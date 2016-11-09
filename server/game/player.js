@@ -864,6 +864,16 @@ class Player {
 
         return state;
     }
+
+    getTotalInitiative() {
+        var plotInitiative = this.selectedPlot.card.initiative;
+        var initiativeModifier = _.chain(this.cardsInPlay).map(cip => {
+            return [cip.card].concat(cip.attachments);
+        }).flatten(true).reduce((memo, card) => {
+            return memo + (card.initiative || 0);
+        }, 0);
+        return plotInitiative + initiativeModifier;
+    }
 }
 
 module.exports = Player;
