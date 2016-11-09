@@ -229,7 +229,7 @@ class Game extends EventEmitter {
             initiativeWinner.buttons.push({ command: 'firstplayer', text: 'Opponent', arg: 'opponent' });
         }
 
-        var otherPlayer = this.getOtherPlayer(highestPlayer);
+        var otherPlayer = this.getOtherPlayer(initiativeWinner);
 
         if (otherPlayer) {
             otherPlayer.menuTitle = 'Waiting for opponent to select first player';
@@ -870,7 +870,7 @@ class Game extends EventEmitter {
             this.addMessage('No one wins dominance');
         }
 
-        this.emit('afterDominance', this, highestPlayer);
+        this.emit('afterDominance', this, dominanceWinner);
 
         this.emit('cardsStanding', this);
 
