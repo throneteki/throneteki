@@ -202,10 +202,18 @@ class Game extends EventEmitter {
             var highestPlayer = undefined;
             var highestInitiative = -1;
             _.each(this.players, p => {
-                if (p.selectedPlot.card.initiative > highestInitiative) {
-                    highestInitiative = p.selectedPlot.card.initiative;
+                var initiativeCards = p.initiativeCardsInPlay();
+                var totalInitiative = _.reduce(initiativeCards, (memo, c) => {
+                    return memo + c.initiative;
+                }, 0);
+                if (totalInitiative > highestInitiative) {
+                    highestInitiative = totalInitiative;
                     highestPlayer = p;
                 }
+                var explanation = _.map(initiativeCards, c => {
+                    return c.name + ': ' + c.initiative;
+                });
+                this.addMessage(p.name + ' has ' + totalInitiative + ' initiative (' + explanation + ')');
             });
 
             _.each(this.players, p => {
