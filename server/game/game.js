@@ -701,13 +701,13 @@ class Game extends EventEmitter {
                     if (loser.power > 0) {
                         loser.power -= 1;
                         winner.power += 1;
-		        claim--;
+                        claim--;
 
                         if (winner.getTotalPower() => 15) {
                             this.addMessage(winner.name + ' has won the game');
                         }
                     } else {
-		        claim = 0;
+                        claim = 0;
 		    }
 		}
             }
