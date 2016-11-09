@@ -46,6 +46,7 @@ class Player {
         this.readyToStart = false;
         this.cardsInPlay = [];
         this.limitedPlayed = false;
+        this.activePlot = undefined;
         this.plotDiscard = [];
         this.deadPile = [];
         this.discardPile = [];
@@ -234,11 +235,6 @@ class Player {
     startPlotPhase() {
         this.phase = 'plot';
 
-        if (this.plotDeck.length === 0) {
-            this.plotDeck = this.plotDiscard;
-            this.plotDiscard = [];
-        }
-
         this.menuTitle = 'Choose your plot';
         this.buttons = [
             { command: 'selectplot', text: 'Done' }
@@ -287,17 +283,26 @@ class Player {
     }
 
     revealPlot() {
-        this.selectedPlot.facedown = false;
-
         this.menuTitle = '';
         this.buttons = [];
 
-        this.plotDiscard.push(this.selectedPlot.card);
+        this.selectedPlot.facedown = false;
+        if (this.activePlot !== null && this.activePlot !== undefined) {
+            this.plotDiscard.push(this.activePlot.card);
+        }
+
+        this.activePlot = this.selectedPlot;
+        console.log(this.activePlot.card.code);
+
         this.plotDeck = _.reject(this.plotDeck, card => {
             return card.uuid === this.selectedPlot.card.uuid;
         });
 
-        this.activePlot = this.selectedPlot;
+        if (this.plotDeck.length === 0) {
+            this.plotDeck = this.plotDiscard;
+            this.plotDiscard = [];
+        }
+
         this.plotRevealed = true;
 
         this.selectedPlot = undefined;
@@ -849,6 +854,7 @@ class Player {
             plotDeck: isActivePlayer ? this.plotDeck : undefined,
             numPlotCards: this.plotDeck.length,
             plotSelected: !!this.selectedPlot,
+            activePlot: this.activePlot,
             firstPlayer: this.firstPlayer,
             plotDiscard: this.plotDiscard,
             selectedAttachment: this.selectedAttachment,
