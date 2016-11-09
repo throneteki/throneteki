@@ -28,6 +28,7 @@ const port = isDeveloping ? 4000 : process.env.PORT;
 
 const Game = require('./game/game.js');
 const Player = require('./game/player.js');
+const Spectator = require('./game/spectator.js');
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -44,8 +45,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new localStrategy(
-    function(username, password, done) {
-        db.collection('users').findOne({ username: username }, function(err, user) {
+    function (username, password, done) {
+        db.collection('users').findOne({ username: username }, function (err, user) {
             if (err) {
                 return done(err);
             }
@@ -54,7 +55,7 @@ passport.use(new localStrategy(
                 return done(null, false, { message: 'Invalid username/password' });
             }
 
-            bcrypt.compare(password, user.password, function(err, valid) {
+            bcrypt.compare(password, user.password, function (err, valid) {
                 if (err) {
                     return done(err);
                 }
@@ -69,14 +70,14 @@ passport.use(new localStrategy(
     }
 ));
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     if (user) {
         done(null, user._id);
     }
 });
 
-passport.deserializeUser(function(id, done) {
-    db.collection('users').findById(id, function(err, user) {
+passport.deserializeUser(function (id, done) {
+    db.collection('users').findById(id, function (err, user) {
         if (err) {
             logger.info(err);
         }
@@ -154,9 +155,9 @@ var games = {};
 
 io.set('heartbeat timeout', 30000);
 
-io.use(function(socket, next) {
+io.use(function (socket, next) {
     if (socket.handshake.query.token) {
-        jwt.verify(socket.handshake.query.token, config.secret, function(err, user) {
+        jwt.verify(socket.handshake.query.token, config.secret, function (err, user) {
             if (!err) {
                 socket.request.user = user;
             }
@@ -216,7 +217,9 @@ function removePlayerFromGame(game, socket, reason) {
 
     socket.leave(game.id);
 
-    if (_.isEmpty(game.players)) {
+    var listToCheck = game.started ? game.players : game.getPlayers();
+
+    if (_.isEmpty(listToCheck)) {
         delete games[game.id];
     }
 }
@@ -233,12 +236,12 @@ function sendGameState(game) {
     });
 }
 
-io.on('connection', function(socket) {
-    socket.on('error', function(err) {
+io.on('connection', function (socket) {
+    socket.on('error', function (err) {
         logger.info('socket error', err);
     });
 
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -250,15 +253,15 @@ io.on('connection', function(socket) {
         refreshGameList();
     });
 
-    socket.on('authenticate', function(token) {
-        jwt.verify(token, config.secret, function(err, user) {
+    socket.on('authenticate', function (token) {
+        jwt.verify(token, config.secret, function (err, user) {
             if (!err) {
                 socket.request.user = user;
             }
         });
     });
 
-    socket.on('newgame', function(name) {
+    socket.on('newgame', function (name) {
         if (!socket.request.user) {
             return;
         }
@@ -274,18 +277,18 @@ io.on('connection', function(socket) {
         refreshGameList();
     });
 
-    socket.on('joingame', function(gameid) {
+    socket.on('joingame', function (gameid) {
         if (!socket.request.user) {
             return;
         }
 
         var game = games[gameid];
 
-        if (!game || game.started || game.players.length === 2) {
+        if (!game || game.started || game.getPlayers().length === 2) {
             return;
         }
 
-        game.players[socket.id] = new Player(socket.id, socket.request.user.username, false);
+        game.players[socket.id] = new Player(socket.id, socket.request.user.username, false, false);
         socket.join(game.id);
 
         _.each(game.players, (player, key) => {
@@ -295,7 +298,29 @@ io.on('connection', function(socket) {
         refreshGameList();
     });
 
-    socket.on('selectdeck', function(gameid, deck) {
+    socket.on('watchgame', function (gameid) {
+        if (!socket.request.user) {
+            return;
+        }
+
+        var game = games[gameid];
+
+        if (!game) {
+            return;
+        }
+
+        game.players[socket.id] = new Spectator(socket.id, socket.request.user.username);
+        game.addMessage(socket.request.user.username + ' has joined the game as a spectator');
+        socket.join(game.id);
+
+        _.each(game.players, (player, key) => {
+            io.to(key).emit('joingame', game.getState(player.id));
+        });
+
+        sendGameState(game);
+    });
+
+    socket.on('selectdeck', function (gameid, deck) {
         if (!socket.request.user) {
             return;
         }
@@ -311,7 +336,7 @@ io.on('connection', function(socket) {
         updateGame(game);
     });
 
-    socket.on('leavegame', function(gameid) {
+    socket.on('leavegame', function (gameid) {
         if (!socket.request.user) {
             return;
         }
@@ -326,7 +351,7 @@ io.on('connection', function(socket) {
         refreshGameList();
     });
 
-    socket.on('startgame', function(gameid) {
+    socket.on('startgame', function (gameid) {
         if (!socket.request.user) {
             return;
         }
@@ -337,13 +362,13 @@ io.on('connection', function(socket) {
             return;
         }
 
-        if (_.any(game.players, function(player) {
+        if (_.any(game.getPlayers(), function (player) {
             return !player.deck;
         })) {
             return;
         }
 
-        var player = game.players[socket.id];
+        var player = game.getPlayers()[socket.id];
         if (!player || !player.owner) {
             return;
         }
@@ -351,7 +376,6 @@ io.on('connection', function(socket) {
         game.started = true;
 
         updateGame(game);
-
         game.initialise();
 
         sendGameState(game);
@@ -359,7 +383,7 @@ io.on('connection', function(socket) {
         refreshGameList();
     });
 
-    socket.on('mulligan', function() {
+    socket.on('mulligan', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -372,7 +396,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('keep', function() {
+    socket.on('keep', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -385,7 +409,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('playcard', function(card) {
+    socket.on('playcard', function (card) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -396,7 +420,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('setupdone', function() {
+    socket.on('setupdone', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -407,7 +431,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('selectplot', function(plot) {
+    socket.on('selectplot', function (plot) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -418,7 +442,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('firstplayer', function(arg) {
+    socket.on('firstplayer', function (arg) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -429,7 +453,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('cardclick', function(card) {
+    socket.on('cardclick', function (card) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -441,7 +465,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('showdrawdeck', function() {
+    socket.on('showdrawdeck', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -453,7 +477,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('drop', function(card, source, target) {
+    socket.on('drop', function (card, source, target) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -465,7 +489,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('donemarshal', function() {
+    socket.on('donemarshal', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -477,7 +501,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('challenge', function(challengeType) {
+    socket.on('challenge', function (challengeType) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -489,7 +513,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('donechallenge', function() {
+    socket.on('donechallenge', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -501,7 +525,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('donedefend', function() {
+    socket.on('donedefend', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -513,7 +537,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('doneallchallenges', function() {
+    socket.on('doneallchallenges', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -525,7 +549,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('doneround', function() {
+    socket.on('doneround', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -537,7 +561,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('changestat', function(stat, value) {
+    socket.on('changestat', function (stat, value) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -549,7 +573,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('custom', function(arg) {
+    socket.on('custom', function (arg) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -561,7 +585,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('chat', function(message) {
+    socket.on('chat', function (message) {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -573,7 +597,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('lobbychat', function(message) {
+    socket.on('lobbychat', function (message) {
         if (!socket.request.user) {
             return;
         }
@@ -583,7 +607,7 @@ io.on('connection', function(socket) {
         io.emit('lobbychat', chatMessage);
     });
 
-    socket.on('concede', function() {
+    socket.on('concede', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -595,7 +619,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('donestealth', function() {
+    socket.on('donestealth', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -607,7 +631,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('donesetpower', function() {
+    socket.on('donesetpower', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -619,7 +643,7 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('cancelclaim', function() {
+    socket.on('cancelclaim', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -628,10 +652,10 @@ io.on('connection', function(socket) {
 
         game.cancelClaim(socket.id);
 
-        sendGameState(game); 
+        sendGameState(game);
     });
 
-    socket.on('shuffledeck', function() {
+    socket.on('shuffledeck', function () {
         var game = findGameForPlayer(socket.id);
 
         if (!game) {
@@ -640,7 +664,7 @@ io.on('connection', function(socket) {
 
         game.shuffleDeck(socket.id);
 
-        sendGameState(game); 
+        sendGameState(game);
     });
 
     refreshGameList(socket);
