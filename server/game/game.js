@@ -255,20 +255,48 @@ class Game extends EventEmitter {
             player.menuTitle = 'Waiting for opponent to select plot';
             player.buttons = [];
         } else {
-            var highestPlayer = undefined;
+            var initiativeWinner = undefined;
             var highestInitiative = -1;
-            _.each(this.getPlayers(), p => {
-                if (p.selectedPlot.card.initiative > highestInitiative) {
-                    highestInitiative = p.selectedPlot.card.initiative;
-                    highestPlayer = p;
-                }
-            });
+            var highestPower = -1;
 
+            // reveal plots when everyone has selected
             _.each(this.getPlayers(), p => {
                 p.revealPlot();
             });
 
-            this.firstPlayerPrompt(highestPlayer);
+            // determine initiative winner
+            _.each(this.getPlayers(), p => {
+                var playerInitiative = p.activePlot.card.initiative;
+                var playerPower = p.power;
+
+                if (playerInitiative === highestInitiative) {
+                    if (playerPower === highestPower) {
+                        var diceRoll = Math.floor((Math.random() * 20));
+                        if (diceRoll % 2 === 0) {
+                            highestInitiative = playerInitiative;
+                            highestPower = playerPower;
+                            initiativeWinner = p;
+                        }
+                    }
+
+                    if (playerPower > highestPower) {
+                        highestInitiative = playerInitiative;
+                        highestPower = playerPower;
+                        initiativeWinner = p;
+                    }
+                }
+
+                if (playerInitiative > highestInitiative) {
+                    highestInitiative = playerInitiative;
+                    highestPower = playerPower;
+                    initiativeWinner = p;
+                }
+            });
+
+            // initiative winner sets the first player
+            // note that control flow for the plot phase after this continues under
+            // the setFirstPlayer function
+            this.firstPlayerPrompt(initiativeWinner);
         }
     }
 
@@ -811,29 +839,33 @@ class Game extends EventEmitter {
 
     dominance() {
         var highestDominance = 0;
-        var highestPlayer = undefined;
+        var dominanceWinner = undefined;
 
         _.each(this.getPlayers(), player => {
             player.phase = 'dominance';
             var dominance = player.getDominance();
 
+            if (dominance === highestDominance) {
+                dominanceWinner = undefined;
+            }
+
             if (dominance > highestDominance) {
-                highestPlayer = player;
+                highestDominance = dominance;
+                dominanceWinner = player;
             }
         });
 
-        if (!highestPlayer) {
-            _.each(this.getPlayers(), p => {
-                highestPlayer = p;
-            });
-        }
+        if (dominanceWinner) {
+            this.addMessage(dominanceWinner.name + ' wins dominance');
 
-        this.addMessage(highestPlayer.name + ' wins dominance');
+            dominanceWinner.power++;
 
-        highestPlayer.power++;
-
-        if (highestPlayer.getTotalPower() >= 15) {
-            this.addMessage(highestPlayer.name + ' has won the game');
+            if (dominanceWinner.getTotalPower() > 15) {
+                this.addMessage(dominanceWinner.name + ' has won the game');
+            }
+        } else {
+            this.addMessage('There was a tie for dominance');
+            this.addMessage('No one wins dominance');
         }
 
         this.emit('afterDominance', this, highestPlayer);
