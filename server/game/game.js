@@ -273,7 +273,7 @@ class Game extends EventEmitter {
 
                 if (playerInitiative === highestInitiative) {
                     if (playerPower === highestPower) {
-                        var diceRoll = Math.floor((Math.random() * 20));
+                        var diceRoll = _.random(1, 20);
                         if (diceRoll % 2 === 0) {
                             highestInitiative = playerInitiative;
                             highestPower = playerPower;
