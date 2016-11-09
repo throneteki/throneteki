@@ -287,12 +287,11 @@ class Player {
         this.buttons = [];
 
         this.selectedPlot.facedown = false;
-        if (this.activePlot !== null && this.activePlot !== undefined) {
+        if (this.activePlot) {
             this.plotDiscard.push(this.activePlot.card);
         }
 
         this.activePlot = this.selectedPlot;
-        console.log(this.activePlot.card.code);
 
         this.plotDeck = _.reject(this.plotDeck, card => {
             return card.uuid === this.selectedPlot.card.uuid;

@@ -113,22 +113,37 @@ class InnerGameBoard extends React.Component {
     }
 
     onPlotDeckClick() {
-        if (this.state.showUsedPlotDeck) { this.setState({ showUsedPlotDeck: !this.state.showUsedPlotDeck }); }
-        if (this.state.showOtherPlayerUsedPlotDeck) { this.setState({ showOtherPlayerUsedPlotDeck: !this.state.showOtherPlayerUsedPlotDeck }); }
+        if (this.state.showUsedPlotDeck) {
+            this.setState({ showUsedPlotDeck: !this.state.showUsedPlotDeck });
+        }
+
+        if (this.state.showOtherPlayerUsedPlotDeck) {
+            this.setState({ showOtherPlayerUsedPlotDeck: !this.state.showOtherPlayerUsedPlotDeck });
+        }
 
         this.setState({ showPlotDeck: !this.state.showPlotDeck });
     }
 
     onUsedPlotDeckClick() {
-        if (this.state.showPlotDeck) { this.setState({ showPlotDeck: !this.state.showPlotDeck }); }
-        if (this.state.showOtherPlayerUsedPlotDeck) { this.setState({ showOtherPlayerUsedPlotDeck: !this.state.showOtherPlayerUsedPlotDeck }); }
+        if (this.state.showPlotDeck) {
+            this.setState({ showPlotDeck: !this.state.showPlotDeck });
+        }
+
+        if (this.state.showOtherPlayerUsedPlotDeck) {
+            this.setState({ showOtherPlayerUsedPlotDeck: !this.state.showOtherPlayerUsedPlotDeck });
+        }
 
         this.setState({ showUsedPlotDeck: !this.state.showUsedPlotDeck });
     }
 
     onOtherPlayerUsedPlotDeckClick() {
-        if (this.state.showPlotDeck) { this.setState({ showPlotDeck: !this.state.showPlotDeck }); }
-        if (this.state.showUsedPlotDeck) { this.setState({ showUsedPlotDeck: !this.state.showUsedPlotDeck }); }
+        if (this.state.showPlotDeck) {
+            this.setState({ showPlotDeck: !this.state.showPlotDeck });
+        }
+
+        if (this.state.showUsedPlotDeck) {
+            this.setState({ showUsedPlotDeck: !this.state.showUsedPlotDeck });
+        }
 
         this.setState({ showOtherPlayerUsedPlotDeck: !this.state.showOtherPlayerUsedPlotDeck });
     }
@@ -280,34 +295,6 @@ class InnerGameBoard extends React.Component {
         return plotDeck;
     }
 
-    getUsedPlotDeck(deck) {
-        var index = 0;
-
-        var usedPlotDeck = _.map(deck, card => {
-            var plotClass = 'plot-card';
-
-            // if (card === this.state.selectedPlot) {
-            //     plotClass += ' selected';
-            // }
-
-            var usedPlotCard = (
-                <div key={'card' + index.toString()} className='card-wrapper'>
-                    <div className='card-frame'>
-                        <div className={plotClass} onMouseOver={this.onMouseOver ? this.onMouseOver.bind(this, card) : null}
-                            onMouseOut={this.onMouseOut}>
-                            <img className='plot-card' src={'/img/cards/' + card.code + '.png'} />
-                        </div>
-                    </div>
-                </div>);
-
-            index++;
-
-            return usedPlotCard;
-        });
-
-        return usedPlotDeck;
-    }
-
     onDragOver(event) {
         event.preventDefault();
     }
@@ -336,9 +323,9 @@ class InnerGameBoard extends React.Component {
         }
 
         var plotDeck = this.getPlotDeck(thisPlayer.plotDeck);
-        var thisPlayerUsedPlotDeck = this.getUsedPlotDeck(thisPlayer.plotDiscard);
+        var thisPlayerUsedPlotDeck = this.getPlotDeck(thisPlayer.plotDiscard);
         if (otherPlayer) {
-            var otherPlayerUsedPlotDeck = this.getUsedPlotDeck(otherPlayer.plotDiscard);
+            var otherPlayerUsedPlotDeck = this.getPlotDeck(otherPlayer.plotDiscard);
         }
 
         var thisPlayerCards = [];
@@ -362,8 +349,6 @@ class InnerGameBoard extends React.Component {
         for (i = otherPlayerCards.length; i < 2; i++) {
             thisPlayerCards.push(<div key={'other-empty' + i} />);
         }
-
-        console.log(thisPlayer.activePlot);
 
         return (
             <div className='game-board'>
@@ -391,7 +376,7 @@ class InnerGameBoard extends React.Component {
 
                                         <img className='vertical' src='/img/cards/cardback.jpg' />
                                     </div>
-                                    <div className='panel horizontal-card' onMouseOver={this.onMouseOver.bind(this, _.last((otherPlayer ? otherPlayer.plotDiscard : null)))}
+                                    <div className='panel horizontal-card' onMouseOver={otherPlayer ? this.onMouseOver.bind(this, _.last(otherPlayer.plotDiscard)) : null}
                                         onMouseOut={this.onMouseOut} onClick={this.onOtherPlayerUsedPlotDeckClick}>
                                         <div className='panel-header'>
                                             {'Active Plot'}
