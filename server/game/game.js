@@ -862,7 +862,7 @@ class Game extends EventEmitter {
 
             dominanceWinner.power++;
 
-            if (dominanceWinner.getTotalPower() > 15) {
+            if (dominanceWinner.getTotalPower() >= 15) {
                 this.addMessage(dominanceWinner.name + ' has won the game');
             }
         } else {
