@@ -628,7 +628,7 @@ io.on('connection', function(socket) {
 
         game.cancelClaim(socket.id);
 
-        sendGameState(game); 
+        sendGameState(game);
     });
 
     socket.on('shuffledeck', function() {
@@ -640,7 +640,7 @@ io.on('connection', function(socket) {
 
         game.shuffleDeck(socket.id);
 
-        sendGameState(game); 
+        sendGameState(game);
     });
 
     refreshGameList(socket);

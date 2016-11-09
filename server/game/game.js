@@ -631,7 +631,7 @@ class Game extends EventEmitter {
                 }
             }
 
-            // XXX This should be after claim but needs a bit of reworking to make that possible            
+            // XXX This should be after claim but needs a bit of reworking to make that possible
             this.applyKeywords(winner, loser);
 
             if (winner === challenger) {
