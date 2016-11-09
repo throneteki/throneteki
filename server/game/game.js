@@ -190,7 +190,7 @@ class Game extends EventEmitter {
                 p.buttons = [];
             });
         } else {
-            _.each(this.getPlayers(), p => {
+            _.each(this.players, p => {
                 p.postSetup();
                 p.startPlotPhase();
             });
