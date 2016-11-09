@@ -216,15 +216,15 @@ class Game extends EventEmitter {
         }
     }
 
-    firstPlayerPrompt(highestPlayer) {
-        highestPlayer.firstPlayer = true;
-        highestPlayer.menuTitle = 'Select a first player';
-        highestPlayer.buttons = [
+    firstPlayerPrompt(initiativeWinner) {
+        initiativeWinner.firstPlayer = true;
+        initiativeWinner.menuTitle = 'Select a first player';
+        initiativeWinner.buttons = [
             { command: 'firstplayer', text: 'Me', arg: 'me' }
         ];
 
         if (_.size(this.getPlayers()) > 1) {
-            highestPlayer.buttons.push({ command: 'firstplayer', text: 'Opponent', arg: 'opponent' });
+            initiativeWinner.buttons.push({ command: 'firstplayer', text: 'Opponent', arg: 'opponent' });
         }
 
         var otherPlayer = this.getOtherPlayer(highestPlayer);
