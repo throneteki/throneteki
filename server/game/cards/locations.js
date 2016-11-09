@@ -2,6 +2,16 @@ const _ = require('underscore');
 
 var locations = {};
 
+// 01039 - The Kingsroad
+locations['01039'] = {
+    register: function(game, player, card) {
+        // TODO: Full Kingsroad behaviour.
+        card.initiative = 1;
+    },
+    unregister: function(game, player, card) {
+    }
+};
+
 // 01040 - The Roseroad
 class TheRoseRoad {
     constructor(player, card) {
