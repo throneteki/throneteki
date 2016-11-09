@@ -864,6 +864,20 @@ class Player {
 
         return state;
     }
+
+    initiativeCardsInPlay() {
+        var cards = [this.selectedPlot.card];
+
+        _.chain(this.cardsInPlay).map(cip => {
+            return [cip.card].concat(cip.attachments);
+        }).flatten(true).filter(card => {
+            return !!card.initiative;
+        }).each(card => {
+            cards.push(card);
+        });
+
+        return cards;
+    }
 }
 
 module.exports = Player;
