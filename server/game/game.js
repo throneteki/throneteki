@@ -210,10 +210,6 @@ class Game extends EventEmitter {
                     highestInitiative = totalInitiative;
                     highestPlayer = p;
                 }
-                var explanation = _.map(initiativeCards, c => {
-                    return c.name + ': ' + c.initiative;
-                });
-                this.addMessage(p.name + ' has ' + totalInitiative + ' initiative (' + explanation + ')');
             });
 
             _.each(this.players, p => {
