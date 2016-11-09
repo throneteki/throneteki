@@ -699,8 +699,8 @@ class Game extends EventEmitter {
             } else if (winner.currentChallenge === 'power') {
                 while (claim > 0) {
                     if (loser.power > 0) {
-                        loser.power -= 1;
-                        winner.power += 1;
+                        loser.power--;
+                        winner.power++;
                         claim--;
 
                         if (winner.getTotalPower() => 15) {
