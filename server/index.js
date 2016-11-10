@@ -505,7 +505,9 @@ io.on('connection', function (socket) {
             return;
         }
 
-        game.resolvePlayerPlotEffect(playerId);
+        runAndCatchErrors(game, () => {
+            game.resolvePlayerPlotEffect(playerId);
+        });
         sendGameState(game);
     });
 
@@ -516,7 +518,9 @@ io.on('connection', function (socket) {
             return;
         }
 
-        game.beginMarshal(game.getPlayers()[socket.id]);
+        runAndCatchErrors(game, () => {
+            game.drawPhase(game.getPlayers()[socket.id]);
+        });
         sendGameState(game);
     });
 

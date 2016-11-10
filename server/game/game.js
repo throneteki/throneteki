@@ -310,6 +310,15 @@ class Game extends EventEmitter {
         }
     }
 
+    drawPhase(firstPlayer) {
+        _.each(this.getPlayers(), p => {
+            this.emit('beginDrawPhase', this, p);
+            p.drawPhase();
+        });
+
+        this.beginMarshal(firstPlayer);
+    }
+
     beginMarshal(player) {
         this.emit('beginMarshal', this, player);
 
