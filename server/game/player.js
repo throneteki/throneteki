@@ -311,7 +311,13 @@ class Player extends Spectator {
     }
 
     hasWhenRevealed() {
-        return this.activePlot.card.text.indexOf('When Revealed:') !== -1;
+        var plotText = this.activePlot.card.text;
+
+        if (!_.isNull(plotText) && !_.isUndefined(plotText)) {
+            return this.activePlot.card.text.indexOf('When Revealed:') !== -1;
+        } else {
+            return false;
+        }
     }
 
     drawPhase() {
@@ -823,7 +829,7 @@ class Player extends Spectator {
 
     getTotalInitiative() {
         var plotInitiative = 0;
-        
+
         if(this.activePlot && this.activePlot.card.initiative) {
             plotInitiative = this.activePlot.card.initiative;
         }
