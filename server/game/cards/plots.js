@@ -218,7 +218,7 @@ class BuildingOrders {
         }
 
         if(arg === 'done') {
-            game.revealDone(player);
+            game.playerRevealDone(player);
         }
 
         var card = _.find(player.drawDeck, c => {
@@ -238,7 +238,7 @@ class BuildingOrders {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
 
-        game.revealDone(player);
+        game.playerRevealDone(player);
     }
 }
 plots['01006'] = {
@@ -335,7 +335,7 @@ class CalmOverWesteros {
 
         this.challengeType = arg;
 
-        game.revealDone(player);
+        game.playerRevealDone(player);
     }
 
     beforeClaim(game, challengeType, winner, loser) {
@@ -447,7 +447,7 @@ class Confiscation {
             });
 
             if(!card) {
-                game.revealDone(player);
+                game.playerRevealDone(player);
 
                 return;
             }
@@ -466,7 +466,7 @@ class Confiscation {
         player.selectCard = false;
         game.clickHandled = true;
 
-        game.revealDone(player);
+        game.playerRevealDone(player);
     }
 }
 plots['01009'] = {
@@ -554,7 +554,7 @@ class FilthyAccusation {
             });
 
             if(!otherPlayer) {
-                game.revealDone(player);
+                game.playerRevealDone(player);
 
                 return;
             }
@@ -564,14 +564,14 @@ class FilthyAccusation {
             });
 
             if(!card) {
-                game.revealDone(player);
+                game.playerRevealDone(player);
 
                 return;
             }
         }
 
         if(card.card.type_code !== 'character' || card.kneeled) {
-            game.revealDone(player);
+            game.playerRevealDone(player);
             return;
         }
 
@@ -579,7 +579,7 @@ class FilthyAccusation {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to kneel ' + card.card.label);
 
-        game.revealDone(player);
+        game.playerRevealDone(player);
     }
 }
 plots['01011'] = {
@@ -729,7 +729,7 @@ class MarchedToTheWall {
 
         if(!stillToDiscard) {
             this.waitingForClick = false;
-            game.revealDone(player);
+            game.playerRevealDone(player);
         } else {
             player.menuTitle = 'Waiting for oppoent to apply plot effect';
             player.buttons = [];
@@ -755,10 +755,10 @@ class MarchedToTheWall {
                 });
 
                 if(otherPlayer) {
-                    game.revealDone(otherPlayer);
+                    game.playerRevealDone(otherPlayer);
                 }
             } else {
-                game.revealDone(player);
+                game.playerRevealDone(player);
             }
         } else {
             player.menuTitle = 'Waiting for oppoent to apply plot effect';
@@ -932,7 +932,7 @@ class Summons {
         }
 
         if(arg === 'done') {
-            game.revealDone(player);
+            game.playerRevealDone(player);
         }
 
         var card = _.find(player.drawDeck, c => {
@@ -952,7 +952,7 @@ class Summons {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
 
-        game.revealDone(player);
+        game.playerRevealDone(player);
     }
 }
 plots['01022'] = {
@@ -1069,7 +1069,7 @@ class TheLongWinter {
         delete this.waitingForPlayers[player.id];
 
         if(!_.any(this.waitingForPlayers)) {
-            game.revealDone(this.player);
+            game.playerRevealDone(this.player);
         }
     }
 }

@@ -323,36 +323,50 @@ class Game extends EventEmitter {
         }
     }
 
-    revealDone(player) {
+    playerRevealDone(player) {
         var otherPlayer = this.getOtherPlayer(player);
+        var firstPlayer = player.firstPlayer ? player : otherPlayer;
 
         player.revealFinished = true;
 
-        if (otherPlayer && !otherPlayer.revealFinished) {
-            this.revealPlot(otherPlayer);
+        this.resolvePlotEffects(firstPlayer);
+    }
 
-            return;
+    resolvePlotEffects(firstPlayer) {
+        firstPlayer.menuTitle = 'Select player to resolve their plot';
+        firstPlayer.buttons = [];
+
+        _.each(this.getPlayers(), p => {
+            if (p.hasWhenRevealed() && !p.revealFinished) {
+                firstPlayer.buttons.push({command: 'resolvePlotEffect', text: p.name, arg: p.id});
+            }
+        });
+
+        if (_.isEmpty(firstPlayer.buttons)) {
+            firstPlayer.menuTitle = 'Any reactions or actions?';
+            firstPlayer.buttons = [{command: 'doneWhenRealedEffects', text: 'Done'}]
         }
 
-        if (!otherPlayer) {
-            this.beginMarshal(player);
-
-            return;
-        }
-
-        var firstPlayer = player.firstPlayer ? player : otherPlayer;
-
-        if (player.plotRevealed && otherPlayer.plotRevealed) {
-            this.beginMarshal(firstPlayer);
+        var otherPlayer = this.getOtherPlayer(firstPlayer);
+        if (otherPlayer) {
+            otherPlayer.menuTitle = 'Waiting for first player resolve plot phase';
+            otherPlayer.buttons = [];
         }
     }
 
-    revealPlot(player) {
+    resolvePlayerPlotEffect(playerId) {
+        var player = this.getPlayers()[playerId];
+        var otherPlayer = this.getOtherPlayer(player);
+        var firstPlayer = player.firstPlayer ? player : otherPlayer;
+
+        firstPlayer.menuTitle = 'Waiting for opponent to resolve plot effect';
+        firstPlayer.buttons = [];
+
         this.pauseForPlot = false;
         this.emit('plotRevealed', this, player);
 
         if (!this.pauseForPlot) {
-            this.revealDone(player);
+            this.playerRevealDone(player);
         }
     }
 
@@ -376,14 +390,13 @@ class Game extends EventEmitter {
                 player.firstPlayer = false;
             }
 
-            player.drawPhase();
             player.menuTitle = '';
             player.buttons = [];
         });
 
         this.addMessage(player.name + ' has selected ' + firstPlayer.name + ' to be the first player');
 
-        this.revealPlot(firstPlayer);
+        this.resolvePlotEffects(firstPlayer);
     }
 
     attachCard(player, card) {

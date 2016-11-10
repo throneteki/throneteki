@@ -310,6 +310,10 @@ class Player extends Spectator {
         this.selectedPlot = undefined;
     }
 
+    hasWhenRevealed() {
+        return this.activePlot.card.text.indexOf('When Revealed:') !== -1;
+    }
+
     drawPhase() {
         this.gold = 0;
         this.phase = 'draw';
