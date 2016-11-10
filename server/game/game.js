@@ -272,6 +272,7 @@ class Game extends EventEmitter {
             // reveal plots when everyone has selected
             _.each(this.getPlayers(), p => {
                 p.revealPlot();
+                this.emit('plotRevealed', this, p);
             });
 
             // determine initiative winner
@@ -372,7 +373,7 @@ class Game extends EventEmitter {
         firstPlayer.buttons = [];
 
         this.pauseForPlot = false;
-        this.emit('plotRevealed', this, player);
+        this.emit('whenRevealed', this, player);
 
         if (!this.pauseForPlot) {
             this.playerRevealDone(player);
