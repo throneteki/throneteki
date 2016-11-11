@@ -763,10 +763,8 @@ class Game extends EventEmitter {
             this.emit('afterChallenge', this, winner.currentChallenge, winner, loser);
 
             if (loser.challengeStrength === 0) {
-                winner.power++;
-
                 this.addMessage(winner.name + ' has gained 1 power from an unopposed challenge');
-
+                this.addPower(winner, 1);
                 this.checkWinCondition(winner);
             }
 
@@ -782,6 +780,16 @@ class Game extends EventEmitter {
                 player.buttons = [];
             }
         }
+    }
+
+    addPower(player, power) {
+        player.power += power;
+    }
+
+    transferPower(winner, loser, power) {
+        var appliedPower = Math.min(loser.power, power);
+        loser.power -= appliedPower;
+        winner.power += appliedPower;
     }
 
     checkWinCondition(player) {
@@ -840,17 +848,8 @@ class Game extends EventEmitter {
             } else if (winner.currentChallenge === 'intrigue') {
                 loser.discardAtRandom(claim);
             } else if (winner.currentChallenge === 'power') {
-                while (claim > 0) {
-                    if (loser.power > 0) {
-                        loser.power--;
-                        winner.power++;
-                        claim--;
-
-                        this.checkWinCondition(winner);
-                    } else {
-                        claim = 0;
-                    }
-                }
+                this.transferPower(winner, loser, claim);
+                this.checkWinCondition(winner);
             }
         }
 
@@ -902,7 +901,7 @@ class Game extends EventEmitter {
         if (dominanceWinner) {
             this.addMessage(dominanceWinner.name + ' wins dominance');
 
-            dominanceWinner.power++;
+            this.addPower(dominanceWinner, 1);
 
             this.checkWinCondition(dominanceWinner);
         } else {
