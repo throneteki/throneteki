@@ -765,7 +765,6 @@ class Game extends EventEmitter {
             if (loser.challengeStrength === 0) {
                 this.addMessage(winner.name + ' has gained 1 power from an unopposed challenge');
                 this.addPower(winner, 1);
-                this.checkWinCondition(winner);
             }
 
             // XXX This should be after claim but needs a bit of reworking to make that possible
@@ -784,12 +783,14 @@ class Game extends EventEmitter {
 
     addPower(player, power) {
         player.power += power;
+        this.checkWinCondition(player);
     }
 
     transferPower(winner, loser, power) {
         var appliedPower = Math.min(loser.power, power);
         loser.power -= appliedPower;
         winner.power += appliedPower;
+        this.checkWinCondition(winner);
     }
 
     checkWinCondition(player) {
@@ -849,7 +850,6 @@ class Game extends EventEmitter {
                 loser.discardAtRandom(claim);
             } else if (winner.currentChallenge === 'power') {
                 this.transferPower(winner, loser, claim);
-                this.checkWinCondition(winner);
             }
         }
 
@@ -902,8 +902,6 @@ class Game extends EventEmitter {
             this.addMessage(dominanceWinner.name + ' wins dominance');
 
             this.addPower(dominanceWinner, 1);
-
-            this.checkWinCondition(dominanceWinner);
         } else {
             this.addMessage('There was a tie for dominance');
             this.addMessage('No one wins dominance');
