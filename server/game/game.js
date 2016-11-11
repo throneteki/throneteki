@@ -767,9 +767,7 @@ class Game extends EventEmitter {
 
                 this.addMessage(winner.name + ' has gained 1 power from an unopposed challenge');
 
-                if (winner.getTotalPower() >= 15) {
-                    this.addMessage(winner.name + ' has won the game');
-                }
+                this.checkWinCondition(winner);
             }
 
             // XXX This should be after claim but needs a bit of reworking to make that possible
@@ -783,6 +781,12 @@ class Game extends EventEmitter {
                 player.menuTitle = 'Waiting for opponent to initiate challenge';
                 player.buttons = [];
             }
+        }
+    }
+
+    checkWinCondition(player) {
+        if (player.getTotalPower() >= 15) {
+            this.addMessage(player.name + ' has won the game');
         }
     }
 
@@ -814,9 +818,7 @@ class Game extends EventEmitter {
                 this.addMessage(winner.name + ' gains 1 power on ' + card.card.label + ' from Renown');
             }
 
-            if (winner.getTotalPower() >= 15) {
-                this.addMessage(winner.name + ' has won the game');
-            }
+            this.checkWinCondition(winner);
         });
     }
 
@@ -844,9 +846,7 @@ class Game extends EventEmitter {
                         winner.power++;
                         claim--;
 
-                        if (winner.getTotalPower() >= 15) {
-                            this.addMessage(winner.name + ' has won the game');
-                        }
+                        this.checkWinCondition(winner);
                     } else {
                         claim = 0;
                     }
@@ -904,9 +904,7 @@ class Game extends EventEmitter {
 
             dominanceWinner.power++;
 
-            if (dominanceWinner.getTotalPower() >= 15) {
-                this.addMessage(dominanceWinner.name + ' has won the game');
-            }
+            this.checkWinCondition(dominanceWinner);
         } else {
             this.addMessage('There was a tie for dominance');
             this.addMessage('No one wins dominance');
