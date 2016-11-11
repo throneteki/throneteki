@@ -353,8 +353,15 @@ class Game extends EventEmitter {
     }
 
     resolvePlotEffects(firstPlayer) {
+        var otherPlayer = this.getOtherPlayer(firstPlayer);
+
         firstPlayer.menuTitle = 'Select player to resolve their plot';
         firstPlayer.buttons = [];
+
+        if (otherPlayer) {
+            otherPlayer.menuTitle = 'Waiting for first player finish plot phase';
+            otherPlayer.buttons = [];
+        }
 
         _.each(this.getPlayers(), p => {
             if (p.hasWhenRevealed() && !p.revealFinished) {
@@ -362,32 +369,21 @@ class Game extends EventEmitter {
             }
         });
 
-        if (_.isEmpty(firstPlayer.buttons)) {
+        if (_.isEmpty(firstPlayer.buttons) && !this.pauseForPlot) {
             firstPlayer.menuTitle = 'Any reactions or actions?';
-            firstPlayer.buttons = [{ command: 'doneWhenRealedEffects', text: 'Done' }]
-        }
-
-        var otherPlayer = this.getOtherPlayer(firstPlayer);
-        if (otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for first player resolve plot phase';
-            otherPlayer.buttons = [];
+            firstPlayer.buttons = [{command: 'doneWhenRealedEffects', text: 'Done'}];
         }
     }
 
     resolvePlayerPlotEffect(playerId) {
         var player = this.getPlayers()[playerId];
         var otherPlayer = this.getOtherPlayer(player);
-        var firstPlayer = player.firstPlayer ? player : otherPlayer;
 
-        firstPlayer.menuTitle = 'Waiting for opponent to resolve plot effect';
-        firstPlayer.buttons = [];
+        otherPlayer.menuTitle = 'Waiting for ' + player.name + ' to resolve plot effect';
+        otherPlayer.buttons = [];
 
-        this.pauseForPlot = false;
+        this.pauseForPlot = true;
         this.emit('whenRevealed', this, player);
-
-        if (!this.pauseForPlot) {
-            this.playerRevealDone(player);
-        }
     }
 
     setFirstPlayer(sourcePlayer, who) {

@@ -204,8 +204,6 @@ class BuildingOrders {
 
         player.buttons = buttons;
         player.menuTitle = 'Select a card to add to your hand';
-
-        game.pauseForPlot = true;
     }
 
     cardSelected(game, player, arg) {
@@ -228,6 +226,7 @@ class BuildingOrders {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
 
+        game.pauseForPlot = false;
         game.playerRevealDone(player);
     }
 }
@@ -276,6 +275,9 @@ class CallingTheBanners {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to gain ' + characterCount + ' gold');
         player.gold += characterCount;
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(player);
     }
 
 }
@@ -312,8 +314,6 @@ class CalmOverWesteros {
             { text: 'Intrigue', command: 'custom', arg: 'intrigue' },
             { text: 'Power', command: 'custom', arg: 'power' }
         ];
-
-        game.pauseForPlot = true;
     }
 
     challengeTypeSelected(game, player, arg) {
@@ -323,6 +323,7 @@ class CalmOverWesteros {
 
         this.challengeType = arg;
 
+        game.pauseForPlot = false;
         game.playerRevealDone(player);
     }
 
@@ -400,7 +401,6 @@ class Confiscation {
         player.buttons = [];
 
         player.selectCard = true;
-        game.pauseForPlot = true;
     }
 
     cardClicked(game, player, clicked) {
@@ -434,6 +434,7 @@ class Confiscation {
             });
 
             if(!card) {
+                game.pauseForPlot = false;
                 game.playerRevealDone(player);
 
                 return;
@@ -453,6 +454,7 @@ class Confiscation {
         player.selectCard = false;
         game.clickHandled = true;
 
+        game.pauseForPlot = false;
         game.playerRevealDone(player);
     }
 }
@@ -487,6 +489,9 @@ class CountingCoppers {
         player.drawCardsToHand(3);
 
         game.addMessage(player.name + ' draws 3 cards from ' + player.activePlot.card.label);
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(player);
     }
 }
 plots['01010'] = {
@@ -518,8 +523,6 @@ class FilthyAccusation {
         player.buttons = [];
         player.selectCard = true;
 
-        game.pauseForPlot = true;
-
         this.waitingForClick = true;
     }
 
@@ -539,6 +542,7 @@ class FilthyAccusation {
             var otherPlayer = game.getOtherPlayer(player);
 
             if(!otherPlayer) {
+                game.pauseForPlot = false;
                 game.playerRevealDone(player);
 
                 return;
@@ -549,6 +553,7 @@ class FilthyAccusation {
             });
 
             if(!card) {
+                game.pauseForPlot = false;
                 game.playerRevealDone(player);
 
                 return;
@@ -564,6 +569,7 @@ class FilthyAccusation {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to kneel ' + card.card.label);
 
+        game.pauseForPlot = false;
         game.playerRevealDone(player);
     }
 }
@@ -608,7 +614,7 @@ class HeadsOnSpikes {
         otherPlayer.removeFromHand(card);
 
         if(card.type_code === 'character') {
-            message += ' and gain 2 power for their faction';
+            message += ' and gains 2 power for their faction';
             otherPlayer.deadPile.push(card);
             game.addPower(player, 2);
         } else {
@@ -616,6 +622,9 @@ class HeadsOnSpikes {
         }
 
         game.addMessage(message);
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(player);
     }
 }
 plots['01013'] = {
@@ -678,7 +687,6 @@ class MarchedToTheWall {
             ];
         });
 
-        game.pauseForPlot = true;
         this.waitingForClick = true;
         this.cardDiscarded = false;
         _.each(game.getPlayers(), p => {
@@ -712,7 +720,6 @@ class MarchedToTheWall {
 
         if(!stillToDiscard) {
             this.waitingForClick = false;
-            game.playerRevealDone(player);
         } else {
             player.menuTitle = 'Waiting for oppoent to apply plot effect';
             player.buttons = [];
@@ -736,9 +743,11 @@ class MarchedToTheWall {
                 var otherPlayer = game.getOtherPlayer(player);
 
                 if(otherPlayer) {
-                    game.playerRevealDone(otherPlayer);
+                    game.pauseForPlot = false;
+                    game.playerRevealDone(player);
                 }
             } else {
+                game.pauseForPlot = false;
                 game.playerRevealDone(player);
             }
         } else {
@@ -900,8 +909,6 @@ class Summons {
 
         player.buttons = buttons;
         player.menuTitle = 'Select a card to add to your hand';
-
-        game.pauseForPlot = true;
     }
 
     cardSelected(game, player, arg) {
@@ -910,6 +917,7 @@ class Summons {
         }
 
         if(arg === 'done') {
+            game.pauseForPlot = false;
             game.playerRevealDone(player);
         }
 
@@ -924,6 +932,7 @@ class Summons {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
 
+        game.pauseForPlot = false;
         game.playerRevealDone(player);
     }
 }
@@ -963,6 +972,9 @@ class TradingWithThePentoshi {
 
             game.addMessage(otherPlayer.name + ' gains 3 gold from ' + player.activePlot.card.label);
         }
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(player);
     }
 }
 
@@ -1016,7 +1028,7 @@ class TheLongWinter {
         });
 
         if(anySummerPlots) {
-            game.pauseForPlot = true;
+            game.pauseForPlot = false;
         }
     }
 
@@ -1039,6 +1051,7 @@ class TheLongWinter {
         delete this.waitingForPlayers[player.id];
 
         if(!_.any(this.waitingForPlayers)) {
+            game.pauseForPlot = false;
             game.playerRevealDone(this.player);
         }
     }
