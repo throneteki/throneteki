@@ -192,9 +192,8 @@ class BuildingOrders {
             return;
         }
 
-        var top10 = _.first(player.drawDeck, 10);
-        var attachmentsAndLocations = _.reject(top10, card => {
-            return card.type_code !== 'attachment' && card.type_code !== 'location';
+        var attachmentsAndLocations = player.searchDrawDeck(10, card => {
+            return card.type_code === 'attachment' || card.type_code === 'location';
         });
 
         var buttons = _.map(attachmentsAndLocations, card => {
@@ -895,9 +894,8 @@ class Summons {
             return;
         }
 
-        var top10 = _.first(player.drawDeck, 10);
-        var characters = _.reject(top10, card => {
-            return card.type_code !== 'character';
+        var characters = player.searchDrawDeck(10, card => {
+            return card.type_code === 'character';
         });
 
         var buttons = _.map(characters, card => {
