@@ -37,6 +37,13 @@ class Player extends Spectator {
         return _.filter(cards, predicate);
     }
 
+    moveFromDrawDeckToHand(card) {
+        this.drawDeck = _.reject(this.drawDeck, c => {
+            return c.uuid === card.uuid;
+        });
+        this.hand.push(card);
+    }
+
     shuffleDrawDeck() {
         this.drawDeck = _.shuffle(this.drawDeck);
     }

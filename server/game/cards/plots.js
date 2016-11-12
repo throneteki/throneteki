@@ -225,11 +225,7 @@ class BuildingOrders {
             return;
         }
 
-        player.drawDeck = _.reject(player.drawDeck, c => {
-            return c.uuid === card.uuid;
-        });
-
-        player.hand.push(card);
+        player.moveFromDrawDeckToHand(card);
         player.shuffleDrawDeck();
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
@@ -927,11 +923,7 @@ class Summons {
             return;
         }
 
-        player.drawDeck = _.reject(player.drawDeck, c => {
-            return c.uuid === card.uuid;
-        });
-
-        player.hand.push(card);
+        player.moveFromDrawDeckToHand(card);
         player.shuffleDrawDeck();
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
