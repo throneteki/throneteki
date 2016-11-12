@@ -44,6 +44,12 @@ class Player extends Spectator {
         this.hand.push(card);
     }
 
+    findDrawDeckCardByUuid(uuid) {
+        return _.find(this.drawDeck, c => {
+            return c.uuid === uuid;
+        });
+    }
+
     shuffleDrawDeck() {
         this.drawDeck = _.shuffle(this.drawDeck);
     }
