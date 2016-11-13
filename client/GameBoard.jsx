@@ -206,7 +206,6 @@ export class InnerGameBoard extends React.Component {
                         <div className='attachment' style={style}>
                             <div className='card' onMouseOver={allowMouseOver ? this.onMouseOver.bind(this, a) : null}
                                 onMouseOut={this.onMouseOut}
-                                onDragStart={(ev) => this.onCardDragStart(ev, a, 'play area')}
                                 onClick={this.onCardClick2.bind(this, a)}>
                                 <div>
                                     {card.facedown ?
@@ -239,7 +238,7 @@ export class InnerGameBoard extends React.Component {
 
                 if (dupes || power) {
                     counters = (
-                        <div className='counters ignore-mouse-events'>
+                        <div className='counters'>
                             {dupes}
                             {power}
                         </div>
@@ -333,13 +332,8 @@ export class InnerGameBoard extends React.Component {
     onDragDropEvent(event, target) {
         event.stopPropagation();
         event.preventDefault();
-        
-        var card = event.dataTransfer.getData('card');
-        if(!card) {
-            return;
-        }
-        
-        var dragData = JSON.parse(card);
+
+        var dragData = JSON.parse(event.dataTransfer.getData('card'));
 
         this.onDragDrop(dragData.card, dragData.source, target);
     }

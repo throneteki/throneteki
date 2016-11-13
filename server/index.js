@@ -677,6 +677,34 @@ io.on('connection', function (socket) {
         sendGameState(game);
     });
 
+    socket.on('firstPlayerDone', function (arg) {
+        var game = findGameForPlayer(socket.id);
+
+        if (!game) {
+            return;
+        }
+
+        runAndCatchErrors(game, () => {
+            game.firstPlayerDone(socket.id, arg);
+        });
+
+        sendGameState(game);
+    });
+
+    socket.on('otherPlayerDone', function (arg) {
+        var game = findGameForPlayer(socket.id);
+
+        if (!game) {
+            return;
+        }
+
+        runAndCatchErrors(game, () => {
+            game.otherPlayerDone(socket.id, arg);
+        });
+
+        sendGameState(game);
+    });
+
     socket.on('chat', function (message) {
         var game = findGameForPlayer(socket.id);
 
