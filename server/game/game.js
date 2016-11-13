@@ -61,6 +61,10 @@ class Game extends EventEmitter {
         return players;
     }
 
+    getPlayerById(playerId) {
+        return this.getPlayers()[playerId];
+    }
+
     getPlayersAndSpectators() {
         return this.players;
     }
@@ -158,7 +162,7 @@ class Game extends EventEmitter {
     }
 
     mulligan(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(this.playStarted || !player) {
             return;
@@ -170,7 +174,7 @@ class Game extends EventEmitter {
     }
 
     keep(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -181,29 +185,20 @@ class Game extends EventEmitter {
         this.addMessage('{0} has kept their hand', player.name);
     }
 
-    playCard(playerId, card, isDrop) {
-        var player = this.getPlayers()[playerId];
+    playCard(playerId, cardId, isDrop) {
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
         }
 
-        this.stopCardPlay = false;
-        this.emit('beforeCardPlayed', this, player, card);
-        if(this.stopCardPlay) {
+        this.emit('beforeCardPlayed', this, player, cardId);
+
+        if(!player.playCard(cardId, isDrop)) {
             return;
         }
 
-        if(!player.playCard(card, isDrop)) {
-            return;
-        }
-
-        this.emit('afterCardPlayed', this, player, card);
-
-        var cardImplemation = cards[card.code];
-        if(cardImplemation && cardImplemation.register) {
-            cardImplemation.register(this, player, card);
-        }
+        this.emit('afterCardPlayed', this, player, cardId);
     }
 
     checkForAttachments() {
@@ -229,20 +224,20 @@ class Game extends EventEmitter {
             });
         } else {
             _.each(this.getPlayers(), p => {
-                p.postSetup();
+                p.setupDone();
                 p.startPlotPhase();
             });
         }
     }
 
     setupDone(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
         }
 
-        player.setupDone();
+        player.setup = true;
 
         this.addMessage('{0} has finished setup', player.name);
 
@@ -283,16 +278,11 @@ class Game extends EventEmitter {
         }
     }
 
-    selectPlot(playerId, plot) {
-        var player = this.getPlayers()[playerId];
+    selectPlot(playerId, plotId) {
+        var player = this.getPlayerById(playerId);
 
-        if(!player || !player.selectPlot(plot)) {
+        if(!player || !player.selectPlot(plotId)) {
             return;
-        }
-
-        var plotImplementation = cards[player.selectedPlot.card.code];
-        if(plotImplementation && plotImplementation.register) {
-            plotImplementation.register(this, player);
         }
 
         this.addMessage('{0} has selected a plot', player.name);
@@ -310,7 +300,6 @@ class Game extends EventEmitter {
             // reveal plots when everyone has selected
             _.each(this.getPlayers(), p => {
                 p.revealPlot();
-                this.emit('plotRevealed', this, p);
             });
 
             // determine initiative winner
@@ -403,7 +392,7 @@ class Game extends EventEmitter {
     }
 
     resolvePlayerPlotEffect(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         var otherPlayer = this.getOtherPlayer(player);
         var firstPlayer = player.firstPlayer ? player : otherPlayer;
 
@@ -447,7 +436,22 @@ class Game extends EventEmitter {
         this.resolvePlotEffects(firstPlayer);
     }
 
-    attachCard(player, card) {
+    attachCard(player, cardId) {
+        var card = player.findCardInPlayByUuid(cardId);
+        var otherPlayer = this.getOtherPlayer(player);
+
+        if(!card) {
+            if(otherPlayer) {
+                return;
+            }
+
+            card = otherPlayer.findCardInPlayByUuid(cardId);
+
+            if(!card) {
+                return;
+            }
+        }
+
         this.canAttach = true;
         this.emit('beforeAttach', this, player, player.selectedAttachment, card);
         if(!this.canAttach) {
@@ -455,23 +459,21 @@ class Game extends EventEmitter {
         }
 
         if(player.dropPending) {
-            player.discardPile = _.reject(player.discardPile, c => {
-                return c.uuid === player.selectedAttachment.uuid;
-            });
+            player.discardPile = player.removeCardByUuid(player.discardPile, player.selectedAttachment);
         }
 
-        player.removeFromHand(player.selectedAttachment);
-
-        var targetPlayer = this.getPlayers()[card.owner];
-        targetPlayer.attach(player.selectedAttachment, card);
-        player.selectCard = false;
-
+        var targetPlayer = this.getPlayers()[card.owner.id];
         if(targetPlayer === player && player.phase === 'setup') {
             // We put attachments on the board during setup, now remove it
-            player.cardsInPlay = _.reject(player.cardsInPlay, c => {
-                return c.card.uuid === player.selectedAttachment.uuid;
-            });
+            player.attach(player.cardsInPlay, player.selectedAttachment, cardId);
+            player.cardsInPlay = player.removeCardByUuid(player.cardsInPlay, player.selectedAttachment);
+        } else {
+            targetPlayer.attach(player.hand, player.selectedAttachment, cardId);
+            player.removeFromHand(player.selectedAttachment); 
         }
+        
+        player.selectCard = false;
+
 
         player.selectedAttachment = undefined;
 
@@ -489,22 +491,22 @@ class Game extends EventEmitter {
         }
     }
 
-    handleChallenge(player, otherPlayer, card) {
-        var cardInPlay = player.findCardInPlayByUuid(card.uuid);
+    handleChallenge(player, otherPlayer, cardId) {
+        var card = player.findCardInPlayByUuid(cardId);
 
-        if(!cardInPlay) {
+        if(!card) {
             if(!player.pickingStealth) {
                 return false;
             }
 
             if(otherPlayer) {
-                var otherCardInPlay = otherPlayer.findCardInPlayByUuid(card.uuid);
+                var otherCardInPlay = otherPlayer.findCardInPlayByUuid(cardId);
 
                 if(!otherCardInPlay) {
                     return false;
                 }
 
-                if(!otherPlayer.addToStealth(otherCardInPlay.card)) {
+                if(!otherPlayer.addToStealth(otherCardInPlay)) {
                     return false;
                 }
 
@@ -516,11 +518,11 @@ class Game extends EventEmitter {
                 }
             }
         } else {
-            if(!player.selectingChallengers || cardInPlay.kneeled) {
+            if(!player.selectingChallengers || card.kneeled) {
                 return false;
             }
 
-            var challengeCard = player.canAddToChallenge(card);
+            var challengeCard = player.canAddToChallenge(cardId);
             if(!challengeCard) {
                 return false;
             }
@@ -537,7 +539,7 @@ class Game extends EventEmitter {
     }
 
     handleClaim(player, otherPlayer, card) {
-        if(card.type_code !== 'character') {
+        if(card.getType() !== 'character') {
             return;
         }
 
@@ -561,19 +563,19 @@ class Game extends EventEmitter {
         }
     }
 
-    processCardClicked(player, card) {
+    processCardClicked(player, cardId) {
         var otherPlayer = this.getOtherPlayer(player);
 
         if(!_.isUndefined(player.setPower)) {
-            var cardInPlay = player.findCardInPlayByUuid(card.uuid);
+            var card = player.findCardInPlayByUuid(cardId);
 
-            if(!cardInPlay) {
+            if(!card) {
                 return false;
             }
 
-            cardInPlay.power = player.setPower;
+            card.power = player.setPower;
 
-            this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player.name, cardInPlay.card, player.setPower);
+            this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player.name, cardInPlay, player.setPower);
             this.doneSetPower(player.id);
 
             return true;
@@ -590,48 +592,51 @@ class Game extends EventEmitter {
         }
 
         if((player.phase === 'setup' || player.phase === 'marshal' || player.dropPending) && player.selectedAttachment) {
-            this.attachCard(player, card);
+            this.attachCard(player, cardId);
 
             return true;
         }
 
         if(player.phase === 'challenge' && player.currentChallenge) {
-            return this.handleChallenge(player, otherPlayer, card);
+            return this.handleChallenge(player, otherPlayer, cardId);
         }
 
         if(player.phase === 'claim' && player.currentChallenge === 'military') {
-            this.handleClaim(player, otherPlayer, card);
+            this.handleClaim(player, otherPlayer, cardId);
 
             return true;
         }
 
-        if(player.phase !== 'setup' || card.type_code !== 'attachment') {
-            return false;
+        if(player.phase === 'setup') {
+            card = player.findCardInPlayByUuid(cardId);
+
+            if(card.getType() === 'attachment') {
+                player.promptForAttachment(card);
+                return true;
+            }
         }
 
-        player.promptForAttachment(card);
-
-        return true;
+        return false;
     }
 
-    cardClicked(sourcePlayer, card) {
+    cardClicked(sourcePlayer, cardId) {
         var player = this.getPlayers()[sourcePlayer];
 
         if(!player) {
             return;
         }
 
-        if(!this.processCardClicked(player, card)) {
-            var cardInPlay = player.findCardInPlayByUuid(card.uuid);
+        if(!this.processCardClicked(player, cardId)) {
+            var cardInPlay = player.findCardInPlayByUuid(cardId);
 
-            if(cardInPlay) {
+            if(cardInPlay && !cardInPlay.facedown) {
                 cardInPlay.kneeled = !cardInPlay.kneeled;
             }
         }
     }
 
     showDrawDeck(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -648,8 +653,8 @@ class Game extends EventEmitter {
         }
     }
 
-    drop(playerId, card, source, target) {
-        var player = this.getPlayers()[playerId];
+    drop(playerId, cardId, source, target) {
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -661,7 +666,7 @@ class Game extends EventEmitter {
     }
 
     marshalDone(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -697,7 +702,7 @@ class Game extends EventEmitter {
     }
 
     startChallenge(playerId, challengeType) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         if(!player) {
             return;
         }
@@ -722,12 +727,12 @@ class Game extends EventEmitter {
     }
 
     doStealth(player) {
-        var stealthCard = _.find(player.cardsInChallenge, card => {
-            return !card.stealthTarget && this.hasKeyword(card.card, 'Stealth');
+        var stealthCard = player.cardsInChallenge.find(card => {
+            return !card.stealthTarget && card.isStealth();
         });
 
         if(stealthCard) {
-            player.menuTitle = 'Select stealth target for ' + stealthCard.card.label;
+            player.menuTitle = 'Select stealth target for ' + stealthCard.name;
             player.buttons = [
                 { command: 'donestealth', text: 'Done' }
             ];
@@ -754,14 +759,12 @@ class Game extends EventEmitter {
     }
 
     doneChallenge(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         if(!player) {
             return;
         }
 
-        if(!_.any(player.cardsInPlay, card => {
-            return card.selected;
-        })) {
+        if(!player.areCardsSelected()) {        
             player.beginChallenge();
             return;
         }
@@ -777,7 +780,7 @@ class Game extends EventEmitter {
     }
 
     doneDefend(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         if(!player) {
             return;
         }
@@ -807,7 +810,7 @@ class Game extends EventEmitter {
             this.addMessage('{0} won a {1} challenge {2} vs {3}',
                 winner.name, winner.currentChallenge, winner.challengeStrength, loser.challengeStrength);
 
-            this.emit('afterChallenge', this, winner.currentChallenge, winner, loser);
+            this.emit('afterChallenge', winner.currentChallenge, winner, loser);
 
             if(loser.challengeStrength === 0) {
                 this.addMessage('{0} has gained 1 power from an unopposed challenge', winner.name);
@@ -837,6 +840,7 @@ class Game extends EventEmitter {
         var appliedPower = Math.min(loser.power, power);
         loser.power -= appliedPower;
         winner.power += appliedPower;
+
         this.checkWinCondition(winner);
     }
 
@@ -846,32 +850,28 @@ class Game extends EventEmitter {
         }
     }
 
-    hasKeyword(card, keyword) {
-        return card.text && card.text.indexOf(keyword + '.') !== -1;
-    }
-
     applyKeywords(winner, loser) {
-        _.each(winner.cardsInChallenge, card => {
-            if(this.hasKeyword(card.card, 'Insight')) {
+        winner.cardsInChallenge.each(card => {
+            if(card.hasKeyword('Insight')) {
                 winner.drawCardsToHand(1);
 
-                this.addMessage('{0} draws a card from Insight on {1}', winner.name, card.card);
+                this.addMessage('{0} draws a card from Insight on {1}', winner.name, card);
             }
 
-            if(this.hasKeyword(card.card, 'Intimidate')) {
+            if(card.hasKeyword('Intimidate')) {
                 // something
             }
 
-            if(this.hasKeyword(card.card, 'Pillage')) {
+            if(card.hasKeyword('Pillage')) {
                 loser.discardFromDraw(1);
 
-                this.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', loser.name, card.card);
+                this.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', loser.name, card);
             }
 
-            if(this.hasKeyword(card.card, 'Renown')) {
+            if(card.hasKeyword('Renown')) {
                 card.power++;
 
-                this.addMessage('{0} gains 1 power on {1} from Renown', winner.name, card.card);
+                this.addMessage('{0} gains 1 power on {1} from Renown', winner.name, card);
             }
 
             this.checkWinCondition(winner);
@@ -880,7 +880,7 @@ class Game extends EventEmitter {
 
     applyClaim(winner, loser) {
         this.emit('beforeClaim', this, winner.currentChallenge, winner, loser);
-        var claim = winner.activePlot.card.claim;
+        var claim = winner.activePlot.getClaim();
 
         if(claim <= 0) {
             this.addMessage('The claim value for {0} is 0, no claim occurs', winner.currentChallenge);
@@ -906,7 +906,7 @@ class Game extends EventEmitter {
     }
 
     doneChallenges(playerId) {
-        var challenger = this.getPlayers()[playerId];
+        var challenger = this.getPlayerById(playerId);
         if(!challenger) {
             return;
         }
@@ -954,7 +954,7 @@ class Game extends EventEmitter {
             this.addMessage('No one wins dominance');
         }
 
-        this.emit('afterDominance', this, dominanceWinner);
+        this.emit('afterDominance', dominanceWinner);
 
         this.emit('cardsStanding', this);
 
@@ -981,7 +981,7 @@ class Game extends EventEmitter {
     }
 
     doneRound(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player || player.hand.length > player.reserve) {
             return;
@@ -992,27 +992,12 @@ class Game extends EventEmitter {
         if(!otherPlayer) {
             player.startPlotPhase();
 
-            var plotImplementation = cards[player.activePlot.card.code];
-            if(plotImplementation && plotImplementation.unregister) {
-                plotImplementation.unregister(this, player);
-            }
-
             return;
         }
 
         if(otherPlayer && otherPlayer.roundDone) {
             player.startPlotPhase();
             otherPlayer.startPlotPhase();
-
-            plotImplementation = cards[player.activePlot.card.code];
-            if(plotImplementation && plotImplementation.unregister) {
-                plotImplementation.unregister(this, player);
-            }
-
-            plotImplementation = cards[otherPlayer.activePlot.card.code];
-            if(plotImplementation && plotImplementation.unregister) {
-                plotImplementation.unregister(this, otherPlayer);
-            }
 
             return;
         }
@@ -1030,7 +1015,7 @@ class Game extends EventEmitter {
     }
 
     changeStat(playerId, stat, value) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         if(!player) {
             return;
         }
@@ -1045,7 +1030,7 @@ class Game extends EventEmitter {
     }
 
     customCommand(playerId, arg) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         if(!player) {
             return;
         }
@@ -1077,7 +1062,7 @@ class Game extends EventEmitter {
         }
 
         if(this.isSpectator(player)) {
-            this.addMessage('<{0}> {1}', player.name,  message);
+            this.addMessage('<{0}> {1}', player.name, message);
             return;
         }
 
@@ -1130,11 +1115,11 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('<{0}> {1}', player.name,  message);
+        this.addMessage('<{0}> {1}', player.name, message);
     }
 
     doneSetPower(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         if(!player) {
             return;
         }
@@ -1159,7 +1144,7 @@ class Game extends EventEmitter {
     }
 
     concede(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -1175,7 +1160,7 @@ class Game extends EventEmitter {
     }
 
     selectDeck(playerId, deck) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -1185,7 +1170,7 @@ class Game extends EventEmitter {
     }
 
     doneStealth(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -1205,7 +1190,7 @@ class Game extends EventEmitter {
     }
 
     cancelClaim(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
 
         if(!player) {
             return;
@@ -1223,7 +1208,7 @@ class Game extends EventEmitter {
     }
 
     shuffleDeck(playerId) {
-        var player = this.getPlayers()[playerId];
+        var player = this.getPlayerById(playerId);
         if(!player) {
             return;
         }
