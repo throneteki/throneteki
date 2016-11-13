@@ -333,12 +333,12 @@ export class InnerGameBoard extends React.Component {
     onDragDropEvent(event, target) {
         event.stopPropagation();
         event.preventDefault();
-        
+
         var card = event.dataTransfer.getData('card');
         if(!card) {
             return;
         }
-        
+
         var dragData = JSON.parse(card);
 
         this.onDragDrop(dragData.card, dragData.source, target);

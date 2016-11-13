@@ -343,7 +343,7 @@ class Player extends Spectator {
     hasWhenRevealed() {
         var plotText = this.activePlot.card.text;
 
-        if(!_.isNull(plotText) && !_.isUndefined(plotText)) {
+        if (plotText) {
             return this.activePlot.card.text.indexOf('When Revealed:') !== -1;
         }
 

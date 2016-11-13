@@ -277,7 +277,7 @@ class Game extends EventEmitter {
         } else {
             var initiativeWinner = undefined;
             var highestInitiative = -1;
-            var highestPower = -1;
+            var lowestPower = -1;
 
             // reveal plots when everyone has selected
             _.each(this.getPlayers(), p => {
@@ -291,25 +291,25 @@ class Game extends EventEmitter {
                 var playerPower = p.power;
 
                 if (playerInitiative === highestInitiative) {
-                    if (playerPower === highestPower) {
+                    if (playerPower === lowestPower) {
                         var diceRoll = _.random(1, 20);
                         if (diceRoll % 2 === 0) {
                             highestInitiative = playerInitiative;
-                            highestPower = playerPower;
+                            lowestPower = playerPower;
                             initiativeWinner = p;
                         }
                     }
 
-                    if (playerPower > highestPower) {
+                    if (playerPower < lowestPower) {
                         highestInitiative = playerInitiative;
-                        highestPower = playerPower;
+                        lowestPower = playerPower;
                         initiativeWinner = p;
                     }
                 }
 
                 if (playerInitiative > highestInitiative) {
                     highestInitiative = playerInitiative;
-                    highestPower = playerPower;
+                    lowestPower = playerPower;
                     initiativeWinner = p;
                 }
             });
@@ -353,8 +353,15 @@ class Game extends EventEmitter {
     }
 
     resolvePlotEffects(firstPlayer) {
+        var otherPlayer = this.getOtherPlayer(firstPlayer);
+
         firstPlayer.menuTitle = 'Select player to resolve their plot';
         firstPlayer.buttons = [];
+
+        if (otherPlayer) {
+            otherPlayer.menuTitle = 'Waiting for first player to finish plot phase';
+            otherPlayer.buttons = [];
+        }
 
         _.each(this.getPlayers(), p => {
             if (p.hasWhenRevealed() && !p.revealFinished) {
@@ -364,30 +371,19 @@ class Game extends EventEmitter {
 
         if (_.isEmpty(firstPlayer.buttons)) {
             firstPlayer.menuTitle = 'Any reactions or actions?';
-            firstPlayer.buttons = [{ command: 'doneWhenRealedEffects', text: 'Done' }]
-        }
-
-        var otherPlayer = this.getOtherPlayer(firstPlayer);
-        if (otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for first player resolve plot phase';
-            otherPlayer.buttons = [];
+            firstPlayer.buttons = [{command: 'doneWhenRealedEffects', text: 'Done'}];
         }
     }
 
     resolvePlayerPlotEffect(playerId) {
         var player = this.getPlayers()[playerId];
         var otherPlayer = this.getOtherPlayer(player);
-        var firstPlayer = player.firstPlayer ? player : otherPlayer;
 
-        firstPlayer.menuTitle = 'Waiting for opponent to resolve plot effect';
-        firstPlayer.buttons = [];
+        otherPlayer.menuTitle = 'Waiting for ' + player.name + ' to resolve plot effect';
+        otherPlayer.buttons = [];
 
-        this.pauseForPlot = false;
+        this.pauseForPlot = true;
         this.emit('whenRevealed', this, player);
-
-        if (!this.pauseForPlot) {
-            this.playerRevealDone(player);
-        }
     }
 
     setFirstPlayer(sourcePlayer, who) {
@@ -1023,6 +1019,26 @@ class Game extends EventEmitter {
         }
 
         this.emit('customCommand', this, player, arg);
+    }
+
+    // there are plenty of cards where the first player must make the first choice
+    // and then move on to the other player
+    firstPlayerDone(playerId, arg) {
+        var player = this.getPlayers()[playerId];
+        if (!player) {
+            return;
+        }
+
+        this.emit('firstPlayerDone', this, player, arg);
+    }
+
+    otherPlayerDone(playerId, arg) {
+        var player = this.getPlayers()[playerId];
+        if (!player) {
+            return;
+        }
+
+        this.emit('otherPlayerDone', this, player, arg);
     }
 
     getNumberOrDefault(string, defaultNumber) {

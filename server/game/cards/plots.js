@@ -92,11 +92,11 @@ plots['01003'] = {
 class ANobleCause {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.plotRevealed = this.plotRevealed.bind(this);
         this.beforeCardPlayed = this.beforeCardPlayed.bind(this);
     }
 
-    revealed(game, player) {
+    plotRevealed(game, player) {
         if(player !== this.player) {
             return;
         }
@@ -138,13 +138,13 @@ plots['01004'] = {
 
         game.playerPlots[player.id] = plot;
 
-        game.on('plotRevealed', plot.revealed);
+        game.on('plotRevealed', plot.plotRevealed);
         game.on('beforeCardPlayed', plot.beforeCardPlayed);
     },
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
 
-        game.removeListener('plotRevealed', plot.revealed);
+        game.removeListener('plotRevealed', plot.plotRevealed);
         game.removeListener('beforeCardPlayed', plot.beforeCardPlayed);
     }
 };
@@ -153,10 +153,10 @@ plots['01004'] = {
 class AStormOfSwords {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.plotRevealed = this.plotRevealed.bind(this);
     }
 
-    revealed(game, player) {
+    plotRevealed(game, player) {
         if(player !== this.player) {
             return;
         }
@@ -172,10 +172,10 @@ plots['01005'] = {
 
         game.playerPlots[player.id] = plot;
 
-        game.on('plotRevealed', plot.revealed);
+        game.on('plotRevealed', plot.plotRevealed);
     },
     unregister(game, player) {
-        game.removeListener('plotRevealed', game.playerPlots[player.id].revealed);
+        game.removeListener('plotRevealed', game.playerPlots[player.id].plotRevealed);
     }
 };
 
@@ -183,11 +183,11 @@ plots['01005'] = {
 class BuildingOrders {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
         this.cardSelected = this.cardSelected.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(this.player !== player) {
             return;
         }
@@ -204,8 +204,6 @@ class BuildingOrders {
 
         player.buttons = buttons;
         player.menuTitle = 'Select a card to add to your hand';
-
-        game.pauseForPlot = true;
     }
 
     cardSelected(game, player, arg) {
@@ -228,7 +226,8 @@ class BuildingOrders {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
 
-        game.playerRevealDone(player);
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 plots['01006'] = {
@@ -236,12 +235,12 @@ plots['01006'] = {
         var plot = new BuildingOrders(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
         game.on('customCommand', plot.cardSelected);
     },
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
-        game.removeListener('whenRevealed', plot.revealed);
+        game.removeListener('whenRevealed', plot.whenRevealed);
         game.removeListener('customCommand', plot.cardSelected);
     }
 };
@@ -250,10 +249,10 @@ plots['01006'] = {
 class CallingTheBanners {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(this.player !== player) {
             return;
         }
@@ -276,6 +275,9 @@ class CallingTheBanners {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to gain ' + characterCount + ' gold');
         player.gold += characterCount;
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 
 }
@@ -284,10 +286,10 @@ plots['01007'] = {
         var plot = new CallingTheBanners(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
     },
     unregister(game, player) {
-        game.removeListener('whenRevealed', game.playerPlots[player.id].revealed);
+        game.removeListener('whenRevealed', game.playerPlots[player.id].whenRevealed);
     }
 };
 
@@ -295,13 +297,13 @@ plots['01007'] = {
 class CalmOverWesteros {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
         this.challengeTypeSelected = this.challengeTypeSelected.bind(this);
         this.beforeClaim = this.beforeClaim.bind(this);
         this.afterClaim = this.afterClaim.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(player !== this.player) {
             return;
         }
@@ -312,8 +314,6 @@ class CalmOverWesteros {
             { text: 'Intrigue', command: 'custom', arg: 'intrigue' },
             { text: 'Power', command: 'custom', arg: 'power' }
         ];
-
-        game.pauseForPlot = true;
     }
 
     challengeTypeSelected(game, player, arg) {
@@ -323,7 +323,8 @@ class CalmOverWesteros {
 
         this.challengeType = arg;
 
-        game.playerRevealDone(player);
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 
     beforeClaim(game, challengeType, winner, loser) {
@@ -360,7 +361,7 @@ plots['01008'] = {
 
         game.playerPlots[player.id] = plot;
 
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
         game.on('customCommand', plot.challengeTypeSelected);
         game.on('beforeClaim', plot.beforeClaim);
         game.on('afterClaim', plot.afterClaim);
@@ -368,7 +369,7 @@ plots['01008'] = {
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
 
-        game.removeListener('whenRevealed', plot.revealed);
+        game.removeListener('whenRevealed', plot.whenRevealed);
         game.removeListener('customCommand', plot.challengeTypeSelected);
         game.removeListener('beforeClaim', plot.beforeClaim);
         game.removeListener('afterClaim', plot.afterClaim);
@@ -379,11 +380,11 @@ plots['01008'] = {
 class Confiscation {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
         this.cardClicked = this.cardClicked.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(player !== this.player) {
             return;
         }
@@ -400,7 +401,6 @@ class Confiscation {
         player.buttons = [];
 
         player.selectCard = true;
-        game.pauseForPlot = true;
     }
 
     cardClicked(game, player, clicked) {
@@ -434,6 +434,7 @@ class Confiscation {
             });
 
             if(!card) {
+                game.pauseForPlot = false;
                 game.playerRevealDone(player);
 
                 return;
@@ -453,7 +454,8 @@ class Confiscation {
         player.selectCard = false;
         game.clickHandled = true;
 
-        game.playerRevealDone(player);
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 plots['01009'] = {
@@ -461,13 +463,13 @@ plots['01009'] = {
         var plot = new Confiscation(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
         game.on('cardClicked', plot.cardClicked);
     },
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
 
-        game.removeListener('whenRevealed', plot.revealed);
+        game.removeListener('whenRevealed', plot.whenRevealed);
         game.removeListener('cardClicked', plot.cardClicked);
     }
 };
@@ -476,10 +478,10 @@ plots['01009'] = {
 class CountingCoppers {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(player !== this.player) {
             return;
         }
@@ -487,6 +489,9 @@ class CountingCoppers {
         player.drawCardsToHand(3);
 
         game.addMessage(player.name + ' draws 3 cards from ' + player.activePlot.card.label);
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 plots['01010'] = {
@@ -494,10 +499,10 @@ plots['01010'] = {
         var plot = new CountingCoppers(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
     },
     unregister(game, player) {
-        game.removeListener('whenRevealed', game.playerPlots[player.id].revealed);
+        game.removeListener('whenRevealed', game.playerPlots[player.id].whenRevealed);
     }
 };
 
@@ -505,11 +510,11 @@ plots['01010'] = {
 class FilthyAccusation {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
         this.cardClicked = this.cardClicked.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(this.player !== player) {
             return;
         }
@@ -517,8 +522,6 @@ class FilthyAccusation {
         player.menuTitle = 'Select character to kneel';
         player.buttons = [];
         player.selectCard = true;
-
-        game.pauseForPlot = true;
 
         this.waitingForClick = true;
     }
@@ -539,7 +542,8 @@ class FilthyAccusation {
             var otherPlayer = game.getOtherPlayer(player);
 
             if(!otherPlayer) {
-                game.playerRevealDone(player);
+                game.pauseForPlot = false;
+                game.playerRevealDone(this.player);
 
                 return;
             }
@@ -549,14 +553,15 @@ class FilthyAccusation {
             });
 
             if(!card) {
-                game.playerRevealDone(player);
+                game.pauseForPlot = false;
+                game.playerRevealDone(this.player);
 
                 return;
             }
         }
 
         if(card.card.type_code !== 'character' || card.kneeled) {
-            game.playerRevealDone(player);
+            game.playerRevealDone(this.player);
             return;
         }
 
@@ -564,7 +569,8 @@ class FilthyAccusation {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to kneel ' + card.card.label);
 
-        game.playerRevealDone(player);
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 plots['01011'] = {
@@ -572,12 +578,12 @@ plots['01011'] = {
         var plot = new FilthyAccusation(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
         game.on('cardClicked', plot.cardClicked);
     },
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
-        game.removeListener('whenRevealed', plot.revealed);
+        game.removeListener('whenRevealed', plot.whenRevealed);
         game.removeListener('cardClicked', plot.cardClicked);
     }
 };
@@ -586,10 +592,10 @@ plots['01011'] = {
 class HeadsOnSpikes {
     constructor(player) {
         this.player = player;
-        this.reveal = this.reveal.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
     }
 
-    reveal(game, player) {
+    whenRevealed(game, player) {
         if(this.player !== player) {
             return;
         }
@@ -608,7 +614,7 @@ class HeadsOnSpikes {
         otherPlayer.removeFromHand(card);
 
         if(card.type_code === 'character') {
-            message += ' and gain 2 power for their faction';
+            message += ' and gains 2 power for their faction';
             otherPlayer.deadPile.push(card);
             game.addPower(player, 2);
         } else {
@@ -616,6 +622,9 @@ class HeadsOnSpikes {
         }
 
         game.addMessage(message);
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 plots['01013'] = {
@@ -623,10 +632,10 @@ plots['01013'] = {
         var plot = new HeadsOnSpikes(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.reveal);
+        game.on('whenRevealed', plot.whenRevealed);
     },
     unregister(game, player) {
-        game.removeListener('whenRevealed', game.playerPlots[player.id].reveal);
+        game.removeListener('whenRevealed', game.playerPlots[player.id].whenRevealed);
     }
 };
 
@@ -661,29 +670,40 @@ plots['01014'] = {
 class MarchedToTheWall {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
         this.cardClicked = this.cardClicked.bind(this);
-        this.doneClicked = this.doneClicked.bind(this);
+        this.firstPlayerDone = this.firstPlayerDone.bind(this);
+        this.otherPlayerDone = this.otherPlayerDone.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(this.player !== player) {
             return;
         }
 
-        _.each(game.getPlayers(), p => {
-            p.menuTitle = 'Select a character to discard';
-            p.buttons = [
-                { command: 'custom', text: 'Done', arg: '01015done' }
-            ];
-        });
+        var otherPlayer = game.getOtherPlayer(player);
 
-        game.pauseForPlot = true;
+        if (player.firstPlayer) {
+            player.doneDiscard = false;
+            player.menuTitle = 'Select a character to discard for Marched to the Wall';
+            player.buttons = [
+                { command: 'firstPlayerDone', text: 'Done', arg: this.player.id }
+            ];
+
+            otherPlayer.menuTitle = 'Waiting for opponent to discard a character for Marched to the Wall';
+            otherPlayer.buttons = [];
+        } else {
+            otherPlayer.doneDiscard = false;
+            otherPlayer.menuTitle = 'Select a character to discard for Marched to the Wall';
+            otherPlayer.buttons = [
+                { command: 'firstPlayerDone', text: 'Done', arg: this.player.id }
+            ];
+
+            player.menuTitle = 'Waiting for opponent to discard a character for Marched to the Wall';
+            player.buttons = [];
+        }
+
         this.waitingForClick = true;
-        this.cardDiscarded = false;
-        _.each(game.getPlayers(), p => {
-            p.doneDiscard = false;
-        });
     }
 
     cardClicked(game, player, clicked) {
@@ -705,46 +725,42 @@ class MarchedToTheWall {
 
         player.discardCard(clicked, player.discardPile);
         player.doneDiscard = true;
-
-        var stillToDiscard = _.find(game.getPlayers(), p => {
-            return !p.doneDiscard;
-        });
-
-        if(!stillToDiscard) {
-            this.waitingForClick = false;
-            game.playerRevealDone(player);
-        } else {
-            player.menuTitle = 'Waiting for oppoent to apply plot effect';
-            player.buttons = [];
-        }
+        this.waitingForClick = false;
     }
 
-    doneClicked(game, player, arg) {
-        if(arg !== '01015done') {
+    firstPlayerDone(game, player, arg) {
+        if(arg !== this.player.id) {
+            return;
+        }
+
+        // here we can be confident that this is not the first player as we would
+        // only get here if the first player clicked proceed
+        var otherPlayer = game.getOtherPlayer(player);
+
+        otherPlayer.menuTitle = 'Select a character to discard for Marched to the Wall';
+        otherPlayer.buttons = [
+            { command: 'otherPlayerDone', text: 'Done', arg: this.player.id }
+        ];
+
+        player.menuTitle = 'Waiting for opponent to discard a character for Marched to the Wall';
+        player.buttons = [];
+
+        otherPlayer.doneDiscard = false;
+        this.waitingForClick = true;
+    }
+
+    otherPlayerDone(game, player, arg) {
+        if(arg !== this.player.id) {
             return;
         }
 
         player.doneDiscard = true;
+        this.waitingForClick = false;
 
-        var stillToDiscard = _.find(game.getPlayers(), p => {
-            return !p.doneDiscard;
-        });
+        game.addMessage('All players have resolved Marched to the Wall');
 
-        if(!stillToDiscard) {
-            this.waitingForClick = false;
-            if(!player.plotRevealed) {
-                var otherPlayer = game.getOtherPlayer(player);
-
-                if(otherPlayer) {
-                    game.playerRevealDone(otherPlayer);
-                }
-            } else {
-                game.playerRevealDone(player);
-            }
-        } else {
-            player.menuTitle = 'Waiting for oppoent to apply plot effect';
-            player.buttons = [];
-        }
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 plots['01015'] = {
@@ -753,16 +769,18 @@ plots['01015'] = {
 
         game.playerPlots[player.id] = plot;
 
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
         game.on('cardClicked', plot.cardClicked);
-        game.on('customCommand', plot.doneClicked);
+        game.on('firstPlayerDone', plot.firstPlayerDone);
+        game.on('otherPlayerDone', plot.otherPlayerDone);
     },
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
 
-        game.removeListener('whenRevealed', plot.revealed);
+        game.removeListener('whenRevealed', plot.whenRevealed);
         game.removeListener('cardClicked', plot.cardClicked);
-        game.removeListener('customCommand', plot.doneClicked);
+        game.removeListener('firstPlayerDone', plot.firstPlayerDone);
+        game.removeListener('otherPlayerDone', plot.otherPlayerDone);
     }
 };
 
@@ -849,10 +867,10 @@ plots['01017'] = {
 class SneakAttack {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.plotRevealed = this.plotRevealed.bind(this);
     }
 
-    revealed(game, player) {
+    plotRevealed(game, player) {
         if(player !== this.player) {
             return;
         }
@@ -868,10 +886,10 @@ plots['01021'] = {
         var plot = new SneakAttack(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('plotRevealed', plot.revealed);
+        game.on('plotRevealed', plot.plotRevealed);
     },
     unregister(game, player) {
-        game.removeListener('plotRevealed', game.playerPlots[player.id].revealed);
+        game.removeListener('plotRevealed', game.playerPlots[player.id].plotRevealed);
     }
 };
 
@@ -879,11 +897,11 @@ plots['01021'] = {
 class Summons {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
         this.cardSelected = this.cardSelected.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(this.player !== player) {
             return;
         }
@@ -900,8 +918,6 @@ class Summons {
 
         player.buttons = buttons;
         player.menuTitle = 'Select a card to add to your hand';
-
-        game.pauseForPlot = true;
     }
 
     cardSelected(game, player, arg) {
@@ -910,7 +926,8 @@ class Summons {
         }
 
         if(arg === 'done') {
-            game.playerRevealDone(player);
+            game.pauseForPlot = false;
+            game.playerRevealDone(this.player);
         }
 
         var card = player.findDrawDeckCardByUuid(arg);
@@ -924,7 +941,8 @@ class Summons {
 
         game.addMessage(player.name + ' uses ' + player.activePlot.card.label + ' to reveal ' + card.label + ' and add it to their hand');
 
-        game.playerRevealDone(player);
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 plots['01022'] = {
@@ -932,12 +950,12 @@ plots['01022'] = {
         var plot = new Summons(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
         game.on('customCommand', plot.cardSelected);
     },
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
-        game.removeListener('whenRevealed', plot.revealed);
+        game.removeListener('whenRevealed', plot.whenRevealed);
         game.removeListener('customCommand', plot.cardSelected);
     }
 };
@@ -948,10 +966,10 @@ class TradingWithThePentoshi {
     constructor(player) {
         this.player = player;
 
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(player !== this.player) {
             return;
         }
@@ -963,6 +981,9 @@ class TradingWithThePentoshi {
 
             game.addMessage(otherPlayer.name + ' gains 3 gold from ' + player.activePlot.card.label);
         }
+
+        game.pauseForPlot = false;
+        game.playerRevealDone(this.player);
     }
 }
 
@@ -972,10 +993,10 @@ plots['02039'] = {
 
         game.playerPlots[player.id] = plot;
 
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
     },
     unregister(game, player) {
-        game.removeListener('whenRevealed', game.playerPlots[player.id].revealed);
+        game.removeListener('whenRevealed', game.playerPlots[player.id].whenRevealed);
     }
 };
 
@@ -983,12 +1004,12 @@ plots['02039'] = {
 class TheLongWinter {
     constructor(player) {
         this.player = player;
-        this.revealed = this.revealed.bind(this);
+        this.whenRevealed = this.whenRevealed.bind(this);
         this.cardSelected = this.cardSelected.bind(this);
         this.waitingForPlayers = {};
     }
 
-    revealed(game, player) {
+    whenRevealed(game, player) {
         if(this.player !== player) {
             return;
         }
@@ -1016,7 +1037,7 @@ class TheLongWinter {
         });
 
         if(anySummerPlots) {
-            game.pauseForPlot = true;
+            game.pauseForPlot = false;
         }
     }
 
@@ -1039,6 +1060,7 @@ class TheLongWinter {
         delete this.waitingForPlayers[player.id];
 
         if(!_.any(this.waitingForPlayers)) {
+            game.pauseForPlot = false;
             game.playerRevealDone(this.player);
         }
     }
@@ -1048,13 +1070,13 @@ plots['03049'] = {
         var plot = new TheLongWinter(player);
 
         game.playerPlots[player.id] = plot;
-        game.on('whenRevealed', plot.revealed);
+        game.on('whenRevealed', plot.whenRevealed);
         game.on('cardClicked', plot.cardSelected);
     },
     unregister(game, player) {
         var plot = game.playerPlots[player.id];
 
-        game.removeListener('whenRevealed', plot.revealed);
+        game.removeListener('whenRevealed', plot.whenRevealed);
         game.removeListener('cardClicked', plot.cardSelected);
     }
 };
