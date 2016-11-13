@@ -277,7 +277,7 @@ class Game extends EventEmitter {
         } else {
             var initiativeWinner = undefined;
             var highestInitiative = -1;
-            var highestPower = -1;
+            var lowestPower = -1;
 
             // reveal plots when everyone has selected
             _.each(this.getPlayers(), p => {
@@ -295,12 +295,12 @@ class Game extends EventEmitter {
                         var diceRoll = _.random(1, 20);
                         if (diceRoll % 2 === 0) {
                             highestInitiative = playerInitiative;
-                            highestPower = playerPower;
+                            lowestPower = playerPower;
                             initiativeWinner = p;
                         }
                     }
 
-                    if (playerPower > highestPower) {
+                    if (playerPower < lowestPower) {
                         highestInitiative = playerInitiative;
                         lowestPower = playerPower;
                         initiativeWinner = p;
@@ -309,7 +309,7 @@ class Game extends EventEmitter {
 
                 if (playerInitiative > highestInitiative) {
                     highestInitiative = playerInitiative;
-                    highestPower = playerPower;
+                    lowestPower = playerPower;
                     initiativeWinner = p;
                 }
             });
