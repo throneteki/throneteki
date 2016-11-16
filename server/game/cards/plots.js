@@ -1037,7 +1037,7 @@ class TheLongWinter {
             return;
         }
 
-        game.addMessage('{0} discards 1 power from {1} from {2}', player.name, cardInPlay.card, this.player.activePlot.card.label);
+        game.addMessage('{0} discards 1 power from {1} from {2}', player.name, cardInPlay.card, this.player.activePlot.card);
         cardInPlay.power--;
 
         delete this.waitingForPlayers[player.id];

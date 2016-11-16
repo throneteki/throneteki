@@ -855,7 +855,7 @@ class Game extends EventEmitter {
             if(this.hasKeyword(card.card, 'Insight')) {
                 winner.drawCardsToHand(1);
 
-                this.addMessage('{0} draws a card from Insight on {1}', winner.name, card.card.label);
+                this.addMessage('{0} draws a card from Insight on {1}', winner.name, card.card);
             }
 
             if(this.hasKeyword(card.card, 'Intimidate')) {
@@ -865,7 +865,7 @@ class Game extends EventEmitter {
             if(this.hasKeyword(card.card, 'Pillage')) {
                 loser.discardFromDraw(1);
 
-                this.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', loser.name, card.card.label);
+                this.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', loser.name, card.card);
             }
 
             if(this.hasKeyword(card.card, 'Renown')) {
