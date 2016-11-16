@@ -4,6 +4,7 @@ const uuid = require('node-uuid');
 
 const cards = require('./cards');
 const Player = require('./player.js');
+const BaseCard = require('./basecard.js');
 
 class Game extends EventEmitter {
     constructor(owner, name) {
@@ -34,8 +35,12 @@ class Game extends EventEmitter {
             if(argMatch) {
                 var arg = args[argMatch[1]];
                 if(arg) {
+                    if(arg instanceof BaseCard) {
+                        return { code: arg.code, label: arg.name, type: arg.getType() };
+                    }
                     return arg;
                 }
+                
                 return '';
             }
 
