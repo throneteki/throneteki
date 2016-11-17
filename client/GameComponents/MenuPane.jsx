@@ -8,7 +8,7 @@ class MenuPane extends React.Component {
         this.onButtonClick = this.onButtonClick.bind(this);
     }
 
-    onButtonClick(event, command, arg) {
+    onButtonClick(event, command, arg, method) {
         event.preventDefault();
 
         if(this.props.onButtonClick) {
