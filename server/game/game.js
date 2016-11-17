@@ -531,12 +531,6 @@ class Game extends EventEmitter {
             return true;
         }
 
-        this.clickHandled = false;
-        this.emit('cardClicked', this, player, card);
-        if(this.clickHandled) {
-            return true;
-        }
-
         if(player.phase === 'setup' && !player.waitingForAttachments) {
             return false;
         }
@@ -573,6 +567,12 @@ class Game extends EventEmitter {
         var player = this.getPlayers()[sourcePlayer];
 
         if(!player) {
+            return;
+        }
+
+        if(player === this.selectPlayer && this.selectCallback) {
+            this.selectCallback(player, cardId);
+
             return;
         }
 
@@ -1182,6 +1182,13 @@ class Game extends EventEmitter {
         if(!player.activePlot || !player.activePlot[method]) {
             player.activePlot[method](player, arg);
         }
+    }
+
+    promptForSelect(player, callback) {
+        player.selectCard = true;
+
+        this.selectPlayer = player;
+        this.selectCallback = callback;
     }
 
     initialise() {
