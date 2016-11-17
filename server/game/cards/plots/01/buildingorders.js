@@ -20,6 +20,8 @@ class BuildingOrders extends PlotCard {
 
         player.buttons = buttons;
         player.menuTitle = 'Select a card to add to your hand';
+
+        return false;
     }
 
     cardSelected(player, cardId) {

@@ -57,6 +57,10 @@ class BaseCard {
         return cost;
     }
 
+    modifyClaim(player, type, claim) {
+        return claim;
+    }
+
     getSummary(isActivePlayer, hideWhenFaceup) {
         return isActivePlayer || (!this.facedown && !hideWhenFaceup) ? {
             code: this.cardData.code,

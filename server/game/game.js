@@ -525,7 +525,7 @@ class Game extends EventEmitter {
 
             card.power = player.setPower;
 
-            this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player, cardInPlay, player.setPower);
+            this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player, card, player.setPower);
             this.doneSetPower(player.id);
 
             return true;
@@ -610,7 +610,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(player.drop(card, source, target)) {
+        if(player.drop(cardId, source, target)) {
             this.addMessage('{0} has moved a card from their {1} to their {2}', player, source, target);
         }
     }
@@ -831,6 +831,11 @@ class Game extends EventEmitter {
     applyClaim(winner, loser) {
         this.emit('beforeClaim', this, winner.currentChallenge, winner, loser);
         var claim = winner.activePlot.getClaim();
+        claim = winner.modifyClaim(winner.currentChallenge, claim);
+        
+        if(loser) {
+            claim = loser.modifyClaim(winner.currentChallenge, claim);
+        }
 
         if(claim <= 0) {
             this.addMessage('The claim value for {0} is 0, no claim occurs', winner.currentChallenge);
@@ -1175,7 +1180,7 @@ class Game extends EventEmitter {
         }
 
         if(!player.activePlot || !player.activePlot[method]) {
-            player.activePlot[method](arg);
+            player.activePlot[method](player, arg);
         }
     }
 
