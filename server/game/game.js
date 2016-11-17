@@ -284,7 +284,11 @@ class Game extends EventEmitter {
             // initiative winner sets the first player
             // note that control flow for the plot phase after this continues under
             // the setFirstPlayer function
-            this.firstPlayerPrompt(initiativeWinner);
+            if(_.size(this.players) === 1) {
+                this.setFirstPlayer(player.id, 'me');
+            } else {
+                this.firstPlayerPrompt(initiativeWinner);
+            }    
         }
     }
 
@@ -938,7 +942,7 @@ class Game extends EventEmitter {
     doneRound(playerId) {
         var player = this.getPlayerById(playerId);
 
-        if(!player || player.hand.length > player.reserve) {
+        if(!player || player.hand.size() > player.reserve) {
             return;
         }
 
