@@ -843,10 +843,10 @@ class Game extends EventEmitter {
     applyClaim(winner, loser) {
         this.emit('beforeClaim', this, winner.currentChallenge, winner, loser);
         var claim = winner.activePlot.getClaim();
-        claim = winner.modifyClaim(winner.currentChallenge, claim);
+        claim = winner.modifyClaim(winner, winner.currentChallenge, claim);
         
         if(loser) {
-            claim = loser.modifyClaim(winner.currentChallenge, claim);
+            claim = loser.modifyClaim(winner, winner.currentChallenge, claim);
         }
 
         if(claim <= 0) {

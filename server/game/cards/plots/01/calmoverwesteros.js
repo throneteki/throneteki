@@ -18,7 +18,7 @@ class CalmOverWesteros extends PlotCard {
     }
 
     cancelChallengeSelect(player) {
-        if(!this.inPlay || this.player !== player) {
+        if(!this.inPlay || this.owner !== player) {
             return;
         }
 
@@ -34,7 +34,7 @@ class CalmOverWesteros extends PlotCard {
 
         this.challengeType = challengeType;
 
-        this.game.addMessage('{0} uses {1} to reduce the claim value of {2} challenges by 1 this round');
+        this.game.addMessage('{0} uses {1} to reduce the claim value of {2} challenges by 1 this round', player, this, challengeType);
 
         this.game.playerRevealDone(player);
     }

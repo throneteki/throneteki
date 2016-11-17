@@ -138,10 +138,10 @@ class Player extends Spectator {
         return cost;
     }
 
-    modifyClaim(challengeType, claim) {
-        claim = this.activePlot.modifyClaim(this, challengeType, claim);
+    modifyClaim(winner, challengeType, claim) {
+        claim = this.activePlot.modifyClaim(winner, challengeType, claim);
         this.cardsInPlay.each(card => {
-            claim = card.modifyClaim(this, challengeType, claim);
+            claim = card.modifyClaim(winner, challengeType, claim);
         });
 
         return claim;
