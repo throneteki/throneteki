@@ -423,6 +423,8 @@ class Player extends Spectator {
                 won: 0
             }
         };
+        
+        this.challengerLimit = 0;
     }
 
     selectPlot(plotId) {
@@ -687,6 +689,10 @@ class Player extends Spectator {
 
     canAddToChallenge(cardId) {
         var card = this.findCardInPlayByUuid(cardId);
+
+        if(this.challengerLimit && this.cardsInChallenge.size() >= this.challengerLimit) {
+            return false;
+        }
 
         if(!card) {
             return false;

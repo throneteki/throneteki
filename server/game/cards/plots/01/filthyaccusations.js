@@ -11,13 +11,15 @@ class FilthyAccusations extends PlotCard {
 
         player.selectCard = true;
 
+        this.selecting = true;
+
         this.game.promptForSelect(player, this.onCardSelected.bind(this));
 
         return false;
     }
 
     onCardSelected(player, cardId) {
-        if(this.owner !== player || !this.inPlay) {
+        if(this.owner !== player || !this.inPlay || !this.selecting) {
             return;
         }
 
@@ -49,7 +51,8 @@ class FilthyAccusations extends PlotCard {
         card.kneeled = true;
 
         this.game.addMessage('{0} uses {1} to kneel {2}', player, this, card);
-
+        
+        this.selecting = false;
         this.game.playerRevealDone(player);
     }
 }

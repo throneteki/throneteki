@@ -1,30 +1,3 @@
-// // 01014 - Jousting Contest
-// class JoustingContest {
-//     constructor(player) {
-//         this.player = player;
-//         this.beforeChallengerSelected = this.beforeChallengerSelected.bind(this);
-//     }
-
-//     beforeChallengerSelected(game, player, card) {
-//         if(player.cardsInChallenge.length !== 0 && !_.any(player.cardsInChallenge, c => {
-//             return c.card.uuid === card.card.uuid;
-//         })) {
-//             game.canAddToChallenge = false;
-//         }
-//     }
-// }
-// plots['01014'] = {
-//     register(game, player) {
-//         var plot = new JoustingContest(player);
-
-//         game.playerPlots[player.id] = plot;
-//         game.on('beforeChallengerSelected', plot.beforeChallengerSelected);
-//     },
-//     unregister(game, player) {
-//         game.removeListener('beforeChallengerSelected', game.playerPlots[player.id].beforeChallengerSelected);
-//     }
-// };
-
 // // 01015 - Marched To The Wall
 // class MarchedToTheWall {
 //     constructor(player) {
