@@ -39,6 +39,10 @@ class DrawCard extends BaseCard {
         return this.hasKeyword('Stealth');
     }
 
+    isTerminal() {
+        return this.hasKeyword('Terminal');
+    }
+
     hasIcon(icon) {
         return this.icons[icon];
     }

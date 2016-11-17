@@ -841,9 +841,9 @@ class Player extends Spectator {
             pile.push(dupe);
         });
 
-        card.dupes = [];
+        card.dupes = _([]);
 
-        _.each(card.attachments, attachment => {
+        card.attachments.each(attachment => {
             this.removeAttachment(card, attachment);
         });
 
@@ -859,14 +859,11 @@ class Player extends Spectator {
     }
 
     removeAttachment(cardInPlay, attachment) {
-        var otherPlayer = this.game.getOtherPlayer(this);
-        var owner = attachment.owner === this.id ? this : otherPlayer;
-
-        if(this.hasKeyword(attachment, 'Terminal')) {
+        if(attachment.isTerminal()) {
             attachment.parent = undefined;
-            owner.discardPile.push(attachment);
+            attachment.owner.discardPile.push(attachment);
         } else {
-            owner.hand.push(attachment);
+            attachment.owner.hand.push(attachment);
         }
 
         this.game.notifyLeavingPlay(this, attachment);
