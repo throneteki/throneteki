@@ -11,13 +11,13 @@ class FilthyAccusations extends PlotCard {
 
         player.selectCard = true;
 
-        this.game.promptForSelect(player, this.onCardSelected);
+        this.game.promptForSelect(player, this.onCardSelected.bind(this));
 
         return false;
     }
 
     onCardSelected(player, cardId) {
-        if(this.player !== player || !this.inPlay) {
+        if(this.owner !== player || !this.inPlay) {
             return;
         }
 
