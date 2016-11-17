@@ -12,7 +12,7 @@ class AFeastForCrows extends PlotCard {
             return;
         }
 
-        this.game.addMessage('{0} uses {1} to gain 2 power for their faction', winner.name, this);
+        this.game.addMessage('{0} uses {1} to gain 2 power for their faction', winner, this);
         this.game.addPower(winner, 2);
     }
 }

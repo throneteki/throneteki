@@ -37,7 +37,10 @@ class Game extends EventEmitter {
                 if(arg) {
                     if(arg instanceof BaseCard) {
                         return { code: arg.code, label: arg.name, type: arg.getType() };
+                    } else if(arg instanceof Player) {
+                        return { name: arg.name };
                     }
+
                     return arg;
                 }
                 
@@ -174,7 +177,7 @@ class Game extends EventEmitter {
         }
 
         if(player.mulligan()) {
-            this.addMessage('{0} has taken a mulligan', player.name);
+            this.addMessage('{0} has taken a mulligan', player);
         }
     }
 
@@ -187,7 +190,7 @@ class Game extends EventEmitter {
 
         player.keep();
 
-        this.addMessage('{0} has kept their hand', player.name);
+        this.addMessage('{0} has kept their hand', player);
     }
 
     playCard(playerId, cardId, isDrop) {
@@ -244,7 +247,7 @@ class Game extends EventEmitter {
 
         player.setup = true;
 
-        this.addMessage('{0} has finished setup', player.name);
+        this.addMessage('{0} has finished setup', player);
 
         if(!_.all(this.getPlayers(), p => {
             return p.setup;
@@ -290,7 +293,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} has selected a plot', player.name);
+        this.addMessage('{0} has selected a plot', player);
 
         if(!_.all(this.getPlayers(), p => {
             return !!p.selectedPlot;
@@ -436,7 +439,7 @@ class Game extends EventEmitter {
             player.buttons = [];
         });
 
-        this.addMessage('{0} has selected {1} to be the first player', player.name, firstPlayer.name);
+        this.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);
 
         this.resolvePlotEffects(firstPlayer);
     }
@@ -515,7 +518,7 @@ class Game extends EventEmitter {
                     return false;
                 }
 
-                this.addMessage('{0} has chosen {1} as a stealth target', player.name, otherCardInPlay.card);
+                this.addMessage('{0} has chosen {1} as a stealth target', player, otherCardInPlay.card);
                 player.stealthCard.stealthTarget = otherCardInPlay;
 
                 if(this.doStealth(player)) {
@@ -580,7 +583,7 @@ class Game extends EventEmitter {
 
             card.power = player.setPower;
 
-            this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player.name, cardInPlay, player.setPower);
+            this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player, cardInPlay, player.setPower);
             this.doneSetPower(player.id);
 
             return true;
@@ -650,11 +653,11 @@ class Game extends EventEmitter {
         if(!player.showDeck) {
             player.showDrawDeck();
 
-            this.addMessage('{0} is looking at their deck', player.name);
+            this.addMessage('{0} is looking at their deck', player);
         } else {
             player.showDeck = false;
 
-            this.addMessage('{0} stops looking at their deck', player.name);
+            this.addMessage('{0} stops looking at their deck', player);
         }
     }
 
@@ -666,7 +669,7 @@ class Game extends EventEmitter {
         }
 
         if(player.drop(card, source, target)) {
-            this.addMessage('{0} has moved a card from their {1} to their {2}', player.name, source, target);
+            this.addMessage('{0} has moved a card from their {1} to their {2}', player, source, target);
         }
     }
 
@@ -679,7 +682,7 @@ class Game extends EventEmitter {
 
         player.marshalDone();
 
-        this.addMessage('{0} has finished marshalling', player.name);
+        this.addMessage('{0} has finished marshalling', player);
 
         var unMarshalledPlayer = _.find(this.getPlayers(), p => {
             return !p.marshalled;
@@ -748,7 +751,7 @@ class Game extends EventEmitter {
             return true;
         }
 
-        this.addMessage('{0} has initiated a {1} challenge with strength {2}', player.name, player.currentChallenge, player.challengeStrength);
+        this.addMessage('{0} has initiated a {1} challenge with strength {2}', player, player.currentChallenge, player.challengeStrength);
 
         var otherPlayer = this.getOtherPlayer(player);
 
@@ -792,7 +795,7 @@ class Game extends EventEmitter {
 
         player.doneChallenge(false);
 
-        this.addMessage('{0} has defended with strength {1}', player.name, player.challengeStrength);
+        this.addMessage('{0} has defended with strength {1}', player, player.challengeStrength);
 
         var challenger = _.find(this.getPlayers(), p => {
             return p.id !== player.id;
@@ -818,7 +821,7 @@ class Game extends EventEmitter {
             this.emit('afterChallenge', winner.currentChallenge, winner, loser);
 
             if(loser.challengeStrength === 0) {
-                this.addMessage('{0} has gained 1 power from an unopposed challenge', winner.name);
+                this.addMessage('{0} has gained 1 power from an unopposed challenge', winner);
                 this.addPower(winner, 1);
             }
 
@@ -851,7 +854,7 @@ class Game extends EventEmitter {
 
     checkWinCondition(player) {
         if(player.getTotalPower() >= 15) {
-            this.addMessage('{0} has won the game', player.name);
+            this.addMessage('{0} has won the game', player);
         }
     }
 
@@ -860,7 +863,7 @@ class Game extends EventEmitter {
             if(card.hasKeyword('Insight')) {
                 winner.drawCardsToHand(1);
 
-                this.addMessage('{0} draws a card from Insight on {1}', winner.name, card);
+                this.addMessage('{0} draws a card from Insight on {1}', winner, card);
             }
 
             if(card.hasKeyword('Intimidate')) {
@@ -870,13 +873,13 @@ class Game extends EventEmitter {
             if(card.hasKeyword('Pillage')) {
                 loser.discardFromDraw(1);
 
-                this.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', loser.name, card);
+                this.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', loser, card);
             }
 
             if(card.hasKeyword('Renown')) {
                 card.power++;
 
-                this.addMessage('{0} gains 1 power on {1} from Renown', winner.name, card);
+                this.addMessage('{0} gains 1 power on {1} from Renown', winner, card);
             }
 
             this.checkWinCondition(winner);
@@ -951,7 +954,7 @@ class Game extends EventEmitter {
         });
 
         if(dominanceWinner) {
-            this.addMessage('{0} wins dominance', dominanceWinner.name);
+            this.addMessage('{0} wins dominance', dominanceWinner);
 
             this.addPower(dominanceWinner, 1);
         } else {
@@ -1030,7 +1033,7 @@ class Game extends EventEmitter {
         if(player[stat] < 0) {
             player[stat] = 0;
         } else {
-            this.addMessage('{0} sets {1} to {2} ({3})', player.name, stat, player[stat], (value > 0 ? '+' : '') + value);
+            this.addMessage('{0} sets {1} to {2} ({3})', player, stat, player[stat], (value > 0 ? '+' : '') + value);
         }
     }
 
@@ -1067,7 +1070,7 @@ class Game extends EventEmitter {
         }
 
         if(this.isSpectator(player)) {
-            this.addMessage('<{0}> {1}', player.name, message);
+            this.addMessage('<{0}> {1}', player, message);
             return;
         }
 
@@ -1076,7 +1079,7 @@ class Game extends EventEmitter {
                 num = this.getNumberOrDefault(args[1], 1);
             }
 
-            this.addMessage('{0} uses the /draw command to draw {1} cards to their hand', player.name, num);
+            this.addMessage('{0} uses the /draw command to draw {1} cards to their hand', player, num);
 
             player.drawCardsToHand(num);
 
@@ -1105,7 +1108,7 @@ class Game extends EventEmitter {
                 num = this.getNumberOrDefault(args[1], 1);
             }
 
-            this.addMessage('{0} uses the /discard command to discard {1} cards at random', player.name, num);
+            this.addMessage('{0} uses the /discard command to discard {1} cards at random', player, num);
 
             player.discardAtRandom(num);
 
@@ -1113,14 +1116,14 @@ class Game extends EventEmitter {
         }
 
         if(message.indexOf('/pillage') !== -1) {
-            this.addMessage('{0} uses the /pillage command to discard a card from the top of their draw deck', player.name);
+            this.addMessage('{0} uses the /pillage command to discard a card from the top of their draw deck', player);
 
             player.discardFromDraw(1);
 
             return;
         }
 
-        this.addMessage('<{0}> {1}', player.name, message);
+        this.addMessage('<{0}> {1}', player, message);
     }
 
     doneSetPower(playerId) {
@@ -1145,7 +1148,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} {1}', player.name, reason);
+        this.addMessage('{0} {1}', player, reason);
     }
 
     concede(playerId) {
@@ -1155,12 +1158,12 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} concedes', player.name);
+        this.addMessage('{0} concedes', player);
 
         var otherPlayer = this.getOtherPlayer(player);
 
         if(otherPlayer) {
-            this.addMessage('{0} wins the game', otherPlayer.name);
+            this.addMessage('{0} wins the game', otherPlayer);
         }
     }
 
@@ -1201,7 +1204,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} has cancelled claim effects', player.name);
+        this.addMessage('{0} has cancelled claim effects', player);
 
         player.doneClaim();
 
@@ -1218,7 +1221,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} shuffles their deck', player.name);
+        this.addMessage('{0} shuffles their deck', player);
 
         player.shuffleDrawDeck();
     }

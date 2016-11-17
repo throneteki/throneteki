@@ -32,6 +32,8 @@ class ANobleCause extends PlotCard {
             cost = 0;
         }
 
+        this.game.addMessage('{0} uses {1} to reduce the cost of {2} by 3', this.owner, this, card);
+
         return cost;
     }
 

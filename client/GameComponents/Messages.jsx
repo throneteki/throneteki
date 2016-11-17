@@ -44,9 +44,9 @@ class InnerMessages extends React.Component {
                         {fragment.label}
                     </span>
                 );
-            } else {
-                return fragment;
-            }
+            } 
+
+            return fragment;
         });
     }
 
@@ -89,6 +89,8 @@ class InnerMessages extends React.Component {
 InnerMessages.displayName = 'Messages';
 InnerMessages.propTypes = {
     messages: React.PropTypes.array,
+    onCardMouseOut: React.PropTypes.func,
+    onCardMouseOver: React.PropTypes.func,
     socket: React.PropTypes.object
 };
 

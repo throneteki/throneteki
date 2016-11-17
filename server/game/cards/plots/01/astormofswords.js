@@ -8,7 +8,7 @@ class AStormOfSwords extends PlotCard {
 
         player.addChallenge('military', 1);
 
-        this.game.addMessage(player.name + ' uses ' + this.name + ' to gain an additional military challenge this round');
+        this.game.addMessage('{0} uses {1} to gain an additional military challenge this round', player, this);
     }
 }
 

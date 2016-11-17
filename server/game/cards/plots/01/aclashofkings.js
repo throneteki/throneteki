@@ -13,7 +13,8 @@ class AClashOfKings extends PlotCard {
         }
 
         if(winner === this.owner && challengeType === 'power' && loser.power > 0) {
-            this.game.addMessage(winner.name + ' uses ' + this.name + ' to move 1 power from ' + loser.name + '\'s faction card');
+            this.game.addMessage('{0} uses {1} to move 1 power from {2}\'s faction card to their own', winner, this, loser);
+
             this.game.transferPower(winner, loser, 1);
         }
     }

@@ -36,7 +36,7 @@ class BuildingOrders extends PlotCard {
         player.moveFromDrawDeckToHand(card);
         player.shuffleDrawDeck();
 
-        this.game.addMessage(player.name + ' uses ' + this.name + ' to reveal ' + card.name + ' and add it to their hand');
+        this.game.addMessage('{0} uses {1} to reveal {2} and add it to their hand', player, this, card);
 
         this.game.playerRevealDone(player);
     }
