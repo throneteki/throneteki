@@ -21,7 +21,6 @@ class Player extends Spectator {
         this.game = game;
     }
 
-    // List maniuplation functions
     isCardUuidInList(list, card) {
         return list.any(c => {
             return c.uuid === card.uuid;
@@ -121,6 +120,22 @@ class Player extends Spectator {
 
     getNumberOfChallengesWon(challengeType) {
         return this.challenges[challengeType].won;
+    }
+
+    getCostForCard(card) {
+        var cost = card.getCost();
+
+        if(this.activePlot && this.activePlot.canReduce(this, card)) {
+            cost = this.activePlot.reduce(card, cost);
+        }
+
+        this.cardsInPlay.each(c => {
+            if(c.canReduce(this, c)) {
+                cost = c.reduce(card, cost);
+            }
+        });
+
+        return cost;
     }
 
     drawCardsToHand(numCards) {
@@ -270,7 +285,7 @@ class Player extends Spectator {
 
         var dupe = this.getDuplicateInPlay(card);
 
-        if(card.getCost() > this.gold && !dupe) {
+        if(this.getCostForCard(card) > this.gold && !dupe) {
             return false;
         }
 
@@ -305,9 +320,8 @@ class Player extends Spectator {
 
         var dupeCard = this.getDuplicateInPlay(card);
 
-        // XXX - Reducers should act here, or in card.getCost()?        
         if(!dupeCard && !forcePlay) {
-            this.gold -= card.getCost();
+            this.gold -= this.getCostForCard(card);
         }
 
         if(card.getType() === 'attachment' && this.phase !== 'setup') {
