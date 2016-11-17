@@ -14,8 +14,8 @@ class DrawCard extends BaseCard {
             this.icons.military = true;
         }
 
-        if(cardData.is_intrique) {
-            this.icons.intrique = true;
+        if(cardData.is_intrigue) {
+            this.icons.intrigue = true;
         }
 
         if(cardData.is_power) {

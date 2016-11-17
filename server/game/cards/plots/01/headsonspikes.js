@@ -1,3 +1,5 @@
+const _ = require('underscore');
+
 const PlotCard = require('../../../plotcard.js');
 
 class HeadsOnSpikes extends PlotCard {
@@ -17,7 +19,7 @@ class HeadsOnSpikes extends PlotCard {
         }
 
         var cardIndex = _.random(0, otherPlayer.hand.size() - 1);
-        var card = otherPlayer.hand[cardIndex];
+        var card = otherPlayer.hand.value()[cardIndex];
         var powerMessage = '';
 
         otherPlayer.removeFromHand(card);

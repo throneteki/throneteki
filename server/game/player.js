@@ -207,6 +207,7 @@ class Player extends Spectator {
 
     addChallenge(type, number) {
         this.challenges[type].max += number;
+        this.challenges.maxTotal += number;
     }
 
     initDrawDeck() {
@@ -441,8 +442,8 @@ class Player extends Spectator {
         this.menuTitle = '';
         this.buttons = [];
 
-        this.selectedPlot.facedown = false;
-        this.selectedPlot.revealed(this);
+        this.selectedPlot.flipFaceup();
+        
         if(this.activePlot) {
             this.activePlot.leavesPlay(this);
             this.plotDiscard.push(this.activePlot);
@@ -460,16 +461,6 @@ class Player extends Spectator {
         this.revealFinished = false;
 
         this.selectedPlot = undefined;
-    }
-
-    hasWhenRevealed() {
-        var plotText = this.activePlot.text;
-
-        if(!_.isNull(plotText) && !_.isUndefined(plotText)) {
-            return this.activePlot.text.indexOf('When Revealed:') !== -1;
-        }
-
-        return false;
     }
 
     drawPhase() {

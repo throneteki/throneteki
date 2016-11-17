@@ -15,6 +15,10 @@ class PlotCard extends BaseCard {
         });
     }
 
+    hasRevealEffect() {
+        return this.cardData.text && this.cardData.text.indexOf('When Revealed:') !== -1;
+    }
+
     getInitiative() {
         return this.cardData.initiative;
     }
@@ -35,8 +39,13 @@ class PlotCard extends BaseCard {
         return true;
     }
 
-    revealed() {
+    flipFaceup() {
         this.inPlay = true;
+        this.facedown = false;
+    }
+
+    revealed() {
+        return true;
     }
 
     leavesPlay() {

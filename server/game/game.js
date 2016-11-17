@@ -328,19 +328,25 @@ class Game extends EventEmitter {
         firstPlayer.buttons = [];
 
         _.each(this.getPlayers(), p => {
-            if(p.hasWhenRevealed() && !p.revealFinished) {
+            if(p.activePlot.hasRevealEffect() && !p.revealFinished) {
                 firstPlayer.buttons.push({ command: 'resolvePlotEffect', text: p.name, arg: p.id });
             }
         });
 
+        if(firstPlayer.buttons.length === 1) {
+            this.resolvePlayerPlotEffect(firstPlayer.buttons[0].arg);
+
+            return;
+        }
+
         if(_.isEmpty(firstPlayer.buttons)) {
-            firstPlayer.menuTitle = 'Any reactions or actions?';
+            firstPlayer.menuTitle = 'Perform any after reveal actions';
             firstPlayer.buttons = [{ command: 'doneWhenRealedEffects', text: 'Done' }];
         }
 
         var otherPlayer = this.getOtherPlayer(firstPlayer);
         if(otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for first player resolve plot phase';
+            otherPlayer.menuTitle = 'Waiting for first player to resolve plot phase';
             otherPlayer.buttons = [];
         }
     }
@@ -350,13 +356,12 @@ class Game extends EventEmitter {
         var otherPlayer = this.getOtherPlayer(player);
         var firstPlayer = player.firstPlayer ? player : otherPlayer;
 
-        firstPlayer.menuTitle = 'Waiting for opponent to resolve plot effect';
-        firstPlayer.buttons = [];
+        if(otherPlayer && otherPlayer.activePlot.hasRevealEffect()) {
+            firstPlayer.menuTitle = 'Waiting for opponent to resolve plot effect';
+            firstPlayer.buttons = [];
+        }
 
-        this.pauseForPlot = false;
-        this.emit('whenRevealed', this, player);
-
-        if(!this.pauseForPlot) {
+        if(player.activePlot.revealed(player)) {
             this.playerRevealDone(player);
         }
     }
@@ -671,9 +676,12 @@ class Game extends EventEmitter {
 
         player.challengeType = challengeType;
 
-        this.cancelChallenge = false;
-        this.emit('beforeChallenge', this, player, challengeType);
-        if(this.cancelChallenge) {
+        if(!player.activePlot.canChallenge(player, challengeType)) {
+            return;
+        }
+        
+        var otherPlayer = this.getOtherPlayer(player);
+        if(otherPlayer && !otherPlayer.activePlot.canChallenge(player, challengeType)) {
             return;
         }
 
@@ -762,7 +770,7 @@ class Game extends EventEmitter {
             winner.challenges[winner.currentChallenge].won++;
 
             this.addMessage('{0} won a {1} challenge {2} vs {3}',
-                winner.name, winner.currentChallenge, winner.challengeStrength, loser.challengeStrength);
+                winner, winner.currentChallenge, winner.challengeStrength, loser.challengeStrength);
 
             this.emit('afterChallenge', winner.currentChallenge, winner, loser);
 
@@ -1183,7 +1191,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(!player.activePlot || !player.activePlot[method]) {
+        if(player.activePlot && player.activePlot[method]) {
             player.activePlot[method](player, arg);
         }
     }

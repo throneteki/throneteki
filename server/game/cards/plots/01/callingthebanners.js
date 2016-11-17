@@ -14,7 +14,7 @@ class CallingTheBanners extends PlotCard {
             return true;
         }
 
-        var characterCount = _.reduce(otherPlayer.cardsInPlay, (memo, card) => {
+        var characterCount = otherPlayer.cardsInPlay.reduce((memo, card) => {
             var count = memo;
 
             if(card.getType() === 'character') {
@@ -30,6 +30,8 @@ class CallingTheBanners extends PlotCard {
 
         this.game.addMessage('{0} uses {1} to gain {2} gold', player, this, characterCount);
         player.gold += characterCount;
+
+        return true;
     }
 }
 

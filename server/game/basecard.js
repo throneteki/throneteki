@@ -22,7 +22,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        return this.cardCard.traits && this.cardData.traits.indexOf(trait + '.') !== -1;
+        return this.cardData.traits && this.cardData.traits.indexOf(trait + '.') !== -1;
     }
 
     leavesPlay() {

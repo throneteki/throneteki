@@ -4,7 +4,7 @@ const PlotCard = require('../../../plotcard.js');
 
 class BuildingOrders extends PlotCard {
     revealed(player) {
-        if(this.owner !== player) {
+        if(!this.inPlay || this.owner !== player) {
             return true;
         }
 
@@ -29,7 +29,7 @@ class BuildingOrders extends PlotCard {
             return;
         }
 
-        var card = player.findCardInPlayByUuid(cardId);
+        var card = player.findCardByUuid(player.drawDeck, cardId);
 
         if(!card) {
             return;
@@ -52,6 +52,6 @@ class BuildingOrders extends PlotCard {
     }
 }
 
-BuildingOrders.code = '01005';
+BuildingOrders.code = '01006';
 
 module.exports = BuildingOrders;
