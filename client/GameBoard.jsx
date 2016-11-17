@@ -73,6 +73,10 @@ export class InnerGameBoard extends React.Component {
         }
     }
 
+    componentDidUpdate() {
+        $(this.refs.messagePanel).scrollTop(999999);
+    }
+
     setContextMenu(menu) {
         if(this.props.setContextMenu) {
             this.props.setContextMenu(menu);
@@ -497,7 +501,15 @@ export class InnerGameBoard extends React.Component {
                     <CardZoom imageUrl={this.state.cardToZoom ? '/img/cards/' + this.state.cardToZoom.code + '.png' : ''}
                         orientation={this.state.cardToZoom ? this.state.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical'}
                         show={!!this.state.cardToZoom} />
-                    <Messages messages={this.props.state.messages} onCardMouseOver={this.onMouseOver} onCardMouseOut={this.onMouseOut} />
+                    <div className='chat'>
+                        <div className='messages panel' ref='messagePanel'>
+                            <Messages messages={this.props.state.messages} onCardMouseOver={this.onMouseOver} onCardMouseOut={this.onMouseOut} />
+                        </div>
+                        <form>
+                            <input className='form-control' placeholder='Chat...' onKeyPress={this.onKeyPress} onChange={this.onChange}
+                                value={this.state.message} />
+                        </form>
+                    </div>
                 </div>
             </div>);
     }

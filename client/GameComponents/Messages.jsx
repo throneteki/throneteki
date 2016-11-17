@@ -19,10 +19,6 @@ class InnerMessages extends React.Component {
         this.formatMessageText = this.formatMessageText.bind(this);
     }
 
-    componentDidUpdate() {
-        $(this.refs.messagePanel).scrollTop(999999);
-    }
-
     getMessage() {
         var index = 0;
         var messages = _.map(this.props.messages, message => {
@@ -79,16 +75,7 @@ class InnerMessages extends React.Component {
     }
 
     render() {
-        return (
-            <div className='chat'>
-                <div className='messages panel' ref='messagePanel'>
-                    {this.getMessage()}
-                </div>
-                <form>
-                    <input className='form-control' placeholder='Chat...' onKeyPress={this.onKeyPress} onChange={this.onChange}
-                        value={this.state.message} />
-                </form>
-            </div>);
+        return <div>{this.getMessage()}</div>;
     }
 }
 
