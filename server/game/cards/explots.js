@@ -1,32 +1,3 @@
-// // 01010 - Counting coppers
-// class CountingCoppers {
-//     constructor(player) {
-//         this.player = player;
-//         this.revealed = this.revealed.bind(this);
-//     }
-
-//     revealed(game, player) {
-//         if(player !== this.player) {
-//             return;
-//         }
-
-//         player.drawCardsToHand(3);
-
-//         game.addMessage(player.name + ' draws 3 cards from ' + player.activePlot.card.label);
-//     }
-// }
-// plots['01010'] = {
-//     register: function(game, player) {
-//         var plot = new CountingCoppers(player);
-
-//         game.playerPlots[player.id] = plot;
-//         game.on('whenRevealed', plot.revealed);
-//     },
-//     unregister(game, player) {
-//         game.removeListener('whenRevealed', game.playerPlots[player.id].revealed);
-//     }
-// };
-
 // // 01011 - Filthy Accusations
 // class FilthyAccusation {
 //     constructor(player) {
