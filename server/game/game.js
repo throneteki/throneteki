@@ -91,64 +91,6 @@ class Game extends EventEmitter {
         return spectators;
     }
 
-    getState(activePlayer) {
-        var playerState = {};
-
-        if(this.started) {
-            _.each(this.getPlayers(), player => {
-                playerState[player.id] = player.getState(activePlayer === player.id);
-            });
-
-            return {
-                id: this.id,
-                name: this.name,
-                owner: this.owner,
-                players: playerState,
-                messages: this.messages,
-                spectators: _.map(this.getSpectators(), spectator => {
-                    return {
-                        id: spectator.id,
-                        name: spectator.name
-                    };
-                }),
-                started: this.started
-            };
-        }
-
-        return this.getSummary(activePlayer);
-    }
-
-    getSummary(activePlayer) {
-        var playerSummaries = [];
-
-        _.each(this.getPlayers(), player => {
-            var deck = undefined;
-
-            if(activePlayer === player.id && player.deck) {
-                deck = { name: player.deck.name };
-            } else if(player.deck) {
-                deck = {};
-            }
-
-            playerSummaries.push({ id: player.id, name: player.name, deck: deck, owner: player.owner });
-        });
-
-        return {
-            id: this.id,
-            name: this.name,
-            owner: this.owner,
-            started: this.started,
-            spectators: _.map(this.getSpectators(), spectator => {
-                return {
-                    id: spectator.id,
-                    name: spectator.name
-                };
-            }),
-            players: playerSummaries,
-            messages: this.messages
-        };
-    }
-
     getOtherPlayer(player) {
         var otherPlayer = _.find(this.getPlayers(), p => {
             return p.id !== player.id;
@@ -1226,12 +1168,81 @@ class Game extends EventEmitter {
         player.shuffleDrawDeck();
     }
 
+    plotCardCommand(playerId, method, arg) {
+        var player = this.getPlayerById(playerId);
+        if(!player) {
+            return;
+        }
+
+        if(!player.activePlot || !player.activePlot[method]) {
+            player.activePlot[method](arg);
+        }
+    }
+
     initialise() {
         this.playStarted = false;
         this.messages = [];
         _.each(this.getPlayers(), player => {
             player.initialise();
         });
+    }
+
+    getState(activePlayer) {
+        var playerState = {};
+
+        if(this.started) {
+            _.each(this.getPlayers(), player => {
+                playerState[player.id] = player.getState(activePlayer === player.id);
+            });
+
+            return {
+                id: this.id,
+                name: this.name,
+                owner: this.owner,
+                players: playerState,
+                messages: this.messages,
+                spectators: _.map(this.getSpectators(), spectator => {
+                    return {
+                        id: spectator.id,
+                        name: spectator.name
+                    };
+                }),
+                started: this.started
+            };
+        }
+
+        return this.getSummary(activePlayer);
+    }
+
+    getSummary(activePlayer) {
+        var playerSummaries = [];
+
+        _.each(this.getPlayers(), player => {
+            var deck = undefined;
+
+            if(activePlayer === player.id && player.deck) {
+                deck = { name: player.deck.name };
+            } else if(player.deck) {
+                deck = {};
+            }
+
+            playerSummaries.push({ id: player.id, name: player.name, deck: deck, owner: player.owner });
+        });
+
+        return {
+            id: this.id,
+            name: this.name,
+            owner: this.owner,
+            started: this.started,
+            spectators: _.map(this.getSpectators(), spectator => {
+                return {
+                    id: spectator.id,
+                    name: spectator.name
+                };
+            }),
+            players: playerSummaries,
+            messages: this.messages
+        };
     }
 }
 

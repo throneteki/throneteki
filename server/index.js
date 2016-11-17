@@ -777,6 +777,20 @@ io.on('connection', function(socket) {
         });
     });
 
+    socket.on('plot', function(arg, method) {
+        var game = findGameForPlayer(socket.id);
+
+        if(!game) {
+            return;
+        }
+
+        runAndCatchErrors(game, () => {
+            game.plotCardCommand(socket.id, method, arg);
+
+            sendGameState(game);        
+        });        
+    });
+
     refreshGameList(socket);
 
     db.collection('messages').find().sort({ time: -1 }).limit(50).toArray((err, messages) => {

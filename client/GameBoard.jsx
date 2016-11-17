@@ -270,7 +270,7 @@ export class InnerGameBoard extends React.Component {
         return cardsByLocation;
     }
 
-    onCommand(command, arg) {
+    onCommand(command, arg, method) {
         var commandArg = arg;
 
         if(command === 'selectplot') {
@@ -281,7 +281,7 @@ export class InnerGameBoard extends React.Component {
             commandArg = this.state.selectedPlot.uuid;
         }
 
-        this.props.socket.emit(command, commandArg);
+        this.props.socket.emit(command, commandArg, method);
     }
 
     getPlotDeck(deck) {
