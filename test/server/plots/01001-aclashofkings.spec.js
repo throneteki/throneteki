@@ -21,10 +21,6 @@ describe('AClashOfKings', function() {
             this.plot.revealed();
         });
 
-        it('should be marked as in play', function() {
-            expect(this.plot.inPlay).toBe(true);
-        });
-
         it('should register its afterChallenge handler', function() {
             expect(this.gameSpy.on).toHaveBeenCalledWith('afterChallenge', this.plot.afterChallenge);
         });

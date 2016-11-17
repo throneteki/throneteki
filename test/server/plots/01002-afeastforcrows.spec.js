@@ -21,10 +21,6 @@ describe('AFeastForCrows', function() {
             this.plot.revealed();
         });
 
-        it('should be marked as in play', function() {
-            expect(this.plot.inPlay).toBe(true);
-        });
-
         it('should register its afterDominance handler', function() {
             expect(this.gameSpy.on).toHaveBeenCalledWith('afterDominance', this.plot.afterDominance);
         });
