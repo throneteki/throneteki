@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
-import $ from 'jquery';
 
 import * as actions from '../actions';
 

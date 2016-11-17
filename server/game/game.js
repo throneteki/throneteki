@@ -400,7 +400,7 @@ class Game extends EventEmitter {
         var otherPlayer = this.getOtherPlayer(player);
 
         if(!card) {
-            if(otherPlayer) {
+            if(!otherPlayer) {
                 return;
             }
 
@@ -581,6 +581,8 @@ class Game extends EventEmitter {
 
         if(player === this.selectPlayer && this.selectCallback) {
             this.selectCallback(player, cardId);
+
+            player.selectCard = false;
 
             return;
         }

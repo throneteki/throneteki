@@ -497,6 +497,7 @@ class Player extends Spectator {
         }
 
         attachment.parent = card;
+        attachment.facedown = false;
 
         card.attachments.push(attachment);
     }
@@ -835,7 +836,7 @@ class Player extends Spectator {
         card.dupes = _([]);
 
         card.attachments.each(attachment => {
-            this.removeAttachment(card, attachment);
+            this.removeAttachment(attachment);
         });
 
         this.cardsInPlay = this.removeCardByUuid(this.cardsInPlay, cardId);
@@ -849,7 +850,9 @@ class Player extends Spectator {
         pile.push(card);
     }
 
-    removeAttachment(cardInPlay, attachment) {
+    removeAttachment(attachment) {
+        attachment.parent.attachments = this.removeCardByUuid(attachment.parent.attachments, attachment.uuid);
+
         if(attachment.isTerminal()) {
             attachment.parent = undefined;
             attachment.owner.discardPile.push(attachment);

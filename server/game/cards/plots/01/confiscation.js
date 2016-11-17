@@ -1,15 +1,13 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../../plotcard.js');
 
 class Confiscation extends PlotCard {
     revealed(player) {
-        if(this.owner !== player) {
+        if(!this.inPlay || this.owner !== player) {
             return true;
         }
 
-        if(player.cardsInPlay.any(card => {
-            return card.attachments.length !== 0;
+        if(!player.cardsInPlay.any(card => {
+            return card.attachments.size() !== 0;
         })) {
             return true;
         }
@@ -19,7 +17,7 @@ class Confiscation extends PlotCard {
 
         player.selectCard = true;
 
-        this.game.promptForSelect(player, this.onCardSelected);
+        this.game.promptForSelect(player, this.onCardSelected.bind(this));
 
         return false;
     }
@@ -40,10 +38,9 @@ class Confiscation extends PlotCard {
         var attachment = player.findCardInPlayByUuid(cardId);
 
         if(!attachment) {
-            var otherPlayer = this.game.findOtherPlayer(player);
+            var otherPlayer = this.game.getOtherPlayer(player);
 
             if(!otherPlayer) {
-                this.game.revealDone(player);
                 return;            
             }
 
@@ -51,15 +48,14 @@ class Confiscation extends PlotCard {
         }
         
         
-        if(!attachment || !attachment.getType() !== 'attachment') {
-            this.game.revealDone(player);
+        if(!attachment || attachment.getType() !== 'attachment') {
             return;
         }
 
-        attachment.owner.discardCard(attachment);
+        attachment.owner.removeAttachment(attachment);
 
         this.game.addMessage('{0} uses {1} to discard {2}', attachment.owner, this, attachment);
-        this.game.revealDone(player);
+        this.game.playerRevealDone(player);
     }
 }
 

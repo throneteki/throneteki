@@ -60,10 +60,10 @@ class DrawCard extends BaseCard {
 
         return _.extend(baseSummary, {
             dupes: this.dupes.map(dupe => {
-                return dupe.getSummary(isActivePlayer);
+                return dupe.getSummary(isActivePlayer, hideWhenFaceup);
             }),
             attachments: this.attachments.map(attachment => {
-                return attachment.getSummary(isActivePlayer);
+                return attachment.getSummary(isActivePlayer, hideWhenFaceup);
             }),
             kneeled: this.kneeled,
             power: this.power,
