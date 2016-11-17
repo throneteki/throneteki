@@ -46,6 +46,14 @@ class InnerMessages extends React.Component {
                         {fragment.name}
                     </span>
                 );
+            } else if(fragment === 'military') {
+                return (
+                    <span className='icon-military' key={index++} />
+                );
+            } else if(fragment === 'power') {
+                return <span className='icon-power' key={index++} />;
+            } else if(fragment === 'intrigue') {
+                return <span className='icon-intrigue' key={index++} />;
             }
 
             return fragment;
