@@ -3,7 +3,7 @@
 
 const BaseCard = require('../../../server/game/basecard.js');
 
-describe('Card', function () {
+describe('BaseCard', function () {
     beforeEach(function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
         this.limitedCard = { code: '1234', text: 'Limited.' };
@@ -59,14 +59,30 @@ describe('Card', function () {
             });
 
             describe('and card is faceup', function() {
-                it('should return no card data', function () {
-                    expect(this.summary.uuid).toBeUndefined();
-                    expect(this.summary.name).toBeUndefined();
-                    expect(this.summary.code).toBeUndefined();
+                describe('and hiding facedown cards', function() {
+                    beforeEach(function() {
+                        this.summary = this.card.getSummary(false, true);
+                    });
+
+                    it('should return no card data', function () {
+                        expect(this.summary.uuid).toBeUndefined();
+                        expect(this.summary.name).toBeUndefined();
+                        expect(this.summary.code).toBeUndefined();
+                    });
+
+                    it('should return facedown', function() {
+                        expect(this.summary.facedown).toBe(true);
+                    });
                 });
 
-                it('should return facedown', function() {
-                    expect(this.summary.facedown).toBe(true);
+                it('should return card data', function () {
+                    expect(this.summary.uuid).toEqual(this.card.uuid);
+                    expect(this.summary.name).toEqual(this.testCard.name);
+                    expect(this.summary.code).toEqual(this.testCard.code);
+                });
+
+                it('should not return facedown', function() {
+                    expect(this.summary.facedown).toBe(false);
                 });
             });
 
