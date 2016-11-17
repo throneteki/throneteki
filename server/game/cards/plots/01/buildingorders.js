@@ -5,7 +5,7 @@ const PlotCard = require('../../../plotcard.js');
 class BuildingOrders extends PlotCard {
     revealed(player) {
         if(this.owner !== player) {
-            return;
+            return true;
         }
 
         var attachmentsAndLocations = player.searchDrawDeck(10, card => {

@@ -3,7 +3,7 @@ const PlotCard = require('../../../plotcard.js');
 class AStormOfSwords extends PlotCard {
     revealed(player) {
         if(this.owner !== player) {
-            return;
+            return true;
         }
 
         player.addChallenge('military', 1);

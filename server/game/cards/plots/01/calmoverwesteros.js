@@ -3,7 +3,7 @@ const PlotCard = require('../../../plotcard.js');
 class CalmOverWesteros extends PlotCard {
     revealed(player) {
         if(!this.inPlay || this.owner !== player) {
-            return;
+            return true;
         }
 
         player.menuTitle = 'Select a challenge type';
@@ -21,7 +21,7 @@ class CalmOverWesteros extends PlotCard {
         if(!this.inPlay || this.player !== player) {
             return;
         }
-        
+
         this.game.addMessage('{0} cancels the effect of {1}', player, this);
         
         this.game.playerRevealDone(player);       
