@@ -309,44 +309,6 @@
 //         game.removeListener('customCommand', plot.cardSelected);
 //     }
 // };
-
-
-// // 02039 - Trading with the Pentoshi
-// class TradingWithThePentoshi {
-//     constructor(player) {
-//         this.player = player;
-
-//         this.revealed = this.revealed.bind(this);
-//     }
-
-//     revealed(game, player) {
-//         if(player !== this.player) {
-//             return;
-//         }
-
-//         var otherPlayer = game.getOtherPlayer(player);
-
-//         if(otherPlayer) {
-//             otherPlayer.gold += 3;
-
-//             game.addMessage(otherPlayer.name + ' gains 3 gold from ' + player.activePlot.card.label);
-//         }
-//     }
-// }
-
-// plots['02039'] = {
-//     register(game, player) {
-//         var plot = new TradingWithThePentoshi(player);
-
-//         game.playerPlots[player.id] = plot;
-
-//         game.on('whenRevealed', plot.revealed);
-//     },
-//     unregister(game, player) {
-//         game.removeListener('whenRevealed', game.playerPlots[player.id].revealed);
-//     }
-// };
-
 // // 03049 - The Long Winter
 // class TheLongWinter {
 //     constructor(player) {
