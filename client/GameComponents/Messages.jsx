@@ -44,7 +44,13 @@ class InnerMessages extends React.Component {
                         {fragment.label}
                     </span>
                 );
-            } 
+            } else if(fragment.name) {
+                return (
+                    <span key={index++}>
+                        {fragment.name}
+                    </span>
+                );
+            }
 
             return fragment;
         });
