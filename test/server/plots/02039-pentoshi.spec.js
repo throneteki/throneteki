@@ -1,18 +1,20 @@
 /* global describe, it, expect, beforeEach, afterEach */
 
+const _ = require('underscore');
+
 const Game = require('../../../server/game/game.js');
 const Player = require('../../../server/game/player.js');
 
-xdescribe('Trading With The Pentoshi', () => {
+describe('Trading With The Pentoshi', () => {
     var game = {};
     var player1 = new Player('1', 'Player 1', true);
     var player2 = new Player('2', 'Player 2', false);
-    var pentoshi = { code: '02039', label: 'Test Pentoshi Plot' };
-    var testPlot = { code: '0000', label: 'Test Plot With No Effects' };
+    var pentoshi = { code: '02039', label: 'Test Pentoshi Plot', text: 'When revealed:' };
+    var testPlot = { code: '0000', label: 'Test Plot With No Effects', text: 'When revealed' };
 
     beforeEach(() => {
-        player1.plotCards = [testPlot, pentoshi];
-        player2.plotCards = [testPlot, pentoshi];
+        player1.plotCards = _([testPlot, pentoshi]);
+        player2.plotCards = _([testPlot, pentoshi]);
 
         game = new Game('1', 'Test Game');
         game.players['1'] = player1;

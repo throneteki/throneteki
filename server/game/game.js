@@ -91,6 +91,12 @@ class Game extends EventEmitter {
         return spectators;
     }
 
+    getFirstPlayer() {
+        return _.find(this.getPlayers(), p => {
+            return p.firstPlayer;
+        });
+    }
+
     getOtherPlayer(player) {
         var otherPlayer = _.find(this.getPlayers(), p => {
             return p.id !== player.id;
@@ -647,9 +653,7 @@ class Game extends EventEmitter {
 
             this.beginMarshal(unMarshalledPlayer);
         } else {
-            var firstPlayer = _.find(this.getPlayers(), p => {
-                return p.firstPlayer;
-            });
+            var firstPlayer = this.getFirstPlayer();
 
             firstPlayer.beginChallenge();
 
@@ -932,9 +936,7 @@ class Game extends EventEmitter {
             player.taxation();
         });
 
-        var firstPlayer = _.find(this.getPlayers(), p => {
-            return p.firstPlayer;
-        });
+        var firstPlayer = this.getFirstPlayer();
 
         firstPlayer.menuTitle = '';
         firstPlayer.buttons = [
