@@ -327,11 +327,10 @@ class Game extends EventEmitter {
 
     playerRevealDone(player) {
         var otherPlayer = this.getOtherPlayer(player);
-        var firstPlayer = player.firstPlayer ? player : otherPlayer;
 
         player.revealFinished = true;
 
-        this.resolvePlotEffects(firstPlayer);
+        this.resolvePlotEffects(otherPlayer);
     }
 
     resolvePlotEffects(firstPlayer) {

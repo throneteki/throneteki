@@ -942,6 +942,12 @@ class Player extends Spectator {
         });
     }
 
+    cancelPrompt() {
+        this.selectCard = false;
+        this.menuTitle = '';
+        this.buttons = [];
+    }
+
     getState(isActivePlayer) {
         var state = {
             id: this.id,

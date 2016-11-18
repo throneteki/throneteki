@@ -3,7 +3,7 @@
 
 const Game = require('../../../server/game/game.js');
 
-fdescribe('Game', function() {
+describe('Game', function() {
     beforeEach(function() {
         this.game = new Game('1', 'Test Game');
 
