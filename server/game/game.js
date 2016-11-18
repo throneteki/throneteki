@@ -4,6 +4,7 @@ const uuid = require('node-uuid');
 
 const cards = require('./cards');
 const Player = require('./player.js');
+const Spectator = require('./spectator.js');
 const BaseCard = require('./basecard.js');
 
 class Game extends EventEmitter {
@@ -52,7 +53,7 @@ class Game extends EventEmitter {
     }
 
     isSpectator(player) {
-        return player.constructor !== Player;
+        return player.constructor === Spectator;
     }
 
     getPlayers() {
@@ -71,6 +72,10 @@ class Game extends EventEmitter {
 
     getPlayerById(playerId) {
         return this.getPlayers()[playerId];
+    }
+
+    getPlayersInFirstPlayerOrder() {
+        return _.sortBy(this.getPlayers(), 'firstPlayer');
     }
 
     getPlayersAndSpectators() {
