@@ -153,12 +153,12 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(!player.activePlot.canPlay(player, cardId)) {
+        if(player.activePliot && !player.activePlot.canPlay(player, cardId)) {
             return;
         }
 
         var otherPlayer = this.getOtherPlayer(player);
-        if(!otherPlayer.activePlot.canPlay(player, cardId)) {
+        if(otherPlayer && otherPlayer.activePlot && !otherPlayer.activePlot.canPlay(player, cardId)) {
             return;
         }       
 
@@ -335,7 +335,12 @@ class Game extends EventEmitter {
 
         player.revealFinished = true;
 
-        this.resolvePlotEffects(otherPlayer);
+        if(otherPlayer) {
+            this.resolvePlotEffects(otherPlayer);
+        } else {
+            player.menuTitle = 'Perform any after reveal actions';
+            player.buttons = [{ command: 'doneWhenRealedEffects', text: 'Done' }];
+        }
     }
 
     resolvePlotEffects(firstPlayer) {
@@ -595,9 +600,9 @@ class Game extends EventEmitter {
         }
 
         if(player === this.selectPlayer && this.selectCallback) {
-            this.selectCallback(player, cardId);
-
-            player.selectCard = false;
+            if(this.selectCallback(player, cardId)) {
+                player.selectCard = false;
+            }    
 
             return;
         }

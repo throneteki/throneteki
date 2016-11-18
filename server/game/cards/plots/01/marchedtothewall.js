@@ -21,6 +21,7 @@ class MarchedToTheWall extends PlotCard {
 
         var otherPlayer = this.game.getOtherPlayer(firstPlayer);
 
+        this.state[firstPlayer.id] = {};
         this.state[firstPlayer.id].selecting = true;
         this.state[firstPlayer.id].selectedCard = undefined;
         this.state[firstPlayer.id].doneSelecting = false;
@@ -31,6 +32,7 @@ class MarchedToTheWall extends PlotCard {
             otherPlayer.menuTitle = 'Waiting for opponent to select character';
             otherPlayer.buttons = [];
 
+            this.state[otherPlayer.id] = {};            
             this.state[otherPlayer.id].selecting = false;
             this.state[otherPlayer.id].selectedCard = undefined;
             this.state[otherPlayer.id].doneSelecting = false;
@@ -51,32 +53,38 @@ class MarchedToTheWall extends PlotCard {
             return;
         }
 
+        this.game.addMessage('{0} has cancelled the resolution of {1}', player, this);
+
         this.proceedToNextStep();
     }
 
     onCardSelected(player, cardId) {
-        if(!this.inPlay || this.currentPlayer !== player) {
-            return;
+        if(!this.inPlay || !this.state[player.id].selecting) {
+            return false;
         }
 
         var card = player.findCardInPlayByUuid(cardId);
 
         if(!card || card.getType() !== 'character' || player.selectedCard) {
-            return;
+            return false;
         }
 
         this.state[player.id].selecting = false;
         this.state[player.id].doneSelecting = true;
         this.state[player.id].selectedCard = card;
 
+        this.game.addMessage('{0} has selected {1} to discard from {2}', player, card, this);
+
         this.proceedToNextStep();
+
+        return true;
     }
 
     doDiscard() {
         var sortedPlayers = this.game.getPlayersInFirstPlayerOrder();
 
         _.each(sortedPlayers, player => {
-            player.discardCard(this.state[player.id].selectedCard.id, player.discardPile);
+            player.discardCard(this.state[player.id].selectedCard.uuid, player.discardPile);
         });
 
         this.game.playerRevealDone(this.owner);
