@@ -285,6 +285,20 @@ class Player extends Spectator {
     }
 
     canPlayCard(card) {
+        var canPlay = true;
+
+        this.cardsInPlay.each(c => {
+            canPlay = c.canPlay(this, card);
+
+            if(!canPlay) {
+                return;
+            }
+        });
+
+        if(!canPlay) {
+            return false;
+        }
+
         if(this.phase !== 'setup' && this.phase !== 'marshal') {
             return false;
         }

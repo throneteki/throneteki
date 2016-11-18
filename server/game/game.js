@@ -153,13 +153,18 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.emit('beforeCardPlayed', this, player, cardId);
+        if(!player.activePlot.canPlay(player, cardId)) {
+            return;
+        }
+
+        var otherPlayer = this.getOtherPlayer(player);
+        if(!otherPlayer.activePlot.canPlay(player, cardId)) {
+            return;
+        }       
 
         if(!player.playCard(cardId, isDrop)) {
             return;
         }
-
-        this.emit('afterCardPlayed', this, player, cardId);
     }
 
     checkForAttachments() {

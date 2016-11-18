@@ -29,6 +29,10 @@ class BaseCard {
         this.inPlay = false;
     }
 
+    canPlay() {
+        return true;
+    }
+
     canReduce() {
         return false;
     }
