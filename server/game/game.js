@@ -599,15 +599,20 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(player === this.selectPlayer && this.selectCallback) {
-            if(this.selectCallback(player, cardId)) {
-                player.selectCard = false;
-            }    
+        var handled = false;
 
-            return;
+        if(player === this.selectPlayer && this.selectCallback) {
+            handled = this.selectCallback(player, cardId);
+
+            if(handled) {
+                player.selectCard = false;
+                return;
+            }
         }
 
-        if(!this.processCardClicked(player, cardId)) {
+        handled = this.processCardClicked(player, cardId);
+
+        if(!handled) {
             var cardInPlay = player.findCardInPlayByUuid(cardId);
 
             if(cardInPlay && !cardInPlay.facedown) {
@@ -954,13 +959,13 @@ class Game extends EventEmitter {
 
         firstPlayer.menuTitle = '';
         firstPlayer.buttons = [
-            { command: 'doneround', text: 'End Turn' }
+            { command: 'doneround', text: 'End Round' }
         ];
 
         var otherPlayer = this.getOtherPlayer(firstPlayer);
 
         if(otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for opponent to end their turn';
+            otherPlayer.menuTitle = 'Waiting for opponent to end the round';
             otherPlayer.buttons = [];
         }
     }
@@ -988,13 +993,13 @@ class Game extends EventEmitter {
         }
 
         player.roundDone = true;
-        player.menuTitle = 'Waiting for opponent to end their turn';
+        player.menuTitle = 'Waiting for opponent to end the round';
         player.buttons = [];
 
         if(otherPlayer) {
             otherPlayer.menuTitle = '';
             otherPlayer.buttons = [
-                { command: 'doneround', text: 'End Turn' }
+                { command: 'doneround', text: 'End Round' }
             ];
         }
     }
