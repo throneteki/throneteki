@@ -939,9 +939,19 @@ class Player extends Spectator {
     }
 
     getTotalIncome() {
-        return this.getTotalPlotStat(card => {
+        var gold = this.getTotalPlotStat(card => {
             return card.getIncome();
         });
+
+        gold = this.activePlot.modifyIncome(this, gold);
+
+        // XXX this player shouldn't know about the other player, this should be deffered to game        
+        var otherPlayer = this.game.getOtherPlayer(this);
+        if(otherPlayer) {
+            gold = otherPlayer.activePlot.modifyIncome(this, gold);
+        }    
+        
+        return gold;
     }
 
     getTotalReserve() {

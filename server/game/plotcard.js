@@ -35,6 +35,10 @@ class PlotCard extends BaseCard {
         return this.cardData.claim;
     }
 
+    modifyIncome(player, income) {
+        return income;
+    }
+
     canChallenge() {
         return true;
     }
