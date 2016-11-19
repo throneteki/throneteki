@@ -1,33 +1,3 @@
-// // 01021 - Sneak Attack
-// class SneakAttack {
-//     constructor(player) {
-//         this.player = player;
-//         this.revealed = this.revealed.bind(this);
-//     }
-
-//     revealed(game, player) {
-//         if(player !== this.player) {
-//             return;
-//         }
-
-//         player.challenges.maxTotal = 1;
-
-//         game.addMessage(player.name + ' uses ' + player.activePlot.card.label +
-//             ' to make the maximum number of challenges able to be initiated by ' + player.name + ' this round be 1');
-//     }
-// }
-// plots['01021'] = {
-//     register(game, player) {
-//         var plot = new SneakAttack(player);
-
-//         game.playerPlots[player.id] = plot;
-//         game.on('plotRevealed', plot.revealed);
-//     },
-//     unregister(game, player) {
-//         game.removeListener('plotRevealed', game.playerPlots[player.id].revealed);
-//     }
-// };
-
 // // 01022 - Summons
 // class Summons {
 //     constructor(player) {

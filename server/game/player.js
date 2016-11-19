@@ -210,6 +210,10 @@ class Player extends Spectator {
         this.challenges.maxTotal += number;
     }
 
+    setMaxChallenge(number) {
+        this.challenges.maxTotal = number;
+    }
+
     initDrawDeck() {
         this.drawDeck = this.drawCards;
         this.shuffleDrawDeck();
