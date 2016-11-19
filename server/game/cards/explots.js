@@ -1,32 +1,3 @@
-// // 01016 - Marching Orders
-// class MarchingOrders {
-//     constructor(player) {
-//         this.player = player;
-//         this.beforeCardPlayed = this.beforeCardPlayed.bind(this);
-//     }
-
-//     beforeCardPlayed(game, player, card) {
-//         if(this.player !== player) {
-//             return;
-//         }
-
-//         if(card.type_code === 'event' || card.type_code === 'attachment' || card.type_code === 'location') {
-//             game.stopCardPlay = true;
-//         }
-//     }
-// }
-// plots['01016'] = {
-//     register(game, player) {
-//         var plot = new MarchingOrders(player);
-
-//         game.playerPlots[player.id] = plot;
-//         game.on('beforeCardPlayed', plot.beforeCardPlayed);
-//     },
-//     unregister(game, player) {
-//         game.removeListener('beforeCardPlayed', game.playerPlots[player.id].beforeCardPlayed);
-//     }
-// };
-
 // // 01017 - Naval Superiority
 // class NavalSuperority {
 //     constructor(player) {

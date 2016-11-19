@@ -153,7 +153,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(player.activePliot && !player.activePlot.canPlay(player, cardId)) {
+        if(player.activePlot && !player.activePlot.canPlay(player, cardId)) {
             return;
         }
 
