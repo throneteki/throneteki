@@ -3,16 +3,6 @@ const factionCostReducer = require('./reducer.js').factionCostReducer;
 
 var locations = {};
 
-// 01038 - The Iron Throne
-locations['01038'] = {
-    register: function(game, player, card) {
-        card.reserve = 1;
-        // TODO: Provides 8 STR in dominance phase.
-    },
-    unregister: function(game, player, card) {
-    }
-};
-
 // 01039 - The Kingsroad
 class TheKingsRoad {
     constructor(player, card) {
@@ -28,11 +18,11 @@ class TheKingsRoad {
     }
 
     cardClick(game, player, card) {
-        if (this.player !== player || this.card.uuid !== card.uuid) {
+        if(this.player !== player || this.card.uuid !== card.uuid) {
             return;
         }
 
-        if (player.phase !== 'marshal') {
+        if(player.phase !== 'marshal') {
             return;
         }
 
@@ -40,7 +30,7 @@ class TheKingsRoad {
             return c.card.uuid === card.uuid;
         });
 
-        if (!cardInPlay || cardInPlay.kneeled) {
+        if(!cardInPlay || cardInPlay.kneeled) {
             return;
         }
 
@@ -55,15 +45,15 @@ class TheKingsRoad {
     }
 
     beforeCardPlayed(game, player, card) {
-        if (this.player !== player) {
+        if(this.player !== player) {
             return;
         }
 
-        if (this.active && !this.abilityUsed && card.type_code === 'character' && card.cost > 0) {
+        if(this.active && !this.abilityUsed && card.type_code === 'character' && card.cost > 0) {
             this.cost = card.cost;
 
             card.cost -= 3;
-            if (card.cost < 0) {
+            if(card.cost < 0) {
                 card.cost = 0;
             }
 
@@ -73,7 +63,7 @@ class TheKingsRoad {
     }
 
     afterCardPlayed(game, player, card) {
-        if (this.card !== card) {
+        if(this.card !== card) {
             return;
         }
 

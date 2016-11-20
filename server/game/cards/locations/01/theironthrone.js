@@ -1,7 +1,7 @@
 const DrawCard = require('../../../drawcard.js');
 
 class TheIronThrone extends DrawCard {
-    getInitiative() {
+    getReserve() {
         return 1;
     }
 
