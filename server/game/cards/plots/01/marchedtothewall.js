@@ -29,10 +29,7 @@ class MarchedToTheWall extends PlotCard {
         this.setupSelection(firstPlayer);
 
         if(otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for opponent to select character';
-            otherPlayer.buttons = [];
-
-            this.state[otherPlayer.id] = {};            
+            this.state[otherPlayer.id] = {};
             this.state[otherPlayer.id].selecting = false;
             this.state[otherPlayer.id].selectedCard = undefined;
             this.state[otherPlayer.id].doneSelecting = false;
@@ -45,6 +42,13 @@ class MarchedToTheWall extends PlotCard {
         player.menuTitle = 'Select a character to discard';
         player.buttons = [{ command: 'plot', method: 'cancelSelection', text: 'Done' }];
 
+
+        var otherPlayer = this.game.getOtherPlayer(player);
+        if(otherPlayer) {
+            otherPlayer.menuTitle = 'Waiting for opponent to select character';
+            otherPlayer.buttons = [];
+        }
+
         this.game.promptForSelect(player, this.onCardSelected.bind(this));
     }
 
@@ -54,6 +58,8 @@ class MarchedToTheWall extends PlotCard {
         }
 
         this.game.addMessage('{0} has cancelled the resolution of {1}', player, this);
+
+        this.state[player.id].doneSelecting = true;
 
         this.proceedToNextStep();
     }
@@ -84,7 +90,9 @@ class MarchedToTheWall extends PlotCard {
         var sortedPlayers = this.game.getPlayersInFirstPlayerOrder();
 
         _.each(sortedPlayers, player => {
-            player.discardCard(this.state[player.id].selectedCard.uuid, player.discardPile);
+            if(this.state[player.id].selectedCard) {
+                player.discardCard(this.state[player.id].selectedCard.uuid, player.discardPile);
+            }
         });
 
         this.game.playerRevealDone(this.owner);
@@ -94,7 +102,7 @@ class MarchedToTheWall extends PlotCard {
         var stillToSelect = _.find(this.game.getPlayers(), player => {
             return !this.state[player.id].doneSelecting;
         });
-        
+
         if(!stillToSelect) {
             this.doDiscard();
 

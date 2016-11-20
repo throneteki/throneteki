@@ -54,7 +54,7 @@ class TheLongWinter extends PlotCard {
 
         this.game.addMessage('{0} has cancelled the resolution of {1}', player, this);
 
-        this.state[player.id].doneSelecting = false;
+        this.state[player.id].doneSelecting = true;
 
         this.proceedToNextStep();
     }
