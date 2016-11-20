@@ -8,9 +8,6 @@ class InnerMessages extends React.Component {
     constructor() {
         super();
 
-        this.onKeyPress = this.onKeyPress.bind(this);
-        this.onChange = this.onChange.bind(this);
-
         this.state = {
             message: ''
         };
@@ -57,28 +54,6 @@ class InnerMessages extends React.Component {
 
             return fragment;
         });
-    }
-
-    sendMessage() {
-        if(this.state.message === '') {
-            return;
-        }
-
-        this.props.socket.emit('chat', this.state.message);
-
-        this.setState({ message: '' });
-    }
-
-    onChange(event) {
-        this.setState({ message: event.target.value });
-    }
-
-    onKeyPress(event) {
-        if(event.key === 'Enter') {
-            this.sendMessage();
-
-            event.preventDefault();
-        }
     }
 
     render() {

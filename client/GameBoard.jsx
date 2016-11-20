@@ -27,6 +27,9 @@ export class InnerGameBoard extends React.Component {
         this.onConcedeClick = this.onConcedeClick.bind(this);
         this.onLeaveClick = this.onLeaveClick.bind(this);
         this.onShuffleClick = this.onShuffleClick.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
+        this.onSendClick = this.onSendClick.bind(this);
+        this.onChange = this.onChange.bind(this);
 
         this.state = {
             cardToZoom: undefined,
@@ -35,7 +38,8 @@ export class InnerGameBoard extends React.Component {
             showOtherPlayerUsedPlotDeck: false,
             showDrawDeck: false,
             selectedPlot: undefined,
-            spectating: true
+            spectating: true,
+            message: ''
         };
     }
 
@@ -111,6 +115,34 @@ export class InnerGameBoard extends React.Component {
         this.props.socket.emit('showdrawdeck');
 
         this.setState({ showDrawDeck: !this.state.showDrawDeck });
+    }
+
+    sendMessage() {
+        if(this.state.message === '') {
+            return;
+        }
+
+        this.props.socket.emit('chat', this.state.message);
+
+        this.setState({ message: '' });
+    }
+
+    onChange(event) {
+        this.setState({ message: event.target.value });
+    }
+
+    onKeyPress(event) {
+        if(event.key === 'Enter') {
+            this.sendMessage();
+
+            event.preventDefault();
+        }
+    }
+
+    onSendClick(event) {
+        event.preventDefault();
+
+        this.sendMessage();
     }
 
     onShuffleClick() {
