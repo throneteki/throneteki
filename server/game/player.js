@@ -840,7 +840,7 @@ class Player extends Spectator {
 
     getTotalPower() {
         var power = this.cardsInPlay.reduce((memo, card) => {
-            return memo + card.power;
+            return memo + card.getPower();
         }, this.power);
 
         return power;

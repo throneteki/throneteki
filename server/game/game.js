@@ -820,6 +820,11 @@ class Game extends EventEmitter {
 
     addPower(player, power) {
         player.power += power;
+
+        if(player.power < 0) {
+            player.power = 0;
+        }
+        
         this.checkWinCondition(player);
     }
 
@@ -1216,6 +1221,11 @@ class Game extends EventEmitter {
 
         if(player.activePlot && player.activePlot[method]) {
             player.activePlot[method](player, arg);
+        }
+
+        var otherPlayer = this.getOtherPlayer(player);
+        if(otherPlayer && otherPlayer.activePlot && otherPlayer.activePlot[method]) {
+            otherPlayer.activePlot[method](player, arg);
         }
     }
 

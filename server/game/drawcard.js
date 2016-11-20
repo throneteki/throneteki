@@ -51,6 +51,10 @@ class DrawCard extends BaseCard {
         return this.cardData.cost;
     }
 
+    getPower() {
+        return this.power;
+    }
+
     getStrength() {
         return this.strengthModifier + this.cardData.strength;
     }
