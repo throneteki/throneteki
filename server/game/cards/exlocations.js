@@ -1,5 +1,4 @@
 const _ = require('underscore');
-const factionCostReducer = require('./reducer.js').factionCostReducer;
 
 var locations = {};
 
@@ -91,57 +90,6 @@ locations['01039'] = {
         game.removeListener('beforeCardPlayed', implementation.beforeCardPlayed);
         game.removeListener('afterCardPlayed', implementation.afterCardPlayed);
         game.removeListener('cardsStanding', implementation.cardsStanding);
-    }
-};
-
-// 02006 - Pleasure Barge
-locations['02006'] = {
-    register: function(game, player, card) {
-        card.income = -1;
-        // TODO: Event immunity, card draw
-    },
-    unregister: function(game, player, card) {
-    }
-};
-
-// 02010 - Cersei's Wheelhouse
-locations['02010'] = {
-    register: function(game, player, card) {
-        card.initiative = -1;
-        // TODO: +1 draw or +1 gold when first player.
-    },
-    unregister: function(game, player, card) {
-    }
-};
-
-// 02064 - The Arbor
-locations['02064'] = {
-    register: function(game, player, card) {
-        card.income = 3;
-    },
-    unregister: function(game, player, card) {
-    }
-};
-
-// 02086 - Northern Rookery
-locations['02086'] = {
-    register: function(game, player, card) {
-        card.reserve = 1;
-        // TODO: +1 draw when marshalled
-    },
-    unregister: function(game, player, card) {
-    }
-};
-
-
-// 04058 - The God's Eye
-locations['04058'] = {
-    register: function(game, player, card) {
-        card.income = 1;
-        card.reserve = 1;
-        // TODO: Cannot be discarded
-    },
-    unregister: function(game, player, card) {
     }
 };
 
