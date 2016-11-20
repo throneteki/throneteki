@@ -825,6 +825,10 @@ class Player extends Spectator {
             return memo;
         }, 0);
 
+        this.cardsInPlay.each(card => {
+            cardStrength = card.modifyDominance(this, cardStrength);
+        });
+
         return cardStrength + this.gold;
     }
 
@@ -896,7 +900,7 @@ class Player extends Spectator {
                 var drawCard = undefined;
 
                 if(cards[cardEntry.card.code]) {
-                    drawCard = new cards[cardEntry.card.code](this, cardEntry);
+                    drawCard = new cards[cardEntry.card.code](this, cardEntry.card);
                 } else {
                     drawCard = new DrawCard(this, cardEntry.card);
                 }

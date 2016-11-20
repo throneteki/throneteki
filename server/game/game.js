@@ -926,24 +926,30 @@ class Game extends EventEmitter {
 
     dominance() {
         var highestDominance = 0;
+        var lowestDominance = 0;
         var dominanceWinner = undefined;
 
         _.each(this.getPlayers(), player => {
             player.phase = 'dominance';
             var dominance = player.getDominance();
 
+            lowestDominance = dominance;
+
             if(dominance === highestDominance) {
                 dominanceWinner = undefined;
             }
 
             if(dominance > highestDominance) {
+                lowestDominance = highestDominance;
                 highestDominance = dominance;
                 dominanceWinner = player;
+            } else {
+                lowestDominance = dominance;
             }
         });
 
         if(dominanceWinner) {
-            this.addMessage('{0} wins dominance', dominanceWinner);
+            this.addMessage('{0} wins dominance ({1} vs {2})', dominanceWinner, highestDominance, lowestDominance);
 
             this.addPower(dominanceWinner, 1);
         } else {

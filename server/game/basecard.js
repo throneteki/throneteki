@@ -29,6 +29,10 @@ class BaseCard {
         this.inPlay = false;
     }
 
+    modifyDominance(player, strength) {
+        return strength;
+    }
+
     canPlay() {
         return true;
     }
