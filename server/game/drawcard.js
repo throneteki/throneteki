@@ -59,6 +59,10 @@ class DrawCard extends BaseCard {
         return this.strengthModifier + this.cardData.strength;
     }
 
+    clicked() {
+        return false;
+    }
+
     getSummary(isActivePlayer, hideWhenFaceup) {
         var baseSummary = super.getSummary(isActivePlayer, hideWhenFaceup);
 

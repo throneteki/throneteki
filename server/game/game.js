@@ -544,10 +544,9 @@ class Game extends EventEmitter {
 
     processCardClicked(player, cardId) {
         var otherPlayer = this.getOtherPlayer(player);
+        var card = player.findCardInPlayByUuid(cardId);
 
         if(!_.isUndefined(player.setPower)) {
-            var card = player.findCardInPlayByUuid(cardId);
-
             if(!card) {
                 return false;
             }
@@ -580,10 +579,12 @@ class Game extends EventEmitter {
             return true;
         }
 
-        if(player.phase === 'setup') {
-            card = player.findCardInPlayByUuid(cardId);
+        if(card && card.clicked(player)) {
+            return true;
+        }
 
-            if(card.getType() === 'attachment') {
+        if(player.phase === 'setup') {
+            if(card && card.getType() === 'attachment') {
                 player.promptForAttachment(card);
                 return true;
             }

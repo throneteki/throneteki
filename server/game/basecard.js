@@ -53,6 +53,10 @@ class BaseCard {
         return 0;
     }
 
+    getFaction() {
+        return this.cardData.faction_code;
+    }
+
     isUnique() {
         return this.cardData.is_unique;
     }

@@ -94,36 +94,6 @@ locations['01039'] = {
     }
 };
 
-// 01040 - The Roseroad
-locations['01040'] = {
-    register: function(game, player, card) {
-        card.income = 1;
-    },
-    unregister: function(game, player, card) {
-    }
-};
-
-// 01059 - Dragonstone Port
-locations['01059'] = factionCostReducer('baratheon');
-
-// 01080 - Sea Tower
-locations['01080'] = factionCostReducer('greyjoy');
-
-// 01099 - Western Fiefdom
-locations['01099'] = factionCostReducer('lannister');
-
-// 01118 - Blood Orange Grove
-locations['01118'] = factionCostReducer('martell');
-
-// 01156 - Heart Tree Grove
-locations['01156'] = factionCostReducer('stark');
-
-// 01175 - Illyrio's Estate
-locations['01175'] = factionCostReducer('targaryen');
-
-// 01194 - Rose Garden
-locations['01194'] = factionCostReducer('tyrell');
-
 // 02006 - Pleasure Barge
 locations['02006'] = {
     register: function(game, player, card) {

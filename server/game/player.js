@@ -122,7 +122,7 @@ class Player extends Spectator {
         return this.challenges[challengeType].won;
     }
 
-    getCostForCard(card) {
+    getCostForCard(card, spending) {
         var cost = card.getCost();
 
         if(this.activePlot && this.activePlot.canReduce(this, card)) {
@@ -131,7 +131,7 @@ class Player extends Spectator {
 
         this.cardsInPlay.each(c => {
             if(c.canReduce(this, c)) {
-                cost = c.reduce(card, cost);
+                cost = c.reduce(card, cost, spending);
             }
         });
 
@@ -313,7 +313,7 @@ class Player extends Spectator {
 
         var dupe = this.getDuplicateInPlay(card);
 
-        if(this.getCostForCard(card) > this.gold && !dupe) {
+        if(this.getCostForCard(card, false) > this.gold && !dupe) {
             return false;
         }
 
@@ -347,9 +347,16 @@ class Player extends Spectator {
         }
 
         var dupeCard = this.getDuplicateInPlay(card);
+        var cost = 0;
 
         if(!dupeCard && !forcePlay) {
-            this.gold -= this.getCostForCard(card);
+            cost = this.getCostForCard(card, true);
+        }
+
+        this.gold -= cost;
+
+        if(this.phase === 'marshal') {
+            this.game.addMessage('{0} marshals {1} costing {2}', this, card, cost);
         }
 
         if(card.getType() === 'attachment' && this.phase !== 'setup') {
