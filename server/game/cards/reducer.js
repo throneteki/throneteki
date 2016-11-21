@@ -10,7 +10,7 @@ class Reducer extends DrawCard {
     }
 
     canReduce(player, card) {
-        if(!card.inPlay || this.owner !== player || !this.kneeled || this.abilityUsed) {
+        if(!this.inPlay || this.owner !== player || !this.kneeled || this.abilityUsed) {
             return false;
         }
 
@@ -35,10 +35,18 @@ class Reducer extends DrawCard {
                 this.abilityUsed = true;
             }
 
+            if(cost < 0) {
+                cost = 0;
+            }
+
             return cost;
         }
 
         return currentCost;
+    }
+
+    leavesPlay() {
+        this.abilityUsed = false;
     }
 }
 

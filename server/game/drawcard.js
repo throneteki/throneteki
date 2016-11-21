@@ -63,6 +63,10 @@ class DrawCard extends BaseCard {
         return false;
     }
 
+    leavesPlay() {
+        this.kneeled = false;
+    }
+
     getSummary(isActivePlayer, hideWhenFaceup) {
         var baseSummary = super.getSummary(isActivePlayer, hideWhenFaceup);
 

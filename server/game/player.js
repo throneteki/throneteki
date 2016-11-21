@@ -130,7 +130,7 @@ class Player extends Spectator {
         }
 
         this.cardsInPlay.each(c => {
-            if(c.canReduce(this, c)) {
+            if(c.canReduce(this, card)) {
                 cost = c.reduce(card, cost, spending);
             }
         });
@@ -878,11 +878,10 @@ class Player extends Spectator {
 
         if(card.parent && card.parent.attachments) {
             card.parent.attachments = this.removeCardByUuid(card.parent.attachments, cardId);
-
-            this.game.notifyLeavingPlay(this, card);
         }
 
         pile.push(card);
+        card.leavesPlay();
     }
 
     removeAttachment(attachment) {
@@ -895,6 +894,7 @@ class Player extends Spectator {
             attachment.owner.hand.push(attachment);
         }
 
+        attachment.leavesPlay();        
         this.game.notifyLeavingPlay(this, attachment);
     }
 
