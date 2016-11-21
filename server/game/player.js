@@ -680,7 +680,7 @@ class Player extends Spectator {
 
         this.cardsInChallenge = _([]);
         this.cardsInPlay.each(card => {
-            card.stealth = undefined;
+            card.resetForChallenge();
         });
         this.selectCard = false;
         this.selectingChallengers = false;

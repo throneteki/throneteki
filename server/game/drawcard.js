@@ -93,6 +93,11 @@ class DrawCard extends BaseCard {
         this.kneeled = false;
     }
 
+    resetForChallenge() {
+        this.stealth = false;
+        this.stealthTarget = undefined;
+    }
+
     getSummary(isActivePlayer, hideWhenFaceup) {
         var baseSummary = super.getSummary(isActivePlayer, hideWhenFaceup);
 
