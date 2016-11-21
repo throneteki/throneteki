@@ -431,9 +431,7 @@ class Game extends EventEmitter {
             }
         }
 
-        this.canAttach = true;
-        this.emit('beforeAttach', this, player, player.selectedAttachment, card);
-        if(!this.canAttach) {
+        if(!player.canAttach(player.selectedAttachment, card)) {
             return;
         }
 
@@ -452,7 +450,6 @@ class Game extends EventEmitter {
         }
         
         player.selectCard = false;
-
 
         player.selectedAttachment = undefined;
 

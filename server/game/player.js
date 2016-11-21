@@ -515,6 +515,16 @@ class Player extends Spectator {
         });
     }
 
+    canAttach(attachmentId, card) {
+        var attachment = this.findCardByUuid(this.phase === 'setup' ? this.cardsInPlay : this.hand, attachmentId);
+
+        if(!attachment) {
+            return false;
+        }
+
+        return attachment.canAttach(this, card);
+    }
+
     attach(source, attachmentId, cardId) {
         var card = this.findCardInPlayByUuid(cardId);
         var attachment = this.findCardByUuid(source, attachmentId);
@@ -527,6 +537,8 @@ class Player extends Spectator {
         attachment.facedown = false;
 
         card.attachments.push(attachment);
+
+        attachment.attach(this, card);
     }
 
     showDrawDeck() {

@@ -11,10 +11,11 @@ class BaseCard {
         this.name = cardData.name;
         this.facedown = false;
         this.inPlay = false;
+        this.blankCount = 0;
     }
 
     hasKeyword(keyword) {
-        if(!this.cardData.text) {
+        if(!this.cardData.text || this.isBlank()) {
             return false;
         }
 
@@ -61,6 +62,10 @@ class BaseCard {
         return this.cardData.is_unique;
     }
 
+    isBlank() {
+        return this.blankCount > 0;
+    }
+
     getType() {
         return this.cardData.type_code;
     }
@@ -71,6 +76,14 @@ class BaseCard {
 
     modifyClaim(player, type, claim) {
         return claim;
+    }
+    
+    setBlank() {
+        this.blankCount++;
+    }
+
+    clearBlank() {
+        this.blankCount--;
     }
 
     getSummary(isActivePlayer, hideWhenFaceup) {

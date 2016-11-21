@@ -59,6 +59,17 @@ class DrawCard extends BaseCard {
         return this.strengthModifier + this.cardData.strength;
     }
 
+    canAttach(player, card) {
+        if(this.getType() !== 'attachment' || card.hasKeyword('No Attachments')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    attach() {
+    }
+
     clicked() {
         return false;
     }
