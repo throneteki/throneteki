@@ -536,19 +536,6 @@ class Game extends EventEmitter {
         var otherPlayer = this.getOtherPlayer(player);
         var card = player.findCardInPlayByUuid(cardId);
 
-        if(!_.isUndefined(player.setPower)) {
-            if(!card) {
-                return false;
-            }
-
-            card.power = player.setPower;
-
-            this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player, card, player.setPower);
-            this.doneSetPower(player.id);
-
-            return true;
-        }
-
         if(player.phase === 'setup' && !player.waitingForAttachments) {
             return false;
         }
@@ -597,6 +584,9 @@ class Game extends EventEmitter {
 
             if(handled) {
                 player.selectCard = false;
+                this.selectPlayer = undefined;
+                this.selectCallback = undefined;
+
                 return;
             }
         }
@@ -1084,6 +1074,8 @@ class Game extends EventEmitter {
             ];
             player.setPower = num;
 
+            this.promptForSelect(player, this.setPower.bind(this));
+
             return;
         }
 
@@ -1108,6 +1100,21 @@ class Game extends EventEmitter {
         }
 
         this.addMessage('<{0}> {1}', player, message);
+    }
+
+    setPower(player, cardId) {
+        var card = player.findCardInPlayByUuid(cardId);
+
+        if(!card) {
+            return false;
+        }
+
+        card.power = player.setPower;
+
+        this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player, card, player.setPower);
+        this.doneSetPower(player.id);
+
+        return true;
     }
 
     doneSetPower(playerId) {

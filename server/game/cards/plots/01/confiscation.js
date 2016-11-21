@@ -15,8 +15,6 @@ class Confiscation extends PlotCard {
         player.menuTitle = 'Select attachment to discard';
         player.buttons = [{ text: 'Done', command: 'plot', method: 'cancelDiscard' }];
 
-        player.selectCard = true;
-
         this.game.promptForSelect(player, this.onCardSelected.bind(this));
 
         return false;
