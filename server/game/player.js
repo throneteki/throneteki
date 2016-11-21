@@ -806,25 +806,20 @@ class Player extends Spectator {
         var character = this.findCardInPlayByUuid(card.uuid);
 
         if(!character) {
-            return undefined;
+            return;
         }
 
         if(!character.dupes.empty()) {
-            var discardedDupe = _.first(character.dupes);
+            var discardedDupe = character.dupes.first();
 
             character.dupes = character.dupes.slice(1);
-            character = undefined;
 
             this.discardPile.push(discardedDupe);
         } else {
-            this.cardsInPlay = this.removeCardByUuid(this.cardsInPlay, card.uuid);
-
-            this.deadPile.push(card);
+            this.discardCard(card.id, this.deadPile);
         }
 
         this.claimToDo--;
-
-        return character;
     }
 
     doneClaim() {

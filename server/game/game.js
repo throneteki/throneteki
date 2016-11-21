@@ -514,21 +514,14 @@ class Game extends EventEmitter {
         return true;
     }
 
-    handleClaim(player, otherPlayer, card) {
-        if(card.getType() !== 'character') {
+    handleClaim(player, otherPlayer, cardId) {
+        var card = player.findCardInPlayByUuid(cardId);
+
+        if(!card || card.getType() !== 'character') {
             return;
         }
 
-        var character = player.killCharacter(card);
-        if(character) {
-            _.each(character.attachments, attachment => {
-                if(this.hasKeyword(attachment, 'Terminal')) {
-                    this.getPlayers()[attachment.owner].discardPile.push(attachment);
-                } else {
-                    this.getPlayers()[attachment.owner].hand.push(attachment);
-                }
-            });
-        }
+        player.killCharacter(card);
 
         if(player.claimToDo === 0) {
             player.doneClaim();
