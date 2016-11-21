@@ -700,16 +700,6 @@ class Player extends Spectator {
         this.pickingStealth = false;
     }
 
-    addToStealth(card) {
-        if(!card.hasIcon(this.currentChallenge)) {
-            return false;
-        }
-
-        card.stealth = true;
-
-        return true;
-    }
-
     canAddToChallenge(cardId) {
         var card = this.findCardInPlayByUuid(cardId);
 
