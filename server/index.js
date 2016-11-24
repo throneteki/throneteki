@@ -668,6 +668,20 @@ io.on('connection', function(socket) {
         });
     });
 
+    socket.on('menuButton', function(arg) {
+        var game = findGameForPlayer(socket.id);
+
+        if(!game) {
+            return;
+        }
+
+        runAndCatchErrors(game, () => {
+            game.menuButton(socket.id, arg);
+
+            sendGameState(game);
+        });
+    });
+
     socket.on('custom', function(arg) {
         var game = findGameForPlayer(socket.id);
 

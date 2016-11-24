@@ -5,6 +5,7 @@ const uuid = require('node-uuid');
 const Player = require('./player.js');
 const Spectator = require('./spectator.js');
 const BaseCard = require('./basecard.js');
+const GamePipeline  = require('./gamepipeline.js');
 
 class Game extends EventEmitter {
     constructor(owner, name) {
@@ -191,6 +192,7 @@ class Game extends EventEmitter {
         }
 
         this.emit('onCardPlayed', player, cardId);
+        this.pipeline.continue();
     }
 
     checkForAttachments() {
@@ -564,6 +566,14 @@ class Game extends EventEmitter {
         var otherPlayer = this.getOtherPlayer(player);
         var card = this.findAnyCardInPlayByUuid(cardId);
 
+        if(!card) {
+            return false;
+        }
+
+        if(this.pipeline.handleCardClicked(player, card)) {
+            return true;
+        }
+
         if(player.phase === 'setup' && !player.waitingForAttachments) {
             return false;
         }
@@ -628,6 +638,8 @@ class Game extends EventEmitter {
                 cardInPlay.kneeled = !cardInPlay.kneeled;
             }
         }
+
+        this.pipeline.continue();
     }
 
     discardCardClicked(sourcePlayer, cardId) {
@@ -1378,12 +1390,32 @@ class Game extends EventEmitter {
 
     }
 
+    menuButton(playerId, arg) {
+        var player = this.getPlayerById(playerId);
+        if(!player) {
+            return;
+        }
+
+        if (this.pipeline.handleMenuCommand(player, arg)) {
+            this.pipeline.continue();
+            return true;
+        }
+    }
+
     initialise() {
         this.playStarted = false;
         this.messages = [];
         _.each(this.getPlayers(), player => {
             player.initialise();
         });
+        this.pipeline = new GamePipeline();
+        this.pipeline.initialise([
+        ]);
+        this.pipeline.continue();
+    }
+
+    queueStep(step) {
+        this.pipeline.queueStep(step);
     }
 
     getState(activePlayer) {
