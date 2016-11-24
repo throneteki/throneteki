@@ -111,6 +111,16 @@ class Game extends EventEmitter {
         return otherPlayer;
     }
 
+    findAnyCardInPlayByUuid(cardId) {
+        return _.reduce(this.getPlayers(), (card, player) => {
+            if(card) {
+                return card;
+            } else {
+                return player.findCardInPlayByUuid(cardId);
+            }
+        }, null);
+    }
+
     startGameIfAble() {
         if(_.all(this.getPlayers(), player => {
             return player.readyToStart;
@@ -552,7 +562,7 @@ class Game extends EventEmitter {
 
     processCardClicked(player, cardId) {
         var otherPlayer = this.getOtherPlayer(player);
-        var card = player.findCardInPlayByUuid(cardId);
+        var card = this.findAnyCardInPlayByUuid(cardId);
 
         if(player.phase === 'setup' && !player.waitingForAttachments) {
             return false;
