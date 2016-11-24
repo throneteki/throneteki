@@ -26,13 +26,26 @@ class BaseCard {
         this.tokens = {};
 
         this.menu = _([]);
-        this.keywords = this.parseKeywords(cardData.text || '');
+        this.parseCard(cardData.text || '');
     }
 
-    parseKeywords(text) {
+    parseCard(text) {
         var firstLine = text.split('\n')[0];
         var potentialKeywords = _.map(firstLine.split('.'), k => k.toLowerCase().trim());
-        return _.filter(potentialKeywords, keyword => _.contains(ValidKeywords, keyword));
+        this.keywords = [];
+        this.allowedAttachmentTrait = 'any';
+        _.each(potentialKeywords, keyword => {
+            if(_.contains(ValidKeywords, keyword)) {
+                this.keywords.push(keyword);
+            } else if(keyword.indexOf('no attachment') === 0) {
+                var match = keyword.match(/no attachments except <b>(.*)<\/b>/);
+                if(match) {
+                    this.allowedAttachmentTrait = match[1];
+                } else {
+                    this.allowedAttachmentTrait = 'none';
+                }
+            }
+        });
     }
 
     registerEvents(events) {
@@ -56,7 +69,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        return this.cardData.traits && this.cardData.traits.indexOf(trait + '.') !== -1;
+        return this.cardData.traits && this.cardData.traits.toLowerCase().indexOf(trait.toLowerCase() + '.') !== -1;
     }
 
     leavesPlay() {
