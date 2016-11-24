@@ -1,6 +1,15 @@
 const uuid = require('node-uuid');
 const _ = require('underscore');
 
+const ValidKeywords = [
+    'insight',
+    'intimidate',
+    'pillage',
+    'renown',
+    'stealth',
+    'terminal'
+];
+
 class BaseCard {
     constructor(owner, cardData) {
         this.owner = owner;
@@ -17,6 +26,13 @@ class BaseCard {
         this.tokens = {};
 
         this.menu = _([]);
+        this.keywords = this.parseKeywords(cardData.text || '');
+    }
+
+    parseKeywords(text) {
+        var firstLine = text.split('\n')[0];
+        var potentialKeywords = _.map(firstLine.split('.'), k => k.toLowerCase().trim());
+        return _.filter(potentialKeywords, keyword => _.contains(ValidKeywords, keyword));
     }
 
     registerEvents(events) {
@@ -32,11 +48,11 @@ class BaseCard {
     }
 
     hasKeyword(keyword) {
-        if(!this.cardData.text || this.isBlank()) {
+        if(this.isBlank()) {
             return false;
         }
 
-        return this.cardData.text.toLowerCase().indexOf(keyword.toLowerCase() + '.') !== -1;
+        return _.contains(this.keywords, keyword.toLowerCase());
     }
 
     hasTrait(trait) {
