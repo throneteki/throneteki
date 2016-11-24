@@ -1043,6 +1043,20 @@ class Player extends Spectator {
         });
     }
 
+    currentPrompt() {
+        return {
+            selectCard: this.selectCard,
+            menuTitle: this.menuTitle,
+            buttons: this.buttons
+        };
+    }
+
+    setPrompt(prompt) {
+        this.selectCard = prompt.selectCard || false;
+        this.menuTitle = prompt.menuTitle || '';
+        this.buttons = prompt.buttons || [];
+    }
+
     cancelPrompt() {
         this.selectCard = false;
         this.menuTitle = '';
