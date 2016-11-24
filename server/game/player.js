@@ -5,6 +5,7 @@ const cards = require('./cards');
 const DrawCard = require('./drawcard.js');
 const PlotCard = require('./plotcard.js');
 const AgendaCard = require('./agendacard.js');
+const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 
 const StartingHandSize = 7;
 
@@ -722,14 +723,8 @@ class Player extends Spectator {
     }
 
     promptForAttachment(card) {
-        this.selectedAttachment = card.uuid;
-        this.selectCard = true;
-        this.oldMenuTitle = this.menuTitle;
-        this.oldButtons = this.buttons;
-        this.menuTitle = 'Select target for attachment';
-        this.buttons = [
-            { text: 'Done', command: 'doneattachment' }
-        ];
+        // TODO: Really want to move this out of here.
+        this.game.queueStep(new AttachmentPrompt(this.game, this, card));
     }
 
     beginChallenge() {
@@ -748,7 +743,6 @@ class Player extends Spectator {
         });
         this.selectCard = false;
         this.selectingChallengers = false;
-        this.selectedAttachment = undefined;
     }
 
     startChallenge(challengeType) {

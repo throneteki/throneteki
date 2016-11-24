@@ -439,65 +439,6 @@ class Game extends EventEmitter {
         this.resolvePlotEffects(firstPlayer);
     }
 
-    attachCard(player, cardId) {
-        var card = player.findCardInPlayByUuid(cardId);
-        var otherPlayer = this.getOtherPlayer(player);
-
-        if(!card) {
-            if(!otherPlayer) {
-                return;
-            }
-
-            card = otherPlayer.findCardInPlayByUuid(cardId);
-
-            if(!card) {
-                return;
-            }
-        }
-
-        if(!player.canAttach(player.selectedAttachment, card)) {
-            return;
-        }
-
-        var attachment = player.findCardByUuidInAnyList(player.selectedAttachment);
-        if(!attachment) {
-            return;
-        }
-
-        var targetPlayer = this.getPlayerById(card.owner.id);
-        if(targetPlayer === player && player.phase === 'setup') {
-            // We put attachments on the board during setup, now remove it
-            player.attach(attachment, cardId);
-            player.cardsInPlay = player.removeCardByUuid(player.cardsInPlay, player.selectedAttachment);
-        } else {
-            targetPlayer.attach(attachment, cardId);
-            player.removeFromHand(player.selectedAttachment);
-        }
-
-        if(player.dropPending) {
-            player.discardPile = player.removeCardByUuid(player.discardPile, player.selectedAttachment);
-        }
-
-        player.selectCard = false;
-        player.selectedAttachment = undefined;
-
-        if(player.dropPending) {
-            player.dropPending = false;
-
-            player.menuTitle = player.oldMenuTitle;
-            player.buttons = player.oldButtons;
-
-            return;
-        }
-
-        if(player.phase === 'setup') {
-            this.checkForAttachments();
-        } else {
-            player.buttons = [{ command: 'donemarshal', text: 'Done' }];
-            player.menuTitle = 'Marshal your cards';
-        }
-    }
-
     handleChallenge(player, otherPlayer, cardId) {
         var card = player.findCardInPlayByUuid(cardId);
 
@@ -576,12 +517,6 @@ class Game extends EventEmitter {
 
         if(player.phase === 'setup' && !player.waitingForAttachments) {
             return false;
-        }
-
-        if((player.phase === 'setup' || player.phase === 'marshal' || player.dropPending) && player.selectedAttachment) {
-            this.attachCard(player, cardId);
-
-            return true;
         }
 
         if(player.phase === 'challenge' && player.currentChallenge) {
@@ -1239,17 +1174,6 @@ class Game extends EventEmitter {
         this.cancelSelect(player);
 
         player.setStrength = undefined;
-    }
-
-    doneAttachment(playerId) {
-        var player = this.getPlayerById(playerId);
-        if(!player) {
-            return;
-        }
-
-        this.cancelSelect(player);
-
-        this.selectedAttachment = undefined;
     }
 
     playerLeave(playerId, reason) {
