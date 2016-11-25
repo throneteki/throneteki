@@ -13,12 +13,32 @@ class GamePipeline {
         this.pipeline = steps;
     }
 
+    get length() {
+        return this.pipeline.length;
+    }
+
     queueStep(step) {
         if(this.pipeline.length === 0) {
             this.pipeline.unshift(step);
         } else {
             this.queue.push(step);
         }
+    }
+
+    cancelStep() {
+        if(this.pipeline.length === 0) {
+            return;
+        }
+
+        var step = this.pipeline[0];
+        if(step.cancelStep && step.isComplete) {
+            step.cancelStep();
+            if(!step.isComplete()) {
+                return;
+            }
+        }
+
+        this.pipeline.shift();
     }
 
     handleCardClicked(player, card) {

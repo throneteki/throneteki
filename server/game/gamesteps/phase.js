@@ -12,12 +12,20 @@ class Phase extends BaseStep {
         this.pipeline.initialise(steps);
     }
 
+    isComplete() {
+        return this.pipeline.length === 0;
+    }
+
     onCardClicked(player, card) {
         return this.pipeline.handleCardClicked(player, card);
     }
 
     onMenuCommand(player, arg) {
         return this.pipeline.handleMenuCommand(player, arg);
+    }
+
+    cancelStep() {
+        this.pipeline.cancelStep();
     }
 
     continue() {

@@ -1024,6 +1024,13 @@ class Game extends EventEmitter {
             return;
         }
 
+        if(message.indexOf('/cancel-prompt') === 0) {
+            this.addMessage('{0} uses the /cancel-prompt to skip the current step.', player);
+            this.pipeline.cancelStep();
+            this.pipeline.continue();
+            return;
+        }
+
         this.addMessage('<{0}> {1}', player, message);
     }
 
