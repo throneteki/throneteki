@@ -168,52 +168,6 @@ class Game extends EventEmitter {
         this.pipeline.continue();
     }
 
-    firstPlayerPrompt(initiativeWinner) {
-        initiativeWinner.firstPlayer = true;
-        initiativeWinner.menuTitle = 'Select a first player';
-        initiativeWinner.buttons = [
-            { command: 'firstplayer', text: 'Me', arg: 'me' }
-        ];
-
-        if(_.size(this.getPlayers()) > 1) {
-            initiativeWinner.buttons.push({ command: 'firstplayer', text: 'Opponent', arg: 'opponent' });
-        }
-
-        var otherPlayer = this.getOtherPlayer(initiativeWinner);
-
-        if(otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for opponent to select first player';
-            otherPlayer.buttons = [];
-        }
-    }
-
-    selectPlot(playerId, plotId) {
-        var player = this.getPlayerById(playerId);
-
-        if(!player || !player.selectPlot(plotId)) {
-            return;
-        }
-
-        this.addMessage('{0} has selected a plot', player);
-
-        if(!_.all(this.getPlayers(), p => {
-            return !!p.selectedPlot;
-        })) {
-            player.menuTitle = 'Waiting for opponent to select plot';
-            player.buttons = [];
-        } else {
-            // determine initiative winner
-            // initiative winner sets the first player
-            // note that control flow for the plot phase after this continues under
-            // the setFirstPlayer function
-            if(_.size(this.players) === 1) {
-                this.setFirstPlayer(player.id, 'me');
-            } else {
-                this.firstPlayerPrompt(initiativeWinner);
-            }
-        }
-    }
-
     drawPhase(firstPlayer) {
         _.each(this.getPlayers(), p => {
             this.emit('beginDrawPhase', this, p);
@@ -292,35 +246,6 @@ class Game extends EventEmitter {
         if(player.activePlot.onReveal(player)) {
             this.playerRevealDone(player);
         }
-    }
-
-    setFirstPlayer(sourcePlayer, who) {
-        var firstPlayer = undefined;
-
-        var player = this.getPlayerById(sourcePlayer);
-
-        if(!player) {
-            return;
-        }
-
-        _.each(this.getPlayers(), player => {
-            if(player.id === sourcePlayer && who === 'me') {
-                player.firstPlayer = true;
-                firstPlayer = player;
-            } else if(player.id !== sourcePlayer && who !== 'me') {
-                player.firstPlayer = true;
-                firstPlayer = player;
-            } else {
-                player.firstPlayer = false;
-            }
-
-            player.menuTitle = '';
-            player.buttons = [];
-        });
-
-        this.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);
-
-        this.resolvePlotEffects(firstPlayer);
     }
 
     handleChallenge(player, otherPlayer, cardId) {

@@ -23,12 +23,23 @@ class FirstPlayerPrompt extends UIPrompt {
         };
     }
 
-    onMenuCommand(player, firstPlayer) {
+    onMenuCommand(player, playerId) {
         if(player !== this.player) {
             return false;
         }
 
-        console.log(firstPlayer);
+        var firstPlayer = this.game.getPlayerById(playerId);
+        if(!firstPlayer) {
+            return;
+        }
+
+        firstPlayer.firstPlayer = true;
+        var otherPlayer = this.game.getOtherPlayer(firstPlayer);
+        if(otherPlayer) {
+            otherPlayer.firstPlayer = false;
+        }    
+
+        this.game.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);        
     }
 
     continue() {
