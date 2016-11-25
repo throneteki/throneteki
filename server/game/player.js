@@ -282,13 +282,6 @@ class Player extends Spectator {
         this.deadPile = _([]);
         this.discardPile = _([]);
         this.claimToDo = 0;
-
-        this.menuTitle = 'Keep Starting Hand?';
-
-        this.buttons = [
-            { command: 'keep', text: 'Keep Hand' },
-            { command: 'mulligan', text: 'Mulligan' }
-        ];
     }
 
     startGame() {
@@ -298,12 +291,6 @@ class Player extends Spectator {
 
         this.gold = 8;
         this.phase = 'setup';
-
-        this.buttons = [
-            { command: 'setupdone', text: 'Done' }
-        ];
-
-        this.menuTitle = 'Select setup cards';
     }
 
     mulligan() {
@@ -313,10 +300,6 @@ class Player extends Spectator {
 
         this.initDrawDeck();
         this.takenMulligan = true;
-
-        this.buttons = [];
-        this.menuTitle = 'Waiting for opponent to keep hand or mulligan';
-
         this.readyToStart = true;
 
         return true;
@@ -324,9 +307,6 @@ class Player extends Spectator {
 
     keep() {
         this.readyToStart = true;
-
-        this.buttons = [];
-        this.menuTitle = 'Waiting for opponent to keep hand or mulligan';
     }
 
     canPlayCard(card) {

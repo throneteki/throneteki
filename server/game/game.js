@@ -5,7 +5,8 @@ const uuid = require('node-uuid');
 const Player = require('./player.js');
 const Spectator = require('./spectator.js');
 const BaseCard = require('./basecard.js');
-const GamePipeline  = require('./gamepipeline.js');
+const GamePipeline = require('./gamepipeline.js');
+const SetupPhase = require('./gamesteps/setupphase.js');
 
 class Game extends EventEmitter {
     constructor(owner, name) {
@@ -122,42 +123,6 @@ class Game extends EventEmitter {
         }, null);
     }
 
-    startGameIfAble() {
-        if(_.all(this.getPlayers(), player => {
-            return player.readyToStart;
-        })) {
-            _.each(this.getPlayers(), player => {
-                player.startGame();
-
-                this.playStarted = true;
-            });
-        }
-    }
-
-    mulligan(playerId) {
-        var player = this.getPlayerById(playerId);
-
-        if(this.playStarted || !player) {
-            return;
-        }
-
-        if(player.mulligan()) {
-            this.addMessage('{0} has taken a mulligan', player);
-        }
-    }
-
-    keep(playerId) {
-        var player = this.getPlayerById(playerId);
-
-        if(!player) {
-            return;
-        }
-
-        player.keep();
-
-        this.addMessage('{0} has kept their hand', player);
-    }
-
     playCard(playerId, cardId, isDrop, sourceList) {
         var player = this.getPlayerById(playerId);
 
@@ -193,56 +158,6 @@ class Game extends EventEmitter {
 
         this.emit('onCardPlayed', player, cardId);
         this.pipeline.continue();
-    }
-
-    checkForAttachments() {
-        var playersWithAttachments = _.filter(this.getPlayers(), p => {
-            return p.hasUnmappedAttachments();
-        });
-        var playersWaiting = _.filter(this.getPlayers(), p => {
-            return !p.hasUnmappedAttachments();
-        });
-
-        if(playersWithAttachments.length !== 0) {
-            _.each(playersWithAttachments, p => {
-                p.menuTitle = 'Select attachment locations';
-                p.buttons = [
-                    { command: 'mapattachments', text: 'Done' }
-                ];
-                p.waitingForAttachments = true;
-            });
-
-            _.each(playersWaiting, p => {
-                p.menuTitle = 'Waiting for opponent to finish setup';
-                p.buttons = [];
-            });
-        } else {
-            _.each(this.getPlayers(), p => {
-                p.setupDone();
-                p.startPlotPhase();
-            });
-        }
-    }
-
-    setupDone(playerId) {
-        var player = this.getPlayerById(playerId);
-
-        if(!player) {
-            return;
-        }
-
-        player.setup = true;
-
-        this.addMessage('{0} has finished setup', player);
-
-        if(!_.all(this.getPlayers(), p => {
-            return p.setup;
-        })) {
-            player.menuTitle = 'Waiting for opponent to finish setup';
-            player.buttons = [];
-        } else {
-            this.checkForAttachments();
-        }
     }
 
     firstPlayerPrompt(initiativeWinner) {
@@ -515,10 +430,6 @@ class Game extends EventEmitter {
             return true;
         }
 
-        if(player.phase === 'setup' && !player.waitingForAttachments) {
-            return false;
-        }
-
         if(player.phase === 'challenge' && player.currentChallenge) {
             return this.handleChallenge(player, otherPlayer, cardId);
         }
@@ -531,13 +442,6 @@ class Game extends EventEmitter {
 
         if(card && card.onClick(player)) {
             return true;
-        }
-
-        if(player.phase === 'setup') {
-            if(card && card.getType() === 'attachment') {
-                player.promptForAttachment(card);
-                return true;
-            }
         }
 
         return false;
@@ -1334,6 +1238,7 @@ class Game extends EventEmitter {
         });
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
+            new SetupPhase(this)
         ]);
         this.pipeline.continue();
     }

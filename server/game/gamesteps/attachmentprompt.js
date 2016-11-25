@@ -30,25 +30,13 @@ class AttachmentPrompt extends UiPrompt {
             player.removeFromHand(attachmentId);
         }
 
-        player.selectCard = false;
-        this.attached = true;
-
         if(player.dropPending) {
             player.discardPile = player.removeCardByUuid(player.discardPile, attachmentId);
-            player.dropPending = false;
-            // TODO: Should not be necessary in the end, but is for now due to
-            //       interrupts from drag/drop in the middle of steps not
-            //       converted to the new engine.
-            this.player.setPrompt(this.originalPrompt || {});
-            return;
         }
 
-        if(player.phase === 'setup') {
-            this.game.checkForAttachments();
-        } else {
-            player.buttons = [{ command: 'donemarshal', text: 'Done' }];
-            player.menuTitle = 'Marshal your cards';
-        }
+        player.dropPending = false;
+        player.selectCard = false;
+        this.attached = true;
     }
 
     onMenuCommand(player) {
@@ -69,6 +57,11 @@ class AttachmentPrompt extends UiPrompt {
                     { text: 'Done', command: 'menuButton', arg: 'doneattachment' }
                 ]
             });
+        } else {
+            // TODO: Should not be necessary in the end, but is for now due to
+            //       interrupts from drag/drop in the middle of steps not
+            //       converted to the new engine.
+            this.player.setPrompt(this.originalPrompt || {});
         }
     }
 
