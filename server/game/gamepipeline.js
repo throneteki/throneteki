@@ -10,11 +10,20 @@ class GamePipeline {
         if(!_.isArray(steps)) {
             steps = [steps];
         }
+
         this.pipeline = steps;
     }
 
     get length() {
         return this.pipeline.length;
+    }
+
+    getStep(step) {
+        if(_.isFunction(step)) {
+            return step();
+        }
+
+        return step;
     }
 
     queueStep(step) {
@@ -30,7 +39,8 @@ class GamePipeline {
             return;
         }
 
-        var step = this.pipeline[0];
+        var step = this.getStep(this.pipeline[0]);
+
         if(step.cancelStep && step.isComplete) {
             step.cancelStep();
             if(!step.isComplete()) {
@@ -43,7 +53,7 @@ class GamePipeline {
 
     handleCardClicked(player, card) {
         if(this.pipeline.length > 0) {
-            var step = _.first(this.pipeline);
+            var step = this.getStep(_.first(this.pipeline));
             if(step.onCardClicked(player, card) !== false) {
                 return true;
             }
@@ -54,7 +64,7 @@ class GamePipeline {
 
     handleMenuCommand(player, arg, method) {
         if(this.pipeline.length > 0) {
-            var step = _.first(this.pipeline);
+            var step = this.getStep(_.first(this.pipeline));
             if(step.onMenuCommand(player, arg, method) !== false) {
                 return true;
             }
@@ -65,7 +75,7 @@ class GamePipeline {
 
     continue() {
         while(this.pipeline.length > 0) {
-            var currentStep = _.first(this.pipeline);
+            var currentStep = this.getStep(_.first(this.pipeline));
 
             // Explicitly check for a return of false - if no return values is
             // defined then just continue to the next step.
