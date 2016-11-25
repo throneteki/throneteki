@@ -11,7 +11,10 @@ class PlotPhase extends Phase {
             new SimpleStep(game, () => this.startPlotPhase()),
             new SelectPlotPrompt(game),
             new SimpleStep(game, () => this.flipPlotsFaceup()),
-            new SimpleStep(game, () => this.determineInitiative())
+            new SimpleStep(game, () => this.determineInitiative()),
+            () => {
+                return new FirstPlayerPrompt(game, this.initiativeWinner);
+            }
         ]);
     }
 
@@ -62,7 +65,7 @@ class PlotPhase extends Phase {
             }
         });
 
-        this.game.queueStep(new FirstPlayerPrompt(this.game, initiativeWinner));
+        this.initiativeWinner = initiativeWinner;
     }
 }
 

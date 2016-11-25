@@ -33,7 +33,8 @@ class FirstPlayerPrompt extends UIPrompt {
 
     continue() {
         this.setPrompt();
-        return this.attached;
+
+        return false;
     }
 }
 
