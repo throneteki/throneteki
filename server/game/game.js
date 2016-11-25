@@ -117,9 +117,8 @@ class Game extends EventEmitter {
         return _.reduce(this.getPlayers(), (card, player) => {
             if(card) {
                 return card;
-            } else {
-                return player.findCardInPlayByUuid(cardId);
             }
+            return player.findCardInPlayByUuid(cardId);
         }, null);
     }
 
@@ -1224,7 +1223,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        if (this.pipeline.handleMenuCommand(player, arg)) {
+        if(this.pipeline.handleMenuCommand(player, arg)) {
             this.pipeline.continue();
             return true;
         }

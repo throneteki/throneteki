@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach, expect*/
+/*global describe, it, beforeEach, expect, spyOn*/
 
 const UiPrompt = require('../../../server/game/gamesteps/uiprompt.js');
 const Game = require('../../../server/game/game.js');
@@ -14,7 +14,7 @@ describe('the UiPrompt', () => {
 
     beforeEach(() => {
         game = new Game('1', 'Test Game');
-        player1  = new Player('1', 'Player 1', true)
+        player1 = new Player('1', 'Player 1', true);
         player2 = new Player('2', 'Player 2', false);
         game.players[player1.id] = player1;
         game.players[player2.id] = player2;

@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach, expect*/
+/*global describe, it, beforeEach, expect,spyOn*/
 
 const AttachmentPrompt = require('../../../server/game/gamesteps/attachmentprompt.js');
 const Game = require('../../../server/game/game.js');
@@ -15,7 +15,7 @@ describe('the AttachmentPrompt', () => {
 
     beforeEach(() => {
         game = new Game('1', 'Test Game');
-        player  = new Player('1', 'Player 1', true, game)
+        player = new Player('1', 'Player 1', true, game);
         player.initialise();
         otherPlayer = new Player('2', 'Player 2', false, game);
         otherPlayer.initialise();
@@ -45,7 +45,7 @@ describe('the AttachmentPrompt', () => {
             it('should return false', () => {
                 expect(prompt.onCardClicked(otherPlayer, attachmentTarget)).toBe(false);
             });
-        })
+        });
 
         describe('when the player can attach the card', () => {
             beforeEach(() => {
@@ -104,7 +104,7 @@ describe('the AttachmentPrompt', () => {
                 it('should end drop flow', () => {
                     prompt.onCardClicked(player, attachmentTarget);
                     expect(player.dropPending).toBeFalsy();
-                })
+                });
             });
         });
     });
