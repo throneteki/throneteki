@@ -7,27 +7,28 @@ class FirstPlayerPrompt extends UIPrompt {
         this.player = player;
     }
 
+    activeCondition(player) {
+        return player === this.player;
+    }
+
+    activePrompt() {
+        var otherPlayer = this.game.getOtherPlayer(this.player);
+
+        return {
+            menuTitle: 'Select first player',
+            buttons: [
+                { text: this.player.name, command: 'menuButton', arg: this.player.id },
+                { text: otherPlayer.name, command: 'menuButton', arg: otherPlayer.id }
+            ]
+        };
+    }
+
     onMenuCommand(player, firstPlayer) {
         if(player !== this.player) {
             return false;
         }
 
         console.log(firstPlayer);
-    }
-
-    setPrompt() {
-        this.originalPrompt = this.originalPrompt || this.player.currentPrompt();
-
-        var otherPlayer = this.game.getOtherPlayer(this.player);
-
-        this.player.setPrompt({
-            selectCard: true,
-            menuTitle: 'Select first player',
-            buttons: [
-                { text: this.player.name, command: 'menuButton', arg: 'me' },
-                { text: otherPlayer.name, command: 'menuButton', arg: 'opponent'}
-            ]
-        });
     }
 
     continue() {
