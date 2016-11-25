@@ -1016,6 +1016,10 @@ class Player extends Spectator {
         });
     }
 
+    isBelowReserve() {
+        return this.hand.size() <= this.reserve;
+    }
+
     getSummaryForCardList(list, isActivePlayer, hideWhenFaceup) {
         return list.map(card => {
             return card.getSummary(isActivePlayer, hideWhenFaceup);

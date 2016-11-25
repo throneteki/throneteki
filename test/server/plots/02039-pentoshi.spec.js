@@ -32,11 +32,6 @@ describe('Trading With The Pentoshi', () => {
         game.initialise();
     });
 
-    afterEach(() => {
-        game.doneRound(player1.id);
-        game.doneRound(player2.id);
-    });
-
     describe('When a player has trading revealed and that player is first player', () => {
         it('should give the other player 3 gold', () => {
             game.selectPlot(player1.id, pentoshi.uuid);
