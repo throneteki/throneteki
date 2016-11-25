@@ -7,14 +7,14 @@ class EndRoundPrompt extends PlayerOrderPrompt {
             buttons: [
                 { command: 'menuButton', text: 'End Round' }
             ]
-        }
+        };
     }
 
     waitingPrompt() {
         return { menuTitle: 'Waiting for opponent to end the round' };
     }
 
-    onMenuCommand(player, arg) {
+    onMenuCommand(player) {
         if(player !== this.currentPlayer) {
             return false;
         }

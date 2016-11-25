@@ -1,4 +1,4 @@
-/* global describe, it, expect, beforeEach, afterEach, jasmine */
+/* global describe, it, expect, beforeEach, jasmine */
 
 const _ = require('underscore');
 

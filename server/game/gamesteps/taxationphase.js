@@ -11,15 +11,15 @@ class TaxationPhase extends Phase {
             new SimpleStep(game, () => this.returnGold()),
             new DiscardToReservePrompt(game),
             new EndRoundPrompt(game),
-            new SimpleStep(game, () => this.startPlotPhase()),
+            new SimpleStep(game, () => this.startPlotPhase())
         ]);
     }
 
     returnGold() {
-      _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-          player.taxation();
-          this.game.emit('onAfterTaxation', player);
-      });
+        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+            player.taxation();
+            this.game.emit('onAfterTaxation', player);
+        });
     }
 
     // Temporary step until plot phase / round structure is more defined.

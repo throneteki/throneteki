@@ -7,14 +7,14 @@ class DiscardToReservePrompt extends PlayerOrderPrompt {
             buttons: [
                 { command: 'menuButton', text: 'Done' }
             ]
-        }
+        };
     }
 
     waitingPrompt() {
         return { menuTitle: 'Waiting for opponent to discard down to reserve' };
     }
 
-    onMenuCommand(player, arg) {
+    onMenuCommand(player) {
         if(player !== this.currentPlayer) {
             return false;
         }
