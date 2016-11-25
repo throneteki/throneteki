@@ -27,8 +27,6 @@ class SetupPhase extends Phase {
     setupDone() {
         _.each(this.game.getPlayers(), p => {
             p.setupDone();
-            // TODO: Temporarily trigger plot phase here until it's also converted.
-            p.startPlotPhase();
         });
     }
 }

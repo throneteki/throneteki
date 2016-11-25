@@ -7,6 +7,7 @@ const Spectator = require('./spectator.js');
 const BaseCard = require('./basecard.js');
 const GamePipeline = require('./gamepipeline.js');
 const SetupPhase = require('./gamesteps/setupphase.js');
+const PlotPhase = require('./gamesteps/plotphase.js');
 const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
@@ -201,46 +202,7 @@ class Game extends EventEmitter {
             player.menuTitle = 'Waiting for opponent to select plot';
             player.buttons = [];
         } else {
-            var initiativeWinner = undefined;
-            var highestInitiative = -1;
-            var lowestPower = -1;
-
-            this.emit('onPlotFlip');
-
-            // reveal plots when everyone has selected (flip them faceup)
-            _.each(this.getPlayers(), p => {
-                p.revealPlot();
-            });
-
             // determine initiative winner
-            _.each(this.getPlayers(), p => {
-                var playerInitiative = p.getTotalInitiative();
-                var playerPower = p.power;
-
-                if(playerInitiative === highestInitiative) {
-                    if(playerPower === lowestPower) {
-                        var diceRoll = _.random(1, 20);
-                        if(diceRoll % 2 === 0) {
-                            highestInitiative = playerInitiative;
-                            lowestPower = playerPower;
-                            initiativeWinner = p;
-                        }
-                    }
-
-                    if(playerPower < lowestPower) {
-                        highestInitiative = playerInitiative;
-                        lowestPower = playerPower;
-                        initiativeWinner = p;
-                    }
-                }
-
-                if(playerInitiative > highestInitiative) {
-                    highestInitiative = playerInitiative;
-                    lowestPower = playerPower;
-                    initiativeWinner = p;
-                }
-            });
-
             // initiative winner sets the first player
             // note that control flow for the plot phase after this continues under
             // the setFirstPlayer function
@@ -1136,7 +1098,8 @@ class Game extends EventEmitter {
         });
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
-            new SetupPhase(this)
+            new SetupPhase(this),
+            new PlotPhase(this)
         ]);
         this.pipeline.continue();
     }
