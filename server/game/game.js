@@ -7,6 +7,7 @@ const Spectator = require('./spectator.js');
 const BaseCard = require('./basecard.js');
 const GamePipeline = require('./gamepipeline.js');
 const SetupPhase = require('./gamesteps/setupphase.js');
+const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
 
 class Game extends EventEmitter {
@@ -850,12 +851,8 @@ class Game extends EventEmitter {
 
         this.emit('afterDominance', dominanceWinner);
 
-        this.emit('cardsStanding');
 
-        _.each(this.getPlayers(), player => {
-            player.standCards();
-        });
-
+        this.queueStep(new StandingPhase(this));
         this.queueStep(new TaxationPhase(this));
         this.pipeline.continue();
     }
