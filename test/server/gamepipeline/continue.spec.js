@@ -97,5 +97,30 @@ describe('the GamePipeline', function() {
                 expect(pipeline.pipeline[1]).toBe(step1);
             });
         });
+
+        describe('when a step is a factory function', () => {
+            var container;
+
+            beforeEach(() => {
+                container = {
+                    factory: () => step1
+                };
+                spyOn(container, 'factory').and.callThrough();
+                // Setup a failing step so execution can happen multiple times.
+                spyOn(step1, 'continue').and.returnValue(false);
+                pipeline.initialise([container.factory]);
+            });
+
+            it('should only call the factory once', () => {
+                pipeline.continue();
+                pipeline.continue();
+                expect(container.factory.calls.count()).toBe(1);
+            });
+
+            it('should inline the factory-created step', () => {
+                pipeline.continue();
+                expect(pipeline.pipeline[0]).toBe(step1);
+            });
+        });
     });
 });
