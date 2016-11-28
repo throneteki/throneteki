@@ -1,3 +1,5 @@
+const _ = require('underscore');
+
 const UIPrompt = require('../uiprompt.js');
 
 class FirstPlayerPrompt extends UIPrompt {
@@ -12,14 +14,13 @@ class FirstPlayerPrompt extends UIPrompt {
     }
 
     activePrompt() {
-        var otherPlayer = this.game.getOtherPlayer(this.player);
+        var players = [this.player].concat(_.reject(this.game.getPlayers(), p => p === this.player));
 
         return {
             menuTitle: 'Select first player',
-            buttons: [
-                { text: this.player.name, command: 'menuButton', arg: this.player.id },
-                { text: otherPlayer.name, command: 'menuButton', arg: otherPlayer.id }
-            ]
+            buttons: _.map(players, player => {
+                return { text: player.name, command: 'menuButton', arg: player.id };
+            })
         };
     }
 
@@ -33,19 +34,13 @@ class FirstPlayerPrompt extends UIPrompt {
             return;
         }
 
-        firstPlayer.firstPlayer = true;
-        var otherPlayer = this.game.getOtherPlayer(firstPlayer);
-        if(otherPlayer) {
-            otherPlayer.firstPlayer = false;
-        }    
+        _.each(this.game.getPlayers(), player => {
+            player.firstPlayer = firstPlayer === player
+        });
 
-        this.game.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);        
-    }
+        this.game.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);
 
-    continue() {
-        this.setPrompt();
-
-        return false;
+        this.complete();
     }
 }
 
