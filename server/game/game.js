@@ -1023,10 +1023,13 @@ class Game extends EventEmitter {
         });
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
-            new SetupPhase(this),
-            new PlotPhase(this)
+            new SetupPhase(this)
         ]);
         this.pipeline.continue();
+    }
+
+    beginRound() {
+        this.queueStep(new PlotPhase(this));
     }
 
     queueStep(step) {

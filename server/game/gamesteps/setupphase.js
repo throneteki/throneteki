@@ -13,7 +13,8 @@ class SetupPhase extends Phase {
             new SimpleStep(game, () => this.startGame()),
             new SetupCardsPrompt(game),
             new CheckAttachmentsPrompt(game),
-            new SimpleStep(game, () => this.setupDone())
+            new SimpleStep(game, () => this.setupDone()),
+            new SimpleStep(game, () => this.beginRound())
         ]);
     }
 
@@ -28,6 +29,10 @@ class SetupPhase extends Phase {
         _.each(this.game.getPlayers(), p => {
             p.setupDone();
         });
+    }
+
+    beginRound() {
+        this.game.beginRound();
     }
 }
 
