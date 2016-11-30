@@ -8,6 +8,7 @@ const BaseCard = require('./basecard.js');
 const GamePipeline = require('./gamepipeline.js');
 const SetupPhase = require('./gamesteps/setupphase.js');
 const PlotPhase = require('./gamesteps/plotphase.js');
+const DrawPhase = require('./gamesteps/drawphase.js');
 const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
@@ -173,15 +174,6 @@ class Game extends EventEmitter {
 
         this.emit('onCardPlayed', player, cardId);
         this.pipeline.continue();
-    }
-
-    drawPhase(firstPlayer) {
-        _.each(this.getPlayers(), p => {
-            this.emit('beginDrawPhase', this, p);
-            p.drawPhase();
-        });
-
-        this.beginMarshal(firstPlayer);
     }
 
     beginMarshal(player) {
@@ -983,6 +975,7 @@ class Game extends EventEmitter {
 
     beginRound() {
         this.queueStep(new PlotPhase(this));
+        this.queueStep(new DrawPhase(this));
     }
 
     queueStep(step) {
