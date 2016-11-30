@@ -34,7 +34,12 @@ class GamePipeline {
         if(this.pipeline.length === 0) {
             this.pipeline.unshift(step);
         } else {
-            this.queue.push(step);
+            var currentStep = this.getCurrentStep();
+            if(currentStep.queueStep) {
+                currentStep.queueStep(step);
+            } else {
+                this.queue.push(step);
+            }
         }
     }
 
