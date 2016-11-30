@@ -1,3 +1,4 @@
+const _ = require('underscore');
 const UiPrompt = require('./uiprompt.js');
 
 /**
@@ -35,7 +36,7 @@ class MenuPrompt extends UiPrompt {
             return false;
         }
 
-        if(!this.context[method]) {
+        if(!this.context[method] || !this.hasMethodButton(method)) {
             return false;
         }
 
@@ -44,6 +45,10 @@ class MenuPrompt extends UiPrompt {
         }
 
         return true;
+    }
+
+    hasMethodButton(method) {
+        return _.any(this.properties.activePrompt.buttons, button => button.method === method);
     }
 }
 

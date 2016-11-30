@@ -19,15 +19,17 @@ describe('the MenuPrompt', function() {
             doIt: function() {
                 return true;
             },
-            cancelIt: function() {
+            forbiddenMethod: function() {
                 return true;
             }
         };
         spyOn(this.contextObj, 'doIt');
-        spyOn(this.contextObj, 'cancelIt');
+        spyOn(this.contextObj, 'forbiddenMethod');
 
         this.properties = {
-            activePrompt: {}
+            activePrompt: {
+                buttons: [{ command: 'menuButton', text: 'Do it!', method: 'doIt' }]
+            }
         };
 
         this.arg = 123;
@@ -59,38 +61,56 @@ describe('the MenuPrompt', function() {
         });
 
         describe('when the method exists', function() {
-            it('should call the specified method on the context object', function() {
-                this.prompt.onMenuCommand(this.player, this.arg, 'doIt');
-                expect(this.contextObj.doIt).toHaveBeenCalledWith(this.player, this.arg, 'doIt');
-            });
+            describe('when there is no button for the method', function() {
+                it('should not call the specified method on the context object', function() {
+                    this.prompt.onMenuCommand(this.player, this.arg, 'forbiddenMethod');
+                    expect(this.contextObj.forbiddenMethod).not.toHaveBeenCalled();
+                });
 
-            describe('when the method returns false', function() {
-                beforeEach(function() {
-                    this.contextObj.doIt.and.returnValue(false);
+                it('should return false', function() {
+                    expect(this.prompt.onMenuCommand(this.player, this.arg, 'forbiddenMethod')).toBe(false);
                 });
 
                 it('should not complete the prompt', function() {
-                    this.prompt.onMenuCommand(this.player, this.arg, 'doIt');
+                    this.prompt.onMenuCommand(this.player, this.arg, 'forbiddenMethod');
                     expect(this.prompt.isComplete()).toBe(false);
-                });
-
-                it('should return true', function() {
-                    expect(this.prompt.onMenuCommand(this.player, this.arg, 'doIt')).toBe(true);
                 });
             });
 
-            describe('when the method returns true', function() {
-                beforeEach(function() {
-                    this.contextObj.doIt.and.returnValue(true);
-                });
-
-                it('should complete the prompt', function() {
+            describe('when the method has a corresponding button', function() {
+                it('should call the specified method on the context object', function() {
                     this.prompt.onMenuCommand(this.player, this.arg, 'doIt');
-                    expect(this.prompt.isComplete()).toBe(true);
+                    expect(this.contextObj.doIt).toHaveBeenCalledWith(this.player, this.arg, 'doIt');
                 });
 
-                it('should return true', function() {
-                    expect(this.prompt.onMenuCommand(this.player, this.arg, 'doIt')).toBe(true);
+                describe('when the method returns false', function() {
+                    beforeEach(function() {
+                        this.contextObj.doIt.and.returnValue(false);
+                    });
+
+                    it('should not complete the prompt', function() {
+                        this.prompt.onMenuCommand(this.player, this.arg, 'doIt');
+                        expect(this.prompt.isComplete()).toBe(false);
+                    });
+
+                    it('should return true', function() {
+                        expect(this.prompt.onMenuCommand(this.player, this.arg, 'doIt')).toBe(true);
+                    });
+                });
+
+                describe('when the method returns true', function() {
+                    beforeEach(function() {
+                        this.contextObj.doIt.and.returnValue(true);
+                    });
+
+                    it('should complete the prompt', function() {
+                        this.prompt.onMenuCommand(this.player, this.arg, 'doIt');
+                        expect(this.prompt.isComplete()).toBe(true);
+                    });
+
+                    it('should return true', function() {
+                        expect(this.prompt.onMenuCommand(this.player, this.arg, 'doIt')).toBe(true);
+                    });
                 });
             });
         });
