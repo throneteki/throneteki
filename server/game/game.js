@@ -190,64 +190,6 @@ class Game extends EventEmitter {
         }
     }
 
-    playerRevealDone(player) {
-        var otherPlayer = this.getOtherPlayer(player);
-
-        player.revealFinished = true;
-
-        if(otherPlayer) {
-            this.resolvePlotEffects(otherPlayer);
-        } else {
-            player.menuTitle = 'Perform any after reveal actions';
-            player.buttons = [{ command: 'doneWhenRealedEffects', text: 'Done' }];
-        }
-    }
-
-    resolvePlotEffects(player) {
-        player.menuTitle = 'Select player to resolve their plot';
-        player.buttons = [];
-
-        _.each(this.getPlayers(), p => {
-            if(p.activePlot.hasRevealEffect() && !p.revealFinished) {
-                player.buttons.push({ command: 'resolvePlotEffect', text: p.name, arg: p.id });
-            }
-        });
-
-        if(player.buttons.length === 1) {
-            this.resolvePlayerPlotEffect(player.buttons[0].arg);
-
-            return;
-        }
-
-        var firstPlayer = this.getFirstPlayer();
-        var otherPlayer = this.getOtherPlayer(firstPlayer);
-
-        if(_.isEmpty(player.buttons)) {
-            firstPlayer.menuTitle = 'Perform any after reveal actions';
-            firstPlayer.buttons = [{ command: 'doneWhenRealedEffects', text: 'Done' }];
-        }
-
-        if(otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for first player to resolve plot phase';
-            otherPlayer.buttons = [];
-        }
-    }
-
-    resolvePlayerPlotEffect(playerId) {
-        var player = this.getPlayerById(playerId);
-        var otherPlayer = this.getOtherPlayer(player);
-        var firstPlayer = player.firstPlayer ? player : otherPlayer;
-
-        if(otherPlayer && otherPlayer.activePlot.hasRevealEffect()) {
-            firstPlayer.menuTitle = 'Waiting for opponent to resolve plot effect';
-            firstPlayer.buttons = [];
-        }
-
-        if(player.activePlot.onReveal(player)) {
-            this.playerRevealDone(player);
-        }
-    }
-
     handleChallenge(player, otherPlayer, cardId) {
         var card = player.findCardInPlayByUuid(cardId);
 
