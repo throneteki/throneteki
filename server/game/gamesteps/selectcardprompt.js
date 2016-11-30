@@ -7,6 +7,7 @@ const UiPrompt = require('./uiprompt.js');
  * The properties option object has the following properties:
  * numCards           - an integer specifying the number of cards the player
  *                      must select.
+ * additionalButtons  - array of additional buttons for the prompt.
  * activePromptTitle  - the title that should be used in the prompt for the
  *                      choosing player.
  * waitingPromptTitle - the title that should be used in the prompt for the
@@ -19,6 +20,8 @@ const UiPrompt = require('./uiprompt.js');
  *                      it is called when the done button is clicked. If the
  *                      callback does not return true, the prompt is not marked
  *                      as complete.
+ * onMenuCommand      - a callback that is called when one of the additional
+ *                      buttons is clicked.
  * onCancel           - a callback that is called when the player clicks the
  *                      done button without selecting any cards.
  */
@@ -34,8 +37,10 @@ class SelectCardPrompt extends UiPrompt {
     defaultProperties() {
         return {
             numCards: 1,
+            additionalButtons: [],
             cardCondition: () => true,
             onSelect: () => true,
+            onMenuCommand: () => true,
             onCancel: () => true
         };
     }
@@ -48,16 +53,14 @@ class SelectCardPrompt extends UiPrompt {
         return {
             selectCard: true,
             menuTitle: this.properties.activePromptTitle || this.defaultActivePromptTitle(),
-            buttons: [
-                { command: 'menuButton', text: 'Done' }
-            ]
+            buttons: this.properties.additionalButtons.concat([
+                { command: 'menuButton', text: 'Done', arg: 'done' }
+            ])
         };
     }
 
     defaultActivePromptTitle() {
-        return this.properties.numCard === 1
-            ? 'Select a card'
-            : ('Select ' + this.properties.numCard + ' cards');
+        return this.properties.numCard === 1 ? 'Select a card' : ('Select ' + this.properties.numCard + ' cards');
     }
 
     waitingPrompt() {
@@ -104,9 +107,16 @@ class SelectCardPrompt extends UiPrompt {
         }
     }
 
-    onMenuCommand(player) {
+    onMenuCommand(player, arg) {
         if(player !== this.choosingPlayer) {
             return false;
+        }
+
+        if(arg !== 'done') {
+            if(this.properties.onMenuCommand(player, arg)) {
+                this.complete();
+            }
+            return;
         }
 
         if(this.selectedCards.length > 0) {
