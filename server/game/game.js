@@ -138,6 +138,17 @@ class Game extends EventEmitter {
             return;
         }
 
+        var card = player.findCardByUuid(player.hand, cardId);
+
+        if(!card) {
+            return;
+        }
+
+        if(this.pipeline.handleCardClicked(player, card)) {
+            this.pipeline.continue();
+            return;
+        }
+
         var handled = false;
         if(player === this.selectPlayer && this.selectCallback) {
             handled = this.selectCallback(player, cardId);
@@ -297,6 +308,19 @@ class Game extends EventEmitter {
         var player = this.getPlayerById(sourcePlayer);
 
         if(!player) {
+            return;
+        }
+
+        var card = _.reduce(this.getPlayers(), (memo, p) => {
+            return memo || p.findCardByUuid(p.discardPile, cardId);
+        }, null);
+
+        if(!card) {
+            return;
+        }
+
+        if(this.pipeline.handleCardClicked(player, card)) {
+            this.pipeline.continue();
             return;
         }
 
