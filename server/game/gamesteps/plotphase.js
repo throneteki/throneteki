@@ -3,7 +3,6 @@ const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const SelectPlotPrompt = require('./plot/selectplotprompt.js');
 const FirstPlayerPrompt = require('./plot/firstplayerprompt.js');
-const RevealPlotOrderPrompt = require('./plot/revealplotorderprompt.js');
 
 class PlotPhase extends Phase {
     constructor(game) {
@@ -16,8 +15,7 @@ class PlotPhase extends Phase {
             () => {
                 return new FirstPlayerPrompt(game, this.initiativeWinner);
             },
-            new SimpleStep(game, () => this.startPlotRevealEffects()),
-            new RevealPlotOrderPrompt(game)
+            new SimpleStep(game, () => this.startPlotRevealEffects())
         ]);
     }
 
@@ -27,12 +25,9 @@ class PlotPhase extends Phase {
         });
     }
 
+    // Temporarily go back into the old flow.
     startPlotRevealEffects() {
-        if(!_.any(this.game.getPlayers(), player => {
-            return player.activePlot.hasRevealEffect() && !player.revealFinished;
-        })) {
-            return;
-        }
+        this.game.resolvePlotEffects(this.game.getFirstPlayer());
     }
 
     flipPlotsFaceup() {
