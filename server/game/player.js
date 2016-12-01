@@ -42,12 +42,6 @@ class Player extends Spectator {
         });
     }
 
-    findCardInPlayByCode(code) {
-        return this.cardsInPlay.find(card => {
-            return card.code === code;
-        });
-    }
-
     removeCardByUuid(list, uuid) {
         return _(list.reject(card => {
             return card.uuid === uuid;
@@ -55,9 +49,7 @@ class Player extends Spectator {
     }
 
     findCardByName(list, name) {
-        return list.find(card => {
-            return card.name === name;
-        });
+        return this.findCard(list, card => card.name === name);
     }
 
     findCardByUuidInAnyList(uuid) {
@@ -85,32 +77,7 @@ class Player extends Spectator {
     }
 
     findCardByUuid(list, uuid) {
-        var returnedCard = undefined;
-
-        if(!list) {
-            return undefined;
-        }
-
-        list.each(card => {
-            if(card.attachments) {
-                var attachment = this.findCardByUuid(card.attachments, uuid);
-
-                if(attachment) {
-                    returnedCard = attachment;
-                    return;
-                }
-            }
-
-            if(card.card && card.uuid === uuid) {
-                returnedCard = card;
-                return;
-            } else if(card.uuid === uuid) {
-                returnedCard = card;
-                return;
-            }
-        });
-
-        return returnedCard;
+        return this.findCard(list, card => card.uuid === uuid);
     }
 
     findCardInPlayByUuid(uuid) {
