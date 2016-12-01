@@ -114,25 +114,27 @@ class Player extends Spectator {
     }
 
     findCardInPlayByUuid(uuid) {
-        var returnedCard = undefined;
+        return this.findCard(this.cardsInPlay, card => card.uuid === uuid);
+    }
 
-        this.cardsInPlay.each(card => {
+    findCard(cards, predicate) {
+        if(!cards) {
+            return;
+        }
+
+        return cards.reduce((matchingCard, card) => {
+            if(matchingCard) {
+                return matchingCard;
+            }
+
+            if(predicate(card)) {
+                return card;
+            }
+
             if(card.attachments) {
-                var attachment = this.findCardByUuid(card.attachments, uuid);
-                if(attachment) {
-                    returnedCard = attachment;
-
-                    return;
-                }
+                return card.attachments.find(predicate);
             }
-
-            if(card.uuid === uuid) {
-                returnedCard = card;
-                return;
-            }
-        });
-
-        return returnedCard;
+        }, undefined);
     }
 
     getDuplicateInPlay(card) {
@@ -140,7 +142,7 @@ class Player extends Spectator {
             return undefined;
         }
 
-        return this.cardsInPlay.find(playCard => {
+        return this.findCard(this.cardsInPlay, playCard => {
             return playCard.code === card.code || playCard.name === card.name;
         });
     }
