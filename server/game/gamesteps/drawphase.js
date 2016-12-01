@@ -6,9 +6,7 @@ class DrawPhase extends Phase {
     constructor(game) {
         super(game);
         this.initialise([
-            new SimpleStep(game, () => this.draw()),
-            // Temporarily start marshal phase.
-            new SimpleStep(game, () => this.game.beginMarshal(this.game.getFirstPlayer()))
+            new SimpleStep(game, () => this.draw())
         ]);
     }
 

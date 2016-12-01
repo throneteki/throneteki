@@ -9,6 +9,7 @@ const GamePipeline = require('./gamepipeline.js');
 const SetupPhase = require('./gamesteps/setupphase.js');
 const PlotPhase = require('./gamesteps/plotphase.js');
 const DrawPhase = require('./gamesteps/drawphase.js');
+const MarshalingPhase = require('./gamesteps/marshalingphase.js');
 const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
@@ -176,19 +177,6 @@ class Game extends EventEmitter {
         this.pipeline.continue();
     }
 
-    beginMarshal(player) {
-        this.emit('onBeginMarshal', player);
-
-        player.beginMarshal();
-
-        var otherPlayer = this.getOtherPlayer(player);
-
-        if(otherPlayer) {
-            otherPlayer.menuTitle = 'Waiting for opponent to marshal their cards';
-            otherPlayer.buttons = [];
-        }
-    }
-
     handleChallenge(player, otherPlayer, cardId) {
         var card = player.findCardInPlayByUuid(cardId);
 
@@ -354,43 +342,22 @@ class Game extends EventEmitter {
         }
     }
 
-    marshalDone(playerId) {
-        var player = this.getPlayerById(playerId);
+    beginChallengePhase() {
+        var firstPlayer = this.getFirstPlayer();
 
-        if(!player) {
-            return;
-        }
+        firstPlayer.activePlot.onBeginChallengePhase();
 
-        player.marshalDone();
+        firstPlayer.phase = 'challenge';
 
-        this.addMessage('{0} has finished marshalling', player);
+        firstPlayer.beginChallenge();
 
-        var unMarshalledPlayer = _.find(this.getPlayers(), p => {
-            return !p.marshalled;
-        });
+        var otherPlayer = this.getOtherPlayer(firstPlayer);
 
-        if(unMarshalledPlayer) {
-            player.menuTitle = 'Waiting for opponent to finish marshalling';
-            player.buttons = [];
-
-            this.beginMarshal(unMarshalledPlayer);
-        } else {
-            var firstPlayer = this.getFirstPlayer();
-
-            firstPlayer.activePlot.onBeginChallengePhase();
-
-            firstPlayer.phase = 'challenge';
-
-            firstPlayer.beginChallenge();
-
-            var otherPlayer = this.getOtherPlayer(firstPlayer);
-
-            if(otherPlayer) {
-                otherPlayer.activePlot.onBeginChallengePhase();
-                otherPlayer.phase = 'challenge';
-                otherPlayer.menuTitle = 'Waiting for opponent to initiate challenge';
-                otherPlayer.buttons = [];
-            }
+        if(otherPlayer) {
+            otherPlayer.activePlot.onBeginChallengePhase();
+            otherPlayer.phase = 'challenge';
+            otherPlayer.menuTitle = 'Waiting for opponent to initiate challenge';
+            otherPlayer.buttons = [];
         }
     }
 
@@ -976,6 +943,7 @@ class Game extends EventEmitter {
     beginRound() {
         this.queueStep(new PlotPhase(this));
         this.queueStep(new DrawPhase(this));
+        this.queueStep(new MarshalingPhase(this));
     }
 
     queueStep(step) {
