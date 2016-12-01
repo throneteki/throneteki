@@ -869,10 +869,9 @@ class Player extends Spectator {
 
     removeAttachment(attachment) {
         attachment.parent.attachments = this.removeCardByUuid(attachment.parent.attachments, attachment.uuid);
-
-        attachment.leavesPlay();        
+        attachment.parent = undefined;
+        attachment.leavesPlay();
         if(attachment.isTerminal()) {
-            attachment.parent = undefined;
             attachment.owner.discardPile.push(attachment);
         } else {
             attachment.owner.hand.push(attachment);
