@@ -365,7 +365,7 @@ class Player extends Spectator {
             this.game.addMessage('{0} ambushes with {1} costing {2}', this, card, cost);
         }
 
-        if(card.getType() === 'attachment' && this.phase !== 'setup') {
+        if(card.getType() === 'attachment' && this.phase !== 'setup' && !dupeCard) {
             this.promptForAttachment(card);
             return true;
         }
