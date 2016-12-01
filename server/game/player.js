@@ -367,6 +367,8 @@ class Player extends Spectator {
 
         if(card.getType() === 'attachment' && this.phase !== 'setup' && !dupeCard) {
             this.promptForAttachment(card);
+            // Hacky workaround for drag and drop.
+            this.dropPending = sourceList === this.discardPile;
             return true;
         }
 
@@ -642,8 +644,7 @@ class Player extends Spectator {
 
                 this.game.playCard(this.id, cardId, true, sourceList);
 
-                if(card.getType() === 'attachment') {
-                    this.dropPending = true;
+                if(this.dropPending) {
                     return true;
                 }
 
