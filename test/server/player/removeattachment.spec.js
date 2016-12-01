@@ -101,5 +101,41 @@ describe('Player', function() {
                 });
             });
         });
+
+        describe('when the removal cannot be saved', function() {
+            beforeEach(function() {
+                this.dupe = new DrawCard(this.attachmentOwner, {});
+                this.dupe2 = new DrawCard(this.attachmentOwner, {});
+                this.attachment.addDuplicate(this.dupe);
+                this.attachment.addDuplicate(this.dupe2);
+                this.player.removeAttachment(this.attachment, false);
+            });
+
+            it('should remove all dupes', function() {
+                expect(this.attachment.dupes.size()).toBe(0);
+            });
+
+            it('should place all dupes in the owners discard pile', function() {
+                expect(this.attachmentOwner.discardPile).toContain(this.dupe);
+                expect(this.attachmentOwner.discardPile).toContain(this.dupe2);
+            });
+
+            it('should leave play', function() {
+                expect(this.attachment.leavesPlay).toHaveBeenCalled();
+            });
+
+            it('should remove the attachment from its parent', function() {
+                expect(this.card.attachments).not.toContain(this.attachment);
+            });
+
+            it('should unset its parent property', function() {
+                expect(this.attachment.parent).toBeUndefined();
+            });
+
+            it('should return the attachment to its owners hand', function() {
+                expect(this.attachmentOwner.hand).toContain(this.attachment);
+                expect(this.attachmentOwner.discardPile).not.toContain(this.attachment);
+            });
+        });
     });
 });

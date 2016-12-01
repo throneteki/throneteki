@@ -852,7 +852,7 @@ class Player extends Spectator {
         card.dupes = _([]);
 
         card.attachments.each(attachment => {
-            this.removeAttachment(attachment);
+            this.removeAttachment(attachment, false);
         });
 
         this.cardsInPlay = this.removeCardByUuid(this.cardsInPlay, cardId);
@@ -867,11 +867,13 @@ class Player extends Spectator {
         this.game.emit('onCardLeftPlay', this, card);
     }
 
-    removeAttachment(attachment) {
-        if(attachment.dupes.size() > 0) {
+    removeAttachment(attachment, allowSave = true) {
+        while(attachment.dupes.size() > 0) {
             var dupe = attachment.removeDuplicate();
             dupe.owner.discardPile.push(dupe);
-            return;
+            if(allowSave) {
+                return;
+            }
         }
 
         attachment.parent.attachments = this.removeCardByUuid(attachment.parent.attachments, attachment.uuid);
