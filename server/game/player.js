@@ -868,6 +868,12 @@ class Player extends Spectator {
     }
 
     removeAttachment(attachment) {
+        if(attachment.dupes.size() > 0) {
+            var dupe = attachment.removeDuplicate();
+            dupe.owner.discardPile.push(dupe);
+            return;
+        }
+
         attachment.parent.attachments = this.removeCardByUuid(attachment.parent.attachments, attachment.uuid);
         attachment.parent = undefined;
         attachment.leavesPlay();

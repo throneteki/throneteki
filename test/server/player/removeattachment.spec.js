@@ -22,6 +22,36 @@ describe('Player', function() {
             spyOn(this.attachment, 'isTerminal');
         });
 
+        describe('when the attachment has a duplicate', function() {
+            beforeEach(function() {
+                this.dupe = new DrawCard(this.attachmentOwner, {});
+                this.attachment.addDuplicate(this.dupe);
+                this.player.removeAttachment(this.attachment);
+            });
+
+            it('should remove the dupe', function() {
+                expect(this.attachment.dupes).not.toContain(this.dupe);
+            });
+
+            it('should place the dupe in the owners discard pile', function() {
+                expect(this.attachmentOwner.discardPile).toContain(this.dupe);
+            });
+
+            it('should not remove the attachment', function() {
+                expect(this.card.attachments).toContain(this.attachment);
+            });
+
+            it('should not have the attachment leave play', function() {
+                expect(this.attachment.leavesPlay).not.toHaveBeenCalled();
+            });
+
+            it('should not move the attachment', function() {
+                expect(this.attachment.parent).toBe(this.card);
+                expect(this.attachmentOwner.hand).not.toContain(this.attachment);
+                expect(this.attachmentOwner.discardPile).not.toContain(this.attachment);
+            });
+        });
+
         describe('when the attachment has no duplicates', function() {
             describe('when the attachment is terminal', function() {
                 beforeEach(function() {
