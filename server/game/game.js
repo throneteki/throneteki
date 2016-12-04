@@ -13,7 +13,8 @@ const MarshalingPhase = require('./gamesteps/marshalingphase.js');
 const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
-const ChooseStealthTargets = require('./gamesteps/challenge/choosestealthtargets.js');
+const Challenge = require('./challenge.js');
+const ChallengeFlow = require('./gamesteps/challenge/challengeflow.js');
 const FulfillMilitaryClaim = require('./gamesteps/challenge/fulfillmilitaryclaim.js');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
@@ -353,16 +354,24 @@ class Game extends EventEmitter {
         var firstPlayer = this.getFirstPlayer();
 
         firstPlayer.activePlot.onBeginChallengePhase();
-
         firstPlayer.phase = 'challenge';
-
-        firstPlayer.beginChallenge();
 
         var otherPlayer = this.getOtherPlayer(firstPlayer);
 
         if(otherPlayer) {
-            otherPlayer.activePlot.onBeginChallengePhase();
             otherPlayer.phase = 'challenge';
+            otherPlayer.activePlot.onBeginChallengePhase();
+        }
+
+        this.promptForChallenge(firstPlayer);
+    }
+
+    promptForChallenge(attackingPlayer) {
+        attackingPlayer.beginChallenge();
+
+        var otherPlayer = this.getOtherPlayer(attackingPlayer);
+
+        if(otherPlayer) {
             otherPlayer.menuTitle = 'Waiting for opponent to initiate challenge';
             otherPlayer.buttons = [];
         }
@@ -393,7 +402,9 @@ class Game extends EventEmitter {
             return;
         }
 
-        player.startChallenge(challengeType);
+        var challenge = new Challenge(player, otherPlayer, challengeType);
+        this.queueStep(new ChallengeFlow(this, challenge));
+        this.pipeline.continue();
     }
 
     completeAttacker(player) {
@@ -401,48 +412,12 @@ class Game extends EventEmitter {
 
         var otherPlayer = this.getOtherPlayer(player);
 
-        player.pickingStealth = false;
-
         if(otherPlayer) {
             player.menuTitle = 'Waiting for opponent to defend';
             player.buttons = [];
             player.selectCard = false;
 
             otherPlayer.beginDefend(player.currentChallenge);
-        }
-
-        return false;
-    }
-
-    doneChallenge(playerId) {
-        var player = this.getPlayerById(playerId);
-        if(!player) {
-            return;
-        }
-
-        if(!player.areCardsSelected()) {
-            player.beginChallenge();
-            return;
-        }
-
-        var otherPlayer = this.getOtherPlayer(player);
-
-        this.raiseEvent('onChallenge', player, player.currentChallenge);
-
-        player.doneChallenge(true);
-
-        this.raiseEvent('onAttackersDeclared', player, player.currentChallenge);
-
-        if(otherPlayer) {
-            otherPlayer.currentChallenge = player.currentChallenge;
-        }
-
-        var attackersWithStealth = player.cardsInChallenge.filter(card => card.needsStealthTarget());
-        if(attackersWithStealth.length > 0) {
-            this.queueStep(new ChooseStealthTargets(this, player, otherPlayer, attackersWithStealth));
-            this.pipeline.continue();
-        } else {
-            this.completeAttacker(player);
         }
     }
 
@@ -494,10 +469,7 @@ class Game extends EventEmitter {
             } else {
                 this.raiseEvent('onChallengeFinished', winner.currentChallenge, winner, loser, challenger);
 
-                challenger.beginChallenge();
-
-                player.menuTitle = 'Waiting for opponent to initiate challenge';
-                player.buttons = [];
+                this.promptForChallenge(challenger);
             }
         }
     }
@@ -579,7 +551,7 @@ class Game extends EventEmitter {
 
         this.raiseEvent('afterClaim', this, winner.currentChallenge, winner, loser);
         loser.doneClaim();
-        winner.beginChallenge();
+        this.promptForChallenge(winner);
     }
 
     doneChallenges(playerId) {
@@ -595,10 +567,7 @@ class Game extends EventEmitter {
         });
 
         if(other) {
-            other.beginChallenge();
-
-            challenger.menuTitle = 'Waiting for opponent to initiate challenge';
-            challenger.buttons = [];
+            this.promptForChallenge(other);
         } else {
             this.dominance();
         }
@@ -931,7 +900,7 @@ class Game extends EventEmitter {
         var event = new Event();
 
         this.emit(eventName, event, ...params);
-        
+
         return event;
     }
 
