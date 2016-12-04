@@ -620,20 +620,6 @@ io.on('connection', function(socket) {
         sendGameState(game);
     });
 
-    socket.on('donestealth', function() {
-        var game = findGameForPlayer(socket.id);
-
-        if(!game) {
-            return;
-        }
-
-        runAndCatchErrors(game, () => {
-            game.doneStealth(socket.id);
-        });
-
-        sendGameState(game);
-    });
-
     socket.on('donesetpower', function() {
         var game = findGameForPlayer(socket.id);
 

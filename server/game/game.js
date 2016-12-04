@@ -13,6 +13,7 @@ const MarshalingPhase = require('./gamesteps/marshalingphase.js');
 const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
+const ChooseStealthTargets = require('./gamesteps/challenge/choosestealthtargets.js');
 const FulfillMilitaryClaim = require('./gamesteps/challenge/fulfillmilitaryclaim.js');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
@@ -200,29 +201,7 @@ class Game extends EventEmitter {
     handleChallenge(player, otherPlayer, cardId) {
         var card = player.findCardInPlayByUuid(cardId);
 
-        if(!card) {
-            if(!player.pickingStealth) {
-                return false;
-            }
-
-            if(otherPlayer) {
-                var otherCardInPlay = otherPlayer.findCardInPlayByUuid(cardId);
-
-                if(!otherCardInPlay) {
-                    return false;
-                }
-
-                if(!player.stealthCard.useStealthToBypass(otherCardInPlay)) {
-                    return false;
-                }
-
-                this.addMessage('{0} has chosen {1} as the stealth target for {2}', player, otherCardInPlay, player.stealthCard);
-
-                if(this.doStealth(player)) {
-                    return true;
-                }
-            }
-        } else {
+        if(card) {
             if(!player.selectingChallengers || card.kneeled) {
                 return false;
             }
@@ -417,23 +396,7 @@ class Game extends EventEmitter {
         player.startChallenge(challengeType);
     }
 
-    doStealth(player) {
-        var stealthCard = player.cardsInChallenge.find(card => {
-            return card.needsStealthTarget();
-        });
-
-        if(stealthCard) {
-            player.menuTitle = 'Select stealth target for ' + stealthCard.name;
-            player.buttons = [
-                { command: 'donestealth', text: 'Done' }
-            ];
-            player.stealthCard = stealthCard;
-            player.selectCard = true;
-            player.pickingStealth = true;
-
-            return true;
-        }
-
+    completeAttacker(player) {
         this.addMessage('{0} has initiated a {1} challenge with strength {2}', player, player.currentChallenge, player.challengeStrength);
 
         var otherPlayer = this.getOtherPlayer(player);
@@ -474,7 +437,13 @@ class Game extends EventEmitter {
             otherPlayer.currentChallenge = player.currentChallenge;
         }
 
-        this.doStealth(player);
+        var attackersWithStealth = player.cardsInChallenge.filter(card => card.needsStealthTarget());
+        if(attackersWithStealth.length > 0) {
+            this.queueStep(new ChooseStealthTargets(this, player, otherPlayer, attackersWithStealth));
+            this.pipeline.continue();
+        } else {
+            this.completeAttacker(player);
+        }
     }
 
     doneDefend(playerId) {
@@ -846,26 +815,6 @@ class Game extends EventEmitter {
         }
 
         player.selectDeck(deck);
-    }
-
-    doneStealth(playerId) {
-        var player = this.getPlayerById(playerId);
-
-        if(!player) {
-            return;
-        }
-
-        var otherPlayer = this.getOtherPlayer(player);
-
-        if(otherPlayer) {
-            player.menuTitle = 'Waiting for opponent to defend';
-            player.buttons = [];
-            player.selectCard = false;
-
-            otherPlayer.beginDefend(player.currentChallenge);
-        }
-
-        return false;
     }
 
     shuffleDeck(playerId) {
