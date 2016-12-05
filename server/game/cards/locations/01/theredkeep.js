@@ -8,12 +8,16 @@ class TheRedKeep extends DrawCard {
     }
 
     onAttackersDeclared(event, attackingPlayer, challengeType) {
-        if(!this.inPlay || this.owner !== attackingPlayer) {
+        if(!this.inPlay) {
             return;
         }
 
-        if(challengeType === 'power' && attackingPlayer.cardsInChallenge.size() > 0) {
-            event.strengthModifier += 2;
+        if(challengeType === 'power' && this.owner.cardsInChallenge.size() > 0) {
+            if(!event.strengthModifier) {
+                event.strengthModifier = 2;
+            } else {
+                event.strengthModifier += 2;
+            }
 
             this.game.addMessage('{0} uses {1} to add 2 to the strength of this {2} challenge', attackingPlayer, this, challengeType);
         }
