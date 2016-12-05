@@ -126,12 +126,7 @@ class ChallengeFlow extends BaseStep {
         }
 
         this.game.raiseEvent('beforeClaim', this.game, this.challenge.challengeType, this.challenge.winner, this.challenge.loser);
-        var claim = this.challenge.winner.activePlot.getClaim();
-        claim = this.challenge.winner.modifyClaim(this.challenge.winner, this.challenge.challengeType, claim);
-
-        if(this.challenge.loser) {
-            claim = this.challenge.loser.modifyClaim(this.challenge.winner, this.challenge.challengeType, claim);
-        }
+        var claim = this.challenge.getClaim();
 
         if(claim <= 0) {
             this.game.addMessage('The claim value for {0} is 0, no claim occurs', this.challenge.challengeType);

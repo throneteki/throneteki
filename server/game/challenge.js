@@ -80,6 +80,17 @@ class Challenge {
     isUnopposed() {
         return this.defenderStrength <= 0;
     }
+
+    getClaim() {
+        var claim = this.winner.activePlot.getClaim();
+        claim = this.winner.modifyClaim(this.winner, this.challengeType, claim);
+
+        if(this.loser) {
+            claim = this.loser.modifyClaim(this.winner, this.challengeType, claim);
+        }
+
+        return claim;
+    }
 }
 
 module.exports = Challenge;
