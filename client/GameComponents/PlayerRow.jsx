@@ -3,6 +3,7 @@ import _ from 'underscore';
 import $ from 'jquery';
 
 import Card from './Card.jsx';
+import CardCollection from './CardCollection.jsx';
 
 class PlayerRow extends React.Component {
     constructor() {
@@ -269,22 +270,8 @@ class PlayerRow extends React.Component {
                     </div>
                     {hand}
                 </div>
-                <div className='discard panel' onDragLeave={this.onDragLeave} onDragOver={this.onDragOver} onDrop={(event) => this.onDragDrop(event, 'discard pile')}
-                    onClick={this.onDiscardClick}>
-                    <div className='panel-header'>
-                        {'Discard (' + (this.props.discardPile ? this.props.discardPile.length : 0) + ')'}
-                    </div>
-                    {topDiscard ?
-                        <div className='card' onMouseOver={this.props.onMouseOver.bind(this, topDiscard)}
-                            onMouseOut={this.props.onMouseOut}
-                            onDragStart={ev => this.onCardDragStart(ev, topDiscard, 'discard pile')}>
-                            <div>
-                                <img className='card' src={'/img/cards/' + topDiscard.code + '.png'} />
-                            </div>
-                        </div> :
-                        null}
-                    {discardPilePopup}
-                </div>
+                <CardCollection className='discard' title='Discard' cards={this.props.discardPile} />
+
                 <div className='draw panel' onDragLeave={this.onDragLeave} onDragOver={this.onDragOver} onDrop={(event) => this.onDragDrop(event, 'draw deck')}
                     onClick={this.props.isMe ? this.onDrawClick : null}>
                     <div className='panel-header'>
