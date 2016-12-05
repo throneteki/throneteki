@@ -704,7 +704,6 @@ class Player extends Spectator {
             card.resetForChallenge();
         });
         this.selectCard = false;
-        this.selectingChallengers = false;
     }
 
     startChallenge(challengeType) {
@@ -737,19 +736,7 @@ class Player extends Spectator {
         return card;
     }
 
-    addToChallenge(card) {
-        card.selected = !card.selected;
-
-        if(card.selected) {
-            this.cardsInChallenge.push(card);
-        } else {
-            this.cardsInChallenge = this.removeCardByUuid(this.cardsInChallenge, card.uuid);
-        }
-    }
-
     doneChallenge(myChallenge) {
-        this.selectingChallengers = false;
-
         var strength = this.cardsInChallenge.reduce((memo, card) => {
             card.kneeled = true;
 
@@ -767,20 +754,6 @@ class Player extends Spectator {
         this.cardsInPlay.each(card => {
             card.resetForChallenge();
         });
-    }
-
-    beginDefend(challenge) {
-        this.menuTitle = 'Select defenders';
-        this.buttons = [
-            { text: 'Done', command: 'donedefend' }
-        ];
-
-        this.selectCard = true;
-        this.currentChallenge = challenge;
-        this.phase = 'challenge';
-        this.cardsInChallenge = _([]);
-
-        this.selectingChallengers = true;
     }
 
     killCharacter(card) {

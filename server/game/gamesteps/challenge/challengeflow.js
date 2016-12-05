@@ -14,10 +14,9 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.promptForAttackers()),
             () => new ChooseStealthTargets(this.game, this.challenge, this.stealthAttackers),
             // TODO: Action window
-            // TODO: Temporarily re-enter old game flow
-            new SimpleStep(this.game, () => this.game.completeAttacker(this.challenge.attackingPlayer))
-            // Declare defenders
-            // Action window
+            new SimpleStep(this.game, () => this.announceAttackerStrength()),
+            new SimpleStep(this.game, () => this.promptForDefenders()),
+            // TODO: Action window
             // Determine winner
             // Unopposed bonus
             // Claim
@@ -68,6 +67,38 @@ class ChallengeFlow extends BaseStep {
         // TODO: Temporarily re-enter old game flow.
         this.game.promptForChallenge(this.challenge.attackingPlayer);
         return true;
+    }
+
+    announceAttackerStrength() {
+        this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackingPlayer.challengeStrength);
+    }
+
+    promptForDefenders() {
+        this.game.promptForSelect(this.challenge.defendingPlayer, {
+            numCards: this.challenge.defendingPlayer.challengerLimit,
+            activePromptTitle: 'Select defenders',
+            waitingPromptTitle: 'Waiting for opponent to defend',
+            cardCondition: card => this.allowAsDefender(card),
+            onSelect: (player, defenders) => this.chooseDefenders(defenders),
+            onCancel: () => this.chooseDefenders([])
+        });
+    }
+
+    allowAsDefender(card) {
+        return this.challenge.defendingPlayer.canAddToChallenge(card.uuid);
+    }
+
+    chooseDefenders(defenders) {
+      this.challenge.defendingPlayer.cardsInChallenge = _(defenders);
+      this.challenge.defendingPlayer.doneChallenge(false);
+
+      if(this.challenge.defendingPlayer.challengeStrength > 0) {
+          this.game.addMessage('{0} has defended with strength {1}', this.challenge.defendingPlayer, this.challenge.defendingPlayer.challengeStrength);
+      }
+
+      // TODO: Temporarily re-enter old game flow
+      this.game.determineWinner(this.challenge.attackingPlayer, this.challenge.defendingPlayer);
+      return true;
     }
 
     onCardClicked(player, card) {

@@ -199,30 +199,6 @@ class Game extends EventEmitter {
         this.pipeline.continue();
     }
 
-    handleChallenge(player, otherPlayer, cardId) {
-        var card = player.findCardInPlayByUuid(cardId);
-
-        if(card) {
-            if(!player.selectingChallengers || card.kneeled) {
-                return false;
-            }
-
-            var challengeCard = player.canAddToChallenge(cardId);
-            if(!challengeCard) {
-                return false;
-            }
-
-            this.canAddToChallenge = true;
-            this.raiseEvent('beforeChallengerSelected', this, player, challengeCard);
-
-            if(this.canAddToChallenge) {
-                player.addToChallenge(challengeCard);
-            }
-        }
-
-        return true;
-    }
-
     processCardClicked(player, cardId) {
         var otherPlayer = this.getOtherPlayer(player);
         var card = this.findAnyCardInPlayByUuid(cardId);
@@ -233,10 +209,6 @@ class Game extends EventEmitter {
 
         if(this.pipeline.handleCardClicked(player, card)) {
             return true;
-        }
-
-        if(player.phase === 'challenge' && player.currentChallenge) {
-            return this.handleChallenge(player, otherPlayer, cardId);
         }
 
         if(card && card.onClick(player)) {
@@ -407,34 +379,7 @@ class Game extends EventEmitter {
         this.pipeline.continue();
     }
 
-    completeAttacker(player) {
-        this.addMessage('{0} has initiated a {1} challenge with strength {2}', player, player.currentChallenge, player.challengeStrength);
-
-        var otherPlayer = this.getOtherPlayer(player);
-
-        if(otherPlayer) {
-            player.menuTitle = 'Waiting for opponent to defend';
-            player.buttons = [];
-            player.selectCard = false;
-
-            otherPlayer.beginDefend(player.currentChallenge);
-        }
-    }
-
-    doneDefend(playerId) {
-        var player = this.getPlayerById(playerId);
-        if(!player) {
-            return;
-        }
-
-        player.doneChallenge(false);
-
-        this.addMessage('{0} has defended with strength {1}', player, player.challengeStrength);
-
-        var challenger = _.find(this.getPlayers(), p => {
-            return p.id !== player.id;
-        });
-
+    determineWinner(challenger, player) {
         var winner = undefined;
         var loser = undefined;
 
