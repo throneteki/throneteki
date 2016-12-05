@@ -301,6 +301,11 @@ class Player extends Spectator {
             return false;
         }
 
+        canPlay = card.canPlay(this, card);
+        if(!canPlay) {
+            return false;
+        }     
+
         if(this.phase !== 'setup' && this.phase !== 'marshal' && card.getType() !== 'event') {
             if(this.phase !== 'challenge' || !card.isAmbush()) {
                 return false;
@@ -355,6 +360,10 @@ class Player extends Spectator {
         this.gold -= cost;
 
         if(card.getType() === 'event') {
+            if(!this.canPlayCard(card)) {
+                return false;
+            }
+
             this.game.addMessage('{0} plays {1} costing {2}', this, card, cost);
 
             card.play(this);

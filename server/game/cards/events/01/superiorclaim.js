@@ -1,8 +1,8 @@
 const DrawCard = require('../../../drawcard.js');
 
 class SuperiorClaim extends DrawCard {
-    canPlay(player, cardId) {
-        if(player !== this.owner || this.uuid !== cardId) {
+    canPlay(player, card) {
+        if(player !== this.owner || this !== card) {
             return false;
         }
 
@@ -19,7 +19,7 @@ class SuperiorClaim extends DrawCard {
         }
 
         this.game.addPower(player, 2);
-        this.game.addMessage('{0} uses {1} to gain to power for their faction', player, this);
+        this.game.addMessage('{0} uses {1} to gain 2 power for their faction', player, this);
     }
 }
 
