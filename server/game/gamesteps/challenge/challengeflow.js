@@ -42,7 +42,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsAttacker(card) {
-        var event = this.game.raiseEvent('onAttackerSelected', this, card);
+        var event = this.game.raiseEvent('onAttackerSelected', this.challenge.attackingPlayer, card);
 
         if(event.cancel) {
             return false;
