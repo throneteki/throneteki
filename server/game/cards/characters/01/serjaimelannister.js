@@ -29,7 +29,7 @@ class SerJaimeLannister extends DrawCard {
 
     onChallengeFinished(event, challengeType) {
         if(challengeType === 'military') {
-            this.removeKeyword('renonwn');
+            this.removeKeyword('renown');
         }
     }
 }
