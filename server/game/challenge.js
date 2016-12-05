@@ -59,6 +59,20 @@ class Challenge {
         return _.filter(this.attackers, card => card.needsStealthTarget());
     }
 
+    determineWinner() {
+        if(this.attackerStrength >= this.defenderStrength) {
+            this.loser = this.defendingPlayer;
+            this.winner = this.attackingPlayer;
+        } else {
+            this.loser = this.attackingPlayer;
+            this.winner = this.defendingPlayer;
+        }
+
+        this.winner.winChallenge(this.challengeType);
+        this.loser.loseChallenge(this.challengeType);
+        this.strengthDifference = this.winner.challengeStrength - this.loser.challengeStrength;
+    }
+
     isUnopposed() {
         return this.defenderStrength <= 0;
     }

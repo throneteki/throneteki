@@ -103,70 +103,58 @@ class ChallengeFlow extends BaseStep {
     }
 
     determineWinner() {
-        if(this.challenge.attackingPlayer.challengeStrength >= this.challenge.defendingPlayer.challengeStrength) {
-            this.loser = this.challenge.defendingPlayer;
-            this.winner = this.challenge.attackingPlayer;
-        } else {
-            this.loser = this.challenge.attackingPlayer;
-            this.winner = this.challenge.defendingPlayer;
-        }
-
-
-        this.winner.winChallenge(this.challenge.challengeType);
-        this.loser.loseChallenge(this.challenge.challengeType);
+        this.challenge.determineWinner();
 
         this.game.addMessage('{0} won a {1} challenge {2} vs {3}',
-            this.winner, this.challenge.challengeType, this.winner.challengeStrength, this.loser.challengeStrength);
+            this.challenge.winner, this.challenge.challengeType, this.challenge.winner.challengeStrength, this.challenge.loser.challengeStrength);
 
-        this.challenge.strengthDifference = this.winner.challengeStrength - this.loser.challengeStrength;
-
-        this.game.raiseEvent('afterChallenge', this.challenge.challengeType, this.winner, this.loser, this.challenge.attackingPlayer);
+        this.game.raiseEvent('afterChallenge', this.challenge.challengeType, this.challenge.winner, this.challenge.loser, this.challenge.attackingPlayer);
     }
 
     unopposedPower() {
-        if(this.challenge.isUnopposed() && this.winner === this.challenge.attackingPlayer) {
-            this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.winner);
-            this.game.addPower(this.winner, 1);
+        if(this.challenge.isUnopposed() && this.challenge.winner === this.challenge.attackingPlayer) {
+            this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.challenge.winner);
+            this.game.addPower(this.challenge.winner, 1);
 
-            this.game.raiseEvent('onUnopposedWin', this.winner);
+            this.game.raiseEvent('onUnopposedWin', this.challenge.winner);
         }
     }
 
     applyClaim() {
-        if(this.winner !== this.challenge.attackingPlayer) {
+        if(this.challenge.winner !== this.challenge.attackingPlayer) {
             return;
         }
 
-        this.game.raiseEvent('beforeClaim', this.game, this.challenge.challengeType, this.winner, this.loser);
-        var claim = this.winner.activePlot.getClaim();
-        claim = this.winner.modifyClaim(this.winner, this.challenge.challengeType, claim);
+        this.game.raiseEvent('beforeClaim', this.game, this.challenge.challengeType, this.challenge.winner, this.challenge.loser);
+        var claim = this.challenge.winner.activePlot.getClaim();
+        claim = this.challenge.winner.modifyClaim(this.challenge.winner, this.challenge.challengeType, claim);
 
-        if(this.loser) {
-            claim = this.loser.modifyClaim(this.winner, this.challenge.challengeType, claim);
+        if(this.challenge.loser) {
+            claim = this.challenge.loser.modifyClaim(this.challenge.winner, this.challenge.challengeType, claim);
         }
 
         if(claim <= 0) {
             this.game.addMessage('The claim value for {0} is 0, no claim occurs', this.challenge.challengeType);
         } else {
             if(this.challenge.challengeType === 'military') {
-                this.game.queueStep(new FulfillMilitaryClaim(this.game, this.loser, claim));
+                this.game.queueStep(new FulfillMilitaryClaim(this.game, this.challenge.loser, claim));
                 return;
             } else if(this.challenge.challengeType === 'intrigue') {
-                this.loser.discardAtRandom(claim);
+                this.challenge.loser.discardAtRandom(claim);
             } else if(this.challenge.challengeType === 'power') {
-                this.game.transferPower(this.winner, this.loser, claim);
+                this.game.transferPower(this.challenge.winner, this.challenge.loser, claim);
             }
         }
 
-        this.game.raiseEvent('afterClaim', this.game, this.challenge.challengeType, this.winner, this.loser);
+        this.game.raiseEvent('afterClaim', this.game, this.challenge.challengeType, this.challenge.winner, this.challenge.loser);
     }
 
     applyKeywords() {
-        this.winner.cardsInChallenge.each(card => {
+        this.challenge.winner.cardsInChallenge.each(card => {
             if(card.hasKeyword('Insight')) {
-                this.winner.drawCardsToHand(1);
+                this.challenge.winner.drawCardsToHand(1);
 
-                this.game.addMessage('{0} draws a card from Insight on {1}', this.winner, card);
+                this.game.addMessage('{0} draws a card from Insight on {1}', this.challenge.winner, card);
             }
 
             if(card.hasKeyword('Intimidate')) {
@@ -174,25 +162,25 @@ class ChallengeFlow extends BaseStep {
             }
 
             if(card.hasKeyword('Pillage')) {
-                this.loser.discardFromDraw(1);
+                this.challenge.loser.discardFromDraw(1);
 
-                this.game.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', this.loser, card);
+                this.game.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', this.challenge.loser, card);
             }
 
             if(card.isRenown()) {
                 card.power++;
 
-                this.game.raiseEvent('onRenown', this.winner, card);
+                this.game.raiseEvent('onRenown', this.challenge.winner, card);
 
-                this.game.addMessage('{0} gains 1 power on {1} from Renown', this.winner, card);
+                this.game.addMessage('{0} gains 1 power on {1} from Renown', this.challenge.winner, card);
             }
 
-            this.game.checkWinCondition(this.winner);
+            this.game.checkWinCondition(this.challenge.winner);
         });
     }
 
     completeChallenge() {
-        this.game.raiseEvent('onChallengeFinished', this.challenge.challengeType, this.winner, this.loser, this.challenge.attackingPlayer);
+        this.game.raiseEvent('onChallengeFinished', this.challenge.challengeType, this.challenge.winner, this.challenge.loser, this.challenge.attackingPlayer);
     }
 
     onCardClicked(player, card) {
