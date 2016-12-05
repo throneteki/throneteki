@@ -73,6 +73,10 @@ class Challenge {
         this.strengthDifference = this.winner.challengeStrength - this.loser.challengeStrength;
     }
 
+    isAttackerTheWinner() {
+        return this.winner === this.attackingPlayer;
+    }
+
     isUnopposed() {
         return this.defenderStrength <= 0;
     }

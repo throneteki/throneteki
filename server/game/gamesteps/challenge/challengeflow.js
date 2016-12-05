@@ -112,7 +112,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     unopposedPower() {
-        if(this.challenge.isUnopposed() && this.challenge.winner === this.challenge.attackingPlayer) {
+        if(this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner()) {
             this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.challenge.winner);
             this.game.addPower(this.challenge.winner, 1);
 
@@ -121,7 +121,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     applyClaim() {
-        if(this.challenge.winner !== this.challenge.attackingPlayer) {
+        if(!this.challenge.isAttackerTheWinner()) {
             return;
         }
 
