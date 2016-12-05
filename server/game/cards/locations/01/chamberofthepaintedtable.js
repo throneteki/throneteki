@@ -7,7 +7,7 @@ class ChamberOfThePaintedTable extends DrawCard {
         this.registerEvents(['onDominanceDetermined']);
     }
 
-    onDominanceDetermined(winner) {
+    onDominanceDetermined(event, winner) {
         if(!this.inPlay || this.isBlank() || this.owner !== winner) {
             return;
         }
@@ -31,7 +31,7 @@ class ChamberOfThePaintedTable extends DrawCard {
 
         var otherPlayer = this.game.getOtherPlayer(player);
         if(!otherPlayer || otherPlayer.power === 0) {
-            return;
+            return false;
         }
 
         this.game.addMessage('{0} uses {1} to move 1 power from {2}\'s faction card to their own', player, this, otherPlayer);
