@@ -756,15 +756,7 @@ class Player extends Spectator {
         this.challenges[challengeType].lost++;
     }
 
-    doneChallenge() {
-        var strength = this.cardsInChallenge.reduce((memo, card) => {
-            card.kneeled = true;
-
-            return memo + card.getStrength();
-        }, 0);
-
-        this.challengeStrength = strength;
-
+    resetForChallenge() {
         this.cardsInPlay.each(card => {
             card.resetForChallenge();
         });

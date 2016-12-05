@@ -11,9 +11,10 @@ class ChallengeFlow extends BaseStep {
         this.challenge = challenge;
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
+            new SimpleStep(this.game, () => this.resetCards()),
             new SimpleStep(this.game, () => this.announceChallenge()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
-            () => new ChooseStealthTargets(this.game, this.challenge, this.stealthAttackers),
+            () => new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()),
             // TODO: Action window
             new SimpleStep(this.game, () => this.announceAttackerStrength()),
             new SimpleStep(this.game, () => this.promptForDefenders()),
@@ -23,6 +24,10 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.applyClaim()),
             new SimpleStep(this.game, () => this.applyKeywords()),
         ]);
+    }
+
+    resetCards() {
+        this.challenge.resetCards();
     }
 
     announceChallenge() {
@@ -51,14 +56,11 @@ class ChallengeFlow extends BaseStep {
     }
 
     chooseAttackers(player, attackers) {
-        player.cardsInChallenge = _(attackers);
-        this.stealthAttackers = this.challenge.attackingPlayer.cardsInChallenge.filter(card => card.needsStealthTarget());
+        this.challenge.addAttackers(attackers);
 
         this.game.raiseEvent('onChallenge', this.challenge.attackingPlayer, this.challenge.challengeType);
-
-        this.challenge.attackingPlayer.initiateChallenge(this.challenge.challengeType);
-        this.challenge.attackingPlayer.doneChallenge();
-
+        this.challenge.initiateChallenge();
+        this.challenge.calculateStrength();
         this.game.raiseEvent('onAttackersDeclared', this.challenge.attackingPlayer, this.challenge.challengeType);
 
         return true;
@@ -71,7 +73,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     announceAttackerStrength() {
-        this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackingPlayer.challengeStrength);
+        this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackerStrength);
     }
 
     promptForDefenders() {
@@ -90,8 +92,8 @@ class ChallengeFlow extends BaseStep {
     }
 
     chooseDefenders(defenders) {
-        this.challenge.defendingPlayer.cardsInChallenge = _(defenders);
-        this.challenge.defendingPlayer.doneChallenge();
+        this.challenge.addDefenders(defenders);
+        this.challenge.calculateStrength();
 
         if(this.challenge.defendingPlayer.challengeStrength > 0) {
             this.game.addMessage('{0} has defended with strength {1}', this.challenge.defendingPlayer, this.challenge.defendingPlayer.challengeStrength);
