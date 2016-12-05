@@ -764,6 +764,8 @@ class Player extends Spectator {
             this.discardPile.push(discardedDupe);
         } else {
             this.discardCard(card.uuid, this.deadPile);
+
+            this.game.raiseEvent('onCharacterKilled', this, character);
         }
     }
 
