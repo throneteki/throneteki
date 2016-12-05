@@ -58,6 +58,10 @@ class Challenge {
     getStealthAttackers() {
         return _.filter(this.attackers, card => card.needsStealthTarget());
     }
+
+    isUnopposed() {
+        return this.defenderStrength <= 0;
+    }
 }
 
 module.exports = Challenge;

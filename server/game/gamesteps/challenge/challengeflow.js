@@ -95,8 +95,8 @@ class ChallengeFlow extends BaseStep {
         this.challenge.addDefenders(defenders);
         this.challenge.calculateStrength();
 
-        if(this.challenge.defendingPlayer.challengeStrength > 0) {
-            this.game.addMessage('{0} has defended with strength {1}', this.challenge.defendingPlayer, this.challenge.defendingPlayer.challengeStrength);
+        if(!this.challenge.isUnopposed()) {
+            this.game.addMessage('{0} has defended with strength {1}', this.challenge.defendingPlayer, this.challenge.defenderStrength);
         }
 
         return true;
@@ -124,7 +124,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     unopposedPower() {
-        if(this.loser.challengeStrength === 0) {
+        if(this.challenge.isUnopposed() && this.winner === this.challenge.attackingPlayer) {
             this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.winner);
             this.game.addPower(this.winner, 1);
 
