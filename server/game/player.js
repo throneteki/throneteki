@@ -715,13 +715,7 @@ class Player extends Spectator {
         this.selectCard = false;
     }
 
-    startChallenge(challengeType) {
-        this.currentChallenge = challengeType;
-    }
-
-    canAddToChallenge(cardId) {
-        var card = this.findCardInPlayByUuid(cardId);
-
+    canAddToChallenge(card, challengeType) {
         if(this.challengerLimit && this.cardsInChallenge.size() >= this.challengerLimit) {
             return false;
         }
@@ -730,7 +724,11 @@ class Player extends Spectator {
             return false;
         }
 
-        if(!card.hasIcon(this.currentChallenge)) {
+        if(!card.inPlay) {
+            return false;
+        }
+
+        if(!card.hasIcon(challengeType)) {
             return false;
         }
 
@@ -745,7 +743,20 @@ class Player extends Spectator {
         return card;
     }
 
-    doneChallenge(myChallenge) {
+    initiateChallenge(challengeType) {
+        this.challenges[challengeType].performed++;
+        this.challenges.complete++;
+    }
+
+    winChallenge(challengeType) {
+        this.challenges[challengeType].won++;
+    }
+
+    loseChallenge(challengeType) {
+        this.challenges[challengeType].lost++;
+    }
+
+    doneChallenge() {
         var strength = this.cardsInChallenge.reduce((memo, card) => {
             card.kneeled = true;
 
@@ -753,12 +764,6 @@ class Player extends Spectator {
         }, 0);
 
         this.challengeStrength = strength;
-        this.selectCard = false;
-
-        if(myChallenge) {
-            this.challenges[this.currentChallenge].performed++;
-            this.challenges.complete++;
-        }
 
         this.cardsInPlay.each(card => {
             card.resetForChallenge();
