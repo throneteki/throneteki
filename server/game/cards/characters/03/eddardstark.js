@@ -21,18 +21,20 @@ class EddardStark extends DrawCard {
     }
 
     cardCondition(card) {
-        if(card.getType !== 'character') {
+        if(card.getType() !== 'character') {
             return false;
         }
 
         if(!this.owner.cardsInChallenge.find(c => {
-            return c.uuid === card;
+            return c.uuid !== this.uuid && c.uuid === card.uuid;
         })) {
             return false;
         }
+
+        return true;
     }
 
-    onSelect(player, card) {
+    onCardSelected(player, card) {
         if(!this.inPlay || this.isBlank() || this.owner !== player) {
             return;
         }
@@ -40,6 +42,8 @@ class EddardStark extends DrawCard {
         card.power++;
 
         this.game.addMessage('{0} uses {1} to allow {2} to gain 1 power', player, this, card);
+
+        return true;
     }
 }
 
