@@ -776,14 +776,6 @@ class Player extends Spectator {
         }
     }
 
-    doneClaim() {
-        this.phase = 'challenge';
-        this.selectCard = false;
-
-        this.menuTitle = 'Waiting for opponent to issue challenge';
-        this.buttons = [];
-    }
-
     getDominance() {
         var cardStrength = this.cardsInPlay.reduce((memo, card) => {
             if(!card.kneeled && card.getType() === 'character') {
