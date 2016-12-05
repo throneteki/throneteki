@@ -42,7 +42,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsAttacker(card) {
-        var event = this.raiseEvent('onAttackerSelected', this, card);
+        var event = this.game.raiseEvent('onAttackerSelected', this, card);
 
         if(event.cancel) {
             return false;
@@ -186,7 +186,7 @@ class ChallengeFlow extends BaseStep {
             if(card.isRenown()) {
                 card.power++;
 
-                this.raiseEvent('onRenown', this.winner, card);
+                this.game.raiseEvent('onRenown', this.winner, card);
 
                 this.game.addMessage('{0} gains 1 power on {1} from Renown', this.winner, card);
             }
