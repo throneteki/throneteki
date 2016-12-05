@@ -59,7 +59,10 @@ class ChallengeFlow extends BaseStep {
 
         this.challenge.attackingPlayer.doneChallenge(true);
 
-        this.game.raiseEvent('onAttackersDeclared', this.challenge.attackingPlayer, this.challenge.challengeType);
+        var event = this.game.raiseEvent('onAttackersDeclared', this.challenge.attackingPlayer, this.challenge.challengeType);
+        if(event.strengthModifier) {
+            this.challenge.challengeStrength += event.strengthModifier;
+        }
 
         if(this.challenge.defendingPlayer) {
             this.challenge.defendingPlayer.currentChallenge = this.challenge.challengeType;
@@ -114,6 +117,7 @@ class ChallengeFlow extends BaseStep {
         }
 
         this.winner.challenges[this.winner.currentChallenge].won++;
+        this.loser.challenges[this.loser.currentChallenge].lost++;
 
         this.game.addMessage('{0} won a {1} challenge {2} vs {3}',
             this.winner, this.challenge.challengeType, this.winner.challengeStrength, this.loser.challengeStrength);

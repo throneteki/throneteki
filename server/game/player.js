@@ -118,6 +118,10 @@ class Player extends Spectator {
         return this.challenges[challengeType].won;
     }
 
+    getNumberOfChallengesLost(challengeType) {
+        return this.challenges[challengeType].lost;
+    }
+
     getNumberOfChallengesInitiated() {
         return this.challenges.complete;
     }
@@ -443,17 +447,20 @@ class Player extends Spectator {
             military: {
                 performed: 0,
                 max: 1,
-                won: 0
+                won: 0,
+                lost: 0
             },
             intrigue: {
                 performed: 0,
                 max: 1,
-                won: 0
+                won: 0,
+                lost: 0
             },
             power: {
                 performed: 0,
                 max: 1,
-                won: 0
+                won: 0,
+                lost: 0
             }
         };
         
