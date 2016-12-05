@@ -665,6 +665,8 @@ class Game extends EventEmitter {
         this.queueStep(new StandingPhase(this));
         this.queueStep(new TaxationPhase(this));
         this.queueStep(new SimpleStep(this, () => this.beginRound()));
+
+        this.raiseEvent('onBeginRound');
     }
 
     queueStep(step) {

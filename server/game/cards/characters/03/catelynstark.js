@@ -4,7 +4,7 @@ class CatelynStark extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
         
-        this.registerEvents(['onCardSacrificed', 'onCharacterKilled']);
+        this.registerEvents(['onCardSacrificed', 'onCharacterKilled', 'onBeginRound']);
     }
 
     updateStrength() {
@@ -18,8 +18,12 @@ class CatelynStark extends DrawCard {
         this.lastPower = this.owner.power;
     }
 
+    onBeginRound() {
+        this.abilityUsed = 0;
+    }
+
     onCardSacrificed(event, player, card) {
-        if(!this.inPlay || this.isBlank() || this.owner !== player) {
+        if(!this.inPlay || this.isBlank() || this.owner !== player || this.abilityUsed >= 2) {
             return;
         }
 
@@ -34,7 +38,7 @@ class CatelynStark extends DrawCard {
                 },
                 waitingPromptTitle: 'Waiting for opponent to use ' + this.name
             });
-            
+
             this.game.pipeline.continue();
         }
     }
@@ -51,6 +55,8 @@ class CatelynStark extends DrawCard {
         this.game.addMessage('{0} gains 1 power on {1} in reaction to a {2} character being sacrificed or killed', player, this, this.getFaction());
         this.power++;
         this.updateStrength();
+
+        this.abilityUsed++;
 
         return true;
     }
