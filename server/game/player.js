@@ -353,6 +353,8 @@ class Player extends Spectator {
         if(card.getType() === 'event') {
             this.game.addMessage('{0} plays {1} costing {2}', this, card, cost);
 
+            card.play(this);
+
             this.removeFromHand(card.uuid);
             this.discardPile.push(card);
 
