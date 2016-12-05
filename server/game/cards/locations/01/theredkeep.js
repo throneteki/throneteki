@@ -13,13 +13,9 @@ class TheRedKeep extends DrawCard {
         }
 
         if(challengeType === 'power' && this.owner.cardsInChallenge.size() > 0) {
-            if(!event.strengthModifier) {
-                event.strengthModifier = 2;
-            } else {
-                event.strengthModifier += 2;
-            }
+            this.owner.challengeStrength += 2;
 
-            this.game.addMessage('{0} uses {1} to add 2 to the strength of this {2} challenge', attackingPlayer, this, challengeType);
+            this.game.addMessage('{0} uses {1} to add 2 to the strength of this {2} challenge', this.owner, this, challengeType);
         }
     }
 
@@ -39,8 +35,6 @@ class TheRedKeep extends DrawCard {
                 },
                 waitingPromptTitle: 'Waiting for opponent to use ' + this.name
             });
-
-            this.game.pipeline.continue();            
         }
     }
 

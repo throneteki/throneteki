@@ -59,10 +59,7 @@ class ChallengeFlow extends BaseStep {
 
         this.challenge.attackingPlayer.doneChallenge(true);
 
-        var event = this.game.raiseEvent('onAttackersDeclared', this.challenge.attackingPlayer, this.challenge.challengeType);
-        if(event.strengthModifier) {
-            this.challenge.challengeStrength += event.strengthModifier;
-        }
+        this.game.raiseEvent('onAttackersDeclared', this.challenge.attackingPlayer, this.challenge.challengeType);
 
         if(this.challenge.defendingPlayer) {
             this.challenge.defendingPlayer.currentChallenge = this.challenge.challengeType;
