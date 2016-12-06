@@ -60,6 +60,7 @@ class Challenge {
     }
 
     determineWinner() {
+        this.calculateStrength();
         if(this.attackerStrength >= this.defenderStrength) {
             this.loser = this.defendingPlayer;
             this.winner = this.attackingPlayer;
