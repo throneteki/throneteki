@@ -34,6 +34,16 @@ class Challenge {
         this.defendingPlayer.cardsInChallenge = _(defenders);
     }
 
+    removeFromChallenge(card) {
+        this.attackers = _.reject(this.attackers, c => c === card);
+        this.defenders = _.reject(this.defenders, c => c === card);
+        this.calculateStrength();
+
+        // TODO: Remove duplicated logic
+        this.attackingPlayer.cardsInChallenge = _(this.attackers);
+        this.defendingPlayer.cardsInChallenge = _(this.defenders);
+    }
+
     markAsParticipating(cards) {
         _.each(cards, card => {
             card.kneeled = true;
