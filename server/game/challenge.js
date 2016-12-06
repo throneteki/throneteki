@@ -1,12 +1,14 @@
 const _ = require('underscore');
 
 class Challenge {
-    constructor(attackingPlayer, defendingPlayer, challengeType) {
+    constructor(game, attackingPlayer, defendingPlayer, challengeType) {
+        this.game = game;
         this.attackingPlayer = attackingPlayer;
         this.defendingPlayer = defendingPlayer;
         this.challengeType = challengeType;
         this.attackers = [];
         this.defenders = [];
+        this.registerEvents(['onCardLeftPlay'])
     }
 
     resetCards() {
@@ -101,6 +103,28 @@ class Challenge {
         }
 
         return claim;
+    }
+
+    onCardLeftPlay(e, player, card) {
+        this.removeFromChallenge(card);
+    }
+
+    registerEvents(events) {
+        this.events = [];
+
+        _.each(events, event => {
+            this[event] = this[event].bind(this);
+
+            this.game.on(event, this[event]);
+
+            this.events.push(event);
+        });
+    }
+
+    unregisterEvents() {
+        _.each(this.events, event => {
+            this.game.removeListener(event, this[event]);
+        });
     }
 }
 
