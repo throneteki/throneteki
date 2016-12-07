@@ -16,6 +16,10 @@ class RattleshirtsRaiders extends DrawCard {
             return;
         }
 
+        if(!challenger.cardsInChallenge.contains(this)) {
+            return;
+        }
+
         this.game.promptForSelect(this.owner, {
             activePromptTitle: 'Select attachment to discard',
             waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
