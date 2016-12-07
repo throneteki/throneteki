@@ -168,19 +168,6 @@ class Game extends EventEmitter {
             return;
         }
 
-        var handled = false;
-        if(player === this.selectPlayer && this.selectCallback) {
-            handled = this.selectCallback(player, cardId);
-
-            if(handled) {
-                if(!this.multiSelect) {
-                    player.selectCard = false;
-                }
-
-                return;
-            }
-        }
-
         if(player.activePlot && !player.activePlot.canPlay(player, cardId)) {
             return;
         }
@@ -229,21 +216,7 @@ class Game extends EventEmitter {
                 return;
         }
 
-        var handled = false;
-
-        if(player === this.selectPlayer && this.selectCallback) {
-            handled = this.selectCallback(player, cardId);
-
-            if(handled) {
-                if(!this.multiSelect) {
-                    player.selectCard = false;
-                }
-
-                return;
-            }
-        }
-
-        handled = this.processCardClicked(player, cardId);
+        var handled = this.processCardClicked(player, cardId);
 
         if(!handled) {
             var cardInPlay = player.findCardInPlayByUuid(cardId);
@@ -276,17 +249,6 @@ class Game extends EventEmitter {
         if(this.pipeline.handleCardClicked(player, card)) {
             this.pipeline.continue();
             return;
-        }
-
-        var handled = false;
-        if(player === this.selectPlayer && this.selectCallback) {
-            handled = this.selectCallback(player, cardId);
-
-            if(handled) {
-                player.selectCard = false;
-
-                return;
-            }
         }
     }
 
@@ -558,35 +520,6 @@ class Game extends EventEmitter {
 
     promptForSelect(player, properties) {
         this.queueStep(new SelectCardPrompt(this, player, properties));
-    }
-
-    /**
-     * @deprecated - use promptForSelect or promptWithMenu instead.
-     */
-    promptForSelectDeprecated(player, callback, menuTitle, buttons, multiSelect) {
-        player.selectCard = true;
-
-        this.selectPlayer = player;
-        this.selectCallback = callback;
-
-        player.oldMenuTitle = player.menuTitle;
-        player.oldButtons = player.buttons;
-
-        player.menuTitle = menuTitle;
-        player.buttons = buttons;
-
-        this.multiSelect = multiSelect;
-    }
-
-    cancelSelect(player) {
-        player.selectCard = false;
-
-        this.selectPlayer = undefined;
-        this.selectCallback = undefined;
-
-        player.menuTitle = player.oldMenuTitle;
-        player.buttons = player.oldButtons;
-
     }
 
     menuButton(playerId, arg, method) {
