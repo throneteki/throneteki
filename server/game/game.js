@@ -537,6 +537,8 @@ class Game extends EventEmitter {
         if(otherPlayer && otherPlayer.activePlot && otherPlayer.activePlot[method]) {
             otherPlayer.activePlot[method](player, arg);
         }
+
+        this.pipeline.continue();
     }
 
     agendaCardCommand(playerId, method, arg) {
