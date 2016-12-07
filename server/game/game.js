@@ -411,13 +411,17 @@ class Game extends EventEmitter {
                 num = this.getNumberOrDefault(args[1], 1);
             }
 
-            var buttons = [
-                { command: 'donesetpower', text: 'Done' }
-            ];
-
-            player.setPower = num;
-
-            this.promptForSelectDeprecated(player, this.setPower.bind(this), 'Select a card to set power for', buttons);
+            this.promptForSelect(player, {
+                activePromptTitle: 'Select a card to set power for',
+                waitingPromptTitle: 'Waiting for opponent to set power',
+                cardCondition: card => card.inPlay && card.owner === player,
+                onSelect: (p, card) => {
+                    card.power = num;
+                    this.addMessage('{0} uses the /power command to set the power of {1} to {2}', p, card, num);
+                    return true;
+                }
+            });
+            this.pipeline.continue();
 
             return;
         }
@@ -447,12 +451,17 @@ class Game extends EventEmitter {
                 num = this.getNumberOrDefault(args[1], 1);
             }
 
-            buttons = [
-                { command: 'donesetstrength', text: 'Done' }
-            ];
-            player.setStrength = num;
-
-            this.promptForSelectDeprecated(player, this.setStrength.bind(this), 'Select a card to set strength for', buttons);
+            this.promptForSelect(player, {
+                activePromptTitle: 'Select a card to set strength for',
+                waitingPromptTitle: 'Waiting for opponent to set strength',
+                cardCondition: card => card.inPlay && card.owner === player && card.getType() === 'character',
+                onSelect: (p, card) => {
+                    card.strengthModifier = num - card.cardData.strength;
+                    this.addMessage('{0} uses the /strength command to set the strength of {1} to {2}', p, card, num);
+                    return true;
+                }
+            });
+            this.pipeline.continue();
 
             return;
         }
@@ -465,58 +474,6 @@ class Game extends EventEmitter {
         }
 
         this.addChatMessage('{0} {1}', player, message);
-    }
-
-    setStrength(player, cardId) {
-        var card = player.findCardInPlayByUuid(cardId);
-
-        if(!card || card.getType() !== 'character' || _.isUndefined(player.setStrength)) {
-            return false;
-        }
-
-        card.strengthModifier = player.setStrength - card.cardData.strength;
-
-        this.addMessage('{0} uses the /strength command to set the strength of {1} to {2}', player, card, player.setStrength);
-        this.doneSetStrength(player.id);
-
-        return true;
-    }
-
-    setPower(player, cardId) {
-        var card = player.findCardInPlayByUuid(cardId);
-
-        if(!card || _.isUndefined(player.setPower)) {
-            return false;
-        }
-
-        card.power = player.setPower;
-
-        this.addMessage('{0} uses the /power command to set the power of {1} to {2}', player, card, player.setPower);
-        this.doneSetPower(player.id);
-
-        return true;
-    }
-
-    doneSetPower(playerId) {
-        var player = this.getPlayerById(playerId);
-        if(!player) {
-            return;
-        }
-
-        this.cancelSelect(player);
-
-        player.setPower = undefined;
-    }
-
-    doneSetStrength(playerId) {
-        var player = this.getPlayerById(playerId);
-        if(!player) {
-            return;
-        }
-
-        this.cancelSelect(player);
-
-        player.setStrength = undefined;
     }
 
     playerLeave(playerId, reason) {
