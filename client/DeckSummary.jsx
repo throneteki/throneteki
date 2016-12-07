@@ -26,7 +26,7 @@ class DeckSummary extends React.Component {
     }
 
     updateDeck(status) {
-        this.setState({ status: status.status, drawCount: status.drawCount, plotCount: status.plotCount });
+        this.setState({ status: status.status, drawCount: status.drawCount, plotCount: status.plotCount, extendedStatus: status.extendedStatus });
     }
 
     onCardMouseOver(event) {
@@ -85,7 +85,7 @@ class DeckSummary extends React.Component {
                             onMouseOut={ this.onCardMouseOut }>{ this.props.agenda.label }</span> : <span>None</span> }</div>
                         <div ref='drawCount'>Draw deck: { this.state.drawCount } cards</div>
                         <div ref='plotCount'>Plot deck: { this.state.plotCount } cards</div>
-                        <div className={this.state.status === 'Valid' ? 'text-success' : 'text-danger'}>{ this.state.status }</div>
+                        <div className={this.state.status === 'Valid' ? 'text-success' : 'text-danger'}>{ this.state.extendedStatus.replace('\n', '<br />') }</div>
                     </div>
                 </div>
                 <div className='cards'>
