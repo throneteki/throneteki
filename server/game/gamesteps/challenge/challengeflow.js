@@ -200,6 +200,8 @@ class ChallengeFlow extends BaseStep {
             if(card.hasKeyword('Pillage')) {
                 this.challenge.loser.discardFromDraw(1);
 
+                this.game.raiseEvent('onPillage', this.challenge, card);
+
                 this.game.addMessage('{0} discards a card from the top of their deck from Pillage on {1}', this.challenge.loser, card);
             }
 
