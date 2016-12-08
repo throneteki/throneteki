@@ -164,8 +164,10 @@ class Player extends Spectator {
     }
 
     drawCardsToHand(numCards) {
-        this.hand = _(this.hand.concat(this.drawDeck.first(numCards)));
-        this.drawDeck = _(this.drawDeck.rest(numCards));
+        var cards = this.drawDeck.first(numCards);
+        _.each(cards, card => {
+            this.moveCard(card, 'hand');
+        });
     }
 
     searchDrawDeck(limit, predicate) {
@@ -185,9 +187,7 @@ class Player extends Spectator {
     }
 
     moveFromDrawDeckToHand(card) {
-        this.drawDeck = this.removeCardByUuid(this.drawDeck, card.uuid);
-
-        this.hand.push(card);
+        this.moveCard(card, 'hand');
     }
 
     shuffleDrawDeck() {
@@ -259,6 +259,8 @@ class Player extends Spectator {
                 } else {
                     drawCard = new DrawCard(this, cardEntry.card);
                 }
+
+                drawCard.location = 'draw deck';
 
                 this.drawCards.push(drawCard);
             }
@@ -672,7 +674,7 @@ class Player extends Spectator {
         switch(target) {
             case 'hand':
                 card.facedown = false;
-                this.hand.push(card);
+                this.moveCard(card, 'hand');
                 break;
             case 'discard pile':
                 if(source === 'play area') {
@@ -895,7 +897,7 @@ class Player extends Spectator {
         if(attachment.isTerminal()) {
             attachment.owner.discardPile.push(attachment);
         } else {
-            attachment.owner.hand.push(attachment);
+            attachment.owner.moveCard(attachment, 'hand');
         }
     }
 
