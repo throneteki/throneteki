@@ -2,7 +2,7 @@ const DrawCard = require('../../../drawcard.js');
 
 class SuperiorClaim extends DrawCard {
     canPlay(player, card) {
-        if(player !== this.owner || this !== card) {
+        if(player !== this.controller || this !== card) {
             return false;
         }
 
@@ -14,7 +14,7 @@ class SuperiorClaim extends DrawCard {
     }
 
     play(player) {
-        if(this.owner !== player) {
+        if(this.controller !== player) {
             return;
         }
 

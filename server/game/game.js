@@ -606,6 +606,19 @@ class Game extends EventEmitter {
         return event;
     }
 
+    takeControl(player, card) {
+        var oldController = card.controller;
+        var newController = player;
+
+        if(oldController === newController) {
+            return;
+        }
+
+        oldController.removeCardByUuid(oldController.cardsInPlay, card);
+        newController.cardsInPlay.push(card);
+        card.controller = newController;
+    }
+
     getState(activePlayer) {
         var playerState = {};
 
