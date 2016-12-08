@@ -614,7 +614,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        oldController.removeCardByUuid(oldController.cardsInPlay, card);
+        oldController.cardsInPlay = oldController.removeCardByUuid(oldController.cardsInPlay, card.uuid);
         newController.cardsInPlay.push(card);
         card.controller = newController;
     }

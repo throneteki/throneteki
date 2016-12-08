@@ -27,7 +27,7 @@ class TakeTheBlack extends DrawCard {
     }
 
     cardCondition(card) {
-        if(card.getType() !== 'character' || !card.isUnique() || card.getCost() > 6) {
+        if(card.controller === this.choosingPlayer || card.getType() !== 'character' || card.isUnique() || card.getCost() > 6) {
             return false;
         }
 
@@ -35,6 +35,11 @@ class TakeTheBlack extends DrawCard {
     }
 
     onCardClicked(player, card) {
+        this.game.takeControl(player, card);
+
+        this.game.addMessage('{0} uses {1} to take control of {2}', player, this, card);
+
+        return true;
     }
 }
 
