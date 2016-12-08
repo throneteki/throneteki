@@ -612,7 +612,7 @@ class Player extends Spectator {
 
                 card = otherPlayer.findCardInPlayByUuid(cardId);
 
-                if(!card || card.owner !== this) {
+                if(!card || card.controller !== this) {
                     return false;
                 }
 

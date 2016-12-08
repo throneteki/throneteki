@@ -15,6 +15,7 @@ const ValidKeywords = [
 class BaseCard {
     constructor(owner, cardData) {
         this.owner = owner;
+        this.controller = owner;
         this.game = this.owner.game;
         this.cardData = cardData;
 

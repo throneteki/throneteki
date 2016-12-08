@@ -216,12 +216,12 @@ class ChallengeFlow extends BaseStep {
     }
 
     canIntimidate(card, strength) {
-        return !card.kneeled && card.owner === this.challenge.loser && card.getStrength() <= strength;
+        return !card.kneeled && card.controller === this.challenge.loser && card.getStrength() <= strength;
     }
 
     intimidate(sourceCard, targetCard) {
         targetCard.kneeled = true;
-        this.game.addMessage('{0} uses intimidate from {1} to kneel {2}', sourceCard.owner, sourceCard, targetCard);
+        this.game.addMessage('{0} uses intimidate from {1} to kneel {2}', sourceCard.controller, sourceCard, targetCard);
         return true;
     }
 
