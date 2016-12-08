@@ -908,6 +908,24 @@ class Player extends Spectator {
         this.faction.cardData.code = deck.faction.value;
     }
 
+    moveCard(card, targetLocation) {
+        var originalLocation = card.location;
+        var originalPile = this.getSourceList(originalLocation);
+        var targetPile = this.getSourceList(targetLocation);
+
+        if(!targetPile) {
+            return;
+        }
+
+        if(originalPile) {
+            originalPile = this.removeCardByUuid(originalPile, card.uuid);
+            this.updateSourceList(originalLocation, originalPile);
+        }
+
+        card.location = targetLocation;
+        targetPile.push(card);
+    }
+
     getTotalPlotStat(property) {
         var baseValue = 0;
 
