@@ -202,7 +202,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     completeChallenge() {
-        this.game.raiseEvent('onChallengeFinished', this.challenge.challengeType, this.challenge.winner, this.challenge.loser, this.challenge.attackingPlayer);
+        this.game.raiseEvent('onChallengeFinished', this.challenge);
     }
 
     onCardClicked(player, card) {

@@ -38,8 +38,8 @@ class RedCloaks extends DrawCard {
         this.strengthModifier += this.tokens['gold'];
     }
 
-    onChallengeFinished(challengeType) {
-        if(challengeType === 'intrigue') {
+    onChallengeFinished(e, challenge) {
+        if(challenge.challengeType === 'intrigue') {
             this.strengthModifier -= this.tokens['gold'];
         }
     }
