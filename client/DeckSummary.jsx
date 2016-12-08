@@ -1,5 +1,9 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import _ from 'underscore';
+import $ from 'jquery';
+
+import StatusPopOver from './StatusPopOver.jsx';
 import {validateDeck} from './deck-validator';
 
 class DeckSummary extends React.Component {
@@ -25,8 +29,19 @@ class DeckSummary extends React.Component {
         this.updateDeck(validateDeck(newProps));
     }
 
+    updateStatus() {
+        if(this.state.status === 'Valid') {
+            return;
+        }
+
+        var popoverContent = $($.parseHTML(ReactDOM.findDOMNode(this.refs.popoverContent).outerHTML)).removeClass('hidden').html();
+
+        $(this.refs.popover).popover({ trigger: 'hover', html: true });
+        $(this.refs.popover).data('bs.popover').options.content = popoverContent;
+    }
+
     updateDeck(status) {
-        this.setState({ status: status.status, drawCount: status.drawCount, plotCount: status.plotCount, extendedStatus: status.extendedStatus });
+        this.setState({ status: status.status, drawCount: status.drawCount, plotCount: status.plotCount, extendedStatus: status.extendedStatus }, this.updateStatus);
     }
 
     onCardMouseOver(event) {
@@ -85,7 +100,10 @@ class DeckSummary extends React.Component {
                             onMouseOut={ this.onCardMouseOut }>{ this.props.agenda.label }</span> : <span>None</span> }</div>
                         <div ref='drawCount'>Draw deck: { this.state.drawCount } cards</div>
                         <div ref='plotCount'>Plot deck: { this.state.plotCount } cards</div>
-                        <div className={this.state.status === 'Valid' ? 'text-success' : 'text-danger'}>{ this.state.extendedStatus.replace('\n', '<br />') }</div>
+                        <div className={this.state.status === 'Valid' ? 'text-success' : 'text-danger'}>
+                            <span ref='popover'>{ this.state.status }</span>
+                            <StatusPopOver ref='popoverContent' list={this.state.extendedStatus} />
+                        </div>
                     </div>
                 </div>
                 <div className='cards'>
