@@ -7,13 +7,14 @@ class TheLordOfTheCrossing extends AgendaCard {
         this.registerEvents(['onChallenge', 'afterChallenge']);
     }
 
-    onChallenge(e, player) {
+    onChallenge(e, challenge) {
+        var player = challenge.attackingPlayer;
         if(this.owner !== player) {
             return;
         }
 
         player.cardsInChallenge.each(card => {
-            var numChallenges = player.getNumberOfChallengesInitiated(); 
+            var numChallenges = player.getNumberOfChallengesInitiated();
             if(numChallenges === 0) {
                 card.strengthModifier--;
             } else if(numChallenges === 2) {

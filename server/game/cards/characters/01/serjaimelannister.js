@@ -7,8 +7,9 @@ class SerJaimeLannister extends DrawCard {
         this.registerEvents(['onAttackersDeclared', 'onChallengeFinished']);
     }
 
-    onAttackersDeclared(event, player, challengeType) {
-        if(!this.inPlay || challengeType !== 'military') {
+    onAttackersDeclared(event, challenge) {
+        var player = challenge.attackingPlayer;
+        if(!this.inPlay || challenge.challengeType !== 'military') {
             return;
         }
 
