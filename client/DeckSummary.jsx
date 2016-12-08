@@ -35,9 +35,11 @@ class DeckSummary extends React.Component {
         }
 
         var popoverContent = $($.parseHTML(ReactDOM.findDOMNode(this.refs.popoverContent).outerHTML)).removeClass('hidden').html();
-
-        $(this.refs.popover).popover({ trigger: 'hover', html: true });
-        $(this.refs.popover).data('bs.popover').options.content = popoverContent;
+        // XXX Neccessary until I figure out how to make this work for tests
+        if($(this.refs.popover).popover) {
+            $(this.refs.popover).popover({ trigger: 'hover', html: true });
+            $(this.refs.popover).data('bs.popover').options.content = popoverContent;
+        }
     }
 
     updateDeck(status) {

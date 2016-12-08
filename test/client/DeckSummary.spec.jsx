@@ -4,7 +4,7 @@ import DeckSummary from '../../client/DeckSummary.jsx';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 
-describe('the <DeckSummary /> component', function() {
+fdescribe('the <DeckSummary /> component', function() {
     var component;
 
     describe('when initially rendered', function() {
@@ -14,7 +14,7 @@ describe('the <DeckSummary /> component', function() {
             var nameHeader = TestUtils.findRenderedDOMComponentWithTag(component, 'h3');
 
             expect(nameHeader.innerText).toBe('Test Deck');
-            expect(component.state.status).toBe('Too few plot cards');
+            expect(component.state.status).toBe('Invalid');
         });
     });
 
@@ -92,7 +92,7 @@ describe('the <DeckSummary /> component', function() {
 
                 component = TestUtils.renderIntoDocument(<DeckSummary plotCards={ plot } faction={ { name: 'House Stark', value: 'stark' } } />);
 
-                expect(component.state.status).toBe('Too few plot cards');
+                expect(component.state.status).toBe('Invalid');
             });
         });
 
@@ -113,7 +113,7 @@ describe('the <DeckSummary /> component', function() {
 
                 component = TestUtils.renderIntoDocument(<DeckSummary plotCards={ plot } drawCards={ draw } faction={ { name: 'House Stark', value: 'stark' } } />);
 
-                expect(component.state.status).toBe('Too few draw cards');
+                expect(component.state.status).toBe('Invalid');
             });
         });
 
