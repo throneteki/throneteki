@@ -256,6 +256,14 @@ class Game extends EventEmitter {
         });
     }
 
+    callCardMenuCommand(card, player, menuItem) {
+        if(!card || !card[menuItem.method] || !this.cardHasMenuItem(card, menuItem)) {
+            return;
+        }
+
+        card[menuItem.method](player, menuItem.arg);
+    }
+
     menuItemClick(sourcePlayer, source, cardId, menuItem) {
         var player = this.getPlayerById(sourcePlayer);
 
@@ -263,12 +271,22 @@ class Game extends EventEmitter {
             return;
         }
 
+        if(menuItem.command === 'click') {
+            this.cardClicked(sourcePlayer, source, cardId);
+            return;
+        }
+
         switch(source) {
             case 'agenda':
-                if(player.agenda && player.agenda[menuItem.method] && this.cardHasMenuItem(player.agenda, menuItem)) {
-                    player.agenda[menuItem.method](player, menuItem.arg);
+                this.callCardMenuCommand(player.agenda, player, menuItem);
+                break;
+            case 'play area':
+                var card = this.findAnyCardInPlayByUuid(cardId);
+                if(card.controller !== player && !menuItem.anyPlayer) {
+                    return;
                 }
 
+                this.callCardMenuCommand(card, player, menuItem);
                 break;
         }
 
