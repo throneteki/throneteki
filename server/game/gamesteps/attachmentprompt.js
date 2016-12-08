@@ -26,10 +26,10 @@ class AttachmentPrompt extends UiPrompt {
         var targetPlayer = this.game.getPlayerById(targetCard.controller.id);
         if(targetPlayer === player && player.phase === 'setup') {
             // We put attachments on the board during setup, now remove it
-            player.attach(attachment, targetCard.uuid);
+            player.attach(player, attachment, targetCard.uuid);
             player.cardsInPlay = player.removeCardByUuid(player.cardsInPlay, attachmentId);
         } else {
-            targetPlayer.attach(attachment, targetCard.uuid);
+            targetPlayer.attach(player, attachment, targetCard.uuid);
             player.removeFromHand(attachmentId);
         }
 

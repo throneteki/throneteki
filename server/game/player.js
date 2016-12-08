@@ -524,7 +524,7 @@ class Player extends Spectator {
         return attachment.canAttach(this, card);
     }
 
-    attach(attachment, cardId) {
+    attach(player, attachment, cardId) {
         var card = this.findCardInPlayByUuid(cardId);
 
         if(!card || !attachment) {
@@ -536,7 +536,7 @@ class Player extends Spectator {
 
         card.attachments.push(attachment);
 
-        attachment.attach(this, card);
+        attachment.attach(player, card);
     }
 
     showDrawDeck() {
