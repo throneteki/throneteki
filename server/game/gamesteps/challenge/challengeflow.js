@@ -47,7 +47,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsAttacker(card) {
-        var event = this.game.raiseEvent('onAttackerSelected', this.challenge.attackingPlayer, card);
+        var event = this.game.raiseEvent('onAttackerSelected', this.challenge, card);
 
         if(event.cancel) {
             return false;
@@ -121,7 +121,7 @@ class ChallengeFlow extends BaseStep {
             this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.challenge.winner);
             this.game.addPower(this.challenge.winner, 1);
 
-            this.game.raiseEvent('onUnopposedWin', this.challenge.winner);
+            this.game.raiseEvent('onUnopposedWin', this.challenge);
         }
     }
 
@@ -134,7 +134,7 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.game.raiseEvent('beforeClaim', this.game, this.challenge.challengeType, this.challenge.winner, this.challenge.loser);
+        this.game.raiseEvent('beforeClaim', this.challenge);
         var claim = this.challenge.getClaim();
 
         if(claim <= 0) {
@@ -150,7 +150,7 @@ class ChallengeFlow extends BaseStep {
             }
         }
 
-        this.game.raiseEvent('afterClaim', this.game, this.challenge.challengeType, this.challenge.winner, this.challenge.loser);
+        this.game.raiseEvent('afterClaim', this.challenge);
     }
 
     applyKeywords() {
@@ -182,7 +182,7 @@ class ChallengeFlow extends BaseStep {
             if(card.isRenown()) {
                 card.power++;
 
-                this.game.raiseEvent('onRenown', this.challenge.winner, card);
+                this.game.raiseEvent('onRenown', this.challenge, card);
 
                 this.game.addMessage('{0} gains 1 power on {1} from Renown', this.challenge.winner, card);
             }
