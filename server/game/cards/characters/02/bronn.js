@@ -6,7 +6,7 @@ class Bronn extends DrawCard {
 
         this.menu.push({ text: 'Pay 1 gold to take control of Bronn', command: 'menuItem', method: 'takeControl', anyPlayer: true });
 
-        this.registerEvents(['onChallenge']);
+        this.registerEvents(['onChallenge', 'onChallengeFinished']);
     }
 
     onChallenge(challenge) {
@@ -17,6 +17,16 @@ class Bronn extends DrawCard {
         this.setIcon('military');
         this.setIcon('intrigue');
         this.setIcon('power');
+    }
+
+    onChallengeFinished(challenge) {
+        if(!this.inPlay || this.controller !== challenge.defendingPlayer) {
+            return;
+        }
+
+        this.clearIcon('military');
+        this.clearIcon('intrigue');
+        this.clearIcon('power');
     }
 
     takeControl(player) {
