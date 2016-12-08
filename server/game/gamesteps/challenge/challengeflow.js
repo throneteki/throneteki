@@ -113,7 +113,7 @@ class ChallengeFlow extends BaseStep {
         this.game.addMessage('{0} won a {1} challenge {2} vs {3}',
             this.challenge.winner, this.challenge.challengeType, this.challenge.winner.challengeStrength, this.challenge.loser.challengeStrength);
 
-        this.game.raiseEvent('afterChallenge', this.challenge.challengeType, this.challenge.winner, this.challenge.loser, this.challenge.attackingPlayer);
+        this.game.raiseEvent('afterChallenge', this.challenge);
     }
 
     unopposedPower() {
