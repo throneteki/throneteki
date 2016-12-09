@@ -101,7 +101,6 @@ describe('Player', () => {
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
                     expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.deadPile.size()).toBe(0);
                 });
             });
 
@@ -115,7 +114,6 @@ describe('Player', () => {
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
                     expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.deadPile.size()).toBe(0);
                 });
             });
 
@@ -129,7 +127,6 @@ describe('Player', () => {
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
                     expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.deadPile.size()).toBe(0);
                 });
             });
 
@@ -143,7 +140,6 @@ describe('Player', () => {
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
                     expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.deadPile.size()).toBe(0);
                 });
             });
 
@@ -156,8 +152,7 @@ describe('Player', () => {
 
                 it('should return true and put the character in the dead pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.deadPile.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'dead pile');
                 });
             });
         });
@@ -173,7 +168,6 @@ describe('Player', () => {
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
                     expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.discardPile.size()).toBe(0);
                 });
             });
 
@@ -186,8 +180,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.discardPile.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
                 });
             });
 
@@ -198,10 +191,9 @@ describe('Player', () => {
                     this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'discard pile');
                 });
 
-                it('should return false and not update the game state', function() {
+                it('should return true and move the attachment', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.discardPile.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
                 });
             });
 
@@ -212,10 +204,9 @@ describe('Player', () => {
                     this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'discard pile');
                 });
 
-                it('should return false and not update the game state', function() {
+                it('should return true and move the event', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.discardPile.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
                 });
             });
 
@@ -226,10 +217,9 @@ describe('Player', () => {
                     this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'discard pile');
                 });
 
-                it('should return true and put the character in the dead pile', function() {
+                it('should return true and put the character in the discard pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.moveCard).not.toHaveBeenCalled();
-                    expect(this.player.discardPile.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
                 });
             });
         });
@@ -244,7 +234,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.drawDeck.size()).toBe(0);
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                 });
             });
 
@@ -256,7 +246,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'draw deck');
                 });
             });
 
@@ -268,7 +258,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'draw deck');
                 });
             });
 
@@ -280,7 +270,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'draw deck');
                 });
             });
 
@@ -292,20 +282,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
-                });
-            });
-
-            describe('when two cards are dragged to the draw deck', function() {
-                beforeEach(function() {
-                    this.player.drop(this.cardSpy, 'hand', 'draw deck');
-                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'draw deck');
-                });
-
-                it('should put the cards in the draw deck in the correct order', function() {
-                    expect(this.dropSucceeded).toBe(true);
-//                    expect(this.player.drawDeck[0].code).toBe(locationInHand.code);
-  //                  expect(this.player.drawDeck[1].code).toBe(characterInHand.code);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'draw deck');
                 });
             });
         });
@@ -324,7 +301,6 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.cardsInPlay.size()).toBe(1);
                     expect(this.player.moveCard).not.toHaveBeenCalled();
                 });
             });
@@ -336,7 +312,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the discard pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.moveCard).toHaveBeenCalled();
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
                 });
             });
         });

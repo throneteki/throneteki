@@ -656,63 +656,23 @@ class Player extends Spectator {
             }
         }
 
-        switch(target) {
-            case 'hand':
-                card.facedown = false;
-                this.moveCard(card, 'hand');
-                break;
-            case 'discard pile':
-                if(source === 'play area') {
-                    player.moveCard(card, 'discard pile');
-
-                    return true;
-                }
-
-                this.moveCard(card, 'discard pile');
-
-                break;
-            case 'dead pile':
-                if(card.getType() !== 'character') {
-                    return false;
-                }
-
-                if(source === 'play area') {
-                    this.moveCard(card, 'dead pile');
-
-                    return true;
-                }
-
-                this.moveCard(card, 'dead pile');
-                break;
-            case 'play area':
-                if(card.getType() === 'event') {
-                    return false;
-                }
-
-                this.game.playCard(this.id, cardId, true, sourceList);
-
-                if(this.dropPending) {
-                    return true;
-                }
-
-                if(source === 'hand') {
-                    return true;
-                }
-                break;
-            case 'draw deck':
-                this.moveCard(card, 'draw deck');
-                break;
+        if(target === 'dead pile' && card.getType() !== 'character') {
+            return false;
         }
 
-        if(card.parent && card.parent.attachments) {
-            card.parent.attachments = this.removeCardByUuid(card.parent.attachments, cardId);
-
-            card.parent = undefined;
+        if(target === 'play area' && card.getType() === 'event') {
+            return false;
         }
 
-        sourceList = this.removeCardByUuid(sourceList, cardId);
+        if(target === 'play area') {
+            this.game.playCard(this.id, cardId, true, sourceList);
+        } else {
+            this.moveCard(card, target);
+        }
 
-        this.updateSourceList(source, sourceList);
+        if(target === 'hand') {
+            card.facedown = false;
+        }
 
         return true;
     }
