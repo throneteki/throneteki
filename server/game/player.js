@@ -445,6 +445,8 @@ class Player extends Spectator {
             this.removeFromHand(card.uuid);
         }
 
+        card.location = 'play area';
+
         return true;
     }
 
@@ -578,6 +580,7 @@ class Player extends Spectator {
 
         attachment.parent = card;
         attachment.facedown = false;
+        attachment.location = 'play area';
 
         card.attachments.push(attachment);
 
