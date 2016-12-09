@@ -36,6 +36,7 @@ class DrawCard extends BaseCard {
     addDuplicate(card) {
         this.dupes.push(card);
         card.location = 'play area';
+        card.inPlay = true;
     }
 
     removeDuplicate() {

@@ -418,8 +418,8 @@ class Player extends Spectator {
         }
 
         if(dupeCard && this.phase !== 'setup') {
-            dupeCard.addDuplicate(card);
             this.removeCardFromPile(card);
+            dupeCard.addDuplicate(card);
         } else {
             if(this.phase !== 'setup') {
                 this.game.raiseEvent('onCardEntersPlay', card);
@@ -571,6 +571,7 @@ class Player extends Spectator {
         attachment.parent = card;
         attachment.facedown = false;
         attachment.location = 'play area';
+        attachment.inPlay = true;
 
         card.attachments.push(attachment);
 
@@ -842,13 +843,13 @@ class Player extends Spectator {
                 this.moveCard(card.removeDuplicate(), 'discard pile');
             }
 
+            card.leavesPlay();
+            this.game.raiseEvent('onCardLeftPlay', this, card);
+
             if(card.parent && card.parent.attachments) {
                 card.parent.attachments = this.removeCardByUuid(card.parent.attachments, card.uuid);
                 card.parent = undefined;
             }
-
-            card.leavesPlay();
-            this.game.raiseEvent('onCardLeftPlay', this, card);
         }
 
         card.location = targetLocation;
