@@ -267,6 +267,7 @@ export class InnerGameBoard extends React.Component {
                         numDrawCards={otherPlayer ? otherPlayer.numDrawCards : 0}
                         discardPile={otherPlayer ? otherPlayer.discardPile : []}
                         deadPile={otherPlayer ? otherPlayer.deadPile : []}
+                        onCardClick={this.onCardClick}
                         onMouseOver={this.onMouseOver}
                         onMouseOut={this.onMouseOut}
                         />
