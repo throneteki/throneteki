@@ -18,8 +18,7 @@ class AryaStark extends DrawCard {
         dupe.facedown = true;
         this.controller.removeCardFromPile(dupe);
 
-        this.dupes.push(dupe);
-        this.setIcon('military');
+        this.addDuplicate(dupe);
 
         this.game.addMessage('{0} places the top card of their deck on {1} as a duplicate', this.controller, this);
     }

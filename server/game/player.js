@@ -222,6 +222,7 @@ class Player extends Spectator {
 
     initDrawDeck() {
         this.drawDeck = this.drawCards;
+        this.drawDeck.each(card => card.location = 'draw deck');
         this.shuffleDrawDeck();
         this.hand = _([]);
         this.drawCardsToHand(StartingHandSize);
@@ -419,7 +420,6 @@ class Player extends Spectator {
         if(dupeCard && this.phase !== 'setup') {
             dupeCard.addDuplicate(card);
             this.removeCardFromPile(card);
-            card.location = 'play area';
         } else {
             if(this.phase !== 'setup') {
                 this.game.raiseEvent('onCardEntersPlay', card);
@@ -833,20 +833,20 @@ class Player extends Spectator {
 
         this.removeCardFromPile(card);
 
-        card.attachments.each(attachment => {
-            this.removeAttachment(attachment, false);
-        });
-
-        while(card.dupes.size() > 0) {
-            this.moveCard(card.removeDuplicate(), 'discard pile');
-        }
-
-        if(card.parent && card.parent.attachments) {
-            card.parent.attachments = this.removeCardByUuid(card.parent.attachments, card.uuid);
-            card.parent = undefined;
-        }
-
         if(card.location === 'play area') {
+            card.attachments.each(attachment => {
+                this.removeAttachment(attachment, false);
+            });
+
+            while(card.dupes.size() > 0) {
+                this.moveCard(card.removeDuplicate(), 'discard pile');
+            }
+
+            if(card.parent && card.parent.attachments) {
+                card.parent.attachments = this.removeCardByUuid(card.parent.attachments, card.uuid);
+                card.parent = undefined;
+            }
+
             card.leavesPlay();
             this.game.raiseEvent('onCardLeftPlay', this, card);
         }

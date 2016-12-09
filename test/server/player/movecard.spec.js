@@ -75,65 +75,67 @@ describe('Player', function() {
             beforeEach(function() {
                 this.player.cardsInPlay.push(this.card);
                 this.card.location = 'play area';
-
-                this.player.moveCard(this.card, 'dead pile');
             });
 
             it('should make the card leave play', function() {
+                this.player.moveCard(this.card, 'dead pile');
                 expect(this.card.leavesPlay).toHaveBeenCalled();
             });
 
             it('should raise the left play event', function() {
+                this.player.moveCard(this.card, 'dead pile');
                 expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardLeftPlay', this.player, this.card);
             });
-        });
 
-        describe('when the card has attachments', function() {
-            beforeEach(function() {
-                this.attachment = new DrawCard(this.player, {});
-                this.attachment.parent = this.card;
-                this.card.attachments.push(this.attachment);
-                spyOn(this.player, 'removeAttachment');
+            describe('when the card has attachments', function() {
+                beforeEach(function() {
+                    this.attachment = new DrawCard(this.player, {});
+                    this.attachment.parent = this.card;
+                    this.attachment.location = 'play area';
+                    this.card.attachments.push(this.attachment);
+                    spyOn(this.player, 'removeAttachment');
 
-                this.player.moveCard(this.card, 'hand');
+                    this.player.moveCard(this.card, 'hand');
+                });
+
+                it('should remove the attachments', function() {
+                    expect(this.player.removeAttachment).toHaveBeenCalledWith(this.attachment, false);
+                });
             });
 
-            it('should remove the attachments', function() {
-                expect(this.player.removeAttachment).toHaveBeenCalledWith(this.attachment, false);
-            });
-        });
+            describe('when the card is an attachment', function() {
+                beforeEach(function() {
+                    this.attachment = new DrawCard(this.player, {});
+                    this.attachment.parent = this.card;
+                    this.attachment.location = 'play area';
+                    this.card.attachments.push(this.attachment);
+                    spyOn(this.player, 'removeAttachment');
 
-        describe('when the card is an attachment', function() {
-            beforeEach(function() {
-                this.attachment = new DrawCard(this.player, {});
-                this.attachment.parent = this.card;
-                this.card.attachments.push(this.attachment);
-                spyOn(this.player, 'removeAttachment');
+                    this.player.moveCard(this.attachment, 'hand');
+                });
 
-                this.player.moveCard(this.attachment, 'hand');
-            });
+                it('should place the attachment in the target pile', function() {
+                    expect(this.player.hand).toContain(this.attachment);
+                    expect(this.attachment.location).toBe('hand');
+                });
 
-            it('should place the attachment in the target pile', function() {
-                expect(this.player.hand).toContain(this.attachment);
-                expect(this.attachment.location).toBe('hand');
-            });
-
-            it('should remove the attachment from the card', function() {
-                expect(this.card.attachments).not.toContain(this.attachment);
-            });
-        });
-
-        describe('when the card has duplicates', function() {
-            beforeEach(function() {
-                this.dupe = new DrawCard(this.player, {});
-                this.card.addDuplicate(this.dupe);
-
-                this.player.moveCard(this.card, 'hand');
+                it('should remove the attachment from the card', function() {
+                    expect(this.card.attachments).not.toContain(this.attachment);
+                });
             });
 
-            it('should discard the dupes', function() {
-                expect(this.player.discardPile).toContain(this.dupe);
-                expect(this.dupe.location).toBe('discard pile');
+            describe('when the card has duplicates', function() {
+                beforeEach(function() {
+                    this.dupe = new DrawCard(this.player, {});
+                    this.card.addDuplicate(this.dupe);
+
+                    this.player.moveCard(this.card, 'hand');
+                });
+
+                it('should discard the dupes', function() {
+                    expect(this.player.discardPile).toContain(this.dupe);
+                    expect(this.dupe.location).toBe('discard pile');
+                });
             });
         });
 

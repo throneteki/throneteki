@@ -24,7 +24,7 @@ class AttachmentPrompt extends UiPrompt {
         }
 
         var targetPlayer = this.game.getPlayerById(targetCard.controller.id);
-        targetPlayer.attach(attachment, targetCard.uuid);
+        targetPlayer.attach(player, attachment, targetCard.uuid);
 
         player.dropPending = false;
         player.selectCard = false;
