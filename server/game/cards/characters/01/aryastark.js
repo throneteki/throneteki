@@ -14,9 +14,9 @@ class AryaStark extends DrawCard {
             return;
         }
 
-        var dupe = this.controller.drawDeck.first(1)[0];
+        var dupe = this.owner.drawDeck.first();
         dupe.facedown = true;
-        this.controller.drawDeck = _(this.controller.drawDeck.rest(1));
+        this.controller.removeCardFromPile(dupe);
 
         this.dupes.push(dupe);
         this.setIcon('military');
