@@ -566,7 +566,7 @@ class Player extends Spectator {
             return;
         }
 
-        this.removeCardFromPile(attachment);
+        attachment.owner.removeCardFromPile(attachment);
 
         attachment.parent = card;
         attachment.facedown = false;
