@@ -415,7 +415,7 @@ class Player extends Spectator {
         }
 
         if(this.phase === 'marshal') {
-            this.game.addMessage('{0} marshals {1} costing {2}', this, card, cost);
+            this.game.addMessage('{0} {1} {2} costing {3}', this, dupeCard ? 'duplicates' : 'marshals', card, cost);
         } else if(this.phase === 'challenge' && card.isAmbush()) {
             this.game.addMessage('{0} ambushes with {1} costing {2}', this, card, cost);
         }
