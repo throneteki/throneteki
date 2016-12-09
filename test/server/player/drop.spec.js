@@ -16,8 +16,7 @@ describe('Player', () => {
             this.gameSpy.players = [];
             this.gameSpy.players[this.player.id] = this.player;
 
-            this.cardSpy = jasmine.createSpyObj('card', ['getType']);            
-            spyOn(this.player, 'removeFromHand');
+            this.cardSpy = jasmine.createSpyObj('card', ['getType']);
             spyOn(this.player, 'discardCard');
 
             this.findSpy.and.returnValue(this.cardSpy);
@@ -35,7 +34,6 @@ describe('Player', () => {
                     expect(this.dropSucceeded).toBe(false);
                     expect(this.player.cardsInPlay.size()).toBe(0);
                     expect(this.player.hand.size()).toBe(0);
-                    expect(this.player.removeFromHand).not.toHaveBeenCalled();
                 });
             });
 
@@ -49,7 +47,6 @@ describe('Player', () => {
                 it('should return true and add the card to the play area', function() {
                     expect(this.dropSucceeded).toBe(true);
                     expect(this.gameSpy.playCard).toHaveBeenCalled();
-                    //expect(this.player.removeFromHand).toHaveBeenCalled();
                 });
             });
 

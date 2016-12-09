@@ -16,7 +16,8 @@ describe('Player', function() {
             this.canPlaySpy = spyOn(this.player, 'canPlayCard');
             this.cardSpy = jasmine.createSpyObj('card', ['getType', 'getCost', 'isUnique', 'isLimited', 'play']);
             this.dupeCardSpy = jasmine.createSpyObj('dupecard', ['addDuplicate']);
-            spyOn(this.player, 'removeFromHand');
+            spyOn(this.player, 'moveCard');
+            spyOn(this.player, 'removeCardFromPile');
 
             this.findSpy.and.returnValue(this.cardSpy);
             this.canPlaySpy.and.returnValue(true);
@@ -33,7 +34,7 @@ describe('Player', function() {
             });
 
             it('should not change the hand', function() {
-                expect(this.player.removeFromHand).not.toHaveBeenCalled();
+                expect(this.player.moveCard).not.toHaveBeenCalled();
             });
         });
 
@@ -52,7 +53,7 @@ describe('Player', function() {
                 });
 
                 it('should not change the hand', function() {
-                    expect(this.player.removeFromHand).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                 });
             });
 
@@ -66,7 +67,7 @@ describe('Player', function() {
                 });
 
                 it('should remove the card from hand', function() {
-                    expect(this.player.removeFromHand).toHaveBeenCalled();
+                    expect(this.player.moveCard).toHaveBeenCalled();
                 });
             });
         });
@@ -92,7 +93,7 @@ describe('Player', function() {
                 });
 
                 it('should not remove the card from hand', function() {
-                    expect(this.player.removeFromHand).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                 });
             });
 
@@ -111,7 +112,7 @@ describe('Player', function() {
                 });
 
                 it('should remove the card from hand', function() {
-                    expect(this.player.removeFromHand).toHaveBeenCalled();
+                    expect(this.player.removeCardFromPile).toHaveBeenCalled();
                 });
 
                 it('should add a duplicate to the existing card in play', function() {
@@ -145,7 +146,7 @@ describe('Player', function() {
                 });
 
                 it('should add a new card in play facedown', function() {
-                    expect(this.player.cardsInPlay).toContain(this.cardSpy);
+                    expect(this.player.moveCard).toHaveBeenCalledWith(this.cardSpy, 'play area');
                     expect(this.cardSpy.facedown).toBe(true);
                     expect(this.cardSpy.play).toHaveBeenCalledWith(this.player);
                 });

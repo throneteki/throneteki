@@ -27,7 +27,6 @@ describe('the AttachmentPrompt', () => {
 
         player.cardsInPlay.push(attachmentTarget);
         spyOn(player, 'attach');
-        spyOn(player, 'removeFromHand');
     });
 
     describe('the onCardClicked() function', () => {

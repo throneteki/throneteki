@@ -194,10 +194,6 @@ class Player extends Spectator {
         this.drawDeck = _(this.drawDeck.shuffle());
     }
 
-    removeFromHand(cardId) {
-        this.hand = this.removeCardByUuid(this.hand, cardId);
-    }
-
     discardFromDraw(number) {
         for(var i = 0; i < number; i++) {
             this.moveCard(this.drawDeck.first(), 'discard pile');
@@ -420,12 +416,13 @@ class Player extends Spectator {
         if(card.getType() === 'attachment' && this.phase !== 'setup' && !dupeCard) {
             this.promptForAttachment(card);
             // Hacky workaround for drag and drop.
-            this.dropPending = sourceList === this.discardPile;
+            this.dropPending = card.location === 'discard pile';
             return true;
         }
 
         if(dupeCard && this.phase !== 'setup') {
             dupeCard.addDuplicate(card);
+            this.removeCardFromPile(card);
             card.location = 'play area';
         } else {
             if(this.phase !== 'setup') {
