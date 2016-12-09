@@ -22,15 +22,14 @@ class HeadsOnSpikes extends PlotCard {
         var card = otherPlayer.hand.value()[cardIndex];
         var powerMessage = '';
 
-        otherPlayer.removeFromHand(card);
-
         if(card.getType() === 'character') {
             powerMessage = ' and gain 2 power for their faction';
+            otherPlayer.removeFromHand(card);
             otherPlayer.deadPile.push(card);
             
             this.game.addPower(player, 2);
         } else {
-            otherPlayer.discardPile.push(card);
+            otherPlayer.moveCard(card, 'discard pile');
         }
 
         this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}', player, this, card, otherPlayer, powerMessage);

@@ -200,8 +200,7 @@ class Player extends Spectator {
 
     discardFromDraw(number) {
         for(var i = 0; i < number; i++) {
-            this.discardPile.push(this.drawDeck.first());
-            this.drawDeck = _(this.drawDeck.slice(1));
+            this.moveCard(this.drawDeck.first(), 'discard pile');
         }
     }
 
@@ -215,12 +214,10 @@ class Player extends Spectator {
         while(toDiscard > 0) {
             var cardIndex = _.random(0, this.hand.size() - 1);
 
-            var discarded = this.hand.value().splice(cardIndex, 1);
+            var card = this.hand.value()[cardIndex];
 
-            _.each(discarded, card => {
-                this.game.addMessage('{0} discards {1} at random', this, card);
-                this.discardPile.push(card);
-            });
+            this.game.addMessage('{0} discards {1} at random', this, card);
+            this.moveCard(card, 'discard pile');
 
             toDiscard--;
         }
@@ -413,8 +410,7 @@ class Player extends Spectator {
 
             card.play(this);
 
-            this.removeFromHand(card.uuid);
-            this.discardPile.push(card);
+            this.moveCard(card, 'discard pile');
 
             return true;
         }
@@ -683,7 +679,7 @@ class Player extends Spectator {
                     return true;
                 }
 
-                this.discardPile.push(card);
+                this.moveCard(card, 'discard pile');
 
                 break;
             case 'dead pile':
@@ -800,13 +796,11 @@ class Player extends Spectator {
         }
 
         if(!character.dupes.isEmpty() && allowSave) {
-            var discardedDupe = character.dupes.first();
-
-            character.dupes = _(character.dupes.slice(1));
+            var discardedDupe = character.removeDuplicate();
 
             this.game.raiseEvent('onDupeDiscarded', this, character, discardedDupe);
 
-            this.discardPile.push(discardedDupe);
+            this.moveCard(discardedDupe, 'discard pile');
         } else {
             this.discardCard(card.uuid, this.deadPile);
 
@@ -884,7 +878,7 @@ class Player extends Spectator {
     removeAttachment(attachment, allowSave = true) {
         while(attachment.dupes.size() > 0) {
             var dupe = attachment.removeDuplicate();
-            dupe.owner.discardPile.push(dupe);
+            dupe.owner.moveCard(dupe, 'discard pile');
             if(allowSave) {
                 return;
             }
@@ -895,7 +889,7 @@ class Player extends Spectator {
         attachment.parent = undefined;
 
         if(attachment.isTerminal()) {
-            attachment.owner.discardPile.push(attachment);
+            attachment.owner.moveCard(attachment, 'discard pile');
         } else {
             attachment.owner.moveCard(attachment, 'hand');
         }
