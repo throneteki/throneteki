@@ -693,7 +693,7 @@ class Player extends Spectator {
                     return true;
                 }
 
-                this.deadPile.push(card);
+                this.moveCard(card, 'dead pile');
                 break;
             case 'play area':
                 if(card.getType() === 'event') {
