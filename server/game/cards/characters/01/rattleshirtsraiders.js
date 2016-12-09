@@ -29,8 +29,8 @@ class RattleshirtsRaiders extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        card.parent.controller.discardCard(card);
-        
+        card.controller.removeAttachment(card);
+
         return true;
     }
 }

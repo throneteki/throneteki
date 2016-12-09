@@ -17,7 +17,7 @@ describe('Player', () => {
             this.gameSpy.players[this.player.id] = this.player;
 
             this.cardSpy = jasmine.createSpyObj('card', ['getType']);
-            spyOn(this.player, 'discardCard');
+            spyOn(this.player, 'moveCard');
 
             this.findSpy.and.returnValue(this.cardSpy);
         });
@@ -100,7 +100,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.deadPile.size()).toBe(0);
                 });
             });
@@ -114,7 +114,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.deadPile.size()).toBe(0);
                 });
             });
@@ -128,7 +128,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.deadPile.size()).toBe(0);
                 });
             });
@@ -142,7 +142,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.deadPile.size()).toBe(0);
                 });
             });
@@ -156,7 +156,7 @@ describe('Player', () => {
 
                 it('should return true and put the character in the dead pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.deadPile.size()).toBe(1);
                 });
             });
@@ -172,7 +172,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.discardPile.size()).toBe(0);
                 });
             });
@@ -186,7 +186,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.discardPile.size()).toBe(1);
                 });
             });
@@ -200,7 +200,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.discardPile.size()).toBe(1);
                 });
             });
@@ -214,7 +214,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.discardPile.size()).toBe(1);
                 });
             });
@@ -228,7 +228,7 @@ describe('Player', () => {
 
                 it('should return true and put the character in the dead pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                     expect(this.player.discardPile.size()).toBe(1);
                 });
             });
@@ -325,7 +325,7 @@ describe('Player', () => {
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
                     expect(this.player.cardsInPlay.size()).toBe(1);
-                    expect(this.player.discardCard).not.toHaveBeenCalled();
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
                 });
             });
 
@@ -336,7 +336,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the discard pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.discardCard).toHaveBeenCalled();
+                    expect(this.player.moveCard).toHaveBeenCalled();
                 });
             });
         });

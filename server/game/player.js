@@ -667,7 +667,7 @@ class Player extends Spectator {
                 break;
             case 'discard pile':
                 if(source === 'play area') {
-                    player.discardCard(cardId, this.discardPile);
+                    player.moveCard(card, 'discard pile');
 
                     return true;
                 }
@@ -681,7 +681,7 @@ class Player extends Spectator {
                 }
 
                 if(source === 'play area') {
-                    this.discardCard(cardId, this.deadPile);
+                    this.moveCard(card, 'dead pile');
 
                     return true;
                 }
@@ -795,7 +795,7 @@ class Player extends Spectator {
 
             this.moveCard(discardedDupe, 'discard pile');
         } else {
-            this.discardCard(card.uuid, this.deadPile);
+            this.moveCard(card, 'dead pile');
 
             this.game.raiseEvent('onCharacterKilled', this, character);
         }
@@ -839,35 +839,6 @@ class Player extends Spectator {
         return power;
     }
 
-    discardCard(cardId, pile) {
-        var card = this.findCardInPlayByUuid(cardId);
-
-        if(!card) {
-            return;
-        }
-
-        card.dupes.each(dupe => {
-            pile.push(dupe);
-        });
-
-        card.dupes = _([]);
-
-        card.attachments.each(attachment => {
-            this.removeAttachment(attachment, false);
-        });
-
-        this.cardsInPlay = this.removeCardByUuid(this.cardsInPlay, cardId);
-
-        if(card.parent && card.parent.attachments) {
-            card.parent.attachments = this.removeCardByUuid(card.parent.attachments, cardId);
-        }
-
-        pile.push(card);
-        card.leavesPlay();
-
-        this.game.raiseEvent('onCardLeftPlay', this, card);
-    }
-
     removeAttachment(attachment, allowSave = true) {
         while(attachment.dupes.size() > 0) {
             var dupe = attachment.removeDuplicate();
@@ -905,6 +876,24 @@ class Player extends Spectator {
         }
 
         this.removeCardFromPile(card);
+
+        card.attachments.each(attachment => {
+            this.removeAttachment(attachment, false);
+        });
+
+        while(card.dupes.size() > 0) {
+            this.moveCard(card.removeDuplicate(), 'discard pile');
+        }
+
+        if(card.parent && card.parent.attachments) {
+            card.parent.attachments = this.removeCardByUuid(card.parent.attachments, card.uuid);
+            card.parent = undefined;
+        }
+
+        if(card.location === 'play area') {
+            card.leavesPlay();
+            this.game.raiseEvent('onCardLeftPlay', this, card);
+        }
 
         card.location = targetLocation;
         if(targetLocation === 'draw deck') {
