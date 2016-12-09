@@ -186,10 +186,6 @@ class Player extends Spectator {
         return cards.filter(predicate);
     }
 
-    moveFromDrawDeckToHand(card) {
-        this.moveCard(card, 'hand');
-    }
-
     shuffleDrawDeck() {
         this.drawDeck = _(this.drawDeck.shuffle());
     }
