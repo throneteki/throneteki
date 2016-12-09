@@ -1,6 +1,7 @@
 /* global describe, it, beforeEach, expect, jasmine */
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
+const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 const DrawCard = require('../../../server/game/drawcard.js');
 
@@ -57,6 +58,17 @@ describe('Player', function() {
 
             it('should remove it from the original pile', function() {
                 expect(this.player.discardPile).not.toContain(this.card);
+            });
+        });
+
+        describe('when the target location is the draw deck', function() {
+            beforeEach(function() {
+                this.player.drawDeck = _([{}, {}, {}]);
+                this.player.moveCard(this.card, 'draw deck');
+            });
+
+            it('should add the card to the top of the deck', function() {
+                expect(this.player.drawDeck.value()[0]).toBe(this.card);
             });
         });
     });

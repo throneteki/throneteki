@@ -204,10 +204,6 @@ class Player extends Spectator {
         }
     }
 
-    addCardToDrawDeck(card) {
-        this.drawDeck.push(card);
-    }
-
     discardAtRandom(number) {
         var toDiscard = number;
 
@@ -711,7 +707,7 @@ class Player extends Spectator {
                 }
                 break;
             case 'draw deck':
-                this.drawDeck.unshift(card);
+                this.moveCard(card, 'draw deck');
                 break;
         }
 
@@ -919,7 +915,11 @@ class Player extends Spectator {
         }
 
         card.location = targetLocation;
-        targetPile.push(card);
+        if(targetLocation === 'draw deck') {
+            targetPile.unshift(card);
+        } else {
+            targetPile.push(card);
+        }
     }
 
     getTotalPlotStat(property) {
