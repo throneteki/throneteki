@@ -21,7 +21,6 @@ describe('Player', function() {
 
     describe('removeAttachment', function() {
         beforeEach(function() {
-            spyOn(this.attachment, 'leavesPlay');
             spyOn(this.attachment, 'isTerminal');
         });
 
@@ -40,18 +39,8 @@ describe('Player', function() {
                 expect(this.attachmentOwner.moveCard).toHaveBeenCalledWith(this.dupe, 'discard pile');
             });
 
-            it('should not remove the attachment', function() {
-                expect(this.card.attachments).toContain(this.attachment);
-            });
-
-            it('should not have the attachment leave play', function() {
-                expect(this.attachment.leavesPlay).not.toHaveBeenCalled();
-            });
-
             it('should not move the attachment', function() {
-                expect(this.attachment.parent).toBe(this.card);
-                expect(this.attachmentOwner.hand).not.toContain(this.attachment);
-                expect(this.attachmentOwner.discardPile).not.toContain(this.attachment);
+                expect(this.attachmentOwner.moveCard).not.toHaveBeenCalledWith(this.attachment, jasmine.any(Object));
             });
         });
 
@@ -60,18 +49,6 @@ describe('Player', function() {
                 beforeEach(function() {
                     this.attachment.isTerminal.and.returnValue(true);
                     this.player.removeAttachment(this.attachment);
-                });
-
-                it('should leave play', function() {
-                    expect(this.attachment.leavesPlay).toHaveBeenCalled();
-                });
-
-                it('should remove the attachment from its parent', function() {
-                    expect(this.card.attachments).not.toContain(this.attachment);
-                });
-
-                it('should unset its parent property', function() {
-                    expect(this.attachment.parent).toBeUndefined();
                 });
 
                 it('should move the attachment to its owners discard pile', function() {
@@ -83,18 +60,6 @@ describe('Player', function() {
                 beforeEach(function() {
                     this.attachment.isTerminal.and.returnValue(false);
                     this.player.removeAttachment(this.attachment);
-                });
-
-                it('should leave play', function() {
-                    expect(this.attachment.leavesPlay).toHaveBeenCalled();
-                });
-
-                it('should remove the attachment from its parent', function() {
-                    expect(this.card.attachments).not.toContain(this.attachment);
-                });
-
-                it('should unset its parent property', function() {
-                    expect(this.attachment.parent).toBeUndefined();
                 });
 
                 it('should move the attachment to its owners hand', function() {
@@ -119,18 +84,6 @@ describe('Player', function() {
             it('should place all dupes in the owners discard pile', function() {
                 expect(this.attachmentOwner.moveCard).toHaveBeenCalledWith(this.dupe, 'discard pile');
                 expect(this.attachmentOwner.moveCard).toHaveBeenCalledWith(this.dupe2, 'discard pile');
-            });
-
-            it('should leave play', function() {
-                expect(this.attachment.leavesPlay).toHaveBeenCalled();
-            });
-
-            it('should remove the attachment from its parent', function() {
-                expect(this.card.attachments).not.toContain(this.attachment);
-            });
-
-            it('should unset its parent property', function() {
-                expect(this.attachment.parent).toBeUndefined();
             });
 
             it('should move the attachment to its owners hand', function() {

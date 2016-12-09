@@ -805,10 +805,6 @@ class Player extends Spectator {
             }
         }
 
-        attachment.parent.attachments = this.removeCardByUuid(attachment.parent.attachments, attachment.uuid);
-        attachment.leavesPlay();
-        attachment.parent = undefined;
-
         if(attachment.isTerminal()) {
             attachment.owner.moveCard(attachment, 'discard pile');
         } else {
