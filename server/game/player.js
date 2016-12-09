@@ -426,6 +426,7 @@ class Player extends Spectator {
 
         if(dupeCard && this.phase !== 'setup') {
             dupeCard.addDuplicate(card);
+            card.location = 'play area';
         } else {
             if(this.phase !== 'setup') {
                 this.game.raiseEvent('onCardEntersPlay', card);
@@ -434,18 +435,12 @@ class Player extends Spectator {
             card.facedown = this.phase === 'setup';
             card.play(this);
             card.new = true;
-            this.cardsInPlay.push(card);
-        } 
+            this.moveCard(card, 'play area');
+        }
 
         if(card.isLimited() && !forcePlay) {
             this.limitedPlayed++;
         }
-
-        if(sourceList === this.hand) {
-            this.removeFromHand(card.uuid);
-        }
-
-        card.location = 'play area';
 
         return true;
     }
