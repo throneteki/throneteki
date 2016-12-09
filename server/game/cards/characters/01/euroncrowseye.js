@@ -6,7 +6,7 @@ class EuronCrowsEye extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.registerEvents(['onPillage']);
+//        this.registerEvents(['onPillage']);
     }
 
     onPillage(event, challenge, card) {
