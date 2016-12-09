@@ -578,6 +578,8 @@ class Player extends Spectator {
             return;
         }
 
+        this.removeCardFromPile(attachment);
+
         attachment.parent = card;
         attachment.facedown = false;
         attachment.location = 'play area';
@@ -904,24 +906,28 @@ class Player extends Spectator {
     }
 
     moveCard(card, targetLocation) {
-        var originalLocation = card.location;
-        var originalPile = this.getSourceList(originalLocation);
         var targetPile = this.getSourceList(targetLocation);
 
         if(!targetPile) {
             return;
         }
 
-        if(originalPile) {
-            originalPile = this.removeCardByUuid(originalPile, card.uuid);
-            this.updateSourceList(originalLocation, originalPile);
-        }
+        this.removeCardFromPile(card);
 
         card.location = targetLocation;
         if(targetLocation === 'draw deck') {
             targetPile.unshift(card);
         } else {
             targetPile.push(card);
+        }
+    }
+
+    removeCardFromPile(card) {
+        var originalLocation = card.location;
+        var originalPile = this.getSourceList(originalLocation);
+        if(originalPile) {
+            originalPile = this.removeCardByUuid(originalPile, card.uuid);
+            this.updateSourceList(originalLocation, originalPile);
         }
     }
 
