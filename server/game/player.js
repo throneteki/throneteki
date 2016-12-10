@@ -746,11 +746,7 @@ class Player extends Spectator {
         }
 
         if(!character.dupes.isEmpty() && allowSave) {
-            var discardedDupe = character.removeDuplicate();
-
-            this.game.raiseEvent('onDupeDiscarded', this, character, discardedDupe);
-
-            this.moveCard(discardedDupe, 'discard pile');
+            this.removeDuplicate(character);
         } else {
             this.moveCard(card, 'dead pile');
 
@@ -798,8 +794,7 @@ class Player extends Spectator {
 
     removeAttachment(attachment, allowSave = true) {
         while(attachment.dupes.size() > 0) {
-            var dupe = attachment.removeDuplicate();
-            dupe.owner.moveCard(dupe, 'discard pile');
+            this.removeDuplicate(attachment);
             if(allowSave) {
                 return;
             }
@@ -836,7 +831,7 @@ class Player extends Spectator {
             });
 
             while(card.dupes.size() > 0) {
-                this.moveCard(card.removeDuplicate(), 'discard pile');
+                this.removeDuplicate(card);
             }
 
             card.leavesPlay();
@@ -854,6 +849,17 @@ class Player extends Spectator {
         } else {
             targetPile.push(card);
         }
+    }
+
+    removeDuplicate(card) {
+        if(card.dupes.isEmpty()) {
+            return;
+        }
+
+        var dupe = card.removeDuplicate();
+        dupe.location = 'discard pile';
+        dupe.owner.discardPile.push(dupe);
+        this.game.raiseEvent('onDupeDiscarded', this, card, dupe);
     }
 
     removeCardFromPile(card) {

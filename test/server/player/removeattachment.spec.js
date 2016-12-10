@@ -6,10 +6,11 @@ const DrawCard = require('../../../server/game/drawcard.js');
 
 describe('Player', function() {
     beforeEach(function() {
-        this.player = new Player('1', 'Player 1', true);
+        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent']);
+        this.player = new Player('1', 'Player 1', true, this.gameSpy);
         this.player.deck = {};
         this.player.initialise();
-        this.attachmentOwner = new Player('2', 'Player 2', false);
+        this.attachmentOwner = new Player('2', 'Player 2', false, this.gameSpy);
         this.attachmentOwner.initialise();
         this.attachment = new DrawCard(this.attachmentOwner, {});
         this.card = new DrawCard(this.player, {});
@@ -36,7 +37,8 @@ describe('Player', function() {
             });
 
             it('should move the dupe in the owners discard pile', function() {
-                expect(this.attachmentOwner.moveCard).toHaveBeenCalledWith(this.dupe, 'discard pile');
+                expect(this.attachmentOwner.discardPile).toContain(this.dupe);
+                expect(this.dupe.location).toBe('discard pile');
             });
 
             it('should not move the attachment', function() {
@@ -82,8 +84,8 @@ describe('Player', function() {
             });
 
             it('should place all dupes in the owners discard pile', function() {
-                expect(this.attachmentOwner.moveCard).toHaveBeenCalledWith(this.dupe, 'discard pile');
-                expect(this.attachmentOwner.moveCard).toHaveBeenCalledWith(this.dupe2, 'discard pile');
+                expect(this.attachmentOwner.discardPile).toContain(this.dupe);
+                expect(this.attachmentOwner.discardPile).toContain(this.dupe2);
             });
 
             it('should move the attachment to its owners hand', function() {
