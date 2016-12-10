@@ -671,10 +671,6 @@ class Player extends Spectator {
             this.moveCard(card, target);
         }
 
-        if(target === 'hand') {
-            card.facedown = false;
-        }
-
         return true;
     }
 
@@ -849,6 +845,10 @@ class Player extends Spectator {
         } else {
             targetPile.push(card);
         }
+
+        if(targetLocation !== 'play area') {
+            card.facedown = false;
+        }
     }
 
     removeDuplicate(card) {
@@ -857,6 +857,7 @@ class Player extends Spectator {
         }
 
         var dupe = card.removeDuplicate();
+        dupe.facedown = false;
         dupe.location = 'discard pile';
         dupe.owner.discardPile.push(dupe);
         this.game.raiseEvent('onDupeDiscarded', this, card, dupe);
