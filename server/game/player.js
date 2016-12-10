@@ -633,7 +633,6 @@ class Player extends Spectator {
 
         var sourceList = this.getSourceList(source);
         var card = this.findCardByUuid(sourceList, cardId);
-        var player = this;
 
         if(!card) {
             if(source === 'play area') {
@@ -648,8 +647,6 @@ class Player extends Spectator {
                 if(!card || card.controller !== this) {
                     return false;
                 }
-
-                player = otherPlayer;
             } else {
                 return false;
             }
