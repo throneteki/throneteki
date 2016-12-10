@@ -192,7 +192,7 @@ class Player extends Spectator {
 
     discardFromDraw(number) {
         for(var i = 0; i < number; i++) {
-            this.moveCard(this.drawDeck.first(), 'discard pile');
+            this.discardCard(this.drawDeck.first());
         }
     }
 
@@ -205,7 +205,7 @@ class Player extends Spectator {
             var card = this.hand.value()[cardIndex];
 
             this.game.addMessage('{0} discards {1} at random', this, card);
-            this.moveCard(card, 'discard pile');
+            this.discardCard(card);
 
             toDiscard--;
         }
@@ -732,6 +732,19 @@ class Player extends Spectator {
         this.cardsInPlay.each(card => {
             card.resetForChallenge();
         });
+    }
+
+    sacrificeCard(card) {
+        this.move(card, 'discard pile');
+        this.game.raiseEvent('onSacrificed', this, card);
+    }
+
+    discardCard(card, allowSave = true) {
+        if(!card.dupes.isEmpty() && allowSave) {
+            this.removeDuplicate(card);
+        } else {
+            this.moveCard(card, 'discard pile');
+        }
     }
 
     killCharacter(card, allowSave = true) {

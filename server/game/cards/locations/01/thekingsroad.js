@@ -21,7 +21,7 @@ class TheKingsroad extends Reducer {
         var cost = super.reduce(card, currentCost, spending);
 
         if(spending) {
-            this.controller.moveCard(this, 'discard pile');
+            this.owner.sacrificeCard(this);
         }
 
         return cost;

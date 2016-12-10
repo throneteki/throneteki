@@ -28,7 +28,7 @@ class HeadsOnSpikes extends PlotCard {
 
             this.game.addPower(player, 2);
         } else {
-            otherPlayer.moveCard(card, 'discard pile');
+            otherPlayer.discardCard(card);
         }
 
         this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}', player, this, card, otherPlayer, powerMessage);

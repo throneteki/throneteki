@@ -25,7 +25,7 @@ class Confiscation extends PlotCard {
             return false;
         }
 
-        attachment.controller.moveCard(attachment, 'discard pile');
+        attachment.owner.discardCard(attachment);
 
         this.game.addMessage('{0} uses {1} to discard {2}', player, this, attachment);
 
