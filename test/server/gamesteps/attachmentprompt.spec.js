@@ -77,17 +77,11 @@ describe('the AttachmentPrompt', () => {
             describe('when attaching a card from discard', () => {
                 beforeEach(() => {
                     player.discardPile.push(attachment);
-                    player.dropPending = true;
                 });
 
                 it('should attach the card', () => {
                     prompt.onCardClicked(player, attachmentTarget);
                     expect(player.attach).toHaveBeenCalled();
-                });
-
-                it('should end drop flow', () => {
-                    prompt.onCardClicked(player, attachmentTarget);
-                    expect(player.dropPending).toBeFalsy();
                 });
             });
         });
