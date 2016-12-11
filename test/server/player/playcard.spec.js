@@ -2,7 +2,6 @@
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 const Player = require('../../../server/game/player.js');
-const DrawCard = require('../../../server/game/drawcard.js');
 
 describe('Player', function() {
     beforeEach(function() {
@@ -14,15 +13,13 @@ describe('Player', function() {
     describe('playCard', function() {
         beforeEach(function() {
             this.canPlaySpy = spyOn(this.player, 'canPlayCard');
-            this.card = new DrawCard(this.player, {});
-            spyOn(this.card, 'getType');
-            spyOn(this.card, 'isLimited');
-            spyOn(this.card, 'play');
+            this.cardSpy = jasmine.createSpyObj('card', ['getType', 'getCost', 'isUnique', 'isLimited', 'play']);
+            this.cardSpy.uuid = '1111';
             this.dupeCardSpy = jasmine.createSpyObj('dupecard', ['addDuplicate']);
 
             this.canPlaySpy.and.returnValue(true);
-            this.player.hand.push(this.card);
-            this.card.location = 'hand';
+            this.player.hand.push(this.cardSpy);
+            this.cardSpy.location = 'hand';
         });
 
         describe('when card is not in hand to play', function() {
@@ -36,7 +33,7 @@ describe('Player', function() {
             });
 
             it('should not put the card in play', function() {
-                expect(this.player.cardsInPlay).not.toContain(this.card);
+                expect(this.player.cardsInPlay).not.toContain(this.cardSpy);
             });
         });
 
@@ -47,7 +44,7 @@ describe('Player', function() {
 
             describe('and not forcing play', function() {
                 beforeEach(function() {
-                    this.canPlay = this.player.playCard(this.card.uuid, false);
+                    this.canPlay = this.player.playCard(this.cardSpy.uuid, false);
                 });
 
                 it('should return false', function() {
@@ -55,13 +52,13 @@ describe('Player', function() {
                 });
 
                 it('should not change the hand', function() {
-                    expect(this.player.hand).toContain(this.card);
+                    expect(this.player.hand).toContain(this.cardSpy);
                 });
             });
 
             describe('and forcing play', function() {
                 beforeEach(function() {
-                    this.canPlay = this.player.playCard(this.card.uuid, true);
+                    this.canPlay = this.player.playCard(this.cardSpy.uuid, true);
                 });
 
                 it('should return true', function() {
@@ -69,7 +66,7 @@ describe('Player', function() {
                 });
 
                 it('should remove the card from hand', function() {
-                    expect(this.player.hand).not.toContain(this.card);
+                    expect(this.player.hand).not.toContain(this.cardSpy);
                 });
             });
         });
@@ -78,12 +75,12 @@ describe('Player', function() {
             beforeEach(function() {
                 spyOn(this.player, 'promptForAttachment');
 
-                this.card.getType.and.returnValue('attachment');
+                this.cardSpy.getType.and.returnValue('attachment');
             });
 
             describe('and there is no duplicate out', function() {
                 beforeEach(function() {
-                    this.canPlay = this.player.playCard(this.card.uuid);
+                    this.canPlay = this.player.playCard(this.cardSpy.uuid);
                 });
 
                 it('should return true', function() {
@@ -95,14 +92,14 @@ describe('Player', function() {
                 });
 
                 it('should not remove the card from hand', function() {
-                    expect(this.player.hand).toContain(this.card);
+                    expect(this.player.hand).toContain(this.cardSpy);
                 });
             });
 
             describe('and there is a duplicate out', function() {
                 beforeEach(function() {
                     spyOn(this.player, 'getDuplicateInPlay').and.returnValue(this.dupeCardSpy);
-                    this.canPlay = this.player.playCard(this.card.uuid);
+                    this.canPlay = this.player.playCard(this.cardSpy.uuid);
                 });
 
                 it('should return true', function() {
@@ -114,15 +111,15 @@ describe('Player', function() {
                 });
 
                 it('should remove the card from hand', function() {
-                    expect(this.player.hand).not.toContain(this.card);
+                    expect(this.player.hand).not.toContain(this.cardSpy);
                 });
 
                 it('should add a duplicate to the existing card in play', function() {
-                    expect(this.dupeCardSpy.addDuplicate).toHaveBeenCalledWith(this.card);
+                    expect(this.dupeCardSpy.addDuplicate).toHaveBeenCalledWith(this.cardSpy);
                 });
 
                 it('should not add a new card to play', function() {
-                    expect(this.player.cardsInPlay).not.toContain(this.card);
+                    expect(this.player.cardsInPlay).not.toContain(this.cardSpy);
                 });
             });
         });
@@ -136,7 +133,7 @@ describe('Player', function() {
                 beforeEach(function() {
                     this.player.phase = 'setup';
 
-                    this.canPlay = this.player.playCard(this.card.uuid);
+                    this.canPlay = this.player.playCard(this.cardSpy.uuid);
                 });
 
                 it('should return true', function() {
@@ -148,15 +145,15 @@ describe('Player', function() {
                 });
 
                 it('should add a new card in play facedown', function() {
-                    expect(this.player.cardsInPlay).toContain(this.card);
-                    expect(this.card.facedown).toBe(true);
-                    expect(this.card.play).toHaveBeenCalledWith(this.player);
+                    expect(this.player.cardsInPlay).toContain(this.cardSpy);
+                    expect(this.cardSpy.facedown).toBe(true);
+                    expect(this.cardSpy.play).toHaveBeenCalledWith(this.player);
                 });
             });
 
             describe('and this is not the setup phase', function() {
                 beforeEach(function() {
-                    this.canPlay = this.player.playCard(this.card.uuid);
+                    this.canPlay = this.player.playCard(this.cardSpy.uuid);
                 });
 
                 it('should return true', function() {
@@ -168,15 +165,15 @@ describe('Player', function() {
                 });
 
                 it('should not add a new card to play', function() {
-                    expect(this.player.cardsInPlay).not.toContain(this.card);
+                    expect(this.player.cardsInPlay).not.toContain(this.cardSpy);
                 });
             });
         });
 
         describe('when card is limited and not forcing play', function() {
             beforeEach(function() {
-                this.card.isLimited.and.returnValue(true);
-                this.canPlay = this.player.playCard(this.card.uuid);
+                this.cardSpy.isLimited.and.returnValue(true);
+                this.canPlay = this.player.playCard(this.cardSpy.uuid);
             });
 
             it('should set the limited played flag', function() {
@@ -186,8 +183,8 @@ describe('Player', function() {
 
         describe('when card is limited and forcing play', function() {
             beforeEach(function() {
-                this.card.isLimited.and.returnValue(true);
-                this.canPlay = this.player.playCard(this.card.uuid, true);
+                this.cardSpy.isLimited.and.returnValue(true);
+                this.canPlay = this.player.playCard(this.cardSpy.uuid, true);
             });
 
             it('should not set the limited played flag', function() {
