@@ -81,7 +81,7 @@ class SelectCardPrompt extends UiPrompt {
             return false;
         }
 
-        if(this.properties.numCards === 1) {
+        if(this.properties.numCards === 1 && this.selectedCards.length === 1) {
             this.fireOnSelect();
         }
     }

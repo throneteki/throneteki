@@ -72,6 +72,17 @@ describe('the SelectCardPrompt', function() {
                     expect(this.properties.onSelect).toHaveBeenCalledWith(this.player, this.card);
                 });
 
+                describe('when the card is selected from a previous prompt', function() {
+                    beforeEach(function() {
+                        this.card.selected = true;
+                    });
+
+                    it('should not fire the onSelect event', function() {
+                        this.prompt.onCardClicked(this.player, this.card);
+                        expect(this.properties.onSelect).not.toHaveBeenCalled();
+                    })
+                });
+
                 describe('when onSelect returns true', function() {
                     beforeEach(function() {
                         this.properties.onSelect.and.returnValue(true);
