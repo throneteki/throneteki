@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach, expect,spyOn*/
+/*global describe, it, beforeEach, expect,spyOn, jasmine*/
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 const _ = require('underscore');
@@ -15,6 +15,9 @@ describe('the SelectCardPrompt', function() {
         this.card = {};
 
         this.player.cardsInPlay.push(this.card);
+
+        this.previousCard = { selected: true };
+        this.game.allCards = _([this.previousCard]);
 
         this.properties = {
             cardCondition: function() {
@@ -40,6 +43,10 @@ describe('the SelectCardPrompt', function() {
         beforeEach(function() {
             this.properties.numCards = 1;
             this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+        });
+
+        it('should unselect the cards when the prompt starts', function() {
+            expect(this.previousCard.selected).toBe(false);
         });
 
         describe('the onCardClicked() function', function() {
@@ -77,7 +84,7 @@ describe('the SelectCardPrompt', function() {
                     it('should not fire the onSelect event', function() {
                         this.prompt.onCardClicked(this.player, this.card);
                         expect(this.properties.onSelect).not.toHaveBeenCalled();
-                    })
+                    });
                 });
 
                 describe('when onSelect returns true', function() {
@@ -88,6 +95,13 @@ describe('the SelectCardPrompt', function() {
                     it('should complete the prompt', function() {
                         this.prompt.onCardClicked(this.player, this.card);
                         expect(this.prompt.isComplete()).toBe(true);
+                    });
+
+                    it('should reselect the card when the prompt is completed', function() {
+                        this.prompt.onCardClicked(this.player, this.card);
+                        this.prompt.continue();
+
+                        expect(this.previousCard.selected).toBe(true);
                     });
                 });
 
@@ -159,6 +173,13 @@ describe('the SelectCardPrompt', function() {
                         it('should complete the prompt', function() {
                             this.prompt.onMenuCommand(this.player, 'another');
                             expect(this.prompt.isComplete()).toBe(true);
+                        });
+
+                        it('should reselect the card when the prompt is completed', function() {
+                            this.prompt.onMenuCommand(this.player, 'another');
+                            this.prompt.continue();
+
+                            expect(this.previousCard.selected).toBe(true);
                         });
                     });
                 });
