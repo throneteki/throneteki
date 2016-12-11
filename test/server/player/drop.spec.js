@@ -17,6 +17,7 @@ describe('Player', () => {
             this.gameSpy.players[this.player.id] = this.player;
 
             this.cardSpy = jasmine.createSpyObj('card', ['getType']);
+            this.cardSpy.controller = this.player;
             spyOn(this.player, 'moveCard');
 
             this.findSpy.and.returnValue(this.cardSpy);

@@ -644,12 +644,16 @@ class Player extends Spectator {
 
                 card = otherPlayer.findCardInPlayByUuid(cardId);
 
-                if(!card || card.controller !== this) {
+                if(!card) {
                     return false;
                 }
             } else {
                 return false;
             }
+        }
+
+        if(card.controller !== this) {
+            return false;
         }
 
         if(target === 'dead pile' && card.getType() !== 'character') {
