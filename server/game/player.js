@@ -529,9 +529,6 @@ class Player extends Spectator {
     }
 
     flipPlotFaceup() {
-        this.menuTitle = '';
-        this.buttons = [];
-
         this.selectedPlot.flipFaceup();
 
         if(this.activePlot) {
