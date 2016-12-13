@@ -495,7 +495,6 @@ class Player extends Spectator {
         this.reserve = 0;
         this.firstPlayer = false;
         this.selectedPlot = undefined;
-        this.plotRevealed = false;
         this.roundDone = false;
         this.challenges = {
             complete: 0,
@@ -543,8 +542,6 @@ class Player extends Spectator {
             this.plotDeck = this.plotDiscard;
             this.plotDiscard = _([]);
         }
-
-        this.plotRevealed = true;
 
         this.selectedPlot = undefined;
     }
