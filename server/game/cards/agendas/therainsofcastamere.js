@@ -20,13 +20,13 @@ class TheRainsOfCastamere extends AgendaCard {
     }
 
     removeExistingSchemeFromGame() {
-      var previousPlot = this.owner.activePlot;
+        var previousPlot = this.owner.activePlot;
 
-      if(!previousPlot || !previousPlot.hasTrait('Scheme')) {
-          return;
-      }
+        if(!previousPlot || !previousPlot.hasTrait('Scheme')) {
+            return;
+        }
 
-      this.owner.removeActivePlot();
+        this.owner.removeActivePlot();
     }
 
     afterChallenge(e, challenge) {

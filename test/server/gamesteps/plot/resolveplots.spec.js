@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach, expect, jasmine, spyOn*/
+/*global describe, it, beforeEach, expect, jasmine */
 /* eslint no-invalid-this: 0 */
 
 const ResolvePlots = require('../../../../server/game/gamesteps/plot/resolveplots.js');
