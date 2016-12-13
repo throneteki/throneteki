@@ -64,6 +64,8 @@ class TheRainsOfCastamere extends AgendaCard {
             return false;
         }
 
+        this.game.addMessage('{0} uses {1} to reveal {2}', player, this, scheme);
+
         this.removeExistingSchemeFromGame();
 
         this.schemes = _.reject(this.schemes, card => card === scheme);

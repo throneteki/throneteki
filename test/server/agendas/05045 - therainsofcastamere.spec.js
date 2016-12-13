@@ -22,7 +22,7 @@ describe('The Rains of Castamere', function() {
     }
 
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'promptWithMenu']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'promptWithMenu', 'addMessage']);
 
         this.plot1 = plot('1111');
         this.plot2 = plot('2222');
