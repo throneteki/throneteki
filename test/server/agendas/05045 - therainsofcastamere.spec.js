@@ -7,7 +7,7 @@ const TheRainsOfCastamere = require('../../../server/game/cards/agendas/therains
 
 describe('The Rains of Castamere', function() {
     function createPlotSpy(uuid, hasTrait) {
-        var plot = jasmine.createSpyObj('plot', ['hasTrait', 'leavesPlay', 'onReveal']);
+        var plot = jasmine.createSpyObj('plot', ['hasTrait', 'onReveal']);
         plot.uuid = uuid;
         plot.hasTrait.and.callFake(hasTrait);
         return plot;
@@ -29,7 +29,7 @@ describe('The Rains of Castamere', function() {
         this.scheme1 = scheme('3333');
         this.scheme2 = scheme('4444');
 
-        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup']);
+        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup', 'removeActivePlot']);
         this.player.game = this.gameSpy;
         this.player.faction = {};
 
@@ -77,7 +77,7 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should not make the plot leave play directly', function() {
-                expect(this.plot1.leavesPlay).not.toHaveBeenCalled();
+                expect(this.player.removeActivePlot).not.toHaveBeenCalled();
             });
         });
 
@@ -88,12 +88,8 @@ describe('The Rains of Castamere', function() {
                 this.agenda.onPlotFlip();
             });
 
-            it('should remove the plot directly', function() {
-                expect(this.player.activePlot).toBeUndefined();
-            });
-
-            it('should make the plot leave play directly', function() {
-                expect(this.scheme1.leavesPlay).toHaveBeenCalled();
+            it('should remove the active plot from the game', function() {
+                expect(this.player.removeActivePlot).toHaveBeenCalled();
             });
         });
     });
@@ -248,7 +244,7 @@ describe('The Rains of Castamere', function() {
                 });
 
                 it('should remove the current plot from play', function() {
-                    expect(this.scheme2.leavesPlay).toHaveBeenCalledWith(this.player);
+                    expect(this.player.removeActivePlot).toHaveBeenCalled();
                 });
 
                 it('should remove the revealed scheme from the choices list', function() {

@@ -531,8 +531,8 @@ class Player extends Spectator {
         this.selectedPlot.flipFaceup();
 
         if(this.activePlot) {
-            this.activePlot.leavesPlay(this);
-            this.plotDiscard.push(this.activePlot);
+            var previousPlot = this.removeActivePlot();
+            this.plotDiscard.push(previousPlot);
         }
 
         this.activePlot = this.selectedPlot;
@@ -544,6 +544,15 @@ class Player extends Spectator {
         }
 
         this.selectedPlot = undefined;
+    }
+
+    removeActivePlot() {
+        if(this.activePlot) {
+            var plot = this.activePlot;
+            plot.leavesPlay(this);
+            this.activePlot = undefined;
+            return plot;
+        }
     }
 
     drawPhase() {

@@ -26,8 +26,7 @@ class TheRainsOfCastamere extends AgendaCard {
           return;
       }
 
-      previousPlot.leavesPlay(this.owner);
-      this.owner.activePlot = undefined;
+      this.owner.removeActivePlot();
     }
 
     afterChallenge(e, challenge) {
