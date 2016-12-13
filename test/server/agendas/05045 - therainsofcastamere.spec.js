@@ -177,6 +177,10 @@ describe('The Rains of Castamere', function() {
             it('should return false', function() {
                 expect(this.result).toBe(false);
             });
+
+            it('should not kneel the player faction card', function() {
+                expect(this.player.faction.kneeled).toBeFalsy();
+            });
         });
 
         describe('when the argument is a scheme', function() {
@@ -202,6 +206,10 @@ describe('The Rains of Castamere', function() {
                 it('should return true', function() {
                     expect(this.result).toBe(true);
                 });
+
+                it('should kneel the player faction card', function() {
+                    expect(this.player.faction.kneeled).toBe(true);
+                });
             });
 
             describe('and the active plot is not a scheme', function() {
@@ -225,6 +233,10 @@ describe('The Rains of Castamere', function() {
 
                 it('should return true', function() {
                     expect(this.result).toBe(true);
+                });
+
+                it('should kneel the player faction card', function() {
+                    expect(this.player.faction.kneeled).toBe(true);
                 });
             });
 
@@ -253,6 +265,10 @@ describe('The Rains of Castamere', function() {
 
                 it('should return true', function() {
                     expect(this.result).toBe(true);
+                });
+
+                it('should kneel the player faction card', function() {
+                    expect(this.player.faction.kneeled).toBe(true);
                 });
             });
         });

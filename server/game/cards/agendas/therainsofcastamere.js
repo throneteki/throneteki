@@ -74,6 +74,8 @@ class TheRainsOfCastamere extends AgendaCard {
         player.flipPlotFaceup();
         scheme.onReveal(player);
 
+        player.faction.kneeled = true;
+
         return true;
     }
 
