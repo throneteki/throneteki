@@ -819,6 +819,8 @@ class Player extends Spectator {
 
             card.kneeled = false;
         });
+
+        this.faction.kneeled = false;
     }
 
     taxation() {
