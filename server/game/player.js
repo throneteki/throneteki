@@ -555,6 +555,12 @@ class Player extends Spectator {
         }
     }
 
+    revealPlot() {
+        this.activePlot.onReveal(this);
+        this.reserve = this.getTotalReserve();
+        this.claim = this.activePlot.claim || 0;
+    }
+
     drawPhase() {
         this.game.addMessage('{0} draws {1} cards for the draw phase', this, this.drawPhaseCards);
         this.drawCardsToHand(this.drawPhaseCards);

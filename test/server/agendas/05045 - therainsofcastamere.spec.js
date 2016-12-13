@@ -7,7 +7,7 @@ const TheRainsOfCastamere = require('../../../server/game/cards/agendas/therains
 
 describe('The Rains of Castamere', function() {
     function createPlotSpy(uuid, hasTrait) {
-        var plot = jasmine.createSpyObj('plot', ['hasTrait', 'onReveal']);
+        var plot = jasmine.createSpyObj('plot', ['hasTrait']);
         plot.uuid = uuid;
         plot.hasTrait.and.callFake(hasTrait);
         return plot;
@@ -29,7 +29,7 @@ describe('The Rains of Castamere', function() {
         this.scheme1 = scheme('3333');
         this.scheme2 = scheme('4444');
 
-        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup', 'removeActivePlot']);
+        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup', 'removeActivePlot', 'revealPlot']);
         this.player.game = this.gameSpy;
         this.player.faction = {};
 
@@ -170,6 +170,10 @@ describe('The Rains of Castamere', function() {
                 expect(this.player.flipPlotFaceup).not.toHaveBeenCalled();
             });
 
+            it('should not reveal a plot', function() {
+                expect(this.player.revealPlot).not.toHaveBeenCalled();
+            });
+
             it('should return false', function() {
                 expect(this.result).toBe(false);
             });
@@ -196,7 +200,7 @@ describe('The Rains of Castamere', function() {
                 });
 
                 it('should reveal the plot', function() {
-                    expect(this.scheme1.onReveal).toHaveBeenCalledWith(this.player);
+                    expect(this.player.revealPlot).toHaveBeenCalled();
                 });
 
                 it('should return true', function() {
@@ -224,7 +228,7 @@ describe('The Rains of Castamere', function() {
                 });
 
                 it('should reveal the plot', function() {
-                    expect(this.scheme1.onReveal).toHaveBeenCalledWith(this.player);
+                    expect(this.player.revealPlot).toHaveBeenCalled();
                 });
 
                 it('should return true', function() {
@@ -256,7 +260,7 @@ describe('The Rains of Castamere', function() {
                 });
 
                 it('should reveal the plot', function() {
-                    expect(this.scheme1.onReveal).toHaveBeenCalledWith(this.player);
+                    expect(this.player.revealPlot).toHaveBeenCalled();
                 });
 
                 it('should return true', function() {
