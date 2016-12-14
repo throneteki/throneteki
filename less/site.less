@@ -7,6 +7,15 @@
 @card-width: 64px;
 @card-height: 84px;
 
+// Z-index layers
+@layer-cards: 1;
+@layer-pile-header: 2;
+@layer-card-collection-draw: 15;
+@layer-card-menu: 20;
+@layer-card-collection: 100;
+@layer-prompt: 110;
+@layer-top: 9999;
+
 @font-face {
   font-family: thronesdb;
   src: url('/fonts/thronesdb.ttf');
@@ -77,7 +86,7 @@ h3 {
   position: fixed;
   left: 10px;
   top: 60px;
-  z-index: 9999;
+  z-index: @layer-top;
 }
 
 .card-group {
@@ -563,7 +572,7 @@ h4 {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: @layer-pile-header;
   padding: 1px 4px;
   font-size: 10px;
   line-height: 14px;
@@ -581,7 +590,7 @@ h4 {
 
 .card-frame {
   position: relative;
-  z-index: 1;
+  z-index: @layer-cards;
 }
 
 .attachment > div {
@@ -657,7 +666,7 @@ h4 {
 }
 
 .popup {
-  z-index: 100;
+  z-index: @layer-card-collection;
 }
 
 .draw {
@@ -667,7 +676,7 @@ h4 {
     bottom: 85px;
     width: 590px;
     min-height: 92px;
-    z-index: 15;
+    z-index: @layer-card-collection-draw;
 
     .card {
       float: left;
@@ -696,7 +705,7 @@ h4 {
 
 .menu-pane {
   text-align: center;
-  z-index: 110;
+  z-index: @layer-prompt;
 }
 
 .icon-military {
@@ -887,7 +896,7 @@ h4 {
   top: -5px;
   font-size: 12px;
   line-height: 16px;
-  z-index: 20;
+  z-index: @layer-card-menu;
 }
 
 .menu > div {
