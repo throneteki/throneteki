@@ -39,7 +39,7 @@ describe('the <GameBoard /> component', function() {
         state.games.currentGame.players['1'] = { id: 1 };
         state.games.currentGame.players['2'] = { id: 2 };
         state.socket.socket = jasmine.createSpyObj('socket', ['emit']);
-        state.socket.socket.id = '1';
+        state.socket.username = '1';
         state.games.state = state.games.currentGame;
     });
 

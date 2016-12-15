@@ -229,8 +229,8 @@ function removePlayerFromGame(game, socket, reason) {
     game.playerLeave(socket.request.user.username, reason);
 
     if(game.started) {
-        _.each(game.players, (player, key) => {
-            io.to(key).emit('gamestate', game.getState(player.id));
+        _.each(game.players, player => {
+            io.to(player.id).emit('gamestate', game.getState(player.name));
         });
     }
 
@@ -246,7 +246,7 @@ function removePlayerFromGame(game, socket, reason) {
         game.players[socket.request.user.username].left = true;
     }
 
-    io.to(game.id).emit('leavegame', game.getSummary(socket.request.user.username), player.id);
+    io.to(game.id).emit('leavegame', game.getSummary(socket.request.user.username), player.name);
 
     socket.leave(game.id);
 
@@ -260,21 +260,21 @@ function removePlayerFromGame(game, socket, reason) {
 }
 
 function updateGame(game) {
-    _.each(game.players, (player, key) => {
-        io.to(key).emit('updategame', game.getState(player.id));
+    _.each(game.players, player => {
+        io.to(player.id).emit('updategame', game.getState(player.name));
     });
 }
 
 function sendGameState(game) {
-    _.each(game.players, (player, key) => {
-        io.to(key).emit('gamestate', game.getState(player.id));
+    _.each(game.players, player => {
+        io.to(player.id).emit('gamestate', game.getState(player.name));
     });
 }
 
 function handleError(game, e) {
     logger.error(e);
     _.each(game.players, player => {
-        logger.error(game.getSummary(player.id));
+        logger.error(game.getSummary(player.name));
     });
 
     if(game) {
@@ -337,7 +337,7 @@ io.on('connection', function(socket) {
 
         var game = new Game(socket.request.user.username, gameDetails);
 
-        game.players[socket.request.user.username] = new Player(socket.request.user, true, game);
+        game.players[socket.request.user.username] = new Player(socket.id, socket.request.user, true, game);
 
         games[game.id] = game;
         socket.emit('newgame', game.getState(socket.request.user.username));
@@ -358,12 +358,12 @@ io.on('connection', function(socket) {
         }
 
         runAndCatchErrors(game, () => {
-            game.players[socket.request.user.username] = new Player(socket.request.user, false, game);
+            game.players[socket.request.user.username] = new Player(socket.id, socket.request.user, false, game);
             socket.join(game.id);
         });
 
-        _.each(game.players, (player, key) => {
-            io.to(key).emit('joingame', game.getState(player.id));
+        _.each(game.players, player => {
+            io.to(player.id).emit('joingame', game.getState(player.name));
         });
 
         refreshGameList();
@@ -381,11 +381,11 @@ io.on('connection', function(socket) {
         }
 
         runAndCatchErrors(game, () => {
-            game.players[socket.request.user.username] = new Spectator(socket.request.user);
+            game.players[socket.request.user.username] = new Spectator(socket.id, socket.request.user);
             game.addMessage('{0} has joined the game as a spectator', socket.request.user.username);
             socket.join(game.id);
-            _.each(game.players, (player, key) => {
-                io.to(key).emit('joingame', game.getState(player.id));
+            _.each(game.players, player => {
+                io.to(player.id).emit('joingame', game.getState(player.name));
             });
 
             sendGameState(game);
@@ -444,7 +444,7 @@ io.on('connection', function(socket) {
             return;
         }
 
-        var player = game.getPlayerById(socket.request.user.username);
+        var player = game.getPlayerByName(socket.request.user.username);
         if(!player || !player.owner) {
             return;
         }

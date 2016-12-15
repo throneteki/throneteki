@@ -11,8 +11,8 @@ const StartingHandSize = 7;
 const DrawPhaseCards = 2;
 
 class Player extends Spectator {
-    constructor(user, owner, game) {
-        super(user);
+    constructor(id, user, owner, game) {
+        super(id, user);
 
         this.drawCards = _([]);
         this.plotCards = _([]);
@@ -702,7 +702,7 @@ class Player extends Spectator {
         }
 
         if(target === 'play area') {
-            this.game.playCard(this.id, cardId, true, sourceList);
+            this.game.playCard(this.name, cardId, true, sourceList);
         } else {
             this.moveCard(card, target);
         }
