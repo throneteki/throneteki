@@ -118,19 +118,13 @@ class Card extends React.Component {
             return;
         }
 
-        var offset = -10;
+        var index = 1;
         var dupes = _.map(facedownDupes, dupe => {
-            var style = {
-                top: offset + 'px',
-                left: '0px',
-                zIndex: offset,
-                position: 'absolute' };
-
-            var returnedDupe = (<Card key={dupe.uuid} style={style} source={this.props.source} card={dupe} wrapped={false}
+            var returnedDupe = (<Card key={dupe.uuid} className={'card-dupe card-dupe-' + index} source={this.props.source} card={dupe} wrapped={false}
                             onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe)}
                             onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut} />);
 
-            offset -= 10;
+            index += 1;
 
             return returnedDupe;
         });
