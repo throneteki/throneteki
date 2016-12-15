@@ -189,7 +189,7 @@ class Card extends React.Component {
             cardClass += ' horizontal';
             imageClass += ' vertical kneeled';
         } else if(this.props.card.type === 'plot') {
-            cardClass = 'plot-card';
+            cardClass += ' horizontal';
             imageClass += ' horizontal';
         } else {
             cardClass += ' vertical';
