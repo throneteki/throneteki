@@ -63,7 +63,7 @@ export class InnerGameBoard extends React.Component {
 
         if(props.currentGame) {
             if(_.find(props.currentGame.players, p => {
-                return p.user.username === props.username;
+                return p.name === props.username;
             })) {
                 menuOptions.unshift({ text: 'Concede', onClick: this.onConcedeClick });
             }

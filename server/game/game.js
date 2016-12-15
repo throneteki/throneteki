@@ -608,6 +608,17 @@ class Game extends EventEmitter {
         card.controller = newController;
     }
 
+    reconnect(id, playerName) {
+        var player = this.getPlayerByName(playerName);
+        if(!player) {
+            return;
+        }
+
+        player.id = id;
+
+        this.addMessage('{0} has reconnected', player);
+    }
+
     getState(activePlayer) {
         var playerState = {};
 

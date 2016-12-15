@@ -319,6 +319,23 @@ io.on('connection', function(socket) {
         refreshGameList();
     });
 
+    socket.on('reconnect', function() {
+        if(!socket.request.user) {
+            return;
+        }
+
+        var game = findGameForPlayer(socket.request.user.username);
+        if(!game) {
+            return;
+        }
+
+        runAndCatchErrors(game, () => {
+            game.reconnect(socket.id, socket.request.user.username);
+
+            sendGameState(game);
+        });
+    });
+
     socket.on('authenticate', function(token) {
         jwt.verify(token, config.secret, function(err, user) {
             if(!err) {
