@@ -88,18 +88,16 @@ class Card extends React.Component {
             return null;
         }
 
-        var offset = 10;
+        var index = 1;
         var attachments = _.map(this.props.card.attachments, attachment => {
-            var style = { top: offset + 'px', zIndex: -offset };
-
-            var returnedAttachment = (<Card key={attachment.uuid} style={style} source={this.props.source} card={attachment}
+            var returnedAttachment = (<Card key={attachment.uuid} source={this.props.source} card={attachment} className={"attachment attachment-" + index} wrapped={false}
                             onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment)}
                             onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
                             onClick={this.props.onClick}
                             onMenuItemClick={this.props.onMenuItemClick}
                             onDragStart={ev => this.onCardDragStart(ev, attachment, this.props.source)} />);
 
-            offset += 10;
+            index += 1;
 
             return returnedAttachment;
         });
@@ -128,7 +126,7 @@ class Card extends React.Component {
                 zIndex: offset,
                 position: 'absolute' };
 
-            var returnedDupe = (<Card key={dupe.uuid} style={style} source={this.props.source} card={dupe}
+            var returnedDupe = (<Card key={dupe.uuid} style={style} source={this.props.source} card={dupe} wrapped={false}
                             onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe)}
                             onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut} />);
 
@@ -162,9 +160,28 @@ class Card extends React.Component {
     }
 
     render() {
+        if(!this.props.wrapped) {
+            return this.getCard();
+        }
+
+        var wrapperClass = 'card-wrapper';
+        if(this.props.source === 'selected plot') {
+            wrapperClass += ' selected-plot';
+        }
+
+        return (
+                <div className={wrapperClass}>
+                    <div className='card-frame'>
+                        {this.getCard()}
+                        {this.getDupes()}
+                        {this.getAttachments()}
+                    </div>
+                </div>);
+    }
+
+    getCard() {
         var cardClass = '';
         var imageClass = '';
-        var wrapperClass = 'card-wrapper';
 
         if(!this.props.card) {
             return <div />;
@@ -189,31 +206,23 @@ class Card extends React.Component {
             cardClass += ' new';
         }
 
-        if(this.props.source === 'play area' && this.props.card.type === 'attachment' && this.props.card.attached) {
-            wrapperClass += ' attachment';
-        } else if(this.props.source === 'selected plot') {
-            wrapperClass += ' selected-plot';
+        if(this.props.className) {
+            cardClass += ' ' + this.props.className;
         }
 
         return (
-                <div className={wrapperClass} style={this.props.style}>
-                    <div className='card-frame'>
-                        <div className={cardClass}
-                            onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card)}
-                            onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
-                            onClick={ev => this.onClick(ev, this.props.card, this.props.source)}
-                            onDragStart={ev => this.onCardDragStart(ev, this.props.card, this.props.source)}
-                            draggable>
-                            <div>
-                                <span className='card-name'>{this.props.card.name}</span>
-                                <img className={imageClass} src={'/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
-                            </div>
-                            {this.getCounters()}
-                            {this.getMenu()}
-                        </div>
-                        {this.getDupes()}
-                        {this.getAttachments()}
+                <div className={cardClass} style={this.props.style}
+                    onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card)}
+                    onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
+                    onClick={ev => this.onClick(ev, this.props.card, this.props.source)}
+                    onDragStart={ev => this.onCardDragStart(ev, this.props.card, this.props.source)}
+                    draggable>
+                    <div>
+                        <span className='card-name'>{this.props.card.name}</span>
+                        <img className={imageClass} src={'/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
                     </div>
+                    {this.getCounters()}
+                    {this.getMenu()}
                 </div>);
     }
 }
@@ -238,6 +247,7 @@ Card.propTypes = {
         tokens: React.PropTypes.object,
         type: React.PropTypes.string
     }).isRequired,
+    className: React.PropTypes.string,
     disableMouseOver: React.PropTypes.bool,
     horizontal: React.PropTypes.bool,
     onClick: React.PropTypes.func,
@@ -245,7 +255,11 @@ Card.propTypes = {
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
     source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction']).isRequired,
-    style: React.PropTypes.object
+    style: React.PropTypes.object,
+    wrapped: React.PropTypes.bool
+};
+Card.defaultProps = {
+    wrapped: true
 };
 
 export default Card;
