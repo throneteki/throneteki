@@ -170,8 +170,9 @@ class Card extends React.Component {
         }
 
         return (
-                <div className={wrapperClass}>
+                <div className={wrapperClass} style={this.props.style}>
                     {this.getCard()}
+                    {this.getMenu()}
                     {this.getDupes()}
                     {this.getAttachments()}
                 </div>);
@@ -209,7 +210,7 @@ class Card extends React.Component {
         }
 
         return (
-                <div className={cardClass} style={this.props.style}
+                <div className={cardClass}
                     onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card)}
                     onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
                     onClick={ev => this.onClick(ev, this.props.card, this.props.source)}
