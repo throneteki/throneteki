@@ -1,6 +1,5 @@
 class Spectator {
-    constructor(id, user) {
-        this.id = id;
+    constructor(user) {
         this.user = user;
         this.name = this.user.username;
 

@@ -11,8 +11,8 @@ const StartingHandSize = 7;
 const DrawPhaseCards = 2;
 
 class Player extends Spectator {
-    constructor(id, user, owner, game) {
-        super(id, user);
+    constructor(user, owner, game) {
+        super(user);
 
         this.drawCards = _([]);
         this.plotCards = _([]);
