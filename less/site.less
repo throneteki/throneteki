@@ -448,23 +448,24 @@ h4 {
   border-radius: 4px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   position: relative;
+  z-index: @layer-cards;
 }
 
-.horizontal-card {
-  img.kneeled {
-    position: absolute;
-    transform: rotate(90deg);
-    left: 9px;
-    top: -10px;
-    width: @card-width;
-    height: @card-height;
-  }
-}
+// .horizontal-card {
+//   img.kneeled {
+//     position: absolute;
+//     transform: rotate(90deg);
+//     left: 9px;
+//     top: -10px;
+//     width: @card-width;
+//     height: @card-height;
+//   }
+// }
 
-.horizontal-card > img.horizontal {
-  height: @card-width;
-  width: @card-height;
-}
+// .horizontal-card > img.horizontal {
+//   height: @card-width;
+//   width: @card-height;
+// }
 
 .card-row .horizontal-card {
     margin-bottom: @card-height - @card-width;
@@ -495,6 +496,7 @@ h4 {
   width: @card-width;
   border-radius: 4px;
   box-shadow: 0 0 12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
+  overflow: hidden;
   z-index: @layer-cards;
 }
 
@@ -510,11 +512,33 @@ h4 {
   box-shadow: 0 0 1px 2px #d0d834;
 }
 
-.card > * > img {
+.card-image {
+  left: 0;
   position: absolute;
-  top: 0px;
-  left: 0px;
+  top: 0;
+
+  &.vertical {
+    height: @card-height;
+    width: @card-width;
+  }
+
+  &.horizontal {
+    height: @card-width;
+    width: @card-height;
+  }
+
+  &.kneeled {
+    left: 9px;
+    top: -10px;
+    transform: rotate(90deg);
+  }
 }
+
+// .card > * > img {
+//   position: absolute;
+//   top: 0px;
+//   left: 0px;
+// }
 
 .card-name {
   // display: none;
@@ -528,11 +552,11 @@ h4 {
 }
 
 .plot-card {
-  img {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+  // img {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  // }
 
   display: inline-block;
   position: relative;

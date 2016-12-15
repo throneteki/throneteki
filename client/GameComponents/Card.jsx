@@ -179,7 +179,7 @@ class Card extends React.Component {
 
     getCard() {
         var cardClass = '';
-        var imageClass = '';
+        var imageClass = 'card-image';
 
         if(!this.props.card) {
             return <div />;
@@ -187,13 +187,13 @@ class Card extends React.Component {
 
         if(this.props.card.kneeled || this.props.horizontal) {
             cardClass = 'horizontal-card';
-            imageClass = 'kneeled card';
+            imageClass += ' vertical kneeled';
         } else if(this.props.card.type === 'plot') {
             cardClass = 'plot-card';
-            imageClass = 'plot-card';
+            imageClass += ' horizontal';
         } else {
             cardClass = 'card';
-            imageClass = 'card';
+            imageClass += ' vertical';
         }
 
         if(this.props.card.selected) {
