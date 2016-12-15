@@ -172,7 +172,6 @@ class Card extends React.Component {
         return (
                 <div className={wrapperClass} style={this.props.style}>
                     {this.getCard()}
-                    {this.getMenu()}
                     {this.getDupes()}
                     {this.getAttachments()}
                 </div>);
@@ -210,17 +209,19 @@ class Card extends React.Component {
         }
 
         return (
-                <div className={cardClass}
-                    onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card)}
-                    onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
-                    onClick={ev => this.onClick(ev, this.props.card, this.props.source)}
-                    onDragStart={ev => this.onCardDragStart(ev, this.props.card, this.props.source)}
-                    draggable>
-                    <div>
-                        <span className='card-name'>{this.props.card.name}</span>
-                        <img className={imageClass} src={'/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
+                <div className='card-frame'>
+                    <div className={cardClass}
+                        onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card)}
+                        onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
+                        onClick={ev => this.onClick(ev, this.props.card, this.props.source)}
+                        onDragStart={ev => this.onCardDragStart(ev, this.props.card, this.props.source)}
+                        draggable>
+                        <div>
+                            <span className='card-name'>{this.props.card.name}</span>
+                            <img className={imageClass} src={'/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
+                        </div>
+                        {this.getCounters()}
                     </div>
-                    {this.getCounters()}
                     {this.getMenu()}
                 </div>);
     }
