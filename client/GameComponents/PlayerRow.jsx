@@ -196,8 +196,8 @@ class PlayerRow extends React.Component {
                     <div className='panel-header'>
                         {'Draw (' + this.props.numDrawCards + ')'}
                     </div>
-                    <div className='card ignore-mouse-events'>
-                        <img className='card' src='/img/cards/cardback.jpg' />
+                    <div className='card vertical ignore-mouse-events'>
+                        <img className='card-image vertical' src='/img/cards/cardback.jpg' />
                     </div>
                     {drawDeckMenu}
                     {drawDeckPopup}

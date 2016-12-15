@@ -11,7 +11,7 @@
 
 // Z-index layers
 @layer-cards: 10;
-@layer-pile-header: 2;
+@layer-pile-header: 20;
 @layer-card-menu: 20;
 @layer-card-collection: 100;
 @layer-prompt: 110;
@@ -441,15 +441,15 @@ h4 {
   width: @card-height;
 }
 
-.horizontal-card {
-  height: @card-width;
-  width: @card-height;
-  padding: 0px;
-  border-radius: 4px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  position: relative;
-  z-index: @layer-cards;
-}
+// .horizontal-card {
+//   height: @card-width;
+//   width: @card-height;
+//   padding: 0px;
+//   border-radius: 4px;
+//   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+//   position: relative;
+//   z-index: @layer-cards;
+// }
 
 // .horizontal-card {
 //   img.kneeled {
@@ -467,7 +467,7 @@ h4 {
 //   width: @card-height;
 // }
 
-.card-row .horizontal-card {
+.card-row .card.horizontal {
     margin-bottom: @card-height - @card-width;
 }
 
@@ -492,23 +492,31 @@ h4 {
 .card {
   // display: inline-block;
   position: relative;
-  height: @card-height;
-  width: @card-width;
   border-radius: 4px;
   box-shadow: 0 0 12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
   overflow: hidden;
   z-index: @layer-cards;
+
+  &.vertical {
+    height: @card-height;
+    width: @card-width;
+  }
+
+  &.horizontal {
+    height: @card-width;
+    width: @card-height;
+  }
 }
 
-.card.selected, .horizontal-card.selected {
+.card.selected {
   box-shadow: 0 0 1px 4px @brand-primary;
 }
 
-.card.new, .horizontal-card.new {
+.card.new {
   // box-shadow: 0 0 1px 2px @brand-info;
 }
 
-.card.controlled, .horizontal-card.controlled {
+.card.controlled {
   box-shadow: 0 0 1px 2px #d0d834;
 }
 
