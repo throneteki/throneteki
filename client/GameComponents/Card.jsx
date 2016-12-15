@@ -154,21 +154,16 @@ class Card extends React.Component {
     }
 
     render() {
-        if(!this.props.wrapped) {
-            return this.getCard();
+        if(this.props.wrapped) {
+            return (
+                    <div className='card-wrapper' style={this.props.style}>
+                        {this.getCard()}
+                        {this.getDupes()}
+                        {this.getAttachments()}
+                    </div>);
         }
 
-        var wrapperClass = 'card-wrapper';
-        if(this.props.source === 'selected plot') {
-            wrapperClass += ' selected-plot';
-        }
-
-        return (
-                <div className={wrapperClass} style={this.props.style}>
-                    {this.getCard()}
-                    {this.getDupes()}
-                    {this.getAttachments()}
-                </div>);
+        return this.getCard();
     }
 
     getCard() {
