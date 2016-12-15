@@ -171,11 +171,9 @@ class Card extends React.Component {
 
         return (
                 <div className={wrapperClass}>
-                    <div className='card-frame'>
-                        {this.getCard()}
-                        {this.getDupes()}
-                        {this.getAttachments()}
-                    </div>
+                    {this.getCard()}
+                    {this.getDupes()}
+                    {this.getAttachments()}
                 </div>);
     }
 
