@@ -275,11 +275,6 @@ h3 {
   width: 100%;
 }
 
-// .plot-popup > .plot-card > img {
-//   width: initial;
-//   height: 100%;
-// }
-
 .discard, .draw, .faction, .agenda {
   position: relative;
   width: @card-width;
@@ -344,10 +339,6 @@ h4 {
 .our-side > div:first-child {
   margin-top: auto;
 }
-
-// .plot-card.selected {
-//   box-shadow: 0 0 1px 2px @brand-primary;
-// }
 
 .discard-plot {
   height: 110px;
@@ -417,7 +408,6 @@ h4 {
   }
 
   .card {
-    // float: left;
     margin: 2px;
   }
 }
@@ -441,32 +431,6 @@ h4 {
   width: @card-height;
 }
 
-// .horizontal-card {
-//   height: @card-width;
-//   width: @card-height;
-//   padding: 0px;
-//   border-radius: 4px;
-//   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-//   position: relative;
-//   z-index: @layer-cards;
-// }
-
-// .horizontal-card {
-//   img.kneeled {
-//     position: absolute;
-//     transform: rotate(90deg);
-//     left: 9px;
-//     top: -10px;
-//     width: @card-width;
-//     height: @card-height;
-//   }
-// }
-
-// .horizontal-card > img.horizontal {
-//   height: @card-width;
-//   width: @card-height;
-// }
-
 .card-row .card.horizontal {
     margin-bottom: @card-height - @card-width;
 }
@@ -483,14 +447,11 @@ h4 {
 }
 
 .card-wrapper {
-  // display: inline-block;
   margin: 0px 4px 0px 0px;
-  // position: relative;
   vertical-align: middle;
 }
 
 .card {
-  // display: inline-block;
   position: relative;
   border-radius: 4px;
   box-shadow: 0 0 12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
@@ -513,7 +474,7 @@ h4 {
 }
 
 .card.new {
-  // box-shadow: 0 0 1px 2px @brand-info;
+  box-shadow: 0 0 1px 2px @brand-info;
 }
 
 .card.controlled {
@@ -542,15 +503,7 @@ h4 {
   }
 }
 
-// .card > * > img {
-//   position: absolute;
-//   top: 0px;
-//   left: 0px;
-// }
-
 .card-name {
-  // display: none;
-  // // float: left;
   font-size: 10px;
   line-height: 14px;
 }
@@ -558,21 +511,6 @@ h4 {
 .squish .card {
   position: absolute;
 }
-
-// .plot-card {
-//   // img {
-//   //   position: absolute;
-//   //   top: 0;
-//   //   left: 0;
-//   // }
-//
-//   display: inline-block;
-//   position: relative;
-//   height: @card-width;
-//   width: @card-height;
-//   border-radius: 4px;
-//   box-shadow: 0 0 12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
-// }
 
 .shadow {
   box-shadow: 0 0 12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
@@ -628,13 +566,8 @@ h4 {
 }
 
 .attachment {
-  // height: @card-height;
-  // width: @card-width;
-  // position: absolute;
-  // left: 0;
   margin-top: @attachment-offset - @card-height;
 }
-
 
 .generate-attachments(@n, @i: 1) when (@i =< @n) {
   .attachment-@{i} {
@@ -644,10 +577,6 @@ h4 {
 }
 
 .generate-attachments(5, 1);
-
-// .attachment > div {
-//   float: left;
-// }
 
 .player-board {
   .card-wrapper {
@@ -736,7 +665,6 @@ h4 {
     min-height: 92px;
 
     .card {
-      // float: left;
       margin: 2px;
     }
   }
