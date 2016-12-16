@@ -168,15 +168,6 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(player.activePlot && !player.activePlot.canPlay(player, cardId)) {
-            return;
-        }
-
-        var otherPlayer = this.getOtherPlayer(player);
-        if(otherPlayer && otherPlayer.activePlot && !otherPlayer.activePlot.canPlay(player, cardId)) {
-            return;
-        }
-
         if(!player.playCard(cardId, isDrop, sourceList)) {
             return;
         }

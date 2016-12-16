@@ -353,6 +353,10 @@ class Player extends Spectator {
     canPlayCard(card) {
         var canPlay = true;
 
+        if(this.activePlot && !this.activePlot.canPlay(this, card)) {
+            return false;
+        }
+
         this.cardsInPlay.each(c => {
             canPlay = c.canPlay(this, card);
 
