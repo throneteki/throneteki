@@ -1,6 +1,7 @@
 @import "~bootstrap/less/bootstrap";
 @import "variables";
 @import "icons";
+@import "application";
 @import "common";
 @import "deckbuilder";
 @import "gamelist";
@@ -15,20 +16,12 @@ body {
   color: @foreground-color
 }
 
-#container {
-  margin: 0 auto;
-}
-
 h1 {
   font-size: 24px;
 }
 
 h3 {
   font-size: 18px;
-}
-
-.navbar-right {
-  margin-right: 0px;
 }
 
 .player-row {
@@ -508,36 +501,6 @@ h4 {
 
 .chat > form input {
   width: 100%;
-}
-
-.navbar-header {
-  margin-right: -15px;
-  margin-left: -15px;
-}
-
-.navbar-toggle {
-  .icon-bar {
-    display: block;
-    width: 22px;
-    height: 2px;
-    border-radius: 1px;
-  }
-}
-
-.navbar-nav > li > span {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    line-height: 20px;
-    position: relative;
-    display: block;
-    padding: 10px 15px;
-}
-
-@media (min-width: 768px) {
-  .navbar-nav > li > span {
-    padding-top: 15px;
-    padding-bottom: 15px;
-  }
 }
 
 .players {
