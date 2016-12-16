@@ -3,6 +3,7 @@
 @import "icons";
 @import "application";
 @import "common";
+@import "chat";
 @import "deckbuilder";
 @import "gamelist";
 @import "cards";
@@ -194,17 +195,6 @@ h4 {
   }
 }
 
-.messages {
-  flex: 1;
-  overflow: auto;
-  position: absolute;
-  top: 0;
-  bottom: 42px;
-  left: 0;
-  right: 4px;
-  margin: 0;
-}
-
 .card-row .card.horizontal {
     margin-bottom: @card-height - @card-width;
 }
@@ -254,15 +244,6 @@ h4 {
   }
 }
 
-.messages {
-  font-size: 12px;
-  overflow-y: auto;
-}
-
-.message {
-  margin-bottom: 4px;
-}
-
 .menu-pane {
   text-align: center;
   z-index: @layer-prompt;
@@ -294,34 +275,6 @@ h4 {
   color: white;
 }
 
-.lobby-messages {
-  height: 400px;
-  font-size: 12px;
-  overflow-y: auto;
-}
-
-.message {
-  margin-top: 2px;
-}
-
-.chat {
-  width: 307px;
-  position: absolute;
-  top: 317px;
-  bottom: 0;
-}
-
-.chat > form {
-  position: absolute;
-  bottom: 5px;
-  left: 0;
-  right: 4px;
-}
-
-.chat > form input {
-  width: 100%;
-}
-
 .players {
   height: 100px;
   clear: both;
@@ -330,29 +283,4 @@ h4 {
 .spectators {
   height: 55px;
   clear: both;
-}
-
-.message-list {
-  height: 200px;
-  width: 100%;
-  border: 1px solid @brand-primary;
-  border-radius: 4px;
-  margin-bottom: 5px;
-  overflow: auto;
-  padding: 5px 10px;
-}
-
-.user-list {
-  >div {
-    margin-bottom: 5px;
-  }
-
-  height: 400px;
-  margin-left: 0px;
-  margin-right: 0px;
-  overflow-y: scroll;
-}
-
-.chat-box {
-  margin-left: 5px;
 }
