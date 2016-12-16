@@ -172,7 +172,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.raiseEvent('onCardPlayed', player, cardId);
+        this.raiseEvent('onCardPlayed', player, card);
         this.pipeline.continue();
     }
 
