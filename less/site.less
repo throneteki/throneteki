@@ -267,14 +267,6 @@ h3 {
   height: 22px;
 }
 
-.agenda > img, .card-large > img, .plot-deck-card > img {
-  width: 100%;
-}
-
-.plot > img, .discard-plot > img {
-  width: 100%;
-}
-
 .discard, .draw, .faction, .agenda {
   position: relative;
   width: @card-width;
@@ -340,32 +332,11 @@ h4 {
   margin-top: auto;
 }
 
-.discard-plot {
-  height: 110px;
-  padding: 0px;
-  width: @card-width;
-  margin-left: 20px;
-  margin-bottom: -25px;
-}
-
 .plots-pane {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-}
-
-.plot-deck-card.kneeled {
-  width: @card-width;
-  padding: 0px;
-  margin: -20px 0px 0px 0px;
-  border: none;
-  height: @card-height;
-}
-
-.discard-plot.opponent {
-  margin-bottom: 0px;
-  margin-top: -25px;
 }
 
 .discard {
@@ -421,14 +392,6 @@ h4 {
   left: 0;
   right: 4px;
   margin: 0;
-}
-
-.plot-deck-card {
-  height: @card-width;
-  padding: 0px;
-  margin: 0px 0px 0px -20px;
-  border: none;
-  width: @card-height;
 }
 
 .card-row .card.horizontal {
