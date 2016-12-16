@@ -403,13 +403,7 @@ class Player extends Spectator {
         return true;
     }
 
-    playCard(cardId, forcePlay, sourceList) {
-        if(!sourceList) {
-            sourceList = this.hand;
-        }
-
-        var card = this.findCardByUuid(sourceList, cardId);
-
+    playCard(card, forcePlay) {
         if(!card) {
             return false;
         }

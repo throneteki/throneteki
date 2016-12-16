@@ -161,14 +161,14 @@ class Game extends EventEmitter {
             return;
         }
 
-        var card = player.findCardByUuid(player.hand, cardId);
+        var card = player.findCardByUuid(sourceList, cardId);
 
         if(card && !isDrop && this.pipeline.handleCardClicked(player, card)) {
             this.pipeline.continue();
             return;
         }
 
-        if(!player.playCard(cardId, isDrop, sourceList)) {
+        if(!player.playCard(card, isDrop)) {
             return;
         }
 
@@ -217,7 +217,7 @@ class Game extends EventEmitter {
 
         switch(source) {
             case 'hand':
-                this.playCard(player.name, cardId);
+                this.playCard(player.name, cardId, false, player.hand);
                 return;
             case 'plot deck':
                 this.selectPlot(player, cardId);
