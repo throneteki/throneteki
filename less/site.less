@@ -1,6 +1,7 @@
 @import "~bootstrap/less/bootstrap";
 @import "variables";
 @import "icons";
+@import "common";
 @import "deckbuilder";
 @import "gamelist";
 
@@ -30,30 +31,6 @@ h3 {
   margin-right: 0px;
 }
 
-.bootstrap-typeahead-input-main {
-  background: white !important;
-}
-
-.card-link {
-  cursor: pointer;
-  cursor: hand;
-  color: @brand-primary;
-}
-
-.card-link:hover {
-  color: @brand-info;
-}
-
-.gravatar {
-  margin-right: 5px;
-  vertical-align: middle;
-}
-
-.popup {
-  color: #1E1E1E;
-  background-color: #999999;
-}
-
 .player-row {
   margin-top: 15px;
 }
@@ -76,15 +53,6 @@ h3 {
 .player-home-row {
   display: flex;
   height: 100px;
-}
-
-.panel {
-  position: relative;
-  background-color: rgba(0, 0, 0, 0.85);
-  margin: 5px;
-  padding: 5px 10px;
-  border: 1px solid rgba(71, 58, 56, 0.95);
-  overflow: visible;
 }
 
 .hand {
@@ -328,10 +296,6 @@ h4 {
   position: absolute;
 }
 
-.shadow {
-  box-shadow: 0 0 12px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.1);
-}
-
 .card-large {
   width: 220px;
   height: 307px;
@@ -366,19 +330,6 @@ h4 {
 
 .select-cursor {
   cursor: url(/img/crosshairs.cur), default;
-}
-
-.panel-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: @layer-pile-header;
-  padding: 1px 4px;
-  font-size: 10px;
-  line-height: 14px;
-  background: rgba(0,0,0,0.6);
-  text-shadow: 1px 1px 2px #000;
-  border-radius: 4px;
 }
 
 .attachment {
@@ -427,10 +378,6 @@ h4 {
   z-index: @layer-cards + 1;
 }
 
-.ignore-mouse-events {
-  pointer-events: none;
-}
-
 .counter {
   padding: 0;
   font-size: 12px;
@@ -476,15 +423,6 @@ h4 {
   color: white;
 }
 
-.popup {
-  z-index: @layer-card-collection;
-
-  .inner {
-    display: flex;
-    flex-wrap: wrap;
-  }
-}
-
 .draw {
   .popup {
     left: -271px;
@@ -502,10 +440,6 @@ h4 {
     height: 450px;
     overflow-y: scroll;
   }
-}
-
-.highlight-panel {
-  border-color: @brand-info;
 }
 
 .messages {
@@ -552,12 +486,6 @@ h4 {
   height: 400px;
   font-size: 12px;
   overflow-y: auto;
-}
-
-.username {
-  font-weight: bold;
-  margin-right: 5px;
-  color: white;
 }
 
 .message {
@@ -609,42 +537,6 @@ h4 {
   .navbar-nav > li > span {
     padding-top: 15px;
     padding-bottom: 15px;
-  }
-}
-
-.menu {
-  position: absolute;
-  width: 200px;
-  left: 58px;
-  top: -5px;
-  font-size: 12px;
-  line-height: 16px;
-  z-index: @layer-card-menu;
-}
-
-.menu > div {
-  border: 1px solid @brand-primary;
-  padding: 3px 6px;
-  border-radius: 4px;
-  margin-bottom: 4px;
-  cursor: pointer;
-}
-
-.menu > div:hover {
-  border-color: @brand-info;
-}
-
-.popup {
-  a {
-    display: inline-block;
-    margin: 0 10px 8px 4px;
-
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: @brand-info;
-    cursor: pointer;
   }
 }
 
