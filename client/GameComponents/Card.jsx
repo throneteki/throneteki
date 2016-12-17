@@ -32,7 +32,7 @@ class Card extends React.Component {
     }
 
     isAllowedMenuSource() {
-        return this.props.source === 'play area' || this.props.source === 'agenda';
+        return this.props.source === 'play area' || this.props.source === 'agenda' || this.props.source === 'revealed plots';
     }
 
     onClick(event, card, source) {
