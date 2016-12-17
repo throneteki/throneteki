@@ -53,6 +53,7 @@ class Card extends React.Component {
     onMenuItemClick(menuItem) {
         if(this.props.onMenuItemClick) {
             this.props.onMenuItemClick(this.props.source, this.props.card, menuItem);
+            this.setState({showMenu: !this.state.showMenu});
         }
     }
 
