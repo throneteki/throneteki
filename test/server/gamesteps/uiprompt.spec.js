@@ -1,4 +1,5 @@
 /*global describe, it, beforeEach, expect, spyOn, jasmine*/
+/* eslint no-invalid-this: 0 */
 
 const UiPrompt = require('../../../server/game/gamesteps/uiprompt.js');
 
