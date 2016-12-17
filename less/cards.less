@@ -132,9 +132,26 @@
   right: 0;
   justify-content: center;
   display: flex;
-  flex-direction: column;
+  align-content: center;
   align-items: center;
+  flex-wrap: wrap;
   z-index: @layer-cards + 1;
+}
+
+.card.vertical .counters {
+  flex-direction: column;
+
+  &.many-counters {
+    flex-direction: row;
+  }
+}
+
+.card.horizontal .counters {
+  flex-direction: row;
+
+  &.many-counters {
+    flex-direction: column;
+  }
 }
 
 .counter {
