@@ -180,6 +180,8 @@ class Card extends React.Component {
             return <div />;
         }
 
+        cardClass += ' card-type-' + this.props.card.type;
+
         if(this.props.orientation === 'kneeled' || this.props.card.kneeled) {
             cardClass += ' horizontal';
             imageClass += ' vertical kneeled';
