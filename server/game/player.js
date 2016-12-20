@@ -1,10 +1,8 @@
 const _ = require('underscore');
 
 const Spectator = require('./spectator.js');
-const cards = require('./cards');
 const DrawCard = require('./drawcard.js');
-const PlotCard = require('./plotcard.js');
-const AgendaCard = require('./agendacard.js');
+const Deck = require('./deck.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 
 const StartingHandSize = 7;
@@ -14,8 +12,6 @@ class Player extends Spectator {
     constructor(id, user, owner, game) {
         super(id, user);
 
-        this.drawCards = _([]);
-        this.plotCards = _([]);
         this.drawDeck = _([]);
         this.plotDeck = _([]);
         this.plotDiscard = _([]);
@@ -294,72 +290,28 @@ class Player extends Spectator {
     }
 
     initDrawDeck() {
-        this.allCards = _(this.drawCards.clone());
-        this.drawDeck = this.drawCards;
-        this.drawDeck.each(card => card.location = 'draw deck');
-        this.shuffleDrawDeck();
+        this.hand.each(card => {
+            card.location = 'draw deck';
+            this.drawDeck.push(card);
+        });
         this.hand = _([]);
+        this.shuffleDrawDeck();
         this.drawCardsToHand(StartingHandSize);
     }
 
-    initPlotDeck() {
-        this.plotDeck = this.plotCards;
-    }
-
     prepareDecks() {
-        this.drawCards = _([]);
-        this.plotCards = _([]);
-
-        _.each(this.deck.drawCards, cardEntry => {
-            for(var i = 0; i < cardEntry.count; i++) {
-                var drawCard = undefined;
-
-                if(cards[cardEntry.card.code]) {
-                    drawCard = new cards[cardEntry.card.code](this, cardEntry.card);
-                } else {
-                    drawCard = new DrawCard(this, cardEntry.card);
-                }
-
-                drawCard.location = 'draw deck';
-
-                this.drawCards.push(drawCard);
-            }
-        });
-
-        _.each(this.deck.plotCards, cardEntry => {
-            for(var i = 0; i < cardEntry.count; i++) {
-                var plotCard = undefined;
-
-                if(cards[cardEntry.card.code]) {
-                    plotCard = new cards[cardEntry.card.code](this, cardEntry.card);
-                } else {
-                    plotCard = new PlotCard(this, cardEntry.card);
-                }
-
-                plotCard.location = 'plot deck';
-
-                this.plotCards.push(plotCard);
-            }
-        });
-
-        if(this.deck.agenda) {
-            if(cards[this.deck.agenda.code]) {
-                this.agenda = new cards[this.deck.agenda.code](this, this.deck.agenda);
-            } else {
-                this.agenda = new AgendaCard(this, this.deck.agenda);
-            }
-
-            this.agenda.inPlay = true;
-            this.agenda.location = 'agenda';
-        } else {
-            this.agenda = undefined;
-        }
+        var deck = new Deck(this.deck);
+        var preparedDeck = deck.prepare(this);
+        this.plotDeck = _(preparedDeck.plotCards);
+        this.agenda = preparedDeck.agenda;
+        this.faction = preparedDeck.faction;
+        this.drawDeck = _(preparedDeck.drawCards);
+        this.allCards = _(_.clone(preparedDeck.drawCards));
     }
 
     initialise() {
         this.prepareDecks();
         this.initDrawDeck();
-        this.initPlotDeck();
 
         this.gold = 0;
         this.claim = 0;
