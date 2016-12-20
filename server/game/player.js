@@ -58,41 +58,7 @@ class Player extends Spectator {
     }
 
     findCardByUuidInAnyList(uuid) {
-        if(uuid === this.agenda.uuid) {
-            return this.agenda;
-        }
-
-        var card = this.findCardByUuid(this.cardsInPlay, uuid);
-
-        if(card) {
-            return card;
-        }
-
-        card = this.findCardByUuid(this.hand, uuid);
-
-        if(card) {
-            return card;
-        }
-
-        card = this.findCardByUuid(this.discardPile, uuid);
-        if(card) {
-            return card;
-        }
-
-        card = this.findCardByUuid(this.deadPile, uuid);
-        if(card) {
-            return card;
-        }
-
-        card = this.findCardByUuid(this.plotDeck, uuid);
-        if(card) {
-            return card;
-        }
-
-        card = this.findCardByUuid(this.plotDiscard, uuid);
-        if(card) {
-            return card;
-        }
+        return this.findCardByUuid(this.allCards, uuid);
     }
 
     findCardByUuid(list, uuid) {
