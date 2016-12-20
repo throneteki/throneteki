@@ -28,20 +28,23 @@ class Deck {
             result.plotCards.push(plotCard);
         });
 
-        if(this.data.agenda) {
-            result.agenda = this.createCard(AgendaCard, player, this.data.agenda);
-            result.agenda.inPlay = true;
-            result.agenda.location = 'agenda';
-        } else {
-            result.agenda = undefined;
-        }
-
         if(this.data.faction) {
             result.faction = new DrawCard(player, _.extend({ code: this.data.faction.value, type_code: 'faction' }, this.data.faction));
         } else {
             result.faction = new DrawCard(player, { type_code: 'faction' });
         }
         result.faction.location = 'faction';
+
+        result.allCards = [result.faction].concat(result.drawCards).concat(result.plotCards);
+
+        if(this.data.agenda) {
+            result.agenda = this.createCard(AgendaCard, player, this.data.agenda);
+            result.agenda.inPlay = true;
+            result.agenda.location = 'agenda';
+            result.allCards.push(result.agenda);
+        } else {
+            result.agenda = undefined;
+        }
 
         return result;
     }

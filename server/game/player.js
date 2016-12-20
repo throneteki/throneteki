@@ -306,7 +306,7 @@ class Player extends Spectator {
         this.agenda = preparedDeck.agenda;
         this.faction = preparedDeck.faction;
         this.drawDeck = _(preparedDeck.drawCards);
-        this.allCards = _(_.clone(preparedDeck.drawCards));
+        this.allCards = _(preparedDeck.allCards);
     }
 
     initialise() {
