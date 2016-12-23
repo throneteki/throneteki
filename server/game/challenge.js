@@ -32,33 +32,35 @@ class Challenge {
     addAttackers(attackers) {
         this.attackers = attackers;
         this.markAsParticipating(attackers);
-
-        // TODO: Remove duplicated logic.
-        this.attackingPlayer.cardsInChallenge = _(attackers);
     }
 
     addDefenders(defenders) {
         this.defenders = defenders;
         this.markAsParticipating(defenders);
-
-        // TODO: Remove duplicated logic.
-        this.defendingPlayer.cardsInChallenge = _(defenders);
     }
 
     removeFromChallenge(card) {
         this.attackers = _.reject(this.attackers, c => c === card);
         this.defenders = _.reject(this.defenders, c => c === card);
         this.calculateStrength();
-
-        // TODO: Remove duplicated logic
-        this.attackingPlayer.cardsInChallenge = _(this.attackers);
-        this.defendingPlayer.cardsInChallenge = _(this.defenders);
     }
 
     markAsParticipating(cards) {
         _.each(cards, card => {
             card.kneeled = true;
         });
+    }
+
+    isAttacking(card) {
+        return this.attackers.includes(card);
+    }
+
+    isDefending(card) {
+        return this.defenders.includes(card);
+    }
+
+    isParticipating(card) {
+        return this.isAttacking(card) || this.isDefending(card);
     }
 
     calculateStrength() {
@@ -112,6 +114,16 @@ class Challenge {
         }
 
         return claim;
+    }
+
+    getWinnerCards() {
+        if(this.winner === this.attackingPlayer) {
+            return this.attackers;
+        } else if(this.winner === this.defendingPlayer) {
+            return this.defenders;
+        }
+
+        return [];
     }
 
     onCardLeftPlay(e, player, card) {

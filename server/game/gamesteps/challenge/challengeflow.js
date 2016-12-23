@@ -185,8 +185,9 @@ class ChallengeFlow extends BaseStep {
 
     applyKeywords() {
         var appliedIntimidate = false;
+        var winnerCards = this.challenge.getWinnerCards();
 
-        this.challenge.winner.cardsInChallenge.each(card => {
+        _.each(winnerCards, card => {
             if(card.hasKeyword('Insight')) {
                 this.challenge.winner.drawCardsToHand(1);
 
