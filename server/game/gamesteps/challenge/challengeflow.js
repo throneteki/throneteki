@@ -111,7 +111,7 @@ class ChallengeFlow extends BaseStep {
         this.challenge.determineWinner();
 
         this.game.addMessage('{0} won a {1} challenge {2} vs {3}',
-            this.challenge.winner, this.challenge.challengeType, this.challenge.winner.challengeStrength, this.challenge.loser.challengeStrength);
+            this.challenge.winner, this.challenge.challengeType, this.challenge.winnerStrength, this.challenge.loserStrength);
 
         this.game.raiseEvent('afterChallenge', this.challenge);
     }

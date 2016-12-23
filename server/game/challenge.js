@@ -9,7 +9,11 @@ class Challenge {
         this.defendingPlayer = defendingPlayer || this.singlePlayerDefender();
         this.challengeType = challengeType;
         this.attackers = [];
+        this.attackerStrength = 0;
+        this.attackerStrengthModifier = 0;
         this.defenders = [];
+        this.defenderStrength = 0;
+        this.defenderStrengthModifier = 0;
         this.registerEvents(['onCardLeftPlay']);
     }
 
@@ -64,18 +68,24 @@ class Challenge {
     }
 
     calculateStrength() {
-        this.attackerStrength = this.calculateStrengthFor(this.attackers);
-        this.defenderStrength = this.calculateStrengthFor(this.defenders);
-
-        // TODO: Remove duplicated logic
-        this.attackingPlayer.challengeStrength = this.attackerStrength;
-        this.defendingPlayer.challengeStrength = this.defenderStrength;
+        this.attackerStrength = this.calculateStrengthFor(this.attackers) + this.attackerStrengthModifier;
+        this.defenderStrength = this.calculateStrengthFor(this.defenders) + this.defenderStrengthModifier;
     }
 
     calculateStrengthFor(cards) {
         return _.reduce(cards, (sum, card) => {
             return sum + card.getStrength();
         }, 0);
+    }
+
+    modifyAttackerStrength(value) {
+        this.attackerStrengthModifier += value;
+        this.calculateStrength();
+    }
+
+    modifyDefenderStrength(value) {
+        this.defenderStrengthModifier += value;
+        this.calculateStrength();
     }
 
     getStealthAttackers() {
@@ -86,15 +96,19 @@ class Challenge {
         this.calculateStrength();
         if(this.attackerStrength >= this.defenderStrength) {
             this.loser = this.defendingPlayer;
+            this.loserStrength = this.defenderStrength;
             this.winner = this.attackingPlayer;
+            this.winnerStrength = this.attackerStrength;
         } else {
             this.loser = this.attackingPlayer;
+            this.loserStrength = this.attackerStrength;
             this.winner = this.defendingPlayer;
+            this.winnerStrength = this.defenderStrength;
         }
 
         this.winner.winChallenge(this.challengeType);
         this.loser.loseChallenge(this.challengeType);
-        this.strengthDifference = this.winner.challengeStrength - this.loser.challengeStrength;
+        this.strengthDifference = this.winnerStrength - this.loserStrength;
     }
 
     isAttackerTheWinner() {
