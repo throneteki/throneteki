@@ -549,7 +549,6 @@ class Player extends Spectator {
 
         attachment.parent = card;
         attachment.moveTo('play area');
-        attachment.inPlay = true;
 
         card.attachments.push(attachment);
 
@@ -670,7 +669,7 @@ class Player extends Spectator {
             return false;
         }
 
-        if(!card.inPlay) {
+        if(card.location !== 'play area') {
             return false;
         }
 

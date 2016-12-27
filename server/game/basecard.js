@@ -26,7 +26,6 @@ class BaseCard {
         this.code = cardData.code;
         this.name = cardData.name;
         this.facedown = false;
-        this.inPlay = false;
         this.blankCount = 0;
 
         this.tokens = {};
@@ -91,11 +90,9 @@ class BaseCard {
     }
 
     play() {
-        this.inPlay = true;
     }
 
     leavesPlay() {
-        this.inPlay = false;
         this.tokens = {};
     }
 

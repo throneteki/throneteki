@@ -34,10 +34,6 @@ describe('AClashOfKings', function() {
             this.plot.moveTo('revealed plots');
         });
 
-        it('should be marked as not in play', function() {
-            expect(this.plot.inPlay).toBe(false);
-        });
-
         it('should unregister its afterChallenge handler', function() {
             expect(this.gameSpy.removeListener).toHaveBeenCalledWith('afterChallenge', jasmine.any(Function));
         });
@@ -50,11 +46,9 @@ describe('AClashOfKings', function() {
             this.challenge.loser = this.otherPlayerSpy;
         });
 
-        describe('and this plot is not in play', function() {
+        describe('and the challenge type was not power', function() {
             beforeEach(function() {
-                this.plot.inPlay = false;
-                this.challenge.winner = this.otherPlayerSpy;
-                this.challenge.loser = this.playerSpy;
+                this.challenge.challengeType = 'not power';
                 this.plot.afterChallenge({}, this.challenge);
             });
 
@@ -63,14 +57,11 @@ describe('AClashOfKings', function() {
             });
         });
 
-        describe('and this plot is in play', function() {
-            beforeEach(function() {
-                this.plot.inPlay = true;
-            });
-
-            describe('and the challenge type was not power', function() {
+        describe('and the challenge type was power', function() {
+            describe('and our owner lost', function() {
                 beforeEach(function() {
-                    this.challenge.challengeType = 'not power';
+                    this.challenge.winner = this.otherPlayerSpy;
+                    this.challenge.loser = this.playerSpy;
                     this.plot.afterChallenge({}, this.challenge);
                 });
 
@@ -79,11 +70,9 @@ describe('AClashOfKings', function() {
                 });
             });
 
-            describe('and the challenge type was power', function() {
-                describe('and our owner lost', function() {
+            describe('and our owner won', function() {
+                describe('but the loser did not have any power', function() {
                     beforeEach(function() {
-                        this.challenge.winner = this.otherPlayerSpy;
-                        this.challenge.loser = this.playerSpy;
                         this.plot.afterChallenge({}, this.challenge);
                     });
 
@@ -92,26 +81,14 @@ describe('AClashOfKings', function() {
                     });
                 });
 
-                describe('and our owner won', function() {
-                    describe('but the loser did not have any power', function() {
-                        beforeEach(function() {
-                            this.plot.afterChallenge({}, this.challenge);
-                        });
-
-                        it('should not change any power', function() {
-                            expect(this.gameSpy.transferPower).not.toHaveBeenCalled();
-                        });
+                describe('and the loser had power', function() {
+                    beforeEach(function() {
+                        this.otherPlayerSpy.power = 1;
+                        this.plot.afterChallenge({}, this.challenge);
                     });
 
-                    describe('and the loser had power', function() {
-                        beforeEach(function() {
-                            this.otherPlayerSpy.power = 1;
-                            this.plot.afterChallenge({}, this.challenge);
-                        });
-
-                        it('should transfer one power from the loser to our owner', function() {
-                            expect(this.gameSpy.transferPower).toHaveBeenCalledWith(this.playerSpy, this.otherPlayerSpy, 1);
-                        });
+                    it('should transfer one power from the loser to our owner', function() {
+                        expect(this.gameSpy.transferPower).toHaveBeenCalledWith(this.playerSpy, this.otherPlayerSpy, 1);
                     });
                 });
             });

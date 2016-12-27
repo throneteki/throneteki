@@ -33,49 +33,31 @@ describe('AFeastForCrows', function() {
             this.plot.moveTo('revealed plots');
         });
 
-        it('should be marked as not in play', function() {
-            expect(this.plot.inPlay).toBe(false);
-        });
-
         it('should unregister its onDominanceDetermined handler', function() {
             expect(this.gameSpy.removeListener).toHaveBeenCalledWith('onDominanceDetermined', jasmine.any(Function));
         });
     });
 
     describe('when dominance finished', function() {
-        describe('and this plot is not in play', function() {
-            beforeEach(function() {
-                this.plot.inPlay = false;
-                this.plot.onDominanceDetermined({}, this.playerSpy);
-            });
+        beforeEach(function() {
+            this.plot.onDominanceDetermined({}, this.playerSpy);
+        });
 
-            it('should not change any power', function() {
-                expect(this.gameSpy.addPower).not.toHaveBeenCalled();
+        describe('and our owner won', function() {
+            it('should add 2 power to our owner', function() {
+                expect(this.gameSpy.addPower).toHaveBeenCalledWith(this.playerSpy, 2);
             });
         });
 
-        describe('and this plot is in play', function() {
+        describe('and our owner did not win', function() {
             beforeEach(function() {
-                this.plot.inPlay = true;
-                this.plot.onDominanceDetermined({}, this.playerSpy);
+                this.gameSpy.addPower.calls.reset();
+
+                this.plot.onDominanceDetermined({}, this.otherPlayerSpy);
             });
 
-            describe('and our owner won', function() {
-                it('should add 2 power to our owner', function() {
-                    expect(this.gameSpy.addPower).toHaveBeenCalledWith(this.playerSpy, 2);
-                });
-            });
-
-            describe('and our owner did not win', function() {
-                beforeEach(function() {
-                    this.gameSpy.addPower.calls.reset();
-
-                    this.plot.onDominanceDetermined({}, this.otherPlayerSpy);
-                });
-
-                it('should not add any power', function() {
-                    expect(this.gameSpy.addPower).not.toHaveBeenCalled();
-                });
+            it('should not add any power', function() {
+                expect(this.gameSpy.addPower).not.toHaveBeenCalled();
             });
         });
     });
