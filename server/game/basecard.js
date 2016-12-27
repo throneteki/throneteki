@@ -1,6 +1,8 @@
 const uuid = require('node-uuid');
 const _ = require('underscore');
 
+const EventRegistrar = require('./eventregistrar.js');
+
 const ValidKeywords = [
     'ambush',
     'insight',
@@ -31,6 +33,8 @@ class BaseCard {
         this.menu = _([]);
         this.parseKeywords(cardData.text || '');
         this.parseTraits(cardData.traits || '');
+
+        this.events = new EventRegistrar(this.game, this);
     }
 
     parseKeywords(text) {
@@ -61,22 +65,14 @@ class BaseCard {
 
     parseTraits(traits) {
         this.traits = {};
-        
+
         var firstLine = traits.split('\n')[0];
 
         _.each(firstLine.split('.'), trait => this.addTrait(trait.toLowerCase().trim()));
     }
 
     registerEvents(events) {
-        this.events = [];
-
-        _.each(events, event => {
-            this[event] = this[event].bind(this);
-
-            this.game.on(event, this[event]);
-
-            this.events.push(event);
-        });
+        this.events.register(events);
     }
 
     hasKeyword(keyword) {
@@ -98,9 +94,7 @@ class BaseCard {
     }
 
     leavesPlay() {
-        _.each(this.events, event => {
-            this.game.removeListener(event, this[event]);
-        });
+        this.events.unregisterAll();
 
         this.inPlay = false;
         this.tokens = {};

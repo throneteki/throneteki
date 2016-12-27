@@ -22,7 +22,7 @@ describe('AFeastForCrows', function() {
         });
 
         it('should register its onDominanceDetermined handler', function() {
-            expect(this.gameSpy.on).toHaveBeenCalledWith('onDominanceDetermined', this.plot.onDominanceDetermined);
+            expect(this.gameSpy.on).toHaveBeenCalledWith('onDominanceDetermined', jasmine.any(Function));
         });
     });
 
@@ -36,7 +36,7 @@ describe('AFeastForCrows', function() {
         });
 
         it('should unregister its onDominanceDetermined handler', function() {
-            expect(this.gameSpy.removeListener).toHaveBeenCalledWith('onDominanceDetermined', this.plot.onDominanceDetermined);
+            expect(this.gameSpy.removeListener).toHaveBeenCalledWith('onDominanceDetermined', jasmine.any(Function));
         });
     });
 
