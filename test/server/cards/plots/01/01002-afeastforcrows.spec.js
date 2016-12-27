@@ -14,6 +14,7 @@ describe('AFeastForCrows', function() {
         this.otherPlayerSpy.game = this.gameSpy;
 
         this.plot = new AFeastForCrows(this.playerSpy, {});
+        this.plot.moveTo('active plot');
     });
 
     describe('when revealed', function() {
@@ -29,6 +30,7 @@ describe('AFeastForCrows', function() {
     describe('when card leaves play', function() {
         beforeEach(function() {
             this.plot.leavesPlay();
+            this.plot.moveTo('revealed plots');
         });
 
         it('should be marked as not in play', function() {

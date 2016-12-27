@@ -13,6 +13,7 @@ const ValidKeywords = [
     'terminal',
     'limited'
 ];
+const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agenda'];
 
 class BaseCard {
     constructor(owner, cardData) {
@@ -72,7 +73,7 @@ class BaseCard {
     }
 
     registerEvents(events) {
-        this.events.register(events);
+        this.eventsForRegistration = events;
     }
 
     hasKeyword(keyword) {
@@ -94,10 +95,22 @@ class BaseCard {
     }
 
     leavesPlay() {
-        this.events.unregisterAll();
-
         this.inPlay = false;
         this.tokens = {};
+    }
+
+    moveTo(targetLocation) {
+        if(LocationsWithEventHandling.includes(targetLocation) && !LocationsWithEventHandling.includes(this.location)) {
+            this.events.register(this.eventsForRegistration);
+        } else if(LocationsWithEventHandling.includes(this.location) && !LocationsWithEventHandling.includes(targetLocation)) {
+            this.events.unregisterAll();
+        }
+
+        if(targetLocation !== 'play area') {
+            this.facedown = false;
+        }
+
+        this.location = targetLocation;
     }
 
     modifyDominance(player, strength) {

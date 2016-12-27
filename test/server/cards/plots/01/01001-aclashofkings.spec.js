@@ -15,6 +15,7 @@ describe('AClashOfKings', function() {
         this.otherPlayerSpy.game = this.gameSpy;
 
         this.plot = new AClashOfKings(this.playerSpy, {});
+        this.plot.moveTo('active plot');
     });
 
     describe('when revealed', function() {
@@ -30,6 +31,7 @@ describe('AClashOfKings', function() {
     describe('when card leaves play', function() {
         beforeEach(function() {
             this.plot.leavesPlay();
+            this.plot.moveTo('revealed plots');
         });
 
         it('should be marked as not in play', function() {
@@ -44,7 +46,7 @@ describe('AClashOfKings', function() {
     describe('when a challenge is finished', function() {
         beforeEach(function() {
             this.challenge = new Challenge(this.gameSpy, this.playerSpy, this.otherPlayerSpy, 'power');
-            this.challenge.winner = this.playerSpy
+            this.challenge.winner = this.playerSpy;
             this.challenge.loser = this.otherPlayerSpy;
         });
 
@@ -52,7 +54,7 @@ describe('AClashOfKings', function() {
             beforeEach(function() {
                 this.plot.inPlay = false;
                 this.challenge.winner = this.otherPlayerSpy;
-                this.challenge.loser = this.playerSpy
+                this.challenge.loser = this.playerSpy;
                 this.plot.afterChallenge({}, this.challenge);
             });
 
@@ -81,7 +83,7 @@ describe('AClashOfKings', function() {
                 describe('and our owner lost', function() {
                     beforeEach(function() {
                         this.challenge.winner = this.otherPlayerSpy;
-                        this.challenge.loser = this.playerSpy
+                        this.challenge.loser = this.playerSpy;
                         this.plot.afterChallenge({}, this.challenge);
                     });
 
