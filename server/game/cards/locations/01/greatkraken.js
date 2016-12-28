@@ -47,7 +47,7 @@ class GreatKraken extends DrawCard {
 
         this.game.addPower(player, 1);
 
-        this.game.addMessage('{0} uses {1} to 1 power for their faction', player, this);
+        this.game.addMessage('{0} uses {1} to gain 1 power for their faction', player, this);
 
         this.abilityUsed++;
 
