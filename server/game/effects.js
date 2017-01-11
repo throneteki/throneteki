@@ -43,18 +43,13 @@ const Effects = {
             }
         };
     },
-    poison: function() {
+    addTrait: function(trait) {
         return {
-            apply: function(card, context) {
-                context.game.addMessage('{0} uses {1} to place 1 poison token on {2}', context.source.controller, context.source, card);
-                card.addToken('poison', 1);
+            apply: function(card) {
+                card.addTrait(trait);
             },
-            unapply: function(card, context) {
-                if(card.hasToken('poison', 1)) {
-                    context.game.addMessage('{0} uses {1} to kill {2} at the end of the phase', context.source.controller, context.source, card);
-                    card.removeToken('poison');
-                    card.controller.killCharacter(card);
-                }
+            unapply: function(card) {
+                card.removeTrait(trait);
             }
         };
     },
