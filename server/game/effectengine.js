@@ -12,8 +12,21 @@ class EffectEngine {
 
     add(effect) {
         this.effects.push(effect);
+        this.applyEffect(effect);
+    }
+
+    applyEffect(effect) {
         var validTargets = this.game.allCards.filter(card => card.location === 'play area');
         effect.addTargets(validTargets);
+    }
+
+    reapplyStateDependentEffects() {
+        _.each(this.effects, effect => {
+            if(effect.isStateDependent) {
+                effect.cancel();
+                this.applyEffect(effect);
+            }
+        });
     }
 
     onCardEntersPlay(e, card) {

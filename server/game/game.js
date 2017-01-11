@@ -698,6 +698,7 @@ class Game extends EventEmitter {
 
     continue() {
         this.pipeline.continue();
+        this.effectEngine.reapplyStateDependentEffects();
     }
 
     getSaveState() {

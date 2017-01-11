@@ -9,6 +9,20 @@ const Effects = {
             }
         };
     },
+    dynamicStrength: function(calculate) {
+        return {
+            apply: function(card, context) {
+                context.dynamicStrength = context.dynamicStrength || {};
+                context.dynamicStrength[card] = calculate(card, context);
+                card.strengthModifier += context.dynamicStrength[card];
+            },
+            unapply: function(card, context) {
+                card.strengthModifier -= context.dynamicStrength[card];
+                delete context.dynamicStrength[card];
+            },
+            isStateDependent: true
+        };
+    },
     addIcon: function(icon) {
         return {
             apply: function(card) {

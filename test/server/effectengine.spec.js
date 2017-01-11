@@ -33,6 +33,42 @@ describe('EffectEngine', function () {
         });
     });
 
+    describe('reapplyStateDependentEffects()', function() {
+        beforeEach(function() {
+            this.engine.effects = [this.effectSpy];
+        });
+
+        describe('when an effect is state dependent', function() {
+            beforeEach(function() {
+                this.effectSpy.isStateDependent = true;
+                this.engine.reapplyStateDependentEffects();
+            });
+
+            it('should cancel the effect', function() {
+                expect(this.effectSpy.cancel).toHaveBeenCalled();
+            });
+
+            it('should add existing valid targets back to the effect', function() {
+                expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.playAreaCard]);
+            });
+        });
+
+        describe('when an effect is not state dependent', function() {
+            beforeEach(function() {
+                this.effectSpy.isStateDependent = false;
+                this.engine.reapplyStateDependentEffects();
+            });
+
+            it('should not cancel the effect', function() {
+                expect(this.effectSpy.cancel).not.toHaveBeenCalled();
+            });
+
+            it('should not add existing valid targets back to the effect', function() {
+                expect(this.effectSpy.addTargets).not.toHaveBeenCalled();
+            });
+        });
+    });
+
     describe('onCardEntersPlay()', function() {
         beforeEach(function() {
             this.engine.effects = [this.effectSpy];

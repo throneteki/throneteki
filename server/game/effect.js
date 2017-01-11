@@ -8,6 +8,11 @@ const _ = require('underscore');
  *                    a boolean about whether the passed card should have the
  *                    effect applied.
  * duration         - string representing how long the effect lasts.
+ * condition        - function that returns a boolean determining whether the
+ *                    effect can be applied. Use with cards that have a
+ *                    condition that must be met before applying a persistent
+ *                    effect (e.g. "when there are more Summer plots revealed
+ *                    than Winter plots").
  * targetController - string that determines which player's cards are targeted.
  *                    Can be 'current' (default), 'opponent' or 'any'.
  * effect.apply     - function that takes a card and a context object and modifies
@@ -21,14 +26,20 @@ class Effect {
         this.source = source;
         this.match = properties.match;
         this.duration = properties.duration;
+        this.condition = properties.condition || (() => true);
         this.targetController = properties.targetController || 'current';
         this.effect = properties.effect;
         this.targets = [];
         this.context = { game: game, source: source };
         this.active = true;
+        this.isStateDependent = properties.condition || properties.effect.isStateDependent;
     }
 
     addTargets(cards) {
+        if(!this.condition()) {
+            return;
+        }
+
         _.each(cards, card => {
             if(this.isValidTarget(card)) {
                 this.targets.push(card);
