@@ -134,6 +134,32 @@ class BaseCard {
         });
     }
 
+    /**
+     * Applies an immediate effect which lasts until the end of the current
+     * challenge.
+     */
+    untilEndOfChallenge(propertyFactory) {
+        var properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, _.extend({ duration: 'untilEndOfChallenge' }, properties));
+    }
+
+    /**
+     * Applies an immediate effect which lasts until the end of the phase.
+     */
+    untilEndOfPhase(propertyFactory) {
+        var properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, _.extend({ duration: 'untilEndOfPhase' }, properties));
+    }
+
+    /**
+     * Applies an immediate effect which expires at the end of the phase. Per
+     * game rules this duration is outside of the phase.
+     */
+    atEndOfPhase(propertyFactory) {
+        var properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, _.extend({ duration: 'atEndOfPhase' }, properties));
+    }
+
     doAction(player, arg) {
         if(!this.abilities.action) {
             return;
