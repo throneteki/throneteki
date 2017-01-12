@@ -160,6 +160,14 @@ class BaseCard {
         this.game.addEffect(this, _.extend({ duration: 'atEndOfPhase' }, properties));
     }
 
+    /**
+     * Applies an immediate effect which lasts until the end of the round.
+     */
+    untilEndOfRound(propertyFactory) {
+        var properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, _.extend({ duration: 'untilEndOfRound' }, properties));
+    }
+
     doAction(player, arg) {
         if(!this.abilities.action) {
             return;
