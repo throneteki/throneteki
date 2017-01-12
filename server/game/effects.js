@@ -39,10 +39,20 @@ const Effects = {
     addIcon: function(icon) {
         return {
             apply: function(card) {
-                card.setIcon(icon);
+                card.addIcon(icon);
             },
             unapply: function(card) {
-                card.clearIcon(card);
+                card.removeIcon(icon);
+            }
+        };
+    },
+    removeIcon: function(icon) {
+        return {
+            apply: function(card) {
+                card.removeIcon(icon);
+            },
+            unapply: function(card) {
+                card.addIcon(icon);
             }
         };
     },
