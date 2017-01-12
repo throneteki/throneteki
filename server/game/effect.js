@@ -1,5 +1,7 @@
 const _ = require('underscore');
 
+const Effects = require('./effects.js');
+
 /**
  * Represents a card based effect applied to one or more targets.
  *
@@ -15,6 +17,9 @@ const _ = require('underscore');
  *                    than Winter plots").
  * targetController - string that determines which player's cards are targeted.
  *                    Can be 'current' (default), 'opponent' or 'any'.
+ * effect           - object representing the effect to be applied. If passed an
+ *                    array instead of an object, it will apply / unapply all of
+ *                    the sub objects in the array instead.
  * effect.apply     - function that takes a card and a context object and modifies
  *                    the card to apply the effect.
  * effect.unapply   - function that takes a card and a context object and modifies
@@ -28,11 +33,19 @@ class Effect {
         this.duration = properties.duration;
         this.condition = properties.condition || (() => true);
         this.targetController = properties.targetController || 'current';
-        this.effect = properties.effect;
+        this.effect = this.buildEffect(properties.effect);
         this.targets = [];
         this.context = { game: game, source: source };
         this.active = true;
-        this.isStateDependent = properties.condition || properties.effect.isStateDependent;
+        this.isStateDependent = properties.condition || this.effect.isStateDependent;
+    }
+
+    buildEffect(effect) {
+        if(_.isArray(effect)) {
+            return Effects.all(effect);
+        }
+
+        return effect;
     }
 
     addTargets(cards) {

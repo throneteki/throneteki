@@ -1,4 +1,17 @@
+const _ = require('underscore');
+
 const Effects = {
+    all: function(effects) {
+        return {
+            apply: function(card, context) {
+                _.each(effects, effect => effect.apply(card, context));
+            },
+            unapply: function(card, context) {
+                _.each(effects, effect => effect.unapply(card, context));
+            },
+            isStateDependent: _.any(effects, effect => !!effect.isStateDependent)
+        }
+    },
     modifyStrength: function(value) {
         return {
             apply: function(card) {
