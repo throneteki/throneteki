@@ -39,7 +39,7 @@ class Halder extends DrawCard {
 
         this.kneelingCard.controller.kneelCard(this.kneelingCard);
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.modifyStrength(1)
         }));
 

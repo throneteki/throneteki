@@ -39,7 +39,7 @@ class PlazaOfPunishment extends DrawCard {
         this.game.addMessage('{0} uses {1} to give {2} -2 STR', player, this, card);
         player.kneelCard(this);
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: [
                 ability.effects.modifyStrength(-2),
                 ability.effects.killByStrength

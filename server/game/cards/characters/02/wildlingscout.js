@@ -31,7 +31,7 @@ class WildlingScout extends DrawCard {
 
         this.game.addMessage('{0} sacrifices {1} to make {2} gain stealth', player, this, card);
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.addKeyword('Stealth')
         }));
 

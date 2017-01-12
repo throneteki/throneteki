@@ -46,7 +46,7 @@ class WildlingHorde extends DrawCard {
 
         this.game.addMessage('{0} uses {1} to kneel their faction card and increase the strength of {2} by 2 until the end of the challenge', player, this, card);
         this.untilEndOfChallenge(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.modifyStrength(2)
         }));
 

@@ -27,7 +27,7 @@ class RedCloaks extends DrawCard {
         }
 
         this.untilEndOfChallenge(ability => ({
-            match: c => c === this,
+            match: this,
             effect: ability.effects.modifyStrength(this.tokens['gold'] || 0)
         }));
     }

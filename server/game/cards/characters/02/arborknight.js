@@ -30,7 +30,7 @@ class ArborKnight extends DrawCard {
     onCardSelected(player, card) {
         this.game.addMessage('{0} uses {1} to pay 1 gold and give {2} +1 STR until the end of the challenge', player, this, card);
         this.untilEndOfChallenge(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.modifyStrength(1)
         }));
 

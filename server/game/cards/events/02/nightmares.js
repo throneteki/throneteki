@@ -12,7 +12,7 @@ class Nightmares extends DrawCard {
 
     onCardSelected(player, card) {
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.blank
         }));
 

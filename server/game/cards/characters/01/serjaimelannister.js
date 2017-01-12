@@ -14,7 +14,7 @@ class SerJaimeLannister extends DrawCard {
         }
 
         this.untilEndOfChallenge(ability => ({
-            match: c => c === this,
+            match: this,
             effect: ability.effects.addKeyword('renown')
         }));
 

@@ -31,7 +31,7 @@ class SyrioForel extends DrawCard {
     onCardSelected(player, card) {
         this.game.addMessage('{0} uses {1} to give {2} a {3} icon and stealth until the end of the phase', player, this, card, 'military');
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: [
                 ability.effects.addIcon('military'),
                 ability.effects.addKeyword('Stealth')

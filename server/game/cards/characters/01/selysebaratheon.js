@@ -28,7 +28,7 @@ class SelyseBaratheon extends DrawCard {
 
         this.game.addGold(this.controller, -1);
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.addIcon('intrigue')
         }));
 

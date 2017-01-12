@@ -29,7 +29,7 @@ class Pyke extends DrawCard {
         this.game.addMessage('{0} kneeled {1} to make {2} gain stealth', player, this, card);
         player.kneelCard(this);
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.addKeyword('Stealth')
         }));
 

@@ -39,7 +39,7 @@ class Dracarys extends DrawCard {
         this.game.addMessage('{0} uses {1} to kneel {2} and give {3} -4 STR until the end of the phase', player, this, this.selectedCard, card);
         player.kneelCard(this.selectedCard);
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: [
                 ability.effects.modifyStrength(-4),
                 ability.effects.killByStrength

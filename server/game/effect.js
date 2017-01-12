@@ -8,7 +8,8 @@ const Effects = require('./effects.js');
  * Properties:
  * match            - function that takes a card and context object and returns
  *                    a boolean about whether the passed card should have the
- *                    effect applied.
+ *                    effect applied. Alternatively, a card can be passed as the
+ *                    match property to match that single card.
  * duration         - string representing how long the effect lasts.
  * condition        - function that returns a boolean determining whether the
  *                    effect can be applied. Use with cards that have a
@@ -64,6 +65,10 @@ class Effect {
     }
 
     isValidTarget(card) {
+        if(!_.isFunction(this.match)) {
+            return card === this.match;
+        }
+
         if(!this.match(card, this.context)) {
             return false;
         }

@@ -18,7 +18,7 @@ class Confinement extends DrawCard {
 
     onCardSelected(player, card) {
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: [
                 ability.effects.removeIcon('military'),
                 ability.effects.removeIcon('intrigue'),

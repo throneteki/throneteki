@@ -22,7 +22,7 @@ class HearMeRoar extends DrawCard {
         player.playCard(card, true);
 
         this.atEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.discardIfStillInPlay(false)
         }));
 

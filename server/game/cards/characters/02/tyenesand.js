@@ -17,7 +17,7 @@ class TyeneSand extends DrawCard {
                     cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasIcon('intrigue'),
                     onSelect: (p, card) => {
                         this.atEndOfPhase(ability => ({
-                            match: c => c === card,
+                            match: card,
                             effect: ability.effects.poison
                         }));
                         return true;

@@ -26,7 +26,7 @@ class TearsOfLys extends DrawCard {
             cardCondition: card => card.location === 'play area' && card.controller !== player && card.getType() === 'character' && !card.hasIcon('intrigue'),
             onSelect: (p, card) => {
                 this.atEndOfPhase(ability => ({
-                    match: c => c === card,
+                    match: card,
                     effect: ability.effects.poison
                 }));
                 return true;

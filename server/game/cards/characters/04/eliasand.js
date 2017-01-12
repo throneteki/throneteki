@@ -21,7 +21,7 @@ class EliaSand extends DrawCard {
     onCardSelected(player, card) {
         this.game.addMessage('{0} uses {1} to give {2} Stealth', player, this, card);
         this.untilEndOfPhase(ability => ({
-            match: c => c === card,
+            match: card,
             effect: ability.effects.addKeyword('Stealth')
         }));
 

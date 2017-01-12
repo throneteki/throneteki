@@ -72,8 +72,7 @@ class OldNan extends DrawCard {
         this.game.addMessage('{0} uses {1} to add the {2} trait to {3}', player, this, trait, plotCard);
         player.kneelCard(this);
         this.untilEndOfRound(ability => ({
-            match: c => c === plotCard,
-            targetController: 'any',
+            match: plotCard,
             effect: ability.effects.addTrait(trait)
         }));
 
