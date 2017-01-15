@@ -170,11 +170,23 @@ const Effects = {
     },
     setMaxChallenge: function(max) {
         return {
-            apply: function(player, context) {
+            apply: function(player) {
                 player.setMaxChallenge(max);
             },
             unapply: function(player) {
                 player.clearMaxChallenge();
+            }
+        };
+    },
+    setMinReserve: function(min) {
+        return {
+            apply: function(player, context) {
+                context.setMinReserve = context.setMinReserve || {};
+                context.setMinReserve[player] = player.minReserve;
+                player.minReserve = min;
+            },
+            unapply: function(player, context) {
+                player.minReserve = context.setMinReserve[player];
             }
         }
     }

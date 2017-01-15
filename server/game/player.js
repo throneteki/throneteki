@@ -29,6 +29,7 @@ class Player extends Spectator {
 
         this.deck = {};
         this.challenges = new ChallengeTracker();
+        this.minReserve = 0;
     }
 
     isCardUuidInList(list, card) {
@@ -980,9 +981,11 @@ class Player extends Spectator {
     }
 
     getTotalReserve() {
-        return this.getTotalPlotStat(card => {
+        var reserve = this.getTotalPlotStat(card => {
             return card.getReserve();
         });
+
+        return Math.max(reserve, this.minReserve);
     }
 
     isBelowReserve() {
