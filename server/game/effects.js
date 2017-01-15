@@ -30,7 +30,7 @@ const Effects = {
             unapply: function(card) {
                 card.reserveModifier -= value;
             }
-        };        
+        };
     },
     dynamicStrength: function(calculate) {
         return {
@@ -188,7 +188,7 @@ const Effects = {
             unapply: function(player, context) {
                 player.minReserve = context.setMinReserve[player];
             }
-        }
+        };
     }
 };
 

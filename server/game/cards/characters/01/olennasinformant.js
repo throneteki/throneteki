@@ -1,7 +1,7 @@
 const DrawCard = require('../../../drawcard.js');
 
 class OlennasInformant extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 onCardEntersPlay: (e, card) => card === this && this.game.currentPhase === 'challenge'
@@ -32,7 +32,7 @@ class OlennasInformant extends DrawCard {
         this.game.addMessage('{0} uses {1} to be able to initiate an additional {2} challenge this phase', player, this, challenge);
 
         return true;
-    } 
+    }
 }
 
 OlennasInformant.code = '01189';
