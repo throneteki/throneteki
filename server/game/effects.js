@@ -157,6 +157,26 @@ const Effects = {
                 delete context.takeControl[card];
             }
         };
+    },
+    modifyChallengeTypeLimit: function(challengeType, value) {
+        return {
+            apply: function(player) {
+                player.addChallenge(challengeType, value);
+            },
+            unapply: function(player) {
+                player.addChallenge(challengeType, -value);
+            }
+        };
+    },
+    setMaxChallenge: function(max) {
+        return {
+            apply: function(player, context) {
+                player.setMaxChallenge(max);
+            },
+            unapply: function(player) {
+                player.clearMaxChallenge();
+            }
+        }
     }
 };
 
