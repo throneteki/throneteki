@@ -97,6 +97,14 @@ class BaseCard {
     }
 
     plotModifiers(modifiers) {
+        if(modifiers.initiative) {
+            this.persistentEffect({
+                condition: () => this.canProvidePlotModifier['initiative'],
+                target: card => card.controller.activePlot === card,
+                targetController: 'current',
+                effect: AbilityDsl.effects.modifyInitiative(modifiers.initiative)
+            });
+        }
         if(modifiers.reserve) {
             this.persistentEffect({
                 condition: () => this.canProvidePlotModifier['reserve'],
@@ -264,10 +272,6 @@ class BaseCard {
 
     canReduce() {
         return false;
-    }
-
-    getInitiative() {
-        return 0;
     }
 
     getIncome() {

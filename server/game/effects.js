@@ -22,6 +22,16 @@ const Effects = {
             }
         };
     },
+    modifyInitiative: function(value) {
+        return {
+            apply: function(card) {
+                card.initiativeModifier += value;
+            },
+            unapply: function(card) {
+                card.initiativeModifier -= value;
+            }
+        };
+    },
     modifyReserve: function(value) {
         return {
             apply: function(card) {

@@ -6,6 +6,7 @@ class PlotCard extends BaseCard {
 
         this.reserveModifier = 0;
         this.goldModifier = 0;
+        this.initiativeModifier = 0;
         this.claimModifier = 0;
     }
 
@@ -14,7 +15,7 @@ class PlotCard extends BaseCard {
     }
 
     getInitiative() {
-        return this.cardData.initiative;
+        return this.cardData.initiative + this.initiativeModifier;
     }
 
     getIncome(printed) {

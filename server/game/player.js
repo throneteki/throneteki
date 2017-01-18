@@ -953,9 +953,11 @@ class Player extends Spectator {
     }
 
     getTotalInitiative() {
-        return this.getTotalPlotStat(card => {
-            return card.getInitiative();
-        });
+        if(!this.activePlot) {
+            return 0;
+        }
+
+        return this.activePlot.getInitiative();
     }
 
     getTotalIncome() {
