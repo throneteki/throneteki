@@ -81,16 +81,6 @@ class App extends React.Component {
             this.props.receiveJoinGame(game);
         });
 
-        socket.on('leavegame', (game, player) => {
-            var isMe = false;
-
-            if(player === this.props.username) {
-                isMe = true;
-            }
-
-            this.props.receiveLeaveGame(game, isMe);
-        });
-
         socket.on('gamestate', game => {
             this.props.receiveGameState(game, this.props.username);
         });

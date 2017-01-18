@@ -46,12 +46,15 @@ function games(state = {
                 currentGame: action.currentGame
             });
 
-            var currentState = state.currentGame;
-
-            if(currentState && currentState.players[action.username] && currentState.players[action.username].left) {
-                delete retState.currentGame;
+            var currentState = retState.currentGame;
+            if(!currentState) {
+                return retState;
             }
 
+            if(!currentState || !currentState.players[action.username] || currentState.players[action.username].left) {
+                delete retState.currentGame;
+            }
+            
             return retState;
         case 'RECEIVE_USERS':
             return Object.assign({}, state, {
