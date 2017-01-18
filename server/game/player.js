@@ -975,11 +975,11 @@ class Player extends Spectator {
     }
 
     getTotalReserve() {
-        var reserve = this.getTotalPlotStat(card => {
-            return card.getReserve();
-        });
+        if(!this.activePlot) {
+            return 0;
+        }
 
-        return Math.max(reserve, this.minReserve);
+        return Math.max(this.activePlot.getReserve(), this.minReserve);
     }
 
     getClaim() {

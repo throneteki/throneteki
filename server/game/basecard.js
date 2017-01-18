@@ -33,6 +33,11 @@ class BaseCard {
         this.blankCount = 0;
 
         this.tokens = {};
+        this.canProvidePlotModifier = {
+            gold: true,
+            initiative: true,
+            reserve: true
+        };
         this.menu = _([]);
         this.events = new EventRegistrar(this.game, this);
 
@@ -89,6 +94,17 @@ class BaseCard {
     }
 
     setupCardAbilities() {
+    }
+
+    plotModifiers(modifiers) {
+        if(modifiers.reserve) {
+            this.persistentEffect({
+                condition: () => this.canProvidePlotModifier['reserve'],
+                target: card => card.controller.activePlot === card,
+                targetController: 'current',
+                effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
+            });
+        }
     }
 
     action(properties) {
@@ -255,10 +271,6 @@ class BaseCard {
     }
 
     getIncome() {
-        return 0;
-    }
-
-    getReserve() {
         return 0;
     }
 
