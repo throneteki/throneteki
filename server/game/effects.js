@@ -22,6 +22,16 @@ const Effects = {
             }
         };
     },
+    modifyGold: function(value) {
+        return {
+            apply: function(card) {
+                card.goldModifier += value;
+            },
+            unapply: function(card) {
+                card.goldModifier -= value;
+            }
+        };
+    },
     modifyInitiative: function(value) {
         return {
             apply: function(card) {

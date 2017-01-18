@@ -938,20 +938,6 @@ class Player extends Spectator {
         }
     }
 
-    getTotalPlotStat(property) {
-        var baseValue = 0;
-
-        if(this.activePlot && property(this.activePlot)) {
-            baseValue = property(this.activePlot);
-        }
-
-        var modifier = this.cardsInPlay.reduce((memo, card) => {
-            return memo + (property(card) || 0);
-        }, 0);
-
-        return baseValue + modifier;
-    }
-
     getTotalInitiative() {
         if(!this.activePlot) {
             return 0;
@@ -961,10 +947,11 @@ class Player extends Spectator {
     }
 
     getTotalIncome() {
-        var gold = this.getTotalPlotStat(card => {
-            return card.getIncome();
-        });
+        if(!this.activePlot) {
+            return 0;
+        }
 
+        var gold = this.activePlot.getIncome();
         gold = this.activePlot.modifyIncome(this, gold);
 
         // XXX this player shouldn't know about the other player, this should be deffered to game

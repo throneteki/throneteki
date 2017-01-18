@@ -33,6 +33,11 @@ class BaseCard {
         this.blankCount = 0;
 
         this.tokens = {};
+        this.plotModifierValues = {
+            gold: 0,
+            initiative: 0,
+            reserve: 0
+        };
         this.canProvidePlotModifier = {
             gold: true,
             initiative: true,
@@ -97,10 +102,19 @@ class BaseCard {
     }
 
     plotModifiers(modifiers) {
+        this.plotModifierValues = _.extend(this.plotModifierValues, modifiers);
+        if(modifiers.gold) {
+            this.persistentEffect({
+                condition: () => this.canProvidePlotModifier['gold'],
+                match: card => card.controller.activePlot === card,
+                targetController: 'current',
+                effect: AbilityDsl.effects.modifyGold(modifiers.gold)
+            });
+        }
         if(modifiers.initiative) {
             this.persistentEffect({
                 condition: () => this.canProvidePlotModifier['initiative'],
-                target: card => card.controller.activePlot === card,
+                match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyInitiative(modifiers.initiative)
             });
@@ -108,7 +122,7 @@ class BaseCard {
         if(modifiers.reserve) {
             this.persistentEffect({
                 condition: () => this.canProvidePlotModifier['reserve'],
-                target: card => card.controller.activePlot === card,
+                match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
             });
@@ -272,10 +286,6 @@ class BaseCard {
 
     canReduce() {
         return false;
-    }
-
-    getIncome() {
-        return 0;
     }
 
     getFaction() {
