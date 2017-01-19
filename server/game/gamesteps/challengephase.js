@@ -68,7 +68,6 @@ class ChallengePhase extends Phase {
 
     cleanupChallenge() {
         this.game.currentChallenge.unregisterEvents();
-        this.game.currentChallenge = null;
     }
 
     chooseOpponent(attackingPlayer) {
@@ -76,6 +75,7 @@ class ChallengePhase extends Phase {
     }
 
     completeChallenges(player) {
+        this.game.currentChallenge = null;
         this.game.addMessage('{0} has finished their challenges', player);
 
         this.remainingPlayers.shift();
