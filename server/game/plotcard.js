@@ -15,7 +15,8 @@ class PlotCard extends BaseCard {
     }
 
     getInitiative() {
-        return this.cardData.initiative + this.initiativeModifier;
+        var baseValue = this.canProvidePlotModifier['initiative'] ? this.cardData.initiative : 0;
+        return baseValue + this.initiativeModifier;
     }
 
     getIncome(printed) {
@@ -23,19 +24,18 @@ class PlotCard extends BaseCard {
             return this.cardData.income;
         }
 
-        return this.cardData.income + this.goldModifier;
+        var baseValue = this.canProvidePlotModifier['gold'] ? this.cardData.income : 0;
+
+        return baseValue + this.goldModifier;
     }
 
     getReserve() {
-        return this.cardData.reserve + this.reserveModifier;
+        var baseValue = this.canProvidePlotModifier['reserve'] ? this.cardData.reserve : 0;
+        return baseValue + this.reserveModifier;
     }
 
     getClaim() {
         return this.cardData.claim + this.claimModifier;
-    }
-
-    modifyIncome(player, income) {
-        return income;
     }
 
     canChallenge() {

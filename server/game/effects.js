@@ -62,6 +62,16 @@ const Effects = {
             }
         };
     },
+    preventPlotModifier: function(modifier) {
+        return {
+            apply: function(card) {
+                card.canProvidePlotModifier[modifier] = false;
+            },
+            unapply: function(card) {
+                card.canProvidePlotModifier[modifier] = true;
+            }
+        };
+    },
     dynamicStrength: function(calculate) {
         return {
             apply: function(card, context) {
