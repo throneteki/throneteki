@@ -49,7 +49,7 @@ class InnerGameList extends React.Component {
 
             return (
                 <div key={ game.id } className='game-row'>
-                    { (this.props.currentGame || game.players.length === 2 || game.started) ?
+                    { (this.props.currentGame || _.size(game.players) === 2 || game.started) ?
                         null :
                         <button className='btn btn-primary pull-right' onClick={ event => this.joinGame(event, game) }>Join</button>
                     }
