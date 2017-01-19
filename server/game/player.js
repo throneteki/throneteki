@@ -486,6 +486,8 @@ class Player extends Spectator {
             this.game.raiseEvent('onPlotsRecycled', this);
         }
 
+        this.game.raiseEvent('onCardEntersPlay', this.activePlot);
+
         this.selectedPlot = undefined;
     }
 
