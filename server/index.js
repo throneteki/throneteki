@@ -277,7 +277,7 @@ io.on('connection', function(socket) {
 
         if(game) {
             runAndCatchErrors(game, () => {
-                if(!game.players[socket.request.user.username].noReconnect) {
+                if(!game.players[socket.request.user.username].left) {
                     socket.join(game.id);
                     
                     game.reconnect(socket.id, socket.request.user.username);
@@ -413,16 +413,7 @@ io.on('connection', function(socket) {
             return;
         }
 
-        runAndCatchErrors(game, () => {
-            if(game.players[socket.request.user.username]) {
-                game.players[socket.request.user.username].noReconnect = true;
-            }
-            
-            if(game.started && !game.finishedAt) {
-                game.finishedAt = new Date();
-                game.saveGame();
-            }
-
+        runAndCatchErrors(game, () => {           
             game.playerLeave(socket.request.user.username, 'has left the game');
 
             var player = game.players[socket.request.user.username];
@@ -433,8 +424,14 @@ io.on('connection', function(socket) {
 
             if(game.isSpectator(player)) {
                 delete game.players[socket.request.user.username];
+                io.to(player.id).emit('gamestate', game.getState(player.name));
             } else {
                 game.players[socket.request.user.username].left = true;
+
+                if(game.started && !game.finishedAt) {
+                    game.finishedAt = new Date();
+                    game.saveGame();
+                }                
             }
 
             var listToCheck = game.getPlayers();
@@ -445,7 +442,9 @@ io.on('connection', function(socket) {
                 if(_.isEmpty(game.getSpectators())) {
                     delete games[game.id];
                 }
-            } else {
+            }
+
+            if(games[game.id]) {
                 _.each(game.players, player => {
                     io.to(player.id).emit('gamestate', game.getState(player.name));
                 });

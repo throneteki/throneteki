@@ -168,7 +168,6 @@ App.propTypes = {
     receiveGameState: React.PropTypes.func,
     receiveGames: React.PropTypes.func,
     receiveJoinGame: React.PropTypes.func,
-    receiveLeaveGame: React.PropTypes.func,
     receiveLobbyMessage: React.PropTypes.func,
     receiveLobbyMessages: React.PropTypes.func,
     receiveNewGame: React.PropTypes.func,
