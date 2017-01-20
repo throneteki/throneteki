@@ -21,8 +21,8 @@ const BaseCardReaction = require('./basecardreaction.js');
  */
 
 class CardForcedReaction extends BaseCardReaction {
-    constructor(game, card, properties) {
-        super(game, card, properties);
+    constructor(game, card, type, properties) {
+        super(game, card, type, properties);
 
         this.handler = properties.handler;
     }

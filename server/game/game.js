@@ -809,7 +809,11 @@ class Game extends EventEmitter {
     raiseEvent(eventName, ...params) {
         var event = new Event();
 
+        this.emit(eventName + ':interrupt', event, ...params);
+        this.emit(eventName + ':forcedinterrupt', event, ...params);
         this.emit(eventName, event, ...params);
+        this.emit(eventName + ':forcedreaction', event, ...params);
+        this.emit(eventName + ':reaction', event, ...params);
 
         return event;
     }

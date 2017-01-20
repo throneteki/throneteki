@@ -136,23 +136,23 @@ class BaseCard {
     }
 
     reaction(properties) {
-        var reaction = new CardReaction(this.game, this, properties);
+        var reaction = new CardReaction(this.game, this, 'reaction', properties);
         this.abilities.reactions.push(reaction);
     }
 
     forcedReaction(properties) {
-        var reaction = new CardForcedReaction(this.game, this, properties);
+        var reaction = new CardForcedReaction(this.game, this, 'forcedreaction', properties);
         this.abilities.reactions.push(reaction);
     }
 
-    // TODO: Interrupt shouldn't be a synonym for reaction, but for now this
-    //       mirrors how they've been implemented so far.
     interrupt(properties) {
-        this.reaction(properties);
+        var reaction = new CardReaction(this.game, this, 'interrupt', properties);
+        this.abilities.reactions.push(reaction);
     }
 
     forcedInterrupt(properties) {
-        this.forcedReaction(properties);
+        var reaction = new CardForcedReaction(this.game, this, 'forcedinterrupt', properties);
+        this.abilities.reactions.push(reaction);
     }
 
     // TODO: When revealed abilities shouldn't be a synonym for forced reactions

@@ -1,11 +1,12 @@
 const _ = require('underscore');
 
 class BaseCardReaction {
-    constructor(game, card, properties) {
+    constructor(game, card, eventType, properties) {
         this.game = game;
         this.card = card;
         this.limit = properties.limit;
         this.when = properties.when;
+        this.eventType = eventType;
     }
 
     createEventHandlerFor(eventName) {
@@ -43,7 +44,7 @@ class BaseCardReaction {
         this.events = [];
         _.each(eventNames, eventName => {
             var event = {
-                name: eventName,
+                name: eventName + ':' + this.eventType,
                 handler: this.createEventHandlerFor(eventName)
             };
             this.game.on(event.name, event.handler);

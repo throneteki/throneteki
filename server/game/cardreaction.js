@@ -24,8 +24,8 @@ const BaseCardReaction = require('./basecardreaction.js');
  *           for the reaction as well as when it resets.
  */
 class CardReaction extends BaseCardReaction {
-    constructor(game, card, properties) {
-        super(game, card, properties);
+    constructor(game, card, type, properties) {
+        super(game, card, type, properties);
 
         this.choices = this.createChoices(properties);
     }
