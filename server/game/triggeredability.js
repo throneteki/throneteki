@@ -1,6 +1,22 @@
 const _ = require('underscore');
 
-class BaseCardReaction {
+class TriggeredAbilityContext {
+    constructor(event, game, source) {
+        this.event = event;
+        this.game = game;
+        this.source = source;
+    }
+
+    cancel() {
+        this.event.cancel();
+    }
+
+    skipHandler() {
+        this.event.skipHandler();
+    }
+}
+
+class TriggeredAbility {
     constructor(game, card, eventType, properties) {
         this.game = game;
         this.card = card;
@@ -27,7 +43,7 @@ class BaseCardReaction {
                 return;
             }
 
-            this.executeReaction();
+            this.executeReaction(new TriggeredAbilityContext(args[0], this.game, this.source));
         };
     }
 
@@ -69,4 +85,4 @@ class BaseCardReaction {
     }
 }
 
-module.exports = BaseCardReaction;
+module.exports = TriggeredAbility;
