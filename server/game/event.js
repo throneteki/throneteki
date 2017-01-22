@@ -1,7 +1,7 @@
 class Event {
     constructor(name, params) {
         this.name = name;
-        this.params = params;
+        this.params = [this].concat(params);
         this.cancelled = false;
         this.shouldSkipHandler = false;
     }

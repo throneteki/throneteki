@@ -15,6 +15,8 @@ const TriggeredAbility = require('./triggeredability.js');
  *           }
  *           Multiple events may be specified for cards that have multiple
  *           possible triggers for the same reaction.
+ * title   - function that returns the string to be used as the prompt title. If
+ *           none provided, then the title will be "Trigger {card name}?".
  * handler - function that will be executed if the player chooses 'Yes' when
  *           asked to trigger the reaction. If the reaction has more than one
  *           choice, use the choices sub object instead.
@@ -28,6 +30,7 @@ class PromptedTriggeredAbility extends TriggeredAbility {
         super(game, card, type, properties);
 
         this.choices = this.createChoices(properties);
+        this.title = properties.title || (() => 'Trigger ' + this.card.name + '?');
     }
 
     createChoices(properties) {
@@ -50,7 +53,7 @@ class PromptedTriggeredAbility extends TriggeredAbility {
         this.currentContext = context;
         this.game.promptWithMenu(this.card.controller, this, {
             activePrompt: {
-                menuTitle: 'Trigger ' + this.card.name + '?',
+                menuTitle: this.title(context),
                 buttons: this.buttonsForChoices()
             },
             waitingPromptTitle: 'Waiting for opponent to use ' + this.card.name
