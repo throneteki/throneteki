@@ -73,6 +73,10 @@ class DrawCard extends BaseCard {
     isRenown() {
         return this.hasKeyword('renown');
     }
+    
+    isKneeled() {
+    	return this.kneeled;
+    }
 
     hasIcon(icon) {
         return this.icons[icon.toLowerCase()] > 0;
