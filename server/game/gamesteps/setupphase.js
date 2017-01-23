@@ -20,6 +20,11 @@ class SetupPhase extends Phase {
 
     prepareDecks() {
         this.game.raiseEvent('onDecksPrepared');
+        _.each(this.game.getPlayers(), player => {
+            if(player.agenda) {
+                player.agenda.play();
+            }
+        });
     }
 
     startGame() {
