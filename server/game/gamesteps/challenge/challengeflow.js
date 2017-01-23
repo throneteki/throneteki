@@ -39,6 +39,7 @@ class ChallengeFlow extends BaseStep {
     promptForAttackers() {
         this.game.promptForSelect(this.challenge.attackingPlayer, {
             numCards: this.challenge.attackingPlayer.challengerLimit,
+            multiSelect: true,
             activePromptTitle: 'Select challenge attackers',
             waitingPromptTitle: 'Waiting for opponent to select attackers',
             cardCondition: card => this.allowAsAttacker(card),
@@ -72,6 +73,7 @@ class ChallengeFlow extends BaseStep {
 
         this.game.promptForSelect(this.challenge.defendingPlayer, {
             numCards: this.challenge.defendingPlayer.challengerLimit,
+            multiSelect: true,
             activePromptTitle: 'Select defenders',
             waitingPromptTitle: 'Waiting for opponent to defend',
             cardCondition: card => this.allowAsDefender(card),
