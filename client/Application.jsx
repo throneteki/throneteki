@@ -15,6 +15,7 @@ import NavBar from './NavBar.jsx';
 import GameLobby from './GameLobby.jsx';
 import GameBoard from './GameBoard.jsx';
 import About from './About.jsx';
+import ForgotPassword from './ForgotPassword.jsx';
 
 import * as actions from './actions';
 
@@ -41,6 +42,7 @@ var decks = <Decks />;
 var gameBoard = <GameBoard />;
 var gameLobby = <GameLobby />;
 var about = <About />;
+var forgot = <ForgotPassword />;
 
 class App extends React.Component {
     componentWillMount() {
@@ -138,6 +140,9 @@ class App extends React.Component {
                 break;
             case '/about':
                 component = about;
+                break;
+            case '/forgot':
+                component = forgot;
                 break;
             default:
                 component = <NotFound />;
