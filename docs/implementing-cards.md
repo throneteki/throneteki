@@ -47,6 +47,27 @@ class NobleLineage extends DrawCard {
 }
 ```
 
+### Keywords
+
+Keywords are automatically parsed from the card text. It isn't necessary to explicitly implement them unless they are provided by a conditional persistent effect (e.g. Ser Jaime Lannister's military-only renown).
+
+### Plot modifiers
+
+Cards with plot modifier icons need to be declared when setting up the card using the `plotModifiers` method. The method takes an object that can have three properties: `gold` to modify the plot's gold value, `initiative` to modify the plot's initiative value, and `reserve` to modify the plot's reserve value. While most cards only provide a single modifier, it's possible to declare multiple values when appropriate.
+
+```javascript
+// The Arbor provides +3 gold.
+this.plotModifiers({
+    gold: 3
+});
+
+// The God's Eye provides both +1 gold and +1 reserve
+this.plotModifiers({
+    reserve: 1,
+    gold: 1
+});
+```
+
 ### Persistent effects
 
 Many cards provide continuous bonuses to other cards you control or detrimental effects to opponents cards in certain situations. These can be defined using the `persistentEffect` method. Cards that enter play while the persistent effect is in play will automatically have the effect applied, and cards that leave play will have the effect removed. If the card providing the effect becomes blank, the effect is automatically removed from all previously applied cards.
