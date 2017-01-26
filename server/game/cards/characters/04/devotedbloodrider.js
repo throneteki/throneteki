@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class DevotedBloodrider extends DrawCard {
     setupCardAbilities(ability) {
          this.persistentEffect({
-            match: (card) => card.hasTrait('Bloodrider') && card.controller === this.controller,
+            match: (card) => card.hasTrait('Bloodrider'),
             effect: ability.effects.modifyStrength(1)
         });
     }
