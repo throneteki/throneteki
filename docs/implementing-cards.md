@@ -200,7 +200,7 @@ this.persistentEffect({
 
 ### Lasting effects
 
-Unlike persistent effects, lasting effects are typically applied during an action, reaction or interrupt and expire after a specified period of time.  The properties sent when applying these effects are identical to those of persistent effects, but additional methods are provided to apply them immediately with the correct duration.
+Unlike persistent effects, lasting effects are typically applied during an action, reaction or interrupt and expire after a specified period of time.  Because lasting effects can be applied almost anywhere, each method takes a factory function that provides the `ability` object and should return the effect properties. The properties returned when applying these effects are identical to those of persistent effects, but additional methods are provided to apply them immediately with the correct duration.
 
 **Important: These should not be used within setupCardAbilities, only within handler code for actions and triggered abilities.**
 
