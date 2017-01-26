@@ -12,7 +12,7 @@ class MotherOfDragons extends DrawCard {
     addToChallenge(player) {
         var challenge = this.game.currentChallenge;
         if(this.kneeled || !player.cardsInPlay.any(card => {
-            return card.inChallenge && card.hasTrait('Dragon');
+            return challenge.isParticipating(card) && card.hasTrait('Dragon');
         })) {
             return false;
         }
