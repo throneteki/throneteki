@@ -139,6 +139,15 @@ this.whileAttached({
 });
 ```
 
+If the effect has an additional requirement, an optional `match` function can be passed in.
+```javascript
+// If attached character is Joffrey Baratheon, he gains a military icon.
+this.whileAttached({
+    match: card => card.name === 'Joffrey Baratheon',
+    effect: ability.effects.addIcon('military')
+});
+```
+
 #### Applying multiple effects at once
 As a shorthand, it is possible to pass an array into the `effect` property to apply multiple effects that have the same conditions / matching functions.
 
