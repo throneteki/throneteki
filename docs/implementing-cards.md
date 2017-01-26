@@ -243,8 +243,83 @@ this.untilEndOfRound(ability => ({
 
 ### Actions
 
-TODO
+**Note:** Actions may be reworked in the future to separate out the action's cost from the action's effect. So this API may change slightly.
+
+Actions are abilities provided by the card text that players may trigger during action windows. They are declared using the `action` method. See `/server/game/cardaction.js` for full documentation. Here are some common scenarios:
+
+#### Declaring an action
+
+When declaring an action, use the `action` method and provide it with a `title` and a `method` property. The title is what will be displayed in the menu players see when clicking on the card. The method is a string that references a method on the card object to be called when the player chooses to trigger the action. The player executing the action is passed into the method.
+
+```javascript
+class SealOfTheHand extends DrawCard {
+    setupCardAbilities() {
+        this.action({
+            title: 'Stand attached character',
+            method: 'kneel'
+        });
+    }
+
+    kneel(player) {
+        // Code to stand the parent card.
+    }
+}
+```
+
+#### Cancelling an action due to cost
+
+Some actions have an additional cost or requirement, such as kneeling the card. In these cases, if the cost cannot be paid, returning false from the handler will cancel the action.
+
+```javascript
+// Handler method for Seal of the Hand
+kneel(player) {
+    // ensure the parent is kneeled and the Seal is standing.
+    if(!this.parent || !this.parent.kneeled || this.kneeled) {
+        return false;
+    }
+
+    // stand parent, kneel this.
+}
+```
+
+If an action is cancelled in this manner, it is not counted towards any 'limit X per challenge/phase/round' requirements.
+
+#### Limiting an action to a specific phase
+
+Some actions are limited to a specific phase by their card text (e.g. 'Challenges Action:'). You can pass an optional `phase` property to the action to limit it to just that phase. Valid phases include `'plot'`, `'draw'`, `'marshal'`, `'challenges'`, `'dominance'`, `'standing'` `'taxation'`. The default is `'any'` which allows the action to be triggered in any phase.
+
+```javascript
+this.action({
+    title: 'Kneel Grey Wind to kill a character',
+    method: 'kill',
+    phase: 'challenge'
+});
+```
+
+#### Limiting the number of uses
+
+Some actions have text limiting the number of times they may be used in a given period. You can pass an optional `limit` property using one of the duration-specific ability limiters.
+
+```javascript
+this.action({
+    title: 'Put a card with printed cost of 5 or lower in play',
+    method: 'putInPlay',
+    limit: ability.limit.perPhase(1)
+});
+```
 
 ### Triggered abilities
 
 TODO
+
+### Ability limits
+
+Actions, reactions, and interrupts can have limits on how many times they may be used within a certain period. These limits can be set by setting the `limit` property on the ability. The `ability` object has a limit helper with methods for the different periods.
+
+To limit an ability per challenge, use `ability.limit.perChallenge(x)`.
+
+To limit an ability per phase, use `ability.limit.perPhase(x)`.
+
+To limit an ability per challenge, use `ability.limit.perRound(x)`.
+
+In each case, `x` should be the number of times the ability is allowed to be used.
