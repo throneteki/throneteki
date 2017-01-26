@@ -24,7 +24,7 @@ export class InnerRegister extends React.Component {
         };
     }
 
-    verifyUsername(event, isSubmitting, foo) {
+    verifyUsername(event, isSubmitting) {
         var validation = this.state.validation;
 
         delete validation['username'];

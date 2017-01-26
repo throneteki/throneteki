@@ -4,8 +4,7 @@ const passport = require('passport');
 const config = require('./../config.js');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const escapeRegex = require('../util.js').escapeRegex;
-const https = require('https');
+const util = require('../util.js');
 const nodemailer = require('nodemailer');
 const hmac = crypto.createHmac('sha512', config.hmacSecret);
 const moment = require('moment');
@@ -87,61 +86,38 @@ module.exports.init = function(server) {
     });
 
     server.post('/api/account/password-reset', function(req, res) {
-        var responseStr = '';
-        var url = 'https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha;
+        util.httpRequest('https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha)
+        .then((response) => {
+            var answer = JSON.parse(response);
 
-        https.get(url, function(response) {
-            response.on('data', function(chunk) {
-                responseStr += chunk;                    
-            });
+            if(!answer.success) {
+                return res.send({ success: false, message: 'Please complete the captcha correctly' });
+            }
 
-            response.on('end', function() {
-                var answer = JSON.parse(responseStr);
+            res.send({ success: true });
 
-                if(!answer.success) {
-                    return res.send({ success: false, message: 'Please complete the captcha correctly' });
-                }
+            return userRepository.getUserByUsername(req.body.username);
+        })
+        .then(user => {
+            if(!user) {
+                return;
+            }
 
-                res.send({ success: true });
+            var expiration = moment();
 
-                db.collection('users').findOne({ username: {'$regex': new RegExp('^' + escapeRegex(req.body.username.toLowerCase()), 'i')}}, function(err, account) {
-                    if(!err && account) {
-                        var expiration = moment();
+            var resetToken = hmac.update('RESET ' + user.username + ' ' + expiration).digest('hex');
 
-                        hmac.on('readable', () => {
-                            var resetToken = hmac.read();
-                            if(!resetToken) {
-                                return;
-                            }
+            var emailTransport = nodemailer.createTransport(config.emailPath);
 
-                            console.info(resetToken.toString('hex'));
-
-                            // db.collection('tokens').insert({
-                            //     username: req.body.username,
-                            //     expiration: expiration,
-                            //     token: 
-                            // }, function(err) {
-
-                            // });
-
-                            var emailTransport = nodemailer.createTransport(config.emailPath);
-
-                            emailTransport.sendMail({
-                                from: 'The Iron Throne <noreply@theironthrone.net',
-                                to: account.email,
-                                subject: 'Your account at The Iron Throne',
-                                text: 'Hi, Someone, hopefully you, has requested their password on The Iron Throne (https://theironthronet.net).  If this was you, click this link <link> to complete the process.  If you did not request this reset, do not worry, your account has not been changed, just ignore this email.'
-                            });
-
-                        });
-
-                        hmac.write('RESET ' + account.username + ' ' + expiration);
-                        hmac.end();                        
-                    }
-                });
-            });
-        }).on('error', function(e) {
-            logger.info(e.message);
+            emailTransport.sendMail({
+                from: 'The Iron Throne <noreply@theironthrone.net',
+                to: user.email,
+                subject: 'Your account at The Iron Throne',
+                text: 'Hi, Someone, hopefully you, has requested their password on The Iron Throne (https://theironthronet.net).  If this was you, click this link <link> to complete the process.  If you did not request this reset, do not worry, your account has not been changed, just ignore this email.'
+            });            
+        })
+        .catch(err => {
+            logger.info(err.message);
             res.send({ success: false, message: 'There was a problem verifying the captcha, please try again' });
         });
     });

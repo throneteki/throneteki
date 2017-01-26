@@ -1,5 +1,4 @@
 const db = require('monk')('mongodb://127.0.0.1:27017/throneteki');
-const logger = require('../log.js');
 const users = db.get('users');
 const escapeRegex = require('../util.js').escapeRegex;
 
