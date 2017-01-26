@@ -24,7 +24,7 @@ export class InnerRegister extends React.Component {
         };
     }
 
-    verifyUsername(event, isSubmitting) {
+    verifyUsername(event, isSubmitting, foo) {
         var validation = this.state.validation;
 
         delete validation['username'];
@@ -134,7 +134,7 @@ export class InnerRegister extends React.Component {
                 label: 'Username',
                 placeholder: 'Username',
                 inputType: 'text',
-                blurCallback: this.verifyUsername
+                blurCallback: (event) => this.verifyUsername(event, false)
             },
             {
                 name: 'email',

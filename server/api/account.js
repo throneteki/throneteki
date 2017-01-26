@@ -1,5 +1,3 @@
-const mongoskin = require('mongoskin');
-const db = mongoskin.db('mongodb://127.0.0.1:27017/throneteki');
 const logger = require('./../log.js');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
@@ -11,69 +9,70 @@ const https = require('https');
 const nodemailer = require('nodemailer');
 const hmac = crypto.createHmac('sha512', config.hmacSecret);
 const moment = require('moment');
+const UserRepository = require('../repositories/userRepository.js');
+
+var userRepository = new UserRepository();
+
+function hashPassword(password, rounds) {
+    return new Promise((resolve, reject) => {
+        bcrypt.hash(password, rounds, function(err, hash) {
+            if(err) {
+                return reject(err);
+            }
+
+            return resolve(hash);
+        });
+    });
+}
 
 module.exports.init = function(server) {
     server.post('/api/account/register', function(req, res, next) {
-        db.collection('users').findOne({ username: {'$regex': new RegExp('^' + escapeRegex(req.body.username.toLowerCase()), 'i')}},
-        function(err, account) {
-            if(err) {
-                res.send({ success: false, message: 'An error occured registering your account' });
-                logger.info(err.message);
-                return next(err);
-            }
-
-            if(account) {
+        userRepository.getUserByUsername(req.body.username).then(user => {
+            if(user) {
                 res.send({ success: false, message: 'An account with that name already exists, please choose another' });
                 return next();
             }
 
-            bcrypt.hash(req.body.password, 10, function(err, hash) {
-                if(err) {
-                    res.send({ success: false, message: 'An error occured registering your account' });
-                    logger.info(err.message);
-                    return next(err);
-                }
+            return hashPassword(req.body.password, 10);
+        }).then(hash => {
+            req.body.password = hash;
+            req.body.registered = new Date();
+            req.body.emailHash = crypto.createHash('md5').update(req.body.email).digest('hex');
 
-                req.body.password = hash;
-                req.body.registered = new Date();
-                req.body.emailHash = crypto.createHash('md5').update(req.body.email).digest('hex');
-
-                db.collection('users').insert(req.body, function(err) {
+            return userRepository.addUser(req.body);
+        }).then(() => {
+            return new Promise((resolve, reject) => {
+                req.login(req.body, function(err) {
                     if(err) {
-                        res.send({ success: false, message: 'An error occured registering your account' });
-                        logger.info(err.message);
-                        return next(err);
+                        return reject(err);
                     }
 
-                    req.login(req.body, function(err) {
-                        if(err) {
-                            res.send({ success: false, message: 'An error occured registering your account' });
-                            logger.info(err.message);
-                            return next(err);
-                        }
-
-                        res.send({ success: true, user: req.body, token: jwt.sign(req.user, config.secret)});
-                    });
+                    resolve();
                 });
             });
+        }).then(() => {
+            res.send({ success: true, user: req.body, token: jwt.sign(req.user, config.secret)});
+        }).catch(err => {
+            res.send({ success: false, message: 'An error occured registering your account' });
+            logger.info(err.message);
+            return next(err);
         });
     });
 
     server.post('/api/account/check-username', function(req, res) {
-        db.collection('users').findOne({ username: { '$regex': new RegExp('^' + escapeRegex(req.body.username.toLowerCase()), 'i')}},
-        function(err, account) {
-            if(err) {
-                res.send({ message: '' });
-                logger.info(err.message);
-                return;
-            }
+        userRepository.getUserByUsername(req.body.username).then(user => {
+            logger.info(user);
 
-            if(account) {
+            if(user) {
                 res.send({ message: 'An account with that name already exists, please choose another' });
                 return;
             }
 
             res.send({ message: '' });
+        }).catch(err => {
+            logger.info(err);
+            res.send({ message: '' });
+            logger.info(err.message);
         });
     });
 
@@ -117,13 +116,13 @@ module.exports.init = function(server) {
 
                             console.info(resetToken.toString('hex'));
 
-                            db.collection('tokens').insert({
-                                username: req.body.username,
-                                expiration: expiration,
-                                token: 
-                            }, function(err) {
+                            // db.collection('tokens').insert({
+                            //     username: req.body.username,
+                            //     expiration: expiration,
+                            //     token: 
+                            // }, function(err) {
 
-                            });
+                            // });
 
                             var emailTransport = nodemailer.createTransport(config.emailPath);
 
