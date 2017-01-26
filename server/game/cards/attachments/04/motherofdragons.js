@@ -25,7 +25,6 @@ class MotherOfDragons extends DrawCard {
             this.game.addMessage('{0} uses {1} to add {2} to the challenge as a defender with strength {3}', this.controller, this, this.parent, this.parent.getStrength());
         }
         this.controller.standCard(this.parent);
-        this.game.addMessage();
     }
 
     canAttach(player, card) {
