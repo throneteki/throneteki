@@ -1,37 +1,31 @@
-const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class MotherOfDragons extends DrawCard {
     setupCardAbilities() {
-        this.reaction({
-            when: {
-                onAttackersDeclared: (event, challenge) => !this.kneeled && this.controller === challenge.attackingPlayer &&_.any(challenge.attackers, card => {
-                    return card.hasTrait('Dragon');
-                })
-                
-            },
-            handler: () => {
-                var challenge = this.game.currentChallenge;
-                this.controller.kneelCard(this);
-                challenge.addAttacker(this.parent);
-                this.game.addMessage('{0} uses {1} to add {2} to the challenge as an attacker', this.controller, this, this.parent);
-            }
+        this.action({
+            title: 'Kneel Mother of Dragons to add attached character to challenge',
+            method: 'addToChallenge',
+            phase: 'challenge'
         });
+    }
 
-        this.reaction({
-            when: {
-                onDefendersDeclared: (event, challenge) => !this.kneeled && this.controller === challenge.defendingPlayer &&_.any(challenge.defenders, card => {
-                    return card.hasTrait('Dragon');
-                })
-                
-            },
-            handler: () => {
-                var challenge = this.game.currentChallenge;
-                this.controller.kneelCard(this);
-                challenge.addDefender(this.parent);
-                this.game.addMessage('{0} uses {1} to add {2} to the challenge as a defender', this.controller, this, this.parent);
-            }
-        });
+    addToChallenge(player) {
+        var challenge = this.game.currentChallenge;
+        if(this.kneeled || !player.cardsInPlay.any(card => {
+            return card.inChallenge && card.hasTrait('Dragon');
+        })) {
+            return false;
+        }
+        this.controller.kneelCard(this);
+        if(challenge.attackingPlayer === player) {
+            challenge.addAttacker(this.parent);
+            this.game.addMessage('{0} uses {1} to add {2} to the challenge as an attacker with strength {3}', this.controller, this, this.parent, this.parent.getStrength());
+        } else {
+            challenge.addDefender(this.parent);
+            this.game.addMessage('{0} uses {1} to add {2} to the challenge as a defender with strength {3}', this.controller, this, this.parent, this.parent.getStrength());
+        }
+        this.controller.standCard(this.parent);
+        this.game.addMessage();
     }
 
     canAttach(player, card) {
@@ -39,7 +33,6 @@ class MotherOfDragons extends DrawCard {
             return false;
         }
         return super.canAttach(player, card);
-
     }       
 }
 
