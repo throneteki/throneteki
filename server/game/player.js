@@ -391,6 +391,7 @@ class Player extends Spectator {
 
         if(card.getType() === 'attachment' && this.phase !== 'setup' && !dupeCard) {
             this.promptForAttachment(card);
+            this.game.raiseEvent('onCardEntersPlay', card);
             return true;
         }
 
