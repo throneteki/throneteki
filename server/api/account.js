@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const util = require('../util.js');
 const nodemailer = require('nodemailer');
-const hmac = crypto.createHmac('sha512', config.hmacSecret);
 const moment = require('moment');
 const UserRepository = require('../repositories/userRepository.js');
 
@@ -20,6 +19,37 @@ function hashPassword(password, rounds) {
             }
 
             return resolve(hash);
+        });
+    });
+}
+
+function loginUser(request, user) {
+    return new Promise((resolve, reject) => {
+        request.login(user, function(err) {
+            if(err) {
+                return reject(err);
+            }
+            
+            resolve();
+        });
+    });    
+}
+
+function sendEmail(address, email) {
+    return new Promise((resolve, reject) => {
+        var emailTransport = nodemailer.createTransport(config.emailPath);
+
+        emailTransport.sendMail({
+            from: 'The Iron Throne <noreply@theironthrone.net',
+            to: address,
+            subject: 'Your account at The Iron Throne',
+            text: email
+        }, function(error) {
+            if(error) {
+                reject(error);
+            }
+
+            resolve();
         });
     });
 }
@@ -40,15 +70,7 @@ module.exports.init = function(server) {
 
             return userRepository.addUser(req.body);
         }).then(() => {
-            return new Promise((resolve, reject) => {
-                req.login(req.body, function(err) {
-                    if(err) {
-                        return reject(err);
-                    }
-
-                    resolve();
-                });
-            });
+            return loginUser(req, req.body);
         }).then(() => {
             res.send({ success: true, user: req.body, token: jwt.sign(req.user, config.secret)});
         }).catch(err => {
@@ -86,8 +108,11 @@ module.exports.init = function(server) {
     });
 
     server.post('/api/account/password-reset', function(req, res) {
-        util.httpRequest('https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha)
-        .then((response) => {
+        var resetToken = '';
+        var responseSent = false;
+        var emailUser;
+
+        util.httpRequest('https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha).then((response) => {
             var answer = JSON.parse(response);
 
             if(!answer.success) {
@@ -96,29 +121,38 @@ module.exports.init = function(server) {
 
             res.send({ success: true });
 
+            responseSent = true;
+
             return userRepository.getUserByUsername(req.body.username);
-        })
-        .then(user => {
+        }).then(user => {
             if(!user) {
-                return;
+                throw new Error('username not found for password reset ' + req.body.username);
             }
 
-            var expiration = moment();
+            emailUser = user;
 
-            var resetToken = hmac.update('RESET ' + user.username + ' ' + expiration).digest('hex');
+            var expiration = moment().add(4, 'hours');
+            var formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
+            var hmac = crypto.createHmac('sha512', config.hmacSecret);
 
-            var emailTransport = nodemailer.createTransport(config.emailPath);
+            resetToken = hmac.update('RESET ' + user.username + ' ' + formattedExpiration).digest('hex');
 
-            emailTransport.sendMail({
-                from: 'The Iron Throne <noreply@theironthrone.net',
-                to: user.email,
-                subject: 'Your account at The Iron Throne',
-                text: 'Hi, Someone, hopefully you, has requested their password on The Iron Throne (https://theironthronet.net).  If this was you, click this link <link> to complete the process.  If you did not request this reset, do not worry, your account has not been changed, just ignore this email.'
-            });            
+            return userRepository.setResetToken(user, resetToken, formattedExpiration);
+        }).then(() => {
+            var url = 'https://theironthrone.net/reset-password?id=' + emailUser._id + '&token=' + resetToken;
+
+            var emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthronet.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
+                  'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
+                  'Kind regards,\n\n' +
+                  'The Iron Throne team';
+                  
+            sendEmail(emailUser.email, emailText);
         })
         .catch(err => {
             logger.info(err.message);
-            res.send({ success: false, message: 'There was a problem verifying the captcha, please try again' });
+            if(!responseSent) {
+                res.send({ success: false, message: 'There was a problem verifying the captcha, please try again' });
+            }
         });
     });
 };

@@ -10,6 +10,10 @@ class UserRepository {
     addUser(user) {
         return users.insert(user);
     }
+
+    setResetToken(user, token, tokenExpiration) {
+        return users.update({ username: user.username }, { '$set': { resetToken: token, tokenExpires: tokenExpiration } });
+    }
 }
 
 module.exports = UserRepository;
