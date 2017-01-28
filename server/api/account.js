@@ -139,7 +139,7 @@ module.exports.init = function(server) {
             var hmac = crypto.createHmac('sha512', config.hmacSecret);
             var resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
 
-            if(resetToken !== user.resetToken) {
+            if(resetToken !== req.body.token) {
                 throw new Error('Invalid reset token');
             }
 

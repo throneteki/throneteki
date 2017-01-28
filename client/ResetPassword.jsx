@@ -2,7 +2,11 @@ import React from 'react';
 import _ from 'underscore';
 import $ from 'jquery';
 
-class ResetPassword extends React.Component {
+import {connect} from 'react-redux';
+
+import * as actions from './actions';
+
+class InnerResetPassword extends React.Component {
     constructor() {
         super();
 
@@ -66,9 +70,11 @@ class ResetPassword extends React.Component {
                 this.setState({ error: data.message });
                 return;
             }
+
+            this.props.navigate('/login');
         }).fail(() => {
             this.setState({ error: 'Could not communicate with the server.  Please try again later.' });
-        });        
+        });
     }
 
     render() {
@@ -136,10 +142,18 @@ class ResetPassword extends React.Component {
     }
 }
 
-ResetPassword.propTypes = {
+InnerResetPassword.propTypes = {
     id: React.PropTypes.string,
+    navigate: React.PropTypes.func,
     token: React.PropTypes.string
 };
-ResetPassword.displayName = 'ResetPassword';
+InnerResetPassword.displayName = 'ResetPassword';
+
+function mapStateToProps() {
+    return {
+    };
+}
+
+const ResetPassword = connect(mapStateToProps, actions)(InnerResetPassword);
 
 export default ResetPassword;
