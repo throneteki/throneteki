@@ -107,6 +107,56 @@ module.exports.init = function(server) {
         res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
     });
 
+    server.post('/api/account/password-reset-finish', function(req, res) {
+        var responseSent = false;
+        var resetUser;
+
+        if(!req.body.id || !req.body.token || !req.body.newPassword) {
+            return res.send({ success: false, message: 'Invalid parameters' });
+        }
+
+        userRepository.getUserById(req.body.id).then(user => {
+            if(!user) {
+                throw new Error('User id not found ' + req.body.id);
+            }
+
+            if(!user.resetToken) {
+                throw new Error('Got unexpected reset request for user ' + user.username);
+            }
+
+            resetUser = user;
+
+            var now = moment();
+
+            if(user.tokenExpires < now) {
+                res.send({ success: false, message: 'The reset token you have provided has expired'});
+                
+                responseSent = true;
+
+                throw new Error('Token expired');
+            }
+
+            var hmac = crypto.createHmac('sha512', config.hmacSecret);
+            var resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
+
+            if(resetToken !== user.resetToken) {
+                throw new Error('Invalid reset token');
+            }
+
+            return hashPassword(req.body.newPassword, 10);            
+        }).then(hash => {
+            return userRepository.setPassword(resetUser, hash);
+        }).then(() => {
+            res.send({ success: true });
+        }).catch(err => {
+            logger.info(err.message);
+
+            if(!responseSent) {
+                res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again'});
+            }
+        });
+    });
+
     server.post('/api/account/password-reset', function(req, res) {
         var resetToken = '';
         var responseSent = false;
