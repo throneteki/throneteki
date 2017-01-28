@@ -22,6 +22,10 @@ class UserRepository {
     setPassword(user, password) {
         return users.update({ username: user.username }, { '$set': { password: password } });
     }
+
+    clearResetToken(user) {
+        return users.update({ username: user.username }, { '$set': { resetToken: undefined, tokenExpires: undefined } });
+    }
 }
 
 module.exports = UserRepository;

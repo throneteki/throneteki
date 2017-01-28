@@ -148,6 +148,8 @@ module.exports.init = function(server) {
             return userRepository.setPassword(resetUser, hash);
         }).then(() => {
             res.send({ success: true });
+
+            userRepository.clearResetToken(resetUser);
         }).catch(err => {
             logger.info(err.message);
 
