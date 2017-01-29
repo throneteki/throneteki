@@ -82,8 +82,6 @@ module.exports.init = function(server) {
 
     server.post('/api/account/check-username', function(req, res) {
         userRepository.getUserByUsername(req.body.username).then(user => {
-            logger.info(user);
-
             if(user) {
                 res.send({ message: 'An account with that name already exists, please choose another' });
                 return;
@@ -91,7 +89,6 @@ module.exports.init = function(server) {
 
             res.send({ message: '' });
         }).catch(err => {
-            logger.info(err);
             res.send({ message: '' });
             logger.info(err.message);
         });
