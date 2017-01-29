@@ -12,20 +12,18 @@ class EffectEngine {
 
     add(effect) {
         this.effects.push(effect);
-        this.applyEffect(effect);
+        effect.addTargets(this.getTargets());
     }
 
-    applyEffect(effect) {
+    getTargets() {
         var validTargets = this.game.allCards.filter(card => card.location === 'play area' || card.location === 'active plot');
-        effect.addTargets(validTargets);
-        effect.addTargets(this.game.getPlayers());
+        return validTargets.concat(_.values(this.game.getPlayers()));
     }
 
     reapplyStateDependentEffects() {
         _.each(this.effects, effect => {
             if(effect.isStateDependent) {
-                effect.cancel();
-                this.applyEffect(effect);
+                effect.resetTargets(this.getTargets());
             }
         });
     }

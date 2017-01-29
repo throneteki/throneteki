@@ -136,6 +136,11 @@ class Effect {
         }
         this.targets = [];
     }
+
+    resetTargets(newTargets) {
+        this.cancel();
+        this.addTargets(newTargets);
+    }
 }
 
 module.exports = Effect;
