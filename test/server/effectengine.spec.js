@@ -30,7 +30,7 @@ describe('EffectEngine', function () {
         });
 
         it('should add existing valid targets to the effect', function() {
-            expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.playAreaCard]);
+            expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard]);
         });
     });
 
@@ -41,7 +41,7 @@ describe('EffectEngine', function () {
         });
 
         it('should return all play area cards and players', function() {
-            expect(this.engine.getTargets()).toEqual([this.playAreaCard, this.player]);
+            expect(this.engine.getTargets()).toEqual([this.handCard, this.playAreaCard, this.player]);
         });
     });
 
@@ -57,7 +57,7 @@ describe('EffectEngine', function () {
             });
 
             it('should reset valid targets', function() {
-                expect(this.effectSpy.resetTargets).toHaveBeenCalledWith([this.playAreaCard]);
+                expect(this.effectSpy.resetTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard]);
             });
         });
 
