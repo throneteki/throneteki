@@ -8,11 +8,13 @@ class EffectEngine {
         this.events = new EventRegistrar(game, this);
         this.events.register(['onCardEntersPlay', 'onCardLeftPlay', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
         this.effects = [];
+        this.recalculateEvents = {};
     }
 
     add(effect) {
         this.effects.push(effect);
         effect.addTargets(this.getTargets());
+        this.registerRecalculateEvents(effect.recalculateWhen);
     }
 
     getTargets() {
@@ -67,10 +69,47 @@ class EffectEngine {
         this.unapplyAndRemove(effect => effect.duration === 'untilEndOfRound');
     }
 
+    registerRecalculateEvents(eventNames) {
+        _.each(eventNames, eventName => {
+            if(!this.recalculateEvents[eventName]) {
+                var handler = this.recalculateEvent.bind(this);
+                this.recalculateEvents[eventName] = {
+                    name: eventName,
+                    handler: handler,
+                    count: 1
+                };
+                this.game.on(eventName, handler);
+            } else {
+                this.recalculateEvents[eventName].count++;
+            }
+        });
+    }
+
+    unregisterRecalculateEvents(eventNames) {
+        _.each(eventNames, eventName => {
+            var event = this.recalculateEvents[eventName];
+            if(event && event.count <= 1) {
+                this.game.removeListener(event.name, event.handler);
+                delete this.recalculateEvents[eventName];
+            } else if(event) {
+                event.count--;
+            }
+        });
+    }
+
+    recalculateEvent(event) {
+        _.each(this.effects, effect => {
+            if(effect.isStateDependent && effect.recalculateWhen.includes(event.name)) {
+                effect.resetTargets(this.getTargets());
+            }
+        })
+    }
+
     unapplyAndRemove(match) {
         var [matchingEffects, remainingEffects] = _.partition(this.effects, match);
         _.each(matchingEffects, effect => {
             effect.cancel();
+            this.unregisterRecalculateEvents(effect.recalculateWhen);
         });
         this.effects = remainingEffects;
     }
