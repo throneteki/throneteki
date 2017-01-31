@@ -6,7 +6,7 @@ class EffectEngine {
     constructor(game) {
         this.game = game;
         this.events = new EventRegistrar(game, this);
-        this.events.register(['onCardEntersPlay', 'onCardLeftPlay', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
+        this.events.register(['onCardEntersPlay', 'onCardLeftPlay', 'onCardEntersHand', 'onCardLeftHand', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
         this.effects = [];
         this.recalculateEvents = {};
     }
@@ -31,19 +31,36 @@ class EffectEngine {
     }
 
     onCardEntersPlay(e, card) {
+        this.addTargetForPersistentEffects(card, 'play area');
+    }
+
+    onCardLeftPlay(e, player, card) {
+        this.removeTargetFromPersistentEffects(card, 'play area');
+        this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === card);
+    }
+
+    onCardEntersHand(e, card) {
+        this.addTargetForPersistentEffects(card, 'hand');
+    }
+
+    onCardLeftHand(e, player, card) {
+        this.removeTargetFromPersistentEffects(card, 'hand');
+    }
+
+    addTargetForPersistentEffects(card, targetLocation) {
         _.each(this.effects, effect => {
-            if(effect.duration === 'persistent') {
+            if(effect.duration === 'persistent' && effect.targetLocation === targetLocation) {
                 effect.addTargets([card]);
             }
         });
     }
 
-    onCardLeftPlay(e, player, card) {
+    removeTargetFromPersistentEffects(card, targetLocation) {
         _.each(this.effects, effect => {
-            effect.removeTarget(card);
+            if(effect.targetLocation === targetLocation) {
+                effect.removeTarget(card);
+            }
         });
-
-        this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === card);
     }
 
     onCardBlankToggled(event, card, isBlank) {

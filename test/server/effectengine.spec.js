@@ -16,6 +16,7 @@ describe('EffectEngine', function () {
         this.gameSpy.allCards = _([this.handCard, this.playAreaCard, this.discardedCard]);
 
         this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'resetTargets', 'removeTarget', 'cancel', 'setActive']);
+        this.effectSpy.targetLocation = 'play area';
 
         this.engine = new EffectEngine(this.gameSpy);
     });
@@ -81,7 +82,7 @@ describe('EffectEngine', function () {
         describe('when an effect has persistent duration', function() {
             beforeEach(function() {
                 this.effectSpy.duration = 'persistent';
-                this.cardEnteringPlay = {};
+                this.cardEnteringPlay = { location: 'play area' };
                 this.engine.onCardEntersPlay({}, this.cardEnteringPlay);
             });
 
@@ -93,7 +94,7 @@ describe('EffectEngine', function () {
         describe('when an effect has a non-persistent duration', function() {
             beforeEach(function() {
                 this.effectSpy.duration = 'untilEndOfChallenge';
-                this.cardEnteringPlay = {};
+                this.cardEnteringPlay = { location: 'play area' };
                 this.engine.onCardEntersPlay({}, this.cardEnteringPlay);
             });
 
@@ -106,7 +107,7 @@ describe('EffectEngine', function () {
     describe('onCardLeftPlay()', function() {
         beforeEach(function() {
             this.engine.effects = [this.effectSpy];
-            this.cardLeavingPlay = {};
+            this.cardLeavingPlay = { location: 'play area' };
         });
 
         describe('when an effect has persistent duration', function() {
