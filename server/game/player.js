@@ -466,25 +466,18 @@ class Player extends Spectator {
 
     flipPlotFaceup() {
         if(this.activePlot) {
-            var previousPlot = this.removeActivePlot();
-            previousPlot.moveTo('revealed plots');
-            this.plotDiscard.push(previousPlot);
-
+            var previousPlot = this.removeActivePlot('revealed plots');
             this.game.raiseEvent('onPlotDiscarded', this, previousPlot);
         }
 
         this.selectedPlot.flipFaceup();
         this.selectedPlot.play();
-        this.selectedPlot.moveTo('active plot');
-        this.activePlot = this.selectedPlot;
-        this.plotDeck = this.removeCardByUuid(this.plotDeck, this.selectedPlot.uuid);
+        this.moveCard(this.selectedPlot, 'active plot');
 
         if(this.plotDeck.isEmpty()) {
-            this.plotDeck = this.plotDiscard;
-            this.plotDeck.each(plot => {
-                plot.moveTo('plot deck');
+            this.plotDiscard.each(plot => {
+                this.moveCard(plot, 'plot deck');
             });
-            this.plotDiscard = _([]);
 
             this.game.raiseEvent('onPlotsRecycled', this);
         }
@@ -494,11 +487,10 @@ class Player extends Spectator {
         this.selectedPlot = undefined;
     }
 
-    removeActivePlot() {
+    removeActivePlot(targetLocation) {
         if(this.activePlot) {
             var plot = this.activePlot;
-            plot.leavesPlay(this);
-            this.game.raiseEvent('onCardLeftPlay', this, plot);
+            this.moveCard(this.activePlot, targetLocation);
             this.activePlot = undefined;
             return plot;
         }
@@ -592,7 +584,6 @@ class Player extends Spectator {
                 return this.deadPile;
             case 'play area':
                 return this.cardsInPlay;
-            case 'active plot':
             case 'plot deck':
                 return this.plotDeck;
             case 'revealed plots':
@@ -882,13 +873,20 @@ class Player extends Spectator {
             this.game.raiseEvent('onCardLeftHand', card);
         }
 
+        if(card.location === 'active plot') {
+            card.leavesPlay();
+            this.game.raiseEvent('onCardLeftPlay', this, card);
+        }
+
         if(!options.isDupe) {
             card.moveTo(targetLocation);
         } else {
             card.location = 'dupe';
         }
 
-        if(targetLocation === 'draw deck' && !options.bottom) {
+        if(targetLocation === 'active plot') {
+            this.activePlot = card;
+        } else if(targetLocation === 'draw deck' && !options.bottom) {
             targetPile.unshift(card);
         } else {
             targetPile.push(card);

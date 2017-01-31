@@ -29,7 +29,7 @@ describe('The Rains of Castamere', function() {
         this.scheme1 = scheme('3333');
         this.scheme2 = scheme('4444');
 
-        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup', 'removeActivePlot', 'kneelCard']);
+        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup', 'removeActivePlot', 'kneelCard', 'moveCard']);
         this.player.game = this.gameSpy;
         this.player.faction = {};
 
@@ -78,7 +78,6 @@ describe('The Rains of Castamere', function() {
 
             it('should not make the plot leave play directly', function() {
                 expect(this.player.removeActivePlot).not.toHaveBeenCalled();
-                expect(this.plot1.moveTo).not.toHaveBeenCalled();
             });
         });
 
@@ -90,8 +89,7 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should remove the active plot from the game', function() {
-                expect(this.player.removeActivePlot).toHaveBeenCalled();
-                expect(this.scheme1.moveTo).toHaveBeenCalledWith('out of game');
+                expect(this.player.removeActivePlot).toHaveBeenCalledWith('out of game');
             });
         });
     });
