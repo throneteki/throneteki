@@ -20,6 +20,7 @@ class Player extends Spectator {
         this.cardsInPlay = _([]);
         this.deadPile = _([]);
         this.discardPile = _([]);
+        this.additionalPiles = {};
 
         this.faction = new DrawCard(this, {});
 
@@ -30,6 +31,8 @@ class Player extends Spectator {
         this.deck = {};
         this.challenges = new ChallengeTracker();
         this.minReserve = 0;
+
+        this.createAdditionalPile('out of game', { title: 'Out of Game', area: 'player row' });
     }
 
     isCardUuidInList(list, card) {
@@ -584,11 +587,21 @@ class Player extends Spectator {
                 return this.deadPile;
             case 'play area':
                 return this.cardsInPlay;
+            case 'active plot':
+                return _([]);
             case 'plot deck':
                 return this.plotDeck;
             case 'revealed plots':
                 return this.plotDiscard;
+            default:
+                if(this.additionalPiles[source]) {
+                    return this.additionalPiles[source].cards;
+                }
         }
+    }
+
+    createAdditionalPile(name, properties) {
+        this.additionalPiles[name] = _.extend({ cards: _([]) }, properties);
     }
 
     updateSourceList(source, targetList) {
@@ -614,6 +627,10 @@ class Player extends Spectator {
             case 'revealed plots':
                 this.plotDiscard = targetList;
                 break;
+            default:
+                if(this.additionalPiles[source]) {
+                    this.additionalPiles[source].cards = targetList;
+                }
         }
     }
 
@@ -1009,6 +1026,12 @@ class Player extends Spectator {
     getState(isActivePlayer) {
         var state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(isActivePlayer) : undefined,
+            additionalPiles: _.mapObject(this.additionalPiles, pile => ({
+                title: pile.title,
+                area: pile.area,
+                isPrivate: pile.isPrivate,
+                cards: this.getSummaryForCardList(pile.cards, isActivePlayer, pile.isPrivate)
+            })),
             agenda: this.agenda ? this.agenda.getSummary() : undefined,
             buttons: isActivePlayer ? this.buttons : undefined,
             cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, isActivePlayer),
