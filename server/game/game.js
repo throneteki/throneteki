@@ -5,6 +5,7 @@ const uuid = require('node-uuid');
 const GameChat = require('./gamechat.js');
 const EffectEngine = require('./effectengine.js');
 const Effect = require('./effect.js');
+const Player = require('./player.js');
 const Spectator = require('./spectator.js');
 const GamePipeline = require('./gamepipeline.js');
 const SetupPhase = require('./gamesteps/setupphase.js');
@@ -55,6 +56,10 @@ class Game extends EventEmitter {
 
     isSpectator(player) {
         return player.constructor === Spectator;
+    }
+
+    hasActivePlayer(playerName) {
+        return !!this.players[playerName] && !this.players[playerName].left;
     }
 
     getPlayers() {
@@ -683,16 +688,6 @@ class Game extends EventEmitter {
         this.gameChat.addChatMessage('{0} {1}', player, message);
     }
 
-    playerLeave(playerName, reason) {
-        var player = this.players[playerName];
-
-        if(!player) {
-            return;
-        }
-
-        this.addMessage('{0} {1}', player, reason);
-    }
-
     concede(playerName) {
         var player = this.getPlayerByName(playerName);
 
@@ -829,6 +824,68 @@ class Game extends EventEmitter {
         card.controller = newController;
     }
 
+    watch(socketId, user) {
+        if(!this.allowSpectators) {
+            return false;
+        }
+
+        this.players[user.username] = new Spectator(socketId, user);
+        this.addMessage('{0} has joined the game as a spectator', user.username);
+
+        return true;
+    }
+
+    join(socketId, user) {
+        if(this.started || _.values(this.getPlayers()).length === 2) {
+            return false;
+        }
+
+        this.players[user.username] = new Player(socketId, user, this.owner === user.username, this);
+
+        return true;
+    }
+
+    isEmpty() {
+        return _.all(this.players, player => player.disconnected || player.left);
+    }
+
+    leave(playerName) {
+        var player = this.players[playerName];
+
+        if(!player) {
+            return;
+        }
+
+        this.addMessage('{0} has left the game', player);
+
+        if(this.isSpectator(player)) {
+            delete this.players[playerName];
+        } else {
+            player.left = true;
+
+            if(this.started && !this.finishedAt) {
+                this.finishedAt = new Date();
+                this.saveGame();
+            }
+        }
+    }
+
+    disconnect(playerName) {
+        var player = this.players[playerName];
+
+        if(!player) {
+            return;
+        }
+
+        this.addMessage('{0} has disconnected', player);
+
+        if(this.isSpectator(player)) {
+            delete this.players[playerName];
+        } else {
+            player.disconnected = true;
+        }
+    }
+
     reconnect(id, playerName) {
         var player = this.getPlayerByName(playerName);
         if(!player) {
@@ -836,7 +893,7 @@ class Game extends EventEmitter {
         }
 
         player.id = id;
-        player.left = false;
+        player.disconnected = false;
 
         this.addMessage('{0} has reconnected', player);
     }
