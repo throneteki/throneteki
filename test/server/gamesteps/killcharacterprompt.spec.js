@@ -2,7 +2,6 @@
 /* eslint camelcase: 0 */
 
 const KillCharacterPrompt = require('../../../server/game/gamesteps/killcharacterprompt.js');
-const Game = require('../../../server/game/game.js');
 const Player = require('../../../server/game/player.js');
 const DrawCard = require('../../../server/game/drawcard.js');
 

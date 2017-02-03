@@ -2,7 +2,6 @@
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 const MenuPrompt = require('../../../server/game/gamesteps/menuprompt.js');
-const Game = require('../../../server/game/game.js');
 const Player = require('../../../server/game/player.js');
 
 describe('the MenuPrompt', function() {
