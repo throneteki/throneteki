@@ -15,10 +15,10 @@ class QuaitheOfTheShadow extends DrawCard {
                 var attackers = _.filter(this.game.currentChallenge.attackers, card => card.getStrength() <= 2);
                 var defenders = _.filter(this.game.currentChallenge.defenders, card => card.getStrength() <= 2);
                 var participants = attackers.concat(defenders);
-                _.each(participants, card=> {
+                _.each(participants, card => {
                     this.game.currentChallenge.removeFromChallenge(card);
-                    this.game.addMessage('{0} uses {1} to remove {2} from the challenge', this.controller, this, card);
                 });
+                this.game.addMessage('{0} uses {1} to remove all characters with STR 2 or lower from the challenge', this.controller, this);
             }
         });
     }
