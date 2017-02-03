@@ -5,7 +5,7 @@ class RelentlessAssault extends DrawCard {
         if(player !== this.controller || this !== card) {
             return false;
         }
-        if(!this.game.currentChallenge || this.game.currentChallenge.winner !== this.controller || this.game.currentChallenge.strengthDifference < 5 ||
+        if(!this.game.currentChallenge || this.game.currentChallenge.winner !== this.controller ||
                 this.game.currentChallenge.strengthDifference < 5 && !player.faction.kneeled) {
             return false;
         }
