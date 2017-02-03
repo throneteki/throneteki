@@ -13,9 +13,9 @@ describe('the MenuPrompt', function() {
         this.player.initialise();
         this.otherPlayer = new Player('2', 'Player 2', false, game);
         this.otherPlayer.initialise();
-        game.players = {};
-        game.players[this.player.name] = this.player;
-        game.players[this.otherPlayer.name] = this.otherPlayer;
+        game.playersAndSpectators = {};
+        game.playersAndSpectators[this.player.name] = this.player;
+        game.playersAndSpectators[this.otherPlayer.name] = this.otherPlayer;
 
         this.contextObj = {
             doIt: function() {

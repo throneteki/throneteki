@@ -27,9 +27,9 @@ describe('the KillCharacterPrompt', () => {
         player.initialise();
         otherPlayer = new Player('2', 'Player 2', false, game);
         otherPlayer.initialise();
-        game.players = {};
-        game.players[player.name] = player;
-        game.players[otherPlayer.name] = otherPlayer;
+        game.playersAndSpectators = {};
+        game.playersAndSpectators[player.name] = player;
+        game.playersAndSpectators[otherPlayer.name] = otherPlayer;
         card = new DrawCard(player, { type_code: 'character', name: 'Killable' });
         prompt = new KillCharacterPrompt(game, player, cardCondition, events);
 

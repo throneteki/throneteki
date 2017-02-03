@@ -15,8 +15,8 @@ describe('Game', function() {
             });
 
             it('should add the player', function() {
-                expect(this.game.players['foo']).toBeDefined();
-                expect(this.game.players['foo'].id).toBe('1');
+                expect(this.game.playersAndSpectators['foo']).toBeDefined();
+                expect(this.game.playersAndSpectators['foo'].id).toBe('1');
             });
 
             it('should return true', function() {
@@ -31,7 +31,7 @@ describe('Game', function() {
             });
 
             it('should not add the player', function() {
-                expect(this.game.players['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
             });
 
             it('should return false', function() {
@@ -47,7 +47,7 @@ describe('Game', function() {
             });
 
             it('should not add the player', function() {
-                expect(this.game.players['baz']).toBeUndefined();
+                expect(this.game.playersAndSpectators['baz']).toBeUndefined();
             });
 
             it('should return false', function() {
@@ -64,9 +64,9 @@ describe('Game', function() {
             });
 
             it('should add the spectator', function() {
-                expect(this.game.players['foo']).toBeDefined();
-                expect(this.game.players['foo'].id).toBe('1');
-                expect(this.game.players['foo'].constructor.name).toBe('Spectator');
+                expect(this.game.playersAndSpectators['foo']).toBeDefined();
+                expect(this.game.playersAndSpectators['foo'].id).toBe('1');
+                expect(this.game.playersAndSpectators['foo'].constructor.name).toBe('Spectator');
             });
 
             it('should return true', function() {
@@ -81,7 +81,7 @@ describe('Game', function() {
             });
 
             it('should not add the spectator', function() {
-                expect(this.game.players['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
             });
 
             it('should return false', function() {
@@ -108,7 +108,7 @@ describe('Game', function() {
 
             it('should mark the player as left', function() {
                 this.game.leave('foo');
-                expect(this.game.players['foo'].left).toBe(true);
+                expect(this.game.playersAndSpectators['foo'].left).toBe(true);
             });
 
             describe('when the game has started', function() {
@@ -151,7 +151,7 @@ describe('Game', function() {
             });
 
             it('should delete the spectator', function() {
-                expect(this.game.players['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
             });
 
             it('should not save the game', function() {
@@ -174,7 +174,7 @@ describe('Game', function() {
 
             it('should mark the player as disconnected', function() {
                 this.game.disconnect('foo');
-                expect(this.game.players['foo'].disconnected).toBe(true);
+                expect(this.game.playersAndSpectators['foo'].disconnected).toBe(true);
             });
         });
 
@@ -185,7 +185,7 @@ describe('Game', function() {
             });
 
             it('should delete the spectator', function() {
-                expect(this.game.players['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
             });
         });
     });
@@ -202,11 +202,11 @@ describe('Game', function() {
         });
 
         it('should set the new socket ID on the player', function() {
-            expect(this.game.players['foo'].id).toBe('2');
+            expect(this.game.playersAndSpectators['foo'].id).toBe('2');
         });
 
         it('should mark the player as no longer disconnected', function() {
-            expect(this.game.players['foo'].disconnected).toBe(false);
+            expect(this.game.playersAndSpectators['foo'].disconnected).toBe(false);
         });
     });
 

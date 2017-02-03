@@ -52,7 +52,7 @@ describe('the DrawCard', function() {
 
             this.player = new Player(1, { username: 'foo' }, false, this.game);
 
-            this.game.players['foo'] = this.player;
+            this.game.playersAndSpectators['foo'] = this.player;
             this.game.initialise();
 
             this.game.currentPhase = 'marshal';

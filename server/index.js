@@ -234,7 +234,7 @@ function findGameForPlayer(username) {
 }
 
 function sendGameState(game) {
-    _.each(game.players, player => {
+    _.each(game.playersAndSpectators, player => {
         io.to(player.id).emit('gamestate', game.getState(player.name));
     });
 }
@@ -277,7 +277,7 @@ io.on('connection', function(socket) {
 
         if(game) {
             runAndCatchErrors(game, () => {
-                if(!game.players[socket.request.user.username].left) {
+                if(!game.playersAndSpectators[socket.request.user.username].left) {
                     socket.join(game.id);
 
                     game.reconnect(socket.id, socket.request.user.username);
@@ -372,7 +372,7 @@ io.on('connection', function(socket) {
             }
         });
 
-        _.each(game.players, player => {
+        _.each(game.playersAndSpectators, player => {
             io.to(player.id).emit('joingame', game.getState(player.name));
         });
 
@@ -398,7 +398,7 @@ io.on('connection', function(socket) {
         runAndCatchErrors(game, () => {
             if(game.watch(socket.id, socket.request.user)) {
                 socket.join(game.id);
-                _.each(game.players, player => {
+                _.each(game.playersAndSpectators, player => {
                     io.to(player.id).emit('joingame', game.getState(player.name));
                 });
 

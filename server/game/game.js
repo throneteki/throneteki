@@ -27,7 +27,7 @@ class Game extends EventEmitter {
         super();
 
         this.effectEngine = new EffectEngine(this);
-        this.players = {};
+        this.playersAndSpectators = {};
         this.playerPlots = {};
         this.playerCards = {};
         this.gameChat = new GameChat();
@@ -59,13 +59,13 @@ class Game extends EventEmitter {
     }
 
     hasActivePlayer(playerName) {
-        return !!this.players[playerName] && !this.players[playerName].left;
+        return !!this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
     }
 
     getPlayers() {
         var players = {};
 
-        _.reduce(this.players, (playerList, player) => {
+        _.reduce(this.playersAndSpectators, (playerList, player) => {
             if(!this.isSpectator(player)) {
                 playerList[player.name] = player;
             }
@@ -85,13 +85,13 @@ class Game extends EventEmitter {
     }
 
     getPlayersAndSpectators() {
-        return this.players;
+        return this.playersAndSpectators;
     }
 
     getSpectators() {
         var spectators = [];
 
-        _.reduce(this.players, (spectators, player) => {
+        _.reduce(this.playersAndSpectators, (spectators, player) => {
             if(this.isSpectator(player)) {
                 spectators.push(player);
             }
@@ -425,7 +425,7 @@ class Game extends EventEmitter {
     }
 
     chat(playerName, message) {
-        var player = this.players[playerName];
+        var player = this.playersAndSpectators[playerName];
         var args = message.split(' ');
         var num = 1;
 
@@ -755,13 +755,13 @@ class Game extends EventEmitter {
     initialise() {
         var players = {};
 
-        _.each(this.players, player => {
+        _.each(this.playersAndSpectators, player => {
             if(!player.left) {
                 players[player.name] = player;
             }
         });
-        
-        this.players = players;
+
+        this.playersAndSpectators = players;
 
         _.each(this.getPlayers(), player => {
             player.initialise();
@@ -829,7 +829,7 @@ class Game extends EventEmitter {
             return false;
         }
 
-        this.players[user.username] = new Spectator(socketId, user);
+        this.playersAndSpectators[user.username] = new Spectator(socketId, user);
         this.addMessage('{0} has joined the game as a spectator', user.username);
 
         return true;
@@ -840,17 +840,17 @@ class Game extends EventEmitter {
             return false;
         }
 
-        this.players[user.username] = new Player(socketId, user, this.owner === user.username, this);
+        this.playersAndSpectators[user.username] = new Player(socketId, user, this.owner === user.username, this);
 
         return true;
     }
 
     isEmpty() {
-        return _.all(this.players, player => player.disconnected || player.left);
+        return _.all(this.playersAndSpectators, player => player.disconnected || player.left);
     }
 
     leave(playerName) {
-        var player = this.players[playerName];
+        var player = this.playersAndSpectators[playerName];
 
         if(!player) {
             return;
@@ -859,7 +859,7 @@ class Game extends EventEmitter {
         this.addMessage('{0} has left the game', player);
 
         if(this.isSpectator(player)) {
-            delete this.players[playerName];
+            delete this.playersAndSpectators[playerName];
         } else {
             player.left = true;
 
@@ -871,7 +871,7 @@ class Game extends EventEmitter {
     }
 
     disconnect(playerName) {
-        var player = this.players[playerName];
+        var player = this.playersAndSpectators[playerName];
 
         if(!player) {
             return;
@@ -880,7 +880,7 @@ class Game extends EventEmitter {
         this.addMessage('{0} has disconnected', player);
 
         if(this.isSpectator(player)) {
-            delete this.players[playerName];
+            delete this.playersAndSpectators[playerName];
         } else {
             player.disconnected = true;
         }
