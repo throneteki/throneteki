@@ -17,8 +17,11 @@ class RelentlessAssault extends DrawCard {
             return;
         }
         var type = this.game.currentChallenge.challengeType;
-        player.addChallenge(type, 1);
-        this.game.addMessage('{0} uses {1} to gain an additional {2} challenge', player, this, type);
+        this.untilEndOfPhase(ability => ({
+            targetType: 'player',
+            targetController: 'current',
+            effect: ability.effects.modifyChallengeTypeLimit(type, 1)
+        }));
     }
 }
 
