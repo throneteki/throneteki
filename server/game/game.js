@@ -63,17 +63,7 @@ class Game extends EventEmitter {
     }
 
     getPlayers() {
-        var players = {};
-
-        _.reduce(this.playersAndSpectators, (playerList, player) => {
-            if(!this.isSpectator(player)) {
-                playerList[player.name] = player;
-            }
-
-            return playerList;
-        }, players);
-
-        return players;
+        return _.omit(this.playersAndSpectators, player => this.isSpectator(player));
     }
 
     getPlayerByName(playerName) {
@@ -89,17 +79,7 @@ class Game extends EventEmitter {
     }
 
     getSpectators() {
-        var spectators = [];
-
-        _.reduce(this.playersAndSpectators, (spectators, player) => {
-            if(this.isSpectator(player)) {
-                spectators.push(player);
-            }
-
-            return spectators;
-        }, spectators);
-
-        return spectators;
+        return _.pick(this.playersAndSpectators, player => this.isSpectator(player));
     }
 
     getFirstPlayer() {
