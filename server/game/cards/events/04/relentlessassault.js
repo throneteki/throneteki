@@ -6,7 +6,7 @@ class RelentlessAssault extends DrawCard {
             return false;
         }
         if(!this.game.currentChallenge || this.game.currentChallenge.winner !== this.controller ||
-                this.game.currentChallenge.strengthDifference < 5 && !player.faction.kneeled) {
+                this.game.currentChallenge.strengthDifference < 5 || player.faction.kneeled) {
             return false;
         }
         return true;
