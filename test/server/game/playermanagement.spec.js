@@ -254,8 +254,8 @@ describe('Game', function() {
             this.game.join('1', { username: 'foo' });
         });
 
-        it('should return false if the player is not in the game', function() {
-            expect(this.game.hasActivePlayer('nothere')).toBe(false);
+        it('should return falsy if the player is not in the game', function() {
+            expect(this.game.hasActivePlayer('nothere')).toBeFalsy();
         });
 
         it('should return true if the player is active', function() {
@@ -267,9 +267,9 @@ describe('Game', function() {
             expect(this.game.hasActivePlayer('foo')).toBe(true);
         });
 
-        it('should return false if the player has left', function() {
+        it('should return falsy if the player has left', function() {
             this.game.leave('foo');
-            expect(this.game.hasActivePlayer('foo')).toBe(false);
+            expect(this.game.hasActivePlayer('foo')).toBeFalsy();
         });
     });
 });

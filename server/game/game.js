@@ -59,7 +59,7 @@ class Game extends EventEmitter {
     }
 
     hasActivePlayer(playerName) {
-        return !!this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
+        return this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
     }
 
     getPlayers() {
