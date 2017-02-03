@@ -16,6 +16,7 @@ class RelentlessAssault extends DrawCard {
         if(this.controller !== player) {
             return;
         }
+        player.kneelCard(player.faction);
         var type = this.game.currentChallenge.challengeType;
         this.untilEndOfPhase(ability => ({
             targetType: 'player',
