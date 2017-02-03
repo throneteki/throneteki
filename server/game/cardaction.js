@@ -20,6 +20,7 @@ class CardAction {
     constructor(game, card, properties) {
         this.game = game;
         this.card = card;
+        this.canPlayFrom = properties.canPlayFrom || 'play';
         this.title = properties.title;
         this.limit = properties.limit;
         this.phase = properties.phase || 'any';
@@ -51,7 +52,7 @@ class CardAction {
     }
 
     getMenuItem() {
-        return { text: this.title, method: 'doAction', anyPlayer: !!this.anyPlayer };
+        return { text: this.title, method: 'doAction', anyPlayer: !!this.anyPlayer, canPlayFrom: this.canPlayFrom };
     }
 
     registerEvents() {

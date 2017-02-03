@@ -260,9 +260,13 @@ class Game extends EventEmitter {
                 if(card.controller !== player && !menuItem.anyPlayer) {
                     return;
                 }
-
                 this.callCardMenuCommand(card, player, menuItem);
                 break;
+            case 'hand':
+                if(menuItem.canPlayFrom !== 'hand'){
+                    return;
+                }
+                this.callCardMenuCommand(card, player, menuItem);
         }
     }
 

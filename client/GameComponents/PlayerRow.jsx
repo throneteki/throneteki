@@ -105,6 +105,7 @@ class PlayerRow extends React.Component {
             return (<Card key={card.uuid} card={card} style={style} disableMouseOver={!this.props.isMe} source='hand'
                          onMouseOver={this.props.onMouseOver}
                          onMouseOut={this.props.onMouseOut}
+                         onMenuItemClick={this.props.onMenuItemClick}
                          onClick={this.props.onCardClick} />);
         });
 
