@@ -27,8 +27,8 @@ class SeaBitch extends DrawCard {
     onCardSelected(player, card) {      
         this.untilEndOfPhase(ability => ({
             targetController: 'opponent',
-            match: target => target === card,
-            effect: ability.effects.takeControl(player,card)
+            match: target => card,
+            effect: ability.effects.takeControl(player)
         }));
         this.game.addMessage('{0} sacrifices {1} to take control of {2} until the end of the phase', player, this, card);
         this.controller.sacrificeCard(this);
