@@ -8,12 +8,12 @@ class ForTheWatch extends PlotCard {
     }
 
     onChallenge(event, challenge) {
-        if(challenge.attackingPlayer === this.controller || challenge.attackingPlayer.challenges.complete >= 1) {
+        if(challenge.attackingPlayer === this.controller || challenge.attackingPlayer.getNumberOfChallengesInitiated() > 1) {
             return;
         }
 
         challenge.attackerCannotWin = true;
-    } 
+    }
 }
 
 ForTheWatch.code = '02067';

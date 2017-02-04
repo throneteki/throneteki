@@ -60,9 +60,10 @@ class ChallengeFlow extends BaseStep {
     chooseAttackers(player, attackers) {
         this.challenge.addAttackers(attackers);
 
-        this.game.raiseEvent('onChallenge', this.challenge);
-        this.challenge.initiateChallenge();
-        this.game.raiseEvent('onAttackersDeclared', this.challenge);
+        this.game.raiseEvent('onChallenge', this.challenge, () => {
+            this.challenge.initiateChallenge();
+            this.game.raiseEvent('onAttackersDeclared', this.challenge);
+        });
 
         return true;
     }
