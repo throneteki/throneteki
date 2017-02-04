@@ -110,8 +110,10 @@ class ChallengeFlow extends BaseStep {
     announceDefenderStrength() {
         // Explicitly recalculate strength in case an effect has modified character strength.
         this.challenge.calculateStrength();
-        if(!this.challenge.isUnopposed()) {
+        if(this.challenge.defenderStrength > 0) {
             this.game.addMessage('{0} has defended with strength {1}', this.challenge.defendingPlayer, this.challenge.defenderStrength);
+        } else {
+            this.game.addMessage('{0} does not defend the challenge', this.challenge.defendingPlayer);
         }
     }
 
