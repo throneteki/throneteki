@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class AlannysGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: player.firstPlayer,
+            condition: () => this.controller.firstPlayer,
             match: (card) => card === card.controller.activePlot,
             targetController: 'opponent',
             effect: ability.effects.modifyReserve(-1)
