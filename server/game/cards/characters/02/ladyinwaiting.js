@@ -1,20 +1,20 @@
 const DrawCard = require('../../../drawcard.js');
 
 class LadyInWaiting extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
             title: 'Marshal Lady-In-Waiting as a duplicate on a lady at no cost',
             method: 'marshalAsDupe',
             canPlayFrom: 'hand'
         });
     }
-    marshalAsDupe(player){
+    marshalAsDupe() {
         this.game.promptForSelect(this.controller, {
-                 activePromptTitle: 'Select a character',
-                 waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
-                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady'),
-                 onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            activePromptTitle: 'Select a character',
+            waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
+            cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady'),
+            onSelect: (p, card) => this.onCardSelected(p, card)
+        });
         return true;
     }
     onCardSelected(player, card) {
