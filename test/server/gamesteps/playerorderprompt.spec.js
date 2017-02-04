@@ -2,27 +2,22 @@
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 const PlayerOrderPrompt = require('../../../server/game/gamesteps/playerorderprompt.js');
-const Game = require('../../../server/game/game.js');
-const Player = require('../../../server/game/player.js');
 
 describe('the PlayerOrderPrompt', function() {
     beforeEach(function() {
         this.activePrompt = { active: true };
         this.waitingPrompt = { active: false };
 
-        this.game = new Game('1', 'Test Game');
-        this.player1 = new Player('1', { username: 'Player 1' }, true, this.game);
-        this.player2 = new Player('2', { username: 'Player 2' }, false, this.game);
-        this.player2.firstPlayer = true;
-        this.game.playersAndSpectators[0] = this.player1;
-        this.game.playersAndSpectators[1] = this.player2;
+        this.game = jasmine.createSpyObj('game', ['getPlayers', 'getPlayersInFirstPlayerOrder']);
+        this.player1 = jasmine.createSpyObj('player1', ['setPrompt', 'cancelPrompt']);
+        this.player2 = jasmine.createSpyObj('player1', ['setPrompt', 'cancelPrompt']);
+
+        this.game.getPlayers.and.returnValue([this.player1, this.player2]);
+        this.game.getPlayersInFirstPlayerOrder.and.returnValue([this.player2, this.player1]);
+
         this.prompt = new PlayerOrderPrompt(this.game);
         spyOn(this.prompt, 'activePrompt').and.returnValue(this.activePrompt);
         spyOn(this.prompt, 'waitingPrompt').and.returnValue(this.waitingPrompt);
-        spyOn(this.player1, 'setPrompt');
-        spyOn(this.player2, 'setPrompt');
-        spyOn(this.player1, 'cancelPrompt');
-        spyOn(this.player2, 'cancelPrompt');
     });
 
     describe('the continue() function', function() {
@@ -77,8 +72,7 @@ describe('the PlayerOrderPrompt', function() {
 
         describe('when the first player order changes after construction', function() {
             beforeEach(function() {
-                this.player2.firstPlayer = false;
-                this.player1.firstPlayer = true;
+                this.game.getPlayersInFirstPlayerOrder.and.returnValue([this.player1, this.player2]);
             });
 
             it('should prompt players in the current first-player order', function() {
