@@ -19,6 +19,6 @@ class Appointed extends DrawCard {
     }
 }
 
-LittleBird.code = '05043';
+Appointed.code = '05043';
 
 module.exports = Appointed;
