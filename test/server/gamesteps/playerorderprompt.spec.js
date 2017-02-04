@@ -77,5 +77,31 @@ describe('the PlayerOrderPrompt', () => {
                 expect(prompt.continue()).toBe(true);
             });
         });
+
+        describe('when the first player order changes after construction', function() {
+            beforeEach(function() {
+                player2.firstPlayer = false;
+                player1.firstPlayer = true;
+            });
+
+            it('should prompt players in the current first-player order', () => {
+                prompt.continue();
+                expect(prompt.currentPlayer).toBe(player1);
+            });
+
+            it('should give the active prompt to the current player', () => {
+                prompt.continue();
+                expect(player1.setPrompt).toHaveBeenCalledWith(activePrompt);
+            });
+
+            it('should give the waiting prompt to the remaining players', () => {
+                prompt.continue();
+                expect(player2.setPrompt).toHaveBeenCalledWith(waitingPrompt);
+            });
+
+            it('should return false', () => {
+                expect(prompt.continue()).toBe(false);
+            });
+        });
     });
 });
