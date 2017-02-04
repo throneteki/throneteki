@@ -12,7 +12,11 @@ class Varys extends DrawCard {
                 this.controller.removeCardFromPile(this);
                 this.moveTo('out of game');
                 _.each(this.game.getPlayers(), player => {
-                    player.cardsInPlay.each(card => player.discardCard(card));
+                    player.cardsInPlay.each(card => {
+                        if(card.getType() === 'character') {
+                            player.discardCard(card);
+                        }
+                    });
                 });
             }
         });
