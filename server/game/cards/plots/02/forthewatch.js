@@ -1,18 +1,17 @@
 const PlotCard = require('../../../plotcard.js');
 
 class ForTheWatch extends PlotCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onChallenge']);
-    }
-
-    onChallenge(event, challenge) {
-        if(challenge.attackingPlayer === this.controller || challenge.attackingPlayer.getNumberOfChallengesInitiated() > 1) {
-            return;
-        }
-
-        challenge.attackerCannotWin = true;
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => (
+                this.game.currentChallenge &&
+                this.game.currentChallenge.defendingPlayer === this.controller &&
+                this.game.currentChallenge.attackingPlayer.getNumberOfChallengesInitiated() <= 1
+            ),
+            targetType: 'player',
+            targetController: 'opponent',
+            effect: ability.effects.cannotWinChallenge()
+        });
     }
 }
 
