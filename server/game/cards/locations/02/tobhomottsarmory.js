@@ -1,6 +1,6 @@
 const DrawCard = require('../../../drawcard.js');
 
-class TobhoMott\'sArmory extends DrawCard {
+class TobhoMottsArmory extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
@@ -15,6 +15,6 @@ class TobhoMott\'sArmory extends DrawCard {
     }
 }
 
-TobhoMott\'sArmory.code = '02069';
+TobhoMottsArmory.code = '02069';
 
-module.exports = TobhoMott\'sArmory;
+module.exports = TobhoMottsArmory;
