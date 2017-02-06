@@ -310,14 +310,6 @@ class Player extends Spectator {
     }
 
     canPlayCard(card, overrideHandCheck = false) {
-        if(this.activePlot && !this.activePlot.canPlay(this, card)) {
-            return false;
-        }
-
-        if(!this.cardsInPlay.all(c => c.canPlay(this, card))) {
-            return false;
-        }
-
         if(!card.canPlay(this, card)) {
             return false;
         }
