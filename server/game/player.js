@@ -328,6 +328,10 @@ class Player extends Spectator {
             }
         }
 
+        if(card.getType() !== 'event' && this.phase === 'marshal' && card.cannotMarshal) {
+            return false;
+        }
+
         if(!this.isCardUuidInList(this.hand, card) && !overrideHandCheck) {
             return false;
         }

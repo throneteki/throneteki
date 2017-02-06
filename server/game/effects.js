@@ -267,6 +267,16 @@ const Effects = {
             }
         };
     },
+    cannotMarshal: function() {
+        return {
+            apply: function(card) {
+                card.cannotMarshal = true;
+            },
+            unapply: function(card) {
+                card.cannotMarshal = false;
+            }
+        };
+    },
     modifyChallengeTypeLimit: function(challengeType, value) {
         return {
             apply: function(player) {
