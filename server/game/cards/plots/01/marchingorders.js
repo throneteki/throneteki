@@ -7,17 +7,11 @@ class MarchingOrders extends PlotCard {
             targetLocation: 'hand',
             effect: ability.effects.cannotMarshal()
         });
-    }
-    canPlay(player, card) {
-        if(this.controller !== player || this.controller !== card.controller) {
-            return true;
-        }
-
-        if(card.getType() === 'event') {
-            return false;
-        }
-
-        return true;
+        this.persistentEffect({
+            match: card => card.getType() === 'event',
+            targetLocation: 'hand',
+            effect: ability.effects.cannotPlay()
+        });
     }
 }
 

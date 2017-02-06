@@ -332,6 +332,10 @@ class Player extends Spectator {
             return false;
         }
 
+        if(card.getType() === 'event' && card.cannotPlay) {
+            return false;
+        }
+
         if(!this.isCardUuidInList(this.hand, card) && !overrideHandCheck) {
             return false;
         }
