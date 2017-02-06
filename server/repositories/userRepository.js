@@ -15,6 +15,10 @@ class UserRepository {
         return users.insert(user);
     }
 
+    setParams(user, params) {
+        return users.update({ username: user.username }, { '$set': { params: params } });
+    }
+
     setResetToken(user, token, tokenExpiration) {
         return users.update({ username: user.username }, { '$set': { resetToken: token, tokenExpires: tokenExpiration } });
     }

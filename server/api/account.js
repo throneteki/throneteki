@@ -104,6 +104,17 @@ module.exports.init = function(server) {
         res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
     });
 
+    server.post('/api/account/params', function(req, res) {
+        userRepository.getUserByUsername(req.user.username).then(user => {
+            if(user) {
+                console.log('user', req.body)
+                res.send({ success: true, message: 'Params saved' });
+            }
+        }).then(() => {
+            return userRepository.setParams(req.user, req.body);
+        });
+    });
+
     server.post('/api/account/password-reset-finish', function(req, res) {
         var responseSent = false;
         var resetUser;
