@@ -657,7 +657,7 @@ class Game extends EventEmitter {
             this.promptForSelect(player, {
                 activePromptTitle: 'Select a character',
                 waitingPromptTitle: 'Waiting for opponent to give control',
-                cardCondition: card => card.location === 'play area' && card.controller === player,
+                cardCondition: card => ['play area', 'discard pile', 'dead pile'].includes(card.location) && card.controller === player,
                 onSelect: (p, card) => {
                     var otherPlayer = this.getOtherPlayer(player);
                     if(!otherPlayer) {
