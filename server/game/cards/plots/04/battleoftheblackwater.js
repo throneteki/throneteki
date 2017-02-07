@@ -17,8 +17,7 @@ class BattleOfTheBlackwater extends PlotCard {
         var characters = player.cardsInPlay.filter(card => card.dupes.size() > 0);
         _.each(characters, character => {
             while(character.dupes.size() > 0) {
-                var dupe = character.removeDuplicate();
-                player.moveCard(dupe, 'discard pile');
+                player.removeDuplicate(character);
             }
         });
     }
