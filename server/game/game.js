@@ -653,6 +653,22 @@ class Game extends EventEmitter {
             }
         }
 
+        if(message.indexOf('/take-control') === 0) {
+            this.promptForSelect(player, {
+                activePromptTitle: 'Select a character',
+                waitingPromptTitle: 'Waiting for opponent to take control',
+                cardCondition: card => card.location === 'play area' && card.controller !== player,
+                onSelect: (p, card) => {
+                    this.takeControl(player, card);
+                    this.addMessage('{0} uses the /take-control command to control {1}', p, card);
+
+                    return true;
+                }
+            });
+
+            return;
+        }
+
         if(message.indexOf('/reset-challenges-count') === 0) {
             player.challenges.reset();
             this.addMessage('{0} uses /reset-challenges-count to reset the number of challenges performed', player);
