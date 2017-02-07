@@ -818,6 +818,8 @@ class Game extends EventEmitter {
         newController.cardsInPlay.push(card);
 
         card.controller = newController;
+
+        this.raiseEvent('onCardTakenControl', card);
     }
 
     watch(socketId, user) {
