@@ -3,9 +3,13 @@ const DrawCard = require('../../../drawcard.js');
 class DisputedClaim extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => (
-                this.controller.faction.power >  this.game.getOtherPlayer(this.controller).faction.power
-            ),
+            condition: () => {
+                var otherPlayer = this.game.getOtherPlayer(this.controller);
+                if(!otherPlayer || this.controller.faction.power > otherPlayer.faction.power) {
+                    return true;
+                }
+                return false;
+            },
             effect: [
                 ability.effects.modifyStrength(2),
                 ability.effects.addKeyword('Renown')
