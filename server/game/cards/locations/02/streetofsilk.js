@@ -1,7 +1,7 @@
 const DrawCard = require('../../../drawcard.js');
 
 class StreetOfSilk extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (e, challenge) => challenge.winner === this.controller && this.hasParticipatingLordOrLady() && !this.controller.faction.kneeled
