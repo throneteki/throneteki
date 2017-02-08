@@ -1,7 +1,7 @@
 const DrawCard = require('../../../drawcard.js');
 
 class StreetOfSteel extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (e, challenge) => challenge.winner === this.controller && challenge.challengeType === 'military' && !this.controller.faction.kneeled
