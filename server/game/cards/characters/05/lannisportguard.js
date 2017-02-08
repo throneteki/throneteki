@@ -1,10 +1,10 @@
 const DrawCard = require('../../../drawcard.js');
 
 class LannisportGuard extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (e, card) => card === this
+                onCardEntersPlay: (e, card) => card === this && this.game.currentPhase === 'marshal'
             },
             handler: () => {
                 player.drawCardsToHand(1);
