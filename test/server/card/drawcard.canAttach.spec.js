@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach, expect*/
+/*global describe, it, beforeEach, expect, jasmine*/
 /* eslint camelcase: 0 */
 
 const DrawCard = require('../../../server/game/drawcard.js');
@@ -12,6 +12,7 @@ describe('the DrawCard', function() {
     describe('the canAttach() function', function() {
         describe('when the card is not an attachment', function() {
             beforeEach(function() {
+                owner.game = jasmine.createSpyObj('game', ['raiseEvent']);
                 targetCard = new DrawCard(owner, { text: '' });
                 attachment = new DrawCard(owner, { type_code: 'event' });
             });
@@ -29,6 +30,16 @@ describe('the DrawCard', function() {
 
             it('should return false', function() {
                 expect(attachment.canAttach(player, targetCard)).toBe(false);
+            });
+
+            describe('but the target card is blank', function() {
+                beforeEach(function() {
+                    targetCard.setBlank();
+                });
+
+                it('should return true', function() {
+                    expect(attachment.canAttach(player, targetCard)).toBe(true);
+                });
             });
         });
 
@@ -70,6 +81,16 @@ describe('the DrawCard', function() {
 
                 it('should return false', function() {
                     expect(attachment.canAttach(player, targetCard)).toBe(false);
+                });
+
+                describe('but the target card is blank', function() {
+                    beforeEach(function() {
+                        targetCard.setBlank();
+                    });
+
+                    it('should return true', function() {
+                        expect(attachment.canAttach(player, targetCard)).toBe(true);
+                    });
                 });
             });
         });
