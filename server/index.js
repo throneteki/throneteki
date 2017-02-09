@@ -104,8 +104,12 @@ passport.deserializeUser(function(id, done) {
                     }
                 });
         }
+        
+        if(!user.emailHash) {
+            user.emailHash = {};
+        }
 
-        done(err, { username: user.username, email: user.email, emailHash: user.emailHash, _id: user._id });
+        done(err, { username: user.username, email: user.email, emailHash: user.emailHash, _id: user._id, params: user.params });
     });
 });
 

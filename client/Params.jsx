@@ -13,9 +13,10 @@ class InnerParams extends React.Component {
 
         this.state = {
             error: '',
-            image_path: '',
+            image_path: user.params.image_path,
             validation: {}
         };
+        console.log(user);
 
         this.onChange = this.onChange.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -32,13 +33,6 @@ class InnerParams extends React.Component {
     onSave(event) {
         event.preventDefault();
         this.setState({ error: '' });
-
-        if(_.any(this.state.validation, function(message) {
-            return message && message !== '';
-        })) {
-            this.setState({ error: 'Please complete both fields and try again' });
-            return;
-        }
 
         $.ajax({
             url: '/api/account/params',
