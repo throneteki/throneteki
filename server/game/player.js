@@ -757,7 +757,12 @@ class Player extends Spectator {
                 this.game.addMessage('{0} discards a duplicate to save {1}', this, character);
             }
         } else {
-            this.game.raiseEvent('onCharacterKilled', this, character, allowSave, () => {
+            this.game.raiseEvent('onCharacterKilled', this, character, allowSave, event => {
+                if(character.location !== 'play area') {
+                    event.cancel();
+                    return;
+                }
+
                 this.moveCard(card, 'dead pile');
             });
         }
