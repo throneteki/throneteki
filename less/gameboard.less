@@ -255,3 +255,78 @@
   outline: 0px;
   color: white;
 }
+
+
+// 3ana
+.deck-type {
+  display: flex;
+}
+.deck-cards {
+  display: flex;
+  height: 100px;
+}
+                            
+.panel-home-row {
+  height: auto;
+}
+
+.main-window {
+  display: flex;
+  flex-direction: row;
+  .left-side {
+    display: flex;
+    flex-direction: column;
+    width: 310px;
+    justify-content: space-between;
+    .player-info {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      .player-stats {
+        width: 144px;
+      }
+      .deck-info {
+        display: flex;
+        flex-direction: column;
+        // margin: 5px;
+        // justify-content: space-between;
+        .deck-type {
+          display: flex;
+          flex-direction: row;
+        }
+        .first-player-indicator {
+          margin: 5px 7px;
+          padding: 5px;
+          text-align: center;
+          background: rgba(255,255,255,0.2);
+          border-radius: 0.25rem;
+          border: 1px solid gray;
+        }
+      }
+    }
+    .middle {
+      display: flex;
+      flex-direction: row;
+      .plots-pane {
+        display: flex;
+        flex-direction: column;
+      }
+      .middle-right {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        .schemes-pane {
+          display: flex;
+          flex-direction: row;
+        }
+      }
+    }
+  }
+  .center {
+    flex-direction: column;
+    display: flex;
+  }
+}
+.state span {
+  padding-right: 5px;
+}
