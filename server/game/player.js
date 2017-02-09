@@ -746,7 +746,7 @@ class Player extends Spectator {
     killCharacter(card, allowSave = true) {
         var character = this.findCardInPlayByUuid(card.uuid);
 
-        if(!character) {
+        if(!character || character.location !== 'play area') {
             return;
         }
 
