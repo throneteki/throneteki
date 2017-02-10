@@ -109,7 +109,11 @@ passport.deserializeUser(function(id, done) {
             user.emailHash = {};
         }
 
-        if (user.params.image_path == null || user.params.image_path.length == '')
+        if(!user.params) {
+            user.params = {};
+        }
+
+        if ( user.params.image_path == null || user.params.image_path.length == '')
         {
             user.params.image_path = '/img/cards/';
         }
