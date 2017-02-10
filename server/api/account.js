@@ -107,7 +107,6 @@ module.exports.init = function(server) {
     server.post('/api/account/params', function(req, res) {
         userRepository.getUserByUsername(req.user.username).then(user => {
             if(user) {
-                console.log('user', req.body)
                 res.send({ success: true, message: 'Params saved' });
             }
         }).then(() => {

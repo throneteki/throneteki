@@ -9,7 +9,7 @@ import {validateDeck} from './deck-validator';
 class DeckSummary extends React.Component {
     constructor() {
         super();
-        
+
         this.onCardMouseOut = this.onCardMouseOut.bind(this);
         this.onCardMouseOver = this.onCardMouseOver.bind(this);
 
