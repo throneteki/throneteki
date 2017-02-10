@@ -9,7 +9,7 @@ import {validateDeck} from './deck-validator';
 class DeckSummary extends React.Component {
     constructor() {
         super();
-
+        
         this.onCardMouseOut = this.onCardMouseOut.bind(this);
         this.onCardMouseOver = this.onCardMouseOver.bind(this);
 
@@ -95,11 +95,11 @@ class DeckSummary extends React.Component {
 
         return (
             <div>
-                { this.state.cardToShow ? <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } /> : null }
+                { this.state.cardToShow ? <img className='hover-image' src={ user.params.image_path + this.state.cardToShow.code + '.png' } /> : null }
                 <h3>{ this.props.name }</h3>
                 <div className='decklist'>
-                    <img className='pull-left' src={ '/img/cards/' + this.props.faction.value + '.png' } />
-                    { this.props.agenda && this.props.agenda.code ? <img className='pull-right' src={ '/img/cards/' + this.props.agenda.code + '.png' } /> : null }
+                    <img className='pull-left' src={ user.params.image_path + this.props.faction.value + '.png' } />
+                    { this.props.agenda && this.props.agenda.code ? <img className='pull-right' src={ user.params.image_path + this.props.agenda.code + '.png' } /> : null }
                     <div>
                         <h4>{ this.props.faction.name }</h4>
                         <div ref='agenda'>Agenda: { this.props.agenda && this.props.agenda.label ? <span className='card-link' onMouseOver={ this.onCardMouseOver }

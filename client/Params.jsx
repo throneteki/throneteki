@@ -16,7 +16,6 @@ class InnerParams extends React.Component {
             image_path: user.params.image_path,
             validation: {}
         };
-        console.log(user);
 
         this.onChange = this.onChange.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -43,6 +42,8 @@ class InnerParams extends React.Component {
             if(!data.success) {
                 this.setState({ error: data.message });
                 return;
+            }else{
+                user.params.image_path = this.state.image_path;
             }
         }).fail((xhr) => {
             console.log(xhr);
