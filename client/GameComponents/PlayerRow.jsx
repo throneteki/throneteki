@@ -15,7 +15,6 @@ class PlayerRow extends React.Component {
         this.onShowDeckClick = this.onShowDeckClick.bind(this);
         this.onCloseClick = this.onCloseClick.bind(this);
         this.onCloseAndShuffleClick = this.onCloseAndShuffleClick.bind(this);
-        this.onAgendaClick = this.onAgendaClick.bind(this);
         this.onDragDrop = this.onDragDrop.bind(this);
 
         this.state = {
@@ -143,12 +142,6 @@ class PlayerRow extends React.Component {
         this.setState({ showDrawMenu: !this.state.showDrawMenu });
     }
 
-    onAgendaClick(event) {
-        event.preventDefault();
-
-        this.setState({ showAgendaMenu: !this.state.showAgendaMenu });
-    }
-
     onShuffleClick(event) {
         event.preventDefault();
 
@@ -218,11 +211,9 @@ class PlayerRow extends React.Component {
 
 PlayerRow.displayName = 'PlayerRow';
 PlayerRow.propTypes = {
-    agenda: React.PropTypes.object,
     deadPile: React.PropTypes.array,
     discardPile: React.PropTypes.array,
     drawDeck: React.PropTypes.array,
-    faction: React.PropTypes.object,
     hand: React.PropTypes.array,
     isMe: React.PropTypes.bool,
     numDrawCards: React.PropTypes.number,
