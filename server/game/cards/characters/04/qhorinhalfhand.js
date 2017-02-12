@@ -12,7 +12,7 @@ class QhorinHalfhand extends DrawCard {
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
+                    activePromptTitle: 'Select a character to kill',
                     waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
                     cardCondition: card => (
                         card.location === 'play area' && 
@@ -21,7 +21,7 @@ class QhorinHalfhand extends DrawCard {
                         card.getStrength() < this.getStrength() &&
                         card.controller !== this.controller),
                     onSelect: (p, card) => {
-                        this.card.controller.killCharacter(this.card);
+                        card.controller.killCharacter(card);
                         this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, card);
                         
                         return true;
