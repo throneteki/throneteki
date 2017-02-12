@@ -92,6 +92,7 @@ class CardCollection extends React.Component {
 
             popup = (
                 <div className={popupClass} onClick={event => event.stopPropagation() }>
+                    <span className='arrow-indicator'></span>
                     <div>
                         <a onClick={this.onCollectionClick}>Close</a>
                     </div>

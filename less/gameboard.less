@@ -89,7 +89,7 @@
     position: absolute;
     width: 200px;
     min-height: 92px;
-    bottom: 34px;
+    // bottom: 34px;
     left: 119px;    
   }
 }
@@ -361,4 +361,31 @@
 }
 .chat {
   width: 100%;
+}
+.panel.card-pile.plot {
+  .popup.panel {
+    display: none;
+    left: 75px;
+    top: -@card-height;
+    z-index: 9999;
+    background-color: black;
+  }
+  &:hover > .popup.panel, .popup.panel:hover {
+    display: block;
+  }
+}
+.arrow-indicator {
+  position: absolute;
+  left: -10px;
+  top: calc(@card-height + 10px);
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  background-color: black;
+  -ms-transform: rotate(20deg); /* IE 9 */
+  -webkit-transform: rotate(20deg); /* Safari */
+  transform: rotate(45deg);
+  border: 1px solid rgba(71, 58, 56, 0.95);
+  border-top: none;
+  border-right: none;
 }
