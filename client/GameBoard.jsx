@@ -299,7 +299,7 @@ export class InnerGameBoard extends React.Component {
                                         : <div className='agenda card-pile vertical panel'></div>
                                     }
                                 </div>
-                                <div className="first-player-indicator">First player</div>
+                                { otherPlayer ? <div className={"first-player-indicator " + (!thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div> : ''}
                             </div>
                         </div>
                         <div className='middle'>
@@ -325,19 +325,19 @@ export class InnerGameBoard extends React.Component {
                             </div>
                             <div className='middle-right'>
                                 <div className='inset-pane'>
+                                    <div className={'phase-indicator ' + thisPlayer.phase}>{thisPlayer.phase} phase</div>
                                     <MenuPane title={thisPlayer.menuTitle} buttons={thisPlayer.buttons} onButtonClick={this.onCommand}
                                                 onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} />
                                 </div>
                                 <div className='schemes-pane'>
-                                    
                                 </div>
                             </div>
                         </div>
-                        <div className='player-info'>
+                        <div className='player-info our-side'>
                             <PlayerStats gold={thisPlayer.gold || 0} claim={thisPlayer.claim || 0} reserve={thisPlayer.reserve || 0}
                                         power={thisPlayer.totalPower} isMe={!this.state.spectating} user={thisPlayer.user} />
                             <div className='deck-info'>
-                                <div className="first-player-indicator">First player</div>
+                                <div className={'first-player-indicator ' + (thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div>
                                 <div className='deck-type'>
                                     <CardCollection className='faction' source='faction' cards={[]} topCard={thisPlayer.faction} onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut} disablePopup />
                                     {thisPlayer.agenda && thisPlayer.agenda.code !== '' ?
@@ -385,20 +385,19 @@ export class InnerGameBoard extends React.Component {
                             spectating={this.state.spectating}
                             onMenuItemClick={this.onMenuItemClick}/>
                     </div>
-                
-                    <div className='right-side'>
-                        <CardZoom imageUrl={this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : ''}
-                            orientation={this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical'}
-                            show={!!this.props.cardToZoom} cardName={this.props.cardToZoom ? this.props.cardToZoom.name : null} />
-                        <div className='chat'>
-                            <div className='messages panel' ref='messagePanel' onScroll={this.onScroll}>
-                                <Messages messages={this.props.currentGame.messages} onCardMouseOver={this.onMouseOver} onCardMouseOut={this.onMouseOut} />
-                            </div>
-                            <form>
-                                <input className='form-control' placeholder='Chat...' onKeyPress={this.onKeyPress} onChange={this.onChange}
-                                    value={this.state.message} />
-                            </form>
+                </div>
+                <div className='right-side'>
+                    <CardZoom imageUrl={this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : ''}
+                        orientation={this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical'}
+                        show={!!this.props.cardToZoom} cardName={this.props.cardToZoom ? this.props.cardToZoom.name : null} />
+                    <div className='chat'>
+                        <div className='messages panel' ref='messagePanel' onScroll={this.onScroll}>
+                            <Messages messages={this.props.currentGame.messages} onCardMouseOver={this.onMouseOver} onCardMouseOut={this.onMouseOut} />
                         </div>
+                        <form>
+                            <input className='form-control' placeholder='Chat...' onKeyPress={this.onKeyPress} onChange={this.onChange}
+                                value={this.state.message} />
+                        </form>
                     </div>
                 </div>
             </div>);
