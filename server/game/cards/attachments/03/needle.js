@@ -10,9 +10,8 @@ class Needle extends DrawCard {
             when: {
                 onSacrificed: (e, player, card) => card === this.parent
             },
-            canCancel: true,
             handler: (context) => {
-                context.cancel();
+                context.skipHandler();
                 this.game.addMessage('{0} uses {1} to return {2} to their hand instead of discard', this.controller, this, this.parent);
                 this.controller.returnCardToHand(this.parent, false);
                 this.controller.sacrificeCard(this);
