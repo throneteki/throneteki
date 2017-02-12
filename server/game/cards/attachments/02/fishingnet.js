@@ -6,6 +6,12 @@ class FishingNet extends DrawCard {
             effect: ability.effects.allowAsDefender(false)
         });
     }
+    canAttach(player, card) {
+        if(card.getType() !== 'character' || card.controller === this.controller) {
+            return false;
+        }
+        return super.canAttach(player, card);
+    }
 }
 
 FishingNet.code = '02052';
