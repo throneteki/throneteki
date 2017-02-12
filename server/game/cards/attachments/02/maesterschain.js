@@ -9,7 +9,7 @@ class MaestersChain extends DrawCard {
         });
     }
 
-     canAttach(player, card) {
+    canAttach(player, card) {
         if(card.getType() !== 'character' || !card.hasTrait('maester')) {
             return false;
         }
