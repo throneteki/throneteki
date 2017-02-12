@@ -12,7 +12,7 @@ class Needle extends DrawCard {
             },
             handler: (context) => {
                 context.skipHandler();
-                this.game.addMessage('{0} uses {1} to return {2} to their hand instead of discard', this.controller, this, this.parent);
+                this.game.addMessage('{0} uses {1} to return {2} to their hand instead of their discard pile', this.controller, this, this.parent);
                 this.controller.returnCardToHand(this.parent, false);
                 this.controller.sacrificeCard(this);
             }
