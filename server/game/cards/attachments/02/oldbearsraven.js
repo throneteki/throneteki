@@ -4,11 +4,11 @@ class OldBearsRaven extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
             match: card => card.name === 'Old Bear Mormont',
-            effect: ability.effects.addIcon("intrigue")
+            effect: ability.effects.addIcon('intrigue')
         });
         this.whileAttached({
-             effect: ability.effects.addKeyword("stealth")
-        })
+            effect: ability.effects.addKeyword('stealth')
+        });
     }
 
     canAttach(player, card) {
