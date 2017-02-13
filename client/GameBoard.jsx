@@ -295,7 +295,7 @@ export class InnerGameBoard extends React.Component {
                                     <CardCollection className='faction' source='faction' cards={[]} topCard={otherPlayer ? otherPlayer.faction : undefined} onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut} disablePopup />
                                     {otherPlayer && otherPlayer.agenda && otherPlayer.agenda.code !== '' ?
                                         <CardCollection className='agenda' source='agenda' cards={[]} topCard={otherPlayer ? otherPlayer.agenda : undefined} onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut}
-                                              onClick={this.onClick} disablePopup onMenuItemClick={this.props.onMenuItemClick} />
+                                              onClick={this.onClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
                                         : <div className='agenda card-pile vertical panel'></div>
                                     }
                                 </div>
@@ -342,7 +342,7 @@ export class InnerGameBoard extends React.Component {
                                     <CardCollection className='faction' source='faction' cards={[]} topCard={thisPlayer.faction} onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut} disablePopup />
                                     {thisPlayer.agenda && thisPlayer.agenda.code !== '' ?
                                         <CardCollection className='agenda' source='agenda' cards={[]} topCard={thisPlayer.agenda} onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut}
-                                              onClick={this.onClick} disablePopup onMenuItemClick={this.props.onMenuItemClick} />
+                                              onClick={this.onClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
                                         : <div className='agenda card-pile vertical panel'></div>
                                     }
                                 </div>
