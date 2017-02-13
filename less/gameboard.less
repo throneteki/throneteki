@@ -1,7 +1,4 @@
-.player-row {
-  margin-top: 15px;
-}
-
+// GENERAL
 .game-board {
   position: absolute;
   bottom: 0;
@@ -14,55 +11,7 @@
 
 .main-window {
   display: flex;
-  flex-direction: column;
-}
-
-.player-home-row {
-  display: flex;
-  height: 100px;
-}
-
-.hand {
-  height: @card-height;
-  width: 342px;
-  padding: 0px;
-}
-
-.middle {
-  display: flex;
-  flex: 1;
-}
-
-.left-side {
-  width: 150px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.popup {
-  z-index: @layer-card-collection;
-
-  .inner {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  a {
-    display: inline-block;
-    margin: 0 10px 8px 4px;
-
-    text-decoration: none;
-  }
-
-  a:hover {
-    color: @brand-info;
-    cursor: pointer;
-  }
-}
-
-.state {
-  height: 22px;
+  flex-direction: row;
 }
 
 .card-pile {
@@ -81,157 +30,63 @@
   }
 }
 
-.dead, .plot {
-  margin-top: auto;
-  margin-bottom: auto;
+.popup {
+  z-index: @layer-card-menu;
 
-  .popup {
-    position: absolute;
-    width: 200px;
-    min-height: 92px;
-    // bottom: 34px;
-    left: 119px;    
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  a {
+    display: inline-block;
+    margin: 0 10px 8px 4px;
+    text-decoration: none;
+
+    &:hover {
+      color: @brand-info;
+      cursor: pointer;
+    }
   }
 }
 
-.right-side {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 307px;
-}
+// .select-cursor {
+//   cursor: url(/img/crosshairs.cur), default;
+// }
 
-.inset-pane {
+// LEFT SIDE
+.left-side {
+  width: 310px;
   display: flex;
   flex-direction: column;
-  width: 210px;
   justify-content: space-between;
 }
 
-.inset-pane > div {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.menu-pane button {
-  width: 100%;
-  margin-bottom: 5px;
-}
-
-.play-area, .player-board {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-}
-
-.player-board.our-side {
-  margin: 10px;
-}
-
-.player-board.our-side > div:first-child {
-  margin-top: auto;
-}
-
-.plots-pane {
+.player-info {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
 }
 
-.discard {
-  .popup.our-side {
-    left: -6px;
-    position: absolute;
-    top: initial;
-    bottom: 85px;
-    width: 505px;
-    min-height: 92px;
+.player-stats {
+  width: 144px;
+}
+
+.player-stats b {
+  max-width: calc(~"100% - 40px");
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.state {
+  height: 22px;
+
+  span {
+    padding-right: 5px;
   }
-
-  .popup {
-    position: absolute;
-    left: -6px;
-    top: 85px;
-    bottom: initial;
-    width: 505px;
-    min-height: 92px;
-  }
-}
-
-.dead {
-  .popup.our-side {
-    left: -154px;
-    position: absolute;
-    top: initial;
-    bottom: 85px;
-    width: 368px;
-    min-height: 92px;
-  }
-
-  .popup {
-    position: absolute;
-    left: -154px;
-    top: 85px;
-    bottom: initial;
-    width: 368px;
-    min-height: 92px;
-  }
-}
-
-.card-row .card.horizontal {
-    margin-bottom: @card-height - @card-width;
-}
-
-.plot-group {
-  >.plot {
-    margin-bottom: 5px;
-  }
-}
-
-.card-row, .hand {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.squish .card-wrapper {
-  position: absolute;
-}
-
-.select-cursor {
-  cursor: url(/img/crosshairs.cur), default;
-}
-
-.player-board {
-  .card-wrapper {
-    margin-right: 10px;
-    margin-bottom: 5px;
-  }
-}
-
-.draw {
-  .popup {
-    left: -271px;
-    position: absolute;
-    bottom: 85px;
-    width: 590px;
-    min-height: 92px;
-
-    .card {
-      margin: 2px;
-    }
-  }
-
-  .inner {
-    height: 450px;
-    overflow-y: scroll;
-  }
-}
-
-.menu-pane {
-  text-align: center;
-  z-index: @layer-prompt;
 }
 
 .btn-stat {
@@ -256,83 +111,112 @@
   color: white;
 }
 
+.deck-info {
+  display: flex;
+  flex-direction: column;
+}
 
-// 3ana
+.player-info.our-side .deck-info {
+  justify-content: flex-end;
+}
+
 .deck-type {
   display: flex;
-}
-.deck-cards {
-  display: flex;
+  flex-direction: row;
   height: 100px;
 }
-                            
-.panel-home-row {
-  height: auto;
+
+.first-player-indicator {
+  margin: 5px 7px;
+  padding: 5px;
+  text-align: center;
+  background: rgba(255,255,255,0.2);
+  border-radius: 0.25rem;
+  border: 1px solid gray;
 }
 
-.main-window {
+.middle {
   display: flex;
   flex-direction: row;
-  .left-side {
-    display: flex;
-    flex-direction: column;
-    width: 310px;
-    justify-content: space-between;
-    .player-info {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      .player-stats {
-        width: 144px;
-      }
-      .deck-info {
-        display: flex;
-        flex-direction: column;
-        // margin: 5px;
-        // justify-content: space-between;
-        .deck-type {
-          display: flex;
-          flex-direction: row;
-          height: 100px;
-        }
-        .first-player-indicator {
-          margin: 5px 7px;
-          padding: 5px;
-          text-align: center;
-          background: rgba(255,255,255,0.2);
-          border-radius: 0.25rem;
-          border: 1px solid gray;
-        }
-      }
-    }
-    .middle {
-      display: flex;
-      flex-direction: row;
-      .plots-pane {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      .middle-right {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        .schemes-pane {
-          display: flex;
-          flex-direction: row;
-          margin: 5px;
-          margin-top: 0;
-        }
-      }
-    }
-  }
-  .center {
-    flex-direction: column;
-    display: flex;
-  }
+  flex: 1;
 }
-.state span {
-  padding-right: 5px;
+
+.plots-pane {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.plot {
+  margin: 5px;
+ 
+  .popup.panel {
+    position: absolute;
+    width: 200px;
+    min-height: 92px;
+    left: 75px;
+    top: 0;
+    transform: translateY(-50%);
+    background-color: black;
+    &.hidden {
+      display: none;
+    }
+  }
+
+  // &:hover > .popup.panel.hidden, .popup.panel.hidden:hover {
+  //   display: block !important;
+  // }
+}
+
+.arrow-indicator {
+  position: absolute;
+  left: -10px;
+  top: calc(~"50% + 10px");
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  background-color: black;
+  transform: rotate(45deg);
+  border: 1px solid rgba(71, 58, 56, 0.95);
+  border-top: none;
+  border-right: none;
+}
+
+.middle-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.inset-pane {
+  display: flex;
+  flex-direction: column;
+  width: 210px;
+  justify-content: space-between;
+}
+
+.inset-pane > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-pane {
+  text-align: center;
+  z-index: @layer-prompt;
+}
+
+.menu-pane .panel {
+  margin-top: 0;
+  padding-top: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+
+.menu-pane button {
+  width: 100%;
+  margin-bottom: 5px;
 }
 
 .phase-indicator {
@@ -347,45 +231,165 @@
   text-transform: uppercase;
   width: initial !important; //fix this
 }
-.menu-pane .panel {
+
+.schemes-pane {
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
   margin-top: 0;
-  border-top-right-radius: 0;
-  border-top-left-radius: 0;
-  padding-top: 0;
 }
-.player-info.our-side .deck-info {
-  justify-content: flex-end;
+
+// CENTER
+.center {
+  flex-direction: column;
+  display: flex;
 }
+
+.play-area, .player-board {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.player-board.our-side {
+  margin: 10px;
+}
+
+.player-board.our-side > div:first-child {
+  margin-top: auto;
+}
+
+.player-home-row {
+  display: flex;
+  height: 100px;
+}
+
+.deck-cards {
+  display: flex;
+  height: 100px;
+}
+
+.hand {
+  height: @card-height;
+  width: 342px;
+  padding: 0px;
+}
+
+.hand.squish .card-wrapper {
+  position: absolute;
+}
+
+.discard .popup {
+  position: absolute;
+  left: -100px;
+  top: 85px;
+  bottom: initial;
+  width: 500px;
+  min-height: 92px;
+  
+  .arrow-indicator {
+    transform: rotate(135deg);
+    top: -11px;
+    left: 110px;
+  }
+
+  &.our-side {
+    top: initial;
+    bottom: 85px;
+   
+    .arrow-indicator {
+      transform: rotate(-45deg);
+      top: inherit;
+      bottom: -11px;
+    }
+  }
+}
+
+.dead {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.dead .popup {
+  position: absolute;
+  left: -90px;
+  top: 65px;
+  bottom: initial;
+  width: 465px;
+  min-height: 92px;
+  
+  .arrow-indicator {
+    transform: rotate(135deg);
+    top: -11px;
+    left: 100px;
+  }
+
+  &.our-side {
+    top: initial;
+    bottom: 70px;
+
+    .arrow-indicator {
+      transform: rotate(-45deg);
+      top: inherit;
+      bottom: -11px;
+    }
+  }
+}
+
+
+.draw {
+  .popup {
+    left: -271px;
+    position: absolute;
+    bottom: 85px;
+    width: 590px;
+    min-height: 92px;
+
+    .card {
+      margin: 2px;
+    }
+  }
+
+  .inner {
+    height: 450px;
+    overflow-y: scroll;
+  }
+}
+
+.card-row, .hand {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.card-row .card.horizontal {
+  margin-bottom: @card-height - @card-width;
+}
+
+.card-wrapper {
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+//RIGHT SIDE
 .right-side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   min-width: 312px;
 }
+
 .chat {
   width: 100%;
 }
-.panel.card-pile.plot {
-  .popup.panel {
-    display: none;
-    left: 75px;
-    top: -@card-height;
-    z-index: 9999;
-    background-color: black;
-  }
-  &:hover > .popup.panel, .popup.panel:hover {
-    display: block;
-  }
-}
-.arrow-indicator {
-  position: absolute;
-  left: -10px;
-  top: calc(@card-height + 10px);
-  display: inline-block;
-  height: 20px;
-  width: 20px;
-  background-color: black;
-  -ms-transform: rotate(20deg); /* IE 9 */
-  -webkit-transform: rotate(20deg); /* Safari */
-  transform: rotate(45deg);
-  border: 1px solid rgba(71, 58, 56, 0.95);
-  border-top: none;
-  border-right: none;
-}
+
+
+
+
+
+
+
+
+
+
+
+
