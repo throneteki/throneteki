@@ -3,18 +3,22 @@ const DrawCard = require('../../../drawcard.js');
 class SerLancelLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.getOtherLannisterLords().length == 1,
+            condition: () => !this.getSingleOtherLannisterLordOrLady(),
             match: this,
-            effect: ability.effects.dynamicStrenght(() => this.getOtherLannisterLords().first().getStrength())
+            effect: ability.effects.dynamicStrenght(() => this.getSingleOtherLannisterLordOrLady().getStrength())
         });
     }
 
-    getOtherLannisterLords() {
+    getSingleOtherLannisterLordOrLady() {
         var cards = this.controller.cardsInPlay.filter(card => {
             return card.getFaction() === "lannister" && (card.hasTrait('Lord') || card.hasTrait('Lady')) && card.getType() === 'character' && card !== this;
         });
 
-        return cards;
+        if (cards.length === 1) {
+            return cards.first();
+        }
+
+        return;
     }
 
 }
