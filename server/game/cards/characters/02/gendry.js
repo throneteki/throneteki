@@ -8,21 +8,21 @@ class Gendry extends DrawCard {
             },
             handler: () => {
                 this.modifyPower(1),
-                this.game.addMessage('{0} uses {1} gain a power on {2}', this.controller, this, this);
+                this.game.addMessage('{0} uses {1} gain a power on {1}', this.controller, this);
             }
         });
 
         this.forcedReaction({
             when: {
-                onDominanceDetermined: (event, winner) => this.game.getOtherPlayer(this.controller) === winner
+                onDominanceDetermined: (event, winner, loser) => this.controller === loser
             },
             handler: () => {
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
-                        menuTitle: 'Discard 1 power from ' + this.name + ' or sacrifice a bastard?',
+                        menuTitle: 'Discard a power from ' + this.name + '?',
                         buttons: [
-                            { text: 'Discard power', method: 'discardPower' },
-                            { text: 'Sacrifice bastard', method: 'sacrificeBastard' }
+                            { text: 'Yes', method: 'discardPower' },
+                            { text: 'No', method: 'sacrificeBastard' }
                         ]
                     },
                     waitingPromptTitle: 'Waiting for opponent to use ' + this.name
