@@ -36,7 +36,7 @@ class TowerOfTheHand extends DrawCard {
         this.selectedCard.controller.returnCardToHand(this.selectedCard);
         this.controller.kneelCard(this);
 
-        this.game.addMessage('{0} uses {1} to return {2} to their hand and return {3} to {4}\'s hand', this.controller, this, this.selectedCard, card, card.controller);
+        this.game.addMessage('{0} kneels {1} to return {2} to their hand and return {3} to {4}\'s hand', this.controller, this, this.selectedCard, card, card.controller);
 
         return true;
     }
