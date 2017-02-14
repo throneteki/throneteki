@@ -20,6 +20,38 @@ describe('CardAction', function () {
         };
     });
 
+    describe('constructor', function() {
+        describe('when passed a method reference', function() {
+            beforeEach(function() {
+                this.properties = {
+                    title: 'Do the thing',
+                    method: 'handler'
+                };
+                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            });
+
+            it('should use the specified method on the card object', function() {
+                this.action.handler();
+                expect(this.cardSpy.handler).toHaveBeenCalled();
+            });
+        });
+
+        describe('when passed a handler directly', function() {
+            beforeEach(function() {
+                this.properties = {
+                    title: 'Do the thing',
+                    handler: jasmine.createSpy('handler')
+                };
+                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            });
+
+            it('should use the handler directly', function() {
+                this.action.handler();
+                expect(this.properties.handler).toHaveBeenCalled();
+            });
+        });
+    });
+
     describe('execute()', function() {
         beforeEach(function() {
             this.player = {};

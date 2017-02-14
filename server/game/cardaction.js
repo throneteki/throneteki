@@ -25,7 +25,7 @@ class CardAction {
         this.phase = properties.phase || 'any';
         this.anyPlayer = properties.anyPlayer || false;
 
-        this.handler = card[properties.method].bind(card);
+        this.handler = properties.handler || card[properties.method].bind(card);
     }
 
     execute(player, arg) {
