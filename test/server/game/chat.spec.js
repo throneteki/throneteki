@@ -8,6 +8,7 @@ describe('the Game', function() {
     var game = {};
     var player1 = {};
     var spectator = {};
+    var chatCommands = {};
 
     beforeEach(function() {
         game = new Game('1', 'Test Game');
@@ -21,30 +22,32 @@ describe('the Game', function() {
         game.initialise();
 
         player1.setPower = undefined;
+
+        chatCommands = game.chatCommands;
     });
 
     describe('the getNumberOrDefault() function', function() {
         describe('with no arguments', function() {
             it('should return the default', function () {
-                expect(game.getNumberOrDefault('', 1)).toBe(1);
+                expect(chatCommands.getNumberOrDefault('', 1)).toBe(1);
             });
         });
 
         describe('with a string argument', function() {
             it('should return the default', function () {
-                expect(game.getNumberOrDefault('test', 1)).toBe(1);
+                expect(chatCommands.getNumberOrDefault('test', 1)).toBe(1);
             });
         });
 
         describe('with a negative argument', function() {
             it('should return the default', function () {
-                expect(game.getNumberOrDefault('-1', 1)).toBe(1);
+                expect(chatCommands.getNumberOrDefault('-1', 1)).toBe(1);
             });
         });
 
         describe('with a valid argument', function() {
             it('should return the parsed value', function () {
-                expect(game.getNumberOrDefault('3', 1)).toBe(3);
+                expect(chatCommands.getNumberOrDefault('3', 1)).toBe(3);
             });
         });
     });
