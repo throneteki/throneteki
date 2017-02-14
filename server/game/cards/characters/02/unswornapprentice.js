@@ -33,7 +33,6 @@ class UnswornApprentice extends DrawCard {
             match: this,
             effect: ability.effects.addIcon(icon)
         }));
-       
         return true;
     }
 }
