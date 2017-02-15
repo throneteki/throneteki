@@ -7,7 +7,7 @@ class CrossroadsSellsword extends DrawCard {
                 onCharacterKilled: (event, player, card) => (
                     card === this &&
                     this.controller === card.controller &&
-                    this.game.currentPhase === 'challenges')
+                    this.game.currentPhase === 'challenge')
             },
             handler: () => {
                 this.game.addGold(this.controller, 2);
