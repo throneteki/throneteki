@@ -8,11 +8,11 @@ class RobbStark extends DrawCard {
                 this.game.currentChallenge.challengeType === 'military'
             ),
             match: this,
-            effect: ability.effects.modifyStrength(this.numberOfLoyalChars())
+            effect: ability.effects.dynamicStrength(() => this.numberOfLoyalChars())
         });
 
         this.action({
-            title: 'Initiate ability',
+            title: 'Stand and remove a character from the challenge',
             method: 'initiate',
             limit: ability.limit.perChallenge(1)
         });
@@ -39,7 +39,7 @@ class RobbStark extends DrawCard {
         card.controller.standCard(card);
         this.game.currentChallenge.removeFromChallenge(card);
 
-        this.game.addMessage('{0} uses {1} to stand {2} and remove it from the challenge', player, this, card);
+        this.game.addMessage('{0} uses {1} to stand {2} and remove them from the challenge', player, this, card);
 
         return true;
     }
