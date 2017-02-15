@@ -3,9 +3,9 @@ const DrawCard = require('../../../drawcard.js');
 class SerLancelLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.getSingleOtherLannisterLordOrLady(),
+            condition: () => this.getSingleOtherLannisterLordOrLady(),
             match: this,
-            effect: ability.effects.dynamicStrenght(() => this.getSingleOtherLannisterLordOrLady().getStrength())
+            effect: ability.effects.dynamicStrength(() => this.getSingleOtherLannisterLordOrLady().getStrength())
         });
     }
 
