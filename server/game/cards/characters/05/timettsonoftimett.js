@@ -13,7 +13,7 @@ class TimettSonOfTimett extends DrawCard {
                     cardCondition: card => (
                         card.location === 'play area' && 
                         card.getType() === 'character' && 
-                        card.getCost() <= this.numberOfClansmen()),
+                        card.getCost() <= this.getNumberOfClansmen()),
                     activePromptTitle: 'Select character to kill',
                     waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
                     onSelect: (player, card) => (
