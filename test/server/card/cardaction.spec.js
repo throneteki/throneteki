@@ -198,6 +198,52 @@ describe('CardAction', function () {
             });
         });
 
+        describe('when the action has a cost', function() {
+            beforeEach(function() {
+                this.cost1 = jasmine.createSpyObj('cost1', ['canPay', 'pay']);
+                this.cost2 = jasmine.createSpyObj('cost2', ['canPay', 'pay']);
+                this.properties.cost = [this.cost1, this.cost2];
+
+                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            });
+
+            describe('and at least one cost cannot be paid', function() {
+                beforeEach(function() {
+                    this.cost1.canPay.and.returnValue(true);
+                    this.cost2.canPay.and.returnValue(false);
+
+                    this.action.execute(this.player, 'arg');
+                });
+
+                it('should not pay any of the costs', function() {
+                    expect(this.cost1.pay).not.toHaveBeenCalled();
+                    expect(this.cost2.pay).not.toHaveBeenCalled();
+                });
+
+                it('should not call the handler', function() {
+                    expect(this.cardSpy.handler).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('and all costs can be paid', function() {
+                beforeEach(function() {
+                    this.cost1.canPay.and.returnValue(true);
+                    this.cost2.canPay.and.returnValue(true);
+
+                    this.action.execute(this.player, 'arg');
+                });
+
+                it('should pay all of the costs', function() {
+                    expect(this.cost1.pay).toHaveBeenCalled();
+                    expect(this.cost2.pay).toHaveBeenCalled();
+                });
+
+                it('should call the handler', function() {
+                    expect(this.cardSpy.handler).toHaveBeenCalled();
+                });
+            });
+        });
+
         describe('when all conditions met', function() {
             beforeEach(function() {
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);

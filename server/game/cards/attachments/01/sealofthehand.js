@@ -1,22 +1,19 @@
 const DrawCard = require('../../../drawcard.js');
 
 class SealOfTheHand extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Stand attached character',
-            method: 'kneel'
+            cost: ability.costs.kneelSelf(),
+            handler: () => {
+                if(!this.parent.kneeled) {
+                    return;
+                }
+
+                this.controller.standCard(this.parent);
+                this.game.addMessage('{0} kneels {1} to stand {2}', this.controller, this, this.parent);
+            }
         });
-    }
-
-    kneel(player) {
-        if(!this.parent || !this.parent.kneeled) {
-            return false;
-        }
-
-        player.standCard(this.parent);
-        player.kneelCard(this);
-
-        this.game.addMessage('{0} kneels {1} to stand {2}', player, this, this.parent);
     }
 
     canAttach(player, card) {
