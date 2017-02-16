@@ -1,7 +1,7 @@
 const DrawCard = require('../../../drawcard.js');
 
 class Will extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.forcedReaction({
             when: {
                 onUnopposedWin: (e, challenge) => this.controller !== challenge.winner
