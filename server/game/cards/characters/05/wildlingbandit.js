@@ -6,10 +6,18 @@ class WildlingBandit extends DrawCard {
             condition: () => (
                 this.game.currentChallenge &&
                 this.game.currentChallenge.isAttacking(this) &&
-                this.controller.gold < this.game.getOtherPlayer(this.controller).gold),
+                this.hasLessGold()),
             match: this,
             effect: ability.effects.modifyStrength(2)
         });
+    }
+
+    hasLessGold() {
+        var otherPlayer = this.game.getOtherPlayer(this.controller);
+        if(!otherPlayer) {
+            return false;
+        }
+        return this.controller.gold < otherPlayer.gold;
     }
 }
 
