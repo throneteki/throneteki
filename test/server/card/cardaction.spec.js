@@ -24,6 +24,14 @@ describe('CardAction', function () {
 
     describe('constructor', function() {
         describe('handler', function() {
+            beforeEach(function() {
+                this.context = {
+                    player: 'player',
+                    arg: 'arg',
+                    foo: 'bar'
+                };
+            });
+
             describe('when passed a method reference', function() {
                 beforeEach(function() {
                     this.properties = {
@@ -34,8 +42,8 @@ describe('CardAction', function () {
                 });
 
                 it('should use the specified method on the card object', function() {
-                    this.action.handler();
-                    expect(this.cardSpy.handler).toHaveBeenCalled();
+                    this.action.handler(this.context);
+                    expect(this.cardSpy.handler).toHaveBeenCalledWith('player', 'arg', this.context);
                 });
             });
 
@@ -49,8 +57,8 @@ describe('CardAction', function () {
                 });
 
                 it('should use the handler directly', function() {
-                    this.action.handler();
-                    expect(this.properties.handler).toHaveBeenCalled();
+                    this.action.handler(this.context);
+                    expect(this.properties.handler).toHaveBeenCalledWith(this.context);
                 });
             });
         });
@@ -377,6 +385,8 @@ describe('CardAction', function () {
                 player: this.player,
                 arg: 'arg'
             };
+            this.handler = jasmine.createSpy('handler');
+            this.properties.handler = this.handler;
         });
 
         describe('when the action has no limit', function() {
@@ -386,7 +396,7 @@ describe('CardAction', function () {
             });
 
             it('should call the handler', function() {
-                expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg', this.context);
+                expect(this.handler).toHaveBeenCalledWith(this.context);
             });
         });
 
@@ -398,13 +408,13 @@ describe('CardAction', function () {
 
             describe('and the handler returns false', function() {
                 beforeEach(function() {
-                    this.cardSpy.handler.and.returnValue(false);
+                    this.handler.and.returnValue(false);
 
                     this.action.executeHandler(this.context);
                 });
 
                 it('should call the handler', function() {
-                    expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg', this.context);
+                    expect(this.handler).toHaveBeenCalledWith(this.context);
                 });
 
                 it('should not count towards the limit', function() {
@@ -414,13 +424,13 @@ describe('CardAction', function () {
 
             describe('and the handler returns undefined or a non-false value', function() {
                 beforeEach(function() {
-                    this.cardSpy.handler.and.returnValue(undefined);
+                    this.handler.and.returnValue(undefined);
 
                     this.action.executeHandler(this.context);
                 });
 
                 it('should call the handler', function() {
-                    expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg', this.context);
+                    expect(this.handler).toHaveBeenCalledWith(this.context);
                 });
 
                 it('should count towards the limit', function() {
