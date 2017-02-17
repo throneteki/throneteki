@@ -309,7 +309,7 @@ export class InnerGameBoard extends React.Component {
                 <div className='main-window'>
                     <div className='left-side'>
                         <div className='player-info'>
-                            <PlayerStats first={ !thisPlayer.firstPlayer ? ( otherPlayer.firstPlayer ? <img src='/img/FirstPlayerIndicator.png' title='First Player' alt='First Player' /> : '') : ''} gold={otherPlayer ? otherPlayer.gold : 0} claim={otherPlayer ? otherPlayer.claim : 0}
+                            <PlayerStats first={otherPlayer ? (otherPlayer.firstPlayer ? <img src='/img/FirstPlayerIndicator.png' title='First Player' alt='First Player' /> : '') : ''} gold={otherPlayer ? otherPlayer.gold : 0} claim={otherPlayer ? otherPlayer.claim : 0}
                                 reserve={otherPlayer ? otherPlayer.reserve : 0} power={otherPlayer ? otherPlayer.totalPower : 0} user={otherPlayer ? otherPlayer.user : null} />
                             <div className='deck-info'>
                                 <div className='deck-type'>
