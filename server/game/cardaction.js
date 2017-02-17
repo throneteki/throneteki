@@ -1,5 +1,7 @@
 const _ = require('underscore');
 
+const AbilityResolver = require('./gamesteps/abilityresolver.js');
+
 /**
  * Represents an action ability provided by card text.
  *
@@ -69,15 +71,22 @@ class CardAction {
             return;
         }
 
-        if(!_.all(this.cost, cost => cost.canPay(context))) {
-            return;
-        }
+        this.game.queueStep(new AbilityResolver(this.game, this, context));
+    }
 
+    checkIfCanPayCosts(context) {
+        return _.map(this.cost, cost => cost.canPay(context));
+    }
+
+    payCosts(context) {
         _.each(this.cost, cost => {
             cost.pay(context);
         });
+    }
 
-        if(this.handler(player, arg) !== false && this.limit) {
+    executeHandler(context) {
+        // TODO: Temporarily need to split the arguments out for backward compatibility.
+        if(this.handler(context.player, context.arg, context) !== false && this.limit) {
             this.limit.increment();
         }
     }

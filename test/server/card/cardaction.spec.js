@@ -3,9 +3,11 @@
 
 const CardAction = require('../../../server/game/cardaction.js');
 
+const AbilityResolver = require('../../../server/game/gamesteps/abilityresolver.js');
+
 describe('CardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'queueStep']);
         this.gameSpy.currentPhase = 'marshal';
 
         this.cardSpy = jasmine.createSpyObj('card', ['isBlank']);
@@ -21,33 +23,73 @@ describe('CardAction', function () {
     });
 
     describe('constructor', function() {
-        describe('when passed a method reference', function() {
-            beforeEach(function() {
-                this.properties = {
-                    title: 'Do the thing',
-                    method: 'handler'
-                };
-                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+        describe('handler', function() {
+            describe('when passed a method reference', function() {
+                beforeEach(function() {
+                    this.properties = {
+                        title: 'Do the thing',
+                        method: 'handler'
+                    };
+                    this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+                });
+
+                it('should use the specified method on the card object', function() {
+                    this.action.handler();
+                    expect(this.cardSpy.handler).toHaveBeenCalled();
+                });
             });
 
-            it('should use the specified method on the card object', function() {
-                this.action.handler();
-                expect(this.cardSpy.handler).toHaveBeenCalled();
+            describe('when passed a handler directly', function() {
+                beforeEach(function() {
+                    this.properties = {
+                        title: 'Do the thing',
+                        handler: jasmine.createSpy('handler')
+                    };
+                    this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+                });
+
+                it('should use the handler directly', function() {
+                    this.action.handler();
+                    expect(this.properties.handler).toHaveBeenCalled();
+                });
             });
         });
 
-        describe('when passed a handler directly', function() {
-            beforeEach(function() {
-                this.properties = {
-                    title: 'Do the thing',
-                    handler: jasmine.createSpy('handler')
-                };
-                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+        describe('cost', function() {
+            describe('when no cost is passed', function() {
+                beforeEach(function() {
+                    delete this.properties.cost;
+                    this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+                });
+
+                it('should set cost to be empty array', function() {
+                    expect(this.action.cost).toEqual([]);
+                });
             });
 
-            it('should use the handler directly', function() {
-                this.action.handler();
-                expect(this.properties.handler).toHaveBeenCalled();
+            describe('when a single cost is passed', function() {
+                beforeEach(function() {
+                    this.cost = { cost: 1 };
+                    this.properties.cost = this.cost;
+                    this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+                });
+
+                it('should set cost to be an array with the cost', function() {
+                    expect(this.action.cost).toEqual([this.cost]);
+                });
+            });
+
+            describe('when multiple costs are passed', function() {
+                beforeEach(function() {
+                    this.cost1 = { cost: 1 };
+                    this.cost2 = { cost: 2 };
+                    this.properties.cost = [this.cost1, this.cost2];
+                    this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+                });
+
+                it('should set cost to be the array', function() {
+                    expect(this.action.cost).toEqual([this.cost1, this.cost2]);
+                });
             });
         });
     });
@@ -71,46 +113,18 @@ describe('CardAction', function () {
                     this.action.execute(this.player, 'arg');
                 });
 
-                it('should not call the handler', function() {
-                    expect(this.cardSpy.handler).not.toHaveBeenCalled();
-                });
-
-                it('should not count towards the limit', function() {
-                    expect(this.limitSpy.increment).not.toHaveBeenCalled();
+                it('should not queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
                 });
             });
 
             describe('and the use count is below the limit', function() {
-                describe('and the handler returns false', function() {
-                    beforeEach(function() {
-                        this.cardSpy.handler.and.returnValue(false);
-
-                        this.action.execute(this.player, 'arg');
-                    });
-
-                    it('should call the handler', function() {
-                        expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg');
-                    });
-
-                    it('should not count towards the limit', function() {
-                        expect(this.limitSpy.increment).not.toHaveBeenCalled();
-                    });
+                beforeEach(function() {
+                    this.action.execute(this.player, 'arg');
                 });
 
-                describe('and the handler returns undefined or a non-false value', function() {
-                    beforeEach(function() {
-                        this.cardSpy.handler.and.returnValue(undefined);
-
-                        this.action.execute(this.player, 'arg');
-                    });
-
-                    it('should call the handler', function() {
-                        expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg');
-                    });
-
-                    it('should count towards the limit', function() {
-                        expect(this.limitSpy.increment).toHaveBeenCalled();
-                    });
+                it('should queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(AbilityResolver));
                 });
             });
         });
@@ -126,8 +140,8 @@ describe('CardAction', function () {
                     this.action.execute(this.otherPlayer, 'arg');
                 });
 
-                it('should not call the handler', function() {
-                    expect(this.cardSpy.handler).not.toHaveBeenCalled();
+                it('should not queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
                 });
             });
 
@@ -138,8 +152,8 @@ describe('CardAction', function () {
                     this.action.execute(this.otherPlayer, 'arg');
                 });
 
-                it('should call the handler', function() {
-                    expect(this.cardSpy.handler).toHaveBeenCalledWith(this.otherPlayer, 'arg');
+                it('should queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(AbilityResolver));
                 });
             });
         });
@@ -151,8 +165,8 @@ describe('CardAction', function () {
                 this.action.execute(this.player, 'arg');
             });
 
-            it('should not call the handler', function() {
-                expect(this.cardSpy.handler).not.toHaveBeenCalled();
+            it('should not queue the ability resolver', function() {
+                expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
             });
         });
 
@@ -168,8 +182,8 @@ describe('CardAction', function () {
                     this.action.execute(this.player, 'arg');
                 });
 
-                it('should not call the handler', function() {
-                    expect(this.cardSpy.handler).not.toHaveBeenCalled();
+                it('should not queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
                 });
             });
 
@@ -179,8 +193,8 @@ describe('CardAction', function () {
                     this.action.execute(this.player, 'arg');
                 });
 
-                it('should call the handler', function() {
-                    expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg');
+                it('should queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(AbilityResolver));
                 });
             });
         });
@@ -193,54 +207,8 @@ describe('CardAction', function () {
                 this.action.execute(this.player, 'arg');
             });
 
-            it('should not call the handler', function() {
-                expect(this.cardSpy.handler).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('when the action has a cost', function() {
-            beforeEach(function() {
-                this.cost1 = jasmine.createSpyObj('cost1', ['canPay', 'pay']);
-                this.cost2 = jasmine.createSpyObj('cost2', ['canPay', 'pay']);
-                this.properties.cost = [this.cost1, this.cost2];
-
-                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-            });
-
-            describe('and at least one cost cannot be paid', function() {
-                beforeEach(function() {
-                    this.cost1.canPay.and.returnValue(true);
-                    this.cost2.canPay.and.returnValue(false);
-
-                    this.action.execute(this.player, 'arg');
-                });
-
-                it('should not pay any of the costs', function() {
-                    expect(this.cost1.pay).not.toHaveBeenCalled();
-                    expect(this.cost2.pay).not.toHaveBeenCalled();
-                });
-
-                it('should not call the handler', function() {
-                    expect(this.cardSpy.handler).not.toHaveBeenCalled();
-                });
-            });
-
-            describe('and all costs can be paid', function() {
-                beforeEach(function() {
-                    this.cost1.canPay.and.returnValue(true);
-                    this.cost2.canPay.and.returnValue(true);
-
-                    this.action.execute(this.player, 'arg');
-                });
-
-                it('should pay all of the costs', function() {
-                    expect(this.cost1.pay).toHaveBeenCalled();
-                    expect(this.cost2.pay).toHaveBeenCalled();
-                });
-
-                it('should call the handler', function() {
-                    expect(this.cardSpy.handler).toHaveBeenCalled();
-                });
+            it('should not queue the ability resolver', function() {
+                expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
             });
         });
 
@@ -250,8 +218,8 @@ describe('CardAction', function () {
                 this.action.execute(this.player, 'arg');
             });
 
-            it('should call the handler', function() {
-                expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg');
+            it('should queue the ability resolver', function() {
+                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(AbilityResolver));
             });
         });
     });
@@ -316,6 +284,119 @@ describe('CardAction', function () {
 
         it('returns the menu item format', function() {
             expect(this.menuItem).toEqual({ text: 'Do the thing', method: 'doAction', anyPlayer: false });
+        });
+    });
+
+    describe('checkIfCanPayCosts()', function() {
+        beforeEach(function() {
+            this.cost1 = jasmine.createSpyObj('cost1', ['canPay']);
+            this.cost2 = jasmine.createSpyObj('cost1', ['canPay']);
+            this.cost1.canPay.and.returnValue(1);
+            this.cost2.canPay.and.returnValue(2);
+            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            this.action.cost = [this.cost1, this.cost2];
+        });
+
+        it('should return the results of the canPay method for all costs', function() {
+            expect(this.action.checkIfCanPayCosts()).toEqual([1, 2]);
+        });
+    });
+
+    describe('checkIfCanPayCosts()', function() {
+        beforeEach(function() {
+            this.cost1 = jasmine.createSpyObj('cost1', ['canPay']);
+            this.cost2 = jasmine.createSpyObj('cost1', ['canPay']);
+            this.cost1.canPay.and.returnValue(1);
+            this.cost2.canPay.and.returnValue(2);
+            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            this.action.cost = [this.cost1, this.cost2];
+            this.context = { context: 1 };
+        });
+
+        it('should call canPay with the context object', function() {
+            this.action.checkIfCanPayCosts(this.context);
+            expect(this.cost1.canPay).toHaveBeenCalledWith(this.context);
+            expect(this.cost2.canPay).toHaveBeenCalledWith(this.context);
+        });
+
+        it('should return the results of the canPay method for all costs', function() {
+            expect(this.action.checkIfCanPayCosts(this.context)).toEqual([1, 2]);
+        });
+    });
+
+    describe('payCosts()', function() {
+        beforeEach(function() {
+            this.cost1 = jasmine.createSpyObj('cost1', ['pay']);
+            this.cost2 = jasmine.createSpyObj('cost1', ['pay']);
+            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            this.action.cost = [this.cost1, this.cost2];
+            this.context = { context: 1 };
+        });
+
+        it('should call pay with the context object', function() {
+            this.action.payCosts(this.context);
+            expect(this.cost1.pay).toHaveBeenCalledWith(this.context);
+            expect(this.cost2.pay).toHaveBeenCalledWith(this.context);
+        });
+    });
+
+    describe('executeHandler()', function() {
+        beforeEach(function() {
+            this.player = { player: true };
+            this.context = {
+                player: this.player,
+                arg: 'arg'
+            };
+        });
+
+        describe('when the action has no limit', function() {
+            beforeEach(function() {
+                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+                this.action.executeHandler(this.context);
+            });
+
+            it('should call the handler', function() {
+                expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg', this.context);
+            });
+        });
+
+        describe('when the action has limited uses', function() {
+            beforeEach(function() {
+                this.properties.limit = this.limitSpy;
+                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            });
+
+            describe('and the handler returns false', function() {
+                beforeEach(function() {
+                    this.cardSpy.handler.and.returnValue(false);
+
+                    this.action.executeHandler(this.context);
+                });
+
+                it('should call the handler', function() {
+                    expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg', this.context);
+                });
+
+                it('should not count towards the limit', function() {
+                    expect(this.limitSpy.increment).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('and the handler returns undefined or a non-false value', function() {
+                beforeEach(function() {
+                    this.cardSpy.handler.and.returnValue(undefined);
+
+                    this.action.executeHandler(this.context);
+                });
+
+                it('should call the handler', function() {
+                    expect(this.cardSpy.handler).toHaveBeenCalledWith(this.player, 'arg', this.context);
+                });
+
+                it('should count towards the limit', function() {
+                    expect(this.limitSpy.increment).toHaveBeenCalled();
+                });
+            });
         });
     });
 });
