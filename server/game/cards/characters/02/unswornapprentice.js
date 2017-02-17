@@ -6,12 +6,13 @@ class UnswornApprentice extends DrawCard {
         this.action({
             title: 'Gain Icon',
             method: 'gainIcon',
+            phase: 'challenge',
             limit: ability.limit.perPhase(1)
         });
     }
 
-    gainIcon(player) {
-        if(this.location !== 'play area' || player.phase !== 'challenge') {
+    gainIcon() {
+        if(this.location !== 'play area') {
             return false;
         }
         var icons = ['Military', 'Intrigue', 'Power'];
