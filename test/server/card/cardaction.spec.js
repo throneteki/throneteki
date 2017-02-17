@@ -212,6 +212,36 @@ describe('CardAction', function () {
             });
         });
 
+        describe('when a condition is provided', function() {
+            beforeEach(function() {
+                this.condition = jasmine.createSpy('condition');
+                this.properties.condition = this.condition;
+                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            });
+
+            describe('and the condition returns true', function() {
+                beforeEach(function() {
+                    this.condition.and.returnValue(true);
+                    this.action.execute(this.player, 'arg');
+                });
+
+                it('should queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(AbilityResolver));
+                });
+            });
+
+            describe('and the condition returns false', function() {
+                beforeEach(function() {
+                    this.condition.and.returnValue(false);
+                    this.action.execute(this.player, 'arg');
+                });
+
+                it('should not queue the ability resolver', function() {
+                    expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
+                });
+            });
+        });
+
         describe('when all conditions met', function() {
             beforeEach(function() {
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);

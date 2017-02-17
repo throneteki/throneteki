@@ -8,6 +8,10 @@ const AbilityResolver = require('./gamesteps/abilityresolver.js');
  * Properties:
  * title        - string that is used within the card menu associated with this
  *                action.
+ * condition    - optional function that should return true when the action is
+ *                allowed, false otherwise. It should generally be used to check
+ *                if the action can modify game state (step #1 in ability
+ *                resolution in the rules).
  * cost         - object or array of objects representing the cost required to
  *                be paid before the action will activate. See Costs.
  * method       - string indicating the method on card that should be called
@@ -30,6 +34,7 @@ class CardAction {
         this.limit = properties.limit;
         this.phase = properties.phase || 'any';
         this.anyPlayer = properties.anyPlayer || false;
+        this.condition = properties.condition;
         this.cost = this.buildCost(properties.cost);
 
         this.handler = properties.handler || card[properties.method].bind(card);
@@ -68,6 +73,10 @@ class CardAction {
         }
 
         if(this.card.isBlank()) {
+            return;
+        }
+
+        if(this.condition && !this.condition()) {
             return;
         }
 

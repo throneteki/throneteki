@@ -5,12 +5,9 @@ class WildlingHorde extends DrawCard {
         this.action({
             title: 'Kneel your faction card',
             phase: 'challenge',
+            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelFactionCard(),
             handler: (player) => {
-                if(!this.game.currentChallenge) {
-                    return false;
-                }
-
                 this.game.promptForSelect(player, {
                     activePromptTitle: 'Select a Wildling character',
                     waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
