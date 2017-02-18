@@ -8,13 +8,12 @@ class SerGregorClegane extends DrawCard {
             },
             handler: context => {
                 var discardedCard = context.event.params[2];
-                if(discardedCard.getType !== 'character')
-                {
+                if(discardedCard.getType !== 'character') {
                     return;
                 }
 
                 var otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer){
+                if(!otherPlayer) {
                     return;
                 }
 
@@ -31,7 +30,7 @@ class SerGregorClegane extends DrawCard {
                         && card.getType() === 'character'
                         && card.getCost() === price,
                     onSelect: (player, selectedCard) =>
-                        this.onCardSelected(player, selectedCard, otherPlaeyr)
+                        this.onCardSelected(player, selectedCard, otherPlayer)
 
                 });
             }
@@ -39,7 +38,7 @@ class SerGregorClegane extends DrawCard {
         });       
     }
 
-    onCardSelected(palyer, selectedCard, otherPlayer) {
+    onCardSelected(player, selectedCard, otherPlayer) {
         this.game.addMessage('{0} uses {1} to kill {2}', player, this, selectedCard);
         otherPlayer.killCharacter(selectedCard);
     }
