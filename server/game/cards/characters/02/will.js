@@ -20,7 +20,7 @@ class Will extends DrawCard {
     onCardSelected(player, card) {
         player.sacrificeCard(card);
 
-        this.game.addMessage('{0} uses {1} to sacrifice {2}', player, this, card);
+        this.game.addMessage('{0} is forced to use {1} to sacrifice {2}', player, this, card);
 
         return true;
     }
