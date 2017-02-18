@@ -4,11 +4,10 @@ class SerGregorClegane extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardDiscarded: (event, challenge, card) => challenge.winner === this.controller && card === this && this.game.addMessage('test1')
+                onCardDiscarded: (event, challenge, card) => challenge.winner === this.controller && card === this
             },
             handler: context => {
                 var discardedCard = context.event.params[2];
-                this.game.addMessage(discardedCard.name);
                 if(discardedCard.getType !== 'character')
                 {
                     return;
