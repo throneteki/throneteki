@@ -309,7 +309,7 @@ export class InnerGameBoard extends React.Component {
                 <div className='main-window'>
                     <div className='left-side'>
                         <div className='player-info'>
-                            <PlayerStats first={otherPlayer ? (otherPlayer.firstPlayer ? <img src='/img/FirstPlayerIndicator.png' title='First Player' alt='First Player' /> : '') : ''} gold={otherPlayer ? otherPlayer.gold : 0} claim={otherPlayer ? otherPlayer.claim : 0}
+                            <PlayerStats gold={otherPlayer ? otherPlayer.gold : 0} claim={otherPlayer ? otherPlayer.claim : 0}
                                 reserve={otherPlayer ? otherPlayer.reserve : 0} power={otherPlayer ? otherPlayer.totalPower : 0} user={otherPlayer ? otherPlayer.user : null} />
                             <div className='deck-info'>
                                 <div className='deck-type'>
@@ -356,9 +356,10 @@ export class InnerGameBoard extends React.Component {
                             </div>
                         </div>
                         <div className='player-info our-side'>
-                            <PlayerStats first={(thisPlayer.firstPlayer ? <img src='/img/FirstPlayerIndicator.png' title='First Player' alt='First Player' /> : '')} gold={thisPlayer.gold || 0} claim={thisPlayer.claim || 0} reserve={thisPlayer.reserve || 0}
+                            <PlayerStats gold={thisPlayer.gold || 0} claim={thisPlayer.claim || 0} reserve={thisPlayer.reserve || 0}
                                         power={thisPlayer.totalPower} isMe={!this.state.spectating} user={thisPlayer.user} />
                             <div className='deck-info'>
+                                <div className={'first-player-indicator ' + (thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div>
                                 <div className='deck-type'>
                                     <CardCollection className='faction' source='faction' cards={[]} topCard={thisPlayer.faction} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup />
                                     {thisPlayer.agenda && thisPlayer.agenda.code !== '' ?
