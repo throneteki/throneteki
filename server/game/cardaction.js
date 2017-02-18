@@ -1,6 +1,4 @@
-const _ = require('underscore');
-
-const AbilityResolver = require('./gamesteps/abilityresolver.js');
+const BaseAbility = require('./baseability.js');
 
 /**
  * Represents an action ability provided by card text.
@@ -26,16 +24,16 @@ const AbilityResolver = require('./gamesteps/abilityresolver.js');
  * anyPlayer    - boolean indicating that the action may be executed by a player
  *                other than the card's controller. Defaults to false.
  */
-class CardAction {
+class CardAction extends BaseAbility {
     constructor(game, card, properties) {
-        this.game = game;
+        super(game, card, properties);
+
         this.card = card;
         this.title = properties.title;
         this.limit = properties.limit;
         this.phase = properties.phase || 'any';
         this.anyPlayer = properties.anyPlayer || false;
         this.condition = properties.condition;
-        this.cost = this.buildCost(properties.cost);
 
         this.handler = this.buildHandler(card, properties);
     }
@@ -56,18 +54,6 @@ class CardAction {
             //       the context object directly.
             return card[properties.method].call(card, context.player, context.arg, context);
         };
-    }
-
-    buildCost(cost) {
-        if(!cost) {
-            return [];
-        }
-
-        if(!_.isArray(cost)) {
-            return [cost];
-        }
-
-        return cost;
     }
 
     execute(player, arg) {
@@ -98,17 +84,7 @@ class CardAction {
             return;
         }
 
-        this.game.queueStep(new AbilityResolver(this.game, this, context));
-    }
-
-    checkIfCanPayCosts(context) {
-        return _.map(this.cost, cost => cost.canPay(context));
-    }
-
-    payCosts(context) {
-        _.each(this.cost, cost => {
-            cost.pay(context);
-        });
+        this.queueResolver(context);
     }
 
     executeHandler(context) {
