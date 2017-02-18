@@ -275,7 +275,7 @@ Actions are abilities provided by the card text that players may trigger during 
 
 #### Declaring an action
 
-When declaring an action, use the `action` method and provide it with a `title` and a `handler` property. The title is what will be displayed in the menu players see when clicking on the card. The handler is a function be called when the player chooses to trigger the action. The handler receives a context object as its only parameter which contains the `player` executing the action, and the `source` card that triggered the ability.
+When declaring an action, use the `action` method and provide it with a `title` and a `handler` property. The title is what will be displayed in the menu players see when clicking on the card. The handler is a function to be called when the player chooses to trigger the action. The handler receives a context object as its only parameter which contains the `player` executing the action, and the `source` card that triggered the ability.
 
 ```javascript
 class SealOfTheHand extends DrawCard {
@@ -524,6 +524,43 @@ this.reaction({
         'Gain 1 power': () => {
             // code to gain 1 power
         }
+    }
+});
+```
+
+#### Paying additional costs for reactions and interrupts
+
+Some abilities have an additional cost, such as kneeling the card. In these cases, specify the `cost` parameter. The ability will check if the cost can be paid. If it can't, the ability will not prompt the player. If it can, costs will be paid automatically and then the ability will execute.
+
+For a full list of costs, look at `/server/game/costs.js`.
+
+```javascript
+this.interrupt({
+    when: {
+        // condition for the Wall.
+    }
+    // This card must be knelt as a cost for the action.
+    cost: ability.costs.kneelSelf(),
+    handler: () => {
+        // Gain 2 power for your faction.
+    }
+});
+```
+
+If a card has multiple costs, an array of cost objects may be sent using the `cost` property.
+
+```javascript
+this.reaction({
+    when {
+        // condition for Ghaston Grey
+    }
+    // This card must be knelt AND sacrificed as a cost for the action.
+    cost: [
+        ability.costs.kneelSelf(),
+        ability.costs.sacrificeSelf()
+    ],
+    handler: () => {
+        // Choose and return an attacking character to your opponent's hand.
     }
 });
 ```
