@@ -293,59 +293,6 @@ describe('CardAction', function () {
         });
     });
 
-    describe('checkIfCanPayCosts()', function() {
-        beforeEach(function() {
-            this.cost1 = jasmine.createSpyObj('cost1', ['canPay']);
-            this.cost2 = jasmine.createSpyObj('cost1', ['canPay']);
-            this.cost1.canPay.and.returnValue(1);
-            this.cost2.canPay.and.returnValue(2);
-            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-            this.action.cost = [this.cost1, this.cost2];
-        });
-
-        it('should return the results of the canPay method for all costs', function() {
-            expect(this.action.checkIfCanPayCosts()).toEqual([1, 2]);
-        });
-    });
-
-    describe('checkIfCanPayCosts()', function() {
-        beforeEach(function() {
-            this.cost1 = jasmine.createSpyObj('cost1', ['canPay']);
-            this.cost2 = jasmine.createSpyObj('cost1', ['canPay']);
-            this.cost1.canPay.and.returnValue(1);
-            this.cost2.canPay.and.returnValue(2);
-            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-            this.action.cost = [this.cost1, this.cost2];
-            this.context = { context: 1 };
-        });
-
-        it('should call canPay with the context object', function() {
-            this.action.checkIfCanPayCosts(this.context);
-            expect(this.cost1.canPay).toHaveBeenCalledWith(this.context);
-            expect(this.cost2.canPay).toHaveBeenCalledWith(this.context);
-        });
-
-        it('should return the results of the canPay method for all costs', function() {
-            expect(this.action.checkIfCanPayCosts(this.context)).toEqual([1, 2]);
-        });
-    });
-
-    describe('payCosts()', function() {
-        beforeEach(function() {
-            this.cost1 = jasmine.createSpyObj('cost1', ['pay']);
-            this.cost2 = jasmine.createSpyObj('cost1', ['pay']);
-            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-            this.action.cost = [this.cost1, this.cost2];
-            this.context = { context: 1 };
-        });
-
-        it('should call pay with the context object', function() {
-            this.action.payCosts(this.context);
-            expect(this.cost1.pay).toHaveBeenCalledWith(this.context);
-            expect(this.cost2.pay).toHaveBeenCalledWith(this.context);
-        });
-    });
-
     describe('executeHandler()', function() {
         beforeEach(function() {
             this.player = { player: true };

@@ -5,10 +5,7 @@ const Costs = {
     kneelSelf: function() {
         return {
             canPay: function(context) {
-                return {
-                    resolved: true,
-                    value: !context.source.kneeled
-                };
+                return !context.source.kneeled;
             },
             pay: function(context) {
                 context.source.controller.kneelCard(context.source);
@@ -21,10 +18,7 @@ const Costs = {
     kneelFactionCard: function() {
         return {
             canPay: function(context) {
-                return {
-                    resolved: true,
-                    value: !context.player.faction.kneeled
-                };
+                return !context.player.faction.kneeled;
             },
             pay: function(context) {
                 context.player.kneelCard(context.player.faction);
@@ -34,6 +28,9 @@ const Costs = {
     kneel: function(condition) {
         return {
             canPay: function(context) {
+                return context.player.cardsInPlay.any(condition);
+            },
+            resolve: function(context) {
                 var result = {
                     resolved: false
                 };

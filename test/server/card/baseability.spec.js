@@ -65,25 +65,89 @@ describe('BaseAbility', function () {
         });
     });
 
-    describe('checkIfCanPayCosts()', function() {
+    describe('canPayCosts()', function() {
         beforeEach(function() {
             this.cost1 = jasmine.createSpyObj('cost1', ['canPay']);
             this.cost2 = jasmine.createSpyObj('cost1', ['canPay']);
-            this.cost1.canPay.and.returnValue(1);
-            this.cost2.canPay.and.returnValue(2);
             this.ability = new BaseAbility(this.gameSpy, this.cardSpy, this.properties);
             this.ability.cost = [this.cost1, this.cost2];
             this.context = { context: 1 };
         });
 
-        it('should call canPay with the context object', function() {
-            this.ability.checkIfCanPayCosts(this.context);
-            expect(this.cost1.canPay).toHaveBeenCalledWith(this.context);
-            expect(this.cost2.canPay).toHaveBeenCalledWith(this.context);
+        describe('when all costs can be paid', function() {
+            beforeEach(function() {
+                this.cost1.canPay.and.returnValue(true);
+                this.cost2.canPay.and.returnValue(true);
+            });
+
+            it('should call canPay with the context object', function() {
+                this.ability.canPayCosts(this.context);
+                expect(this.cost1.canPay).toHaveBeenCalledWith(this.context);
+                expect(this.cost2.canPay).toHaveBeenCalledWith(this.context);
+            });
+
+            it('should return true', function() {
+                expect(this.ability.canPayCosts(this.context)).toBe(true);
+            });
         });
 
-        it('should return the results of the canPay method for all costs', function() {
-            expect(this.ability.checkIfCanPayCosts(this.context)).toEqual([1, 2]);
+        describe('when any cost cannot be paid', function() {
+            beforeEach(function() {
+                this.cost1.canPay.and.returnValue(true);
+                this.cost2.canPay.and.returnValue(false);
+            });
+
+            it('should return false', function() {
+                expect(this.ability.canPayCosts(this.context)).toBe(false);
+            });
+        });
+    });
+
+    describe('resolveCosts()', function() {
+        beforeEach(function() {
+            this.noResolveCost = jasmine.createSpyObj('cost1', ['canPay']);
+            this.resolveCost = jasmine.createSpyObj('cost2', ['canPay', 'resolve']);
+            this.ability = new BaseAbility(this.gameSpy, this.cardSpy, this.properties);
+
+            this.context = { context: 1 };
+        });
+
+        describe('when the cost does not have a resolve method', function() {
+            beforeEach(function() {
+                this.ability.cost = [this.noResolveCost];
+                this.noResolveCost.canPay.and.returnValue('value1');
+
+                this.results = this.ability.resolveCosts(this.context);
+            });
+
+            it('should call canPay on the cost', function() {
+                expect(this.noResolveCost.canPay).toHaveBeenCalledWith(this.context);
+            });
+
+            it('should return the cost in resolved format', function() {
+                expect(this.results).toEqual([{ resolved: true, value: 'value1' }]);
+            });
+        });
+
+        describe('when the cost has a resolve method', function() {
+            beforeEach(function() {
+                this.ability.cost = [this.resolveCost];
+                this.resolveCost.resolve.and.returnValue({ resolved: false });
+
+                this.results = this.ability.resolveCosts(this.context);
+            });
+
+            it('should not call canPay on the cost', function() {
+                expect(this.resolveCost.canPay).not.toHaveBeenCalled();
+            });
+
+            it('should call resolve on the cost', function() {
+                expect(this.resolveCost.resolve).toHaveBeenCalledWith(this.context);
+            });
+
+            it('should return the result of resolve', function() {
+                expect(this.results).toEqual([{ resolved: false }]);
+            });
         });
     });
 

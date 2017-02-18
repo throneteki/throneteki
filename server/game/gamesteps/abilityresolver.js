@@ -12,8 +12,8 @@ class AbilityResolver extends BaseStep {
         this.context = context;
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
-            new SimpleStep(game, () => this.checkIfCanPayCosts()),
-            new SimpleStep(game, () => this.canPayCosts()),
+            new SimpleStep(game, () => this.resolveCosts()),
+            new SimpleStep(game, () => this.waitForCostResolution()),
             new SimpleStep(game, () => this.payCosts()),
             new SimpleStep(game, () => this.executeHandler())
         ]);
@@ -43,11 +43,11 @@ class AbilityResolver extends BaseStep {
         return this.pipeline.continue();
     }
 
-    checkIfCanPayCosts() {
-        this.canPayResults = this.ability.checkIfCanPayCosts(this.context);
+    resolveCosts() {
+        this.canPayResults = this.ability.resolveCosts(this.context);
     }
 
-    canPayCosts() {
+    waitForCostResolution() {
         this.cancelled = _.any(this.canPayResults, result => result.resolved && !result.value);
 
         if(!_.all(this.canPayResults, result => result.resolved)) {

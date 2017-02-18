@@ -6,7 +6,7 @@ const AbilityResolver = require('../../../server/game/gamesteps/abilityresolver.
 describe('AbilityResolver', function() {
     beforeEach(function() {
         this.game = jasmine.createSpyObj('game', ['']);
-        this.ability = jasmine.createSpyObj('ability', ['checkIfCanPayCosts', 'payCosts', 'executeHandler']);
+        this.ability = jasmine.createSpyObj('ability', ['resolveCosts', 'payCosts', 'executeHandler']);
         this.context = { foo: 'bar' };
         this.resolver = new AbilityResolver(this.game, this.ability, this.context);
     });
@@ -14,7 +14,7 @@ describe('AbilityResolver', function() {
     describe('continue()', function() {
         describe('when all costs can be paid', function() {
             beforeEach(function() {
-                this.ability.checkIfCanPayCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
+                this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
                 this.resolver.continue();
             });
 
@@ -29,7 +29,7 @@ describe('AbilityResolver', function() {
 
         describe('when not all costs can be paid', function() {
             beforeEach(function() {
-                this.ability.checkIfCanPayCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: false }]);
+                this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: false }]);
                 this.resolver.continue();
             });
 
@@ -45,7 +45,7 @@ describe('AbilityResolver', function() {
         describe('when a cost cannot be immediately resolved', function() {
             beforeEach(function() {
                 this.canPayResult = { resolved: false };
-                this.ability.checkIfCanPayCosts.and.returnValue([this.canPayResult]);
+                this.ability.resolveCosts.and.returnValue([this.canPayResult]);
                 this.resolver.continue();
             });
 

@@ -25,8 +25,18 @@ class BaseAbility {
         this.game.queueStep(new AbilityResolver(this.game, this, context));
     }
 
-    checkIfCanPayCosts(context) {
-        return _.map(this.cost, cost => cost.canPay(context));
+    canPayCosts(context) {
+        return _.all(this.cost, cost => cost.canPay(context));
+    }
+
+    resolveCosts(context) {
+        return _.map(this.cost, cost => {
+            if(cost.resolve) {
+                return cost.resolve(context);
+            }
+
+            return { resolved: true, value: cost.canPay(context) };
+        });
     }
 
     payCosts(context) {
