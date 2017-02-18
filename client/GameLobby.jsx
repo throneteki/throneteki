@@ -38,7 +38,7 @@ class InnerGameLobby extends React.Component {
                     {this.props.games.length === 0 ? <h4>No games are currently in progress</h4> : <GameList games={this.props.games} />}
                 </div>
                 <div className='col-sm-6'>
-                    {this.props.newGame ? <NewGame defaultGameName={this.props.username + '\'s game'} /> : null}
+                    {(!this.props.currentGame && this.props.newGame) ? <NewGame defaultGameName={this.props.username + '\'s game'} /> : null}
                     {this.props.currentGame ? <PendingGame /> : null}
                 </div>
             </div>);

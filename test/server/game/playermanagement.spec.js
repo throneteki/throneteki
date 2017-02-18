@@ -6,7 +6,7 @@ const Game = require('../../../server/game/game.js');
 describe('Game', function() {
     beforeEach(function() {
         this.gameRepository = jasmine.createSpyObj('gameRepository', ['save']);
-        this.game = new Game('1', { spectators: true }, { gameRepository: this.gameRepository });
+        this.game = new Game({ spectators: true }, { gameRepository: this.gameRepository });
     });
 
     describe('join()', function() {

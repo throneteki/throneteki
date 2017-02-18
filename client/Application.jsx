@@ -80,10 +80,6 @@ class App extends React.Component {
             this.props.receiveNewGame(game);
         });
 
-        socket.on('joingame', game => {
-            this.props.receiveJoinGame(game);
-        });
-
         socket.on('gamestate', game => {
             this.props.receiveGameState(game, this.props.username);
         });
@@ -94,6 +90,24 @@ class App extends React.Component {
 
         socket.on('lobbymessages', messages => {
             this.props.receiveLobbyMessages(messages);
+        });
+
+        socket.on('handoff', server => {
+            var gameSocket = io.connect('http://' + server.address + ':' + server.port, {
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax : 5000,
+                reconnectionAttempts: Infinity,
+                query: 'token=' + this.props.token
+            });
+
+            gameSocket.on('connect', () => {
+                this.props.gameSocketConnected(gameSocket);
+            });
+
+            gameSocket.on('gamestate', game => {
+                this.props.receiveGameState(game, this.props.username);
+            });
         });
     }
 
@@ -185,6 +199,7 @@ App.propTypes = {
     currentGame: React.PropTypes.object,
     fetchCards: React.PropTypes.func,
     fetchPacks: React.PropTypes.func,
+    gameSocketConnected: React.PropTypes.func,    
     games: React.PropTypes.array,
     loggedIn: React.PropTypes.bool,
     navigate: React.PropTypes.func,
