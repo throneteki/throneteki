@@ -25,6 +25,10 @@ const Costs = {
             }
         };
     },
+    /**
+     * Cost that requires kneeling a card that matches the passed condition
+     * predicate function.
+     */
     kneel: function(condition) {
         return {
             canPay: function(context) {
@@ -56,6 +60,19 @@ const Costs = {
             },
             pay: function(context) {
                 context.player.kneelCard(context.kneelingCostCard);
+            }
+        };
+    },
+    /**
+     * Cost that will sacrifice the card that initiated the ability.
+     */
+    sacrificeSelf: function() {
+        return {
+            canPay: function() {
+                return true;
+            },
+            pay: function(context) {
+                context.source.controller.sacrificeCard(context.source);
             }
         };
     }
