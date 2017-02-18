@@ -19,7 +19,7 @@ export class InnerPlayerStats extends React.Component {
     render() {
         var playerAvatar = this.props.user ? (
                     <div className='player-avatar' key={this.props.user.id}>
-                        <Avatar emailHash={this.props.user.emailHash} /><b>{this.props.user.username}</b> {this.props.first}
+                        <Avatar emailHash={this.props.user.emailHash} /><b>{this.props.user.username}</b>
                     </div>) : null;
 
         return (
