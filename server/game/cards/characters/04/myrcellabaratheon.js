@@ -5,7 +5,7 @@ class MyrcellaBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                !this.getKingsInPlay() &&
+                this.areNoKingsInPlay() &&
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'power'),
             match: this,
@@ -13,21 +13,16 @@ class MyrcellaBaratheon extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => !this.getKingsInPlay(),
+            condition: () => this.areNoKingsInPlay(),
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });
     }
 
-    getKingsInPlay() {
-        var cards = _.each(this.game.getPlayers(), player => {
-            player.cardsInPlay.filter(card => {
-                card.getType() === 'character' && 
-                card.hasTrait('King');
-            });
+    areNoKingsInPlay() {
+        return !_.any(this.game.getPlayers(), player => {
+            return player.cardsInPlay.any(card => card.getType() === 'character' && card.hasTrait('King'));
         });
-
-        return cards;
     }
 }
 
