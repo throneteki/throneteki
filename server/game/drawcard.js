@@ -239,27 +239,20 @@ class DrawCard extends BaseCard {
     }
 
     canAddAsAttacker(challengeType) {
-        if(this.location !== 'play area' || this.stealth || this.kneeled && !this.challengeOptions.canBeDeclaredWhileKneeling) {
-            return false;
-        }
-
-        if(!this.hasIcon(challengeType) && !this.challengeOptions.canBeDeclaredWithoutIcon) {
-            return false;
-        }
-
-        return this.challengeOptions.allowAsAttacker;
+        return this.challengeOptions.allowAsAttacker && this.canAddAsParticipant(challengeType);
     }
 
     canAddAsDefender(challengeType) {
-        if(this.location !== 'play area' || this.stealth || this.kneeled && !this.challengeOptions.canBeDeclaredWhileKneeling) {
-            return false;
-        }
+        return this.challengeOptions.allowAsDefender && this.canAddAsParticipant(challengeType);
+    }
 
-        if(!this.hasIcon(challengeType) && !this.challengeOptions.canBeDeclaredWithoutIcon) {
-            return false;
-        }
-
-        return this.challengeOptions.allowAsDefender;
+    canAddAsParticipant(challengeType) {
+        return (
+            this.location === 'play area' &&
+            !this.stealth &&
+            (!this.kneeled || this.challengeOptions.canBeDeclaredWhileKneeling) &&
+            (this.hasIcon(challengeType) || this.challengeOptions.canBeDeclaredWithoutIcon)
+        );
     }
 
     getSummary(isActivePlayer, hideWhenFaceup) {
