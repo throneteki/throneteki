@@ -24,7 +24,7 @@ class AryaStark extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        card.controller.killCard(card);
+        card.controller.killCharacter(card);
         this.game.addMessage('{0} sacrifices {1} to kill {2}', player, this, card);
 
         return true;
