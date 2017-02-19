@@ -1,13 +1,14 @@
 const DrawCard = require('../../../drawcard.js');
 
 class AryaStark extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCharacterKilled: (event, player, card) => (
                     this.controller === card.controller &&
                     card.getFaction() === this.getFaction())
             },
+            cost: ability.costs.sacrificeSelf(),
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => (
@@ -23,7 +24,6 @@ class AryaStark extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        this.controller.sacrificeCard(this);
         card.controller.killCard(card);
         this.game.addMessage('{0} sacrifices {1} to kill {2}', player, this, card);
 
