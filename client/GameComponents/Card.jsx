@@ -277,7 +277,7 @@ class Card extends React.Component {
                         draggable>
                         <div>
                             <span className='card-name'>{this.props.card.name}</span>
-                            <img className={imageClass} src={'/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
+                            <img className={imageClass} src={user.params.image_path + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
                         </div>
                         {this.getCounters()}
                     </div>

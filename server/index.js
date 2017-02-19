@@ -104,8 +104,21 @@ passport.deserializeUser(function(id, done) {
                     }
                 });
         }
+        
+        if(!user.emailHash) {
+            user.emailHash = {};
+        }
 
-        done(err, { username: user.username, email: user.email, emailHash: user.emailHash, _id: user._id });
+        if(!user.params) {
+            user.params = {};
+        }
+
+        if ( user.params.image_path == null || user.params.image_path.length == '')
+        {
+            user.params.image_path = '/img/cards/';
+        }
+
+        done(err, { username: user.username, email: user.email, emailHash: user.emailHash, _id: user._id, params: user.params });
     });
 });
 

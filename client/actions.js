@@ -37,6 +37,12 @@ export function logout() {
     };
 }
 
+export function params() {
+    return {
+        type: 'SET_PARAMS'
+    };
+}
+
 export function requestCards() {
     return {
         type: 'REQUEST_CARDS'
