@@ -239,11 +239,11 @@ class DrawCard extends BaseCard {
     }
 
     canAddAsAttacker(challengeType) {
-        if(this.location !== 'play area' || this.stealth || this.kneeled) {
+        if(this.location !== 'play area' || this.stealth || this.kneeled && !this.challengeOptions.canBeDeclaredWhileKneeling) {
             return false;
         }
 
-        if(!this.hasIcon(challengeType)) {
+        if(!this.hasIcon(challengeType) && !this.challengeOptions.canBeDeclaredWithoutIcon) {
             return false;
         }
 
@@ -251,11 +251,11 @@ class DrawCard extends BaseCard {
     }
 
     canAddAsDefender(challengeType) {
-        if(this.location !== 'play area' || this.stealth || this.kneeled) {
+        if(this.location !== 'play area' || this.stealth || this.kneeled && !this.challengeOptions.canBeDeclaredWhileKneeling) {
             return false;
         }
 
-        if(!this.hasIcon(challengeType)) {
+        if(!this.hasIcon(challengeType) && !this.challengeOptions.canBeDeclaredWithoutIcon) {
             return false;
         }
 
