@@ -105,7 +105,20 @@ passport.deserializeUser(function(id, done) {
                 });
         }
 
-        done(err, { username: user.username, email: user.email, emailHash: user.emailHash, _id: user._id });
+		if(!user.emailHash) {
+            user.emailHash = {};
+        }
+
+		if(!user.settings) {
+            user.settings = {};
+        }
+
+        if ( user.settings.userBackground == null || user.settings.userBackground == '')
+        {
+            user.settings.userBackground = '';
+        }
+
+        done(err, { username: user.username, email: user.email, emailHash: user.emailHash, _id: user._id, settings: user.settings });
     });
 });
 

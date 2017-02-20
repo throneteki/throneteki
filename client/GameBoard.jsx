@@ -303,8 +303,19 @@ export class InnerGameBoard extends React.Component {
         for(i = otherPlayerCards.length; i < 2; i++) {
             thisPlayerCards.push(<div className='card-row' key={'other-empty' + i} />);
         }
+		var userBg = user.settings.userBackground != '' ? user.settings.userBackground : 'none.png';
+		var styleBackground = {
+			position: 'absolute',
+			bottom: '0',
+			left: '0',
+			right: '0',
+			top: '55px',
+			background: 'url(/img/' + userBg + ') no-repeat center fixed', 
+			backgroundSize: 'cover'
+		};
 
         return (
+			<div style={styleBackground}>
             <div className='game-board'>
                 <div className='main-window'>
                     <div className='left-side'>
@@ -424,7 +435,8 @@ export class InnerGameBoard extends React.Component {
                         </form>
                     </div>
                 </div>
-            </div>);
+            </div>
+			</div>);
     }
 }
 

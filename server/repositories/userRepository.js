@@ -15,6 +15,10 @@ class UserRepository {
         return users.insert(user);
     }
 
+	setSettings(user, settings) {
+        return users.update({ username: user.username }, { '$set': { settings: settings } });
+    }
+
     setResetToken(user, token, tokenExpiration) {
         return users.update({ username: user.username }, { '$set': { resetToken: token, tokenExpires: tokenExpiration } });
     }
