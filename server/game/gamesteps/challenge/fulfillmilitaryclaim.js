@@ -35,6 +35,16 @@ class FulfillMilitaryClaim extends BaseStep {
             return false;
         }
 
+        var targets = '';
+        for (var i = 1; i <= cards.length; i++) {
+            if(i == 1) {
+                targets += '{' + i + '}';
+            } else {
+                targets += ((cards.length > 2) ? ',' : '' ) + ((i == cards.length) ? ' and' : '') + ' {' + i + '}';
+            }
+        }
+        this.game.addMessage('{0} chooses ' + targets + ' for claim', this.player, ...cards);
+
         _.each(cards, card => {
             card.controller.killCharacter(card);
         });
