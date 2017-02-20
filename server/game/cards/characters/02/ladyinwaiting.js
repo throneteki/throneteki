@@ -23,7 +23,7 @@ class LadyInWaiting extends DrawCard {
     onCardSelected(player, card) {
         this.controller.removeCardFromPile(this);
         card.addDuplicate(this);
-        this.controller.gold +=2;
+        this.controller.gold += 2;
         this.game.addMessage('{0} places {1} on {2} as a duplicate', this.controller, this, card);
         return true;
     }
