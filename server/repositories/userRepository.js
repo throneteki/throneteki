@@ -15,7 +15,7 @@ class UserRepository {
         return users.insert(user);
     }
 
-	setSettings(user, settings) {
+    setSettings(user, settings) {
         return users.update({ username: user.username }, { '$set': { settings: settings } });
     }
 
