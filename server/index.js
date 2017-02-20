@@ -105,11 +105,11 @@ passport.deserializeUser(function(id, done) {
                 });
         }
 
-	if(!user.emailHash) {
+        if(!user.emailHash) {
             user.emailHash = {};
         }
 
-	if(!user.settings) {
+        if(!user.settings) {
             user.settings = {};
         }
 
