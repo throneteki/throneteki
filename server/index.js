@@ -105,15 +105,15 @@ passport.deserializeUser(function(id, done) {
                 });
         }
 
-		if(!user.emailHash) {
+	if(!user.emailHash) {
             user.emailHash = {};
         }
 
-		if(!user.settings) {
+	if(!user.settings) {
             user.settings = {};
         }
 
-        if ( user.settings.userBackground == null || user.settings.userBackground == '')
+        if(user.settings.userBackground == null || user.settings.userBackground == '')
         {
             user.settings.userBackground = '';
         }
