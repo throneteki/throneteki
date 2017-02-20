@@ -16,7 +16,7 @@ class SerKevanLannister extends DrawCard {
                         (card.getFaction() === this.getFaction() || card.getFaction() === 'neutral') &&
                         (card.getType() === 'location' || card.getType() === 'attachment')),
                     onSelect: (player, card) => {
-                        player.moveCard(card, 'play area');
+                        player.playCard(card, true);
                         this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, card);
 
                         return true;
