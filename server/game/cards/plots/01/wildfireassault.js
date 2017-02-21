@@ -29,19 +29,14 @@ class WildfireAssault extends PlotCard {
             var player = selection.player;
             var toKill = _.difference(player.cardsInPlay.filter(card => card.getType() === 'character'), selection.cards);
 
-            var params = '';
-            var paramIndex = 2;
-
             _.each(toKill, card => {
                 player.killCharacter(card, false);
-
-                params += '{' + paramIndex++ + '} ';
             });
 
             if(_.isEmpty(toKill)) {
                 this.game.addMessage('{0} does not kill any characters with {1}', player, this);
             } else {
-                this.game.addMessage('{0} uses {1} to kill ' + params, player, this, ...toKill);
+                this.game.addMessage('{0} uses {1} to kill {2}', player, this, toKill);
             }
         });
 
