@@ -52,6 +52,9 @@ class BaseCard {
         this.parseKeywords(cardData.text || '');
         this.parseTraits(cardData.traits || '');
         this.setupCardAbilities(AbilityDsl);
+
+        this.factions = {};
+        this.factions[cardData.faction_code] = 1;
     }
 
     parseKeywords(text) {
@@ -247,6 +250,10 @@ class BaseCard {
         return !!this.traits[trait.toLowerCase()];
     }
 
+    isFaction(faction) {
+        return !!this.factions[faction.toLowerCase()];
+    }
+
     play() {
         _.each(this.abilities.persistentEffects, effect => {
             this.game.addEffect(this, effect);
@@ -295,10 +302,6 @@ class BaseCard {
         return false;
     }
 
-    getFaction() {
-        return this.cardData.faction_code;
-    }
-
     getMenu() {
         var menu = [];
 
@@ -322,6 +325,10 @@ class BaseCard {
 
     getType() {
         return this.cardData.type_code;
+    }
+
+    getPrintedFaction() {
+        return this.cardDate.faction_code;
     }
 
     reduce(card, cost) {
@@ -361,6 +368,12 @@ class BaseCard {
         }
     }
 
+    addFaction(faction) {
+        var lowerCaseFaction = faction.toLowerCase();
+        this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
+        this.factions[lowerCaseFaction]++;        
+    }
+
     removeKeyword(keyword) {
         var lowerCaseKeyword = keyword.toLowerCase();
         this.keywords[lowerCaseKeyword] = this.keywords[lowerCaseKeyword] || 0;
@@ -369,6 +382,10 @@ class BaseCard {
 
     removeTrait(trait) {
         this.traits[trait.toLowerCase()]--;
+    }
+
+    removeFaction(faction) {
+        this.factions[faction.toLowerCase()]--;
     }
 
     clearBlank() {
