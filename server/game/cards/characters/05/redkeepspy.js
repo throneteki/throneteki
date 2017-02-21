@@ -4,21 +4,13 @@ class RedKeepSpy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event, card) => {
-                    return this.wasAmbush && this === card;
-                }
+                onCardEntersPlay: (event, card) => (
+                    this.wasAmbush && 
+                    this === card &&
+                    this.hasMoreCardsInHand()
+                )
             },
             handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                if(!otherPlayer) {
-                    return;
-                }
-
-                if(this.controller.hand.size() <= otherPlayer.hand.size()) {
-                    return;
-                }
-
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a character',
                     waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
@@ -36,6 +28,20 @@ class RedKeepSpy extends DrawCard {
                 });
             }
         });
+    }
+    
+    hasMoreCardsInHand() {
+        var otherPlayer = this.game.getOtherPlayer(this.controller);
+
+        if(!otherPlayer) {
+            return false;
+        }
+
+        if(this.controller.hand.size() <= otherPlayer.hand.size()) {
+            return false;
+        }
+
+        return true;
     }
 }
 
