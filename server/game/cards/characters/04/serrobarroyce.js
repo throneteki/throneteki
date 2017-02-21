@@ -11,7 +11,7 @@ class SerRobarRoyce extends DrawCard {
             limit: ability.limit.perPhase(1),
             handler: () => {
                 this.modifyPower(1),
-                this.game.addMessage('{0} uses {1} gain a power on {1}', this.controller, this);
+                this.game.addMessage('{0} uses {1} to gain a power on {1}', this.controller, this);
             }
         });
 
