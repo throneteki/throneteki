@@ -369,6 +369,10 @@ class BaseCard {
     }
 
     addFaction(faction) {
+        if(!faction) {
+            return;
+        }
+
         var lowerCaseFaction = faction.toLowerCase();
         this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
         this.factions[lowerCaseFaction]++;
