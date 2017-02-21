@@ -24,6 +24,7 @@ class GrowingStrong extends DrawCard {
             onCancel: (player) => this.cancelSelection(player)
         });
     }
+    
     onSelect(player, cards) {
         _.each(cards, card => 
             card.untilEndOfChallenge(ability => ({
