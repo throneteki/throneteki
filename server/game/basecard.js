@@ -54,7 +54,7 @@ class BaseCard {
         this.setupCardAbilities(AbilityDsl);
 
         this.factions = {};
-        this.factions[cardData.faction_code] = 1;
+        this.addFaction(cardData.faction);
     }
 
     parseKeywords(text) {
@@ -328,7 +328,7 @@ class BaseCard {
     }
 
     getPrintedFaction() {
-        return this.cardDate.faction_code;
+        return this.cardData.faction_code;
     }
 
     reduce(card, cost) {
@@ -371,7 +371,7 @@ class BaseCard {
     addFaction(faction) {
         var lowerCaseFaction = faction.toLowerCase();
         this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
-        this.factions[lowerCaseFaction]++;        
+        this.factions[lowerCaseFaction]++;
     }
 
     removeKeyword(keyword) {
