@@ -37,11 +37,7 @@ class RedKeepSpy extends DrawCard {
             return false;
         }
 
-        if(this.controller.hand.size() <= otherPlayer.hand.size()) {
-            return false;
-        }
-
-        return true;
+        return this.controller.hand.size() > otherPlayer.hand.size();
     }
 }
 
