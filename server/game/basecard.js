@@ -54,7 +54,7 @@ class BaseCard {
         this.setupCardAbilities(AbilityDsl);
 
         this.factions = {};
-        this.addFaction(cardData.faction);
+        this.addFaction(cardData.faction_code);
     }
 
     parseKeywords(text) {
