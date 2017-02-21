@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const ChallengeEvent = require('../../challengeevent.js');
 
 class ThereIsMyClaim extends ChallengeEvent {
