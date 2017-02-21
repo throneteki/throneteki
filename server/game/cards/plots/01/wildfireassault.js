@@ -14,6 +14,11 @@ class WildfireAssault extends PlotCard {
     }
 
     onSelect(player, cards) {
+        if(_.isEmpty(cards)) {
+            this.game.addMessage('{0} does not choose any characters to save from {1}', player, this);
+        } else {
+            this.game.addMessage('{0} chooses to save {1} from {2}', player, cards, this);
+        }
         this.selections.push({ player: player, cards: cards });
         this.proceedToNextStep();
         return true;
