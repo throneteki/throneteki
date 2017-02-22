@@ -10,7 +10,7 @@ class StannisBaratheon extends DrawCard {
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         });
-
+/*
         this.reaction({
             when: {
                 onDominanceDetermined: (event, winner) => this.controller === winner
@@ -28,7 +28,7 @@ class StannisBaratheon extends DrawCard {
                     }
                 });
             }
-        });
+        }); */
     }
 }
 
