@@ -73,6 +73,8 @@ class GameChat {
 
         if(array.length === 1) {
             format = '{0}';
+        } else if(array.length === 2) {
+            format = '{0} and {1}';
         } else {
             var range = _.map(_.range(array.length - 1), i => '{' + i + '}');
             format = range.join(', ') + ', and {' + (array.length - 1) + '}';

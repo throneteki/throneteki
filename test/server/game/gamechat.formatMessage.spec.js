@@ -75,6 +75,20 @@ describe('GameChat', function() {
                     });
                 });
 
+                describe('and it is a pair entry array', function() {
+                    beforeEach(function() {
+                        this.args = [
+                            'foo',
+                            ['bar', 'baz']
+                        ];
+                    });
+
+                    it('should return a sub-message with no commas', function() {
+                        var message = this.chat.formatMessage('Hello {0} world {1}', this.args);
+                        expect(message[3]).toEqual({ message: ['', 'bar', ' and ', 'baz', ''] });
+                    });
+                });
+
                 describe('and it is a multiple entry array', function() {
                     beforeEach(function() {
                         this.args = [
