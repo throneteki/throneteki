@@ -12,13 +12,12 @@ class GrowingStrong extends DrawCard {
     }
 
     play() {
-        this.waitingPrompt = 'Waiting for opponent to use ' + this.name;
         this.game.promptForSelect(this.controller, {
             numCards: 3,
             activePromptTitle: 'Select Tyrell characters to buff',
             waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
             cardCondition: card => {
-                return card.getFaction() === this.getFaction() && card.getType() === 'character';
+                return card.isFaction('tyrell') && card.getType() === 'character';
             },
             onSelect: (player, cards) => this.onSelect(player, cards)
         });
