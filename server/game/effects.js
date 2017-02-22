@@ -202,6 +202,16 @@ const Effects = {
             }
         };
     },
+    addFaction: function(faction) {
+        return {
+            apply: function(card) {
+                card.addFaction(faction);
+            },
+            unapply: function(card) {
+                card.removeFaction(faction);
+            }
+        };
+    },
     killByStrength: {
         apply: function(card, context) {
             if(card.getStrength() <= 0) {
@@ -305,6 +315,16 @@ const Effects = {
                     card.controller.returnCardToHand(card, allowSave);
                     context.game.addMessage('{0} returns {1} to hand at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
+            }
+        };
+    },
+    doesNotContributeToDominance: function() {
+        return {
+            apply: function(card) {
+                card.contributesToDominance = false;
+            },
+            unapply: function(card) {
+                card.contributesToDominance = true;
             }
         };
     },
