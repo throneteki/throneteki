@@ -4,7 +4,7 @@ class EuronCrowsEye extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: (event, challenge, card, discarded) => challenge.winner === this.controller && card === this
+                onPillage: (event, challenge, card) => challenge.winner === this.controller && card === this
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
