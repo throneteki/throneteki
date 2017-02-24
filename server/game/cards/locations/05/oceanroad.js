@@ -2,8 +2,8 @@ const Reducer = require('../../reducer.js').Reducer;
 
 class OceanRoad extends Reducer {
     constructor(owner, cardData) {
-        super(owner, cardData, 1, (player, card) => {
-            return card.isFaction('neutral') || card.isFaction(this.controller.faction.getPrintedFaction());
+        super(owner, cardData, 1, (card) => {
+            return card.isFaction('neutral') || !card.isFaction(this.controller.faction.getPrintedFaction());
         });
     }
 
