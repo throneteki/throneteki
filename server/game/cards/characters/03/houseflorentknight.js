@@ -5,7 +5,7 @@ class HouseFlorentKnight extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: (event, card) => card===this
+                onCardEntersPlay: (event, card) => card === this
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
