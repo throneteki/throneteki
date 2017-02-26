@@ -927,11 +927,7 @@ class Player extends Spectator {
             this.game.raiseEvent('onCardLeftPlay', this, card);
         }
 
-        if(!options.isDupe) {
-            card.moveTo(targetLocation);
-        } else {
-            card.location = 'dupe';
-        }
+        card.moveTo(targetLocation);
 
         if(targetLocation === 'active plot') {
             this.activePlot = card;
