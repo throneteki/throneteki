@@ -378,7 +378,7 @@ class Player extends Spectator {
             return false;
         }
 
-        if(this.limitedPlayed >= this.maxLimited && card.isLimited() && !dupe) {
+        if(this.limitedPlayed >= this.maxLimited && card.isLimited()) {
             return false;
         }
 

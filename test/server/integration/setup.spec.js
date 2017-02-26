@@ -3,6 +3,35 @@
 
 describe('setup phase', function() {
     integration(function() {
+        describe('when a card is limited', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('tyrell', ['The Roseroad', 'The Arbor', 'The Arbor']);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.roseroad = this.player1.findCardByName('The Roseroad');
+                [this.arbor1, this.arbor2] = this.player1.filterCardsByName('The Arbor');
+            });
+
+            it('should not allow more than one limited location to be placed', function() {
+                this.player1.clickCard(this.roseroad);
+                this.player1.clickCard(this.arbor1);
+
+                expect(this.roseroad.location).toBe('play area');
+                expect(this.arbor1.location).toBe('hand');
+            });
+
+            it('should not allow duplicates of a single limited location to be placed', function() {
+                this.player1.clickCard(this.arbor1);
+                this.player1.clickCard(this.arbor2);
+
+                expect(this.arbor1.location).toBe('play area');
+                expect(this.arbor2.location).toBe('hand');
+            });
+        });
+
         describe('when attachments are put out in the setup phase', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('baratheon', ['Red God\'s Blessing', 'Dragonstone Faithful']);
