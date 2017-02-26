@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 
+const {matchCardByNameAndPack} = require('./cardutil.js');
+
 const PathToSubModulePacks = path.join(__dirname, '../../thronesdb-json-data/pack');
 
 class DeckBuilder {
@@ -52,15 +54,7 @@ class DeckBuilder {
             return this.cards[codeOrLabelOrName];
         }
 
-        var name = codeOrLabelOrName;
-        var pack;
-        var match = codeOrLabelOrName.match(/^(.*)\s\((.*)\)$/);
-        if(match) {
-            name = match[1];
-            pack = match[2];
-        }
-
-        var cardsByName = _.filter(this.cards, card => card.name === name && (!pack || card.pack_code === pack));
+        var cardsByName = _.filter(this.cards, matchCardByNameAndPack(codeOrLabelOrName));
 
         if(cardsByName.length === 0) {
             throw new Error(`Unable to find any card matching ${codeOrLabelOrName}`);
