@@ -37,7 +37,7 @@ var customMatchers = {
 
 beforeEach(function() {
     jasmine.addMatchers(customMatchers);
-})
+});
 
 global.integration = function(definitions) {
     describe('integration', function() {

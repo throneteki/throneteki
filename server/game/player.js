@@ -352,6 +352,10 @@ class Player extends Spectator {
             return false;
         }
 
+        if(card.getType() === 'event' && this.phase === 'setup') {
+            return false;
+        }
+
         if(this.phase !== 'setup' && this.phase !== 'marshal' && card.getType() !== 'event') {
             if(this.phase !== 'challenge' || !card.isAmbush()) {
                 return false;

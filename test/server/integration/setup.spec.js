@@ -3,6 +3,79 @@
 
 describe('setup phase', function() {
     integration(function() {
+        describe('setting up normal cards', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', ['Arya Stark (Core)', 'Eddard Stark (Core)', 'Eddard Stark (Core)', 'Eddard Stark (WotN)', 'The Roseroad', 'Hear Me Roar!']);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.arya = this.player1.findCardByName('Arya Stark (Core)');
+                [this.ned1, this.ned2] = this.player1.filterCardsByName('Eddard Stark (Core)');
+                this.wotnNed = this.player1.findCardByName('Eddard Stark (WotN)');
+                this.roseroad = this.player1.findCardByName('The Roseroad');
+                this.hearMeRoar = this.player1.findCardByName('Hear Me Roar!');
+            });
+
+            it('should only allow placement of 8 gold worth of cards', function() {
+                this.player1.clickCard(this.roseroad);
+                this.player1.clickCard(this.ned1);
+                this.player1.clickCard(this.arya);
+
+
+                expect(this.roseroad.location).toBe('play area');
+                expect(this.ned1.location).toBe('play area');
+                expect(this.arya.location).toBe('hand');
+                expect(this.player1Object.gold).toBe(1);
+            });
+
+            it('should not trigger any enters play abilities', function() {
+                this.player1.clickCard(this.arya);
+                expect(this.player1).toHavePrompt('Select setup cards');
+
+                this.completeSetup();
+
+                expect(this.arya.dupes.size()).toBe(0);
+                expect(this.player1).toHavePrompt('Select a plot');
+            });
+
+            it('should not allow events to be played', function() {
+                this.player1.clickCard(this.hearMeRoar);
+
+                expect(this.player1Object.gold).toBe(8);
+                expect(this.hearMeRoar.location).toBe('hand');
+            });
+
+            describe('when setting up dupes', function() {
+                beforeEach(function() {
+                    this.player1.clickCard(this.ned1);
+                });
+
+                it('should the same card to be set up as a dupe for free', function() {
+                    this.player1.clickCard(this.ned2);
+
+                    expect(this.player1Object.gold).toBe(1);
+
+                    this.completeSetup();
+
+                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.ned1.dupes).toContain(this.ned2);
+                });
+
+                it('should a card with the same name to be set up as a dupe for free', function() {
+                    this.player1.clickCard(this.wotnNed);
+
+                    expect(this.player1Object.gold).toBe(1);
+
+                    this.completeSetup();
+
+                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.ned1.dupes).toContain(this.wotnNed);
+                });
+            });
+        });
+
         describe('when a card is limited', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('tyrell', ['The Roseroad', 'The Arbor', 'The Arbor']);
