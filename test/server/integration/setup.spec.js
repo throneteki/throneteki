@@ -52,7 +52,7 @@ describe('setup phase', function() {
                     this.player1.clickCard(this.ned1);
                 });
 
-                it('should the same card to be set up as a dupe for free', function() {
+                it('should allow the same card to be set up as a dupe for free', function() {
                     this.player1.clickCard(this.ned2);
 
                     expect(this.player1Object.gold).toBe(1);
@@ -63,7 +63,7 @@ describe('setup phase', function() {
                     expect(this.ned1.dupes).toContain(this.ned2);
                 });
 
-                it('should a card with the same name to be set up as a dupe for free', function() {
+                it('should allow a card with the same name to be set up as a dupe for free', function() {
                     this.player1.clickCard(this.wotnNed);
 
                     expect(this.player1Object.gold).toBe(1);
@@ -148,14 +148,16 @@ describe('setup phase', function() {
 
         describe('when dupes are put out in the setup phase', function() {
             beforeEach(function() {
-                const deck = this.buildDeck('thenightswatch', ['The Wall', 'The Wall', 'Steward at the Wall']);
+                const deck = this.buildDeck('thenightswatch', ['Sneak Attack', 'The Wall', 'The Wall', 'Steward at the Wall']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.keepStartingHands();
 
+                this.sneakAttack = this.player1.findCardByName('Sneak Attack');
                 [this.wall1, this.wall2] = this.player1.filterCardsByName('The Wall');
                 this.character = this.player1.findCardByName('Steward at the Wall');
+                this.opponentSneakAttack = this.player2.findCardByName('Sneak Attack');
 
                 this.player1.clickCard(this.wall1);
                 this.player1.clickCard(this.wall2);
@@ -175,6 +177,21 @@ describe('setup phase', function() {
 
                 expect(this.wall2.location).toBe('hand');
                 expect(this.player1Object.cardsInPlay).not.toContain(this.wall2);
+            });
+
+            it('should not double trigger reactions', function() {
+                this.completeSetup();
+                this.player1.selectPlot(this.sneakAttack);
+                this.player2.selectPlot(this.opponentSneakAttack);
+                this.selectFirstPlayer(this.player1);
+                this.completeMarshalPhase();
+                this.completeChallengesPhase();
+
+                expect(this.player1).toHavePrompt('Trigger The Wall?');
+
+                this.player1.clickPrompt('No');
+
+                expect(this.player1).not.toHavePrompt('Trigger The Wall?');
             });
         });
     });
