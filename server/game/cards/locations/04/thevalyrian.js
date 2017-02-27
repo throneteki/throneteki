@@ -19,6 +19,8 @@ class TheValyrian extends DrawCard {
                             match: card,
                             effect: ability.effects.modifyStrength(boost)
                         }));
+
+                        return true;
                     }
                 });
             }
