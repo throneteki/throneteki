@@ -16,7 +16,7 @@ class Harrenhal extends DrawCard {
                     activePromptTitle: 'Select a character',
                     source: this,
                     onSelect: (player, card) => {
-                        player.playCard(card, 'play area');
+                        player.playCard(card, true);
 
                         this.atEndOfPhase(ability => ({
                             match: card,
