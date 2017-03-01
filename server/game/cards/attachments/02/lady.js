@@ -53,6 +53,7 @@ class Lady extends DrawCard {
         } else {
             this.game.addMessage('{0} pays 1 gold to attach {1} from {2} to {3}', player, this, this.oldOwner, newOwner);
         }
+        this.oldOwner = null;
 
         return true;
     }
