@@ -56,20 +56,24 @@ class GameFlowWrapper {
     completeChallengesPhase() {
         this.guardCurrentPhase('challenge');
         // Pre challenge action window
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+        this.skipActionWindow();
         // Each player clicks 'Done' when challenge initiation prompt shows up.
         this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
     }
 
     completeDominancePhase() {
         this.guardCurrentPhase('dominance');
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+        this.skipActionWindow();
     }
 
     completeTaxationPhase() {
         this.guardCurrentPhase('taxation');
         // TODO: Discard down to reserve in case of tests that fill up the player's hand
         this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('End Round'));
+    }
+
+    skipActionWindow() {
+        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
     }
 
     getPromptedPlayer(title) {
