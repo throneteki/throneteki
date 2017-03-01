@@ -1,10 +1,6 @@
 const DrawCard = require('../../../drawcard.js');
 
 class Nymeria extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-        this.oldOwner = null;
-    }
 
     setupCardAbilities(ability) {
         this.whileAttached({

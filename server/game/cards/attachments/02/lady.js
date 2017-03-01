@@ -1,10 +1,6 @@
 const DrawCard = require('../../../drawcard.js');
 
 class Lady extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-        this.oldOwner = null;
-    }
 
     setupCardAbilities(ability) {
         this.whileAttached({
@@ -49,7 +45,7 @@ class Lady extends DrawCard {
         player.gold -= 1;
         if(newOwner.name === 'Sansa Stark' && newOwner.kneeled) {
             player.standCard(newOwner);
-            this.game.addMessage('{0} pays 1 gold to attach {1} from {2} to {3} and then stands {3}', player, this, this.oldOwner, newOwner)
+            this.game.addMessage('{0} pays 1 gold to attach {1} from {2} to {3} and then stands {3}', player, this, this.oldOwner, newOwner);
         } else {
             this.game.addMessage('{0} pays 1 gold to attach {1} from {2} to {3}', player, this, this.oldOwner, newOwner);
         }
