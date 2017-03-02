@@ -1,15 +1,15 @@
 const DrawCard = require('../../../drawcard.js');
 
 class StoneCrows extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (event, challenge) => (
                     challenge.winner === this.controller &&
                     challenge.isAttacking(this) &&
-                    challenge.defenders.length >= 1 &&
-                    this.tokens['gold'] >= 1)
+                    challenge.defenders.length >= 1)
             },
+            cost: ability.costs.discardGold(),
             handler: () => {
                 var otherPlayer = this.game.getOtherPlayer(this.controller);
                 this.game.promptForSelect(otherPlayer, {
