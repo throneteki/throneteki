@@ -19,7 +19,6 @@ class StoneCrows extends DrawCard {
                     activePromptTitle: 'Select character to kill',
                     source: this,
                     onSelect: (player, card) => {
-                        this.removeToken('gold', 1);
                         card.controller.killCharacter(card);
                         this.game.addMessage('{0} discards 1 gold from {1} to force {2} to kill {3}', this.controller, this, otherPlayer, card);
 
