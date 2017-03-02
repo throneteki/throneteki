@@ -10,7 +10,7 @@ const ProxiedGameFlowWrapperMethods = [
     'startGame', 'keepStartingHands', 'skipSetupPhase', 'selectFirstPlayer',
     'completeMarshalPhase', 'completeChallengesPhase', 'completeDominancePhase',
     'completeTaxationPhase', 'selectPlotOrder', 'completeSetup',
-    'skipActionWindow'
+    'skipActionWindow', 'unopposedChallenge'
 ];
 
 const deckBuilder = new DeckBuilder();

@@ -96,6 +96,22 @@ class GameFlowWrapper {
         var promptedPlayer = this.getPromptedPlayer('Select a player to resolve their plot effects');
         promptedPlayer.clickPrompt(player.name);
     }
+
+    unopposedChallenge(player, type, participant) {
+        var opponent = this.allPlayers.find(p => p !== player);
+
+        this.skipActionWindow();
+
+        player.clickPrompt(type);
+        player.clickCard(participant, 'play area');
+        player.clickPrompt('Done');
+
+        this.skipActionWindow();
+
+        opponent.clickPrompt('Done');
+
+        this.skipActionWindow();
+    }
 }
 
 module.exports = GameFlowWrapper;
