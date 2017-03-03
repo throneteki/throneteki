@@ -15,21 +15,23 @@ class Harrenhal extends DrawCard {
                         (card.isFaction('lannister') || card.hasTrait('House Bolton'))),
                     activePromptTitle: 'Select a character',
                     source: this,
-                    onSelect: (player, card) => {
-                        player.playCard(card, true);
-
-                        this.atEndOfPhase(ability => ({
-                            match: card,
-                            effect: ability.effects.killIfStillInPlay(false)
-                        }));
-
-                        this.game.addMessage('{0} kneels {1} to put {2} into play from their hand', player, this, card);
-
-                        return true;
-                    }
+                    onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }
         });
+    }
+
+    onCardSelected(player, card) {
+        player.putIntoPlay(card);
+
+        this.atEndOfPhase(ability => ({
+            match: card,
+            effect: ability.effects.killIfStillInPlay(false)
+        }));
+
+        this.game.addMessage('{0} kneels {1} to put {2} into play from their hand', player, this, card);
+
+        return true;        
     }
 }
 
