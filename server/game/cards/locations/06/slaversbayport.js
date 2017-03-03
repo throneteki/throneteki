@@ -6,7 +6,7 @@ class SlaversBayPort extends DrawCard {
             title: 'Kneel this card to gain gold',
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            handler: () => {
+            handler: context => {
                 var otherPlayer = this.game.getOtherPlayer(this.controller);
 
                 if(!otherPlayer) {
@@ -15,8 +15,8 @@ class SlaversBayPort extends DrawCard {
                     gold = otherPlayer.deadPile.size() >= 4 ? 2 : 1;
                 }
 
-                this.game.addGold(this.controller, gold);
-                this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
+                this.game.addGold(context.player, gold);
+                this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
         });
     }
