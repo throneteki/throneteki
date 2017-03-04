@@ -5,7 +5,7 @@ const _ = require('underscore');
 
 const Player = require('../../../server/game/player.js');
 
-fdescribe('Player', function () {
+describe('Player', function () {
 
     function createCardSpy(num, owner) {
         var spy = jasmine.createSpyObj('card', ['moveTo', 'removeDuplicate']);
