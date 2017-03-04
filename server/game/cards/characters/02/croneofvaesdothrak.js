@@ -5,16 +5,16 @@ class CroneOfVaesDothrak extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDiscarded: (event, player, card, allowSave, originalLocation) =>
-                    ((originalLocation === 'hand' || originalLocation === 'draw deck')
-                     && card.getType() === 'character'
-                     && player !== this.controller)
+                onCardDiscarded: (event, params) =>
+                    ((params.originalLocation === 'hand' || params.originalLocation === 'draw deck')
+                     && params.card.getType() === 'character'
+                     && params.player !== this.controller)
             },
             cost: ability.costs.kneel(card => (
                 card.getType() === 'character' && card.hasTrait('Dothraki')
             )),
             handler: (context) => {
-                var discardedCard = context.event.params[2];
+                var discardedCard = context.event.params[1].card;
                 var otherPlayer = this.game.getOtherPlayer(this.controller);
                 if(!otherPlayer) {
                     return true;

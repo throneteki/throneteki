@@ -525,6 +525,10 @@ class Game extends EventEmitter {
         this.pipeline.queueStep(step);
     }
 
+    queueSimpleStep(handler) {
+        this.pipeline.queueStep(new SimpleStep(this, handler));
+    }
+
     raiseEvent(eventName, ...params) {
         var handler = () => true;
 
