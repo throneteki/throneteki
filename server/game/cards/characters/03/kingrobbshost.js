@@ -9,7 +9,8 @@ class KingRobbsHost extends DrawCard {
                 afterChallenge: (event, challenge) => (
                     challenge.challengeType === 'military' &&
                     challenge.winner === this.controller &&
-                    challenge.isParticipating(this))
+                    challenge.isParticipating(this) &&
+                    challenge.loser.faction.power >= 1)
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
@@ -24,7 +25,13 @@ class KingRobbsHost extends DrawCard {
 
     onCardSelected(p, card) {
         var loser = this.game.currentChallenge.loser;
-        var power = this.anyPlotHasTrait('War') ? 2 : 1;
+
+        if(loser.faction.power >= 2) {
+            var power = this.anyPlotHasTrait('War') ? 2 : 1;
+        } else {
+            power = 1;
+        }
+
         loser.faction.power -= power;
         card.modifyPower(power);
 
