@@ -15,6 +15,8 @@ class JoffreyBaratheon extends DrawCard {
                 }
             },
             cost: [
+                //Todo: this kneel cost will currently prompt, even though there is only 1 option. 
+                //Add kneelSpecificCard() to costs.js
                 ability.costs.kneel(card => card === this.pendingCard),
                 ability.costs.kneelFactionCard()
             ],
