@@ -145,8 +145,6 @@ class Game extends EventEmitter {
         if(!player.playCard(card)) {
             return;
         }
-
-        this.raiseEvent('onCardPlayed', player, card);
     }
 
     processCardClicked(player, card) {
