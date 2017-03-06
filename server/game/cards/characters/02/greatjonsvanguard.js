@@ -8,7 +8,8 @@ class GreatjonsVanguard extends DrawCard {
             effect: [
                 ability.effects.modifyStrength(2),
                 ability.effects.addKeyword('Renown')
-            ]
+            ],
+            recalculateWhen: ['onUsedPlotsModified']
         });
     }
 }

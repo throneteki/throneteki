@@ -515,10 +515,10 @@ const Effects = {
             apply: function(player, context) {
                 context.dynamicUsedPlots = context.dynamicUsedPlots || {};
                 context.dynamicUsedPlots[player.name] = calculate(player, context) || 0;
-                player.usedPlotsModifier += context.dynamicUsedPlots[player.name];
+                player.modifyUsedPlots(context.dynamicUsedPlots[player.name]);
             },
             unapply: function(player, context) {
-                player.usedPlotsModifier -= context.dynamicUsedPlots[player.name];
+                player.modifyUsedPlots(-context.dynamicUsedPlots[player.name]);
                 delete context.dynamicUsedPlots[player.name];
             },
             isStateDependent: true
