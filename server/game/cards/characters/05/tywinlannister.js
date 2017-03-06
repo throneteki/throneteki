@@ -6,11 +6,11 @@ class TywinLannister extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCardsDiscarded: (event, params) => params.originalLocation === 'draw deck' && params.cards.length === 1
+                onCardsDiscarded: event => event.originalLocation === 'draw deck' && event.cards.length === 1
             },
             handler: context => {
-                this.paramsObj = context.event.params[1];
-                this.discardingPlayer = this.paramsObj.player;
+                this.eventObj = context.event;
+                this.discardingPlayer = this.eventObj.player;
 
                 var top2Cards = this.discardingPlayer.drawDeck.first(2);
                 var buttons = _.map(top2Cards, card => {
@@ -35,7 +35,7 @@ class TywinLannister extends DrawCard {
             return false;
         }
 
-        this.paramsObj.cards = [card];
+        this.eventObj.cards = [card];
         this.game.addMessage('{0} uses {1} to choose {2} to be discarded for {3}', this.controller, this, card, this.discardingPlayer);
 
         return true;

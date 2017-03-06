@@ -12,9 +12,9 @@ class CerseiLannister extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardsDiscarded: (event, params) => (
-                    this.controller !== params.player &&
-                    params.originalLocation === 'hand'
+                onCardsDiscarded: event => (
+                    this.controller !== event.player &&
+                    event.originalLocation === 'hand'
                 )
             },
             limit: ability.limit.perRound(3),

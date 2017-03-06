@@ -17,7 +17,7 @@ describe('Player', function () {
     }
 
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'queueSimpleStep', 'addMessage']);
+        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'raiseMergedEvent', 'queueSimpleStep', 'addMessage']);
 
         this.player = new Player('1', 'Test 1', true, this.gameSpy);
         spyOn(this.player, 'moveCard');
@@ -35,7 +35,7 @@ describe('Player', function () {
             });
 
             it('should not raise the event', function() {
-                expect(this.gameSpy.raiseEvent).not.toHaveBeenCalled();
+                expect(this.gameSpy.raiseMergedEvent).not.toHaveBeenCalled();
             });
         });
 
@@ -46,7 +46,7 @@ describe('Player', function () {
             });
 
             it('should raise the onCardsDiscarded event', function() {
-                expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardsDiscarded', this.eventOuterParams, jasmine.any(Function));
+                expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardsDiscarded', this.eventOuterParams, jasmine.any(Function));
             });
 
             describe('the onCardsDiscarded handler', function() {
@@ -56,13 +56,13 @@ describe('Player', function () {
                     });
                     this.eventInnerParams1 = { player: this.player, card: this.card1, allowSave: false, originalLocation: 'loc' };
                     this.eventInnerParams2 = { player: this.player, card: this.card2, allowSave: false, originalLocation: 'loc' };
-                    this.onCardsDiscardedHandler = this.gameSpy.raiseEvent.calls.mostRecent().args[2];
-                    this.onCardsDiscardedHandler(null, this.eventOuterParams);
+                    this.onCardsDiscardedHandler = this.gameSpy.raiseMergedEvent.calls.mostRecent().args[2];
+                    this.onCardsDiscardedHandler(this.eventOuterParams);
                 });
 
                 it('should raise the onCardDiscarded event for each card', function() {
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardDiscarded', this.eventInnerParams1, jasmine.any(Function));
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardDiscarded', this.eventInnerParams2, jasmine.any(Function));
+                    expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardDiscarded', this.eventInnerParams1, jasmine.any(Function));
+                    expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardDiscarded', this.eventInnerParams2, jasmine.any(Function));
                 });
 
                 it('should queue a step to call the callback', function() {
@@ -78,8 +78,8 @@ describe('Player', function () {
 
                 describe('the onCardDiscarded handler', function() {
                     beforeEach(function() {
-                        this.onCardDiscardedHandler = this.gameSpy.raiseEvent.calls.mostRecent().args[2];
-                        this.onCardDiscardedHandler(null, this.eventInnerParams1);
+                        this.onCardDiscardedHandler = this.gameSpy.raiseMergedEvent.calls.mostRecent().args[2];
+                        this.onCardDiscardedHandler(this.eventInnerParams1);
                     });
 
                     it('should move the card to discard', function() {
@@ -104,7 +104,7 @@ describe('Player', function () {
                 });
 
                 it('should not raise the onCardsDiscarded event', function() {
-                    expect(this.gameSpy.raiseEvent).not.toHaveBeenCalledWith('onCardsDiscarded', jasmine.any(Object), jasmine.any(Function));
+                    expect(this.gameSpy.raiseMergedEvent).not.toHaveBeenCalledWith('onCardsDiscarded', jasmine.any(Object), jasmine.any(Function));
                 });
 
                 it('should remove the dupe', function() {
@@ -119,7 +119,7 @@ describe('Player', function () {
                 });
 
                 it('should raise the onCardsDiscarded event', function() {
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardsDiscarded', this.eventOuterParams, jasmine.any(Function));
+                    expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardsDiscarded', this.eventOuterParams, jasmine.any(Function));
                 });
             });
         });
@@ -131,7 +131,7 @@ describe('Player', function () {
             });
 
             it('should raise the onCardsDiscarded event', function() {
-                expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardsDiscarded', this.eventOuterParams, jasmine.any(Function));
+                expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardsDiscarded', this.eventOuterParams, jasmine.any(Function));
             });
 
             describe('the onCardsDiscarded handler', function() {
@@ -140,18 +140,18 @@ describe('Player', function () {
                         this.simpleStepCallback = callback;
                     });
                     this.eventInnerParams1 = { player: this.player, card: this.card1, allowSave: false, originalLocation: 'loc' };
-                    this.onCardsDiscardedHandler = this.gameSpy.raiseEvent.calls.mostRecent().args[2];
-                    this.onCardsDiscardedHandler(null, this.eventOuterParams);
+                    this.onCardsDiscardedHandler = this.gameSpy.raiseMergedEvent.calls.mostRecent().args[2];
+                    this.onCardsDiscardedHandler(this.eventOuterParams);
                 });
 
                 it('should raise the onCardDiscarded event for each card', function() {
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardDiscarded', this.eventInnerParams1, jasmine.any(Function));
+                    expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardDiscarded', this.eventInnerParams1, jasmine.any(Function));
                 });
 
                 describe('the onCardDiscarded handler', function() {
                     beforeEach(function() {
-                        this.onCardDiscardedHandler = this.gameSpy.raiseEvent.calls.mostRecent().args[2];
-                        this.onCardDiscardedHandler(null, this.eventInnerParams1);
+                        this.onCardDiscardedHandler = this.gameSpy.raiseMergedEvent.calls.mostRecent().args[2];
+                        this.onCardDiscardedHandler(this.eventInnerParams1);
                     });
 
                     it('should move the card to discard', function() {

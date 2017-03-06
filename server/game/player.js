@@ -788,12 +788,12 @@ class Player extends Spectator {
             allowSave: allowSave,
             originalLocation: cards[0].location
         };
-        this.game.raiseEvent('onCardsDiscarded', params, (event, params) => {
-            _.each(params.cards, card => {
+        this.game.raiseMergedEvent('onCardsDiscarded', params, event => {
+            _.each(event.cards, card => {
                 this.doSingleCardDiscard(card, allowSave);
             });
             this.game.queueSimpleStep(() => {
-                callback(params.cards);
+                callback(event.cards);
             });
         });
     }
@@ -805,8 +805,8 @@ class Player extends Spectator {
             allowSave: allowSave,
             originalLocation: card.location
         };
-        this.game.raiseEvent('onCardDiscarded', params, (event, params) => {
-            this.moveCard(params.card, 'discard pile');
+        this.game.raiseMergedEvent('onCardDiscarded', params, event => {
+            this.moveCard(event.card, 'discard pile');
         });
     }
 
