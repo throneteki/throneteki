@@ -32,7 +32,7 @@ class KingRobbsHost extends DrawCard {
             power = 1;
         }
 
-        loser.faction.power -= power;
+        this.game.addPower(loser, -power);
         card.modifyPower(power);
 
         this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction card to {4}', 
