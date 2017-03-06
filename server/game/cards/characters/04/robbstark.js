@@ -13,7 +13,6 @@ class RobbStark extends DrawCard {
 
         this.action({
             title: 'Stand and remove a character from the challenge',
-            method: 'initiate',
             limit: ability.limit.perChallenge(1),
             condition: () => this.isParticipatingInMilitaryChallenge(),
             handler: context => {
