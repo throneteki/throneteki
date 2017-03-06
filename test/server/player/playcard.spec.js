@@ -132,12 +132,12 @@ describe('Player', function() {
 
             describe('and it is not the challenge phase', function() {
                 beforeEach(function() {
-                    this.gameSpy.currentPhase = 'marshal';
+                    this.gameSpy.currentPhase = 'dominance';
                     this.canPlay = this.player.playCard(this.cardSpy, false);
                 });
 
                 it('should not play the card as an ambush', function() {
-                    expect(this.cardSpy.play).toHaveBeenCalledWith(this.player, false);
+                    expect(this.cardSpy.play).not.toHaveBeenCalledWith(this.player, true);
                 });
             });
         });

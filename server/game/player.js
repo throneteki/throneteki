@@ -6,6 +6,7 @@ const Deck = require('./deck.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 const BestowPrompt = require('./gamesteps/bestowprompt.js');
 const ChallengeTracker = require('./challengetracker.js');
+const MarshalLocation = require('./marshallocation.js');
 
 const StartingHandSize = 7;
 const DrawPhaseCards = 2;
@@ -33,6 +34,7 @@ class Player extends Spectator {
         this.challenges = new ChallengeTracker();
         this.minReserve = 0;
         this.costReducers = [];
+        this.marshalLocations = [new MarshalLocation(this, 'hand')];
         this.usedPlotsModifier = 0;
 
         this.createAdditionalPile('out of game', { title: 'Out of Game', area: 'player row' });
@@ -107,6 +109,10 @@ class Player extends Spectator {
         });
         
         return cardsToReturn;
+    }
+
+    isCardInMarshalLocation(card) {
+        return _.any(this.marshalLocations, location => location.contains(card));
     }
 
     getDuplicateInPlay(card) {
@@ -393,6 +399,10 @@ class Player extends Spectator {
         return true;
     }
 
+    isCharacterDead(card) {
+        return card.getType() === 'character' && card.isUnique() && this.isCardNameInList(this.deadPile, card);
+    }
+
     playCard(card, forcePlay, overrideHandCheck = false) {
         if(!card) {
             return false;
@@ -410,7 +420,7 @@ class Player extends Spectator {
 
         // TODO: These are implemented via play actions now. Once everything is
         // converted, this guard will not be necessary.
-        if(card.getType() === 'event' || this.game.currentPhase === 'setup') {
+        if(card.getType() === 'event' || this.game.currentPhase === 'setup' || this.game.currentPhase === 'marshal') {
             return false;
         }
 
