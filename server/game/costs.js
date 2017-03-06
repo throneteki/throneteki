@@ -109,6 +109,19 @@ const Costs = {
                 context.source.removeToken('gold', 1);
             }
         };
+    },
+    /**
+     * Cost that will discard faction power matching the passed amount.
+     */
+    discardFactionPower: function(amount) {
+        return {
+            canPay: function(context) {
+                return context.player.faction.power >= amount;
+            },
+            pay: function(context) {
+                context.source.game.addPower(context.player, -amount);
+            }
+        };
     }
 };
 
