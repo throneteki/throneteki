@@ -347,107 +347,27 @@ class Player extends Spectator {
         });
     }
 
-    getPlayingType(card, forcePlay) {
-        if(card.getType() === 'event') {
-            return 'play';
-        } else if(forcePlay) {
-            return 'putIntoPlay';
-        } else if(this.game.currentPhase === 'challenge') {
-            return 'ambush';
-        } else if(this.game.currentPhase === 'marshal') {
-            return 'marshal';
-        } else if(this.game.currentPhase === 'setup') {
-            return 'setup';
-        }
-
-        return 'none';
-    }
-
-    canPlayCard(card, overrideHandCheck = false) {
-        if(this.phase !== 'setup' && this.phase !== 'marshal' && card.getType() !== 'event') {
-            if(this.phase !== 'challenge' || !card.isAmbush()) {
-                return false;
-            }
-        }
-
-        if(card.getType() !== 'event' && this.phase === 'marshal' && card.cannotMarshal) {
-            return false;
-        }
-
-        if(!this.isCardUuidInList(this.hand, card) && !overrideHandCheck) {
-            return false;
-        }
-
-        var dupe = this.getDuplicateInPlay(card);
-
-        var playingType = this.getPlayingType(card, false);
-        var cost = (dupe && playingType !== 'ambush') ? 0 : this.getReducedCost(playingType, card);
-        if(cost > this.gold) {
-            return false;
-        }
-
-        if(this.limitedPlayed >= this.maxLimited && card.isLimited()) {
-            return false;
-        }
-
-        if(card.getType() === 'character' && card.isUnique()) {
-            if(this.isCardNameInList(this.deadPile, card)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     isCharacterDead(card) {
         return card.getType() === 'character' && card.isUnique() && this.isCardNameInList(this.deadPile, card);
     }
 
-    playCard(card, forcePlay, overrideHandCheck = false) {
+    playCard(card) {
         if(!card) {
             return false;
         }
+
         var context = {
             game: this.game,
             player: this,
             source: card
         };
         var playAction = _.find(card.getPlayActions(), action => action.meetsRequirements(context) && action.canPayCosts(context));
-        if(playAction) {
-            this.game.resolveAbility(playAction, context);
-            return true;
-        }
 
-        // TODO: These are implemented via play actions now. Once everything is
-        // converted, this guard will not be necessary.
-        if(card.getType() === 'event' || this.game.currentPhase === 'setup' || this.game.currentPhase === 'marshal') {
+        if(!playAction) {
             return false;
         }
 
-        var playingType = this.getPlayingType(card, forcePlay);
-        var dupeCard = this.getDuplicateInPlay(card);
-        var cost = (dupeCard && playingType !== 'ambush' || forcePlay) ? 0 : this.getReducedCost(playingType, card);
-
-        if(!forcePlay && !this.canPlayCard(card, overrideHandCheck)) {
-            return false;
-        }
-
-        this.gold -= cost;
-
-        this.markUsedReducers(playingType, card);
-
-        if(this.phase === 'marshal') {
-            this.game.addMessage('{0} {1} {2} costing {3}', this, dupeCard ? 'duplicates' : 'marshals', card, cost);
-        } else if(card.isAmbush() && this.phase === 'challenge') {
-            this.game.addMessage('{0} ambushes with {1} costing {2}', this, card, cost);
-        }
-
-        this.putIntoPlay(card, playingType);
-
-        if(card.isLimited() && !forcePlay) {
-            this.limitedPlayed++;
-        }
-
+        this.game.resolveAbility(playAction, context);
         return true;
     }
 
