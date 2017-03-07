@@ -7,11 +7,12 @@ const Player = require('../../../server/game/player.js');
 describe('Player', () => {
     describe('drop()', function() {
         beforeEach(function() {
-            this.gameSpy = jasmine.createSpyObj('game', ['playCard', 'getOtherPlayer', 'raiseEvent', 'playerDecked']);
+            this.gameSpy = jasmine.createSpyObj('game', ['getOtherPlayer', 'raiseEvent', 'playerDecked']);
 
             this.player = new Player('1', 'Player 1', true, this.gameSpy);
             this.player.initialise();
             spyOn(this.player, 'discardCard');
+            spyOn(this.player, 'putIntoPlay');
 
             this.gameSpy.playersAndSpectators = [];
             this.gameSpy.playersAndSpectators[this.player.name] = this.player;
@@ -50,7 +51,7 @@ describe('Player', () => {
 
                 it('should return true and add the card to the play area', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.gameSpy.playCard).toHaveBeenCalled();
+                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy);
                 });
             });
 
@@ -63,7 +64,7 @@ describe('Player', () => {
 
                 it('should return true and add the card to the play area', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.gameSpy.playCard).toHaveBeenCalled();
+                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy);
                 });
             });
 
@@ -76,7 +77,7 @@ describe('Player', () => {
 
                 it('should return false and not add the card to the play area', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.gameSpy.playCard).not.toHaveBeenCalled();
+                    expect(this.player.putIntoPlay).not.toHaveBeenCalled();
                 });
             });
 
@@ -89,7 +90,7 @@ describe('Player', () => {
 
                 it('should return true and play the card', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.gameSpy.playCard).toHaveBeenCalled();
+                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy);
                 });
             });
         });
