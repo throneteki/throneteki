@@ -9,7 +9,7 @@ class SerGregorClegane extends DrawCard {
             handler: context => {
                 var discarded = context.event.params[3];
                 discarded.controller.moveCard(discarded, 'dead pile');
-                this.game.addMessage('{0} uses {1} to place {2} in {3}\'s dead pile.', this.controller, this, discarded, discarded.controller);
+                this.game.addMessage('{0} uses {1} to place {2} in {3}\'s dead pile', this.controller, this, discarded, discarded.controller);
 
                 if(!this.game.allCards.any(card => this.cardCondition(discarded, card))) {
                     return;
@@ -30,7 +30,7 @@ class SerGregorClegane extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to kill {2}.', this.controller, this, card);
+        this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, card);
         card.controller.killCharacter(card);
     }
 }
