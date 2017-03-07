@@ -27,7 +27,7 @@ class KingRobbsHost extends DrawCard {
         var loser = this.game.currentChallenge.loser;
 
         if(loser.faction.power >= 2) {
-            var power = this.anyPlotHasTrait('War') ? 2 : 1;
+            var power = this.game.anyPlotHasTrait('War') ? 2 : 1;
         } else {
             power = 1;
         }
@@ -39,12 +39,6 @@ class KingRobbsHost extends DrawCard {
                               this.controller, this, power, loser, card);
                         
         return true;
-    }
-
-    anyPlotHasTrait(trait) {
-        return _.any(this.game.getPlayers(), player => 
-            player.activePlot &&
-            player.activePlot.hasTrait(trait));
     }
 }
 
