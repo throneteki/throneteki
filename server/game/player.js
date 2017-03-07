@@ -32,6 +32,7 @@ class Player extends Spectator {
         this.challenges = new ChallengeTracker();
         this.minReserve = 0;
         this.costReducers = [];
+        this.usedPlotsModifier = 0;
 
         this.createAdditionalPile('out of game', { title: 'Out of Game', area: 'player row' });
     }
@@ -131,6 +132,15 @@ class Player extends Spectator {
 
     getNumberOfChallengesInitiated() {
         return this.challenges.complete;
+    }
+
+    getNumberOfUsedPlots() {
+        return this.plotDiscard.size() + this.usedPlotsModifier;
+    }
+
+    modifyUsedPlots(value) {
+        this.usedPlotsModifier += value;
+        this.game.raiseEvent('onUsedPlotsModified', this);
     }
 
     modifyClaim(winner, challengeType, claim) {
@@ -402,6 +412,16 @@ class Player extends Spectator {
     playCard(card, forcePlay, overrideHandCheck = false) {
         if(!card) {
             return false;
+        }
+        var context = {
+            game: this.game,
+            player: this,
+            source: card
+        };
+        var playAction = _.find(card.getPlayActions(), action => action.meetsRequirements(context) && action.canPayCosts(context));
+        if(playAction) {
+            this.game.resolveAbility(playAction, context);
+            return true;
         }
 
         var playingType = this.getPlayingType(card, forcePlay);
@@ -717,7 +737,7 @@ class Player extends Spectator {
         }
 
         if(target === 'play area') {
-            this.game.playCard(this.name, cardId, true, sourceList);
+            this.putIntoPlay(card);
         } else {
             if(target === 'dead pile' && card.location === 'play area') {
                 this.killCharacter(card, false);
