@@ -1,3 +1,5 @@
+const _ = require('underscore');
+
 const DrawCard = require('../../../drawcard.js');
 
 class StormsEnd extends DrawCard {
@@ -20,8 +22,7 @@ class StormsEnd extends DrawCard {
     }
     
     onSelect(player, cards) {
-        cards[0].modifyPower(1);
-        cards[1].modifyPower(1);
+        _.each(cards, card => card.modifyPower(1));
         this.game.addMessage('{0} uses {1} to discard a power from their faction to have {2} gain 1 power', 
                               this.controller, this, cards);
 
