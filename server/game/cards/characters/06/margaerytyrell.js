@@ -46,7 +46,7 @@ class MargaeryTyrell extends DrawCard {
         if(!card) {
             return false;
         }
-        player.playCard(card, true);
+        player.putIntoPlay(card);
         player.shuffleDrawDeck();
         this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
         return true;
