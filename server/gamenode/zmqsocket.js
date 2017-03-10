@@ -10,7 +10,7 @@ class ZmqSocket extends EventEmitter {
         this.listenAddress = listenAddress;
 
         this.socket = zmq.socket('dealer');
-        this.socket.identity = config.nodeIdentity;
+        this.socket.identity = process.env.SERVER || config.nodeIdentity;
         this.socket.monitor(500, 0);
 
         this.socket.connect(config.mqUrl, err => {

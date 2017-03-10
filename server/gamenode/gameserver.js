@@ -20,7 +20,7 @@ class GameServer {
         this.socket.on('onStartGame', this.onStartGame.bind(this));
 
         this.io = socketio();
-        this.io.listen(config.socketioPort);
+        this.io.listen(process.env.PORT || config.socketioPort);
         this.io.set('heartbeat timeout', 30000);
         this.io.use(this.handshake.bind(this));
         this.io.on('connection', this.onConnection.bind(this));
@@ -72,7 +72,6 @@ class GameServer {
     }
 
     gameWon(game, reason, winner) {
-        console.info('sending game win');
         this.socket.send('GAMEWIN', { game: game.getSaveState(), winner: winner.name, reason: reason });
     }
 

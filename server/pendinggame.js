@@ -32,6 +32,23 @@ class PendingGame {
         return this.players[playerName];
     }
 
+    getSaveState() {
+        var players = _.map(this.getPlayers(), player => {
+            return {
+                name: player.name,
+                faction: player.faction.name,
+                agenda: player.agenda ? player.agenda.name : undefined,
+                power: player.getTotalPower()
+            };
+        });
+
+        return {
+            id: this.savedGameId,
+            startedAt: this.startedAt,
+            players: players
+        };
+    }
+
     // Helpers
     setupFaction(player, faction) {
         player.faction = {};

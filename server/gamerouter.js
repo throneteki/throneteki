@@ -3,10 +3,12 @@ const router = zmq.socket('router');
 const logger = require('./log.js');
 const config = require('./config.js');
 const _ = require('underscore');
+const GameRepository = require('./repositories/gameRepository.js');
 
 class GameRouter {
     constructor() {
         this.workers = {};
+        this.gameRepository = new GameRepository();
 
         router.bind(config.mqUrl, err => {
             if(err) {
@@ -28,8 +30,32 @@ class GameRouter {
             return;
         }
 
+        this.gameRepository.save(game.getSaveState(), (err, id) => {
+            if(!err) {
+                game.savedGameId = id;
+            }
+        });
+
+        node.numGames++;
+
         this.sendCommand(node.identity, 'STARTGAME', game);
         return node;
+    }
+
+    getNextAvailableGameNode() {
+        if(_.isEmpty(this.workers)) {
+            return undefined;
+        }
+
+        var returnedWorker = _.min(this.workers, worker => {
+            if(worker.numGames >= worker.maxGames) {
+                return undefined;
+            }
+
+            return worker.numGames;
+        });
+
+        return returnedWorker;
     }
 
     // Events
@@ -49,13 +75,12 @@ class GameRouter {
                     port: message.arg.port
                 };
                 worker = this.workers[identityStr];
-                console.info('new worker');
                 break;
             case 'PONG':
                 worker.pingSent = undefined;
                 break;
             case 'GAMEWIN':
-                console.info('game win message yay');
+                this.gameRepository.save(message.arg);
                 break;
         }
 
@@ -81,22 +106,6 @@ class GameRouter {
                 }
             }
         });
-    }
-
-    getNextAvailableGameNode() {
-        if(_.isEmpty(this.workers)) {
-            return undefined;
-        }
-
-        var returnedWorker = _.min(this.workers, worker => {
-            if(worker.numGames >= worker.maxGames) {
-                return undefined;
-            }
-
-            return worker.numGames;
-        });
-
-        return returnedWorker;
     }
 }
 

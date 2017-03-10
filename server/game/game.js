@@ -41,6 +41,7 @@ class Game extends EventEmitter {
         this.started = false;
         this.playStarted = false;
         this.createdAt = new Date();
+        this.savedGameId = details.savedGameId;
 
         _.each(details.players, player => {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -679,25 +680,25 @@ class Game extends EventEmitter {
         var playerState = {};
 
         if(this.started) {
-           _.each(this.getPlayers(), player => {
-                playerState[player.name] = player.getState(activePlayer === player.name);
-            });
+            _.each(this.getPlayers(), player => {
+               playerState[player.name] = player.getState(activePlayer === player.name);
+           });
 
-           return {
-                id: this.id,
-                name: this.name,
-                owner: this.owner,
-                players: playerState,
-                messages: this.gameChat.messages,
-                spectators: _.map(this.getSpectators(), spectator => {
+            return {
+               id: this.id,
+               name: this.name,
+               owner: this.owner,
+               players: playerState,
+               messages: this.gameChat.messages,
+               spectators: _.map(this.getSpectators(), spectator => {
                     return {
                         id: spectator.id,
                         name: spectator.name
                     };
                 }),
-                started: this.started
-            };
-       }
+               started: this.started
+           };
+        }
 
         return this.getSummary(activePlayer);
     }
