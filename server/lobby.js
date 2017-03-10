@@ -206,6 +206,11 @@ class Lobby {
             return;
         }
 
+        game.node = gameNode;
+        game.started = true;
+
+        this.broadcastGameList();
+
         this.io.to(game.id).emit('handoff', { address: gameNode.address, port: gameNode.port });
     }
 
@@ -223,7 +228,12 @@ class Lobby {
         if(game.watch(socket.id, socket.user)) {
             socket.joinChannel(game.id);
 
-            this.sendGameState(game);
+            if(game.started) {
+                this.router.addSpectator(game, socket.user.username);
+                socket.send('handoff', { address: game.node.address, port: game.node.port });
+            } else {
+                this.sendGameState(game);
+            }
         }
     }
 

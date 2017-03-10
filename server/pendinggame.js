@@ -88,6 +88,10 @@ class PendingGame {
             user: user
         };
 
+        if(this.started) {
+            return true;
+        }
+
         this.addMessage('{0} has joined the game as a spectator', user.username);
 
         return true;

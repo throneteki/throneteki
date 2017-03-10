@@ -18,6 +18,7 @@ class GameServer {
 
         this.socket = new ZmqSocket(this.listenAddress);
         this.socket.on('onStartGame', this.onStartGame.bind(this));
+        this.socket.on('onSpectator', this.onSpectator.bind(this));
 
         this.io = socketio();
         this.io.listen(process.env.PORT || config.socketioPort);
@@ -91,6 +92,17 @@ class GameServer {
         game.initialise();
 
         logger.info('Starting new game', game.id);
+    }
+
+    onSpectator(pendingGame, username) {
+        var game = this.games[pendingGame.id];
+        if(!game) {
+            return;
+        }
+
+        game.watch('TBA', { username: username });
+
+        this.sendGameState(game);
     }
 
     onConnection(ioSocket) {

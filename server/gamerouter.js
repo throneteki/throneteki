@@ -45,6 +45,10 @@ class GameRouter extends EventEmitter {
         return node;
     }
 
+    addSpectator(game, username) {
+        this.sendCommand(game.node.identity, 'SPECTATOR', { game: game, username: username });
+    }
+
     getNextAvailableGameNode() {
         if(_.isEmpty(this.workers)) {
             return undefined;
