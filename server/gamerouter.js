@@ -80,7 +80,7 @@ class GameRouter {
                 worker.pingSent = undefined;
                 break;
             case 'GAMEWIN':
-                this.gameRepository.save(message.arg);
+                this.gameRepository.save(message.arg, () => {});
                 break;
         }
 
