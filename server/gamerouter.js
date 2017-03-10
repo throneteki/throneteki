@@ -3,10 +3,13 @@ const router = zmq.socket('router');
 const logger = require('./log.js');
 const config = require('./config.js');
 const _ = require('underscore');
+const EventEmitter = require('events');
 const GameRepository = require('./repositories/gameRepository.js');
 
-class GameRouter {
+class GameRouter extends EventEmitter {
     constructor() {
+        super();
+
         this.workers = {};
         this.gameRepository = new GameRepository();
 
@@ -81,6 +84,17 @@ class GameRouter {
                 break;
             case 'GAMEWIN':
                 this.gameRepository.save(message.arg, () => {});
+                break;
+            case 'GAMECLOSED':
+                logger.info('game closed', message.arg.game);
+                worker.numGames--;
+                this.emit('onGameClosed', message.arg.game);
+
+                break;
+            case 'PLAYERLEFT':
+                logger.info('player left', message.arg.game.id);
+                this.gameRepository.save(message.arg.game);
+
                 break;
         }
 

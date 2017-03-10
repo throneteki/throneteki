@@ -75,6 +75,10 @@ class GameServer {
         this.socket.send('GAMEWIN', { game: game.getSaveState(), winner: winner.name, reason: reason });
     }
 
+    playerLeft(game, player) {
+        this.socket.send('PLAYERLEFT', { game: game.getSaveState(), player: player.name });
+    }
+
     onStartGame(pendingGame) {
         var game = new Game(pendingGame, { router: this });
         this.games[pendingGame.id] = game;
@@ -111,15 +115,58 @@ class GameServer {
         this.sendGameState(game);
 
         socket.registerEvent('game', this.onGameMessage.bind(this));
-     //   socket.on('disconnect', this.onSocketDisconnected.bind(this));
+        socket.on('disconnect', this.onSocketDisconnected.bind(this));
 
         this.sockets[ioSocket.id] = socket;
+    }
+
+    onSocketDisconnected(socket) {
+        var game = this.findGameForUser(socket.user.username);
+        if(!game) {
+            return;
+        }
+
+        game.disconnect(socket.user.username);
+
+        if(game.isEmpty()) {
+            delete this.games[game.id];
+
+            this.socket.send('GAMECLOSED', { game: game.id });
+        }
+
+        this.sendGameState(game);
+    }
+
+    onLeaveGame(socket) {
+        var game = this.findGameForUser(socket.user.username);
+        if(!game) {
+            return;
+        }
+
+        game.leave(socket.user.username);
+        socket.leaveChannel(game.id);
+
+        if(game.isEmpty()) {
+            delete this.games[game.id];
+
+            this.socket.send('GAMECLOSED', { game: game.id });
+        }
+
+        this.sendGameState(game);
     }
 
     onGameMessage(socket, command, ...args) {
         var game = this.findGameForUser(socket.user.username);
 
-        if(!game || !game[command] || !_.isFunction(game[command])) {
+        if(!game) {
+            return;
+        }
+
+        if(command === 'leavegame') {
+            return this.onLeaveGame(socket);
+        }
+
+        if(!game[command] || !_.isFunction(game[command])) {
             return;
         }
 

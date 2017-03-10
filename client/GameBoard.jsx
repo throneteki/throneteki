@@ -117,7 +117,7 @@ export class InnerGameBoard extends React.Component {
     }
 
     onLeaveClick() {
-        this.props.socket.emit('leavegame');
+        this.props.sendGameMessage('leavegame');
     }
 
     onMouseOver(card) {

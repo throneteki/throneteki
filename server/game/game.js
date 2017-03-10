@@ -22,6 +22,8 @@ const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
 
+const logger = require('../log.js');
+
 class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
@@ -434,7 +436,7 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
                 this.winReason = 'concede';
 
-                console.log('concede');
+                logger.info('concede');
                 this.router.gameWon(this, 'concede', otherPlayer);
             }
         }
@@ -681,23 +683,23 @@ class Game extends EventEmitter {
 
         if(this.started) {
             _.each(this.getPlayers(), player => {
-               playerState[player.name] = player.getState(activePlayer === player.name);
-           });
+                playerState[player.name] = player.getState(activePlayer === player.name);
+            });
 
             return {
-               id: this.id,
-               name: this.name,
-               owner: this.owner,
-               players: playerState,
-               messages: this.gameChat.messages,
-               spectators: _.map(this.getSpectators(), spectator => {
+                id: this.id,
+                name: this.name,
+                owner: this.owner,
+                players: playerState,
+                messages: this.gameChat.messages,
+                spectators: _.map(this.getSpectators(), spectator => {
                     return {
                         id: spectator.id,
                         name: spectator.name
                     };
                 }),
-               started: this.started
-           };
+                started: this.started
+            };
         }
 
         return this.getSummary(activePlayer);

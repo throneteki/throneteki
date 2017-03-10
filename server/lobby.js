@@ -18,6 +18,7 @@ class Lobby {
         this.messageRepository = new MessageRepository();
         this.deckRepository = new DeckRepository();
         this.router = new GameRouter();
+        this.router.on('onGameClosed', this.onGameClosed.bind(this));
 
         this.io = socketio(server);
         this.io.set('heartbeat timeout', 30000);
@@ -279,6 +280,13 @@ class Lobby {
         }).catch(err => {
             logger.info(err);
         });
+    }
+
+    // router Events
+    onGameClosed(gameId) {
+        delete this.games[gameId];
+
+        this.broadcastGameList();
     }
 }
 
