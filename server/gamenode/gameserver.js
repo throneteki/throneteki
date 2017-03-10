@@ -50,7 +50,9 @@ class GameServer {
 
     sendGameState(game) {
         _.each(game.getPlayersAndSpectators(), player => {
-            this.sockets[player.id].send('gamestate', game.getState(player.name));
+            if(this.sockets[player.id]) {
+                this.sockets[player.id].send('gamestate', game.getState(player.name));
+            }
         });
     }
 
@@ -69,8 +71,13 @@ class GameServer {
         next();
     }
 
+    gameWon(game, reason, winner) {
+        console.info('sending game win');
+        this.socket.send('GAMEWIN', { game: game.getSaveState(), winner: winner.name, reason: reason });
+    }
+
     onStartGame(pendingGame) {
-        var game = new Game(pendingGame);
+        var game = new Game(pendingGame, { router: this });
         this.games[pendingGame.id] = game;
 
         game.started = true;

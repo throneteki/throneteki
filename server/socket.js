@@ -35,7 +35,7 @@ class Socket extends EventEmitter {
     send(message, ...args) {
         this.socket.emit(message, ...args);
     }
-    
+
     // Events
     onSocketEvent(callback, ...args) {
         if(!this.user) {

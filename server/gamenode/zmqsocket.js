@@ -9,7 +9,7 @@ class ZmqSocket extends EventEmitter {
 
         this.listenAddress = listenAddress;
 
-        this.socket = zmq.socket('req');
+        this.socket = zmq.socket('dealer');
         this.socket.identity = config.nodeIdentity;
         this.socket.monitor(500, 0);
 
@@ -31,7 +31,7 @@ class ZmqSocket extends EventEmitter {
         this.send('HELLO', { maxGames: config.maxGames, address: this.listenAddress, port: process.env.PORT || config.socketioPort });
     }
 
-    onMessage(msg) {
+    onMessage(x, msg) {
         var message = JSON.parse(msg.toString());
 
         switch(message.command) {

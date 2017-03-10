@@ -33,7 +33,7 @@ class GameRouter {
     }
 
     // Events
-    onMessage(identity, x, msg) {
+    onMessage(identity, msg) {
         var identityStr = identity.toString();
 
         var worker = this.workers[identityStr];
@@ -49,9 +49,13 @@ class GameRouter {
                     port: message.arg.port
                 };
                 worker = this.workers[identityStr];
+                console.info('new worker');
                 break;
             case 'PONG':
                 worker.pingSent = undefined;
+                break;
+            case 'GAMEWIN':
+                console.info('game win message yay');
                 break;
         }
 

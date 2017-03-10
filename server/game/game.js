@@ -21,10 +21,9 @@ const MenuPrompt = require('./gamesteps/menuprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
-//const GameRepository = require('../repositories/gameRepository.js');
 
 class Game extends EventEmitter {
-    constructor(details/*, options = {}*/) {
+    constructor(details, options = {}) {
         super();
 
         this.effectEngine = new EffectEngine(this);
@@ -49,7 +48,7 @@ class Game extends EventEmitter {
 
         this.setMaxListeners(0);
 
-       // this.gameRepository = options.gameRepository || new GameRepository();
+        this.router = options.router;
     }
 
     addMessage() {
@@ -347,7 +346,7 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
                 this.winReason = 'power';
 
-                this.saveGame();
+                this.router.gameWon(this, 'power', player);
             }
         }
     }
@@ -364,7 +363,7 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
                 this.winReason = 'decked';
 
-                this.saveGame();
+                this.router.gameWon('decked', player);
             }
         }
     }
@@ -434,7 +433,8 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
                 this.winReason = 'concede';
 
-                this.saveGame();
+                console.log('concede');
+                this.router.gameWon(this, 'concede', otherPlayer);
             }
         }
     }
@@ -506,7 +506,7 @@ class Game extends EventEmitter {
         this.playStarted = true;
         this.startedAt = new Date();
 
-        this.saveGame();
+//        this.saveGame();
 
         this.continue();
     }
@@ -615,7 +615,7 @@ class Game extends EventEmitter {
 
             if(!this.finishedAt) {
                 this.finishedAt = new Date();
-                this.saveGame();
+                this.router.playerLeft(this, player);
             }
         }
     }
@@ -675,23 +675,15 @@ class Game extends EventEmitter {
         };
     }
 
-    saveGame() {
-/*        this.gameRepository.save(this.getSaveState(), (err, id) => {
-            if(!err) {
-                this.savedGameId = id;
-            }
-        });*/
-    }
-
     getState(activePlayer) {
         var playerState = {};
 
         if(this.started) {
-            _.each(this.getPlayers(), player => {
+           _.each(this.getPlayers(), player => {
                 playerState[player.name] = player.getState(activePlayer === player.name);
             });
 
-            return {
+           return {
                 id: this.id,
                 name: this.name,
                 owner: this.owner,
@@ -705,7 +697,7 @@ class Game extends EventEmitter {
                 }),
                 started: this.started
             };
-        }
+       }
 
         return this.getSummary(activePlayer);
     }

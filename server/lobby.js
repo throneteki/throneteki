@@ -175,6 +175,8 @@ class Lobby {
         }
 
         if(game.join(socket.id, socket.user)) {
+            socket.joinChannel(game.id);
+
             this.sendGameState(game);
         }
 
@@ -203,7 +205,7 @@ class Lobby {
             return;
         }
 
-        socket.send('handoff', { address: gameNode.address, port: gameNode.port });
+        this.io.to(game.id).emit('handoff', { address: gameNode.address, port: gameNode.port });
     }
 
     onWatchGame(socket, gameId) {
