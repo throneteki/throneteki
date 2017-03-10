@@ -15,8 +15,8 @@ class JojenReed extends DrawCard {
                     return;
                 }
 
-                var ownCard = this.controller.drawDeck.value()[0];
-                var opponentCard = otherPlayer.drawDeck.value()[0];
+                var ownCard = this.controller.drawDeck.first();
+                var opponentCard = otherPlayer.drawDeck.first();
 
                 this.game.addMessage('{0} uses {1} to reveal {2} from their own deck and {3} from {4}\'s deck', 
                                       this.controller, this, ownCard, opponentCard, otherPlayer);
