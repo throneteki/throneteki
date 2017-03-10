@@ -37,8 +37,7 @@ class PendingGame {
             return {
                 name: player.name,
                 faction: player.faction.name,
-                agenda: player.agenda ? player.agenda.name : undefined,
-                power: player.getTotalPower()
+                agenda: player.agenda ? player.agenda.name : undefined
             };
         });
 
