@@ -6,7 +6,6 @@ import moment from 'moment';
 
 import * as actions from './actions';
 import Avatar from './Avatar.jsx';
-import Link from './Link.jsx';
 
 class InnerLobby extends React.Component {
     constructor() {
