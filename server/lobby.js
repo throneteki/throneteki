@@ -3,12 +3,14 @@ const config = require('./config.js');
 const Socket = require('./socket.js');
 const jwt = require('jsonwebtoken');
 const _ = require('underscore');
-const MessageRepository = require('./repositories/messageRepository.js');
-const DeckRepository = require('./repositories/deckRepository.js');
-const logger = require('./log.js');
+const moment = require('moment');
 
+const logger = require('./log.js');
+const version = moment(require('../version.js'));
 const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
+const MessageRepository = require('./repositories/messageRepository.js');
+const DeckRepository = require('./repositories/deckRepository.js');
 
 class Lobby {
     constructor(server) {
@@ -34,6 +36,8 @@ class Lobby {
     }
 
     handshake(socket, next) {
+        var versionInfo = undefined;
+
         if(socket.handshake.query.token) {
             jwt.verify(socket.handshake.query.token, config.secret, function(err, user) {
                 if(err) {
@@ -43,6 +47,14 @@ class Lobby {
 
                 socket.request.user = user;
             });
+        }
+
+        if(socket.handshake.query.version) {
+            versionInfo = moment(socket.handshake.query.version);
+        }
+
+        if(!versionInfo || versionInfo < version) {
+            socket.emit('banner', 'Your client version is out of date, please refresh or clear your cache to get the latest version');
         }
 
         next();

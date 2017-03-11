@@ -33,6 +33,8 @@ class InnerGameLobby extends React.Component {
     render() {
         return (
             <div>
+                { this.props.bannerNotice ? <div className='alert alert-danger'>{this.props.bannerNotice}</div> : null }
+
                 <div className='col-sm-6'>
                     <button className='btn btn-primary' onClick={this.onNewGameClick} disabled={!!this.props.currentGame}>New Game</button>
                     {this.props.games.length === 0 ? <h4>No games are currently in progress</h4> : <GameList games={this.props.games} />}
@@ -47,6 +49,7 @@ class InnerGameLobby extends React.Component {
 
 InnerGameLobby.displayName = 'GameLobby';
 InnerGameLobby.propTypes = {
+    bannerNotice: React.PropTypes.string,
     currentGame: React.PropTypes.object,
     games: React.PropTypes.array,
     newGame: React.PropTypes.bool,
@@ -57,6 +60,7 @@ InnerGameLobby.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        bannerNotice: state.chat.notice,
         currentGame: state.games.currentGame,
         games: state.games.games,
         newGame: state.games.newGame,

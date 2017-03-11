@@ -186,3 +186,10 @@ export function gameSocketConnected(socket) {
         socket: socket
     };
 }
+
+export function receiveBannerNotice(notice) {
+    return {
+        type: 'RECEIVE_BANNER_NOTICE',
+        notice: notice
+    };
+}

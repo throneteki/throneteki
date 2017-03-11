@@ -80,6 +80,7 @@ class InnerLobby extends React.Component {
 
         return (
             <div>
+                { this.props.bannerNotice ? <div className='alert alert-danger'>{this.props.bannerNotice}</div> : null }
                 <div className='alert alert-success'>
                     The stats for February are now live.<a href='https://gist.github.com/cryogen/6f8accf082546c2e523bf1a4737def37' target='_blank'>Click this link to view them</a>
                 </div>
@@ -119,6 +120,7 @@ class InnerLobby extends React.Component {
 
 InnerLobby.displayName = 'Lobby';
 InnerLobby.propTypes = {
+    bannerNotice: React.PropTypes.string,
     messages: React.PropTypes.array,
     socket: React.PropTypes.object,
     users: React.PropTypes.array
@@ -126,6 +128,7 @@ InnerLobby.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        bannerNotice: state.chat.notice,
         messages: state.chat.messages,
         socket: state.socket.socket,
         users: state.games.users

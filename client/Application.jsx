@@ -18,6 +18,8 @@ import About from './About.jsx';
 import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 
+import version from '../version.js';
+
 import * as actions from './actions';
 
 var notAuthedMenu = [
@@ -61,7 +63,7 @@ class App extends React.Component {
             reconnectionDelay: 1000,
             reconnectionDelayMax : 5000,
             reconnectionAttempts: Infinity,
-            query: 'token=' + this.props.token
+            query: 'token=' + this.props.token + '&version=' + version
         });
 
         socket.on('connect', () => {
@@ -108,6 +110,10 @@ class App extends React.Component {
             gameSocket.on('gamestate', game => {
                 this.props.receiveGameState(game, this.props.username);
             });
+        });
+
+        socket.on('banner', notice => {
+            this.props.receiveBannerNotice(notice);
         });
     }
 
@@ -199,12 +205,13 @@ App.propTypes = {
     currentGame: React.PropTypes.object,
     fetchCards: React.PropTypes.func,
     fetchPacks: React.PropTypes.func,
-    gameSocketConnected: React.PropTypes.func,    
+    gameSocketConnected: React.PropTypes.func,
     games: React.PropTypes.array,
     loggedIn: React.PropTypes.bool,
     navigate: React.PropTypes.func,
     packs: React.PropTypes.array,
     path: React.PropTypes.string,
+    receiveBannerNotice: React.PropTypes.func,
     receiveGameState: React.PropTypes.func,
     receiveGames: React.PropTypes.func,
     receiveJoinGame: React.PropTypes.func,
