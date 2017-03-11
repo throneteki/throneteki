@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import io from 'socket.io-client';
 
 import Login from './Login.jsx';
+import Settings from './Settings.jsx';
 import Logout from './Logout.jsx';
 import Register from './Register.jsx';
 import Lobby from './Lobby.jsx';
@@ -26,6 +27,7 @@ var notAuthedMenu = [
 ];
 
 var authedMenu = [
+	{ name: 'Settings', path: '/settings' },
     { name: 'Logout', path: '/logout' }
 ];
 
@@ -37,6 +39,7 @@ var leftMenu = [
 
 var lobby = <Lobby />;
 var login = <Login />;
+var settings = <Settings />;
 var logout = <Logout />;
 var register = <Register />;
 var decks = <Decks />;
@@ -137,6 +140,9 @@ class App extends React.Component {
             case '/login':
                 component = login;
                 break;
+			case '/settings':
+				component = settings;
+				break;
             case '/logout':
                 component = logout;
                 break;
