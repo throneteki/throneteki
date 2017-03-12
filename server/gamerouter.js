@@ -54,15 +54,47 @@ class GameRouter extends EventEmitter {
             return undefined;
         }
 
-        var returnedWorker = _.min(this.workers, worker => {
-            if(worker.numGames >= worker.maxGames) {
-                return undefined;
+        var returnedWorker = undefined;
+
+        _.each(this.workers, worker => {
+            if(worker.numGames >= worker.maxGames || worker.disabled) {
+                return;
             }
 
-            return worker.numGames;
+            if(!returnedWorker || returnedWorker.numGames > worker.numGames) {
+                returnedWorker = worker;
+            }
         });
 
         return returnedWorker;
+    }
+
+    getNodeStatus() {
+        return _.map(this.workers, worker => {
+            return { name: worker.identity, numGames: worker.numGames, status: worker.disabled ? 'disabled' : 'active' };
+        });
+    }
+
+    disableNode(nodeName) {
+        var worker = this.workers[nodeName];
+        if(!worker) {
+            return false;
+        }
+
+        worker.disabled = true;
+
+        return true;
+    }
+
+    enableNode(nodeName) {
+        var worker = this.workers[nodeName];
+        if(!worker) {
+            return false;
+        }
+
+        worker.disabled = false;
+
+        return true;
     }
 
     // Events

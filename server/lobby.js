@@ -28,6 +28,21 @@ class Lobby {
         this.io.on('connection', this.onConnection.bind(this));
     }
 
+    // External methods
+    getStatus() {
+        var nodeStatus = this.router.getNodeStatus();
+
+        return nodeStatus;
+    }
+
+    disableNode(nodeName) {
+        return this.router.disableNode(nodeName);
+    }
+
+    enableNode(nodeName) {
+        return this.router.enableNode(nodeName);
+    }
+
     // Helpers
     findGameForUser(user) {
         return _.find(this.games, game => {
