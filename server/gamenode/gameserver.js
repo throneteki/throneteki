@@ -3,12 +3,16 @@ const interfaces = os.networkInterfaces();
 const _ = require('underscore');
 const socketio = require('socket.io');
 const jwt = require('jsonwebtoken');
+const raven = require('raven');
 
 const config = require('./nodeconfig.js');
 const logger = require('../log.js');
 const ZmqSocket = require('./zmqsocket.js');
 const Game = require('../game/game.js');
 const Socket = require('../socket.js');
+
+var ravenClient = new raven.Client(config.sentryDsn);
+ravenClient.patchGlobal();
 
 class GameServer {
     constructor() {
@@ -42,6 +46,35 @@ class GameServer {
 
         return firstAddress;
     }
+
+    handleError(game, e) {
+        logger.error(e);
+
+        var debugData = {};
+
+        debugData.game = game.getState();
+
+        _.each(game.getPlayers(), player => {
+            debugData[player.name] = player.getState(player.name);
+        });
+
+        ravenClient.captureException(e, { extra: debugData });
+
+        if(game) {
+            game.addMessage('A Server error has occured processing your game state, apologies.  Your game may now be in an inconsistent state, or you may be able to continue.  The error has been logged.');
+        }
+    }
+
+    runAndCatchErrors(game, func) {
+        try {
+            func();
+        } catch(e) {
+            this.handleError(game, e);
+
+            this.sendGameState(game);
+        }
+    }
+
 
     findGameForUser(username) {
         return _.find(this.games, game => {
@@ -191,11 +224,13 @@ class GameServer {
             return;
         }
 
-        game[command](socket.user.username, ...args);
+        this.runAndCatchErrors(() => {
+            game[command](socket.user.username, ...args);
 
-        game.continue();
+            game.continue();
 
-        this.sendGameState(game);
+            this.sendGameState(game);
+        });
     }
 }
 
