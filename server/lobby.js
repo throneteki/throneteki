@@ -128,6 +128,11 @@ class Lobby {
         });
 
         this.broadcastGameList();
+
+        var game = this.findGameForUser(socket.user.username);
+        if(game) {
+            socket.send('handoff', { address: game.node.address, port: game.node.port });
+        }
     }
 
     onAuthenticated(user) {
@@ -143,6 +148,10 @@ class Lobby {
 
         var game = this.findGameForUser(socket.user.username);
         if(!game) {
+            return;
+        }
+
+        if(game.started) {
             return;
         }
 

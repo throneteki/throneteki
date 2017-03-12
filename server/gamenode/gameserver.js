@@ -118,7 +118,16 @@ class GameServer {
         }
 
         var socket = new Socket(ioSocket);
-        game.playersAndSpectators[socket.user.username].id = socket.id;
+
+        var player = game.playersAndSpectators[socket.user.username];
+        if(!player) {
+            return;
+        }
+
+        player.id = socket.id;
+        if(player.disconnected) {
+            game.reconnect(socket.id, player.name);
+        }
 
         socket.joinChannel(game.id);
 
