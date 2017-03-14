@@ -361,7 +361,6 @@ class ChatCommands {
 
         this.game.addMessage('{0} uses the /count-dominance command to count dominance strength', player);
         this.game.addMessage('Dominance strength: {0} {1} vs {2} {3}', player, playerSTR, otherPlayerSTR, otherPlayer);
-
     }
 
     isValidIcon(icon) {

@@ -29,7 +29,9 @@ class About extends React.Component {
                 <p>The following manual commands have been implemented in order to allow for a smoother gameplay experience:
                 </p>
                 <ul>
+                    <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add</li>
                     <li>/cancel-prompt - Clear the current prompt and resume the game flow.  Use with caution and only when the prompt is 'stuck' and you are unable to continue</li>
+                    <li>/count-dominance - Shows current strength for dominance for both players</li>
                     <li>/discard x - Discards x cards randomly from your hand</li>
                     <li>/draw x - Draws x cards from your deck to your hand</li>
                     <li>/give-control - Give control of a card to your opponent.  Use with caution</li>
@@ -40,8 +42,6 @@ class About extends React.Component {
                     <li>/strength x - Sets the strength of a card to x</li>
                     <li>/take-icon x - Take an x icon from a character; where 'x' is as per '/give-icon'</li>
                     <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'betrayal', 'gold', 'poison', 'vengeance'</li>
-                    <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add</li>
-                    <li>/count-dominance - Shows current strength for dominance for both players</li>
                 </ul>
 
                 <h3>Can I help?</h3>
