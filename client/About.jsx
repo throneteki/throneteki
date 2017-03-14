@@ -39,8 +39,9 @@ class About extends React.Component {
                     <li>/power x - Sets the power of a card to x</li>
                     <li>/strength x - Sets the strength of a card to x</li>
                     <li>/take-icon x - Take an x icon from a character; where 'x' is as per '/give-icon'</li>
-                    <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'betrayal', 'gold', 'poison', 'vengeance'.</li>
-                    <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add.</li>
+                    <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'betrayal', 'gold', 'poison', 'vengeance'</li>
+                    <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add</li>
+                    <li>/count-dominance - Shows current strength for dominance for both players</li>
                 </ul>
 
                 <h3>Can I help?</h3>

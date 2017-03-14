@@ -25,7 +25,8 @@ class ChatCommands {
             '/reset-challenges-count': this.resetChallengeCount,
             '/cancel-prompt': this.cancelPrompt,
             '/token': this.setToken,
-            '/bestow': this.bestow
+            '/bestow': this.bestow,
+            '/count-dominance': this.countDominance
         };
         this.tokens = [
             'power',
@@ -346,6 +347,21 @@ class ChatCommands {
         }
 
         return num;
+    }
+
+    countDominance(player) {
+        var otherPlayer = this.game.getOtherPlayer(player);
+        
+        if(!otherPlayer) {
+            return true;
+        }
+
+        var playerSTR = player.getDominance();
+        var otherPlayerSTR = otherPlayer.getDominance();
+
+        this.game.addMessage('{0} uses the /count-dominance command to count dominance strength', player);
+        this.game.addMessage('Dominance strength: {0} {1} vs {2} {3}', player, playerSTR, otherPlayerSTR, otherPlayer);
+
     }
 
     isValidIcon(icon) {
