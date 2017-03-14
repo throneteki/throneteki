@@ -9,6 +9,7 @@ class MarshalCardAction extends BaseAbility {
                 Costs.playLimited()
             ]
         });
+        this.title = 'Marshal';
     }
 
     meetsRequirements(context) {

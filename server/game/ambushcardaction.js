@@ -9,6 +9,7 @@ class AmbushCardAction extends BaseAbility {
                 Costs.playLimited()
             ]
         });
+        this.title = 'Ambush';
     }
 
     meetsRequirements(context) {

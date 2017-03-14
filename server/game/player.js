@@ -7,6 +7,7 @@ const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 const BestowPrompt = require('./gamesteps/bestowprompt.js');
 const ChallengeTracker = require('./challengetracker.js');
 const MarshalLocation = require('./marshallocation.js');
+const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 
 const StartingHandSize = 7;
 const DrawPhaseCards = 2;
@@ -361,13 +362,18 @@ class Player extends Spectator {
             player: this,
             source: card
         };
-        var playAction = _.find(card.getPlayActions(), action => action.meetsRequirements(context) && action.canPayCosts(context));
+        var playActions = _.filter(card.getPlayActions(), action => action.meetsRequirements(context) && action.canPayCosts(context));
 
-        if(!playAction) {
+        if(playActions.length === 0) {
             return false;
         }
 
-        this.game.resolveAbility(playAction, context);
+        if(playActions.length === 1) {
+            this.game.resolveAbility(playActions[0], context);
+        } else {
+            this.game.queueStep(new PlayActionPrompt(this.game, this, playActions, context));
+        }
+
         return true;
     }
 

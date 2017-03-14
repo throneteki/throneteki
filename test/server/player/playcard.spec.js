@@ -3,9 +3,11 @@
 
 const Player = require('../../../server/game/player.js');
 
+const PlayActionPrompt = require('../../../server/game/gamesteps/playactionprompt.js');
+
 describe('Player', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'raiseEvent', 'getOtherPlayer', 'playerDecked', 'resolveAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'raiseEvent', 'getOtherPlayer', 'playerDecked', 'resolveAbility', 'queueStep']);
         this.player = new Player('1', 'Player 1', true, this.gameSpy);
         this.player.initialise();
     });
@@ -86,6 +88,26 @@ describe('Player', function() {
                 it('should return false', function() {
                     expect(this.player.playCard(this.cardSpy)).toBe(false);
                 });
+            });
+        });
+
+        describe('when card has multiple matching play actions', function() {
+            beforeEach(function() {
+                this.playActionSpy.meetsRequirements.and.returnValue(true);
+                this.playActionSpy.canPayCosts.and.returnValue(true);
+                this.playActionSpy2 = jasmine.createSpyObj('playAction', ['meetsRequirements', 'canPayCosts']);
+                this.playActionSpy2.meetsRequirements.and.returnValue(true);
+                this.playActionSpy2.canPayCosts.and.returnValue(true);
+                this.cardSpy.getPlayActions.and.returnValue([this.playActionSpy, this.playActionSpy2]);
+            });
+
+            it('should prompt the player to choose a play action', function() {
+                this.player.playCard(this.cardSpy);
+                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(PlayActionPrompt));
+            });
+
+            it('should return true', function() {
+                expect(this.player.playCard(this.cardSpy)).toBe(true);
             });
         });
     });
