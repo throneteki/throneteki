@@ -18,7 +18,7 @@ class LannisportTreasury extends DrawCard {
         this.action({
             title: 'Kneel ' + this.name + ' to move gold',
             phase: 'marshal',
-            condition: () => this.tokens['gold'] >= 1,
+            condition: () => this.hasToken('gold'),
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 var range = _.range(1, this.tokens['gold'] + 1).reverse();
