@@ -25,6 +25,7 @@ class RenlysPavilion extends DrawCard {
     }
 
     firstCardSelected(player, card) {
+        this.minusCard = card;
         this.lowerStr(player, card);
         this.game.promptForSelect(player, {
             cardCondition: card => this.cardCondition(card),
@@ -44,10 +45,14 @@ class RenlysPavilion extends DrawCard {
     }
 
     raiseStr(player, card) {
+        this.plusCard = card;
         this.untilEndOfPhase(ability => ({
             match: card,
             effect: ability.effects.modifyStrength(1)
         }));
+
+        this.game.addMessage('{0} kneels {1} to give {2} -1 STR and {3} +1 STR', player, this, this.minusCard, this.plusCard);
+
         return true;
     }
 }
