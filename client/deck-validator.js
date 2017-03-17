@@ -67,16 +67,24 @@ export function validateDeck(deck) {
     if(deck.agenda && deck.agenda.code === '06018') {
         requiredDraw = 75;
         _.each(deck.bannerCards, banner => {
+            var hasLoyalBannerCard = false;
             var banneredCards = _.reduce(combined, (memo, card) => {
                 var faction = card.card.faction_code.toLowerCase();
                 if(isBannerCard(banner.code, faction) && !card.card.is_loyal) {
                     return memo + card.count;          
+                }
+                if(isBannerCard(banner.code, faction) && card.card.is_loyal) {
+                    hasLoyalBannerCard = true;
                 }
                 return memo;
             }, 0);
             if(banneredCards < 12) {
                 status = 'Invalid';
                 extendedStatus.push('Too few banner cards for ' + banner.label);
+            }
+            if(hasLoyalBannerCard) {
+                status = 'Invalid';
+                extendedStatus.push('Has a loyal banner card');
             }
         });   
     }
@@ -156,7 +164,7 @@ export function validateDeck(deck) {
 
     var bannerCount = 0;
 
-    if(deck.agenda && deck.agenda.code !== '06018' && !_.all(combined, card => {
+    if((!deck.agenda || deck.agenda && deck.agenda.code !== '06018') && !_.all(combined, card => {
         var faction = card.card.faction_code.toLowerCase();
         var bannerCard = false;
 
