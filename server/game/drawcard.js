@@ -2,9 +2,15 @@ const _ = require('underscore');
 
 const BaseCard = require('./basecard.js');
 const SetupCardAction = require('./setupcardaction.js');
+const MarshalCardAction = require('./marshalcardaction.js');
+const AmbushCardAction = require('./ambushcardaction.js');
+const PlayCardAction = require('./playcardaction.js');
 
 const StandardPlayActions = [
-    new SetupCardAction()
+    new SetupCardAction(),
+    new MarshalCardAction(),
+    new AmbushCardAction(),
+    new PlayCardAction()
 ];
 
 class DrawCard extends BaseCard {
@@ -175,7 +181,7 @@ class DrawCard extends BaseCard {
     }
 
     canUseStealthToBypass(targetCard) {
-        if(!this.isStealth() || targetCard.isStealth()) {
+        if(!this.isStealth() || targetCard.isStealth() || targetCard.cannotBeBypassedByStealth) {
             return false;
         }
 
@@ -225,7 +231,7 @@ class DrawCard extends BaseCard {
     }
 
     getPlayActions() {
-        return StandardPlayActions;
+        return StandardPlayActions.concat(this.abilities.playActions);
     }
 
     play(player, isAmbush) {

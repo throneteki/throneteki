@@ -18,6 +18,10 @@ import About from './About.jsx';
 import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 
+import {toastr} from 'react-redux-toastr';
+
+import version from '../version.js';
+
 import * as actions from './actions';
 
 var notAuthedMenu = [
@@ -56,12 +60,15 @@ class App extends React.Component {
             }
         });
 
+        var queryString = this.props.token ? 'token=' + this.props.token + '&' : '';
+        queryString += 'version=' + version;
+
         var socket = io.connect(window.location.origin, {
             reconnection: true,
             reconnectionDelay: 1000,
             reconnectionDelayMax : 5000,
             reconnectionAttempts: Infinity,
-            query: 'token=' + this.props.token
+            query: queryString
         });
 
         socket.on('connect', () => {
@@ -80,10 +87,6 @@ class App extends React.Component {
             this.props.receiveNewGame(game);
         });
 
-        socket.on('joingame', game => {
-            this.props.receiveJoinGame(game);
-        });
-
         socket.on('gamestate', game => {
             this.props.receiveGameState(game, this.props.username);
         });
@@ -94,6 +97,57 @@ class App extends React.Component {
 
         socket.on('lobbymessages', messages => {
             this.props.receiveLobbyMessages(messages);
+        });
+
+        socket.on('handoff', server => {
+            var url = server.protocol + '://' + server.address + ':' + server.port;
+            this.props.gameSocketConnecting(url);
+
+            var gameSocket = io.connect(url, {
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax : 5000,
+                reconnectionAttempts: 5,
+                query: this.props.token ? 'token=' + this.props.token : undefined
+            });
+
+            gameSocket.on('connect_error', () => {
+                toastr.error('Connect Error', 'There was an error connecting to the game server');
+            });
+
+            gameSocket.on('disconnect', () => {
+                toastr.error('Connection lost', 'You have been disconnected from the game server, attempting reconnect..');
+
+                this.props.gameSocketDisconnect();
+            });
+
+            gameSocket.on('reconnecting', (attemptNumber) => {
+                toastr.info('Reconnecting', 'Attempt number ' + attemptNumber + ' to reconnect..');
+
+                this.props.gameSocketReconnecting(attemptNumber);
+            });
+
+            gameSocket.on('reconnect', () => {
+                toastr.success('Reconnected', 'The reconnection has been successful');
+                this.props.gameSocketConnected(gameSocket);
+            });
+
+            gameSocket.on('reconnect_failed', () => {
+                toastr.error('Reconnect failed', 'Given up trying to connect to the server');
+                this.props.gameSocketConnectFailed();
+            });
+
+            gameSocket.on('connect', () => {
+                this.props.gameSocketConnected(gameSocket);
+            });
+
+            gameSocket.on('gamestate', game => {
+                this.props.receiveGameState(game, this.props.username);
+            });
+        });
+
+        socket.on('banner', notice => {
+            this.props.receiveBannerNotice(notice);
         });
     }
 
@@ -185,11 +239,18 @@ App.propTypes = {
     currentGame: React.PropTypes.object,
     fetchCards: React.PropTypes.func,
     fetchPacks: React.PropTypes.func,
+    gameSocketConnectError: React.PropTypes.func,
+    gameSocketConnectFailed: React.PropTypes.func,
+    gameSocketConnected: React.PropTypes.func,
+    gameSocketConnecting: React.PropTypes.func,
+    gameSocketDisconnect: React.PropTypes.func,
+    gameSocketReconnecting: React.PropTypes.func,
     games: React.PropTypes.array,
     loggedIn: React.PropTypes.bool,
     navigate: React.PropTypes.func,
     packs: React.PropTypes.array,
     path: React.PropTypes.string,
+    receiveBannerNotice: React.PropTypes.func,
     receiveGameState: React.PropTypes.func,
     receiveGames: React.PropTypes.func,
     receiveJoinGame: React.PropTypes.func,
