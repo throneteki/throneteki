@@ -112,7 +112,7 @@ class DeckSummary extends React.Component {
                         <div ref='agenda'>Agenda: { this.props.agenda && this.props.agenda.label ? <span className='card-link' onMouseOver={ this.onCardMouseOver }
                             onMouseOut={ this.onCardMouseOut }>{ this.props.agenda.label }</span> : <span>None</span> }</div>
                    
-                       {this.props.agenda.label === 'Alliance' ? banners : null}
+                       {(this.props.agenda && this.props.agenda.label === 'Alliance') ? banners : null}
                         
                         <div ref='drawCount'>Draw deck: { this.state.drawCount } cards</div>
                         <div ref='plotCount'>Plot deck: { this.state.plotCount } cards</div>
