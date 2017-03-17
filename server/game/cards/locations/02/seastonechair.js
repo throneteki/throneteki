@@ -8,7 +8,6 @@ class TheSeastoneChair extends DrawCard {
                     challenge.isUnopposed() &&
                     challenge.challengeType === 'military' &&
                     challenge.attackingPlayer === this.controller)
-                   
             },
             cost: ability.costs.kneelFactionCard(),
             handler: context => {
