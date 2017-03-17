@@ -1,7 +1,7 @@
 /* global describe, it, expect, beforeEach, integration */
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
-describe('WraithsInTheirMidst', function() {
+describe('Varys\'s Riddle', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('greyjoy', [
