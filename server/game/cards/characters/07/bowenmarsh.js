@@ -7,7 +7,7 @@ class BowenMarsh extends DrawCard {
         });
         this.persistentEffect({
             condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'intrigue',
-            match: card => card.hasTrait('Steward') && card.getType() === 'character' && card.controller === this.controller,
+            match: card => card.hasTrait('Steward') && card.getType() === 'character',
             effect: ability.effects.addKeyword('Insight')
         });
     }
