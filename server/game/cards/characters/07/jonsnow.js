@@ -19,7 +19,7 @@ class JonSnow extends DrawCard {
                 },
                 'Stand Nights Watch': () => {
                     this.controller.cardsInPlay.each(card => {
-                        if(this.game.currentChallenge.isDefending(card) && card.hasFaction('thenightswatch') && card.getType() === 'character') {
+                        if(this.game.currentChallenge.isDefending(card) && card.isFaction('thenightswatch') && card.getType() === 'character') {
                             card.controller.standCard(card);
                         }
                     });
