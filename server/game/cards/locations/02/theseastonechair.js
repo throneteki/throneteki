@@ -27,7 +27,7 @@ class TheSeastoneChair extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to kneel his faction and kill {2} instead of normal claim effects', player, this, card);
+        this.game.addMessage('{0} uses {1} to kneel their faction and kill {2} instead of normal claim effects', player, this, card);
         card.controller.killCharacter(card);
 
         return true;
