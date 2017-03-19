@@ -24,7 +24,7 @@ class JonSnow extends DrawCard {
                         }
                     });
 
-                    this.game.addMessage('{0} uses {1} to stand each defending The Night\'s Watch character', this.controller, this);
+                    this.game.addMessage('{0} uses {1} to stand each defending {2} character', this.controller, this, 'thenightswatch');
                 }
             }
         });
