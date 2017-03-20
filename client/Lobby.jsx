@@ -6,7 +6,6 @@ import moment from 'moment';
 
 import * as actions from './actions';
 import Avatar from './Avatar.jsx';
-import Link from './Link.jsx';
 
 class InnerLobby extends React.Component {
     constructor() {
@@ -15,14 +14,18 @@ class InnerLobby extends React.Component {
         this.onChange = this.onChange.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.onSendClick = this.onSendClick.bind(this);
+        this.onScroll = this.onScroll.bind(this);
 
         this.state = {
+            canScroll: true,
             message: ''
         };
     }
 
     componentDidUpdate() {
-        $(this.refs.messages).scrollTop(999999);
+        if(this.state.canScroll) {
+            $(this.refs.messages).scrollTop(999999);
+        }
     }
 
     sendMessage() {
@@ -53,6 +56,18 @@ class InnerLobby extends React.Component {
         this.setState({ message: event.target.value });
     }
 
+    onScroll() {
+        var messages = this.refs.messages;
+
+        setTimeout(() => {
+            if(messages.scrollTop >= messages.scrollHeight - messages.offsetHeight - 20) {
+                this.setState({ canScroll: true });
+            } else {
+                this.setState({ canScroll: false });
+            }
+        }, 500);
+    }
+
     render() {
         var index = 0;
         var messages = _.map(this.props.messages, message => {
@@ -80,13 +95,14 @@ class InnerLobby extends React.Component {
 
         return (
             <div>
+                { this.props.bannerNotice ? <div className='alert alert-danger'>{this.props.bannerNotice}</div> : null }
                 <div className='alert alert-success'>
-                    The stats for February are now live.<a href='https://gist.github.com/cryogen/6f8accf082546c2e523bf1a4737def37' target='_blank'>Click this link to view them</a>
+                    Apologies for the server instability over the last couple of days.  I have been working out the last of the issues with the big release last week.  It should be a lot better now. As always, please raise issues on <a href='https://github.com/cryogen/throneteki'>GitHub</a>.
                 </div>
                 <div className='alert alert-info'>
+                    <div><span className='icon-military' />2017-03-19: Implemented Alliance in the deck builder! New cards: King of Salt and Rock, Venomous Blade, Dragonglass Dagger(partial), Motley, Old Bear Mormont(WotW), The Seastone Chair, Bowen Marsh, Cotter Pyke, Stannis Baratheon(TIMC), Ser Denys Mallister, Ser Jaremy Rykker.  Fixed lobby chat to now keep trying to scroll to the bottom if you're scrolling it.  Fixed chat not being able to be scrolled with the mouse wheel</div>
+                    <div><span className='icon-power' />2017-03-15: New cards: Golden Tooth, Ghiscari Elite, Ser Gregor Clegane, Jojen Reed, Maester of Starfall, First of the Men, The Boy King, Bear Island Host, The Prince's Pass, Mountains of the Moon, The Stone Drum, Vaes Tolorro, Tower of the Sun, Brandon's Gift, Tourney Grounds, King Beyond The Wall, Lannisport Treasury.  Fix Tinder Marge(sorry), various other minor fixes.</div>
                     <div><span className='icon-intrigue' />2017-03-09: New cards: Moat Cailin, Late Summer Feast, Joffrey Baratheon(FFH), Ghost, Sworn Brother, Eastwatch Carpenter, EastWatch By The Sea, Ricasso, King Robb's Host, Tywin Lannister(LoCR), Storm's End, Margery Tyrell (AMAF), Pyromancers, Ser Armory Lorch.  Add bestow keyword.  Fix: Castle Black, Cersei Lannister(LoCR)</div>
-                    <div><span className='icon-military' />2017-03-03: New cards: Winterfell Kennel Master, Chataya's Brothel, Renly Baratheon(FFH), Renly Baratheon(TTB), Janos Slynt, Chett, Young Spearwife, Donella Hornwood, Arya's Gift, Ser Davos Seaworth(GoH), Silent Sisters, Ghosts of Harrenhal, Fickle Bannerman, Slaver's Bay Port, The Tumblestone, Stone Crows.  Fixes to: Maester Lomys, Nymeria, A Gift of Arbor Red, Wardens of the North.  Fix duplicates not counting towards limited cards.</div>
-                    <div><span className='icon-power' />2017-02-27: New cards: House Florent Knight, Sweet Donnel Hill, The Knight Of Flowers, Captain's Daughter, The Shadow Tower, Trystane Martell, Alayaya, Chella, Daughter of Cheyk, Hoster Tully.  Fix: All cards that had 'action's were not working and have now been fixed.  Fixed a crash caused by Bronn being weird.  Fixed various minor niggly issues with card text or behind the scenes stuff.</div>
                 </div>
                 <div className='row'>
                     <span className='col-sm-9 text-center'><h1>Play A Game Of Thrones 2nd Edition</h1></span>
@@ -94,7 +110,7 @@ class InnerLobby extends React.Component {
                 </div>
                 <div className='row'>
                     <div className='lobby-chat col-sm-9'>
-                        <div className='panel lobby-messages' ref='messages'>
+                        <div className='panel lobby-messages' ref='messages' onScroll={ this.onScroll }>
                             {messages}
                         </div>
                     </div>
@@ -119,6 +135,7 @@ class InnerLobby extends React.Component {
 
 InnerLobby.displayName = 'Lobby';
 InnerLobby.propTypes = {
+    bannerNotice: React.PropTypes.string,
     messages: React.PropTypes.array,
     socket: React.PropTypes.object,
     users: React.PropTypes.array
@@ -126,6 +143,7 @@ InnerLobby.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        bannerNotice: state.chat.notice,
         messages: state.chat.messages,
         socket: state.socket.socket,
         users: state.games.users

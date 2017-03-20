@@ -8,9 +8,11 @@ var APP_DIR = path.resolve(__dirname, 'client');
 var LESS_DIR = path.resolve(__dirname, 'less');
 
 var config = {
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     entry: [
-        'webpack-hot-middleware/client?reload=true',
+        'react-hot-loader/patch',
+        'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000',
+        'webpack/hot/only-dev-server',
         path.join(__dirname, 'client/index.jsx'),
         LESS_DIR + '/site.less'
     ],
@@ -19,10 +21,15 @@ var config = {
         filename: 'bundle.js',
         publicPath: '/'
     },
+    devServer: {
+        hot: true,
+        contentBase: BUILD_DIR,
+        publicPath: '/'
+    },    
     plugins: [
-        new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin(),
+        new webpack.NamedModulesPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify('development'),
             '__DEV__': JSON.stringify('true')
@@ -36,19 +43,32 @@ var config = {
         loaders: [
             {
                 test: /\.jsx?/,
-                include: APP_DIR,
-                exclude: /node_modules/,
-                loaders: ['babel']
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel-loader'
             },
             {
                 test: /\.less$/,
-                loader: 'style!css!less'
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'less-loader'
+                ]
+            },
+            {
+                test: /\.json?/,
+                loader: 'json-loader'
+            },
+            {
+                test: /\.scss$/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'sass-loader'
+                ]
             }, {
-                test: /.(png|woff(2)?|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/, loader: 'url-loader?limit=100000'
+                test: /.(png|woff(2)?|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/, 
+                loader: 'url-loader?limit=100000'
             }]
-    },
-    postcss: function() {
-        return [precss, autoprefixer];
     }
 };
 

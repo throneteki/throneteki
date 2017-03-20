@@ -2,6 +2,7 @@ const _ = require('underscore');
 
 const AbilityLimit = require('./abilitylimit.js');
 const CostReducer = require('./costreducer.js');
+const MarshalLocation = require('./marshallocation.js');
 
 const Effects = {
     all: function(effects) {
@@ -353,6 +354,16 @@ const Effects = {
             }
         };
     },
+    doesNotStandDuringStanding: function() {
+        return {
+            apply: function(card) {
+                card.standsDuringStanding = false;
+            },
+            unapply: function(card) {
+                card.standsDuringStanding = true;
+            }
+        };
+    },
     takeControl: function(newController) {
         return {
             apply: function(card, context) {
@@ -384,6 +395,16 @@ const Effects = {
             },
             unapply: function(card) {
                 card.cannotPlay = false;
+            }
+        };
+    },
+    cannotBeBypassedByStealth: function() {
+        return {
+            apply: function(card) {
+                card.cannotBeBypassedByStealth = true;
+            },
+            unapply: function(card) {
+                card.cannotBeBypassedByStealth = false;
             }
         };
     },
@@ -453,6 +474,17 @@ const Effects = {
             }
         };
     },
+    canMarshalFrom: function(p, location) {
+        var marshalLocation = new MarshalLocation(p, location);
+        return {
+            apply: function(player) {
+                player.marshalLocations.push(marshalLocation);
+            },
+            unapply: function(player) {
+                player.marshalLocations = _.reject(player.additionalMarshalLocations, l => l === marshalLocation);
+            }
+        };
+    },
     reduceCost: function(properties) {
         return {
             apply: function(player, context) {
@@ -478,6 +510,9 @@ const Effects = {
     },
     reduceNextMarshalledCardCost: function(amount, match) {
         return this.reduceNextCardCost('marshal', amount, match);
+    },
+    reduceNextPlayedCardCost: function(amount, match) {
+        return this.reduceNextCardCost('play', amount, match);
     },
     reduceNextMarshalledOrPlayedCardCost: function(amount, match) {
         return this.reduceNextCardCost(['marshal', 'play'], amount, match);

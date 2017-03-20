@@ -6,8 +6,11 @@ import {Provider} from 'react-redux';
 import configureStore from './configureStore';
 import {navigate, login} from './actions';
 import 'bootstrap/dist/js/bootstrap';
+import ReduxToastr from 'react-redux-toastr';
 
-Raven.config('https://f5286cd580bf46898e7180c7a46de2f6@sentry.io/123019', { release: '2017-03-09'}).install();
+import version from '../version.js';
+
+Raven.config('https://f5286cd580bf46898e7180c7a46de2f6@sentry.io/123019', { release: version}).install();
 
 const store = configureStore();
 
@@ -20,6 +23,13 @@ if(typeof user !== 'undefined') {
 render(
     <Provider store={store}>
         <div>
+            <ReduxToastr
+                timeOut={4000}
+                newestOnTop
+                preventDuplicates
+                position='top-right'
+                transitionIn='fadeIn'
+                transitionOut='fadeOut'/>        
             <Application />
         </div>
     </Provider>, document.getElementById('component'));

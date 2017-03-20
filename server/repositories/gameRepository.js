@@ -1,33 +1,25 @@
-const mongoskin = require('mongoskin');
-const logger = require('../log.js');
+const monk = require('monk');
 
 class GameRepository {
-    save(game, callback) {
-        var db = mongoskin.db('mongodb://127.0.0.1:27017/throneteki');
+    constructor(dbPath) {
+        var db = monk(dbPath);
+        this.games = db.get('games');
+    }
 
-        if(!game.id) {
-            db.collection('games').insert(game, function(err, result) {
-                if(err) {
-                    logger.info(err.message);
+    create(game) {
+        return this.games.insert(game);
+    }
 
-                    callback(err);
-
-                    return;
-                }
-
-                callback(undefined, result.ops[0]._id);
-            });
-        } else {
-            db.collection('games').update({ _id: mongoskin.helper.toObjectID(game.id) }, {
-                '$set': {
-                    startedAt: game.startedAt,
-                    players: game.players,
-                    winner: game.winner,
-                    winReason: game.winReason,
-                    finishedAt: game.finishedAt
-                }
-            });
-        }
+    update(game) {
+        return this.games.update({ gameId: game.gameId }, {
+            '$set': {
+                startedAt: game.startedAt,
+                players: game.players,
+                winner: game.winner,
+                winReason: game.winReason,
+                finishedAt: game.finishedAt
+            }
+        });
     }
 }
 

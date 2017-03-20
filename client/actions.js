@@ -118,20 +118,6 @@ export function socketConnected(socket) {
     };
 }
 
-export function receiveNewGame(game) {
-    return {
-        type: 'RECEIVE_NEWGAME',
-        game: game
-    };
-}
-
-export function receiveJoinGame(game) {
-    return {
-        type: 'RECEIVE_JOINGAME',
-        game: game
-    };
-}
-
 export function receiveGameState(game, username) {
     return {
         type: 'RECEIVE_GAMESTATE',
@@ -178,8 +164,76 @@ export function sendSocketMessage(message, ...args) {
     return (dispatch, getState) => {
         var state = getState();
 
-        state.socket.socket.emit('game', message, ...args);
+        state.socket.socket.emit(message, ...args);
 
         return dispatch(socketMessageSent(message));
+    };
+}
+
+export function sendGameMessage(message, ...args) {
+    return (dispatch, getState) => {
+        var state = getState();
+
+        state.socket.gameSocket.emit('game', message, ...args);
+
+        return dispatch(socketMessageSent(message));
+    };
+}
+
+export function gameSocketConnected(socket) {
+    return {
+        type: 'GAME_SOCKET_CONNECTED',
+        socket: socket
+    };
+}
+
+export function receiveBannerNotice(notice) {
+    return {
+        type: 'RECEIVE_BANNER_NOTICE',
+        notice: notice
+    };
+}
+
+export function gameSocketConnectError() {
+    return {
+        type: 'GAME_SOCKET_CONNECT_ERROR'
+    };
+}
+
+export function gameSocketDisconnect() {
+    return {
+        type: 'GAME_SOCKET_DISCONNETED'
+    };
+}
+
+export function gameSocketReconnecting() {
+    return {
+        type: 'GAME_SOCKET_RECONNECTED'
+    };
+}
+
+export function gameSocketConnecting(host) {
+    return {
+        type: 'GAME_SOCKET_CONNECTING',
+        host: host
+    };
+}
+
+export function gameSocketConnectFailed() {
+    return {
+        type: 'GAME_SOCKET_CONNECT_FAILED'
+    };
+}
+
+export function gameSocketClosed(message) {
+    return {
+        type: 'GAME_SOCKET_CLOSED',
+        message: message
+    };
+}
+
+export function gameSocketClose() {
+    return (dispatch) => {
+        return dispatch(gameSocketClosed());
     };
 }

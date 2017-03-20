@@ -7,7 +7,7 @@ class EddardStark extends DrawCard {
                 onRenown: (event, challenge, card) => card === this
             },
             target: {
-                activePromptTitle: 'Select a character to gain power',
+                activePromptTitle: 'Select character to gain power',
                 cardCondition: card => this.cardCondition(this.game.currentChallenge, card)
             },
             handler: context => {
