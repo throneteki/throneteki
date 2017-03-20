@@ -1,6 +1,5 @@
 const _ = require('underscore');
 const EventEmitter = require('events');
-const uuid = require('node-uuid');
 
 const ChatCommands = require('./chatcommands.js');
 const GameChat = require('./gamechat.js');
@@ -22,10 +21,9 @@ const MenuPrompt = require('./gamesteps/menuprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
-const GameRepository = require('../repositories/gameRepository.js');
 
 class Game extends EventEmitter {
-    constructor(owner, details, options = {}) {
+    constructor(details, options = {}) {
         super();
 
         this.effectEngine = new EffectEngine(this);
@@ -38,15 +36,24 @@ class Game extends EventEmitter {
 
         this.name = details.name;
         this.allowSpectators = details.spectators;
-        this.id = uuid.v1();
-        this.owner = owner;
+        this.id = details.id;
+        this.owner = details.owner;
         this.started = false;
         this.playStarted = false;
         this.createdAt = new Date();
+        this.savedGameId = details.savedGameId;
+
+        _.each(details.players, player => {
+            this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
+        });
+
+        _.each(details.spectators, spectator => {
+            this.playersAndSpectators[spectator.user.username] = new Spectator(spectator.id, spectator.user);
+        });
 
         this.setMaxListeners(0);
 
-        this.gameRepository = options.gameRepository || new GameRepository();
+        this.router = options.router;
     }
 
     addMessage() {
@@ -128,37 +135,13 @@ class Game extends EventEmitter {
     }
 
     anyPlotHasTrait(trait) {
-        return _.any(this.game.getPlayers(), player =>
+        return _.any(this.getPlayers(), player =>
             player.activePlot &&
             player.activePlot.hasTrait(trait));
     }
 
     addEffect(source, properties) {
         this.effectEngine.add(new Effect(this, source, properties));
-    }
-
-    playCard(player, card) {
-        if(this.pipeline.handleCardClicked(player, card)) {
-            return;
-        }
-
-        if(!player.playCard(card)) {
-            return;
-        }
-
-        this.raiseEvent('onCardPlayed', player, card);
-    }
-
-    processCardClicked(player, card) {
-        if(this.pipeline.handleCardClicked(player, card)) {
-            return true;
-        }
-
-        if(card && card.onClick(player)) {
-            return true;
-        }
-
-        return false;
     }
 
     selectPlot(player, plotId) {
@@ -188,28 +171,32 @@ class Game extends EventEmitter {
             return;
         }
 
-        switch(card.location) {
-            case 'hand':
-                this.playCard(player, card);
-                return;
-            case 'plot deck':
-                this.selectPlot(player, cardId);
-
-                return;
+        if(card.location === 'plot deck') {
+            this.selectPlot(player, cardId);
+            return;
         }
 
-        var handled = this.processCardClicked(player, card);
+        if(this.pipeline.handleCardClicked(player, card)) {
+            return;
+        }
 
-        if(!handled) {
-            if(card && !card.facedown && card.location === 'play area' && card.controller === player) {
-                if(card.kneeled) {
-                    player.standCard(card);
-                } else {
-                    player.kneelCard(card);
-                }
+        // Attempt to play cards that are not already in the play area.
+        if(['hand', 'discard pile', 'dead pile'].includes(card.location) && player.playCard(card)) {
+            return;
+        }
 
-                this.addMessage('{0} {1} {2}', player, card.kneeled ? 'kneels' : 'stands', card);
+        if(card.onClick(player)) {
+            return;
+        }
+
+        if(!card.facedown && card.location === 'play area' && card.controller === player) {
+            if(card.kneeled) {
+                player.standCard(card);
+            } else {
+                player.kneelCard(card);
             }
+
+            this.addMessage('{0} {1} {2}', player, card.kneeled ? 'kneels' : 'stands', card);
         }
     }
 
@@ -288,7 +275,18 @@ class Game extends EventEmitter {
         }
 
         if(player.drop(cardId, source, target)) {
-            this.addMessage('{0} has moved a card from their {1} to their {2}', player, source, target);
+            var movedCard = 'a card';
+            if(!_.isEmpty(_.intersection(['dead pile', 'discard pile', 'out of game', 'play area'],
+                                         [source, target]))) {
+                // log the moved card only if it moved from/to a public place
+                var card = this.findAnyCardInAnyList(cardId);
+                if(card && this.currentPhase !== 'setup') {
+                    movedCard = card;
+                }
+            }
+
+            this.addMessage('{0} has moved {1} from their {2} to their {3}',
+                            player, movedCard, source, target);
         }
     }
 
@@ -344,7 +342,7 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
                 this.winReason = 'power';
 
-                this.saveGame();
+                this.router.gameWon(this, 'power', player);
             }
         }
     }
@@ -361,7 +359,7 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
                 this.winReason = 'decked';
 
-                this.saveGame();
+                this.router.gameWon(this, 'decked', player);
             }
         }
     }
@@ -431,7 +429,7 @@ class Game extends EventEmitter {
                 this.finishedAt = new Date();
                 this.winReason = 'concede';
 
-                this.saveGame();
+                this.router.gameWon(this, 'concede', otherPlayer);
             }
         }
     }
@@ -503,7 +501,7 @@ class Game extends EventEmitter {
         this.playStarted = true;
         this.startedAt = new Date();
 
-        this.saveGame();
+//        this.saveGame();
 
         this.continue();
     }
@@ -612,7 +610,6 @@ class Game extends EventEmitter {
 
             if(!this.finishedAt) {
                 this.finishedAt = new Date();
-                this.saveGame();
             }
         }
     }
@@ -664,20 +661,13 @@ class Game extends EventEmitter {
 
         return {
             id: this.savedGameId,
+            gameId: this.id,
             startedAt: this.startedAt,
             players: players,
             winner: this.winner ? this.winner.name : undefined,
             winReason: this.winReason,
             finishedAt: this.finishedAt
         };
-    }
-
-    saveGame() {
-        this.gameRepository.save(this.getSaveState(), (err, id) => {
-            if(!err) {
-                this.savedGameId = id;
-            }
-        });
     }
 
     getState(activePlayer) {
