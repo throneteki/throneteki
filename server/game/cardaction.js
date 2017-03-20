@@ -19,6 +19,8 @@ const BaseAbility = require('./baseability.js');
  * phase        - string representing which phases the action may be executed.
  *                Defaults to 'any' which allows the action to be executed in
  *                any phase.
+ * location     - string indicating the location the card should be in in order
+ *                to activate the action. Defaults to 'play area'.
  * limit        - optional AbilityLimit object that represents the max number of
  *                uses for the action as well as when it resets.
  * anyPlayer    - boolean indicating that the action may be executed by a player
@@ -38,6 +40,7 @@ class CardAction extends BaseAbility {
         this.anyPlayer = properties.anyPlayer || false;
         this.condition = properties.condition;
         this.clickToActivate = !!properties.clickToActivate;
+        this.location = properties.location || 'play area';
 
         this.handler = this.buildHandler(card, properties);
     }
@@ -82,6 +85,10 @@ class CardAction extends BaseAbility {
             return false;
         }
 
+        if(this.location !== this.card.location) {
+            return false;
+        }
+
         if(this.card.isBlank()) {
             return false ;
         }
@@ -90,7 +97,7 @@ class CardAction extends BaseAbility {
             return false;
         }
 
-        return this.canPayCosts(context);
+        return this.canPayCosts(context) && this.canResolveTargets(context);
     }
 
     execute(player, arg) {

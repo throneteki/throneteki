@@ -1,12 +1,29 @@
-function connected(socket) {
-    return { socket: socket };
-}
-
 export default function(state = {}, action) {
     switch(action.type) {
         case 'SOCKET_CONNECTED':
-            state = connected(action.socket);
-            break;
+            return Object.assign({}, state, {
+                socket: action.socket
+            });        
+        case 'GAME_SOCKET_CONNECTED':
+            return Object.assign({}, state, {
+                gameSocket: action.socket,
+                gameConnecting: false
+            });
+        case 'GAME_SOCKET_CONNECTING':
+            return Object.assign({}, state, {
+                gameConnecting: true,
+                gameHost: action.host
+            });
+        case 'GAME_SOCKET_CONNECT_FAILED':
+            return Object.assign({}, state, {
+                gameConnecting: false,                
+                gameHost: undefined
+            });
+        case 'GAME_SOCKET_CLOSED':
+            return Object.assign({}, state, {
+                gameConnecting: false,
+                gameHost: undefined
+            });
     }
 
     return state;

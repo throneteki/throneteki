@@ -1,4 +1,4 @@
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 const _ = require('underscore');
 
 const AbilityDsl = require('./abilitydsl.js');
@@ -7,6 +7,7 @@ const CardForcedInterrupt = require('./cardforcedinterrupt.js');
 const CardForcedReaction = require('./cardforcedreaction.js');
 const CardInterrupt = require('./cardinterrupt.js');
 const CardReaction = require('./cardreaction.js');
+const CustomPlayAction = require('./customplayaction.js');
 const EventRegistrar = require('./eventregistrar.js');
 
 const ValidKeywords = [
@@ -48,7 +49,7 @@ class BaseCard {
         this.menu = _([]);
         this.events = new EventRegistrar(this.game, this);
 
-        this.abilities = { reactions: [], persistentEffects: [] };
+        this.abilities = { reactions: [], persistentEffects: [], playActions: [] };
         this.parseKeywords(cardData.text || '');
         this.parseTraits(cardData.traits || '');
         this.setupCardAbilities(AbilityDsl);
@@ -142,7 +143,7 @@ class BaseCard {
     action(properties) {
         var action = new CardAction(this.game, this, properties);
         this.abilities.action = action;
-        if(!action.isClickToActivate()) {
+        if(!action.isClickToActivate() && action.location === 'play area') {
             this.menu.push(action.getMenuItem());
         }
     }
@@ -176,6 +177,14 @@ class BaseCard {
             }
         };
         this.forcedInterrupt(_.extend(whenClause, properties));
+    }
+
+    /**
+     * Defines a special play action that can occur when the card is outside the
+     * play area (e.g. Lady-in-Waiting's dupe marshal ability)
+     */
+    playAction(properties) {
+        this.abilities.playActions.push(new CustomPlayAction(properties));
     }
 
     /**

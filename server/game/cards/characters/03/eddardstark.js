@@ -6,13 +6,13 @@ class EddardStark extends DrawCard {
             when: {
                 onRenown: (event, challenge, card) => card === this && this.isNotParticipatingAlone()
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.cardCondition(this.game.currentChallenge, card),
-                    activePromptTitle: 'Select character to gain power',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select character to gain power',
+                cardCondition: card => this.cardCondition(this.game.currentChallenge, card)
+            },
+            handler: context => {
+                context.target.modifyPower(1);
+                this.game.addMessage('{0} uses {1} to allow {2} to gain 1 power', context.player, this, context.target);
             }
         });
     }
