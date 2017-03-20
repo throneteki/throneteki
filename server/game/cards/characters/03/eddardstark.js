@@ -4,7 +4,7 @@ class EddardStark extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onRenown: (event, challenge, card) => card === this
+                onRenown: (event, challenge, card) => card === this && this.isNotParticipatingAlone()
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
@@ -31,6 +31,17 @@ class EddardStark extends DrawCard {
         this.game.addMessage('{0} uses {1} to allow {2} to gain 1 power', player, this, card);
 
         return true;
+    }
+
+    isNotParticipatingAlone() {
+        if(this.game.currentChallenge.isAttacking(this) && this.game.currentChallenge.attackers.length > 1) {
+            return true;
+        }
+        if(this.game.currentChallenge.isDefending(this) && this.game.currentChallenge.defenders.length > 1) {
+            return true;
+        }
+
+        return false;
     }
 }
 
