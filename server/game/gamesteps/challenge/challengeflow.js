@@ -136,7 +136,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     unopposedPower() {
-        if(this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner()) {
+        if(this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner() && this.challenge.winner.gainsChallengeBonus) {
             this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.challenge.winner);
             this.game.addPower(this.challenge.winner, 1);
 
