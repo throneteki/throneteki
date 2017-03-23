@@ -9,7 +9,12 @@ class Satin extends DrawCard {
             limit: ability.limit.perPhase(2),
             target: {
                 activePromptTitle: 'Select a Steward to stand',
-                cardCondition: card => card !== this && card.location === 'play area' && card.hasTrait('Steward') && card.getType() === 'character'
+                cardCondition: (
+                    card => card !== this && 
+                    card.location === 'play area' && 
+                    card.hasTrait('Steward') && 
+                    card.getType() === 'character' &&
+                    card.kneeled)
             },
             handler: context => {
                 context.target.controller.standCard(context.target);
