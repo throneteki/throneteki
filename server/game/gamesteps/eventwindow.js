@@ -47,7 +47,11 @@ class EventWindow extends BaseStep {
     }
 
     cancelInterrupts() {
-        this.game.emit(this.eventName + ':cancelinterrupt', ...this.event.params);
+        this.game.openAbilityWindow({
+            title: 'Any interrupts?',
+            eventName: this.eventName + ':cancelinterrupt',
+            params: this.event.params
+        });
     }
 
     forcedInterrupts() {
@@ -63,7 +67,11 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.game.emit(this.eventName + ':interrupt', ...this.event.params);
+        this.game.openAbilityWindow({
+            title: 'Any interrupts?',
+            eventName: this.eventName + ':interrupt',
+            params: this.event.params
+        });
     }
 
     executeHandler() {
@@ -94,7 +102,11 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.game.emit(this.eventName + ':reaction', ...this.event.params);
+        this.game.openAbilityWindow({
+            title: 'Any reactions?',
+            eventName: this.eventName + ':reaction',
+            params: this.event.params
+        });
     }
 }
 
