@@ -1,9 +1,9 @@
 const DrawCard = require('../../../drawcard.js');
 
-class JeynePool extends DrawCard {
+class JeynePoole extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Sacrifice Jeyne Pool',
+            title: 'Sacrifice Jeyne Poole',
             phase: 'marshal',
             cost: ability.costs.sacrificeSelf(),
             target: {
@@ -23,6 +23,6 @@ class JeynePool extends DrawCard {
     }
 }
 
-JeynePool.code = '07033';
+JeynePoole.code = '07033';
 
-module.exports = JeynePool;
+module.exports = JeynePoole;
