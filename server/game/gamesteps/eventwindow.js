@@ -48,9 +48,8 @@ class EventWindow extends BaseStep {
 
     cancelInterrupts() {
         this.game.openAbilityWindow({
-            title: 'Any interrupts?',
-            eventName: this.eventName + ':cancelinterrupt',
-            params: this.event.params
+            abilityType: 'cancelinterrupt',
+            event: this.event
         });
     }
 
@@ -68,9 +67,8 @@ class EventWindow extends BaseStep {
         }
 
         this.game.openAbilityWindow({
-            title: 'Any interrupts?',
-            eventName: this.eventName + ':interrupt',
-            params: this.event.params
+            abilityType: 'interrupt',
+            event: this.event
         });
     }
 
@@ -103,9 +101,8 @@ class EventWindow extends BaseStep {
         }
 
         this.game.openAbilityWindow({
-            title: 'Any reactions?',
-            eventName: this.eventName + ':reaction',
-            params: this.event.params
+            abilityType: 'reaction',
+            event: this.event
         });
     }
 }

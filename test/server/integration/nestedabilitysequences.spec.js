@@ -87,7 +87,6 @@ describe('nested ability sequences', function() {
                 expect(this.player1).toHavePromptButton('Robb Stark');
                 expect(this.player1).not.toHavePromptButton('Catelyn Stark');
                 expect(this.player1).not.toHavePromptButton('Arya Stark');
-                expect(this.player1).toHavePrompt('Any reactions?');
             });
 
             it('should continue with the previous reaction window once the current trigger is resolved', function() {
@@ -100,7 +99,6 @@ describe('nested ability sequences', function() {
                 expect(this.player1).toHavePromptButton('Robb Stark');
                 expect(this.player1).toHavePromptButton('Catelyn Stark');
                 expect(this.player1).not.toHavePromptButton('Arya Stark');
-                expect(this.player1).toHavePrompt('Any reactions?');
             });
 
             it('should not allow abilities to trigger past their limit upon rewinding', function() {
@@ -125,7 +123,6 @@ describe('nested ability sequences', function() {
                 // Robb Stark is still eligible though.
                 expect(this.player1).toHavePromptButton('Robb Stark');
                 expect(this.player1).not.toHavePromptButton('Arya Stark');
-                expect(this.player1).toHavePrompt('Any reactions?');
             });
         });
     });

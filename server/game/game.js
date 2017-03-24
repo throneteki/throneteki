@@ -546,9 +546,9 @@ class Game extends EventEmitter {
     }
 
     openAbilityWindow(properties) {
-        let window = new TriggeredAbilityWindow(this, { title: properties.title });
+        let window = new TriggeredAbilityWindow(this, { abilityType: properties.abilityType, event: properties.event });
         this.abilityWindowStack.push(window);
-        this.emit(properties.eventName, ...properties.params);
+        this.emit(properties.event.name + ':' + properties.abilityType, ...properties.event.params);
         this.queueStep(window);
         this.queueSimpleStep(() => this.abilityWindowStack.pop());
     }
