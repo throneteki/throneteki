@@ -32,7 +32,7 @@ class PromptedTriggeredAbility extends TriggeredAbility {
         super(game, card, type, properties);
 
         this.choices = this.createChoices(properties);
-        this.title = properties.title || (() => 'Trigger ' + this.card.name + '?');
+        this.title = properties.title;
     }
 
     createChoices(properties) {
