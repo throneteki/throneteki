@@ -5,7 +5,7 @@ class WhisperCampaign extends PlotCard {
         this.forcedReaction({
             when: {
                 onCardEntersPlay: (event, card) => {
-                    if(!(card.getType() === 'character' && !card.hasIcon('intrigue'))) {
+                    if(card.getType() !== 'character' || card.hasIcon('intrigue')) {
                         return false;
                     }
 
