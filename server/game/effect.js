@@ -170,11 +170,20 @@ class Effect {
             this.cancel();
             this.addTargets(newTargets);
         } else if(this.effect.isStateDependent) {
-            _.each(this.targets, target => {
-                this.effect.unapply(target, this.context);
-                this.effect.apply(target, this.context);
-            });
+            let reapplyFunc = this.createReapplyFunc();
+            _.each(this.targets, target => reapplyFunc(target));
         }
+    }
+
+    createReapplyFunc() {
+        if(this.effect.reapply) {
+            return target => this.effect.reapply(target, this.context);
+        }
+
+        return target => {
+            this.effect.unapply(target, this.context);
+            this.effect.apply(target, this.context);
+        };
     }
 }
 

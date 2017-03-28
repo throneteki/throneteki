@@ -573,20 +573,47 @@ describe('Effect', function () {
             describe('when the effect is active', function() {
                 beforeEach(function() {
                     this.effect.active = true;
-
-                    this.effect.reapply(this.newTargets);
                 });
 
-                it('should unapply the effect for existing targets', function() {
-                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                describe('and the effect has a reapply method', function() {
+                    beforeEach(function() {
+                        this.properties.effect.reapply = jasmine.createSpy('reapply');
+                        this.effect.reapply(this.newTargets);
+                    });
+
+                    it('should reapply the effect for existing targets', function() {
+                        expect(this.properties.effect.reapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not unapply the effect for existing targets', function() {
+                        expect(this.properties.effect.unapply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not apply the effect for existing targets', function() {
+                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not apply the effect to new targets', function() {
+                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                    });
                 });
 
-                it('should apply the effect for existing targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
-                });
+                describe('and the effect does not have a reapply method', function() {
+                    beforeEach(function() {
+                        this.effect.reapply(this.newTargets);
+                    });
 
-                it('should not apply the effect to new targets', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                    it('should unapply the effect for existing targets', function() {
+                        expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should apply the effect for existing targets', function() {
+                        expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not apply the effect to new targets', function() {
+                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                    });
                 });
             });
         });
