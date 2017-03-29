@@ -621,6 +621,7 @@ describe('Effect', function () {
         describe('when the effect is conditional', function() {
             beforeEach(function() {
                 this.effect.isConditional = true;
+                this.effect.condition = jasmine.createSpy('condition');
             });
 
             describe('when the effect is inactive', function() {
@@ -639,10 +640,32 @@ describe('Effect', function () {
                 });
             });
 
-            describe('when the effect is active', function() {
+            describe('when the condition goes from false to true', function() {
                 beforeEach(function() {
+                    this.effect.targets = [];
                     this.effect.active = true;
+                    this.effect.currentCondition = false;
+                    this.effect.condition.and.returnValue(true);
+                    this.effect.reapply(this.newTargets);
+                });
 
+                it('should apply the effect to new targets', function() {
+                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                });
+
+                it('should update the target list', function() {
+                    expect(this.effect.targets).toContain(this.target);
+                    expect(this.effect.targets).toContain(this.newTarget);
+                });
+            });
+
+            describe('when the condition goes from true to false', function() {
+                beforeEach(function() {
+                    this.effect.targets = [this.target];
+                    this.effect.active = true;
+                    this.effect.currentCondition = true;
+                    this.effect.condition.and.returnValue(false);
                     this.effect.reapply(this.newTargets);
                 });
 
@@ -650,17 +673,34 @@ describe('Effect', function () {
                     expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                 });
 
-                it('should apply the effect from existing targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                it('should not apply the effect to new targets', function() {
+                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
                 });
 
-                it('should apply the effect to new targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                it('should clear the target list', function() {
+                    expect(this.effect.targets).toEqual([]);
+                });
+            });
+
+            describe('when the condition does not change', function() {
+                beforeEach(function() {
+                    this.effect.targets = [this.target];
+                    this.effect.active = true;
+                    this.effect.currentCondition = true;
+                    this.effect.condition.and.returnValue(true);
+                    this.effect.reapply(this.newTargets);
                 });
 
-                it('should update the target list', function() {
-                    expect(this.effect.targets).toContain(this.target);
-                    expect(this.effect.targets).toContain(this.newTarget);
+                it('should not unapply the effect from existing targets', function() {
+                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                });
+
+                it('should not apply the effect to any targets', function() {
+                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                });
+
+                it('should not update the target list', function() {
+                    expect(this.effect.targets).toEqual([this.target]);
                 });
             });
         });
