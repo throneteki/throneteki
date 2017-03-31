@@ -4,7 +4,7 @@ const uuid = require('uuid');
 const BaseStep = require('./basestep.js');
 const TriggeredAbilityWindowTitles = require('./triggeredabilitywindowtitles.js');
 
-class TriggeredAbilityWindow extends BaseStep {
+class ForcedTriggeredAbilityWindow extends BaseStep {
     constructor(game, properties) {
         super(game);
         this.abilityChoices = [];
@@ -70,4 +70,4 @@ class TriggeredAbilityWindow extends BaseStep {
     }
 }
 
-module.exports = TriggeredAbilityWindow;
+module.exports = ForcedTriggeredAbilityWindow;
