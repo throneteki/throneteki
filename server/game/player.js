@@ -38,6 +38,8 @@ class Player extends Spectator {
         this.marshalLocations = [new MarshalLocation(this, 'hand')];
         this.usedPlotsModifier = 0;
 
+        this.gainsChallengeBonus = true;
+
         this.createAdditionalPile('out of game', { title: 'Out of Game', area: 'player row' });
     }
 
