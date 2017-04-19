@@ -113,16 +113,16 @@ class Player extends Spectator {
     }
 
     anyCardsInPlay(predicate) {
-        return this.cardsInPlay.any(predicate);
+        return this.allCards.any(card => card.location === 'play area' && predicate(card));
     }
 
     filterCardsInPlay(predicate) {
-        return this.cardsInPlay.filter(predicate);
+        return this.allCards.filter(card => card.location === 'play area' && predicate(card));
     }
 
     getNumberOfCardsInPlay(predicate) {
-        return this.cardsInPlay.reduce((num, card) => {
-            if(predicate(card)) {
+        return this.allCards.reduce((num, card) => {
+            if(card.location === 'play area' && predicate(card)) {
                 return num + 1;
             }
 
