@@ -21,7 +21,7 @@ class BeggarKing extends DrawCard {
                 var gold = 1;
 
                 var otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer || !otherPlayer.cardsInPlay.any(card => card.hasTrait('King'))) {
+                if(!otherPlayer || !otherPlayer.anyCardsInPlay(card => card.hasTrait('King'))) {
                     gold = 2;
                 }
 
