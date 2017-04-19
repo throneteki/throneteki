@@ -6,7 +6,7 @@ class Ygritte extends DrawCard {
         this.persistentEffect({
             condition: () => this.controlsAnotherWildling(),
             match: this,
-            effects: ability.effects.addKeyword('stealth')
+            effect: ability.effects.addKeyword('stealth')
         });
     }
 
