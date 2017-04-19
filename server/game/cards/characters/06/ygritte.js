@@ -11,7 +11,7 @@ class Ygritte extends DrawCard {
     }
 
     controlsAnotherWildling() {
-        return this.controller.cardsInPlay.any(card => card.hasTrait('Wildling') && card.getType() === 'character' && card !== this);
+        return this.controller.anyCardsInPlay(card => card !== this && card.getType() === 'character' && card.hasTrait('Wildling'));
     }
 }
 
