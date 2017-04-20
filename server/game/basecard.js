@@ -7,7 +7,6 @@ const CardForcedInterrupt = require('./cardforcedinterrupt.js');
 const CardForcedReaction = require('./cardforcedreaction.js');
 const CardInterrupt = require('./cardinterrupt.js');
 const CardReaction = require('./cardreaction.js');
-const CardWhenRevealed = require('./cardwhenrevealed.js');
 const CustomPlayAction = require('./customplayaction.js');
 const EventRegistrar = require('./eventregistrar.js');
 
@@ -168,16 +167,6 @@ class BaseCard {
 
     forcedInterrupt(properties) {
         var reaction = new CardForcedInterrupt(this.game, this, properties);
-        this.abilities.reactions.push(reaction);
-    }
-
-    whenRevealed(properties) {
-        let whenClause = {
-            when: {
-                onPlotsWhenRevealed: event => event.plots.includes(this)
-            }
-        };
-        let reaction = new CardWhenRevealed(this.game, this, _.extend(whenClause, properties));
         this.abilities.reactions.push(reaction);
     }
 
