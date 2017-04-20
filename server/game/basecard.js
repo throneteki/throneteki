@@ -7,6 +7,7 @@ const CardForcedInterrupt = require('./cardforcedinterrupt.js');
 const CardForcedReaction = require('./cardforcedreaction.js');
 const CardInterrupt = require('./cardinterrupt.js');
 const CardReaction = require('./cardreaction.js');
+const CardWhenRevealed = require('./cardwhenrevealed.js');
 const CustomPlayAction = require('./customplayaction.js');
 const EventRegistrar = require('./eventregistrar.js');
 
@@ -170,15 +171,14 @@ class BaseCard {
         this.abilities.reactions.push(reaction);
     }
 
-    // TODO: When revealed abilities shouldn't be a synonym for forced reactions
-    //       but it is probably close enough for now.
     whenRevealed(properties) {
-        var whenClause = {
+        let whenClause = {
             when: {
-                onPlotRevealed: (e, player, plot) => plot === this
+                onPlotsWhenRevealed: event => event.plots.includes(this)
             }
         };
-        this.forcedInterrupt(_.extend(whenClause, properties));
+        let reaction = new CardWhenRevealed(this.game, this, _.extend(whenClause, properties));
+        this.abilities.reactions.push(reaction);
     }
 
     /**

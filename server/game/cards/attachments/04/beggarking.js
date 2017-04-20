@@ -9,10 +9,10 @@ class BeggarKing extends DrawCard {
         });
         this.reaction({
             when: {
-                onPlotRevealCompleted: () => (
-                    _.any(this.game.getPlayers(), player => (
-                        player !== this.controller &&
-                        this.controller.activePlot.getIncome(true) < player.activePlot.getIncome(true)
+                onPlotsRevealed: event => (
+                    _.any(event.plots, plot => (
+                        plot.controller !== this.controller &&
+                        this.controller.activePlot.getIncome(true) < plot.getIncome(true)
                     ))
                 )
             },
