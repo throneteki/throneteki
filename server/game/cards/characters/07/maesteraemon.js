@@ -1,4 +1,4 @@
-const FulfillMilitaryClaim = require('../../../gamesteps/challenge/fulfillmilitaryclaim.js');
+const ApplyClaim = require('../../../gamesteps/challenge/applyclaim.js');
 
 const DrawCard = require('../../../drawcard.js');
 
@@ -9,17 +9,17 @@ class MaesterAemon extends DrawCard {
                 onPhaseEnded: (event, phase) => phase === 'challenge' && this.notAllChallengesInitiatedAgainstYou()
             },
             handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-                var buttons = [];
+                let otherPlayer = this.game.getOtherPlayer(this.controller);
+                let buttons = [];
 
                 if(otherPlayer.getNumberOfChallengesInitiatedByType('military') === 0) {
-                    buttons.push({ text: 'Military', method: 'satisfyMilClaim' });
+                    buttons.push({ text: 'Military', method: 'satisfyClaim', arg: 'military' });
                 }
                 if(otherPlayer.getNumberOfChallengesInitiatedByType('intrigue') === 0) {
-                    buttons.push({ text: 'Intrigue', method: 'satisfyIntClaim' });
+                    buttons.push({ text: 'Intrigue', method: 'satisfyClaim', arg: 'intrigue' });
                 }
                 if(otherPlayer.getNumberOfChallengesInitiatedByType('power') === 0) {
-                    buttons.push({ text: 'Power', method: 'satisfyPowClaim' });
+                    buttons.push({ text: 'Power', method: 'satisfyClaim', arg: 'power' });
                 }
                 buttons.push({ text: 'Done', method: 'cancel' });
 
@@ -34,41 +34,19 @@ class MaesterAemon extends DrawCard {
         });
     }
 
-    satisfyMilClaim(player) {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-        var claim = player.getClaim();
-        var type = 'military';
+    satisfyClaim(player, claimType) {
+        let otherPlayer = this.game.getOtherPlayer(this.controller);
+        let challenge = {
+            winner: player,
+            loser: otherPlayer,
+            challengeType: claimType,
+            claim: player.getClaim()
+        };
 
-        this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim. {2} must kill {4} character{5}', 
-                              player, this, otherPlayer, type, claim, claim > 1 ? 's' : '');
+        this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim',
+                              player, this, otherPlayer, claimType);
 
-        this.game.queueStep(new FulfillMilitaryClaim(this.game, otherPlayer, claim));
-
-        return true;
-    }
-
-    satisfyIntClaim(player) {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-        var claim = player.getClaim();
-        var type = 'intrigue';
-
-        this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim. {2} must discard {4} card{5} at random', 
-                              player, this, otherPlayer, type, claim, claim > 1 ? 's' : '');
-
-        otherPlayer.discardAtRandom(claim);
-
-        return true;
-    }
-
-    satisfyPowClaim(player) {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-        var claim = player.getClaim();
-        var type = 'power';
-
-        this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim. {2} removes {4} power and {0} gains {4} power', 
-                              player, this, otherPlayer, type, claim);
-
-        this.game.transferPower(player, otherPlayer, claim);
+        this.game.queueStep(new ApplyClaim(this.game, challenge));
 
         return true;
     }
@@ -80,7 +58,7 @@ class MaesterAemon extends DrawCard {
     }
 
     notAllChallengesInitiatedAgainstYou() {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
+        let otherPlayer = this.game.getOtherPlayer(this.controller);
 
         if(!otherPlayer) {
             return false;
