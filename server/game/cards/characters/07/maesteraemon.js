@@ -1,12 +1,11 @@
 const ApplyClaim = require('../../../gamesteps/challenge/applyclaim.js');
-
 const DrawCard = require('../../../drawcard.js');
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'challenge' && this.notAllChallengesInitiatedAgainstYou()
+                onPhaseEnded: (event, phase) => phase === 'challenge' && !this.allChallengesInitiatedByOpponent()
             },
             handler: () => {
                 let otherPlayer = this.game.getOtherPlayer(this.controller);
@@ -57,20 +56,18 @@ class MaesterAemon extends DrawCard {
         return true;
     }
 
-    notAllChallengesInitiatedAgainstYou() {
+    allChallengesInitiatedByOpponent() {
         let otherPlayer = this.game.getOtherPlayer(this.controller);
 
         if(!otherPlayer) {
-            return false;
-        }
-
-        if(otherPlayer.getNumberOfChallengesInitiatedByType('military') === 0 ||
-           otherPlayer.getNumberOfChallengesInitiatedByType('intrigue') === 0 ||
-           otherPlayer.getNumberOfChallengesInitiatedByType('power') === 0) {
             return true;
         }
 
-        return false;
+        return (
+            otherPlayer.getNumberOfChallengesInitiatedByType('military') > 0 &&
+            otherPlayer.getNumberOfChallengesInitiatedByType('intrigue') > 0 &&
+            otherPlayer.getNumberOfChallengesInitiatedByType('power') > 0
+        );
     }
 }
 
