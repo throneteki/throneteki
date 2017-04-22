@@ -54,5 +54,35 @@ describe('Esgred', function() {
                 expect(this.knight2.stealth).toBe(true);
             });
         });
+
+        describe('when Esgred is in play and Asha enters play', function() {
+            beforeEach(function() {
+                this.player1.clickCard(this.esgred);
+                this.player1.clickCard(this.asha);
+            });
+
+            it('should have Asha gain power', function() {
+                expect(this.asha.power).toBe(1);
+            });
+
+            it('should sacrifice Esgred', function() {
+                expect(this.esgred.location).toBe('discard pile');
+            });
+        });
+
+        describe('when Asha is in play and Esgred enters play', function() {
+            beforeEach(function() {
+                this.player1.clickCard(this.asha);
+                this.player1.clickCard(this.esgred);
+            });
+
+            it('should have Asha gain power', function() {
+                expect(this.asha.power).toBe(1);
+            });
+
+            it('should sacrifice Esgred', function() {
+                expect(this.esgred.location).toBe('discard pile');
+            });
+        });
     });
 });
