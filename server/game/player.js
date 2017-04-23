@@ -966,6 +966,10 @@ class Player extends Spectator {
         if(targetLocation === 'hand') {
             this.game.raiseEvent('onCardEntersHand', card);
         }
+
+        if(['dead pile', 'discard pile'].includes(targetLocation)) {
+            this.game.raiseMergedEvent('onCardPlaced', { card: card, location: targetLocation });
+        }
     }
 
     kneelCard(card) {

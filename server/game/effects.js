@@ -524,6 +524,19 @@ const Effects = {
             }
         };
     },
+    canPlayFromOwn: function(location) {
+        return {
+            apply: function(player, context) {
+                let playableLocation = new PlayableLocation('play', player, location);
+                context.canPlayFromOwn = playableLocation;
+                player.playableLocations.push(playableLocation);
+            },
+            unapply: function(player, context) {
+                player.playableLocations = _.reject(player.playableLocations, l => l === context.canPlayFromOwn);
+                delete context.canPlayFromOwn;
+            }
+        };
+    },
     canSelectAsFirstPlayer: function(condition) {
         return {
             apply: function(player) {
