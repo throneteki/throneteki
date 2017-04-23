@@ -91,7 +91,7 @@ class InnerLobby extends React.Component {
 
         var users = _.map(this.props.users, user => {
             return (
-                <div>
+                <div data-username={user.name}>
                     <Avatar emailHash={user.emailHash} />
                     <span>{user.name}</span>
                 </div>
@@ -119,7 +119,7 @@ class InnerLobby extends React.Component {
                         </div>
                     </div>
                     <div className='panel user-list col-sm-3 hidden-xs'>
-                        {users}
+                        {_.sortBy(users, element => element.props["data-username"])}
                     </div>
                 </div>
                     <div className='row'>
