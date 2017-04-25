@@ -21,6 +21,7 @@ const DeckSearchPrompt = require('./gamesteps/decksearchprompt.js');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
+const SimultaneousEventWindow = require('./gamesteps/simultaneouseventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
 const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredabilitywindow.js');
 const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
@@ -587,6 +588,10 @@ class Game extends EventEmitter {
         }
 
         this.queueStep(new EventWindow(this, eventName, params, handler, true));
+    }
+
+    raiseSimultaneousEvent(cards, properties) {
+        this.queueStep(new SimultaneousEventWindow(this, cards, properties));
     }
 
     takeControl(player, card) {
