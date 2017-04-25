@@ -813,38 +813,11 @@ class Player extends Spectator {
         }
     }
 
+    /**
+     * @deprecated Use `Game.killCharacter` instead.
+     */
     killCharacter(card, allowSave = true) {
-        var character = this.findCardInPlayByUuid(card.uuid);
-
-        if(!character || character.location !== 'play area') {
-            return;
-        }
-
-        if(!character.canBeKilled()) {
-            this.game.addMessage('{0} controlled by {1} cannot be killed',
-                                 character, this);
-        } else if(!character.dupes.isEmpty() && allowSave) {
-            if(!this.removeDuplicate(character)) {
-                this.moveCard(card, 'dead pile');
-            } else {
-                this.game.addMessage('{0} discards a duplicate to save {1}', this, character);
-            }
-        } else {
-            let params = {
-                player: this,
-                card: character,
-                allowSave: allowSave
-            };
-            this.game.raiseMergedEvent('onCharacterKilled', params, event => {
-                if(character.location !== 'play area') {
-                    event.cancel();
-                    return;
-                }
-
-                this.moveCard(card, 'dead pile');
-                this.game.addMessage('{0} kills {1}', this, character);
-            });
-        }
+        this.game.killCharacter(card, allowSave);
     }
 
     getDominance() {

@@ -594,6 +594,56 @@ class Game extends EventEmitter {
         this.queueStep(new SimultaneousEventWindow(this, cards, properties));
     }
 
+    killCharacters(cards, allowSave = true) {
+        let cardsInPlay = _.filter(cards, card => card.location === 'play area');
+        let [killable, unkillable] = _.partition(cardsInPlay, card => card.canBeKilled());
+
+        if(!_.isEmpty(unkillable)) {
+            this.addMessage('{0} controlled cannot be killed', unkillable);
+        }
+
+        if(_.isEmpty(killable)) {
+            return;
+        }
+
+        this.raiseSimultaneousEvent(killable, {
+            eventName: 'onCharactersKilled',
+            params: {
+                allowSave: allowSave
+            },
+            perCardEventName: 'onCharacterKilled',
+            perCardHandler: event => this.doKill(event)
+        });
+    }
+
+    doKill(event) {
+        let {card, allowSave} = event;
+        let player = card.controller;
+
+        if(card.location !== 'play area') {
+            event.cancel();
+            return;
+        }
+
+        if(!card.canBeKilled()) {
+            this.addMessage('{0} controlled by {1} cannot be killed',
+                                 card, player);
+        } else if(!card.dupes.isEmpty() && allowSave) {
+            if(!player.removeDuplicate(card)) {
+                player.moveCard(card, 'dead pile');
+            } else {
+                this.addMessage('{0} discards a duplicate to save {1}', player, card);
+            }
+        } else {
+            player.moveCard(card, 'dead pile');
+            this.addMessage('{0} kills {1}', player, card);
+        }
+    }
+
+    killCharacter(card, allowSave = true) {
+        this.killCharacters([card], allowSave);
+    }
+
     takeControl(player, card) {
         var oldController = card.controller;
         var newController = player;
