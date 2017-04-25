@@ -285,17 +285,22 @@ class Lobby {
         }
 
         var game = new PendingGame(socket.user, gameDetails);
-        game.join(socket.id, socket.user);
+        game.join(socket.id, socket.user, gameDetails.password, (err, message) => {
+            if(err) {
+                logger.info(err, message);
+                return;
+            }
 
-        socket.joinChannel(game.id);
-        this.sendGameState(game);
+            socket.joinChannel(game.id);
+            this.sendGameState(game);
 
-        this.games[game.id] = game;
+            this.games[game.id] = game;
 
-        this.broadcastGameList();
+            this.broadcastGameList();
+        });
     }
 
-    onJoinGame(socket, gameId) {
+    onJoinGame(socket, gameId, password) {
         var existingGame = this.findGameForUser(socket.user.username);
         if(existingGame) {
             return;
@@ -306,13 +311,18 @@ class Lobby {
             return;
         }
 
-        if(game.join(socket.id, socket.user)) {
+        game.join(socket.id, socket.user, password, (err, message) => {
+            if(err) {
+                logger.info(err, message);
+                return;
+            }
+
             socket.joinChannel(game.id);
 
             this.sendGameState(game);
-        }
 
-        this.broadcastGameList();
+            this.broadcastGameList();
+        });
     }
 
     onStartGame(socket, gameId) {

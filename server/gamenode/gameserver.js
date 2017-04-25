@@ -55,8 +55,6 @@ class GameServer {
 
         if(process.env.NODE_ENV !== 'production') {
             options.path = '/' + (process.env.SERVER || config.nodeIdentity) + '/socket.io';
-
-            logger.info('listening on', options.path);
         }
 
         this.io = socketio(server, options);

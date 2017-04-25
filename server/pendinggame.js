@@ -1,6 +1,8 @@
 const uuid = require('uuid');
 const _ = require('underscore');
+const bcrypt = require('bcrypt');
 
+const logger = require('./log.js');
 const GameChat = require('./game/gamechat.js');
 
 class PendingGame {
@@ -14,6 +16,18 @@ class PendingGame {
         this.gameType = details.gameType;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
+
+        if(details.password) {
+            bcrypt.hash(details.password, 10, (err, hash) => {
+                if(err) {
+                    logger.info(err);
+
+                    return;
+                }
+
+                this.password = hash;
+            });
+        }
     }
 
     // Getters
@@ -69,20 +83,44 @@ class PendingGame {
         this.gameChat.addMessage(...arguments);
     }
 
-    join(id, user) {
+    join(id, user, password, callback) {
         if(_.size(this.players) === 2) {
-            return false;
+            callback(new Error('Too many players'), 'Too many players');
         }
 
-        this.players[user.username] = {
-            id: id,
-            name: user.username,
-            user: user,
-            emailHash: user.emailHash,
-            owner: this.owner === user.username
-        };
+        if(this.password) {
+            bcrypt.compare(this.password, password, (err, valid) => {
+                if(err) {
+                    logger.info(err.message);
 
-        return true;
+                    return callback(new Error('Bad password'), 'Incorrect game password');
+                }
+
+                if(!valid) {
+                    return callback(new Error('Bad password'), 'Incorrect game password');
+                }
+
+                this.players[user.username] = {
+                    id: id,
+                    name: user.username,
+                    user: user,
+                    emailHash: user.emailHash,
+                    owner: this.owner === user.username
+                };
+
+                callback(null);
+            });
+        } else {
+            this.players[user.username] = {
+                id: id,
+                name: user.username,
+                user: user,
+                emailHash: user.emailHash,
+                owner: this.owner === user.username
+            };
+
+            callback(null);
+        }
     }
 
     watch(id, user) {
