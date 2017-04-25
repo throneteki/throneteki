@@ -830,7 +830,12 @@ class Player extends Spectator {
                 this.game.addMessage('{0} discards a duplicate to save {1}', this, character);
             }
         } else {
-            this.game.raiseEvent('onCharacterKilled', this, character, allowSave, event => {
+            let params = {
+                player: this,
+                card: character,
+                allowSave: allowSave
+            };
+            this.game.raiseMergedEvent('onCharacterKilled', params, event => {
                 if(character.location !== 'play area') {
                     event.cancel();
                     return;
