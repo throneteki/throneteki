@@ -452,7 +452,8 @@ class BaseCard {
         };
     }
 
-    getSummary(isActivePlayer, hideWhenFaceup) {
+    getSummary(activePlayer, hideWhenFaceup) {
+        let isActivePlayer = activePlayer === this.owner;
         return isActivePlayer || (!this.facedown && !hideWhenFaceup) ? {
             code: this.cardData.code,
             controlled: this.owner !== this.controller,

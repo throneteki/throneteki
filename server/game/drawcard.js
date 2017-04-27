@@ -307,13 +307,13 @@ class DrawCard extends BaseCard {
         return !this.cannotBeKilled;
     }
 
-    getSummary(isActivePlayer, hideWhenFaceup) {
-        var baseSummary = super.getSummary(isActivePlayer, hideWhenFaceup);
+    getSummary(activePlayer, hideWhenFaceup) {
+        let baseSummary = super.getSummary(activePlayer, hideWhenFaceup);
 
         return _.extend(baseSummary, {
             attached: !!this.parent,
             attachments: this.attachments.map(attachment => {
-                return attachment.getSummary(isActivePlayer, hideWhenFaceup);
+                return attachment.getSummary(activePlayer, hideWhenFaceup);
             }),
             baseStrength: _.isNull(this.cardData.strength) ? 0 : this.cardData.strength,
             dupes: this.dupes.map(dupe => {
@@ -321,7 +321,7 @@ class DrawCard extends BaseCard {
                     throw new Error('A dupe should not have dupes! ' + dupe.name);
                 }
 
-                return dupe.getSummary(isActivePlayer, hideWhenFaceup);
+                return dupe.getSummary(activePlayer, hideWhenFaceup);
             }),
             iconsAdded: this.getIconsAdded(),
             iconsRemoved: this.getIconsRemoved(),
