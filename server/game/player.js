@@ -37,6 +37,8 @@ class Player extends Spectator {
         this.costReducers = [];
         this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, this, 'hand'));
         this.usedPlotsModifier = 0;
+        this.selectedCards = [];
+        this.selectableCards = [];
 
         this.createAdditionalPile('out of game', { title: 'Out of Game', area: 'player row' });
     }
@@ -1031,6 +1033,30 @@ class Player extends Spectator {
 
     isBelowReserve() {
         return this.hand.size() <= this.getTotalReserve();
+    }
+
+    isCardSelected(card) {
+        return this.selectedCards.includes(card);
+    }
+
+    setSelectedCards(cards) {
+        this.selectedCards = cards;
+    }
+
+    clearSelectedCards() {
+        this.selectedCards = [];
+    }
+
+    isCardSelectable(card) {
+        return this.selectableCards.includes(card);
+    }
+
+    setSelectableCards(cards) {
+        this.selectableCards = cards;
+    }
+
+    clearSelectableCards() {
+        this.selectableCards = [];
     }
 
     getSummaryForCardList(list, activePlayer, hideWhenFaceup) {

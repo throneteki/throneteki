@@ -275,7 +275,6 @@ class DrawCard extends BaseCard {
         this.power = 0;
         this.wasAmbush = false;
         this.inChallenge = false;
-        this.selected = this.opponentSelected = false;
 
         super.leavesPlay();
     }

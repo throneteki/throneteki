@@ -8,7 +8,7 @@ describe('BaseCard', function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
         this.limitedCard = { code: '1234', text: 'Limited.' };
         this.nonLimitedCard = { code: '2222', text: 'Stealth.' };
-        this.owner = { owner: 1 };
+        this.owner = jasmine.createSpyObj('owner', ['isCardSelectable', 'isCardSelected']);
         this.card = new BaseCard(this.owner, this.testCard);
     });
 
@@ -87,7 +87,7 @@ describe('BaseCard', function () {
 
         describe('when is not active player', function() {
             beforeEach(function () {
-                this.anotherPlayer = { player: 2 };
+                this.anotherPlayer = jasmine.createSpyObj('owner', ['isCardSelectable', 'isCardSelected']);
                 this.summary = this.card.getSummary(this.anotherPlayer);
             });
 

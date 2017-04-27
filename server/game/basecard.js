@@ -461,8 +461,10 @@ class BaseCard {
             menu: this.getMenu(),
             name: this.cardData.label,
             new: this.new,
-            selected: (isActivePlayer && this.selected) || this.opponentSelected,
-            selectable: (isActivePlayer && this.selectable),
+            // The `this.selected` property here is a hack for plot selection,
+            // which we do differently from normal card selection.
+            selected: this.selected || activePlayer.isCardSelected(this),
+            selectable: activePlayer.isCardSelectable(this),
             tokens: this.tokens,
             type: this.getType(),
             uuid: this.uuid
