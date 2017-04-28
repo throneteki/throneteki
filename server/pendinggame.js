@@ -81,6 +81,15 @@ class PendingGame {
         };
     }
 
+    addSpectator(id, user) {
+        this.spectators[user.username] = {
+            id: id,
+            name: user.userame,
+            user: user,
+            emailHash: user.emailHash
+        };
+    }
+
     newGame(id, user, password, callback) {
         if(password) {
             bcrypt.hash(password, 10, (err, hash) => {
@@ -121,29 +130,42 @@ class PendingGame {
 
                 this.addPlayer(id, user);
 
-                callback(null);
+                callback();
             });
         } else {
             this.addPlayer(id, user);
 
-            callback(null);
+            callback();
         }
     }
 
-    watch(id, user) {
-        if(!this.allowSpectators) {
-            return false;
+    watch(id, user, password, callback) {
+        if(!this.allowSpectators || this.started) {
+            callback(new Error('Join not permitted'));
         }
 
-        this.addPlayer(id, user);
+        if(this.password) {
+            bcrypt.compare(password, this.password, (err, valid) => {
+                if(err) {
+                    return callback(new Error('Bad password'), 'Incorrect game password');
+                }
 
-        if(this.started) {
-            return true;
+                if(!valid) {
+                    return callback(new Error('Bad password'), 'Incorrect game password');
+                }
+
+                this.addSpectator(id, user);
+
+                this.addMessage('{0} has joined the game as a spectator', user.username);
+                callback();
+            });
+        } else {
+            this.addSpectator(id, user);
+
+            this.addMessage('{0} has joined the game as a spectator', user.username);
+
+            callback();
         }
-
-        this.addMessage('{0} has joined the game as a spectator', user.username);
-
-        return true;
     }
 
     leave(playerName) {
