@@ -228,7 +228,7 @@ class InnerPendingGame extends React.Component {
                     <button className='btn btn-primary' onClick={this.onLeaveClick}>Leave</button>
                 </div>
                 <h3>{this.props.currentGame.name}</h3>
-                <div>{this.getGameStatus()}</div>
+                <div className='status-message'>{this.getGameStatus()}</div>
                 <div className='players'>
                     <h3>Players</h3>
                     {
@@ -238,9 +238,9 @@ class InnerPendingGame extends React.Component {
                     }
                 </div>
                 <div className='spectators'>
-                    <h3>Spectators({this.props.currentGame.spectators.length})</h3>
+                    <h3>Spectators ({this.props.currentGame.spectators.length})</h3>
                     {_.map(this.props.currentGame.spectators, spectator => {
-                        return <div key={spectator.name}>{spectator.name}</div>;
+                        return <div key={spectator.name} className='spectator-name'>{spectator.name}</div>;
                     })}
                 </div>
                 <div className='chat-box'>

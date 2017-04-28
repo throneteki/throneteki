@@ -72,9 +72,14 @@ class InnerGameList extends React.Component {
 
             return (
                 <div key={ game.id } className='game-row'>
-                    <div><b>[{ game.gameType }] { game.name }</b>{ this.props.isAdmin && this.props.showNodes ? <span className='game-node'>Node: { game.node }</span> : null}</div>
-                    { gameLayout }
-                    <span className='pull-right'>
+                    <div>
+                        <b className='title'>{ game.name }</b>
+                        { this.props.isAdmin && this.props.showNodes ? <span className='game-node'>Node: { game.node }</span> : null}
+                        <br /><span>{ gameLayout }</span>
+                    </div>
+                    <span className='action-group'>
+                        <b className='type'>{ game.gameType }</b>
+
                         { (this.props.currentGame || _.size(game.players) === 2 || game.started) ?
                             null :
                             <button className='btn btn-primary' onClick={ event => this.joinGame(event, game) }>Join</button>
@@ -83,6 +88,7 @@ class InnerGameList extends React.Component {
                             <button className='btn btn-primary' onClick={event => this.watchGame(event, game)}>Watch</button> : null}
                         {this.props.isAdmin ?
                             <button className='btn btn-primary' onClick={event => this.removeGame(event, game)}>Remove</button> : null}
+
                     </span>
                 </div>
             );
