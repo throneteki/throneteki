@@ -31,10 +31,10 @@ class CalmOverWesteros extends PlotCard {
             condition: () => (
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === challengeType &&
-                this.game.currentChallenge.attackingPlayer !== this.controller
+                this.game.currentChallenge.attackingPlayer !== player
             ),
-            match: card => card === card.controller.activePlot,
-            targetController: 'opponent',
+            match: card => card === this.game.currentChallenge.attackingPlayer.activePlot,
+            targetController: 'any',
             effect: ability.effects.modifyClaim(-1)
         }));
         return true;
