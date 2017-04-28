@@ -287,7 +287,7 @@ class Lobby {
         var game = new PendingGame(socket.user, gameDetails);
         game.newGame(socket.id, socket.user, gameDetails.password, (err, message) => {
             if(err) {
-                logger.info('game failed to create', err);
+                logger.info('game failed to create', err, message);
 
                 return;
             }
