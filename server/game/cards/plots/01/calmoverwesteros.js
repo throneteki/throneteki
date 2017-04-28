@@ -26,17 +26,18 @@ class CalmOverWesteros extends PlotCard {
     }
 
     setChallengeType(player, challengeType) {
-        this.challengeType = challengeType;
         this.game.addMessage('{0} uses {1} to reduce the claim value of {2} challenges by 1 this round', player, this, challengeType);
+        this.untilEndOfRound(ability => ({
+            condition: () => (
+                this.game.currentChallenge &&
+                this.game.currentChallenge.challengeType === challengeType &&
+                this.game.currentChallenge.attackingPlayer !== this.controller
+            ),
+            match: card => card === card.controller.activePlot,
+            targetController: 'opponent',
+            effect: ability.effects.modifyClaim(-1)
+        }));
         return true;
-    }
-
-    modifyClaim(player, challengeType, claim) {
-        if(player === this.controller || this.challengeType !== challengeType) {
-            return claim;
-        }
-
-        return claim - 1;
     }
 }
 
