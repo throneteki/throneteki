@@ -16,18 +16,6 @@ class PendingGame {
         this.gameType = details.gameType;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
-
-        if(details.password) {
-            bcrypt.hash(details.password, 10, (err, hash) => {
-                if(err) {
-                    logger.info(err);
-
-                    return;
-                }
-
-                this.password = hash;
-            });
-        }
     }
 
     // Getters
@@ -83,16 +71,47 @@ class PendingGame {
         this.gameChat.addMessage(...arguments);
     }
 
+    addPlayer(id, user) {
+        this.players[user.username] = {
+            id: id,
+            name: user.username,
+            user: user,
+            emailHash: user.emailHash,
+            owner: this.owner === user.username
+        };
+    }
+
+    newGame(id, user, password, callback) {
+        if(password) {
+            bcrypt.hash(password, 10, (err, hash) => {
+                if(err) {
+                    logger.info(err);
+
+                    callback(err);
+
+                    return;
+                }
+
+                this.password = hash;
+                this.addPlayer(id, user);
+
+                callback();
+            });
+        } else {
+            this.addPlayer(id, user);
+
+            callback();
+        }
+    }
+
     join(id, user, password, callback) {
         if(_.size(this.players) === 2) {
             callback(new Error('Too many players'), 'Too many players');
         }
 
         if(this.password) {
-            bcrypt.compare(this.password, password, (err, valid) => {
+            bcrypt.compare(password, this.password, (err, valid) => {
                 if(err) {
-                    logger.info(err.message);
-
                     return callback(new Error('Bad password'), 'Incorrect game password');
                 }
 
@@ -100,24 +119,12 @@ class PendingGame {
                     return callback(new Error('Bad password'), 'Incorrect game password');
                 }
 
-                this.players[user.username] = {
-                    id: id,
-                    name: user.username,
-                    user: user,
-                    emailHash: user.emailHash,
-                    owner: this.owner === user.username
-                };
+                this.addPlayer(id, user);
 
                 callback(null);
             });
         } else {
-            this.players[user.username] = {
-                id: id,
-                name: user.username,
-                user: user,
-                emailHash: user.emailHash,
-                owner: this.owner === user.username
-            };
+            this.addPlayer(id, user);
 
             callback(null);
         }
@@ -128,12 +135,7 @@ class PendingGame {
             return false;
         }
 
-        this.spectators[user.username] = {
-            id: id,
-            name: user.username,
-            emailHash: user.emailHash,
-            user: user
-        };
+        this.addPlayer(id, user);
 
         if(this.started) {
             return true;
@@ -266,6 +268,7 @@ class PendingGame {
             id: this.id,
             messages: this.gameChat.messages,
             name: this.name,
+            needsPassword: !!this.password,
             node: this.node ? this.node.identity : undefined,
             owner: this.owner,
             players: playerSummaries,

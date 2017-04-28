@@ -285,9 +285,10 @@ class Lobby {
         }
 
         var game = new PendingGame(socket.user, gameDetails);
-        game.join(socket.id, socket.user, gameDetails.password, (err, message) => {
+        game.newGame(socket.id, socket.user, gameDetails.password, (err, message) => {
             if(err) {
-                logger.info(err, message);
+                logger.info('game failed to create', err);
+
                 return;
             }
 
@@ -295,7 +296,6 @@ class Lobby {
             this.sendGameState(game);
 
             this.games[game.id] = game;
-
             this.broadcastGameList();
         });
     }
@@ -313,7 +313,8 @@ class Lobby {
 
         game.join(socket.id, socket.user, password, (err, message) => {
             if(err) {
-                logger.info(err, message);
+                socket.send('passworderror', message);
+
                 return;
             }
 
@@ -355,7 +356,7 @@ class Lobby {
         this.io.to(game.id).emit('handoff', { address: gameNode.address, port: gameNode.port, protocol: game.node.protocol, name: game.node.identity });
     }
 
-    onWatchGame(socket, gameId) {
+    onWatchGame(socket, gameId, password) {
         var existingGame = this.findGameForUser(socket.user.username);
         if(existingGame) {
             return;
@@ -366,7 +367,13 @@ class Lobby {
             return;
         }
 
-        if(game.watch(socket.id, socket.user)) {
+        game.watch(socket.id, socket.user, password, (err, message) => {
+            if(err) {
+                socket.send('passworderror', message);
+
+                return;
+            }
+
             socket.joinChannel(game.id);
 
             if(game.started) {
@@ -375,7 +382,7 @@ class Lobby {
             } else {
                 this.sendGameState(game);
             }
-        }
+        });
     }
 
     onLeaveGame(socket) {
@@ -504,6 +511,7 @@ class Lobby {
             syncGame.createdAt = game.startedAt;
             syncGame.started = game.started;
             syncGame.gameType = game.gameType;
+            syncGame.password = game.password;
 
             _.each(game.players, player => {
                 syncGame.players[player.name] = {

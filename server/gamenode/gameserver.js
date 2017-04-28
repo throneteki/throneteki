@@ -189,7 +189,10 @@ class GameServer {
 
     onGameSync(callback) {
         var gameSummaries = _.map(this.games, game => {
-            return game.getSummary();
+            var retGame = game.getSummary();
+            retGame.password = game.password;
+
+            return retGame;
         });
 
         logger.info('syncing', _.size(gameSummaries), ' games');
