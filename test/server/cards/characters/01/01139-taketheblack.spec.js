@@ -13,7 +13,7 @@ describe('Take the Black', function() {
             this.startGame();
             this.keepStartingHands();
 
-            this.player1.togglePromptedActionWindow('dominance', false);
+            this.player1.togglePromptedActionWindow('dominance', true);
 
             this.tooExpensive = this.player2.findCardByName('Dothraki Outriders', 'hand');
             this.unique = this.player2.findCardByName('Maester Aemon', 'hand');
