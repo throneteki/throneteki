@@ -265,6 +265,10 @@ class Card extends React.Component {
             cardClass += ' selected';
         } else if(this.props.card.selectable) {
             cardClass += ' selectable';
+        } else if(this.props.card.inDanger) {
+            cardClass += ' in-danger';
+        } else if(this.props.card.saved) {
+            cardClass += ' saved';
         } else if(this.props.card.inChallenge) {
             cardClass += ' challenge';
         } else if(this.props.card.stealth) {
