@@ -123,8 +123,8 @@ class PlayerInteractionWrapper {
         this.game.continue();
     }
 
-    toggleAutoPassWindow(window, value) {
-        this.player.autoPassWindows[window] = value;
+    togglePromptedActionWindow(window, value) {
+        this.player.promptedActionWindows[window] = value;
     }
 }
 

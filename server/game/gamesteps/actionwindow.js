@@ -19,7 +19,7 @@ class ActionWindow extends PlayerOrderPrompt {
     }
 
     skipCondition(player) {
-        return !this.forceWindow && player.autoPassWindows[this.windowName];
+        return !this.forceWindow && !player.promptedActionWindows[this.windowName];
     }
 
     onMenuCommand(player) {

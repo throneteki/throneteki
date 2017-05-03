@@ -12,7 +12,7 @@ import Messages from './GameComponents/Messages.jsx';
 import AdditionalCardPile from './GameComponents/AdditionalCardPile.jsx';
 import Card from './GameComponents/Card.jsx';
 import CardCollection from './GameComponents/CardCollection.jsx';
-import AutoPassMenu from './GameComponents/AutoPassMenu.jsx';
+import ActionWindowsMenu from './GameComponents/ActionWindowsMenu.jsx';
 import {tryParseJSON} from './util.js';
 
 import * as actions from './actions';
@@ -43,7 +43,7 @@ export class InnerGameBoard extends React.Component {
             showDrawDeck: false,
             spectating: true,
             message: '',
-            showAutoPass: false,
+            showActionWindowsMenu: false,
             showCardMenu: {}
         };
     }
@@ -322,11 +322,11 @@ export class InnerGameBoard extends React.Component {
     }
 
     onMenuTitleClick() {
-        this.setState({ showAutoPass: !this.state.showAutoPass });
+        this.setState({ showActionWindowsMenu: !this.state.showActionWindowsMenu });
     }
 
-    onAutoPassOptionToggle(option, value) {
-        this.props.sendGameMessage('toggleAutoPass', option, value);
+    onPromptedActionWindowToggle(option, value) {
+        this.props.sendGameMessage('togglePromptedActionWindow', option, value);
     }
 
     render() {
@@ -415,9 +415,12 @@ export class InnerGameBoard extends React.Component {
                             </div>
                             <div className='middle-right'>
                                 <div className='inset-pane'>
-                                    { this.state.showAutoPass ? <AutoPassMenu options={ thisPlayer.autoPassWindows } onToggle={ this.onAutoPassOptionToggle.bind(this) } /> : null }
+                                    { this.state.showActionWindowsMenu ?
+                                        <ActionWindowsMenu options={ thisPlayer.promptedActionWindows }
+                                            onToggle={ this.onPromptedActionWindowToggle.bind(this) } />
+                                        : null }
                                     <div className={ 'phase-indicator ' + thisPlayer.phase } onClick={ this.onMenuTitleClick.bind(this) }>
-                                        { <span className={ this.state.showAutoPass ? 'down-arrow' : 'up-arrow' } /> }
+                                        { <span className={ this.state.showActionWindowsMenu ? 'down-arrow' : 'up-arrow' } /> }
                                         { thisPlayer.phase } phase
                                     </div>
                                     <MenuPane title={ thisPlayer.menuTitle } buttons={ thisPlayer.buttons } promptTitle={ thisPlayer.promptTitle } onButtonClick={ this.onCommand }

@@ -35,7 +35,7 @@ describe('Tywin Lannister (LoCR)', function() {
                 this.cersei = this.player1.findCardByName('Cersei Lannister');
                 this.knight = this.player1.findCardByName('Hedge Knight');
 
-                this.player1.toggleAutoPassWindow('dominance', false);
+                this.player1.togglePromptedActionWindow('dominance', false);
 
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();

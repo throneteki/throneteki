@@ -17,7 +17,7 @@ describe('The Tickler', function() {
             this.startGame();
             this.keepStartingHands();
 
-            this.player1.toggleAutoPassWindow('dominance', false);
+            this.player1.togglePromptedActionWindow('dominance', false);
 
             this.player1.clickCard('The Tickler', 'hand');
             this.player2.clickCard('The Roseroad', 'hand');

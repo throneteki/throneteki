@@ -40,15 +40,15 @@ class Player extends Spectator {
         this.selectedCards = [];
         this.selectableCards = [];
         this.cannotGainChallengeBonus = false;
-        this.autoPassWindows = {
-            plot: true,
-            draw: true,
-            challengeBegin: true,
-            attackersDeclared: false,
-            defendersDeclared: false,
-            dominance: true,
-            standing: true,
-            taxation: true
+        this.promptedActionWindows = {
+            plot: false,
+            draw: false,
+            challengeBegin: false,
+            attackersDeclared: true,
+            defendersDeclared: true,
+            winnerDetermined: true,
+            dominance: false,
+            standing: false
         };
 
         this.createAdditionalPile('out of game', { title: 'Out of Game', area: 'player row' });
@@ -1118,7 +1118,7 @@ class Player extends Spectator {
                 cards: this.getSummaryForCardList(pile.cards, activePlayer, pile.isPrivate)
             })),
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
-            autoPassWindows: this.autoPassWindows,
+            promptedActionWindows: this.promptedActionWindows,
             buttons: isActivePlayer ? this.buttons : undefined,
             cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
             claim: this.getClaim(),

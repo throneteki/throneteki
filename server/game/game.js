@@ -500,13 +500,13 @@ class Game extends EventEmitter {
         }
     }
 
-    toggleAutoPass(playerName, windowName, toggle) {
+    togglePromptedActionWindow(playerName, windowName, toggle) {
         var player = this.getPlayerByName(playerName);
         if(!player) {
             return;
         }
 
-        player.autoPassWindows[windowName] = toggle;
+        player.promptedActionWindows[windowName] = toggle;
     }
 
     initialise() {
