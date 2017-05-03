@@ -122,6 +122,10 @@ class PlayerInteractionWrapper {
         this.game.drop(this.player.name, card.uuid, card.location, targetLocation);
         this.game.continue();
     }
+
+    toggleAutoPassWindow(window, value) {
+        this.player.autoPassWindows[window] = value;
+    }
 }
 
 module.exports = PlayerInteractionWrapper;
