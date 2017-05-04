@@ -32,7 +32,7 @@ Input.propTypes = {
     onBlur: React.PropTypes.func,
     onChange: React.PropTypes.func,
     placeholder: React.PropTypes.string,
-    type: React.PropTypes.oneOf(['text']),
+    type: React.PropTypes.oneOf(['text', 'password']),
     validationMessage: React.PropTypes.string,
     value: React.PropTypes.string
 };
