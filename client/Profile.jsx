@@ -29,7 +29,7 @@ class InnerProfile extends React.Component {
             loading: false,
             newPassword: '',
             newPasswordAgain: '',
-            promptedActionWindows: this.props.user.promptedActions || this.windowDefaults
+            promptedActionWindows: this.props.user.promptedActionWindows || this.windowDefaults
         };
 
         this.windows = [
@@ -66,7 +66,7 @@ class InnerProfile extends React.Component {
     onSaveClick(event) {
         event.preventDefault();
 
-        this.setState({ loading: true });
+        this.setState({ loading: true, errorMessage: undefined, successMessage: undefined });
 
         $.ajax('/api/account/' + this.props.user.username, 
             { 
@@ -81,6 +81,11 @@ class InnerProfile extends React.Component {
                 }) }
             })
             .done((data) => {
+                if(data.success) {
+                    this.setState({ successMessage: 'Profile saved successfully' });
+                } else {
+                    this.setState({ errorMessage: data.message });
+                }
             })
             .always(() => {
                 this.setState({ loading: false });
@@ -96,6 +101,8 @@ class InnerProfile extends React.Component {
         return (
             <div>
                 <h2>User profile for { this.props.user.username }</h2>
+                { this.state.errorMessage ? <div className='alert alert-danger'>{ this.state.errorMessage }</div> : null }
+                { this.state.successMessage ? <div className='alert alert-success'>{ this.state.successMessage }</div> : null }
                 <form className='form form-horizontal'>
                     <h3>User details</h3>
                     <Input name='email' label='Email Address' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter email address'
