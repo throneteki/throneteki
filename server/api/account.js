@@ -194,7 +194,7 @@ module.exports.init = function(server) {
                 return res.send({ success: false, message: 'An error occured updating your user profile' });
             }
 
-            return res.send({ success: true });
+            res.send({ success: true, user: user, token: jwt.sign(user, config.secret) });
         });        
     }
 
@@ -205,16 +205,28 @@ module.exports.init = function(server) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
 
-        user.username = req.params.username;
+        userRepository.getUserByUsername(req.params.username, (err, existingUser) => {
+            if(err) {
+                return res.status({ success: false, message: 'An error occured updating your user profile' });
+            }
 
-        if(user.password && user.password !== '') {
-            bcrypt.hash(user.password, 10, (err, hash) => {
-                user.password = hash;
+            if(!existingUser) {
+                return res.status(404).send({ message: 'Not found'});
+            }
 
-                updateUser(res, user);
-            });
-        } else {
-            updateUser(res, user);
-        }
+            existingUser.email = user.email;
+            existingUser.settings = user.settings;
+            existingUser.promptedActionWindows = user.promptedActionWindows;
+
+            if(user.password && user.password !== '') {
+                bcrypt.hash(user.password, 10, (err, hash) => {
+                    existingUser.password = hash;
+
+                    updateUser(res, existingUser);
+                });
+            } else {
+                updateUser(res, existingUser);
+            }             
+        });
     });
 };

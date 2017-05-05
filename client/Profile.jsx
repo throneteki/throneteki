@@ -29,7 +29,8 @@ class InnerProfile extends React.Component {
             loading: false,
             newPassword: '',
             newPasswordAgain: '',
-            promptedActionWindows: this.props.user.promptedActionWindows || this.windowDefaults
+            promptedActionWindows: this.props.user.promptedActionWindows || this.windowDefaults,
+            validation: {}
         };
 
         this.windows = [
@@ -66,7 +67,19 @@ class InnerProfile extends React.Component {
     onSaveClick(event) {
         event.preventDefault();
 
-        this.setState({ loading: true, errorMessage: undefined, successMessage: undefined });
+        this.setState({ errorMessage: undefined, successMessage: undefined });
+
+        this.verifyEmail();
+        this.verifyPassword(true);
+        
+        if(_.any(this.state.validation, function(message) {
+            return message && message !== '';
+        })) {
+            this.setState({ errorMessage: 'There was an error in one or more fields, please see below, correct the error and try again' });
+            return;
+        }
+
+        this.setState({ loading: true });
 
         $.ajax('/api/account/' + this.props.user.username, 
             { 
@@ -83,6 +96,8 @@ class InnerProfile extends React.Component {
             .done((data) => {
                 if(data.success) {
                     this.setState({ successMessage: 'Profile saved successfully' });
+
+                    this.props.socket.emit('authenticate', data.token);
                 } else {
                     this.setState({ errorMessage: data.message });
                 }
@@ -90,6 +105,42 @@ class InnerProfile extends React.Component {
             .always(() => {
                 this.setState({ loading: false });
             });
+    }
+
+    verifyPassword(isSubmitting) {
+        var validation = this.state.validation;
+
+        delete validation['password'];
+
+        if(!this.state.newPassword && !this.state.newPasswordAgain) {
+            return;
+        }
+
+        if(this.state.newPassword.length < 6) {
+            validation['password'] = 'The password you specify must be at least 6 characters long';
+        }
+
+        if(isSubmitting && !this.state.newPasswordAgain) {
+            validation['password'] = 'Please enter your password again';
+        }
+
+        if(this.state.newPassword && this.state.newPasswordAgain && this.state.newPassword !== this.state.newPasswordAgain) {
+            validation['password'] = 'The passwords you have specified do not match';
+        }
+
+        this.setState({ validation: validation });
+    }
+
+    verifyEmail() {
+        var validation = this.state.validation;
+
+        delete validation['email'];
+
+        if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(this.state.email)) {
+            validation['email'] = 'Please enter a valid email address';
+        }
+
+        this.setState({ validation: validation });
     }
 
     render() {
@@ -106,13 +157,16 @@ class InnerProfile extends React.Component {
                 <form className='form form-horizontal'>
                     <h3>User details</h3>
                     <Input name='email' label='Email Address' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter email address'
-                        type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email } />
+                        type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
+                        onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
                     <Input name='newPassword' label='New Password' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter new password'
-                        type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword } />
+                        type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword } 
+                        onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
                     <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter new password (again)'
-                        type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain } />
+                        type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain } 
+                        onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
                     <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-3 col-sm-4'
-                        onChange={ (e) => this.setState({ disableGravatar: e.target.value }) } checked={ this.state.disableGravatar } />
+                        onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
                     <h3>Action window defaults</h3>
                     { windows }
 
@@ -129,6 +183,7 @@ InnerProfile.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        socket: state.socket.socket,
         user: state.auth.user
     };
 }
