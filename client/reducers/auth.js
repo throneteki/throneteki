@@ -23,6 +23,13 @@ export default function(state = {}, action) {
                 isAdmin: false,
                 loggedIn: false
             });
+
+        case 'REFRESH_USER':
+            return Object.assign({}, state, {
+                user: action.user,
+                username: action.user.username,
+                token: action.token
+            });
     }
 
     return state;

@@ -295,3 +295,10 @@ export function cancelPasswordJoin() {
         type: 'CANCEL_PASSWORD_JOIN'
     };
 }
+
+export function refreshUser(user) {
+    return {
+        type: 'REFRESH_USER',
+        user: user
+    };
+}

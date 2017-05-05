@@ -98,6 +98,7 @@ class InnerProfile extends React.Component {
                     this.setState({ successMessage: 'Profile saved successfully' });
 
                     this.props.socket.emit('authenticate', data.token);
+                    this.props.refreshUser(data.user, data.token);
                 } else {
                     this.setState({ errorMessage: data.message });
                 }
@@ -178,6 +179,7 @@ class InnerProfile extends React.Component {
 
 InnerProfile.displayName = 'Profile';
 InnerProfile.propTypes = {
+    refreshUser: React.PropTypes.func,
     user: React.PropTypes.object
 };
 
