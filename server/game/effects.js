@@ -3,6 +3,21 @@ const _ = require('underscore');
 const AbilityLimit = require('./abilitylimit.js');
 const CostReducer = require('./costreducer.js');
 const PlayableLocation = require('./playablelocation.js');
+const CannotRestriction = require('./cannotrestriction.js');
+
+function cannotEffect(type) {
+    return function(predicate) {
+        let restriction = new CannotRestriction(type, predicate);
+        return {
+            apply: function(card) {
+                card.addAbilityRestriction(restriction);
+            },
+            unapply: function(card) {
+                card.removeAbilityRestriction(restriction);
+            }
+        };
+    };
+}
 
 const Effects = {
     all: function(effects) {
@@ -447,6 +462,7 @@ const Effects = {
             }
         };
     },
+    cannotBeKneeled: cannotEffect('kneel'),
     cannotBeKilled: function() {
         return {
             apply: function(card) {
