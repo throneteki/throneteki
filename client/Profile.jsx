@@ -1,14 +1,16 @@
 import React from 'react';
 import _ from 'underscore';
+import $ from 'jquery';
 import {connect} from 'react-redux';
 
 import Input from './FormComponents/Input.jsx';
+import Checkbox from './FormComponents/Checkbox.jsx';
 
 import * as actions from './actions';
 
 class InnerProfile extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.windowDefaults = {
             plot: false,
@@ -22,11 +24,12 @@ class InnerProfile extends React.Component {
         };
 
         this.state = {
-            email: '',
+            disableGravatar: this.props.user.settings.disableGravatar || false,
+            email: this.props.user ? this.props.user.email : '',
+            loading: false,
             newPassword: '',
             newPasswordAgain: '',
-            disableGravatar: false,
-            promptedActionWindows: this.windowDefaults
+            promptedActionWindows: this.props.user.promptedActions || this.windowDefaults
         };
 
         this.windows = [
@@ -42,20 +45,55 @@ class InnerProfile extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        this.setState({ email: props.user.email, /*disableGravatar: props.user.settings.disableGravatar,*/ promptedActionWindows: props.user.promptedActionWindows || this.windowDefaults });
+        this.setState({ email: props.user.email, disableGravatar: props.user.settings.disableGravatar || false, promptedActionWindows: props.user.promptedActionWindows || this.windowDefaults });
     }
 
     onChange(field, event) {
-        this.setState({ field: event.target.value });
+        var newState = {};
+
+        newState[field] = event.target.value;
+        this.setState(newState);
+    }
+
+    onWindowToggle(field, event) {
+        var newState = {};
+        newState.promptedActionWindows = this.state.promptedActionWindows;
+
+        newState.promptedActionWindows[field] = event.target.checked;
+        this.setState(newState);
+    }
+
+    onSaveClick(event) {
+        event.preventDefault();
+
+        this.setState({ loading: true });
+
+        $.ajax('/api/account/' + this.props.user.username, 
+            { 
+                method: 'PUT',
+                data: { data: JSON.stringify({
+                    email: this.state.email,
+                    password: this.state.newPassword,
+                    promptedActionWindows: this.state.promptedActionWindows,
+                    settings : {
+                        disableGravatar: this.state.disableGravatar
+                    }
+                }) }
+            })
+            .done((data) => {
+            })
+            .always(() => {
+                this.setState({ loading: false });
+            });
     }
 
     render() {
         let windows = _.map(this.windows, window => {
-            return (<Input key={ window.name } name={ 'promptedActionWindows.' + window.name } label={ window.label } labelClass='col-sm-3' fieldClass='col-sm-4'
-                type='checkbox' onChange={ this.onChange.bind(this, window.name) } value={ this.state.promptedActionWindows[window.name] } />);             
+            return (<Checkbox key={ window.name } name={ 'promptedActionWindows.' + window.name } label={ window.label } fieldClass='col-sm-offset-3 col-sm-4'
+                type='checkbox' onChange={ (this.onWindowToggle.bind(this, window.name)) } checked={ this.state.promptedActionWindows[window.name] } />);             
         });
 
-        return ( 
+        return (
             <div>
                 <h2>User profile for { this.props.user.username }</h2>
                 <form className='form form-horizontal'>
@@ -66,12 +104,12 @@ class InnerProfile extends React.Component {
                         type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword } />
                     <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter new password (again)'
                         type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain } />
-                    <Input name='settings.disableGravatar' label='Disable Gravatar integration' labelClass='col-sm-3' fieldClass='col-sm-4'
-                        type='checkbox' onChange={ this.onChange.bind(this, 'disableGravatar') } value={ this.state.disableGravatar } />                                                
+                    <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-3 col-sm-4'
+                        onChange={ (e) => this.setState({ disableGravatar: e.target.value }) } checked={ this.state.disableGravatar } />
                     <h3>Action window defaults</h3>
                     { windows }
 
-                    <button className='btn btn-primary' type='submit'>Save</button>
+                    <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
                 </form>
             </div>);
     }

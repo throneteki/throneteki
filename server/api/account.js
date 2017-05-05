@@ -167,7 +167,7 @@ module.exports.init = function(server) {
                 });
 
                 var url = 'https://theironthrone.net/reset-password?id=' + user._id + '&token=' + resetToken;
-                var emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthronet.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
+                var emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthrone.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
                     'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
                     'Kind regards,\n\n' +
                     'The Iron Throne team';
@@ -186,5 +186,35 @@ module.exports.init = function(server) {
                 });
             });
         });
+    });
+
+    function updateUser(res, user) {
+        userRepository.update(user, err => {
+            if(err) {
+                return res.send({ success: false, message: 'An error occured updating your user profile' });
+            }
+
+            return res.send({ success: true });
+        });        
+    }
+
+    server.put('/api/account/:username', (req, res) => {
+        let user = JSON.parse(req.body.data);
+
+        if(!req.user || req.user.username !== req.params.username) {
+            return res.status(401).send({ message: 'Unauthorized' });
+        }
+
+        user.username = req.params.username;
+
+        if(user.password && user.password !== '') {
+            bcrypt.hash(user.password, 10, (err, hash) => {
+                user.password = hash;
+
+                updateUser(res, user);
+            });
+        } else {
+            updateUser(res, user);
+        }
     });
 };

@@ -4,7 +4,7 @@ class Input extends React.Component {
     render() {
         return (
             <div className='form-group'>
-                <label htmlFor={ this.props.name } className={ this.props.labelClass + ' control-label'}>{ this.props.label }</label>
+                <label htmlFor={ this.props.name } className={ this.props.labelClass + ' control-label' }>{ this.props.label }</label>
                 <div className={ this.props.fieldClass }>
                     <input type={ this.props.type }
                         ref={ this.props.name }
@@ -14,7 +14,7 @@ class Input extends React.Component {
                         value={ this.props.value }
                         onChange={ this.props.onChange }
                         onBlur={ this.props.onBlur } />
-                    { this.props.validationMessage ? <span className='help-block'>{ this.props.validationMessage} </span> : null }
+                    { this.props.validationMessage ? <span className='help-block'>{ this.props.validationMessage } </span> : null }
                 </div>
                 { this.props.children }
             </div>
