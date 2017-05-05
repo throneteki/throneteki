@@ -296,9 +296,10 @@ export function cancelPasswordJoin() {
     };
 }
 
-export function refreshUser(user) {
+export function refreshUser(user, token) {
     return {
         type: 'REFRESH_USER',
-        user: user
+        user: user,
+        token: token
     };
 }

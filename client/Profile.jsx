@@ -180,6 +180,7 @@ class InnerProfile extends React.Component {
 InnerProfile.displayName = 'Profile';
 InnerProfile.propTypes = {
     refreshUser: React.PropTypes.func,
+    socket: React.PropTypes.object,
     user: React.PropTypes.object
 };
 
