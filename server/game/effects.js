@@ -432,47 +432,11 @@ const Effects = {
             }
         };
     },
-    cannotMarshal: function() {
-        return {
-            apply: function(card) {
-                card.cannotMarshal = true;
-            },
-            unapply: function(card) {
-                card.cannotMarshal = false;
-            }
-        };
-    },
-    cannotPlay: function() {
-        return {
-            apply: function(card) {
-                card.cannotPlay = true;
-            },
-            unapply: function(card) {
-                card.cannotPlay = false;
-            }
-        };
-    },
-    cannotBeBypassedByStealth: function() {
-        return {
-            apply: function(card) {
-                card.cannotBeBypassedByStealth = true;
-            },
-            unapply: function(card) {
-                card.cannotBeBypassedByStealth = false;
-            }
-        };
-    },
+    cannotMarshal: cannotEffect('marshal'),
+    cannotPlay: cannotEffect('play'),
+    cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeKneeled: cannotEffect('kneel'),
-    cannotBeKilled: function() {
-        return {
-            apply: function(card) {
-                card.cannotBeKilled = true;
-            },
-            unapply: function(card) {
-                card.cannotBeKilled = false;
-            }
-        };
-    },
+    cannotBeKilled: cannotEffect('kill'),
     cannotGainChallengeBonus: function() {
         return {
             apply: function(player) {

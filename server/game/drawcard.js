@@ -55,7 +55,6 @@ class DrawCard extends BaseCard {
                 defender: false
             }
         };
-        this.cannotBeKilled = false;
         this.stealthLimit = 1;
     }
 
@@ -226,11 +225,7 @@ class DrawCard extends BaseCard {
     }
 
     canUseStealthToBypass(targetCard) {
-        if(!this.isStealth() || targetCard.isStealth() || targetCard.cannotBeBypassedByStealth) {
-            return false;
-        }
-
-        return true;
+        return this.isStealth() && targetCard.canBeBypassedByStealth();
     }
 
     useStealthToBypass(targetCard) {
@@ -319,8 +314,20 @@ class DrawCard extends BaseCard {
         );
     }
 
+    canBeBypassedByStealth() {
+        return !this.isStealth() && this.canBe('bypassedByStealth');
+    }
+
     canBeKilled() {
-        return !this.cannotBeKilled;
+        return this.allowGameAction('kill');
+    }
+
+    canBeMarshaled() {
+        return this.allowGameAction('marshal');
+    }
+
+    canBePlayed() {
+        return this.allowGameAction('play');
     }
 
     markAsInDanger() {
