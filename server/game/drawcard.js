@@ -49,7 +49,6 @@ class DrawCard extends BaseCard {
         this.challengeOptions = {
             allowAsAttacker: true,
             allowAsDefender: true,
-            cannotParticipate: false,
             doesNotKneelAs: {
                 attacker: false,
                 defender: false
@@ -298,20 +297,25 @@ class DrawCard extends BaseCard {
     }
 
     canAddAsAttacker(challengeType) {
-        return this.challengeOptions.allowAsAttacker && !this.challengeOptions.cannotParticipate && this.canAddAsParticipant(challengeType);
+        return this.challengeOptions.allowAsAttacker && this.canAddAsParticipant(challengeType);
     }
 
     canAddAsDefender(challengeType) {
-        return this.challengeOptions.allowAsDefender && !this.challengeOptions.cannotParticipate && this.canAddAsParticipant(challengeType);
+        return this.challengeOptions.allowAsDefender && this.canAddAsParticipant(challengeType);
     }
 
     canAddAsParticipant(challengeType) {
         return (
+            this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             !this.stealth &&
             (!this.kneeled || this.challengeOptions.canBeDeclaredWhileKneeling) &&
             (this.hasIcon(challengeType) || this.challengeOptions.canBeDeclaredWithoutIcon)
         );
+    }
+
+    canParticipateInChallenge() {
+        return this.canBe('participateInChallenge');
     }
 
     canBeBypassedByStealth() {

@@ -68,16 +68,7 @@ const Effects = {
             }
         };
     },
-    cannotParticipate: function() {
-        return {
-            apply: function(card) {
-                card.challengeOptions.cannotParticipate = true;
-            },
-            unapply: function(card) {
-                card.challengeOptions.cannotParticipate = false;
-            }
-        };
-    },
+    cannotParticipate: cannotEffect('participateInChallenge'),
     doesNotKneelAsAttacker: function() {
         return {
             apply: function(card) {
