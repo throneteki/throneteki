@@ -42,32 +42,8 @@ const Effects = {
             isStateDependent: (stateDependentEffects.length !== 0)
         };
     },
-    allowAsAttacker: function(value) {
-        return {
-            apply: function(card, context) {
-                context.allowAsAttacker = context.allowAsAttacker || {};
-                context.allowAsAttacker[card.uuid] = card.challengeOptions.allowAsAttacker;
-                card.challengeOptions.allowAsAttacker = value;
-            },
-            unapply: function(card, context) {
-                card.challengeOptions.allowAsAttacker = context.allowAsAttacker[card.uuid];
-                delete context.allowAsAttacker[card.uuid];
-            }
-        };
-    },
-    allowAsDefender: function(value) {
-        return {
-            apply: function(card, context) {
-                context.allowAsDefender = context.allowAsDefender || {};
-                context.allowAsDefender[card.uuid] = card.challengeOptions.allowAsDefender;
-                card.challengeOptions.allowAsDefender = value;
-            },
-            unapply: function(card, context) {
-                card.challengeOptions.allowAsDefender = context.allowAsDefender[card.uuid];
-                delete context.allowAsDefender[card.uuid];
-            }
-        };
-    },
+    cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
+    cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
     doesNotKneelAsAttacker: function() {
         return {
