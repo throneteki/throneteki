@@ -43,6 +43,8 @@ class JaqenHGhar extends DrawCard {
     }
 
     leavesPlay() {
+        super.leavesPlay();
+
         if(!this.selectedCards) {
             return;
         }
