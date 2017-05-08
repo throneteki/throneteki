@@ -3,6 +3,12 @@ const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class JaqenHGhar extends DrawCard {
+    constructor(owner, cardData) {
+        super(owner, cardData);
+
+        this.registerEvents([{ 'onCardLeftPlay:forcedinterrupt': 'onCardLeftPlay' }]);
+    }
+
     setupCardAbilities() {
         this.reaction({
             when: {
@@ -42,8 +48,10 @@ class JaqenHGhar extends DrawCard {
         });
     }
 
-    leavesPlay() {
-        super.leavesPlay();
+    onCardLeftPlay(event) {
+        if(event.card !== this) {
+            return;
+        }
 
         if(!this.selectedCards) {
             return;
