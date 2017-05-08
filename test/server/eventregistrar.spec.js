@@ -9,7 +9,7 @@ describe('EventRegistrar', function () {
         this.context = {
             method: function() {},
             anotherMethod: function() {},
-            finalMethod: function() {},
+            finalMethod: function() {}
         };
         this.boundHandler = {};
         spyOn(this.context.method, 'bind').and.returnValue(this.boundHandler);
