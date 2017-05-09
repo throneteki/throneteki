@@ -363,13 +363,7 @@ class Game extends EventEmitter {
         if(player.getTotalPower() >= 15) {
             this.addMessage('{0} has won the game', player);
 
-            if(!this.winner) {
-                this.winner = player;
-                this.finishedAt = new Date();
-                this.winReason = 'power';
-
-                this.router.gameWon(this, 'power', player);
-            }
+            this.recordWinner(player, 'power');
         }
     }
 
@@ -380,14 +374,20 @@ class Game extends EventEmitter {
             this.addMessage('{0}\'s draw deck is empty', player);
             this.addMessage('{0} has won the game', otherPlayer);
 
-            if(!this.winner) {
-                this.winner = player;
-                this.finishedAt = new Date();
-                this.winReason = 'decked';
-
-                this.router.gameWon(this, 'decked', player);
-            }
+            this.recordWinner(player, 'decked');
         }
+    }
+
+    recordWinner(winner, reason) {
+        if(this.winner) {
+            return;
+        }
+
+        this.winner = winner;
+        this.finishedAt = new Date();
+        this.winReason = reason;
+
+        this.router.gameWon(this, reason, winner);
     }
 
     changeStat(playerName, stat, value) {
@@ -450,13 +450,7 @@ class Game extends EventEmitter {
         if(otherPlayer) {
             this.addMessage('{0} wins the game', otherPlayer);
 
-            if(!this.winner) {
-                this.winner = otherPlayer;
-                this.finishedAt = new Date();
-                this.winReason = 'concede';
-
-                this.router.gameWon(this, 'concede', otherPlayer);
-            }
+            this.recordWinner(otherPlayer, 'concede');
         }
     }
 
