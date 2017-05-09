@@ -41,6 +41,7 @@ class Deck {
         } else {
             result.faction = new DrawCard(player, { type_code: 'faction' });
         }
+
         result.faction.moveTo('faction');
 
         result.allCards = [result.faction].concat(result.drawCards).concat(result.plotCards);
