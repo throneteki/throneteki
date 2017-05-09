@@ -361,8 +361,6 @@ class Game extends EventEmitter {
 
     checkWinCondition(player) {
         if(player.getTotalPower() >= 15) {
-            this.addMessage('{0} has won the game', player);
-
             this.recordWinner(player, 'power');
         }
     }
@@ -372,7 +370,6 @@ class Game extends EventEmitter {
 
         if(otherPlayer) {
             this.addMessage('{0}\'s draw deck is empty', player);
-            this.addMessage('{0} has won the game', otherPlayer);
 
             this.recordWinner(player, 'decked');
         }
@@ -382,6 +379,8 @@ class Game extends EventEmitter {
         if(this.winner) {
             return;
         }
+
+        this.addMessage('{0} has won the game', winner);
 
         this.winner = winner;
         this.finishedAt = new Date();
@@ -448,8 +447,6 @@ class Game extends EventEmitter {
         var otherPlayer = this.getOtherPlayer(player);
 
         if(otherPlayer) {
-            this.addMessage('{0} wins the game', otherPlayer);
-
             this.recordWinner(otherPlayer, 'concede');
         }
     }
