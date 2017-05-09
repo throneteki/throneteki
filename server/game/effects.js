@@ -457,7 +457,7 @@ const Effects = {
             }
         };
     },
-    modifyChallengeStrength: function(value) {
+    contributeChallengeStrength: function(value) {
         return {
             apply: function(player, context) {
                 let challenge = context.game.currentChallenge;
