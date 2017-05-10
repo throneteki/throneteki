@@ -30,6 +30,10 @@ class PlayCardAction extends BaseAbility {
             context.player.moveCard(event.source, 'discard pile');
         });
     }
+
+    isPlayableEventAbility() {
+        return true;
+    }
 }
 
 module.exports = PlayCardAction;

@@ -6,8 +6,8 @@ const AbilityResolver = require('../../../server/game/gamesteps/abilityresolver.
 describe('AbilityResolver', function() {
     beforeEach(function() {
         this.game = jasmine.createSpyObj('game', ['markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseEvent']);
-        this.ability = jasmine.createSpyObj('ability', ['isAction', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
-        this.source = jasmine.createSpyObj('card', ['getType']);
+        this.ability = jasmine.createSpyObj('ability', ['isAction', 'isPlayableEventAbility', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
+        this.source = { source: 1 };
         this.player = { player: 1 };
         this.context = { foo: 'bar', player: this.player, source: this.source };
         this.resolver = new AbilityResolver(this.game, this.ability, this.context);
@@ -44,10 +44,10 @@ describe('AbilityResolver', function() {
             });
         });
 
-        describe('when the source card is an event', function() {
+        describe('when the ability is an event being played', function() {
             beforeEach(function() {
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
-                this.source.getType.and.returnValue('event');
+                this.ability.isPlayableEventAbility.and.returnValue(true);
                 this.resolver.continue();
             });
 

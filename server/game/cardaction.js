@@ -155,6 +155,10 @@ class CardAction extends BaseAbility {
         return this.clickToActivate;
     }
 
+    isPlayableEventAbility() {
+        return this.card.getType() === 'event' && this.location === 'hand';
+    }
+
     deactivate(player) {
         var context = _.last(this.activationContexts);
 
