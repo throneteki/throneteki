@@ -5,9 +5,11 @@ const AbilityResolver = require('../../../server/game/gamesteps/abilityresolver.
 
 describe('AbilityResolver', function() {
     beforeEach(function() {
-        this.game = jasmine.createSpyObj('game', ['markActionAsTaken', 'popAbilityContext', 'pushAbilityContext']);
+        this.game = jasmine.createSpyObj('game', ['markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseEvent']);
         this.ability = jasmine.createSpyObj('ability', ['isAction', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
-        this.context = { foo: 'bar' };
+        this.source = jasmine.createSpyObj('card', ['getType']);
+        this.player = { player: 1 };
+        this.context = { foo: 'bar', player: this.player, source: this.source };
         this.resolver = new AbilityResolver(this.game, this.ability, this.context);
     });
 
@@ -35,6 +37,22 @@ describe('AbilityResolver', function() {
 
             it('should execute the handler', function() {
                 expect(this.ability.executeHandler).toHaveBeenCalledWith(this.context);
+            });
+
+            it('should not raise the onCardPlayed event', function() {
+                expect(this.game.raiseEvent).not.toHaveBeenCalledWith('onCardPlayed', jasmine.any(Object), jasmine.any(Object));
+            });
+        });
+
+        describe('when the source card is an event', function() {
+            beforeEach(function() {
+                this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
+                this.source.getType.and.returnValue('event');
+                this.resolver.continue();
+            });
+
+            it('should raise the onCardPlayed event', function() {
+                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardPlayed', this.player, this.source);
             });
         });
 

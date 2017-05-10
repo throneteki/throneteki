@@ -139,17 +139,11 @@ class CardAction extends BaseAbility {
     }
 
     executeHandler(context) {
-        context.game.raiseMergedEvent('onBeforeCardPlayed', { player: context.player, source: context.source }, (event) => {
+        context.game.raiseMergedEvent('onBeforeCardPlayed', { player: context.player, source: context.source }, () => {
             var success = this.handler(context);
             if(success !== false && this.limit) {
                 this.limit.increment();
-            } else if(success !== false && context.source.getType() === 'event') {
-                context.game.raiseEvent('onCardPlayed', event.player, event.source);
             }
-        }, (event) => {
-            if(event.source.getType() === 'event') {
-                context.game.raiseEvent('onCardPlayed', event.player, event.source);
-            }            
         });
     }
 
