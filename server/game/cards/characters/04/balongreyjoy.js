@@ -8,7 +8,7 @@ class BalonGreyjoy extends DrawCard {
 
                 return !otherPlayer ||
                     (this.game.currentChallenge &&
-                    this.game.currentChallenge.challengeType !== 'military' &&
+                    this.game.currentChallenge.challengeType === 'military' &&
                     !otherPlayer.anyCardsInPlay(card => card.hasTrait('King')));
             },
             match: this,
@@ -22,7 +22,7 @@ class BalonGreyjoy extends DrawCard {
             cost: ability.costs.kneel(card => card.isFaction('greyjoy') && card.getType() === 'location'),
             handler: () => {
                 this.untilEndOfChallenge(ability => ({
-                    match: card => card.isLoyal() && card.controller === this.controller,
+                    match: card => card.isLoyal() && card.controller === this.controller && card.getType() === 'character',
                     effect: ability.effects.modifyStrength(1)
                 }));
             }
