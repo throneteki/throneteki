@@ -4,10 +4,10 @@ class AMeagerContribution extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onIncomeCollected: (event, player) => player !== this.controller
+                onIncomeCollected: event => event.player !== this.controller
             },
-            handler: () => {
-                let opponent = this.game.getOtherPlayer(this.controller);
+            handler: context => {
+                let opponent = context.event.player;
                 this.game.addGold(opponent, -1);
                 this.game.addGold(this.controller, 1);
 
