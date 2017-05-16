@@ -195,26 +195,29 @@ class ChallengeFlow extends BaseStep {
     }
 
     applyKeywords() {
-        var winnerCards = this.challenge.getWinnerCards();
+        const challengeKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
+        let winnerCards = this.challenge.getWinnerCards();
+        let appliedIntimidate = false;
 
         _.each(winnerCards, card => {
             let context = { game: this.game, challenge: this.challenge, source: card };
 
-            if(card.hasKeyword('Insight')) {
-                this.game.resolveAbility(GameKeywords.insight, context);
-            }
+            _.each(challengeKeywords, keyword => {
+                // It is necessary to check whether intimidate has been applied
+                // here instead of in the ability class because the individual
+                // keywords are resolved asynchronously but are queued up
+                // synchronously here. So two intimidates could be queued when
+                // only one is allowed.
+                if(keyword === 'intimidate' && appliedIntimidate) {
+                    return;
+                }
 
-            if(card.hasKeyword('Intimidate')) {
-                this.game.resolveAbility(GameKeywords.intimidate, context);
-            }
-
-            if(card.hasKeyword('Pillage')) {
-                this.game.resolveAbility(GameKeywords.pillage, context);
-            }
-
-            if(card.isRenown()) {
-                this.game.resolveAbility(GameKeywords.renown, context);
-            }
+                let ability = GameKeywords[keyword];
+                if(card.hasKeyword(keyword) && ability.meetsRequirements(context)) {
+                    appliedIntimidate = appliedIntimidate || (keyword === 'intimidate');
+                    this.game.resolveAbility(ability, context);
+                }
+            });
 
             this.game.checkWinCondition(this.challenge.winner);
         });
