@@ -172,6 +172,11 @@ describe('SimultaneousEventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith(jasmine.objectContaining({ event: jasmine.objectContaining({ name: 'percardevent', card: this.card1 }) }));
             });
 
+            it('should not open ability windows with undefined/null events', function() {
+                expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith(jasmine.objectContaining({ event: undefined }));
+                expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith(jasmine.objectContaining({ event: null }));
+            });
+
             it('should emit all of the interrupt/reaction events for the non-cancelled cards', function() {
                 let card = this.card2;
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'cancelinterrupt', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
