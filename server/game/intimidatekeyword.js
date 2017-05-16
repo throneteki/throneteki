@@ -7,7 +7,7 @@ class IntimidateKeyword extends BaseAbility {
     }
 
     meetsRequirements(context) {
-        return context.challenge.isAttackerTheWinner() && !context.challenge.appliedIntimidate;
+        return context.challenge.isAttackerTheWinner();
     }
 
     executeHandler(context) {
@@ -19,7 +19,6 @@ class IntimidateKeyword extends BaseAbility {
             gameAction: 'kneel',
             onSelect: (player, targetCard) => this.intimidate(game, source, targetCard)
         });
-        challenge.appliedIntimidate = true;
     }
 
     canIntimidate(card, strength, challenge) {
