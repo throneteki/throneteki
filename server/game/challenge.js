@@ -136,9 +136,9 @@ class Challenge {
     }
 
     determineWinner() {
-        this.winnerDetermined = true;
-
         this.calculateStrength();
+
+        this.winnerDetermined = true;
 
         let result = this.checkNoWinnerOrLoser();
         if(result.noWinner) {
