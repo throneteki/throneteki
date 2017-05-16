@@ -4,7 +4,7 @@ class TheValyrian extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to give attacking character +STR',
-            condition: this.game.currentChallenge && this.game.currentChallenge.defendingPlayer.gold >= 1 && this.game.currentChallenge.attackers.length >= 1,
+            condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer.gold >= 1 && this.game.currentChallenge.attackers.length >= 1,
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 var boost = this.game.currentChallenge.defendingPlayer.gold;
