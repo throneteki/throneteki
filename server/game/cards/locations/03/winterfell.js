@@ -13,7 +13,7 @@ class Winterfell extends DrawCard {
             },
             costs: ability.costs.kneelSelf(),
             handler: () => {
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfChallenge(ability => ({
                     targetType: 'player',
                     targetController: 'any',
                     match: player => !player.activePlot.hasTrait('winter'),
