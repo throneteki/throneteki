@@ -7,6 +7,7 @@ class PutToTheSword extends DrawCard {
                 afterChallenge: (event, challenge) => (
                     challenge.challengeType === 'military' &&
                     challenge.winner === this.controller &&
+                    challenge.attackingPlayer === this.controller &&
                     challenge.strengthDifference >= 5
                 )
             },
