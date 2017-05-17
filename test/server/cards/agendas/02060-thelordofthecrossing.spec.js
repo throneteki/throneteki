@@ -41,6 +41,19 @@ describe('The Lord of the Crossing', function() {
             it('should reduce the strength of attacking characters by 1', function() {
                 expect(this.followers.getStrength()).toBe(1);
             });
+
+            it('should calculate overall strength correctly upon declaration', function() {
+                expect(this.game.currentChallenge.attackerStrength).toBe(1);
+            });
+
+            it('should have the correct strength at the end of the challenge', function() {
+                this.skipActionWindow();
+                this.player2.clickPrompt('Done');
+                this.skipActionWindow();
+
+                expect(this.game.currentChallenge.attackerStrength).toBe(1);
+                expect(this.game.currentChallenge.winnerStrength).toBe(1);
+            });
         });
 
         describe('on challenge 2', function() {
@@ -62,6 +75,19 @@ describe('The Lord of the Crossing', function() {
 
             it('should not modify the strength of attacking characters', function() {
                 expect(this.selyse.getStrength()).toBe(2);
+            });
+
+            it('should calculate overall strength correctly upon declaration', function() {
+                expect(this.game.currentChallenge.attackerStrength).toBe(2);
+            });
+
+            it('should have the correct strength at the end of the challenge', function() {
+                this.skipActionWindow();
+                this.player2.clickPrompt('Done');
+                this.skipActionWindow();
+
+                expect(this.game.currentChallenge.attackerStrength).toBe(2);
+                expect(this.game.currentChallenge.winnerStrength).toBe(2);
             });
         });
 
@@ -93,6 +119,19 @@ describe('The Lord of the Crossing', function() {
 
             it('should increase the strength of attacking characters by 2', function() {
                 expect(this.bastard.getStrength()).toBe(4);
+            });
+
+            it('should calculate overall strength correctly upon declaration', function() {
+                expect(this.game.currentChallenge.attackerStrength).toBe(4);
+            });
+
+            it('should have the correct strength at the end of the challenge', function() {
+                this.skipActionWindow();
+                this.player2.clickPrompt('Done');
+                this.skipActionWindow();
+
+                expect(this.game.currentChallenge.attackerStrength).toBe(4);
+                expect(this.game.currentChallenge.winnerStrength).toBe(4);
             });
 
             describe('when the player wins', function() {
