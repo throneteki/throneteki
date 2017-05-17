@@ -83,6 +83,11 @@ class SimultaneousEventWindow extends BaseStep {
         this.filterOutCancelledEvents();
         _.each(this.event.cards, card => {
             let event = this.perCardEventMap[card.uuid];
+
+            if(!event) {
+                return;
+            }
+
             this.game.openAbilityWindow({
                 abilityType: abilityType,
                 event: event
