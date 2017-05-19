@@ -96,6 +96,16 @@ const Effects = {
             }
         };
     },
+    modifyDominanceStrength: function(value) {
+        return {
+            apply: function(card) {
+                card.modifyDominanceStrength(value);
+            },
+            unapply: function(card) {
+                card.modifyDominanceStrength(-value);
+            }
+        };
+    },
     modifyGold: function(value) {
         return {
             apply: function(card) {

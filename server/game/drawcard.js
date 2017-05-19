@@ -39,6 +39,7 @@ class DrawCard extends BaseCard {
 
         this.power = 0;
         this.strengthModifier = 0;
+        this.dominanceStrengthModifier = 0;
         this.contributesToDominance = true;
         this.kneeled = false;
         this.inChallenge = false;
@@ -141,6 +142,16 @@ class DrawCard extends BaseCard {
         }
 
         return Math.max(0, this.strengthModifier + (this.cardData.strength || 0));
+    }
+
+    modifyDominanceStrength(amount) {
+        this.dominanceStrengthModifier += amount;
+    }
+
+    getDominanceStrength() {
+        let baseStrength = !this.kneeled && this.getType() === 'character' && this.contributesToDominance ? this.getStrength() : 0;
+
+        return Math.max(0, baseStrength + this.dominanceStrengthModifier);
     }
 
     getIconsAdded() {
