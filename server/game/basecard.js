@@ -308,10 +308,6 @@ class BaseCard {
         this.location = targetLocation;
     }
 
-    modifyDominance(player, strength) {
-        return strength;
-    }
-
     canPlay() {
         return true;
     }
