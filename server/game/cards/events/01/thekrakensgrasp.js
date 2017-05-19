@@ -11,7 +11,10 @@ class TheKrakensGrasp extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && this.game.currentChallenge.isDefending(card) && card.getStrength() <= 5
             },
             handler: context => {
-                this.game.currentChallenge.modifyDefenderStrength(-context.target.getStrength());
+                this.untilEndOfChallenge(ability => ({
+                    match: context.target,
+                    effect: ability.effects.doesNotContributeStrength()
+                }));
 
                 this.game.addMessage('{0} uses {1} to remove {2}\' STR from the challenge', this.controller, this, context.target);
             }
