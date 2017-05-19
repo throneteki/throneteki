@@ -447,8 +447,12 @@ class Player extends Spectator {
             this.removeCardFromPile(card);
             dupeCard.addDuplicate(card);
         } else {
+            // Attachments placed in setup should not be considered to be 'played',
+            // as it will cause then to double their effects when attached later.
+            let isSetupAttachment = playingType === 'setup' && card.getType() === 'attachment';
+
             card.facedown = this.game.currentPhase === 'setup';
-            if(!dupeCard) {
+            if(!dupeCard && !isSetupAttachment) {
                 card.play(this, playingType === 'ambush');
             }
 
