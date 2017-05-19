@@ -117,6 +117,10 @@ class Challenge {
 
     calculateStrengthFor(cards) {
         return _.reduce(cards, (sum, card) => {
+            if(card.challengeOptions.doesNotContributeStrength) {
+                return sum;
+            }
+
             return sum + card.getStrength();
         }, 0);
     }

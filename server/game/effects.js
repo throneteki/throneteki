@@ -166,6 +166,16 @@ const Effects = {
             isStateDependent: true
         };
     },
+    doesNotContributeStrength: function() {
+        return {
+            apply: function(card) {
+                card.challengeOptions.doesNotContributeStrength = true;
+            },
+            unapply: function(card) {
+                card.challengeOptions.doesNotContributeStrength = false;
+            }
+        };
+    },
     addStealthLimit: function(value) {
         return {
             apply: function(card) {
