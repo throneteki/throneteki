@@ -10,6 +10,9 @@ const UiPrompt = require('./uiprompt.js');
  * numCards           - an integer specifying the number of cards that will be
  *                      searched within the player's deck. If not specified, the
  *                      entire deck will be searched.
+ * numToSelect        - integer specifying the number of cards to select, default
+ *                      is 1. If > 1, the onSelect callback (see below) will be
+ *                      called multiple times, once for each selected card.
  * activePromptTitle  - the title that should be used in the prompt for the
  *                      choosing player.
  * waitingPromptTitle - the title that should be used in the prompt for the
@@ -101,6 +104,14 @@ class DeckSearchPrompt extends UiPrompt {
 
         if(!card) {
             return false;
+        }
+
+        if(this.properties.numToSelect !== undefined && this.properties.numToSelect > 1) {
+            this.properties.onSelect(player, card);
+            this.properties.numToSelect--;
+            this.properties.numCards--;  // to avoid peaking into one *extra* card
+
+            return;
         }
 
         this.selectAndShuffle(player, card);
