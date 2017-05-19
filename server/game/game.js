@@ -151,6 +151,16 @@ class Game extends EventEmitter {
             player.activePlot.hasTrait(trait));
     }
 
+    getNumberOfPlotsWithTrait(trait) {
+        return _.reduce(this.getPlayers(), (sum, player) => {
+            if(player.activePlot && player.activePlot.hasTrait(trait)) {
+                return sum + 1;
+            }
+
+            return sum;
+        }, 0);
+    }
+
     addEffect(source, properties) {
         this.effectEngine.add(new Effect(this, source, properties));
     }
