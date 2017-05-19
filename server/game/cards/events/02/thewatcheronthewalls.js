@@ -1,45 +1,18 @@
-const _ = require('underscore');
+const DrawCard = require('../../../drawcard.js');
 
-const ChallengeEvent = require('../../challengeevent.js');
-
-class TheWatcherOnTheWalls extends ChallengeEvent {
-
-    constructor(owner, cardData) {
-        super(owner, cardData, 'military');
-    }
-
-    canPlay(player, card) {
-        var standingRangers = this.controller.filterCardsInPlay(
-            card =>
-                !card.kneeled
-                && card.hasTrait('Ranger'));
-
-        return (super.canPlay(player, card)
-                && standingRangers.length >= 2);
-    }
-
-    play(player) {
-        this.game.promptForSelect(player, {
-            numCards: 2,
-            activePromptTitle: 'Select 2 standing rangers',
-            source: this,
-            cardCondition: card =>
-                card.location === 'play area'
-                && !card.kneeled
-                && card.controller === this.controller
-                && card.hasTrait('Ranger'),
-            gameAction: 'kneel',
-            onSelect: (player, cards) => this.onSelect(player, cards)
+class TheWatcherOnTheWalls extends DrawCard {
+    setupCardAbilities(ability) {
+        this.action({
+            title: 'Kneel 2 Rangers to kill attackers',
+            phase: 'challenge',
+            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
+            cost: ability.costs.kneelMultiple(2, card => card.getType() === 'character' && card.hasTrait('Ranger')),
+            handler: () => {
+                this.game.killCharacters(this.game.currentChallenge.attackers);
+                this.game.addMessage('{0} uses {1} to kill each attacking character',
+                                     this.controller, this);
+            }
         });
-    }
-
-    onSelect(player, cards) {
-        _.each(cards, card => player.kneelCard(card));
-        this.game.killCharacters(this.game.currentChallenge.attackers);
-        this.game.addMessage('{0} uses {1} to kill each attacking character',
-                             player, this);
-
-        return true;
     }
 }
 

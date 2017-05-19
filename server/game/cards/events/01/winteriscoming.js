@@ -1,6 +1,6 @@
-const ChallengeEvent = require('../../challengeevent.js');
+const DrawCard = require('../../../drawcard.js');
 
-class WinterIsComing extends ChallengeEvent {
+class WinterIsComing extends DrawCard {
 
     // TODO implement restriction "(Max 1 per challenge.)"
     setupCardAbilities() {
