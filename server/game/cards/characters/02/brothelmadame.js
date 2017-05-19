@@ -66,6 +66,12 @@ class BrothelMadame extends DrawCard {
 
         return true;
     }
+
+    doNotPay(player) {
+        this.game.addMessage('{0} declines to give {1} 1 gold for {2}', player, this.controller, this);
+
+        return true;
+    }
 }
 
 BrothelMadame.code = '02029';
