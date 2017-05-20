@@ -262,7 +262,13 @@ class BaseCard {
     }
 
     isFaction(faction) {
-        return !!this.factions[faction.toLowerCase()];
+        let normalizedFaction = faction.toLowerCase();
+
+        if(normalizedFaction === 'neutral') {
+            return !!this.factions[normalizedFaction] && _.size(this.factions) === 1;
+        }
+
+        return !!this.factions[normalizedFaction];
     }
 
     isLoyal() {
