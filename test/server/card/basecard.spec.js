@@ -181,4 +181,39 @@ describe('BaseCard', function () {
             });
         });
     });
+
+    describe('isFaction()', function() {
+        beforeEach(function() {
+            this.card.factions = {};
+            this.card.addFaction('stark');
+        });
+
+        it('should return true if it has that faction', function() {
+            expect(this.card.isFaction('stark')).toBe(true);
+        });
+
+        it('should return true regardless of case', function() {
+            expect(this.card.isFaction('StArK')).toBe(true);
+        });
+
+        it('should return false for unaffiliated factions', function() {
+            expect(this.card.isFaction('baratheon')).toBe(false);
+        });
+
+        describe('when the card is neutral', function() {
+            beforeEach(function() {
+                this.card.factions = {};
+                this.card.addFaction('neutral');
+            });
+
+            it('should return true for neutral', function() {
+                expect(this.card.isFaction('neutral')).toBe(true);
+            });
+
+            it('should return false if it gains a faction affiliation (e.g. Ward)', function() {
+                this.card.addFaction('stark');
+                expect(this.card.isFaction('neutral')).toBe(false);
+            });
+        });
+    });
 });
