@@ -34,7 +34,7 @@ class VenomousBlade extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.isFaction('martell') || card.controller !== this.controller) {
+        if(card.getType() !== 'character' || !card.isFaction('martell') || card.controller !== this.controller) {
             return false;
         }
 

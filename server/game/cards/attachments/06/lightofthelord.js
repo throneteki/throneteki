@@ -15,7 +15,7 @@ class LightOfTheLord extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!(card.isFaction('baratheon') || card.hasTrait('R\'hllor'))) {
+        if(card.getType() !== 'character' || !(card.isFaction('baratheon') || card.hasTrait('R\'hllor'))) {
             return false;
         }
 

@@ -22,7 +22,7 @@ class Ghost extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.isFaction('thenightswatch') && !card.isFaction('stark')) {
+        if(card.getType() !== 'character' || !card.isFaction('thenightswatch') && !card.isFaction('stark')) {
             return false;
         }
 

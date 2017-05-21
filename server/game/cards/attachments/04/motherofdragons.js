@@ -29,7 +29,7 @@ class MotherOfDragons extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.hasTrait('Stormborn')) {
+        if(card.getType() !== 'character' || !card.hasTrait('Stormborn')) {
             return false;
         }
 

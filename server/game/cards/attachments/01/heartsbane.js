@@ -25,7 +25,7 @@ class Heartsbane extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.isFaction('tyrell')) {
+        if(card.getType() !== 'character' || !card.isFaction('tyrell')) {
             return false;
         }
 

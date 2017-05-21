@@ -14,7 +14,7 @@ class KingBeyondTheWall extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.hasTrait('Wildling') || card.getType() !== 'character') {
+        if(card.getType() !== 'character' || !card.hasTrait('Wildling')) {
             return false;
         }
 
