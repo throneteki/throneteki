@@ -12,7 +12,7 @@ class DragonglassDagger extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.isFaction('thenightswatch') || card.getType() !== 'character') {
+        if(card.getType() !== 'character' || !card.isFaction('thenightswatch')) {
             return false;
         }
 

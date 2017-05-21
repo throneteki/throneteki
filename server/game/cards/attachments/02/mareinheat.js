@@ -11,7 +11,7 @@ class MareInHeat extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.hasTrait('Knight')) {
+        if(card.getType() !== 'character' || !card.hasTrait('Knight')) {
             return false;
         }
 

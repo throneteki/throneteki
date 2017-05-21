@@ -20,7 +20,7 @@ class KingOfSaltAndRock extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.hasTrait('Ironborn') || card.getType() !== 'character') {
+        if(card.getType() !== 'character' || !card.hasTrait('Ironborn')) {
             return false;
         }
 

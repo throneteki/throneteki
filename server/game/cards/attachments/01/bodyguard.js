@@ -17,7 +17,7 @@ class BodyGuard extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.hasTrait('Lady') && !card.hasTrait('Lord')) {
+        if(card.getType() !== 'character' || !card.hasTrait('Lady') && !card.hasTrait('Lord')) {
             return false;
         }
 

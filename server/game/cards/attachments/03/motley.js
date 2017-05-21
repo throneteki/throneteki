@@ -19,7 +19,7 @@ class Motley extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(card.controller === this.controller || card.getType() !== 'character') {
+        if(card.getType() !== 'character' || card.controller === this.controller) {
             return false;
         }
 

@@ -26,7 +26,7 @@ class WeirwoodBow extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!(card.isFaction('thenightswatch') || card.hasTrait('Wildling'))) {
+        if(card.getType() !== 'character' || !(card.isFaction('thenightswatch') || card.hasTrait('Wildling'))) {
             return false;
         }
 

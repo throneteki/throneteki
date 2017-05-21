@@ -18,7 +18,7 @@ class TheBoyKing extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.hasTrait('Lord') || card.getType() !== 'character') {
+        if(card.getType() !== 'character' || !card.hasTrait('Lord')) {
             return false;
         }
 
