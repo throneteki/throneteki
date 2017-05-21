@@ -1,6 +1,6 @@
 {
   "name": "throneteki",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Game of Throne Second Edition Card Game Server",
   "main": "index.js",
   "scripts": {
