@@ -56,37 +56,73 @@ describe('TriggeredAbilityWindow', function() {
     describe('registerAbility()', function() {
         beforeEach(function() {
             this.abilityCard = { card: 1, name: 'The Card', controller: this.player1Spy };
-            this.abilitySpy = jasmine.createSpyObj('ability', ['getChoices']);
+            this.abilitySpy = jasmine.createSpyObj('ability', ['getChoices', 'hasMax']);
             this.abilitySpy.getChoices.and.returnValue([{ text: 'Choice 1', choice: 'choice1' }, { text: 'Choice 2', choice: 'choice2' }]);
             this.abilitySpy.card = this.abilityCard;
             this.context = { context: 1 };
-
-            this.window.registerAbility(this.abilitySpy, this.context);
         });
 
-        it('should add each choice for the ability', function() {
-            expect(this.window.abilityChoices.length).toBe(2);
-            expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
-                ability: this.abilitySpy,
-                card: this.abilityCard,
-                choice: 'choice1',
-                context: this.context,
-                player: this.player1Spy,
-                text: 'Choice 1'
-            }));
-            expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
-                ability: this.abilitySpy,
-                card: this.abilityCard,
-                choice: 'choice2',
-                context: this.context,
-                player: this.player1Spy,
-                text: 'Choice 2'
-            }));
+        describe('when a normal ability is registered', function() {
+            beforeEach(function() {
+                this.window.registerAbility(this.abilitySpy, this.context);
+            });
+
+            it('should add each choice for the ability', function() {
+                expect(this.window.abilityChoices.length).toBe(2);
+                expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
+                    ability: this.abilitySpy,
+                    card: this.abilityCard,
+                    choice: 'choice1',
+                    context: this.context,
+                    player: this.player1Spy,
+                    text: 'Choice 1'
+                }));
+                expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
+                    ability: this.abilitySpy,
+                    card: this.abilityCard,
+                    choice: 'choice2',
+                    context: this.context,
+                    player: this.player1Spy,
+                    text: 'Choice 2'
+                }));
+            });
+
+            it('should generate unique IDs for each choice', function() {
+                let ids = _.pluck(this.window.abilityChoices, 'id');
+                expect(_.uniq(ids)).toEqual(ids);
+            });
         });
 
-        it('should generate unique IDs for each choice', function() {
-            let ids = _.pluck(this.window.abilityChoices, 'id');
-            expect(_.uniq(ids)).toEqual(ids);
+        describe('when the ability has a maximum', function() {
+            beforeEach(function() {
+                this.abilitySpy.hasMax.and.returnValue(true);
+            });
+
+            describe('and an ability from a card with that title has not been registered', function() {
+                beforeEach(function() {
+                    this.window.registerAbility(this.abilitySpy, this.context);
+                });
+
+                it('should register as normal', function() {
+                    expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
+                        ability: this.abilitySpy
+                    }));
+                });
+            });
+
+            describe('and an ability from a card with that title has been registered', function() {
+                beforeEach(function() {
+                    this.window.abilityChoices.push({ card: { name: 'The Card' } });
+
+                    this.window.registerAbility(this.abilitySpy, this.context);
+                });
+
+                it('should not register the ability', function() {
+                    expect(this.window.abilityChoices).not.toContain(jasmine.objectContaining({
+                        ability: this.abilitySpy
+                    }));
+                });
+            });
         });
     });
 

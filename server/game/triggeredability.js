@@ -114,6 +114,10 @@ class TriggeredAbility extends BaseAbility {
         return false;
     }
 
+    hasMax() {
+        return !!this.max;
+    }
+
     registerEvents() {
         if(this.events) {
             return;
