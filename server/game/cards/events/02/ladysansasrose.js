@@ -1,7 +1,7 @@
 const DrawCard = require('../../../drawcard.js');
 
 class LadySansasRose extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (event, challenge) => (
@@ -9,6 +9,7 @@ class LadySansasRose extends DrawCard {
                     this.hasSingleParticipatingChar() &&
                     this.hasParticipatingKnight())
             },
+            max: ability.limit.perChallenge(1),
             handler: (context) => {
                 let power = this.hasLadyCharacter() ? 3 : 1;
                 let participatingCard = this.controller.filterCardsInPlay(card => {
@@ -40,11 +41,7 @@ class LadySansasRose extends DrawCard {
     }
 
     hasLadyCharacter() {
-        let cards = this.controller.filterCardsInPlay(card => {
-            return card.hasTrait('Lady') && card.getType() === 'character';
-        });
-
-        return !!cards.length;
+        return this.controller.anyCardsInPlay(card => card.hasTrait('Lady') && card.getType() === 'character');
     }
 }
 
