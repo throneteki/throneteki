@@ -33,12 +33,17 @@ class TriggeredAbility extends BaseAbility {
         this.game = game;
         this.card = card;
         this.limit = properties.limit;
+        this.max = properties.max;
         this.when = properties.when;
         this.eventType = eventType;
         this.location = properties.location || DefaultLocationForType[card.getType()] || 'play area';
 
         if(card.getType() === 'event' && !properties.ignoreEventCosts) {
             this.cost.push(Costs.playEvent());
+        }
+
+        if(this.max) {
+            this.card.owner.registerAbilityMax(this.card.name, this.max);
         }
     }
 
@@ -107,6 +112,10 @@ class TriggeredAbility extends BaseAbility {
 
     isForcedAbility() {
         return false;
+    }
+
+    hasMax() {
+        return !!this.max;
     }
 
     registerEvents() {

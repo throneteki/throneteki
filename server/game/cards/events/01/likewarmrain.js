@@ -6,8 +6,7 @@ class LikeWarmRain extends DrawCard {
             when: {
                 afterChallenge: (event, challenge) => this.controller === challenge.loser && challenge.challengeType === 'intrigue' && challenge.defendingPlayer === this.controller
             },
-            /// XXX This doesn't currently work for cards by title, ie events
-            limit: ability.limit.perChallenge(1),
+            max: ability.limit.perChallenge(1),
             cost: ability.costs.kneel(card => card.getType() === 'character' && card.hasTrait('Direwolf')),
             target: {
                 activePromptTitle: 'Select a character to kill',

@@ -40,6 +40,7 @@ class Player extends Spectator {
         this.usedPlotsModifier = 0;
         this.cannotGainChallengeBonus = false;
         this.cannotTriggerCardAbilities = false;
+        this.abilityMaxByTitle = {};
         this.promptedActionWindows = user.promptedActionWindows || {
             plot: false,
             draw: false,
@@ -383,6 +384,33 @@ class Player extends Spectator {
                 this.removeCostReducer(reducer);
             }
         });
+    }
+
+    registerAbilityMax(cardName, limit) {
+        if(this.abilityMaxByTitle[cardName]) {
+            return;
+        }
+
+        this.abilityMaxByTitle[cardName] = limit;
+        limit.registerEvents(this.game);
+    }
+
+    isAbilityAtMax(cardName) {
+        let limit = this.abilityMaxByTitle[cardName];
+
+        if(!limit) {
+            return false;
+        }
+
+        return limit.isAtMax();
+    }
+
+    incrementAbilityMax(cardName) {
+        let limit = this.abilityMaxByTitle[cardName];
+
+        if(limit) {
+            limit.increment();
+        }
     }
 
     isCharacterDead(card) {

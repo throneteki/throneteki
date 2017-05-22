@@ -1,8 +1,9 @@
 const DrawCard = require('../../../drawcard.js');
 
 class AMeagerContribution extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
+            max: ability.limit.perRound(1),
             when: {
                 onIncomeCollected: event => event.player !== this.controller
             },

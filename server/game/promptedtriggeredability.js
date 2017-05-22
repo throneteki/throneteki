@@ -26,6 +26,9 @@ const TriggeredAbility = require('./triggeredability.js');
  *           are handlers when the player chooses it from the prompt.
  * limit   - optional AbilityLimit object that represents the max number of uses
  *           for the reaction as well as when it resets.
+ * max     - optional AbilityLimit object that represents the max number of
+ *           times the ability by card title can be used. Contrast with `limit`
+ *           which limits per individual card.
  * location - string indicating the location the card should be in in order
  *            to activate the reaction. Defaults to 'play area'.
  */

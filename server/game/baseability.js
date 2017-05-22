@@ -174,6 +174,10 @@ class BaseAbility {
     isCardAbility() {
         return true;
     }
+
+    hasMax() {
+        return false;
+    }
 }
 
 module.exports = BaseAbility;

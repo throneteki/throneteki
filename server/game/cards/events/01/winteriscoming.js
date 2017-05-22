@@ -1,11 +1,10 @@
 const DrawCard = require('../../../drawcard.js');
 
 class WinterIsComing extends DrawCard {
-
-    // TODO implement restriction "(Max 1 per challenge.)"
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Raise claim by 1',
+            max: ability.limit.perChallenge(1),
             condition: () => this.game.currentChallenge,
             handler: () => {
                 this.untilEndOfChallenge(ability => ({

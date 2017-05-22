@@ -13,6 +13,10 @@ class TriggeredAbilityWindow extends BaseStep {
     }
 
     registerAbility(ability, context) {
+        if(ability.hasMax() && this.hasChoiceForCardByName(ability.card.name)) {
+            return;
+        }
+
         let player = ability.card.controller;
         let choiceTexts = ability.getChoices(context);
 
@@ -27,6 +31,10 @@ class TriggeredAbilityWindow extends BaseStep {
                 context: context
             });
         });
+    }
+
+    hasChoiceForCardByName(cardName) {
+        return _.any(this.abilityChoices, choice => choice.card.name === cardName);
     }
 
     continue() {
