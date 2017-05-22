@@ -32,7 +32,7 @@ class TheSwordInTheDarkness extends DrawCard {
     }
 
     hasNightsWatchParticipant() {
-        return _.any(this.currentChallenge.defenders, card => card.getType() === 'character' && card.isFaction('thenightswatch'));
+        return _.any(this.game.currentChallenge.defenders, card => card.getType() === 'character' && card.isFaction('thenightswatch'));
     }
 }
 
