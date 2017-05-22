@@ -12,7 +12,7 @@ class DothrakiSea extends DrawCard {
                 cardCondition: card => card.location === 'hand' && card.getType() === 'character' && card.hasTrait('Dothraki')
             },
             handler: context => {
-                context.card.controller.putIntoPlay(context.target);
+                context.target.controller.putIntoPlay(context.target);
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
                     effect: ability.effects.returnToHandIfStillInPlay()
