@@ -1,9 +1,10 @@
 const DrawCard = require('../../../drawcard.js');
 
 class TakeTheBlack extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Take control of character',
+            max: ability.limit.perRound(1),
             phase: 'dominance',
             target: {
                 activePromptTitle: 'Select a character',

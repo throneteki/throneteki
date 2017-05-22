@@ -1,8 +1,9 @@
 const DrawCard = require('../../../drawcard.js');
 
 class SuperiorClaim extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
+            max: ability.limit.perChallenge(1),
             when: {
                 afterChallenge: (event, challenge) => (
                     challenge.challengeType === 'power' &&
