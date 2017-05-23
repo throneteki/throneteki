@@ -27,8 +27,8 @@ class DaringRescue extends DrawCard {
                         card.controller === this.controller),
                     onSelect: (p, card) => {
                         card.modifyPower(1);
-                        this.game.addMessage('{0} then uses {1} to have {3} gain 1 power', 
-                                              this.controller, this, context.target, card);
+                        this.game.addMessage('{0} then uses {1} to have {2} gain 1 power', 
+                                              this.controller, this, card);
                         
                         return true;
                     }
