@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class DaringRescue extends DrawCard {
     setupCardAbilities() {
         this.action({
-            title: 'Return character ',
+            title: 'Return character then have knight gain power',
             condition: () => this.hasKnightCharacter(),
             target: {
                 activePromptTitle: 'Select a character to return',
