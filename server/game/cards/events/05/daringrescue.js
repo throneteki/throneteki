@@ -5,6 +5,7 @@ class DaringRescue extends DrawCard {
         this.action({
             title: 'Return character then have knight gain power',
             condition: () => this.hasKnightCharacter(),
+            phase: 'challenge',
             target: {
                 activePromptTitle: 'Select a character to return',
                 cardCondition: card => (
@@ -14,6 +15,8 @@ class DaringRescue extends DrawCard {
             },
             handler: context => {
                 this.controller.moveCard(context.target, 'hand');
+                this.game.addMessage('{0} plays {1} to return {2} to its owner\'s hand', 
+                                      this.controller, this, context.target);
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a Knight character',
                     source: this,
@@ -24,7 +27,7 @@ class DaringRescue extends DrawCard {
                         card.controller === this.controller),
                     onSelect: (p, card) => {
                         card.modifyPower(1);
-                        this.game.addMessage('{0} plays {1} to return {2} to its owner\'s hand then have {3} gain 1 power', 
+                        this.game.addMessage('{0} then uses {1} to have {3} gain 1 power', 
                                               this.controller, this, context.target, card);
                         
                         return true;
