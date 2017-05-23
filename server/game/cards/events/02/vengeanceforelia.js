@@ -21,7 +21,7 @@ class VengeanceForElia extends DrawCard {
                     challengeType: this.game.currentChallenge.challengeType,
                     claim: this.game.currentChallenge.claim,
                     loser: opponent,
-                    winner: this.controller
+                    winner: opponent
                 };
 
                 this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
