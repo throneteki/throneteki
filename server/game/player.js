@@ -155,9 +155,12 @@ class Player extends Spectator {
             return undefined;
         }
 
-        return this.findCard(this.cardsInPlay, playCard => {
-            return playCard !== card && (playCard.code === card.code || playCard.name === card.name);
-        });
+        return this.allCards.find(playCard => (
+            playCard.location === 'play area' &&
+            playCard !== card &&
+            (playCard.code === card.code || playCard.name === card.name) &&
+            playCard.owner === this
+        ));
     }
 
     getNumberOfChallengesWon(challengeType) {
