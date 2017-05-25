@@ -4,7 +4,7 @@ class ThePackSurvives extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
-            title: () => 'Sac Direwolf',
+            title: () => 'Sacrifice Direwolf',
             when: {
                 onCardAbilityInitiated: event => event.source.getType() === 'event' && event.player !== this.controller
             },
@@ -19,7 +19,7 @@ class ThePackSurvives extends DrawCard {
 
         this.interrupt({
             canCancel: true,
-            title: () => 'Kneel chars',
+            title: () => 'Kneel characters',
             when: {
                 onCardAbilityInitiated: event => event.source.getType() === 'event' && event.player !== this.controller
             },
