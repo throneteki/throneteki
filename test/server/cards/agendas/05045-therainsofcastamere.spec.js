@@ -1,4 +1,4 @@
-/* global describe, it, expect, beforeEach, jasmine */
+/* global describe, it, expect, beforeEach, jasmine, integration */
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 const _ = require('underscore');
@@ -152,8 +152,8 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should register the ability', function() {
-                this.reaction.executeReaction({});
-                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(this.reaction, jasmine.any(Object));
+                this.reaction.eventHandler({ name: 'afterChallenge', params: [this.event, this.challenge] });
+                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(this.reaction);
             });
         });
     });
@@ -273,6 +273,53 @@ describe('The Rains of Castamere', function() {
                     expect(this.player.kneelCard).toHaveBeenCalledWith(this.player.faction);
                 });
             });
+        });
+    });
+
+    integration(function() {
+        beforeEach(function() {
+            const deck = this.buildDeck('lannister', [
+                '"The Rains of Castamere"',
+                'Trading with the Pentoshi', 'Wardens of the West',
+                'Cersei Lannister (LoCR)'
+            ]);
+            this.player1.selectDeck(deck);
+            this.player2.selectDeck(deck);
+            this.startGame();
+            this.keepStartingHands();
+            this.player1.clickCard('Cersei Lannister', 'hand');
+            this.completeSetup();
+            this.player1.selectPlot('Trading with the Pentoshi');
+            this.player2.selectPlot('Trading with the Pentoshi');
+            this.selectFirstPlayer(this.player1);
+            this.selectPlotOrder(this.player1);
+            this.completeMarshalPhase();
+
+            this.player1.clickPrompt('Intrigue');
+            this.player1.clickCard('Cersei Lannister', 'play area');
+            this.player1.clickPrompt('Done');
+
+            this.skipActionWindow();
+
+            this.player2.clickPrompt('Done');
+
+            this.skipActionWindow();
+
+            this.wardens = this.player1.findCardByName('Wardens of the West');
+
+            this.player1.clickPrompt('"The Rains of Castamere"');
+        });
+
+        it('should allow a scheme to be played', function() {
+            this.player1.clickPrompt('Wardens of the West');
+
+            expect(this.player1Object.activePlot).toBe(this.wardens);
+        });
+
+        it('should allow reactions in the current reaction window to trigger', function() {
+            this.player1.clickPrompt('Wardens of the West');
+
+            expect(this.player1).toHavePromptButton('Wardens of the West');
         });
     });
 });
