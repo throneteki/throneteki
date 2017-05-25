@@ -9,10 +9,10 @@ class Winterfell extends DrawCard {
 
         this.reaction({
             when: {
-                onChallenge: () => true
+                onChallenge: () => !this.kneeled
             },
-            costs: ability.costs.kneelSelf(),
             handler: () => {
+                this.controller.kneelCard(this);
                 this.untilEndOfChallenge(ability => ({
                     targetType: 'player',
                     targetController: 'any',
