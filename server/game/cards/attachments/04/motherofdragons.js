@@ -5,10 +5,11 @@ class MotherOfDragons extends DrawCard {
         this.action({
             title: 'Kneel Mother of Dragons to add attached character to challenge',
             condition: () =>
-                this.game.currentChallenge
-                && this.controller.anyCardsInPlay(
-                    card => this.game.currentChallenge.isParticipating(card)
-                        && card.hasTrait('Dragon')),
+                this.game.currentChallenge && 
+                this.controller.anyCardsInPlay(
+                    card => this.game.currentChallenge.isParticipating(card) &&
+                            card.hasTrait('Dragon')) &&
+                this.parent.canParticipateInChallenge(),
             cost: ability.costs.kneelSelf(),
             method: 'addToChallenge'
         });
