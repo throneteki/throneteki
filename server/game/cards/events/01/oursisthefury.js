@@ -7,7 +7,7 @@ class OursIsTheFury extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer === this.controller,
             target: {
                 activePromptTitle: 'Select character',
-                cardCondition: card => card.kneeled && card.controller === this.controller && card.isFaction('baratheon')
+                cardCondition: card => card.kneeled && card.controller === this.controller && card.isFaction('baratheon') && card.canParticipateInChallenge()
             },
             handler: context => {
                 this.selectedCard = context.target;
