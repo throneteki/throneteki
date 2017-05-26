@@ -480,13 +480,13 @@ class Player extends Spectator {
             let isSetupAttachment = playingType === 'setup' && card.getType() === 'attachment';
 
             card.facedown = this.game.currentPhase === 'setup';
-            if(!dupeCard && !isSetupAttachment) {
-                card.play(this, playingType === 'ambush');
-            }
-
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
             card.controller = this;
+
+            if(!dupeCard && !isSetupAttachment) {
+                card.play(this, playingType === 'ambush');
+            }
 
             if(this.game.currentPhase !== 'setup' && card.isBestow()) {
                 this.game.queueStep(new BestowPrompt(this.game, this, card));
