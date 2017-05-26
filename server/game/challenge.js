@@ -207,7 +207,7 @@ class Challenge {
     }
 
     isUnopposed() {
-        return this.loserStrength <= 0 && this.winnerStrength > 0;
+        return this.loserStrength <= 0 && this.winnerStrength > 0 && this.winner === this.attackingPlayer;
     }
 
     getClaim() {
