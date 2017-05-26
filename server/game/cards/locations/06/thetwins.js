@@ -12,7 +12,7 @@ class TheTwins extends DrawCard {
             effect: ability.effects.modifyClaim(1)
         });
     }
-    
+
     hasAttackingFrey() {
         return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
                                                       card.hasTrait('House Frey') && 
