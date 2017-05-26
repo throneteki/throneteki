@@ -208,7 +208,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Trading with the Pentoshi',
-                    'Euron Crow\'s Eye (Core)', 'Maester Aemon (Core)', 'Sea Bitch'
+                    'Euron Crow\'s Eye (Core)', 'Maester Aemon (Core)', 'Sea Bitch', 'Ward'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
@@ -231,13 +231,13 @@ describe('take control', function() {
 
                 this.player1.selectPlot('Trading with the Pentoshi');
                 this.player2.selectPlot('Trading with the Pentoshi');
-
-                this.selectFirstPlayer(this.player1);
-                this.selectPlotOrder(this.player1);
             });
 
             describe('when it comes into play under control', function() {
                 beforeEach(function() {
+                    this.selectFirstPlayer(this.player1);
+                    this.selectPlotOrder(this.player1);
+
                     // Move The Wall back into draw deck for Euron's pillage.
                     this.wall.controller.moveCard(this.wall, 'draw deck');
 
@@ -280,6 +280,9 @@ describe('take control', function() {
 
             describe('when it transfers control', function() {
                 beforeEach(function() {
+                    this.selectFirstPlayer(this.player1);
+                    this.selectPlotOrder(this.player1);
+
                     this.seaBitch = this.player1.findCardByName('Sea Bitch', 'hand');
 
                     // Marshal cards
@@ -302,6 +305,27 @@ describe('take control', function() {
 
                 it('should apply the effect to the new controller', function() {
                     expect(this.aemon.getStrength()).toBe(3);
+                });
+
+                it('should unapply the effect from the old controller', function() {
+                    expect(this.steward.getStrength()).toBe(1);
+                });
+            });
+
+            describe('when control of effect-modified character is transfered', function() {
+                beforeEach(function() {
+                    this.selectFirstPlayer(this.player2);
+                    this.selectPlotOrder(this.player2);
+
+                    // Marshal cards
+                    this.player2.clickCard(this.wall);
+                    this.player2.clickPrompt('Done');
+                    this.player1.clickCard('Ward', 'hand');
+                    this.player1.clickCard(this.steward);
+
+                    expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.steward.uuid);
+                    expect(this.steward.controller.name).toBe(this.player1Object.name);
+                    expect(this.steward.location).toBe('play area');
                 });
 
                 it('should unapply the effect from the old controller', function() {
