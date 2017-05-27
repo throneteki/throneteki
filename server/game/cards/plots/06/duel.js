@@ -39,8 +39,8 @@ class Duel extends PlotCard {
             activePrompt: {
                 menuTitle: 'Choose character to kneel',
                 buttons: [
-                    { text: cards[0], method: 'resolve', arg: [0,1]},
-                    { text: cards[1], method: 'resolve', arg: [1,0]},
+                    { card: cards[0], method: 'resolve', arg: [0,1]},
+                    { card: cards[1], method: 'resolve', arg: [1,0]},
                     { text: 'Cancel', method: 'cancel'}
                 ]
             },
