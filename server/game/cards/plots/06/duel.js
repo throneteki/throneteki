@@ -28,6 +28,10 @@ class Duel extends PlotCard {
     }
 
     targetsSelected(player, cards) {
+        if(cards.length !== 2) {
+            return false;
+        }
+
         this.targets = cards;
         this.game.addMessage('{0} has chosen {1} as the targets for {2}', player, cards, this);
 
@@ -35,8 +39,9 @@ class Duel extends PlotCard {
             activePrompt: {
                 menuTitle: 'Choose character to kneel',
                 buttons: [
-                    { text: cards[0].name, method: 'resolve', arg: [0,1]},
-                    { text: cards[1].name, method: 'resolve', arg: [1,0]}
+                    { text: cards[0], method: 'resolve', arg: [0,1]},
+                    { text: cards[1], method: 'resolve', arg: [1,0]},
+                    { text: 'Cancel', method: 'cancel'}
                 ]
             },
             source: this
@@ -50,6 +55,12 @@ class Duel extends PlotCard {
         this.game.killCharacter(this.targets[index[1]], false);
 
         this.game.addMessage('{0} then chooses {1} to kneel, {2} is killed', player, this.targets[index[0]], this.targets[index[1]]);
+
+        return true;
+    }
+
+    cancel(player) {
+        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
 
         return true;
     }
