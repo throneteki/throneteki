@@ -406,9 +406,11 @@ class BaseCard {
             return;
         }
 
-        var lowerCaseFaction = faction.toLowerCase();
+        let lowerCaseFaction = faction.toLowerCase();
         this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
         this.factions[lowerCaseFaction]++;
+
+        this.game.raiseMergedEvent('onCardFactionChanged', { card: this });
     }
 
     removeKeyword(keyword) {
@@ -423,6 +425,7 @@ class BaseCard {
 
     removeFaction(faction) {
         this.factions[faction.toLowerCase()]--;
+        this.game.raiseMergedEvent('onCardFactionChanged', { card: this });
     }
 
     clearBlank() {
