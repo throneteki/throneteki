@@ -5,7 +5,7 @@ class WinterfellCrypt extends DrawCard {
         this.reaction({
             when: {
                 onSacrificed: (event, player, card) => {
-                    if(this.uniqueStarkCharacterSacrificedOrKilled(event, card)) {
+                    if(this.uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, card)) {
                         this.triggerCard = card;
                         return true;
                     }
@@ -13,7 +13,7 @@ class WinterfellCrypt extends DrawCard {
                     return false;
                 },
                 onCharacterKilled: event => {
-                    if(this.uniqueStarkCharacterSacrificedOrKilled(event, event.card)) {
+                    if(this.uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, event.card)) {
                         this.triggerCard = event.card;
                         return true;
                     }
@@ -40,12 +40,13 @@ class WinterfellCrypt extends DrawCard {
         });
     }
 
-    uniqueStarkCharacterSacrificedOrKilled(event, card) {
+    uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, card) {
         return (
             this.controller === card.controller &&
             card.isUnique() &&
             card.isFaction('stark') &&
-            card.getType() === 'character'
+            card.getType() === 'character' &&
+            this.game.currentPhase === 'challenge'
         );
     }
 }
