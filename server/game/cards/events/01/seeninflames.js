@@ -15,13 +15,14 @@ class SeenInFlames extends DrawCard {
                     return;
                 }
 
-                this.game.promptWithMenu(otherPlayer, this, {
+                let buttons = otherPlayer.hand.map(card => {
+                    return { method: 'cardSelected', card: card };
+                });
+
+                this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
-                        menuTitle: 'Resolve ' + this.name + ' and reveal hand to opponent?',
-                        buttons: [
-                            { text: 'Yes', method: 'revealHand' },
-                            { text: 'No', method: 'cancel' }
-                        ]
+                        menuTitle: 'Select a card to discard',
+                        buttons: buttons
                     },
                     source: this
                 });
@@ -32,25 +33,6 @@ class SeenInFlames extends DrawCard {
     opponentHasCards() {
         let otherPlayer = this.game.getOtherPlayer(this.controller);
         return otherPlayer && !otherPlayer.hand.isEmpty();
-    }
-
-    revealHand() {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-        var buttons = otherPlayer.hand.map(card => {
-            return { method: 'cardSelected', card: card };
-        });
-
-        buttons.push({ text: 'Cancel', method: 'cancel' });
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Select a card to discard',
-                buttons: buttons
-            },
-            source: this
-        });
-
-        return true;
     }
 
     cardSelected(player, cardId) {
@@ -67,12 +49,6 @@ class SeenInFlames extends DrawCard {
         otherPlayer.discardCard(card);
 
         this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand', player, this, card, otherPlayer);
-
-        return true;
-    }
-
-    cancel(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
 
         return true;
     }

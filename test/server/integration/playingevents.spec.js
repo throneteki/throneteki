@@ -40,7 +40,6 @@ describe('playing events', function() {
                 this.player2.clickPrompt('Pass');
 
                 // Discard Hand's Judgment from the opponent's hand
-                this.player2.clickPrompt('Yes');
                 this.player1.clickPrompt('The Hand\'s Judgment');
             });
 
