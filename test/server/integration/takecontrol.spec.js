@@ -203,5 +203,228 @@ describe('take control', function() {
                 expect(this.kingsroad.controller.name).toBe(this.player2Object.name);
             });
         });
+
+        describe('take control + persistent effects', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('greyjoy', [
+                    'Trading with the Pentoshi',
+                    'Euron Crow\'s Eye (Core)', 'Maester Aemon (Core)', 'Sea Bitch', 'Ward'
+                ]);
+                const deck2 = this.buildDeck('thenightswatch', [
+                    'Trading with the Pentoshi',
+                    'Steward at the Wall', 'The Wall'
+                ]);
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.euron = this.player1.findCardByName('Euron Crow\'s Eye', 'hand');
+                this.aemon = this.player1.findCardByName('Maester Aemon', 'hand');
+                this.steward = this.player2.findCardByName('Steward at the Wall', 'hand');
+                this.wall = this.player2.findCardByName('The Wall', 'hand');
+
+                this.player1.clickCard(this.euron);
+                this.player2.clickCard(this.steward);
+
+                this.completeSetup();
+
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.player2.selectPlot('Trading with the Pentoshi');
+            });
+
+            describe('when it comes into play under control', function() {
+                beforeEach(function() {
+                    this.selectFirstPlayer(this.player1);
+                    this.selectPlotOrder(this.player1);
+
+                    // Move The Wall back into draw deck for Euron's pillage.
+                    this.wall.controller.moveCard(this.wall, 'draw deck');
+
+                    // Marshal cards
+                    this.player1.clickCard(this.aemon);
+                    this.player1.clickPrompt('Done');
+                    this.player2.clickPrompt('Done');
+
+                    // Challenges
+                    this.player1.clickPrompt('Power');
+                    this.player1.clickCard(this.euron);
+                    this.player1.clickPrompt('Done');
+
+                    this.skipActionWindow();
+
+                    this.player2.clickPrompt('Done');
+
+                    this.skipActionWindow();
+                    this.skipActionWindow();
+
+                    this.player1.clickPrompt('Apply Claim');
+
+                    // Use Euron to take control of the opponent Wall.
+                    this.player1.clickPrompt('Euron Crow\'s Eye');
+                    this.player1.clickCard(this.wall);
+
+                    expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.wall.uuid);
+                    expect(this.wall.controller.name).toBe(this.player1Object.name);
+                    expect(this.wall.location).toBe('play area');
+                });
+
+                it('should apply the effect to the new controller', function() {
+                    expect(this.aemon.getStrength()).toBe(3);
+                });
+
+                it('should not apply the effect to the old controller', function() {
+                    expect(this.steward.getStrength()).toBe(1);
+                });
+            });
+
+            describe('when it transfers control', function() {
+                beforeEach(function() {
+                    this.selectFirstPlayer(this.player1);
+                    this.selectPlotOrder(this.player1);
+
+                    this.seaBitch = this.player1.findCardByName('Sea Bitch', 'hand');
+
+                    // Marshal cards
+                    this.player1.clickCard(this.aemon);
+                    this.player1.clickCard(this.seaBitch);
+                    this.player1.clickPrompt('Done');
+                    this.player2.clickCard(this.wall);
+                    this.player2.clickPrompt('Done');
+
+                    expect(this.steward.getStrength()).toBe(2);
+
+                    // Use Sea Bitch to take control of the opponent Wall.
+                    this.player1.clickMenu(this.seaBitch, 'Sacrifice this card');
+                    this.player1.clickCard(this.wall);
+
+                    expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.wall.uuid);
+                    expect(this.wall.controller.name).toBe(this.player1Object.name);
+                    expect(this.wall.location).toBe('play area');
+                });
+
+                it('should apply the effect to the new controller', function() {
+                    expect(this.aemon.getStrength()).toBe(3);
+                });
+
+                it('should unapply the effect from the old controller', function() {
+                    expect(this.steward.getStrength()).toBe(1);
+                });
+            });
+
+            describe('when control of effect-modified character is transfered', function() {
+                beforeEach(function() {
+                    this.selectFirstPlayer(this.player2);
+                    this.selectPlotOrder(this.player2);
+
+                    // Marshal cards
+                    this.player2.clickCard(this.wall);
+                    this.player2.clickPrompt('Done');
+                    this.player1.clickCard('Ward', 'hand');
+                    this.player1.clickCard(this.steward);
+
+                    expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.steward.uuid);
+                    expect(this.steward.controller.name).toBe(this.player1Object.name);
+                    expect(this.steward.location).toBe('play area');
+                });
+
+                it('should unapply the effect from the old controller', function() {
+                    expect(this.steward.getStrength()).toBe(1);
+                });
+            });
+        });
+
+        describe('take control + abilities', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('greyjoy', [
+                    'Trading with the Pentoshi',
+                    'Euron Crow\'s Eye (Core)', 'Iron Mines', 'Hedge Knight'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.euron = this.player1.findCardByName('Euron Crow\'s Eye', 'hand');
+                this.mines = this.player2.findCardByName('Iron Mines', 'hand');
+
+                this.completeSetup();
+
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.player2.selectPlot('Trading with the Pentoshi');
+
+                this.selectFirstPlayer(this.player1);
+                this.selectPlotOrder(this.player1);
+
+                this.player2Object.moveCard(this.mines, 'draw deck');
+
+                this.player1.clickCard('Euron Crow\'s Eye', 'hand');
+                this.player1.clickCard('Hedge Knight', 'hand');
+                this.player1.clickPrompt('Done');
+                this.player2.clickCard('Hedge Knight', 'hand');
+                this.player2.clickPrompt('Done');
+
+                this.player1.clickPrompt('Power');
+                this.player1.clickCard(this.euron);
+                this.player1.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                this.player2.clickPrompt('Done');
+
+                this.skipActionWindow();
+                this.skipActionWindow();
+
+                this.player1.clickPrompt('Apply Claim');
+
+                // Use Euron to take control of the opponent Iron Mines.
+                this.player1.clickPrompt('Euron Crow\'s Eye');
+                this.player1.clickCard(this.mines);
+            });
+
+            it('should trigger for the current player', function() {
+                this.player1.clickPrompt('Done');
+
+                this.player2.clickPrompt('Military');
+                this.player2.clickCard('Hedge Knight', 'play area');
+                this.player2.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                this.player1.clickPrompt('Done');
+
+                this.skipActionWindow();
+                this.skipActionWindow();
+
+                this.player2.clickPrompt('Apply Claim');
+
+                this.player1.clickCard('Hedge Knight', 'play area');
+
+                this.player1.clickPrompt('Iron Mines');
+                this.player1.clickCard('Hedge Knight', 'play area');
+
+                expect(this.player1.findCardByName('Hedge Knight', 'play area')).toBeDefined();
+            });
+
+            it('should not trigger for the opponent', function() {
+                this.player1.clickPrompt('Military');
+                this.player1.clickCard('Hedge Knight', 'play area');
+                this.player1.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                this.player2.clickPrompt('Done');
+
+                this.skipActionWindow();
+                this.skipActionWindow();
+
+                this.player1.clickPrompt('Apply Claim');
+
+                this.player2.clickCard('Hedge Knight', 'play area');
+
+                expect(this.player1).not.toHavePromptButton('Iron Mines');
+                expect(this.player2).not.toHavePromptButton('Iron Mines');
+            });
+        });
     });
 });

@@ -55,8 +55,16 @@ class EffectEngine {
                 // the new controller from scratch.
                 effect.cancel();
                 effect.addTargets(this.getTargets());
+            } else if(effect.duration === 'persistent' && effect.hasTarget(card) && !effect.isValidTarget(card)) {
+                // Evict the card from any effects applied on it that are no
+                // longer valid under the new controller.
+                effect.removeTarget(card);
             }
         });
+
+        // Reapply all relevant persistent effects given the card's new
+        // controller.
+        this.addTargetForPersistentEffects(card, 'play area');
     }
 
     addTargetForPersistentEffects(card, targetLocation) {
