@@ -6,24 +6,24 @@ class TheDornishmansWife extends DrawCard {
             title: 'Gain gold/power/card',
             condition: () => this.opponentHasMorePower() || this.opponentHasMoreCardsInHand() || this.opponentControlsMoreCharacters(),
             handler: () => {
-                let bonusMessage = '';
+                let bonusMessage = [];
 
                 if(this.opponentHasMorePower()) {
                     this.game.addGold(this.controller, 2);
-                    bonusMessage += ' gain 2 gold,';
+                    bonusMessage.push('gain 2 gold');
                 }
 
                 if(this.opponentHasMoreCardsInHand()) {
                     this.game.addPower(this.controller, 1);
-                    bonusMessage += ' gain 1 power for their faction,';
+                    bonusMessage.push('gain 1 power for their faction');
                 }
 
                 if(this.opponentControlsMoreCharacters()) {
                     this.controller.drawCardsToHand(1);
-                    bonusMessage += ' draw 1 card';
+                    bonusMessage.push('draw 1 card');
                 }
 
-                this.game.addMessage('{0} uses {1} to{2}',
+                this.game.addMessage('{0} uses {1} to {2}',
                                     this.controller, this, bonusMessage);
             }
         });
