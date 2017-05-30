@@ -16,7 +16,7 @@ class TrialByCombat extends DrawCard {
 
                 context.skipHandler();
 
-                this.game.addMessage('{0} uses {1} to have {2} apply military claim instead of intrigue claim', this.controller, this, opponent);
+                this.game.addMessage('{0} uses {1} to have {2} apply {3} claim instead of {4} claim', this.controller, this, opponent, 'military', 'intrigue');
 
                 let replacementChallenge = {
                     challengeType: 'military',
