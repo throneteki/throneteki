@@ -386,6 +386,22 @@ const Effects = {
             }
         };
     },
+    shuffleIntoDeckIfStillInPlay: function() {
+        return {
+            apply: function(card, context) {
+                context.shuffleIntoDeckIfStillInPlay = context.shuffleIntoDeckIfStillInPlay || [];
+                context.shuffleIntoDeckIfStillInPlay.push(card);
+            },
+            unapply: function(card, context) {
+                if(card.location === 'play area' && context.shuffleIntoDeckIfStillInPlay.includes(card)) {
+                    context.shuffleIntoDeckIfStillInPlay = _.reject(context.shuffleIntoDeckIfStillInPlay, c => c === card);
+                    card.owner.moveCard(card, 'draw deck');
+                    card.owner.shuffleDrawDeck();
+                    context.game.addMessage('{0} shuffles {1} into their deck at the end of the phase because of {2}', card.owner, card, context.source);
+                }
+            }
+        };
+    },
     doesNotContributeToDominance: function() {
         return {
             apply: function(card) {
