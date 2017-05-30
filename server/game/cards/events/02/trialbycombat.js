@@ -2,8 +2,8 @@ const DrawCard = require('../../../drawcard.js');
 const ApplyClaim = require('../../../gamesteps/challenge/applyclaim.js');
 
 class TrialByCombat extends DrawCard {
-	setupCardAbilities(ability) {
-		this.interrupt({
+    setupCardAbilities() {
+        this.interrupt({
             when: {
                 onClaimApplied: (event, challenge) => (
                     challenge.winner === this.controller &&
@@ -27,8 +27,8 @@ class TrialByCombat extends DrawCard {
 
                 this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
             }            
-		})
-	}
+        });
+    }
 }
 
 TrialByCombat.code = '02090';
