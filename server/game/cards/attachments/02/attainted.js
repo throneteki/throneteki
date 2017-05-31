@@ -6,6 +6,14 @@ class Attainted extends DrawCard {
             effect: ability.effects.removeIcon('intrigue')
         });
     }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
+    }
 }
 
 Attainted.code = '02055';

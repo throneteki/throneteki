@@ -6,6 +6,14 @@ class Condemned extends DrawCard {
             effect: ability.effects.removeIcon('power')
         });
     }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
+    }
 }
 
 Condemned.code = '02077';

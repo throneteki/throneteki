@@ -10,6 +10,14 @@ class DrownedGodsBlessing extends DrawCard {
             initiative: 1
         });
     }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
+    }
 }
 
 DrownedGodsBlessing.code = '02112';
