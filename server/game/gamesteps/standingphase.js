@@ -35,6 +35,9 @@ class StandingPhase extends Phase {
             this.selectRestrictedCards(cardsToStand, player, restriction);
         });
         this.game.queueSimpleStep(() => {
+            this.selectOptionalCards(cardsToStand, player);
+        });
+        this.game.queueSimpleStep(() => {
             let finalCards = _.flatten(_.values(cardsToStand));
             player.faction.kneeled = false;
             _.each(finalCards, card => {
@@ -62,6 +65,27 @@ class StandingPhase extends Phase {
                     return false;
                 }
 
+                cardsToStand.selected = cardsToStand.selected.concat(cards);
+                return true;
+            }
+        });
+    }
+
+    selectOptionalCards(cardsToStand, player) {
+        let optionalStandCards = _.filter(cardsToStand.automatic, card => card.optionalStandDuringStanding);
+
+        if(optionalStandCards.length === 0) {
+            return;
+        }
+
+        cardsToStand.automatic = _.filter(cardsToStand.automatic, card => !card.optionalStandDuringStanding);
+
+        this.game.promptForSelect(player, {
+            numCards: 0,
+            multiSelect: true,
+            activePromptTitle: 'Select optional cards to stand',
+            cardCondition: card => optionalStandCards.includes(card),
+            onSelect: (player, cards) => {
                 cardsToStand.selected = cardsToStand.selected.concat(cards);
                 return true;
             }
