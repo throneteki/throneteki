@@ -41,6 +41,14 @@ class KingRobertsWarhammer extends DrawCard {
     cancelSelection(player) {
         this.game.addMessage('{0} cancels the resolution of {1}', player, this);
     }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
+    }
 }
 
 KingRobertsWarhammer.code = '02008';

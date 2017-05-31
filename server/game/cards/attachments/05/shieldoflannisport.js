@@ -21,6 +21,14 @@ class ShieldOfLannisport extends DrawCard {
             card.getCost() >= 4
         ));
     }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
+    }
 }
 
 ShieldOfLannisport.code = '05020';

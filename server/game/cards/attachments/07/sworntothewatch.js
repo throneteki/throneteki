@@ -18,6 +18,14 @@ class SwornToTheWatch extends DrawCard {
             effect: ability.effects.addTrait('Builder')
         });
     }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
+    }
 }
 
 SwornToTheWatch.code = '07022';
