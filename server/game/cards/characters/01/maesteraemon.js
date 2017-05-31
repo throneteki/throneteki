@@ -3,19 +3,18 @@ const DrawCard = require('../../../drawcard.js');
 class MaesterAemon extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
+            canCancel: true,
             when: {
-                onCharacterKilled: (event, player, card, allowSaves) => (
-                    allowSaves &&
-                    card.isFaction('thenightswatch') &&
-                    card.controller === this.controller
-                )
+                onCharactersKilled: event => event.allowSave
             },
             cost: ability.costs.kneelSelf(),
-            canCancel: true,
-            title: context => 'Use ' + this.name + ' to save ' + context.event.params[2].name,
+            target: {
+                activePromptTitle: 'Select character to save',
+                cardCondition: (card, context) => context.event.cards.includes(card) && card.isFaction('thenightswatch') && card.controller === this.controller
+            },
             handler: context => {
-                context.cancel();
-                this.game.addMessage('{0} kneels {1} to save {2}', this.controller, this, context.event.params[2]);
+                context.event.saveCard(context.target);
+                this.game.addMessage('{0} kneels {1} to save {2}', this.controller, this, context.target);
             }
         });
     }

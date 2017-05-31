@@ -1,6 +1,5 @@
 const _ = require('underscore');
 const EventEmitter = require('events');
-const uuid = require('node-uuid');
 
 const ChatCommands = require('./chatcommands.js');
 const GameChat = require('./gamechat.js');
@@ -8,6 +7,7 @@ const EffectEngine = require('./effectengine.js');
 const Effect = require('./effect.js');
 const Player = require('./player.js');
 const Spectator = require('./spectator.js');
+const AnonymousSpectator = require('./anonymousspectator.js');
 const GamePipeline = require('./gamepipeline.js');
 const SetupPhase = require('./gamesteps/setupphase.js');
 const PlotPhase = require('./gamesteps/plotphase.js');
@@ -18,14 +18,18 @@ const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
 const SimpleStep = require('./gamesteps/simplestep.js');
+const DeckSearchPrompt = require('./gamesteps/decksearchprompt.js');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
+const SimultaneousEventWindow = require('./gamesteps/simultaneouseventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
-const GameRepository = require('../repositories/gameRepository.js');
+const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredabilitywindow.js');
+const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
+const KillCharacters = require('./gamesteps/killcharacters.js');
 
 class Game extends EventEmitter {
-    constructor(owner, details, options = {}) {
+    constructor(details, options = {}) {
         super();
 
         this.effectEngine = new EffectEngine(this);
@@ -35,18 +39,32 @@ class Game extends EventEmitter {
         this.gameChat = new GameChat();
         this.chatCommands = new ChatCommands(this);
         this.pipeline = new GamePipeline();
-
+        this.id = details.id;
         this.name = details.name;
-        this.allowSpectators = details.spectators;
-        this.id = uuid.v1();
-        this.owner = owner;
+        this.allowSpectators = details.allowSpectators;
+        this.owner = details.owner;
         this.started = false;
         this.playStarted = false;
         this.createdAt = new Date();
+        this.savedGameId = details.savedGameId;
+        this.gameType = details.gameType;
+        this.abilityCardStack = [];
+        this.abilityWindowStack = [];
+        this.password = details.password;
+
+        _.each(details.players, player => {
+            this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
+        });
+
+        _.each(details.spectators, spectator => {
+            this.playersAndSpectators[spectator.user.username] = new Spectator(spectator.id, spectator.user);
+        });
 
         this.setMaxListeners(0);
 
-        this.gameRepository = options.gameRepository || new GameRepository();
+        this.router = options.router;
+
+        this.pushAbilityContext('framework', null, 'framework');
     }
 
     addMessage() {
@@ -128,37 +146,23 @@ class Game extends EventEmitter {
     }
 
     anyPlotHasTrait(trait) {
-        return _.any(this.game.getPlayers(), player =>
+        return _.any(this.getPlayers(), player =>
             player.activePlot &&
             player.activePlot.hasTrait(trait));
     }
 
+    getNumberOfPlotsWithTrait(trait) {
+        return _.reduce(this.getPlayers(), (sum, player) => {
+            if(player.activePlot && player.activePlot.hasTrait(trait)) {
+                return sum + 1;
+            }
+
+            return sum;
+        }, 0);
+    }
+
     addEffect(source, properties) {
         this.effectEngine.add(new Effect(this, source, properties));
-    }
-
-    playCard(player, card) {
-        if(this.pipeline.handleCardClicked(player, card)) {
-            return;
-        }
-
-        if(!player.playCard(card)) {
-            return;
-        }
-
-        this.raiseEvent('onCardPlayed', player, card);
-    }
-
-    processCardClicked(player, card) {
-        if(this.pipeline.handleCardClicked(player, card)) {
-            return true;
-        }
-
-        if(card && card.onClick(player)) {
-            return true;
-        }
-
-        return false;
     }
 
     selectPlot(player, plotId) {
@@ -175,6 +179,22 @@ class Game extends EventEmitter {
         plot.selected = true;
     }
 
+    factionCardClicked(sourcePlayer) {
+        var player = this.getPlayerByName(sourcePlayer);
+
+        if(!player) {
+            return;
+        }
+
+        if(player.faction.kneeled) {
+            player.standCard(player.faction);
+        } else {
+            player.kneelCard(player.faction);
+        }
+
+        this.addMessage('{0} {1} their faction card', player, player.faction.kneeled ? 'kneels' : 'stands');
+    }
+
     cardClicked(sourcePlayer, cardId) {
         var player = this.getPlayerByName(sourcePlayer);
 
@@ -188,28 +208,32 @@ class Game extends EventEmitter {
             return;
         }
 
-        switch(card.location) {
-            case 'hand':
-                this.playCard(player, card);
-                return;
-            case 'plot deck':
-                this.selectPlot(player, cardId);
-
-                return;
+        if(card.location === 'plot deck') {
+            this.selectPlot(player, cardId);
+            return;
         }
 
-        var handled = this.processCardClicked(player, card);
+        if(this.pipeline.handleCardClicked(player, card)) {
+            return;
+        }
 
-        if(!handled) {
-            if(card && !card.facedown && card.location === 'play area' && card.controller === player) {
-                if(card.kneeled) {
-                    player.standCard(card);
-                } else {
-                    player.kneelCard(card);
-                }
+        // Attempt to play cards that are not already in the play area.
+        if(['hand', 'discard pile', 'dead pile'].includes(card.location) && player.playCard(card)) {
+            return;
+        }
 
-                this.addMessage('{0} {1} {2}', player, card.kneeled ? 'kneels' : 'stands', card);
+        if(card.onClick(player)) {
+            return;
+        }
+
+        if(!card.facedown && card.location === 'play area' && card.controller === player) {
+            if(card.kneeled) {
+                player.standCard(card);
+            } else {
+                player.kneelCard(card);
             }
+
+            this.addMessage('{0} {1} {2}', player, card.kneeled ? 'kneels' : 'stands', card);
         }
     }
 
@@ -288,7 +312,18 @@ class Game extends EventEmitter {
         }
 
         if(player.drop(cardId, source, target)) {
-            this.addMessage('{0} has moved a card from their {1} to their {2}', player, source, target);
+            var movedCard = 'a card';
+            if(!_.isEmpty(_.intersection(['dead pile', 'discard pile', 'out of game', 'play area'],
+                                         [source, target]))) {
+                // log the moved card only if it moved from/to a public place
+                var card = this.findAnyCardInAnyList(cardId);
+                if(card && this.currentPhase !== 'setup') {
+                    movedCard = card;
+                }
+            }
+
+            this.addMessage('{0} has moved {1} from their {2} to their {3}',
+                            player, movedCard, source, target);
         }
     }
 
@@ -333,19 +368,13 @@ class Game extends EventEmitter {
 
         this.raiseEvent('onStatChanged', from, 'gold');
         this.raiseEvent('onStatChanged', to, 'gold');
+
+        this.raiseMergedEvent('onGoldTransferred', { source: from, target: to, amount: gold });
     }
 
     checkWinCondition(player) {
         if(player.getTotalPower() >= 15) {
-            this.addMessage('{0} has won the game', player);
-
-            if(!this.winner) {
-                this.winner = player;
-                this.finishedAt = new Date();
-                this.winReason = 'power';
-
-                this.saveGame();
-            }
+            this.recordWinner(player, 'power');
         }
     }
 
@@ -354,16 +383,23 @@ class Game extends EventEmitter {
 
         if(otherPlayer) {
             this.addMessage('{0}\'s draw deck is empty', player);
-            this.addMessage('{0} has won the game', otherPlayer);
 
-            if(!this.winner) {
-                this.winner = player;
-                this.finishedAt = new Date();
-                this.winReason = 'decked';
-
-                this.saveGame();
-            }
+            this.recordWinner(otherPlayer, 'decked');
         }
+    }
+
+    recordWinner(winner, reason) {
+        if(this.winner) {
+            return;
+        }
+
+        this.addMessage('{0} has won the game', winner);
+
+        this.winner = winner;
+        this.finishedAt = new Date();
+        this.winReason = reason;
+
+        this.router.gameWon(this, reason, winner);
     }
 
     changeStat(playerName, stat, value) {
@@ -424,15 +460,7 @@ class Game extends EventEmitter {
         var otherPlayer = this.getOtherPlayer(player);
 
         if(otherPlayer) {
-            this.addMessage('{0} wins the game', otherPlayer);
-
-            if(!this.winner) {
-                this.winner = otherPlayer;
-                this.finishedAt = new Date();
-                this.winReason = 'concede';
-
-                this.saveGame();
-            }
+            this.recordWinner(otherPlayer, 'concede');
         }
     }
 
@@ -465,6 +493,12 @@ class Game extends EventEmitter {
         this.queueStep(new SelectCardPrompt(this, player, properties));
     }
 
+    promptForDeckSearch(player, properties) {
+        this.raiseMergedEvent('onBeforeDeckSearch', { source: properties.source, player: player }, event => {
+            this.queueStep(new DeckSearchPrompt(this, event.player, properties));
+        });
+    }
+
     menuButton(playerName, arg, method) {
         var player = this.getPlayerByName(playerName);
         if(!player) {
@@ -474,6 +508,15 @@ class Game extends EventEmitter {
         if(this.pipeline.handleMenuCommand(player, arg, method)) {
             return true;
         }
+    }
+
+    togglePromptedActionWindow(playerName, windowName, toggle) {
+        var player = this.getPlayerByName(playerName);
+        if(!player) {
+            return;
+        }
+
+        player.promptedActionWindows[windowName] = toggle;
     }
 
     initialise() {
@@ -503,8 +546,6 @@ class Game extends EventEmitter {
         this.playStarted = true;
         this.startedAt = new Date();
 
-        this.saveGame();
-
         this.continue();
     }
 
@@ -528,8 +569,48 @@ class Game extends EventEmitter {
         this.pipeline.queueStep(new SimpleStep(this, handler));
     }
 
+    markActionAsTaken() {
+        if(this.currentActionWindow) {
+            this.currentActionWindow.markActionAsTaken();
+        }
+    }
+
+    get currentAbilityContext() {
+        return _.last(this.abilityCardStack);
+    }
+
+    pushAbilityContext(source, card, stage) {
+        this.abilityCardStack.push({ source: source, card: card, stage: stage });
+    }
+
+    popAbilityContext() {
+        this.abilityCardStack.pop();
+    }
+
     resolveAbility(ability, context) {
-        this.queueStep(new AbilityResolver(this.game, ability, context));
+        this.queueStep(new AbilityResolver(this, ability, context));
+    }
+
+    openAbilityWindow(properties) {
+        let windowClass = ['forcedreaction', 'forcedinterrupt', 'whenrevealed'].includes(properties.abilityType) ? ForcedTriggeredAbilityWindow : TriggeredAbilityWindow;
+        let window = new windowClass(this, { abilityType: properties.abilityType, event: properties.event });
+        this.abilityWindowStack.push(window);
+        this.emit(properties.event.name + ':' + properties.abilityType, ...properties.event.params);
+        this.queueStep(window);
+        this.queueSimpleStep(() => this.abilityWindowStack.pop());
+    }
+
+    registerAbility(ability) {
+        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => ability.isTriggeredByEvent(window.event));
+
+        if(windowIndex === -1) {
+            return;
+        }
+
+        let window = this.abilityWindowStack[windowIndex];
+        let context = ability.createContext(window.event);
+
+        window.registerAbility(ability, context);
     }
 
     raiseEvent(eventName, ...params) {
@@ -550,6 +631,18 @@ class Game extends EventEmitter {
         this.queueStep(new EventWindow(this, eventName, params, handler, true));
     }
 
+    raiseSimultaneousEvent(cards, properties) {
+        this.queueStep(new SimultaneousEventWindow(this, cards, properties));
+    }
+
+    killCharacters(cards, allowSave = true) {
+        this.queueStep(new KillCharacters(this, cards, allowSave));
+    }
+
+    killCharacter(card, allowSave = true) {
+        this.killCharacters([card], allowSave);
+    }
+
     takeControl(player, card) {
         var oldController = card.controller;
         var newController = player;
@@ -558,17 +651,43 @@ class Game extends EventEmitter {
             return;
         }
 
-        oldController.removeCardFromPile(card);
-        newController.cardsInPlay.push(card);
-        card.controller = newController;
+        this.applyGameAction('takeControl', card, card => {
+            oldController.removeCardFromPile(card);
+            oldController.allCards = _(oldController.allCards.reject(c => c === card));
+            newController.cardsInPlay.push(card);
+            newController.allCards.push(card);
+            card.controller = newController;
 
-        if(card.location !== 'play area') {
-            card.play(newController, false);
-            card.moveTo('play area');
-            this.raiseEvent('onCardEntersPlay', card);
+            if(card.location !== 'play area') {
+                card.play(newController, false);
+                card.moveTo('play area');
+                this.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: 'play' });
+            }
+
+            this.raiseEvent('onCardTakenControl', card);
+        });
+    }
+
+    applyGameAction(actionType, cards, func) {
+        let wasArray = _.isArray(cards);
+        if(!wasArray) {
+            cards = [cards];
+        }
+        let [allowed, disallowed] = _.partition(cards, card => card.allowGameAction(actionType));
+
+        if(!_.isEmpty(disallowed)) {
+            // TODO: add a cannot / immunity message.
         }
 
-        this.raiseEvent('onCardTakenControl', card);
+        if(_.isEmpty(allowed)) {
+            return;
+        }
+
+        if(wasArray) {
+            func(allowed);
+        } else {
+            func(allowed[0]);
+        }
     }
 
     watch(socketId, user) {
@@ -593,7 +712,7 @@ class Game extends EventEmitter {
     }
 
     isEmpty() {
-        return _.all(this.playersAndSpectators, player => player.disconnected || player.left);
+        return _.all(this.playersAndSpectators, player => player.disconnected || player.left || player.id === 'TBA');
     }
 
     leave(playerName) {
@@ -612,7 +731,6 @@ class Game extends EventEmitter {
 
             if(!this.finishedAt) {
                 this.finishedAt = new Date();
-                this.saveGame();
             }
         }
     }
@@ -631,21 +749,45 @@ class Game extends EventEmitter {
         } else {
             player.disconnected = true;
         }
+
+        player.socket = undefined;
     }
 
-    reconnect(id, playerName) {
+    failedConnect(playerName) {
+        var player = this.playersAndSpectators[playerName];
+
+        if(!player) {
+            return;
+        }
+
+        if(this.isSpectator(player) || !this.started) {
+            delete this.playersAndSpectators[playerName];
+        } else {
+            this.addMessage('{0} has failed to connect to the game', player);
+
+            player.disconnected = true;
+
+            if(!this.finishedAt) {
+                this.finishedAt = new Date();
+            }
+        }
+    }
+
+    reconnect(socket, playerName) {
         var player = this.getPlayerByName(playerName);
         if(!player) {
             return;
         }
 
-        player.id = id;
+        player.id = socket.id;
+        player.socket = socket;
         player.disconnected = false;
 
         this.addMessage('{0} has reconnected', player);
     }
 
     continue() {
+        this.effectEngine.reapplyStateDependentEffects();
         this.pipeline.continue();
         this.effectEngine.reapplyStateDependentEffects();
         // Ensure any events generated by the effects engine are resolved.
@@ -664,6 +806,7 @@ class Game extends EventEmitter {
 
         return {
             id: this.savedGameId,
+            gameId: this.id,
             startedAt: this.startedAt,
             players: players,
             winner: this.winner ? this.winner.name : undefined,
@@ -672,20 +815,13 @@ class Game extends EventEmitter {
         };
     }
 
-    saveGame() {
-        this.gameRepository.save(this.getSaveState(), (err, id) => {
-            if(!err) {
-                this.savedGameId = id;
-            }
-        });
-    }
-
-    getState(activePlayer) {
-        var playerState = {};
+    getState(activePlayerName) {
+        let activePlayer = this.playersAndSpectators[activePlayerName] || new AnonymousSpectator();
+        let playerState = {};
 
         if(this.started) {
             _.each(this.getPlayers(), player => {
-                playerState[player.name] = player.getState(activePlayer === player.name);
+                playerState[player.name] = player.getState(activePlayer);
             });
 
             return {
@@ -700,14 +836,15 @@ class Game extends EventEmitter {
                         name: spectator.name
                     };
                 }),
-                started: this.started
+                started: this.started,
+                winner: this.winner ? this.winner.name : undefined
             };
         }
 
-        return this.getSummary(activePlayer);
+        return this.getSummary(activePlayerName);
     }
 
-    getSummary(activePlayer) {
+    getSummary(activePlayerName) {
         var playerSummaries = {};
 
         _.each(this.getPlayers(), player => {
@@ -716,7 +853,7 @@ class Game extends EventEmitter {
                 return;
             }
 
-            if(activePlayer === player.name && player.deck) {
+            if(activePlayerName === player.name && player.deck) {
                 deck = { name: player.deck.name, selected: player.deck.selected };
             } else if(player.deck) {
                 deck = { selected: player.deck.selected };
@@ -727,11 +864,12 @@ class Game extends EventEmitter {
             playerSummaries[player.name] = {
                 agenda: player.agenda ? player.agenda.code : undefined,
                 deck: deck,
-                emailHash: player.user.emailHash,
+                emailHash: player.emailHash,
                 faction: player.faction.code,
                 id: player.id,
+                lobbyId: player.lobbyId,
                 left: player.left,
-                name: player.user.username,
+                name: player.name,
                 owner: player.owner
             };
         });
@@ -739,15 +877,18 @@ class Game extends EventEmitter {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            gameType: this.gameType,
             id: this.id,
             messages: this.gameChat.messages,
             name: this.name,
             owner: this.owner,
             players: playerSummaries,
             started: this.started,
+            startedAt: this.startedAt,
             spectators: _.map(this.getSpectators(), spectator => {
                 return {
                     id: spectator.id,
+                    lobbyId: spectator.lobbyId,
                     name: spectator.name
                 };
             })

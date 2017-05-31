@@ -7,7 +7,7 @@ describe('marshal phase', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'Trading with the Pentoshi', 'Sneak Attack',
-                    'Arya Stark (Core)', 'Eddard Stark (Core)', 'Eddard Stark (Core)', 'Eddard Stark (WotN)', 'The Kingsroad', 'Hear Me Roar!'
+                    'Arya Stark (Core)', 'Eddard Stark (Core)', 'Eddard Stark (Core)', 'Eddard Stark (WotN)', 'The Kingsroad', 'Hear Me Roar!', 'Gold Cloaks'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -39,8 +39,8 @@ describe('marshal phase', function() {
                 // Ensure there is a card in draw deck
                 this.kingsroad.controller.moveCard(this.kingsroad, 'draw deck');
                 this.player1.clickCard(this.arya);
-                expect(this.player1).toHavePrompt('Trigger Arya Stark?');
-                this.player1.clickPrompt('Yes');
+
+                this.player1.clickPrompt('Arya Stark');
 
                 expect(this.arya.dupes.size()).toBe(1);
             });
@@ -153,6 +153,65 @@ describe('marshal phase', function() {
 
                 it('should properly calculate the effects of the attachment', function() {
                     expect(this.character.getStrength()).toBe(2);
+                });
+            });
+        });
+
+        describe('when unique attachments are marshalled on opponent cards', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'Trading with the Pentoshi',
+                    'Crown of Gold', 'Crown of Gold', 'Khal Drogo'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.player1Character = this.player1.findCardByName('Khal Drogo', 'hand');
+                [this.player1Crown, this.player1CrownDupe] = this.player1.filterCardsByName('Crown of Gold', 'hand');
+                this.player2Character = this.player2.findCardByName('Khal Drogo', 'hand');
+                this.player2Crown = this.player2.findCardByName('Crown of Gold', 'hand');
+
+                this.player1.clickCard(this.player1Character);
+                this.player2.clickCard(this.player2Character);
+
+                this.completeSetup();
+
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.player2.selectPlot('Trading with the Pentoshi');
+                this.selectFirstPlayer(this.player1);
+                this.selectPlotOrder(this.player1);
+
+                // Player 1 marshals a Crown on player 2's character
+                this.player1.clickCard(this.player1Crown);
+                this.player1.clickCard(this.player2Character);
+
+                expect(this.player2Character.getStrength()).toBe(1);
+            });
+
+            it('should marshal a dupe automatically', function() {
+                this.player1.clickCard(this.player1CrownDupe);
+
+                expect(this.player1).not.toHavePrompt('Select target for attachment');
+                expect(this.player1Crown.dupes.pluck('uuid')).toContain(this.player1CrownDupe.uuid);
+            });
+
+            describe('when the opponent tries to marshal the same attachment', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Done');
+
+                    this.player2.clickCard(this.player2Crown);
+                });
+
+                it('should not marshal it as a duplicate for player 1\'s attachment', function() {
+                    expect(this.player1Crown.dupes.pluck('uuid')).not.toContain(this.player2Crown.uuid);
+                });
+
+                it('should allow it to be marshalled as normal', function() {
+                    this.player2.clickCard(this.player1Character);
+
+                    expect(this.player1Character.getStrength()).toBe(1);
                 });
             });
         });

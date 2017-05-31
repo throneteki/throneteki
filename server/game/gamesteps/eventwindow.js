@@ -47,7 +47,10 @@ class EventWindow extends BaseStep {
     }
 
     cancelInterrupts() {
-        this.game.emit(this.eventName + ':cancelinterrupt', ...this.event.params);
+        this.game.openAbilityWindow({
+            abilityType: 'cancelinterrupt',
+            event: this.event
+        });
     }
 
     forcedInterrupts() {
@@ -55,7 +58,10 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.game.emit(this.eventName + ':forcedinterrupt', ...this.event.params);
+        this.game.openAbilityWindow({
+            abilityType: 'forcedinterrupt',
+            event: this.event
+        });
     }
 
     interrupts() {
@@ -63,7 +69,10 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.game.emit(this.eventName + ':interrupt', ...this.event.params);
+        this.game.openAbilityWindow({
+            abilityType: 'interrupt',
+            event: this.event
+        });
     }
 
     executeHandler() {
@@ -78,7 +87,14 @@ class EventWindow extends BaseStep {
                 return;
             }
         }
+        
         this.game.emit(this.eventName, ...this.event.params);
+        if(this.eventName === 'onPlotsWhenRevealed') {
+            this.game.openAbilityWindow({
+                abilityType: 'whenrevealed',
+                event: this.event
+            });
+        }
     }
 
     forcedReactions() {
@@ -86,7 +102,10 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.game.emit(this.eventName + ':forcedreaction', ...this.event.params);
+        this.game.openAbilityWindow({
+            abilityType: 'forcedreaction',
+            event: this.event
+        });
     }
 
     reactions() {
@@ -94,7 +113,10 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.game.emit(this.eventName + ':reaction', ...this.event.params);
+        this.game.openAbilityWindow({
+            abilityType: 'reaction',
+            event: this.event
+        });
     }
 }
 

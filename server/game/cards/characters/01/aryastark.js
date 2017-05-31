@@ -9,14 +9,15 @@ class AryaStark extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: (event, card) => card === this
+                onCardEntersPlay: event => event.card === this && event.card.canBeDuplicated()
             },
             handler: () => {
                 var dupe = this.controller.drawDeck.first();
-                dupe.facedown = true;
                 this.controller.removeCardFromPile(dupe);
 
                 this.addDuplicate(dupe);
+
+                dupe.facedown = true;
 
                 this.game.addMessage('{0} places the top card of their deck on {1} as a duplicate', this.controller, this);
             }

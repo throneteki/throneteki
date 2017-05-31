@@ -15,7 +15,11 @@ class FulfillMilitaryClaim extends BaseStep {
             numCards: this.claim,
             activePromptTitle: promptMessage,
             waitingPromptTitle: 'Waiting for opponent to fulfill military claim',
-            cardCondition: card => card.location === 'play area' && card.controller === this.player && card.getType() === 'character',
+            cardCondition: card =>
+                card.location === 'play area'
+                && card.controller === this.player
+                && card.getType() === 'character',
+            gameAction: 'kill',
             onSelect: (p, cards) => this.fulfillClaim(p, cards),
             onCancel: () => this.cancelClaim()
         });
@@ -28,7 +32,7 @@ class FulfillMilitaryClaim extends BaseStep {
             cards = [cards];
         }
 
-        var charactersAvailable = this.player.cardsInPlay.filter(c => c.getType() === 'character').length;
+        var charactersAvailable = this.player.getNumberOfCardsInPlay(c => c.getType() === 'character');
         var maxAppliedClaim = Math.min(this.claim, charactersAvailable);
 
         if(cards.length < maxAppliedClaim) {
@@ -37,9 +41,7 @@ class FulfillMilitaryClaim extends BaseStep {
 
         this.game.addMessage('{0} chooses {1} for claim', this.player, cards);
 
-        _.each(cards, card => {
-            card.controller.killCharacter(card);
-        });
+        this.game.killCharacters(cards);
 
         return true;
     }

@@ -64,16 +64,16 @@ class Effect {
     }
 
     addTargets(targets) {
-        if(!this.condition()) {
+        if(!this.active || !this.condition()) {
             return;
         }
 
-        _.each(targets, target => {
+        let newTargets = _.difference(targets, this.targets);
+
+        _.each(newTargets, target => {
             if(this.isValidTarget(target)) {
                 this.targets.push(target);
-                if(this.active) {
-                    this.effect.apply(target, this.context);
-                }
+                this.effect.apply(target, this.context);
             }
         });
     }
@@ -85,6 +85,10 @@ class Effect {
             }
 
             if(this.targetLocation === 'hand' && target.location !== 'hand') {
+                return false;
+            }
+
+            if(!target.allowEffectFrom(this.source)) {
                 return false;
             }
         }
@@ -127,9 +131,7 @@ class Effect {
             return;
         }
 
-        if(this.active) {
-            this.effect.unapply(card, this.context);
-        }
+        this.effect.unapply(card, this.context);
 
         this.targets = _.reject(this.targets, target => target === card);
     }
@@ -138,22 +140,22 @@ class Effect {
         return this.targets.includes(card);
     }
 
-    setActive(newActive) {
-        if(this.active && !newActive) {
-            _.each(this.targets, target => this.effect.unapply(target, this.context));
-        }
-
-        if(!this.active && newActive) {
-            _.each(this.targets, target => this.effect.apply(target, this.context));
-        }
+    setActive(newActive, newTargets) {
+        let oldActive = this.active;
 
         this.active = newActive;
+
+        if(oldActive && !newActive) {
+            this.cancel();
+        }
+
+        if(!oldActive && newActive) {
+            this.addTargets(newTargets);
+        }
     }
 
     cancel() {
-        if(this.active) {
-            _.each(this.targets, target => this.effect.unapply(target, this.context));
-        }
+        _.each(this.targets, target => this.effect.unapply(target, this.context));
         this.targets = [];
     }
 
@@ -163,14 +165,37 @@ class Effect {
         }
 
         if(this.isConditional) {
-            this.cancel();
-            this.addTargets(newTargets);
-        } else if(this.effect.isStateDependent) {
-            _.each(this.targets, target => {
-                this.effect.unapply(target, this.context);
-                this.effect.apply(target, this.context);
-            });
+            let newCondition = this.condition();
+
+            if(!newCondition) {
+                this.cancel();
+                return;
+            }
+
+            if(newCondition) {
+                let invalidTargets = _.filter(this.targets, target => !this.isValidTarget(target));
+                _.each(invalidTargets, target => {
+                    this.removeTarget(target);
+                });
+                this.addTargets(newTargets);
+            }
         }
+
+        if(this.effect.isStateDependent) {
+            let reapplyFunc = this.createReapplyFunc();
+            _.each(this.targets, target => reapplyFunc(target));
+        }
+    }
+
+    createReapplyFunc() {
+        if(this.effect.reapply) {
+            return target => this.effect.reapply(target, this.context);
+        }
+
+        return target => {
+            this.effect.unapply(target, this.context);
+            this.effect.apply(target, this.context);
+        };
     }
 }
 

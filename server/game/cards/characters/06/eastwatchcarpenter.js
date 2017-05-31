@@ -4,7 +4,7 @@ class EastwatchCarpenter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onIncomeCollected: (event, player) => player === this.controller
+                onIncomeCollected: event => event.player === this.controller
             },
             handler: () => {
                 var gold = Math.floor(this.numberOfNWLocations() / 2);
@@ -16,7 +16,7 @@ class EastwatchCarpenter extends DrawCard {
     }
 
     numberOfNWLocations() {
-        var cards = this.controller.cardsInPlay.filter(card => {
+        var cards = this.controller.filterCardsInPlay(card => {
             return card.isFaction('thenightswatch') && card.getType() === 'location';
         });
 

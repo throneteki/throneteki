@@ -4,7 +4,10 @@ class Melisandre extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: (e, card) => card.controller === this.controller && card.hasTrait('R\'hllor')
+                onCardEntersPlay: event =>
+                    event.playingType === 'marshal' && event.card.controller === this.controller && event.card.hasTrait('R\'hllor'),
+                onCardPlayed: (event, player, card) =>
+                    card.controller === this.controller && card.hasTrait('R\'hllor')
             },
             limit: ability.limit.perRound(1),
             handler: () => {
@@ -12,6 +15,7 @@ class Melisandre extends DrawCard {
                     cardCondition: card => this.cardCondition(card),
                     activePromptTitle: 'Select a character to kneel',
                     source: this,
+                    gameAction: 'kneel',
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }

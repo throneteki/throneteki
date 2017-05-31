@@ -18,7 +18,7 @@ class DisputedClaim extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!(card.hasTrait('Bastard') || card.hasTrait('Lord') || card.hasTrait('Lady'))) {
+        if(card.getType() !== 'character' || !(card.hasTrait('Bastard') || card.hasTrait('Lord') || card.hasTrait('Lady'))) {
             return false;
         }
         return super.canAttach(player, card);

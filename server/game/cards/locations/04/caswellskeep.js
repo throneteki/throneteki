@@ -6,7 +6,7 @@ class CaswellsKeep extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotRevealCompleted: () => true
+                onPlotsRevealed: event => _.any(event.plots, plot => plot.controller === this.controller)
             },
             handler: () => {
                 var buttons = _.map(this.game.getPlayers(), player => ({
@@ -36,7 +36,7 @@ class CaswellsKeep extends DrawCard {
         this.topCards = this.selectedPlayer.searchDrawDeck(2);
 
         var buttons = _.map(this.topCards, card => ({
-            text: card.name, method: 'selectCard', arg: card.uuid, card: card.getSummary(true)
+            method: 'selectCard', card: card
         }));
 
         this.game.promptWithMenu(this.controller, this, {

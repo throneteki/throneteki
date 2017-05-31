@@ -15,8 +15,16 @@ const UiPrompt = require('./uiprompt.js');
  *                      choosing player.
  * waitingPromptTitle - the title that should be used in the prompt for the
  *                      opponent players.
+ * maxStat            - a function that returns the maximum value that cards
+ *                      selected by the prompt cannot exceed. If not specified,
+ *                      then no stat limiting is done on the prompt.
+ * cardStat           - a function that takes a card and returns a stat value.
+ *                      Used for prompts that have a maximum stat value.
  * cardCondition      - a function that takes a card and should return a boolean
  *                      on whether that card is elligible to be selected.
+ * cardType           - a string or array of strings listing which types of
+ *                      cards can be selected. Defaults to the list of draw
+ *                      card types.
  * onSelect           - a callback that is called once all cards have been
  *                      selected. On single card prompts this is called as soon
  *                      as an elligible card is clicked. On multi-select prompts
@@ -29,6 +37,10 @@ const UiPrompt = require('./uiprompt.js');
  *                      done button without selecting any cards.
  * source             - what is at the origin of the user prompt, usually a card;
  *                      used to provide a default waitingPromptTitle, if missing
+ * gameAction         - a string representing the game action to be checked on
+ *                      target cards.
+ * ordered            - an optional boolean indicating whether or not to display
+ *                      the order of the selection during the prompt.
  */
 class SelectCardPrompt extends UiPrompt {
     constructor(game, choosingPlayer, properties) {
@@ -41,6 +53,14 @@ class SelectCardPrompt extends UiPrompt {
 
         this.properties = properties;
         _.defaults(this.properties, this.defaultProperties());
+        if(!_.isArray(this.properties.cardType)) {
+            this.properties.cardType = [this.properties.cardType];
+        }
+        if(properties.maxStat && properties.cardStat) {
+            this.cardCondition = this.createMaxStatCardCondition(properties);
+        } else {
+            this.cardCondition = properties.cardCondition;
+        }
         this.selectedCards = [];
         this.savePreviouslySelectedCards();
     }
@@ -50,25 +70,29 @@ class SelectCardPrompt extends UiPrompt {
             numCards: 1,
             additionalButtons: [],
             cardCondition: () => true,
+            cardType: ['attachment', 'character', 'event', 'location'],
+            gameAction: 'target',
             onSelect: () => true,
             onMenuCommand: () => true,
             onCancel: () => true
         };
     }
 
+    createMaxStatCardCondition(properties) {
+        return card => {
+            if(!properties.cardCondition(card)) {
+                return false;
+            }
+
+            let currentStatSum = _.reduce(this.selectedCards, (sum, c) => sum + properties.cardStat(c), 0);
+
+            return properties.cardStat(card) + currentStatSum <= properties.maxStat() || this.selectedCards.includes(card);
+        };
+    }
+
     savePreviouslySelectedCards() {
-        this.previouslySelectedCards = _.map(
-            this.game.allCards.filter(card => card.selected || card.opponentSelected),
-            card => ({
-                card: card,
-                selected: card.selected,
-                opponentSelected: card.opponentSelected
-            })
-        );
-        _.each(this.previouslySelectedCards, selection => {
-            selection.card.selected = false;
-            selection.card.opponentSelected = false;
-        });
+        this.previouslySelectedCards = this.choosingPlayer.selectedCards;
+        this.choosingPlayer.clearSelectedCards();
     }
 
     continue() {
@@ -80,11 +104,10 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     highlightSelectableCards() {
-        this.game.allCards.each(card => {
-            if(['character', 'attachment', 'location', 'event'].includes(card.getType())) {
-                card.selectable = !!this.properties.cardCondition(card);
-            }
+        let selectableCards = this.game.allCards.filter(card => {
+            return this.checkCardCondition(card);
         });
+        this.choosingPlayer.setSelectableCards(selectableCards);
     }
 
     activeCondition(player) {
@@ -94,10 +117,12 @@ class SelectCardPrompt extends UiPrompt {
     activePrompt() {
         return {
             selectCard: true,
+            selectOrder: this.properties.ordered,
             menuTitle: this.properties.activePromptTitle || this.defaultActivePromptTitle(),
             buttons: this.properties.additionalButtons.concat([
                 { text: 'Done', arg: 'done' }
-            ])
+            ]),
+            promptTitle: this.properties.source ? this.properties.source.name : undefined
         };
     }
 
@@ -114,7 +139,7 @@ class SelectCardPrompt extends UiPrompt {
             return false;
         }
 
-        if(!this.properties.cardCondition(card)) {
+        if(!this.checkCardCondition(card)) {
             return false;
         }
 
@@ -127,22 +152,21 @@ class SelectCardPrompt extends UiPrompt {
         }
     }
 
+    checkCardCondition(card) {
+        return this.properties.cardType.includes(card.getType()) && this.cardCondition(card) && card.allowGameAction(this.properties.gameAction);
+    }
+
     selectCard(card) {
         if(this.properties.numCards !== 0 && this.selectedCards.length >= this.properties.numCards && !_.contains(this.selectedCards, card)) {
             return false;
         }
 
-        if(this.choosingPlayer !== card.controller) {
-            card.opponentSelected = !card.opponentSelected;
-        } else {
-            card.selected = !card.selected;
-        }
-
-        if(card.selected || card.opponentSelected) {
+        if(!this.selectedCards.includes(card)) {
             this.selectedCards.push(card);
         } else {
             this.selectedCards = _.reject(this.selectedCards, c => c === card);
         }
+        this.choosingPlayer.setSelectedCards(this.selectedCards);
 
         if(this.properties.onCardToggle) {
             this.properties.onCardToggle(this.choosingPlayer, card);
@@ -186,20 +210,12 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     clearSelection() {
-        _.each(this.selectedCards, card => {
-            card.selected = false;
-            card.opponentSelected = false;
-        });
         this.selectedCards = [];
-        this.game.allCards.each(card => {
-            card.selectable = false;
-        });
+        this.choosingPlayer.clearSelectedCards();
+        this.choosingPlayer.clearSelectableCards();
 
         // Restore previous selections.
-        _.each(this.previouslySelectedCards, selection => {
-            selection.card.selected = selection.selected;
-            selection.card.opponentSelected = selection.opponentSelected;
-        });
+        this.choosingPlayer.setSelectedCards(this.previouslySelectedCards);
     }
 }
 

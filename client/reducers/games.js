@@ -3,6 +3,7 @@ import _ from 'underscore';
 function games(state = {
     games: []
 }, action) {
+    let retState = {};
     switch(action.type) {
         case 'START_NEWGAME':
             return Object.assign({}, state, {
@@ -21,6 +22,7 @@ function games(state = {
                 return game.id === state.currentGame.id;
             })) {
                 ret.currentGame = undefined;
+                ret.newGame = false;
             }
 
             return ret;
@@ -29,17 +31,14 @@ function games(state = {
                 currentGame: action.game,
                 newGame: false
             });
-        case 'RECEIVE_JOINGAME':
-            return Object.assign({}, state, {
-                currentGame: action.game
-            });
         case 'RECEIVE_GAMESTATE':
-            var retState = Object.assign({}, state, {
+            retState = Object.assign({}, state, {
                 currentGame: action.currentGame
             });
 
             var currentState = retState.currentGame;
             if(!currentState) {
+                retState.newGame = false;
                 return retState;
             }
 
@@ -51,13 +50,39 @@ function games(state = {
 
             if(!currentState || !currentState.players[action.username] || currentState.players[action.username].left) {
                 delete retState.currentGame;
+                retState.newGame = false;
             }
-            
+
+            if(currentState) {
+                delete retState.passwordGame;
+                delete retState.passwordJoinType;
+                delete retState.passwordError;
+            }
+
             return retState;
         case 'RECEIVE_USERS':
             return Object.assign({}, state, {
                 users: action.users
             });
+        case 'JOIN_PASSWORD_GAME':
+            return Object.assign({}, state, {
+                passwordGame: action.game,
+                passwordJoinType: action.joinType
+            });
+        case 'RECEIVE_PASSWORD_ERROR':
+            return Object.assign({}, state, {
+                passwordError: action.message 
+            });
+        case 'CANCEL_PASSWORD_JOIN':
+            return Object.assign({}, state, {
+                passwordGame: undefined,
+                passwordError: undefined,
+                passwordJoinType: undefined
+            });
+        case 'CLEAR_GAMESTATE':
+            retState = _.omit(state, 'currentGame');
+            retState.newGame = false;
+            return retState;
         default:
             return state;
     }

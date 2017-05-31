@@ -12,8 +12,9 @@ describe('Player', function() {
             this.player.initialise();
 
             this.dupeCard = new DrawCard(this.player, { code: '1', name: 'Test' });
+            this.dupeCard.location = 'play area';
 
-            this.player.cardsInPlay.push(this.dupeCard);
+            this.player.allCards.push(this.dupeCard);
 
             this.cardSpy = jasmine.createSpyObj('card', ['isUnique']);
 
@@ -23,6 +24,30 @@ describe('Player', function() {
         describe('when the card is not unique', function() {
             beforeEach(function() {
                 this.cardSpy.isUnique.and.returnValue(false);
+
+                this.dupe = this.player.getDuplicateInPlay(this.cardSpy);
+            });
+
+            it('should return undefined', function() {
+                expect(this.isDupe).toBeUndefined;
+            });
+        });
+
+        describe('when the other copy is not in play', function() {
+            beforeEach(function() {
+                this.dupeCard.location = 'hand';
+
+                this.dupe = this.player.getDuplicateInPlay(this.cardSpy);
+            });
+
+            it('should return undefined', function() {
+                expect(this.isDupe).toBeUndefined;
+            });
+        });
+
+        describe('when the other copy is not owned by the player', function() {
+            beforeEach(function() {
+                this.dupeCard.owner = {};
 
                 this.dupe = this.player.getDuplicateInPlay(this.cardSpy);
             });
@@ -61,6 +86,8 @@ describe('Player', function() {
         describe('when there is a matching attached card in play', function() {
             beforeEach(function() {
                 this.attachedCard = new DrawCard(this.player, { code: '3', name: 'Attached', type_code: 'attachment' });
+                this.attachedCard.location = 'play area';
+                this.player.allCards.push(this.attachedCard);
                 this.dupeCard.attachments.push(this.attachedCard);
 
                 this.cardSpy.code = '3';

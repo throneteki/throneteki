@@ -1,10 +1,14 @@
 const DrawCard = require('../../../drawcard.js');
 
 class BenjenStark extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            match: (card) => card.getType() === 'character' && card.hasTrait('Ranger'),
+            effect: ability.effects.cannotBeBypassedByStealth()
+        });
         this.interrupt({
             when: {
-                onCharacterKilled: (event, player, card) => card === this
+                onCharacterKilled: event => event.card === this
             },
             handler: (context) => {
                 context.skipHandler();

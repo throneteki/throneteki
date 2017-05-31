@@ -218,6 +218,15 @@
   flex-direction: column;
 }
 
+.menu-pane-source {
+  background: rgba(160, 160, 160, 0.25);
+  font-size: 14px;
+  font-weight: normal;
+  margin: 0 5px;
+  padding: 4px;
+  text-align: center;
+}
+
 .menu-pane {
   text-align: center;
   z-index: @layer-prompt;
@@ -233,6 +242,7 @@
 .menu-pane button {
   width: 100%;
   margin-bottom: 5px;
+  white-space: normal;
 }
 
 .phase-indicator {
@@ -246,6 +256,37 @@
   text-align: center;
   text-transform: uppercase;
   width: 200px !important;
+  position: relative; 
+}
+
+span.up-arrow {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  position: absolute;
+
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+  border-bottom: 8px solid @brand-primary;
+  left: 90px;
+
+  top: -9px;    
+}
+
+span.down-arrow {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  position: absolute;
+
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+  border-top: 8px solid @brand-primary;
+  left: 90px;
+
+  top: -9px;    
 }
 
 .schemes-pane {

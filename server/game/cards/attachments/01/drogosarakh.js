@@ -17,7 +17,7 @@ class DrogosArakh extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.hasTrait('dothraki')) {
+        if(card.getType() !== 'character' || !card.hasTrait('dothraki')) {
             return false;
         }
 

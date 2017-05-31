@@ -1,13 +1,37 @@
 const PlayerOrderPrompt = require('./playerorderprompt.js');
 
 class ActionWindow extends PlayerOrderPrompt {
+    constructor(game, title, windowName) {
+        super(game);
+
+        this.title = title;
+        this.windowName = windowName;
+    }
+
+    continue() {
+        let completed = super.continue();
+
+        if(!completed) {
+            this.game.currentActionWindow = this;
+        } else {
+            this.game.currentActionWindow = null;
+        }
+
+        return completed;
+    }
+
     activePrompt() {
         return {
             menuTitle: 'Any actions or reactions?',
             buttons: [
                 { text: 'Done' }
-            ]
+            ],
+            promptTitle: this.title
         };
+    }
+
+    skipCondition(player) {
+        return !this.forceWindow && !player.promptedActionWindows[this.windowName];
     }
 
     onMenuCommand(player) {
@@ -15,23 +39,14 @@ class ActionWindow extends PlayerOrderPrompt {
             return false;
         }
 
-        if(this.tookAction) {
-            this.setPlayers(this.rotatedPlayerOrder(this.currentPlayer));
-        } else {
-            this.completePlayer();
-        }
-
-        this.tookAction = false;
+        this.completePlayer();
 
         return true;
     }
 
-    onCardClicked() {
-        // For now, assume ANY card click means that the player has taken an
-        // action and re-prompt all players in rotated first player order.
-        this.tookAction = true;
-
-        return false;
+    markActionAsTaken() {
+        this.setPlayers(this.rotatedPlayerOrder(this.currentPlayer));
+        this.forceWindow = true;
     }
 
     rotatedPlayerOrder(player) {

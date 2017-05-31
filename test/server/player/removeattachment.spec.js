@@ -6,7 +6,7 @@ const DrawCard = require('../../../server/game/drawcard.js');
 
 describe('Player', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'getOtherPlayer', 'playerDecked']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'raiseEvent', 'raiseMergedEvent', 'getOtherPlayer', 'playerDecked']);
         this.player = new Player('1', 'Player 1', true, this.gameSpy);
         this.player.deck = {};
         this.player.initialise();
@@ -17,6 +17,12 @@ describe('Player', function() {
         this.card = new DrawCard(this.player, {});
         this.player.cardsInPlay.push(this.card);
         this.player.attach(this.player, this.attachment, this.card.uuid);
+
+        this.gameSpy.raiseMergedEvent.and.callFake((name, params, handler) => {
+            if(handler) {
+                handler(params);
+            }
+        });
     });
 
     describe('removeAttachment', function() {

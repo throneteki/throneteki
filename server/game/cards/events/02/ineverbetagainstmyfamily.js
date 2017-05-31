@@ -3,43 +3,30 @@ const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class INeverBetAgainstMyFamily extends DrawCard {
-    canPlay(player, card) {
-        if(player !== this.controller || this !== card) {
-            return false;
-        }
+    setupCardAbilities(ability) {
+        this.action({
+            title: 'Put character in play from bottom of your deck',
+            phase: 'challenge',
+            cost: ability.costs.kneelFactionCard(),
+            handler: () => {
+                this.remainingCards = this.controller.searchDrawDeck(-5);
 
-        if(this.game.currentPhase !== 'challenge' || this.controller.faction.kneeled) {
-            return false;
-        }
+                this.game.addMessage('{0} uses {1} to reveal from the bottom of their deck: {2}', this.controller, this, this.remainingCards);
 
-        return super.canPlay(player, card);
-    }
+                this.uniqueCharacters = _.filter(this.remainingCards, card => card.isUnique() && card.getType() === 'character' && card.isFaction('lannister'));
 
-    play(player) {
-        if(this.controller !== player) {
-            return;
-        }
-
-        this.controller.kneelCard(this.controller.faction);
-
-        this.remainingCards = this.controller.searchDrawDeck(-5);
-
-        this.game.addMessage('{0} uses {1} to reveal from the bottom of their deck: {2}', player, this, this.remainingCards);
-
-        this.uniqueCharacters = _.filter(this.remainingCards, card => card.isUnique() && card.getType() === 'character' && card.isFaction('lannister'));
-
-        if(this.uniqueCharacters.length > 0) {
-            this.promptToChooseCharacter();
-        } else {
-            this.promptToPlaceNextCard();
-        }
-
-        return true;
+                if(this.uniqueCharacters.length > 0) {
+                    this.promptToChooseCharacter();
+                } else {
+                    this.promptToPlaceNextCard();
+                }
+            }
+        });
     }
 
     promptToChooseCharacter() {
         var buttons = _.map(this.uniqueCharacters, card => ({
-            text: card.name, method: 'selectCharacter', arg: card.uuid, card: card.getSummary(true)
+            method: 'selectCharacter', card: card
         }));
 
         buttons.push({ text: 'None', method: 'promptToPlaceNextCard' });
@@ -75,8 +62,12 @@ class INeverBetAgainstMyFamily extends DrawCard {
     }
 
     promptToPlaceNextCard() {
+        if(this.remainingCards.length === 0) {
+            return true;
+        }
+
         var buttons = _.map(this.remainingCards, card => ({
-            text: card.name, method: 'selectCardForBottom', arg: card.uuid, card: card.getSummary(true)
+            method: 'selectCardForBottom', card: card
         }));
 
         this.game.promptWithMenu(this.controller, this, {

@@ -16,6 +16,10 @@ class PlayerInteractionWrapper {
         return this.player.firstPlayer;
     }
 
+    get activePlot() {
+        return this.player.activePlot;
+    }
+
     currentPrompt() {
         return this.player.currentPrompt();
     }
@@ -116,6 +120,11 @@ class PlayerInteractionWrapper {
 
     dragCard(card, targetLocation) {
         this.game.drop(this.player.name, card.uuid, card.location, targetLocation);
+        this.game.continue();
+    }
+
+    togglePromptedActionWindow(window, value) {
+        this.player.promptedActionWindows[window] = value;
     }
 }
 

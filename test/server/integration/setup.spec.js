@@ -107,14 +107,14 @@ describe('setup phase', function() {
 
         describe('when attachments are put out in the setup phase', function() {
             beforeEach(function() {
-                const deck = this.buildDeck('baratheon', ['Red God\'s Blessing', 'Dragonstone Faithful']);
+                const deck = this.buildDeck('baratheon', ['Sneak Attack', 'Valyrian Steel Dagger', 'Northern Refugee']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.keepStartingHands();
 
-                this.character = this.player1.findCardByName('Dragonstone Faithful');
-                this.attachment = this.player1.findCardByName('Red God\'s Blessing');
+                this.character = this.player1.findCardByName('Northern Refugee');
+                this.attachment = this.player1.findCardByName('Valyrian Steel Dagger');
 
                 this.player1.clickCard(this.character);
                 this.player1.clickCard(this.attachment);
@@ -137,7 +137,18 @@ describe('setup phase', function() {
                 });
 
                 it('should properly calculate the effects of the attachment', function() {
-                    expect(this.character.getStrength()).toBe(2);
+                    // Get into an intrigue challenge to check the strength boost.
+                    this.player1.selectPlot('Sneak Attack');
+                    this.player2.selectPlot('Sneak Attack');
+                    this.selectFirstPlayer(this.player1);
+
+                    this.completeMarshalPhase();
+
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.character);
+                    this.player1.clickPrompt('Done');
+
+                    expect(this.character.getStrength()).toBe(3);
                 });
 
                 it('should continue to the plot phase', function() {
@@ -184,14 +195,13 @@ describe('setup phase', function() {
                 this.player1.selectPlot(this.sneakAttack);
                 this.player2.selectPlot(this.opponentSneakAttack);
                 this.selectFirstPlayer(this.player1);
+
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
 
-                expect(this.player1).toHavePrompt('Trigger The Wall?');
+                this.player1.clickPrompt('The Wall');
 
-                this.player1.clickPrompt('No');
-
-                expect(this.player1).not.toHavePrompt('Trigger The Wall?');
+                expect(this.player1).not.toHavePromptButton('The Wall');
             });
         });
 

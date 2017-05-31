@@ -97,27 +97,31 @@ class CardCollection extends React.Component {
     }
 
     getPopup() {
-        var popup = null;
+        let popup = null;
+        let cardIndex = 0;
 
-        var cardList = _.map(this.props.cards, card => {
-            return (<Card key={card.uuid} card={card} source={this.props.source}
-                            disableMouseOver={this.props.disableMouseOver}
-                            onMouseOver={this.props.onMouseOver}
-                            onMouseOut={this.props.onMouseOut}
-                            onTouchMove={this.props.onTouchMove}
-                            onClick={this.props.onCardClick}
-                            onDragDrop={this.props.onDragDrop}
-                            orientation={this.props.orientation} />);
+        let cardList = _.map(this.props.cards, card => {
+            let cardKey = card.uuid || cardIndex++;
+            return (<Card key={ cardKey } card={ card } source={ this.props.source }
+                            disableMouseOver={ this.props.disableMouseOver }
+                            onMouseOver={ this.props.onMouseOver }
+                            onMouseOut={ this.props.onMouseOut }
+                            onTouchMove={ this.props.onTouchMove }
+                            onClick={ this.props.onCardClick }
+                            onDragDrop={ this.props.onDragDrop }
+                            orientation={ this.props.orientation } />);
         });
 
-        var popupClass = 'popup panel';
+        let popupClass = 'popup panel';
 
         if(this.props.popupLocation === 'top') {
             popupClass += ' our-side';
         }
 
+        let linkIndex = 0;
+
         var popupMenu = this.props.popupMenu ? (<div>{_.map(this.props.popupMenu, menuItem => {
-            return <a onClick={() => this.onPopupMenuItemClick(menuItem)}>{menuItem.text}</a>;
+            return <a key={ linkIndex++ } onClick={() => this.onPopupMenuItemClick(menuItem)}>{menuItem.text}</a>;
         })}</div>) : (
             <div>
                 <a onClick={this.onCollectionClick}>Close</a>

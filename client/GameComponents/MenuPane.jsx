@@ -33,10 +33,10 @@ class MenuPane extends React.Component {
 
         var buttons = _.map(this.props.buttons, button => {
             var option = (
-                <button key={button.command + buttonIndex.toString()} className='btn btn-primary'
-                    onClick={event => this.onButtonClick(event, button.command, button.arg, button.method)}
-                    onMouseOver={event => this.onMouseOver(event, button.card)} onMouseOut={event => this.onMouseOut(event, button.card)}
-                    disabled={button.disabled}>{button.text}</button>);
+                <button key={ button.command + buttonIndex.toString() } className='btn btn-primary'
+                    onClick={ event => this.onButtonClick(event, button.command, button.arg, button.method) }
+                    onMouseOver={ event => this.onMouseOver(event, button.card) } onMouseOut={ event => this.onMouseOut(event, button.card) }
+                    disabled={ button.disabled }>{ button.text }</button>);
 
             buttonIndex++;
 
@@ -47,10 +47,19 @@ class MenuPane extends React.Component {
     }
 
     render() {
-        return (<div className='menu-pane'>
-            <div className='panel'>
-                <h4>{this.props.title}</h4>
-                {this.getButtons()}
+        let promptTitle;
+
+        if(this.props.promptTitle) {
+            promptTitle = (<div className='menu-pane-source'>{ this.props.promptTitle }</div>);
+        }
+
+        return (<div>
+            {promptTitle}
+            <div className='menu-pane'>
+                <div className='panel'>
+                    <h4>{this.props.title}</h4>
+                    { this.getButtons() }
+                </div>
             </div>
         </div>);
     }
@@ -62,6 +71,7 @@ MenuPane.propTypes = {
     onButtonClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
+    promptTitle: React.PropTypes.string,
     socket: React.PropTypes.object,
     title: React.PropTypes.string
 };

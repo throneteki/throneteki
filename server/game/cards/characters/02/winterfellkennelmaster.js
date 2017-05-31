@@ -7,7 +7,7 @@ class WinterfellKennelMaster extends DrawCard {
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
             condition: () => this.isStarkCardParticipatingInChallenge(),
-            cost: ability.costs.kneel(card => this.isDirewolfOrHasAttachment(card)),
+            cost: ability.costs.kneel(card => this.isDirewolfOrHasAttachment(card) && card.canParticipateInChallenge()),
             handler: context => {
                 var card = context.kneelingCostCard;
                 if(this.game.currentChallenge.attackingPlayer === context.player) {
@@ -22,7 +22,7 @@ class WinterfellKennelMaster extends DrawCard {
     }
 
     isStarkCardParticipatingInChallenge() {
-        return this.game.currentChallenge && this.controller.cardsInPlay.any(card => {
+        return this.game.currentChallenge && this.controller.anyCardsInPlay(card => {
             return this.game.currentChallenge.isParticipating(card) && card.isFaction('stark');
         });
     }

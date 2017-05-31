@@ -26,7 +26,8 @@ class ChatCommands {
             '/cancel-prompt': this.cancelPrompt,
             '/token': this.setToken,
             '/bestow': this.bestow,
-            '/count-dominance': this.countDominance
+            '/count-dominance': this.countDominance,
+            '/disconnectme': this.disconnectMe
         };
         this.tokens = [
             'power',
@@ -36,7 +37,8 @@ class ChatCommands {
             'poison',
             'betrayal',
             'vengeance',
-            'ear'
+            'ear',
+            'venom'
         ];
     }
 
@@ -75,7 +77,8 @@ class ChatCommands {
         this.game.promptForSelect(player, {
             activePromptTitle: 'Select a character',
             waitingPromptTitle: 'Waiting for opponent to kill character',
-            cardCondition: card => card.location === 'play area' && card.controller === player,
+            cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
+            gameAction: 'kill',
             onSelect: (p, card) => {
                 card.controller.killCharacter(card);
 
@@ -333,6 +336,10 @@ class ChatCommands {
                 return true;
             }
         });
+    }
+
+    disconnectMe(player) {
+        player.socket.disconnect();
     }
 
     getNumberOrDefault(string, defaultNumber) {

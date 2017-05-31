@@ -1,33 +1,53 @@
-const mongoskin = require('mongoskin');
+const _ = require('underscore');
+
+const BaseRepository = require('./baseRepository.js');
 const logger = require('../log.js');
 
-class GameRepository {
-    save(game, callback) {
-        var db = mongoskin.db('mongodb://127.0.0.1:27017/throneteki');
+class GameRepository extends BaseRepository {
+    create(game) {
+        return this.db.collection('games').insert(game, (err) => {
+            if(err) {
+                logger.error(err);
+            }
+        });
+    }
 
-        if(!game.id) {
-            db.collection('games').insert(game, function(err, result) {
-                if(err) {
-                    logger.info(err.message);
+    update(game) {
+        return this.db.collection('games').update({ gameId: game.gameId }, {
+            '$set': {
+                startedAt: game.startedAt,
+                players: game.players,
+                winner: game.winner,
+                winReason: game.winReason,
+                finishedAt: game.finishedAt
+            }
+        }, (err) => {
+            if(err) {
+                logger.error(err);
+            }
+        });
+    }
 
-                    callback(err);
+    getAllGames(from, to, callback) {
+        this.db.collection('games').find().toArray((err, games) => {
+            if(err) {
+                logger.error(err);
 
-                    return;
+                if(callback) {
+                    return callback(err);
                 }
 
-                callback(undefined, result.ops[0]._id);
-            });
-        } else {
-            db.collection('games').update({ _id: mongoskin.helper.toObjectID(game.id) }, {
-                '$set': {
-                    startedAt: game.startedAt,
-                    players: game.players,
-                    winner: game.winner,
-                    winReason: game.winReason,
-                    finishedAt: game.finishedAt
-                }
-            });
-        }
+                return;
+            }
+
+            if(callback) {
+                games = _.filter(games, game => {
+                    return game.startedAt >= from && game.startedAt < to;
+                });
+
+                return callback(err, games);
+            }
+        });
     }
 }
 

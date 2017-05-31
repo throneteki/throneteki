@@ -1,6 +1,7 @@
 const _ = require('underscore');
 
 const BaseAbility = require('./baseability.js');
+const Costs = require('./costs.js');
 
 class TriggeredAbilityContext {
     constructor(event, game, source) {
@@ -23,42 +24,107 @@ class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
         super(properties);
 
+        const DefaultLocationForType = {
+            event: 'hand',
+            agenda: 'agenda',
+            plot: 'active plot'
+        };
+
         this.game = game;
         this.card = card;
         this.limit = properties.limit;
+        this.max = properties.max;
         this.when = properties.when;
         this.eventType = eventType;
+        this.location = properties.location || DefaultLocationForType[card.getType()] || 'play area';
+
+        if(card.getType() === 'event' && !properties.ignoreEventCosts) {
+            this.cost.push(Costs.playEvent());
+        }
+
+        if(this.max) {
+            this.card.owner.registerAbilityMax(this.card.name, this.max);
+        }
     }
 
-    createEventHandlerFor(eventName) {
-        return (...args) => {
-            var context = new TriggeredAbilityContext(args[0], this.game, this.card);
+    eventHandler(event) {
+        if(!this.isTriggeredByEvent(event)) {
+            return;
+        }
 
-            if(this.game.currentPhase === 'setup') {
-                return;
-            }
-
-            if(this.limit && this.limit.isAtMax()) {
-                return;
-            }
-
-            if(this.card.isBlank()) {
-                return;
-            }
-
-            if(!this.when[eventName](...args)) {
-                return;
-            }
-
-            if(!this.canPayCosts(context)) {
-                return;
-            }
-
-            this.executeReaction(context);
-        };
+        this.game.registerAbility(this);
     }
 
-    executeReaction() {
+    createContext(event) {
+        return new TriggeredAbilityContext(event, this.game, this.card);
+    }
+
+    isTriggeredByEvent(event) {
+        let listener = this.when[event.name];
+
+        if(!listener) {
+            return false;
+        }
+
+        return listener(...event.params);
+    }
+
+    meetsRequirements(context) {
+        let isPlayableEventAbility = this.isPlayableEventAbility();
+
+        if(this.game.currentPhase === 'setup') {
+            return false;
+        }
+
+        if(!this.isForcedAbility() && context.player && context.player.cannotTriggerCardAbilities) {
+            return false;
+        }
+
+        if(this.limit && this.limit.isAtMax()) {
+            return false;
+        }
+
+        if(this.card.isBlank()) {
+            return false;
+        }
+
+        if(!this.isTriggeredByEvent(context.event)) {
+            return false;
+        }
+
+        if(isPlayableEventAbility && !context.player.isCardInPlayableLocation(this.card, 'play')) {
+            return false;
+        }
+
+        if(!isPlayableEventAbility && this.card.location !== this.location) {
+            return false;
+        }
+
+        if(!this.canPayCosts(context) || !this.canResolveTargets(context)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    isEventListeningLocation(location) {
+        return this.location === location;
+    }
+
+    isAction() {
+        return false;
+    }
+
+    isPlayableEventAbility() {
+        return this.card.getType() === 'event' && this.location === 'hand';
+    }
+
+    isForcedAbility() {
+        return false;
+    }
+
+    hasMax() {
+        return !!this.max;
     }
 
     registerEvents() {
@@ -72,7 +138,7 @@ class TriggeredAbility extends BaseAbility {
         _.each(eventNames, eventName => {
             var event = {
                 name: eventName + ':' + this.eventType,
-                handler: this.createEventHandlerFor(eventName)
+                handler: event => this.eventHandler(event)
             };
             this.game.on(event.name, event.handler);
             this.events.push(event);

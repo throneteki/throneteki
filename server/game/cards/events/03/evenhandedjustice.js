@@ -14,9 +14,7 @@ class EvenHandedJustice extends DrawCard {
     }
 
     hasStandingCharacters(player) {
-        return (player.cardsInPlay
-                .filter(card => card.getType() === 'character' && !card.kneeled)
-                .length > 0);
+        return player.anyCardsInPlay(card => card.getType() === 'character' && !card.kneeled);
     }
 
     play(player) {
@@ -30,6 +28,7 @@ class EvenHandedJustice extends DrawCard {
                 !card.kneeled
                 && card.getType() === 'character'
                 && card.controller !== this.controller,  // not event controller
+            gameAction: 'kneel',
             onSelect: (player, card) => this.onFirstCardSelected(player, card)
         });
 
@@ -47,6 +46,7 @@ class EvenHandedJustice extends DrawCard {
                 !card.kneeled
                 && card.getType() === 'character'
                 && card.controller === this.controller,  // event controller
+            gameAction: 'kneel',
             onSelect: (player, card) => this.onSecondCardSelected(player, card)
         });
 

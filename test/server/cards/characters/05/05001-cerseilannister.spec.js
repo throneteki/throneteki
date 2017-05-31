@@ -29,6 +29,7 @@ describe('Cersei Lannister (LoCR)', function() {
                     this.player1.selectPlot('A Clash of Kings');
                     this.player2.selectPlot('Sneak Attack');
                     this.selectFirstPlayer(this.player1);
+
                     this.completeMarshalPhase();
 
                     this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
@@ -37,7 +38,7 @@ describe('Cersei Lannister (LoCR)', function() {
                 });
 
                 it('should allow Cersei to gain power', function() {
-                    this.player1.clickPrompt('Yes');
+                    this.player1.clickPrompt('Cersei Lannister');
                     expect(this.cersei.power).toBe(1);
                 });
             });
@@ -49,6 +50,7 @@ describe('Cersei Lannister (LoCR)', function() {
                     this.player1.selectPlot('Sneak Attack');
                     this.player2.selectPlot('Sneak Attack');
                     this.selectFirstPlayer(this.player1);
+
                     this.completeMarshalPhase();
 
                     this.unopposedChallenge(this.player1, 'Intrigue', this.cersei);
@@ -57,9 +59,9 @@ describe('Cersei Lannister (LoCR)', function() {
                 });
 
                 it('should not prompt Cersei to gain power twice', function() {
-                    this.player1.clickPrompt('Yes');
+                    this.player1.clickPrompt('Cersei Lannister');
 
-                    expect(this.player1).not.toHavePrompt('Trigger Cersei Lannister?');
+                    expect(this.player1).not.toHavePromptButton('Cersei Lannister');
                 });
             });
 
@@ -73,7 +75,7 @@ describe('Cersei Lannister (LoCR)', function() {
                 });
 
                 it('should allow Cersei to gain power', function() {
-                    this.player1.clickPrompt('Yes');
+                    this.player1.clickPrompt('Cersei Lannister');
                     expect(this.cersei.power).toBe(1);
                 });
             });

@@ -4,15 +4,30 @@ import $ from 'jquery';
 import 'jquery-migrate';
 import 'jquery-nearest';
 
+import CardMenu from './CardMenu.jsx';
+import CardCounters from './CardCounters.jsx';
+
 class Card extends React.Component {
     constructor() {
         super();
 
         this.onMouseOver = this.onMouseOver.bind(this);
         this.onMouseOut = this.onMouseOut.bind(this);
+        this.onMenuItemClick = this.onMenuItemClick.bind(this);
 
         this.state = {
             showMenu: false
+        };
+
+        this.shortNames = {
+            stand: 'T',
+            poison: 'O',
+            gold: 'G',
+            valarmorghulis: 'V',
+            betrayal: 'B',
+            vengeance: 'N',
+            ear: 'E',
+            venom: 'M'
         };
     }
 
@@ -52,6 +67,7 @@ class Card extends React.Component {
                 return comp;
             }
         }
+
         return null;
     }
 
@@ -113,48 +129,34 @@ class Card extends React.Component {
         }
     }
 
-    getCounters() {
+    getCountersForCard(card) {
         var counters = {};
-        var countersClass = 'counters ignore-mouse-events';
 
-        if(this.props.source !== 'play area' && this.props.source !== 'faction' && this.props.source !== 'revealed plots') {
-            return null;
-        }
+        counters['card-power'] = card.power ? { count: card.power, fade: card.type === 'attachment', shortName: 'P' } : undefined;
+        counters['strength'] = card.baseStrength !== card.strength ? { count: card.strength, fade: card.type === 'attachment', shortName: 'S' } : undefined;
+        counters['dupe'] = card.dupes && card.dupes.length > 0 ? { count: card.dupes.length, fade: card.type === 'attachment', shortName: 'D' } : undefined;
 
-        if(this.props.card.facedown) {
-            return null;
-        }
-
-        counters['power'] = this.props.card.power || undefined;
-        counters['strength'] = this.props.card.baseStrength !== this.props.card.strength ? this.props.card.strength : undefined;
-        counters['dupe'] = this.props.card.dupes && this.props.card.dupes.length > 0 ? this.props.card.dupes.length : undefined;
-
-        _.map(this.props.card.iconsAdded, icon => {
-            counters['new' + icon] = 0;
+        _.map(card.iconsAdded, icon => {
+            counters[icon] = { count: 0, cancel: false };
         });
 
-        _.map(this.props.card.iconsRemoved, icon => {
-            counters['no' + icon] = 0;
+        _.map(card.iconsRemoved, icon => {
+            counters[icon] = { count: 0, cancel: true };
         });
 
-        _.extend(counters, this.props.card.tokens);
+        _.each(card.tokens, (token, key) => {
+            counters[key] = { count: token, fade: card.type === 'attachment', shortName: this.shortNames[key] };
+        });
+
+        _.each(card.attachments, attachment => {
+            _.extend(counters, this.getCountersForCard(attachment));
+        });
 
         var filteredCounters = _.omit(counters, counter => {
             return _.isUndefined(counter) || _.isNull(counter) || counter < 0;
         });
 
-        var counterDivs = _.map(filteredCounters, (counterValue, key) => {
-            return <div key={key} className={'counter ' + key}><span>{counterValue}</span></div>;
-        });
-
-        if(counters.length > 3) {
-            countersClass += ' many-counters';
-        }
-
-        return counterDivs.length !== 0 ? (
-            <div className={countersClass}>
-                {counterDivs}
-            </div>) : null;
+        return filteredCounters;
     }
 
     getAttachments() {
@@ -206,21 +208,36 @@ class Card extends React.Component {
         return dupes;
     }
 
-    getMenu() {
-        if(!this.isAllowedMenuSource()) {
+    getCardOrder() {
+        if(!this.props.card.order) {
             return null;
         }
 
-        var menuIndex = 0;
-        var menuItems = this.props.card.menu && this.state.showMenu ? _.map(this.props.card.menu, menuItem => {
-            return <div key={menuIndex++} onClick={this.onMenuItemClick.bind(this, menuItem)}>{menuItem.text}</div>;
-        }) : null;
+        return (<div className='card-order'>{this.props.card.order}</div>);
+    }
 
-        return menuItems && menuItems.length !== 0 ? (
-            <div className='panel menu'>
-                {menuItems}
-            </div>
-        ) : null;
+    showMenu() {
+        if(!this.isAllowedMenuSource()) {
+            return false;
+        }
+
+        if(!this.props.card.menu || !this.state.showMenu) {
+            return false;
+        }
+
+        return true;
+    }
+
+    showCounters() {
+        if(this.props.source !== 'play area' && this.props.source !== 'faction' && this.props.source !== 'revealed plots') {
+            return false;
+        }
+
+        if(this.props.card.facedown || this.props.card.type === 'attachment') {
+            return false;
+        }
+
+        return true;
     }
 
     isFacedown() {
@@ -248,10 +265,18 @@ class Card extends React.Component {
             imageClass += ' vertical';
         }
 
+        if(this.props.card.unselectable) {
+            cardClass += ' unselectable';
+        }
+
         if(this.props.card.selected) {
             cardClass += ' selected';
         } else if(this.props.card.selectable) {
             cardClass += ' selectable';
+        } else if(this.props.card.inDanger) {
+            cardClass += ' in-danger';
+        } else if(this.props.card.saved) {
+            cardClass += ' saved';
         } else if(this.props.card.inChallenge) {
             cardClass += ' challenge';
         } else if(this.props.card.stealth) {
@@ -271,6 +296,7 @@ class Card extends React.Component {
                     onTouchMove={ev => this.onTouchMove(ev)}
                     onTouchEnd={ev => this.onTouchEnd(ev)}
                     onTouchStart={ev => this.onTouchStart(ev)}>
+                    {this.getCardOrder()}
                     <div className={cardClass}
                         onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card)}
                         onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
@@ -281,9 +307,9 @@ class Card extends React.Component {
                             <span className='card-name'>{this.props.card.name}</span>
                             <img className={imageClass} src={'/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
                         </div>
-                        {this.getCounters()}
+                        { this.showCounters() ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
                     </div>
-                    {this.getMenu()}
+                    { this.showMenu() ? <CardMenu menu={ this.props.card.menu } onMenuItemClick={ this.onMenuItemClick } /> : null }
                 </div>);
     }
 
@@ -314,17 +340,21 @@ Card.propTypes = {
         iconsAdded: React.PropTypes.array,
         iconsRemoved: React.PropTypes.array,
         inChallenge: React.PropTypes.bool,
+        inDanger: React.PropTypes.bool,
         kneeled: React.PropTypes.bool,
         menu: React.PropTypes.array,
         name: React.PropTypes.string,
         new: React.PropTypes.bool,
+        order: React.PropTypes.number,
         power: React.PropTypes.number,
+        saved: React.PropTypes.bool,
         selectable: React.PropTypes.bool,
         selected: React.PropTypes.bool,
         stealth: React.PropTypes.bool,
         strength: React.PropTypes.number,
         tokens: React.PropTypes.object,
-        type: React.PropTypes.string
+        type: React.PropTypes.string,
+        unselectable: React.PropTypes.bool
     }).isRequired,
     className: React.PropTypes.string,
     disableMouseOver: React.PropTypes.bool,

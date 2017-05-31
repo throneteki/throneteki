@@ -33,7 +33,7 @@ class InnerMessages extends React.Component {
     getMessage() {
         var index = 0;
         var messages = _.map(this.props.messages, message => {
-            return <div key={'message'+index++} className='message'>{this.formatMessageText(message.message)}</div>;
+            return <div key={'message' + index++} className='message'>{this.formatMessageText(message.message)}</div>;
         });
 
         return messages;
@@ -60,7 +60,7 @@ class InnerMessages extends React.Component {
             } else if(fragment.name) {
                 return (
                     <div key={index++}>
-                        <Avatar emailHash={fragment.emailHash} float />
+                        <Avatar emailHash={ fragment.emailHash } forceDefault={ fragment.noAvatar } float />
                         <span key={index++}>
                             <b>{fragment.name}</b>
                         </span>

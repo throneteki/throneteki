@@ -19,6 +19,7 @@ class SerGregorClegane extends DrawCard {
                     cardCondition: card => this.cardCondition(discarded, card),
                     activePromptTitle: 'Select a character to kill',
                     source: this,
+                    gameAction: 'kill',
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }
@@ -32,6 +33,7 @@ class SerGregorClegane extends DrawCard {
     onCardSelected(player, card) {
         this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, card);
         card.controller.killCharacter(card);
+        return true;
     }
 }
 

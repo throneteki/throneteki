@@ -15,11 +15,19 @@ class ShieldOfLannisport extends DrawCard {
     }
 
     noOtherLordsOrLadies() {
-        return !this.controller.cardsInPlay.any(card => (
+        return !this.controller.anyCardsInPlay(card => (
             card !== this.parent &&
             (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
-            card.getCost() < 4
+            card.getCost() >= 4
         ));
+    }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
     }
 }
 

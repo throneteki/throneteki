@@ -15,19 +15,20 @@ export function setContextMenu(menu) {
     };
 }
 
-export function register(username, token) {
+export function register(user, token) {
     return {
         type: 'AUTH_REGISTER',
-        username: username,
+        user: user,
         token: token
     };
 }
 
-export function login(username, token) {
+export function login(user, token, isAdmin) {
     return {
         type: 'AUTH_LOGIN',
-        username: username,
-        token: token
+        user: user,
+        token: token,
+        isAdmin: isAdmin
     };
 }
 
@@ -118,25 +119,17 @@ export function socketConnected(socket) {
     };
 }
 
-export function receiveNewGame(game) {
-    return {
-        type: 'RECEIVE_NEWGAME',
-        game: game
-    };
-}
-
-export function receiveJoinGame(game) {
-    return {
-        type: 'RECEIVE_JOINGAME',
-        game: game
-    };
-}
-
 export function receiveGameState(game, username) {
     return {
         type: 'RECEIVE_GAMESTATE',
         currentGame: game,
         username: username
+    };
+}
+
+export function clearGameState() {
+    return {
+        type: 'CLEAR_GAMESTATE'
     };
 }
 
@@ -178,8 +171,141 @@ export function sendSocketMessage(message, ...args) {
     return (dispatch, getState) => {
         var state = getState();
 
-        state.socket.socket.emit('game', message, ...args);
+        state.socket.socket.emit(message, ...args);
 
         return dispatch(socketMessageSent(message));
+    };
+}
+
+export function sendGameMessage(message, ...args) {
+    return (dispatch, getState) => {
+        var state = getState();
+
+        state.socket.gameSocket.emit('game', message, ...args);
+
+        return dispatch(socketMessageSent(message));
+    };
+}
+
+export function gameSocketConnected(socket) {
+    return {
+        type: 'GAME_SOCKET_CONNECTED',
+        socket: socket
+    };
+}
+
+export function receiveBannerNotice(notice) {
+    return {
+        type: 'RECEIVE_BANNER_NOTICE',
+        notice: notice
+    };
+}
+
+export function gameSocketConnectError() {
+    return {
+        type: 'GAME_SOCKET_CONNECT_ERROR'
+    };
+}
+
+export function gameSocketDisconnect() {
+    return {
+        type: 'GAME_SOCKET_DISCONNETED'
+    };
+}
+
+export function gameSocketReconnecting() {
+    return {
+        type: 'GAME_SOCKET_RECONNECTED'
+    };
+}
+
+export function gameSocketConnecting(host) {
+    return {
+        type: 'GAME_SOCKET_CONNECTING',
+        host: host
+    };
+}
+
+export function gameSocketConnectFailed() {
+    return {
+        type: 'GAME_SOCKET_CONNECT_FAILED'
+    };
+}
+
+export function sendGameSocketConnectFailed() {
+    return (dispatch, getState) => {
+        var state = getState();
+
+        if(state.socket.socket) {
+            state.socket.socket.emit('connectfailed');
+        }
+
+        return dispatch(gameSocketConnectFailed());
+    };
+}
+
+export function gameSocketClosed(message) {
+    return {
+        type: 'GAME_SOCKET_CLOSED',
+        message: message
+    };
+}
+
+export function gameSocketClose() {
+    return (dispatch) => {
+        return dispatch(gameSocketClosed());
+    };
+}
+
+export function fetchNews() {
+    return dispatch => {
+        dispatch(requestNews());
+
+        return $.ajax('/api/news')
+            .done(function(data) {
+                dispatch(receiveNews(data));
+            });
+    };
+}
+
+export function requestNews() {
+    return {
+        type: 'REQUEST_NEWS'
+    };
+}
+
+export function receiveNews(news) {
+    return {
+        type: 'RECEIVE_NEWS',
+        news: news
+    };
+}
+
+export function joinPasswordGame(game, type) {
+    return {
+        type: 'JOIN_PASSWORD_GAME',
+        game: game,
+        joinType: type
+    };
+}
+
+export function receivePasswordError(message) {
+    return {
+        type: 'RECEIVE_PASSWORD_ERROR',
+        message: message
+    };
+}
+
+export function cancelPasswordJoin() {
+    return {
+        type: 'CANCEL_PASSWORD_JOIN'
+    };
+}
+
+export function refreshUser(user, token) {
+    return {
+        type: 'REFRESH_USER',
+        user: user,
+        token: token
     };
 }

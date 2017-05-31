@@ -21,6 +21,7 @@ class BaseAbility {
      */
     constructor(properties) {
         this.cost = this.buildCost(properties.cost);
+        this.targets = this.buildTargets(properties);
     }
 
     buildCost(cost) {
@@ -33,6 +34,20 @@ class BaseAbility {
         }
 
         return cost;
+    }
+
+    buildTargets(properties) {
+        if(properties.target) {
+            return {
+                target: properties.target
+            };
+        }
+
+        if(properties.targets) {
+            return properties.targets;
+        }
+
+        return {};
     }
 
     /**
@@ -72,11 +87,96 @@ class BaseAbility {
     }
 
     /**
+     * Return whether when unpay is implemented for the ability cost and the
+     * cost can be unpaid.
+     *
+     * @returns {boolean}
+     */
+    canUnpayCosts(context) {
+        return _.all(this.cost, cost => cost.unpay && cost.canUnpay(context));
+    }
+
+    /**
+     * Unpays each cost associated with the ability.
+     */
+    unpayCosts(context) {
+        _.each(this.cost, cost => {
+            cost.unpay(context);
+        });
+    }
+
+    /**
+     * Returns whether there are eligible cards available to fulfill targets.
+     *
+     * @returns {Boolean}
+     */
+    canResolveTargets(context) {
+        const ValidTypes = ['character', 'attachment', 'location', 'event'];
+        return _.all(this.targets, target => {
+            return context.game.allCards.any(card => {
+                if(!ValidTypes.includes(card.getType())) {
+                    return false;
+                }
+
+                return target.cardCondition(card, context);
+            });
+        });
+    }
+
+    /**
+     * Prompts the current player to choose each target defined for the ability.
+     *
+     * @returns {Array} An array of target resolution objects.
+     */
+    resolveTargets(context) {
+        return _.map(this.targets, (targetProperties, name) => {
+            return this.resolveTarget(context, name, targetProperties);
+        });
+    }
+
+    resolveTarget(context, name, targetProperties) {
+        let cardCondition = targetProperties.cardCondition;
+        let otherProperties = _.omit(targetProperties, 'cardCondition');
+        let result = { resolved: false, name: name, value: null };
+        let promptProperties = {
+            source: context.source,
+            cardCondition: card => cardCondition(card, context),
+            onSelect: (player, card) => {
+                result.resolved = true;
+                result.value = card;
+                return true;
+            },
+            onCancel: () => {
+                result.resolved = true;
+                return true;
+            }
+        };
+        context.game.promptForSelect(context.player, _.extend(promptProperties, otherProperties));
+        return result;
+    }
+
+    /**
      * Executes the ability once all costs have been paid. Inheriting classes
      * should override this method to implement their behavior; by default it
      * does nothing.
      */
     executeHandler(context) { // eslint-disable-line no-unused-vars
+    }
+
+    isAction() {
+        return true;
+    }
+
+    isPlayableEventAbility() {
+        return false;
+    }
+
+    isCardAbility() {
+        return true;
+    }
+
+    hasMax() {
+        return false;
     }
 }
 

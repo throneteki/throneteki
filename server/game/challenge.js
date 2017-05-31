@@ -90,13 +90,37 @@ class Challenge {
         return this.isAttacking(card) || this.isDefending(card);
     }
 
+    anyParticipants(predicate) {
+        let participants = this.attackers.concat(this.defenders);
+        return _.any(participants, predicate);
+    }
+
+    getNumberOfParticipants(predicate) {
+        let participants = this.attackers.concat(this.defenders);
+        return _.reduce(participants, (count, card) => {
+            if(predicate(card)) {
+                return count + 1;
+            }
+
+            return count;
+        }, 0);
+    }
+
     calculateStrength() {
+        if(this.winnerDetermined) {
+            return;
+        }
+
         this.attackerStrength = this.calculateStrengthFor(this.attackers) + this.attackerStrengthModifier;
         this.defenderStrength = this.calculateStrengthFor(this.defenders) + this.defenderStrengthModifier;
     }
 
     calculateStrengthFor(cards) {
         return _.reduce(cards, (sum, card) => {
+            if(card.challengeOptions.doesNotContributeStrength) {
+                return sum;
+            }
+
             return sum + card.getStrength();
         }, 0);
     }
@@ -116,11 +140,13 @@ class Challenge {
     }
 
     determineWinner() {
-        this.winnerDetermined = true;
-
         this.calculateStrength();
 
-        if(this.attackerStrength === 0 && this.defenderStrength === 0 || this.attackerStrength >= this.defenderStrength && this.attackingPlayer.cannotWinChallenge) {
+        this.winnerDetermined = true;
+
+        let result = this.checkNoWinnerOrLoser();
+        if(result.noWinner) {
+            this.noWinnerMessage = result.message;
             this.loser = undefined;
             this.winner = undefined;
             this.loserStrength = this.winnerStrength = 0;
@@ -146,12 +172,42 @@ class Challenge {
         this.strengthDifference = this.winnerStrength - this.loserStrength;
     }
 
+    checkNoWinnerOrLoser() {
+        const noWinnerRules = [
+            {
+                condition: () => this.attackerStrength === 0 && this.defenderStrength === 0,
+                message: 'There is no winner or loser for this challenge because the attacker strength is 0'
+            },
+            {
+                condition: () => this.attackerStrength >= this.defenderStrength && this.attackingPlayer.cannotWinChallenge,
+                message: 'There is no winner or loser for this challenge because the attacker cannot win'
+            },
+            {
+                condition: () => this.attackerStrength >= this.defenderStrength && this.attackers.length === 0,
+                message: 'There is no winner or loser for this challenge because the attacker has no participants'
+            },
+            {
+                condition: () => this.defenderStrength > this.attackerStrength && this.defendingPlayer.cannotWinChallenge,
+                message: 'There is no winner or loser for this challenge because the defender cannot win'
+            },
+            {
+                condition: () => this.defenderStrength > this.attackerStrength && this.defenders.length === 0,
+                message: 'There is no winner or loser for this challenge because the defender has no participants'
+            }
+        ];
+
+        return _.chain(noWinnerRules)
+            .map(rule => ({ noWinner: !!rule.condition(), message: rule.message }))
+            .find(match => match.noWinner)
+            .value() || { noWinner: false };
+    }
+
     isAttackerTheWinner() {
         return this.winner === this.attackingPlayer;
     }
 
     isUnopposed() {
-        return this.defenderStrength <= 0 && this.attackerStrength > 0;
+        return this.loserStrength <= 0 && this.winnerStrength > 0 && this.winner === this.attackingPlayer;
     }
 
     getClaim() {
@@ -179,9 +235,9 @@ class Challenge {
         return this.attackingPlayer === player ? this.defenders : this.attackers;
     }
 
-    onCardLeftPlay(e, player, card) {
+    onCardLeftPlay(event) {
         if(!this.winnerDetermined) {
-            this.removeFromChallenge(card);
+            this.removeFromChallenge(event.card);
         }
     }
 

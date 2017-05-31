@@ -3,8 +3,9 @@ const BaseStep = require('../basestep.js');
 const GamePipeline = require('../../gamepipeline.js');
 const SimpleStep = require('../simplestep.js');
 const ChooseStealthTargets = require('./choosestealthtargets.js');
-const FulfillMilitaryClaim = require('./fulfillmilitaryclaim.js');
+const ApplyClaim = require('./applyclaim.js');
 const ActionWindow = require('../actionwindow.js');
+const GameKeywords = require('../../gamekeywords.js');
 
 class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
@@ -15,12 +16,12 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.resetCards()),
             new SimpleStep(this.game, () => this.announceChallenge()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
-            () => new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()),
+            new SimpleStep(this.game, () => this.chooseStealthTargets()),
             new SimpleStep(this.game, () => this.announceAttackerStrength()),
-            new ActionWindow(this.game),
+            new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
             new SimpleStep(this.game, () => this.promptForDefenders()),
             new SimpleStep(this.game, () => this.announceDefenderStrength()),
-            new ActionWindow(this.game),
+            new ActionWindow(this.game, 'After defenders declared', 'defendersDeclared'),
             new SimpleStep(this.game, () => this.determineWinner()),
             new SimpleStep(this.game, () => this.unopposedPower()),
             new SimpleStep(this.game, () => this.beforeClaim()),
@@ -55,18 +56,22 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsAttacker(card) {
-        return this.challenge.attackingPlayer === card.controller && card.canAddAsAttacker(this.challenge.challengeType);
+        return this.challenge.attackingPlayer === card.controller && card.canDeclareAsAttacker(this.challenge.challengeType);
     }
 
     chooseAttackers(player, attackers) {
         this.challenge.addAttackers(attackers);
 
+        return true;
+    }
+
+    chooseStealthTargets() {
+        this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()));
+
         this.game.raiseEvent('onChallenge', this.challenge, () => {
             this.challenge.initiateChallenge();
             this.game.raiseEvent('onAttackersDeclared', this.challenge);
         });
-
-        return true;
     }
 
     announceAttackerStrength() {
@@ -97,7 +102,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsDefender(card) {
-        return this.challenge.defendingPlayer === card.controller && card.canAddAsDefender(this.challenge.challengeType);
+        return this.challenge.defendingPlayer === card.controller && card.canDeclareAsDefender(this.challenge.challengeType);
     }
 
     chooseDefenders(defenders) {
@@ -122,23 +127,28 @@ class ChallengeFlow extends BaseStep {
         this.challenge.determineWinner();
 
         if(!this.challenge.winner && !this.challenge.loser) {
-            if(this.challenge.attackerStrength === 0) {
-                this.game.addMessage('Attacking strength is 0, there is no winner for this challenge');
-            } else {
-                this.game.addMessage('There is no winner or loser for this challenge');
-            }
+            this.game.addMessage(this.challenge.noWinnerMessage);
         } else {
             this.game.addMessage('{0} won a {1} challenge {2} vs {3}',
                 this.challenge.winner, this.challenge.challengeType, this.challenge.winnerStrength, this.challenge.loserStrength);
         }
 
         this.game.raiseEvent('afterChallenge', this.challenge);
+
+        // Only open a winner action window if a winner / loser was determined.
+        if(this.challenge.winner) {
+            this.game.queueStep(new ActionWindow(this.game, 'After winner determined', 'winnerDetermined'));
+        }
     }
 
     unopposedPower() {
         if(this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner()) {
-            this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.challenge.winner);
-            this.game.addPower(this.challenge.winner, 1);
+            if(this.challenge.winner.cannotGainChallengeBonus) {
+                this.game.addMessage('{0} won the challenge unopposed but cannot gain challenge bonuses', this.challenge.winner);
+            } else {
+                this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.challenge.winner);
+                this.game.addPower(this.challenge.winner, 1);
+            }
 
             this.game.raiseEvent('onUnopposedWin', this.challenge);
         }
@@ -153,24 +163,17 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        var claim = this.challenge.getClaim();
-
-        if(claim <= 0) {
-            this.game.addMessage('The claim value for {0} is 0, no claim occurs', this.challenge.challengeType);
-        } else {
-            this.game.promptWithMenu(this.challenge.winner, this, {
-                activePrompt: {
-                    menuTitle: 'Perform before claim actions',
-                    buttons: [
-                        { text: 'Apply Claim', method: 'applyClaim' },
-                        { text: 'Continue', method: 'cancelClaim' }
-                    ]
-                },
-                waitingPromptTitle: 'Waiting for opponent to apply claim'
-            });
-
-            this.challenge.claim = claim;
-        }
+        this.challenge.claim = this.challenge.getClaim();
+        this.game.promptWithMenu(this.challenge.winner, this, {
+            activePrompt: {
+                menuTitle: 'Perform before claim actions',
+                buttons: [
+                    { text: 'Apply Claim', method: 'applyClaim' },
+                    { text: 'Continue', method: 'cancelClaim' }
+                ]
+            },
+            waitingPromptTitle: 'Waiting for opponent to apply claim'
+        });
     }
 
     applyClaim(player) {
@@ -179,25 +182,7 @@ class ChallengeFlow extends BaseStep {
         }
 
         this.game.raiseEvent('onClaimApplied', this.challenge, () => {
-            switch(this.challenge.challengeType) {
-                case 'military':
-                    this.game.addMessage('{0} claim is applied.  {1} must kill {2} character{3}', this.challenge.challengeType, this.challenge.loser, this.challenge.claim,
-                        this.challenge.claim > 1 ? 's' : '');
-                    this.game.queueStep(new FulfillMilitaryClaim(this.game, this.challenge.loser, this.challenge.claim));
-                    break;
-                case 'intrigue':
-                    this.game.addMessage('{0} claim is applied.  {1} must discard {2} card{3} at random', this.challenge.challengeType, this.challenge.loser, this.challenge.claim,
-                        this.challenge.claim > 1 ? 's' : '');
-                    this.challenge.loser.discardAtRandom(this.challenge.claim);
-                    break;
-                case 'power':
-                    if(this.challenge.loser.faction.power > 0) {
-                        this.game.addMessage('{0} claim is applied.  {1} removes {2} power and {3} gains {2} power', this.challenge.challengeType, this.challenge.loser, this.challenge.claim,
-                            this.challenge.winner);
-                    }
-                    this.game.transferPower(this.challenge.winner, this.challenge.loser, this.challenge.claim);
-                    break;
-            }
+            this.game.queueStep(new ApplyClaim(this.game, this.challenge));
         });
 
         return true;
@@ -210,57 +195,32 @@ class ChallengeFlow extends BaseStep {
     }
 
     applyKeywords() {
-        var appliedIntimidate = false;
-        var winnerCards = this.challenge.getWinnerCards();
+        const challengeKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
+        let winnerCards = this.challenge.getWinnerCards();
+        let appliedIntimidate = false;
 
         _.each(winnerCards, card => {
-            if(card.hasKeyword('Insight')) {
-                var drawn = this.challenge.winner.drawCardsToHand(1);
+            let context = { game: this.game, challenge: this.challenge, source: card };
 
-                this.game.raiseEvent('onInsight', this.challenge, card, drawn);
+            _.each(challengeKeywords, keyword => {
+                // It is necessary to check whether intimidate has been applied
+                // here instead of in the ability class because the individual
+                // keywords are resolved asynchronously but are queued up
+                // synchronously here. So two intimidates could be queued when
+                // only one is allowed.
+                if(keyword === 'intimidate' && appliedIntimidate) {
+                    return;
+                }
 
-                this.game.addMessage('{0} draws a card from Insight on {1}', this.challenge.winner, card);
-            }
-
-            if(card.hasKeyword('Intimidate') && !appliedIntimidate && this.challenge.isAttackerTheWinner()) {
-                var strength = this.challenge.strengthDifference;
-                this.game.promptForSelect(this.challenge.winner, {
-                    activePromptTitle: 'Choose and kneel a character with ' + strength + ' strength or less',
-                    cardCondition: card => this.canIntimidate(card, strength),
-                    onSelect: (player, targetCard) => this.intimidate(card, targetCard)
-                });
-                appliedIntimidate = true;
-            }
-
-            if(card.hasKeyword('Pillage')) {
-                this.challenge.loser.discardFromDraw(1, cards => {
-                    var discarded = cards[0];
-                    this.game.raiseEvent('onPillage', this.challenge, card, discarded);
-
-                    this.game.addMessage('{0} discards {1} from the top of their deck due to Pillage from {2}', this.challenge.loser, discarded, card);
-                });
-            }
-
-            if(card.isRenown()) {
-                card.modifyPower(1);
-
-                this.game.raiseEvent('onRenown', this.challenge, card);
-
-                this.game.addMessage('{0} gains 1 power on {1} from Renown', this.challenge.winner, card);
-            }
+                let ability = GameKeywords[keyword];
+                if(card.hasKeyword(keyword) && ability.meetsRequirements(context)) {
+                    appliedIntimidate = appliedIntimidate || (keyword === 'intimidate');
+                    this.game.resolveAbility(ability, context);
+                }
+            });
 
             this.game.checkWinCondition(this.challenge.winner);
         });
-    }
-
-    canIntimidate(card, strength) {
-        return !card.kneeled && card.controller === this.challenge.loser && card.getStrength() <= strength;
-    }
-
-    intimidate(sourceCard, targetCard) {
-        targetCard.controller.kneelCard(targetCard);
-        this.game.addMessage('{0} uses intimidate from {1} to kneel {2}', sourceCard.controller, sourceCard, targetCard);
-        return true;
     }
 
     completeChallenge() {

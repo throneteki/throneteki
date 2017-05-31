@@ -3,38 +3,35 @@ const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class AGiftOfArborRed extends DrawCard {
-    canPlay(player, card) {
-        if(player !== this.controller || this !== card || player.faction.kneeled) {
-            return false;
-        }
+    setupCardAbilities(ability) {
+        this.action({
+            title: 'Reveal top 4 cards of each deck',
+            cost: ability.costs.kneelFactionCard(),
+            handler: () => {
+                let player = this.controller;
+                this.thisPlayerCards = player.searchDrawDeck(4);
 
-        return super.canPlay(player, card);
-    }
+                this.revealCards(player, this.thisPlayerCards);
 
-    play(player) {
-        this.thisPlayerCards = player.searchDrawDeck(4);
+                this.otherPlayer = this.game.getOtherPlayer(player);
+                if(this.otherPlayer) {
+                    this.otherPlayerCards = this.otherPlayer.searchDrawDeck(4);
+                    this.revealCards(this.otherPlayer, this.otherPlayerCards);
+                }
 
-        this.revealCards(player, this.thisPlayerCards);
+                var buttons = _.map(this.thisPlayerCards, card => ({
+                    method: 'selectThisPlayerCardForHand', card: card
+                }));
 
-        this.otherPlayer = this.game.getOtherPlayer(player);
-        if(this.otherPlayer) {
-            this.otherPlayerCards = this.otherPlayer.searchDrawDeck(4);
-            this.revealCards(this.otherPlayer, this.otherPlayerCards);
-        }
-
-        var buttons = _.map(this.thisPlayerCards, card => ({
-            text: card.name, method: 'selectThisPlayerCardForHand', arg: card.uuid, card: card.getSummary(true)
-        }));
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Choose a card to add to your hand',
-                buttons: buttons
-            },
-            source: this
+                this.game.promptWithMenu(this.controller, this, {
+                    activePrompt: {
+                        menuTitle: 'Choose a card to add to your hand',
+                        buttons: buttons
+                    },
+                    source: this
+                });
+            }
         });
-
-        player.faction.kneeled = true;
     }
 
     revealCards(player, cards) {
@@ -49,7 +46,7 @@ class AGiftOfArborRed extends DrawCard {
         }
 
         var buttons = _.map(this.otherPlayerCards, card => ({
-            text: card.name, method: 'selectOtherPlayerCardForHand', arg: card.uuid, card: card.getSummary(true)
+            method: 'selectOtherPlayerCardForHand', card: card
         }));
 
         this.game.promptWithMenu(this.controller, this, {

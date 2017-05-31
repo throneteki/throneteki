@@ -1,15 +1,13 @@
 /*global describe, it, beforeEach, expect, jasmine*/
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
-const _ = require('underscore');
-
 const FulfillMilitaryClaim = require('../../../server/game/gamesteps/challenge/fulfillmilitaryclaim.js');
 
 describe('FulfillMilitaryClaim', function() {
     beforeEach(function() {
-        this.game = jasmine.createSpyObj('game', ['promptForSelect', 'addMessage']);
-        this.loser = jasmine.createSpyObj('loser', ['killCharacter']);
-        this.loser.cardsInPlay = _([]);
+        this.game = jasmine.createSpyObj('game', ['killCharacters', 'promptForSelect', 'addMessage']);
+        this.loser = jasmine.createSpyObj('loser', ['getNumberOfCardsInPlay']);
+        this.loser.getNumberOfCardsInPlay.and.returnValue(0);
 
         this.step = new FulfillMilitaryClaim(this.game, this.loser, 1);
     });
@@ -40,9 +38,7 @@ describe('FulfillMilitaryClaim', function() {
             this.card2 = makeCard(this.loser, 'character');
             this.card3 = makeCard(this.loser, 'location');
 
-            this.loser.cardsInPlay.push(this.card1);
-            this.loser.cardsInPlay.push(this.card2);
-            this.loser.cardsInPlay.push(this.card3);
+            this.loser.getNumberOfCardsInPlay.and.returnValue(2);
         });
 
         describe('when the claim is 1', function() {
@@ -51,7 +47,7 @@ describe('FulfillMilitaryClaim', function() {
             });
 
             it('should kill the character', function() {
-                expect(this.loser.killCharacter).toHaveBeenCalledWith(this.card1);
+                expect(this.game.killCharacters).toHaveBeenCalledWith([this.card1]);
             });
 
             it('should return true', function() {
@@ -71,7 +67,7 @@ describe('FulfillMilitaryClaim', function() {
                     });
 
                     it('should not kill the character', function() {
-                        expect(this.loser.killCharacter).not.toHaveBeenCalled();
+                        expect(this.game.killCharacters).not.toHaveBeenCalled();
                     });
 
                     it('should return false', function() {
@@ -85,8 +81,7 @@ describe('FulfillMilitaryClaim', function() {
                     });
 
                     it('should kill the characters', function() {
-                        expect(this.loser.killCharacter).toHaveBeenCalledWith(this.card1);
-                        expect(this.loser.killCharacter).toHaveBeenCalledWith(this.card2);
+                        expect(this.game.killCharacters).toHaveBeenCalledWith([this.card1, this.card2]);
                     });
 
                     it('should return true', function() {
@@ -107,7 +102,7 @@ describe('FulfillMilitaryClaim', function() {
                     });
 
                     it('should not kill the character', function() {
-                        expect(this.loser.killCharacter).not.toHaveBeenCalled();
+                        expect(this.game.killCharacters).not.toHaveBeenCalled();
                     });
 
                     it('should return false', function() {
@@ -121,8 +116,7 @@ describe('FulfillMilitaryClaim', function() {
                     });
 
                     it('should kill the characters', function() {
-                        expect(this.loser.killCharacter).toHaveBeenCalledWith(this.card1);
-                        expect(this.loser.killCharacter).toHaveBeenCalledWith(this.card2);
+                        expect(this.game.killCharacters).toHaveBeenCalledWith([this.card1, this.card2]);
                     });
 
                     it('should return true', function() {

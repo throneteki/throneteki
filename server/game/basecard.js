@@ -1,4 +1,4 @@
-const uuid = require('node-uuid');
+const uuid = require('uuid');
 const _ = require('underscore');
 
 const AbilityDsl = require('./abilitydsl.js');
@@ -7,6 +7,7 @@ const CardForcedInterrupt = require('./cardforcedinterrupt.js');
 const CardForcedReaction = require('./cardforcedreaction.js');
 const CardInterrupt = require('./cardinterrupt.js');
 const CardReaction = require('./cardreaction.js');
+const CustomPlayAction = require('./customplayaction.js');
 const EventRegistrar = require('./eventregistrar.js');
 
 const ValidKeywords = [
@@ -45,10 +46,11 @@ class BaseCard {
             initiative: true,
             reserve: true
         };
+        this.abilityRestrictions = [];
         this.menu = _([]);
         this.events = new EventRegistrar(this.game, this);
 
-        this.abilities = { reactions: [], persistentEffects: [] };
+        this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
         this.parseKeywords(cardData.text || '');
         this.parseTraits(cardData.traits || '');
         this.setupCardAbilities(AbilityDsl);
@@ -141,10 +143,12 @@ class BaseCard {
 
     action(properties) {
         var action = new CardAction(this.game, this, properties);
-        this.abilities.action = action;
-        if(!action.isClickToActivate()) {
-            this.menu.push(action.getMenuItem());
+
+        if(!action.isClickToActivate() && action.allowMenu()) {
+            var index = this.abilities.actions.length;
+            this.menu.push(action.getMenuItem(index));
         }
+        this.abilities.actions.push(action);
     }
 
     reaction(properties) {
@@ -167,15 +171,12 @@ class BaseCard {
         this.abilities.reactions.push(reaction);
     }
 
-    // TODO: When revealed abilities shouldn't be a synonym for forced reactions
-    //       but it is probably close enough for now.
-    whenRevealed(properties) {
-        var whenClause = {
-            when: {
-                onPlotRevealed: (e, player) => player === this.controller
-            }
-        };
-        this.forcedInterrupt(_.extend(whenClause, properties));
+    /**
+     * Defines a special play action that can occur when the card is outside the
+     * play area (e.g. Lady-in-Waiting's dupe marshal ability)
+     */
+    playAction(properties) {
+        this.abilities.playActions.push(new CustomPlayAction(properties));
     }
 
     /**
@@ -238,11 +239,13 @@ class BaseCard {
     }
 
     doAction(player, arg) {
-        if(!this.abilities.action) {
+        var action = this.abilities.actions[arg];
+
+        if(!action) {
             return;
         }
 
-        this.abilities.action.execute(player, arg);
+        action.execute(player, arg);
     }
 
     hasKeyword(keyword) {
@@ -259,7 +262,13 @@ class BaseCard {
     }
 
     isFaction(faction) {
-        return !!this.factions[faction.toLowerCase()];
+        let normalizedFaction = faction.toLowerCase();
+
+        if(normalizedFaction === 'neutral') {
+            return !!this.factions[normalizedFaction] && _.size(this.factions) === 1;
+        }
+
+        return !!this.factions[normalizedFaction];
     }
 
     isLoyal() {
@@ -277,33 +286,35 @@ class BaseCard {
     }
 
     moveTo(targetLocation) {
-        if(LocationsWithEventHandling.includes(targetLocation) && !LocationsWithEventHandling.includes(this.location)) {
+        let originalLocation = this.location;
+
+        this.location = targetLocation;
+
+        if(LocationsWithEventHandling.includes(targetLocation) && !LocationsWithEventHandling.includes(originalLocation)) {
             this.events.register(this.eventsForRegistration);
-            if(this.abilities.action) {
-                this.abilities.action.registerEvents();
-            }
-            _.each(this.abilities.reactions, reaction => {
-                reaction.registerEvents();
-            });
-        } else if(LocationsWithEventHandling.includes(this.location) && !LocationsWithEventHandling.includes(targetLocation)) {
+        } else if(LocationsWithEventHandling.includes(originalLocation) && !LocationsWithEventHandling.includes(targetLocation)) {
             this.events.unregisterAll();
-            if(this.abilities.action) {
-                this.abilities.action.unregisterEvents();
-            }
-            _.each(this.abilities.reactions, reaction => {
-                reaction.unregisterEvents();
-            });
         }
+
+        _.each(this.abilities.actions, action => {
+            if(action.isEventListeningLocation(targetLocation) && !action.isEventListeningLocation(originalLocation)) {
+                action.registerEvents();
+            } else if(action.isEventListeningLocation(originalLocation) && !action.isEventListeningLocation(targetLocation)) {
+                action.unregisterEvents();
+            }
+        });
+        _.each(this.abilities.reactions, reaction => {
+            if(reaction.isEventListeningLocation(targetLocation) && !reaction.isEventListeningLocation(originalLocation)) {
+                reaction.registerEvents();
+                this.game.registerAbility(reaction);
+            } else if(reaction.isEventListeningLocation(originalLocation) && !reaction.isEventListeningLocation(targetLocation)) {
+                reaction.unregisterEvents();
+            }
+        });
 
         if(targetLocation !== 'play area') {
             this.facedown = false;
         }
-
-        this.location = targetLocation;
-    }
-
-    modifyDominance(player, strength) {
-        return strength;
     }
 
     canPlay() {
@@ -352,6 +363,24 @@ class BaseCard {
         }
     }
 
+    allowGameAction(actionType) {
+        let currentAbilityContext = this.game.currentAbilityContext;
+        return !_.any(this.abilityRestrictions, restriction => restriction.isMatch(actionType, currentAbilityContext));
+    }
+
+    allowEffectFrom(sourceCard) {
+        let currentAbilityContext = { source: 'card', card: sourceCard, stage: 'effect' };
+        return !_.any(this.abilityRestrictions, restriction => restriction.isMatch('applyEffect', currentAbilityContext));
+    }
+
+    addAbilityRestriction(restriction) {
+        this.abilityRestrictions.push(restriction);
+    }
+
+    removeAbilityRestriction(restriction) {
+        this.abilityRestrictions = _.reject(this.abilityRestrictions, r => r === restriction);
+    }
+
     addKeyword(keyword) {
         var lowerCaseKeyword = keyword.toLowerCase();
         this.keywords[lowerCaseKeyword] = this.keywords[lowerCaseKeyword] || 0;
@@ -377,9 +406,11 @@ class BaseCard {
             return;
         }
 
-        var lowerCaseFaction = faction.toLowerCase();
+        let lowerCaseFaction = faction.toLowerCase();
         this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
         this.factions[lowerCaseFaction]++;
+
+        this.game.raiseMergedEvent('onCardFactionChanged', { card: this });
     }
 
     removeKeyword(keyword) {
@@ -394,6 +425,7 @@ class BaseCard {
 
     removeFaction(faction) {
         this.factions[faction.toLowerCase()]--;
+        this.game.raiseMergedEvent('onCardFactionChanged', { card: this });
     }
 
     clearBlank() {
@@ -430,28 +462,44 @@ class BaseCard {
     }
 
     onClick(player) {
-        var action = this.abilities.action;
-        if(action && action.isClickToActivate()) {
-            return action.execute(player);
+        var action = _.find(this.abilities.actions, action => action.isClickToActivate());
+        if(action) {
+            return action.execute(player) || action.deactivate(player);
         }
 
         return false;
     }
 
-    getSummary(isActivePlayer, hideWhenFaceup) {
-        return isActivePlayer || (!this.facedown && !hideWhenFaceup) ? {
+    getShortSummary() {
+        return {
+            code: this.cardData.code,
+            label: this.cardData.label,
+            name: this.cardData.name,
+            type: this.getType()
+        };
+    }
+
+    getSummary(activePlayer, hideWhenFaceup) {
+        let isActivePlayer = activePlayer === this.owner;
+
+        if(!isActivePlayer && (this.facedown || hideWhenFaceup)) {
+            return { facedown: true };
+        }
+
+        let selectionState = activePlayer.getCardSelectionState(this);
+        let state = {
             code: this.cardData.code,
             controlled: this.owner !== this.controller,
             facedown: this.facedown,
             menu: this.getMenu(),
             name: this.cardData.label,
             new: this.new,
-            selected: (isActivePlayer && this.selected) || this.opponentSelected,
-            selectable: (isActivePlayer && this.selectable),
             tokens: this.tokens,
             type: this.getType(),
             uuid: this.uuid
-        } : { facedown: true };
+        };
+
+        return _.extend(state, selectionState);
     }
 }
 

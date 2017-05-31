@@ -12,13 +12,14 @@ class QuentynMartell extends DrawCard {
         });
         this.interrupt({
             when: {
-                onCharacterKilled: (event, player, card) => card === this
+                onCharacterKilled: event => event.card === this
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => this.cardCondition(card),
                     activePromptTitle: 'Select a character to kill',
                     source: this,
+                    gameAction: 'kill',
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }

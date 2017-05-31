@@ -3,19 +3,17 @@ const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class HouseOfTheUndying extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Control opponent\'s dead characters',
-            method: 'controlDeadCharacters',
-            phase: 'challenge'
+            phase: 'challenge',
+            cost: ability.costs.removeSelfFromGame(),
+            handler: context => this.controlDeadCharacters(context.player)
         });
     }
 
-    controlDeadCharacters() {
-        this.controller.moveCard(this, 'out of game');
-
-        var opponent = this.game.getOtherPlayer(this.controller);
-
+    controlDeadCharacters(currentController) {
+        var opponent = this.game.getOtherPlayer(currentController);
         if(!opponent) {
             return;
         }
@@ -29,14 +27,15 @@ class HouseOfTheUndying extends DrawCard {
         });
 
         _.each(eligibleCharacters, card => {
-            this.game.takeControl(this.controller, card);
+            currentController.putIntoPlay(card);
             this.atEndOfPhase(ability => ({
                 match: card,
                 effect: ability.effects.moveToDeadPileIfStillInPlay()
             }));
         });
 
-        this.game.addMessage('{0} removes {1} from the game to control {2}', this.controller, this, eligibleCharacters);
+        this.game.addMessage('{0} removes {1} from the game to control {2}',
+                             currentController, this, eligibleCharacters);
     }
 }
 

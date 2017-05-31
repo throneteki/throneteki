@@ -1,8 +1,17 @@
 /*global describe, it, beforeEach, expect, jasmine */
 /*eslint camelcase: 0, no-invalid-this: 0 */
 
+const _ = require('underscore');
+
 const Effect = require('../../server/game/effect.js');
 const Player = require('../../server/game/player.js');
+
+function createTarget(properties = {}) {
+    let card = jasmine.createSpyObj('card', ['allowEffectFrom']);
+    card.allowEffectFrom.and.returnValue(true);
+    _.extend(card, properties);
+    return card;
+}
 
 describe('Effect', function () {
     beforeEach(function () {
@@ -24,8 +33,8 @@ describe('Effect', function () {
 
     describe('addTargets()', function() {
         beforeEach(function() {
-            this.matchingCard = { good: true, location: 'play area' };
-            this.nonMatchingCard = { bad: true, location: 'play area' };
+            this.matchingCard = createTarget({ good: true, location: 'play area' });
+            this.nonMatchingCard = createTarget({ bad: true, location: 'play area' });
 
             this.properties.match.and.callFake((card) => card === this.matchingCard);
         });
@@ -56,6 +65,8 @@ describe('Effect', function () {
 
             describe('and the condition returns false', function() {
                 beforeEach(function() {
+                    this.existingTarget = { target: 1 };
+                    this.effect.targets = [this.existingTarget];
                     this.properties.condition.and.returnValue(false);
                     this.effect.addTargets([this.nonMatchingCard, this.matchingCard]);
                 });
@@ -95,12 +106,23 @@ describe('Effect', function () {
                 this.effect.addTargets([this.nonMatchingCard, this.matchingCard]);
             });
 
-            it('should add the matching cards to the target list', function() {
-                expect(this.effect.targets).toContain(this.matchingCard);
+            it('should not add the matching cards to the target list', function() {
+                expect(this.effect.targets).not.toContain(this.matchingCard);
             });
 
             it('should not apply the effect to the matching card', function() {
                 expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.matchingCard, jasmine.any(Object));
+            });
+        });
+
+        describe('when the target is already applied', function() {
+            beforeEach(function() {
+                this.effect.targets.push(this.matchingCard);
+                this.effect.addTargets([this.matchingCard]);
+            });
+
+            it('should not add the target again', function() {
+                expect(this.effect.targets).toEqual([this.matchingCard]);
             });
         });
 
@@ -111,6 +133,17 @@ describe('Effect', function () {
                 this.anotherPlayer = {};
                 this.sourceSpy.controller = this.player;
                 this.matchingCard.controller = this.player;
+            });
+
+            describe('when the source cannot apply an effect to the target', function() {
+                beforeEach(function() {
+                    this.matchingCard.allowEffectFrom.and.returnValue(false);
+                });
+
+                it('should reject the target', function() {
+                    this.effect.addTargets([this.matchingCard]);
+                    expect(this.effect.targets).not.toContain(this.matchingCard);
+                });
             });
 
             describe('when the target controller is current', function() {
@@ -332,7 +365,7 @@ describe('Effect', function () {
 
     describe('removeTarget()', function() {
         beforeEach(function() {
-            this.target = { good: true, location: 'play area' };
+            this.target = createTarget({ good: true, location: 'play area' });
 
             this.effect.addTargets([this.target]);
         });
@@ -347,24 +380,8 @@ describe('Effect', function () {
             });
         });
 
-        describe('when the effect is inactive', function() {
+        describe('when the card is an existing target', function() {
             beforeEach(function() {
-                this.effect.active = false;
-                this.effect.removeTarget(this.target);
-            });
-
-            it('should remove the card from the target list', function() {
-                expect(this.effect.targets).not.toContain(this.target);
-            });
-
-            it('should not unapply the effect', function() {
-                expect(this.properties.effect.unapply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
-            });
-        });
-
-        describe('when the effect is active', function() {
-            beforeEach(function() {
-                this.effect.setActive(true);
                 this.effect.removeTarget(this.target);
             });
 
@@ -380,18 +397,19 @@ describe('Effect', function () {
 
     describe('setActive()', function() {
         beforeEach(function() {
-            this.target = {};
-            this.effect.targets =[this.target];
+            this.target = createTarget({ target: 1, location: 'play area' });
+            this.newTarget = createTarget({ target: 2, location: 'play area' });
         });
 
         describe('when the effect is active', function() {
             beforeEach(function() {
                 this.effect.active = true;
+                this.effect.targets = [this.target];
             });
 
             describe('and is set to inactive', function() {
                 beforeEach(function() {
-                    this.effect.setActive(false);
+                    this.effect.setActive(false, [this.newTarget]);
                 });
 
                 it('should unapply the effect from existing targets', function() {
@@ -401,11 +419,19 @@ describe('Effect', function () {
                 it('should not apply the effect to anything', function() {
                     expect(this.properties.effect.apply).not.toHaveBeenCalled();
                 });
+
+                it('should remove all old targets', function() {
+                    expect(this.effect.targets).not.toContain(this.target);
+                });
+
+                it('should not add new targets', function() {
+                    expect(this.effect.targets).not.toContain(this.newTarget);
+                });
             });
 
             describe('and is set to active', function() {
                 beforeEach(function() {
-                    this.effect.setActive(true);
+                    this.effect.setActive(true, [this.newTarget]);
                 });
 
                 it('should not unapply the effect from existing targets', function() {
@@ -415,17 +441,26 @@ describe('Effect', function () {
                 it('should not apply the effect to anything', function() {
                     expect(this.properties.effect.apply).not.toHaveBeenCalled();
                 });
+
+                it('should not modify existing targets', function() {
+                    expect(this.effect.targets).toContain(this.target);
+                });
+
+                it('should not add new targets', function() {
+                    expect(this.effect.targets).not.toContain(this.newTarget);
+                });
             });
         });
 
         describe('when the effect is inactive', function() {
             beforeEach(function() {
                 this.effect.active = false;
+                this.effect.targets = [];
             });
 
             describe('and is set to inactive', function() {
                 beforeEach(function() {
-                    this.effect.setActive(false);
+                    this.effect.setActive(false, [this.newTarget]);
                 });
 
                 it('should not unapply the effect', function() {
@@ -435,19 +470,27 @@ describe('Effect', function () {
                 it('should not apply the effect', function() {
                     expect(this.properties.effect.apply).not.toHaveBeenCalled();
                 });
+
+                it('should not add new targets', function() {
+                    expect(this.effect.targets).not.toContain(this.newTarget);
+                });
             });
 
             describe('and is set to active', function() {
                 beforeEach(function() {
-                    this.effect.setActive(true);
+                    this.effect.setActive(true, [this.newTarget]);
                 });
 
                 it('should not unapply the effect', function() {
                     expect(this.properties.effect.unapply).not.toHaveBeenCalled();
                 });
 
-                it('should apply the effect to existing targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
+                it('should apply the effect to new targets', function() {
+                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.newTarget, { game: this.gameSpy, source: this.sourceSpy });
+                });
+
+                it('should add new targets', function() {
+                    expect(this.effect.targets).toContain(this.newTarget);
                 });
             });
         });
@@ -457,43 +500,22 @@ describe('Effect', function () {
         beforeEach(function() {
             this.target = {};
             this.effect.targets = [this.target];
+            this.effect.cancel();
         });
 
-        describe('when the effect is active', function() {
-            beforeEach(function() {
-                this.effect.active = true;
-                this.effect.cancel();
-            });
-
-            it('should unapply the effect from existing targets', function() {
-                expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
-            });
-
-            it('should remove all targets', function() {
-                expect(this.effect.targets.length).toBe(0);
-            });
+        it('should unapply the effect from existing targets', function() {
+            expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
         });
 
-        describe('when the effect is inactive', function() {
-            beforeEach(function() {
-                this.effect.active = false;
-                this.effect.cancel();
-            });
-
-            it('should not unapply the effect from existing targets', function() {
-                expect(this.properties.effect.unapply).not.toHaveBeenCalled();
-            });
-
-            it('should remove all targets', function() {
-                expect(this.effect.targets.length).toBe(0);
-            });
+        it('should remove all targets', function() {
+            expect(this.effect.targets.length).toBe(0);
         });
     });
 
     describe('reapply()', function() {
         beforeEach(function() {
-            this.target = { target: 1, location: 'play area' };
-            this.newTarget = { target: 2, location: 'play area' };
+            this.target = createTarget({ target: 1, location: 'play area' });
+            this.newTarget = createTarget({ target: 2, location: 'play area' });
             this.effect.targets = [this.target];
             this.newTargets = [this.target, this.newTarget];
         });
@@ -562,20 +584,47 @@ describe('Effect', function () {
             describe('when the effect is active', function() {
                 beforeEach(function() {
                     this.effect.active = true;
-
-                    this.effect.reapply(this.newTargets);
                 });
 
-                it('should unapply the effect for existing targets', function() {
-                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                describe('and the effect has a reapply method', function() {
+                    beforeEach(function() {
+                        this.properties.effect.reapply = jasmine.createSpy('reapply');
+                        this.effect.reapply(this.newTargets);
+                    });
+
+                    it('should reapply the effect for existing targets', function() {
+                        expect(this.properties.effect.reapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not unapply the effect for existing targets', function() {
+                        expect(this.properties.effect.unapply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not apply the effect for existing targets', function() {
+                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not apply the effect to new targets', function() {
+                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                    });
                 });
 
-                it('should apply the effect for existing targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
-                });
+                describe('and the effect does not have a reapply method', function() {
+                    beforeEach(function() {
+                        this.effect.reapply(this.newTargets);
+                    });
 
-                it('should not apply the effect to new targets', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                    it('should unapply the effect for existing targets', function() {
+                        expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should apply the effect for existing targets', function() {
+                        expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    });
+
+                    it('should not apply the effect to new targets', function() {
+                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                    });
                 });
             });
         });
@@ -583,6 +632,7 @@ describe('Effect', function () {
         describe('when the effect is conditional', function() {
             beforeEach(function() {
                 this.effect.isConditional = true;
+                this.effect.condition = jasmine.createSpy('condition');
             });
 
             describe('when the effect is inactive', function() {
@@ -601,10 +651,38 @@ describe('Effect', function () {
                 });
             });
 
-            describe('when the effect is active', function() {
+            describe('when the condition is true', function() {
                 beforeEach(function() {
+                    this.matchingTarget = createTarget({ target: 3, location: 'play area' });
+                    this.effect.targets = [this.target, this.matchingTarget];
                     this.effect.active = true;
+                    this.effect.condition.and.returnValue(true);
+                    this.properties.match.and.callFake(card => card !== this.target);
+                    this.effect.reapply(this.newTargets);
+                });
 
+                it('should apply the effect to new targets', function() {
+                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                });
+
+                it('should not unapply the effect from targets that still match', function() {
+                    expect(this.properties.effect.unapply).not.toHaveBeenCalledWith(this.matchingTarget, jasmine.any(Object));
+                });
+
+                it('should unapply the effect from targets that no longer match', function() {
+                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                });
+
+                it('should update the target list', function() {
+                    expect(this.effect.targets).toEqual([this.matchingTarget, this.newTarget]);
+                });
+            });
+
+            describe('when the condition is false', function() {
+                beforeEach(function() {
+                    this.effect.targets = [this.target];
+                    this.effect.active = true;
+                    this.effect.condition.and.returnValue(false);
                     this.effect.reapply(this.newTargets);
                 });
 
@@ -612,17 +690,12 @@ describe('Effect', function () {
                     expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                 });
 
-                it('should apply the effect from existing targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                it('should not apply the effect to new targets', function() {
+                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
                 });
 
-                it('should apply the effect to new targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
-                });
-
-                it('should update the target list', function() {
-                    expect(this.effect.targets).toContain(this.target);
-                    expect(this.effect.targets).toContain(this.newTarget);
+                it('should clear the target list', function() {
+                    expect(this.effect.targets).toEqual([]);
                 });
             });
         });

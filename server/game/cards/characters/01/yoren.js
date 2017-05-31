@@ -4,7 +4,7 @@ class Yoren extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event, card) => card === this && card.controller.phase !== 'setup'
+                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
@@ -18,7 +18,7 @@ class Yoren extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        this.game.takeControl(player, card);
+        player.putIntoPlay(card);
         this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s discard pile under their control', player, this, card, card.owner);
 
         return true;

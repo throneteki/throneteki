@@ -35,13 +35,15 @@ describe('Tywin Lannister (LoCR)', function() {
                 this.cersei = this.player1.findCardByName('Cersei Lannister');
                 this.knight = this.player1.findCardByName('Hedge Knight');
 
+                this.player1.togglePromptedActionWindow('dominance', true);
+
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
                 this.player2.clickMenu('The Tickler', 'Discard opponents top card');
             });
 
             it('should allow Tywin to choose to trigger', function() {
-                this.player1.clickPrompt('Yes');
+                this.player1.clickPrompt('Tywin Lannister');
                 this.player1.clickPrompt('Hedge Knight');
                 expect(this.cersei.location).toBe('draw deck');
                 expect(this.knight.location).toBe('discard pile');
@@ -54,9 +56,6 @@ describe('Tywin Lannister (LoCR)', function() {
                 this.knight = this.player1.findCardByName('Hedge Knight');
 
                 this.completeMarshalPhase();
-
-                // Pre-challenge action window
-                this.skipActionWindow();
 
                 // Challenge prompt for Player 1
                 this.player1.clickPrompt('Done');
@@ -74,11 +73,11 @@ describe('Tywin Lannister (LoCR)', function() {
                 this.skipActionWindow();
 
                 // Trigger The Reader
-                this.player2.clickPrompt('Discard 3 cards');
+                this.player2.clickPrompt('The Reader - Discard 3 cards');
             });
 
             it('should not allow Tywin to choose to trigger', function() {
-                expect(this.player1).not.toHavePrompt('Trigger Tywin Lannister?');
+                expect(this.player1).not.toHavePromptButton('Tywin Lannister');
             });
         });
 
@@ -88,9 +87,6 @@ describe('Tywin Lannister (LoCR)', function() {
                 this.knight = this.player2.findCardByName('Hedge Knight');
 
                 this.completeMarshalPhase();
-
-                // Pre-challenge action window
-                this.skipActionWindow();
 
                 // Challenge prompt for Player 1
                 this.player1.clickPrompt('Power');
@@ -103,12 +99,13 @@ describe('Tywin Lannister (LoCR)', function() {
                 this.player2.clickPrompt('Done');
 
                 this.skipActionWindow();
+                this.skipActionWindow();
 
                 this.player1.clickPrompt('Apply Claim');
             });
 
             it('should allow Tywin to choose to trigger', function() {
-                this.player1.clickPrompt('Yes');
+                this.player1.clickPrompt('Tywin Lannister');
                 this.player1.clickPrompt('Hedge Knight');
                 expect(this.cersei.location).toBe('draw deck');
                 expect(this.knight.location).toBe('discard pile');

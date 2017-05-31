@@ -33,7 +33,6 @@ request.get(apiUrl + 'cards', function(error, res, body) {
         var imagePath = path.join(imageDir, card.code + '.png');
 
         if(card.imagesrc && !fs.existsSync(imagePath)) {
-            console.info(card.imagesrc, card.code, imagePath);
             fetchImage(card.imagesrc, card.code, imagePath, i++ * 200);
         }
     });
@@ -42,6 +41,8 @@ request.get(apiUrl + 'cards', function(error, res, body) {
         db.collection('cards').insert(cards, function() {
             fs.writeFile('got-cards.json', JSON.stringify(cards), function() {
                 console.info(cards.length + ' cards fetched');
+
+                db.close();
             });
         });
     });

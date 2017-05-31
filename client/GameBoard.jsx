@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'underscore';
 import $ from 'jquery';
+import {toastr} from 'react-redux-toastr';
 
 import PlayerStats from './GameComponents/PlayerStats.jsx';
 import PlayerRow from './GameComponents/PlayerRow.jsx';
@@ -11,6 +12,7 @@ import Messages from './GameComponents/Messages.jsx';
 import AdditionalCardPile from './GameComponents/AdditionalCardPile.jsx';
 import Card from './GameComponents/Card.jsx';
 import CardCollection from './GameComponents/CardCollection.jsx';
+import ActionWindowsMenu from './GameComponents/ActionWindowsMenu.jsx';
 import {tryParseJSON} from './util.js';
 
 import * as actions from './actions';
@@ -33,6 +35,7 @@ export class InnerGameBoard extends React.Component {
         this.onChange = this.onChange.bind(this);
         this.onScroll = this.onScroll.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
+        this.onFactionCardClick = this.onFactionCardClick.bind(this);
 
         this.state = {
             canScroll: true,
@@ -40,6 +43,7 @@ export class InnerGameBoard extends React.Component {
             showDrawDeck: false,
             spectating: true,
             message: '',
+            showActionWindowsMenu: false,
             showCardMenu: {}
         };
     }
@@ -88,7 +92,17 @@ export class InnerGameBoard extends React.Component {
                 menuOptions.unshift({ text: 'Concede', onClick: this.onConcedeClick });
             }
 
-            menuOptions.unshift({ text: 'Spectators: ' + props.currentGame.spectators.length });
+            let spectators = _.map(props.currentGame.spectators, spectator => {
+                return <li key={spectator.id}>{spectator.name}</li>;
+            });
+
+            let spectatorPopup = (
+                <ul className='spectators-popup absolute-panel'>
+                    {spectators}
+                </ul>
+            );
+
+            menuOptions.unshift({ text: 'Spectators: ' + props.currentGame.spectators.length, popup: spectatorPopup });
 
             this.setContextMenu(menuOptions);
         } else {
@@ -105,19 +119,60 @@ export class InnerGameBoard extends React.Component {
     onScroll() {
         var messages = this.refs.messagePanel;
 
-        if(messages.scrollTop >= messages.scrollHeight - messages.offsetHeight - 20) {
-            this.setState({ canScroll: true });
-        } else {
-            this.setState({ canScroll: false });
-        }
+        setTimeout(() => {
+            if(messages.scrollTop >= messages.scrollHeight - messages.offsetHeight - 20) {
+                this.setState({ canScroll: true });
+            } else {
+                this.setState({ canScroll: false });
+            }
+        }, 500);
     }
 
     onConcedeClick() {
-        this.props.sendSocketMessage('concede');
+        this.props.sendGameMessage('concede');
+    }
+
+    isGameActive() {
+        if(!this.props.currentGame) {
+            return false;
+        }
+
+        if(this.props.currentGame.winner) {
+            return false;
+        }
+
+        var thisPlayer = this.props.currentGame.players[this.props.username];
+        if(!thisPlayer) {
+            thisPlayer = _.toArray(this.props.currentGame.players)[0];
+        }
+
+        var otherPlayer = _.find(this.props.currentGame.players, player => {
+            return player.name !== thisPlayer.name;
+        });
+
+        if(!otherPlayer) {
+            return false;
+        }
+
+        if(otherPlayer.disconnected) {
+            return false;
+        }
+
+        return true;
     }
 
     onLeaveClick() {
-        this.props.socket.emit('leavegame');
+        if(!this.state.spectating && this.isGameActive()) {
+            toastr.confirm('Your game is not finished, are you sure you want to leave?', {
+                onOk: () => {
+                    this.props.sendGameMessage('leavegame');
+                }
+            });
+
+            return;
+        }
+
+        this.props.sendGameMessage('leavegame');
     }
 
     onMouseOver(card) {
@@ -129,11 +184,15 @@ export class InnerGameBoard extends React.Component {
     }
 
     onCardClick(card) {
-        this.props.sendSocketMessage('cardClicked', card.uuid);
+        this.props.sendGameMessage('cardClicked', card.uuid);
+    }
+
+    onFactionCardClick() {
+        this.props.sendGameMessage('factionCardClicked');
     }
 
     onDrawClick() {
-        this.props.sendSocketMessage('showDrawDeck');
+        this.props.sendGameMessage('showDrawDeck');
 
         this.setState({ showDrawDeck: !this.state.showDrawDeck });
     }
@@ -143,7 +202,7 @@ export class InnerGameBoard extends React.Component {
             return;
         }
 
-        this.props.sendSocketMessage('chat', this.state.message);
+        this.props.sendGameMessage('chat', this.state.message);
 
         this.setState({ message: '' });
     }
@@ -167,11 +226,11 @@ export class InnerGameBoard extends React.Component {
     }
 
     onShuffleClick() {
-        this.props.sendSocketMessage('shuffleDeck');
+        this.props.sendGameMessage('shuffleDeck');
     }
 
     onDragDrop(card, source, target) {
-        this.props.sendSocketMessage('drop', card.uuid, source, target);
+        this.props.sendGameMessage('drop', card.uuid, source, target);
     }
 
     onCardDragStart(event, card, source) {
@@ -233,7 +292,7 @@ export class InnerGameBoard extends React.Component {
     onCommand(command, arg, method) {
         var commandArg = arg;
 
-        this.props.sendSocketMessage(command, commandArg, method);
+        this.props.sendGameMessage(command, commandArg, method);
     }
 
     onDragOver(event) {
@@ -259,7 +318,15 @@ export class InnerGameBoard extends React.Component {
     }
 
     onMenuItemClick(card, menuItem) {
-        this.props.sendSocketMessage('menuItemClick', card.uuid, menuItem);
+        this.props.sendGameMessage('menuItemClick', card.uuid, menuItem);
+    }
+
+    onMenuTitleClick() {
+        this.setState({ showActionWindowsMenu: !this.state.showActionWindowsMenu });
+    }
+
+    onPromptedActionWindowToggle(option, value) {
+        this.props.sendGameMessage('togglePromptedActionWindow', option, value);
     }
 
     render() {
@@ -316,7 +383,7 @@ export class InnerGameBoard extends React.Component {
                                     <CardCollection className='faction' source='faction' cards={[]} topCard={otherPlayer ? otherPlayer.faction : undefined} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup />
                                     {otherPlayer && otherPlayer.agenda && otherPlayer.agenda.code !== '' ?
                                         <CardCollection className='agenda' source='agenda' cards={[]} topCard={otherPlayer ? otherPlayer.agenda : undefined} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}
-                                              onClick={this.onClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
+                                              onCardClick={this.onCardClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
                                         : <div className='agenda card-pile vertical panel' />
                                     }
                                 </div>
@@ -348,9 +415,16 @@ export class InnerGameBoard extends React.Component {
                             </div>
                             <div className='middle-right'>
                                 <div className='inset-pane'>
-                                    <div className={'phase-indicator ' + thisPlayer.phase}>{thisPlayer.phase} phase</div>
-                                    <MenuPane title={thisPlayer.menuTitle} buttons={thisPlayer.buttons} onButtonClick={this.onCommand}
-                                                onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} />
+                                    { !this.state.spectating && this.state.showActionWindowsMenu ?
+                                        <ActionWindowsMenu options={ thisPlayer.promptedActionWindows }
+                                            onToggle={ this.onPromptedActionWindowToggle.bind(this) } />
+                                        : null }
+                                    <div className={ 'phase-indicator ' + thisPlayer.phase } onClick={ this.onMenuTitleClick.bind(this) }>
+                                        { <span className={ this.state.spectating ? '' : this.state.showActionWindowsMenu ? 'down-arrow' : 'up-arrow' } /> }
+                                        { thisPlayer.phase } phase
+                                    </div>
+                                    <MenuPane title={ thisPlayer.menuTitle } buttons={ thisPlayer.buttons } promptTitle={ thisPlayer.promptTitle } onButtonClick={ this.onCommand }
+                                                onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onTitleClick={ this.onMenuTitleClick.bind(this) } />
                                 </div>
                                 <div className='schemes-pane' />
                             </div>
@@ -361,10 +435,10 @@ export class InnerGameBoard extends React.Component {
                             <div className='deck-info'>
                                 <div className={'first-player-indicator ' + (thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div>
                                 <div className='deck-type'>
-                                    <CardCollection className='faction' source='faction' cards={[]} topCard={thisPlayer.faction} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup />
+                                    <CardCollection className='faction' source='faction' cards={[]} topCard={thisPlayer.faction} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup onCardClick={this.onFactionCardClick} />
                                     {thisPlayer.agenda && thisPlayer.agenda.code !== '' ?
                                         <CardCollection className='agenda' source='agenda' cards={[]} topCard={thisPlayer.agenda} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}
-                                              onClick={this.onClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
+                                              onCardClick={this.onCardClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
                                         : <div className='agenda card-pile vertical panel' />
                                     }
                                 </div>
@@ -433,7 +507,7 @@ InnerGameBoard.propTypes = {
     cardToZoom: React.PropTypes.object,
     clearZoom: React.PropTypes.func,
     currentGame: React.PropTypes.object,
-    sendSocketMessage: React.PropTypes.func,
+    sendGameMessage: React.PropTypes.func,
     setContextMenu: React.PropTypes.func,
     socket: React.PropTypes.object,
     username: React.PropTypes.string,

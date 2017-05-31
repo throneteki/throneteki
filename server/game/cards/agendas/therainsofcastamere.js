@@ -1,19 +1,16 @@
 const _ = require('underscore');
 
 const AgendaCard = require('../../agendacard.js');
+const RevealPlots = require('../../gamesteps/revealplots.js');
 
 class TheRainsOfCastamere extends AgendaCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        // TODO: This is a hack - should not be considered an interrupt but
-        //       should fire approx at that timeframe.
-        this['onPlotFlip:forcedinterrupt'] = () => this.onPlotFlip();
-
-        this.registerEvents(['onDecksPrepared', 'onPlotFlip:forcedinterrupt']);
+        this.registerEvents(['onDecksPrepared', { 'onPlotFlip:forcedinterrupt': 'onPlotFlip' }]);
     }
 
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: (event, challenge) => (
@@ -23,16 +20,24 @@ class TheRainsOfCastamere extends AgendaCard {
                     challenge.strengthDifference >= 5
                 )
             },
-            handler: () => {
-                this.game.promptWithMenu(this.owner, this, {
-                    activePrompt: {
-                        menuTitle: 'Trigger Scheme plot?',
-                        buttons: this.menuButtons()
-                    },
-                    source: this
-                });
-            }
+            handler: this.trigger.bind(this)
         });
+
+        this.action({
+            title: 'Manually trigger',
+            method: 'trigger',
+            cost: ability.costs.kneelFactionCard()
+        });
+    }
+
+    trigger() {
+        this.game.promptWithMenu(this.owner, this, {
+            activePrompt: {
+                menuTitle: 'Trigger Scheme plot?',
+                buttons: this.menuButtons()
+            },
+            source: this
+        });        
     }
 
     onDecksPrepared() {
@@ -61,7 +66,7 @@ class TheRainsOfCastamere extends AgendaCard {
 
     menuButtons() {
         var buttons = _.map(this.schemes, scheme => {
-            return { text: scheme.name, method: 'revealScheme', arg: scheme.uuid, card: scheme.getSummary(true) };
+            return { method: 'revealScheme', card: scheme };
         });
 
         buttons.push({ text: 'Done', method: 'cancelScheme' });
@@ -83,7 +88,7 @@ class TheRainsOfCastamere extends AgendaCard {
 
         player.selectedPlot = scheme;
         player.flipPlotFaceup();
-        this.game.raiseEvent('onPlotRevealed', player);
+        this.game.queueStep(new RevealPlots(this.game, [scheme]));
 
         player.kneelCard(player.faction);
 

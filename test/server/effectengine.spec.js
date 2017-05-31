@@ -83,7 +83,7 @@ describe('EffectEngine', function () {
             beforeEach(function() {
                 this.effectSpy.duration = 'persistent';
                 this.cardEnteringPlay = { location: 'play area' };
-                this.engine.onCardEntersPlay({}, this.cardEnteringPlay);
+                this.engine.onCardEntersPlay({ card: this.cardEnteringPlay });
             });
 
             it('should add the card entering play as a target', function() {
@@ -95,7 +95,7 @@ describe('EffectEngine', function () {
             beforeEach(function() {
                 this.effectSpy.duration = 'untilEndOfChallenge';
                 this.cardEnteringPlay = { location: 'play area' };
-                this.engine.onCardEntersPlay({}, this.cardEnteringPlay);
+                this.engine.onCardEntersPlay({ card: this.cardEnteringPlay });
             });
 
             it('should not add the card entering play as a target', function() {
@@ -118,7 +118,7 @@ describe('EffectEngine', function () {
             describe('and the card leaving play is the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = this.cardLeavingPlay;
-                    this.engine.onCardLeftPlay({}, {}, this.cardLeavingPlay);
+                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
                 });
 
                 it('should remove the target from all effects', function() {
@@ -137,7 +137,7 @@ describe('EffectEngine', function () {
             describe('and the card leaving play is not the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = {};
-                    this.engine.onCardLeftPlay({}, {}, this.cardLeavingPlay);
+                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
                 });
 
                 it('should remove the target from all effects', function() {
@@ -162,7 +162,7 @@ describe('EffectEngine', function () {
             describe('and the card leaving play is the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = this.cardLeavingPlay;
-                    this.engine.onCardLeftPlay({}, {}, this.cardLeavingPlay);
+                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
                 });
 
                 it('should remove the target from all effects', function() {
@@ -181,7 +181,7 @@ describe('EffectEngine', function () {
             describe('and the card leaving play is not the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = {};
-                    this.engine.onCardLeftPlay({}, {}, this.cardLeavingPlay);
+                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
                 });
 
                 it('should remove the target from all effects', function() {
@@ -216,8 +216,8 @@ describe('EffectEngine', function () {
                     this.engine.onCardBlankToggled({}, this.cardBeingToggled, false);
                 });
 
-                it('should set the active value for the effect', function() {
-                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true);
+                it('should set the active value for the effect along with cards to target', function() {
+                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true, [this.handCard, this.playAreaCard]);
                 });
             });
 

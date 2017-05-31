@@ -3,23 +3,25 @@ const DrawCard = require('../../../drawcard.js');
 class SerBarristanSelmy extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
+            canCancel: true,
             when: {
-                onCharacterKilled: (event, player, card, allowSave) => (
-                    allowSave
-                    && (card.hasTrait('Lord') || card.hasTrait('Lady'))
-                    && card.controller === this.controller
-                )
+                onCharactersKilled: event => event.allowSave
+            },
+            target: {
+                activePromptTitle: 'Select character to save',
+                cardCondition: (card, context) => context.event.cards.includes(card) && this.isControlledLordOrLady(card)
             },
             cost: ability.costs.standSelf(),
-            canCancel: true,
-            title: context => 'Stand ' + this.name + ' to save ' + context.event.params[2].name,
             handler: context => {
-                context.cancel();
-
+                context.event.saveCard(context.target);
                 this.game.addMessage('{0} stands {1} to save {2}',
-                                     this.controller, this, context.event.params[2]);
+                                     this.controller, this, context.target);
             }
         });
+    }
+
+    isControlledLordOrLady(card) {
+        return card.controller === this.controller && (card.hasTrait('Lord') || card.hasTrait('Lady'));
     }
 }
 

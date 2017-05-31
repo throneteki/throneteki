@@ -1,18 +1,14 @@
 const DrawCard = require('../../../drawcard.js');
 
 class TheIronThrone extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.plotModifiers({
             reserve: 1
         });
-    }
-
-    modifyDominance(player, strength) {
-        if(this.controller === player && !this.isBlank()) {
-            return strength + 8;
-        }
-
-        return strength;
+        this.persistentEffect({
+            match: this,
+            effect: ability.effects.modifyDominanceStrength(8)
+        });
     }
 }
 

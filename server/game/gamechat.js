@@ -22,6 +22,8 @@ class GameChat {
         args = _.reduce(args, (argList, arg) => {
             if(arg instanceof Spectator) {
                 argList.push(arg.name);
+            } else if(arg && arg.emailHash) {
+                argList.push({ name: arg.name, emailHash: arg.emailHash, noAvatar: arg.user.settings.disableGravatar });
             } else {
                 argList.push(arg);
             }
@@ -51,7 +53,7 @@ class GameChat {
                     } else if(arg instanceof BaseCard) {
                         return { code: arg.code, label: arg.name, type: arg.getType() };
                     } else if(arg instanceof Spectator) {
-                        return { name: arg.user.username, emailHash: arg.user.emailHash };
+                        return { name: arg.user.username, emailHash: arg.user.emailHash, noAvatar: arg.user.settings ? arg.user.settings.disableGravatar : false };
                     }
 
                     return arg;

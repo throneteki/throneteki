@@ -1,18 +1,19 @@
+const _ = require('underscore');
+
 const DrawCard = require('../../../drawcard.js');
 
 class RobbStark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: (e, player, card) => this.isStarkCharacter(card),
+                onCharacterKilled: event => this.isStarkCharacter(event.card),
                 onSacrificed: (e, player, card) => this.isStarkCharacter(card)
             },
             limit: ability.limit.perRound(1),
             handler: () => {
-                this.controller.cardsInPlay.each(card => {
-                    if(card.getType() === 'character' && card.isFaction('stark')) {
-                        card.controller.standCard(card);
-                    }
+                let characters = this.controller.filterCardsInPlay(card => card.getType() === 'character');
+                _.each(characters, card => {
+                    card.controller.standCard(card);
                 });
 
                 this.game.addMessage('{0} uses {1} to stand each {2} character they control', this.controller, this, 'stark');

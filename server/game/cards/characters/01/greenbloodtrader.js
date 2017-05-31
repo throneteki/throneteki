@@ -6,13 +6,13 @@ class GreenbloodTrader extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (e, card) => card === this
+                onCardEntersPlay: event => event.card === this
             },
             handler: () => {
                 this.top2Cards = this.controller.drawDeck.first(2);
 
                 var buttons = _.map(this.top2Cards, card => {
-                    return { text: card.name, method: 'cardSelected', arg: card.uuid, card: card.getSummary(true) };
+                    return { method: 'cardSelected', card: card };
                 });
 
                 buttons.push({ text: 'Continue', method: 'continueWithoutSelecting' });
@@ -51,7 +51,7 @@ class GreenbloodTrader extends DrawCard {
 
         player.moveFromTopToBottomOfDrawDeck(1);
 
-        this.game.addMessage('{0} uses {1} to draw 2 cards, draw 1 and place the other on the bottom of their deck', player, this);
+        this.game.addMessage('{0} uses {1} to draw 2 cards, keep 1 and place the other on the bottom of their deck', player, this);
 
         return true;
     }
@@ -76,7 +76,7 @@ class GreenbloodTrader extends DrawCard {
 
     continueWithoutSelecting(player) {
         var buttons = _.map(this.top2Cards, card => {
-            return { text: card.name, method: 'moveToBottom', arg: card.uuid, card: card.getSummary(true) };
+            return { method: 'moveToBottom', card: card };
         });
 
         buttons.push({ text: 'Cancel', method: 'cancel' });

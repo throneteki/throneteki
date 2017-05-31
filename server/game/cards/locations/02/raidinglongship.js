@@ -24,7 +24,10 @@ class RaidingLongship extends DrawCard {
     }
 
     onCardSelected(player, card) {
-        this.game.currentChallenge.removeFromChallenge(card);
+        this.untilEndOfChallenge(ability => ({
+            match: card,
+            effect: ability.effects.doesNotContributeStrength()
+        }));
 
         this.game.addMessage('{0} kneels {1} to remove {2}\'s STR from the challenge', player, this, card);
 

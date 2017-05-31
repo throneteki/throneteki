@@ -27,17 +27,19 @@
   }
 
   &.selectable {
-    animation: selectable-pulse 4s infinite;
     box-shadow: 0 0 10px 1px fadeout(lighten(@brand-primary, 60%), 10%);
   }
 
-  @keyframes selectable-pulse {
-    0% {
-      box-shadow: 0 0 10px 1px fadeout(lighten(@brand-primary, 60%), 10%);
-    }
-    50% {
-      box-shadow: 0 0 10px 1px fadeout(lighten(@brand-primary, 60%), 50%);
-    }
+  &.unselectable {
+    filter: grayscale(100%) brightness(60%);
+  }
+
+  &.in-danger {
+    box-shadow: 0 0 1px 2px red;
+  }
+
+  &.saved {
+    box-shadow: 0 0 1px 2px green;
   }
 
   &.selected {
@@ -81,6 +83,24 @@
     top: -10px;
     transform: rotate(90deg);
   }
+}
+
+.card-order {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.9);
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  height: 26px;
+  left: 50%;
+  line-height: 24px;
+  margin: 0 0 0 -12px;
+  position: absolute;
+  text-align: center;
+  top: -28px;
+  width: 24px;
+  z-index: @layer-card-menu;
 }
 
 .card-name {
@@ -191,18 +211,89 @@
   text-shadow: 1px 1px 2px #000;
   border-radius: 4px;
   color: white;
+
+  &.intrigue {
+    span {
+      display: none;
+    }
+
+    font-family: 'thronesdb';
+
+    &:before {
+      content: "\e602";
+      color: @intrigue-icon-color;
+    }
+
+    background-color: rgba(0, 0, 0, 0.85);
+  }
+
+  &.military {
+    span {
+      display: none;
+    }
+
+    font-family: 'thronesdb';
+
+    &:before {
+      content: "\e605";
+      color: @military-icon-color;
+    }
+
+    background-color: rgba(0, 0, 0, 0.85);
+  }
+
+  &.power {
+    span {
+      display: none;
+    }
+
+    font-family: 'thronesdb';
+
+    &:before {
+      content: "\e607";
+      color: @power-icon-color;
+    }
+
+    background-color: rgba(0, 0, 0, 0.85);
+  }
+
+  &.fade-out {
+    opacity: 0.4;
+  }  
+
+  &.cancel {
+    position: relative;
+
+    &:after {
+      border-bottom: 0.17em solid @brand-danger;
+      content: "";
+      left: 0;
+      margin-top: calc(0.17em / 2 * -1);
+      position: absolute;
+      right: 0;
+      top: 50%;
+    }
+  }
 }
 
 .dupe {
-  background-color: rgba(0,128,0,0.85);
+  background-color: @dupe-color;
 }
 
-.power {
-  background-color: rgba(0,0,128,0.85);
+.attachment-dupe {
+  background-color: fade(@dupe-color, 50%);
+}
+
+.card-power {
+  background-color: @power-color;
+}
+
+.attachment-power {
+  background-color: fade(@power-color, 50%);
 }
 
 .strength {
-  background-color: rgba(128,0,0,0.85);
+  background-color: @strength-color;
 }
 
 .stand {
@@ -233,94 +324,12 @@
   background-color: rgba(162, 255, 81, 0.85);
 }
 
-.newintrigue {
-  span {
-    display: none;
-  }
-
-  font-family: 'thronesdb';
-
-  &:before {
-    content: "\e602";
-    color: #159e40;
-  }
-
-  background-color: rgba(0, 0, 0, 0.85);
+.venom {
+  background-color: @venom-color;
 }
 
-.newmilitary {
-  span {
-    display: none;
-  }
-  
-  font-family: 'thronesdb';
-
-  &:before {
-    content: "\e605";
-    color: #159e40;
-  }
-
-  background-color: rgba(0, 0, 0, 0.85);
-}
-
-.newpower {
-  span {
-    display: none;
-  }
-  
-  font-family: 'thronesdb';
-
-  &:before {
-    content: "\e607";
-    color: #159e40;
-  }
-
-  background-color: rgba(0, 0, 0, 0.85);
-}
-
-.nointrigue {
-  span {
-    display: none;
-  }
-
-  font-family: 'thronesdb';
-
-  &:before {
-    content: "\e602";
-    color: #fa050c;
-  }
-
-  background-color: rgba(0, 0, 0, 0.85);
-}
-
-.nomilitary {
-  span {
-    display: none;
-  }
-  
-  font-family: 'thronesdb';
-
-  &:before {
-    content: "\e605";
-    color: #fa050c;
-  }
-
-  background-color: rgba(0, 0, 0, 0.85);
-}
-
-.nopower {
-  span {
-    display: none;
-  }
-  
-  font-family: 'thronesdb';
-
-  &:before {
-    content: "\e607";
-    color: #fa050c;
-  }
-
-  background-color: rgba(0, 0, 0, 0.85);
+.attachment-venom {
+  background-color: fade(@venom-color, 50%);
 }
 
 .plot-selected {

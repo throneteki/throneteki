@@ -1,26 +1,45 @@
 /*global user, authToken */
 import React from 'react';
-import {render} from 'react-dom';
-import Application from './Application.jsx';
+import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import configureStore from './configureStore';
 import {navigate, login} from './actions';
 import DevTools from './DevTools';
 import 'bootstrap/dist/js/bootstrap';
+import ReduxToastr from 'react-redux-toastr';
+import { AppContainer } from 'react-hot-loader';
 
 const store = configureStore();
 
 store.dispatch(navigate(window.location.pathname, window.location.search));
 
 if(typeof user !== 'undefined') {
-    store.dispatch(login(user.username, authToken));
+    store.dispatch(login(user, authToken, user.admin));
 }
 
-render(
-    <Provider store={store}>
-        <div>
-            <Application />
+const render = () => {
+    const Application = require('./Application.jsx').default;
+    ReactDOM.render(<AppContainer>
+        <Provider store={store}>
+            <div>
+                <ReduxToastr
+                    timeOut={4000}
+                    newestOnTop
+                    preventDuplicates
+                    position='top-right'
+                    transitionIn='fadeIn'
+                    transitionOut='fadeOut'/>  
+                <Application />
+                <DevTools />
+            </div>
+        </Provider>
+    </AppContainer>, document.getElementById('component'));
+};
 
-            <DevTools />
-        </div>
-    </Provider>, document.getElementById('component'));
+if(module.hot) {
+    module.hot.accept('./Application.jsx', () => {
+        setTimeout(render);
+    });
+}
+
+render();

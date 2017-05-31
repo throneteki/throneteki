@@ -4,13 +4,14 @@ class AsshaiPriestess extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: (event, card) => card === this && this.game.currentPhase === 'marshal'
+                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => this.cardCondition(card),
                     activePromptTitle: 'Select a character to kneel',
                     source: this,
+                    gameAction: 'kneel',
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }

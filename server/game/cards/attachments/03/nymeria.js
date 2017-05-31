@@ -32,7 +32,7 @@ class Nymeria extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(!card.isFaction('stark') || card.getType() !== 'character' || !card.isUnique() || card === this.oldOwner) {
+        if(card.getType() !== 'character' || !card.isFaction('stark') || !card.isUnique() || card === this.oldOwner) {
             return false;
         }
 

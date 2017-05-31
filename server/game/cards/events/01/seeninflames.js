@@ -1,46 +1,38 @@
 const DrawCard = require('../../../drawcard.js');
 
 class SeenInFlames extends DrawCard {
-    canPlay(player, card) {
-        var otherPlayer = this.game.getOtherPlayer(player);
-        if(player !== this.controller || this !== card || player.phase !== 'challenge') {
-            return false;
-        }
+    setupCardAbilities() {
+        this.action({
+            title: 'Discard from opponent\'s hand',
+            phase: 'challenge',
+            condition: () => (
+                this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor')) &&
+                this.opponentHasCards()
+            ),
+            handler: context => {
+                let otherPlayer = this.game.getOtherPlayer(context.player);
+                if(!otherPlayer) {
+                    return;
+                }
 
-        if(otherPlayer && otherPlayer.hand.isEmpty()) {
-            return false;
-        }
+                let buttons = otherPlayer.hand.map(card => {
+                    return { method: 'cardSelected', card: card };
+                });
 
-        var rhllor = player.cardsInPlay.find(card => {
-            return card.hasTrait('R\'hllor');
+                this.game.promptWithMenu(this.controller, this, {
+                    activePrompt: {
+                        menuTitle: 'Select a card to discard',
+                        buttons: buttons
+                    },
+                    source: this
+                });
+            }
         });
-
-        return !!rhllor;
     }
 
-    play(player) {
-        if(this.controller !== player) {
-            return;
-        }
-
-        var otherPlayer = this.game.getOtherPlayer(player);
-        if(!otherPlayer) {
-            return;
-        }
-
-        var buttons = otherPlayer.hand.map(card => {
-            return { text: card.name, method: 'cardSelected', arg: card.uuid, card: card.getSummary(true) };
-        });
-
-        buttons.push({ text: 'Cancel', method: 'cancel' });
-
-        this.game.promptWithMenu(player, this, {
-            activePrompt: {
-                menuTitle: 'Select a card to discard',
-                buttons: buttons
-            },
-            source: this
-        });
+    opponentHasCards() {
+        let otherPlayer = this.game.getOtherPlayer(this.controller);
+        return otherPlayer && !otherPlayer.hand.isEmpty();
     }
 
     cardSelected(player, cardId) {
@@ -57,12 +49,6 @@ class SeenInFlames extends DrawCard {
         otherPlayer.discardCard(card);
 
         this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand', player, this, card, otherPlayer);
-
-        return true;
-    }
-
-    cancel(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
 
         return true;
     }
