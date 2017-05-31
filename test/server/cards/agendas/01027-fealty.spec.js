@@ -7,7 +7,7 @@ describe('Fealty', function() {
             const deck = this.buildDeck('greyjoy', [
                 'Fealty',
                 'Sneak Attack',
-                'Balon Greyjoy (Core)', 'Theon Greyjoy'
+                'Balon Greyjoy (Core)', 'Theon Greyjoy (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
