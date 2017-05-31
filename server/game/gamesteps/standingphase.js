@@ -29,14 +29,15 @@ class StandingPhase extends Phase {
             restrictedSubset.push({ max: restriction.max, cards: restrictedCards });
         });
         // Automatically stand non-restricted cards
-        let cardsToStand = kneelingCards;
+        let cardsToStand = { automatic: kneelingCards, selected: [] };
 
         _.each(restrictedSubset, restriction => {
             this.selectRestrictedCards(cardsToStand, player, restriction);
         });
         this.game.queueSimpleStep(() => {
+            let finalCards = _.flatten(_.values(cardsToStand));
             player.faction.kneeled = false;
-            _.each(cardsToStand, card => {
+            _.each(finalCards, card => {
                 player.standCard(card);
             });
         });
@@ -44,7 +45,7 @@ class StandingPhase extends Phase {
 
     selectRestrictedCards(cardsToStand, player, restriction) {
         if(restriction.cards.length <= restriction.max) {
-            _.each(restriction.cards, card => cardsToStand.push(card));
+            cardsToStand.automatic = cardsToStand.automatic.concat(restriction.cards);
             return;
         }
 
@@ -61,7 +62,7 @@ class StandingPhase extends Phase {
                     return false;
                 }
 
-                _.each(cards, card => cardsToStand.push(card));
+                cardsToStand.selected = cardsToStand.selected.concat(cards);
                 return true;
             }
         });
