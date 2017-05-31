@@ -456,6 +456,16 @@ const Effects = {
             }
         };
     },
+    modifyMaxLimited: function(amount) {
+        return {
+            apply: function(player) {
+                player.maxLimited += amount;
+            },
+            unapply: function(player) {
+                player.maxLimited -= amount;
+            }
+        };
+    },
     modifyChallengeTypeLimit: function(challengeType, value) {
         return {
             apply: function(player) {
