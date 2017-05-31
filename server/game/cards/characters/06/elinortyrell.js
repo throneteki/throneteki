@@ -1,6 +1,6 @@
-const PlotCard = require('../../../plotcard.js');
+const DrawCard = require('../../../drawcard.js');
 
-class Taxation extends PlotCard {
+class ElinorTyrell extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetType: 'player',
@@ -9,6 +9,6 @@ class Taxation extends PlotCard {
     }
 }
 
-Taxation.code = '01024';
+ElinorTyrell.code = '06043';
 
-module.exports = Taxation;
+module.exports = ElinorTyrell;
