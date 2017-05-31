@@ -41,6 +41,7 @@ class Player extends Spectator {
         this.cannotGainChallengeBonus = false;
         this.cannotTriggerCardAbilities = false;
         this.abilityMaxByTitle = {};
+        this.standPhaseRestrictions = [];
         this.promptedActionWindows = user.promptedActionWindows || {
             plot: false,
             draw: false,
@@ -877,22 +878,6 @@ class Player extends Spectator {
         }, 0);
 
         return cardStrength + this.gold;
-    }
-
-    standCards(notCharacters = false) {
-        this.cardsInPlay.each(card => {
-            card.attachments.each(attachment => {
-                this.standCard(attachment);
-            });
-
-            if((notCharacters && card.getType() === 'character') || !card.standsDuringStanding) {
-                return;
-            }
-
-            this.standCard(card);
-        });
-
-        this.faction.kneeled = false;
     }
 
     taxation() {

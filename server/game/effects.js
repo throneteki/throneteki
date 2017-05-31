@@ -612,6 +612,17 @@ const Effects = {
             }
         };
     },
+    cannotStandMoreThan: function(max, match) {
+        let restriction = { max: max, match: match };
+        return {
+            apply: function(player) {
+                player.standPhaseRestrictions.push(restriction);
+            },
+            unapply: function(player) {
+                player.standPhaseRestrictions = _.reject(player.standPhaseRestrictions, r => r === restriction);
+            }
+        };
+    },
     reduceCost: function(properties) {
         return {
             apply: function(player, context) {
