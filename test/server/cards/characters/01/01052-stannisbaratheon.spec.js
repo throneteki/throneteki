@@ -13,7 +13,6 @@ describe('Stannis Baratheon', function() {
             this.startGame();
             this.keepStartingHands();
 
-            // this.stannis = this.player1.findCardByName('Stannis Baratheon', 'hand');
             this.character1 = this.player1.findCardByName('Robert Baratheon', 'hand');
             this.character2 = this.player1.findCardByName('Dragonstone Faithful', 'hand');
             this.character3 = this.player1.findCardByName('Maester Cressen', 'hand');
