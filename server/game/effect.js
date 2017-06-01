@@ -14,6 +14,12 @@ const PlayAreaLocations = ['play area', 'active plot'];
  *                    effect applied. Alternatively, a card can be passed as the
  *                    match property to match that single card.
  * duration         - string representing how long the effect lasts.
+ * until            - optional object to specify events that will cancel the
+ *                    effect when duration is 'custom'. The keys of the object
+ *                    represent event names that will be listened to and the
+ *                    corresponding values should be handler functions for those
+ *                    events that return true when the effect should be
+ *                    cancelled.
  * condition        - function that returns a boolean determining whether the
  *                    effect can be applied. Use with cards that have a
  *                    condition that must be met before applying a persistent
@@ -42,6 +48,7 @@ class Effect {
         this.source = source;
         this.match = properties.match || (() => true);
         this.duration = properties.duration;
+        this.until = properties.until || {};
         this.condition = properties.condition || (() => true);
         this.targetController = properties.targetController || 'current';
         this.targetType = properties.targetType || 'card';

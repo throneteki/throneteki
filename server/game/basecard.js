@@ -238,6 +238,15 @@ class BaseCard {
         this.game.addEffect(this, _.extend({ duration: 'untilEndOfRound' }, properties));
     }
 
+    /**
+     * Applies a lasting effect which lasts until an event contained in the
+     * `until` property for the effect has occurred.
+     */
+    lastingEffect(propertyFactory) {
+        let properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, _.extend({ duration: 'custom' }, properties));
+    }
+
     doAction(player, arg) {
         var action = this.abilities.actions[arg];
 
