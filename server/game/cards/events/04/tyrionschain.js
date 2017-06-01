@@ -7,11 +7,11 @@ class TyrionsChain extends DrawCard {
             when: {
                 afterChallenge: (event, challenge) => (
                     challenge.winner === this.controller &&
-                    this.hasParticipatingUniqueLannister()
+                    this.hasParticipatingUniqueLannister() &&
+                    this.game.anyPlotHasTrait('War')
                 )
             },
             max: ability.limit.perPhase(1),
-            condition: () => this.game.anyPlotHasTrait('War'),
             handler: () => {
                 let warPlots = this.getRevealedWarPlots();
 
@@ -45,7 +45,7 @@ class TyrionsChain extends DrawCard {
     }
 
     selectWarPlot(player, card) {
-        let warPlot = this.controller.findCardByUuidInAnyList(card);
+        var warPlot = this.controller.findCardByUuid(this.game.allCards, card);
         this.resolving = true;
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, warPlot);
