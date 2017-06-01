@@ -422,6 +422,16 @@ const Effects = {
             }
         };
     },
+    optionalStandDuringStanding: function() {
+        return {
+            apply: function(card) {
+                card.optionalStandDuringStanding = true;
+            },
+            unapply: function(card) {
+                card.optionalStandDuringStanding = false;
+            }
+        };
+    },
     immuneTo: function(cardCondition) {
         let restriction = new ImmunityRestriction(cardCondition);
         return {

@@ -33,6 +33,22 @@ describe('EffectEngine', function () {
         it('should add existing valid targets to the effect', function() {
             expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard]);
         });
+
+        describe('when the effect has custom duration', function() {
+            beforeEach(function() {
+                this.effectSpy.duration = 'custom';
+                this.effectSpy.until = {
+                    foo: () => true,
+                    bar: () => true
+                };
+                this.engine.add(this.effectSpy);
+            });
+
+            it('should register event handlers for the until listeners', function() {
+                expect(this.gameSpy.on).toHaveBeenCalledWith('foo', jasmine.any(Function));
+                expect(this.gameSpy.on).toHaveBeenCalledWith('bar', jasmine.any(Function));
+            });
+        });
     });
 
     describe('getTargets()', function() {
@@ -406,6 +422,88 @@ describe('EffectEngine', function () {
 
             it('should not remove the effect from the list', function() {
                 expect(this.engine.effects).toContain(this.effectSpy);
+            });
+        });
+    });
+
+    describe('custom duration event handlers', function() {
+        beforeEach(function() {
+            this.effectSpy.duration = 'custom';
+            this.effectSpy.until = {
+                foo: jasmine.createSpy('listener')
+            };
+            this.effectSpy2 = jasmine.createSpyObj('effect', ['addTargets', 'reapply', 'removeTarget', 'cancel', 'setActive']);
+            this.effectSpy2.targetLocation = 'play area';
+            this.effectSpy2.duration = 'custom';
+            this.effectSpy2.until = { foo: () => true };
+
+            this.engine.add(this.effectSpy);
+            this.engine.add(this.effectSpy2);
+
+            this.handler = this.engine.createCustomDurationHandler(this.effectSpy);
+        });
+
+        describe('when called for an unregistered event', function() {
+            it('should not crash', function() {
+                expect(() => this.handler({ name: 'bar' }, 1)).not.toThrow();
+            });
+        });
+
+        describe('when the until listener returns true', function() {
+            beforeEach(function() {
+                this.effectSpy.until.foo.and.returnValue(true);
+                this.event = { name: 'foo' };
+                this.handler(this.event, 1, 2, 3);
+            });
+
+            it('should call the listener with the right arguments', function() {
+                expect(this.effectSpy.until.foo).toHaveBeenCalledWith(this.event, 1, 2, 3);
+            });
+
+            it('should cancel the effect', function() {
+                expect(this.effectSpy.cancel).toHaveBeenCalled();
+            });
+
+            it('should unregister event listeners', function() {
+                expect(this.gameSpy.removeListener).toHaveBeenCalledWith('foo', jasmine.any(Function));
+                expect(this.engine.customDurationEvents).not.toContain(jasmine.objectContaining({ effect: this.effectSpy }));
+            });
+
+            it('should remove the effect from play', function() {
+                expect(this.engine.effects).not.toContain(this.effectSpy);
+            });
+
+            it('should not remove listeners for other effects', function() {
+                expect(this.engine.customDurationEvents).toContain(jasmine.objectContaining({ effect: this.effectSpy2 }));
+            });
+        });
+
+        describe('when the until listener returns false', function() {
+            beforeEach(function() {
+                this.effectSpy.until.foo.and.returnValue(false);
+                this.event = { name: 'foo' };
+                this.handler(this.event, 1, 2, 3);
+            });
+
+            it('should call the listener with the right arguments', function() {
+                expect(this.effectSpy.until.foo).toHaveBeenCalledWith(this.event, 1, 2, 3);
+            });
+
+            it('should not cancel the effect', function() {
+                expect(this.effectSpy.cancel).not.toHaveBeenCalled();
+            });
+
+            it('should not unregister event listeners', function() {
+                expect(this.gameSpy.removeListener).not.toHaveBeenCalledWith('foo', jasmine.any(Function));
+                expect(this.engine.customDurationEvents).toContain(jasmine.objectContaining({ effect: this.effectSpy }));
+            });
+
+            it('should not remove the effect from play', function() {
+                expect(this.engine.effects).toContain(this.effectSpy);
+            });
+
+            it('should not remove listeners for other effects', function() {
+                expect(this.engine.customDurationEvents).toContain(jasmine.objectContaining({ effect: this.effectSpy2 }));
             });
         });
     });
