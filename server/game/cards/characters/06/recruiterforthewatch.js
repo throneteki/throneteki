@@ -6,7 +6,26 @@ class RecruiterForTheWatch extends DrawCard {
             match: this,
             effect: ability.effects.optionalStandDuringStanding()
         });
-        // TODO: Marshaling action to take control.
+        this.action({
+            title: 'Take control of character',
+            phase: 'marshal',
+            cost: ability.costs.kneelSelf(),
+            target: {
+                activePromptTitle: 'Select character with printed cost 2 or less',
+                cardCondition: card => card.getType() === 'character' && card.controller !== this.controller && card.getCost(true) <= 2
+            },
+            handler: context => {
+                this.game.addMessage('{0} kneels {1} to take control of {2}', this.controller, this, context.target);
+                this.lastingEffect(ability => ({
+                    until: {
+                        onCardStood: (event, player, card) => card === this,
+                        onCardLeftPlay: event => event.card === this
+                    },
+                    match: context.target,
+                    effect: ability.effects.takeControl(this.controller)
+                }));
+            }
+        });
     }
 }
 
