@@ -17,7 +17,7 @@ class TriggeredAbilityWindow extends BaseStep {
             return;
         }
 
-        let player = ability.card.controller;
+        let player = context.player;
         let choiceTexts = ability.getChoices(context);
 
         _.each(choiceTexts, choiceText => {
