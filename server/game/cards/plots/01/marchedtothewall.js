@@ -38,7 +38,7 @@ class MarchedToTheWall extends PlotCard {
             this.game.promptForSelect(currentPlayer, {
                 activePromptTitle: 'Select a character to discard',
                 source: this,
-                cardCondition: card => card.controller === currentPlayer && card.getType() === 'character',
+                cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'character',
                 onSelect: (player, cards) => this.onCardSelected(player, cards),
                 onCancel: (player) => this.cancelSelection(player)
             });
