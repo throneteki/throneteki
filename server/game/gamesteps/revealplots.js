@@ -16,6 +16,7 @@ class RevealPlots extends BaseStep {
         };
         this.game.raiseMergedEvent('onPlotsRevealed', params, () => {
             if(this.needsFirstPlayerChoice()) {
+                this.game.raiseMergedEvent('onCompareInitiative', {});
                 this.game.queueStep(new SimpleStep(this.game, () => this.determineInitiative()));
                 this.game.queueStep(() => new FirstPlayerPrompt(this.game, this.initiativeWinner));
             }
