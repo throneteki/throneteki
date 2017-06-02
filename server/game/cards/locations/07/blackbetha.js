@@ -8,6 +8,8 @@ class BlackBetha extends DrawCard {
         });
         this.action({
             title: 'Kneel to give attacking character +X STR',
+            condition: () => this.game.currentChallenge && this.calculateStrength() >= 1,
+            cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select character to gain STR',
                 cardCondition: card => this.game.currentChallenge.isAttacking(card)
