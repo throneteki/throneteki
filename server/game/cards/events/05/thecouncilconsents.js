@@ -9,7 +9,7 @@ class TheCouncilConsents extends DrawCard {
                 afterChallenge: (event, challenge) => (
                     challenge.challengeType === 'intrigue' && 
                     challenge.strengthDifference >= 5 &&
-                    this.hasSmallCouncilChar())
+                    this.anySmallCouncilCharacterInPlay())
             },
             handler: () => {
                 let ownSmallCouncilChars = this.controller.filterCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character');
@@ -29,10 +29,10 @@ class TheCouncilConsents extends DrawCard {
         });
     }
 
-    hasSmallCouncilChar() {
+    anySmallCouncilCharacterInPlay() {
         let opponent = this.game.getOtherPlayer(this.controller);
         return this.controller.anyCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character') ||
-               opponent.anyCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character');
+               (opponent && opponent.anyCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character'));
     }
 }
 
