@@ -284,7 +284,7 @@ class BaseCard {
         return this.cardData.is_loyal;
     }
 
-    play() {
+    applyPersistentEffects() {
         _.each(this.abilities.persistentEffects, effect => {
             this.game.addEffect(this, effect);
         });
@@ -324,10 +324,6 @@ class BaseCard {
         if(targetLocation !== 'play area') {
             this.facedown = false;
         }
-    }
-
-    canPlay() {
-        return true;
     }
 
     getMenu() {

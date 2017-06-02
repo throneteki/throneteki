@@ -11,11 +11,11 @@ describe('Player', function() {
         this.player = new Player('1', 'Player 1', true, this.gameSpy);
         this.player.initialise();
 
-        this.selectedPlotSpy = jasmine.createSpyObj('plot', ['flipFaceup', 'moveTo', 'play']);
+        this.selectedPlotSpy = jasmine.createSpyObj('plot', ['flipFaceup', 'moveTo', 'applyPersistentEffects']);
         this.selectedPlotSpy.uuid = '111';
         this.selectedPlotSpy.location = 'plot deck';
         this.selectedPlotSpy.controller = this.player;
-        this.anotherPlotSpy = jasmine.createSpyObj('plot', ['flipFaceup', 'moveTo', 'play']);
+        this.anotherPlotSpy = jasmine.createSpyObj('plot', ['flipFaceup', 'moveTo', 'applyPersistentEffects']);
         this.anotherPlotSpy.uuid = '222';
         this.anotherPlotSpy.location = 'plot deck';
         this.anotherPlotSpy.controller = this.player;
@@ -34,8 +34,8 @@ describe('Player', function() {
                 expect(this.selectedPlotSpy.flipFaceup).toHaveBeenCalled();
             });
 
-            it('should put the selected plot into play', function() {
-                expect(this.selectedPlotSpy.play).toHaveBeenCalled();
+            it('should apply effects for the selected plot', function() {
+                expect(this.selectedPlotSpy.applyPersistentEffects).toHaveBeenCalled();
             });
 
             it('should move the plot to the active plot slot', function() {
