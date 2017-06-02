@@ -39,6 +39,7 @@ class DrawCard extends BaseCard {
 
         this.power = 0;
         this.strengthModifier = 0;
+        this.strengthMultiplier = 1;
         this.dominanceStrengthModifier = 0;
         this.contributesToDominance = true;
         this.kneeled = false;
@@ -137,12 +138,26 @@ class DrawCard extends BaseCard {
         });
     }
 
+    modifyStrengthMultiplier(amount, applying = true) {
+        let strengthBefore = this.getStrength();
+
+        this.strengthMultiplier *= amount;
+        this.game.raiseMergedEvent('onCardStrengthChanged', {
+            card: this,
+            amount: this.getStrength() - strengthBefore,
+            applying: applying
+        });
+    }
+
     getStrength(printed = false) {
         if(this.controller.phase === 'setup' || printed) {
             return this.cardData.strength || undefined;
         }
 
-        return Math.max(0, this.strengthModifier + (this.cardData.strength || 0));
+        let baseStrength = (this.cardData.strength || 0);
+        let modifiedStrength = this.strengthModifier + baseStrength;
+        let multipliedStrength = Math.round(this.strengthMultiplier * modifiedStrength);
+        return Math.max(0, multipliedStrength);
     }
 
     modifyDominanceStrength(amount) {
