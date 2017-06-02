@@ -1,33 +1,26 @@
 const DrawCard = require('../../../drawcard.js');
 
 class WeDoNotSow extends DrawCard {
-    canPlay(player, card) {
-        if(player !== this.controller || this !== card) {
-            return false;
-        }
+    setupCardAbilities(ability) {
+        this.reaction({
+            max: ability.limit.perChallenge(1),
+            when: {
+                afterChallenge: (event, challenge) => (
+                    challenge.winner === this.controller &&
+                    challenge.isUnopposed()
+                )
+            },
+            target: {
+                activePromptTitle: 'Select attachment or location',
+                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && (card.getType() === 'attachment' || card.getType() === 'location'),
+                gameAction: 'discard'
+            },
+            handler: context => {
+                context.target.controller.discardCard(context.target);
 
-        if(!this.game.currentChallenge || this.game.currentChallenge.winner !== this.controller || !this.game.currentChallenge.isUnopposed()) {
-            return false;
-        }
-
-        return super.canPlay(player, card);
-    }
-
-    play(player) {
-        this.game.promptForSelect(player, {
-            activePromptTitle: 'Select attachment or location',
-            source: this,
-            cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && (card.getType() === 'attachment' || card.getType() === 'location'),
-            onSelect: (player, cards) => this.onCardSelected(player, cards)
+                this.game.addMessage('{0} uses {1} to discard {2} from play', context.player, this, context.target);
+            }
         });
-    }
-
-    onCardSelected(player, card) {
-        card.controller.discardCard(card);
-
-        this.game.addMessage('{0} uses {1} to discard {2} from play', player, this, card);
-
-        return true;
     }
 }
 

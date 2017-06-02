@@ -3,46 +3,31 @@ const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class ConsolidationOfPower extends DrawCard {
-    canPlay(player, card) {
-        if(player !== this.controller || this !== card) {
-            return false;
-        }
-
-        if(player.phase !== 'marshal') {
-            return false;
-        }
-
-        return super.canPlay(player, card);
-    }
-
-    play(player) {
-        this.game.promptForSelect(player, {
-            numCards: 99,
-            activePromptTitle: 'Select characters',
-            source: this,
-            maxStat: () => 4,
-            cardStat: card => card.getStrength(),
-            cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
-            gameAction: 'kneel',
-            onSelect: (player, cards) => this.onSelect(player, cards),
-            onCancel: (player) => this.cancelSelection(player)
-        });
-    }
-
-    onSelect(player, cards) {
-        this.cards = cards;
-
-        this.game.promptForSelect(player, {
-            activePromptTitle: 'Select character to gain power',
-            source: this,
-            cardCondition: card => {
-                return _.contains(this.cards, card);
+    setupCardAbilities() {
+        this.action({
+            title: 'Kneel 4 STR worth of characters',
+            phase: 'marshal',
+            target: {
+                numCards: 99,
+                activePromptTitle: 'Select characters',
+                maxStat: () => 4,
+                cardStat: card => card.getStrength(),
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
+                gameAction: 'kneel'
             },
-            onSelect: (player, card) => this.onPowerSelected(player, card),
-            onCancel: (player) => this.cancelSelection(player)
+            handler: context => {
+                this.cards = context.target;
+                this.game.promptForSelect(this.controller, {
+                    activePromptTitle: 'Select character to gain power',
+                    source: this,
+                    cardCondition: card => {
+                        return _.contains(this.cards, card);
+                    },
+                    onSelect: (player, card) => this.onPowerSelected(player, card),
+                    onCancel: (player) => this.cancelSelection(player)
+                });
+            }
         });
-
-        return true;
     }
 
     onPowerSelected(player, card) {

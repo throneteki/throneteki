@@ -1,35 +1,31 @@
 const DrawCard = require('../../../drawcard.js');
 
 class OlennasCunning extends DrawCard {
-    canPlay(player, card) {
-        if(this !== card || !this.game.currentChallenge || (this.game.currentChallenge.challengeType !== 'intrigue' && this.game.currentChallenge.challengeType !== 'power')) {
-            return false;
-        }
-
-        if(this.game.currentChallenge.winner !== this.controller) {
-            return false;
-        }
-
-        return super.canPlay(player, card);
-    }
-
-    play() {
-        var buttons = [
-            { text: 'Character', method: 'typeSelected', arg: 'character' },
-            { text: 'Location', method: 'typeSelected', arg: 'location' },
-            { text: 'Attachment', method: 'typeSelected', arg: 'attachment' },
-            { text: 'Event', method: 'typeSelected', arg: 'event' }
-        ];
-
-        this.game.promptWithMenu(this.game.currentChallenge.loser, this, {
-            activePrompt: {
-                menuTitle: 'Select a card type',
-                buttons: buttons
+    setupCardAbilities() {
+        this.reaction({
+            when: {
+                afterChallenge: (event, challenge) => (
+                    ['intrigue', 'power'].includes(challenge.challengeType) &&
+                    challenge.winner === this.controller
+                )
             },
-            source: this
-        });
+            handler: () => {
+                let buttons = [
+                    { text: 'Character', method: 'typeSelected', arg: 'character' },
+                    { text: 'Location', method: 'typeSelected', arg: 'location' },
+                    { text: 'Attachment', method: 'typeSelected', arg: 'attachment' },
+                    { text: 'Event', method: 'typeSelected', arg: 'event' }
+                ];
 
-        return true;
+                this.game.promptWithMenu(this.game.currentChallenge.loser, this, {
+                    activePrompt: {
+                        menuTitle: 'Select a card type',
+                        buttons: buttons
+                    },
+                    source: this
+                });
+            }
+        });
     }
 
     typeSelected(player, type) {
