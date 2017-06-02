@@ -11,6 +11,11 @@ class TheLastOfTheGiants extends DrawCard {
             handler: context => {
                 context.player.putIntoPlay(context.target);
 
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.addKeyword('Intimidate')
+                }));
+
                 this.atEndOfPhase(ability => ({
                     match: context.target,
                     effect: ability.effects.killIfStillInPlay(false)
