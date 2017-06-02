@@ -44,7 +44,7 @@ class RevealPlots extends BaseStep {
         }
 
         this.initiativeWinner = initiativeWinner;
-        this.game.raiseEvent('onInitiativeDetermined', initiativeWinner);
+        this.game.raiseMergedEvent('onInitiativeDetermined', { winner: initiativeWinner });
     }
 
     getInitiativeResult(sampleFunc = _.sample) {
