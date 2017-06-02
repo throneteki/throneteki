@@ -4,11 +4,11 @@ const BaseAbility = require('./baseability.js');
 const Costs = require('./costs.js');
 
 class TriggeredAbilityContext {
-    constructor(event, game, source) {
+    constructor(event, game, source, player) {
         this.event = event;
         this.game = game;
         this.source = source;
-        this.player = source.controller;
+        this.player = player;
     }
 
     cancel() {
@@ -35,6 +35,7 @@ class TriggeredAbility extends BaseAbility {
         this.limit = properties.limit;
         this.max = properties.max;
         this.when = properties.when;
+        this.playerFunc = properties.player || (() => this.card.controller);
         this.eventType = eventType;
         this.location = properties.location || DefaultLocationForType[card.getType()] || 'play area';
 
@@ -56,7 +57,7 @@ class TriggeredAbility extends BaseAbility {
     }
 
     createContext(event) {
-        return new TriggeredAbilityContext(event, this.game, this.card);
+        return new TriggeredAbilityContext(event, this.game, this.card, this.playerFunc());
     }
 
     isTriggeredByEvent(event) {

@@ -56,6 +56,25 @@ describe('CardReaction', function () {
                 expect(this.action.location).toBe('foo');
             });
         });
+
+        describe('player', function() {
+            beforeEach(function() {
+                this.controller = { controller: true };
+                this.cardSpy.controller = this.controller;
+            });
+
+            it('should default to a function returning the source card\'s controller', function() {
+                this.reaction = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
+                expect(this.reaction.playerFunc()).toBe(this.controller);
+            });
+
+            it('should allow a custom function to be specified', function() {
+                let foo = { foo: true };
+                this.properties.player = () => foo;
+                this.reaction = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
+                expect(this.reaction.playerFunc()).toBe(foo);
+            });
+        });
     });
 
     describe('eventHandler()', function() {
