@@ -4,10 +4,7 @@ class FuneralPyre extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => (
-                    event.card.controller === this.controller &&
-                    (event.card.hasTrait('Lord') || event.card.hasTrait('Lady'))
-                )
+                onCharacterKilled: event => event.card.hasTrait('Lord') || event.card.hasTrait('Lady')
             },
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
