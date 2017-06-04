@@ -26,7 +26,7 @@ class IntimidateKeyword extends BaseAbility {
     }
 
     canIntimidate(card, strength, challenge) {
-        return !card.kneeled && card.controller === challenge.loser && card.getStrength() <= strength;
+        return !card.kneeled && card.controller === challenge.loser && card.getType() === 'character' && card.getStrength() <= strength;
     }
 
     intimidate(game, sourceCard, targetCard) {
