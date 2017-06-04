@@ -21,7 +21,7 @@ class ThereAreNoMenLikeMe extends DrawCard {
                     ]
                 }));
 
-                this.game.addMessage('{0} uses {1} to keep {2} standing when participating in military challenges this phase.', context.player, this, context.target);
+                this.game.addMessage('{0} uses {1} to not kneel {2} when declared in military challenges this phase.', context.player, this, context.target);
             }
         });
     }
