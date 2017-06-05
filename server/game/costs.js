@@ -433,8 +433,8 @@ const Costs = {
             }
         };
     },
-/**
-     * Cost that requires kneeling a card that matches the passed condition
+    /**
+     * Cost that requires discarding a power from a card that matches the passed condition
      * predicate function.
      */
     discardPower: function(amount, condition) {
