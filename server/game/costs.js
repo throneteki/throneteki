@@ -34,6 +34,19 @@ const Costs = {
         };
     },
     /**
+     * Cost that will kneel the parent card the current card is attached to.
+     */
+    kneelParent: function() {
+        return {
+            canPay: function(context) {
+                return !!context.source.parent && !context.source.parent.kneeled;
+            },
+            pay: function(context) {
+                context.source.parent.controller.kneelCard(context.source.parent);
+            }
+        };
+    },
+    /**
      * Cost that will kneel the player's faction card.
      */
     kneelFactionCard: function() {
