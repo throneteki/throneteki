@@ -13,7 +13,7 @@ class CatapultOnTheWall extends DrawCard {
             ],
             target: {
                 activePromptTitle: 'Select character to kill',
-                cardCondition: card => this.game.currentChallenge.isAttacking(card)
+                cardCondition: card => this.game.currentChallenge.isAttacking(card) && card.getStrength() <= 4
             },
             handler: context => {
                 context.target.owner.killCharacter(context.target);
