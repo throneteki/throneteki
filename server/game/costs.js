@@ -433,6 +433,50 @@ const Costs = {
             }
         };
     },
+/**
+     * Cost that requires kneeling a card that matches the passed condition
+     * predicate function.
+     */
+    discardPower: function(amount, condition) {
+        var fullCondition = (card, context) => (
+            card.getPower() >= amount &&
+            card.location === 'play area' &&
+            card.controller === context.player &&
+            condition(card)
+        );
+        return {
+            canPay: function(context) {
+                return context.player.anyCardsInPlay(card => fullCondition(card, context));
+            },
+            resolve: function(context) {
+                var result = {
+                    resolved: false
+                };
+
+                context.game.promptForSelect(context.player, {
+                    cardCondition: card => fullCondition(card, context),
+                    activePromptTitle: 'Select card to discard ' + amount + ' power from',
+                    source: context.source,
+                    onSelect: (player, card) => {
+                        context.discardPowerCostCard = card;
+                        result.value = true;
+                        result.resolved = true;
+
+                        return true;
+                    },
+                    onCancel: () => {
+                        result.value = false;
+                        result.resolved = true;
+                    }
+                });
+
+                return result;
+            },
+            pay: function(context) {
+                context.discardPowerCostCard.modifyPower(-amount);
+            }
+        };
+    },
     /**
      * Cost that ensures that the player can still play a Limited card this
      * round.
