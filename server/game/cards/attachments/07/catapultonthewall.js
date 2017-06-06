@@ -9,7 +9,7 @@ class CatapultOnTheWall extends DrawCard {
             // This is not a nice interaction for users, but `ability.costs` would need to be updated with a different method to allow something like attachment.parent.kneel() (I think)
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.kneel(card => card === this.parent)
+                ability.costs.kneelParent()
             ],
             target: {
                 activePromptTitle: 'Select character to kill',
