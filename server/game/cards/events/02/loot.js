@@ -3,24 +3,24 @@ const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class Loot extends DrawCard {
-	setupCardAbilities(ability) {
-		this.reaction({
-			when: {
-				afterChallenge: (event, challenge) => (
-					this.controller === challenge.winner
-					&& challenge.isUnopposed()
-					&& this.opponentHasGold()
-					&& this.opponentHasDrawDeck())
-			},
-			handler: () => {
-				let opponent = this.game.getOtherPlayer(this.controller);
+    setupCardAbilities() {
+        this.reaction({
+            when: {
+                afterChallenge: (event, challenge) => (
+                    this.controller === challenge.winner
+                    && challenge.isUnopposed()
+                    && this.opponentHasGold()
+                    && this.opponentHasDrawDeck())
+            },
+            handler: () => {
+                let opponent = this.game.getOtherPlayer(this.controller);
 
-				if(!opponent) {
+                if(!opponent) {
                     return false;
                 }
 
                 let maxDiscard = Math.min(opponent.gold, opponent.drawDeck.size());
-                let buttons = _.map(_.range(1, maxDiscard+1), num => {
+                let buttons = _.map(_.range(1, maxDiscard + 1), num => {
                     return { text: num, method: 'numberSelected', arg: num };
                 });
 
@@ -31,41 +31,41 @@ class Loot extends DrawCard {
                     },
                     source: this
                 }); 
-			}
-		});
-	}
+            }
+        });
+    }
 
-	numberSelected(player, num) {
-		let opponent = this.game.getOtherPlayer(this.controller);
+    numberSelected(player, num) {
+        let opponent = this.game.getOtherPlayer(this.controller);
 
-		opponent.discardFromDraw(num);
-		opponent.gold -= num;
+        opponent.discardFromDraw(num);
+        opponent.gold -= num;
 
-		this.game.addMessage('{0} uses {1} to discard the top {2} cards from {3}\'s deck',
-			this.controller, this, num, opponent);
+        this.game.addMessage('{0} uses {1} to discard the top {2} cards from {3}\'s deck',
+            this.controller, this, num, opponent);
 
-		return true;
-	}
+        return true;
+    }
 
-	opponentHasGold() {
-		let opponent = this.game.getOtherPlayer(this.controller);
+    opponentHasGold() {
+        let opponent = this.game.getOtherPlayer(this.controller);
 
-		if(!opponent) {
+        if(!opponent) {
             return false;
         }
 
         return opponent.gold >= 1;
-	}
+    }
 
-	opponentHasDrawDeck() {
-		let opponent = this.game.getOtherPlayer(this.controller);
+    opponentHasDrawDeck() {
+        let opponent = this.game.getOtherPlayer(this.controller);
 
-		if(!opponent) {
+        if(!opponent) {
             return false;
         }
 
         return opponent.drawDeck.size() >= 1;
-	}
+    }
 }
 
 Loot.code = '02073';
