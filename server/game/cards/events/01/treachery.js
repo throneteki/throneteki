@@ -11,7 +11,7 @@ class Treachery extends DrawCard {
                         return false;
                     }
 
-                    if(!this.controller.anyCardsInPlay(card => card.isUnique() && card.isFaction('lannister'))) {
+                    if(!this.controller.anyCardsInPlay(card => card.isUnique() && card.isFaction('lannister') && card.getType() === 'character')) {
                         return false;
                     }
 
