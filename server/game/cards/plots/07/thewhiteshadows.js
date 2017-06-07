@@ -11,7 +11,7 @@ class TheWhiteShadows extends PlotCard {
                 this.game.addMessage('{0} uses {1} to put {2} into play under their control, blank', 
                                       this.controller, this, context.event.card);
 
-                this.untilEndOfPhase(ability => ({
+                this.atEndOfPhase(ability => ({
                     match: context.event.card,
                     effect: [
                         ability.effects.blank,
