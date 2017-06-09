@@ -358,12 +358,18 @@ const Costs = {
         };
     },
     /**
-     * Cost that requires discarding a card from hand.
+     * Cost that requires discarding a card from hand matching the passed
+     * condition predicate function.
      */
-    discardFromHand: function() {
+    discardFromHand: function(condition = () => true) {
+        var fullCondition = (card, context) => (
+            card.location === 'hand' &&
+            card.controller === context.player &&
+            condition(card)
+        );
         return {
             canPay: function(context) {
-                return context.player.hand.size() >= 1;
+                return context.player.allCards.any(card => fullCondition(card, context));
             },
             resolve: function(context) {
                 var result = {
@@ -371,7 +377,7 @@ const Costs = {
                 };
 
                 context.game.promptForSelect(context.player, {
-                    cardCondition: card => card.location === 'hand',
+                    cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select card to discard',
                     source: context.source,
                     onSelect: (player, card) => {
