@@ -19,7 +19,7 @@ class VaesDothrak extends DrawCard {
                         card.getCost(true) <= context.discardCostCard.getCost(true)),
                     onSelect: (p, card) => {
                         card.controller.discardCard(card);
-                        this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {2}', 
+                        this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {3} from play', 
                                               this.controller, this, context.discardCostCard, card);
                         
                         return true;
