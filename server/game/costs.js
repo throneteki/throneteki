@@ -361,7 +361,7 @@ const Costs = {
      * Cost that requires discarding a card from hand matching the passed
      * condition predicate function.
      */
-    discardFromHand: function(condition) {
+    discardFromHand: function(condition = () => true) {
         var fullCondition = (card, context) => (
             card.location === 'hand' &&
             card.controller === context.player &&

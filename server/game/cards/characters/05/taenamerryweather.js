@@ -6,7 +6,7 @@ class TaenaMerryweather extends DrawCard {
             when: {
                 onCardPlayed: (event, player, card) => card.getType() === 'event' && card.controller === this.controller
             },
-            cost: ability.costs.discardFromHand(() => true),
+            cost: ability.costs.discardFromHand(),
             handler: context => {
                 this.controller.drawCardsToHand(1);
                 this.game.addMessage('{0} uses {1} and discards {2} from their hand to draw 1 card', 

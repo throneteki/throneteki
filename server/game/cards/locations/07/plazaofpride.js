@@ -7,7 +7,7 @@ class PlazaOfPride extends DrawCard {
             title: 'Stand a character',
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.discardFromHand(() => true)
+                ability.costs.discardFromHand()
             ],
             handler: context => {
                 this.game.promptForSelect(this.controller, {
