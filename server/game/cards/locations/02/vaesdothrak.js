@@ -36,9 +36,9 @@ class VaesDothrak extends DrawCard {
 
         let attachmentsInPlay = this.game.findAnyCardsInPlay(card => card.getType() === 'attachment');
         let attachmentsInPlayCosts = _.map(attachmentsInPlay, card => card.getCost(true));
-        let attachmentsInPlayHighestCost = _.max(attachmentsInPlayCosts);
+        let attachmentsInPlayLowestCost = _.min(attachmentsInPlayCosts);
 
-        return attachmentsInHandHighestCost >= attachmentsInPlayHighestCost;
+        return attachmentsInHandHighestCost >= attachmentsInPlayLowestCost;
     }
 }
 
