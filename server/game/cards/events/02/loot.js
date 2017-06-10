@@ -39,7 +39,7 @@ class Loot extends DrawCard {
         let opponent = this.game.getOtherPlayer(this.controller);
 
         opponent.discardFromDraw(num);
-        opponent.gold -= num;
+        this.game.addGold(opponent, -num);
 
         this.game.addMessage('{0} uses {1} to discard the top {2} cards from {3}\'s deck',
             this.controller, this, num, opponent);
