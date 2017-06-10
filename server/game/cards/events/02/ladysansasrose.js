@@ -6,8 +6,8 @@ class LadySansasRose extends DrawCard {
             when: {
                 afterChallenge: (event, challenge) => (
                     challenge.winner === this.controller &&
-                    this.hasSingleParticipatingChar() &&
-                    this.hasParticipatingKnight())
+                    this.hasSingleParticipatingChar(challenge) &&
+                    this.hasParticipatingKnight(challenge))
             },
             max: ability.limit.perChallenge(1),
             handler: (context) => {
@@ -23,16 +23,16 @@ class LadySansasRose extends DrawCard {
         });
     }
 
-    hasSingleParticipatingChar() {
-        if(this.game.currentChallenge.attackingPlayer === this.controller) {
-            return this.game.currentChallenge.attackers.length === 1;
+    hasSingleParticipatingChar(challenge) {
+        if(challenge.attackingPlayer === this.controller) {
+            return challenge.attackers.length === 1;
         }
-        return this.game.currentChallenge.defenders.length === 1;
+        return challenge.defenders.length === 1;
     }
 
-    hasParticipatingKnight() {
+    hasParticipatingKnight(challenge) {
         let cards = this.controller.filterCardsInPlay(card => {
-            return (this.game.currentChallenge.isParticipating(card) &&
+            return (challenge.isParticipating(card) &&
                     card.hasTrait('Knight') && 
                     card.getType() === 'character');
         });
