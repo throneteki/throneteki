@@ -659,7 +659,7 @@ class Game extends EventEmitter {
             card.controller = newController;
 
             if(card.location !== 'play area') {
-                card.play(newController, false);
+                card.applyPersistentEffects();
                 card.moveTo('play area');
                 this.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: 'play' });
             }

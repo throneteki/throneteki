@@ -4,13 +4,11 @@ const BaseCard = require('./basecard.js');
 const SetupCardAction = require('./setupcardaction.js');
 const MarshalCardAction = require('./marshalcardaction.js');
 const AmbushCardAction = require('./ambushcardaction.js');
-const PlayCardAction = require('./playcardaction.js');
 
 const StandardPlayActions = [
     new SetupCardAction(),
     new MarshalCardAction(),
-    new AmbushCardAction(),
-    new PlayCardAction()
+    new AmbushCardAction()
 ];
 
 class DrawCard extends BaseCard {
@@ -298,12 +296,6 @@ class DrawCard extends BaseCard {
         return StandardPlayActions
             .concat(this.abilities.playActions)
             .concat(_.filter(this.abilities.actions, action => !action.allowMenu()));
-    }
-
-    play(player, isAmbush) {
-        this.wasAmbush = isAmbush;
-
-        super.play();
     }
 
     leavesPlay() {
