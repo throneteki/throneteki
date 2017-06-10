@@ -8,6 +8,9 @@ class UndergroundVault extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let opponent = this.game.getOtherPlayer(this.controller);
+                if(!opponent) {
+                    return;
+                }
                 let gold = opponent && opponent.activePlot.getIncome() >= 5 ? 2 : 1;
 
                 this.game.addGold(context.player, gold);
