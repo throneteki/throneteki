@@ -231,6 +231,10 @@ class ChallengeFlow extends BaseStep {
         this.challenge.finish();
     }
 
+    isComplete() {
+        return this.pipeline.length === 0;
+    }
+
     onCardClicked(player, card) {
         return this.pipeline.handleCardClicked(player, card);
     }
