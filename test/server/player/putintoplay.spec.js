@@ -15,7 +15,7 @@ describe('Player', function() {
         spyOn(this.player, 'isCharacterDead');
         spyOn(this.player, 'canResurrect');
 
-        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'getCost', 'isBestow', 'play', 'moveTo']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'getCost', 'isBestow', 'applyPersistentEffects', 'moveTo']);
         this.cardSpy.controller = this.player;
         this.cardSpy.owner = this.player;
         this.dupeCardSpy = jasmine.createSpyObj('dupecard', ['addDuplicate']);
@@ -143,8 +143,8 @@ describe('Player', function() {
                     expect(this.cardSpy.new).toBe(true);
                 });
 
-                it('should play the card as non-ambush', function() {
-                    expect(this.cardSpy.play).toHaveBeenCalledWith(this.player, false);
+                it('should apply effects for the card', function() {
+                    expect(this.cardSpy.applyPersistentEffects).toHaveBeenCalled();
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
@@ -174,8 +174,8 @@ describe('Player', function() {
                     expect(this.player.cardsInPlay).not.toContain(this.cardSpy);
                 });
 
-                it('should not play the card as an ambush', function() {
-                    expect(this.cardSpy.play).not.toHaveBeenCalled();
+                it('should not apply effects for the card', function() {
+                    expect(this.cardSpy.applyPersistentEffects).not.toHaveBeenCalled();
                 });
 
                 it('should not raise the onCardEntersPlay event', function() {
@@ -265,8 +265,8 @@ describe('Player', function() {
                     expect(this.cardSpy.new).toBe(true);
                 });
 
-                it('should play the card as non-ambush', function() {
-                    expect(this.cardSpy.play).toHaveBeenCalledWith(this.player, false);
+                it('should apply effects for the card', function() {
+                    expect(this.cardSpy.applyPersistentEffects).toHaveBeenCalledWith();
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
@@ -304,8 +304,8 @@ describe('Player', function() {
                     expect(this.cardSpy.new).toBe(true);
                 });
 
-                it('should not play the card', function() {
-                    expect(this.cardSpy.play).not.toHaveBeenCalled();
+                it('should not apply effects for the card', function() {
+                    expect(this.cardSpy.applyPersistentEffects).not.toHaveBeenCalled();
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
@@ -338,7 +338,11 @@ describe('Player', function() {
                 });
 
                 it('should play the card as an ambush', function() {
-                    expect(this.cardSpy.play).toHaveBeenCalledWith(this.player, true);
+                    expect(this.cardSpy.wasAmbush).toBe(true);
+                });
+
+                it('should apply effects for the card', function() {
+                    expect(this.cardSpy.applyPersistentEffects).toHaveBeenCalled();
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
@@ -356,8 +360,8 @@ describe('Player', function() {
                     expect(this.player.cardsInPlay).not.toContain(this.cardSpy);
                 });
 
-                it('should not play the card as an ambush', function() {
-                    expect(this.cardSpy.play).not.toHaveBeenCalled();
+                it('should not apply effects for the card', function() {
+                    expect(this.cardSpy.applyPersistentEffects).not.toHaveBeenCalled();
                 });
 
                 it('should not raise the onCardEntersPlay event', function() {

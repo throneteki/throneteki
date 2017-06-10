@@ -1,10 +1,6 @@
 const DrawCard = require('../../../drawcard.js');
 
 class HealingExpertise extends DrawCard {
-    canPlay() {
-        return false;
-    }
-
     setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,

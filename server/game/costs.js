@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const ChooseCost = require('./costs/choosecost.js');
 
 const Costs = {
     /**
@@ -13,6 +14,15 @@ const Costs = {
                 _.each(costs, cost => cost.pay(context));
             }
         };
+    },
+    /**
+     * Cost that allows the player to choose between multiple costs. The
+     * `choices` object should have string keys representing the button text
+     * that will be used to prompt the player, with the values being the cost
+     * associated with that choice.
+     */
+    choose: function(choices) {
+        return new ChooseCost(choices);
     },
     /**
      * Cost that will kneel the card that initiated the ability.
@@ -74,11 +84,7 @@ const Costs = {
             canPay: function(context) {
                 return context.player.anyCardsInPlay(card => fullCondition(card, context));
             },
-            resolve: function(context) {
-                var result = {
-                    resolved: false
-                };
-
+            resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select card to kneel',
@@ -118,11 +124,7 @@ const Costs = {
             canPay: function(context) {
                 return context.player.getNumberOfCardsInPlay(card => fullCondition(card, context)) >= number;
             },
-            resolve: function(context) {
-                var result = {
-                    resolved: false
-                };
-
+            resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select ' + number + ' cards to kneel',
@@ -182,11 +184,7 @@ const Costs = {
             canPay: function(context) {
                 return context.player.anyCardsInPlay(card => fullCondition(card, context));
             },
-            resolve: function(context) {
-                var result = {
-                    resolved: false
-                };
-
+            resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select card to sacrifice',
@@ -238,11 +236,7 @@ const Costs = {
             canPay: function(context) {
                 return context.player.anyCardsInPlay(card => fullCondition(card, context));
             },
-            resolve: function(context) {
-                var result = {
-                    resolved: false
-                };
-
+            resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select card to return to hand',
@@ -295,11 +289,7 @@ const Costs = {
                 let potentialCards = context.player.findCards(context.player.hand, card => fullCondition(card, context));
                 return _.size(potentialCards) >= number;
             },
-            resolve: function(context) {
-                var result = {
-                    resolved: false
-                };
-
+            resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select ' + number + ' cards to reveal',
@@ -358,20 +348,22 @@ const Costs = {
         };
     },
     /**
-     * Cost that requires discarding a card from hand.
+     * Cost that requires discarding a card from hand matching the passed
+     * condition predicate function.
      */
-    discardFromHand: function() {
+    discardFromHand: function(condition = () => true) {
+        var fullCondition = (card, context) => (
+            card.location === 'hand' &&
+            card.controller === context.player &&
+            condition(card)
+        );
         return {
             canPay: function(context) {
-                return context.player.hand.size() >= 1;
+                return context.player.allCards.any(card => fullCondition(card, context));
             },
-            resolve: function(context) {
-                var result = {
-                    resolved: false
-                };
-
+            resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
-                    cardCondition: card => card.location === 'hand',
+                    cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select card to discard',
                     source: context.source,
                     onSelect: (player, card) => {
@@ -461,11 +453,7 @@ const Costs = {
             canPay: function(context) {
                 return context.player.anyCardsInPlay(card => fullCondition(card, context));
             },
-            resolve: function(context) {
-                var result = {
-                    resolved: false
-                };
-
+            resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select card to discard ' + amount + ' power from',

@@ -20,7 +20,11 @@ class Duel extends PlotCard {
                     numCards: 2,
                     activePromptTitle: 'Select two characters',
                     source: this,
-                    cardCondition: card => !card.hasTrait('Army') && card.getType() === 'character' && card.getCost() >= 6,
+                    cardCondition: card => (
+                        card.location === 'play area' && 
+                        !card.hasTrait('Army') && 
+                        card.getType() === 'character' && 
+                        card.getCost() >= 6),
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
                 });
             }

@@ -487,9 +487,10 @@ class Player extends Spectator {
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
             card.controller = this;
+            card.wasAmbush = (playingType === 'ambush');
 
             if(!dupeCard && !isSetupAttachment) {
-                card.play(this, playingType === 'ambush');
+                card.applyPersistentEffects();
             }
 
             if(this.game.currentPhase !== 'setup' && card.isBestow()) {
@@ -551,7 +552,7 @@ class Player extends Spectator {
         }
 
         this.selectedPlot.flipFaceup();
-        this.selectedPlot.play();
+        this.selectedPlot.applyPersistentEffects();
         this.moveCard(this.selectedPlot, 'active plot');
 
         this.game.raiseMergedEvent('onCardEntersPlay', { card: this.activePlot, playingType: 'plot' });

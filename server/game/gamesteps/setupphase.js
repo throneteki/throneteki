@@ -22,7 +22,7 @@ class SetupPhase extends Phase {
         this.game.raiseEvent('onDecksPrepared');
         _.each(this.game.getPlayers(), player => {
             if(player.agenda) {
-                player.agenda.play();
+                player.agenda.applyPersistentEffects();
             }
         });
     }
