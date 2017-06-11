@@ -484,6 +484,8 @@ class Player extends Spectator {
             // as it will cause then to double their effects when attached later.
             let isSetupAttachment = playingType === 'setup' && card.getType() === 'attachment';
 
+            var originalLocation = card.location;
+
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
@@ -498,7 +500,7 @@ class Player extends Spectator {
                 this.game.queueStep(new BestowPrompt(this.game, this, card));
             }
 
-            this.game.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: playingType });
+            this.game.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
         }
     }
 
