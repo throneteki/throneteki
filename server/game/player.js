@@ -484,7 +484,7 @@ class Player extends Spectator {
             // as it will cause then to double their effects when attached later.
             let isSetupAttachment = playingType === 'setup' && card.getType() === 'attachment';
 
-            var originalLocation = card.location;
+            let originalLocation = card.location;
 
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
@@ -629,8 +629,9 @@ class Player extends Spectator {
         attachment.owner.removeCardFromPile(attachment);
 
         attachment.parent = card;
+        let originalLocation = attachment.location;
         attachment.moveTo('play area');
-        this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType });
+        this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
         card.attachments.push(attachment);
 
         attachment.attach(player, card);
