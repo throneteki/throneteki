@@ -85,13 +85,41 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        var title = 'Select defenders';
-        if(this.challenge.defendingPlayer.challengerLimit !== 0) {
-            title += ' (limit ' + this.challenge.defendingPlayer.challengerLimit + ')';
+        this.forcedDefenders = this.challenge.defendingPlayer.filterCardsInPlay(card => {
+            return card.getType() === 'character' &&
+                   card.canDeclareAsDefender(this.challenge.challengeType) &&
+                   card.challengeOptions.mustBeDeclaredAsDefender;
+        });
+
+        let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
+        let selectableLimit = defenderLimit;
+
+        if(!_.isEmpty(this.forcedDefenders)) {
+            if(this.forcedDefenders.length === defenderLimit) {
+                this.game.addMessage('{0} {1} automatically declared as {2}', 
+                                      this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
+                
+                this.chooseDefenders([]);
+                return;
+            }
+
+            if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
+                this.game.addMessage('{0} {1} automatically declared as {2}', 
+                                      this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
+
+                if(defenderLimit !== 0) {
+                    selectableLimit -= this.forcedDefenders.length;
+                }
+            }
+        }
+
+        let title = 'Select defenders';
+        if(defenderLimit !== 0) {
+            title += ' (limit ' + defenderLimit + ')';
         }
 
         this.game.promptForSelect(this.challenge.defendingPlayer, {
-            numCards: this.challenge.defendingPlayer.challengerLimit,
+            numCards: selectableLimit,
             multiSelect: true,
             activePromptTitle: title,
             waitingPromptTitle: 'Waiting for opponent to defend',
@@ -102,10 +130,30 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsDefender(card) {
-        return this.challenge.defendingPlayer === card.controller && card.canDeclareAsDefender(this.challenge.challengeType);
+        return this.challenge.defendingPlayer === card.controller && 
+               card.canDeclareAsDefender(this.challenge.challengeType) &&
+               this.mustBeDeclaredAsDefender(card);
+    }
+
+    mustBeDeclaredAsDefender(card) {
+        if(_.isEmpty(this.forcedDefenders)) {
+            return true;
+        }
+
+        let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
+        if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
+            return !this.forcedDefenders.includes(card);
+        }
+
+        return this.forcedDefenders.includes(card);
     }
 
     chooseDefenders(defenders) {
+        let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
+        if(this.forcedDefenders.length <= defenderLimit || defenderLimit === 0) {
+            defenders = defenders.concat(this.forcedDefenders);
+        }
+
         this.challenge.addDefenders(defenders);
 
         this.game.raiseEvent('onDefendersDeclared', this.challenge);
