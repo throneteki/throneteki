@@ -7,18 +7,30 @@ class FulfillMilitaryClaim extends BaseStep {
         super(game);
         this.player = player;
         this.claim = claim;
+        this.forcedClaim = [];
     }
 
     continue() {
-        var promptMessage = 'Select ' + this.claim + ' ' + (this.claim > 1 ? 'characters' : 'character') + ' to fulfill military claim';
+        this.forcedClaim = _.filter(this.player.mustChooseAsClaim, card => card.controller === this.player && card.location === 'play area');
+        
+        let claimToSelect = this.claim;
+        
+        if(this.forcedClaim.length < this.claim) {
+            claimToSelect = this.claim - this.forcedClaim.length;
+            this.game.addMessage('{0} {1} automatically chosen for claim',
+                                  this.forcedClaim, this.forcedClaim.length > 1 ? 'are' : 'is');
+        }
+
+        let promptMessage = 'Select ' + claimToSelect + ' ' + (claimToSelect > 1 ? 'characters' : 'character') + ' to fulfill military claim';
         this.game.promptForSelect(this.player, {
-            numCards: this.claim,
+            numCards: claimToSelect,
             activePromptTitle: promptMessage,
             waitingPromptTitle: 'Waiting for opponent to fulfill military claim',
             cardCondition: card =>
                 card.location === 'play area'
                 && card.controller === this.player
-                && card.getType() === 'character',
+                && card.getType() === 'character'
+                && this.mustChooseAsClaim(card),
             gameAction: 'kill',
             onSelect: (p, cards) => this.fulfillClaim(p, cards),
             onCancel: () => this.cancelClaim()
@@ -27,9 +39,25 @@ class FulfillMilitaryClaim extends BaseStep {
         return true;
     }
 
+    mustChooseAsClaim(card) {
+        if(_.isEmpty(this.forcedClaim)) {
+            return true;
+        }
+
+        if(this.forcedClaim.length < this.claim) {
+            return !this.forcedClaim.includes(card);
+        }
+
+        return this.forcedClaim.includes(card);
+    }
+
     fulfillClaim(p, cards) {
         if(!_.isArray(cards)) {
             cards = [cards];
+        }
+
+        if(this.forcedClaim.length < this.claim) {
+            cards = cards.concat(this.forcedClaim);
         }
 
         var charactersAvailable = this.player.getNumberOfCardsInPlay(c => c.getType() === 'character');
