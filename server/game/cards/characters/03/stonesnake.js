@@ -2,6 +2,8 @@ const _ = require('underscore');
 
 const DrawCard = require('../../../drawcard.js');
 
+const keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
+
 class Stonesnake extends DrawCard {
     setupCardAbilities() {
         this.reaction({
@@ -16,7 +18,6 @@ class Stonesnake extends DrawCard {
             },
             handler: () => {
                 let buttons = [];
-                let keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
 
                 _.each(keywords, keyword => {
                     if(this.bypassed.hasKeyword(keyword)) {
@@ -49,13 +50,7 @@ class Stonesnake extends DrawCard {
     }
 
     hasNoCopyableKeyword(card) {
-        if(!card.hasKeyword('insight') &&
-           !card.hasKeyword('intimidate') &&
-           !card.hasKeyword('pillage') &&
-           !card.hasKeyword('renown')) {
-            return true;
-        }
-        return false;
+        return !_.any(keywords, keyword => card.hasKeyword(keyword));
     }
 }
 
