@@ -723,6 +723,16 @@ const Effects = {
             isStateDependent: true
         };
     },
+    mustChooseAsClaim: function(card) {
+        return {
+            apply: function(player) {
+                player.mustChooseAsClaim.push(card);
+            },
+            unapply: function(player) {
+                player.mustChooseAsClaim = _.reject(player.mustChooseAsClaim, c => c === card);
+            }
+        };
+    },
     /**
      * Effects specifically for Old Wyk.
      */

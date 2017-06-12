@@ -42,6 +42,7 @@ class Player extends Spectator {
         this.cannotTriggerCardAbilities = false;
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
+        this.mustChooseAsClaim = [];
         this.promptedActionWindows = user.promptedActionWindows || {
             plot: false,
             draw: false,
