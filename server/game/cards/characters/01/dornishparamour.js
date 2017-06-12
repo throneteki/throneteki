@@ -6,24 +6,23 @@ class DornishParamour extends DrawCard {
             when: {
                 onAttackersDeclared: (event, challenge) => challenge.isAttacking(this)
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
-                        card.getType() === 'character' && !card.kneeled && !this.game.currentChallenge.isDefending(card),
-                    onSelect: (p, card) => this.onCardSelected(p, card) && card.hasIcon(this.game.currentChallenge.challengeType)
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => (
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.controller !== this.controller)
+            },
+            handler: context => {
+                this.untilEndOfChallenge(ability => ({
+                    match: context.target,
+                    effect: ability.effects.mustBeDeclaredAsDefender()
+                }));
+
+                this.game.addMessage('{0} uses {1} to force {2} to be declared as a defender this challenge, if able', 
+                                      this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.game.currentChallenge.addDefender(card);
-
-        this.game.addMessage('{0} uses {1} to force {2} to be declared as a defender', this.controller, this, card);
-
-        return true;
     }
 }
 

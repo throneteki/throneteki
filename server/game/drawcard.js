@@ -51,7 +51,8 @@ class DrawCard extends BaseCard {
             doesNotKneelAs: {
                 attacker: false,
                 defender: false
-            }
+            },
+            mustBeDeclaredAsDefender: false
         };
         this.stealthLimit = 1;
     }

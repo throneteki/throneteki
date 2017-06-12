@@ -86,6 +86,16 @@ const Effects = {
             }
         };
     },
+    mustBeDeclaredAsDefender: function() {
+        return {
+            apply: function(card) {
+                card.challengeOptions.mustBeDeclaredAsDefender = true;
+            },
+            unapply: function(card) {
+                card.challengeOptions.mustBeDeclaredAsDefender = false;
+            }
+        };
+    },
     modifyStrength: function(value) {
         return {
             apply: function(card) {
