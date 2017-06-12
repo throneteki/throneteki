@@ -7,6 +7,7 @@ class FulfillMilitaryClaim extends BaseStep {
         super(game);
         this.player = player;
         this.claim = claim;
+        this.forcedClaim = [];
     }
 
     continue() {
