@@ -16,9 +16,11 @@ class FulfillMilitaryClaim extends BaseStep {
         
         if(this.forcedClaim.length < this.claim) {
             claimToSelect = this.claim - this.forcedClaim.length;
+            this.game.addMessage('{0} {1} automatically chosen for claim',
+                                  this.forcedClaim, this.forcedClaim.length > 1 ? 'are' : 'is');
         }
 
-        var promptMessage = 'Select ' + claimToSelect + ' ' + (claimToSelect > 1 ? 'characters' : 'character') + ' to fulfill military claim';
+        let promptMessage = 'Select ' + claimToSelect + ' ' + (claimToSelect > 1 ? 'characters' : 'character') + ' to fulfill military claim';
         this.game.promptForSelect(this.player, {
             numCards: claimToSelect,
             activePromptTitle: promptMessage,
@@ -54,7 +56,7 @@ class FulfillMilitaryClaim extends BaseStep {
         }
 
         if(this.forcedClaim.length < this.claim) {
-            cards.push(this.forcedClaim);
+            cards = cards.concat(this.forcedClaim);
         }
 
         var charactersAvailable = this.player.getNumberOfCardsInPlay(c => c.getType() === 'character');
