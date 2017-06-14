@@ -6,10 +6,10 @@ class JonSnow extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.registerEvents(['onAttackersDeclared']);
+        this.registerEvents(['onChallengeInitiated']);
     }
 
-    onAttackersDeclared(event, challenge) {
+    onChallengeInitiated(event, challenge) {
         if(this.kneeled || this.controller !== challenge.attackingPlayer) {
             return;
         }

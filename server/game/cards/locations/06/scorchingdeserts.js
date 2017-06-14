@@ -4,7 +4,7 @@ class ScorchingDeserts extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onAttackersDeclared: () => true,
+                onChallengeInitiated: () => true,
                 onDefendersDeclared: () => true
             },
             cost: [
