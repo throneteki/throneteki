@@ -9,7 +9,7 @@ class Winterfell extends DrawCard {
 
         this.reaction({
             when: {
-                onChallenge: () => !this.kneeled
+                onChallengeInitiated: () => !this.kneeled
             },
             handler: () => {
                 this.controller.kneelCard(this);

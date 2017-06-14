@@ -10,7 +10,7 @@ class JonSnow extends DrawCard {
     }
 
     hasOtherAttackingNightsWatch() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) && 
+        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
                                                       card.isFaction('thenightswatch') &&
                                                       card.getType() === 'character' &&
                                                       card !== this);
