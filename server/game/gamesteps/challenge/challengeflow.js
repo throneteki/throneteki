@@ -77,6 +77,7 @@ class ChallengeFlow extends BaseStep {
     announceAttackerStrength() {
         // Explicitly recalculate strength in case an effect has modified character strength.
         this.challenge.calculateStrength();
+
         this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackerStrength);
     }
 
@@ -96,15 +97,15 @@ class ChallengeFlow extends BaseStep {
 
         if(!_.isEmpty(this.forcedDefenders)) {
             if(this.forcedDefenders.length === defenderLimit) {
-                this.game.addMessage('{0} {1} automatically declared as {2}', 
+                this.game.addMessage('{0} {1} automatically declared as {2}',
                                       this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
-                
+
                 this.chooseDefenders([]);
                 return;
             }
 
             if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
-                this.game.addMessage('{0} {1} automatically declared as {2}', 
+                this.game.addMessage('{0} {1} automatically declared as {2}',
                                       this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
 
                 if(defenderLimit !== 0) {
@@ -130,7 +131,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsDefender(card) {
-        return this.challenge.defendingPlayer === card.controller && 
+        return this.challenge.defendingPlayer === card.controller &&
                card.canDeclareAsDefender(this.challenge.challengeType) &&
                this.mustBeDeclaredAsDefender(card);
     }
