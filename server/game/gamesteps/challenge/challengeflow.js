@@ -67,17 +67,16 @@ class ChallengeFlow extends BaseStep {
 
     chooseStealthTargets() {
         this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()));
-
-        this.game.raiseEvent('onChallenge', this.challenge, () => {
-            this.challenge.initiateChallenge();
-            this.game.raiseEvent('onAttackersDeclared', this.challenge);
-        });
     }
 
     announceAttackerStrength() {
         // Explicitly recalculate strength in case an effect has modified character strength.
         this.challenge.calculateStrength();
-        this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackerStrength);
+
+        this.game.raiseMergedEvent('onChallengeInitiated', { challenge: this.challenge }, () => {
+            this.challenge.initiateChallenge();
+            this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackerStrength);
+        });
     }
 
     promptForDefenders() {

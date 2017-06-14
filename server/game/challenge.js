@@ -15,6 +15,7 @@ class Challenge {
         this.defenders = [];
         this.defenderStrength = 0;
         this.defenderStrengthModifier = 0;
+        this.stealthData = [],
         this.events = new EventRegistrar(game, this);
         this.registerEvents(['onCardLeftPlay']);
     }
@@ -104,6 +105,34 @@ class Challenge {
 
             return count;
         }, 0);
+    }
+
+    getAllStealthSources() {
+        return _.flatten(_.pluck(this.stealthData, 'source'));
+    }
+
+    getAllStealthTargets() {
+        return _.flatten(_.pluck(this.stealthData, 'targets'));
+    }
+
+    isStealthSource(card) {
+        return this.getAllStealthSources().includes(card);
+    }
+
+    isStealthTarget(card) {
+        return this.getAllStealthTargets().includes(card);
+    }
+
+    getStealthTargetFor(card) {
+        let stealthPair = _.where(this.stealthData, { source: card });
+
+        if(!stealthPair) {
+            return false;
+        }
+
+        let targets = _.flatten(_.pluck(stealthPair, 'targets'));
+
+        return targets.length > 1 ? targets : _.first(targets);
     }
 
     calculateStrength() {
