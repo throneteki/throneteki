@@ -480,6 +480,7 @@ const Effects = {
     cannotMarshal: cannotEffect('marshal'),
     cannotPlay: cannotEffect('play'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
+    cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),
     cannotBeKilled: cannotEffect('kill'),
     cannotGainChallengeBonus: function() {
