@@ -4,7 +4,8 @@ class SerDavosSeaworth extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onBypassedByStealth: (event, challenge, source, target) => source === this && !target.isLoyal()
+                onChallengeInitiated: event => event.challenge.isStealthSource(this) && 
+                                               !event.challenge.getStealthTargetFor(this).isLoyal()
             },
             choices: {
                 'Draw 1 card': () => {
