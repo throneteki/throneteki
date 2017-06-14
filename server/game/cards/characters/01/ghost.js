@@ -4,18 +4,14 @@ class Ghost extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onBypassedByStealth: (event, challenge, source, target) => {
-                    if(source !== this) {
-                        return false;
-                    }
-                    this.bypassed = target;
-                    return true;
-                }
+                onChallengeInitiated: event => event.challenge.isStealthSource(this)
             },
-            handler: () => {
-                this.game.addMessage('{0} uses {1} to make {2} unable to be declared as a defender', this.controller, this, this.bypassed);
+            handler: context => {
+                this.game.addMessage('{0} uses {1} to make {2} unable to be declared as a defender until the end of the phase', 
+                                      this.controller, this, context.event.challenge.getStealthTargetFor(this));
+
                 this.untilEndOfPhase(ability => ({
-                    match: this.bypassed,
+                    match: context.event.challenge.getStealthTargetFor(this),
                     effect: ability.effects.cannotBeDeclaredAsDefender()
                 }));
             }
