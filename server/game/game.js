@@ -660,8 +660,8 @@ class Game extends EventEmitter {
 
             if(card.location !== 'play area') {
                 let originalLocation = card.location;
-                card.applyPersistentEffects();
                 card.moveTo('play area');
+                card.applyPersistentEffects();
                 this.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: 'play', originalLocation: originalLocation });
             }
 

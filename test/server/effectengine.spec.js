@@ -15,7 +15,8 @@ describe('EffectEngine', function () {
         this.gameSpy.getPlayers.and.returnValue([]);
         this.gameSpy.allCards = _([this.handCard, this.playAreaCard, this.discardedCard]);
 
-        this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'reapply', 'removeTarget', 'cancel', 'setActive']);
+        this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
+        this.effectSpy.isInActiveLocation.and.returnValue(true);
         this.effectSpy.targetLocation = 'play area';
 
         this.engine = new EffectEngine(this.gameSpy);
@@ -90,126 +91,128 @@ describe('EffectEngine', function () {
         });
     });
 
-    describe('onCardEntersPlay()', function() {
+    describe('onCardMoved()', function() {
         beforeEach(function() {
             this.engine.effects = [this.effectSpy];
         });
 
-        describe('when an effect has persistent duration', function() {
-            beforeEach(function() {
-                this.effectSpy.duration = 'persistent';
-                this.cardEnteringPlay = { location: 'play area' };
-                this.engine.onCardEntersPlay({ card: this.cardEnteringPlay });
-            });
-
-            it('should add the card entering play as a target', function() {
-                expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.cardEnteringPlay]);
-            });
-        });
-
-        describe('when an effect has a non-persistent duration', function() {
-            beforeEach(function() {
-                this.effectSpy.duration = 'untilEndOfChallenge';
-                this.cardEnteringPlay = { location: 'play area' };
-                this.engine.onCardEntersPlay({ card: this.cardEnteringPlay });
-            });
-
-            it('should not add the card entering play as a target', function() {
-                expect(this.effectSpy.addTargets).not.toHaveBeenCalled();
-            });
-        });
-    });
-
-    describe('onCardLeftPlay()', function() {
-        beforeEach(function() {
-            this.engine.effects = [this.effectSpy];
-            this.cardLeavingPlay = { location: 'play area' };
-        });
-
-        describe('when an effect has persistent duration', function() {
-            beforeEach(function() {
-                this.effectSpy.duration = 'persistent';
-            });
-
-            describe('and the card leaving play is the source for an effect', function() {
+        describe('when coming into play', function() {
+            describe('when an effect has persistent duration', function() {
                 beforeEach(function() {
-                    this.effectSpy.source = this.cardLeavingPlay;
-                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
+                    this.effectSpy.duration = 'persistent';
+                    this.cardEnteringPlay = { location: 'play area' };
+                    this.engine.onCardMoved({ card: this.cardEnteringPlay, originalLocation: 'hand', newLocation: 'play area' });
                 });
 
-                it('should remove the target from all effects', function() {
-                    expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
-                });
-
-                it('should cancel the effect', function() {
-                    expect(this.effectSpy.cancel).toHaveBeenCalled();
-                });
-
-                it('should remove the effect from the list', function() {
-                    expect(this.engine.effects).not.toContain(this.effectSpy);
+                it('should add the card entering play as a target', function() {
+                    expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.cardEnteringPlay]);
                 });
             });
 
-            describe('and the card leaving play is not the source for an effect', function() {
+            describe('when an effect has a non-persistent duration', function() {
                 beforeEach(function() {
-                    this.effectSpy.source = {};
-                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
+                    this.effectSpy.duration = 'untilEndOfChallenge';
+                    this.cardEnteringPlay = { location: 'play area' };
+                    this.engine.onCardMoved({ card: this.cardEnteringPlay, originalLocation: 'hand', newLocation: 'play area' });
                 });
 
-                it('should remove the target from all effects', function() {
-                    expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
-                });
-
-                it('should not cancel the effect', function() {
-                    expect(this.effectSpy.cancel).not.toHaveBeenCalled();
-                });
-
-                it('should not remove the effect from the list', function() {
-                    expect(this.engine.effects).toContain(this.effectSpy);
+                it('should not add the card entering play as a target', function() {
+                    expect(this.effectSpy.addTargets).not.toHaveBeenCalled();
                 });
             });
         });
 
-        describe('when an effect has a non-persistent duration', function() {
+        describe('when leaving play', function () {
             beforeEach(function() {
-                this.effectSpy.duration = 'untilEndOfChallenge';
+                this.cardLeavingPlay = { location: 'play area' };
             });
 
-            describe('and the card leaving play is the source for an effect', function() {
+            describe('when an effect has persistent duration', function() {
                 beforeEach(function() {
-                    this.effectSpy.source = this.cardLeavingPlay;
-                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
+                    this.effectSpy.duration = 'persistent';
                 });
 
-                it('should remove the target from all effects', function() {
-                    expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
+                describe('and the card leaving play is the source for an effect', function() {
+                    beforeEach(function() {
+                        this.effectSpy.source = this.cardLeavingPlay;
+                        this.effectSpy.location = 'play area';
+                        this.engine.onCardMoved({ card: this.cardLeavingPlay, originalLocation: 'play area', newLocation: 'discard pile' });
+                    });
+
+                    it('should remove the target from all effects', function() {
+                        expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
+                    });
+
+                    it('should cancel the effect', function() {
+                        expect(this.effectSpy.cancel).toHaveBeenCalled();
+                    });
+
+                    it('should remove the effect from the list', function() {
+                        expect(this.engine.effects).not.toContain(this.effectSpy);
+                    });
                 });
 
-                it('should not cancel the effect', function() {
-                    expect(this.effectSpy.cancel).not.toHaveBeenCalled();
-                });
+                describe('and the card leaving play is not the source for an effect', function() {
+                    beforeEach(function() {
+                        this.effectSpy.source = {};
+                        this.engine.onCardMoved({ card: this.cardLeavingPlay, originalLocation: 'play area', newLocation: 'discard pile' });
+                    });
 
-                it('should not remove the effect from the list', function() {
-                    expect(this.engine.effects).toContain(this.effectSpy);
+                    it('should remove the target from all effects', function() {
+                        expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
+                    });
+
+                    it('should not cancel the effect', function() {
+                        expect(this.effectSpy.cancel).not.toHaveBeenCalled();
+                    });
+
+                    it('should not remove the effect from the list', function() {
+                        expect(this.engine.effects).toContain(this.effectSpy);
+                    });
                 });
             });
 
-            describe('and the card leaving play is not the source for an effect', function() {
+            describe('when an effect has a non-persistent duration', function() {
                 beforeEach(function() {
-                    this.effectSpy.source = {};
-                    this.engine.onCardLeftPlay({ card: this.cardLeavingPlay });
+                    this.effectSpy.duration = 'untilEndOfChallenge';
                 });
 
-                it('should remove the target from all effects', function() {
-                    expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
+                describe('and the card leaving play is the source for an effect', function() {
+                    beforeEach(function() {
+                        this.effectSpy.source = this.cardLeavingPlay;
+                        this.engine.onCardMoved({ card: this.cardLeavingPlay, originalLocation: 'play area', newLocation: 'discard pile' });
+                    });
+
+                    it('should remove the target from all effects', function() {
+                        expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
+                    });
+
+                    it('should not cancel the effect', function() {
+                        expect(this.effectSpy.cancel).not.toHaveBeenCalled();
+                    });
+
+                    it('should not remove the effect from the list', function() {
+                        expect(this.engine.effects).toContain(this.effectSpy);
+                    });
                 });
 
-                it('should not cancel the effect', function() {
-                    expect(this.effectSpy.cancel).not.toHaveBeenCalled();
-                });
+                describe('and the card leaving play is not the source for an effect', function() {
+                    beforeEach(function() {
+                        this.effectSpy.source = {};
+                        this.engine.onCardMoved({ card: this.cardLeavingPlay, originalLocation: 'play area', newLocation: 'discard pile' });
+                    });
 
-                it('should not remove the effect from the list', function() {
-                    expect(this.engine.effects).toContain(this.effectSpy);
+                    it('should remove the target from all effects', function() {
+                        expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
+                    });
+
+                    it('should not cancel the effect', function() {
+                        expect(this.effectSpy.cancel).not.toHaveBeenCalled();
+                    });
+
+                    it('should not remove the effect from the list', function() {
+                        expect(this.engine.effects).toContain(this.effectSpy);
+                    });
                 });
             });
         });
@@ -432,7 +435,8 @@ describe('EffectEngine', function () {
             this.effectSpy.until = {
                 foo: jasmine.createSpy('listener')
             };
-            this.effectSpy2 = jasmine.createSpyObj('effect', ['addTargets', 'reapply', 'removeTarget', 'cancel', 'setActive']);
+            this.effectSpy2 = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
+            this.effectSpy2.isInActiveLocation.and.returnValue(true);
             this.effectSpy2.targetLocation = 'play area';
             this.effectSpy2.duration = 'custom';
             this.effectSpy2.until = { foo: () => true };
