@@ -9,7 +9,8 @@ class JonSnow extends DrawCard {
         this.registerEvents(['onChallengeInitiated']);
     }
 
-    onChallengeInitiated(event, challenge) {
+    onChallengeInitiated(event) {
+        let challenge = event.challenge;
         if(this.kneeled || this.controller !== challenge.attackingPlayer) {
             return;
         }
