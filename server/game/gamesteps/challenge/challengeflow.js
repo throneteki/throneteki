@@ -69,6 +69,7 @@ class ChallengeFlow extends BaseStep {
         this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()));
 
         this.challenge.initiateChallenge();
+        this.game.raiseMergedEvent('onChallengeRecalculate', {});
     }
 
     announceAttackerStrength() {
