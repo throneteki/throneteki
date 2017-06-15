@@ -9,7 +9,7 @@ class StannisBaratheon extends DrawCard {
             match: (card) => this.game.currentChallenge.isParticipating(card) && !card.hasTrait('King'),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1),
-            recalculateWhen: ['onChallengeInitiated', 'onDefendersDeclared']
+            recalculateWhen: ['onChallengeRecalculate', 'onDefendersDeclared']
         });
 
         this.reaction({
