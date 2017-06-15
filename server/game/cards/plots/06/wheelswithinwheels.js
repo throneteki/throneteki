@@ -9,7 +9,7 @@ class WheelsWithinWheels extends PlotCard {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
                     numToSelect: 10,
-                    activePromptTitle: 'Select any number of cards to reveal',
+                    activePromptTitle: 'Select any number of events to reveal',
                     cardType: 'event',
                     onSelect: (player, card) => this.cardsToReveal(player, card),
                     onCancel: player => this.doneSelecting(player),
@@ -22,7 +22,7 @@ class WheelsWithinWheels extends PlotCard {
     cardsToReveal(player, card) {
         this.cards = this.cards || [];
         this.cards.push(card);
-        player.moveCard(card, 'discard pile');
+        player.removeCardFromPile(card);
         
         return true;
     }
@@ -46,7 +46,7 @@ class WheelsWithinWheels extends PlotCard {
 
         this.game.addMessage('{0} uses {1} to reveal {2}', player, this, this.cards);
 
-        var buttons = _.map(this.cards, (card, i) => {
+        let buttons = _.map(this.cards, (card, i) => {
             return { card: card, method: 'resolve', arg: i };
         });
 
@@ -66,15 +66,12 @@ class WheelsWithinWheels extends PlotCard {
         player.moveCard(cardToHand, 'hand');
         this.cards.splice(index, 1);
 
-        if(this.cards.length === 1) {
-            this.game.addMessage('{0} uses {1} to add {2} to their hand, {3} is placed in their discard pile', 
-                                  player, this, cardToHand, this.cards);
+        _.each(this.cards, card => {
+            player.moveCard(card, 'discard pile');
+        });
 
-            return true;
-        }
-
-        this.game.addMessage('{0} uses {1} to add {2} to their hand, {3} are placed in their discard pile', 
-                              player, this, cardToHand, this.cards);
+        this.game.addMessage('{0} uses {1} to add {2} to their hand, {3} {4} placed in their discard pile', 
+                              player, this, cardToHand, this.cards, this.cards.length > 1 ? 'are' : 'is');
 
         return true;
     }
