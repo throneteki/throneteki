@@ -66,6 +66,21 @@ const Effects = {
             }
         };
     },
+    consideredToBeAttacking: function() {
+        return {
+            apply: function(card, context) {
+                let challenge = context.game.currentChallenge;
+                challenge.addAttacker(card, false);
+            },
+            unapply: function(card, context) {
+                let challenge = context.game.currentChallenge;
+
+                if(challenge) {
+                    challenge.removeFromChallenge(card);
+                }
+            }
+        };
+    },
     canBeDeclaredWithoutIcon: function() {
         return {
             apply: function(card) {
