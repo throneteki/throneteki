@@ -27,8 +27,10 @@ class Event {
             return;
         }
 
-        card.markAsSaved();
-        this.cards = _.reject(this.cards, c => c === card);
+        card.game.raiseMergedEvent('onCharacterSaved', { card: card }, () => {
+            card.markAsSaved();
+            this.cards = _.reject(this.cards, c => c === card);
+        });
 
         if(_.isEmpty(this.cards)) {
             this.cancel();
