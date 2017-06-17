@@ -34,11 +34,13 @@ class StreetOfSilk extends DrawCard {
 
     cardSelected(player, card) {
         player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to reveal {2} and add it to their hand', player, this, card);
+        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
+                             player, this, card);
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} does not use {1} to add a card to their hand', player, this);
+        this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
+                             player, this);
     }
 }
 
