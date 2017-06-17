@@ -7,26 +7,27 @@ class CastleBlackMason extends DrawCard {
             cost: ability.costs.kneelMultiple(2, card => card.getType() === 'character' && card.hasTrait('Builder')),
             limit: ability.limit.perRound(2),
             handler: context => {
-                this.game.addMessage('{0} uses {1} to kneel {2} to search the top 10 cards of their deck for a location or attachment', this.controller, this, context.kneelingCostCards);
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
                     activePromptTitle: 'Select a card to add to your hand',
                     cardType: ['attachment', 'location'],
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
+                    onSelect: (player, card) => this.cardSelected(player, card, context.kneelingCostCards),
+                    onCancel: player => this.doneSelecting(player, context.kneelingCostCards),
                     source: this
                 });
             }
         });
     }
 
-    cardSelected(player, card) {
+    cardSelected(player, card, kneeledCards) {
         player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to reveal {2} and add it to their hand', player, this, card);
+        this.game.addMessage('{0} uses {1} to kneel {2}, search their deck, and add {3} to their hand',
+                             player, this, kneeledCards, card);
     }
 
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not use {1} to add a card to their hand', player, this);
+    doneSelecting(player, kneeledCards) {
+        this.game.addMessage('{0} uses {1} to kneel {2} and search their deck, but does not add any card to their hand',
+                             player, this, kneeledCards);
     }
 }
 
