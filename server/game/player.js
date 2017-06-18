@@ -620,21 +620,23 @@ class Player extends Spectator {
     }
 
     attach(player, attachment, cardId, playingType) {
-        var card = this.findCardInPlayByUuid(cardId);
+        let card = this.findCardInPlayByUuid(cardId);
 
         if(!card || !attachment) {
             return;
         }
 
-        attachment.owner.removeCardFromPile(attachment);
-
-        attachment.parent = card;
         let originalLocation = attachment.location;
-        attachment.moveTo('play area');
-        this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
-        card.attachments.push(attachment);
 
+        attachment.owner.removeCardFromPile(attachment);
+        attachment.parent = card;
+        attachment.moveTo('play area');
+        card.attachments.push(attachment);
         attachment.attach(player, card);
+
+        if(originalLocation !== 'play area') {
+            this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
+        }
     }
 
     showDrawDeck() {
