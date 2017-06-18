@@ -15,7 +15,7 @@ class FulfillMilitaryClaim extends BaseStep {
         
         let claimToSelect = this.claim;
         
-        if(this.forcedClaim.length < this.claim) {
+        if(this.forcedClaim.length >= 1 && this.forcedClaim.length < this.claim) {
             claimToSelect = this.claim - this.forcedClaim.length;
             this.game.addMessage('{0} {1} automatically chosen for claim',
                                   this.forcedClaim, this.forcedClaim.length > 1 ? 'are' : 'is');
