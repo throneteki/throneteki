@@ -11,6 +11,7 @@ class PlotCard extends BaseCard {
         this.goldModifier = 0;
         this.initiativeModifier = 0;
         this.claimModifier = 0;
+        this.claimSet = undefined;
     }
 
     whenRevealed(properties) {
@@ -47,8 +48,8 @@ class PlotCard extends BaseCard {
         return baseValue + this.reserveModifier;
     }
 
-    getClaim() {
-        return this.cardData.claim + this.claimModifier;
+    getClaim() {        
+        return _.isNumber(this.claimSet) ? this.claimSet : this.cardData.claim + this.claimModifier;
     }
 
     canChallenge() {

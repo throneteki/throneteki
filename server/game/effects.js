@@ -181,6 +181,16 @@ const Effects = {
             }
         };
     },
+    setClaim: function(value) {
+        return {
+            apply: function(card) {
+                card.claimSet = value;
+            },
+            unapply: function(card) {
+                card.claimSet = undefined;
+            }
+        };
+    },
     preventPlotModifier: function(modifier) {
         return {
             apply: function(card) {
