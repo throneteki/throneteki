@@ -403,12 +403,12 @@ class Game extends EventEmitter {
     }
 
     changeStat(playerName, stat, value) {
-        var player = this.getPlayerByName(playerName);
+        let player = this.getPlayerByName(playerName);
         if(!player) {
             return;
         }
 
-        var target = player;
+        let target = player;
 
         if(stat === 'power') {
             target = player.faction;
@@ -418,6 +418,19 @@ class Game extends EventEmitter {
             }
 
             target = player.activePlot.cardData;
+        }
+
+        if(stat === 'claim' && _.isNumber(player.activePlot.claimSet)) {
+            player.activePlot.claimSet += value;
+
+            this.raiseEvent('onStatChanged', player, stat, value);
+
+            if(player.activePlot.claimSet < 0) {
+                player.activePlot.claimSet = 0;
+            } else {
+                this.addMessage('{0} changes the set claim value to be {1} ({2})', player, player.activePlot.claimSet, (value > 0 ? '+' : '') + value);
+            }
+            return;
         }
 
         target[stat] += value;
