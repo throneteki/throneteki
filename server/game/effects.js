@@ -336,7 +336,8 @@ const Effects = {
         unapply: function() {
             // nothing happens when this effect expires.
         },
-        isStateDependent: true
+        isStateDependent: true,
+        order: 1000
     },
     blank: {
         apply: function(card) {
