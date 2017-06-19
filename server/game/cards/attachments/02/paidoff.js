@@ -8,10 +8,15 @@ class PaidOff extends DrawCard {
             },
             handler: () => {
                 this.parent.controller.kneelCard(this.parent);
-
                 this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, this.parent);
 
-                this.game.promptWithMenu(this.parent.controller, this, {
+                let player = this.parent.controller;
+                if(player.gold < 1) {
+                    this.cancel(player);
+                    return false;
+                }
+
+                this.game.promptWithMenu(player, this, {
                     activePrompt: {
                         menuTitle: 'Pay 1 gold to stand ' + this.parent.name,
                         buttons: [
@@ -34,13 +39,15 @@ class PaidOff extends DrawCard {
 
         player.standCard(this.parent);
 
-        this.game.addMessage('{0} pays 1 gold to stand {1}', player, this.parent);
+        this.game.addMessage('{0} pays 1 gold for {1} to stand {2}',
+                             player, this, this.parent);
 
         return true;
     }
 
     cancel(player) {
-        this.game.addMessage('{0} does not pay 1 gold and {1} remains kneeled', player, this.parent);
+        this.game.addMessage('{0} does not pay 1 gold for {1} so {2} remains kneeled',
+                             player, this, this.parent);
 
         return true;
     }
