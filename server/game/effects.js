@@ -40,7 +40,8 @@ const Effects = {
             unapply: function(card, context) {
                 _.each(effects, effect => effect.unapply(card, context));
             },
-            isStateDependent: (stateDependentEffects.length !== 0)
+            isStateDependent: (stateDependentEffects.length !== 0),
+            order: _.max(_.pluck(effects, 'order'))
         };
     },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),

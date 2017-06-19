@@ -18,6 +18,7 @@ class EffectEngine {
         }
 
         this.effects.push(effect);
+        this.effects = _.sortBy(this.effects, effect => effect.order);
         effect.addTargets(this.getTargets());
         this.registerRecalculateEvents(effect.recalculateWhen);
         if(effect.duration === 'custom') {
