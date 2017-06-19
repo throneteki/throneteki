@@ -555,8 +555,8 @@ class Player extends Spectator {
         }
 
         this.selectedPlot.flipFaceup();
-        this.selectedPlot.applyPersistentEffects();
         this.moveCard(this.selectedPlot, 'active plot');
+        this.selectedPlot.applyPersistentEffects();
 
         this.game.raiseMergedEvent('onCardEntersPlay', { card: this.activePlot, playingType: 'plot' });
 
@@ -632,7 +632,8 @@ class Player extends Spectator {
         attachment.parent = card;
         attachment.moveTo('play area');
         card.attachments.push(attachment);
-        attachment.attach(player, card);
+
+        attachment.applyPersistentEffects();
 
         if(originalLocation !== 'play area') {
             this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });

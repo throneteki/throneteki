@@ -25,6 +25,9 @@ class SetupPhase extends Phase {
                 player.agenda.applyPersistentEffects();
             }
         });
+        this.game.allCards.each(card => {
+            card.applyAnyLocationPersistentEffects();
+        });
     }
 
     startGame() {
