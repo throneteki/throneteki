@@ -35,27 +35,27 @@ class Challenge {
         this.attackingPlayer.initiateChallenge(this.challengeType);
     }
 
-    addAttackers(attackers) {
+    addAttackers(attackers, kneel = true) {
         this.attackers = this.attackers.concat(attackers);
-        this.markAsParticipating(attackers, 'attacker');
+        this.markAsParticipating(attackers, 'attacker', kneel);
         this.calculateStrength();
     }
 
-    addAttacker(attacker) {
+    addAttacker(attacker, kneel = true) {
         this.attackers.push(attacker);
-        this.markAsParticipating([attacker], 'attacker');
+        this.markAsParticipating([attacker], 'attacker', kneel);
         this.calculateStrength();
     }
 
-    addDefenders(defenders) {
+    addDefenders(defenders, kneel = true) {
         this.defenders = this.defenders.concat(defenders);
-        this.markAsParticipating(defenders, 'defender');
+        this.markAsParticipating(defenders, 'defender', kneel);
         this.calculateStrength();
     }
 
-    addDefender(defender) {
+    addDefender(defender, kneel = true) {
         this.defenders.push(defender);
-        this.markAsParticipating([defender], 'defender');
+        this.markAsParticipating([defender], 'defender', kneel);
         this.calculateStrength();
     }
 
@@ -68,9 +68,9 @@ class Challenge {
         this.calculateStrength();
     }
 
-    markAsParticipating(cards, participantType) {
+    markAsParticipating(cards, participantType, kneel) {
         _.each(cards, card => {
-            if(!card.kneeled && !card.challengeOptions.doesNotKneelAs[participantType]) {
+            if(kneel && !card.kneeled && !card.challengeOptions.doesNotKneelAs[participantType]) {
                 card.controller.kneelCard(card);
             }
 

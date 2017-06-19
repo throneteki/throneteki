@@ -17,6 +17,11 @@ class IntimidateKeyword extends BaseAbility {
     executeHandler(context) {
         let {game, challenge, source} = context;
         let strength = challenge.strengthDifference;
+
+        if(!challenge.loser.anyCardsInPlay(card => this.canIntimidate(card, strength, challenge))) {
+            return false;
+        }
+
         game.promptForSelect(challenge.winner, {
             activePromptTitle: 'Choose and kneel a character with ' + strength + ' strength or less',
             cardCondition: card => this.canIntimidate(card, strength, challenge),
@@ -26,7 +31,11 @@ class IntimidateKeyword extends BaseAbility {
     }
 
     canIntimidate(card, strength, challenge) {
-        return !card.kneeled && card.controller === challenge.loser && card.getType() === 'character' && card.getStrength() <= strength;
+        return !card.kneeled
+            && card.controller === challenge.loser
+            && card.location === 'play area'
+            && card.getType() === 'character'
+            && card.getStrength() <= strength;
     }
 
     intimidate(game, sourceCard, targetCard) {

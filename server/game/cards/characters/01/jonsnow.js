@@ -1,29 +1,18 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../../drawcard.js');
 
 class JonSnow extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onAttackersDeclared']);
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => !this.kneeled && this.game.currentChallenge && this.hasAttackingNightsWatch(),
+            match: this,
+            effect: ability.effects.consideredToBeAttacking()
+        });
     }
 
-    onAttackersDeclared(event, challenge) {
-        if(this.kneeled || this.controller !== challenge.attackingPlayer) {
-            return;
-        }
-
-        if(!_.any(challenge.attackers, card => {
-            return card.isFaction('thenightswatch');
-        })) {
-            return;
-        }
-
-        challenge.addAttacker(this);
-        this.controller.standCard(this);
-
-        this.game.addMessage('{0} uses {1} to add {1} to the challenge as an attacker', this.controller, this);
+    hasAttackingNightsWatch() {
+        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) && 
+                                              card.isFaction('thenightswatch') &&
+                                              card.getType() === 'character');
     }
 }
 

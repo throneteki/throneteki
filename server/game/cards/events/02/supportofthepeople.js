@@ -24,11 +24,13 @@ class SupportOfThePeople extends DrawCard {
 
     cardSelected(player, card) {
         player.putIntoPlay(card);
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
+        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play',
+                             player, this, card);
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} does not use {1} to search for a card', player, this);
+        this.game.addMessage('{0} uses {1} to search their deck but does not put any card into play',
+                             player, this);
     }
 }
 

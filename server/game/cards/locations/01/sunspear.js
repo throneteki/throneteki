@@ -9,7 +9,8 @@ class Sunspear extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 let challengeType = this.game.currentChallenge.challengeType;
-                this.game.addMessage('{0} uses {1} to raise the claim on their plot card for {1} challenges by 1', this.controller, this, challengeType);
+                this.game.addMessage('{0} kneels {1} to raise the claim on their plot card during {2} challenges by 1 until the end of the phase', 
+                                      this.controller, this, challengeType);
                 this.untilEndOfPhase(ability => ({
                     condition: () => (
                         this.game.currentChallenge &&
