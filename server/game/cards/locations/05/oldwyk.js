@@ -7,29 +7,41 @@ class OldWyk extends DrawCard {
         this.reaction({
             when: {
                 onChallenge: (event, challenge) =>
-                    challenge.attackingPlayer === this.controller
-                    && challenge.challengeType === 'power'
+                    challenge.attackingPlayer === this.controller &&
+                    challenge.challengeType === 'power' &&
+                    this.anyDrownedGodInDeadPile()
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                var card = _.last(this.controller.deadPile.filter(c => c.hasTrait('Drowned God')));
-
-                if(!card) {
-                    this.game.addMessage('{0} finds no character in their dead pile to put into play with {1}', this.controller, this);
-                    return;
-                }
+                let card = _.last(this.controller.deadPile.filter(c => c.hasTrait('Drowned God')));
 
                 this.controller.putIntoPlay(card);
                 this.game.currentChallenge.addAttacker(card);
 
-                this.game.addMessage('{0} uses {1} to put into play {2} as an attacker from their dead pile', this.controller, this, card);
+                this.game.addMessage('{0} kneels {1} to put {2} into play from their dead pile as an attacker', 
+                                      this.controller, this, card);
 
-                this.untilEndOfChallenge(ability => ({
-                    match: card,
-                    effect: ability.effects.returnToHandOrDeckBottom()
-                }));
+                this.game.once('afterChallenge:interrupt', (event, challenge) => this.resolveAfterChallenge(challenge, card));
             }
         });
+    }
+
+    resolveAfterChallenge(challenge, card) {
+        if(challenge.winner === this.controller && challenge.strengthDifference >= 5) {
+            this.controller.returnCardToHand(card);
+            this.game.addMessage('{0} is returned to {1}\'s hand because of {2}',
+                                  card, this.controller, this);
+
+            return;
+        }
+
+        this.controller.moveCard(card, 'draw deck', { bottom: true });
+        this.game.addMessage('{0} is placed on the bottom of {1}\'s deck because of {2}',
+                              card, this.controller, this);
+    }
+
+    anyDrownedGodInDeadPile() {
+        return this.controller.allCards.any(card => card.location === 'dead pile' && card.hasTrait('Drowned God'));
     }
 }
 
