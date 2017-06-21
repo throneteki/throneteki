@@ -8,12 +8,16 @@ class About extends React.Component {
             <div>
                 <a className='btn btn-danger btn-lg pull-right' href='https://github.com/cryogen/throneteki/issues'>Report Problems</a>
                 <h2>Help and Information</h2>
+
                 <h3>What is this?</h3>
+
                 <p>This site was setup to allow you to play A Game Of Thrones 2.0, an LCG from Fantasy Flight Games (FFG) in your browser.</p>
+
                 <h3>That's pretty cool!  How do I play?</h3>
                 <p>That's kind of you to say.  Start by registering for an account or logging in if you already have one.  You must be logged in to play games or spectate on them.
                 Once you're logged in, go to the <Link href='/decks'>decks page.</Link>  You can create a deck by going to <a href='http://www.thronesdb.com' target='_blank'>Thrones DB</a>,
                  clicking on the button to download your deck to a TXT file and copy/pasting it into the deck builder.  Then either join or create a game and you're good to go.</p>
+
 
                 <h3>Everyone has a shiny avatar, how do I get one?</h3>
                 <p>This is handled by the good people at <a href='http://gravatar.com' target='_blank'>Gravatar</a>.  Sign up there with the same email address you did there and it should appear on the site after a short while.
@@ -30,6 +34,7 @@ class About extends React.Component {
                 <p>The following manual commands have been implemented in order to allow for a smoother gameplay experience:
                 </p>
                 <ul>
+                    <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add.</li>
                     <li>/cancel-prompt - Clear the current prompt and resume the game flow.  Use with caution and only when the prompt is 'stuck' and you are unable to continue</li>
                     <li>/discard x - Discards x cards randomly from your hand</li>
                     <li>/draw x - Draws x cards from your deck to your hand</li>
@@ -41,7 +46,6 @@ class About extends React.Component {
                     <li>/strength x - Sets the strength of a card to x</li>
                     <li>/take-icon x - Take an x icon from a character; where 'x' is as per '/give-icon'</li>
                     <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'betrayal', 'gold', 'poison', 'vengeance'.</li>
-                    <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add.</li>
                 </ul>
 
                 <h3>Can I help?</h3>
@@ -50,6 +54,7 @@ class About extends React.Component {
                 status list above to have a look at what needs to be done.  If you want to join the dev discord, or ask any other question, send me a note on here, over at&nbsp;
                 <a href='http://www.twitter.com/cryogen'>Twitter</a> or post in the AGoT Facebook group.  I'll likely find it.
                 </p>
+
                 <h4>Donations</h4>
                 I was always reluctant to accept donations but since I've been asked a few times I thought I'd put up a small section about it here.
 
@@ -64,7 +69,6 @@ class About extends React.Component {
                 If, after the annnual bills for that are paid up, there is any money left over, I'll put it towards the following years expenses.
                 Also, this is not required to continue to use and enjoy the site and will not give anything in return (other than my sincerce gratitude and potentially better hardware for the site to run on).
                 I will also put a donation report in with the monthly reports that I'm publishing so that you know where your donations are going.
-
 
                 <h2>Special Thanks</h2>
                 <p>I'd like to thank mtgred, and the whole of the jinteki.net development team(except whoever decided to write the code in clojure, not you. - just kidding!) as without their
