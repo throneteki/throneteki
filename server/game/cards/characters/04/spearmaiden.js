@@ -16,7 +16,7 @@ class Spearmaiden extends DrawCard {
             handler: context => {
                 this.game.addMessage('{0} chooses {1} as the target for {2}', this.controller, context.target, this);
 
-                this.game.once('afterChallenge:interrupt', (event, challenge) => this.resolveIfWinBy5(challenge, context));
+                this.game.once('afterChallenge', (event, challenge) => this.resolveIfWinBy5(challenge, context));
             }
         });
     }

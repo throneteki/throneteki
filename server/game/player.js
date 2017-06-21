@@ -555,8 +555,8 @@ class Player extends Spectator {
         }
 
         this.selectedPlot.flipFaceup();
-        this.selectedPlot.applyPersistentEffects();
         this.moveCard(this.selectedPlot, 'active plot');
+        this.selectedPlot.applyPersistentEffects();
 
         this.game.raiseMergedEvent('onCardEntersPlay', { card: this.activePlot, playingType: 'plot' });
 
@@ -620,21 +620,24 @@ class Player extends Spectator {
     }
 
     attach(player, attachment, cardId, playingType) {
-        var card = this.findCardInPlayByUuid(cardId);
+        let card = this.findCardInPlayByUuid(cardId);
 
         if(!card || !attachment) {
             return;
         }
 
-        attachment.owner.removeCardFromPile(attachment);
-
-        attachment.parent = card;
         let originalLocation = attachment.location;
+
+        attachment.owner.removeCardFromPile(attachment);
+        attachment.parent = card;
         attachment.moveTo('play area');
-        this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
         card.attachments.push(attachment);
 
-        attachment.attach(player, card);
+        attachment.applyPersistentEffects();
+
+        if(originalLocation !== 'play area') {
+            this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
+        }
     }
 
     showDrawDeck() {

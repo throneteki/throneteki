@@ -11,6 +11,7 @@ class EvenHandedJustice extends DrawCard {
                     activePromptTitle: 'Select a standing character of yours',
                     cardCondition: card =>
                         !card.kneeled
+                        && card.location === 'play area'
                         && card.getType() === 'character'
                         && card.controller === this.controller,  // event controller
                     gameAction: 'kneel'
@@ -19,6 +20,7 @@ class EvenHandedJustice extends DrawCard {
                     activePromptTitle: 'Select a standing character controlled by your opponent',
                     cardCondition: card =>
                         !card.kneeled
+                        && card.location === 'play area'
                         && card.getType() === 'character'
                         && card.controller !== this.controller,  // not event controller
                     gameAction: 'kneel'

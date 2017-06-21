@@ -31,7 +31,10 @@ class ChooseStealthTargets extends BaseStep {
     }
 
     canStealth(card, challenge, character) {
-        return card.controller === challenge.defendingPlayer && card.getType() === 'character' && character.canUseStealthToBypass(card);
+        return card.controller === challenge.defendingPlayer
+            && card.location === 'play area'
+            && card.getType() === 'character'
+            && character.canUseStealthToBypass(card);
     }
 
     selectStealthTarget(character, targets) {

@@ -31,7 +31,7 @@ class TheWatchHasNeed extends DrawCard {
             activePromptTitle: 'Select a card to add to hand',
             cardCondition: card => card.getType() === 'character' && card.hasTrait(trait),
             onSelect: (player, card) => this.cardSelected(player, trait, card),
-            onCancel: player => this.doneSelecting(player),
+            onCancel: player => this.doneSelecting(player, trait),
             source: this
         });
 
@@ -52,9 +52,9 @@ class TheWatchHasNeed extends DrawCard {
         return true;
     }
 
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not use {1} to add a card to their hand',
-                             player, this);
+    doneSelecting(player, trait) {
+        this.game.addMessage('{0} uses {1} to search their deck for a {2}, but does not add any card to their hand',
+                             player, this, trait);
 
         return true;
     }

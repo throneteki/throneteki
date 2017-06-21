@@ -181,6 +181,16 @@ const Effects = {
             }
         };
     },
+    setClaim: function(value) {
+        return {
+            apply: function(card) {
+                card.claimSet = value;
+            },
+            unapply: function(card) {
+                card.claimSet = undefined;
+            }
+        };
+    },
     preventPlotModifier: function(modifier) {
         return {
             apply: function(card) {
@@ -684,6 +694,25 @@ const Effects = {
             }
         };
     },
+    reduceSelfCost: function(playingTypes, amount) {
+        return {
+            apply: function(player, context) {
+                context.reducers = context.reducers || [];
+                let reducer = new CostReducer(context.game, context.source, {
+                    playingTypes: playingTypes,
+                    amount: amount,
+                    match: card => card === context.source
+                });
+                context.reducers.push(reducer);
+                player.addCostReducer(reducer);
+            },
+            unapply: function(player, context) {
+                if(context.reducers.length > 0) {
+                    _.each(context.reducers, reducer => player.removeCostReducer(reducer));
+                }
+            }
+        };
+    },
     reduceNextCardCost: function(playingTypes, amount, match) {
         return this.reduceCost({
             playingTypes: playingTypes,
@@ -756,33 +785,6 @@ const Effects = {
             },
             unapply: function(player) {
                 player.mustChooseAsClaim = _.reject(player.mustChooseAsClaim, c => c === card);
-            }
-        };
-    },
-    /**
-     * Effects specifically for Old Wyk.
-     */
-    returnToHandOrDeckBottom: function() {
-        return {
-            apply: function(card, context) {
-                context.returnToHandOrDeckBottom = context.returnToHandOrDeckBottom || [];
-                context.returnToHandOrDeckBottom.push(card);
-            },
-            unapply: function(card, context) {
-                if(!context.returnToHandOrDeckBottom.includes(card)) {
-                    return;
-                }
-
-                context.returnToHandOrDeckBottom = _.reject(context.returnToHandOrDeckBottom, c => c === card);
-
-                var challenge = context.game.currentChallenge;
-                if(challenge && challenge.winner === context.source.controller && challenge.strengthDifference >= 5) {
-                    card.controller.moveCard(card, 'hand');
-                    context.game.addMessage('{0} returns {1} to their hand', context.source.controller, card);
-                } else {
-                    card.controller.moveCard(card, 'draw deck', { bottom: true });
-                    context.game.addMessage('{0} returns {1} to the bottom of their deck', context.source.controller, card);
-                }
             }
         };
     }

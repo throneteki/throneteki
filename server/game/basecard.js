@@ -184,7 +184,19 @@ class BaseCard {
      * is both in play and not blank.
      */
     persistentEffect(properties) {
-        this.abilities.persistentEffects.push(_.extend({ duration: 'persistent' }, properties));
+        const allowedLocations = ['active plot', 'agenda', 'any', 'play area'];
+        const defaultLocationForType = {
+            agenda: 'agenda',
+            plot: 'active plot'
+        };
+
+        let location = properties.location || defaultLocationForType[this.getType()] || 'play area';
+
+        if(!allowedLocations.includes(location)) {
+            throw new Error(`'${location}' is not a supported effect location.`);
+        }
+
+        this.abilities.persistentEffects.push(_.extend({ duration: 'persistent', location: location }, properties));
     }
 
     /**
@@ -210,7 +222,7 @@ class BaseCard {
      */
     untilEndOfChallenge(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'untilEndOfChallenge' }, properties));
+        this.game.addEffect(this, _.extend({ duration: 'untilEndOfChallenge', location: 'any' }, properties));
     }
 
     /**
@@ -218,7 +230,7 @@ class BaseCard {
      */
     untilEndOfPhase(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'untilEndOfPhase' }, properties));
+        this.game.addEffect(this, _.extend({ duration: 'untilEndOfPhase', location: 'any' }, properties));
     }
 
     /**
@@ -227,7 +239,7 @@ class BaseCard {
      */
     atEndOfPhase(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'atEndOfPhase' }, properties));
+        this.game.addEffect(this, _.extend({ duration: 'atEndOfPhase', location: 'any' }, properties));
     }
 
     /**
@@ -235,7 +247,7 @@ class BaseCard {
      */
     untilEndOfRound(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'untilEndOfRound' }, properties));
+        this.game.addEffect(this, _.extend({ duration: 'untilEndOfRound', location: 'any' }, properties));
     }
 
     /**
@@ -244,7 +256,7 @@ class BaseCard {
      */
     lastingEffect(propertyFactory) {
         let properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'custom' }, properties));
+        this.game.addEffect(this, _.extend({ duration: 'custom', location: 'any' }, properties));
     }
 
     doAction(player, arg) {
@@ -284,9 +296,19 @@ class BaseCard {
         return this.cardData.is_loyal;
     }
 
+    applyAnyLocationPersistentEffects() {
+        _.each(this.abilities.persistentEffects, effect => {
+            if(effect.location === 'any') {
+                this.game.addEffect(this, effect);
+            }
+        });
+    }
+
     applyPersistentEffects() {
         _.each(this.abilities.persistentEffects, effect => {
-            this.game.addEffect(this, effect);
+            if(effect.location !== 'any') {
+                this.game.addEffect(this, effect);
+            }
         });
     }
 
@@ -323,6 +345,10 @@ class BaseCard {
 
         if(targetLocation !== 'play area') {
             this.facedown = false;
+        }
+
+        if(originalLocation !== targetLocation) {
+            this.game.raiseMergedEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation });
         }
     }
 

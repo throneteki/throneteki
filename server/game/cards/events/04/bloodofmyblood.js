@@ -25,11 +25,13 @@ class BloodOfMyBlood extends DrawCard {
             effect: ability.effects.returnToHandIfStillInPlay(true)
         }));
 
-        this.game.addMessage('{0} uses {1} to reveal {2} and put it into play', player, this, card);
+        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play',
+                             player, this, card);
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} does not use {1} to put a card in play', player, this);
+        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into play',
+                             player, this);
     }
 }
 
