@@ -4,10 +4,10 @@ class WolvesOfTheNorth extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isStealthSource(this)
+                onBypassedByStealth: event => event.source === this
             },
             handler: context => {
-                let target = context.event.challenge.getStealthTargetFor(this);
+                let target = context.event.target;
                 let strDecrease = -this.controller.getNumberOfCardsInPlay(c => c.hasTrait('Direwolf'));
 
                 this.untilEndOfPhase(ability => ({

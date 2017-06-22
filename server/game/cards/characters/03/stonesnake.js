@@ -8,11 +8,11 @@ class Stonesnake extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isStealthSource(this) && 
-                                               this.hasCopyableKeyword(event.challenge.getStealthTargetFor(this))
+                onBypassedByStealth: event => event.source === this &&
+                                               this.hasCopyableKeyword(event.target)
             },
             handler: context => {
-                let target = context.event.challenge.getStealthTargetFor(this);
+                let target = context.event.target;
                 let buttons = [];
 
                 _.each(keywords, keyword => {

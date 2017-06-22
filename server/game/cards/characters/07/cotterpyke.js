@@ -4,7 +4,7 @@ class CotterPyke extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isStealthSource(this) && this.game.anyPlotHasTrait('Winter')
+                onBypassedByStealth: event => event.source === this && this.game.anyPlotHasTrait('Winter')
             },
             target: {
                 activePromptTitle: 'Select a character',
