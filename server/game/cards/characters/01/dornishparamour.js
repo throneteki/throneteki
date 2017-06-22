@@ -4,7 +4,7 @@ class DornishParamour extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isAttacking(this)
+                onAttackersDeclared: event => event.challenge.isAttacking(this)
             },
             target: {
                 activePromptTitle: 'Select a character',
