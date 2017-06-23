@@ -46,7 +46,7 @@ class TywinsStratagem extends DrawCard {
     }
 
     cardCondition(card) {
-        return card.location === 'play area' && card.getType() === 'character' && card.getStrength() <= 2;
+        return card.location === 'play area' && card.getType() === 'character' && card.getCost() <= 2;
     }
 }
 
