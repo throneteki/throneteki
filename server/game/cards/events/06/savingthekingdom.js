@@ -10,6 +10,8 @@ class SavingTheKingdom extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getStrength() <= 3
             },
             handler: context => {
+                context.target.controller.kneelCard(context.target);
+
                 this.untilEndOfRound(ability => ({
                     match: context.target,
                     effect: ability.effects.doesNotStandDuringStanding()
