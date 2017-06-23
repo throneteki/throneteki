@@ -12,11 +12,20 @@ class TriggeredAbilityWindow extends BaseStep {
         this.abilityType = properties.abilityType;
     }
 
-    registerAbility(ability, context) {
+    canTriggerAbility(ability) {
+        return ability.eventType === this.abilityType && ability.isTriggeredByEvent(this.event);
+    }
+
+    emitEvents() {
+        this.game.emit(this.event.name + ':' + this.abilityType, ...this.event.params);
+    }
+
+    registerAbility(ability) {
         if(ability.hasMax() && this.hasChoiceForCardByName(ability.card.name)) {
             return;
         }
 
+        let context = ability.createContext(this.event);
         let player = context.player;
         let choiceTexts = ability.getChoices(context);
 

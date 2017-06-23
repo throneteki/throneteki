@@ -12,7 +12,16 @@ class ForcedTriggeredAbilityWindow extends BaseStep {
         this.abilityType = properties.abilityType;
     }
 
-    registerAbility(ability, context) {
+    canTriggerAbility(ability) {
+        return ability.eventType === this.abilityType && ability.isTriggeredByEvent(this.event);
+    }
+
+    emitEvents() {
+        this.game.emit(this.event.name + ':' + this.abilityType, ...this.event.params);
+    }
+
+    registerAbility(ability) {
+        let context = ability.createContext(this.event);
         let player = ability.card.controller;
         this.abilityChoices.push({
             id: uuid.v1(),

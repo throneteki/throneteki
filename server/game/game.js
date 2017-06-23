@@ -617,22 +617,20 @@ class Game extends EventEmitter {
         let windowClass = ['forcedreaction', 'forcedinterrupt', 'whenrevealed'].includes(properties.abilityType) ? ForcedTriggeredAbilityWindow : TriggeredAbilityWindow;
         let window = new windowClass(this, { abilityType: properties.abilityType, event: properties.event });
         this.abilityWindowStack.push(window);
-        this.emit(properties.event.name + ':' + properties.abilityType, ...properties.event.params);
+        window.emitEvents();
         this.queueStep(window);
         this.queueSimpleStep(() => this.abilityWindowStack.pop());
     }
 
     registerAbility(ability) {
-        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => ability.eventType === window.abilityType && ability.isTriggeredByEvent(window.event));
+        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => window.canTriggerAbility(ability));
 
         if(windowIndex === -1) {
             return;
         }
 
         let window = this.abilityWindowStack[windowIndex];
-        let context = ability.createContext(window.event);
-
-        window.registerAbility(ability, context);
+        window.registerAbility(ability);
     }
 
     raiseEvent(eventName, ...params) {

@@ -55,11 +55,12 @@ describe('TriggeredAbilityWindow', function() {
 
     describe('registerAbility()', function() {
         beforeEach(function() {
+            this.context = { context: 1, player: this.player1Spy };
             this.abilityCard = { card: 1, name: 'The Card' };
-            this.abilitySpy = jasmine.createSpyObj('ability', ['getChoices', 'hasMax']);
+            this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'getChoices', 'hasMax']);
+            this.abilitySpy.createContext.and.returnValue(this.context);
             this.abilitySpy.getChoices.and.returnValue([{ text: 'Choice 1', choice: 'choice1' }, { text: 'Choice 2', choice: 'choice2' }]);
             this.abilitySpy.card = this.abilityCard;
-            this.context = { context: 1, player: this.player1Spy };
         });
 
         describe('when a normal ability is registered', function() {
