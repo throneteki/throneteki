@@ -14,20 +14,26 @@ class StannisBaratheon extends DrawCard {
 
         this.reaction({
             when: {
-                onDominanceDetermined: (event, winner) => this.controller === winner
+                onDominanceDetermined: (event, winner) =>
+                    this.controller === winner
+                    && this.controller.filterCardsInPlay(card => this.canBeStoppedFromStanding(card)).length > 0
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    cardCondition: card => (
-                        card.location === 'play area' && 
-                        card.getType() === 'character' && 
-                        !card.isLoyal()),
+                    cardCondition: card => this.canBeStoppedFromStanding(card),
                     activePromptTitle: 'Select a character',
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }
         });
+    }
+
+    canBeStoppedFromStanding(card) {
+        return card.location === 'play area'
+            && card.getType() === 'character'
+            && card.kneeled
+            && !card.isLoyal();
     }
 
     onCardSelected(player, card) {
