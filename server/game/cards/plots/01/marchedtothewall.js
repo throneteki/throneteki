@@ -20,21 +20,28 @@ class MarchedToTheWall extends PlotCard {
 
     onCardSelected(player, card) {
         this.selections.push({ player: player, card: card });
-        this.game.addMessage('{0} has selected {1} to discard from {2}', player, card, this);
+        this.game.addMessage('{0} has selected {1} to discard for {2}', player, card, this);
         this.proceedToNextStep();
         return true;
     }
 
     doDiscard() {
         _.each(this.selections, selection => {
-            var player = selection.player;
+            let player = selection.player;
             player.discardCard(selection.card, false);
         });
     }
 
     proceedToNextStep() {
         if(this.remainingPlayers.length > 0) {
-            var currentPlayer = this.remainingPlayers.shift();
+            let currentPlayer = this.remainingPlayers.shift();
+
+            if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'character')) {
+                this.game.addMessage('{0} has no characters in play to discard for {1}', currentPlayer, this);
+                this.proceedToNextStep();
+                return true;
+            }
+
             this.game.promptForSelect(currentPlayer, {
                 activePromptTitle: 'Select a character to discard',
                 source: this,

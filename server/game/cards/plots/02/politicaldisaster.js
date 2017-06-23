@@ -14,6 +14,11 @@ class PoliticalDisaster extends PlotCard {
     }
 
     onSelect(player, cards) {
+        if(_.isEmpty(cards)) {
+            this.game.addMessage('{0} does not choose any locations for {1}', player, this);
+        } else {
+            this.game.addMessage('{0} chooses {1} for {2}', player, cards, this);
+        }
         this.selections.push({ player: player, cards: cards });
         this.proceedToNextStep();
         return true;
@@ -26,17 +31,17 @@ class PoliticalDisaster extends PlotCard {
 
     doDiscard() {
         _.each(this.selections, selection => {
-            var player = selection.player;
-            var toDiscard = _.difference(player.filterCardsInPlay(card => card.getType() === 'location'), selection.cards);
+            let player = selection.player;
+            let toDiscard = _.difference(player.filterCardsInPlay(card => card.getType() === 'location'), selection.cards);
 
             _.each(toDiscard, card => {
                 player.discardCard(card);
             });
 
             if(_.isEmpty(toDiscard)) {
-                this.game.addMessage('{0} does not discard any locations with {1}', player, this);
+                this.game.addMessage('{0} does not have any locations discarded for {1}', player, this);
             } else {
-                this.game.addMessage('{0} uses {1} to discard {2}', player, this, toDiscard);
+                this.game.addMessage('{0} has {1} discarded for {2}', player, toDiscard, this);
             }
         });
 
@@ -45,10 +50,18 @@ class PoliticalDisaster extends PlotCard {
 
     proceedToNextStep() {
         if(this.remainingPlayers.length > 0) {
-            var currentPlayer = this.remainingPlayers.shift();
+            let currentPlayer = this.remainingPlayers.shift();
+
+            if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'location')) {
+                this.game.addMessage('{0} has no locations in play to choose for {1}', currentPlayer, this);
+                this.selections.push({ player: currentPlayer, cards: [] });
+                this.proceedToNextStep();
+                return true;
+            }
+
             this.game.promptForSelect(currentPlayer, {
                 numCards: 2,
-                activePromptTitle: 'Select up to 2 locations to save',
+                activePromptTitle: 'Select up to 2 locations',
                 source: this,
                 cardCondition: card => card.controller === currentPlayer && card.getType() === 'location',
                 onSelect: (player, cards) => this.onSelect(player, cards),
