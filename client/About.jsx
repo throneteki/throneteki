@@ -49,7 +49,7 @@ class About extends React.Component {
                     <li>/power x - Sets the power of a card to x</li>
                     <li>/strength x - Sets the strength of a card to x</li>
                     <li>/take-icon x - Take an x icon from a character; where 'x' is as per '/give-icon'</li>
-                    <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'betrayal', 'gold', 'poison', 'vengeance', 'ear', 'venom', 'kiss', 'valarmorghulis' and 'stand'.</li>
+                    <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'betrayal', 'ear', 'gold', 'kiss', 'poison', 'stand', 'valarmorghulis', 'vengeance' and 'venom'.</li>
                 </ul>
 
                 <h3>Can I help?</h3>
