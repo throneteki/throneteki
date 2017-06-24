@@ -155,6 +155,7 @@ export function validateDeck(deck) {
         status = 'Invalid';
     }
 
+    // Fealty
     if(deck.agenda && deck.agenda.code === '01027' && _.reduce(deck.drawCards, (counter, card) => {
         return card.card.faction_code === 'neutral' ? counter + card.count : counter;
     }, 0) > 15) {
@@ -162,6 +163,16 @@ export function validateDeck(deck) {
         extendedStatus.push('You cannot include more than 15 neutral cards in a deck with Fealty');
     }
 
+    // The Brotherhood Without Banners
+    if(deck.agenda && deck.agenda.code === '06119' &&
+    _.any(deck.drawCards, card => {
+        return card.card.is_loyal && card.card.type_code === 'character';
+    })) {
+        status = 'Invalid';
+        extendedStatus.push('The Brotherhood Without Banners cannot include loyal characters');
+    }
+
+    // Alliance
     var bannerCount = 0;
 
     if((!deck.agenda || deck.agenda && deck.agenda.code !== '06018') && !_.all(combined, card => {
