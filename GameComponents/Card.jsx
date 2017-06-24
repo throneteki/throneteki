@@ -27,7 +27,8 @@ class Card extends React.Component {
             betrayal: 'B',
             vengeance: 'N',
             ear: 'E',
-            venom: 'M'
+            venom: 'M',
+            kiss: 'K'
         };
     }
 
