@@ -426,6 +426,19 @@ const Costs = {
         };
     },
     /**
+     * Cost that will discard a fixed amount of a passed type token from the current card.
+     */
+    discardTokenFromSelf: function(type, amount = 1) {
+        return {
+            canPay: function(context) {
+                return context.source.tokens[type] >= amount;
+            },
+            pay: function(context) {
+                context.source.removeToken(type, amount);
+            }
+        };
+    },
+    /**
      * Cost that will discard faction power matching the passed amount.
      */
     discardFactionPower: function(amount) {
