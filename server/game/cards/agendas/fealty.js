@@ -1,6 +1,6 @@
-const DrawCard = require('../../drawcard.js');
+const AgendaCard = require('../../agendacard.js');
 
-class Fealty extends DrawCard {
+class Fealty extends AgendaCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel your faction card',
