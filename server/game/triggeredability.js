@@ -53,7 +53,7 @@ class TriggeredAbility extends BaseAbility {
             return;
         }
 
-        this.game.registerAbility(this);
+        this.game.registerAbility(this, event);
     }
 
     createContext(event) {

@@ -8,20 +8,28 @@ class ForcedTriggeredAbilityWindow extends BaseStep {
     constructor(game, properties) {
         super(game);
         this.abilityChoices = [];
-        this.event = properties.event;
+        this.events = _.flatten([properties.event]);
         this.abilityType = properties.abilityType;
     }
 
     canTriggerAbility(ability) {
-        return ability.eventType === this.abilityType && ability.isTriggeredByEvent(this.event);
+        return ability.eventType === this.abilityType && _.any(this.events, event => ability.isTriggeredByEvent(event));
     }
 
     emitEvents() {
-        this.game.emit(this.event.name + ':' + this.abilityType, ...this.event.params);
+        _.each(this.events, event => {
+            this.game.emit(event.name + ':' + this.abilityType, ...event.params);
+        });
     }
 
-    registerAbility(ability) {
-        let context = ability.createContext(this.event);
+    registerAbilityForEachEvent(ability) {
+        _.each(this.events, event => {
+            this.registerAbility(ability, event);
+        });
+    }
+
+    registerAbility(ability, event) {
+        let context = ability.createContext(event);
         let player = ability.card.controller;
         this.abilityChoices.push({
             id: uuid.v1(),
@@ -58,7 +66,7 @@ class ForcedTriggeredAbilityWindow extends BaseStep {
 
         this.game.promptWithMenu(this.game.getFirstPlayer(), this, {
             activePrompt: {
-                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event),
+                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.events[0]),
                 buttons: buttons
             },
             waitingPromptTitle: 'Waiting for opponents to resolve forced abilities'

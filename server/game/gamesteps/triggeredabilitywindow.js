@@ -8,24 +8,32 @@ class TriggeredAbilityWindow extends BaseStep {
     constructor(game, properties) {
         super(game);
         this.abilityChoices = [];
-        this.event = properties.event;
+        this.events = _.flatten([properties.event]);
         this.abilityType = properties.abilityType;
     }
 
     canTriggerAbility(ability) {
-        return ability.eventType === this.abilityType && ability.isTriggeredByEvent(this.event);
+        return ability.eventType === this.abilityType && _.any(this.events, event => ability.isTriggeredByEvent(event));
     }
 
     emitEvents() {
-        this.game.emit(this.event.name + ':' + this.abilityType, ...this.event.params);
+        _.each(this.events, event => {
+            this.game.emit(event.name + ':' + this.abilityType, ...event.params);
+        });
     }
 
-    registerAbility(ability) {
+    registerAbilityForEachEvent(ability) {
+        _.each(this.events, event => {
+            this.registerAbility(ability, event);
+        });
+    }
+
+    registerAbility(ability, event) {
         if(ability.hasMax() && this.hasChoiceForCardByName(ability.card.name)) {
             return;
         }
 
-        let context = ability.createContext(this.event);
+        let context = ability.createContext(event);
         let player = context.player;
         let choiceTexts = ability.getChoices(context);
 
@@ -78,7 +86,7 @@ class TriggeredAbilityWindow extends BaseStep {
         buttons.push({ text: 'Pass', method: 'pass' });
         this.game.promptWithMenu(player, this, {
             activePrompt: {
-                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event),
+                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.events[0]),
                 buttons: buttons
             },
             waitingPromptTitle: 'Waiting for opponents'
