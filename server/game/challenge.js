@@ -107,32 +107,8 @@ class Challenge {
         }, 0);
     }
 
-    getAllStealthSources() {
-        return _.flatten(_.pluck(this.stealthData, 'source'));
-    }
-
-    getAllStealthTargets() {
-        return _.flatten(_.pluck(this.stealthData, 'targets'));
-    }
-
-    isStealthSource(card) {
-        return this.getAllStealthSources().includes(card);
-    }
-
-    isStealthTarget(card) {
-        return this.getAllStealthTargets().includes(card);
-    }
-
-    getStealthTargetFor(card) {
-        let stealthPair = _.where(this.stealthData, { source: card });
-
-        if(!stealthPair) {
-            return false;
-        }
-
-        let targets = _.flatten(_.pluck(stealthPair, 'targets'));
-
-        return targets.length > 1 ? targets : _.first(targets);
+    addStealthChoice(source, target) {
+        this.stealthData.push({ source: source, target: target });
     }
 
     calculateStrength() {
