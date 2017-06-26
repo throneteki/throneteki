@@ -46,7 +46,6 @@ class ChooseStealthTargets extends BaseStep {
                 return false;
             }
 
-            this.game.raiseMergedEvent('onBypassedByStealth', { challenge: this.challenge, source: character, target: target });
             this.challenge.stealthData.push({ source: character, target: target });
         });
 

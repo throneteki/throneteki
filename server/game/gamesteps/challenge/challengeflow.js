@@ -17,6 +17,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.announceChallenge()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
             new SimpleStep(this.game, () => this.chooseStealthTargets()),
+            new SimpleStep(this.game, () => this.initiateChallenge()),
             new SimpleStep(this.game, () => this.announceAttackerStrength()),
             new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
             new SimpleStep(this.game, () => this.promptForDefenders()),
@@ -67,17 +68,24 @@ class ChallengeFlow extends BaseStep {
 
     chooseStealthTargets() {
         this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()));
+    }
 
-        this.game.raiseMergedEvent('onChallengeInitiated', { challenge: this.challenge }, () => {
-            this.challenge.initiateChallenge();
-            this.game.raiseMergedEvent('onAttackersDeclared', { challenge: this.challenge });
+    initiateChallenge() {
+        this.challenge.initiateChallenge();
+
+        let events = [
+            { name: 'onChallengeInitiated', params: { challenge: this.challenge } },
+            { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
+        ];
+        let stealthEvents = _.map(this.challenge.stealthData, stealth => {
+            return { name: 'onBypassedByStealth', params: { challenge: this.challenge, source: stealth.source, target: stealth.target } };
         });
+        this.game.raiseAtomicEvent(events.concat(stealthEvents));
     }
 
     announceAttackerStrength() {
         // Explicitly recalculate strength in case an effect has modified character strength.
         this.challenge.calculateStrength();
-
         this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackerStrength);
     }
 
@@ -97,15 +105,15 @@ class ChallengeFlow extends BaseStep {
 
         if(!_.isEmpty(this.forcedDefenders)) {
             if(this.forcedDefenders.length === defenderLimit) {
-                this.game.addMessage('{0} {1} automatically declared as {2}',
+                this.game.addMessage('{0} {1} automatically declared as {2}', 
                                       this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
-
+                
                 this.chooseDefenders([]);
                 return;
             }
 
             if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
-                this.game.addMessage('{0} {1} automatically declared as {2}',
+                this.game.addMessage('{0} {1} automatically declared as {2}', 
                                       this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
 
                 if(defenderLimit !== 0) {
@@ -131,7 +139,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsDefender(card) {
-        return this.challenge.defendingPlayer === card.controller &&
+        return this.challenge.defendingPlayer === card.controller && 
                card.canDeclareAsDefender(this.challenge.challengeType) &&
                this.mustBeDeclaredAsDefender(card);
     }
