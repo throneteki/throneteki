@@ -13,6 +13,11 @@ class ApplyClaim extends BaseStep {
             return;
         }
 
+        this.game.claim = {
+            isApplying: true,
+            type: this.challenge.challengeType
+        };
+
         switch(this.challenge.challengeType) {
             case 'military':
                 this.game.addMessage('{0} claim is applied.  {1} must kill {2} character{3}', this.challenge.challengeType, this.challenge.loser, this.challenge.claim,
@@ -32,6 +37,13 @@ class ApplyClaim extends BaseStep {
                 this.game.transferPower(this.challenge.winner, this.challenge.loser, this.challenge.claim);
                 break;
         }
+
+        this.game.queueSimpleStep(() => {
+            this.game.claim = {
+                isApplying: false,
+                type: undefined
+            };
+        });
 
         return true;
     }
