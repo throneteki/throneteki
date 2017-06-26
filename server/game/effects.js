@@ -574,6 +574,16 @@ const Effects = {
             }
         };
     },
+    setMinCost: function(value) {
+        return {
+            apply: function(player, context) {
+                context.source.minCost = value;
+            },
+            unapply: function(player, context) {
+                context.source.minCost = 0;
+            }
+        };
+    },
     contributeChallengeStrength: function(value) {
         return {
             apply: function(player, context) {
