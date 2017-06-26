@@ -10,7 +10,7 @@ class Rakharo extends DrawCard {
 
         this.reaction({
             when: {
-                onCharactersKilled: () =>
+                onCharacterKilled: () =>
                     this.game.currentChallenge &&
                     this.game.currentChallenge.attackingPlayer === this.controller &&
                     this.game.claim.isApplying
