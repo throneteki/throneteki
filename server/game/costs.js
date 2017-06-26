@@ -210,6 +210,19 @@ const Costs = {
         };
     },
     /**
+     * Cost that will put into play the card that initiated the ability.
+     */
+    putSelfIntoPlay: function() {
+        return {
+            canPay: function() {
+                return true;
+            },
+            pay: function(context) {
+                context.source.controller.putIntoPlay(context.source);
+            }
+        };
+    },
+    /**
      * Cost that will remove from game the card that initiated the ability.
      */
     removeSelfFromGame: function() {
