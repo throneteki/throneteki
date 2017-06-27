@@ -638,6 +638,8 @@ class Player extends Spectator {
         if(originalLocation !== 'play area') {
             this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
         }
+
+        this.game.raiseMergedEvent('onCardAttached', { card: attachment, parent: card });
     }
 
     showDrawDeck() {
