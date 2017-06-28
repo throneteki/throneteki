@@ -8,7 +8,6 @@ class FrozenExpanse extends PlotCard {
             effect: ability.effects.cannotBeStood()
         });
     }
-
 }
 
 FrozenExpanse.code = '07052';
