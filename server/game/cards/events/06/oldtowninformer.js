@@ -23,6 +23,10 @@ class OldtownInformer extends DrawCard {
     }
 
     cardsSelected(player, cards) {
+        if(cards.length !== this.tokens['gold']) {
+            return false;
+        }
+
         player.discardCards(cards);
         this.game.addMessage('{0} then discards {1} for {2}', this.controller, cards, this);
         return true;
