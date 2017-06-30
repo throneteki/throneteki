@@ -28,7 +28,6 @@ class AryasGift extends DrawCard {
     moveAttachment(player, newOwner, attachment, oldOwner) {
         player.attach(player, attachment, newOwner.uuid);
         this.game.addMessage('{0} moves {1} from {2} to {3}', player, attachment, oldOwner, newOwner);
-        this.game.addMessage(this.dupes.length);
 
         return true;
     }
