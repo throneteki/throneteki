@@ -3,8 +3,9 @@ const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class AllMenAreFools extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
+            max: ability.limit.perChallenge(1),
             when: {
                 afterChallenge: (event, challenge) => (
                     challenge.winner === this.controller && 
