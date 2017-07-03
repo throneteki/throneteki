@@ -16,6 +16,7 @@ class FreyHospitality extends DrawCard {
 
                 this.game.promptForSelect(this.controller, {
                     numCards: numTargets,
+                    multiSelect: true,
                     activePromptTitle: 'Select ' + numTargets + ' character(s)',
                     source: this,
                     gameAction: 'kill',
