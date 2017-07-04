@@ -12,21 +12,19 @@ class NymeriaSand extends DrawCard {
                                        card.getType() === 'character'
             },
             handler: context => {
-                this.game.promptForIcon(this.controller, context);
-
-                this.game.queueSimpleStep(() => {
+                this.game.promptForIcon(this.controller, icon => {
                     this.untilEndOfPhase(ability => ({
                         match: context.target,
-                        effect: ability.effects.removeIcon(context.icon)
+                        effect: ability.effects.removeIcon(icon)
                     }));
 
                     this.untilEndOfPhase(ability => ({
                         match: card => card.getType() === 'character' && card.hasTrait('Sand Snake'),
-                        effect: ability.effects.addIcon(context.icon)
+                        effect: ability.effects.addIcon(icon)
                     }));
 
                     this.game.addMessage('{0} uses {1} to remove {2} {3} icon from {4} and have each Sand Snake character they control gain it', 
-                                          this.controller, this, context.icon === 'intrigue' ? 'an' : 'a', context.icon, context.target);
+                                          this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
                 });
             }
         });

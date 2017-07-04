@@ -6,17 +6,15 @@ class UnswornApprentice extends DrawCard {
             title: 'Gain icon',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            handler: context => {
-                this.game.promptForIcon(this.controller, context);
-
-                this.game.queueSimpleStep(() => {
+            handler: () => {
+                this.game.promptForIcon(this.controller, icon => {
                     this.untilEndOfPhase(ability => ({
                         match: this,
-                        effect: ability.effects.addIcon(context.icon)
+                        effect: ability.effects.addIcon(icon)
                     }));
 
                     this.game.addMessage('{0} uses {1} to have {1} gain {2} {3} icon until the end of the phase',
-                                        this.controller, this, context.icon === 'intrigue' ? 'an' : 'a', context.icon);
+                                          this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon);
                 });
             }
         });
