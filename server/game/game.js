@@ -20,6 +20,7 @@ const TaxationPhase = require('./gamesteps/taxationphase.js');
 const SimpleStep = require('./gamesteps/simplestep.js');
 const DeckSearchPrompt = require('./gamesteps/decksearchprompt.js');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
+const IconPrompt = require('./gamesteps/iconprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
 const SimultaneousEventWindow = require('./gamesteps/simultaneouseventwindow.js');
@@ -504,6 +505,10 @@ class Game extends EventEmitter {
 
     promptWithMenu(player, contextObj, properties) {
         this.queueStep(new MenuPrompt(this, player, contextObj, properties));
+    }
+
+    promptForIcon(player, callback = () => true) {
+        this.queueStep(new IconPrompt(this, player, callback));
     }
 
     promptForSelect(player, properties) {

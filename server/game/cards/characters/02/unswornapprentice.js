@@ -1,40 +1,23 @@
-const _ = require('underscore');
 const DrawCard = require('../../../drawcard.js');
 
 class UnswornApprentice extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Gain Icon',
-            method: 'gainIcon',
+            title: 'Gain icon',
             phase: 'challenge',
-            limit: ability.limit.perPhase(1)
-        });
-    }
+            limit: ability.limit.perPhase(1),
+            handler: () => {
+                this.game.promptForIcon(this.controller, icon => {
+                    this.untilEndOfPhase(ability => ({
+                        match: this,
+                        effect: ability.effects.addIcon(icon)
+                    }));
 
-    gainIcon() {
-        if(this.location !== 'play area') {
-            return false;
-        }
-        var icons = ['Military', 'Intrigue', 'Power'];
-        var buttons = _.map(icons, icon => {
-            return { text: icon, method: 'iconSelected', arg: icon.toLowerCase() };
+                    this.game.addMessage('{0} uses {1} to have {1} gain {2} {3} icon until the end of the phase',
+                                          this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon);
+                });
+            }
         });
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Select an icon to gain',
-                buttons: buttons
-            },
-            source: this
-        });
-        return true;
-    }
-
-    iconSelected(player, icon) {
-        this.untilEndOfPhase(ability => ({
-            match: this,
-            effect: ability.effects.addIcon(icon)
-        }));
-        return true;
     }
 }
 

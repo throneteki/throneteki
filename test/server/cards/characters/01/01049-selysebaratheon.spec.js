@@ -26,7 +26,7 @@ describe('Selyse Baratheon', function() {
             this.completeMarshalPhase();
 
             this.selyse = this.player1.findCardByName('Selyse Baratheon', 'play area');
-            this.player2.clickMenu('Nymeria Sand', 'Remove icon from opponent\'s character');
+            this.player2.clickMenu('Nymeria Sand', 'Remove and gain icon');
             this.player2.clickCard(this.selyse);
             this.player2.clickPrompt('Intrigue');
 
