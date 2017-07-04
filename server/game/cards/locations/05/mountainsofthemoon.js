@@ -1,49 +1,25 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../../drawcard.js');
 
 class MountainsOfTheMoon extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => {
-                    let card = event.card;
-                    if(!card.hasTrait('Clansman') || !card.getType() === 'character') {
-                        return false;
-                    }
-
-                    this.pendingCard = card;
-
-                    return true;
-                }             
+                onCardEntersPlay: event => event.card.hasTrait('Clansman') && event.card.getType() === 'character'
             },
-            handler: () => {
-                var icons = ['Military', 'Intrigue', 'Power'];
+            handler: context => {
+                this.game.promptForIcon(this.controller, context);
 
-                var buttons = _.map(icons, icon => {
-                    return { text: icon, method: 'iconSelected', arg: icon.toLowerCase() };
-                });
+                this.game.queueSimpleStep(() => {
+                    this.untilEndOfPhase(ability => ({
+                        match: context.event.card,
+                        effect: ability.effects.addIcon(context.icon)
+                    }));
 
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select an icon to give',
-                        buttons: buttons
-                    },
-                    source: this
-                });                
+                    this.game.addMessage('{0} uses {1} to have {2} gain {3} {4} icon until the end of the phase',
+                                this.controller, this, context.event.card, context.icon === 'intrigue' ? 'an' : 'a', context.icon);
+                });              
             }
         });
-    }
-
-    iconSelected(player, icon) {
-        this.untilEndOfPhase(ability => ({
-            match: this.pendingCard,
-            effect: ability.effects.addIcon(icon)
-        }));
-
-        this.game.addMessage('{0} uses {1} to give {2} a {3} icon', player, this, this.pendingCard, icon);
-
-        return true;
     }
 }
 
