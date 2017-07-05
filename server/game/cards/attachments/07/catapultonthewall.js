@@ -5,8 +5,6 @@ class CatapultOnTheWall extends DrawCard {
         this.action({
             title: 'Kneel Catapult and attached character',
             condition: () => this.game.currentChallenge,
-
-            // This is not a nice interaction for users, but `ability.costs` would need to be updated with a different method to allow something like attachment.parent.kneel() (I think)
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.kneelParent()
@@ -16,11 +14,12 @@ class CatapultOnTheWall extends DrawCard {
                 cardCondition: card => this.game.currentChallenge.isAttacking(card) && card.getStrength() <= 4
             },
             handler: context => {
-                context.target.owner.killCharacter(context.target);
+                this.game.killCharacter(context.target);
                 this.game.addMessage('{0} kneels {1} and {2} to kill {3}', context.player, this, this.parent, context.target);
-                this.parent.untilEndOfRound(ability => ({
+                this.untilEndOfRound(ability => ({
+                    condition: () => this.game.currentPhase === 'standing',
                     match: this.parent,
-                    effect: ability.effects.doesNotStandDuringStanding()
+                    effect: ability.effects.cannotBeStood()
                 }));
             }
         });

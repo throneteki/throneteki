@@ -13,11 +13,12 @@ class SavingTheKingdom extends DrawCard {
                 context.target.controller.kneelCard(context.target);
 
                 this.untilEndOfRound(ability => ({
+                    condition: () => this.game.currentPhase === 'standing',
                     match: context.target,
-                    effect: ability.effects.doesNotStandDuringStanding()
+                    effect: ability.effects.cannotBeStood()
                 }));
 
-                this.game.addMessage('{0} plays {1} to make {2} unable to stand during the standing phase this round', 
+                this.game.addMessage('{0} plays {1} to kneel and make {2} unable to stand during the standing phase this round', 
                                       this.controller, this, context.target);
             }
         });

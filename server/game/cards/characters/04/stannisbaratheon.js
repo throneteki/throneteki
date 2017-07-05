@@ -16,30 +16,22 @@ class StannisBaratheon extends DrawCard {
             when: {
                 onDominanceDetermined: (event, winner) => this.controller === winner
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => (
-                        card.location === 'play area' && 
-                        card.getType() === 'character' && 
-                        !card.isLoyal()),
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
+                                       !card.isLoyal()
+            },
+            handler: context => {
+                this.untilEndOfRound(ability => ({
+                    condition: () => this.game.currentPhase === 'standing',
+                    match: context.target,
+                    effect: ability.effects.cannotBeStood()
+                }));
+
+                this.game.addMessage('{0} uses {1} to make {2} unable to stand during the standing phase this round', 
+                                      this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to make {2} unable to stand during the standing phase this round', 
-                              player, this, card);
-
-        this.untilEndOfRound(ability => ({
-            match: card,
-            effect: ability.effects.doesNotStandDuringStanding()
-        }));
-
-        return true;
     }
 }
 
