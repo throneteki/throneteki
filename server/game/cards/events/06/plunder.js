@@ -18,7 +18,7 @@ class Plunder extends DrawCard {
         let opponent = this.game.getOtherPlayer(this.controller);
 
         if(!opponent) {
-            return;
+            return 0;
         }
 
         return opponent.allCards.reduce((num, card) => {

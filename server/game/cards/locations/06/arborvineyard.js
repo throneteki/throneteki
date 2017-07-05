@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../../drawcard.js');
 
 class ArborVineyard extends DrawCard {
@@ -17,10 +15,10 @@ class ArborVineyard extends DrawCard {
     }
 
     moreSummerThanWinterPlotsRevealed() {
-        let summerPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Summer'));
-        let winterPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Winter'));
+        let summerPlots = this.game.getNumberOfPlotsWithTrait('Summer');
+        let winterPlots = this.game.getNumberOfPlotsWithTrait('Winter');
 
-        return summerPlots.length > winterPlots.length;
+        return summerPlots > winterPlots;
     }
 }
 

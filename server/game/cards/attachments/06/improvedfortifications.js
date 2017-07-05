@@ -9,7 +9,7 @@ class ImprovedFortifications extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
-                context.event.saveCard(this.parent);
+                context.event.cancel();
                 this.game.addMessage('{0} sacrifices {1} to save {2}', this.controller, this, this.parent);
             }
         });
