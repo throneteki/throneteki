@@ -13,7 +13,7 @@ class OthellYarwyck extends DrawCard {
             handler: context => {
                 this.game.promptForIcon(this.controller, icon => {
                     this.untilEndOfPhase(ability => ({
-                        match: this,
+                        match: context.target,
                         effect: ability.effects.addIcon(icon)
                     }));
 
