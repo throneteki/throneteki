@@ -11,7 +11,7 @@ class SerAlliserThorne extends DrawCard {
         this.reaction({
             location: 'hand',
             when: {
-                onChallenge: (event, challenge) => challenge.challengeType === 'military'
+                onChallengeInitiated: event => event.challenge.challengeType === 'military' && event.challenge.defendingPlayer === this.controller
             },
             cost: [
                 ability.costs.kneelFactionCard(),

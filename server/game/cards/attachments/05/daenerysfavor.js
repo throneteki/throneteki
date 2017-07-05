@@ -10,7 +10,7 @@ class DaenerysFavor extends DrawCard {
             match: card => this.game.currentChallenge.isParticipating(card) && card.getType() === 'character' && card !== this.parent,
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1),
-            recalculateWhen: ['onAttackersDeclared', 'onDefendersDeclared']
+            recalculateWhen: ['onChallengeRecalculate', 'onDefendersDeclared']
         });
     }
     canAttach(player, card) {
