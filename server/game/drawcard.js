@@ -149,11 +149,12 @@ class DrawCard extends BaseCard {
     }
 
     getStrength(printed = false) {
+        let baseStrength = (this.cardData.strength || 0);
+
         if(this.controller.phase === 'setup' || printed) {
-            return this.cardData.strength || undefined;
+            return baseStrength;
         }
 
-        let baseStrength = (this.cardData.strength || 0);
         let modifiedStrength = this.strengthModifier + baseStrength;
         let multipliedStrength = Math.round(this.strengthMultiplier * modifiedStrength);
         return Math.max(0, multipliedStrength);
@@ -368,7 +369,7 @@ class DrawCard extends BaseCard {
             attachments: this.attachments.map(attachment => {
                 return attachment.getSummary(activePlayer, hideWhenFaceup);
             }),
-            baseStrength: _.isNull(this.cardData.strength) ? 0 : this.cardData.strength,
+            baseStrength: this.getStrength(true),
             dupes: this.dupes.map(dupe => {
                 if(dupe.dupes.size() !== 0) {
                     throw new Error('A dupe should not have dupes! ' + dupe.name);
@@ -383,7 +384,7 @@ class DrawCard extends BaseCard {
             kneeled: this.kneeled,
             power: this.power,
             saved: this.saved,
-            strength: !_.isNull(this.cardData.strength) ? this.getStrength() : 0,
+            strength: this.getStrength(),
             stealth: this.stealth
         });
     }
