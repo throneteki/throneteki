@@ -41,7 +41,7 @@ class TheRainsOfCastamere extends AgendaCard {
     }
 
     onDecksPrepared() {
-        this.owner.createAdditionalPile('scheme plots', { title: 'Schemes', area: 'plots', isPrivate: true });
+        this.owner.createAdditionalPile('scheme plots', { isPrivate: true });
         var schemePartition = this.owner.plotDeck.partition(card => card.hasTrait('Scheme'));
         this.schemes = schemePartition[0];
         this.owner.plotDeck = _(schemePartition[1]);
