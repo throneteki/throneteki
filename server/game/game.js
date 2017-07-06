@@ -623,7 +623,7 @@ class Game extends EventEmitter {
     }
 
     registerAbility(ability) {
-        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => ability.isTriggeredByEvent(window.event));
+        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => ability.eventType === window.abilityType && ability.isTriggeredByEvent(window.event));
 
         if(windowIndex === -1) {
             return;
