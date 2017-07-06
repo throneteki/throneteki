@@ -56,6 +56,7 @@ class Game extends EventEmitter {
             isApplying: false,
             type: undefined
         };
+        this.round = 0;
 
         _.each(details.players, player => {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -572,6 +573,7 @@ class Game extends EventEmitter {
     }
 
     beginRound() {
+        this.round += 1;
         this.raiseEvent('onBeginRound');
         this.queueStep(new PlotPhase(this));
         this.queueStep(new DrawPhase(this));
