@@ -16,7 +16,7 @@ class ScalingTheWall extends DrawCard {
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to return {2} to it\'s owners hand', context.player, this, context.target);
-                this.controller.moveCard(context.target, 'hand');
+                context.target.owner.returnCardToHand(context.target);
             }
         });
     }
