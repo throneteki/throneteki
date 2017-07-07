@@ -1,17 +1,17 @@
 const DrawCard = require('../../../drawcard.js');
 
-class GuardingTheRealm extends DrawCard {
+class PayTheIronPrice extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Take control of character in discard pile',
-            phase: 'marshal',
+            title: 'Put attachment into play',
+            phase: 'challenge',
             target: {
-                activePromptTitle: 'Select a character',
-                cardCondition: card => card.controller !== this.controller && card.location === 'discard pile' && card.getType() === 'character' && card.getCost() <= 3
+                activePromptTitle: 'Select an attachment',
+                cardCondition: card => card.location === 'discard pile' && card.controller !== this.controller && card.getType() === 'attachment'
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);
-                this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s discard pile under their control', 
+                this.game.addMessage('{0} plays {1} to put {2} into play from {3}\'s discard pile under their control', 
                                       this.controller, this, context.target, context.target.owner);
             }
         });
@@ -19,7 +19,7 @@ class GuardingTheRealm extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && !challenge.isAttackerTheWinner()
+                afterChallenge: (event, challenge) => this.controller === challenge.winner && challenge.isUnopposed()
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
@@ -31,6 +31,6 @@ class GuardingTheRealm extends DrawCard {
     }
 }
 
-GuardingTheRealm.code = '06026';
+PayTheIronPrice.code = '06112';
 
-module.exports = GuardingTheRealm;
+module.exports = PayTheIronPrice;
