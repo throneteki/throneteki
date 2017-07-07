@@ -45,7 +45,7 @@ describe('The Rains of Castamere', function() {
         });
 
         it('should create the schemes plot pile', function() {
-            expect(this.player.createAdditionalPile).toHaveBeenCalledWith('scheme plots', { title: jasmine.any(String), area: 'plots', isPrivate: true });
+            expect(this.player.createAdditionalPile).toHaveBeenCalledWith('scheme plots', { isPrivate: true });
         });
 
         it('should remove the schemes from the players plot deck', function() {

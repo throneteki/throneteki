@@ -54,7 +54,7 @@ class Player extends Spectator {
             standing: false
         };
 
-        this.createAdditionalPile('out of game', { title: 'Out of Game', area: 'player row' });
+        this.createAdditionalPile('out of game');
 
         this.promptState = new PlayerPromptState();
     }
@@ -691,7 +691,7 @@ class Player extends Spectator {
         }
     }
 
-    createAdditionalPile(name, properties) {
+    createAdditionalPile(name, properties = {}) {
         this.additionalPiles[name] = _.extend({ cards: _([]) }, properties);
     }
 
@@ -1135,8 +1135,6 @@ class Player extends Spectator {
         let state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
             additionalPiles: _.mapObject(this.additionalPiles, pile => ({
-                title: pile.title,
-                area: pile.area,
                 isPrivate: pile.isPrivate,
                 cards: this.getSummaryForCardList(pile.cards, activePlayer, pile.isPrivate)
             })),

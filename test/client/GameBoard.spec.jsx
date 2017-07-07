@@ -1,4 +1,4 @@
-/* global describe, it, expect, beforeEach, jasmine */
+/* global describe, it, expect, beforeEach, jasmine, xdescribe */
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 import GameBoard, { InnerGameBoard } from '../../client/GameBoard.jsx';
@@ -36,8 +36,8 @@ describe('the <GameBoard /> component', function() {
 
         component = ReactDOM.render(<InnerGameBoard />, node);
 
-        state.games.currentGame.players['1'] = { id: 1, name: '1' };
-        state.games.currentGame.players['2'] = { id: 2, name: '2' };
+        state.games.currentGame.players['1'] = { id: 1, name: '1', additionalPiles: {} };
+        state.games.currentGame.players['2'] = { id: 2, name: '2', additionalPiles: {} };
         state.socket.socket = jasmine.createSpyObj('socket', ['emit']);
         state.auth.username = '1';
         state.socket.username = '1';
