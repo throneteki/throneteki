@@ -15,7 +15,7 @@ class AdditionalCardPile extends React.Component {
         return (
             <CardCollection
                 className={this.props.className}
-                title={this.props.pile.title}
+                title={this.props.title}
                 source='additional'
                 cards={this.props.pile.cards}
                 topCard={topCard}
@@ -35,7 +35,8 @@ AdditionalCardPile.propTypes = {
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
     pile: React.PropTypes.object,
-    spectating: React.PropTypes.bool
+    spectating: React.PropTypes.bool,
+    title: React.PropTypes.string
 };
 
 export default AdditionalCardPile;

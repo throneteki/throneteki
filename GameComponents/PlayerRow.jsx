@@ -148,20 +148,23 @@ class PlayerRow extends React.Component {
         }
     }
 
-    getAdditionalPiles() {
-        var piles = _.reject(this.props.additionalPiles, pile => pile.cards.length === 0 || pile.area !== 'player row');
-        var index = 0;
-        return _.map(piles, pile => {
-            return (
-                <AdditionalCardPile key={'additional-pile-' + index++}
-                    className='additional-cards'
-                    isMe={this.props.isMe}
-                    onMouseOut={this.props.onMouseOut}
-                    onMouseOver={this.props.onMouseOver}
-                    pile={pile}
-                    spectating={this.props.spectating} />
-            );
-        });
+    getOutOfGamePile() {
+        let pile = this.props.additionalPiles['out of game'];
+
+        if(!pile || pile.cards.length === 0) {
+            return;
+        }
+
+        return (
+            <AdditionalCardPile
+                className='additional-cards'
+                isMe={this.props.isMe}
+                onMouseOut={this.props.onMouseOut}
+                onMouseOver={this.props.onMouseOver}
+                pile={pile}
+                spectating={this.props.spectating}
+                title='Out of Game' />
+        );
     }
 
     render() {
@@ -173,8 +176,6 @@ class PlayerRow extends React.Component {
         }
 
         var hand = this.getHand(needsSquish);
-
-        var additionalPiles = this.getAdditionalPiles();
 
         var drawDeckMenu = [
             { text: 'Show', handler: this.onShowDeckClick, showPopup: true },
@@ -206,7 +207,7 @@ class PlayerRow extends React.Component {
                 <CardCollection className='dead' title='Dead' source='dead pile' cards={this.props.deadPile}
                                 onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut} onCardClick={this.props.onCardClick}
                                 popupLocation={this.props.isMe || this.props.spectating ? 'top' : 'bottom'} onDragDrop={this.props.onDragDrop} orientation='kneeled' />
-                  {additionalPiles}
+                  {this.getOutOfGamePile()}
                 </div>
             </div>
         );

@@ -269,24 +269,23 @@ export class InnerGameBoard extends React.Component {
         return cardsByLocation;
     }
 
-    getAdditionalPlotPiles(player, isMe) {
-        if(!player) {
+    getSchemePile(player, isMe) {
+        let schemePile = player && player.additionalPiles['scheme plots'];
+
+        if(!schemePile) {
             return;
         }
 
-        var piles = _.reject(player.additionalPiles, pile => pile.cards.length === 0 || pile.area !== 'plots');
-        var index = 0;
-        return _.map(piles, pile => {
-            return (
-                <AdditionalCardPile key={'additional-pile-' + index++}
-                    className='plot'
-                    isMe={isMe}
-                    onMouseOut={this.onMouseOut}
-                    onMouseOver={this.onMouseOver}
-                    pile={pile}
-                    spectating={this.state.spectating} />
-            );
-        });
+        return (
+            <AdditionalCardPile
+                className='plot'
+                isMe={isMe}
+                onMouseOut={this.onMouseOut}
+                onMouseOver={this.onMouseOver}
+                pile={schemePile}
+                spectating={this.state.spectating}
+                title='Schemes' />
+        );
     }
 
     onCommand(command, arg, method) {
@@ -393,7 +392,7 @@ export class InnerGameBoard extends React.Component {
                         <div className='middle'>
                              <div className='plots-pane'>
                                 <div className='plot-group'>
-                                    {this.getAdditionalPlotPiles(otherPlayer, false)}
+                                    {this.getSchemePile(otherPlayer, false)}
                                     <CardCollection className={otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot'}
                                                     title='Plots' source='plot deck' cards={otherPlayer ? otherPlayer.plotDeck : []}
                                                     topCard={{ facedown: true, kneeled: true }} orientation='horizontal'
@@ -410,7 +409,7 @@ export class InnerGameBoard extends React.Component {
                                     <CardCollection className={thisPlayer.plotSelected ? 'plot plot-selected' : 'plot'}
                                                     title='Plots' source='plot deck' cards={thisPlayer.plotDeck} topCard={{ facedown: true, kneeled: true }} orientation='horizontal'
                                                     onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} onCardClick={this.onCardClick} onDragDrop={this.onDragDrop} />
-                                    {this.getAdditionalPlotPiles(thisPlayer, !this.state.spectating)}
+                                    {this.getSchemePile(thisPlayer, !this.state.spectating)}
                                 </div>
                             </div>
                             <div className='middle-right'>
