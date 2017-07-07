@@ -20,7 +20,7 @@ class RedKeepSpy extends DrawCard {
                         card.getType() === 'character' &&
                         card.getCost() <= 3),
                     onSelect: (player, card) => {
-                        card.controller.moveCard(card, 'hand');
+                        card.owner.returnCardToHand(card);
                         this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', player, this, card, card.controller);
 
                         return true;
