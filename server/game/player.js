@@ -489,6 +489,10 @@ class Player extends Spectator {
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
+            if(card.controller !== this) {
+                card.controller.allCards = _(card.controller.allCards.reject(c => c === card));
+                this.allCards.push(card);
+            }
             card.controller = this;
             card.wasAmbush = (playingType === 'ambush');
 
