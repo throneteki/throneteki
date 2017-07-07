@@ -27,6 +27,7 @@ const SimultaneousEventWindow = require('./gamesteps/simultaneouseventwindow.js'
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
 const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredabilitywindow.js');
 const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
+const CardEventLog = require('./cardeventlog.js');
 const KillCharacters = require('./gamesteps/killcharacters.js');
 
 class Game extends EventEmitter {
@@ -57,6 +58,7 @@ class Game extends EventEmitter {
             type: undefined
         };
         this.round = 0;
+        this.cardEventLog = new CardEventLog(this);
 
         _.each(details.players, player => {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -691,6 +693,14 @@ class Game extends EventEmitter {
 
             this.raiseEvent('onCardTakenControl', card);
         });
+    }
+
+    anyCardsInLog(predicate) {
+        return this.cardEventLog.any(predicate);
+    }
+
+    filterCardsInLog(predicate) {
+        return this.cardEventLog.filterCards(predicate);
     }
 
     applyGameAction(actionType, cards, func) {
