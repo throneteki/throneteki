@@ -14,7 +14,7 @@ class OrphanOfTheGreenblood extends DrawCard {
                     card.getType() === 'character')
             },
             handler: context => {
-                context.target.controller.moveCard(context.target, 'hand');
+                context.target.owner.returnCardToHand(context.target);
                 this.game.addMessage('{0} discards 1 gold from {1} to return {2} to their hand', 
                                       this.controller, this, context.target);
             }

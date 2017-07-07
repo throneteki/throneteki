@@ -12,7 +12,7 @@ class TheThingsIDoForLove extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' && card.getCost() <= this.controller.gold
             },
             handler: context => {
-                context.target.controller.moveCard(context.target, 'hand');
+                context.target.controller.returnCardsToHand(context.target);
                 context.player.gold -= context.target.getCost();
 
                 this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', context.player, this, context.target, context.target.owner);

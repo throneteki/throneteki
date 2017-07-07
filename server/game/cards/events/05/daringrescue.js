@@ -14,7 +14,7 @@ class DaringRescue extends DrawCard {
                     card.getType() === 'character')
             },
             handler: context => {
-                this.controller.moveCard(context.target, 'hand');
+                context.target.owner.returnCardToHand(context.target);
                 this.game.addMessage('{0} plays {1} to return {2} to its owner\'s hand', 
                                       this.controller, this, context.target);
                 this.game.promptForSelect(this.controller, {
