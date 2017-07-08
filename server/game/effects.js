@@ -459,16 +459,6 @@ const Effects = {
             }
         };
     },
-    doesNotStandDuringStanding: function() {
-        return {
-            apply: function(card) {
-                card.standsDuringStanding = false;
-            },
-            unapply: function(card) {
-                card.standsDuringStanding = true;
-            }
-        };
-    },
     optionalStandDuringStanding: function() {
         return {
             apply: function(card) {
