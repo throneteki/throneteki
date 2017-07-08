@@ -629,11 +629,12 @@ class Player extends Spectator {
         let originalLocation = attachment.location;
 
         attachment.owner.removeCardFromPile(attachment);
-        attachment.parent = card;
-        attachment.moveTo('play area');
+        attachment.moveTo('play area', card);
         card.attachments.push(attachment);
 
-        attachment.applyPersistentEffects();
+        this.game.queueSimpleStep(() => {
+            attachment.applyPersistentEffects();
+        });
 
         if(originalLocation !== 'play area') {
             this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
