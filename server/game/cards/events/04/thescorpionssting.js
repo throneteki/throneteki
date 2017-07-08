@@ -12,6 +12,7 @@ class TheScorpionsSting extends DrawCard {
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     numCards: this.controller.getNumberOfUsedPlots(),
+                    multiSelect: true,
                     activePromptTitle: 'Select up to ' + this.controller.getNumberOfUsedPlots() + ' characters',
                     source: this,
                     cardCondition: card => card.isFaction('martell') && card.getType() === 'character',

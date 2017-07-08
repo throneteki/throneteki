@@ -10,11 +10,8 @@ class AryasGift extends DrawCard {
                     card.parent.isFaction('stark') && card.parent.controller === this.controller
             },
             handler: context => {
-                let player = context.player;
                 let attachment = context.target;
                 let oldOwner = attachment.parent;
-
-                player.moveCard(attachment, 'play area');
 
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => card.getType() === 'character' && card.controller === this.controller &&
@@ -31,7 +28,6 @@ class AryasGift extends DrawCard {
     moveAttachment(player, newOwner, attachment, oldOwner) {
         player.attach(player, attachment, newOwner.uuid);
         this.game.addMessage('{0} moves {1} from {2} to {3}', player, attachment, oldOwner, newOwner);
-        this.game.addMessage(this.dupes.length);
 
         return true;
     }

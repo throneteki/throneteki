@@ -623,7 +623,7 @@ class Game extends EventEmitter {
     }
 
     registerAbility(ability) {
-        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => ability.isTriggeredByEvent(window.event));
+        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => ability.eventType === window.abilityType && ability.isTriggeredByEvent(window.event));
 
         if(windowIndex === -1) {
             return;
@@ -807,6 +807,10 @@ class Game extends EventEmitter {
         player.disconnected = false;
 
         this.addMessage('{0} has reconnected', player);
+    }
+
+    reapplyStateDependentEffects() {
+        this.effectEngine.reapplyStateDependentEffects();
     }
 
     continue() {
