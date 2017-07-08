@@ -210,14 +210,18 @@ class ChatCommands {
     }
 
     strength(player, args) {
-        var num = this.getNumberOrDefault(args[1], 1);
+        let num = this.getNumberOrDefault(args[1], 1);
 
         this.game.promptForSelect(player, {
             activePromptTitle: 'Select a card to set strength for',
             waitingPromptTitle: 'Waiting for opponent to set strength',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
-                card.strengthModifier = num - card.cardData.strength;
+                if(_.isNumber(card.strengthSet)) {
+                    card.strengthSet = num;
+                } else {
+                    card.strengthModifier = num - card.cardData.strength;
+                }
                 this.game.addMessage('{0} uses the /strength command to set the strength of {1} to {2}', p, card, num);
                 return true;
             }
