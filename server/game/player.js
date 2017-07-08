@@ -489,6 +489,10 @@ class Player extends Spectator {
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
+            if(card.controller !== this) {
+                card.controller.allCards = _(card.controller.allCards.reject(c => c === card));
+                this.allCards.push(card);
+            }
             card.controller = this;
             card.wasAmbush = (playingType === 'ambush');
 
@@ -629,11 +633,12 @@ class Player extends Spectator {
         let originalLocation = attachment.location;
 
         attachment.owner.removeCardFromPile(attachment);
-        attachment.parent = card;
-        attachment.moveTo('play area');
+        attachment.moveTo('play area', card);
         card.attachments.push(attachment);
 
-        attachment.applyPersistentEffects();
+        this.game.queueSimpleStep(() => {
+            attachment.applyPersistentEffects();
+        });
 
         if(originalLocation !== 'play area') {
             this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
@@ -945,20 +950,20 @@ class Player extends Spectator {
                 return;
             }
 
-            card.attachments.each(attachment => {
-                this.removeAttachment(attachment, false);
-            });
-
-            while(card.dupes.size() > 0 && targetLocation !== 'play area') {
-                this.removeDuplicate(card, true);
-            }
-
             var params = {
                 player: this,
                 card: card
             };
 
             this.game.raiseMergedEvent('onCardLeftPlay', params, event => {
+                card.attachments.each(attachment => {
+                    this.removeAttachment(attachment, false);
+                });
+
+                while(card.dupes.size() > 0 && targetLocation !== 'play area') {
+                    this.removeDuplicate(card, true);
+                }
+
                 event.card.leavesPlay();
 
                 if(event.card.parent && event.card.parent.attachments) {

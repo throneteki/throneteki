@@ -209,6 +209,10 @@ class Effect {
             this.effect.apply(target, this.context);
         };
     }
+
+    get order() {
+        return this.effect.order || 0;
+    }
 }
 
 module.exports = Effect;

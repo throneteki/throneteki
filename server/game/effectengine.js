@@ -18,6 +18,7 @@ class EffectEngine {
         }
 
         this.effects.push(effect);
+        this.effects = _.sortBy(this.effects, effect => effect.order);
         effect.addTargets(this.getTargets());
         this.registerRecalculateEvents(effect.recalculateWhen);
         if(effect.duration === 'custom') {
@@ -42,7 +43,7 @@ class EffectEngine {
         let originalArea = event.originalLocation === 'hand' ? 'hand' : 'play area';
         let newArea = event.newLocation === 'hand' ? 'hand' : 'play area';
         this.removeTargetFromPersistentEffects(event.card, originalArea);
-        this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === event.card && effect.location === event.originalLocation);
+        this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === event.card && (effect.location === event.originalLocation || event.parentChanged));
         this.addTargetForPersistentEffects(event.card, newArea);
     }
 

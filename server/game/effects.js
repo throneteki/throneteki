@@ -40,7 +40,8 @@ const Effects = {
             unapply: function(card, context) {
                 _.each(effects, effect => effect.unapply(card, context));
             },
-            isStateDependent: (stateDependentEffects.length !== 0)
+            isStateDependent: (stateDependentEffects.length !== 0),
+            order: _.max(_.pluck(effects, 'order'))
         };
     },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
@@ -345,7 +346,8 @@ const Effects = {
         unapply: function() {
             // nothing happens when this effect expires.
         },
-        isStateDependent: true
+        isStateDependent: true,
+        order: 1000
     },
     blank: {
         apply: function(card) {
@@ -475,16 +477,6 @@ const Effects = {
             },
             unapply: function(card) {
                 card.contributesToDominance = true;
-            }
-        };
-    },
-    doesNotStandDuringStanding: function() {
-        return {
-            apply: function(card) {
-                card.standsDuringStanding = false;
-            },
-            unapply: function(card) {
-                card.standsDuringStanding = true;
             }
         };
     },

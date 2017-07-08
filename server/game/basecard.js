@@ -316,10 +316,12 @@ class BaseCard {
         this.tokens = {};
     }
 
-    moveTo(targetLocation) {
+    moveTo(targetLocation, parent) {
         let originalLocation = this.location;
+        let originalParent = this.parent;
 
         this.location = targetLocation;
+        this.parent = parent;
 
         if(LocationsWithEventHandling.includes(targetLocation) && !LocationsWithEventHandling.includes(originalLocation)) {
             this.events.register(this.eventsForRegistration);
@@ -347,8 +349,8 @@ class BaseCard {
             this.facedown = false;
         }
 
-        if(originalLocation !== targetLocation) {
-            this.game.raiseMergedEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation });
+        if(originalLocation !== targetLocation || originalParent !== parent) {
+            this.game.raiseMergedEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation, parentChanged: originalParent !== parent });
         }
     }
 

@@ -426,5 +426,48 @@ describe('take control', function() {
                 expect(this.player2).not.toHavePromptButton('Iron Mines');
             });
         });
+
+        describe('put into play under control + abilities', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('greyjoy', [
+                    'Snowed Under',
+                    'Night Gathers...', 'Lost Ranger', 'Old Forest Hunter'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.ranger = this.player2.findCardByName('Lost Ranger', 'hand');
+                this.hunter = this.player2.findCardByName('Old Forest Hunter', 'hand');
+
+                // Drag these to discard to be available for Night Gathers
+                this.player2.dragCard(this.ranger, 'discard pile');
+                this.player2.dragCard(this.hunter, 'discard pile');
+
+                this.completeSetup();
+
+                this.player1.selectPlot('Snowed Under');
+                this.player2.selectPlot('Snowed Under');
+
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.clickCard('Night Gathers...', 'hand');
+
+                // Marshal Lost Ranger + Old Forest Hunter
+                this.player1.clickCard(this.ranger);
+                this.player1.clickCard(this.hunter);
+
+                expect(this.player1Object.cardsInPlay).toContain(this.ranger);
+                expect(this.player1Object.cardsInPlay).toContain(this.hunter);
+            });
+
+            it('should not trigger Lost Ranger\'s forced interrupt since there is another Ranger in play.', function() {
+                this.completeMarshalPhase();
+                this.completeChallengesPhase();
+
+                expect(this.ranger.location).toBe('play area');
+            });
+        });
     });
 });
