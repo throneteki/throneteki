@@ -946,20 +946,20 @@ class Player extends Spectator {
                 return;
             }
 
-            card.attachments.each(attachment => {
-                this.removeAttachment(attachment, false);
-            });
-
-            while(card.dupes.size() > 0 && targetLocation !== 'play area') {
-                this.removeDuplicate(card, true);
-            }
-
             var params = {
                 player: this,
                 card: card
             };
 
             this.game.raiseMergedEvent('onCardLeftPlay', params, event => {
+                card.attachments.each(attachment => {
+                    this.removeAttachment(attachment, false);
+                });
+
+                while(card.dupes.size() > 0 && targetLocation !== 'play area') {
+                    this.removeDuplicate(card, true);
+                }
+
                 event.card.leavesPlay();
 
                 if(event.card.parent && event.card.parent.attachments) {
