@@ -7,7 +7,7 @@ export function loadDecks() {
         shouldCallAPI: (state) => {
             return state.cards.singleDeck || !state.cards.decks;
         },
-        callAPI: () => $.ajax('/api/decks')
+        callAPI: () => $.ajax('/api/decks', { cache: false })
     };
 }
 
@@ -21,7 +21,7 @@ export function loadDeck(deckId) {
 
             return ret;
         },
-        callAPI: () => $.ajax('/api/decks/' + deckId)
+        callAPI: () => $.ajax('/api/decks/' + deckId, { cache: false })
     };
 }
 

@@ -6,7 +6,7 @@ export function loadCards() {
         shouldCallAPI: (state) => {
             return !state.cards.cards;  
         },
-        callAPI: () => $.ajax('/api/cards')
+        callAPI: () => $.ajax('/api/cards', { cache: false })
     };
 }
 
@@ -16,7 +16,7 @@ export function loadPacks() {
         shouldCallAPI: (state) => {
             return !state.cards.packs;  
         },
-        callAPI: () => $.ajax('/api/packs')
+        callAPI: () => $.ajax('/api/packs', { cache: false })
     };    
 }
 
@@ -26,6 +26,6 @@ export function loadFactions() {
         shouldCallAPI: (state) => {
             return !state.cards.factions;  
         },
-        callAPI: () => $.ajax('/api/factions')
+        callAPI: () => $.ajax('/api/factions', { cache: false })
     };
 }
