@@ -1,10 +1,7 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import _ from 'underscore';
-import $ from 'jquery';
 
 import StatusPopOver from './StatusPopOver.jsx';
-import {validateDeck} from './deck-validator';
 
 class DeckSummary extends React.Component {
     constructor() {
@@ -14,40 +11,8 @@ class DeckSummary extends React.Component {
         this.onCardMouseOver = this.onCardMouseOver.bind(this);
 
         this.state = {
-            status: '',
-            cardToShow: '',
-            plotCount: 0,
-            drawCount: 0
+            cardToShow: ''
         };
-    }
-
-    componentWillMount() {
-        this.updateDeck(validateDeck(this.props));
-    }
-
-    componentWillReceiveProps(newProps) {
-        this.updateDeck(validateDeck(newProps));
-    }
-
-    updateStatus() {
-        if(this.state.status === 'Valid') {
-            if($(this.refs.popover).popover) {
-                $(this.refs.popover).popover('disable');
-            }
-
-            return;
-        }
-
-        var popoverContent = $($.parseHTML(ReactDOM.findDOMNode(this.refs.popoverContent).outerHTML)).removeClass('hidden').html();
-        // XXX Neccessary until I figure out how to make this work for tests
-        if($(this.refs.popover).popover) {
-            $(this.refs.popover).popover({ trigger: 'hover', html: true });
-            $(this.refs.popover).data('bs.popover').options.content = popoverContent;
-        }
-    }
-
-    updateDeck(status) {
-        this.setState({ status: status.status, drawCount: status.drawCount, plotCount: status.plotCount, extendedStatus: status.extendedStatus }, this.updateStatus);
     }
 
     onCardMouseOver(event) {
@@ -64,7 +29,7 @@ class DeckSummary extends React.Component {
 
     getBannersToRender() {
         var banners = [];
-        _.each(this.props.bannerCards, (card) => {
+        _.each(this.props.deck.bannerCards, (card) => {
             banners.push(<div key={ card.code ? card.code : card }><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span></div>);
         });
         return banners;
@@ -73,7 +38,7 @@ class DeckSummary extends React.Component {
     getCardsToRender() {
         var cardsToRender = [];
         var groupedCards = {};
-        var combinedCards = _.union(this.props.plotCards, this.props.drawCards);
+        var combinedCards = _.union(this.props.deck.plotCards, this.props.deck.drawCards);
 
         _.each(combinedCards, (card) => {
             if(!groupedCards[card.card.type_name]) {
@@ -99,28 +64,32 @@ class DeckSummary extends React.Component {
     }
 
     render() {
+        if(!this.props.deck) {
+            return <div>Waiting for selected deck...</div>;
+        }
+
         var cardsToRender = this.getCardsToRender();
         var banners = this.getBannersToRender();
 
         return (
             <div>
                 { this.state.cardToShow ? <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } /> : null }
-                <h3>{ this.props.name }</h3>
+                <h3>{ this.props.deck.name }</h3>
                 <div className='decklist'>
-                    <img className='pull-left' src={ '/img/cards/' + this.props.faction.value + '.png' } />
-                    { this.props.agenda && this.props.agenda.code ? <img className='pull-right' src={ '/img/cards/' + this.props.agenda.code + '.png' } /> : null }
+                    { this.props.deck.faction ? <img className='pull-left' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }
+                    { this.props.deck.agenda && this.props.deck.agenda.code ? <img className='pull-right' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /> : null }
                     <div>
-                        <h4>{ this.props.faction.name }</h4>
-                        <div ref='agenda'>Agenda: { this.props.agenda && this.props.agenda.label ? <span className='card-link' onMouseOver={ this.onCardMouseOver }
-                            onMouseOut={ this.onCardMouseOut }>{ this.props.agenda.label }</span> : <span>None</span> }</div>
-                   
-                       {(this.props.agenda && this.props.agenda.label === 'Alliance') ? banners : null}
-                        
-                        <div ref='drawCount'>Draw deck: { this.state.drawCount } cards</div>
-                        <div ref='plotCount'>Plot deck: { this.state.plotCount } cards</div>
-                        <div className={this.state.status === 'Valid' ? 'text-success' : 'text-danger'}>
-                            <span ref='popover'>{ this.state.status }</span>
-                            <StatusPopOver ref='popoverContent' list={this.state.extendedStatus} />
+                        <h4>{ this.props.deck.faction ? this.props.deck.faction.name : null }</h4>
+                        <div ref='agenda'>Agenda: { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='card-link' onMouseOver={ this.onCardMouseOver }
+                            onMouseOut={ this.onCardMouseOut }>{ this.props.deck.agenda.label }</span> : <span>None</span> }</div>
+
+                       {(this.props.deck.agenda && this.props.deck.agenda.label === 'Alliance') ? banners : null}
+
+                        <div ref='drawCount'>Draw deck: { this.props.deck.validation.drawCount } cards</div>
+                        <div ref='plotCount'>Plot deck: { this.props.deck.validation.plotCount } cards</div>
+                        <div className={ this.props.deck.validation.status === 'Valid' ? 'text-success' : 'text-danger' }>
+                            <StatusPopOver status={ this.props.deck.validation.status } list={ this.props.deck.validation.extendedStatus }
+                                            show={ this.props.deck.validation.status !== 'Valid' } />
                         </div>
                     </div>
                 </div>
@@ -133,19 +102,8 @@ class DeckSummary extends React.Component {
 
 DeckSummary.displayName = 'DeckSummary';
 DeckSummary.propTypes = {
-    agenda: React.PropTypes.shape({
-        code: React.PropTypes.string,
-        label: React.PropTypes.string
-    }),
-    bannerCards: React.PropTypes.array,
-    cards: React.PropTypes.array,
-    drawCards: React.PropTypes.array,
-    faction: React.PropTypes.shape({
-        name: React.PropTypes.string,
-        value: React.PropTypes.string
-    }).isRequired,
-    name: React.PropTypes.string,
-    plotCards: React.PropTypes.array
+    cards: React.PropTypes.object,
+    deck: React.PropTypes.object
 };
 
 export default DeckSummary;

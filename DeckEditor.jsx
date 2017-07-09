@@ -1,61 +1,25 @@
 import React from 'react';
 import _ from 'underscore';
 import $ from 'jquery';
+import {connect} from 'react-redux';
 
 import Input from './FormComponents/Input.jsx';
 import Select from './FormComponents/Select.jsx';
 import Typeahead from './FormComponents/Typeahead.jsx';
 import TextArea from './FormComponents/TextArea.jsx';
 
-class DeckEditor extends React.Component {
+import * as actions from './actions';
+
+class InnerDeckEditor extends React.Component {
     constructor(props) {
         super(props);
 
-        this.onFactionChange = this.onFactionChange.bind(this);
-        this.onAgendaChange = this.onAgendaChange.bind(this);
-        this.onBannerChange = this.onBannerChange.bind(this);
-        this.onAddCard = this.onAddCard.bind(this);
-        this.onAddBanner = this.onAddBanner.bind(this);
-        this.addCardChange = this.addCardChange.bind(this);
-        this.onCardListChange = this.onCardListChange.bind(this);
-        this.onBannerListChange = this.onBannerListChange.bind(this);
-        this.onSaveClick = this.onSaveClick.bind(this);
-
         this.state = {
             cardList: '',
-            bannerList: '',
-            deckName: props.deckName || 'New Deck',
-            drawCards: props.drawCards || [],
-            factions: [
-                { name: 'House Baratheon', value: 'baratheon' },
-                { name: 'House Greyjoy', value: 'greyjoy' },
-                { name: 'House Lannister', value: 'lannister' },
-                { name: 'House Martell', value: 'martell' },
-                { name: 'The Night\'s Watch', value: 'thenightswatch' },
-                { name: 'House Stark', value: 'stark' },
-                { name: 'House Targaryen', value: 'targaryen' },
-                { name: 'House Tyrell', value: 'tyrell' }
-            ],
-            banners: [
-                { name: 'Banner of the Dragon', value: 'Banner of the Dragon'},
-                { name: 'Banner of the Kraken', value:  'Banner of the Kraken'},
-                { name: 'Banner of the Lion', value: 'Banner of the Lion'},
-                { name: 'Banner of the Rose', value: 'Banner of the Rose'},
-                { name: 'Banner of the Stag', value: 'Banner of the Stag'},
-                { name: 'Banner of the Sun', value: 'Banner of the Sun'},
-                { name: 'Banner of the Watch', value: 'Banner of the Watch'},
-                { name: 'Banner of the Wolf', value: 'Banner of the Wolf'}
-            ],
+            deck: this.copyDeck(props.deck),
             numberToAdd: 1,
-            plotCards: props.plotCards || [],
-            bannerCards: props.bannerCards || [],
-            selectedAgenda: props.agenda || {},
+            showBanners: false,
             selectedBanner: {},
-            bannersVisible: (props.agenda && props.agenda.name === 'Alliance') || false,
-            selectedFaction: props.faction || {
-                name: 'House Baratheon',
-                value: 'baratheon'
-            },
             validation: {
                 deckname: '',
                 cardToAdd: ''
@@ -64,98 +28,112 @@ class DeckEditor extends React.Component {
     }
 
     componentWillMount() {
-        var cardList = '';
-        var bannerList = '';
-        if(this.props.bannerCards) {
-            _.each(this.props.bannerCards, card => {
-                bannerList += ' ' + card.label + '\n';
-            });
-            this.setState({bannerList: bannerList});
+        if(!this.props.deck.faction && this.props.factions) {
+            let deck = this.copyDeck(this.state.deck);
+
+            deck.faction = this.props.factions['baratheon'];
+
+            this.setState({ deck: deck });
+            this.props.updateDeck(deck);
         }
-        if(this.props.drawCards || this.props.plotCards) {
-            _.each(this.props.drawCards, card => {
+
+        let cardList = '';
+
+        if(this.props.deck && (this.props.deck.drawCards || this.props.deck.plotCards)) {
+            _.each(this.props.deck.drawCards, card => {
                 cardList += card.count + ' ' + card.card.label + '\n';
             });
 
-            _.each(this.props.plotCards, card => {
+            _.each(this.props.deck.plotCards, card => {
                 cardList += card.count + ' ' + card.card.label + '\n';
             });
 
             this.setState({ cardList: cardList });
         }
-
-        this.raiseDeckChanged();
     }
 
-    raiseDeckChanged() {
-        if(this.props.onDeckChange) {
-            this.props.onDeckChange(this.buildDeck());
+    // XXX One could argue this is a bit hacky, because we're updating the innards of the deck object, react doesn't update components that use it unless we change the reference itself
+    copyDeck(deck) {
+        if(!deck) {
+            return { name: 'New Deck'};
         }
-    }
 
-    buildDeck() {
         return {
-            name: this.state.deckName,
-            selectedFaction: this.state.selectedFaction,
-            selectedAgenda: this.state.selectedAgenda,
-            plotCards: this.state.plotCards,
-            drawCards: this.state.drawCards,
-            bannerCards: this.state.bannerCards
+            _id: deck._id,
+            name: deck.name,
+            plotCards: deck.plotCards,
+            drawCards: deck.drawCards,
+            bannerCards: deck.bannerCards,
+            faction: deck.faction,
+            agenda: deck.agenda,
+            validation: deck.validation
         };
     }
 
     onChange(field, event) {
-        var newState = {};
+        let deck = this.copyDeck(this.state.deck);
 
-        newState[field] = event.target.value;
-        this.setState(newState, () => this.raiseDeckChanged());
+        deck[field] = event.target.value;
+
+        this.setState({ deck: deck });
+        this.props.updateDeck(deck);
     }
 
-    onFactionChange(event) {
-        var faction = _.find(this.state.factions, (faction) => {
-            return faction.value === event.target.value;
-        });
+    onFactionChange(selectedFaction) {
+        let deck = this.copyDeck(this.state.deck);
 
-        this.setState({ selectedFaction: faction }, () => this.raiseDeckChanged());
+        deck.faction = selectedFaction;
+
+        this.setState({ deck: deck });
+        this.props.updateDeck(deck);
     }
 
-    onAgendaChange(event) {
-        if(!event.target.value || event.target.value === '') {
-            this.setState({ selectedAgenda: { code: '' } }, () => this.raiseDeckChanged());
-            return;
-        }
+    onAgendaChange(selectedAgenda) {
+        let deck = this.copyDeck(this.state.deck);
 
-        var agenda = _.find(this.props.agendas, function(agenda) {
-            return agenda.code === event.target.value;
-        });
-        this.setState({ bannersVisible: agenda.name === 'Alliance'});
-        this.setState({ selectedAgenda: agenda }, () => this.raiseDeckChanged());
+        deck.agenda = selectedAgenda;
+
+        this.setState({ deck: deck, showBanners: deck.agenda && deck.agenda.code === '06018' }); // Alliance
+        this.props.updateDeck(deck);
     }
 
-    onBannerChange(event) {
-        if(!event.target.value || event.target.value === '') {
-            this.setState({ selectedBanner: { code: '' } }, () => this.raiseDeckChanged());
-            return;
-        }
-
-        var banner = _.find(this.props.agendas, function(agenda) {
-            return agenda.name === event.target.value;
-        });      
-        this.setState({ selectedBanner: banner }, () => this.raiseDeckChanged());
+    onBannerChange(selectedBanner) {
+        this.setState({ selectedBanner: selectedBanner });
     }
 
-    addBanner(card) {
-        var list = this.state.bannerCards;
-        list.push(card);
-        this.setState({bannerCards: list});
-    }
-    
     onAddBanner(event) {
         event.preventDefault();
-        this.addBanner(this.state.selectedBanner);
-        var bannerList = this.state.bannerList;
-        bannerList += this.state.selectedBanner.label + '\n';
-        this.setState({ bannerList: bannerList }, () => this.raiseDeckChanged());
+
+        if(!this.state.selectedBanner) {
+            return;
+        }
+
+        if(!this.state.deck.bannerCards) {
+            this.state.deck.bannerCards = {};
+        }
+
+        if(_.any(this.state.deck.bannerCards, banner => {
+            return banner.code === this.state.selectedBanner.code;
+        })) {
+            return;
+        }
+
+        let deck = this.copyDeck(this.state.deck);
+        deck.bannerCards.push(this.state.selectedBanner);
+
+        this.setState({ deck: deck });
+        this.props.updateDeck(deck);
+    }
+
+    onRemoveBanner(banner) {
+        let deck = this.copyDeck(this.state.deck);
+
+        deck.bannerCards = _.reject(deck.bannerCards, card => {
+            return card.code === banner.code;
+        });
+
+        this.setState({ deck: deck });
+        this.props.updateDeck(deck);
     }
 
     addCardChange(selectedCards) {
@@ -169,113 +147,113 @@ class DeckEditor extends React.Component {
             return;
         }
 
-        var cardList = this.state.cardList;
+        let cardList = this.state.cardList;
         cardList += this.state.numberToAdd + ' ' + this.state.cardToAdd.label + '\n';
 
         this.addCard(this.state.cardToAdd, parseInt(this.state.numberToAdd));
-        this.setState({ cardList: cardList }, () => this.raiseDeckChanged());
-    }
-
-    onBannerListChange(event) {
-       
-        var split = event.target.value.split('\n');
-        this.setState({bannerCards: []}, () => {
-            _.each(split, line => {
-                line = line.trim();
-                var card = _.find(this.props.cards, function(card) {
-                    return card.label.toLowerCase() === line.toLowerCase();
-                });
-                if(card) {
-                    this.addBanner(card);
-                }
-            });
-        });
-        this.setState({ bannerList: event.target.value }, () => this.raiseDeckChanged());
+        this.setState({ cardList: cardList });
     }
 
     onCardListChange(event) {
-        var split = event.target.value.split('\n');
+        let deck = this.state.deck;
 
-        var headerMark = _.findIndex(split, line => line.match(/^Packs:/));
+        let split = event.target.value.split('\n');
+
+        let headerMark = _.findIndex(split, line => line.match(/^Packs:/));
         if(headerMark >= 0) { // ThronesDB-style deck header found
                               // extract deck title, faction, agenda, and banners
-            var header = _.filter(_.first(split, headerMark), line => line !== '');
+            let header = _.filter(_.first(split, headerMark), line => line !== '');
             split = _.rest(split, headerMark);
 
             if(header.length >= 2) {
-                this.setState({ deckName: header[0] });
+                deck.name = header[0];
 
-                var faction = _.find(this.state.factions, faction => faction.name === header[1]);
+                let faction = _.find(this.props.factions, faction => faction.name === header[1].trim());
                 if(faction) {
-                    this.setState({ selectedFaction: faction }, () => this.raiseDeckChanged());
+                    deck.faction = faction;
                 }
 
                 header = _.rest(header, 2);
+
                 if(header.length >= 1) {
-                    var rawAgenda = undefined;
-                    if(_.contains(header, 'Alliance')) {
+                    let rawAgenda, rawBanners;
+
+                    if(_.any(header, line => {
+                        return line.trim() === 'Alliance';
+                    })) {
                         rawAgenda = 'Alliance';
-                        var rawBanners = _.filter(header, line => line !== 'Alliance');
+                        rawBanners = _.filter(header, line => line.trim() !== 'Alliance');
                     } else {
-                        rawAgenda = header[0];
+                        rawAgenda = header[0].trim();
                     }
 
-                    var agenda = _.find(this.props.agendas, agenda => agenda.name === rawAgenda);
+                    let agenda = _.find(this.props.agendas, agenda => agenda.name === rawAgenda);
                     if(agenda) {
-                        this.setState({ bannersVisible: agenda.name === 'Alliance'});
-                        this.setState({ selectedAgenda: agenda }, () => this.raiseDeckChanged());
+                        deck.agenda = agenda;
                     }
+
                     if(rawBanners) {
-                        this.setState({ bannerList: rawBanners.join('\n') }, () => this.raiseDeckChanged());
+                        let banners = _.map(rawBanners, rawBanner => {
+                            return _.find(this.props.banners, banner => {
+                                return rawBanner.trim() === banner.label;
+                            });
+                        });
+
+                        deck.bannerCards = banners;
                     }
                 }
             }
         }
 
-        this.setState({ drawCards: [], plotCards: [] }, () => {
-            _.each(split, line => {
-                line = line.trim();
-                var index = 2;
+        deck.plotCards = [];
+        deck.drawCards = [];
 
-                if(!$.isNumeric(line[0])) {
-                    return;
+        _.each(split, line => {
+            line = line.trim();
+            let index = 2;
+
+            if(!$.isNumeric(line[0])) {
+                return;
+            }
+
+            let num = parseInt(line[0]);
+            if(line[1] === 'x') {
+                index++;
+            }
+
+            let packOffset = line.indexOf('(');
+            let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
+            let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
+
+            let pack = _.find(this.props.packs, function(pack) {
+                return pack.code.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
+            });
+
+            let card = _.find(this.props.cards, function(card) {
+                if(pack) {
+                    return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
                 }
 
-                var num = parseInt(line[0]);
-                if(line[1] === 'x') {
-                    index++;
-                }
+                return card.label.toLowerCase() === cardName.toLowerCase();
+            });
 
-                var packOffset = line.indexOf('(');
-                var cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
-                var packName = line.substr(packOffset + 1, line.length - packOffset - 2);
-
-                var pack = _.find(this.props.packs, function(pack) {
-                    return pack.code === packName || pack.name === packName;
-                });
-
-                var card = _.find(this.props.cards, function(card) {
-                    if(pack) {
-                        return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
-                    }
-
-                    return card.label.toLowerCase() === cardName.toLowerCase();
-                });
-
-                if(card) {
-                    this.addCard(card, num);
-                }
-            }, () => this.raiseDeckChanged());
+            if(card) {
+                this.addCard(card, num);
+            }
         });
 
-        this.setState({ cardList: event.target.value }, () => this.raiseDeckChanged());
+        deck = this.copyDeck(deck);
+
+        this.setState({ cardList: event.target.value, deck: deck, showBanners: deck.agenda && deck.agenda.code === '06018' }); // Alliance
+        this.props.updateDeck(deck);
     }
 
     addCard(card, number) {
-        var plots = this.state.plotCards;
-        var draw = this.state.drawCards;
+        let deck = this.copyDeck(this.state.deck);
+        let plots = deck.plotCards;
+        let draw = deck.drawCards;
 
-        var list;
+        let list;
 
         if(card.type_code === 'plot') {
             list = plots;
@@ -288,54 +266,74 @@ class DeckEditor extends React.Component {
         } else {
             list.push({ count: number, card: card });
         }
-
-        this.setState({ plotCards: plots, drawCards: draw }, () => this.raiseDeckChanged());
     }
 
     onSaveClick(event) {
         event.preventDefault();
 
         if(this.props.onDeckSave) {
-            this.props.onDeckSave(this.buildDeck());
+            this.props.onDeckSave(this.props.deck);
         }
     }
 
+    getBannerList() {
+        if(_.size(this.props.deck.bannerCards) === 0) {
+            return null;
+        }
+
+        return _.map(this.props.deck.bannerCards, card => {
+            return (<div>
+                <span key={ card.code } className='card-link col-sm-10'>{ card.label }</span>
+                <span className='glyphicon glyphicon-remove icon-danger btn col-sm-1' aria-hidden='true' onClick={ this.onRemoveBanner.bind(this, card) } />
+            </div>);
+        });
+    }
+
     render() {
+        if(!this.props.deck || this.props.loading) {
+            return <div>Waiting for deck...</div>;
+        }
+
+        let banners = this.getBannerList();
+
         return (
             <div className='col-sm-6'>
                 <h2>Deck Editor</h2>
                 <h4>Either type the cards manually into the box below, add the cards one by one using the card box and autocomplete or for best results, copy and paste a decklist from <a href='http://thronesdb.com' target='_blank'>Thrones DB</a> into the box below.</h4>
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
-                        type='text' onChange={this.onChange.bind(this, 'deckName')} value={this.state.deckName} />
-                    <Select name='faction' label='Faction' labelClass='col-sm-3' fieldClass='col-sm-9' options={this.state.factions}
-                        onChange={this.onFactionChange} value={this.state.selectedFaction.value} />
-                    <Select name='agenda' label='Agenda' labelClass='col-sm-3' fieldClass='col-sm-9' options={this.props.agendas}
-                        onChange={this.onAgendaChange} value={this.state.selectedAgenda.code}
-                        valueKey='code' nameKey='label' blankOption={{ label: '- Select -', code: '' }} />
+                        type='text' onChange={this.onChange.bind(this, 'name')} value={ this.state.deck.name } />
+                    <Select name='faction' label='Faction' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.factions) }
+                        onChange={ this.onFactionChange.bind(this) } value={ this.state.deck.faction ? this.state.deck.faction.value : undefined } />
+                    <Select name='agenda' label='Agenda' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.agendas) }
+                        onChange={ this.onAgendaChange.bind(this) } value={ this.state.deck.agenda ? this.state.deck.agenda.code : undefined }
+                        valueKey='code' nameKey='label' blankOption={ { label: '- Select -', code: '' } } />
 
-                    {this.state.bannersVisible &&
+                    { this.state.showBanners &&
                     <div>
-                        <Select name='banners' label ='Banners' labelClass='col-sm-3' fieldClass='col-sm-9' options={this.state.banners}
-                            onChange={this.onBannerChange} value={this.state.selectedBanner.name} blankOption={{ name: '- Select -', code: '' }} button={{ text:'Add', onClick: this.onAddBanner}} />
-                        <TextArea label='Banners' labelClass='col-sm-3' fieldClass='col-sm-9' disabled='disabled' rows='2' value={this.state.bannerList}
-                            onChange={this.onBannerListChange} />
+                        <Select name='banners' label ='Banners' labelClass='col-sm-3' fieldClass='col-sm-9' options={ this.props.banners }
+                            onChange={ this.onBannerChange.bind(this) } value={ this.state.selectedBanner ? this.state.selectedBanner.code : undefined }
+                            valueKey='code' nameKey='label'
+                            blankOption={ { label: '- Select -', code: '' } } button={ { text:'Add', onClick: this.onAddBanner.bind(this) } } />
+                        <div className='col-sm-9 col-sm-offset-3 banner-list'>
+                            { banners }
+                        </div>
                     </div>
                     }
-                    <Typeahead label='Card' labelClass={'col-sm-3'} fieldClass='col-sm-4' labelKey={'label'} options={this.props.cards}
-                        onChange={this.addCardChange}>
+                    <Typeahead label='Card' labelClass={'col-sm-3'} fieldClass='col-sm-4' labelKey={'label'} options={ _.toArray(this.props.cards) }
+                        onChange={ this.addCardChange.bind(this) }>
                         <Input name='numcards' type='text' label='Num' labelClass='col-sm-1' fieldClass='col-sm-2'
-                            value={this.state.numberToAdd.toString()} onChange={this.onChange.bind(this, 'numberToAdd')}>
+                            value={ this.state.numberToAdd.toString() } onChange={ this.onChange.bind(this, 'numberToAdd') }>
                             <div className='col-sm-1'>
-                                <button className='btn btn-default' onClick={this.onAddCard}>Add</button>
+                                <button className='btn btn-default' onClick={ this.onAddCard.bind(this) }>Add</button>
                             </div>
                         </Input>
                     </Typeahead>
-                    <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='25' value={this.state.cardList}
-                        onChange={this.onCardListChange} />
+                    <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='25' value={ this.state.cardList }
+                        onChange={ this.onCardListChange.bind(this) } />
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
-                            <button ref='submit' type='submit' className='btn btn-primary' onClick={this.onSaveClick}>{this.props.mode}</button>
+                            <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>{ this.props.mode }</button>
                         </div>
                     </div>
                 </form>
@@ -344,20 +342,34 @@ class DeckEditor extends React.Component {
     }
 }
 
-DeckEditor.displayName = 'DeckEditor';
-DeckEditor.propTypes = {
-    agenda: React.PropTypes.object,
-    agendas: React.PropTypes.array,
-    bannerCards: React.PropTypes.array,
-    cards: React.PropTypes.array,
-    deckName: React.PropTypes.string,
-    drawCards: React.PropTypes.array,
-    faction: React.PropTypes.object,
+InnerDeckEditor.displayName = 'DeckEditor';
+InnerDeckEditor.propTypes = {
+    agendas: React.PropTypes.object,
+    banners: React.PropTypes.array,
+    cards: React.PropTypes.object,
+    deck: React.PropTypes.object,
+    factions: React.PropTypes.object,
+    loading: React.PropTypes.bool,
     mode: React.PropTypes.string,
-    onDeckChange: React.PropTypes.func,
     onDeckSave: React.PropTypes.func,
     packs: React.PropTypes.array,
-    plotCards: React.PropTypes.array
+    updateDeck: React.PropTypes.func
 };
+
+function mapStateToProps(state) {
+    return {
+        apiError: state.api.message,
+        agendas: state.cards.agendas,
+        banners: state.cards.banners,
+        cards: state.cards.cards,
+        deck: state.cards.selectedDeck,
+        decks: state.cards.decks,
+        factions: state.cards.factions,
+        loading: state.api.loading,
+        packs: state.cards.packs
+    };
+}
+
+const DeckEditor = connect(mapStateToProps, actions)(InnerDeckEditor);
 
 export default DeckEditor;
