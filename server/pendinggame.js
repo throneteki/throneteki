@@ -62,6 +62,10 @@ class PendingGame {
     }
 
     setupAgenda(player, agenda) {
+        if(!agenda) {
+            return;
+        }
+
         player.agenda = {};
         player.agenda.cardData = agenda;
     }
@@ -264,9 +268,9 @@ class PendingGame {
             var deck = undefined;
 
             if(activePlayer === player.name && player.deck) {
-                deck = { name: player.deck.name, selected: player.deck.selected };
+                deck = { name: player.deck.name, selected: player.deck.selected, status: player.deck.status };
             } else if(player.deck) {
-                deck = { selected: player.deck.selected };
+                deck = { selected: player.deck.selected, status: player.deck.status };
             } else {
                 deck = {};
             }
