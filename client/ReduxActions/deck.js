@@ -60,7 +60,7 @@ export function saveDeck(deck) {
     let str = JSON.stringify({
         deckName: deck.name,
         faction: { value: deck.faction.value },
-        agenda: { code: deck.agenda.code },
+        agenda: deck.agenda ? { code: deck.agenda.code } : null,
         plotCards: formatCards(deck.plotCards),
         drawCards: formatCards(deck.drawCards),
         bannerCards: _.map(deck.bannerCards, card => {
