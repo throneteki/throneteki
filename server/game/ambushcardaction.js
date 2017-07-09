@@ -12,6 +12,10 @@ class AmbushCardAction extends BaseAbility {
         this.title = 'Ambush';
     }
 
+    isCardAbility() {
+        return false;
+    }
+
     meetsRequirements(context) {
         return (
             context.game.currentPhase === 'challenge' &&
