@@ -6,7 +6,7 @@ var cardRepository = new CardRepository(config.dbPath);
 
 module.exports.init = function(server) {
     server.get('/api/cards', function(req, res, next) {
-        cardRepository.getCards(true, (err, cards) => {
+        cardRepository.getCards({ shortForm: true }, (err, cards) => {
             if(err) {
                 logger.info(err);
                 return next(err);

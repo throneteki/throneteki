@@ -4,7 +4,7 @@ const logger = require('../log.js');
 const BaseRepository = require('./baseRepository.js');
 
 class DeckRepository extends BaseRepository {
-    getCards(brief, callback) {
+    getCards(options, callback) {
         this.db.collection('cards').find({}).toArray((err, data) => {
             if(err) {
                 logger.info(err);
@@ -15,7 +15,7 @@ class DeckRepository extends BaseRepository {
             let cards = {};
 
             _.each(data, card => {
-                if(brief) {
+                if(options.shortForm) {
                     cards[card.code] = _.pick(card, 'code', 'name', 'label', 'type_code', 'type_name', 'is_loyal', 'faction_code', 'deck_limit', 'pack_code');
                 } else {
                     cards[card.code] = card;
