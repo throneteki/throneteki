@@ -122,6 +122,16 @@ const Effects = {
             }
         };
     },
+    setStrength: function(value) {
+        return {
+            apply: function(card) {
+                card.strengthSet = value;
+            },
+            unapply: function(card) {
+                card.strengthSet = undefined;
+            }
+        };
+    },
     modifyStrengthMultiplier: function(value) {
         return {
             apply: function(card) {
@@ -449,6 +459,17 @@ const Effects = {
             }
         };
     },
+    removeFromGame: function() {
+        return {
+            apply: function(card) {
+                card.owner.moveCard(card, 'out of game');
+            },
+            unapply: function(card, context) {
+                card.owner.putIntoPlay(card);
+                context.game.addMessage('{0} is put into play because of {1}', card, context.source);
+            }
+        };
+    },
     doesNotContributeToDominance: function() {
         return {
             apply: function(card) {
@@ -501,6 +522,7 @@ const Effects = {
     cannotBeKneeled: cannotEffect('kneel'),
     cannotBeStood: cannotEffect('stand'),
     cannotBeKilled: cannotEffect('kill'),
+    cannotGainPower: cannotEffect('gainPower'),
     cannotGainChallengeBonus: function() {
         return {
             apply: function(player) {

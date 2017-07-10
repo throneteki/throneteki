@@ -38,6 +38,7 @@ class DrawCard extends BaseCard {
         this.power = 0;
         this.strengthModifier = 0;
         this.strengthMultiplier = 1;
+        this.strengthSet = undefined;
         this.dominanceStrengthModifier = 0;
         this.contributesToDominance = true;
         this.kneeled = false;
@@ -154,6 +155,10 @@ class DrawCard extends BaseCard {
             return baseStrength;
         }
 
+        if(_.isNumber(this.strengthSet)) {
+            return this.strengthSet;
+        }
+
         let modifiedStrength = this.strengthModifier + baseStrength;
         let multipliedStrength = Math.round(this.strengthMultiplier * modifiedStrength);
         return Math.max(0, multipliedStrength);
@@ -230,17 +235,19 @@ class DrawCard extends BaseCard {
     }
 
     modifyPower(power) {
-        var oldPower = this.power;
+        this.game.applyGameAction('gainPower', this, card => {
+            let oldPower = card.power;
 
-        this.power += power;
+            card.power += power;
 
-        if(this.power < 0) {
-            this.power = 0;
-        }
+            if(card.power < 0) {
+                card.power = 0;
+            }
 
-        this.game.raiseEvent('onCardPowerChanged', this, this.power - oldPower);
+            this.game.raiseEvent('onCardPowerChanged', this, card.power - oldPower);
 
-        this.game.checkWinCondition(this.controller);
+            this.game.checkWinCondition(this.controller);
+        });
     }
 
     needsStealthTarget() {
