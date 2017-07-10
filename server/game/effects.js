@@ -465,7 +465,7 @@ const Effects = {
                 card.owner.moveCard(card, 'out of game');
             },
             unapply: function(card, context) {
-                context.source.controller.putIntoPlay(card);
+                card.owner.putIntoPlay(card);
                 context.game.addMessage('{0} is put into play because of {1}', card, context.source);
             }
         };
