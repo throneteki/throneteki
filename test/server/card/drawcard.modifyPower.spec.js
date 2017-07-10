@@ -7,6 +7,7 @@ describe('DrawCard', function () {
     beforeEach(function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
         this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'checkWinCondition', 'applyGameAction']);
+        this.gameSpy.applyGameAction.and.callFake((action, card, callback) => callback(card));
         this.card = new DrawCard({ game: this.gameSpy }, this.testCard);
     });
 
