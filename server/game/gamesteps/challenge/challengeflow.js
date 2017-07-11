@@ -68,7 +68,7 @@ class ChallengeFlow extends BaseStep {
     chooseStealthTargets() {
         this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()));
 
-        this.game.raiseEvent('onChallenge', this.challenge, () => {
+        this.game.raiseEvent('onChallengeInitiated', this.challenge, () => {
             this.challenge.initiateChallenge();
             this.game.raiseEvent('onAttackersDeclared', this.challenge);
         });
