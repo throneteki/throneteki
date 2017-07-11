@@ -12,13 +12,14 @@ describe('Player', function () {
         this.reducerSpy = jasmine.createSpyObj('reducer', ['canReduce', 'getAmount', 'markUsed', 'isExpired', 'unregisterEvents']);
         this.reducerSpy.getAmount.and.returnValue(1);
         this.reducer2Spy = jasmine.createSpyObj('reducer2', ['canReduce', 'getAmount', 'markUsed', 'isExpired', 'unregisterEvents']);
-        this.cardSpy = jasmine.createSpyObj('card', ['getCost', 'getAmbushCost']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getCost', 'getMinCost', 'getAmbushCost']);
     });
 
     describe('getReducedCost()', function () {
         describe('when marshaling', function() {
             beforeEach(function() {
                 this.cardSpy.getCost.and.returnValue(4);
+                this.cardSpy.getMinCost.and.returnValue(0);
             });
 
             describe('and there are no reducers', function() {
@@ -58,6 +59,7 @@ describe('Player', function () {
         describe('when ambushing', function() {
             beforeEach(function() {
                 this.cardSpy.getAmbushCost.and.returnValue(4);
+                this.cardSpy.getMinCost.and.returnValue(0);
             });
 
             describe('and there are no reducers', function() {

@@ -55,6 +55,7 @@ class DrawCard extends BaseCard {
             mustBeDeclaredAsDefender: false
         };
         this.stealthLimit = 1;
+        this.minCost = 0;
     }
 
     canBeDuplicated() {
@@ -118,6 +119,10 @@ class DrawCard extends BaseCard {
 
     getCost() {
         return this.cardData.cost;
+    }
+
+    getMinCost() {
+        return this.minCost;
     }
 
     getAmbushCost() {
