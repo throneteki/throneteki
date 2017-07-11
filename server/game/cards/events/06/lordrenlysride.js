@@ -13,7 +13,7 @@ class LordRenlysRide extends DrawCard {
                 let strBoost = 0;
 
                 if(topDeadCharacter) {
-                    strBoost = topDeadCharacter.getStrength(true);
+                    strBoost = topDeadCharacter.getPrintedStrength();
                 }
 
                 this.untilEndOfPhase(ability => ({

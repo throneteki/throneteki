@@ -6,11 +6,11 @@ class UlfSonOfUmar extends DrawCard {
             when: {
                 onCardEntersPlay: event => {
                     let card = event.card;
-                    if(!card.hasTrait('Clansman') || card.getType() !== 'character' || card.controller !== this.controller || card.getStrength(true) === 0) {
+                    if(!card.hasTrait('Clansman') || card.getType() !== 'character' || card.controller !== this.controller || card.getPrintedStrength() === 0) {
                         return false;
                     }
 
-                    this.strBoost = card.getStrength(true);
+                    this.strBoost = card.getPrintedStrength();
                     return true;
                 }             
             },

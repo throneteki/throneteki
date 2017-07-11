@@ -25,8 +25,8 @@ class WinterfellCrypt extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => (
-                    card.location === 'play area' && 
-                    card.getStrength(true) <= this.triggerCard.getStrength(true) &&
+                    card.location === 'play area' &&
+                    card.getPrintedStrength() <= this.triggerCard.getPrintedStrength() &&
                     card.getType() === 'character')
             },
             handler: context => {
