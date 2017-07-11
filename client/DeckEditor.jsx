@@ -113,7 +113,7 @@ class InnerDeckEditor extends React.Component {
         }
 
         if(!this.state.deck.bannerCards) {
-            this.state.deck.bannerCards = {};
+            this.state.deck.bannerCards = [];
         }
 
         if(_.any(this.state.deck.bannerCards, banner => {
