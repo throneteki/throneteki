@@ -18,7 +18,7 @@ class InnerDeckEditor extends React.Component {
             cardList: '',
             deck: this.copyDeck(props.deck),
             numberToAdd: 1,
-            showBanners: false,
+            showBanners: props.deck.agenda && props.deck.agenda.code === '06018',
             selectedBanner: {},
             validation: {
                 deckname: '',
