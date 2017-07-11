@@ -8,7 +8,7 @@ class ActionWindowsMenu extends React.Component {
         this.windows = [
             { name: 'plot', label: 'Plots revealed' },
             { name: 'draw', label: 'Draw phase' },
-            { name: 'challengeBegin', label: 'Challenge phase begins' },
+            { name: 'challengeBegin', label: 'Before challenge' },
             { name: 'attackersDeclared', label: 'Attackers declared' },
             { name: 'defendersDeclared', label: 'Defenders declared' },
             { name: 'winnerDetermined', label: 'Winner determined' },
