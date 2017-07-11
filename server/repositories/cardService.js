@@ -9,15 +9,15 @@ class CardService {
         this.cards = db.get('cards');
         this.packs = db.get('packs');
     }
-    
+
     getAllCards(options) {
         return this.cards.find({})
             .then(result => {
                 let cards = {};
-                
+
                 _.each(result, card => {
                     if(options && options.shortForm) {
-                        cards[card.code] = _.pick(card, 'code', 'name', 'label', 'type_code', 'type_name', 'is_loyal', 'faction_code', 'deck_limit', 'pack_code');
+                        cards[card.code] = _.pick(card, 'code', 'name', 'label', 'type_code', 'type_name', 'is_loyal', 'faction_code', 'deck_limit', 'pack_code', 'traits');
                     } else {
                         cards[card.code] = card;
                     }
