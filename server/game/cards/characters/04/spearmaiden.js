@@ -4,7 +4,7 @@ class Spearmaiden extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onAttackersDeclared: (event, challenge) => challenge.challengeType === 'military' && challenge.isAttacking(this)
+                onAttackersDeclared: event => event.challenge.challengeType === 'military' && event.challenge.isAttacking(this)
             },
             target: {
                 activePromptTitle: 'Select character',

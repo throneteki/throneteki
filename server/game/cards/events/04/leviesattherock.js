@@ -4,7 +4,7 @@ class LeviesAtTheRock extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallenge: (event, challenge) => challenge.defendingPlayer === this.controller && this.opponentHasGold()
+                onChallengeInitiated: event => event.challenge.defendingPlayer === this.controller && this.opponentHasGold()
             },
             handler: () => {
                 let opponent = this.game.getOtherPlayer(this.controller);

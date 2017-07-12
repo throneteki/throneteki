@@ -10,7 +10,7 @@ class MargaeryTyrell extends DrawCard {
 
         this.reaction({
             when: {
-                onAttackersDeclared: (event, challenge) => challenge.isAttacking(this)
+                onAttackersDeclared: event => event.challenge.isAttacking(this)
             },
             target: {
                 activePromptTitle: 'Select a character',

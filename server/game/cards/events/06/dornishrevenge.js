@@ -4,7 +4,7 @@ class DornishRevenge extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallenge: (event, challenge) => challenge.attackingPlayer === this.controller
+                onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller
             },
             target: {
                 activePromptTitle: 'Select a character',

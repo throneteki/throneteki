@@ -8,11 +8,11 @@ class BreakerOfChains extends DrawCard {
 
         this.reaction({
             when: {
-                onAttackersDeclared: (event, challenge) => challenge.isAttacking(this.parent)
+                onAttackersDeclared: event => event.challenge.isAttacking(this.parent)
             },
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller && 
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
                                        card.getCost() <= 2
             },
             handler: context => {

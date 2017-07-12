@@ -4,7 +4,7 @@ class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallenge: (event, challenge) => challenge.challengeType === 'intrigue'
+                onChallengeInitiated: event => event.challenge.challengeType === 'intrigue'
             },
             limit: ability.limit.perRound(2),
             handler: () => {

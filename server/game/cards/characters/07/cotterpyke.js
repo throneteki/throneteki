@@ -4,30 +4,24 @@ class CotterPyke extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onBypassedByStealth: (event, challenge, source) => source === this
+                onBypassedByStealth: event => event.source === this && this.game.anyPlotHasTrait('Winter')
             },
-            condition: () => this.game.anyPlotHasTrait('Winter'),
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => (
-                        card.isFaction('thenightswatch') &&
-                        card.getType() === 'character' &&
-                        card.location === 'play area'),
-                    activePromptTitle: 'Select character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => (
+                    card.isFaction('thenightswatch') &&
+                    card.getType() === 'character' &&
+                    card.location === 'play area')
+            },
+            handler: context => {
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.addKeyword('Stealth')
+                }));
+
+                this.game.addMessage('{0} uses {1} to have {2} gain stealth until the end of the phase', this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.untilEndOfPhase(ability => ({
-            match: card,
-            effect: ability.effects.addKeyword('Stealth')
-        }));
-
-        this.game.addMessage('{0} uses {1} to have {2} gain stealth until the end of the phase', this.controller, this, card);
     }
 }
 

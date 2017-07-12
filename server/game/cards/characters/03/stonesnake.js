@@ -8,19 +8,15 @@ class Stonesnake extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onBypassedByStealth: (event, challenge, source, target) => {
-                    if(source !== this || this.hasNoCopyableKeyword(target)) {
-                        return false;
-                    }
-                    this.bypassed = target;
-                    return true;
-                }
+                onBypassedByStealth: event => event.source === this &&
+                                               this.hasCopyableKeyword(event.target)
             },
-            handler: () => {
+            handler: context => {
+                let target = context.event.target;
                 let buttons = [];
 
                 _.each(keywords, keyword => {
-                    if(this.bypassed.hasKeyword(keyword)) {
+                    if(target.hasKeyword(keyword)) {
                         buttons.push({ text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() });
                     }
                 });
@@ -49,8 +45,8 @@ class Stonesnake extends DrawCard {
         return true;
     }
 
-    hasNoCopyableKeyword(card) {
-        return !_.any(keywords, keyword => card.hasKeyword(keyword));
+    hasCopyableKeyword(card) {
+        return _.any(keywords, keyword => card.hasKeyword(keyword));
     }
 }
 

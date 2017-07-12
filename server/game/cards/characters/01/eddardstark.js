@@ -4,7 +4,7 @@ class EddardStark extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onAttackersDeclared: (event, challenge) => challenge.attackingPlayer !== this.controller && this.kneeled
+                onAttackersDeclared: event => event.challenge.attackingPlayer !== this.controller && this.kneeled
             },
             handler: () => {
                 this.controller.standCard(this);

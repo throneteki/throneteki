@@ -7,7 +7,7 @@ class Motley extends DrawCard {
         });
         this.reaction({
             when: {
-                onAttackersDeclared: (event, challenge) => challenge.isAttacking(this.parent),
+                onAttackersDeclared: event => event.challenge.isAttacking(this.parent),
                 onDefendersDeclared: (event, challenge) => challenge.isDefending(this.parent)
             },
             handler: () => {
