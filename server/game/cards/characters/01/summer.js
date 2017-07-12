@@ -24,7 +24,7 @@ class Summer extends DrawCard {
 
     cardCondition(card) {
         return (card.location === 'dead pile' || card.location === 'discard pile') && card.controller === this.controller && card.getType() === 'character' &&
-            card.isFaction('stark') && card.getStrength(true) <= 2;
+            card.isFaction('stark') && card.getPrintedStrength() <= 2;
     }
 
     onCardSelected(player, card) {

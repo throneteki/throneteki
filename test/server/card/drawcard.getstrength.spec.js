@@ -60,7 +60,7 @@ describe('DrawCard', function() {
             });
 
             it('should return the base strength', function() {
-                expect(this.card.getStrength(true)).toBe(3);
+                expect(this.card.getPrintedStrength()).toBe(3);
             });
         });
     });

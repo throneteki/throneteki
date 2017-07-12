@@ -17,7 +17,7 @@ class VenomousBlade extends DrawCard {
                     cardCondition: card => (
                         card.location === 'play area' &&
                         card.getType() === 'character' &&
-                        card.getStrength(true) <= 2),
+                        card.getPrintedStrength() <= 2),
                     onSelect: (p, card) => this.onCardSelected(p, card)
                 });
             }
