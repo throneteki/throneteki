@@ -117,8 +117,12 @@ class DrawCard extends BaseCard {
         return this.icons[icon.toLowerCase()] > 0;
     }
 
+    getPrintedCost() {
+        return this.cardData.cost || 0;
+    }
+
     getCost() {
-        return this.cardData.cost;
+        return this.getPrintedCost();
     }
 
     getMinCost() {
