@@ -41,7 +41,7 @@ class Lady extends DrawCard {
 
     moveAttachment(player, newOwner) {
         var targetPlayer = this.game.getPlayerByName(newOwner.controller.name);
-        targetPlayer.attach(player, this, newOwner.uuid);
+        targetPlayer.attach(player, this, newOwner);
         player.gold -= 1;
         if(newOwner.name === 'Sansa Stark' && newOwner.kneeled) {
             player.standCard(newOwner);

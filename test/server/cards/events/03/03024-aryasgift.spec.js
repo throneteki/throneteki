@@ -46,6 +46,10 @@ describe('Arya\'s Gift', function() {
                 expect(this.milk.parent).toBe(this.character2);
             });
 
+            it('should remove the attachment from the old parent', function() {
+                expect(this.character1.attachments.includes(this.milk)).toBe(false);
+            });
+
             it('should apply effects to the new parent', function() {
                 expect(this.character2.isBlank()).toBe(true);
             });

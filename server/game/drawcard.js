@@ -303,6 +303,15 @@ class DrawCard extends BaseCard {
         return card.allowAttachment(this);
     }
 
+    removeAttachment(attachment) {
+        if(!attachment || !this.attachments.includes(attachment)) {
+            return;
+        }
+
+        this.attachments = _(this.attachments.reject(a => a === attachment));
+        attachment.parent = undefined;
+    }
+
     getPlayActions() {
         return StandardPlayActions
             .concat(this.abilities.playActions)

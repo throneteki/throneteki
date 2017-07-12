@@ -623,16 +623,18 @@ class Player extends Spectator {
         return attachment.canAttach(this, card);
     }
 
-    attach(player, attachment, cardId, playingType) {
-        let card = this.findCardInPlayByUuid(cardId);
-
+    attach(player, attachment, card, playingType) {
         if(!card || !attachment) {
             return;
         }
 
         let originalLocation = attachment.location;
+        let originalParent = attachment.parent;
 
         attachment.owner.removeCardFromPile(attachment);
+        if(originalParent) {
+            originalParent.removeAttachment(attachment);
+        }
         attachment.moveTo('play area', card);
         card.attachments.push(attachment);
 
@@ -966,9 +968,8 @@ class Player extends Spectator {
 
                 event.card.leavesPlay();
 
-                if(event.card.parent && event.card.parent.attachments) {
-                    event.card.parent.attachments = this.removeCardByUuid(event.card.parent.attachments, event.card.uuid);
-                    event.card.parent = undefined;
+                if(event.card.parent) {
+                    event.card.parent.removeAttachment(event.card);
                 }
 
                 card.moveTo(targetLocation);
