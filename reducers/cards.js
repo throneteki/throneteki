@@ -23,6 +23,10 @@ function processDecks(decks, state) {
             deck.agenda = state.agendas[deck.agenda.code];
         }
 
+        if(deck.bannerCards) {
+            deck.bannerCards = _.map(deck.bannerCards, card => state.cards[card.code]);
+        }
+
         deck.plotCards = _.map(deck.plotCards, card => {
             return { count: card.count, card: state.cards[card.card.code] };
         });
