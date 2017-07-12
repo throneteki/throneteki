@@ -32,7 +32,7 @@ class Summer extends DrawCard {
                     this.canAttach(this.controller, card))
             },
             handler: context => {
-                this.controller.attach(this.controller, this, context.target.uuid);
+                this.controller.attach(this.controller, this, context.target);
 
                 this.game.addMessage('{0} uses {1} and pays 1 gold to attach {1} to {2}',
                                       this.controller, this, this.parent);

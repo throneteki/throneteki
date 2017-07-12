@@ -41,7 +41,7 @@ class Nymeria extends DrawCard {
 
     moveAttachment(player, newOwner) {
         var targetPlayer = this.game.getPlayerByName(newOwner.controller.name);
-        targetPlayer.attach(player, this, newOwner.uuid);
+        targetPlayer.attach(player, this, newOwner);
         player.gold -= 1;
         this.game.addMessage('{0} pays 1 gold to attach {1} from {2} to {3}', player, this, this.oldOwner, newOwner);
         this.oldOwner = null;

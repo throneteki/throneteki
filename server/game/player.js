@@ -623,9 +623,7 @@ class Player extends Spectator {
         return attachment.canAttach(this, card);
     }
 
-    attach(player, attachment, cardId, playingType) {
-        let card = this.findCardInPlayByUuid(cardId);
-
+    attach(player, attachment, card, playingType) {
         if(!card || !attachment) {
             return;
         }
