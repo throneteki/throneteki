@@ -5,11 +5,11 @@ describe('The Annals of Castle Black', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('greyjoy', [
-                'The Annals of Castle Black',
+                'The Annals of Castle Black', 'A Noble Cause',
                 'Wildling Horde', 'Lannisport Merchant', 'Hear Me Roar!', 'Ahead of the Tide'
             ]);
             const deck2 = this.buildDeck('greyjoy', [
-                'A Noble Cause',
+                'A Noble Cause', 'A Noble Cause',
                 'Lannisport Merchant', 'Hear Me Roar!'
             ]);
 
@@ -88,6 +88,19 @@ describe('The Annals of Castle Black', function() {
                 this.player1.clickPrompt('Ahead of the Tide');
 
                 expect(this.interruptEventCard.location).toBe('out of game');
+            });
+
+            it('should remove the effect next round', function() {
+                this.player1.clickPrompt('Pass');
+                this.selectFirstPlayer(this.player1);
+                this.completeMarshalPhase();
+                this.completeChallengesPhase();
+                this.completeTaxationPhase();
+
+                this.player1.selectPlot('A Noble Cause');
+                this.player2.selectPlot('A Noble Cause');
+
+                expect(this.player1).not.toHavePromptButton('Ahead of the Tide');
             });
         });
 
