@@ -28,7 +28,7 @@ class TheHandsJudgment extends DrawCard {
             return super.getCost();
         }
 
-        return this.eventToInterrupt.getCost();
+        return this.eventToInterrupt.getPrintedCost();
     }
 }
 
