@@ -1,7 +1,7 @@
 const _ = require('underscore');
 const uuid = require('uuid');
 
-const BaseAbilityWindow = require('./baseabilityWindow.js');
+const BaseAbilityWindow = require('./baseabilitywindow.js');
 const TriggeredAbilityWindowTitles = require('./triggeredabilitywindowtitles.js');
 
 class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
