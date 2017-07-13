@@ -1,33 +1,10 @@
 const _ = require('underscore');
 const uuid = require('uuid');
 
-const BaseStep = require('./basestep.js');
+const BaseAbilityWindow = require('./baseabilityWindow.js');
 const TriggeredAbilityWindowTitles = require('./triggeredabilitywindowtitles.js');
 
-class TriggeredAbilityWindow extends BaseStep {
-    constructor(game, properties) {
-        super(game);
-        this.abilityChoices = [];
-        this.events = _.flatten([properties.event]);
-        this.abilityType = properties.abilityType;
-    }
-
-    canTriggerAbility(ability) {
-        return ability.eventType === this.abilityType && _.any(this.events, event => ability.isTriggeredByEvent(event));
-    }
-
-    emitEvents() {
-        _.each(this.events, event => {
-            this.game.emit(event.name + ':' + this.abilityType, ...event.params);
-        });
-    }
-
-    registerAbilityForEachEvent(ability) {
-        _.each(this.events, event => {
-            this.registerAbility(ability, event);
-        });
-    }
-
+class TriggeredAbilityWindow extends BaseAbilityWindow {
     registerAbility(ability, event) {
         if(ability.hasMax() && this.hasChoiceForCardByName(ability.card.name)) {
             return;
