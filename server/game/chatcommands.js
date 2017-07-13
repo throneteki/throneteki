@@ -65,7 +65,12 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to set power',
             cardCondition: card => card.location === 'play area' && card.controller === player,
             onSelect: (p, card) => {
-                card.modifyPower(num - card.power);
+                let power = num - card.power;
+                card.power += power;
+
+                if(card.power < 0) {
+                    card.power = 0;
+                }
 
                 this.game.addMessage('{0} uses the /power command to set the power of {1} to {2}', p, card, num);
                 return true;
