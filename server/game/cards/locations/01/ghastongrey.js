@@ -4,29 +4,24 @@ class GhastonGrey extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.loser === this.controller && challenge.defendingPlayer === this.controller
+                afterChallenge: (event, challenge) => challenge.loser === this.controller && 
+                                                      challenge.defendingPlayer === this.controller
             },
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.sacrificeSelf()
             ],
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && this.game.currentChallenge.isAttacking(card),
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && 
+                                       this.game.currentChallenge.isAttacking(card)
+            },
+            handler: context => {
+                context.target.owner.returnCardToHand(context.target, false);
+                this.game.addMessage('{0} kneels and sacrifices {1} to return {2} to {3}\'s hand',
+                                      context.player, this, context.target, context.target.owner);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        card.controller.moveCard(card, 'hand');
-
-        this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', player, this, card, card.controller);
-
-        return true;
     }
 }
 
