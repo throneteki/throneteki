@@ -356,7 +356,8 @@ class DrawCard extends BaseCard {
     }
 
     canParticipateInChallenge() {
-        return this.allowGameAction('participateInChallenge');
+        return this.getType() === 'character'
+            && this.allowGameAction('participateInChallenge');
     }
 
     canBeBypassedByStealth() {
