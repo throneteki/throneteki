@@ -674,12 +674,13 @@ const Effects = {
         return {
             apply: function(player, context) {
                 let playableLocation = new PlayableLocation('play', player, location);
-                context.canPlayFromOwn = playableLocation;
+                context.canPlayFromOwn = context.canPlayFromOwn || {};
+                context.canPlayFromOwn[player.name] = playableLocation;
                 player.playableLocations.push(playableLocation);
             },
             unapply: function(player, context) {
-                player.playableLocations = _.reject(player.playableLocations, l => l === context.canPlayFromOwn);
-                delete context.canPlayFromOwn;
+                player.playableLocations = _.reject(player.playableLocations, l => l === context.canPlayFromOwn[player.name]);
+                delete context.canPlayFromOwn[player.name];
             }
         };
     },
