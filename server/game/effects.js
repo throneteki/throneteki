@@ -515,6 +515,16 @@ const Effects = {
             }
         };
     },
+    cannotMarshalOrPutIntoPlayByTitle: function(name) {
+        return {
+            apply: function(player) {
+                player.cannotMarshalOrPutIntoPlayByTitle.push(name);
+            },
+            unapply: function(player) {
+                player.cannotMarshalOrPutIntoPlayByTitle = _.reject(player.cannotMarshalOrPutIntoPlayByTitle, n => n === name);
+            }
+        };
+    },
     cannotMarshal: cannotEffect('marshal'),
     cannotPlay: cannotEffect('play'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
