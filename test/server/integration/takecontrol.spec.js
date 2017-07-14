@@ -383,6 +383,8 @@ describe('take control', function() {
             });
 
             it('should trigger for the current player', function() {
+                let knight = this.player1.findCardByName('Hedge Knight', 'play area');
+
                 this.player1.clickPrompt('Done');
 
                 this.player2.clickPrompt('Military');
@@ -398,12 +400,14 @@ describe('take control', function() {
 
                 this.player2.clickPrompt('Apply Claim');
 
-                this.player1.clickCard('Hedge Knight', 'play area');
+                this.player1.clickCard(knight);
 
                 this.player1.clickPrompt('Iron Mines');
-                this.player1.clickCard('Hedge Knight', 'play area');
+                expect(this.player1).toHavePrompt('Select character to save');
+                this.player1.clickCard(knight);
 
-                expect(this.player1.findCardByName('Hedge Knight', 'play area')).toBeDefined();
+                expect(this.player1).not.toHavePrompt('Select character to save');
+                expect(knight.location).toBe('play area');
             });
 
             it('should not trigger for the opponent', function() {
