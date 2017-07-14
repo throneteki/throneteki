@@ -10,7 +10,7 @@ class NowMyWatchBegins extends DrawCard {
                                 event.card.getCost() <= 5
             },
             handler: (context) => {
-                this.game.takeControl(this.controller, context.event.card);
+                this.controller.putIntoPlay(context.event.card);
 
                 this.game.addMessage('{0} uses {1} to put {2} into play under their control', this.controller, this, context.event.card);
             }
