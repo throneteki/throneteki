@@ -1,5 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
+import _ from 'underscore';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
@@ -207,6 +208,20 @@ class App extends React.Component {
     }
 
     render() {
+        var adminMenuItems = [];
+
+        if(this.props.user && this.props.user.permissions) {
+            var permissions = this.props.user.permissions;
+
+            if(permissions.canEditNews) {
+                adminMenuItems.push({ name: 'News', path: '/news' });
+            }
+        }
+
+        if(_.size(adminMenuItems) > 0) {
+            leftMenu.push({ name: 'Admin', childItems: adminMenuItems });
+        }
+
         let rightMenu = this.props.loggedIn ? authedMenu : notAuthedMenu;
         let component = {};
 
@@ -320,6 +335,7 @@ App.propTypes = {
     sendGameSocketConnectFailed: React.PropTypes.func,
     socketConnected: React.PropTypes.func,
     token: React.PropTypes.string,
+    user: React.PropTypes.object,
     username: React.PropTypes.string
 };
 
@@ -330,6 +346,7 @@ function mapStateToProps(state) {
         path: state.navigation.path,
         loggedIn: state.auth.loggedIn,
         token: state.auth.token,
+        user: state.auth.user,
         username: state.auth.username
     };
 }
