@@ -4,7 +4,7 @@ class TheIronBankWillHaveItsDue extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return character to gain gold',
-            condition: () => !this.game.currentPhase === 'taxation',
+            condition: () => this.game.currentPhase !== 'taxation',
             cost: [
                 ability.costs.kneelFactionCard(),
                 ability.costs.returnToHand(card => card.getType() === 'character')
