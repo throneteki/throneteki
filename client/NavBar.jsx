@@ -26,15 +26,22 @@ class InnerNavBar extends React.Component {
     }
 
     renderMenuItem(menuItem) {
-        let active = menuItem.path === this.props.currentPath ? 'active' : '';
 
         if(menuItem.childItems) {
+            let className = 'dropdown';
+
+            if(_.any(menuItem.childItems, item => {
+                return item.path === this.props.currentPath;
+            })) {
+                className += ' active';
+            }
+
             let childItems = _.map(menuItem.childItems, item => {
-                return <li key={ item.name } className={ active }><Link href={ item.path }>{ item.name }</Link></li>;
+                return <li key={ item.name }><Link href={ item.path }>{ item.name }</Link></li>;
             });
 
             return (
-                <li key={ menuItem.name } className='dropdown'>
+                <li key={ menuItem.name } className={ className }>
                     <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{ menuItem.name }<span className='caret' /></a>
                     <ul className='dropdown-menu'>
                         { childItems }
@@ -42,6 +49,8 @@ class InnerNavBar extends React.Component {
                 </li>);
 
         }
+
+        let active = menuItem.path === this.props.currentPath ? 'active' : '';
 
         return <li key={ menuItem.name } className={ active }><Link href={ menuItem.path }>{ menuItem.name }</Link></li>;
     }
