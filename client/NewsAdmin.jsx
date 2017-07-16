@@ -16,6 +16,7 @@ class InnerNewsAdmin extends React.Component {
             newsText: ''
         };
     }
+
     componentWillMount() {
         this.props.loadNews({ forceLoad: true });
     }
