@@ -40,6 +40,7 @@ class Player extends Spectator {
         this.usedPlotsModifier = 0;
         this.cannotGainChallengeBonus = false;
         this.cannotTriggerCardAbilities = false;
+        this.cannotMarshalOrPutIntoPlayByTitle = [];
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
         this.mustChooseAsClaim = [];
@@ -448,9 +449,9 @@ class Player extends Spectator {
     }
 
     canPutIntoPlay(card) {
-        var owner = card.owner;
+        let owner = card.owner;
         return (
-            (!this.isCharacterDead(card) || this.canResurrect(card)) &&
+            (!this.isCharacterDead(card) || this.canResurrect(card)) && !this.cannotMarshalOrPutIntoPlayByTitle.includes(card.name) &&
             (
                 owner === this ||
                 !this.getDuplicateInPlay(card) &&
