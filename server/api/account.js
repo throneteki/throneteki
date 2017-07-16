@@ -294,7 +294,7 @@ module.exports.init = function(server) {
                 updateUser(res, existingUser);
             })
             .catch(() => {
-                return res.status({ success: false, message: 'An error occured updating your user profile' });
+                return res.send({ success: false, message: 'An error occured updating your user profile' });
             });
     });
 };
