@@ -20,6 +20,7 @@ import About from './About.jsx';
 import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 import Profile from './Profile.jsx';
+import NewsAdmin from './NewsAdmin.jsx';
 
 import {toastr} from 'react-redux-toastr';
 
@@ -60,7 +61,8 @@ class App extends React.Component {
             '/about': () => <About />,
             '/forgot': () => <ForgotPassword />,
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
-            '/profile': () => <Profile />
+            '/profile': () => <Profile />,
+            '/news': () => <NewsAdmin />
         };
     }
 
@@ -292,15 +294,18 @@ class App extends React.Component {
             case '/profile':
                 component = <Profile />;
                 break;
+            case '/news':
+                component = <NewsAdmin />;
+                break;
             default:
                 component = <NotFound />;
                 break;
         }
 
         return (<div>
-            <NavBar leftMenu={leftMenu} rightMenu={rightMenu} title='The Iron Throne' currentPath={this.props.path} numGames={this.props.games.length} />
+            <NavBar leftMenu={ leftMenu } rightMenu={ rightMenu } title='The Iron Throne' currentPath={ this.props.path } numGames={ this.props.games.length } />
             <div className='container'>
-                {component}
+                { component }
             </div>
         </div>);
     }
