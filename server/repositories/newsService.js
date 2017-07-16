@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const monk = require('monk');
 
 class NewsService {
