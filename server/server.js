@@ -151,7 +151,7 @@ class Server {
                     admin: user.admin,
                     settings: user.settings || {},
                     promptedActionWindows: user.promptedActionWindows,
-                    permissions: user.permissions
+                    permissions: user.permissions || {}
                 });
             });
         });
@@ -177,7 +177,7 @@ class Server {
                 admin: user.admin,
                 settings: user.settings || {},
                 promptedActionWindows: user.promptedActionWindows,
-                permissions: user.permissions
+                permissions: user.permissions || {}
             });
         });
     }
