@@ -533,6 +533,16 @@ const Effects = {
     cannotBeStood: cannotEffect('stand'),
     cannotBeKilled: cannotEffect('kill'),
     cannotGainPower: cannotEffect('gainPower'),
+    cannotGainGold: function() {
+        return {
+            apply: function(player) {
+                player.cannotGainGold = true;
+            },
+            unapply: function(player) {
+                player.cannotGainGold = false;
+            }
+        };
+    },
     cannotGainChallengeBonus: function() {
         return {
             apply: function(player) {

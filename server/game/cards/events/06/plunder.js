@@ -4,7 +4,7 @@ class Plunder extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',
-            condition: () => this.getGold() >= 1,
+            condition: () => this.getGold() >= 1 && !this.controller.cannotGainGold,
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 let gold = this.getGold();

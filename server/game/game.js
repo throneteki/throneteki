@@ -345,6 +345,11 @@ class Game extends EventEmitter {
     }
 
     addGold(player, gold) {
+        if(gold > 0 && player.cannotGainGold) {
+            this.addMessage('{0} cannot gain gold', player);
+            return;
+        }
+
         player.gold += gold;
 
         if(player.gold < 0) {
