@@ -22,6 +22,7 @@ import ResetPassword from './ResetPassword.jsx';
 import Profile from './Profile.jsx';
 import NewsAdmin from './NewsAdmin.jsx';
 import Unauthorised from './Unauthorised.jsx';
+import UserAdmin from './UserAdmin.jsx';
 
 import {toastr} from 'react-redux-toastr';
 
@@ -223,6 +224,10 @@ class App extends React.Component {
             if(permissions.canEditNews) {
                 adminMenuItems.push({ name: 'News', path: '/news' });
             }
+
+            if(permissions.canManageUsers) {
+                adminMenuItems.push({ name: 'Users', path: '/users' });
+            }
         }
 
         if(_.size(adminMenuItems) > 0) {
@@ -308,6 +313,9 @@ class App extends React.Component {
                 break;
             case '/unauth':
                 component = <Unauthorised />;
+                break;
+            case '/users':
+                component = <UserAdmin />;
                 break;
             default:
                 component = <NotFound />;
