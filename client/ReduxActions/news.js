@@ -32,17 +32,13 @@ export function loadNews(options) {
             return _.size(state.news.news) === 0 || (options && !!options.forceLoad);
         },
         callAPI: () => {
-            let optionsStr = '';
+            let params = {};
 
             if(options && options.limit) {
-                optionsStr += 'limit=' + options.limit;
+                params.limit = options.limit;
             }
 
-            if(optionsStr !== '') {
-                optionsStr = '?' + optionsStr;
-            }
-
-            return $.ajax('/api/news/' + optionsStr, { cache: false });
+            return $.ajax('/api/news/', { cache: false, data: params });
         }
     };
 }

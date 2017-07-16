@@ -23,7 +23,7 @@ module.exports.init = function(server) {
         }
 
         if(!req.user.permissions || !req.user.permissions.canEditNews) {
-            return res.status(401).send({ message: 'Unauthorized' });
+            return res.status(403).send({ message: 'Forbidden' });
         }
 
         newsService.addNews({ poster: req.user.username, text: req.body.text, datePublished: new Date() })

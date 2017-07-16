@@ -21,28 +21,13 @@ import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 import Profile from './Profile.jsx';
 import NewsAdmin from './NewsAdmin.jsx';
+import Unauthorised from './Unauthorised.jsx';
 
 import {toastr} from 'react-redux-toastr';
 
 import version from '../version.js';
 
 import * as actions from './actions';
-
-var notAuthedMenu = [
-    { name: 'Login', path: '/login' },
-    { name: 'Register', path: '/register' }
-];
-
-var authedMenu = [
-    { name: 'Profile', path: '/profile' },
-    { name: 'Logout', path: '/logout' }
-];
-
-var leftMenu = [
-    { name: 'Decks', path: '/decks' },
-    { name: 'Play', path: '/play' },
-    { name: 'About', path: '/about' }
-];
 
 class App extends React.Component {
     constructor(props) {
@@ -74,13 +59,15 @@ class App extends React.Component {
         $(document).ajaxError((event, xhr) => {
             if(xhr.status === 401) {
                 this.props.navigate('/login');
+            } else if(xhr.status === 403) {
+                this.props.navigate('/unauth');
             }
         });
 
-        var queryString = this.props.token ? 'token=' + this.props.token + '&' : '';
+        let queryString = this.props.token ? 'token=' + this.props.token + '&' : '';
         queryString += 'version=' + version;
 
-        var socket = io.connect(window.location.origin, {
+        let socket = io.connect(window.location.origin, {
             reconnection: true,
             reconnectionDelay: 1000,
             reconnectionDelayMax : 5000,
@@ -134,14 +121,14 @@ class App extends React.Component {
         });
 
         socket.on('handoff', server => {
-            var url = '//' + server.address;
+            let url = '//' + server.address;
             if(server.port && server.port !== 80 && server.port !== 443) {
                 url += ':' + server.port;
             }
 
             this.props.gameSocketConnecting(url + '/' + server.name);
 
-            var gameSocket = io.connect(url, {
+            let gameSocket = io.connect(url, {
                 path: '/' + server.name + '/socket.io',
                 reconnection: true,
                 reconnectionDelay: 1000,
@@ -200,8 +187,9 @@ class App extends React.Component {
 
     getUrlParameter(name) {
         name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
-        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        var results = regex.exec(location.search);
+        let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        let results = regex.exec(location.search);
+
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
@@ -210,10 +198,27 @@ class App extends React.Component {
     }
 
     render() {
-        var adminMenuItems = [];
+        let notAuthedMenu = [
+            { name: 'Login', path: '/login' },
+            { name: 'Register', path: '/register' }
+        ];
+
+        let authedMenu = [
+            { name: 'Profile', path: '/profile' },
+            { name: 'Logout', path: '/logout' }
+        ];
+
+        let leftMenu = [
+            { name: 'Decks', path: '/decks' },
+            { name: 'Play', path: '/play' },
+            { name: 'About', path: '/about' }
+        ];
+
+        let adminMenuItems = [];
+        let permissions = {};
 
         if(this.props.user && this.props.user.permissions) {
-            var permissions = this.props.user.permissions;
+            permissions = this.props.user.permissions;
 
             if(permissions.canEditNews) {
                 adminMenuItems.push({ name: 'News', path: '/news' });
@@ -295,7 +300,14 @@ class App extends React.Component {
                 component = <Profile />;
                 break;
             case '/news':
-                component = <NewsAdmin />;
+                if(!permissions.canEditNews) {
+                    component = <Unauthorised />;
+                } else {
+                    component = <NewsAdmin />;
+                }
+                break;
+            case '/unauth':
+                component = <Unauthorised />;
                 break;
             default:
                 component = <NotFound />;
