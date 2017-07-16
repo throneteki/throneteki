@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import _ from 'underscore';
 
 import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import Input from './FormComponents/Input.jsx';
 
 import * as actions from './actions';
 
@@ -11,10 +12,21 @@ class InnerUserAdmin extends React.Component {
         super(props);
 
         this.state = {
+            username: ''
         };
     }
 
     componentWillMount() {
+    }
+
+    onUsernameChange(event) {
+        this.setState({ username: event.target.value });
+    }
+
+    onFindClick(event) {
+        event.preventDefault();
+
+        this.props.findUser(this.state.username);
     }
 
     render() {
@@ -39,7 +51,10 @@ class InnerUserAdmin extends React.Component {
         } else {
             content = (
                 <div>
-                    <form className='form' />
+                    <form className='form'>
+                        <Input name='username' label={ 'Search for a user' } value={ this.state.username } onChange={ this.onUsernameChange.bind(this) } placeholder={ 'Enter username' } />
+                        <button type='submit' className='btn btn-primary' onClick={ this.onFindClick.bind(this) }>Find</button>
+                    </form>
                 </div>);
         }
 
@@ -50,6 +65,7 @@ class InnerUserAdmin extends React.Component {
 InnerUserAdmin.displayName = 'UserAdmin';
 InnerUserAdmin.propTypes = {
     apiError: React.PropTypes.string,
+    findUser: React.PropTypes.func,
     loading: React.PropTypes.bool
 };
 
