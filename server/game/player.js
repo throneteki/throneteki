@@ -934,7 +934,7 @@ class Player extends Spectator {
         this.deck.selected = true;
 
         this.faction.cardData = deck.faction;
-        this.faction.cardDat.name = deck.faction.name;
+        this.faction.cardData.name = deck.faction.name;
         this.faction.cardData.code = deck.faction.value;
         this.faction.cardData.type_code = 'faction';
         this.faction.cardData.strength = 0;
