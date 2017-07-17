@@ -24,7 +24,37 @@ module.exports.init = function(server) {
 
                 res.send({ success: true, user: user });
             })
+            .catch(err => {
+                logger.error(err);
+            });
+    });
+
+    server.put('/api/user/:username', function(req, res) {
+        if(!req.user) {
+            return res.status(401);
+        }
+
+        if(!req.user.permissions || !req.user.permissions.canManageUsers) {
+            return res.status(403);
+        }
+
+        let userToSet = JSON.parse(req.body.data);
+
+        userService.getUserByUsername(req.params.username)
+            .then(user => {
+                if(!user) {
+                    return res.status(404).send({ message: 'Not found'});
+                }
+
+                user.permissions = userToSet.permissions;
+
+                return userService.update(user);
+            })
+            .then(() => {
+                res.send({ success: true });
+            })
             .catch(() => {
+                return res.send({ success: false, message: 'An error occured saving the user' });
             });
     });
 };

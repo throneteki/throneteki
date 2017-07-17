@@ -310,12 +310,18 @@ class App extends React.Component {
                 } else {
                     component = <NewsAdmin />;
                 }
+
                 break;
             case '/unauth':
                 component = <Unauthorised />;
                 break;
             case '/users':
-                component = <UserAdmin />;
+                if(!permissions.canManageUsers) {
+                    component = <Unauthorised />;
+                } else {
+                    component = <UserAdmin />;
+                }
+
                 break;
             default:
                 component = <NotFound />;

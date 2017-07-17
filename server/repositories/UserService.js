@@ -49,7 +49,8 @@ class UserService {
         var toSet = {
             email: user.email,
             settings: user.settings,
-            promptedActionWindows: user.promptedActionWindows
+            promptedActionWindows: user.promptedActionWindows,
+            permissions: user.permissions
         };
 
         if(user.password && user.password !== '') {
