@@ -694,6 +694,10 @@ class Game extends EventEmitter {
             return;
         }
 
+        if(!newController.canPutIntoPlay(card)) {
+            return;
+        }
+
         this.applyGameAction('takeControl', card, card => {
             oldController.removeCardFromPile(card);
             oldController.allCards = _(oldController.allCards.reject(c => c === card));

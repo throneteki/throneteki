@@ -52,6 +52,24 @@ var customMatchers = {
                 return result;
             }
         };
+    },
+    toBeControlledBy: function(util, customEqualityMatchers) {
+        return {
+            compare: function(actual, expected) {
+                let result = {};
+                let controller = actual.controller;
+
+                result.pass = util.equals(controller.name, expected.name, customEqualityMatchers);
+
+                if(result.pass) {
+                    result.message = `Expected ${actual.name} not to be controlled by ${expected.name} but it is.`;
+                } else {
+                    result.message = `Expected ${actual.name} to be controlled by ${expected.name} but is controlled by ${controller.name}`;
+                }
+
+                return result;
+            }
+        };
     }
 };
 

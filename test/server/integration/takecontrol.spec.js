@@ -473,5 +473,163 @@ describe('take control', function() {
                 expect(this.ranger.location).toBe('play area');
             });
         });
+
+        describe('take control + uniqueness', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('greyjoy', [
+                    'Trading with the Pentoshi',
+                    'Ward', 'Night Gathers...', 'Will'
+                ]);
+                const deck2 = this.buildDeck('thenightswatch', [
+                    'A Noble Cause',
+                    'Will', 'Will'
+                ]);
+
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.ourCharacter = this.player1.findCardByName('Will', 'hand');
+                [this.theirCharacter, this.theirDupe] = this.player2.filterCardsByName('Will', 'hand');
+            });
+
+            describe('when the player has a character out', function() {
+                beforeEach(function() {
+                    this.player1.clickCard(this.ourCharacter);
+                    this.completeSetup();
+
+                    this.player1.selectPlot('Trading with the Pentoshi');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    expect(this.ourCharacter.location).toBe('play area');
+                });
+
+                it('should not be able to put an opponents copy into play', function() {
+                    this.player2.dragCard(this.theirCharacter, 'discard pile');
+                    this.player1.clickCard('Night Gathers...');
+                    this.player1.clickCard(this.theirCharacter);
+
+                    expect(this.theirCharacter.location).toBe('discard pile');
+                    expect(this.theirCharacter).toBeControlledBy(this.player2);
+                });
+
+                it('should not be able to take control of an opponents copy already in play', function() {
+                    this.player2.dragCard(this.theirCharacter, 'play area');
+                    this.player1.clickCard('Ward');
+                    this.player1.clickCard(this.theirCharacter);
+
+                    expect(this.theirCharacter).toBeControlledBy(this.player2);
+                });
+            });
+
+            describe('when the player has a character in their own dead pile', function() {
+                beforeEach(function() {
+                    this.player1.dragCard(this.ourCharacter, 'dead pile');
+                    this.completeSetup();
+
+                    this.player1.selectPlot('Trading with the Pentoshi');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+                });
+
+                it('should not be able to put an opponents copy into play', function() {
+                    this.player2.dragCard(this.theirCharacter, 'discard pile');
+                    this.player1.clickCard('Night Gathers...');
+                    this.player1.clickCard(this.theirCharacter);
+
+                    expect(this.theirCharacter.location).toBe('discard pile');
+                    expect(this.theirCharacter).toBeControlledBy(this.player2);
+                });
+
+                it('should not be able to take control of an opponents copy already in play', function() {
+                    this.player2.dragCard(this.theirCharacter, 'play area');
+                    this.player1.clickCard('Ward');
+                    this.player1.clickCard(this.theirCharacter);
+
+                    expect(this.theirCharacter).toBeControlledBy(this.player2);
+                });
+            });
+
+            describe('when the player controls an opponents character', function() {
+                beforeEach(function() {
+                    this.player2.clickCard(this.theirCharacter);
+                    this.completeSetup();
+
+                    this.player1.selectPlot('Trading with the Pentoshi');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    this.player1.clickCard('Ward');
+                    this.player1.clickCard(this.theirCharacter);
+
+                    expect(this.theirCharacter.location).toBe('play area');
+                    expect(this.theirCharacter).toBeControlledBy(this.player1);
+                });
+
+                it('should not allow the player to put out their own copy', function() {
+                    this.player1.clickCard(this.ourCharacter);
+
+                    expect(this.ourCharacter.location).toBe('hand');
+                });
+
+                it('should not allow the opponent to put out another copy', function() {
+                    this.player1.clickPrompt('Done');
+                    this.player2.clickCard(this.theirDupe);
+
+                    expect(this.theirDupe.location).toBe('hand');
+                });
+            });
+
+            describe('when the opponent has the character out', function() {
+                beforeEach(function() {
+                    this.player2.clickCard(this.theirCharacter);
+                    this.completeSetup();
+
+                    this.player1.selectPlot('Trading with the Pentoshi');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+                });
+
+                it('should not allow the player to put into play another copy owned by the opponent', function() {
+                    this.player2.dragCard(this.theirDupe, 'discard pile');
+                    this.player1.clickCard('Night Gathers...');
+                    this.player1.clickCard(this.theirDupe);
+
+                    expect(this.theirDupe.location).toBe('discard pile');
+                    expect(this.theirDupe).toBeControlledBy(this.player2);
+                });
+
+                it('should not allow the player to take control of it if another copy is in the opponents dead pile', function() {
+                    this.player2.dragCard(this.theirDupe, 'dead pile');
+                    this.player1.clickCard('Ward');
+                    this.player1.clickCard(this.theirCharacter);
+
+                    expect(this.theirCharacter.location).toBe('play area');
+                    expect(this.theirCharacter).toBeControlledBy(this.player2);
+                });
+            });
+
+            describe('when the opponent has the character in their dead pile', function() {
+                beforeEach(function() {
+                    this.player2.dragCard(this.theirCharacter, 'dead pile');
+                    this.completeSetup();
+
+                    this.player1.selectPlot('Trading with the Pentoshi');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+                });
+
+                it('should not allow the player to put into play another copy owned by the opponent', function() {
+                    this.player2.dragCard(this.theirDupe, 'discard pile');
+                    this.player1.clickCard('Night Gathers...');
+                    this.player1.clickCard(this.theirDupe);
+
+                    expect(this.theirDupe.location).toBe('discard pile');
+                    expect(this.theirDupe).toBeControlledBy(this.player2);
+                });
+            });
+        });
     });
 });
