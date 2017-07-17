@@ -7,7 +7,7 @@ describe('event maximums', function() {
     integration(function() {
         beforeEach(function() {
             const deck = this.buildDeck('baratheon', [
-                'A Game of Thrones',
+                'A Game of Thrones', 'A Game of Thrones',
                 'A Meager Contribution', 'A Meager Contribution'
             ]);
             this.player1.selectDeck(deck);
@@ -39,6 +39,27 @@ describe('event maximums', function() {
             this.player2.clickPrompt('Done');
 
             expect(this.player2).toHavePromptButton('A Meager Contribution');
+        });
+
+        describe('when the maximum period has passed', function() {
+            beforeEach(function() {
+                // Play the card Round 1
+                this.player1.clickPrompt('A Meager Contribution');
+                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt('Pass');
+                this.player1.clickPrompt('Done');
+
+                this.completeChallengesPhase();
+                this.completeTaxationPhase();
+
+                this.player1.selectPlot('A Game of Thrones');
+                this.player2.selectPlot('A Game of Thrones');
+                this.selectFirstPlayer(this.player2);
+            });
+
+            it('should allow the card to be prompted again', function() {
+                expect(this.player1).toHavePromptButton('A Meager Contribution');
+            });
         });
     });
 });

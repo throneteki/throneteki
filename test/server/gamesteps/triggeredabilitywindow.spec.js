@@ -29,17 +29,17 @@ describe('TriggeredAbilityWindow', function() {
             }
 
             this.abilityCard1 = createCard({ card: 1, name: 'The Card', controller: this.player1Spy });
-            this.ability1Spy = jasmine.createSpyObj('ability', ['meetsRequirements']);
+            this.ability1Spy = jasmine.createSpyObj('ability', ['hasMax', 'meetsRequirements']);
             this.ability1Spy.meetsRequirements.and.returnValue(true);
             this.context1 = { context: 1 };
 
             this.abilityCard2 = createCard({ card: 2, name: 'The Card 2', controller: this.player1Spy });
-            this.ability2Spy = jasmine.createSpyObj('ability', ['meetsRequirements']);
+            this.ability2Spy = jasmine.createSpyObj('ability', ['hasMax','meetsRequirements']);
             this.ability2Spy.meetsRequirements.and.returnValue(true);
             this.context2 = { context: 2 };
 
             this.abilityCard3 = createCard({ card: 3, name: 'Their Card', controller: this.player2Spy });
-            this.ability3Spy = jasmine.createSpyObj('ability', ['meetsRequirements']);
+            this.ability3Spy = jasmine.createSpyObj('ability', ['hasMax','meetsRequirements']);
             this.ability3Spy.meetsRequirements.and.returnValue(true);
             this.context3 = { context: 3 };
 
@@ -57,7 +57,7 @@ describe('TriggeredAbilityWindow', function() {
         beforeEach(function() {
             this.context = { context: 1, player: this.player1Spy };
             this.abilityCard = { card: 1, name: 'The Card' };
-            this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'getChoices', 'hasMax']);
+            this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'getChoices']);
             this.abilitySpy.createContext.and.returnValue(this.context);
             this.abilitySpy.getChoices.and.returnValue([{ text: 'Choice 1', choice: 'choice1' }, { text: 'Choice 2', choice: 'choice2' }]);
             this.abilitySpy.card = this.abilityCard;
@@ -91,38 +91,6 @@ describe('TriggeredAbilityWindow', function() {
             it('should generate unique IDs for each choice', function() {
                 let ids = _.pluck(this.window.abilityChoices, 'id');
                 expect(_.uniq(ids)).toEqual(ids);
-            });
-        });
-
-        describe('when the ability has a maximum', function() {
-            beforeEach(function() {
-                this.abilitySpy.hasMax.and.returnValue(true);
-            });
-
-            describe('and an ability from a card with that title has not been registered', function() {
-                beforeEach(function() {
-                    this.window.registerAbility(this.abilitySpy, this.context);
-                });
-
-                it('should register as normal', function() {
-                    expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
-                        ability: this.abilitySpy
-                    }));
-                });
-            });
-
-            describe('and an ability from a card with that title has been registered', function() {
-                beforeEach(function() {
-                    this.window.abilityChoices.push({ card: { name: 'The Card' } });
-
-                    this.window.registerAbility(this.abilitySpy, this.context);
-                });
-
-                it('should not register the ability', function() {
-                    expect(this.window.abilityChoices).not.toContain(jasmine.objectContaining({
-                        ability: this.abilitySpy
-                    }));
-                });
             });
         });
     });
@@ -184,6 +152,53 @@ describe('TriggeredAbilityWindow', function() {
 
                 it('should continue to prompt', function() {
                     expect(this.result).toBe(false);
+                });
+            });
+
+            describe('and the ability has a maximum', function() {
+                beforeEach(function() {
+                    this.ability1Spy.hasMax.and.returnValue(true);
+                    this.ability2Spy.hasMax.and.returnValue(true);
+
+                    this.window.abilityChoices = [
+                        { id: '1', ability: this.ability1Spy, card: this.abilityCard1, choice: 'default', context: this.context1, player: this.player1Spy, text: 'default' },
+                        { id: '2', ability: this.ability2Spy, card: this.abilityCard2, choice: 'default', context: this.context2, player: this.player1Spy, text: 'default' }
+                    ];
+                });
+
+                describe('and another ability from a card with that title has not been registered', function() {
+                    it('should display buttons as normal', function() {
+                        this.window.continue();
+                        expect(this.gameSpy.promptWithMenu).toHaveBeenCalledWith(this.player1Spy, this.window, jasmine.objectContaining({
+                            activePrompt: {
+                                menuTitle: jasmine.any(String),
+                                buttons: [
+                                    jasmine.objectContaining({ text: 'The Card', arg: '1', method: 'chooseAbility' }),
+                                    jasmine.objectContaining({ text: 'The Card 2', arg: '2', method: 'chooseAbility' }),
+                                    jasmine.objectContaining({ text: 'Pass', method: 'pass' })
+                                ]
+                            }
+                        }));
+                    });
+                });
+
+                describe('and another ability from a card with that title has been registered', function() {
+                    beforeEach(function() {
+                        this.abilityCard2.name = 'The Card';
+                        this.window.continue();
+                    });
+
+                    it('should only display the first copy', function() {
+                        expect(this.gameSpy.promptWithMenu).toHaveBeenCalledWith(this.player1Spy, this.window, jasmine.objectContaining({
+                            activePrompt: {
+                                menuTitle: jasmine.any(String),
+                                buttons: [
+                                    jasmine.objectContaining({ text: 'The Card', arg: '1', method: 'chooseAbility' }),
+                                    jasmine.objectContaining({ text: 'Pass', method: 'pass' })
+                                ]
+                            }
+                        }));
+                    });
                 });
             });
 
