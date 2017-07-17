@@ -17,6 +17,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.announceChallenge()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
             new SimpleStep(this.game, () => this.chooseStealthTargets()),
+            new SimpleStep(this.game, () => this.initiateChallenge()),
             new SimpleStep(this.game, () => this.announceAttackerStrength()),
             new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
             new SimpleStep(this.game, () => this.promptForDefenders()),
@@ -67,11 +68,19 @@ class ChallengeFlow extends BaseStep {
 
     chooseStealthTargets() {
         this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()));
+    }
 
-        this.game.raiseMergedEvent('onChallengeInitiated', { challenge: this.challenge }, () => {
-            this.challenge.initiateChallenge();
-            this.game.raiseMergedEvent('onAttackersDeclared', { challenge: this.challenge });
+    initiateChallenge() {
+        this.challenge.initiateChallenge();
+
+        let events = [
+            { name: 'onChallengeInitiated', params: { challenge: this.challenge } },
+            { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
+        ];
+        let stealthEvents = _.map(this.challenge.stealthData, stealth => {
+            return { name: 'onBypassedByStealth', params: { challenge: this.challenge, source: stealth.source, target: stealth.target } };
         });
+        this.game.raiseAtomicEvent(events.concat(stealthEvents));
     }
 
     announceAttackerStrength() {

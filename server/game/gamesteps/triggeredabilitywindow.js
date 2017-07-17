@@ -1,22 +1,16 @@
 const _ = require('underscore');
 const uuid = require('uuid');
 
-const BaseStep = require('./basestep.js');
+const BaseAbilityWindow = require('./baseabilitywindow.js');
 const TriggeredAbilityWindowTitles = require('./triggeredabilitywindowtitles.js');
 
-class TriggeredAbilityWindow extends BaseStep {
-    constructor(game, properties) {
-        super(game);
-        this.abilityChoices = [];
-        this.event = properties.event;
-        this.abilityType = properties.abilityType;
-    }
-
-    registerAbility(ability, context) {
+class TriggeredAbilityWindow extends BaseAbilityWindow {
+    registerAbility(ability, event) {
         if(ability.hasMax() && this.hasChoiceForCardByName(ability.card.name)) {
             return;
         }
 
+        let context = ability.createContext(event);
         let player = context.player;
         let choiceTexts = ability.getChoices(context);
 
@@ -69,7 +63,7 @@ class TriggeredAbilityWindow extends BaseStep {
         buttons.push({ text: 'Pass', method: 'pass' });
         this.game.promptWithMenu(player, this, {
             activePrompt: {
-                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event),
+                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.events[0]),
                 buttons: buttons
             },
             waitingPromptTitle: 'Waiting for opponents'

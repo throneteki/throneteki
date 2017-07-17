@@ -152,8 +152,9 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should register the ability', function() {
-                this.reaction.eventHandler({ name: 'afterChallenge', params: [this.event, this.challenge] });
-                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(this.reaction);
+                let event = { name: 'afterChallenge', params: [this.event, this.challenge] };
+                this.reaction.eventHandler(event);
+                expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(this.reaction, event);
             });
         });
     });

@@ -3,6 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class MaryaSeaworth extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
+            title: context => 'Kneel ' + context.event.target.name,
             when: {
                 onBypassedByStealth: () => true
             },

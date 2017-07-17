@@ -15,6 +15,7 @@ class Challenge {
         this.defenders = [];
         this.defenderStrength = 0;
         this.defenderStrengthModifier = 0;
+        this.stealthData = [],
         this.events = new EventRegistrar(game, this);
         this.registerEvents(['onCardLeftPlay']);
     }
@@ -104,6 +105,10 @@ class Challenge {
 
             return count;
         }, 0);
+    }
+
+    addStealthChoice(source, target) {
+        this.stealthData.push({ source: source, target: target });
     }
 
     calculateStrength() {
