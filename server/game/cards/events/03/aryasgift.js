@@ -15,7 +15,7 @@ class AryasGift extends DrawCard {
 
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => card.getType() === 'character' && card.controller === this.controller &&
-                        card !== oldOwner && attachment.canAttach(this.controller, card) && card.location === 'play area',
+                        card !== oldOwner && this.controller.canAttach(attachment, card) && card.location === 'play area',
                     activePromptTitle: 'Select another character for attachment',
                     waitingPromptTitle: 'Waiting for opponent to move attachment',
                     onSelect: (player, card) => this.moveAttachment(player, card, attachment, oldOwner)

@@ -29,7 +29,7 @@ class Summer extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card !== this.parent &&
-                    this.canAttach(this.controller, card))
+                    this.controller.canAttach(this, card))
             },
             handler: context => {
                 this.controller.attach(this.controller, this, context.target);
