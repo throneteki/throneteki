@@ -5,7 +5,8 @@ const EventToTitleFunc = {
     onCharactersKilled: () => 'characters being killed',
     onPhaseEnded: event => event.params[1] + ' phase ending',
     onPhaseStarted: event => event.params[1] + ' phase starting',
-    onSacrificed: event => event.params[2].name + ' being sacrificed'
+    onSacrificed: event => event.params[2].name + ' being sacrificed',
+    onRemovedFromChallenge: event => event.card.name + ' being removed from the challenge'
 };
 
 const AbilityTypeToWord = {
