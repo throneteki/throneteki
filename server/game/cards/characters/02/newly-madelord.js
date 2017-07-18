@@ -6,27 +6,16 @@ class NewlyMadeLord extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.cardCondition(card),
-                    activePromptTitle: 'Select location',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select a location',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'location' &&
+                                       !card.isLimited() && card.getCost() <= 3
+            },
+            handler: context => {
+                context.target.owner.discardCard(context.target);
+                this.game.addMessage('{0} uses {1} to discard {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    cardCondition(card) {
-        return card.getType() === 'location' && !card.isLimited() && card.getCost() <= 3;
-    }
-
-    onCardSelected(player, card) {
-        card.controller.discardCard(card);
-
-        this.game.addMessage('{0} uses {1} to discard {2}', player, this, card);
-
-        return true;
     }
 }
 
