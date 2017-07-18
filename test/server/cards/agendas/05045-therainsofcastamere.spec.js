@@ -57,44 +57,31 @@ describe('The Rains of Castamere', function() {
         });
     });
 
-    describe('onPlotFlip()', function() {
-        describe('when there is no active plot', function() {
+    describe('onPlotDiscarded()', function() {
+        beforeEach(function() {
+            this.plotSpy = jasmine.createSpyObj('plot', ['hasTrait']);
+            this.event = { player: this.player, card: this.plotSpy };
+        });
+
+        describe('when the plot is a scheme', function() {
             beforeEach(function() {
-                this.player.activePlot = undefined;
+                this.plotSpy.hasTrait.and.callFake(trait => trait === 'Scheme');
+                this.agenda.onPlotDiscarded(this.event);
             });
 
-            it('should not crash', function() {
-                expect(() => {
-                    this.agenda.onPlotFlip();
-                }).not.toThrow();
+            it('should move the card out of the game', function() {
+                expect(this.player.moveCard).toHaveBeenCalledWith(this.plotSpy, 'out of game');
             });
         });
 
-        describe('when the active plot is not a scheme', function() {
+        describe('when the plot is not a scheme', function() {
             beforeEach(function() {
-                this.player.activePlot = this.plot1;
-
-                this.agenda.onPlotFlip();
+                this.plotSpy.hasTrait.and.returnValue(false);
+                this.agenda.onPlotDiscarded(this.event);
             });
 
-            it('should not remove the plot directly', function() {
-                expect(this.player.activePlot).toBe(this.plot1);
-            });
-
-            it('should not make the plot leave play directly', function() {
-                expect(this.player.removeActivePlot).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('when the active plot is a scheme', function() {
-            beforeEach(function() {
-                this.player.activePlot = this.scheme1;
-
-                this.agenda.onPlotFlip();
-            });
-
-            it('should remove the active plot from the game', function() {
-                expect(this.player.removeActivePlot).toHaveBeenCalledWith('out of game');
+            it('should not move the card', function() {
+                expect(this.player.moveCard).not.toHaveBeenCalled();
             });
         });
     });

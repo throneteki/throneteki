@@ -7,7 +7,7 @@ class TheRainsOfCastamere extends AgendaCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.registerEvents(['onDecksPrepared', { 'onPlotFlip:forcedinterrupt': 'onPlotFlip' }]);
+        this.registerEvents(['onDecksPrepared', 'onPlotDiscarded']);
     }
 
     setupCardAbilities(ability) {
@@ -50,18 +50,10 @@ class TheRainsOfCastamere extends AgendaCard {
         });
     }
 
-    onPlotFlip() {
-        this.removeExistingSchemeFromGame();
-    }
-
-    removeExistingSchemeFromGame() {
-        var previousPlot = this.owner.activePlot;
-
-        if(!previousPlot || !previousPlot.hasTrait('Scheme')) {
-            return;
+    onPlotDiscarded(event) {
+        if(event.card.hasTrait('Scheme')) {
+            this.owner.moveCard(event.card, 'out of game');
         }
-
-        this.owner.removeActivePlot('out of game');
     }
 
     menuButtons() {
@@ -82,11 +74,10 @@ class TheRainsOfCastamere extends AgendaCard {
 
         this.game.addMessage('{0} uses {1} to reveal {2}', player, this, scheme);
 
-        this.removeExistingSchemeFromGame();
-
         this.schemes = _.reject(this.schemes, card => card === scheme);
 
         player.selectedPlot = scheme;
+        player.removeActivePlot();
         player.flipPlotFaceup();
         this.game.queueStep(new RevealPlots(this.game, [scheme]));
 

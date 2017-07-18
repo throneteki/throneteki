@@ -556,8 +556,7 @@ class Player extends Spectator {
 
     flipPlotFaceup() {
         if(this.activePlot) {
-            var previousPlot = this.removeActivePlot('revealed plots');
-            this.game.raiseEvent('onPlotDiscarded', this, previousPlot);
+            this.removeActivePlot('revealed plots');
         }
 
         this.selectedPlot.flipFaceup();
@@ -581,8 +580,9 @@ class Player extends Spectator {
 
     removeActivePlot(targetLocation) {
         if(this.activePlot) {
-            var plot = this.activePlot;
+            let plot = this.activePlot;
             this.moveCard(this.activePlot, targetLocation);
+            this.game.raiseMergedEvent('onPlotDiscarded', { player: this, card: plot });
             this.activePlot = undefined;
             return plot;
         }
