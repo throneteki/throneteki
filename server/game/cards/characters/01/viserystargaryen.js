@@ -6,23 +6,15 @@ class ViserysTargaryen extends DrawCard {
             when: {
                 onCardLeftPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => card.getType() === 'attachment',
-                    activePromptTitle: 'Select an attachment to discard',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select an attachment',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'attachment'
+            },
+            handler: context => {
+                context.target.owner.discardCard(context.target);
+                this.game.addMessage('{0} uses {1} to discard {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, attachment) {
-        attachment.owner.discardCard(attachment);
-
-        this.game.addMessage('{0} uses {1} to discard {2}', player, this, attachment);
-
-        return true;
     }
 }
 
