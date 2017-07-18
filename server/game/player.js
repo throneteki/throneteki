@@ -607,10 +607,8 @@ class Player extends Spectator {
         });
     }
 
-    canAttach(attachmentId, card) {
-        var attachment = this.findCardByUuidInAnyList(attachmentId);
-
-        if(!attachment) {
+    canAttach(attachment, card) {
+        if(!attachment || !card) {
             return false;
         }
 
