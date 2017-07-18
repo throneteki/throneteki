@@ -625,6 +625,10 @@ class Player extends Spectator {
             return;
         }
 
+        if(!this.canAttach(attachment, card)) {
+            return;
+        }
+
         let originalLocation = attachment.location;
         let originalParent = attachment.parent;
 

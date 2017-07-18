@@ -33,6 +33,10 @@ class RisenFromTheSea extends DrawCard {
             ]
         });
     }
+
+    canAttach(player, card) {
+        return card.getType() === 'character';
+    }
 }
 
 RisenFromTheSea.code = '01081';

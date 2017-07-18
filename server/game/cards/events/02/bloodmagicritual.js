@@ -33,6 +33,10 @@ class BloodMagicRitual extends DrawCard {
             ]
         });
     }
+
+    canAttach(player, card) {
+        return card.getType() === 'character';
+    }
 }
 
 BloodMagicRitual.code = '02094';
