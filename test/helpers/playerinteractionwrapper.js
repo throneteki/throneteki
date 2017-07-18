@@ -75,7 +75,7 @@ class PlayerInteractionWrapper {
 
     selectPlot(plot) {
         if(_.isString(plot)) {
-            plot = this.findCardByName(plot);
+            plot = this.findCardByName(plot, 'plot deck');
         }
 
         this.player.selectedPlot = plot;
