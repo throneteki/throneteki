@@ -51,29 +51,33 @@ describe('Player', function() {
                 expect(this.player.plotDeck).not.toContain(this.selectedPlotSpy);
             });
         });
+    });
 
-        describe('when there is an active plot', function() {
-            beforeEach(function() {
-                this.activePlotSpy = jasmine.createSpyObj('plot', ['leavesPlay', 'moveTo']);
-                this.activePlotSpy.location = 'active plot';
-                this.activePlotSpy.controller = this.player;
-                this.player.activePlot = this.activePlotSpy;
+    describe('removeActivePlot()', function() {
+        beforeEach(function() {
+            this.activePlotSpy = jasmine.createSpyObj('plot', ['leavesPlay', 'moveTo']);
+            this.activePlotSpy.location = 'active plot';
+            this.activePlotSpy.controller = this.player;
+            this.player.activePlot = this.activePlotSpy;
 
-                this.player.flipPlotFaceup();
-            });
+            this.player.removeActivePlot();
+        });
 
-            it('should move the plot to the revealed plots pile', function() {
-                expect(this.activePlotSpy.moveTo).toHaveBeenCalledWith('revealed plots');
-                expect(this.player.plotDiscard).toContain(this.activePlotSpy);
-            });
+        it('should move the plot to the revealed plots pile', function() {
+            expect(this.activePlotSpy.moveTo).toHaveBeenCalledWith('revealed plots');
+            expect(this.player.plotDiscard).toContain(this.activePlotSpy);
+        });
 
-            it('should have the plot leave play', function() {
-                expect(this.activePlotSpy.leavesPlay).toHaveBeenCalled();
-            });
+        it('should have the plot leave play', function() {
+            expect(this.activePlotSpy.leavesPlay).toHaveBeenCalled();
+        });
 
-            it('should raise the onCardLeftPlay event', function() {
-                expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardLeftPlay', { player: this.player, card: this.activePlotSpy });
-            });
+        it('should raise the onCardLeftPlay event', function() {
+            expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardLeftPlay', { player: this.player, card: this.activePlotSpy });
+        });
+
+        it('should raise the onPlotDiscarded event', function() {
+            expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onPlotDiscarded', { player: this.player, card: this.activePlotSpy });
         });
     });
 

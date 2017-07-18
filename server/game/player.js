@@ -555,10 +555,6 @@ class Player extends Spectator {
     }
 
     flipPlotFaceup() {
-        if(this.activePlot) {
-            this.removeActivePlot('revealed plots');
-        }
-
         this.selectedPlot.flipFaceup();
         this.moveCard(this.selectedPlot, 'active plot');
         this.selectedPlot.applyPersistentEffects();
@@ -578,10 +574,10 @@ class Player extends Spectator {
         }
     }
 
-    removeActivePlot(targetLocation) {
+    removeActivePlot() {
         if(this.activePlot) {
             let plot = this.activePlot;
-            this.moveCard(this.activePlot, targetLocation);
+            this.moveCard(this.activePlot, 'revealed plots');
             this.game.raiseMergedEvent('onPlotDiscarded', { player: this, card: plot });
             this.activePlot = undefined;
             return plot;
