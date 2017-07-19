@@ -271,6 +271,32 @@ export class InnerGameBoard extends React.Component {
         return cardsByLocation;
     }
 
+    getAgenda(player, popupLocation) {
+        if(!player || !player.agenda || player.agenda.code === '') {
+            return <div className='agenda card-pile vertical panel' />;
+        }
+
+        let cards = [];
+
+        // Alliance
+        if(player.agenda.code === '06018') {
+            cards = player.bannerCards;
+        }
+
+        return (
+            <CardCollection className='agenda'
+                cards={ cards }
+                disablePopup={ cards.length === 0 }
+                onCardClick={ this.onCardClick }
+                onMenuItemClick={ this.onMenuItemClick }
+                onMouseOut={ this.onMouseOut }
+                onMouseOver={ this.onMouseOver }
+                popupLocation={ popupLocation }
+                source='agenda'
+                topCard={ player.agenda } />
+        );
+    }
+
     getSchemePile(player, isMe) {
         let schemePile = player && player.additionalPiles['scheme plots'];
 
@@ -382,11 +408,7 @@ export class InnerGameBoard extends React.Component {
                             <div className='deck-info'>
                                 <div className='deck-type'>
                                     <CardCollection className='faction' source='faction' cards={[]} topCard={otherPlayer ? otherPlayer.faction : undefined} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup />
-                                    {otherPlayer && otherPlayer.agenda && otherPlayer.agenda.code !== '' ?
-                                        <CardCollection className='agenda' source='agenda' cards={[]} topCard={otherPlayer ? otherPlayer.agenda : undefined} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}
-                                              onCardClick={this.onCardClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
-                                        : <div className='agenda card-pile vertical panel' />
-                                    }
+                                    { this.getAgenda(otherPlayer, 'bottom') }
                                 </div>
                                 { otherPlayer ? <div className={'first-player-indicator ' + (!thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div> : ''}
                             </div>
@@ -437,11 +459,7 @@ export class InnerGameBoard extends React.Component {
                                 <div className={'first-player-indicator ' + (thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div>
                                 <div className='deck-type'>
                                     <CardCollection className='faction' source='faction' cards={[]} topCard={thisPlayer.faction} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup onCardClick={this.onFactionCardClick} />
-                                    {thisPlayer.agenda && thisPlayer.agenda.code !== '' ?
-                                        <CardCollection className='agenda' source='agenda' cards={[]} topCard={thisPlayer.agenda} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut}
-                                              onCardClick={this.onCardClick} disablePopup onMenuItemClick={this.onMenuItemClick} />
-                                        : <div className='agenda card-pile vertical panel' />
-                                    }
+                                    { this.getAgenda(thisPlayer, 'top') }
                                 </div>
                             </div>
                         </div>

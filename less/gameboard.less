@@ -336,6 +336,32 @@ span.down-arrow {
   position: absolute;
 }
 
+.agenda .popup {
+  position: absolute;
+  left: -100px;
+  top: 85px;
+  bottom: initial;
+  width: 500px;
+  min-height: 92px;
+
+  .arrow-indicator {
+    transform: rotate(135deg);
+    top: -11px;
+    left: 110px;
+  }
+
+  &.our-side {
+    top: initial;
+    bottom: 85px;
+
+    .arrow-indicator {
+      transform: rotate(-45deg);
+      top: inherit;
+      bottom: -11px;
+    }
+  }
+}
+
 .discard .popup {
   position: absolute;
   left: -100px;

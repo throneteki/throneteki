@@ -54,6 +54,8 @@ class Deck {
             result.agenda = undefined;
         }
 
+        result.bannerCards = _.map(this.data.bannerCards, card => this.createCard(AgendaCard, player, card));
+
         return result;
     }
 
