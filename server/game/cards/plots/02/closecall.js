@@ -15,7 +15,7 @@ class CloseCall extends PlotCard {
     }
 
     cardCondition(card) {
-        return card.getType() === 'character' && card.location === 'dead pile';
+        return card.getType() === 'character' && card.location === 'dead pile' && card.controller === this.controller;
     }
 
     onCardSelected(player, card) {
@@ -23,7 +23,7 @@ class CloseCall extends PlotCard {
 
         this.game.addMessage('{0} uses {1} to move {2} to their discard pile', player, this, card);
 
-        var otherPlayer = this.game.getOtherPlayer(player);
+        let otherPlayer = this.game.getOtherPlayer(player);
         if(!otherPlayer || !otherPlayer.activePlot.hasTrait('Winter')) {
             player.drawCardsToHand(1);
             this.game.addMessage('{0} uses {1} to draw 1 card', player, this);

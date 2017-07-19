@@ -67,6 +67,8 @@ class Challenge {
         card.inChallenge = false;
 
         this.calculateStrength();
+
+        this.game.raiseMergedEvent('onRemovedFromChallenge', { card: card });
     }
 
     markAsParticipating(cards, participantType, kneel) {
