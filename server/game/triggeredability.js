@@ -109,11 +109,15 @@ class TriggeredAbility extends BaseAbility {
     }
 
     isEventListeningLocation(location) {
-        // Reactions / interrupts need to listen for events in all open
-        // information locations plus while in hand. The location property of
-        // the ability will prevent it from firing in inappropriate locations
-        // when requirements are checked for the ability.
-        return ['active plot', 'agenda', 'discard pile', 'dead pile', 'faction', 'hand', 'play area'].includes(location);
+        // Reactions / interrupts for playable event cards need to listen for
+        // game events in all open information locations plus while in hand.
+        // The location property of the ability will prevent it from firing in
+        // inappropriate locations when requirements are checked for the ability.
+        if(this.isPlayableEventAbility()) {
+            return ['discard pile', 'hand'].includes(location);
+        }
+
+        return this.location === location;
     }
 
     isAction() {
