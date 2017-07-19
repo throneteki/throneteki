@@ -327,6 +327,7 @@ class Player extends Spectator {
         this.agenda = preparedDeck.agenda;
         this.faction = preparedDeck.faction;
         this.drawDeck = _(preparedDeck.drawCards);
+        this.bannerCards = _(preparedDeck.bannerCards);
         this.allCards = _(preparedDeck.allCards);
     }
 
@@ -1148,7 +1149,7 @@ class Player extends Spectator {
                 cards: this.getSummaryForCardList(pile.cards, activePlayer, pile.isPrivate)
             })),
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
-            promptedActionWindows: this.promptedActionWindows,
+            bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
             cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
             claim: this.getClaim(),
             deadPile: this.getSummaryForCardList(this.deadPile, activePlayer),
@@ -1167,6 +1168,7 @@ class Player extends Spectator {
             plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
             plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
             plotSelected: !!this.selectedPlot,
+            promptedActionWindows: this.promptedActionWindows,
             reserve: this.getTotalReserve(),
             totalPower: this.getTotalPower(),
             user: _.omit(this.user, ['password', 'email'])
