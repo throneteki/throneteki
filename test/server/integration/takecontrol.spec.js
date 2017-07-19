@@ -295,7 +295,7 @@ describe('take control', function() {
                     expect(this.steward.getStrength()).toBe(2);
 
                     // Use Sea Bitch to take control of the opponent Wall.
-                    this.player1.clickMenu(this.seaBitch, 'Sacrifice this card');
+                    this.player1.clickMenu(this.seaBitch, 'Take control of location');
                     this.player1.clickCard(this.wall);
 
                     expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.wall.uuid);
