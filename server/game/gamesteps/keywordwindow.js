@@ -27,27 +27,26 @@ class KeywordWindow extends BaseStep {
     }
 
     applyKeyword(keyword) {
-        let appliedIntimidate = false;
         let ability = GameKeywords[keyword];
-        _.each(this.winnerCardsWithContext, participant => {
-            let {card, context} = participant;
+        let participantsWithKeyword = this.getParticipantsForKeyword(keyword, ability);
 
-            // It is necessary to check whether intimidate has been applied
-            // here instead of in the ability class because the individual
-            // keywords are resolved asynchronously but are queued up
-            // synchronously here. So two intimidates could be queued when
-            // only one is allowed.
-            if(keyword === 'intimidate' && appliedIntimidate) {
-                return;
-            }
-
-            if(card.hasKeyword(keyword) && ability.meetsRequirements(context)) {
-                appliedIntimidate = appliedIntimidate || (keyword === 'intimidate');
-                this.game.resolveAbility(ability, context);
-            }
+        _.each(participantsWithKeyword, participant => {
+            this.game.resolveAbility(ability, participant.context);
         });
 
         this.game.checkWinCondition(this.challenge.winner);
+    }
+
+    getParticipantsForKeyword(keyword, ability) {
+        let participants = _.filter(this.winnerCardsWithContext, participant => {
+            return participant.card.hasKeyword(keyword) && ability.meetsRequirements(participant.context);
+        });
+
+        if(keyword === 'intimidate' && !_.isEmpty(participants)) {
+            return [participants[0]];
+        }
+
+        return participants;
     }
 }
 
