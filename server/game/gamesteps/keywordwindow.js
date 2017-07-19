@@ -30,9 +30,11 @@ class KeywordWindow extends BaseStep {
         let ability = GameKeywords[keyword];
         let participantsWithKeyword = this.getParticipantsForKeyword(keyword, ability);
 
-        _.each(participantsWithKeyword, participant => {
-            this.game.resolveAbility(ability, participant.context);
-        });
+        if(keyword === 'pillage' && _.size(participantsWithKeyword) > 1) {
+            this.promptForPillageOrder(ability, participantsWithKeyword);
+        } else {
+            this.resolveAbility(ability, participantsWithKeyword);
+        }
 
         this.game.checkWinCondition(this.challenge.winner);
     }
@@ -47,6 +49,38 @@ class KeywordWindow extends BaseStep {
         }
 
         return participants;
+    }
+
+    promptForPillageOrder(ability, participants) {
+        let cards = _.pluck(participants, 'card');
+        this.game.promptForSelect(this.challenge.winner, {
+            ordered: true,
+            multiSelect: true,
+            numCards: _.size(participants),
+            activePromptTitle: 'Select order for pillage',
+            cardCondition: card => cards.includes(card),
+            onSelect: (player, selectedCards) => {
+                if(selectedCards.length !== cards.length) {
+                    return false;
+                }
+
+                let finalParticipants = _.map(selectedCards, card => _.find(participants, participant => participant.card === card));
+
+                this.resolveAbility(ability, finalParticipants);
+
+                return true;
+            },
+            onCancel: () => {
+                this.resolveAbility(ability, participants);
+                return true;
+            }
+        });
+    }
+
+    resolveAbility(ability, participants) {
+        _.each(participants, participant => {
+            this.game.resolveAbility(ability, participant.context);
+        });
     }
 }
 

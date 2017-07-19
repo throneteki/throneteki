@@ -44,6 +44,11 @@ describe('pillage', function() {
                 this.skipActionWindow();
 
                 this.player1.clickPrompt('Apply Claim');
+
+                // Choose order for pillage
+                this.player1.clickCard(this.wildlingHorde1);
+                this.player1.clickCard(this.wildlingHorde2);
+                this.player1.clickPrompt('Done');
             });
 
             it('should discard two cards', function() {
