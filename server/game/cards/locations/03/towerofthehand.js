@@ -13,7 +13,7 @@ class TowerOfTheHand extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller !== this.controller &&
-                                                  card.getPrintedCost() < context.costs.returnedToHandCard.getPrintedCost()
+                                                  (!context.costs.returnedToHandCard || card.getPrintedCost() < context.costs.returnedToHandCard.getPrintedCost())
             },
             handler: context => {
                 let returnedCostCard = context.costs.returnedToHandCard;
