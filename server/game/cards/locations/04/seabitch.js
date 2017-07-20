@@ -1,42 +1,32 @@
 const DrawCard = require('../../../drawcard.js');
 
 class SeaBitch extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
-            title: 'Sacrifice this card',
-            method: 'sacrifice'
+            title: 'Take control of location',
+            cost: ability.costs.sacrificeSelf(),
+            target: {
+                activePromptTitle: 'Select a location',
+                cardCondition: (card, context) => this.cardCondition(card, context)
+            },
+            handler: context => {
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.takeControl(context.player)
+                }));
+
+                this.game.addMessage('{0} sacrifices {1} to take control of {2} until the end of the phase',
+                                      context.player, this, context.target);
+            }
         });
     }
 
-    sacrifice(player) {
-        if(this.location !== 'play area') {
-            return false;
-        }
-        this.game.promptForSelect(player, {
-            cardCondition: card => this.cardCondition(card),
-            activePromptTitle: 'Select location to take control of',
-            source: this,
-            onSelect: (player, card) => this.onCardSelected(player, card)
-        });
-    }
-
-    cardCondition(card) {
+    cardCondition(card, context) {
         return card.getType() === 'location'
             && card.location === 'play area'
-            && card.owner !== this.owner
+            && card.controller !== context.player
             && !card.hasKeyword('Limited')
             && card.name !== this.name;
-    }
-
-    onCardSelected(player, card) {
-        this.untilEndOfPhase(ability => ({
-            targetController: 'opponent',
-            match:  card,
-            effect: ability.effects.takeControl(player)
-        }));
-        this.game.addMessage('{0} sacrifices {1} to take control of {2} until the end of the phase', player, this, card);
-        this.controller.sacrificeCard(this);
-        return true;
     }
 }
 
