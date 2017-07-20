@@ -4,7 +4,7 @@ class HighgardenMinstrel extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: (event, player, card) => card.hasTrait('Song')
+                onCardPlayed: event => event.card.hasTrait('Song') && event.card.controller === this.controller
             },
             limit: ability.limit.perRound(3),
             handler: () => {

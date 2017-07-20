@@ -131,7 +131,7 @@ class AbilityResolver extends BaseStep {
         // then this event will need to wrap the execution of the entire
         // ability instead.
         if(this.ability.isPlayableEventAbility()) {
-            this.game.raiseEvent('onCardPlayed', this.context.player, this.context.source);
+            this.game.raiseMergedEvent('onCardPlayed', { player: this.context.player, card: this.context.source });
         }
     }
 }
