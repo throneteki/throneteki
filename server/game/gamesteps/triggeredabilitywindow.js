@@ -6,10 +6,6 @@ const TriggeredAbilityWindowTitles = require('./triggeredabilitywindowtitles.js'
 
 class TriggeredAbilityWindow extends BaseAbilityWindow {
     registerAbility(ability, event) {
-        if(ability.hasMax() && this.hasChoiceForCardByName(ability.card.name)) {
-            return;
-        }
-
         let context = ability.createContext(event);
         let player = context.player;
         let choiceTexts = ability.getChoices(context);
@@ -25,10 +21,6 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 context: context
             });
         });
-    }
-
-    hasChoiceForCardByName(cardName) {
-        return _.any(this.abilityChoices, choice => choice.card.name === cardName);
     }
 
     continue() {
@@ -52,7 +44,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     promptPlayer(player) {
-        let choicesForPlayer = _.filter(this.abilityChoices, abilityChoice => this.eligibleChoiceForPlayer(abilityChoice, player));
+        let choicesForPlayer = this.getChoicesForPlayer(player);
         let buttons = _.map(choicesForPlayer, abilityChoice => {
             let title = abilityChoice.card.name;
             if(abilityChoice.text !== 'default') {
@@ -68,6 +60,13 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             },
             waitingPromptTitle: 'Waiting for opponents'
         });
+    }
+
+    getChoicesForPlayer(player) {
+        let choices = _.filter(this.abilityChoices, abilityChoice => this.eligibleChoiceForPlayer(abilityChoice, player));
+        // Cards that have a maximum should only display a single choice by
+        // title even if multiple copies are available to be triggered.
+        return _.uniq(choices, choice => choice.ability.hasMax() ? choice.card.name : choice);
     }
 
     chooseAbility(player, id) {
