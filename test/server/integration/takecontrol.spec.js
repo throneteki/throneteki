@@ -133,7 +133,7 @@ describe('take control', function() {
         describe('when a permanent take control occurs', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('greyjoy', [
-                    'Sneak Attack',
+                    'Sneak Attack', 'Sneak Attack',
                     'Euron Crow\'s Eye (Core)', 'The Kingsroad', 'Theon Greyjoy (Core)'
                 ]);
                 this.player1.selectDeck(deck);
