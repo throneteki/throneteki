@@ -625,26 +625,25 @@ class Player extends Spectator {
         });
     }
 
-    canAttach(attachmentId, card) {
-        var attachment = this.findCardByUuidInAnyList(attachmentId);
-
-        if(!attachment) {
+    canAttach(attachment, card) {
+        if(!attachment || !card) {
             return false;
         }
 
-        if(card.location !== 'play area') {
-            return false;
-        }
-
-        if(card === attachment) {
-            return false;
-        }
-
-        return attachment.canAttach(this, card);
+        return (
+            card.location === 'play area' &&
+            card !== attachment &&
+            card.allowAttachment(attachment) &&
+            attachment.canAttach(this, card)
+        );
     }
 
     attach(player, attachment, card, playingType) {
         if(!card || !attachment) {
+            return;
+        }
+
+        if(!this.canAttach(attachment, card)) {
             return;
         }
 
