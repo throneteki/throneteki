@@ -99,7 +99,6 @@ describe('Tywin Lannister (LoCR)', function() {
                 this.player2.clickPrompt('Done');
 
                 this.skipActionWindow();
-                this.skipActionWindow();
 
                 this.player1.clickPrompt('Apply Claim');
             });

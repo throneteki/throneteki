@@ -138,8 +138,6 @@ describe('The Annals of Castle Black', function() {
 
                 this.skipActionWindow();
 
-                this.skipActionWindow();
-
                 this.player1.clickPrompt('Apply Claim');
             });
 

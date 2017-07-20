@@ -64,8 +64,6 @@ describe('The Haunted Forest', function() {
                 this.skipActionWindow();
 
                 this.player2.clickPrompt('player1 - The Haunted Forest');
-
-                this.skipActionWindow();
             });
 
             it('should kneel the Haunted Forest', function() {

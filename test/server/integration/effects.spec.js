@@ -48,7 +48,6 @@ describe('effects', function() {
                 this.player2.clickPrompt('Done');
 
                 this.skipActionWindow();
-                this.skipActionWindow();
                 this.player1.clickPrompt('Apply Claim');
             });
 
@@ -111,8 +110,6 @@ describe('effects', function() {
                 this.player2.clickCard(this.character);
 
                 expect(this.character.tokens['poison']).toBeTruthy();
-
-                this.skipActionWindow();
 
                 this.player2.clickPrompt('Apply Claim');
 

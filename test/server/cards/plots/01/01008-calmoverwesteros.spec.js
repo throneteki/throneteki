@@ -37,7 +37,6 @@ describe('Calm Over Westeros', function() {
                 this.player1.clickPrompt('Done');
 
                 this.skipActionWindow();
-                this.skipActionWindow();
 
                 this.player2.clickPrompt('Apply Claim');
             });
@@ -57,7 +56,6 @@ describe('Calm Over Westeros', function() {
 
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
                 this.skipActionWindow();
 
                 this.player2.clickPrompt('Apply Claim');
