@@ -4,7 +4,7 @@ class TowerOfTheSun extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: (event, player, card) => card.getType() === 'event'
+                onCardPlayed: () => true
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

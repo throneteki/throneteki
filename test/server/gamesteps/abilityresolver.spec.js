@@ -46,7 +46,7 @@ describe('AbilityResolver', function() {
             });
 
             it('should not raise the onCardPlayed event', function() {
-                expect(this.game.raiseEvent).not.toHaveBeenCalledWith('onCardPlayed', jasmine.any(Object), jasmine.any(Object));
+                expect(this.game.raiseMergedEvent).not.toHaveBeenCalledWith('onCardPlayed', jasmine.any(Object));
             });
         });
 
@@ -84,7 +84,7 @@ describe('AbilityResolver', function() {
             });
 
             it('should raise the onCardPlayed event', function() {
-                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardPlayed', this.player, this.source);
+                expect(this.game.raiseMergedEvent).toHaveBeenCalledWith('onCardPlayed', jasmine.any(Object));
             });
         });
 
