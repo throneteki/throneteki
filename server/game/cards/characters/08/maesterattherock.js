@@ -4,7 +4,8 @@ class MaesterAtTheRock extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: event => event.card.isFaction('lannister') && event.card.controller === this.controller
+                onCardPlayed: event => event.card.isFaction('lannister') && event.card.controller === this.controller &&
+                                       event.card.location === 'discard pile'
             },
             cost: ability.costs.kneelSelf(),
             handler: context => {
