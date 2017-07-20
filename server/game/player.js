@@ -452,15 +452,36 @@ class Player extends Spectator {
 
     canPutIntoPlay(card) {
         let owner = card.owner;
-        return (
-            (!this.isCharacterDead(card) || this.canResurrect(card)) && !this.cannotMarshalOrPutIntoPlayByTitle.includes(card.name) &&
-            (
-                owner === this ||
-                !this.getDuplicateInPlay(card) &&
-                !owner.getDuplicateInPlay(card) &&
-                (!owner.isCharacterDead(card) || owner.canResurrect(card))
-            )
-        );
+
+        if(!card.isUnique()) {
+            return true;
+        }
+
+        if(this.cannotMarshalOrPutIntoPlayByTitle.includes(card.name)) {
+            return false;
+        }
+
+        if(this.isCharacterDead(card) && !this.canResurrect(card)) {
+            return false;
+        }
+
+        if(owner === this) {
+            let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this);
+            let opponentControlsOurCopy = _.any(this.game.getPlayers(), player => {
+                return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card);
+            });
+
+            return !controlsAnOpponentsCopy && !opponentControlsOurCopy;
+        }
+
+        if(owner.isCharacterDead(card) && !owner.canResurrect(card)) {
+            return false;
+        }
+
+        let controlsACopy = this.anyCardsInPlay(c => c.name === card.name);
+        let opponentControlsACopy = owner.anyCardsInPlay(c => c.name === card.name && c !== card);
+
+        return !controlsACopy && !opponentControlsACopy;
     }
 
     canResurrect(card) {

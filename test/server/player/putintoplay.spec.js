@@ -15,112 +15,12 @@ describe('Player', function() {
         spyOn(this.player, 'isCharacterDead');
         spyOn(this.player, 'canResurrect');
 
-        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'getCost', 'isBestow', 'applyPersistentEffects', 'moveTo']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'getCost', 'isBestow', 'isUnique', 'applyPersistentEffects', 'moveTo']);
         this.cardSpy.controller = this.player;
         this.cardSpy.owner = this.player;
         this.dupeCardSpy = jasmine.createSpyObj('dupecard', ['addDuplicate']);
         this.player.hand.push(this.cardSpy);
         this.cardSpy.location = 'hand';
-    });
-
-    describe('canPutIntoPlay()', function() {
-        beforeEach(function() {
-            this.ownerSpy = jasmine.createSpyObj('ownerPlayer', ['canResurrect', 'getDuplicateInPlay', 'isCharacterDead']);
-        });
-
-        describe('when the player is the owner of the card', function() {
-            beforeEach(function() {
-                this.cardSpy.owner = this.player;
-            });
-
-            describe('and the character is already in play', function() {
-                beforeEach(function() {
-                    this.player.getDuplicateInPlay.and.returnValue({ foo: 'bar' });
-                });
-
-                it('should return true', function() {
-                    expect(this.player.canPutIntoPlay(this.cardSpy)).toBe(true);
-                });
-            });
-
-            describe('and the character is dead', function() {
-                beforeEach(function() {
-                    this.player.isCharacterDead.and.returnValue(true);
-                });
-
-                describe('and the character can be resurrected', function() {
-                    beforeEach(function() {
-                        this.player.canResurrect.and.returnValue(true);
-                    });
-
-                    it('should return true', function() {
-                        expect(this.player.canPutIntoPlay(this.cardSpy)).toBe(true);
-                    });
-                });
-
-                describe('and the character cannot be resurrected', function() {
-                    beforeEach(function() {
-                        this.player.canResurrect.and.returnValue(false);
-                    });
-
-                    it('should return false', function() {
-                        expect(this.player.canPutIntoPlay(this.cardSpy)).toBe(false);
-                    });
-                });
-            });
-        });
-
-        describe('when the player is not the owner of the card', function() {
-            beforeEach(function() {
-                this.cardSpy.owner = this.ownerSpy;
-            });
-
-            describe('and the character is already in play', function() {
-                beforeEach(function() {
-                    this.player.getDuplicateInPlay.and.returnValue({ foo: 'bar' });
-                });
-
-                it('should return false', function() {
-                    expect(this.player.canPutIntoPlay(this.cardSpy)).toBe(false);
-                });
-            });
-
-            describe('and the character is in play for the owner', function() {
-                beforeEach(function() {
-                    this.ownerSpy.getDuplicateInPlay.and.returnValue({ foo: 'bar' });
-                });
-
-                it('should return false', function() {
-                    expect(this.player.canPutIntoPlay(this.cardSpy)).toBe(false);
-                });
-            });
-
-            describe('and the character is dead for the owner', function() {
-                beforeEach(function() {
-                    this.ownerSpy.isCharacterDead.and.returnValue(true);
-                });
-
-                describe('and the character can be resurrected', function() {
-                    beforeEach(function() {
-                        this.ownerSpy.canResurrect.and.returnValue(true);
-                    });
-
-                    it('should return true', function() {
-                        expect(this.player.canPutIntoPlay(this.cardSpy)).toBe(true);
-                    });
-                });
-
-                describe('and the character cannot be resurrected', function() {
-                    beforeEach(function() {
-                        this.ownerSpy.canResurrect.and.returnValue(false);
-                    });
-
-                    it('should return false', function() {
-                        expect(this.player.canPutIntoPlay(this.cardSpy)).toBe(false);
-                    });
-                });
-            });
-        });
     });
 
     describe('putIntoPlay', function() {
