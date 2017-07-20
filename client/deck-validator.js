@@ -135,6 +135,16 @@ const agendaRules = {
                 condition: deck => !_.any(deck.drawCards, cardQuantity => cardQuantity.card.type_code === 'character' && cardQuantity.card.is_loyal)
             }
         ]
+    },
+    // The Conclave
+    '09045': {
+        mayInclude: card => card.type_code === 'character' && hasTrait(card, 'Maester') && !card.is_loyal,
+        rules: [
+            {
+                message: 'Must contain 12 or more Maester characters',
+                condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.type_code === 'character' && hasTrait(cardQuantity.card, 'Maester'))) >= 12
+            }
+        ]
     }
 };
 
