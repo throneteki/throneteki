@@ -108,7 +108,7 @@ class InnerForgotPassword extends React.Component {
 
             if(this.state.validation[field.name]) {
                 className += ' has-error';
-                validation = <span className='help-block'>{ this.state.validation[field.name]}</span>;
+                validation = <span className='help-block'>{ this.state.validation[field.name] }</span>;
             }
 
             fieldsToRender.push(
@@ -143,7 +143,7 @@ class InnerForgotPassword extends React.Component {
                     </div>
                     <div className='form-group'>
                         <div className='col-sm-offset-2 col-sm-3'>
-                            {this.state.submitting ? <button type='submit' className='btn btn-primary' disabled>Submitting...</button> :
+                            { this.state.submitting ? <button type='submit' className='btn btn-primary' disabled>Submitting...</button> :
                                 <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSubmit }>Submit</button>
                             }
                         </div>

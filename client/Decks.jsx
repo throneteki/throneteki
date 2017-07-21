@@ -72,9 +72,9 @@ class InnerDecks extends React.Component {
                 <div className='btn-group'>
                     <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
                     <button className='btn btn-primary' onClick={ this.onDeleteClick }>Delete</button>
-                    {this.state.showDelete ?
+                    { this.state.showDelete ?
                         <button className='btn btn-danger' onClick={ this.onConfirmDeleteClick }>Delete</button> :
-                        null}
+                        null }
                 </div>
                 <DeckSummary deck={ this.props.selectedDeck } cards={ this.props.cards } />
             </div>);

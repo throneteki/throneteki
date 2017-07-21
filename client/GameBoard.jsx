@@ -93,12 +93,12 @@ export class InnerGameBoard extends React.Component {
             }
 
             let spectators = _.map(props.currentGame.spectators, spectator => {
-                return <li key={ spectator.id }>{spectator.name}</li>;
+                return <li key={ spectator.id }>{ spectator.name }</li>;
             });
 
             let spectatorPopup = (
                 <ul className='spectators-popup absolute-panel'>
-                    {spectators}
+                    { spectators }
                 </ul>
             );
 
@@ -390,13 +390,13 @@ export class InnerGameBoard extends React.Component {
 
         var thisCardsInPlay = this.getCardsInPlay(thisPlayer, true);
         _.each(thisCardsInPlay, cards => {
-            thisPlayerCards.push(<div className='card-row' key={ 'this-loc' + index++ }>{cards}</div>);
+            thisPlayerCards.push(<div className='card-row' key={ 'this-loc' + index++ }>{ cards }</div>);
         });
         var otherPlayerCards = [];
 
         if(otherPlayer) {
             _.each(this.getCardsInPlay(otherPlayer, false), cards => {
-                otherPlayerCards.push(<div className='card-row' key={ 'other-loc' + index++ }>{cards}</div>);
+                otherPlayerCards.push(<div className='card-row' key={ 'other-loc' + index++ }>{ cards }</div>);
             });
         }
 
@@ -420,13 +420,13 @@ export class InnerGameBoard extends React.Component {
                                     <CardCollection className='faction' source='faction' cards={ [] } topCard={ otherPlayer ? otherPlayer.faction : undefined } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup />
                                     { this.getAgenda(otherPlayer, false, 'bottom') }
                                 </div>
-                                { otherPlayer ? <div className={ 'first-player-indicator ' + (!thisPlayer.firstPlayer ? '' : 'hidden') }>First player</div> : ''}
+                                { otherPlayer ? <div className={ 'first-player-indicator ' + (!thisPlayer.firstPlayer ? '' : 'hidden') }>First player</div> : '' }
                             </div>
                         </div>
                         <div className='middle'>
                             <div className='plots-pane'>
                                 <div className='plot-group'>
-                                    {this.getSchemePile(otherPlayer, false)}
+                                    { this.getSchemePile(otherPlayer, false) }
                                     <CardCollection className={ otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
                                         title='Plots' source='plot deck' cards={ otherPlayer ? otherPlayer.plotDeck : [] }
                                         topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
@@ -443,7 +443,7 @@ export class InnerGameBoard extends React.Component {
                                     <CardCollection className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
                                         title='Plots' source='plot deck' cards={ thisPlayer.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                                         onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
-                                    {this.getSchemePile(thisPlayer, !this.state.spectating)}
+                                    { this.getSchemePile(thisPlayer, !this.state.spectating) }
                                 </div>
                             </div>
                             <div className='middle-right'>
@@ -488,11 +488,11 @@ export class InnerGameBoard extends React.Component {
                         />
                         <div className='play-area'>
                             <div className='player-board'>
-                                {otherPlayerCards}
+                                { otherPlayerCards }
                             </div>
                             <div className='player-board our-side' onDragOver={ this.onDragOver }
                                 onDrop={ event => this.onDragDropEvent(event, 'play area') } >
-                                {thisPlayerCards}
+                                { thisPlayerCards }
                             </div>
                         </div>
                         <PlayerRow isMe={ !this.state.spectating }

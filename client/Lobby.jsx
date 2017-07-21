@@ -85,8 +85,8 @@ class InnerLobby extends React.Component {
             return (
                 <div key={ timestamp + message.user.username + (index++).toString() }>
                     <Avatar emailHash={ message.user.emailHash } float forceDefault={ message.user.noAvatar } />
-                    <span className='username'>{message.user.username}</span><span>{timestamp}</span>
-                    <div className='message'>{message.message}</div>
+                    <span className='username'>{ message.user.username }</span><span>{ timestamp }</span>
+                    <div className='message'>{ message.message }</div>
                 </div>);
         });
 
@@ -108,16 +108,16 @@ class InnerLobby extends React.Component {
                 </AlertPanel>
                 <div className='row'>
                     <span className='col-sm-9 text-center'><h1>Play A Game Of Thrones 2nd Edition</h1></span>
-                    <span className='col-sm-3 hidden-xs'><h3>{'Online Users (' + users.length + ')'}</h3></span>
+                    <span className='col-sm-3 hidden-xs'><h3>{ 'Online Users (' + users.length + ')' }</h3></span>
                 </div>
                 <div className='row'>
                     <div className='lobby-chat col-sm-9'>
                         <div className='panel lobby-messages' ref='messages' onScroll={ this.onScroll }>
-                            {messages}
+                            { messages }
                         </div>
                     </div>
                     <div className='panel user-list col-sm-3 hidden-xs'>
-                        {users}
+                        { users }
                     </div>
                 </div>
                 <div className='row'>

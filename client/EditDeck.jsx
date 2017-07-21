@@ -47,7 +47,7 @@ class InnerEditDeck extends React.Component {
             content = <AlertPanel message='The specified deck was not found' type='error' />;
         } else {
             content = (<div>
-                {<DeckEditor mode='Save' onDeckSave={ this.onEditDeck } />}
+                { <DeckEditor mode='Save' onDeckSave={ this.onEditDeck } /> }
                 <DeckSummary className='col-sm-6 right-pane' cards={ this.props.cards } deck={ this.props.deck } />
             </div>);
         }

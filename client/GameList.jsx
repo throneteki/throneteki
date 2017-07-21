@@ -103,7 +103,7 @@ class InnerGameList extends React.Component {
 
             return (
                 <div key={ game.id } className='game-row'>
-                    <div><b>{ gameTitle }</b>{ this.props.isAdmin && this.props.showNodes ? <span className='game-node'>Node: { game.node }</span> : null}</div>
+                    <div><b>{ gameTitle }</b>{ this.props.isAdmin && this.props.showNodes ? <span className='game-node'>Node: { game.node }</span> : null }</div>
                     { gameLayout }
                     <span className='pull-right'>
                         { (this.props.currentGame || _.size(game.players) === 2 || game.started) ?

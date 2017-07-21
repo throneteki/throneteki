@@ -124,7 +124,7 @@ class InnerLogin extends React.Component {
 
             if(this.state.validation[field.name]) {
                 className += ' has-error';
-                validation = <span className='help-block'>{ this.state.validation[field.name]}</span>;
+                validation = <span className='help-block'>{ this.state.validation[field.name] }</span>;
             }
 
             fieldsToRender.push(
