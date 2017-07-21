@@ -51,7 +51,7 @@ class TheRainsOfCastamere extends AgendaCard {
     }
 
     onPlotDiscarded(event) {
-        if(event.card.hasTrait('Scheme')) {
+        if(event.card.controller === this.controller && event.card.hasTrait('Scheme')) {
             this.owner.moveCard(event.card, 'out of game');
         }
     }

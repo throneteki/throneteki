@@ -60,10 +60,11 @@ describe('The Rains of Castamere', function() {
     describe('onPlotDiscarded()', function() {
         beforeEach(function() {
             this.plotSpy = jasmine.createSpyObj('plot', ['hasTrait']);
+            this.plotSpy.controller = this.player;
             this.event = { player: this.player, card: this.plotSpy };
         });
 
-        describe('when the plot is a scheme', function() {
+        describe('when the plot is a scheme and controlled by the player', function() {
             beforeEach(function() {
                 this.plotSpy.hasTrait.and.callFake(trait => trait === 'Scheme');
                 this.agenda.onPlotDiscarded(this.event);
@@ -71,6 +72,18 @@ describe('The Rains of Castamere', function() {
 
             it('should move the card out of the game', function() {
                 expect(this.player.moveCard).toHaveBeenCalledWith(this.plotSpy, 'out of game');
+            });
+        });
+
+        describe('when the plot is a scheme and controlled by the opponent', function() {
+            beforeEach(function() {
+                this.plotSpy.hasTrait.and.callFake(trait => trait === 'Scheme');
+                this.plotSpy.controller = {};
+                this.agenda.onPlotDiscarded(this.event);
+            });
+
+            it('should not move the card', function() {
+                expect(this.player.moveCard).not.toHaveBeenCalled();
             });
         });
 
