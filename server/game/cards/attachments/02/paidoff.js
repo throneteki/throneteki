@@ -40,14 +40,14 @@ class PaidOff extends DrawCard {
         player.standCard(this.parent);
 
         this.game.addMessage('{0} pays 1 gold for {1} to stand {2}',
-                             player, this, this.parent);
+            player, this, this.parent);
 
         return true;
     }
 
     cancel(player) {
         this.game.addMessage('{0} does not pay 1 gold for {1} so {2} remains kneeled',
-                             player, this, this.parent);
+            player, this, this.parent);
 
         return true;
     }

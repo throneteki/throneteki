@@ -24,7 +24,7 @@ class IsleOfRavens extends DrawCard {
         card.controller.shuffleDrawDeck();
 
         this.game.addMessage('{0} kneels {1} to shuffle {2} back into {3}\'s deck',
-                             player, this, card, card.controller);
+            player, this, card, card.controller);
 
         return true;
     }

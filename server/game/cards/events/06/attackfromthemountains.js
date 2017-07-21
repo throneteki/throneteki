@@ -17,7 +17,7 @@ class AttackFromTheMountains extends DrawCard {
             handler: context => {
                 context.target.owner.putIntoPlay(context.target);
                 this.game.addMessage('{0} plays {1} to put {2} into play from their hand',
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
                 
             }
         });

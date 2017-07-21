@@ -16,7 +16,7 @@ class HotPie extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} and kneels {2} to reduce the cost of the next unique character they marshal this phase by 1', 
-                                      context.player, this, context.kneelingCostCard);
+                    context.player, this, context.kneelingCostCard);
             }
         });
     }

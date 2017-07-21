@@ -20,7 +20,7 @@ class AllMenAreFools extends DrawCard {
                 });
 
                 this.game.addMessage('{0} plays {1} to have {2} gain 1 power',
-                                      this.controller, this, ladies);
+                    this.controller, this, ladies);
             }
         });
     }

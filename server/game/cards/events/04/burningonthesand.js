@@ -15,7 +15,7 @@ class BurningOnTheSand extends DrawCard {
 
                 let opponent = this.game.getOtherPlayer(this.controller);
                 this.game.addMessage('{0} plays {1} to set the claim value on {2}\'s revealed plot card to 0 until the end of the challenge', 
-                                      this.controller, this, opponent);
+                    this.controller, this, opponent);
             }
         });
     }

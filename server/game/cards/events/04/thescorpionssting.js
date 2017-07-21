@@ -29,7 +29,7 @@ class TheScorpionsSting extends DrawCard {
         }));
 
         this.game.addMessage('{0} plays {1} to give {2} renown until the end of the phase', 
-                              player, this, cards);
+            player, this, cards);
 
         return true;
     }

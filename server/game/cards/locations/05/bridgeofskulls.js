@@ -8,7 +8,7 @@ class BridgeOfSkulls extends DrawCard {
                     phase === 'challenge'
                     && this.game.getOtherPlayer(this.controller)
                     && this.game.getOtherPlayer(this.controller)
-                    .getNumberOfChallengesInitiatedByType('military') < 1
+                        .getNumberOfChallengesInitiatedByType('military') < 1
             },
             handler: () => {
                 var opponent = this.game.getOtherPlayer(this.controller);
@@ -19,7 +19,7 @@ class BridgeOfSkulls extends DrawCard {
                 opponent.discardAtRandom(1);
 
                 this.game.addMessage('{0} uses {1} to discard 1 card at random from {2}\'s hand',
-                                     this.controller, this, opponent);
+                    this.controller, this, opponent);
             }
         });
     }

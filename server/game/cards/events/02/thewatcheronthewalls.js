@@ -10,7 +10,7 @@ class TheWatcherOnTheWalls extends DrawCard {
             handler: () => {
                 this.game.killCharacters(this.game.currentChallenge.attackers);
                 this.game.addMessage('{0} uses {1} to kill each attacking character',
-                                     this.controller, this);
+                    this.controller, this);
             }
         });
     }

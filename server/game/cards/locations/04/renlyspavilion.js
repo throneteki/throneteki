@@ -17,7 +17,7 @@ class RenlysPavilion extends DrawCard {
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to give -1 STR to {2} and +1 STR to {3}',
-                             context.player, this, context.targets.toLower, context.targets.toRaise);
+                    context.player, this, context.targets.toLower, context.targets.toRaise);
                 this.untilEndOfPhase(ability => ({
                     match: context.targets.toLower,
                     effect: ability.effects.modifyStrength(-1)

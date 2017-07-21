@@ -18,7 +18,7 @@ class RaidingTheBayOfIce extends DrawCard {
             handler: context => {
                 context.target.owner.moveCard(context.target, 'draw deck');
                 this.game.addMessage('{0} plays {1} to move {2} to the top of {3}\'s deck',
-                                      this.controller, this, context.target, context.target.owner);
+                    this.controller, this, context.target, context.target.owner);
 
             }
         });

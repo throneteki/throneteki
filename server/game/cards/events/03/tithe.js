@@ -8,7 +8,7 @@ class Tithe extends DrawCard {
             handler: context => {
                 this.game.addGold(this.controller, 2);
                 this.game.addMessage('{0} uses {1} to kneel {2} to gain 2 gold',
-                                      this.controller, this, context.kneelingCostCard);
+                    this.controller, this, context.kneelingCostCard);
             }
         });
     }

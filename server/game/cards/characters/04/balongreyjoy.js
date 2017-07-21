@@ -27,7 +27,7 @@ class BalonGreyjoy extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to kneel {2} and give +1 STR to each loyal character they control until the end of the challenge',
-                                     this.controller, this, context.kneelingCostCard);
+                    this.controller, this, context.kneelingCostCard);
             }
         });
     }

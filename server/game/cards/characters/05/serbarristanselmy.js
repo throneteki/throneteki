@@ -13,7 +13,7 @@ class SerBarristanSelmy extends DrawCard {
             handler: () => {
                 this.controller.standCard(this);
                 this.game.addMessage('{0} uses {1} to stand {1}',
-                                     this.controller, this, this);
+                    this.controller, this, this);
             }
         });
     }

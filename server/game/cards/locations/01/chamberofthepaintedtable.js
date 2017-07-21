@@ -14,7 +14,7 @@ class ChamberOfThePaintedTable extends DrawCard {
                 }
 
                 this.game.addMessage('{0} kneels {1} to move 1 power from {2}\'s faction card to their own',
-                                     this.controller, this, otherPlayer);
+                    this.controller, this, otherPlayer);
                 this.game.transferPower(this.controller, otherPlayer, 1);
             }
         });

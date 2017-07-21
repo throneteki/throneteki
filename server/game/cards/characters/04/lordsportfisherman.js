@@ -11,7 +11,7 @@ class LordsportFisherman extends DrawCard {
                 this.controller.moveCard(bottomCard, 'hand');
 
                 this.game.addMessage('{0} uses {1} to draw the bottom card of their deck',
-                                     this.controller, this);
+                    this.controller, this);
             }
         });
     }

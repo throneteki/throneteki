@@ -102,10 +102,10 @@ class ValarDohaeris extends PlotCard {
                 });
 
                 this.game.addMessage('{0} has {1} moved to the bottom of their deck for {2}',
-                                      player, cardsOwnedByPlayer, this);
+                    player, cardsOwnedByPlayer, this);
             } else {
                 this.game.addMessage('{0} does not have any characters moved to the bottom of their deck for {1}',
-                                      player, this);
+                    player, this);
             }
         });
 

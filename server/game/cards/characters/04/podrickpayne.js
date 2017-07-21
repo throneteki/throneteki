@@ -19,7 +19,7 @@ class PodrickPayne extends DrawCard {
             handler: context => {
                 context.event.saveCard(context.target);
                 this.game.addMessage('{0} puts {1} into play and pays 2 gold to save {2}', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
 
                 if(context.target.name === 'Tyrion Lannister' && this.controller.gold >= 2 &&
                    this.game.currentChallenge && this.game.currentChallenge.attackers.length >= 1) {

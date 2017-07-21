@@ -38,7 +38,7 @@ class ConsolidationOfPower extends DrawCard {
         card.modifyPower(1);
 
         this.game.addMessage('{0} uses {1} to kneel {2} and have {3} gain 1 power',
-                             player, this, this.cards, card);
+            player, this, this.cards, card);
 
         return true;
     }

@@ -13,7 +13,7 @@ class IShallWinNoGlory extends DrawCard {
             }),
             handler: (context) => {
                 this.game.addMessage('{0} plays {1} and kneels {2} to end the challenge immediately with no winner or loser', 
-                                      this.controller, this, context.kneelingCostCards);
+                    this.controller, this, context.kneelingCostCards);
 
                 this.game.currentChallenge.cancelChallenge();
             }

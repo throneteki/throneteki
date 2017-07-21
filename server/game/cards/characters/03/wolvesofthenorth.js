@@ -16,7 +16,7 @@ class WolvesOfTheNorth extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to give {2} {3}STR until the end of the phase', 
-                                      this.controller, this, target, strDecrease);
+                    this.controller, this, target, strDecrease);
             }
         });
     }

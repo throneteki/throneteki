@@ -32,7 +32,7 @@ class MaceTyrell extends DrawCard {
                     effect: ability.effects.removeFromGame()
                 }));
                 this.game.addMessage('{0} uses {1} and kneels their faction card to remove {2} from the game',
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

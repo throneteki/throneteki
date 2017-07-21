@@ -20,7 +20,7 @@ class Gilly extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} discards 1 gold from {1} to have {2} gain stealth until the end of the phase', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

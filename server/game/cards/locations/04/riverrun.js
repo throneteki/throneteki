@@ -22,7 +22,7 @@ class Riverrun extends DrawCard {
                 this.tullyCharacter.modifyPower(1);
 
                 this.game.addMessage('{0} kneels {1} to have {2} gain 1 power',
-                                     this.controller, this, this.tullyCharacter);
+                    this.controller, this, this.tullyCharacter);
 
                 this.tullyCharacter = undefined;
             }

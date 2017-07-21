@@ -22,7 +22,7 @@ class MargaeryTyrell extends DrawCard {
                 this.game.currentChallenge.addDefender(context.target, false);
 
                 this.game.addMessage('{0} uses {1} to kneel {2} and have them participate in the current challenge as a defender', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

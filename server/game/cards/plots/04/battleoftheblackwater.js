@@ -11,7 +11,7 @@ class BattleOfTheBlackwater extends PlotCard {
                 });
 
                 this.game.addMessage('{0} uses {1} to have both players discard each duplicate they control', 
-                                      this.controller, this);
+                    this.controller, this);
             }
         });
     }

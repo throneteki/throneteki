@@ -8,7 +8,7 @@ class Ghost extends DrawCard {
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to make {2} unable to be declared as a defender until the end of the phase',
-                                      this.controller, this, context.event.target);
+                    this.controller, this, context.event.target);
 
                 this.untilEndOfPhase(ability => ({
                     match: context.event.target,

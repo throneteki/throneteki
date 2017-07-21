@@ -19,7 +19,7 @@ class SavingTheKingdom extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} plays {1} to kneel and make {2} unable to stand during the standing phase this round', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
 

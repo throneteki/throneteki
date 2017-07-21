@@ -26,7 +26,7 @@ class BearIslandHost extends DrawCard {
         }));
 
         this.game.addMessage('{0} discards a gold from {1} to make {2} not kneel as an attacker in a military challenge', 
-                              player, this, card);
+            player, this, card);
 
         return true;
     }

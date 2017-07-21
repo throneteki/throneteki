@@ -27,7 +27,7 @@ class OursIsTheOldWay extends DrawCard {
         }));
 
         this.game.addMessage('{0} plays {1} to have each {2} character they control gain stealth until the end of the phase', 
-                              this.controller, this, 'greyjoy');
+            this.controller, this, 'greyjoy');
 
         return true;
     }
@@ -39,7 +39,7 @@ class OursIsTheOldWay extends DrawCard {
         }));
 
         this.game.addMessage('{0} plays {1} to have each non-{2} character lose stealth until the end of the phase', 
-                              this.controller, this, 'greyjoy');
+            this.controller, this, 'greyjoy');
 
         return true;
     }

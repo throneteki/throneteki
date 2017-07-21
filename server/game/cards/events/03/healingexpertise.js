@@ -16,7 +16,7 @@ class HealingExpertise extends DrawCard {
             handler: context => {
                 context.event.saveCard(context.target);                
                 this.game.addMessage('{0} plays {1} to kneel {2} to save {3}', 
-                                      this.controller, this, context.kneelingCostCard, context.target);
+                    this.controller, this, context.kneelingCostCard, context.target);
             }
         });
     }

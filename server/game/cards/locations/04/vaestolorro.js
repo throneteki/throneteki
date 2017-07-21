@@ -14,7 +14,7 @@ class VaesTolorro extends DrawCard {
                 pendingCard.modifyPower(-power);
                 this.modifyPower(power);
                 this.game.addMessage('{0} kneels {1} to move {2} power from {3} to {1}',
-                                      this.controller, this, power, pendingCard);
+                    this.controller, this, power, pendingCard);
             }
         });
     }

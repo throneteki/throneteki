@@ -110,7 +110,7 @@ class DeckSearchPrompt extends UiPrompt {
         if(this.properties.numToSelect !== undefined && this.properties.numToSelect > 1) {
             this.properties.onSelect(player, card);
             this.properties.numToSelect--;
-            this.properties.numCards--;  // to avoid peaking into one *extra* card
+            this.properties.numCards--; // to avoid peaking into one *extra* card
 
             return;
         }

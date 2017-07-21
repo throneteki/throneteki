@@ -106,7 +106,7 @@ class ChallengeFlow extends BaseStep {
         if(!_.isEmpty(this.forcedDefenders)) {
             if(this.forcedDefenders.length === defenderLimit) {
                 this.game.addMessage('{0} {1} automatically declared as {2}', 
-                                      this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
+                    this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
                 
                 this.chooseDefenders([]);
                 return;
@@ -114,7 +114,7 @@ class ChallengeFlow extends BaseStep {
 
             if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
                 this.game.addMessage('{0} {1} automatically declared as {2}', 
-                                      this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
+                    this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
 
                 if(defenderLimit !== 0) {
                     selectableLimit -= this.forcedDefenders.length;

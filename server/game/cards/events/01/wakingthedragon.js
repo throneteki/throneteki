@@ -24,7 +24,7 @@ class WakingTheDragon extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to stand {2}',
-                                     this.controller, this, targetCharacter);
+                    this.controller, this, targetCharacter);
             }
         });
     }

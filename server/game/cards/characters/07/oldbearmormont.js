@@ -26,7 +26,7 @@ class OldBearMormont extends DrawCard {
             
         var otherPlayer = this.game.getOtherPlayer(this.controller);
         this.game.addMessage('{0} uses {1} to put {2} into play under their control from {3}\'s discard pile', 
-                              player, this, card, otherPlayer);
+            player, this, card, otherPlayer);
 
         return true;
     }

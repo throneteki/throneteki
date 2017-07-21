@@ -18,7 +18,7 @@ class Varys extends DrawCard {
                 });
 
                 this.game.addMessage('{0} removes {1} from the game to discard all characters',
-                                     this.controller, this);
+                    this.controller, this);
             }
         });
     }

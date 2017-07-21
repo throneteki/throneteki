@@ -20,7 +20,7 @@ class DornishParamour extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to force {2} to be declared as a defender this challenge, if able', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

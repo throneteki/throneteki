@@ -16,7 +16,7 @@ class TheHandsSolar extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} kneels {1} to give {2} an {3} icon until the end of the phase', 
-                                      this.controller, this, context.target, 'intrigue');
+                    this.controller, this, context.target, 'intrigue');
             }
         });
     }

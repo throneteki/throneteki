@@ -12,7 +12,7 @@ class LeviesAtTheRock extends DrawCard {
                 this.game.addGold(opponent, -gold);
                 this.game.addGold(this.controller, gold);
                 this.game.addMessage('{0} plays {1} to move {2} gold from {3}\'s gold pool to their own', 
-                                      this.controller, this, gold, opponent);
+                    this.controller, this, gold, opponent);
             }
         });
     }

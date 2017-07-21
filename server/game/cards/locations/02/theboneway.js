@@ -26,7 +26,7 @@ class TheBoneway extends DrawCard {
         this.game.addPower(player, 3);
 
         this.game.addMessage('{0} uses {1} to discard 6 vengeance tokens and gain 3 power for their faction',
-                             this.controller, this);
+            this.controller, this);
     }
 }
 

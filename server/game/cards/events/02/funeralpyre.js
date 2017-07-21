@@ -10,7 +10,7 @@ class FuneralPyre extends DrawCard {
             handler: () => {
                 this.controller.drawCardsToHand(3);
                 this.game.addMessage('{0} uses {1} to draw 3 cards',
-                                     this.controller, this);
+                    this.controller, this);
             }
         });
     }

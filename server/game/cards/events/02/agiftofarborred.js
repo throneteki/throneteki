@@ -78,7 +78,7 @@ class AGiftOfArborRed extends DrawCard {
         player.shuffleDrawDeck();
 
         this.game.addMessage('{0} adds {1} to {2}\'s hand and shuffles their deck',
-                             this.controller, card, player);
+            this.controller, card, player);
 
         return true;
     }

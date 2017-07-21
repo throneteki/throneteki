@@ -26,7 +26,7 @@ class JaqenHGhar extends DrawCard {
                 });
 
                 this.game.addMessage('{0} uses {1} to add Valar Morghulis tokens to {2}',
-                                    this.controller, this, this.selectedCards);
+                    this.controller, this, this.selectedCards);
             }
         });
         this.reaction({

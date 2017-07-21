@@ -14,7 +14,7 @@ class QuietAsAShadow extends DrawCard {
                     effect: ability.effects.addKeyword('stealth')
                 }));
                 this.game.addMessage('{0} plays {1} to give {2} stealth until the end of the phase',
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

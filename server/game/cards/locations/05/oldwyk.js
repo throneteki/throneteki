@@ -18,7 +18,7 @@ class OldWyk extends DrawCard {
                 this.game.currentChallenge.addAttacker(card);
 
                 this.game.addMessage('{0} kneels {1} to put {2} into play from their dead pile as an attacker',
-                                      this.controller, this, card);
+                    this.controller, this, card);
 
                 this.game.once('afterChallenge', (event, challenge) => this.resolveAfterChallenge(challenge, card));
             }
@@ -29,14 +29,14 @@ class OldWyk extends DrawCard {
         if(challenge.winner === this.controller && challenge.strengthDifference >= 5) {
             this.controller.returnCardToHand(card);
             this.game.addMessage('{0} is returned to {1}\'s hand because of {2}',
-                                  card, this.controller, this);
+                card, this.controller, this);
 
             return;
         }
 
         this.controller.moveCard(card, 'draw deck', { bottom: true });
         this.game.addMessage('{0} is placed on the bottom of {1}\'s deck because of {2}',
-                              card, this.controller, this);
+            card, this.controller, this);
     }
 
     anyDrownedGodInDeadPile() {

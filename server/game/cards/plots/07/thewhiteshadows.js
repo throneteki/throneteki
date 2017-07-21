@@ -9,7 +9,7 @@ class TheWhiteShadows extends PlotCard {
             handler: context => {
                 this.controller.putIntoPlay(context.event.card);
                 this.game.addMessage('{0} uses {1} to put {2} into play under their control, blank', 
-                                      this.controller, this, context.event.card);
+                    this.controller, this, context.event.card);
 
                 this.atEndOfPhase(ability => ({
                     match: context.event.card,
