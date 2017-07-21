@@ -290,7 +290,7 @@ export class InnerGameBoard extends React.Component {
             disablePopup = !isMe;
         }
 
-        disablePopup = disablePopup || cards.length === 0;
+        disablePopup = disablePopup || !cards || cards.length === 0;
 
         return (
             <CardCollection className='agenda'
