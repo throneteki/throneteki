@@ -9,6 +9,7 @@ class TriggeredAbilityContext {
         this.game = game;
         this.source = source;
         this.player = player;
+        this.costs = {};
     }
 
     cancel() {
