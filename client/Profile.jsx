@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'underscore';
 import $ from 'jquery';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import AlertPanel from './SiteComponents/AlertPanel.jsx';
 import Input from './FormComponents/Input.jsx';
@@ -16,7 +16,7 @@ class InnerProfile extends React.Component {
         if(!this.props.user) {
             return;
         }
-        
+
         this.windowDefaults = {
             plot: false,
             draw: false,
@@ -38,13 +38,13 @@ class InnerProfile extends React.Component {
         };
 
         this.windows = [
-            { name: 'plot', label: 'Plots revealed' },
-            { name: 'draw', label: 'Draw phase' },
-            { name: 'challengeBegin', label: 'Before challenge' },
-            { name: 'attackersDeclared', label: 'Attackers declared' },
-            { name: 'defendersDeclared', label: 'Defenders declared' },
-            { name: 'dominance', label: 'Dominance phase' },
-            { name: 'standing', label: 'Standing phase' }
+            { name: 'plot', label: 'Plots revealed', style: 'col-sm-4' },
+            { name: 'draw', label: 'Draw phase', style: 'col-sm-4' },
+            { name: 'challengeBegin', label: 'Before challenge', style: 'col-sm-4' },
+            { name: 'attackersDeclared', label: 'Attackers declared', style: 'col-sm-4' },
+            { name: 'defendersDeclared', label: 'Defenders declared', style: 'col-sm-4' },
+            { name: 'dominance', label: 'Dominance phase', style: 'col-sm-4' },
+            { name: 'standing', label: 'Standing phase', style: 'col-sm-4' }
         ];
     }
 
@@ -95,14 +95,16 @@ class InnerProfile extends React.Component {
         $.ajax('/api/account/' + this.props.user.username,
             {
                 method: 'PUT',
-                data: { data: JSON.stringify({
-                    email: this.state.email,
-                    password: this.state.newPassword,
-                    promptedActionWindows: this.state.promptedActionWindows,
-                    settings : {
-                        disableGravatar: this.state.disableGravatar
-                    }
-                }) }
+                data: {
+                    data: JSON.stringify({
+                        email: this.state.email,
+                        password: this.state.newPassword,
+                        promptedActionWindows: this.state.promptedActionWindows,
+                        settings: {
+                            disableGravatar: this.state.disableGravatar
+                        }
+                    })
+                }
             })
             .done((data) => {
                 if(data.success) {
@@ -161,32 +163,54 @@ class InnerProfile extends React.Component {
         }
 
         let windows = _.map(this.windows, window => {
-            return (<Checkbox key={ window.name } name={ 'promptedActionWindows.' + window.name } label={ window.label } fieldClass='col-sm-offset-3 col-sm-4'
-                type='checkbox' onChange={ (this.onWindowToggle.bind(this, window.name)) } checked={ this.state.promptedActionWindows[window.name] } />);
+            return (<Checkbox key={ window.name }
+                noGroup
+                name={ 'promptedActionWindows.' + window.name }
+                label={ window.label }
+                fieldClass={ window.style }
+                type='checkbox'
+                onChange={ (this.onWindowToggle.bind(this, window.name)) }
+                checked={ this.state.promptedActionWindows[window.name] } />);
         });
 
         return (
             <div>
-                <h2>User profile for { this.props.user.username }</h2>
+                <h3 className='text-center'>Profile for { this.props.user.username }</h3>
                 { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
                 { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
                 <form className='form form-horizontal'>
-                    <h3>User details</h3>
-                    <Input name='email' label='Email Address' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter email address'
-                        type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
-                        onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
-                    <Input name='newPassword' label='New Password' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter new password'
-                        type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
-                        onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
-                    <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-3' fieldClass='col-sm-4' placeholder='Enter new password (again)'
-                        type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
-                        onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
-                    <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-3 col-sm-4'
-                        onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
-                    <h3>Action window defaults</h3>
-                    { windows }
+                    <div className='col-sm-6 row'>
+                        <div className='panel-title text-center'>
+                            User
+                        </div>
+                        <div className='panel'>
+                            <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
+                                type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
+                                onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
+                            <Input name='newPassword' label='New Password' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password'
+                                type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
+                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
+                            <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
+                                type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
+                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
+                            <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
+                                onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
+                        </div>
+                    </div>
+                    <div className='row col-sm-6'>
+                        <div className='panel-title text-center'>
+                            Action window defaults
+                        </div>
+                        <div className='panel'>
+                            <div className='form-group'>
+                                { windows }
+                            </div>
+                        </div>
+                    </div>
 
-                    <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
+                    <div className='row col-sm-12'>
+                        <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
+                    </div>
                 </form>
             </div>);
     }
