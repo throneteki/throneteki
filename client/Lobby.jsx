@@ -83,7 +83,7 @@ class InnerLobby extends React.Component {
 
             var timestamp = moment(message.time).format('MMM Do H:mm:ss');
             return (
-                <div key={timestamp + message.user.username + (index++).toString()}>
+                <div key={ timestamp + message.user.username + (index++).toString() }>
                     <Avatar emailHash={ message.user.emailHash } float forceDefault={ message.user.noAvatar } />
                     <span className='username'>{message.user.username}</span><span>{timestamp}</span>
                     <div className='message'>{message.message}</div>
@@ -120,17 +120,17 @@ class InnerLobby extends React.Component {
                         {users}
                     </div>
                 </div>
-                    <div className='row'>
-                        <form className='form form-hozitontal'>
-                            <div className='form-group'>
-                                <div className='chat-box col-sm-5 col-xs-9'>
-                                    <input className='form-control' type='text' placeholder='Chat...' value={this.state.message}
-                                        onKeyPress={this.onKeyPress} onChange={this.onChange} />
-                                </div>
-                                <button type='button' className='btn btn-primary col-sm-1 col-xs-2' onClick={this.onSendClick}>Send</button>
+                <div className='row'>
+                    <form className='form form-hozitontal'>
+                        <div className='form-group'>
+                            <div className='chat-box col-sm-5 col-xs-9'>
+                                <input className='form-control' type='text' placeholder='Chat...' value={ this.state.message }
+                                    onKeyPress={ this.onKeyPress } onChange={ this.onChange } />
                             </div>
-                        </form>
-                    </div>
+                            <button type='button' className='btn btn-primary col-sm-1 col-xs-2' onClick={ this.onSendClick }>Send</button>
+                        </div>
+                    </form>
+                </div>
             </div>);
     }
 }

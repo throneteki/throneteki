@@ -93,7 +93,7 @@ export class InnerGameBoard extends React.Component {
             }
 
             let spectators = _.map(props.currentGame.spectators, spectator => {
-                return <li key={spectator.id}>{spectator.name}</li>;
+                return <li key={ spectator.id }>{spectator.name}</li>;
             });
 
             let spectatorPopup = (
@@ -262,8 +262,8 @@ export class InnerGameBoard extends React.Component {
 
         _.each(cardsByType, cards => {
             var cardsInPlay = _.map(cards, card => {
-                return (<Card key={card.uuid} source='play area' card={card} disableMouseOver={card.facedown && !card.code} onMenuItemClick={this.onMenuItemClick}
-                                    onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} onClick={this.onCardClick} onDragDrop={this.onDragDrop} />);
+                return (<Card key={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code } onMenuItemClick={ this.onMenuItemClick }
+                    onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />);
             });
             cardsByLocation.push(cardsInPlay);
         });
@@ -317,11 +317,11 @@ export class InnerGameBoard extends React.Component {
         return (
             <AdditionalCardPile
                 className='plot'
-                isMe={isMe}
-                onMouseOut={this.onMouseOut}
-                onMouseOver={this.onMouseOver}
-                pile={schemePile}
-                spectating={this.state.spectating}
+                isMe={ isMe }
+                onMouseOut={ this.onMouseOut }
+                onMouseOver={ this.onMouseOver }
+                pile={ schemePile }
+                spectating={ this.state.spectating }
                 title='Schemes' />
         );
     }
@@ -390,22 +390,22 @@ export class InnerGameBoard extends React.Component {
 
         var thisCardsInPlay = this.getCardsInPlay(thisPlayer, true);
         _.each(thisCardsInPlay, cards => {
-            thisPlayerCards.push(<div className='card-row' key={'this-loc' + index++}>{cards}</div>);
+            thisPlayerCards.push(<div className='card-row' key={ 'this-loc' + index++ }>{cards}</div>);
         });
         var otherPlayerCards = [];
 
         if(otherPlayer) {
             _.each(this.getCardsInPlay(otherPlayer, false), cards => {
-                otherPlayerCards.push(<div className='card-row' key={'other-loc' + index++}>{cards}</div>);
+                otherPlayerCards.push(<div className='card-row' key={ 'other-loc' + index++ }>{cards}</div>);
             });
         }
 
         for(var i = thisPlayerCards.length; i < 2; i++) {
-            thisPlayerCards.push(<div className='card-row' key={'this-empty' + i} />);
+            thisPlayerCards.push(<div className='card-row' key={ 'this-empty' + i } />);
         }
 
         for(i = otherPlayerCards.length; i < 2; i++) {
-            thisPlayerCards.push(<div className='card-row' key={'other-empty' + i} />);
+            thisPlayerCards.push(<div className='card-row' key={ 'other-empty' + i } />);
         }
 
         return (
@@ -413,36 +413,36 @@ export class InnerGameBoard extends React.Component {
                 <div className='main-window'>
                     <div className='left-side'>
                         <div className='player-info'>
-                            <PlayerStats gold={otherPlayer ? otherPlayer.gold : 0} claim={otherPlayer ? otherPlayer.claim : 0}
-                                reserve={otherPlayer ? otherPlayer.reserve : 0} power={otherPlayer ? otherPlayer.totalPower : 0} user={otherPlayer ? otherPlayer.user : null} />
+                            <PlayerStats gold={ otherPlayer ? otherPlayer.gold : 0 } claim={ otherPlayer ? otherPlayer.claim : 0 }
+                                reserve={ otherPlayer ? otherPlayer.reserve : 0 } power={ otherPlayer ? otherPlayer.totalPower : 0 } user={ otherPlayer ? otherPlayer.user : null } />
                             <div className='deck-info'>
                                 <div className='deck-type'>
-                                    <CardCollection className='faction' source='faction' cards={[]} topCard={otherPlayer ? otherPlayer.faction : undefined} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup />
+                                    <CardCollection className='faction' source='faction' cards={ [] } topCard={ otherPlayer ? otherPlayer.faction : undefined } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup />
                                     { this.getAgenda(otherPlayer, false, 'bottom') }
                                 </div>
-                                { otherPlayer ? <div className={'first-player-indicator ' + (!thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div> : ''}
+                                { otherPlayer ? <div className={ 'first-player-indicator ' + (!thisPlayer.firstPlayer ? '' : 'hidden') }>First player</div> : ''}
                             </div>
                         </div>
                         <div className='middle'>
-                             <div className='plots-pane'>
+                            <div className='plots-pane'>
                                 <div className='plot-group'>
                                     {this.getSchemePile(otherPlayer, false)}
-                                    <CardCollection className={otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot'}
-                                                    title='Plots' source='plot deck' cards={otherPlayer ? otherPlayer.plotDeck : []}
-                                                    topCard={{ facedown: true, kneeled: true }} orientation='horizontal'
-                                                    onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disableMouseOver disablePopup
-                                                    onCardClick={this.onCardClick} orientation='horizontal' />
-                                    <CardCollection className='plot' title='Used Plots' source='revealed plots' cards={otherPlayer ? otherPlayer.plotDiscard : []}
-                                                    topCard={otherPlayer ? otherPlayer.activePlot : undefined} orientation='horizontal' onMouseOver={this.onMouseOver}
-                                                    onMouseOut={this.onMouseOut} onCardClick={this.onCardClick} />
+                                    <CardCollection className={ otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
+                                        title='Plots' source='plot deck' cards={ otherPlayer ? otherPlayer.plotDeck : [] }
+                                        topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
+                                        onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disableMouseOver disablePopup
+                                        onCardClick={ this.onCardClick } orientation='horizontal' />
+                                    <CardCollection className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer ? otherPlayer.plotDiscard : [] }
+                                        topCard={ otherPlayer ? otherPlayer.activePlot : undefined } orientation='horizontal' onMouseOver={ this.onMouseOver }
+                                        onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } />
                                 </div>
                                 <div className='plot-group our-side'>
-                                    <CardCollection className='plot' title='Used Plots' source='revealed plots' cards={thisPlayer.plotDiscard} topCard={thisPlayer.activePlot}
-                                                    onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} orientation='horizontal' onMenuItemClick={this.onMenuItemClick}
-                                                    onCardClick={this.onCardClick} onDragDrop={this.onDragDrop} />
-                                    <CardCollection className={thisPlayer.plotSelected ? 'plot plot-selected' : 'plot'}
-                                                    title='Plots' source='plot deck' cards={thisPlayer.plotDeck} topCard={{ facedown: true, kneeled: true }} orientation='horizontal'
-                                                    onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} onCardClick={this.onCardClick} onDragDrop={this.onDragDrop} />
+                                    <CardCollection className='plot' title='Used Plots' source='revealed plots' cards={ thisPlayer.plotDiscard } topCard={ thisPlayer.activePlot }
+                                        onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } orientation='horizontal' onMenuItemClick={ this.onMenuItemClick }
+                                        onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
+                                    <CardCollection className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
+                                        title='Plots' source='plot deck' cards={ thisPlayer.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
+                                        onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
                                     {this.getSchemePile(thisPlayer, !this.state.spectating)}
                                 </div>
                             </div>
@@ -457,18 +457,18 @@ export class InnerGameBoard extends React.Component {
                                         { thisPlayer.phase } phase
                                     </div>
                                     <MenuPane title={ thisPlayer.menuTitle } buttons={ thisPlayer.buttons } promptTitle={ thisPlayer.promptTitle } onButtonClick={ this.onCommand }
-                                                onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onTitleClick={ this.onMenuTitleClick.bind(this) } />
+                                        onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onTitleClick={ this.onMenuTitleClick.bind(this) } />
                                 </div>
                                 <div className='schemes-pane' />
                             </div>
                         </div>
                         <div className='player-info our-side'>
-                            <PlayerStats gold={thisPlayer.gold || 0} claim={thisPlayer.claim || 0} reserve={thisPlayer.reserve || 0}
-                                        power={thisPlayer.totalPower} isMe={!this.state.spectating} user={thisPlayer.user} />
+                            <PlayerStats gold={ thisPlayer.gold || 0 } claim={ thisPlayer.claim || 0 } reserve={ thisPlayer.reserve || 0 }
+                                power={ thisPlayer.totalPower } isMe={ !this.state.spectating } user={ thisPlayer.user } />
                             <div className='deck-info'>
-                                <div className={'first-player-indicator ' + (thisPlayer.firstPlayer ? '' : 'hidden')}>First player</div>
+                                <div className={ 'first-player-indicator ' + (thisPlayer.firstPlayer ? '' : 'hidden') }>First player</div>
                                 <div className='deck-type'>
-                                    <CardCollection className='faction' source='faction' cards={[]} topCard={thisPlayer.faction} onMouseOver={this.onMouseOver} onMouseOut={this.onMouseOut} disablePopup onCardClick={this.onFactionCardClick} />
+                                    <CardCollection className='faction' source='faction' cards={ [] } topCard={ thisPlayer.faction } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup onCardClick={ this.onFactionCardClick } />
                                     { this.getAgenda(thisPlayer, !this.state.spectating, 'top') }
                                 </div>
                             </div>
@@ -477,53 +477,53 @@ export class InnerGameBoard extends React.Component {
 
                     <div className='center'>
                         <PlayerRow
-                            additionalPiles={otherPlayer ? otherPlayer.additionalPiles : {}}
-                            hand={otherPlayer ? otherPlayer.hand : []} isMe={false}
-                            numDrawCards={otherPlayer ? otherPlayer.numDrawCards : 0}
-                            discardPile={otherPlayer ? otherPlayer.discardPile : []}
-                            deadPile={otherPlayer ? otherPlayer.deadPile : []}
-                            onCardClick={this.onCardClick}
-                            onMouseOver={this.onMouseOver}
-                            onMouseOut={this.onMouseOut}
-                            />
+                            additionalPiles={ otherPlayer ? otherPlayer.additionalPiles : {} }
+                            hand={ otherPlayer ? otherPlayer.hand : [] } isMe={ false }
+                            numDrawCards={ otherPlayer ? otherPlayer.numDrawCards : 0 }
+                            discardPile={ otherPlayer ? otherPlayer.discardPile : [] }
+                            deadPile={ otherPlayer ? otherPlayer.deadPile : [] }
+                            onCardClick={ this.onCardClick }
+                            onMouseOver={ this.onMouseOver }
+                            onMouseOut={ this.onMouseOut }
+                        />
                         <div className='play-area'>
                             <div className='player-board'>
                                 {otherPlayerCards}
                             </div>
-                            <div className='player-board our-side' onDragOver={this.onDragOver}
-                                onDrop={event => this.onDragDropEvent(event, 'play area')} >
+                            <div className='player-board our-side' onDragOver={ this.onDragOver }
+                                onDrop={ event => this.onDragDropEvent(event, 'play area') } >
                                 {thisPlayerCards}
                             </div>
                         </div>
-                        <PlayerRow isMe={!this.state.spectating}
-                            additionalPiles={thisPlayer.additionalPiles}
-                            hand={thisPlayer.hand}
-                            onCardClick={this.onCardClick}
-                            onMouseOver={this.onMouseOver}
-                            onMouseOut={this.onMouseOut}
-                            numDrawCards={thisPlayer.numDrawCards}
-                            onDrawClick={this.onDrawClick}
-                            onShuffleClick={this.onShuffleClick}
-                            showDrawDeck={this.state.showDrawDeck}
-                            drawDeck={thisPlayer.drawDeck}
-                            onDragDrop={this.onDragDrop}
-                            discardPile={thisPlayer.discardPile}
-                            deadPile={thisPlayer.deadPile}
-                            spectating={this.state.spectating}
-                            onMenuItemClick={this.onMenuItemClick}/>
+                        <PlayerRow isMe={ !this.state.spectating }
+                            additionalPiles={ thisPlayer.additionalPiles }
+                            hand={ thisPlayer.hand }
+                            onCardClick={ this.onCardClick }
+                            onMouseOver={ this.onMouseOver }
+                            onMouseOut={ this.onMouseOut }
+                            numDrawCards={ thisPlayer.numDrawCards }
+                            onDrawClick={ this.onDrawClick }
+                            onShuffleClick={ this.onShuffleClick }
+                            showDrawDeck={ this.state.showDrawDeck }
+                            drawDeck={ thisPlayer.drawDeck }
+                            onDragDrop={ this.onDragDrop }
+                            discardPile={ thisPlayer.discardPile }
+                            deadPile={ thisPlayer.deadPile }
+                            spectating={ this.state.spectating }
+                            onMenuItemClick={ this.onMenuItemClick }/>
                     </div>
                 </div>
                 <div className='right-side'>
-                    <CardZoom imageUrl={this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : ''}
-                        orientation={this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical'}
-                        show={!!this.props.cardToZoom} cardName={this.props.cardToZoom ? this.props.cardToZoom.name : null} />
+                    <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
+                        orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
+                        show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
                     <div className='chat'>
-                        <div className='messages panel' ref='messagePanel' onScroll={this.onScroll}>
-                            <Messages messages={this.props.currentGame.messages} onCardMouseOver={this.onMouseOver} onCardMouseOut={this.onMouseOut} />
+                        <div className='messages panel' ref='messagePanel' onScroll={ this.onScroll }>
+                            <Messages messages={ this.props.currentGame.messages } onCardMouseOver={ this.onMouseOver } onCardMouseOut={ this.onMouseOut } />
                         </div>
                         <form>
-                            <input className='form-control' placeholder='Chat...' onKeyPress={this.onKeyPress} onChange={this.onChange}
-                                value={this.state.message} />
+                            <input className='form-control' placeholder='Chat...' onKeyPress={ this.onKeyPress } onChange={ this.onChange }
+                                value={ this.state.message } />
                         </form>
                     </div>
                 </div>

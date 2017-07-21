@@ -18,9 +18,9 @@ export class InnerPlayerStats extends React.Component {
 
     render() {
         var playerAvatar = this.props.user ? (
-                    <div className='player-avatar' key={this.props.user.id}>
-                        <Avatar emailHash={this.props.user.emailHash} /><b>{this.props.user.username}</b>
-                    </div>) : null;
+            <div className='player-avatar' key={ this.props.user.id }>
+                <Avatar emailHash={ this.props.user.emailHash } /><b>{this.props.user.username}</b>
+            </div>) : null;
 
         return (
             <div className='panel player-stats'>
@@ -29,8 +29,8 @@ export class InnerPlayerStats extends React.Component {
                     <span><img src='/img/Gold.png' title='Gold' alt='Gold' /> {this.props.gold}</span>
                     {this.props.isMe ?
                         <div className='pull-right'>
-                            <button className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'gold', 'down')}><img src='/img/Minus.png' title='-' alt='-' /></button>
-                            <button className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'gold', 'up')}><img src='/img/Plus.png' title='+' alt='+' /></button>
+                            <button className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'gold', 'down') }><img src='/img/Minus.png' title='-' alt='-' /></button>
+                            <button className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'gold', 'up') }><img src='/img/Plus.png' title='+' alt='+' /></button>
                         </div> :
                         null}
                 </div>
@@ -38,8 +38,8 @@ export class InnerPlayerStats extends React.Component {
                     <span><img src='/img/Power.png' title='Power' alt='Power' /> {this.props.power}</span>
                     {this.props.isMe ?
                         <div className='pull-right'>
-                            <span className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'power', 'down')}><img src='/img/Minus.png' title='-' alt='-' /></span>
-                            <span className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'power', 'up')}><img src='/img/Plus.png' title='+' alt='+' /></span>
+                            <span className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'power', 'down') }><img src='/img/Minus.png' title='-' alt='-' /></span>
+                            <span className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'power', 'up') }><img src='/img/Plus.png' title='+' alt='+' /></span>
                         </div> :
                         null}
                 </div>
@@ -47,8 +47,8 @@ export class InnerPlayerStats extends React.Component {
                     <span><img src='/img/Reserve.png' title='Reserve' alt='Reserve' /> {this.props.reserve}</span>
                     {this.props.isMe ?
                         <div className='pull-right'>
-                            <span className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'reserve', 'down')}><img src='/img/Minus.png' title='-' alt='-' /></span>
-                            <span className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'reserve', 'up')}><img src='/img/Plus.png' title='+' alt='+' /></span>
+                            <span className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'reserve', 'down') }><img src='/img/Minus.png' title='-' alt='-' /></span>
+                            <span className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'reserve', 'up') }><img src='/img/Plus.png' title='+' alt='+' /></span>
                         </div> :
                         null}
                 </div>
@@ -56,8 +56,8 @@ export class InnerPlayerStats extends React.Component {
                     <span><img src='/img/Claim.png' title='Claim' alt='Claim' /> {this.props.claim}</span>
                     {this.props.isMe ?
                         <div className='pull-right'>
-                            <span className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'claim', 'down')}><img src='/img/Minus.png' title='-' alt='-' /></span>
-                            <span className='btn btn-stat' onClick={this.sendUpdate.bind(this, 'claim', 'up')}><img src='/img/Plus.png' title='+' alt='+' /></span>
+                            <span className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'claim', 'down') }><img src='/img/Minus.png' title='-' alt='-' /></span>
+                            <span className='btn btn-stat' onClick={ this.sendUpdate.bind(this, 'claim', 'up') }><img src='/img/Plus.png' title='+' alt='+' /></span>
                         </div> :
                         null}
                 </div>

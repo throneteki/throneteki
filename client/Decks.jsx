@@ -51,8 +51,8 @@ class InnerDecks extends React.Component {
 
         var decks = _.map(this.props.decks, deck => {
             var row = (<DeckRow key={ deck.name + index.toString() } deck={ deck }
-                                onClick={ () => this.props.selectDeck(deck) }
-                                active={ this.props.selectedDeck && deck._id === this.props.selectedDeck._id } />);
+                onClick={ () => this.props.selectDeck(deck) }
+                active={ this.props.selectedDeck && deck._id === this.props.selectedDeck._id } />);
 
             index++;
 

@@ -170,7 +170,7 @@ class InnerDeckEditor extends React.Component {
 
         let headerMark = _.findIndex(split, line => line.match(/^Packs:/));
         if(headerMark >= 0) { // ThronesDB-style deck header found
-                              // extract deck title, faction, agenda, and banners
+            // extract deck title, faction, agenda, and banners
             let header = _.filter(_.first(split, headerMark), line => line !== '');
             split = _.rest(split, headerMark);
 
@@ -311,7 +311,7 @@ class InnerDeckEditor extends React.Component {
                 <h4>Either type the cards manually into the box below, add the cards one by one using the card box and autocomplete or for best results, copy and paste a decklist from <a href='http://thronesdb.com' target='_blank'>Thrones DB</a> into the box below.</h4>
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
-                        type='text' onChange={this.onChange.bind(this, 'name')} value={ this.state.deck.name } />
+                        type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.deck.name } />
                     <Select name='faction' label='Faction' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.factions) }
                         onChange={ this.onFactionChange.bind(this) } value={ this.state.deck.faction ? this.state.deck.faction.value : undefined } />
                     <Select name='agenda' label='Agenda' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.agendas) }
@@ -329,7 +329,7 @@ class InnerDeckEditor extends React.Component {
                         </div>
                     </div>
                     }
-                    <Typeahead label='Card' labelClass={'col-sm-3'} fieldClass='col-sm-4' labelKey={'label'} options={ _.toArray(this.props.cards) }
+                    <Typeahead label='Card' labelClass={ 'col-sm-3' } fieldClass='col-sm-4' labelKey={ 'label' } options={ _.toArray(this.props.cards) }
                         onChange={ this.addCardChange.bind(this) }>
                         <Input name='numcards' type='text' label='Num' labelClass='col-sm-1' fieldClass='col-sm-2'
                             value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) }>

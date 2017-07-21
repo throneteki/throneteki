@@ -83,13 +83,13 @@ class DeckSummary extends React.Component {
                         <div ref='agenda'>Agenda: { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='card-link' onMouseOver={ this.onCardMouseOver }
                             onMouseOut={ this.onCardMouseOut }>{ this.props.deck.agenda.label }</span> : <span>None</span> }</div>
 
-                       {(this.props.deck.agenda && this.props.deck.agenda.label === 'Alliance') ? banners : null}
+                        {(this.props.deck.agenda && this.props.deck.agenda.label === 'Alliance') ? banners : null}
 
                         <div ref='drawCount'>Draw deck: { this.props.deck.validation.drawCount } cards</div>
                         <div ref='plotCount'>Plot deck: { this.props.deck.validation.plotCount } cards</div>
                         <div className={ this.props.deck.validation.status === 'Valid' ? 'text-success' : 'text-danger' }>
                             <StatusPopOver status={ this.props.deck.validation.status } list={ this.props.deck.validation.extendedStatus }
-                                            show={ this.props.deck.validation.status !== 'Valid' } />
+                                show={ this.props.deck.validation.status !== 'Valid' } />
                         </div>
                     </div>
                 </div>

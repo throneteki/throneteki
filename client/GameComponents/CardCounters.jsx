@@ -13,11 +13,11 @@ class CardCounters extends React.Component {
 
         var counterDivs = _.map(this.props.counters, (counter, key) => {
             return (<Counter key={ key } 
-                            name={ key } 
-                            value={ counter.count } 
-                            fade={ counter.fade } 
-                            cancel={ counter.cancel } 
-                            shortName={ counter.shortName } />);
+                name={ key } 
+                value={ counter.count } 
+                fade={ counter.fade } 
+                cancel={ counter.cancel } 
+                shortName={ counter.shortName } />);
         });
 
         if(_.size(this.props.counters) > 3) {
