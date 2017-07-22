@@ -59,7 +59,7 @@ class QueensMen extends DrawCard {
         toKneel.controller.kneelCard(toKneel);
         toDiscard.owner.discardCard(toDiscard);
         this.game.addMessage('{0} then kneels {1} to discard {2} from {3}\'s hand',
-                              this.controller, toKneel, toDiscard, toDiscard.owner);
+            this.controller, toKneel, toDiscard, toDiscard.owner);
 
         return true;
     }
