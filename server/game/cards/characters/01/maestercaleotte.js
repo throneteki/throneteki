@@ -6,43 +6,21 @@ class MaesterCaleotte extends DrawCard {
             when: {
                 afterChallenge: (event, challenge) => challenge.loser === this.controller && challenge.isParticipating(this)
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select character',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character',
-                    onSelect: (p, card) => this.onCardSelected(p, card)
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+            },
+            handler: context => {
+                this.game.promptForIcon(this.controller, icon => {
+                    this.untilEndOfPhase(ability => ({
+                        match: context.target,
+                        effect: ability.effects.removeIcon(icon)
+                    }));
+                    this.game.addMessage('{0} uses {1} to remove {2} {3} icon from {4}',
+                                    this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
                 });
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.selectedCard = card;
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Select an icon to remove',
-                buttons: [
-                    { text: 'Military', method: 'iconSelected', arg: 'military' },
-                    { text: 'Intrigue', method: 'iconSelected', arg: 'intrigue' },
-                    { text: 'Power', method: 'iconSelected', arg: 'power' }
-                ]
-            },
-            source: this
-        });
-
-        return true;
-    }
-
-    iconSelected(player, icon) {
-        this.game.addMessage('{0} uses {1} to remove a {2} icon from {3}', player, this, icon, this.selectedCard);
-        this.untilEndOfPhase(ability => ({
-            match: this.selectedCard,
-            effect: ability.effects.removeIcon(icon)
-        }));
-
-        return true;
     }
 }
 
