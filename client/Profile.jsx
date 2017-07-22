@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import AlertPanel from './SiteComponents/AlertPanel.jsx';
 import Input from './FormComponents/Input.jsx';
 import Checkbox from './FormComponents/Checkbox.jsx';
+import Slider from 'react-bootstrap-slider';
 
 import * as actions from './actions';
 
@@ -34,7 +35,8 @@ class InnerProfile extends React.Component {
             newPassword: '',
             newPasswordAgain: '',
             promptedActionWindows: this.props.user ? this.props.user.promptedActionWindows || this.windowDefaults : this.windowDefaults,
-            validation: {}
+            validation: {},
+            windowTimer: this.props.user.settings ? _.isUndefined(this.props.user.settings.windowTimer) ? 10 : this.props.user.settings.windowTimer : 10
         };
 
         this.windows = [
@@ -101,7 +103,8 @@ class InnerProfile extends React.Component {
                         password: this.state.newPassword,
                         promptedActionWindows: this.state.promptedActionWindows,
                         settings: {
-                            disableGravatar: this.state.disableGravatar
+                            disableGravatar: this.state.disableGravatar,
+                            windowTimer: this.state.windowTimer
                         }
                     })
                 }
@@ -157,6 +160,24 @@ class InnerProfile extends React.Component {
         this.setState({ validation: validation });
     }
 
+    onSlideStop(event) {
+        let value = parseInt(event.target.value);
+
+        if(_.isNaN(value)) {
+            return;
+        }
+
+        if(value < 0) {
+            value = 0;
+        }
+
+        if(value > 10) {
+            value = 10;
+        }
+
+        this.setState({ windowTimer: value });
+    }
+
     render() {
         if(!this.props.user) {
             return <AlertPanel type='error' message='You must be logged in to update your profile' />;
@@ -179,36 +200,64 @@ class InnerProfile extends React.Component {
                 { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
                 { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
                 <form className='form form-horizontal'>
-                    <div className='col-sm-6 row'>
-                        <div className='panel-title text-center'>
+                    <div className='row'>
+                        <div className='col-sm-6 col-sm-offset-3'>
+                            <div className='panel-title text-center'>
                             User
-                        </div>
-                        <div className='panel'>
-                            <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
-                                type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
-                                onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
-                            <Input name='newPassword' label='New Password' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password'
-                                type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
-                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
-                            <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
-                                type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
-                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
-                            <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
-                                onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
-                        </div>
-                    </div>
-                    <div className='row col-sm-6'>
-                        <div className='panel-title text-center'>
-                            Action window defaults
-                        </div>
-                        <div className='panel'>
-                            <div className='form-group'>
-                                { windows }
+                            </div>
+                            <div className='panel'>
+                                <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
+                                    type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
+                                    onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
+                                <Input name='newPassword' label='New Password' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password'
+                                    type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
+                                    onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
+                                <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
+                                    type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
+                                    onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
+                                <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
+                                    onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
                             </div>
                         </div>
                     </div>
-
-                    <div className='row col-sm-12'>
+                    <div className='row'>
+                        <div className='col-sm-offset-3 col-sm-6'>
+                            <div className='panel-title text-center'>
+                                Action window defaults
+                            </div>
+                            <div className='panel'>
+                                <p className='help-block small'>If an option is selected here, you will always be prompted if you want to take an action in that window.  If an option is not selected, you will receive no prompts for that window.  For some windows (e.g. dominance) this could mean the whole window is skipped</p>
+                                <div className='form-group'>
+                                    { windows }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-sm-offset-3 col-sm-6'>
+                            <div className='panel-title text-center'>
+                                Action window timing
+                            </div>
+                            <div className='panel'>
+                                <p className='help-block small'>Every time a game event occurs after which you could possibly have an action or reaction, a timer will count down.  At the end of that timer, the window will automatically pass.  This options controls how fast that timer counts down</p>
+                                <div className='form-group'>
+                                    <label className='col-sm-3 control-label'>Window timeout</label>
+                                    <div className='col-sm-5'>
+                                        <Slider value={ this.state.windowTimer }
+                                            slideStop={ this.onSlideStop.bind(this) }
+                                            step={ 1 }
+                                            max={ 10 }
+                                            min={ 0 } />
+                                    </div>
+                                    <div className='col-sm-2'>
+                                        <input className='form-control text-center' name='timer' value={ this.state.windowTimer } onChange={ this.onSlideStop.bind(this) } />
+                                    </div>
+                                    <label className='col-sm-2 control-label'>seconds</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='col-sm-offset-8 col-sm-2'>
                         <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
                     </div>
                 </form>
