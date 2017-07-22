@@ -9,17 +9,17 @@ class ThePrincesPlan extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
-                this.targetCharacter = context.target;
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Choose an icon to gain',
-                        buttons: [
-                            { text: 'Military', method: 'addStrengthAndIcon', arg: 'military' },
-                            { text: 'Intrigue', method: 'addStrengthAndIcon', arg: 'intrigue' },
-                            { text: 'Power', method: 'addStrengthAndIcon', arg: 'power' }
+                let strBoost = this.controller.getNumberOfUsedPlots();
+                this.game.promptForIcon(this.controller, this, icon => {
+                    this.game.addMessage('{0} plays {1} to give {2} +{3} STR and {4} {5} icon until the end of the phase',
+                        this.controller, this, context.target, strBoost, icon === 'intrigue' ? 'an' : 'a', icon);
+                    this.untilEndOfPhase(ability => ({
+                        match: context.target,
+                        effect: [
+                            ability.effects.modifyStrength(strBoost),
+                            ability.effects.addIcon(icon)
                         ]
-                    },
-                    source: this
+                    }));
                 });
             }
         });
@@ -36,18 +36,6 @@ class ThePrincesPlan extends DrawCard {
                 this.controller.moveCard(this, 'hand');
             }
         });
-    }
-
-    addStrengthAndIcon(player, icon) {
-        this.game.addMessage('{0} uses {1} to give {2} +1 STR per used plot and a {3} icon until the end of the phase', player, this, this.targetCharacter, icon);
-        this.untilEndOfPhase(ability => ({
-            match: this.targetCharacter,
-            effect: [
-                ability.effects.dynamicStrength(() => this.controller.getNumberOfUsedPlots()),
-                ability.effects.addIcon(icon)
-            ]
-        }));
-        return true;
     }
 }
 

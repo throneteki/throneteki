@@ -513,8 +513,8 @@ class Game extends EventEmitter {
         this.queueStep(new MenuPrompt(this, player, contextObj, properties));
     }
 
-    promptForIcon(player, callback = () => true) {
-        this.queueStep(new IconPrompt(this, player, callback));
+    promptForIcon(player, card, callback = () => true) {
+        this.queueStep(new IconPrompt(this, player, card, callback));
     }
 
     promptForSelect(player, properties) {
