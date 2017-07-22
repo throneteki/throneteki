@@ -17,7 +17,7 @@ class HouseTullySepton extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} and discards a power from {2} to reduce the cost of the next House Tully or The Seven character they marshal this phase by 2', 
-                                      context.player, this, context.discardPowerCostCard);
+                    context.player, this, context.discardPowerCostCard);
             }
         });
     }

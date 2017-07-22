@@ -16,7 +16,7 @@ class Summer extends DrawCard {
                 }
                 
                 this.game.addMessage('{0} uses {1} and kneels {2} to have {2} participate on their side',
-                                      this.controller, this, this.parent);
+                    this.controller, this, this.parent);
             }
         }),
 
@@ -35,7 +35,7 @@ class Summer extends DrawCard {
                 this.controller.attach(this.controller, this, context.target);
 
                 this.game.addMessage('{0} uses {1} and pays 1 gold to attach {1} to {2}',
-                                      this.controller, this, this.parent);
+                    this.controller, this, this.parent);
             }
         });
     }

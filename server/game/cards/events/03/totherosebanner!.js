@@ -18,7 +18,7 @@ class ToTheRoseBanner extends DrawCard {
                 this.game.addGold(this.controller, gold);
                 context.player.sacrificeCard(context.target);
                 this.game.addMessage('{0} uses {1} to gain {2} gold then sacrifice {3}',
-                                    context.player, this, gold, context.target);
+                    context.player, this, gold, context.target);
             }
         });
     }

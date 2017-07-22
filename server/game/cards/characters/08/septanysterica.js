@@ -15,7 +15,7 @@ class SeptaNysterica extends DrawCard {
                 context.target.controller.standCard(context.target);
                 this.game.currentChallenge.removeFromChallenge(context.target);
                 this.game.addMessage('{0} kneels {1} to stand and remove {2} from the challenge',
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

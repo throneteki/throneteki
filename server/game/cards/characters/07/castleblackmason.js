@@ -22,12 +22,12 @@ class CastleBlackMason extends DrawCard {
     cardSelected(player, card, kneeledCards) {
         player.moveCard(card, 'hand');
         this.game.addMessage('{0} uses {1} to kneel {2}, search their deck, and add {3} to their hand',
-                             player, this, kneeledCards, card);
+            player, this, kneeledCards, card);
     }
 
     doneSelecting(player, kneeledCards) {
         this.game.addMessage('{0} uses {1} to kneel {2} and search their deck, but does not add any card to their hand',
-                             player, this, kneeledCards);
+            player, this, kneeledCards);
     }
 }
 

@@ -16,7 +16,7 @@ class SaltWife extends DrawCard {
                     effect: ability.effects.cannotBeDeclaredAsDefender()
                 }));
                 this.game.addMessage('{0} sacrifices {1} to make {2} unable to be declared as a defender', 
-                                      context.player, this, context.target);
+                    context.player, this, context.target);
             }
         });
     }

@@ -18,7 +18,7 @@ class LaySiege extends DrawCard {
                     sacMessage = ' and then discard it from play';
                 }
                 this.game.addMessage('{0} uses {1} to kneel {2}{3}',
-                                      this.controller, this, context.target, sacMessage);
+                    this.controller, this, context.target, sacMessage);
             }
         });
     }

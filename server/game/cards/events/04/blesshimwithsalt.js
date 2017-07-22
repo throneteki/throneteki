@@ -20,7 +20,7 @@ class BlessHimWithSalt extends DrawCard {
                 this.game.once('afterChallenge', this.afterChallenge.bind(this));
 
                 this.game.addMessage('{0} uses {1} to give +3 STR to {2}',
-                                    context.player, this, context.target);
+                    context.player, this, context.target);
             }
         });
     }
@@ -34,7 +34,7 @@ class BlessHimWithSalt extends DrawCard {
             this.controller.drawCardsToHand(1);
 
             this.game.addMessage('{0} uses {1} to draw 1 card',
-                                 this.controller, this);
+                this.controller, this);
         }
 
         this.selectedCard = undefined;

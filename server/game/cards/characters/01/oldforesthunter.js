@@ -10,7 +10,7 @@ class OldForestHunter extends DrawCard {
             handler: context => {
                 this.game.addGold(this.controller, 1);
                 this.game.addMessage('{0} uses {1} and discards {2} from their hand to gain 1 gold', 
-                                      this.controller, this, context.discardCostCard);
+                    this.controller, this, context.discardCostCard);
             }
         });
     }

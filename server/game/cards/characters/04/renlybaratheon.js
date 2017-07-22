@@ -20,7 +20,7 @@ class RenlyBaratheon extends DrawCard {
                     this.controller.drawCardsToHand(1);
 
                     this.game.addMessage('{0} uses {1} to reveal {2} and draw a card',
-                                         this.controller, this, this.drawnCard);
+                        this.controller, this, this.drawnCard);
                 }
             }
         });

@@ -40,7 +40,7 @@ class Melisandre extends DrawCard {
             }
 
             this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}',
-                                  player, this, card, otherPlayer, charMessage);
+                player, this, card, otherPlayer, charMessage);
         });
 
         return true;

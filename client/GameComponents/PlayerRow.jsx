@@ -96,11 +96,11 @@ class PlayerRow extends React.Component {
                 };
             }
 
-            return (<Card key={card.uuid} card={card} style={style} disableMouseOver={!this.props.isMe} source='hand'
-                         onMouseOver={this.props.onMouseOver}
-                         onMouseOut={this.props.onMouseOut}
-                         onClick={this.props.onCardClick}
-                         onDragDrop={this.props.onDragDrop} />);
+            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ !this.props.isMe } source='hand'
+                onMouseOver={ this.props.onMouseOver }
+                onMouseOut={ this.props.onMouseOut }
+                onClick={ this.props.onCardClick }
+                onDragDrop={ this.props.onDragDrop } />);
         });
 
         return hand;
@@ -111,20 +111,20 @@ class PlayerRow extends React.Component {
 
         if(this.props.showDrawDeck && this.props.drawDeck) {
             var drawDeck = _.map(this.props.drawDeck, card => {
-                return (<Card key={card.uuid} card={card} source='draw deck'
-                             onMouseOver={this.props.onMouseOver}
-                             onMouseOut={this.props.onMouseOut}
-                             onClick={this.props.onCardClick} />);
+                return (<Card key={ card.uuid } card={ card } source='draw deck'
+                    onMouseOver={ this.props.onMouseOver }
+                    onMouseOut={ this.props.onMouseOut }
+                    onClick={ this.props.onCardClick } />);
             });
 
             drawDeckPopup = (
-                <div className='popup panel' onClick={event => event.stopPropagation() }>
+                <div className='popup panel' onClick={ event => event.stopPropagation() }>
                     <div>
-                        <a onClick={this.onCloseClick}>Close</a>
-                        <a onClick={this.onCloseAndShuffleClick}>Close and shuffle</a>
+                        <a onClick={ this.onCloseClick }>Close</a>
+                        <a onClick={ this.onCloseAndShuffleClick }>Close and shuffle</a>
                     </div>
                     <div className='inner'>
-                        {drawDeck}
+                        { drawDeck }
                     </div>
                 </div>);
         }
@@ -158,11 +158,11 @@ class PlayerRow extends React.Component {
         return (
             <AdditionalCardPile
                 className='additional-cards'
-                isMe={this.props.isMe}
-                onMouseOut={this.props.onMouseOut}
-                onMouseOver={this.props.onMouseOver}
-                pile={pile}
-                spectating={this.props.spectating}
+                isMe={ this.props.isMe }
+                onMouseOut={ this.props.onMouseOut }
+                onMouseOver={ this.props.onMouseOver }
+                pile={ pile }
+                spectating={ this.props.spectating }
                 title='Out of Game' />
         );
     }
@@ -190,24 +190,24 @@ class PlayerRow extends React.Component {
         return (
             <div className='player-home-row'>
                 <div className='deck-cards'>
-                    <div className={className} onDragLeave={this.onDragLeave} onDragOver={this.onDragOver} onDrop={(event) => this.onDragDrop(event, 'hand')}>
+                    <div className={ className } onDragLeave={ this.onDragLeave } onDragOver={ this.onDragOver } onDrop={ (event) => this.onDragDrop(event, 'hand') }>
                         <div className='panel-header'>
-                            {'Hand (' + hand.length + ')'}
+                            { 'Hand (' + hand.length + ')' }
                         </div>
-                        {hand}
+                        { hand }
                     </div>
 
-                <CardCollection className='draw' title='Draw' source='draw deck' cards={this.props.drawDeck}
-                                onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut} onCardClick={this.props.onCardClick}
-                                popupLocation={this.props.isMe || this.props.spectating ? 'top' : 'bottom'} onDragDrop={this.props.onDragDrop}
-                                menu={drawDeckMenu} hiddenTopCard cardCount={this.props.numDrawCards} popupMenu={drawDeckPopupMenu} />
-                <CardCollection className='discard' title='Discard' source='discard pile' cards={this.props.discardPile}
-                                onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut} onCardClick={this.props.onCardClick}
-                                popupLocation={this.props.isMe || this.props.spectating ? 'top' : 'bottom'} onDragDrop={this.props.onDragDrop} />
-                <CardCollection className='dead' title='Dead' source='dead pile' cards={this.props.deadPile}
-                                onMouseOver={this.props.onMouseOver} onMouseOut={this.props.onMouseOut} onCardClick={this.props.onCardClick}
-                                popupLocation={this.props.isMe || this.props.spectating ? 'top' : 'bottom'} onDragDrop={this.props.onDragDrop} orientation='kneeled' />
-                  {this.getOutOfGamePile()}
+                    <CardCollection className='draw' title='Draw' source='draw deck' cards={ this.props.drawDeck }
+                        onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick }
+                        popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } onDragDrop={ this.props.onDragDrop }
+                        menu={ drawDeckMenu } hiddenTopCard cardCount={ this.props.numDrawCards } popupMenu={ drawDeckPopupMenu } />
+                    <CardCollection className='discard' title='Discard' source='discard pile' cards={ this.props.discardPile }
+                        onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick }
+                        popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } onDragDrop={ this.props.onDragDrop } />
+                    <CardCollection className='dead' title='Dead' source='dead pile' cards={ this.props.deadPile }
+                        onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick }
+                        popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } onDragDrop={ this.props.onDragDrop } orientation='kneeled' />
+                    { this.getOutOfGamePile() }
                 </div>
             </div>
         );

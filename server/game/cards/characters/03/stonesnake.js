@@ -40,7 +40,7 @@ class Stonesnake extends DrawCard {
         }));
 
         this.game.addMessage('{0} uses {1} to have {1} gain {2} until the end of the phase', 
-                              this.controller, this, keyword);
+            this.controller, this, keyword);
 
         return true;
     }

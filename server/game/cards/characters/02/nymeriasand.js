@@ -24,7 +24,7 @@ class NymeriaSand extends DrawCard {
                     }));
 
                     this.game.addMessage('{0} uses {1} to remove {2} {3} icon from {4} and have each Sand Snake character they control gain it', 
-                                          this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
+                        this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
                 });
             }
         });

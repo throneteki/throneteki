@@ -24,7 +24,7 @@ class TheDornishmansWife extends DrawCard {
                 }
 
                 this.game.addMessage('{0} uses {1} to {2}',
-                                    this.controller, this, bonusMessage);
+                    this.controller, this, bonusMessage);
             }
         });
     }

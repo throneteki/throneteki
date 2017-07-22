@@ -40,7 +40,7 @@ class WithoutHisBeard extends DrawCard {
         opponent.discardAtRandom(num);
         opponent.drawCardsToHand(2);
         this.game.addMessage('{0} plays {1} to have {2} discard {3} cards at random, then draw 2 cards', 
-                              player, this, opponent, num);
+            player, this, opponent, num);
 
         return true;
     }

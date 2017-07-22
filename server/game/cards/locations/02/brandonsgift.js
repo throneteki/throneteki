@@ -20,7 +20,7 @@ class BrandonsGift extends DrawCard {
                 }));
                 
                 this.game.addMessage('{0} uses {1} to reduce the cost of the next The Night\'s Watch card they marshal by 1', 
-                                      this.controller, this);
+                    this.controller, this);
             }
         });
     }

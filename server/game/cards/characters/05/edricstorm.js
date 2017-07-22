@@ -26,7 +26,7 @@ class EdricStorm extends DrawCard {
         }));
 
         this.game.addMessage('{0} uses {1} to exclude {2}\'s strength from dominance this phase',
-                             this.controller, this, card);
+            this.controller, this, card);
 
         return true;
     }

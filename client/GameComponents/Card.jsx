@@ -167,12 +167,12 @@ class Card extends React.Component {
 
         var index = 1;
         var attachments = _.map(this.props.card.attachments, attachment => {
-            var returnedAttachment = (<Card key={attachment.uuid} source={this.props.source} card={attachment} className={'attachment attachment-' + index} wrapped={false}
-                            onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment)}
-                            onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
-                            onClick={this.props.onClick}
-                            onMenuItemClick={this.props.onMenuItemClick}
-                            onDragStart={ev => this.onCardDragStart(ev, attachment, this.props.source)} />);
+            var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment } className={ 'attachment attachment-' + index } wrapped={ false }
+                onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment) }
+                onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
+                onClick={ this.props.onClick }
+                onMenuItemClick={ this.props.onMenuItemClick }
+                onDragStart={ ev => this.onCardDragStart(ev, attachment, this.props.source) } />);
 
             index += 1;
 
@@ -197,9 +197,9 @@ class Card extends React.Component {
 
         var index = 1;
         var dupes = _.map(facedownDupes, dupe => {
-            var returnedDupe = (<Card key={dupe.uuid} className={'card-dupe card-dupe-' + index} source={this.props.source} card={dupe} wrapped={false}
-                            onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe)}
-                            onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut} />);
+            var returnedDupe = (<Card key={ dupe.uuid } className={ 'card-dupe card-dupe-' + index } source={ this.props.source } card={ dupe } wrapped={ false }
+                onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe) }
+                onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut } />);
 
             index += 1;
 
@@ -214,7 +214,7 @@ class Card extends React.Component {
             return null;
         }
 
-        return (<div className='card-order'>{this.props.card.order}</div>);
+        return (<div className='card-order'>{ this.props.card.order }</div>);
     }
 
     showMenu() {
@@ -293,35 +293,35 @@ class Card extends React.Component {
         }
 
         return (
-                <div className='card-frame' ref='cardFrame'
-                    onTouchMove={ev => this.onTouchMove(ev)}
-                    onTouchEnd={ev => this.onTouchEnd(ev)}
-                    onTouchStart={ev => this.onTouchStart(ev)}>
-                    {this.getCardOrder()}
-                    <div className={cardClass}
-                        onMouseOver={this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card)}
-                        onMouseOut={this.props.disableMouseOver ? null : this.onMouseOut}
-                        onClick={ev => this.onClick(ev, this.props.card)}
-                        onDragStart={ev => this.onCardDragStart(ev, this.props.card, this.props.source)}
-                        draggable>
-                        <div>
-                            <span className='card-name'>{this.props.card.name}</span>
-                            <img className={imageClass} src={'/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg')} />
-                        </div>
-                        { this.showCounters() ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
+            <div className='card-frame' ref='cardFrame'
+                onTouchMove={ ev => this.onTouchMove(ev) }
+                onTouchEnd={ ev => this.onTouchEnd(ev) }
+                onTouchStart={ ev => this.onTouchStart(ev) }>
+                { this.getCardOrder() }
+                <div className={ cardClass }
+                    onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card) }
+                    onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
+                    onClick={ ev => this.onClick(ev, this.props.card) }
+                    onDragStart={ ev => this.onCardDragStart(ev, this.props.card, this.props.source) }
+                    draggable>
+                    <div>
+                        <span className='card-name'>{ this.props.card.name }</span>
+                        <img className={ imageClass } src={ '/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg') } />
                     </div>
-                    { this.showMenu() ? <CardMenu menu={ this.props.card.menu } onMenuItemClick={ this.onMenuItemClick } /> : null }
-                </div>);
+                    { this.showCounters() ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
+                </div>
+                { this.showMenu() ? <CardMenu menu={ this.props.card.menu } onMenuItemClick={ this.onMenuItemClick } /> : null }
+            </div>);
     }
 
     render() {
         if(this.props.wrapped) {
             return (
-                    <div className='card-wrapper' style={this.props.style}>
-                        {this.getCard()}
-                        {this.getDupes()}
-                        {this.getAttachments()}
-                    </div>);
+                <div className='card-wrapper' style={ this.props.style }>
+                    { this.getCard() }
+                    { this.getDupes() }
+                    { this.getAttachments() }
+                </div>);
         }
 
         return this.getCard();

@@ -16,7 +16,7 @@ class DaringRescue extends DrawCard {
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);
                 this.game.addMessage('{0} plays {1} to return {2} to its owner\'s hand', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a Knight character',
                     source: this,
@@ -28,7 +28,7 @@ class DaringRescue extends DrawCard {
                     onSelect: (p, card) => {
                         card.modifyPower(1);
                         this.game.addMessage('{0} then uses {1} to have {2} gain 1 power', 
-                                              this.controller, this, card);
+                            this.controller, this, card);
                         
                         return true;
                     }

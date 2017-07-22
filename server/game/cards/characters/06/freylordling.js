@@ -13,7 +13,7 @@ class FreyLordling extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to give {1} +1 STR until the end of the phase', 
-                                      this.controller, this);
+                    this.controller, this);
             }
         });
     }

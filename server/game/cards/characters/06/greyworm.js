@@ -20,7 +20,7 @@ class GreyWorm extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to give {2} -3 STR until the end of the challenge', 
-                                      context.player, this, context.target);
+                    context.player, this, context.target);
             }
         });
     }

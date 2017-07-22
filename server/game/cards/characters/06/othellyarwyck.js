@@ -18,7 +18,7 @@ class OthellYarwyck extends DrawCard {
                     }));
 
                     this.game.addMessage('{0} uses {1} and kneels {2} to give {3} {4} {5} icon until the end of the phase',
-                            this.controller, this, context.kneelingCostCard, context.target, icon === 'intrigue' ? 'an' : 'a', icon);
+                        this.controller, this, context.kneelingCostCard, context.target, icon === 'intrigue' ? 'an' : 'a', icon);
                 });
             }
         });

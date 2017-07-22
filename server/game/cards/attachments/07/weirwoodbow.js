@@ -20,7 +20,7 @@ class WeirwoodBow extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} kneels {1} to give {2} -2 STR until the end of the challenge', 
-                                      context.player, this, context.target);
+                    context.player, this, context.target);
             }
         });
     }

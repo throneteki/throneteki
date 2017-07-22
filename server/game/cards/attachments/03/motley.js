@@ -13,7 +13,7 @@ class Motley extends DrawCard {
             handler: () => {
                 this.parent.controller.discardAtRandom(1);
                 this.game.addMessage('{0} uses {1} to discard 1 card at random from {2}\'s hand', 
-                                      this.controller, this, this.parent.controller);
+                    this.controller, this, this.parent.controller);
             }
         });
     }

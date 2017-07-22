@@ -14,7 +14,7 @@ class UnswornApprentice extends DrawCard {
                     }));
 
                     this.game.addMessage('{0} uses {1} to have {1} gain {2} {3} icon until the end of the phase',
-                                          this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon);
+                        this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon);
                 });
             }
         });

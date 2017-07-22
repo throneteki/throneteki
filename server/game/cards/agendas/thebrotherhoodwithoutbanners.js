@@ -40,7 +40,7 @@ class TheBrotherhoodWithoutBanners extends AgendaCard {
         }));
 
         this.game.addMessage('{0} uses {1} and kneels their faction card to have {2} gain {3} until the end of the phase', 
-                              this.controller, this, this.target, keyword);
+            this.controller, this, this.target, keyword);
 
         return true;
     }

@@ -35,7 +35,7 @@ class HouseOfTheUndying extends DrawCard {
         });
 
         this.game.addMessage('{0} removes {1} from the game to control {2}',
-                             currentController, this, eligibleCharacters);
+            currentController, this, eligibleCharacters);
     }
 }
 

@@ -15,7 +15,7 @@ class ThereIsMyClaim extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to raise their claim value until the end of the challenge',
-                                     this.controller, this);
+                    this.controller, this);
             }
         });
     }

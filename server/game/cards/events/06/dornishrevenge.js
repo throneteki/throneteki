@@ -20,7 +20,7 @@ class DornishRevenge extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} plays {1} to force {2} to be declared as a defender this challenge, if able', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
 
                 this.game.once('afterChallenge:interrupt', (event, challenge) => this.resolveIfWinBy5(challenge));
             }
@@ -35,7 +35,7 @@ class DornishRevenge extends DrawCard {
         let opponent = this.game.getOtherPlayer(this.controller);
 
         this.game.addMessage('{0} uses {1} to have {2} choose and kill a defending character', 
-                              this.controller, this, opponent);
+            this.controller, this, opponent);
 
         this.game.promptForSelect(opponent, {
             activePromptTitle: 'Select a character to kill',

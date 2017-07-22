@@ -13,7 +13,7 @@ class EvenHandedJustice extends DrawCard {
                         !card.kneeled
                         && card.location === 'play area'
                         && card.getType() === 'character'
-                        && card.controller === this.controller,  // event controller
+                        && card.controller === this.controller, // event controller
                     gameAction: 'kneel'
                 },
                 opponentCard: {
@@ -22,7 +22,7 @@ class EvenHandedJustice extends DrawCard {
                         !card.kneeled
                         && card.location === 'play area'
                         && card.getType() === 'character'
-                        && card.controller !== this.controller,  // not event controller
+                        && card.controller !== this.controller, // not event controller
                     gameAction: 'kneel'
                 }
             },
@@ -31,7 +31,7 @@ class EvenHandedJustice extends DrawCard {
 
                 _.each(kneeledCards, card => card.controller.kneelCard(card));
                 this.game.addMessage('{0} uses {1} to kneel {2}',
-                                     this.controller, this, kneeledCards);
+                    this.controller, this, kneeledCards);
             }
         });
     }

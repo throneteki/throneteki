@@ -15,7 +15,7 @@ class TheDragonsTail extends DrawCard {
                 opponent.drawCardsToHand(2);
 
                 this.game.addMessage('{0} uses {1} to make both players draw 2 cards',
-                                    this.controller, this);
+                    this.controller, this);
             }
         });
     }

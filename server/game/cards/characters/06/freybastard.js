@@ -10,7 +10,7 @@ class FreyBastard extends DrawCard {
             handler: () => {
                 this.game.addPower(this.controller, 1);
                 this.game.addMessage('{0} discards a gold from {1} to gain 1 power for their faction', 
-                                      this.controller, this);
+                    this.controller, this);
             }
         });
     }

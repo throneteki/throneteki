@@ -12,7 +12,7 @@ class Dissension extends DrawCard {
             handler: context => {
                 context.target.controller.discardCard(context.target);
                 this.game.addMessage('{0} plays {1} to discard {2}',
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

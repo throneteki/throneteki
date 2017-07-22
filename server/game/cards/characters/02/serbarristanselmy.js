@@ -15,7 +15,7 @@ class SerBarristanSelmy extends DrawCard {
             handler: context => {
                 context.event.saveCard(context.target);
                 this.game.addMessage('{0} stands {1} to save {2}',
-                                     this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

@@ -28,7 +28,7 @@ class TheEyrie extends DrawCard {
         }));
 
         this.game.addMessage('{0} uses {1} to make {2} unkillable until the end of the {3} phase',
-                             this.controller, this, card, this.game.currentPhase);
+            this.controller, this, card, this.game.currentPhase);
 
         return true;
     }

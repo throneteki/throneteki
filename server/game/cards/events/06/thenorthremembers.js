@@ -9,7 +9,7 @@ class TheNorthRemembers extends DrawCard {
             phase: 'challenge',
             handler: () => {
                 this.game.addMessage('{0} plays {1} to have each player sacrifice a character or location', 
-                                      this.controller, this);
+                    this.controller, this);
 
                 this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
                 this.selections = [];

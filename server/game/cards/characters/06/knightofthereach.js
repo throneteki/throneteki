@@ -19,7 +19,7 @@ class KnightOfTheReach extends DrawCard {
             handler: context => {
                 context.target.modifyPower(1);
                 this.game.addMessage('{0} uses {1} to have {2} gain 1 power', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

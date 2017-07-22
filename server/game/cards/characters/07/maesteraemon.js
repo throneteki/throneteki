@@ -43,7 +43,7 @@ class MaesterAemon extends DrawCard {
         };
 
         this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim',
-                              player, this, otherPlayer, claimType);
+            player, this, otherPlayer, claimType);
 
         this.game.queueStep(new ApplyClaim(this.game, challenge));
 

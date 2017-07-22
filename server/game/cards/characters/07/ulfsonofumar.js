@@ -22,7 +22,7 @@ class UlfSonOfUmar extends DrawCard {
                 }));        
 
                 this.game.addMessage('{0} uses {1} to give {1} +{2} STR until the end of the phase', 
-                                      this.controller, this, this.strBoost);
+                    this.controller, this, this.strBoost);
             }
         });
     }

@@ -18,7 +18,7 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} plays {1} to be able to initiate an additional {2} and {3} challenge this phase',
-                                      this.controller, this, 'military', 'intrigue');
+                    this.controller, this, 'military', 'intrigue');
             }
         });
     }

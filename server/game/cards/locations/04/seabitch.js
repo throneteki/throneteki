@@ -16,7 +16,7 @@ class SeaBitch extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} sacrifices {1} to take control of {2} until the end of the phase',
-                                      context.player, this, context.target);
+                    context.player, this, context.target);
             }
         });
     }

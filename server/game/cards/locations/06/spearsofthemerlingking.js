@@ -11,7 +11,7 @@ class SpearsOfTheMerlingKing extends DrawCard {
                 context.skipHandler();
                 this.controller.moveCard(context.event.card, 'hand');
                 this.game.addMessage('{0} sacrifices {1} to return {2} to their hand', 
-                                      this.controller, this, context.event.card);
+                    this.controller, this, context.event.card);
             }
         });
     }

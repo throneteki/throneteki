@@ -25,7 +25,7 @@ class TywinsStratagem extends DrawCard {
                 });
 
                 this.game.addMessage('{0} plays {1} to return {2} to {3}\'s hand and {4} to {5}\'s hand',
-                        this.controller, this, characters[0], characters[0].owner, characters[1], characters[1].owner);
+                    this.controller, this, characters[0], characters[0].owner, characters[1], characters[1].owner);
             }
         });
 

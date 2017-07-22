@@ -16,10 +16,10 @@ class ThePackSurvives extends DrawCard {
 
                 if(context.sacrificeCostCard) {
                     this.game.addMessage('{0} plays {1} and sacrifices {2} to cancel {3}',
-                                          this.controller, this, context.sacrificeCostCard, context.event.source);
+                        this.controller, this, context.sacrificeCostCard, context.event.source);
                 } else {
                     this.game.addMessage('{0} plays {1} and kneels {2} to cancel {3}',
-                                          this.controller, this, context.kneelingCostCards, context.event.source);
+                        this.controller, this, context.kneelingCostCards, context.event.source);
                 }
             }
         });

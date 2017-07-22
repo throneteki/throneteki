@@ -19,7 +19,7 @@ class JojenReed extends DrawCard {
                 var opponentCard = otherPlayer.drawDeck.first();
 
                 this.game.addMessage('{0} uses {1} to reveal {2} from their own deck and {3} from {4}\'s deck', 
-                                      this.controller, this, ownCard, opponentCard, otherPlayer);
+                    this.controller, this, ownCard, opponentCard, otherPlayer);
                 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {

@@ -15,7 +15,7 @@ class StreetOfTheSisters extends DrawCard {
                 this.game.addPower(this.controller, 1);
 
                 this.game.addMessage('{0} uses {1} to gain 1 power for their faction',
-                                     this.controller, this);
+                    this.controller, this);
             }
         });
     }

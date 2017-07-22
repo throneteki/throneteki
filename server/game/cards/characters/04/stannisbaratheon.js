@@ -29,7 +29,7 @@ class StannisBaratheon extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to make {2} unable to stand during the standing phase this round', 
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

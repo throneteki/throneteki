@@ -15,7 +15,7 @@ class DesmeraRedwyne extends DrawCard {
                     }));
 
                     this.game.addMessage('{0} uses {1} and pays 1 gold to give {2} +2 STR until the end of the phase',
-                                          this.controller, this, context.event.card);
+                        this.controller, this, context.event.card);
                 },
                 'Give -1 STR': context => {
                     this.untilEndOfPhase(ability => ({
@@ -24,7 +24,7 @@ class DesmeraRedwyne extends DrawCard {
                     }));
 
                     this.game.addMessage('{0} uses {1} and pays 1 gold to give {2} -1 STR until the end of the phase',
-                                          this.controller, this, context.event.card);
+                        this.controller, this, context.event.card);
                 }
             }
         });

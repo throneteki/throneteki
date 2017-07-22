@@ -16,7 +16,7 @@ class MoonBrothers extends DrawCard {
                 this.game.currentChallenge.addAttacker(this);
                 this.kneeled = false;
                 this.game.addMessage('{0} kneels their faction card to put {1} into play participating  as an attacker', 
-                                      this.controller, this);
+                    this.controller, this);
             }
         });
     }

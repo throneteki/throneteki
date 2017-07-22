@@ -25,7 +25,7 @@ class Grenn extends DrawCard {
                 context.target.modifyPower(power);
 
                 this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction to {4}', 
-                                      this.controller, this, power, otherPlayer, context.target);
+                    this.controller, this, power, otherPlayer, context.target);
             }
         });
     }

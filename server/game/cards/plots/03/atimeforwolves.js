@@ -20,7 +20,7 @@ class ATimeForWolves extends PlotCard {
 
         if(card.getCost() > 3) {
             this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-                                 player, this, card);
+                player, this, card);
             return;
         }
 
@@ -47,7 +47,7 @@ class ATimeForWolves extends PlotCard {
         }
 
         this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-                             player, this, this.revealedCard);
+            player, this, this.revealedCard);
         this.revealedCard = null;
 
         return true;
@@ -59,7 +59,7 @@ class ATimeForWolves extends PlotCard {
         }
 
         this.game.addMessage('{0} uses {1} to search their deck and put {2} into play',
-                             player, this, this.revealedCard);
+            player, this, this.revealedCard);
         player.putIntoPlay(this.revealedCard);
         this.revealedCard = null;
 
@@ -68,7 +68,7 @@ class ATimeForWolves extends PlotCard {
 
     doneSelecting(player) {
         this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any card',
-                             player, this);
+            player, this);
     }
 }
 

@@ -18,7 +18,7 @@ class UnbridledGenerosity extends DrawCard {
                 });
 
                 this.game.addMessage('{0} plays {1} to move 1 gold from the treasury to {2}',
-                                      this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

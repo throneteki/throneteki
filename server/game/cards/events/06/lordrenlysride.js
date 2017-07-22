@@ -25,7 +25,7 @@ class LordRenlysRide extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to give {2} +{3} STR and intimidate until the end of the phase',
-                                      this.controller, this, context.target, strBoost);
+                    this.controller, this, context.target, strBoost);
             }
         });
     }

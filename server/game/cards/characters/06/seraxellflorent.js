@@ -14,7 +14,7 @@ class SerAxellFlorent extends DrawCard {
             handler: context => {
                 context.target.controller.kneelCard(context.target);
                 this.game.addMessage('{0} discards 1 gold from {1} to kneel {2}',
-                                     this.controller, this, context.target);
+                    this.controller, this, context.target);
             }
         });
     }

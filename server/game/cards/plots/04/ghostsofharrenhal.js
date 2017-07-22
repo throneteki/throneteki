@@ -14,7 +14,7 @@ class GhostsOfHarrenhal extends PlotCard {
                         player.putIntoPlay(lastDeadCharacter);
 
                         this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s dead pile',
-                                             this.controller, this, lastDeadCharacter, lastDeadCharacter.controller);
+                            this.controller, this, lastDeadCharacter, lastDeadCharacter.controller);
                     }
                 });
             }

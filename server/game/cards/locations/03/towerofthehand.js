@@ -19,7 +19,7 @@ class TowerOfTheHand extends DrawCard {
                 let returnedCostCard = context.costs.returnedToHandCard;
                 context.target.owner.returnCardToHand(context.target);
                 this.game.addMessage('{0} kneels {1} and returns {2} to their hand to return {3} to {4}\'s hand',
-                                      this.controller, this, returnedCostCard, context.target, context.target.owner);
+                    this.controller, this, returnedCostCard, context.target, context.target.owner);
             }
         });
     }

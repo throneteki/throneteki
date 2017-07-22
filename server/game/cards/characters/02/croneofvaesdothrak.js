@@ -23,7 +23,7 @@ class CroneOfVaesDothrak extends DrawCard {
                 otherPlayer.moveCard(discardedCard, 'dead pile');
 
                 this.game.addMessage('{0} uses {1} to place {2} in the dead pile',
-                                     this.controler, this, discardedCard);
+                    this.controler, this, discardedCard);
             }
         });
     }

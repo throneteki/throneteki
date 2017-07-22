@@ -22,7 +22,7 @@ class TarredHeads extends DrawCard {
                     }
 
                     this.game.addMessage('{0} plays {1} to discard {2} from {3}\'s hand{4}',
-                                          this.controller, this, card, opponent, deadMessage);
+                        this.controller, this, card, opponent, deadMessage);
                 });
             }
         });

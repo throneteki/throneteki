@@ -24,7 +24,7 @@ class StormsEnd extends DrawCard {
     onSelect(player, cards) {
         _.each(cards, card => card.modifyPower(1));
         this.game.addMessage('{0} uses {1} to discard a power from their faction to have {2} gain 1 power', 
-                              this.controller, this, cards);
+            this.controller, this, cards);
 
         return true;
     }

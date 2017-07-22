@@ -22,12 +22,12 @@ class AlerieTyrell extends DrawCard {
     cardSelected(player, card) {
         player.moveCard(card, 'hand');
         this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-                             player, this, card);
+            player, this, card);
     }
 
     doneSelecting(player) {
         this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
-                             player, this);
+            player, this);
     }
 }
 

@@ -16,7 +16,7 @@ class SouthronMessenger extends DrawCard {
             handler: context => {
                 context.target.controller.returnCardToHand(context.target);
                 this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand',
-                                      context.player, this, context.target, context.target.controller);
+                    context.player, this, context.target, context.target.controller);
             }
         });
     }

@@ -24,7 +24,7 @@ class TheCouncilConsents extends DrawCard {
                 });
 
                 this.game.addMessage('{0} plays {1} to stand {2}',
-                                      this.controller, this, allSmallCouncilChars);
+                    this.controller, this, allSmallCouncilChars);
             }
         });
     }

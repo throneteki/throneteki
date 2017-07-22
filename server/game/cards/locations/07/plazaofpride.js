@@ -28,7 +28,7 @@ class PlazaOfPride extends DrawCard {
         player.standCard(card);
 
         this.game.addMessage('{0} kneels {1} and discard {2} to stand {3}',
-                             this.controller, this, discardedCard, card);
+            this.controller, this, discardedCard, card);
 
         return true;
     }

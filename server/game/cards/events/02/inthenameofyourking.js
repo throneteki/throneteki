@@ -15,7 +15,7 @@ class InTheNameOfYourKing extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to end this challenge with no winner or loser',
-                                    this.controller, this);
+                    this.controller, this);
             }
         });
     }

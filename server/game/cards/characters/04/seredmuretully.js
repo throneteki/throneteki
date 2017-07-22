@@ -50,7 +50,7 @@ class SerEdmureTully extends DrawCard {
         toCharacter.modifyPower(1);
 
         this.game.addMessage('{0} uses {1} to move 1 power from {2} to {3}',
-                             this.controller, this, this.powerGainingCharacter, toCharacter);
+            this.controller, this, this.powerGainingCharacter, toCharacter);
 
         this.powerGainingCharacter = undefined;
 

@@ -20,7 +20,7 @@ class VaesDothrak extends DrawCard {
                     onSelect: (p, card) => {
                         card.controller.discardCard(card);
                         this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {3} from play', 
-                                              this.controller, this, context.discardCostCard, card);
+                            this.controller, this, context.discardCostCard, card);
                         
                         return true;
                     }
