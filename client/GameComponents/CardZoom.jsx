@@ -10,12 +10,12 @@ class CardZoom extends React.Component {
 
         return (
             <div className={ zoomClass }>
-                {this.props.show ?
+                { this.props.show ?
                     <div className='card-zoomed shadow'>
-                        <span className='card-name'>{this.props.cardName}</span>
+                        <span className='card-name'>{ this.props.cardName }</span>
                         <img src={ this.props.imageUrl } />
                     </div>
-                    : null}
+                    : null }
             </div>);
     }
 }

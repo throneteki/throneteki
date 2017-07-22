@@ -11,7 +11,7 @@ class Input extends React.Component {
                         options={ this.props.options }
                         labelKey={ this.props.labelKey }
                         onChange={ this.props.onChange } />
-                    { this.props.validationMessage ? <span className='help-block'>{ this.props.validationMessage} </span> : null }
+                    { this.props.validationMessage ? <span className='help-block'>{ this.props.validationMessage } </span> : null }
                 </div>
                 { this.props.children }
             </div>

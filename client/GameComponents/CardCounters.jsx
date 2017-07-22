@@ -26,7 +26,7 @@ class CardCounters extends React.Component {
 
         return (
             <div className={ countersClass }>
-                {counterDivs}
+                { counterDivs }
             </div>
         );
     }

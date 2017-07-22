@@ -33,7 +33,7 @@ class InnerMessages extends React.Component {
     getMessage() {
         var index = 0;
         var messages = _.map(this.props.messages, message => {
-            return <div key={ 'message' + index++ } className='message'>{this.formatMessageText(message.message)}</div>;
+            return <div key={ 'message' + index++ } className='message'>{ this.formatMessageText(message.message) }</div>;
         });
 
         return messages;
@@ -54,7 +54,7 @@ class InnerMessages extends React.Component {
                         className='card-link'
                         onMouseOver={ this.props.onCardMouseOver.bind(this, fragment) }
                         onMouseOut={ this.props.onCardMouseOut.bind(this) }>
-                        {fragment.label}
+                        { fragment.label }
                     </span>
                 );
             } else if(fragment.name) {
@@ -62,7 +62,7 @@ class InnerMessages extends React.Component {
                     <div key={ index++ }>
                         <Avatar emailHash={ fragment.emailHash } forceDefault={ fragment.noAvatar } float />
                         <span key={ index++ }>
-                            <b>{fragment.name}</b>
+                            <b>{ fragment.name }</b>
                         </span>
                     </div>
                 );
@@ -77,7 +77,7 @@ class InnerMessages extends React.Component {
     }
 
     render() {
-        return <div>{this.getMessage()}</div>;
+        return <div>{ this.getMessage() }</div>;
     }
 }
 

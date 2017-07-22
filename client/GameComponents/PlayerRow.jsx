@@ -124,7 +124,7 @@ class PlayerRow extends React.Component {
                         <a onClick={ this.onCloseAndShuffleClick }>Close and shuffle</a>
                     </div>
                     <div className='inner'>
-                        {drawDeck}
+                        { drawDeck }
                     </div>
                 </div>);
         }
@@ -192,9 +192,9 @@ class PlayerRow extends React.Component {
                 <div className='deck-cards'>
                     <div className={ className } onDragLeave={ this.onDragLeave } onDragOver={ this.onDragOver } onDrop={ (event) => this.onDragDrop(event, 'hand') }>
                         <div className='panel-header'>
-                            {'Hand (' + hand.length + ')'}
+                            { 'Hand (' + hand.length + ')' }
                         </div>
-                        {hand}
+                        { hand }
                     </div>
 
                     <CardCollection className='draw' title='Draw' source='draw deck' cards={ this.props.drawDeck }
@@ -207,7 +207,7 @@ class PlayerRow extends React.Component {
                     <CardCollection className='dead' title='Dead' source='dead pile' cards={ this.props.deadPile }
                         onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick }
                         popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } onDragDrop={ this.props.onDragDrop } orientation='kneeled' />
-                    {this.getOutOfGamePile()}
+                    { this.getOutOfGamePile() }
                 </div>
             </div>
         );

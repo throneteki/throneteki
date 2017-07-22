@@ -120,18 +120,18 @@ class CardCollection extends React.Component {
 
         let linkIndex = 0;
 
-        var popupMenu = this.props.popupMenu ? (<div>{_.map(this.props.popupMenu, menuItem => {
-            return <a key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{menuItem.text}</a>;
-        })}</div>) : (
+        var popupMenu = this.props.popupMenu ? (<div>{ _.map(this.props.popupMenu, menuItem => {
+            return <a key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{ menuItem.text }</a>;
+        }) }</div>) : (
             <div>
                 <a onClick={ this.onCollectionClick }>Close</a>
             </div>);
 
         popup = (
             <div className={ popupClass + (this.state.showPopup ? '' : ' hidden') } onClick={ event => event.stopPropagation() }>
-                {popupMenu}
+                { popupMenu }
                 <div className='inner'>
-                    {cardList}
+                    { cardList }
                 </div>
                 <div className='arrow-indicator' />
             </div>);
@@ -143,12 +143,12 @@ class CardCollection extends React.Component {
         var menuIndex = 0;
 
         var menu = _.map(this.props.menu, item => {
-            return <div key={ (menuIndex++).toString() } onClick={ this.onMenuItemClick.bind(this, item) }>{item.text}</div>;
+            return <div key={ (menuIndex++).toString() } onClick={ this.onMenuItemClick.bind(this, item) }>{ item.text }</div>;
         });
 
         return (
             <div className='panel menu'>
-                {menu}
+                { menu }
             </div>);
     }
 
@@ -175,18 +175,18 @@ class CardCollection extends React.Component {
             <div className={ className } onDragLeave={ this.onDragLeave } onDragOver={ this.onDragOver } onDrop={ event => this.onDragDrop(event, this.props.source) }
                 onClick={ this.onCollectionClick }>
                 <div className='panel-header'>
-                    {headerText}
+                    { headerText }
                 </div>
-                {topCard ? <Card card={ topCard } source={ this.props.source }
+                { topCard ? <Card card={ topCard } source={ this.props.source }
                     onMouseOver={ this.props.onMouseOver }
                     onMouseOut={ this.props.onMouseOut }
                     disableMouseOver={ topCard.facedown }
                     onClick={ this.onTopCardClick }
                     onMenuItemClick={ this.props.onMenuItemClick }
                     onDragDrop={ this.props.onDragDrop }
-                    orientation={ cardOrientation } /> : null}
-                {this.state.showMenu ? this.getMenu() : null}
-                {this.getPopup()}
+                    orientation={ cardOrientation } /> : null }
+                { this.state.showMenu ? this.getMenu() : null }
+                { this.getPopup() }
             </div>);
     }
 }

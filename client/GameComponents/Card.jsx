@@ -214,7 +214,7 @@ class Card extends React.Component {
             return null;
         }
 
-        return (<div className='card-order'>{this.props.card.order}</div>);
+        return (<div className='card-order'>{ this.props.card.order }</div>);
     }
 
     showMenu() {
@@ -297,7 +297,7 @@ class Card extends React.Component {
                 onTouchMove={ ev => this.onTouchMove(ev) }
                 onTouchEnd={ ev => this.onTouchEnd(ev) }
                 onTouchStart={ ev => this.onTouchStart(ev) }>
-                {this.getCardOrder()}
+                { this.getCardOrder() }
                 <div className={ cardClass }
                     onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card) }
                     onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
@@ -305,7 +305,7 @@ class Card extends React.Component {
                     onDragStart={ ev => this.onCardDragStart(ev, this.props.card, this.props.source) }
                     draggable>
                     <div>
-                        <span className='card-name'>{this.props.card.name}</span>
+                        <span className='card-name'>{ this.props.card.name }</span>
                         <img className={ imageClass } src={ '/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg') } />
                     </div>
                     { this.showCounters() ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
@@ -318,9 +318,9 @@ class Card extends React.Component {
         if(this.props.wrapped) {
             return (
                 <div className='card-wrapper' style={ this.props.style }>
-                    {this.getCard()}
-                    {this.getDupes()}
-                    {this.getAttachments()}
+                    { this.getCard() }
+                    { this.getDupes() }
+                    { this.getAttachments() }
                 </div>);
         }
 
