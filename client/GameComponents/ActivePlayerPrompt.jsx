@@ -1,11 +1,9 @@
 import React from 'react';
 import _ from 'underscore';
 
-class MenuPane extends React.Component {
+class ActivePlayerPrompt extends React.Component {
     constructor() {
         super();
-
-        this.onButtonClick = this.onButtonClick.bind(this);
 
         this.timer = {};
 
@@ -36,6 +34,10 @@ class MenuPane extends React.Component {
                     this.timer.handle = undefined;
 
                     keepGoing = false;
+
+                    if(this.props.onTimerExpired) {
+                        this.props.onTimerExpired();
+                    }
                 }
 
                 let timerClass = (((this.timer.timerTime - difference) / this.timer.timerTime) * 100) + '%';
@@ -50,6 +52,16 @@ class MenuPane extends React.Component {
         if(this.props.onButtonClick) {
             this.props.onButtonClick(command, arg, method);
         }
+    }
+
+    onCancelTimerClick(event) {
+        event.preventDefault();
+
+        if(this.timer.handle) {
+            clearInterval(this.timer.handle);
+        }
+
+        this.setState({ showTimer: false });
     }
 
     onMouseOver(event, card) {
@@ -74,9 +86,12 @@ class MenuPane extends React.Component {
                 return;
             }
 
+            let clickCallback = button.timerCancel ? this.onCancelTimerClick.bind(this) :
+                event => this.onButtonClick(event, button.command, button.arg, button.method);
+
             let option = (
                 <button key={ button.command + buttonIndex.toString() } className='btn btn-primary'
-                    onClick={ event => this.onButtonClick(event, button.command, button.arg, button.method) }
+                    onClick={ clickCallback }
                     onMouseOver={ event => this.onMouseOver(event, button.card) } onMouseOut={ event => this.onMouseOut(event, button.card) }
                     disabled={ button.disabled }>{ button.text }</button>);
 
@@ -105,6 +120,9 @@ class MenuPane extends React.Component {
 
         return (<div>
             { timer }
+            <div className={ 'phase-indicator ' + this.props.phase }>
+                { this.props.phase } phase
+            </div>
             { promptTitle }
             <div className='menu-pane'>
                 <div className='panel'>
@@ -116,16 +134,18 @@ class MenuPane extends React.Component {
     }
 }
 
-MenuPane.displayName = 'MenuPane';
-MenuPane.propTypes = {
+ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
+ActivePlayerPrompt.propTypes = {
     buttons: React.PropTypes.array,
     onButtonClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
+    onTimerExpired: React.PropTypes.func,
+    phase: React.PropTypes.string,
     promptTitle: React.PropTypes.string,
     socket: React.PropTypes.object,
     title: React.PropTypes.string,
     user: React.PropTypes.object
 };
 
-export default MenuPane;
+export default ActivePlayerPrompt;

@@ -36,8 +36,10 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     isCancellableEvent() {
-        return _.any(this.events, event => {
-            return event.name === 'onCardAbilityInitiated';
+        let cancellableEvents = ['onCardAbilityInitiated', 'onClaimApplied'];
+
+        return this.abilityType === 'cancelinterrupt' && _.any(this.events, event => {
+            return _.contains(cancellableEvents, event.name);
         });
     }
 
@@ -56,11 +58,14 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             if(abilityChoice.text !== 'default') {
                 title += ' - ' + abilityChoice.text;
             }
+
             return { text: title, method: 'chooseAbility', arg: abilityChoice.id, card: abilityChoice.card };
         });
 
         if(this.isCancellableEvent()) {
             buttons.push({ timer: true, method: 'pass' });
+            buttons.push({ text: 'I need more time', timerCancel: true });
+            buttons.push({ text: 'Don\'t ask for 5 minutes', method: 'pass', arg: 'pause' });
         }
 
         buttons.push({ text: 'Pass', method: 'pass' });
