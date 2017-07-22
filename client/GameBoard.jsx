@@ -456,8 +456,14 @@ export class InnerGameBoard extends React.Component {
                                         { <span className={ this.state.spectating ? '' : this.state.showActionWindowsMenu ? 'down-arrow' : 'up-arrow' } /> }
                                         { thisPlayer.phase } phase
                                     </div>
-                                    <MenuPane title={ thisPlayer.menuTitle } buttons={ thisPlayer.buttons } promptTitle={ thisPlayer.promptTitle } onButtonClick={ this.onCommand }
-                                        onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onTitleClick={ this.onMenuTitleClick.bind(this) } />
+                                    <MenuPane title={ thisPlayer.menuTitle }
+                                        buttons={ thisPlayer.buttons }
+                                        promptTitle={ thisPlayer.promptTitle }
+                                        onButtonClick={ this.onCommand }
+                                        onMouseOver={ this.onMouseOver }
+                                        onMouseOut={ this.onMouseOut }
+                                        onTitleClick={ this.onMenuTitleClick.bind(this) }
+                                        user={ this.props.user } />
                                 </div>
                                 <div className='schemes-pane' />
                             </div>
@@ -540,6 +546,7 @@ InnerGameBoard.propTypes = {
     sendGameMessage: React.PropTypes.func,
     setContextMenu: React.PropTypes.func,
     socket: React.PropTypes.object,
+    user: React.PropTypes.object,
     username: React.PropTypes.string,
     zoomCard: React.PropTypes.func
 };
@@ -549,6 +556,7 @@ function mapStateToProps(state) {
         cardToZoom: state.cards.zoomCard,
         currentGame: state.games.currentGame,
         socket: state.socket.socket,
+        user: state.auth.user,
         username: state.auth.username
     };
 }

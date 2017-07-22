@@ -26,7 +26,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     continue() {
         this.players = this.filterChoicelessPlayers(this.players || this.game.getPlayersInFirstPlayerOrder());
 
-        if(this.players.length === 0 || this.abilityChoices.length === 0) {
+        if(this.players.length === 0) {
             return true;
         }
 
@@ -35,8 +35,14 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return false;
     }
 
+    isCancellableEvent() {
+        return _.any(this.events, event => {
+            return event.name === 'onCardAbilityInitiated';
+        });
+    }
+
     filterChoicelessPlayers(players) {
-        return _.filter(players, player => _.any(this.abilityChoices, abilityChoice => this.eligibleChoiceForPlayer(abilityChoice, player)));
+        return _.filter(players, player => this.isCancellableEvent() || _.any(this.abilityChoices, abilityChoice => this.eligibleChoiceForPlayer(abilityChoice, player)));
     }
 
     eligibleChoiceForPlayer(abilityChoice, player) {
@@ -52,6 +58,11 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             }
             return { text: title, method: 'chooseAbility', arg: abilityChoice.id, card: abilityChoice.card };
         });
+
+        if(this.isCancellableEvent()) {
+            buttons.push({ timer: true, method: 'pass' });
+        }
+
         buttons.push({ text: 'Pass', method: 'pass' });
         this.game.promptWithMenu(player, this, {
             activePrompt: {
