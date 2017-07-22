@@ -21,7 +21,7 @@ class ThePrincesPass extends DrawCard {
                     }));
 
                     this.game.addMessage('{0} kneels {1} to remove {2} {3} icon from {4}',
-                                this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, this.targetCharacter);
+                        this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, this.targetCharacter);
 
                     if(this.targetCharacter.getNumberOfIcons() === 0) {
                         this.game.promptWithMenu(this.controller, this, {

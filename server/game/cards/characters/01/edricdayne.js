@@ -12,7 +12,7 @@ class EdricDayne extends DrawCard {
                         effect: ability.effects.addIcon(icon)
                     }));
                     this.game.addMessage('{0} pays 1 gold to give {1} {2} {3} icon until the end of the phase',
-                                          this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon);
+                        this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon);
                 });
             }
         });
