@@ -14,7 +14,7 @@ class ThePrincesPass extends DrawCard {
             handler: context => {
                 this.targetCharacter = context.target;
 
-                this.game.promptForIcon(this.controller, icon => {
+                this.game.promptForIcon(this.controller, this, icon => {
                     this.untilEndOfPhase(ability => ({
                         match: this.targetCharacter,
                         effect: ability.effects.removeIcon(icon)

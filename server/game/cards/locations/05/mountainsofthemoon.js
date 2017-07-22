@@ -7,7 +7,7 @@ class MountainsOfTheMoon extends DrawCard {
                 onCardEntersPlay: event => event.card.hasTrait('Clansman') && event.card.getType() === 'character'
             },
             handler: context => {
-                this.game.promptForIcon(this.controller, icon => {
+                this.game.promptForIcon(this.controller, this, icon => {
                     this.untilEndOfPhase(ability => ({
                         match: context.event.card,
                         effect: ability.effects.addIcon(icon)

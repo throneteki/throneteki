@@ -10,7 +10,7 @@ class ThePrincesPlan extends DrawCard {
             },
             handler: context => {
                 let strBoost = this.controller.getNumberOfUsedPlots();
-                this.game.promptForIcon(this.controller, icon => {
+                this.game.promptForIcon(this.controller, this, icon => {
                     this.game.addMessage('{0} plays {1} to give {2} +{3} STR and {4} {5} icon until the end of the phase',
                         this.controller, this, context.target, strBoost, icon === 'intrigue' ? 'an' : 'a', icon);
                     this.untilEndOfPhase(ability => ({

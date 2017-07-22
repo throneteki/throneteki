@@ -7,7 +7,7 @@ class UnswornApprentice extends DrawCard {
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
             handler: () => {
-                this.game.promptForIcon(this.controller, icon => {
+                this.game.promptForIcon(this.controller, this, icon => {
                     this.untilEndOfPhase(ability => ({
                         match: this,
                         effect: ability.effects.addIcon(icon)

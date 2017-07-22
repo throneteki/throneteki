@@ -3,10 +3,11 @@ const _ = require('underscore');
 const BaseStep = require('./basestep');
 
 class IconPrompt extends BaseStep {
-    constructor(game, player, callback) {
+    constructor(game, player, card, callback) {
         super(game);
 
         this.player = player;
+        this.card = card;
         this.callback = callback;
     }
 
@@ -22,7 +23,7 @@ class IconPrompt extends BaseStep {
                 menuTitle: 'Select an icon',
                 buttons: buttons
             },
-            source: this
+            source: this.card
         });
     }
 

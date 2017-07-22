@@ -6,7 +6,7 @@ class EdricDayne extends DrawCard {
             title: 'Give icon',
             cost: ability.costs.payGold(1),
             handler: () => {
-                this.game.promptForIcon(this.controller, icon => {
+                this.game.promptForIcon(this.controller, this, icon => {
                     this.untilEndOfPhase(ability => ({
                         match: this,
                         effect: ability.effects.addIcon(icon)
