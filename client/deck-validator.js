@@ -186,7 +186,7 @@ const agendaRules = {
     // Uniting the Seven Kingdoms
     '00004': rulesForDraft({
         mayInclude: card => card.type_code !== 'plot'
-    }),
+    })
 };
 
 class DeckValidator {
