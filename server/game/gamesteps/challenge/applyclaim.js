@@ -29,13 +29,13 @@ class ApplyClaim extends BaseStep {
                     this.challenge.claim > 1 ? 's' : '');
                 this.challenge.loser.discardAtRandom(this.challenge.claim);
                 break;
-            case 'power':
-                if(this.challenge.loser.faction.power > 0) {
-                    this.game.addMessage('{0} claim is applied.  {1} removes {2} power and {3} gains {2} power', this.challenge.challengeType, this.challenge.loser, this.challenge.claim,
-                        this.challenge.winner);
-                }
+            case 'power': {
+                let appliedPower = Math.min(this.challenge.loser.faction.power, this.challenge.claim);
+                this.game.addMessage('{0} {1} claim is applied.  {2} removes {3} power and {4} gains {3} power', this.challenge.claim, this.challenge.challengeType, this.challenge.loser, appliedPower,
+                    this.challenge.winner);
                 this.game.transferPower(this.challenge.winner, this.challenge.loser, this.challenge.claim);
                 break;
+            }
         }
 
         this.game.queueSimpleStep(() => {
