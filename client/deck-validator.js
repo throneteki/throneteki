@@ -240,9 +240,19 @@ class DeckValidator {
         });
 
         let isValid = errors.length === 0;
+        let containsDraftCards = this.isDraftCard(deck.agenda) || _.any(allCards, cardQuantity => this.isDraftCard(cardQuantity.card));
+        let status = 'Valid';
+
+        if(!isValid) {
+            status = 'Invalid';
+        } else if(containsDraftCards) {
+            status = 'Draft Cards';
+        } else if(unreleasedCards.length !== 0) {
+            status = 'Unreleased Cards';
+        }
 
         return {
-            status: !isValid ? 'Invalid' : (unreleasedCards.length === 0 ? 'Valid' : 'Unreleased Cards'),
+            status: status,
             plotCount: plotCount,
             drawCount: drawCount,
             extendedStatus: errors.concat(unreleasedCards),
@@ -285,6 +295,10 @@ class DeckValidator {
             rules: combinedRules
         };
         return _.extend({}, ...validators, combined);
+    }
+
+    isDraftCard(card) {
+        return card && card.pack_code === 'VDS';
     }
 }
 
