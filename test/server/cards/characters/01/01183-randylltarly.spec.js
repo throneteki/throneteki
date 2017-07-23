@@ -102,9 +102,6 @@ describe('Randyll Tarly', function() {
                 // Skip post defense action window
                 this.skipActionWindow();
 
-                // Skip post winner window
-                this.skipActionWindow();
-
                 this.player1.clickPrompt('Apply Claim');
             });
 

@@ -23,7 +23,6 @@ class InnerProfile extends React.Component {
             challengeBegin: false,
             attackersDeclared: true,
             defendersDeclared: true,
-            winnerDetermined: false,
             dominance: false,
             standing: false
         };
@@ -44,7 +43,6 @@ class InnerProfile extends React.Component {
             { name: 'challengeBegin', label: 'Before challenge' },
             { name: 'attackersDeclared', label: 'Attackers declared' },
             { name: 'defendersDeclared', label: 'Defenders declared' },
-            { name: 'winnerDetermined', label: 'Winner determined' },
             { name: 'dominance', label: 'Dominance phase' },
             { name: 'standing', label: 'Standing phase' }
         ];

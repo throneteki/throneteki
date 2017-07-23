@@ -64,7 +64,6 @@ describe('The Lord of the Crossing', function() {
                 this.skipActionWindow();
                 this.player2.clickPrompt('Done');
                 this.skipActionWindow();
-                this.skipActionWindow();
                 this.player1.clickPrompt('Apply Claim');
                 this.player2.clickPrompt('Done');
 
@@ -99,7 +98,6 @@ describe('The Lord of the Crossing', function() {
                 this.skipActionWindow();
                 this.player2.clickPrompt('Done');
                 this.skipActionWindow();
-                this.skipActionWindow();
                 this.player1.clickPrompt('Apply Claim');
                 this.player2.clickPrompt('Done');
 
@@ -108,7 +106,6 @@ describe('The Lord of the Crossing', function() {
                 this.player1.clickPrompt('Done');
                 this.skipActionWindow();
                 this.player2.clickPrompt('Done');
-                this.skipActionWindow();
                 this.skipActionWindow();
                 this.player1.clickPrompt('Apply Claim');
 
@@ -138,7 +135,6 @@ describe('The Lord of the Crossing', function() {
                 beforeEach(function() {
                     this.skipActionWindow();
                     this.player2.clickPrompt('Done');
-                    this.skipActionWindow();
                     this.skipActionWindow();
                 });
 

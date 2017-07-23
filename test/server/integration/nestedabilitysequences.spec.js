@@ -53,8 +53,6 @@ describe('nested ability sequences', function() {
                 this.player1.clickPrompt('Done');
                 this.skipActionWindow();
 
-                this.skipActionWindow();
-
                 this.player2.clickPrompt('Apply Claim');
 
                 // kill someone

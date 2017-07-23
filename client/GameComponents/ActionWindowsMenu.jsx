@@ -11,7 +11,6 @@ class ActionWindowsMenu extends React.Component {
             { name: 'challengeBegin', label: 'Before challenge' },
             { name: 'attackersDeclared', label: 'Attackers declared' },
             { name: 'defendersDeclared', label: 'Defenders declared' },
-            { name: 'winnerDetermined', label: 'Winner determined' },
             { name: 'dominance', label: 'Dominance phase' },
             { name: 'standing', label: 'Standing phase' }
         ];

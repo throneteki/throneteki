@@ -63,7 +63,7 @@ describe('WraithsInTheirMidst', function() {
 
                 this.completeMarshalPhase();
 
-                this.unopposedChallenge(this.player2, 'intrigue', 'Tywin Lannister', true);
+                this.unopposedChallenge(this.player2, 'intrigue', 'Tywin Lannister');
 
                 this.player2.clickPrompt('"The Rains of Castamere"');
                 this.player2.clickPrompt('Filthy Accusations');

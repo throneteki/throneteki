@@ -167,7 +167,6 @@ describe('take control', function() {
                 this.player2.clickPrompt('Done');
 
                 this.skipActionWindow();
-                this.skipActionWindow();
 
                 this.player1.clickPrompt('Apply Claim');
 
@@ -255,7 +254,6 @@ describe('take control', function() {
 
                     this.player2.clickPrompt('Done');
 
-                    this.skipActionWindow();
                     this.skipActionWindow();
 
                     this.player1.clickPrompt('Apply Claim');
@@ -373,7 +371,6 @@ describe('take control', function() {
                 this.player2.clickPrompt('Done');
 
                 this.skipActionWindow();
-                this.skipActionWindow();
 
                 this.player1.clickPrompt('Apply Claim');
 
@@ -395,7 +392,6 @@ describe('take control', function() {
 
                 this.player1.clickPrompt('Done');
 
-                this.skipActionWindow();
                 this.skipActionWindow();
 
                 this.player2.clickPrompt('Apply Claim');
@@ -419,7 +415,6 @@ describe('take control', function() {
 
                 this.player2.clickPrompt('Done');
 
-                this.skipActionWindow();
                 this.skipActionWindow();
 
                 this.player1.clickPrompt('Apply Claim');

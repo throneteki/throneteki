@@ -17,7 +17,6 @@ const defaultWindows = {
     challengeBegin: false,
     attackersDeclared: true,
     defendersDeclared: true,
-    winnerDetermined: false,
     dominance: false,
     standing: false
 };

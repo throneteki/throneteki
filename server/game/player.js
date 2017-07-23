@@ -51,7 +51,6 @@ class Player extends Spectator {
             challengeBegin: false,
             attackersDeclared: true,
             defendersDeclared: true,
-            winnerDetermined: true,
             dominance: false,
             standing: false
         };

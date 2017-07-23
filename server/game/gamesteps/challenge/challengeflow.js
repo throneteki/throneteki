@@ -191,11 +191,6 @@ class ChallengeFlow extends BaseStep {
         }
 
         this.game.raiseEvent('afterChallenge', this.challenge);
-
-        // Only open a winner action window if a winner / loser was determined.
-        if(this.challenge.winner) {
-            this.game.queueStep(new ActionWindow(this.game, 'After winner determined', 'winnerDetermined'));
-        }
     }
 
     unopposedPower() {
