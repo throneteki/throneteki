@@ -15,9 +15,9 @@ class WildfireAssault extends PlotCard {
 
     onSelect(player, cards) {
         if(_.isEmpty(cards)) {
-            this.game.addMessage('{0} does not choose any characters to save from {1}', player, this);
+            this.game.addMessage('{0} does not choose any characters for {1}', player, this);
         } else {
-            this.game.addMessage('{0} chooses to save {1} from {2}', player, cards, this);
+            this.game.addMessage('{0} chooses {1} for {2}', player, cards, this);
         }
         this.selections.push({ player: player, cards: cards });
         this.proceedToNextStep();
@@ -29,7 +29,7 @@ class WildfireAssault extends PlotCard {
         this.proceedToNextStep();
     }
 
-    doDiscard() {
+    doKill() {
         let characters = [];
 
         _.each(this.selections, selection => {
@@ -39,9 +39,9 @@ class WildfireAssault extends PlotCard {
             characters = characters.concat(toKill);
 
             if(_.isEmpty(toKill)) {
-                this.game.addMessage('{0} does not kill any characters with {1}', player, this);
+                this.game.addMessage('{0} does not have any characters killed for {1}', player, this);
             } else {
-                this.game.addMessage('{0} uses {1} to kill {2}', player, this, toKill);
+                this.game.addMessage('{0} has {1} killed because of {2}', player, toKill, this);
             }
         });
 
@@ -52,17 +52,25 @@ class WildfireAssault extends PlotCard {
 
     proceedToNextStep() {
         if(this.remainingPlayers.length > 0) {
-            var currentPlayer = this.remainingPlayers.shift();
+            let currentPlayer = this.remainingPlayers.shift();
+
+            if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'character')) {
+                this.game.addMessage('{0} has no characters in play to choose for {1}', currentPlayer, this);
+                this.selections.push({ player: currentPlayer, cards: [] });
+                this.proceedToNextStep();
+                return true;
+            }
+
             this.game.promptForSelect(currentPlayer, {
                 numCards: 3,
-                activePromptTitle: 'Select up to 3 characters to save',
+                activePromptTitle: 'Select up to 3 characters',
                 source: this,
                 cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'character',
                 onSelect: (player, cards) => this.onSelect(player, cards),
                 onCancel: (player) => this.cancelSelection(player)
             });
         } else {
-            this.doDiscard();
+            this.doKill();
         }
     }
 }
