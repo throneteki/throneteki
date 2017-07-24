@@ -13,7 +13,7 @@ class SerArysOakheart extends DrawCard {
             },
             handler: context => {
                 context.target.controller.discardCard(context.target);
-                this.game.addMessage('{0} uses {1} to discard {2} from play', this.controller, this, context.target);
+                this.game.addMessage('{0} uses {1} and pays 2 gold to discard {2} from play', this.controller, this, context.target);
             }
         });
     }
