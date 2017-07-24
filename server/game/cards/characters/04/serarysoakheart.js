@@ -1,25 +1,19 @@
 const DrawCard = require('../../../drawcard.js');
 
 class SerArysOakheart extends DrawCard {
-    setupCardAbilities() {  
+    setupCardAbilities(ability) {  
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && this.controller.gold >= 2
+                onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => (
-                        card.location === 'play area' && 
-                        card.getType() === 'character' && 
-                        card.hasTrait('Ally')),
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    onSelect: (player, card) => {
-                        card.controller.discardCard(card);
-                        this.controller.gold -= 2;
-                        this.game.addMessage('{0} uses {1} to discard {2} from play', player, this, card);
-                    }
-                });
+            cost: ability.costs.payGold(2),
+            target: {
+                activePromptTitle: 'Select a character to discard',
+                cardCondition: card => card.location === 'play area' && card.hasTrait('Ally') && card.getType() === 'character'
+            },
+            handler: context => {
+                context.target.controller.discardCard(context.target);
+                this.game.addMessage('{0} uses {1} to discard {2} from play', this.controller, this, context.target);
             }
         });
     }

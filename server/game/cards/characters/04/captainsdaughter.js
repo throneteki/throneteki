@@ -4,24 +4,17 @@ class CaptainsDaughter extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => {
-                    let card = event.card;
-                    if(this.controller === card.controller || this.controller.phase === 'setup' || card.isLoyal() || card.getType() !== 'character') {
-                        return false;
-                    }
-
-                    this.pendingCard = card;
-
-                    return true;
-                }
+                onCardEntersPlay: event => !event.card.isLoyal() && event.card.getType() === 'character' &&
+                                           event.card.controller !== this.controller
             },
             cost: [
                 ability.costs.sacrificeSelf(),
                 ability.costs.kneelFactionCard()
             ],
-            handler: () => {
-                this.pendingCard.controller.moveCard(this.pendingCard, 'draw deck');
-                this.game.addMessage('{0} sacrifices {1} to move {2} to the top of {3}\'s deck', this.controller, this, this.pendingCard, this.pendingCard.controller);
+            handler: context => {
+                context.event.card.owner.moveCard(context.event.card, 'draw deck');
+                this.game.addMessage('{0} sacrifices {1} and kneels their faction card to move {2} to the top of {3}\'s deck',
+                    this.controller, this, context.event.card, context.event.card.owner);
             }
         });
     }
