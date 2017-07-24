@@ -5,7 +5,7 @@ class FreyHospitality extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: (event, challenge) => challenge.winner === this.controller &&
-                                                      this.controller.getNumberOfChallengesInitiated() === 3 &&
+                                                      challenge.number === 3 &&
                                                       this.hasAttackingFrey()
             },
             handler: () => {

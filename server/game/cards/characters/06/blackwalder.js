@@ -4,9 +4,9 @@ class BlackWalder extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.currentChallenge && 
-                this.game.currentChallenge.attackingPlayer === this.controller && 
-                this.controller.getNumberOfChallengesInitiated() === 3),
+                this.game.currentChallenge &&
+                this.game.currentChallenge.attackingPlayer === this.controller &&
+                this.game.currentChallenge.number === 3),
             match: this,
             recalculateWhen: ['onAttackersDeclared'],
             effect: [

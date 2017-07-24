@@ -4,9 +4,9 @@ class TheTwins extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.currentChallenge && 
-                this.game.currentChallenge.attackingPlayer === this.controller && 
-                this.controller.getNumberOfChallengesInitiated() === 3 &&
+                this.game.currentChallenge &&
+                this.game.currentChallenge.attackingPlayer === this.controller &&
+                this.game.currentChallenge.number === 3 &&
                 this.hasAttackingFrey()),
             match: card => card === this.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
