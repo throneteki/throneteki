@@ -22,7 +22,7 @@ describe('Challenge', function() {
         this.defenderCard = new DrawCard(this.defendingPlayer, {});
         spyOn(this.defenderCard, 'getStrength').and.returnValue(3);
 
-        this.challenge = new Challenge(this.gameSpy, this.attackingPlayer, this.defendingPlayer, 'military');
+        this.challenge = new Challenge(this.gameSpy, { attackingPlayer: this.attackingPlayer, defendingPlayer: this.defendingPlayer, challengeType: 'military' });
         this.challenge.addAttackers([this.attackerCard]);
         this.challenge.addDefenders([this.defenderCard]);
     });
