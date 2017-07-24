@@ -848,6 +848,7 @@ class Player extends Spectator {
         if(!card.dupes.isEmpty() && allowSave) {
             if(this.removeDuplicate(card)) {
                 this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
+                this.game.raiseMergedEvent('onCardSaved', { card: card });
                 return;
             }
         }
@@ -893,6 +894,7 @@ class Player extends Spectator {
                     this.moveCard(card, 'hand');
                 } else {
                     this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
+                    this.game.raiseMergedEvent('onCardSaved', { card: card });
                 }
             } else {
                 this.moveCard(card, 'hand');
@@ -930,6 +932,7 @@ class Player extends Spectator {
     removeAttachment(attachment, allowSave = true) {
         if(allowSave && !attachment.dupes.isEmpty() && this.removeDuplicate(attachment)) {
             this.game.addMessage('{0} discards a duplicate to save {1}', this, attachment);
+            this.game.raiseMergedEvent('onCardSaved', { card: attachment });
             return;
         }
 
