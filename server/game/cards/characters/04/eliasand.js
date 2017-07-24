@@ -8,7 +8,7 @@ class EliaSand extends DrawCard {
             },
             limit: ability.limit.perPhase(2),
             target: {
-                activePromptTitle: 'Select a character to gain stealth',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
