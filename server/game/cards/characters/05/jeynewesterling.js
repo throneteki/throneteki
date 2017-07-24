@@ -6,7 +6,7 @@ class JeyneWesterling extends DrawCard {
             title: 'Stand a King or Lord',
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character to stand',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.isFaction('stark') && card.getType() === 'character' &&
                                        (card.hasTrait('King') || card.hasTrait('Lord')) && card.kneeled,
                 gameAction: 'stand'
