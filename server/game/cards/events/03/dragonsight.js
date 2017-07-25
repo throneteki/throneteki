@@ -6,7 +6,7 @@ class DragonSight extends DrawCard {
             title: 'Reduce non-Dragon characters STR by 1',
             condition: () => this.game.currentChallenge,
             handler: () => {
-                this.game.addMessage('{0} use {1} to give each non-Dragon participating character -1 STR until the end of the challenge', this.controller, this);
+                this.game.addMessage('{0} uses {1} to give each non-Dragon participating character -1 STR until the end of the challenge', this.controller, this);
                 this.untilEndOfChallenge(ability => ({
                     match: card => (
                         card.getType() === 'character' &&
