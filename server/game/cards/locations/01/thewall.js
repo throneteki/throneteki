@@ -13,7 +13,7 @@ class TheWall extends DrawCard {
         });
         this.interrupt({
             when: {
-                onPhaseEnded: (e, phase) => phase === 'challenge'
+                onPhaseEnded: event => event.phase === 'challenge'
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {

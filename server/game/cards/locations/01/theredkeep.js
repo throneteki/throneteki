@@ -14,7 +14,7 @@ class TheRedKeep extends DrawCard {
         });
         this.interrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'challenge' &&
+                onPhaseEnded: event => event.phase === 'challenge' &&
                     this.controller.getNumberOfChallengesLost('power') === 0
             },
             cost: ability.costs.kneelSelf(),

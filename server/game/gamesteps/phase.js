@@ -50,7 +50,7 @@ class Phase extends BaseStep {
     }
 
     endPhase() {
-        this.game.raiseEvent('onPhaseEnded', this.name);
+        this.game.raiseMergedEvent('onPhaseEnded', { phase: this.name });
         this.game.currentPhase = '';
         _.each(this.game.getPlayers(), player => {
             player.phase = '';

@@ -4,8 +4,8 @@ class BridgeOfSkulls extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: (e, phase) =>
-                    phase === 'challenge'
+                onPhaseEnded: event =>
+                    event.phase === 'challenge'
                     && this.game.getOtherPlayer(this.controller)
                     && this.game.getOtherPlayer(this.controller)
                         .getNumberOfChallengesInitiatedByType('military') < 1

@@ -6,7 +6,7 @@ class Varys extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'dominance'
+                onPhaseEnded: event => event.phase === 'dominance'
             },
             cost: ability.costs.removeSelfFromGame(),
             handler: () => {

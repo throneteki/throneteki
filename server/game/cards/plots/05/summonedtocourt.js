@@ -6,7 +6,7 @@ class SummonedToCourt extends PlotCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'draw'
+                onPhaseEnded: event => event.phase === 'draw'
             },
             handler: () => {
                 this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
