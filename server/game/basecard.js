@@ -421,7 +421,7 @@ class BaseCard {
     }
 
     addTrait(trait) {
-        var lowerCaseTrait = trait.toLowerCase();
+        let lowerCaseTrait = trait.toLowerCase();
 
         if(!lowerCaseTrait || lowerCaseTrait === '') {
             return;
@@ -432,6 +432,8 @@ class BaseCard {
         } else {
             this.traits[lowerCaseTrait]++;
         }
+
+        this.game.raiseMergedEvent('onCardTraitChanged', { card: this });
     }
 
     addFaction(faction) {
@@ -454,6 +456,7 @@ class BaseCard {
 
     removeTrait(trait) {
         this.traits[trait.toLowerCase()]--;
+        this.game.raiseMergedEvent('onCardTraitChanged', { card: this });
     }
 
     removeFaction(faction) {
