@@ -568,7 +568,7 @@ class Game extends EventEmitter {
     }
 
     beginRound() {
-        this.raiseEvent('onBeginRound');
+        this.raiseMergedEvent('onBeginRound');
         this.queueStep(new PlotPhase(this));
         this.queueStep(new DrawPhase(this));
         this.queueStep(new MarshalingPhase(this));
