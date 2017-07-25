@@ -331,6 +331,7 @@ class DrawCard extends BaseCard {
         this.power = 0;
         this.wasAmbush = false;
         this.inChallenge = false;
+        this.new = false;
 
         super.leavesPlay();
     }
