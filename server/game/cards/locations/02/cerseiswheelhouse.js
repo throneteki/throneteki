@@ -4,7 +4,7 @@ class CerseisWheelhouse extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onFirstPlayerDetermined: (event, player) => this.controller === player
+                onFirstPlayerDetermined: event => this.controller === event.player
             },
             choices: {
                 'Gain 1 gold': () => {
