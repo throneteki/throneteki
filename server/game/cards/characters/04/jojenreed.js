@@ -6,7 +6,7 @@ class JojenReed extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardStood: (e, player, card) => card === this
+                onCardStood: event => event.card === this
             },
             handler: () => {
                 var otherPlayer = this.game.getOtherPlayer(this.controller);

@@ -18,9 +18,7 @@ class SansaStark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardStood: (e, player, card) => {
-                    return card === this;
-                }
+                onCardStood: event => event.card === this
             },
             limit: ability.limit.perRound(1),
             handler: () => {

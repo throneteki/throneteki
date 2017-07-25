@@ -1043,7 +1043,7 @@ class Player extends Spectator {
         this.game.applyGameAction('stand', card, card => {
             card.kneeled = false;
 
-            this.game.raiseEvent('onCardStood', this, card);
+            this.game.raiseMergedEvent('onCardStood', { player: this, card: card });
         });
     }
 
