@@ -4,7 +4,7 @@ class EddardStark extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onRenown: (event, challenge, card) => card === this
+                onRenown: event => event.card === this
             },
             target: {
                 activePromptTitle: 'Select character to gain power',

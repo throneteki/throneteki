@@ -12,7 +12,7 @@ class TheSilverSteed extends DrawCard {
         });
         this.reaction({
             when: {
-                onRenown: (event, challenge, card) => card === this.parent
+                onRenown: event => event.card === this.parent
             },
             handler: () => {
                 this.controller.sacrificeCard(this);
