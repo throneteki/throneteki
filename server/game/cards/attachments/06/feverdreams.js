@@ -4,7 +4,7 @@ class FeverDreams extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardKneeled: (event, player, card) => card === this.parent
+                onCardKneeled: event => event.card === this.parent
             },
             cost: ability.costs.discardGold(),
             handler: () => {

@@ -4,7 +4,7 @@ class GreenDreams extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (e, player, card) => card === this.parent
+                onCardKneeled: event => event.card === this.parent
             },
             handler: () => {
                 this.topCard = this.controller.drawDeck.first();

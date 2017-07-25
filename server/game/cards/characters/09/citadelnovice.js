@@ -4,7 +4,7 @@ class CitaldelNovice extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardKneeled: (e, player, card) => card === this
+                onCardKneeled: event => event.card === this
             },
             limit: ability.limit.perPhase(1),
             handler: () => {
