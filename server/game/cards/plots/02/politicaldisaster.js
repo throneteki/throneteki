@@ -39,9 +39,9 @@ class PoliticalDisaster extends PlotCard {
             });
 
             if(_.isEmpty(toDiscard)) {
-                this.game.addMessage('{0} does not have any locations discarded for {1}', player, this);
+                this.game.addMessage('{0} does not discard any locations for {1}', player, this);
             } else {
-                this.game.addMessage('{0} has {1} discarded for {2}', player, toDiscard, this);
+                this.game.addMessage('{0} discards {1} for {2}', player, toDiscard, this);
             }
         });
 

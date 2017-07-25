@@ -39,9 +39,9 @@ class WildfireAssault extends PlotCard {
             characters = characters.concat(toKill);
 
             if(_.isEmpty(toKill)) {
-                this.game.addMessage('{0} does not have any characters killed for {1}', player, this);
+                this.game.addMessage('{0} does not kill any characters for {1}', player, this);
             } else {
-                this.game.addMessage('{0} has {1} killed because of {2}', player, toKill, this);
+                this.game.addMessage('{0} kills {1} for {2}', player, toKill, this);
             }
         });
 
