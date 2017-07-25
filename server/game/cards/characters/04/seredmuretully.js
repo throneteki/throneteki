@@ -8,8 +8,9 @@ class SerEdmureTully extends DrawCard {
                 // TODO this should trigger only when power is *gained*, but currently also
                 // triggers when power is *moved* between cards. To make the distinction we
                 // need a new high-level event and review all uses of card power modifications
-                onCardPowerChanged: (event, card, power) => {
-                    var tullyCharacters = this.game.findAnyCardsInPlay(this.isTullyCharacter);
+                onCardPowerChanged: event => {
+                    let {card, power} = event;
+                    let tullyCharacters = this.game.findAnyCardsInPlay(this.isTullyCharacter);
 
                     if(card.getType() === 'character'
                        && power > 0
