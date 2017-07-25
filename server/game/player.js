@@ -205,9 +205,12 @@ class Player extends Spectator {
             numCards = this.drawDeck.size();
         }
 
-        var cards = this.drawDeck.first(numCards);
-        _.each(cards, card => {
-            this.moveCard(card, 'hand');
+        let cards = this.drawDeck.first(numCards);
+
+        this.game.raiseMergedEvent('onCardsDrawn', { cards: cards, player: this }, () => {
+            _.each(cards, card => {
+                this.moveCard(card, 'hand');
+            });
         });
 
         if(this.drawDeck.size() === 0) {
