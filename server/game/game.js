@@ -344,8 +344,6 @@ class Game extends EventEmitter {
             player.faction.power = 0;
         }
 
-        this.raiseEvent('onStatChanged', player, 'power');
-
         this.checkWinCondition(player);
     }
 
@@ -360,17 +358,12 @@ class Game extends EventEmitter {
         if(player.gold < 0) {
             player.gold = 0;
         }
-
-        this.raiseEvent('onStatChanged', player, 'gold');
     }
 
     transferPower(winner, loser, power) {
         var appliedPower = Math.min(loser.faction.power, power);
         loser.faction.power -= appliedPower;
         winner.faction.power += appliedPower;
-
-        this.raiseEvent('onStatChanged', loser, 'power');
-        this.raiseEvent('onStatChanged', winner, 'power');
 
         this.checkWinCondition(winner);
     }
@@ -380,9 +373,6 @@ class Game extends EventEmitter {
 
         from.gold -= appliedGold;
         to.gold += appliedGold;
-
-        this.raiseEvent('onStatChanged', from, 'gold');
-        this.raiseEvent('onStatChanged', to, 'gold');
 
         this.raiseMergedEvent('onGoldTransferred', { source: from, target: to, amount: gold });
     }
@@ -438,8 +428,6 @@ class Game extends EventEmitter {
         if(stat === 'claim' && _.isNumber(player.activePlot.claimSet)) {
             player.activePlot.claimSet += value;
 
-            this.raiseEvent('onStatChanged', player, stat, value);
-
             if(player.activePlot.claimSet < 0) {
                 player.activePlot.claimSet = 0;
             } else {
@@ -449,8 +437,6 @@ class Game extends EventEmitter {
         }
 
         target[stat] += value;
-
-        this.raiseEvent('onStatChanged', player, stat, value);
 
         if(target[stat] < 0) {
             target[stat] = 0;
