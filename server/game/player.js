@@ -1018,10 +1018,6 @@ class Player extends Spectator {
             targetPile.push(card);
         }
 
-        if(targetLocation === 'hand') {
-            this.game.raiseEvent('onCardEntersHand', card);
-        }
-
         if(['dead pile', 'discard pile'].includes(targetLocation)) {
             this.game.raiseMergedEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
         }
