@@ -101,7 +101,8 @@ class EffectEngine {
         });
     }
 
-    onCardBlankToggled(event, card, isBlank) {
+    onCardBlankToggled(event) {
+        let {card, isBlank} = event;
         let targets = this.getTargets();
         let matchingEffects = _.filter(this.effects, effect => effect.duration === 'persistent' && effect.source === card);
         _.each(matchingEffects, effect => {
