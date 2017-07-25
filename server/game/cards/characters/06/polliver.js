@@ -4,7 +4,7 @@ class Polliver extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: (event, challenge, card, discarded) => card === this && discarded.getType() === 'character' && this.opponentHasGold()
+                onPillage: event => event.source === this && event.discardedCard.getType() === 'character' && this.opponentHasGold()
             },
             handler: () => {
                 let otherPlayer = this.game.getOtherPlayer(this.controller);

@@ -4,7 +4,7 @@ class SerGregorsMarauders extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: (event, challenge, card, discarded) => card === this && discarded.getType() === 'event'
+                onPillage: event => event.source === this && event.discardedCard.getType() === 'event'
             },
             handler: () => {
                 this.controller.standCard(this);
