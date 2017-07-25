@@ -4,10 +4,10 @@ class TheSeastoneChair extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onClaimApplied: (event, challenge) => (
-                    challenge.isUnopposed() &&
-                    challenge.challengeType === 'military' &&
-                    challenge.attackingPlayer === this.controller)
+                onClaimApplied: event => (
+                    event.challenge.isUnopposed() &&
+                    event.challenge.challengeType === 'military' &&
+                    event.challenge.attackingPlayer === this.controller)
             },
             cost: ability.costs.kneelFactionCard(),
             handler: context => {

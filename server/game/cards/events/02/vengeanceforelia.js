@@ -5,7 +5,7 @@ class VengeanceForElia extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: (event, challenge) => challenge.defendingPlayer === this.controller
+                onClaimApplied: event => event.challenge.defendingPlayer === this.controller
             },
             handler: context => {
                 let opponent = this.game.getOtherPlayer(this.controller);

@@ -5,10 +5,10 @@ class TrialByCombat extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: (event, challenge) => (
-                    challenge.winner === this.controller &&
-                    challenge.attackingPlayer === this.controller &&
-                    challenge.challengeType === 'intrigue'
+                onClaimApplied: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.attackingPlayer === this.controller &&
+                    event.challenge.challengeType === 'intrigue'
                 )
             },
             handler: context => {

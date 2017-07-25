@@ -4,10 +4,10 @@ class DagmerCleftjaw extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: (event, challenge) => (
-                    challenge.winner === this.controller &&
-                    challenge.isAttacking(this) &&
-                    challenge.attackers.length === 1)
+                onClaimApplied: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isAttacking(this) &&
+                    event.challenge.attackers.length === 1)
             },
             handler: context => {
                 context.skipHandler();

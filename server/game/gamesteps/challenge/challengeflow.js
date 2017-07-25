@@ -233,7 +233,7 @@ class ChallengeFlow extends BaseStep {
             return false;
         }
 
-        this.game.raiseEvent('onClaimApplied', this.challenge, () => {
+        this.game.raiseMergedEvent('onClaimApplied', { challenge: this.challenge }, () => {
             this.game.queueStep(new ApplyClaim(this.game, this.challenge));
         });
 
