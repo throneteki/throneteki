@@ -22,9 +22,9 @@ class ActionWindow extends PlayerOrderPrompt {
 
     activePrompt() {
         return {
-            menuTitle: 'Any actions or reactions?',
+            menuTitle: 'Initiate an action, or pass',
             buttons: [
-                { text: 'Done' }
+                { text: 'Pass' }
             ],
             promptTitle: this.title
         };
