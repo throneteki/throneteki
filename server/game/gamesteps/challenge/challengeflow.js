@@ -165,7 +165,7 @@ class ChallengeFlow extends BaseStep {
 
         this.challenge.addDefenders(defenders);
 
-        this.game.raiseEvent('onDefendersDeclared', this.challenge);
+        this.game.raiseMergedEvent('onDefendersDeclared', { challenge: this.challenge });
 
         return true;
     }
