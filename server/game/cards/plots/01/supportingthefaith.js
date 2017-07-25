@@ -6,7 +6,7 @@ class SupportingTheFaith extends PlotCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onPhaseStarted: (e, phase) => phase === 'challenge'
+                onPhaseStarted: event => event.phase === 'challenge'
             },
             handler: () => {
                 _.each(this.game.getPlayers(), player => {

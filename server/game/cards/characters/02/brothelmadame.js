@@ -11,7 +11,7 @@ class BrothelMadame extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: (event, phase) => phase === 'challenge'
+                onPhaseStarted: event => event.phase === 'challenge'
             },
             handler: () => {
                 let otherPlayer = this.game.getOtherPlayer(this.controller);

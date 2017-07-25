@@ -4,7 +4,7 @@ class LightOfTheLord extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: (event, phase) => phase === 'dominance'
+                onPhaseStarted: event => event.phase === 'dominance'
             },
             handler: () => {
                 this.controller.standCard(this.parent);

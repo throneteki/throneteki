@@ -46,7 +46,7 @@ class Phase extends BaseStep {
             player.phase = this.name;
         });
         this.game.reapplyStateDependentEffects();
-        this.game.raiseEvent('onPhaseStarted', this.name);
+        this.game.raiseMergedEvent('onPhaseStarted', { phase: this.name });
     }
 
     endPhase() {

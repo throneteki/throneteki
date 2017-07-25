@@ -6,7 +6,7 @@ class UnexpectedDelay extends PlotCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onPhaseStarted: (event, phase) => phase === 'challenge'
+                onPhaseStarted: event => event.phase === 'challenge'
             },
             handler: () => {
                 this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();

@@ -6,7 +6,7 @@ class TheBrotherhoodWithoutBanners extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: (event, phase) => phase === 'challenge'
+                onPhaseStarted: event => event.phase === 'challenge'
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
