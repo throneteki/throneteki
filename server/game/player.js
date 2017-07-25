@@ -1001,10 +1001,6 @@ class Player extends Spectator {
             });
         }
 
-        if(card.location === 'hand') {
-            this.game.raiseEvent('onCardLeftHand', card);
-        }
-
         if(card.location === 'active plot') {
             card.leavesPlay();
             this.game.raiseMergedEvent('onCardLeftPlay', { player: this, card: card });
