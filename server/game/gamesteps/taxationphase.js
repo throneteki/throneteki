@@ -24,7 +24,7 @@ class TaxationPhase extends Phase {
     }
 
     roundEnded() {
-        this.game.raiseEvent('onRoundEnded');
+        this.game.raiseMergedEvent('onRoundEnded');
     }
 }
 
