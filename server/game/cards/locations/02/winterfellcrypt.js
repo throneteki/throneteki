@@ -4,9 +4,9 @@ class WinterfellCrypt extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: (event, player, card) => {
-                    if(this.uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, card)) {
-                        this.triggerCard = card;
+                onSacrificed: event => {
+                    if(this.uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, event.card)) {
+                        this.triggerCard = event.card;
                         return true;
                     }
 

@@ -4,7 +4,7 @@ class AsHardAsWinter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onSacrificed: (event, player, card) => this.checkConditionsAndSaveCharacter(card),
+                onSacrificed: event => this.checkConditionsAndSaveCharacter(event.card),
                 onCharacterKilled: (event) => this.checkConditionsAndSaveCharacter(event.card)
             },
 

@@ -5,7 +5,7 @@ const EventToTitleFunc = {
     onCharactersKilled: () => 'characters being killed',
     onPhaseEnded: event => event.phase + ' phase ending',
     onPhaseStarted: event => event.phase + ' phase starting',
-    onSacrificed: event => event.params[2].name + ' being sacrificed',
+    onSacrificed: event => event.card.name + ' being sacrificed',
     onRemovedFromChallenge: event => event.card.name + ' being removed from the challenge'
 };
 

@@ -8,7 +8,7 @@ class Needle extends DrawCard {
 
         this.interrupt({
             when: {
-                onSacrificed: (e, player, card) => card === this.parent
+                onSacrificed: event => event.card === this.parent
             },
             handler: (context) => {
                 context.skipHandler();
