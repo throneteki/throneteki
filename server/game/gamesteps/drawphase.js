@@ -14,7 +14,6 @@ class DrawPhase extends Phase {
 
     draw() {
         _.each(this.game.getPlayers(), p => {
-            this.game.raiseEvent('beginDrawPhase', this, p);
             p.drawPhase();
         });
     }
