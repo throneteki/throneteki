@@ -702,7 +702,7 @@ class Game extends EventEmitter {
                 this.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: 'play', originalLocation: originalLocation });
             }
 
-            this.raiseEvent('onCardTakenControl', card);
+            this.raiseMergedEvent('onCardTakenControl', { card: card });
         });
     }
 

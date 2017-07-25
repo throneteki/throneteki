@@ -47,7 +47,8 @@ class EffectEngine {
         this.addTargetForPersistentEffects(event.card, newArea);
     }
 
-    onCardTakenControl(e, card) {
+    onCardTakenControl(event) {
+        let card = event.card;
         _.each(this.effects, effect => {
             if(effect.duration === 'persistent' && effect.source === card) {
                 // Since the controllers have changed, explicitly cancel the
