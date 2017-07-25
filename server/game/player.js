@@ -188,7 +188,7 @@ class Player extends Spectator {
 
     modifyUsedPlots(value) {
         this.usedPlotsModifier += value;
-        this.game.raiseEvent('onUsedPlotsModified', this);
+        this.game.raiseMergedEvent('onUsedPlotsModified', { player: this });
     }
 
     modifyClaim(winner, challengeType, claim) {
