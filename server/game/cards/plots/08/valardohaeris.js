@@ -101,7 +101,7 @@ class ValarDohaeris extends PlotCard {
                     card.owner.moveCard(card, 'draw deck', { bottom: true });
                 });
 
-                this.game.addMessage('{0} has {1} moved to the bottom of their deck for {2}',
+                this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}',
                     player, cardsOwnedByPlayer, this);
             } else {
                 this.game.addMessage('{0} does not have any characters moved to the bottom of their deck for {1}',

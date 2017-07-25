@@ -17,13 +17,13 @@ class UnexpectedDelay extends PlotCard {
     }
 
     cancelSelection(player) {
-        this.game.addMessage('{0} has cancelled the resolution of {1}', player, this);
+        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
         this.proceedToNextStep();
     }
 
     onCardSelected(player, card) {
         this.selections.push({ player: player, card: card });
-        this.game.addMessage('{0} has selected {1} for {2}', player, card, this);
+        this.game.addMessage('{0} selects {1} for {2}', player, card, this);
         this.proceedToNextStep();
 
         return true;

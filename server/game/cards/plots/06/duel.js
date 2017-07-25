@@ -37,7 +37,7 @@ class Duel extends PlotCard {
         }
 
         this.targets = cards;
-        this.game.addMessage('{0} has chosen {1} as the targets for {2}', player, cards, this);
+        this.game.addMessage('{0} chooses {1} as the targets for {2}', player, cards, this);
 
         this.game.promptWithMenu(player, this, {
             activePrompt: {
