@@ -1067,7 +1067,6 @@ class Player extends Spectator {
 
         dupe.moveTo('discard pile');
         dupe.owner.discardPile.push(dupe);
-        this.game.raiseEvent('onDupeDiscarded', this, card, dupe);
 
         return true;
     }
