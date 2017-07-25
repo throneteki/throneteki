@@ -48,16 +48,16 @@ describe('Dolorous Edd', function() {
         describe('when the player wins the challenge Edd enters', function() {
             beforeEach(function() {
                 this.player2.clickCard('Grand Maester Pycelle', 'play area');
-                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt('Pass');
 
                 // Skip player 2's action window
-                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt('Pass');
 
                 this.player1.clickCard('Dolorous Edd', 'hand');
 
                 // Complete the action window
-                this.player2.clickPrompt('Done');
-                this.player1.clickPrompt('Done');
+                this.player2.clickPrompt('Pass');
+                this.player1.clickPrompt('Pass');
 
                 // Do not explicitly defend
                 expect(this.player1).toHavePrompt('Select defenders');
@@ -87,13 +87,13 @@ describe('Dolorous Edd', function() {
                 this.player2.clickPrompt('Done');
 
                 // Skip player 2's action window
-                this.player2.clickPrompt('Done');
+                this.player2.clickPrompt('Pass');
 
                 this.player1.clickCard('Dolorous Edd', 'hand');
 
                 // Complete the action window
-                this.player2.clickPrompt('Done');
-                this.player1.clickPrompt('Done');
+                this.player2.clickPrompt('Pass');
+                this.player1.clickPrompt('Pass');
 
                 // Do not explicitly defend
                 expect(this.player1).toHavePrompt('Select defenders');

@@ -83,7 +83,7 @@ describe('Randyll Tarly', function() {
                 this.player1.clickPrompt('Done');
 
                 // Pass action window
-                this.player1.clickPrompt('Done');
+                this.player1.clickPrompt('Pass');
 
                 // Activate Dracarys
                 this.player2.clickCard('Dracarys!', 'hand');
@@ -93,8 +93,8 @@ describe('Randyll Tarly', function() {
                 this.player2.clickCard(this.randyll);
 
                 // Complete action window
-                this.player1.clickPrompt('Done');
-                this.player2.clickPrompt('Done');
+                this.player1.clickPrompt('Pass');
+                this.player2.clickPrompt('Pass');
 
                 // No defenders
                 this.player2.clickPrompt('Done');
