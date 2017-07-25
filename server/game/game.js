@@ -648,7 +648,7 @@ class Game extends EventEmitter {
             handler = () => true;
         }
 
-        this.queueStep(new EventWindow(this, eventName, params, handler, true));
+        this.queueStep(new EventWindow(this, eventName, params || {}, handler, true));
     }
 
     /**
