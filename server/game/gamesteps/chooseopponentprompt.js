@@ -4,7 +4,7 @@ const BaseStep = require('./basestep.js');
 /**
  * Prompt that asks the current player to select an opponent.
  */
-class SelectOpponentPrompt extends BaseStep {
+class ChooseOpponentPrompt extends BaseStep {
     constructor(game, player, properties) {
         super(game);
         this.player = player;
@@ -50,4 +50,4 @@ class SelectOpponentPrompt extends BaseStep {
     }
 }
 
-module.exports = SelectOpponentPrompt;
+module.exports = ChooseOpponentPrompt;

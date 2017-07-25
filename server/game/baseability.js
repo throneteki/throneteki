@@ -22,6 +22,7 @@ class BaseAbility {
     constructor(properties) {
         this.cost = this.buildCost(properties.cost);
         this.targets = this.buildTargets(properties);
+        this.chooseOpponentFunc = properties.chooseOpponent;
     }
 
     buildCost(cost) {
@@ -103,6 +104,18 @@ class BaseAbility {
         _.each(this.cost, cost => {
             cost.unpay(context);
         });
+    }
+
+    needsChooseOpponent() {
+        return !!this.chooseOpponentFunc;
+    }
+
+    canChooseOpponent(opponent) {
+        if(_.isFunction(this.chooseOpponentFunc)) {
+            return this.chooseOpponentFunc(opponent);
+        }
+
+        return this.chooseOpponentFunc === true;
     }
 
     /**
