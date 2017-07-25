@@ -7,8 +7,11 @@ const PlayerInteractionWrapper = require('./playerinteractionwrapper.js');
 
 class GameFlowWrapper {
     constructor() {
-        var gameRouter = jasmine.createSpyObj('gameRouter', ['gameWon', 'playerLeft']);
-        var details = {
+        let gameRouter = jasmine.createSpyObj('gameRouter', ['gameWon', 'handleError', 'playerLeft']);
+        gameRouter.handleError.and.callFake((game, error) => {
+            throw error;
+        });
+        let details = {
             name: 'player1\'s game',
             id: 12345,
             owner: 'player1',
