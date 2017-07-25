@@ -41,7 +41,7 @@ describe('The Red Keep', function() {
             });
 
             it('should remove the strength bonus if blanked mid-challenge', function() {
-                this.player1.clickPrompt('Done');
+                this.player1.clickPrompt('Pass');
                 this.player2.clickCard('Nightmares', 'hand');
                 this.player2.clickCard(this.redKeep);
 
@@ -49,7 +49,7 @@ describe('The Red Keep', function() {
             });
 
             it('should not keep the strength bonus if all characters removed from the challenge', function() {
-                this.player1.clickPrompt('Done');
+                this.player1.clickPrompt('Pass');
                 this.player2.clickCard('Areo Hotah', 'hand');
                 this.player2.clickPrompt('Areo Hotah');
                 this.player2.clickCard(this.character);
