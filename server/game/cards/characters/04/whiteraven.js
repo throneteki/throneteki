@@ -15,8 +15,8 @@ class WhiteRaven extends DrawCard {
         });
         this.reaction({
             when: {
-                onDominanceDetermined: (event, winner) => (
-                    this.controller === winner && 
+                onDominanceDetermined: event => (
+                    this.controller === event.winner &&
                     (this.anyPlotHasTrait('Summer') || this.anyPlotHasTrait('Winter')))
             },
             handler: () => {

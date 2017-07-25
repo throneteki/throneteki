@@ -26,7 +26,7 @@ class SavingTheKingdom extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                onDominanceDetermined: (event, winner) => this.controller === winner
+                onDominanceDetermined: event => this.controller === event.winner
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),

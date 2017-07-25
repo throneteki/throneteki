@@ -14,7 +14,7 @@ class StannisBaratheon extends DrawCard {
 
         this.reaction({
             when: {
-                onDominanceDetermined: (event, winner) => this.controller === winner
+                onDominanceDetermined: event => this.controller === event.winner
             },
             target: {
                 activePromptTitle: 'Select a character',

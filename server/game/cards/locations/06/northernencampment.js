@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class DominanceTracker {
     constructor(game, card) {
         this.hasWonDominanceThisRound = undefined;
-        game.on('onDominanceDetermined', (event, winner) => this.hasWonDominanceThisRound = card.controller === winner);
+        game.on('onDominanceDetermined', event => this.hasWonDominanceThisRound = card.controller === event.winner);
         game.on('onRoundEnded', () => this.hasWonDominanceThisRound = undefined);
     }
 }
