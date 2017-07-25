@@ -595,8 +595,6 @@ class Player extends Spectator {
             this.plotDiscard.each(plot => {
                 this.moveCard(plot, 'plot deck');
             });
-
-            this.game.raiseEvent('onPlotsRecycled', this);
         }
     }
 
