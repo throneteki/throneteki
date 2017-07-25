@@ -17,7 +17,7 @@ class TaxationPhase extends Phase {
 
     returnGold() {
         _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-            this.game.raiseEvent('onUnspentGoldReturned', player, () => {
+            this.game.raiseMergedEvent('onUnspentGoldReturned', { player: player }, () => {
                 player.taxation();
             });
         });
