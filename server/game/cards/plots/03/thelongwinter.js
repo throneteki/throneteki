@@ -14,7 +14,7 @@ class TheLongWinter extends PlotCard {
     }
 
     cancelSelection(player) {
-        this.game.addMessage('{0} has cancelled the resolution of {1}', player, this);
+        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
         this.proceedToNextStep();
         return true;
     }
@@ -25,14 +25,14 @@ class TheLongWinter extends PlotCard {
         }
 
         this.selections.push({ player: player, factionCard: true });
-        this.game.addMessage('{0} has selected their faction to lose power from {2}', player, this);
+        this.game.addMessage('{0} selects their faction to lose power from {2}', player, this);
         this.proceedToNextStep();
         return true;
     }
 
     onCardSelected(player, card) {
         this.selections.push({ player: player, card: card });
-        this.game.addMessage('{0} has selected {1} to lose power from {2}', player, card, this);
+        this.game.addMessage('{0} selects {1} to lose power from {2}', player, card, this);
         this.proceedToNextStep();
         return true;
     }

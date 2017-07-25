@@ -58,7 +58,7 @@ class Queenscrown extends DrawCard {
         if(this.remainingCards.length === 1) {
             let card = this.remainingCards.shift();
             card.controller.moveCard(card, 'draw deck', { bottom: true });
-            this.game.addMessage('{0} has placed the remaining cards at the bottom of {1}\'s deck', this.controller, card.controller);
+            this.game.addMessage('{0} places the remaining cards at the bottom of {1}\'s deck', this.controller, card.controller);
             return;
         }
 
