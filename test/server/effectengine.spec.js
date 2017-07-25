@@ -289,7 +289,7 @@ describe('EffectEngine', function () {
         describe('when an effect has untilEndOfChallenge duration', function() {
             beforeEach(function() {
                 this.effectSpy.duration = 'untilEndOfChallenge';
-                this.engine.onChallengeFinished({}, {});
+                this.engine.onChallengeFinished({ challenge: {} });
             });
 
             it('should cancel the effect', function() {
@@ -305,7 +305,7 @@ describe('EffectEngine', function () {
         describe('when an effect has a non-untilEndOfChallenge duration', function() {
             beforeEach(function() {
                 this.effectSpy.duration = 'persistent';
-                this.engine.onChallengeFinished({}, {});
+                this.engine.onChallengeFinished({ challenge: {} });
             });
 
             it('should not cancel the effect', function() {
