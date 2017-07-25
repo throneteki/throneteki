@@ -63,7 +63,7 @@ describe('Heads on Spikes', function() {
                 this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player1);
 
-                this.skipActionWindow();
+                this.completeMarshalPhase();
             });
 
             it('should discard a card from the opponent hand', function() {
