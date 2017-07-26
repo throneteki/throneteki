@@ -4,7 +4,8 @@ class Loot extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => this.controller === challenge.winner && challenge.isUnopposed()
+                afterChallenge: ({challenge}) => this.controller === challenge.winner && challenge.isUnopposed() &&
+                                                 this.opponentDeckSize() >= 1
             },
             cost: ability.costs.payXGold(() => this.opponentDeckSize(), this.game.getOtherPlayer(this.controller)),
             handler: context => {
