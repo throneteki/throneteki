@@ -35,16 +35,16 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return false;
     }
 
-    isCancellableEvent() {
+    isCancellableEvent(player) {
         let cancellableEvents = ['onCardAbilityInitiated', 'onClaimApplied'];
 
-        return this.abilityType === 'cancelinterrupt' && _.any(this.events, event => {
+        return !player.noTimer && this.abilityType === 'cancelinterrupt' && _.any(this.events, event => {
             return _.contains(cancellableEvents, event.name);
         });
     }
 
     filterChoicelessPlayers(players) {
-        return _.filter(players, player => this.isCancellableEvent() || _.any(this.abilityChoices, abilityChoice => this.eligibleChoiceForPlayer(abilityChoice, player)));
+        return _.filter(players, player => this.isCancellableEvent(player) || _.any(this.abilityChoices, abilityChoice => this.eligibleChoiceForPlayer(abilityChoice, player)));
     }
 
     eligibleChoiceForPlayer(abilityChoice, player) {
@@ -62,10 +62,10 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             return { text: title, method: 'chooseAbility', arg: abilityChoice.id, card: abilityChoice.card };
         });
 
-        if(this.isCancellableEvent()) {
+        if(this.isCancellableEvent(player)) {
             buttons.push({ timer: true, method: 'pass' });
             buttons.push({ text: 'I need more time', timerCancel: true });
-            buttons.push({ text: 'Don\'t ask for 5 minutes', method: 'pass', arg: 'pause' });
+            buttons.push({ text: 'Don\'t ask again until end of phase', timerCancel: true, method: 'pass', arg: 'pauseRound' });
         }
 
         buttons.push({ text: 'Pass', method: 'pass' });
@@ -113,7 +113,12 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return true;
     }
 
-    pass() {
+    pass(player, arg) {
+        if(arg === 'pauseRound') {
+            player.noTimer = true;
+            player.resetTimerAtEndOfRound = true;
+        }
+
         this.players.shift();
         return true;
     }

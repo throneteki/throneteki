@@ -41,7 +41,7 @@ class ActivePlayerPrompt extends React.Component {
                 }
 
                 let timerClass = (((this.timer.timerTime - difference) / this.timer.timerTime) * 100) + '%';
-                this.setState({ showTimer: keepGoing, timerClass: timerClass });
+                this.setState({ showTimer: keepGoing, timerClass: timerClass, timeLeft: (this.timer.timerTime - difference).toFixed() });
             }, 100);
         }
     }
@@ -54,7 +54,7 @@ class ActivePlayerPrompt extends React.Component {
         }
     }
 
-    onCancelTimerClick(event) {
+    onCancelTimerClick(event, button) {
         event.preventDefault();
 
         if(this.timer.handle) {
@@ -62,6 +62,10 @@ class ActivePlayerPrompt extends React.Component {
         }
 
         this.setState({ showTimer: false });
+
+        if(button.method) {
+            this.props.onButtonClick(button.command, button.arg, button.method);
+        }
     }
 
     onMouseOver(event, card) {
@@ -86,13 +90,15 @@ class ActivePlayerPrompt extends React.Component {
                 return;
             }
 
-            let clickCallback = button.timerCancel ? this.onCancelTimerClick.bind(this) :
+            let clickCallback = button.timerCancel ? event => this.onCancelTimerClick(event, button) :
                 event => this.onButtonClick(event, button.command, button.arg, button.method);
 
             let option = (
-                <button key={ button.command + buttonIndex.toString() } className='btn btn-primary'
+                <button key={ button.command + buttonIndex.toString() }
+                    className='btn btn-primary'
                     onClick={ clickCallback }
-                    onMouseOver={ event => this.onMouseOver(event, button.card) } onMouseOut={ event => this.onMouseOut(event, button.card) }
+                    onMouseOver={ event => this.onMouseOver(event, button.card) }
+                    onMouseOut={ event => this.onMouseOut(event, button.card) }
                     disabled={ button.disabled }>{ button.text }</button>);
 
             buttonIndex++;
@@ -113,9 +119,13 @@ class ActivePlayerPrompt extends React.Component {
         let timer = null;
 
         if(this.state.showTimer) {
-            timer = (<div className='progress'>
-                <div className='progress-bar progress-bar-success progress-bar-striped' role='progressbar' style={ { width: this.state.timerClass } } />
-            </div>);
+            timer = (
+                <div>
+                    <span>Auto passing in { this.state.timeLeft }...</span>
+                    <div className='progress'>
+                        <div className='progress-bar progress-bar-success' role='progressbar' style={ { width: this.state.timerClass } } />
+                    </div>
+                </div>);
         }
 
         return (<div>
