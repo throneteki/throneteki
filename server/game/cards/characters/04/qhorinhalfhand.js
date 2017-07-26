@@ -10,24 +10,15 @@ class QhorinHalfhand extends DrawCard {
                     challenge.isParticipating(this)
                 )
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character to kill',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' && 
-                        card.getType() === 'character' && 
-                        !card.isUnique() && 
-                        card.getStrength() < this.getStrength() &&
-                        card.controller !== this.controller),
-                    gameAction: 'kill',
-                    onSelect: (p, card) => {
-                        card.controller.killCharacter(card);
-                        this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, card);
-                        
-                        return true;
-                    }
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' &&
+                                       !card.isUnique() && card.getStrength() < this.getStrength(),
+                gameAction: 'kill'
+            },
+            handler: context => {
+                context.target.controller.killCharacter(context.target);
+                this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, context.target);
             }
         });
     }
