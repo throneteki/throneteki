@@ -6,7 +6,7 @@ class EffectEngine {
     constructor(game) {
         this.game = game;
         this.events = new EventRegistrar(game, this);
-        this.events.register(['onCardMoved', 'onCardFactionChanged', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
+        this.events.register(['onCardMoved', 'onCardTraitChanged', 'onCardFactionChanged', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
         this.effects = [];
         this.recalculateEvents = {};
         this.customDurationEvents = [];
@@ -67,14 +67,22 @@ class EffectEngine {
         this.addTargetForPersistentEffects(card, 'play area');
     }
 
+    onCardTraitChanged(event) {
+        this.recalculateTargetingChange(event.card);
+    }
+
     onCardFactionChanged(event) {
+        this.recalculateTargetingChange(event.card);
+    }
+
+    recalculateTargetingChange(card) {
         _.each(this.effects, effect => {
-            if(effect.duration === 'persistent' && effect.hasTarget(event.card) && !effect.isValidTarget(event.card)) {
-                effect.removeTarget(event.card);
+            if(effect.duration === 'persistent' && effect.hasTarget(card) && !effect.isValidTarget(card)) {
+                effect.removeTarget(card);
             }
         });
 
-        this.addTargetForPersistentEffects(event.card, 'play area');
+        this.addTargetForPersistentEffects(card, 'play area');
     }
 
     addTargetForPersistentEffects(card, targetLocation) {
