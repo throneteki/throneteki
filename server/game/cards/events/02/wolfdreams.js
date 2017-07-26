@@ -7,7 +7,7 @@ class WolfDreams extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to add to hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Direwolf'),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

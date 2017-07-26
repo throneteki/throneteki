@@ -12,7 +12,7 @@ class ShierakQiya extends DrawCard {
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                activePromptTitle: 'Select a participating character to stand',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card),
                 gameAction: 'stand'
             },

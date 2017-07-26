@@ -19,7 +19,7 @@ class ShaggaSonOfDolf extends DrawCard {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'ambush'
             },
             target: {
-                activePromptTitle: 'Select a character to kill',
+                activePromptTitle: 'Select a character',
                 cardCondition: card =>
                     card.location === 'play area'
                     && card.controller === this.controller

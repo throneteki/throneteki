@@ -29,7 +29,7 @@ class SerEdmureTully extends DrawCard {
                         card !== this.powerGainingCharacter &&
                         this.isTullyCharacter(card)
                     ),
-                    activePromptTitle: 'Select a Tully character to move power to',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     onSelect: (player, card) => this.transferPower(card)
                 });

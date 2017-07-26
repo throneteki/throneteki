@@ -5,7 +5,7 @@ class ATimeForWolves extends PlotCard {
         this.whenRevealed({
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Direwolf'),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

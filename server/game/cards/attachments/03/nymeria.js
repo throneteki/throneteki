@@ -23,7 +23,7 @@ class Nymeria extends DrawCard {
 
         this.game.promptForSelect(this.controller, {
             cardCondition: card => player.canAttach(this, card) && card.location === 'play area',
-            activePromptTitle: 'Select a different character for attachment',
+            activePromptTitle: 'Select a character',
             waitingPromptTitle: 'Waiting for opponent to move attachment',
             onSelect: (player, card) => this.moveAttachment(player, card)
         });

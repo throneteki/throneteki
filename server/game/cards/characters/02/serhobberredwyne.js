@@ -8,7 +8,7 @@ class SerHobberRedwyne extends DrawCard {
             },
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'character' && card.hasTrait('Lady'),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

@@ -41,7 +41,7 @@ class Gendry extends DrawCard {
     sacrificeBastard(player) {
         this.game.promptForSelect(player, {
             cardCondition: card => card.location === 'play area' && card.hasTrait('Bastard') && card.getType() === 'character' && card.controller === this.controller,
-            activePromptTitle: 'Select a bastard to sacrifice',
+            activePromptTitle: 'Select a character',
             source: this,
             onSelect: (player, card) => {
                 card.controller.sacrificeCard(card);

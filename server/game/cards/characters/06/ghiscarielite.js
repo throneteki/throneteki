@@ -13,7 +13,7 @@ class GhiscariElite extends DrawCard {
                 this.game.promptForSelect(this.controller, {
                     source: this,
                     cardCondition: card => this.eventOrAttachmentInDiscard(card),
-                    activePromptTitle: 'Select attachment or event in discard',
+                    activePromptTitle: 'Select attachment or event',
                     onSelect: (player, card) => this.moveToBottomOfDeck(card)
                 });
             }

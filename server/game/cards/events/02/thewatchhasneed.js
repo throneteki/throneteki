@@ -28,7 +28,7 @@ class TheWatchHasNeed extends DrawCard {
         this.game.promptForDeckSearch(this.controller, {
             numCards: reserve,
             numToSelect: reserve, // player can stop earlier clicking Done when happy
-            activePromptTitle: 'Select a card to add to hand',
+            activePromptTitle: 'Select a card',
             cardCondition: card => card.getType() === 'character' && card.hasTrait(trait),
             onSelect: (player, card) => this.cardSelected(player, trait, card),
             onCancel: player => this.doneSelecting(player, trait),

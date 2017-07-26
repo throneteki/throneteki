@@ -10,7 +10,7 @@ class ShadowblackLane extends DrawCard {
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'event' && card.isFaction(this.controller.faction.getPrintedFaction()),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

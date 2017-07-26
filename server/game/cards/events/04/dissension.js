@@ -6,7 +6,7 @@ class Dissension extends DrawCard {
             title: 'Discard Ally from play',
             phase: 'marshal',
             target: {
-                activePromptTitle: 'Select an Ally',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.hasTrait('Ally') && card.getType() === 'character'
             },
             handler: context => {

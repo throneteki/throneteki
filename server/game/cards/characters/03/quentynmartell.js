@@ -17,7 +17,7 @@ class QuentynMartell extends DrawCard {
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => this.cardCondition(card),
-                    activePromptTitle: 'Select a character to kill',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     gameAction: 'kill',
                     onSelect: (player, card) => this.onCardSelected(player, card)

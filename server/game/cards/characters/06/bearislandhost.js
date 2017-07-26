@@ -7,7 +7,7 @@ class BearIslandHost extends DrawCard {
             cost: ability.costs.discardGold(),
             handler: context => {
                 this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a House Mormont character',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.hasTrait('House Mormont') && card.getType() === 'character',
                     onSelect: (player, card) => this.onCardSelected(player, card)

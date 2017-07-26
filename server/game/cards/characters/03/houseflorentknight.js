@@ -8,7 +8,7 @@ class HouseFlorentKnight extends DrawCard {
                 onCardEntersPlay: event => event.card === this
             },
             target: {
-                activePromptTitle: 'Select a character with the lowest strength in play',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => {
                     return card.getStrength() === this.getLowestStrInPlay() && card.location === 'play area';
                 }

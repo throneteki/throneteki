@@ -6,7 +6,7 @@ class Gilly extends DrawCard {
             title: 'Discard 1 gold from ' + this.name,
             cost: ability.costs.discardGold(),
             target: {
-                activePromptTitle: 'Select a Steward character',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' && 
                     card.controller === this.controller &&

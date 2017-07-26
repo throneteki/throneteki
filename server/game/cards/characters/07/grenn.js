@@ -10,7 +10,7 @@ class Grenn extends DrawCard {
                     this.opponentHasFactionPower()
             },
             target: {
-                activePromptTitle: 'Select attacking character',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card !== this &&

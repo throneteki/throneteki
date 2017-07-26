@@ -20,7 +20,7 @@ class HisViperEyes extends DrawCard {
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
-                        menuTitle: 'Select a card to discard',
+                        menuTitle: 'Select a card',
                         buttons: buttons
                     },
                     source: this

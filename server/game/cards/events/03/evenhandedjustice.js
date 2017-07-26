@@ -8,7 +8,7 @@ class EvenHandedJustice extends DrawCard {
             title: 'Kneel a character for each player',
             targets: {
                 yourCard: {
-                    activePromptTitle: 'Select a standing character of yours',
+                    activePromptTitle: 'Select a character of yours',
                     cardCondition: card =>
                         !card.kneeled
                         && card.location === 'play area'
@@ -17,7 +17,7 @@ class EvenHandedJustice extends DrawCard {
                     gameAction: 'kneel'
                 },
                 opponentCard: {
-                    activePromptTitle: 'Select a standing character controlled by your opponent',
+                    activePromptTitle: 'Select a character controlled by your opponent',
                     cardCondition: card =>
                         !card.kneeled
                         && card.location === 'play area'

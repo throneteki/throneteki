@@ -11,7 +11,7 @@ class MargaeryTyrell extends DrawCard {
             limit: ability.limit.perRound(1),
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to put into play',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.isUnique() && (card.hasTrait('king') || card.hasTrait('lord')) && this.controller.canPutIntoPlay(card),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

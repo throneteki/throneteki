@@ -9,7 +9,7 @@ class CastleBlackMason extends DrawCard {
             handler: context => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardType: ['attachment', 'location'],
                     onSelect: (player, card) => this.cardSelected(player, card, context.kneelingCostCards),
                     onCancel: player => this.doneSelecting(player, context.kneelingCostCards),

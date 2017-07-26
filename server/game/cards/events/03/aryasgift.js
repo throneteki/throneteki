@@ -5,7 +5,7 @@ class AryasGift extends DrawCard {
         this.action({
             title: 'Move attachment',
             target: {
-                activePromptTitle: 'Select attachment to move from Stark character',
+                activePromptTitle: 'Select an attachment',
                 cardCondition: card => card.getType && card.getType() === 'attachment' && card.parent &&
                     card.parent.isFaction('stark') && card.parent.controller === this.controller
             },
@@ -16,8 +16,7 @@ class AryasGift extends DrawCard {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => card.getType() === 'character' && card.controller === this.controller &&
                         card !== oldOwner && this.controller.canAttach(attachment, card) && card.location === 'play area',
-                    activePromptTitle: 'Select another character for attachment',
-                    waitingPromptTitle: 'Waiting for opponent to move attachment',
+                    activePromptTitle: 'Select a character',
                     onSelect: (player, card) => this.moveAttachment(player, card, attachment, oldOwner)
                 });
 

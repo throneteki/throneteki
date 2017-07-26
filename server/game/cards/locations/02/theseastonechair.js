@@ -13,7 +13,7 @@ class TheSeastoneChair extends DrawCard {
             handler: context => {
                 context.skipHandler();
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character to kill',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => (
                         card.location === 'play area' && 

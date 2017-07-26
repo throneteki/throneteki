@@ -7,7 +7,7 @@ class DaringRescue extends DrawCard {
             condition: () => this.hasKnightCharacter(),
             phase: 'challenge',
             target: {
-                activePromptTitle: 'Select a character to return',
+                activePromptTitle: 'Select a character to return to hand',
                 cardCondition: card => (
                     card.location === 'play area' && 
                     card.controller === this.controller && 
@@ -18,7 +18,7 @@ class DaringRescue extends DrawCard {
                 this.game.addMessage('{0} plays {1} to return {2} to its owner\'s hand', 
                     this.controller, this, context.target);
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a Knight character',
+                    activePromptTitle: 'Select a character to gain power',
                     source: this,
                     cardCondition: card => (
                         card.location === 'play area' && 

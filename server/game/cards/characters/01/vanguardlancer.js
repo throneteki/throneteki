@@ -8,7 +8,7 @@ class VanguardLancer extends DrawCard {
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a card to discard power from',
+                    activePromptTitle: 'Select a card',
                     source: this,
                     additionalButtons: [{ text: 'Faction Card', arg: 'faction' }],
                     cardCondition: card => card.controller !== this.controller && card.getPower() > 0,

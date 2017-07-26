@@ -9,7 +9,7 @@ class AsshaiPriestess extends DrawCard {
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => this.cardCondition(card),
-                    activePromptTitle: 'Select a character to kneel',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     gameAction: 'kneel',
                     onSelect: (player, card) => this.onCardSelected(player, card)

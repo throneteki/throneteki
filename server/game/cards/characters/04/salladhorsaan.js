@@ -10,7 +10,7 @@ class SalladhorSaan extends DrawCard {
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a card to put into play',
+                    activePromptTitle: 'Select a card',
                     source: this,
                     cardCondition: card => (
                         card.location === 'hand' &&

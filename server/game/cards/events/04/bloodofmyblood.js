@@ -7,7 +7,7 @@ class BloodOfMyBlood extends DrawCard {
             phase: 'challenge',
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to put it in play',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'character' && card.hasTrait('Bloodrider') && this.controller.canPutIntoPlay(card),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

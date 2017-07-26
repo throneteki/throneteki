@@ -6,7 +6,7 @@ class Summons extends PlotCard {
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardType: 'character',
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

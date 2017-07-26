@@ -30,7 +30,7 @@ class OlennasCunning extends DrawCard {
 
     typeSelected(player, type) {
         this.game.promptForDeckSearch(this.controller, {
-            activePromptTitle: 'Select a card add to your hand',
+            activePromptTitle: 'Select a card',
             cardCondition: card => card.getType() !== type,
             onSelect: (player, card) => this.cardSelected(player, card),
             onCancel: player => this.doneSelecting(player),

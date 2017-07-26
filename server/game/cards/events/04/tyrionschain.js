@@ -21,7 +21,7 @@ class TyrionsChain extends DrawCard {
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
-                        menuTitle: 'Select a War plot to resolve',
+                        menuTitle: 'Select a plot',
                         buttons: buttons
                     },
                     source: this

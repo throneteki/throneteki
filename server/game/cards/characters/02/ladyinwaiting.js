@@ -7,7 +7,7 @@ class LadyInWaiting extends DrawCard {
             condition: () => this.canMarshalAsDupe(),
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a Lady character',
+                    activePromptTitle: 'Select a character',
                     cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady') &&
                                            card.controller === this.controller && card.owner === this.controller,
                     onSelect: (player, card) => this.marshalAsDupe(card)

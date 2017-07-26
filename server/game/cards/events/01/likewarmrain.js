@@ -9,7 +9,7 @@ class LikeWarmRain extends DrawCard {
             max: ability.limit.perChallenge(1),
             cost: ability.costs.kneel(card => card.getType() === 'character' && card.hasTrait('Direwolf')),
             target: {
-                activePromptTitle: 'Select a character to kill',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isAttacking(card),
                 gameAction: 'kill'
             },

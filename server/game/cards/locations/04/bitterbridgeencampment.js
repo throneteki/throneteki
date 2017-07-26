@@ -42,7 +42,7 @@ class BitterbridgeEncampment extends DrawCard {
         if(this.remainingPlayers.length > 0) {
             var currentPlayer = this.remainingPlayers.shift();
             this.game.promptForSelect(currentPlayer, {
-                activePromptTitle: 'Select a character to put into play',
+                activePromptTitle: 'Select a character',
                 source: this,
                 cardCondition: card => card.controller === currentPlayer && card.getType() === 'character' && card.location === 'hand',
                 onSelect: (player, card) => this.onCardSelected(player, card),
