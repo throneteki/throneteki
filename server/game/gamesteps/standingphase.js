@@ -13,10 +13,8 @@ class StandingPhase extends Phase {
     }
 
     standCards() {
-        this.game.raiseEvent('onStandAllCards', () => {
-            _.each(this.game.getPlayers(), player => {
-                this.standCardsForPlayer(player);
-            });
+        _.each(this.game.getPlayers(), player => {
+            this.standCardsForPlayer(player);
         });
     }
 

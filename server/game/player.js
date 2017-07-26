@@ -595,8 +595,6 @@ class Player extends Spectator {
             this.plotDiscard.each(plot => {
                 this.moveCard(plot, 'plot deck');
             });
-
-            this.game.raiseEvent('onPlotsRecycled', this);
         }
     }
 
@@ -1003,10 +1001,6 @@ class Player extends Spectator {
             });
         }
 
-        if(card.location === 'hand') {
-            this.game.raiseEvent('onCardLeftHand', card);
-        }
-
         if(card.location === 'active plot') {
             card.leavesPlay();
             this.game.raiseMergedEvent('onCardLeftPlay', { player: this, card: card });
@@ -1022,10 +1016,6 @@ class Player extends Spectator {
             targetPile.unshift(card);
         } else {
             targetPile.push(card);
-        }
-
-        if(targetLocation === 'hand') {
-            this.game.raiseEvent('onCardEntersHand', card);
         }
 
         if(['dead pile', 'discard pile'].includes(targetLocation)) {
@@ -1069,7 +1059,6 @@ class Player extends Spectator {
 
         dupe.moveTo('discard pile');
         dupe.owner.discardPile.push(dupe);
-        this.game.raiseEvent('onDupeDiscarded', this, card, dupe);
 
         return true;
     }
