@@ -14,7 +14,7 @@ class RitualOfRhllor extends DrawCard {
                 this.game.promptForSelect(this.controller, {
                     numCards: goldCost,
                     multiSelect: true,
-                    activePromptTitle: 'Select ' + goldCost + ' characters',
+                    activePromptTitle: 'Select ' + (goldCost === 1 ? 'a' : goldCost) + ' character' + (goldCost === 1 ? '' : 's'),
                     source: this,
                     cardCondition: card => card.location === 'play area' && !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',
                     onSelect: (player, cards) => this.targetsSelected(player, cards, goldCost)

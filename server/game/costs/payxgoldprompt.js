@@ -24,7 +24,7 @@ class payXGoldPrompt extends BaseStep {
 
         this.context.game.promptWithMenu(this.context.player, this, {
             activePrompt: {
-                menuTitle: 'Select gold amount to pay for ' + this.context.source.name,
+                menuTitle: 'Select gold amount to pay',
                 buttons: buttons
             },
             source: this.context.source
