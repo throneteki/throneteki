@@ -1,6 +1,6 @@
 const _ = require('underscore');
 const ChooseCost = require('./costs/choosecost.js');
-const payXGoldPrompt = require('./costs/payxgoldprompt.js');
+const PayXGoldPrompt = require('./costs/payxgoldprompt.js');
 
 const Costs = {
     /**
@@ -615,8 +615,8 @@ const Costs = {
             },
             resolve: function(context, result = { resolved: false }) {
                 let gold = opponentObj ? opponentObj.gold : context.player.gold;
-                let list = [maxFunc(), gold];
-                context.game.queueStep(new payXGoldPrompt(list, context));
+                let limit = _.min([maxFunc(), gold]);
+                context.game.queueStep(new PayXGoldPrompt(limit, context));
                 result.value = true;
                 result.resolved = true;
                 return result;
