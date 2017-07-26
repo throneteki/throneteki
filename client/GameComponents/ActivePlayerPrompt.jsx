@@ -11,38 +11,53 @@ class ActivePlayerPrompt extends React.Component {
         };
     }
 
-    componentWillReceiveProps(props) {
-        if(_.any(props.buttons, button => {
+    shouldComponentUpdate(newProps, newState) {
+        return newProps.phase !== this.props.phase || newProps.promptTitle !== this.props.promptTitle ||
+            newProps.title !== this.props.title || newState.showTimer !== this.state.showTimer ||
+            newState.timeLeft !== this.state.timeLeft || newState.timerClass !== this.state.timerClass;
+    }
+
+    componentWillUpdate(newProps, newState) {
+        if(_.difference(newProps.buttons, this.props.buttons).length === 0) {
+            return;
+        }
+
+        if(_.any(newProps.buttons, button => {
             return button.timer;
         })) {
-            if(this.timer.handle) {
+            if(newState.timerHandle) {
                 return;
             }
 
             this.timer.started = new Date();
-            this.timer.timerTime = _.isUndefined(this.props.user.settings.windowTimer) ? 10 : this.props.user.settings.windowTimer;
+            this.timer.timerTime = _.isUndefined(newProps.user.settings.windowTimer) ? 10 : newProps.user.settings.windowTimer;
 
-            this.setState({ showTimer: true, timerClass: '100%' });
-
-            this.timer.handle = setInterval(() => {
+            let handle = setInterval(() => {
                 let now = new Date();
                 let difference = (now - this.timer.started) / 1000;
                 let keepGoing = true;
 
-                if(difference > this.timer.timerTime) {
-                    clearInterval(this.timer.handle);
-                    this.timer.handle = undefined;
+                if(difference >= this.timer.timerTime) {
+                    clearInterval(this.state.timerHandle);
 
                     keepGoing = false;
 
-                    if(this.props.onTimerExpired) {
-                        this.props.onTimerExpired();
+                    this.setState({ timerHandle: undefined });
+
+                    if(newProps.onTimerExpired) {
+                        newProps.onTimerExpired();
                     }
                 }
 
-                let timerClass = (((this.timer.timerTime - difference) / this.timer.timerTime) * 100) + '%';
-                this.setState({ showTimer: keepGoing, timerClass: timerClass, timeLeft: (this.timer.timerTime - difference).toFixed() });
+                let timerClass = (((this.timer.timerTime - difference) / this.timer.timerTime) * 100).toFixed() + '%';
+                this.setState({
+                    showTimer: keepGoing,
+                    timerClass: timerClass,
+                    timeLeft: (this.timer.timerTime - difference).toFixed()
+                });
             }, 100);
+
+            this.setState({ showTimer: true, timerClass: '100%', timerHandle: handle });
         }
     }
 
@@ -57,11 +72,11 @@ class ActivePlayerPrompt extends React.Component {
     onCancelTimerClick(event, button) {
         event.preventDefault();
 
-        if(this.timer.handle) {
-            clearInterval(this.timer.handle);
+        if(this.state.timerHandle) {
+            clearInterval(this.state.timerHandle);
         }
 
-        this.setState({ showTimer: false });
+        this.setState({ showTimer: false, timerHandle: undefined, timerCancelled: true });
 
         if(button.method) {
             this.props.onButtonClick(button.command, button.arg, button.method);

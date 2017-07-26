@@ -63,9 +63,9 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         });
 
         if(this.isCancellableEvent(player)) {
-            buttons.push({ timer: true, method: 'pass' });
+            buttons.push({ timer: true, method: 'pass', id: uuid.v1() });
             buttons.push({ text: 'I need more time', timerCancel: true });
-            buttons.push({ text: 'Don\'t ask again until end of phase', timerCancel: true, method: 'pass', arg: 'pauseRound' });
+            buttons.push({ text: 'Don\'t ask again until end of round', timerCancel: true, method: 'pass', arg: 'pauseRound' });
         }
 
         buttons.push({ text: 'Pass', method: 'pass' });
