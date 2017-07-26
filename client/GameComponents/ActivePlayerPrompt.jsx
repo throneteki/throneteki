@@ -145,7 +145,7 @@ class ActivePlayerPrompt extends React.Component {
 
         return (<div>
             { timer }
-            <div className={ 'phase-indicator ' + this.props.phase }>
+            <div className={ 'phase-indicator ' + this.props.phase } onClick={ this.props.onTitleClick }>
                 { this.props.phase } phase
             </div>
             { promptTitle }
@@ -166,6 +166,7 @@ ActivePlayerPrompt.propTypes = {
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
     onTimerExpired: React.PropTypes.func,
+    onTitleClick: React.PropTypes.func,
     phase: React.PropTypes.string,
     promptTitle: React.PropTypes.string,
     socket: React.PropTypes.object,
