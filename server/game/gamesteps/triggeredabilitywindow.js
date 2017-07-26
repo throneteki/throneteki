@@ -39,7 +39,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         let cancellableEvents = ['onCardAbilityInitiated', 'onClaimApplied'];
 
         return !player.noTimer && this.abilityType === 'cancelinterrupt' && _.any(this.events, event => {
-            return _.contains(cancellableEvents, event.name);
+            return event.player !== player && _.contains(cancellableEvents, event.name);
         });
     }
 
