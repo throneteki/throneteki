@@ -11,7 +11,7 @@ class MaesterOfStarfall extends DrawCard {
             handler: context => {
                 this.game.promptForSelect(context.player, {
                     cardCondition: card => card.location === 'play area' && card.getType() === 'character',
-                    activePromptTitle: 'Select a character to lose keyword',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });                
@@ -30,7 +30,7 @@ class MaesterOfStarfall extends DrawCard {
 
         this.game.promptWithMenu(this.controller, this, {
             activePrompt: {
-                menuTitle: 'Select a keyword to remove',
+                menuTitle: 'Select a keyword',
                 buttons: buttons
             },
             source: this

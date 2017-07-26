@@ -13,7 +13,7 @@ class PutToTheTorch extends DrawCard {
                 )
             },
             target: {
-                activePromptTitle: 'Select a location to discard',
+                activePromptTitle: 'Select a location',
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'location',
                 gameAction: 'discard'
             },

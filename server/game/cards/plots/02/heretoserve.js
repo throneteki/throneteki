@@ -5,7 +5,7 @@ class HereToServe extends PlotCard {
         this.whenRevealed({
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to put in play',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Maester') && card.getCost() <= 3 && this.controller.canPutIntoPlay(card),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

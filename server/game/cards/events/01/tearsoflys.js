@@ -15,7 +15,7 @@ class TearsOfLys extends DrawCard {
                 // Use an explicit prompt instead of the target API because the
                 // card uses the word 'place' instead of 'choose'.
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character to receive poison token',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' && !card.hasIcon('intrigue'),
                     onSelect: (p, card) => this.cardSelected(card)

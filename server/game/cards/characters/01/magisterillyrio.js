@@ -15,7 +15,7 @@ class MagisterIllyrio extends DrawCard {
         }
 
         this.game.promptForSelect(player, {
-            activePromptTitle: 'Select a character to stand',
+            activePromptTitle: 'Select a character',
             source: this,
             cardCondition: card => card.location === 'play area' && card.getType() === 'character',
             onSelect: (p, card) => this.onStandSelected(p, card)

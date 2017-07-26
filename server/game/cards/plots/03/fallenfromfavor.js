@@ -6,7 +6,7 @@ class FallenFromFavor extends PlotCard {
         this.whenRevealed({
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character to sacrifice',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card =>
                         card.location === 'play area'

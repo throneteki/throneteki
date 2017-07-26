@@ -18,7 +18,7 @@ class TheQueensAssassin extends DrawCard {
                 }
 
                 this.game.promptForSelect(otherPlayer, {
-                    activePromptTitle: 'Select a character to kill',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character',
                     gameAction: 'kill',

@@ -21,7 +21,7 @@ class TheTickler extends DrawCard {
             this.game.addMessage('{0} uses {1} to discard the top card of {2}\'s deck', player, this, otherPlayer);
 
             this.game.promptForSelect(player, {
-                activePromptTitle: 'Select a copy of ' + topCard.name + ' to discard',
+                activePromptTitle: 'Select a copy of ' + topCard.name,
                 source: this,
                 cardCondition: card => card.location === 'play area' && card.name === topCard.name,
                 onSelect: (p, card) => this.onCardSelected(p, card)

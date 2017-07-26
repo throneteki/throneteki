@@ -10,7 +10,7 @@ class StreetOfSteel extends DrawCard {
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'attachment' && (card.hasTrait('Weapon') || card.hasTrait('Item')),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

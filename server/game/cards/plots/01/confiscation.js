@@ -4,7 +4,7 @@ class Confiscation extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             target: {
-                activePromptTitle: 'Select an attachment to discard',
+                activePromptTitle: 'Select an attachment',
                 cardCondition: card => this.cardCondition(card)
             },
             handler: context => {

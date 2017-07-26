@@ -12,7 +12,7 @@ class SupportOfThePeople extends DrawCard {
             },
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a location to put into play',
+                    activePromptTitle: 'Select a location',
                     cardCondition: card => card.getType() === 'location' && card.getCost() <= 3,
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

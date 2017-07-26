@@ -9,7 +9,7 @@ class PyatPree extends DrawCard {
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: this.game.currentChallenge.strengthDifference,
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => (card.getType() === 'attachment' || card.getType() === 'event') && card.isFaction('targaryen'),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

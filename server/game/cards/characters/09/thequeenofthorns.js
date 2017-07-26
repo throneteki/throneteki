@@ -9,7 +9,7 @@ class TheQueenOfThorns extends DrawCard {
             cost: ability.costs.discardFromHand(card => card.getType() === 'event'),
             handler: context => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'event',
                     onSelect: (player, card) => this.cardSelected(player, card, context.discardCostCard),
                     onCancel: player => this.doneSelecting(player),

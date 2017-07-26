@@ -18,7 +18,7 @@ class CrownOfGoldenRoses extends DrawCard {
         }
 
         this.game.promptForSelect(player, {
-            activePromptTitle: 'Select a character to discard',
+            activePromptTitle: 'Select a card',
             source: this,
             cardCondition: card => card.location === 'hand',
             onSelect: (p, card) => this.onCardSelected(p, card)

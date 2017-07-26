@@ -9,7 +9,7 @@ class ThrowingAxe extends DrawCard {
             limit: ability.limit.perPhase(1),
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character to kill',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isDefending(card),
                     gameAction: 'kill',

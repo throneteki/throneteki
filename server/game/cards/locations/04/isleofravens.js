@@ -13,7 +13,7 @@ class IsleOfRavens extends DrawCard {
     kneel(player) {
         this.game.promptForSelect(player, {
             cardCondition: card => card.location === 'discard pile',
-            activePromptTitle: 'Select a discarded card',
+            activePromptTitle: 'Select a card',
             source: this,
             onSelect: (player, card) => this.onCardSelected(player, card)
         });

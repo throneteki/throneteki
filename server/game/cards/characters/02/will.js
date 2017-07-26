@@ -8,7 +8,7 @@ class Will extends DrawCard {
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select and sacrifice a ranger character you control',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Ranger') && card.controller === this.controller,
                     onSelect: (p, card) => this.onCardSelected(p, card)

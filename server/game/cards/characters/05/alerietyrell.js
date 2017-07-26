@@ -9,7 +9,7 @@ class AlerieTyrell extends DrawCard {
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'character' && card.isFaction('tyrell') && card.getCost() <= 3,
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

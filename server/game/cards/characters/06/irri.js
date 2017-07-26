@@ -7,7 +7,7 @@ class Irri extends DrawCard {
             cost: ability.costs.discardGold(),
             limit: ability.limit.perPhase(1),
             target: {
-                activePromptTitle: 'Select a character to stand',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        (card.hasTrait('Lord') || card.hasTrait('Lady')) && card.kneeled,
                 gameAction: 'stand'

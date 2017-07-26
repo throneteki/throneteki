@@ -12,7 +12,7 @@ class VenomousBlade extends DrawCard {
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character to poison',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => (
                         card.location === 'play area' &&

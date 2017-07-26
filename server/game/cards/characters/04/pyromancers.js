@@ -11,7 +11,7 @@ class Pyromancers extends DrawCard {
             ],
             handler: context => {
                 this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a location to discard',
+                    activePromptTitle: 'Select a location',
                     source: this,
                     cardCondition: card => card.location === 'play area' && !card.isLimited() && card.getType() === 'location',
                     onSelect: (p, card) => {

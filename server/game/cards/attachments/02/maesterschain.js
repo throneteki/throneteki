@@ -19,7 +19,7 @@ class MaestersChain extends DrawCard {
     
     kneel(player) {
         this.game.promptForSelect(player, {
-            activePromptTitle: 'Select a condition attachment to discard',
+            activePromptTitle: 'Select an attachment',
             source: this,
             cardCondition: card => card.location === 'play area' && card.getType() === 'attachment' && card.hasTrait('condition'),
             onSelect: (p, card) => this.onCardSelected(p, card)

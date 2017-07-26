@@ -7,7 +7,7 @@ class WeirwoodBow extends DrawCard {
             cost: ability.costs.kneelSelf(),
             condition: () => this.game.currentChallenge,
             target: {
-                activePromptTitle: 'Select a defending character',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' && 
                     card.getType() === 'character' &&

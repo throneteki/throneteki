@@ -12,7 +12,7 @@ class RattleshirtsRaiders extends DrawCard {
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select attachment to discard',
+                    activePromptTitle: 'Select an attachment',
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'attachment',
                     onSelect: (p, card) => this.onCardSelected(p, card)

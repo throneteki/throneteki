@@ -7,7 +7,7 @@ class SerHorasRedwyne extends DrawCard {
                 onCardKneeled: (e, player, card) => card === this
             },
             target: {
-                activePromptTitle: 'Select a Lady',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady')
             },
             handler: context => {

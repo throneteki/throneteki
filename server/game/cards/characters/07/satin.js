@@ -8,7 +8,7 @@ class Satin extends DrawCard {
             },
             limit: ability.limit.perPhase(2),
             target: {
-                activePromptTitle: 'Select a Steward to stand',
+                activePromptTitle: 'Select a character',
                 cardCondition: (
                     card => card !== this && 
                     card.location === 'play area' && 

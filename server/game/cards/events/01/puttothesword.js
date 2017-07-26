@@ -13,7 +13,7 @@ class PutToTheSword extends DrawCard {
                 )
             },
             target: {
-                activePromptTitle: 'Select a character to kill',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character',
                 gameAction: 'kill'
             },

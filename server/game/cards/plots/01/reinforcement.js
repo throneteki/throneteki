@@ -5,7 +5,7 @@ class Reinforcements extends PlotCard {
         this.whenRevealed({
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character from your hand or discard pile',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => this.cardCondition(card),
                     onSelect: (player, card) => this.onCardClicked(player, card)

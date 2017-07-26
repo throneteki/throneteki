@@ -9,7 +9,7 @@ class WheelsWithinWheels extends PlotCard {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
                     numToSelect: 10,
-                    activePromptTitle: 'Select any number of events to reveal',
+                    activePromptTitle: 'Select any number of events',
                     cardType: 'event',
                     onSelect: (player, card) => this.cardsToReveal(player, card),
                     onCancel: player => this.doneSelecting(player),
@@ -50,7 +50,7 @@ class WheelsWithinWheels extends PlotCard {
 
         this.game.promptWithMenu(this.controller, this, {
             activePrompt: {
-                menuTitle: 'Select a card to add to your hand',
+                menuTitle: 'Select a card',
                 buttons: buttons
             },
             source: this

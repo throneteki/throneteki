@@ -15,7 +15,7 @@ class Oathkeeper extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card to add to your hand',
+                    activePromptTitle: 'Select a card',
                     cardCondition: card => !card.isFaction('tyrell') && card.getType() === 'character',
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

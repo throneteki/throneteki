@@ -9,7 +9,7 @@ class RiverrunMinstrel extends DrawCard {
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => card.hasTrait('House Tully') && card.getType() === 'character',
-                    activePromptTitle: 'Select a character to gain a power',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     onSelect: (player, card) => {
                         card.modifyPower(1);
