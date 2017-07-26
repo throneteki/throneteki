@@ -45,7 +45,7 @@ describe('Ser Gregor Clegane', function() {
             });
 
             it('should not prompt to kill', function() {
-                expect(this.player1).not.toHavePrompt('Select a character to kill');
+                expect(this.player1).not.toHavePrompt('Select a character');
             });
         });
 
@@ -63,7 +63,7 @@ describe('Ser Gregor Clegane', function() {
             });
 
             it('should prompt to kill', function() {
-                expect(this.player1).toHavePrompt('Select a character to kill');
+                expect(this.player1).toHavePrompt('Select a character');
             });
 
             it('should allow the player to kill an equal cost character', function() {
@@ -90,7 +90,7 @@ describe('Ser Gregor Clegane', function() {
             });
 
             it('should not prompt to kill', function() {
-                expect(this.player1).not.toHavePrompt('Select a character to kill');
+                expect(this.player1).not.toHavePrompt('Select a character');
             });
         });
     });
