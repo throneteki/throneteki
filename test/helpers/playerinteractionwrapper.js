@@ -1,11 +1,13 @@
 const _ = require('underscore');
 
-const {matchCardByNameAndPack} = require('./cardutil.js');
+const { matchCardByNameAndPack } = require('./cardutil.js');
 
 class PlayerInteractionWrapper {
     constructor(game, player) {
         this.game = game;
         this.player = player;
+
+        player.noTimer = true;
     }
 
     get name() {
