@@ -56,7 +56,7 @@ class BrothelMadame extends DrawCard {
         }
 
         this.hasPaidGoldThisPhase = true;
-        this.game.addMessage('{0} has now paid {1} and can initiate {2} challenges this phase', event.source, event.target, 'military');
+        this.game.addMessage('{0} pays {1} and can now initiate {2} challenges this phase', event.source, event.target, 'military');
     }
 
     payOneGold(player) {
