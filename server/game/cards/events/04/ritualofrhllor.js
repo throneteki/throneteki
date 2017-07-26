@@ -16,7 +16,7 @@ class RitualOfRhllor extends DrawCard {
                     multiSelect: true,
                     activePromptTitle: 'Select ' + goldCost + ' characters',
                     source: this,
-                    cardCondition: card => !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',
+                    cardCondition: card => card.location === 'play area' && !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',
                     onSelect: (player, cards) => this.targetsSelected(player, cards, goldCost)
                 });
             }
