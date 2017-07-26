@@ -4,7 +4,7 @@ class SerJorahMormont extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && challenge.isParticipating(this)
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this)
             },
             handler: () => {
                 this.addToken('betrayal', 1);

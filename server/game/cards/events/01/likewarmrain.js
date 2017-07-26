@@ -4,7 +4,7 @@ class LikeWarmRain extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => this.controller === challenge.loser && challenge.challengeType === 'intrigue' && challenge.defendingPlayer === this.controller
+                afterChallenge: ({challenge}) => this.controller === challenge.loser && challenge.challengeType === 'intrigue' && challenge.defendingPlayer === this.controller
             },
             max: ability.limit.perChallenge(1),
             cost: ability.costs.kneel(card => card.getType() === 'character' && card.hasTrait('Direwolf')),

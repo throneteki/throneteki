@@ -20,7 +20,7 @@ class OldWyk extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to put {2} into play from their dead pile as an attacker',
                     this.controller, this, card);
 
-                this.game.once('afterChallenge', (event, challenge) => this.resolveAfterChallenge(challenge, card));
+                this.game.once('afterChallenge', event => this.resolveAfterChallenge(event.challenge, card));
             }
         });
     }

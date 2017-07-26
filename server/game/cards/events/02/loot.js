@@ -6,7 +6,7 @@ class Loot extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     this.controller === challenge.winner
                     && challenge.isUnopposed()
                     && this.opponentHasGold()

@@ -6,7 +6,7 @@ class RooseBolton extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && challenge.isAttacking(this)
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this)
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {

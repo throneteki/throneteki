@@ -5,7 +5,7 @@ class RoyalEntourage extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.loser === this.controller && challenge.challengeType === 'intrigue'
+                afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.challengeType === 'intrigue'
             },
             handler: () => {
                 this.controller.kneelCard(this);

@@ -101,8 +101,8 @@ describe('The Rains of Castamere', function() {
 
     describe('afterChallenge()', function() {
         beforeEach(function() {
-            this.event = {};
             this.challenge = { challengeType: 'intrigue', winner: this.player, strengthDifference: 5 };
+            this.event = { challenge: this.challenge };
             this.reaction = this.agenda.abilities.reactions[0];
         });
 
@@ -112,7 +112,7 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should not trigger', function() {
-                expect(this.reaction.when.afterChallenge(this.event, this.challenge)).toBe(false);
+                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
             });
         });
 
@@ -122,7 +122,7 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should not trigger', function() {
-                expect(this.reaction.when.afterChallenge(this.event, this.challenge)).toBe(false);
+                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
             });
         });
 
@@ -132,7 +132,7 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should not trigger', function() {
-                expect(this.reaction.when.afterChallenge(this.event, this.challenge)).toBe(false);
+                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
             });
         });
 
@@ -142,13 +142,13 @@ describe('The Rains of Castamere', function() {
             });
 
             it('should not trigger', function() {
-                expect(this.reaction.when.afterChallenge(this.event, this.challenge)).toBe(false);
+                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
             });
         });
 
         describe('when all triggering criteria are met', function() {
             it('should trigger', function() {
-                expect(this.reaction.when.afterChallenge(this.event, this.challenge)).toBe(true);
+                expect(this.reaction.when.afterChallenge(this.event)).toBe(true);
             });
 
             it('should register the ability', function() {

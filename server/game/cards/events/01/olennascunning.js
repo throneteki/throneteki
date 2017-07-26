@@ -4,7 +4,7 @@ class OlennasCunning extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     ['intrigue', 'power'].includes(challenge.challengeType) &&
                     challenge.winner === this.controller
                 )

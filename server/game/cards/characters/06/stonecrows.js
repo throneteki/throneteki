@@ -4,7 +4,7 @@ class StoneCrows extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.winner === this.controller &&
                     challenge.isAttacking(this) &&
                     challenge.defenders.length >= 1)

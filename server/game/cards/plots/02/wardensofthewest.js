@@ -4,7 +4,7 @@ class WardensOfTheWest extends PlotCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => {
+                afterChallenge: ({challenge}) => {
                     return challenge.winner === this.controller && challenge.challengeType === 'intrigue' && this.controller.gold >= 2;
                 }
             },

@@ -22,7 +22,7 @@ class DornishRevenge extends DrawCard {
                 this.game.addMessage('{0} plays {1} to force {2} to be declared as a defender this challenge, if able', 
                     this.controller, this, context.target);
 
-                this.game.once('afterChallenge:interrupt', (event, challenge) => this.resolveIfWinBy5(challenge));
+                this.game.once('afterChallenge:interrupt', event => this.resolveIfWinBy5(event.challenge));
             }
         });
     }

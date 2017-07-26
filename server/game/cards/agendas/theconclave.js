@@ -13,7 +13,7 @@ class TheConclave extends AgendaCard {
     setupCardAbilities() {
         this.reaction({
             when : {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && this.hasParticipatingMaester(challenge)
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && this.hasParticipatingMaester(challenge)
             },
             target: {
                 activePromptTitle: 'Choose Conclave card to swap with top of deck',

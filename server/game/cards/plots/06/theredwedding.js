@@ -4,7 +4,7 @@ class TheRedWedding extends PlotCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                afterChallenge: (event, challenge) => challenge.attackingPlayer === challenge.winner
+                afterChallenge: ({challenge}) => challenge.attackingPlayer === challenge.winner
             },
             player: () => this.game.currentChallenge.winner,
             target: {

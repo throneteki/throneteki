@@ -4,7 +4,7 @@ class BurningOnTheSand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.loser === this.controller && challenge.isUnopposed()
+                afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.isUnopposed()
             },
             handler: () => {
                 this.untilEndOfChallenge(ability => ({

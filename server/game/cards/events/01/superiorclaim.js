@@ -5,7 +5,7 @@ class SuperiorClaim extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.challengeType === 'power' &&
                     challenge.winner === this.controller &&
                     challenge.strengthDifference >= 5

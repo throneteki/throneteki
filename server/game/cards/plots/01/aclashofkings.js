@@ -4,7 +4,7 @@ class AClashOfKings extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (e, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.winner === this.controller &&
                     challenge.challengeType === 'power' &&
                     challenge.loser.faction.power > 0

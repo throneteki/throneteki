@@ -21,12 +21,12 @@ class OursIsTheFury extends DrawCard {
         });
     }
 
-    afterChallenge(event, challenge) {
+    afterChallenge(event) {
         if(!this.selectedCard) {
             return;
         }
 
-        if(challenge.winner === this.controller) {
+        if(event.challenge.winner === this.controller) {
             this.controller.standCard(this.selectedCard);
 
             this.game.addMessage('{0} uses {1} to stand {2} as the challenge was won', this.controller, this, this.selectedCard);

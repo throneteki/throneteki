@@ -4,7 +4,7 @@ class PaidOff extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.challengeType === 'intrigue' && !this.parent.kneeled && challenge.winner === this.controller
+                afterChallenge: ({challenge}) => challenge.challengeType === 'intrigue' && !this.parent.kneeled && challenge.winner === this.controller
             },
             handler: () => {
                 this.parent.controller.kneelCard(this.parent);

@@ -31,7 +31,7 @@ class JaqenHGhar extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.winner === this.controller &&
                     challenge.isAttacking(this) &&
                     challenge.attackers.length === 1

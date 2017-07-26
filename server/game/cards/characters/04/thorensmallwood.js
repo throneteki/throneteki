@@ -4,7 +4,7 @@ class ThorenSmallwood extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && !challenge.isAttackerTheWinner()
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && !challenge.isAttackerTheWinner()
             },
             handler: () => {
                 this.game.addPower(this.controller, 1);

@@ -4,7 +4,7 @@ class FickleBannerman extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: (e, challenge) => challenge.loser === this.controller && challenge.challengeType === 'power'
+                afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.challengeType === 'power'
             },
             handler: () => {
                 this.game.promptWithMenu(this.controller, this, {
