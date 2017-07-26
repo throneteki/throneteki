@@ -1,5 +1,6 @@
 const _ = require('underscore');
 const ChooseCost = require('./costs/choosecost.js');
+const payXGoldPrompt = require('./costs/payxgoldprompt.js');
 
 const Costs = {
     /**
@@ -595,6 +596,37 @@ const Costs = {
             },
             pay: function(context) {
                 context.game.addGold(context.player, -amount);
+            }
+        };
+    },
+    /**
+     * Cost where the player gets prompted to pay from 1 up to the lesser of two values: 
+     * the passed value and either the player's or his opponent's gold.
+     * Used by Ritual of R'hllor and Loot.
+     * TODO: needs to be reducable for cards like Littlefinger's Meddling and Paxter Redwyne.
+     */
+    payXGold: function(maxFunc, opponentObj = false) {
+        return {
+            canPay: function(context) {
+                if(!opponentObj) {
+                    return context.player.gold >= 1;
+                }
+                return opponentObj.gold >= 1;
+            },
+            resolve: function(context, result = { resolved: false }) {
+                let gold = opponentObj ? opponentObj.gold : context.player.gold;
+                let list = [maxFunc(), gold];
+                context.game.queueStep(new payXGoldPrompt(list, context));
+                result.value = true;
+                result.resolved = true;
+                return result;
+            },
+            pay: function(context) {
+                if(!opponentObj) {
+                    context.game.addGold(context.player, -context.goldCostAmount);
+                } else {
+                    context.game.addGold(opponentObj, -context.goldCostAmount);
+                }
             }
         };
     }
