@@ -22,7 +22,7 @@ describe('Challenge', function() {
         this.attackerCard = new DrawCard(this.attackingPlayer, {});
         this.defenderCard = new DrawCard(this.defendingPlayer, {});
 
-        this.challenge = new Challenge(this.gameSpy, this.attackingPlayer, this.defendingPlayer, 'military');
+        this.challenge = new Challenge(this.gameSpy, { attackingPlayer: this.attackingPlayer, defendingPlayer: this.defendingPlayer, challengeType: 'military' });
     });
 
     describe('determineWinner()', function() {

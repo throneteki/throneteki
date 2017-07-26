@@ -55,12 +55,17 @@ class ChallengePhase extends Phase {
             return;
         }
 
-        var defendingPlayer = this.chooseOpponent(attackingPlayer);
+        let defendingPlayer = this.chooseOpponent(attackingPlayer);
         if(defendingPlayer && !defendingPlayer.activePlot.canChallenge(attackingPlayer, challengeType)) {
             return;
         }
 
-        var challenge = new Challenge(this.game, attackingPlayer, defendingPlayer, challengeType);
+        let challenge = new Challenge(this.game, {
+            attackingPlayer: attackingPlayer,
+            defendingPlayer: defendingPlayer,
+            challengeType: challengeType,
+            number: attackingPlayer.getNumberOfChallengesInitiated() + 1
+        });
         this.game.currentChallenge = challenge;
         this.game.queueStep(new ChallengeFlow(this.game, challenge));
         this.game.queueStep(new SimpleStep(this.game, () => this.cleanupChallenge()));

@@ -6,7 +6,7 @@ describe('The Lord of the Crossing', function() {
         beforeEach(function() {
             const deck = this.buildDeck('baratheon', [
                 'The Lord of the Crossing',
-                'A Noble Cause',
+                'A Noble Cause', 'Blood of the Dragon',
                 'Selyse Baratheon', 'Bastard in Hiding', 'Fiery Followers'
             ]);
             this.player1.selectDeck(deck);
@@ -23,16 +23,16 @@ describe('The Lord of the Crossing', function() {
             this.player1.clickCard(this.followers);
 
             this.completeSetup();
-
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
-            this.selectFirstPlayer(this.player1);
-
-            this.completeMarshalPhase();
         });
 
         describe('on challenge 1', function() {
             beforeEach(function() {
+                this.player1.selectPlot('A Noble Cause');
+                this.player2.selectPlot('A Noble Cause');
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.followers);
                 this.player1.clickPrompt('Done');
@@ -58,6 +58,12 @@ describe('The Lord of the Crossing', function() {
 
         describe('on challenge 2', function() {
             beforeEach(function() {
+                this.player1.selectPlot('A Noble Cause');
+                this.player2.selectPlot('A Noble Cause');
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.followers);
                 this.player1.clickPrompt('Done');
@@ -92,6 +98,12 @@ describe('The Lord of the Crossing', function() {
 
         describe('on challenge 3', function() {
             beforeEach(function() {
+                this.player1.selectPlot('A Noble Cause');
+                this.player2.selectPlot('A Noble Cause');
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
                 this.player1.clickPrompt('Military');
                 this.player1.clickCard(this.followers);
                 this.player1.clickPrompt('Done');
@@ -142,6 +154,31 @@ describe('The Lord of the Crossing', function() {
                     // 3 from unopposed challenges, 1 from LotC
                     expect(this.player1Object.getTotalPower()).toBe(4);
                 });
+            });
+        });
+
+        describe('when Blood of the Dragon is in play', function() {
+            beforeEach(function() {
+                this.player1.selectPlot('A Noble Cause');
+                this.player2.selectPlot('Blood of the Dragon');
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
+                this.player1.clickPrompt('Intrigue');
+                this.player1.clickCard(this.selyse);
+                this.player1.clickPrompt('Done');
+                this.skipActionWindow();
+                this.player2.clickPrompt('Done');
+                this.skipActionWindow();
+
+                this.player1.clickPrompt('Military');
+                this.player1.clickCard(this.followers);
+                this.player1.clickPrompt('Done');
+            });
+
+            it('should not apply the -1 STR penalty from the first challenge and kill the character', function() {
+                expect(this.followers.location).not.toBe('dead pile');
             });
         });
     });

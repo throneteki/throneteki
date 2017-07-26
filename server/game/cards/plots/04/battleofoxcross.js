@@ -7,7 +7,7 @@ class BattleOfOxcross extends PlotCard {
             condition: () =>
                 this.game.currentChallenge
                 && this.game.currentChallenge.attackingPlayer === this.controller
-                && this.game.currentChallenge.attackingPlayer.getNumberOfChallengesInitiated() <= 1,
+                && this.game.currentChallenge.number <= 1,
             match: (card) =>
                 card.getType() === 'character'
                 && card.getCost() >= 4,

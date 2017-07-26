@@ -3,19 +3,20 @@ const Player = require('./player.js');
 const EventRegistrar = require('./eventregistrar.js');
 
 class Challenge {
-    constructor(game, attackingPlayer, defendingPlayer, challengeType) {
+    constructor(game, properties) {
         this.game = game;
-        this.attackingPlayer = attackingPlayer;
-        this.isSinglePlayer = !defendingPlayer;
-        this.defendingPlayer = defendingPlayer || this.singlePlayerDefender();
-        this.challengeType = challengeType;
+        this.attackingPlayer = properties.attackingPlayer;
+        this.isSinglePlayer = !properties.defendingPlayer;
+        this.defendingPlayer = properties.defendingPlayer || this.singlePlayerDefender();
+        this.challengeType = properties.challengeType;
+        this.number = properties.number;
         this.attackers = [];
         this.attackerStrength = 0;
         this.attackerStrengthModifier = 0;
         this.defenders = [];
         this.defenderStrength = 0;
         this.defenderStrengthModifier = 0;
-        this.stealthData = [],
+        this.stealthData = [];
         this.events = new EventRegistrar(game, this);
         this.registerEvents(['onCardLeftPlay']);
     }
