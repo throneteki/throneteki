@@ -46,7 +46,7 @@ export default function(state = {}, action) {
             var agendas = {};
 
             _.each(action.response.cards, card => {
-                if(card.type_code === 'agenda' && card.pack_code !== 'VDS') {
+                if(card.type_code === 'agenda') {
                     agendas[card.code] = card;
                 }
             });

@@ -48,6 +48,10 @@ function rulesForBanner(faction, factionName) {
     };
 }
 
+function rulesForDraft(properties) {
+    return _.extend({ requiredDraw: 40, requiredPlots: 5 }, properties);
+}
+
 /**
  * Validation rule structure is as follows. All fields are optional.
  *
@@ -145,7 +149,44 @@ const agendaRules = {
                 condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.type_code === 'character' && hasTrait(cardQuantity.card, 'Maester'))) >= 12
             }
         ]
-    }
+    },
+    // Draft Agendas
+    // The Power of Wealth
+    '00001': rulesForDraft({
+        mayInclude: () => true,
+        rules: [
+            {
+                message: 'Cannot include cards from more than 1 outside faction',
+                condition: deck => {
+                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction_code !== deck.faction.value && cardQuantity.card.faction_code !== 'neutral');
+                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction_code);
+                    return _.size(factions) <= 1;
+                }
+            }
+        ]
+    }),
+    // Protectors of the Realm
+    '00002': rulesForDraft({
+        mayInclude: card => card.type_code === 'character' && (hasTrait(card, 'Knight') || hasTrait(card, 'Army'))
+    }),
+    // Treaty
+    '00003': rulesForDraft({
+        mayInclude: () => true,
+        rules: [
+            {
+                message: 'Cannot include cards from more than 2 outside factions',
+                condition: deck => {
+                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction_code !== deck.faction.value && cardQuantity.card.faction_code !== 'neutral');
+                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction_code);
+                    return _.size(factions) <= 2;
+                }
+            }
+        ]
+    }),
+    // Uniting the Seven Kingdoms
+    '00004': rulesForDraft({
+        mayInclude: card => card.type_code !== 'plot'
+    })
 };
 
 class DeckValidator {
@@ -199,9 +240,19 @@ class DeckValidator {
         });
 
         let isValid = errors.length === 0;
+        let containsDraftCards = this.isDraftCard(deck.agenda) || _.any(allCards, cardQuantity => this.isDraftCard(cardQuantity.card));
+        let status = 'Valid';
+
+        if(!isValid) {
+            status = 'Invalid';
+        } else if(containsDraftCards) {
+            status = 'Draft Cards';
+        } else if(unreleasedCards.length !== 0) {
+            status = 'Unreleased Cards';
+        }
 
         return {
-            status: !isValid ? 'Invalid' : (unreleasedCards.length === 0 ? 'Valid' : 'Unreleased Cards'),
+            status: status,
             plotCount: plotCount,
             drawCount: drawCount,
             extendedStatus: errors.concat(unreleasedCards),
@@ -244,6 +295,10 @@ class DeckValidator {
             rules: combinedRules
         };
         return _.extend({}, ...validators, combined);
+    }
+
+    isDraftCard(card) {
+        return card && card.pack_code === 'VDS';
     }
 }
 
