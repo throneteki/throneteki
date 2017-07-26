@@ -4,7 +4,7 @@ class LostRanger extends DrawCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'challenge' && this.hasNoOtherRanger()
+                onPhaseEnded: event => event.phase === 'challenge' && this.hasNoOtherRanger()
             },
             handler: () => {
                 this.controller.sacrificeCard(this);

@@ -5,7 +5,7 @@ class EdricStorm extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: (event, phase) => phase === 'dominance'
+                onPhaseStarted: event => event.phase === 'dominance'
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {

@@ -9,7 +9,7 @@ class OldBearMormont extends DrawCard {
         });
         this.interrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'challenge' && this.controller.getNumberOfChallengesLost('defender') === 0
+                onPhaseEnded: event => event.phase === 'challenge' && this.controller.getNumberOfChallengesLost('defender') === 0
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {

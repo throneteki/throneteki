@@ -6,7 +6,7 @@ class LannisportTreasury extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: (event, phase) => phase === 'taxation' && this.controller.gold >= 1
+                onPhaseStarted: event => event.phase === 'taxation' && this.controller.gold >= 1
             },
             handler: () => {
                 this.game.addGold(this.controller, -1);

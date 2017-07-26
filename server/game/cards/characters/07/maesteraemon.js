@@ -5,7 +5,7 @@ class MaesterAemon extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'challenge' && !this.allChallengesInitiatedByOpponent()
+                onPhaseEnded: event => event.phase === 'challenge' && !this.allChallengesInitiatedByOpponent()
             },
             handler: () => {
                 let otherPlayer = this.game.getOtherPlayer(this.controller);

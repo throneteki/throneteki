@@ -4,7 +4,7 @@ class RangersCache extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'taxation'
+                onPhaseEnded: event => event.phase === 'taxation'
             },
             choices: {
                 'Gain 3 gold': () => {

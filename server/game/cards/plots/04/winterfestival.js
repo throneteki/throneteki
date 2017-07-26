@@ -6,8 +6,8 @@ class WinterFestival extends PlotCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: (event, phase) => {
-                    if(phase !== 'challenge') {
+                onPhaseEnded: event => {
+                    if(event.phase !== 'challenge') {
                         return false;
                     }
 

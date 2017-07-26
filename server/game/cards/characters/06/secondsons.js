@@ -4,7 +4,7 @@ class SecondSons extends DrawCard {
     setupCardAbilities() {
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: (event, phase) => phase === 'challenge'
+                onPhaseEnded: event => event.phase === 'challenge'
             },
             handler: () => {
                 this.game.promptWithMenu(this.controller, this, {
