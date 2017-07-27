@@ -8,7 +8,7 @@ class Condemned extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(card.getType() !== 'character') {
+        if(card.getType() !== 'character' || card.controller === this.controller) {
             return false;
         }
 
