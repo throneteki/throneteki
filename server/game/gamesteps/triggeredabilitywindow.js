@@ -5,6 +5,18 @@ const BaseAbilityWindow = require('./baseabilitywindow.js');
 const TriggeredAbilityWindowTitles = require('./triggeredabilitywindowtitles.js');
 
 class TriggeredAbilityWindow extends BaseAbilityWindow {
+    constructor(game, properties) {
+        super(game, properties);
+
+        this.forceWindowPerPlayer = {};
+
+        _.each(game.getPlayersInFirstPlayerOrder(), player => {
+            if(this.isCancellableEvent(player)) {
+                this.forceWindowPerPlayer[player.name] = true;
+            }
+        });
+    }
+
     registerAbility(ability, event) {
         let context = ability.createContext(event);
         let player = context.player;
@@ -26,7 +38,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     continue() {
         this.players = this.filterChoicelessPlayers(this.players || this.game.getPlayersInFirstPlayerOrder());
 
-        if(this.players.length === 0) {
+        if(this.players.length === 0 || _.size(this.abilityChoices) === 0 && !this.forceWindowPerPlayer[this.players[0].name]) {
             return true;
         }
 
@@ -36,10 +48,13 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     isCancellableEvent(player) {
-        let cancellableEvents = ['onCardAbilityInitiated', 'onClaimApplied'];
+        let cancellableEvents = {
+            onCardAbilityInitiated: 'cancelinterrupt',
+            onClaimApplied: 'interrupt'
+        };
 
-        return !player.noTimer && this.abilityType === 'cancelinterrupt' && _.any(this.events, event => {
-            return event.player !== player && _.contains(cancellableEvents, event.name);
+        return !player.noTimer && _.any(this.events, event => {
+            return event.player !== player && cancellableEvents[event.name] && cancellableEvents[event.name] === this.abilityType;
         });
     }
 
@@ -76,6 +91,8 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             },
             waitingPromptTitle: 'Waiting for opponents'
         });
+
+        this.forceWindowPerPlayer[player.name] = false;
     }
 
     getChoicesForPlayer(player) {

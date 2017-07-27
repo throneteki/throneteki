@@ -23,6 +23,10 @@ class ActivePlayerPrompt extends React.Component {
             return;
         }
 
+        if(newProps.user.settings.windowTimer === 0) {
+            return;
+        }
+
         if(_.any(newProps.buttons, button => {
             return button.timer;
         })) {
