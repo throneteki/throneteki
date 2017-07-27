@@ -457,6 +457,7 @@ export class InnerGameBoard extends React.Component {
                                             onToggle={ this.onPromptedActionWindowToggle.bind(this) } />
                                         : null }
                                     <ActivePlayerPrompt title={ thisPlayer.menuTitle }
+                                        arrowDirection={ this.state.spectating ? 'none' : this.state.showActionWindowsMenu ? 'down' : 'up' }
                                         buttons={ thisPlayer.buttons }
                                         promptTitle={ thisPlayer.promptTitle }
                                         onButtonClick={ this.onCommand }

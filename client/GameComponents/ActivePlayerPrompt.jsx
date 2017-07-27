@@ -13,7 +13,8 @@ class ActivePlayerPrompt extends React.Component {
 
     shouldComponentUpdate(newProps, newState) {
         return newProps.phase !== this.props.phase || newProps.promptTitle !== this.props.promptTitle ||
-            newProps.title !== this.props.title || newState.showTimer !== this.state.showTimer ||
+            newProps.title !== this.props.title || newProps.arrowDirection !== this.props.arrowDirection ||
+            newState.showTimer !== this.state.showTimer ||
             newState.timeLeft !== this.state.timeLeft || newState.timerClass !== this.state.timerClass;
     }
 
@@ -149,9 +150,17 @@ class ActivePlayerPrompt extends React.Component {
                 </div>);
         }
 
+        var arrow = null;
+        if(this.props.arrowDirection === 'up') {
+            arrow = <span className='up-arrow' />;
+        } else if(this.props.arrowDirection === 'down') {
+            arrow = <span className='down-arrow' />;
+        }
+
         return (<div>
             { timer }
             <div className={ 'phase-indicator ' + this.props.phase } onClick={ this.props.onTitleClick }>
+                { arrow }
                 { this.props.phase } phase
             </div>
             { promptTitle }
@@ -167,6 +176,11 @@ class ActivePlayerPrompt extends React.Component {
 
 ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
 ActivePlayerPrompt.propTypes = {
+    arrowDirection: React.PropTypes.oneOf([
+        'up',
+        'down',
+        'none'
+    ]),
     buttons: React.PropTypes.array,
     onButtonClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
