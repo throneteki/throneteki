@@ -96,8 +96,8 @@ class ChallengeFlow extends BaseStep {
 
         this.forcedDefenders = this.challenge.defendingPlayer.filterCardsInPlay(card => {
             return card.getType() === 'character' &&
-                   card.canDeclareAsDefender(this.challenge.challengeType) &&
-                   card.challengeOptions.mustBeDeclaredAsDefender;
+                card.canDeclareAsDefender(this.challenge.challengeType) &&
+                card.challengeOptions.mustBeDeclaredAsDefender;
         });
 
         let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
@@ -105,15 +105,15 @@ class ChallengeFlow extends BaseStep {
 
         if(!_.isEmpty(this.forcedDefenders)) {
             if(this.forcedDefenders.length === defenderLimit) {
-                this.game.addMessage('{0} {1} automatically declared as {2}', 
+                this.game.addMessage('{0} {1} automatically declared as {2}',
                     this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
-                
+
                 this.chooseDefenders([]);
                 return;
             }
 
             if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
-                this.game.addMessage('{0} {1} automatically declared as {2}', 
+                this.game.addMessage('{0} {1} automatically declared as {2}',
                     this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
 
                 if(defenderLimit !== 0) {
@@ -139,9 +139,9 @@ class ChallengeFlow extends BaseStep {
     }
 
     allowAsDefender(card) {
-        return this.challenge.defendingPlayer === card.controller && 
-               card.canDeclareAsDefender(this.challenge.challengeType) &&
-               this.mustBeDeclaredAsDefender(card);
+        return this.challenge.defendingPlayer === card.controller &&
+            card.canDeclareAsDefender(this.challenge.challengeType) &&
+            this.mustBeDeclaredAsDefender(card);
     }
 
     mustBeDeclaredAsDefender(card) {
@@ -233,7 +233,7 @@ class ChallengeFlow extends BaseStep {
             return false;
         }
 
-        this.game.raiseMergedEvent('onClaimApplied', { challenge: this.challenge }, () => {
+        this.game.raiseMergedEvent('onClaimApplied', { player: this.challenge.winner, challenge: this.challenge }, () => {
             this.game.queueStep(new ApplyClaim(this.game, this.challenge));
         });
 

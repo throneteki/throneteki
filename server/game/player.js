@@ -570,6 +570,10 @@ class Player extends Spectator {
         this.selectedPlot = undefined;
         this.roundDone = false;
 
+        if(this.resetTimerAtEndOfRound) {
+            this.noTimer = false;
+        }
+
         this.challenges.reset();
 
         this.challengerLimit = 0;
