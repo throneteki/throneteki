@@ -5,7 +5,7 @@ class TyrionsChain extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.winner === this.controller &&
                     this.hasParticipatingUniqueLannister() &&
                     this.game.anyPlotHasTrait('War')

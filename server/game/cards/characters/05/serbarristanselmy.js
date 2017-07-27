@@ -4,7 +4,7 @@ class SerBarristanSelmy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (e, challenge) =>
+                afterChallenge: ({challenge}) =>
                     challenge.winner === this.controller
                     && challenge.isParticipating(this)
                     && this.game.getOtherPlayer(this.controller)

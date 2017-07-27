@@ -4,8 +4,8 @@ class TheHoneywine extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (e, challenge) => (
-                    challenge.winner === this.controller && 
+                afterChallenge: ({challenge}) => (
+                    challenge.winner === this.controller &&
                     challenge.attackingPlayer === this.controller &&
                     challenge.strengthDifference >= 5)
             },

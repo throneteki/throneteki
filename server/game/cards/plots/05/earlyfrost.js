@@ -1,16 +1,13 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../../plotcard.js');
 
 class EarlyFrost extends PlotCard {
-    flipFaceup() {
-        super.flipFaceup();
-
-        _.each(this.game.getPlayers(), player => {
-            player.drawPhaseCards--;
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => this.game.currentPhase === 'draw',
+            targetType: 'player',
+            targetController: 'any',
+            effect: ability.effects.modifyDrawPhaseCards(-1)
         });
-
-        this.game.addMessage('{0} uses {1} to reduce the number of cards each player draws in the draw phase by 1', this.owner, this);
     }
 }
 

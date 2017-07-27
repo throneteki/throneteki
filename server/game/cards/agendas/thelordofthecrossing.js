@@ -29,7 +29,8 @@ class TheLordOfTheCrossing extends AgendaCard {
         return 0;
     }
 
-    afterChallenge(e, challenge) {
+    afterChallenge(event) {
+        let challenge = event.challenge;
         if(challenge.attackingPlayer !== this.controller) {
             return;
         }

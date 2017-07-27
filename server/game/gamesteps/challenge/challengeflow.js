@@ -165,7 +165,7 @@ class ChallengeFlow extends BaseStep {
 
         this.challenge.addDefenders(defenders);
 
-        this.game.raiseEvent('onDefendersDeclared', this.challenge);
+        this.game.raiseMergedEvent('onDefendersDeclared', { challenge: this.challenge });
 
         return true;
     }
@@ -190,7 +190,7 @@ class ChallengeFlow extends BaseStep {
                 this.challenge.winner, this.challenge.challengeType, this.challenge.winnerStrength, this.challenge.loserStrength);
         }
 
-        this.game.raiseEvent('afterChallenge', this.challenge);
+        this.game.raiseMergedEvent('afterChallenge', { challenge: this.challenge });
     }
 
     unopposedPower() {
@@ -202,7 +202,7 @@ class ChallengeFlow extends BaseStep {
                 this.game.addPower(this.challenge.winner, 1);
             }
 
-            this.game.raiseEvent('onUnopposedWin', this.challenge);
+            this.game.raiseMergedEvent('onUnopposedWin', { challenge: this.challenge });
         }
     }
 
@@ -233,7 +233,7 @@ class ChallengeFlow extends BaseStep {
             return false;
         }
 
-        this.game.raiseEvent('onClaimApplied', this.challenge, () => {
+        this.game.raiseMergedEvent('onClaimApplied', { challenge: this.challenge }, () => {
             this.game.queueStep(new ApplyClaim(this.game, this.challenge));
         });
 
@@ -247,7 +247,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     completeChallenge() {
-        this.game.raiseEvent('onChallengeFinished', this.challenge);
+        this.game.raiseMergedEvent('onChallengeFinished', { challenge: this.challenge });
 
         this.resetCards();
 

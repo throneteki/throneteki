@@ -5,7 +5,7 @@ class StreetOfTheSisters extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (e, challenge) =>
+                afterChallenge: ({challenge}) =>
                     challenge.winner === this.controller
                     && challenge.challengeType === 'power'
                     && challenge.strengthDifference >= 5

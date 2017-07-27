@@ -4,7 +4,7 @@ class TimettSonOfTimett extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.winner === this.controller &&
                     challenge.isAttacking(this))
             },

@@ -4,7 +4,7 @@ class ThrowingAxe extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && challenge.isAttacking(this.parent)
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this.parent)
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

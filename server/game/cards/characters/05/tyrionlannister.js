@@ -4,7 +4,7 @@ class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller
+                afterChallenge: ({challenge}) => challenge.winner === this.controller
             },
             cost: ability.costs.returnToHand(card => this.isAttackingClansman(card)),
             limit: ability.limit.perPhase(2),

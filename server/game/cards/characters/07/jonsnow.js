@@ -6,7 +6,7 @@ class JonSnow extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && challenge.isParticipating(this)
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this)
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

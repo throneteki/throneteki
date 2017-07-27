@@ -4,7 +4,7 @@ class Lannisport extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.challengeType === 'intrigue' && challenge.winner === this.controller
+                afterChallenge: ({challenge}) => challenge.challengeType === 'intrigue' && challenge.winner === this.controller
             },
             handler: () => {
                 this.controller.drawCardsToHand(1);

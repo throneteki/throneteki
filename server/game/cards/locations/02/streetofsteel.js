@@ -4,7 +4,7 @@ class StreetOfSteel extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (e, challenge) => challenge.winner === this.controller && challenge.challengeType === 'military'
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.challengeType === 'military'
             },
             cost: ability.costs.kneelFactionCard(),
             handler: () => {

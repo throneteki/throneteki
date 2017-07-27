@@ -25,12 +25,12 @@ class BlessHimWithSalt extends DrawCard {
         });
     }
 
-    afterChallenge(event, challenge) {
+    afterChallenge(event) {
         if(!this.selectedCard) {
             return;
         }
 
-        if(challenge.winner === this.controller) {
+        if(event.challenge.winner === this.controller) {
             this.controller.drawCardsToHand(1);
 
             this.game.addMessage('{0} uses {1} to draw 1 card',

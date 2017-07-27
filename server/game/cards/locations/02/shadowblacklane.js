@@ -4,7 +4,7 @@ class ShadowblackLane extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (e, challenge) => challenge.winner === this.controller && challenge.challengeType === 'intrigue'
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.challengeType === 'intrigue'
             },
             cost: ability.costs.kneelFactionCard(),
             handler: () => {

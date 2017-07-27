@@ -6,7 +6,7 @@ class Rhaegal extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.winner === this.controller &&
                     _.any(challenge.getWinnerCards(), card => card.hasTrait('Stormborn'))
                 )

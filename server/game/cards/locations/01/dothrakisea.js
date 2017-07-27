@@ -4,7 +4,7 @@ class DothrakiSea extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && challenge.challengeType === 'power'
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.challengeType === 'power'
             },
             cost: ability.costs.sacrificeSelf(),
             target: {

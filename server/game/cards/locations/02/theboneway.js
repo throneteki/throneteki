@@ -4,7 +4,7 @@ class TheBoneway extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.loser === this.controller
+                afterChallenge: ({challenge}) => challenge.loser === this.controller
             },
             handler: () => {
                 this.addToken('vengeance', 1);

@@ -4,10 +4,10 @@ class InsidiousScheme extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onClaimApplied: (event, challenge) => (
-                    challenge.challengeType === 'intrigue' &&
-                    challenge.winner === this.controller &&
-                    challenge.strengthDifference >= 5)
+                onClaimApplied: event => (
+                    event.challenge.challengeType === 'intrigue' &&
+                    event.challenge.winner === this.controller &&
+                    event.challenge.strengthDifference >= 5)
             },
             handler: () => {
                 let opponent = this.game.getOtherPlayer(this.controller);

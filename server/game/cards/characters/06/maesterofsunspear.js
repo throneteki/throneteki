@@ -4,7 +4,7 @@ class MaesterOfSunspear extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => this.controller === challenge.loser && challenge.isParticipating(this)
+                afterChallenge: ({challenge}) => this.controller === challenge.loser && challenge.isParticipating(this)
             },
             target: {
                 activePromptTitle: 'Select an attachment',
