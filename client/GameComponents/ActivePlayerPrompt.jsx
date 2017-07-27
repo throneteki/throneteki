@@ -64,6 +64,12 @@ class ActivePlayerPrompt extends React.Component {
     onButtonClick(event, command, arg, method) {
         event.preventDefault();
 
+        if(this.state.timerHandle) {
+            clearInterval(this.state.timerHandle);
+        }
+
+        this.setState({ showTimer: false, timerHandle: undefined, timerCancelled: true });
+
         if(this.props.onButtonClick) {
             this.props.onButtonClick(command, arg, method);
         }
