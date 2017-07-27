@@ -18,7 +18,7 @@ class RecruiterForTheWatch extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to take control of {2}', this.controller, this, context.target);
                 this.lastingEffect(ability => ({
                     until: {
-                        onCardStood: (event, player, card) => card === this,
+                        onCardStood: event => event.card === this,
                         onCardLeftPlay: event => event.card === this
                     },
                     match: context.target,

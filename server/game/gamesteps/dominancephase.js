@@ -44,9 +44,7 @@ class DominancePhase extends Phase {
             this.game.addMessage('No one wins dominance');
         }
 
-        var dominanceLoser = dominanceWinner ? this.game.getOtherPlayer(dominanceWinner) : undefined;
-
-        this.game.raiseEvent('onDominanceDetermined', dominanceWinner, dominanceLoser);
+        this.game.raiseMergedEvent('onDominanceDetermined', { winner: dominanceWinner });
     }
 }
 

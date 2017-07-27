@@ -232,7 +232,7 @@ describe('EffectEngine', function () {
             describe('and the card being blanked is the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = this.cardBeingToggled;
-                    this.engine.onCardBlankToggled({}, this.cardBeingToggled, false);
+                    this.engine.onCardBlankToggled({ card: this.cardBeingToggled, isBlank: false });
                 });
 
                 it('should set the active value for the effect along with cards to target', function() {
@@ -243,7 +243,7 @@ describe('EffectEngine', function () {
             describe('and the card being blanked is not the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = {};
-                    this.engine.onCardBlankToggled({}, this.cardBeingToggled, false);
+                    this.engine.onCardBlankToggled({ card: this.cardBeingToggled, isBlank: false });
                 });
 
                 it('should not set the active value for the effect', function() {
@@ -260,7 +260,7 @@ describe('EffectEngine', function () {
             describe('and the card being blanked is the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = this.cardBeingToggled;
-                    this.engine.onCardBlankToggled({}, this.cardBeingToggled, false);
+                    this.engine.onCardBlankToggled({ card: this.cardBeingToggled, isBlank: false });
                 });
 
                 it('should not set the active value for the effect', function() {
@@ -271,7 +271,7 @@ describe('EffectEngine', function () {
             describe('and the card being blanked is not the source for an effect', function() {
                 beforeEach(function() {
                     this.effectSpy.source = {};
-                    this.engine.onCardBlankToggled({}, this.cardBeingToggled, false);
+                    this.engine.onCardBlankToggled({ card: this.cardBeingToggled, isBlank: false });
                 });
 
                 it('should not set the active value for the effect', function() {

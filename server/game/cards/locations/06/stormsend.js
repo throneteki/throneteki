@@ -6,7 +6,7 @@ class StormsEnd extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: (event, winner) => this.controller === winner
+                onDominanceDetermined: event => this.controller === event.winner
             },
             cost: ability.costs.discardFactionPower(1),
             handler: () => {

@@ -4,7 +4,7 @@ class Melisandre extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event, winner) => this.controller === winner && this.opponentHasCardsInHand()
+                onDominanceDetermined: event => this.controller === event.winner && this.opponentHasCardsInHand()
             },
             handler: () => {
                 let otherPlayer = this.game.getOtherPlayer(this.controller);

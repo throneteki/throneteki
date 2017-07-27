@@ -4,7 +4,7 @@ class AeronDamphair extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event, winner) => this.controller === winner
+                onDominanceDetermined: event => this.controller === event.winner
             },
             target: {
                 activePromptTitle: 'Select character',

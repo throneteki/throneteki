@@ -4,7 +4,7 @@ class CatelynStark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: (event, player, card) => this.starkCharacterSacrificedOrKilled(event, card),
+                onSacrificed: event => this.starkCharacterSacrificedOrKilled(event, event.card),
                 onCharacterKilled: event => this.starkCharacterSacrificedOrKilled(event, event.card)
             },
             limit: ability.limit.perRound(2),

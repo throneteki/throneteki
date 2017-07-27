@@ -14,7 +14,7 @@ class TheLongPlan extends PlotCard {
         // TODO: This is a hack, really the ability should be a persistent effect.
         this.forcedInterrupt({
             when: {
-                onUnspentGoldReturned: (event, player) => player === this.controller
+                onUnspentGoldReturned: event => event.player === this.controller
             },
             handler: context => {
                 context.skipHandler();

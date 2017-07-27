@@ -4,7 +4,7 @@ class StinkingDrunk extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardStood: (event, player, card) => card === this.parent
+                onCardStood: event => event.card === this.parent
             },
             handler: () => {
                 this.game.addMessage('{0} sacrifices {1} to kneel {2}', this.controller, this, this.parent);

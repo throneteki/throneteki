@@ -4,7 +4,7 @@ class Satin extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardKneeled: (event, player, card) => card === this
+                onCardKneeled: event => event.card === this
             },
             limit: ability.limit.perPhase(2),
             target: {

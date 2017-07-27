@@ -4,7 +4,7 @@ class Gendry extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: (event, winner) => this.controller === winner
+                onDominanceDetermined: event => this.controller === event.winner
             },
             handler: () => {
                 this.modifyPower(1),
@@ -14,7 +14,7 @@ class Gendry extends DrawCard {
 
         this.forcedReaction({
             when: {
-                onDominanceDetermined: (event, winner, loser) => this.controller === loser
+                onDominanceDetermined: event => event.winner && this.controller !== event.winner
             },
             handler: () => {
                 this.game.promptWithMenu(this.controller, this, {

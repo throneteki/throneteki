@@ -188,7 +188,7 @@ class Player extends Spectator {
 
     modifyUsedPlots(value) {
         this.usedPlotsModifier += value;
-        this.game.raiseEvent('onUsedPlotsModified', this);
+        this.game.raiseMergedEvent('onUsedPlotsModified', { player: this });
     }
 
     modifyClaim(winner, challengeType, claim) {
@@ -841,7 +841,7 @@ class Player extends Spectator {
 
     sacrificeCard(card) {
         this.game.applyGameAction('sacrifice', card, card => {
-            this.game.raiseEvent('onSacrificed', this, card, () => {
+            this.game.raiseMergedEvent('onSacrificed', { player: this, card: card }, () => {
                 this.moveCard(card, 'discard pile');
             });
         });
@@ -1031,7 +1031,7 @@ class Player extends Spectator {
         this.game.applyGameAction('kneel', card, card => {
             card.kneeled = true;
 
-            this.game.raiseEvent('onCardKneeled', this, card);
+            this.game.raiseMergedEvent('onCardKneeled', { player: this, card: card });
         });
     }
 
@@ -1043,7 +1043,7 @@ class Player extends Spectator {
         this.game.applyGameAction('stand', card, card => {
             card.kneeled = false;
 
-            this.game.raiseEvent('onCardStood', this, card);
+            this.game.raiseMergedEvent('onCardStood', { player: this, card: card });
         });
     }
 

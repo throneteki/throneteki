@@ -4,20 +4,19 @@ class TheTumblestone extends DrawCard {
     setupCardAbilities(ability) {  
         this.reaction({
             when: {
-                // Currently has false positive when power is moved to a character, should only trigger on 'gains'
-                onCardPowerChanged: (event, card, power) => {
-                    if(!card.hasTrait('House Tully') || card.getType() !== 'character' || power === 0 || !card.kneeled) {
-                        return false;
-                    }
-                    
-                    this.standCard = card;
-                    return true;
-                }
+                // TODO: Currently has false positive when power is moved to a character, should only trigger on 'gains'
+                onCardPowerChanged: event => (
+                    event.power > 0 &&
+                    event.card.getType() === 'character' &&
+                    event.card.hasTrait('House Tully') &&
+                    event.card.kneeled
+                )
             },
             cost: ability.costs.discardGold(),
-            handler: () => {
-                this.standCard.controller.standCard(this.standCard);
-                this.game.addMessage('{0} discards a gold from {1} to stand {2}', this.controller, this, this.standCard);
+            handler: context => {
+                let standCard = context.event.card;
+                standCard.controller.standCard(standCard);
+                this.game.addMessage('{0} discards a gold from {1} to stand {2}', this.controller, this, standCard);
             }
         });
     }

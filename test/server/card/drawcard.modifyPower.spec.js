@@ -6,7 +6,7 @@ const DrawCard = require('../../../server/game/drawcard.js');
 describe('DrawCard', function () {
     beforeEach(function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
-        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'checkWinCondition', 'applyGameAction']);
+        this.gameSpy = jasmine.createSpyObj('game', ['raiseMergedEvent', 'checkWinCondition', 'applyGameAction']);
         this.gameSpy.applyGameAction.and.callFake((action, card, callback) => callback(card));
         this.card = new DrawCard({ game: this.gameSpy }, this.testCard);
     });
@@ -17,7 +17,7 @@ describe('DrawCard', function () {
                 this.card.modifyPower(2);
 
                 expect(this.card.power).toBe(2);
-                expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardPowerChanged', this.card, 2);
+                expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardPowerChanged', { card: this.card, power: 2 });
             });
         });
 
@@ -27,7 +27,7 @@ describe('DrawCard', function () {
                 this.card.modifyPower(-2);
 
                 expect(this.card.power).toBe(0);
-                expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardPowerChanged', this.card, -2);
+                expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardPowerChanged', { card: this.card, power: -2 });
             });
         });
 
@@ -37,7 +37,7 @@ describe('DrawCard', function () {
                 this.card.modifyPower(-5);
 
                 expect(this.card.power).toBe(0);
-                expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardPowerChanged', this.card, -2);
+                expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardPowerChanged', { card: this.card, power: -2 });
             });
         });
     });

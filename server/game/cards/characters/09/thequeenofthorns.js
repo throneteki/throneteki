@@ -4,7 +4,7 @@ class TheQueenOfThorns extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardKneeled: (e, player, card) => card === this
+                onCardKneeled: event => event.card === this
             },
             cost: ability.costs.discardFromHand(card => card.getType() === 'event'),
             handler: context => {

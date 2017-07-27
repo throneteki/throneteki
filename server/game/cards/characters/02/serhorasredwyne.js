@@ -4,7 +4,7 @@ class SerHorasRedwyne extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: (e, player, card) => card === this
+                onCardKneeled: event => event.card === this
             },
             target: {
                 activePromptTitle: 'Select a character',
