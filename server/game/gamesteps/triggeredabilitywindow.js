@@ -53,7 +53,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             onClaimApplied: 'interrupt'
         };
 
-        return !player.noTimer && _.any(this.events, event => {
+        return !player.noTimer && (!player.user.settings || player.user.settings.windowTimer !== 0) && _.any(this.events, event => {
             return event.player !== player && cancellableEvents[event.name] && cancellableEvents[event.name] === this.abilityType;
         });
     }

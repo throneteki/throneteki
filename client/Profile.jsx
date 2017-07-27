@@ -201,9 +201,9 @@ class InnerProfile extends React.Component {
                 { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
                 <form className='form form-horizontal'>
                     <div className='row'>
-                        <div className='col-sm-6 col-sm-offset-3'>
+                        <div className='col-sm-8 col-sm-offset-2'>
                             <div className='panel-title text-center'>
-                            User
+                                User
                             </div>
                             <div className='panel'>
                                 <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
@@ -221,7 +221,7 @@ class InnerProfile extends React.Component {
                         </div>
                     </div>
                     <div className='row'>
-                        <div className='col-sm-offset-3 col-sm-6'>
+                        <div className='col-sm-offset-2 col-sm-8'>
                             <div className='panel-title text-center'>
                                 Action window defaults
                             </div>
@@ -234,12 +234,12 @@ class InnerProfile extends React.Component {
                         </div>
                     </div>
                     <div className='row'>
-                        <div className='col-sm-offset-3 col-sm-6'>
+                        <div className='col-sm-offset-2 col-sm-8'>
                             <div className='panel-title text-center'>
                                 Action window timing
                             </div>
                             <div className='panel'>
-                                <p className='help-block small'>Every time a game event occurs after which you could possibly have an action or reaction, a timer will count down.  At the end of that timer, the window will automatically pass.  This options controls how fast that timer counts down</p>
+                                <p className='help-block small'>Every time a game event occurs after which you could possibly have an action, reaction or interrupt which would allow you to cancel it, a timer will count down.  At the end of that timer, the window will automatically pass.  This options controls how fast that timer counts down</p>
                                 <div className='form-group'>
                                     <label className='col-sm-3 control-label'>Window timeout</label>
                                     <div className='col-sm-5'>
@@ -252,7 +252,7 @@ class InnerProfile extends React.Component {
                                     <div className='col-sm-2'>
                                         <input className='form-control text-center' name='timer' value={ this.state.windowTimer } onChange={ this.onSlideStop.bind(this) } />
                                     </div>
-                                    <label className='col-sm-2 control-label'>seconds</label>
+                                    <label className='col-sm-1 control-label'>seconds</label>
                                 </div>
                             </div>
                         </div>
