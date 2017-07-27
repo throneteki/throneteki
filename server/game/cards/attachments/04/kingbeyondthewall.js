@@ -22,7 +22,7 @@ class KingBeyondTheWall extends DrawCard {
     }
 
     hasLessTotalPower() {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
+        let otherPlayer = this.game.getOtherPlayer(this.controller);
         if(!otherPlayer) {
             return false;
         }

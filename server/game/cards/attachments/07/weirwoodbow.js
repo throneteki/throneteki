@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class WeirwoodBow extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel Weirwood Bow to give -2 STR',
+            title: 'Give defending character -2 STR',
             cost: ability.costs.kneelSelf(),
             condition: () => this.game.currentChallenge,
             target: {

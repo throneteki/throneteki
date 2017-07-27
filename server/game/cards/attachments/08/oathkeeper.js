@@ -8,9 +8,8 @@ class Oathkeeper extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller &&
-                                                  challenge.strengthDifference >= 5 &&
-                                                  challenge.isParticipating(this.parent)
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.strengthDifference >= 5 &&
+                                                 challenge.isParticipating(this.parent)
             },
             cost: ability.costs.sacrificeSelf(),
             handler: () => {

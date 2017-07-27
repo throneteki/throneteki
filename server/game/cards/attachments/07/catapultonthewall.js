@@ -3,14 +3,14 @@ const DrawCard = require('../../../drawcard.js');
 class CatapultOnTheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel Catapult and attached character',
+            title: 'Kill attacking character',
             condition: () => this.game.currentChallenge,
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.kneelParent()
             ],
             target: {
-                activePromptTitle: 'Select character to kill',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => this.game.currentChallenge.isAttacking(card) && card.getStrength() <= 4
             },
             handler: context => {

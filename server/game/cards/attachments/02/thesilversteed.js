@@ -15,6 +15,7 @@ class TheSilverSteed extends DrawCard {
                 onRenown: event => event.card === this.parent
             },
             handler: () => {
+                // The sacrifice here is specifically an effect, not a cost
                 this.controller.sacrificeCard(this);
 
                 this.untilEndOfPhase(ability => ({
@@ -23,7 +24,7 @@ class TheSilverSteed extends DrawCard {
                     effect: ability.effects.modifyChallengeTypeLimit('power', 1)
                 }));
 
-                this.game.addMessage('{0} sacrifices {1} to be able to initiate an additional {2} challenge this phase', this.controller, this, 'power');
+                this.game.addMessage('{0} sacrifices {1} and is able to initiate an additional {2} challenge this phase', this.controller, this, 'power');
             }
         });
     }

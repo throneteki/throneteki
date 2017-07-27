@@ -23,7 +23,7 @@ class ShieldOfLannisport extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(card.getType() !== 'character') {
+        if(card.getType() !== 'character' || !card.isFaction('lannister') || (!card.hasTrait('Lord') && !card.hasTrait('Lady'))) {
             return false;
         }
 
