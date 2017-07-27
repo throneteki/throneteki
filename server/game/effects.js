@@ -563,6 +563,16 @@ const Effects = {
             }
         };
     },
+    modifyDrawPhaseCards: function(value) {
+        return {
+            apply: function(player) {
+                player.drawPhaseCards += value;
+            },
+            unapply: function(player) {
+                player.drawPhaseCards -= value;
+            }
+        };
+    },
     modifyMaxLimited: function(amount) {
         return {
             apply: function(player) {
