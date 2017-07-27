@@ -1,10 +1,9 @@
 const DrawCard = require('../../../drawcard.js');
 
 class Summer extends DrawCard {
-
     setupCardAbilities(ability) {
         this.action({
-            title: 'Have parent participate',
+            title: 'Add attached character to the challenge',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
             cost: ability.costs.kneelParent(),
             limit: ability.limit.perChallenge(1),
@@ -14,27 +13,22 @@ class Summer extends DrawCard {
                 } else {
                     this.game.currentChallenge.addDefender(this.parent, false);
                 }
-                
-                this.game.addMessage('{0} uses {1} and kneels {2} to have {2} participate on their side',
+                this.game.addMessage('{0} uses {1} and kneels {2} to have {2} participate in the challenge on their side',
                     this.controller, this, this.parent);
             }
         }),
-
+        //TODO: uses target API but doesn't 'target' per the game rules (doesn't use the word choose)
         this.action({
-            title: 'Attach to a different character',
+            title: 'Attach Summer to another character',
             cost: ability.costs.payGold(1),
             limit: ability.limit.perPhase(1),
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => (
-                    card.location === 'play area' &&
-                    card !== this.parent &&
-                    this.controller.canAttach(this, card))
+                cardCondition: card => card.location === 'play area' && card !== this.parent && this.controller.canAttach(this, card)
             },
             handler: context => {
                 this.controller.attach(this.controller, this, context.target);
-
-                this.game.addMessage('{0} uses {1} and pays 1 gold to attach {1} to {2}',
+                this.game.addMessage('{0} pays 1 gold to attach {1} to {2}',
                     this.controller, this, this.parent);
             }
         });

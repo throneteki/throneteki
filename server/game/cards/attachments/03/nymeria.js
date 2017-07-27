@@ -6,47 +6,28 @@ class Nymeria extends DrawCard {
         this.whileAttached({
             effect: ability.effects.addKeyword('Intimidate')
         });
+        //TODO: uses target API but doesn't 'target' per the game rules (doesn't use the word choose)
         this.action({
-            title: 'Pay 1 gold to attach Nymeria to another character',
-            method: 'reAttach',
-            limit: ability.limit.perPhase(1)
+            title: 'Attach Nymeria to another character',
+            cost: ability.costs.payGold(1),
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => this.controller.canAttach(this, card) && card.location === 'play area' && card !== this
+            },
+            limit: ability.limit.perPhase(1),
+            handler: context => {
+                this.controller.attach(this.controller, this, context.target);
+                this.game.addMessage('{0} pays 1 gold to attach {1} to {2}', this.controller, this, context.target);
+            }
         });
-    }
-
-    reAttach(player) {
-        this.oldOwner = this.parent;
-        if(!this.oldOwner || this.controller.gold < 1) {
-            return false;
-        }
-
-        player.moveCard(this, 'play area');
-
-        this.game.promptForSelect(this.controller, {
-            cardCondition: card => player.canAttach(this, card) && card.location === 'play area',
-            activePromptTitle: 'Select a character',
-            waitingPromptTitle: 'Waiting for opponent to move attachment',
-            onSelect: (player, card) => this.moveAttachment(player, card)
-        });
-
-        return true;
     }
 
     canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('stark') || !card.isUnique() || card === this.oldOwner) {
+        if(card.getType() !== 'character' || !card.isFaction('stark') || !card.isUnique()) {
             return false;
         }
 
         return super.canAttach(player, card);
-    }
-
-    moveAttachment(player, newOwner) {
-        var targetPlayer = this.game.getPlayerByName(newOwner.controller.name);
-        targetPlayer.attach(player, this, newOwner);
-        player.gold -= 1;
-        this.game.addMessage('{0} pays 1 gold to attach {1} from {2} to {3}', player, this, this.oldOwner, newOwner);
-        this.oldOwner = null;
-
-        return true;
     }
 }
 
