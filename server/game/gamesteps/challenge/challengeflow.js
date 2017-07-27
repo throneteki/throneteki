@@ -216,20 +216,20 @@ class ChallengeFlow extends BaseStep {
         }
 
         this.challenge.claim = this.challenge.getClaim();
-        this.game.promptWithMenu(this.challenge.winner, this, {
+        this.game.promptWithMenu(this.challenge.loser, this, {
             activePrompt: {
-                menuTitle: 'Perform before claim actions',
+                menuTitle: 'Claim will be applied',
                 buttons: [
-                    { text: 'Apply Claim', method: 'applyClaim' },
-                    { text: 'Continue', method: 'cancelClaim' }
+                    { text: 'Continue', method: 'applyClaim' },
+                    { text: 'Cancel', method: 'cancelClaim' }
                 ]
             },
-            waitingPromptTitle: 'Waiting for opponent to apply claim'
+            waitingPromptTitle: 'Waiting for opponents'
         });
     }
 
     applyClaim(player) {
-        if(player !== this.challenge.winner) {
+        if(player !== this.challenge.loser) {
             return false;
         }
 
@@ -241,7 +241,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     cancelClaim(player) {
-        this.game.addMessage('{0} continues without applying claim', player, this);
+        this.game.addMessage('{0} cancels applying claim', player, this);
 
         return true;
     }
