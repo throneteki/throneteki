@@ -5,7 +5,7 @@ class UnbowedUnbentUnbroken extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     !this.controller.firstPlayer &&
                     challenge.defendingPlayer === this.controller &&
                     challenge.loser === this.controller

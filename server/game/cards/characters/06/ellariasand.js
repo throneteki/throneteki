@@ -6,7 +6,7 @@ class EllariaSand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => this.controller === challenge.loser && challenge.isParticipating(this)
+                afterChallenge: ({challenge}) => this.controller === challenge.loser && challenge.isParticipating(this)
             },
             cost: ability.costs.discardGold(),
             handler: () => {

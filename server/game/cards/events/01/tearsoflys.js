@@ -5,7 +5,7 @@ class TearsOfLys extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.attackingPlayer === this.controller &&
                     challenge.winner === this.controller &&
                     challenge.challengeType === 'intrigue'

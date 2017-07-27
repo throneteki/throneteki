@@ -4,9 +4,9 @@ class Alayaya extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (e, challenge) => (
-                    challenge.winner === this.controller && 
-                    challenge.isParticipating(this) && 
+                afterChallenge: ({challenge}) => (
+                    challenge.winner === this.controller &&
+                    challenge.isParticipating(this) &&
                     this.opponentHasGold())
             },
             handler: () => {

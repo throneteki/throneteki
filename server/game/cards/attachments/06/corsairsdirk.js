@@ -8,9 +8,9 @@ class CorsairsDirk extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
-                    challenge.winner === this.controller && 
-                    challenge.isAttacking(this.parent) && 
+                afterChallenge: ({challenge}) => (
+                    challenge.winner === this.controller &&
+                    challenge.isAttacking(this.parent) &&
                     this.opponentHasGold())
             },
             handler: () => {

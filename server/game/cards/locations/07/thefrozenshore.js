@@ -6,7 +6,7 @@ class TheFrozenShore extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.winner === this.controller &&
                     this.getNumOfAttackingWildlings(challenge) > 0 &&
                     this.getNumOfWinterPlots() > 0

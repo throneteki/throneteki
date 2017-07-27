@@ -5,7 +5,7 @@ class PutToTheTorch extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event, challenge) => (
+                afterChallenge: ({challenge}) => (
                     challenge.challengeType === 'military' &&
                     challenge.winner === this.controller &&
                     challenge.attackingPlayer === this.controller &&

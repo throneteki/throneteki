@@ -5,7 +5,7 @@ class PlazaOfPunishment extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) =>
+                afterChallenge: ({challenge}) =>
                     challenge.winner === this.controller
                     && challenge.challengeType === 'power'
             },

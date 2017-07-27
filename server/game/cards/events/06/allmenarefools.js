@@ -7,8 +7,8 @@ class AllMenAreFools extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: (event, challenge) => (
-                    challenge.winner === this.controller && 
+                afterChallenge: ({challenge}) => (
+                    challenge.winner === this.controller &&
                     challenge.strengthDifference >= 5 &&
                     this.hasLady())
             },

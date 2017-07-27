@@ -19,7 +19,7 @@ class GuardingTheRealm extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && !challenge.isAttackerTheWinner()
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && !challenge.isAttackerTheWinner()
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),

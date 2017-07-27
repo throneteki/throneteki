@@ -23,7 +23,7 @@ class ADragonIsNoSlave extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && this.hasParticipatingDragonOrDany()
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && this.hasParticipatingDragonOrDany()
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),

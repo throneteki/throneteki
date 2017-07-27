@@ -4,7 +4,7 @@ class TowerOfTheHand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.challengeType === 'intrigue' && challenge.winner === this.controller
+                afterChallenge: ({challenge}) => challenge.challengeType === 'intrigue' && challenge.winner === this.controller
             },
             cost: [
                 ability.costs.kneelSelf(),

@@ -4,7 +4,7 @@ class Pyp extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller && challenge.isAttacking(this)
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this)
             },
             target: {
                 activePromptTitle: 'Select a character',

@@ -4,7 +4,7 @@ class EliaSand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => this.controller === challenge.loser
+                afterChallenge: ({challenge}) => this.controller === challenge.loser
             },
             limit: ability.limit.perPhase(2),
             target: {

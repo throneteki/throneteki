@@ -4,8 +4,8 @@ class TarredHeads extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => (
-                    challenge.challengeType === 'power' && 
+                afterChallenge: ({challenge}) => (
+                    challenge.challengeType === 'power' &&
                     challenge.winner === this.controller &&
                     this.opponentHasCards())
             },

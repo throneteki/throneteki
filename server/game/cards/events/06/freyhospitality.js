@@ -4,9 +4,9 @@ class FreyHospitality extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: (event, challenge) => challenge.winner === this.controller &&
-                                                      challenge.number === 3 &&
-                                                      this.hasAttackingFrey()
+                afterChallenge: ({challenge}) => challenge.winner === this.controller &&
+                                                 challenge.number === 3 &&
+                                                 this.hasAttackingFrey()
             },
             handler: () => {
                 let numTargets = this.game.currentChallenge.strengthDifference >= 20 ? 3 : 1;
@@ -17,8 +17,8 @@ class FreyHospitality extends DrawCard {
                     activePromptTitle: 'Select character(s)',
                     source: this,
                     gameAction: 'kill',
-                    cardCondition: card => card.location === 'play area' && 
-                                           card.controller !== this.controller && 
+                    cardCondition: card => card.location === 'play area' &&
+                                           card.controller !== this.controller &&
                                            card.getType() === 'character',
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
                 });
@@ -30,7 +30,7 @@ class FreyHospitality extends DrawCard {
         if(this.game.currentChallenge.strengthDifference >= 20 && cards.length !== 3) {
             return false;
         }
-        
+
         this.game.killCharacters(cards);
         this.game.addMessage('{0} plays {1} to kill {2}', this.controller, this, cards);
 
@@ -38,8 +38,8 @@ class FreyHospitality extends DrawCard {
     }
 
     hasAttackingFrey() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) && 
-                                                      card.hasTrait('House Frey') && 
+        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
+                                                      card.hasTrait('House Frey') &&
                                                       card.getType() === 'character');
     }
 }

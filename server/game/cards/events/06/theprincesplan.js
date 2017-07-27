@@ -27,7 +27,7 @@ class ThePrincesPlan extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: (event, challenge) => challenge.loser === this.controller
+                afterChallenge: ({challenge}) => challenge.loser === this.controller
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
