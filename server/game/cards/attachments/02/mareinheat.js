@@ -4,7 +4,8 @@ class MareInHeat extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge && this.hasSingleParticipatingChar(),
+            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent) &&
+                             this.hasSingleParticipatingChar(),
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a character',

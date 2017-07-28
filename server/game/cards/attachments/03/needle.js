@@ -8,18 +8,13 @@ class Needle extends DrawCard {
 
         this.interrupt({
             when: {
-                onSacrificed: event => {
-                    if(event.card === this.parent) {
-                        this.parentCard = this.parent;
-                        return true;
-                    }
-                }
+                onSacrificed: event => event.card === this.parent
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
                 context.skipHandler();
-                this.game.addMessage('{0} sacrifices {1} to return {2} to their hand', this.controller, this, this.parentCard);
-                this.controller.returnCardToHand(this.parentCard, false);
+                this.game.addMessage('{0} sacrifices {1} to return {2} to their hand', this.controller, this, context.event.card);
+                this.controller.returnCardToHand(context.event.card, false);
             }
         });
     }
