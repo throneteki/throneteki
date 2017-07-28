@@ -2,56 +2,28 @@ const DrawCard = require('../../../drawcard.js');
 
 class CrownOfGoldenRoses extends DrawCard {
     setupCardAbilities(ability) {
-        this.action({
-            title: 'Discard a card to give attached character STR',
-            method: 'boost',
-            limit: ability.limit.perRound(2)
-        });
         this.whileAttached({
             effect: ability.effects.addTrait('King')
         });
-    }
 
-    boost(player) {
-        if(!this.parent) {
-            return false;
-        }
+        this.action({
+            title: 'Give attached character +STR',
+            condition: () => this.parent.getNumberOfIcons() >= 1,
+            limit: ability.limit.perRound(2),
+            cost: ability.costs.discardFromHand(),
+            handler: context => {
+                let strBoost = this.parent.getNumberOfIcons();
 
-        this.game.promptForSelect(player, {
-            activePromptTitle: 'Select a card',
-            source: this,
-            cardCondition: card => card.location === 'hand',
-            onSelect: (p, card) => this.onCardSelected(p, card)
+                this.untilEndOfPhase(ability => ({
+                    match: card => card === this.parent,
+                    effect: ability.effects.modifyStrength(strBoost)
+                }));
+
+                this.game.addMessage('{0} uses {1} and discards {2} from their hand to give +{3} STR to {4} until the end of the phase',
+                    this.controller, this, context.discardCostCard, strBoost, this.parent);
+            }
         });
 
-        return true;
-    }
-
-    onCardSelected(player, card) {
-        this.controller.discardCard(card);
-
-        var icons = 0;
-
-        if(this.parent.hasIcon('military')) {
-            icons++;
-        }
-
-        if(this.parent.hasIcon('intrigue')) {
-            icons++;
-        }
-
-        if(this.parent.hasIcon('power')) {
-            icons++;
-        }
-
-        this.untilEndOfPhase(ability => ({
-            match: card => card === this.parent,
-            effect: ability.effects.modifyStrength(icons)
-        }));
-
-        this.game.addMessage('{0} uses {1} to discard {2} to give {3} +{4} STR', player, this, card, this.parent, icons);
-
-        return true;
     }
 
     canAttach(player, card) {

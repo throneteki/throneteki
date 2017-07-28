@@ -4,7 +4,7 @@ class DisputedClaim extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
             condition: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
+                let otherPlayer = this.game.getOtherPlayer(this.controller);
                 if(!otherPlayer || this.controller.faction.power > otherPlayer.faction.power) {
                     return true;
                 }

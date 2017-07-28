@@ -5,32 +5,22 @@ class VenomousBlade extends DrawCard {
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)
         });
-
+        //TODO: uses target API but doesn't 'target' per the game rules (doesn't use the word choose)
         this.reaction({
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.getType() === 'character' &&
-                        card.getPrintedStrength() <= 2),
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedStrength() <= 2
+            },
+            handler: context => {
+                this.atEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.poison
+                }));
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.atEndOfPhase(ability => ({
-            match: card,
-            effect: ability.effects.poison
-        }));
-
-        return true;
     }
 
     canAttach(player, card) {

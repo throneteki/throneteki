@@ -12,7 +12,7 @@ class DrownedGodsBlessing extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(card.getType() !== 'character') {
+        if(card.getType() !== 'character' || !card.isFaction('greyjoy')) {
             return false;
         }
 

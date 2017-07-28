@@ -19,16 +19,15 @@ class BeggarKing extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                var gold = 1;
+                let gold = 1;
 
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer || !otherPlayer.anyCardsInPlay(card => card.hasTrait('King'))) {
+                let opponent = this.game.getOtherPlayer(this.controller);
+                if(!opponent || !opponent.anyCardsInPlay(card => card.hasTrait('King'))) {
                     gold = 2;
                 }
 
                 this.game.addGold(this.controller, gold);
-
-                this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
+                this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
             }
         });
     }

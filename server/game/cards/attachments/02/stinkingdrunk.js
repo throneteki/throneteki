@@ -1,16 +1,15 @@
 const DrawCard = require('../../../drawcard.js');
 
 class StinkingDrunk extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardStood: event => event.card === this.parent
             },
-            handler: () => {
-                this.game.addMessage('{0} sacrifices {1} to kneel {2}', this.controller, this, this.parent);
-
-                this.parent.controller.kneelCard(this.parent);
-                this.owner.sacrificeCard(this);
+            cost: ability.costs.sacrificeSelf(),
+            handler: context => {
+                this.game.addMessage('{0} sacrifices {1} to kneel {2}', this.controller, this, context.event.card);
+                this.parent.controller.kneelCard(context.event.card);
             }
         });
     }

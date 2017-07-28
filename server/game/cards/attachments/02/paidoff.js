@@ -36,11 +36,9 @@ class PaidOff extends DrawCard {
         }
 
         this.game.transferGold(this.controller, player, 1);
-
         player.standCard(this.parent);
 
-        this.game.addMessage('{0} pays 1 gold for {1} to stand {2}',
-            player, this, this.parent);
+        this.game.addMessage('{0} pays 1 gold for {1} to stand {2}', player, this, this.parent);
 
         return true;
     }
@@ -48,20 +46,6 @@ class PaidOff extends DrawCard {
     cancel(player) {
         this.game.addMessage('{0} does not pay 1 gold for {1} so {2} remains kneeled',
             player, this, this.parent);
-
-        return true;
-    }
-
-    cardCondition(card) {
-        return card.getType() === 'character' && card.location === 'play area' && this.game.currentChallenge.isParticipating(card) && card.getStrength() > this.parent.getStrength();
-    }
-
-    onCardSelected(player, card) {
-        player.kneelCard(this);
-
-        this.game.currentChallenge.removeFromChallenge(card);
-
-        this.game.addMessage('{0} kneels {1} to remove {2} from the challenge', player, this, card);
 
         return true;
     }

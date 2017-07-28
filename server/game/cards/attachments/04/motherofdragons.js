@@ -3,30 +3,21 @@ const DrawCard = require('../../../drawcard.js');
 class MotherOfDragons extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel Mother of Dragons to add attached character to challenge',
-            condition: () =>
-                this.game.currentChallenge && 
-                this.controller.anyCardsInPlay(
-                    card => this.game.currentChallenge.isParticipating(card) &&
-                            card.hasTrait('Dragon')) &&
-                this.parent.canParticipateInChallenge(),
+            title: 'Add attached character to the challenge',
+            condition: () => this.game.currentChallenge && this.parent.canParticipateInChallenge() &&
+                             this.controller.anyCardsInPlay(card => this.game.currentChallenge.isParticipating(card) && card.hasTrait('Dragon')),
             cost: ability.costs.kneelSelf(),
-            method: 'addToChallenge'
+            handler: () => {
+                let challenge = this.game.currentChallenge;
+
+                if(challenge.attackingPlayer === this.controller) {
+                    challenge.addAttacker(this.parent, false);
+                } else {
+                    challenge.addDefender(this.parent, false);
+                }
+                this.game.addMessage('{0} kneels {1} to have {2} participate in the challenge on their side', this.controller, this, this.parent);
+            }
         });
-    }
-
-    addToChallenge(player) {
-        var challenge = this.game.currentChallenge;
-
-        if(challenge.attackingPlayer === player) {
-            challenge.addAttacker(this.parent);
-            this.game.addMessage('{0} uses {1} to add {2} to the challenge as an attacker with strength {3}', this.controller, this, this.parent, this.parent.getStrength());
-        } else {
-            challenge.addDefender(this.parent);
-            this.game.addMessage('{0} uses {1} to add {2} to the challenge as a defender with strength {3}', this.controller, this, this.parent, this.parent.getStrength());
-        }
-
-        this.controller.standCard(this.parent);
     }
 
     canAttach(player, card) {

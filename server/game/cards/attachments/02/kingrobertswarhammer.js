@@ -11,35 +11,26 @@ class KingRobertsWarhammer extends DrawCard {
             when: {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this.parent)
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    numCards: 99,
-                    activePromptTitle: 'Select characters',
-                    source: this,
-                    maxStat: () => this.parent.getStrength(),
-                    cardStat: card => card.getStrength(),
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
-                    gameAction: 'kneel',
-                    onSelect: (player, cards) => this.onSelect(player, cards),
-                    onCancel: (player) => this.cancelSelection(player)
+            target: {
+                activePromptTitle: 'Select character(s)',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
+                numCards: 99,
+                maxStat: () => this.parent.getStrength(),
+                cardStat: card => card.getStrength(),
+                multiSelect: true,
+                gameAction: 'kneel'
+            },
+            handler: context => {
+                _.each(context.target, card => {
+                    card.controller.kneelCard(card);
                 });
+
+                this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, context.target);
+                // King Robert's Warhammer specifically has its sacrifice as a then-effect, not a cost
+                this.controller.sacrificeCard(this);
+                this.game.addMessage('{0} then sacrifices {1}', this.controller, this);
             }
         });
-    }
-
-    onSelect(player, cards) {
-        _.each(cards, card => {
-            card.controller.kneelCard(card);
-        });
-
-        this.game.addMessage('{0} sacrifices {1} to kneel {2}', player, this, cards);
-        this.controller.sacrificeCard(this);
-
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
     }
 
     canAttach(player, card) {

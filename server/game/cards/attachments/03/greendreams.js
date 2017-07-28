@@ -26,12 +26,12 @@ class GreenDreams extends DrawCard {
 
     placeOnBottom(player, arg) {
         if(arg === 'no') {
-            this.game.addMessage('{0} declines to use {1} to move the top card of their deck to the bottom', this.controller, this);
+            this.game.addMessage('{0} does not put the top card of their deck on the bottom', this.controller);
             return true;
         }
 
         this.controller.moveCard(this.topCard, 'draw deck', { bottom: true });
-        this.game.addMessage('{0} uses {1} to move the top card of their deck to the bottom', this.controller, this);
+        this.game.addMessage('{0} puts the top card of their deck on the bottom', this.controller, this);
 
         return true;
     }
