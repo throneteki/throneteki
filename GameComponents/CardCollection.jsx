@@ -3,7 +3,7 @@ import _ from 'underscore';
 import $ from 'jquery';
 
 import Card from './Card.jsx';
-import {tryParseJSON} from '../util.js';
+import { tryParseJSON } from '../util.js';
 
 class CardCollection extends React.Component {
     constructor() {
@@ -60,7 +60,7 @@ class CardCollection extends React.Component {
             return;
         }
 
-        this.setState({showPopup: !this.state.showPopup});
+        this.setState({ showPopup: !this.state.showPopup });
     }
 
     onDragOver(event) {
@@ -96,6 +96,16 @@ class CardCollection extends React.Component {
         }
     }
 
+    onCardClick(card) {
+        if(this.props.closeOnClick) {
+            this.setState({ showPopup: false });
+        }
+
+        if(this.props.onCardClick) {
+            this.props.onCardClick(card);
+        }
+    }
+
     getPopup() {
         let popup = null;
         let cardIndex = 0;
@@ -107,7 +117,7 @@ class CardCollection extends React.Component {
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
                 onTouchMove={ this.props.onTouchMove }
-                onClick={ this.props.onCardClick }
+                onClick={ this.onCardClick.bind(this, card) }
                 onDragDrop={ this.props.onDragDrop }
                 orientation={ this.props.orientation } />);
         });
@@ -196,6 +206,7 @@ CardCollection.propTypes = {
     cardCount: React.PropTypes.number,
     cards: React.PropTypes.array,
     className: React.PropTypes.string,
+    closeOnClick: React.PropTypes.bool,
     disableMouseOver: React.PropTypes.bool,
     disablePopup: React.PropTypes.bool,
     hiddenTopCard: React.PropTypes.bool,
