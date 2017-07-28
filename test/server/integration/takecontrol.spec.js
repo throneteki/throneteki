@@ -626,5 +626,75 @@ describe('take control', function() {
                 });
             });
         });
+
+        describe('repeated take control', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('tyrell', [
+                    'Sneak Attack', 'The First Snow of Winter', 'A Game of Thrones',
+                    'Margaery Tyrell (Core)'
+                ]);
+                const deck2 = this.buildDeck('stark', [
+                    'Sneak Attack', 'A Game of Thrones', 'A Game of Thrones',
+                    'Ward', 'Ward'
+                ]);
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.character = this.player1.findCardByName('Margaery Tyrell', 'hand');
+                [this.ward1, this.ward2] = this.player2.filterCardsByName('Ward');
+
+                this.player1.clickCard(this.character);
+                this.completeSetup();
+
+                this.player1.selectPlot('Sneak Attack');
+                this.player2.selectPlot('Sneak Attack');
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.clickPrompt('Done');
+
+                this.player2.clickCard(this.ward1);
+                this.player2.clickCard(this.character);
+
+                expect(this.character).toBeControlledBy(this.player2);
+
+                this.player2.clickPrompt('Done');
+                this.completeChallengesPhase();
+                this.completeTaxationPhase();
+
+                this.player1.selectPlot('The First Snow of Winter');
+                this.player2.selectPlot('A Game of Thrones');
+                this.selectFirstPlayer(this.player1);
+                this.completeMarshalPhase();
+
+                // First Snow returns controlled character to hand
+                expect(this.character).toBeControlledBy(this.player1);
+                expect(this.character.location).toBe('hand');
+                expect(this.ward1.location).toBe('discard pile');
+
+                this.completeChallengesPhase();
+                this.completeTaxationPhase();
+
+                this.player1.selectPlot('A Game of Thrones');
+                this.player2.selectPlot('A Game of Thrones');
+                this.selectFirstPlayer(this.player1);
+
+                // Remarshal the character
+                this.player1.clickCard(this.character);
+                this.player1.clickPrompt('Done');
+
+                expect(this.character.location).toBe('play area');
+                expect(this.character).toBeControlledBy(this.player1);
+
+                this.player2.clickCard(this.ward2);
+                this.player2.clickCard(this.character);
+            });
+
+            it('should take control again', function() {
+                expect(this.character.attachments).toContain(this.ward2);
+                expect(this.character).toBeControlledBy(this.player2);
+            });
+        });
     });
 });
