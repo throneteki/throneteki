@@ -10,8 +10,7 @@ class CalmOverWesteros extends PlotCard {
                         buttons: [
                             { text: 'Military', method: 'setChallengeType', arg: 'military' },
                             { text: 'Intrigue', method: 'setChallengeType', arg: 'intrigue' },
-                            { text: 'Power', method: 'setChallengeType', arg: 'power' },
-                            { text: 'Cancel', method: 'cancelChallengeSelect' }
+                            { text: 'Power', method: 'setChallengeType', arg: 'power' }
                         ]
                     },
                     source: this
@@ -20,23 +19,21 @@ class CalmOverWesteros extends PlotCard {
         });
     }
 
-    cancelChallengeSelect(player) {
-        this.game.addMessage('{0} cancels the effect of {1}', player, this);
-        return true;
-    }
-
     setChallengeType(player, challengeType) {
-        this.game.addMessage('{0} uses {1} to reduce the claim value of {2} challenges by 1 this round', player, this, challengeType);
-        this.untilEndOfRound(ability => ({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === challengeType &&
-                this.game.currentChallenge.attackingPlayer !== player
-            ),
+        this.game.addMessage('{0} uses {1} to reduce the claim value of {2} challenges in which they are the defending player by 1 until they reveal a new plot',
+            player, this, challengeType);
+
+        this.lastingEffect(ability => ({
+            until: {
+                onCardEntersPlay: event => event.card.getType() === 'plot' && event.card.controller === this.controller
+            },
+            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === challengeType &&
+                             this.game.currentChallenge.defendingPlayer === player,
             match: card => card === this.game.currentChallenge.attackingPlayer.activePlot,
             targetController: 'any',
             effect: ability.effects.modifyClaim(-1)
         }));
+
         return true;
     }
 }
