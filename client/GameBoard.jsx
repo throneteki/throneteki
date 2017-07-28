@@ -446,7 +446,8 @@ export class InnerGameBoard extends React.Component {
                                         onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
                                     <CardCollection className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
                                         title='Plots' source='plot deck' cards={ thisPlayer.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
-                                        onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
+                                        onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop }
+                                        closeOnClick />
                                     { this.getSchemePile(thisPlayer, !this.state.spectating) }
                                 </div>
                             </div>
