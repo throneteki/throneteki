@@ -457,12 +457,12 @@ class Player extends Spectator {
     canPutIntoPlay(card) {
         let owner = card.owner;
 
-        if(!card.isUnique()) {
-            return true;
-        }
-
         if(this.cannotMarshalOrPutIntoPlayByTitle.includes(card.name)) {
             return false;
+        }
+
+        if(!card.isUnique()) {
+            return true;
         }
 
         if(this.isCharacterDead(card) && !this.canResurrect(card)) {
