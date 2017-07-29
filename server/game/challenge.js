@@ -56,6 +56,10 @@ class Challenge {
     }
 
     addDefender(defender, kneel = true) {
+        if(this.defenders.includes(defender)) {
+            return;
+        }
+
         this.defenders.push(defender);
         this.markAsParticipating([defender], 'defender', kneel);
         this.calculateStrength();
