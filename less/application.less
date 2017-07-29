@@ -44,7 +44,7 @@
 }
 
 .panel-title {
-  background-color: @brand-primary;
+  background-color: fade(#281d0d, 60%);
   color: white;
   font-weight: bold;
   margin: 5px;
@@ -57,4 +57,25 @@
   text-transform: uppercase;
   position: relative;
   top: 5px;
+}
+
+.main-header {
+  font-family: agot;
+  background-color: fade(@brand-danger, 50%);
+  height: 100%;
+  vertical-align: center;
+  margin-left: 5px;
+  margin-right: 5px;
+  padding-top: 1px;
+  padding-bottom: 2px;
+  border-radius: 4px;
+}
+
+.military-container {
+  color: @military-icon-color;
+  font-weight: bolder;
+}
+
+.intrigue-container, .power-container {
+  color: @brand-primary;
 }

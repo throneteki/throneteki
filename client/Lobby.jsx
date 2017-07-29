@@ -90,44 +90,40 @@ class InnerLobby extends React.Component {
                 </div>);
         });
 
-        var users = _.map(this.props.users, user => {
-            return (
-                <div key={ user.name }>
-                    <Avatar emailHash={ user.emailHash } forceDefault={ user.noAvatar } />
-                    <span>{ user.name }</span>
-                </div>
-            );
-        });
-
         return (
             <div>
-                { this.props.bannerNotice ? <AlertPanel message={ this.props.bannerNotice } type='error' /> : null }
-                <AlertPanel type='info' message='Latest Site News'>
-                    { this.props.loading ? <div>News loading...</div> : null }
-                    <News news={ this.props.news } />
-                </AlertPanel>
-                <div className='row'>
-                    <span className='col-sm-9 text-center'><h1>Play A Game Of Thrones 2nd Edition</h1></span>
-                    <span className='col-sm-3 hidden-xs'><h3>{ 'Online Users (' + users.length + ')' }</h3></span>
+                <div className='col-sm-offset-1 col-sm-10'>
+                    <div className='main-header'>
+                        <span className='text-center'><h1>A # LCG second edition</h1></span>
+                    </div>
                 </div>
-                <div className='row'>
-                    <div className='lobby-chat col-sm-9'>
+                { this.props.bannerNotice ? <AlertPanel message={ this.props.bannerNotice } type='error' /> : null }
+                <div className='col-sm-offset-1 col-sm-10'>
+                    <div className='panel-title text-center'>
+                        Latest site news
+                    </div>
+                    <div className='panel panel-darker'>
+                        { this.props.loading ? <div>News loading...</div> : null }
+                        <News news={ this.props.news } />
+                    </div>
+                </div>
+                <div className='col-sm-offset-1 col-sm-10'>
+                    <div className='panel-title text-center'>
+                        Lobby Chat
+                    </div>
+                    <div className='lobby-chat'>
                         <div className='panel lobby-messages' ref='messages' onScroll={ this.onScroll }>
                             { messages }
                         </div>
                     </div>
-                    <div className='panel user-list col-sm-3 hidden-xs'>
-                        { users }
-                    </div>
                 </div>
-                <div className='row'>
+                <div className='col-sm-offset-1 col-sm-10'>
                     <form className='form form-hozitontal'>
                         <div className='form-group'>
-                            <div className='chat-box col-sm-5 col-xs-9'>
-                                <input className='form-control' type='text' placeholder='Chat...' value={ this.state.message }
+                            <div className='chat-box'>
+                                <input className='form-control' type='text' placeholder='Enter a message...' value={ this.state.message }
                                     onKeyPress={ this.onKeyPress } onChange={ this.onChange } />
                             </div>
-                            <button type='button' className='btn btn-primary col-sm-1 col-xs-2' onClick={ this.onSendClick }>Send</button>
                         </div>
                     </form>
                 </div>
