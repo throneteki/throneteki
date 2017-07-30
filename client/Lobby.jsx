@@ -121,7 +121,8 @@ class InnerLobby extends React.Component {
                             <div className='form-group'>
                                 <div className='chat-box'>
                                     <input className='form-control' type='text' placeholder='Enter a message...' value={ this.state.message }
-                                        onKeyPress={ this.onKeyPress } onChange={ this.onChange } />
+                                        onKeyPress={ this.onKeyPress } onChange={ this.onChange }
+                                        ref={ input => input && input.focus() } />
                                 </div>
                             </div>
                         </form>
