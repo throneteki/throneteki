@@ -8,6 +8,7 @@ import * as actions from './actions';
 import Avatar from './Avatar.jsx';
 import News from './SiteComponents/News.jsx';
 import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import Typeahead from './FormComponents/Typeahead.jsx';
 
 class InnerLobby extends React.Component {
     constructor() {
@@ -48,6 +49,8 @@ class InnerLobby extends React.Component {
         if(event.key === 'Enter') {
             this.sendMessage();
 
+            this.refs.message.clear();
+
             event.preventDefault();
         }
     }
@@ -58,8 +61,8 @@ class InnerLobby extends React.Component {
         this.sendMessage();
     }
 
-    onChange(event) {
-        this.setState({ message: event.target.value });
+    onChange(value) {
+        this.setState({ message: value });
     }
 
     onScroll() {
@@ -139,12 +142,14 @@ class InnerLobby extends React.Component {
                                 { messages }
                             </div>
                         </div>
-                        <form className='form form-hozitontal'>
+                        <form className='form form-hozitontal' onSubmit={ event => this.onSendClick(event) }>
                             <div className='form-group'>
                                 <div className='chat-box'>
-                                    <input className='form-control' type='text' placeholder='Enter a message...' value={ this.state.message }
-                                        onKeyPress={ this.onKeyPress } onChange={ this.onChange }
-                                        ref={ input => input && input.focus() } />
+                                    <Typeahead ref='message' value={ this.state.message } placeholder='Enter a message...'
+                                        labelKey={ 'name' } onKeyDown={ this.onKeyPress }
+                                        options={ _.toArray(this.props.users) } onInputChange={ this.onChange } autoFocus
+                                        dropup emptyLabel={ '' }
+                                        minLength={ 2 } />
                                 </div>
                             </div>
                         </form>
