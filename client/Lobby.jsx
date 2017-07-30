@@ -63,7 +63,7 @@ class InnerLobby extends React.Component {
     }
 
     onScroll() {
-        var messages = this.refs.messages;
+        let messages = this.refs.messages;
 
         setTimeout(() => {
             if(messages.scrollTop >= messages.scrollHeight - messages.offsetHeight - 20) {
@@ -75,19 +75,41 @@ class InnerLobby extends React.Component {
     }
 
     render() {
-        var index = 0;
-        var messages = _.map(this.props.messages, message => {
-            if(!message.user) {
+        let index = 0;
+        let groupedMessages = _.groupBy(this.props.messages, message => message.user && message.user.username + moment(message.time).format('YYYYMMDDHHmm'));
+        let today = moment();
+        let yesterday = moment().add(-1, 'days');
+
+        let messages = _.map(groupedMessages, messages => {
+            let timestamp = '';
+            let firstMessage = _.first(messages);
+
+            if(!firstMessage.user) {
                 return;
             }
 
-            var timestamp = moment(message.time).format('MMM Do H:mm:ss');
+            if(today.isSame(firstMessage.time, 'd')) {
+                timestamp = moment(firstMessage.time).format('H:mm');
+            } else if(yesterday.isSame(firstMessage.time, 'd')) {
+                timestamp = moment(firstMessage.time).format('yesterday H:mm');
+            } else {
+                timestamp = moment(firstMessage.time).format('MMM Do H:mm');
+            }
+
+            let renderedMessages = _.map(messages, message => {
+                if(!message.user) {
+                    return;
+                }
+                return (<div className='message'>{ message.message }</div>);
+            });
+
             return (
-                <div key={ timestamp + message.user.username + (index++).toString() }>
-                    <Avatar emailHash={ message.user.emailHash } float forceDefault={ message.user.noAvatar } />
-                    <span className='username'>{ message.user.username }</span><span>{ timestamp }</span>
-                    <div className='message'>{ message.message }</div>
-                </div>);
+                <div key={ timestamp + firstMessage.user.username + (index++).toString() }>
+                    <Avatar emailHash={ firstMessage.user.emailHash } float forceDefault={ firstMessage.user.noAvatar } />
+                    <span className='username'>{ firstMessage.user.username }</span><span>{ timestamp }</span>
+                    { renderedMessages }
+                </div>
+            );
         });
 
         return (
