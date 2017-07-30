@@ -22,7 +22,7 @@ class News extends React.Component {
         });
 
         return (
-            <div>
+            <div className='news-container'>
                 { news }
             </div>);
     }
