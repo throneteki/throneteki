@@ -12,7 +12,11 @@ class OursIsTheFury extends DrawCard {
             },
             handler: context => {
                 this.selectedCard = context.target;
-                this.game.currentChallenge.addDefender(context.target);
+
+                if(!this.game.currentChallenge.defenders.includes(this.selectCard)) {
+                    this.game.currentChallenge.addDefender(context.target);
+                }
+
                 this.game.addMessage('{0} plays {1} to add {2} to the challenge as a defender', context.player, this, context.target);
 
                 this.game.once('afterChallenge', this.afterChallenge.bind(this));
