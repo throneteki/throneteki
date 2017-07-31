@@ -85,3 +85,43 @@
   min-height: 130px;
   overflow-y: auto;
 }
+
+.sidebar {
+  position: absolute;
+  left: 0;
+  top: 50px;
+  bottom: 0;
+
+  background-color: fade(@navbar-inverse-bg, 80%);
+
+  padding-left: 10px;
+
+  & a {
+    color: @foreground-color;
+  }
+
+  &.expanded {
+    width: 200px;
+  }
+}
+
+.userlist {
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 20px;
+  font-weight: bold;
+}
+
+.user-row {
+  text-align: left;
+  font-weight: normal;
+  padding-top: 5px;
+
+  &:hover {
+    background-color: fade(@navbar-inverse-bg, 100%);;
+  }
+}
+
+.glyphicon-menu-hamburger {
+  font-size: 16px;
+}

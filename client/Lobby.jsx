@@ -21,7 +21,8 @@ class InnerLobby extends React.Component {
 
         this.state = {
             canScroll: true,
-            message: ''
+            message: '',
+            showUsers: false
         };
     }
 
@@ -77,6 +78,10 @@ class InnerLobby extends React.Component {
         }, 500);
     }
 
+    onBurgerClick() {
+        this.setState({ showUsers: !this.state.showUsers });
+    }
+
     render() {
         let index = 0;
         let groupedMessages = _.groupBy(this.props.messages, message => message.user && message.user.username + moment(message.time).format('YYYYMMDDHHmm'));
@@ -115,8 +120,34 @@ class InnerLobby extends React.Component {
             );
         });
 
+        let userList = _.map(this.props.users, user => {
+            return (
+                <div className='user-row' key={ user.name }>
+                    <Avatar emailHash={ user.emailHash } forceDefault={ user.noAvatar } />
+                    <span>{ user.name }</span>
+                </div>
+            );
+        });
+
         return (
             <div className='body'>
+                <div className={ 'sidebar' + (this.state.showUsers ? ' expanded' : '') }>
+                    { this.state.showUsers ?
+                        <div>
+                            <a href='#' className='btn pull-right' onClick={ this.onBurgerClick.bind(this) }>
+                                <span className='glyphicon glyphicon-remove' />
+                            </a>
+                            <div className='userlist'>Online Users
+                                { userList }
+                            </div>
+                        </div> :
+                        <div>
+                            <a href='#' className='btn' onClick={ this.onBurgerClick.bind(this) }>
+                                <span className='glyphicon glyphicon-menu-hamburger' />
+                            </a>
+                        </div>
+                    }
+                </div>
                 <div className='col-sm-offset-1 col-sm-10'>
                     <div className='main-header'>
                         <span className='text-center'><h1>A # LCG second edition</h1></span>
