@@ -94,7 +94,7 @@ class InnerLobby extends React.Component {
             if(today.isSame(firstMessage.time, 'd')) {
                 timestamp = moment(firstMessage.time).format('H:mm');
             } else if(yesterday.isSame(firstMessage.time, 'd')) {
-                timestamp = moment(firstMessage.time).format('yesterday H:mm');
+                timestamp = 'yesterday ' + moment(firstMessage.time).format('H:mm');
             } else {
                 timestamp = moment(firstMessage.time).format('MMM Do H:mm');
             }
