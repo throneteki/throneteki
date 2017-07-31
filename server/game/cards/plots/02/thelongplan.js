@@ -1,7 +1,7 @@
 const PlotCard = require('../../../plotcard.js');
 
 class TheLongPlan extends PlotCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: ({challenge}) => challenge.loser === this.controller
@@ -11,15 +11,9 @@ class TheLongPlan extends PlotCard {
                 this.game.addGold(this.controller, 1);
             }
         });
-        // TODO: This is a hack, really the ability should be a persistent effect.
-        this.forcedInterrupt({
-            when: {
-                onUnspentGoldReturned: event => event.player === this.controller
-            },
-            handler: context => {
-                context.skipHandler();
-                // Do nothing - just needed to prevent gold from being returned.
-            }
+        this.persistentEffect({
+            targetType: 'player',
+            effect: ability.effects.doesNotReturnUnspentGold()
         });
     }
 }
