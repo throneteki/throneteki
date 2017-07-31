@@ -15,8 +15,12 @@ class DeckSummary extends React.Component {
         };
     }
 
+    hasTrait(card, trait) {
+        return card.traits && card.traits.toLowerCase().indexOf(trait.toLowerCase() + '.') !== -1;
+    }
+
     onCardMouseOver(event) {
-        var cardToDisplay = _.filter(this.props.cards, card => {
+        let cardToDisplay = _.filter(this.props.cards, card => {
             return event.target.innerText === card.label;
         });
 
@@ -28,29 +32,38 @@ class DeckSummary extends React.Component {
     }
 
     getBannersToRender() {
-        var banners = [];
+        let banners = [];
         _.each(this.props.deck.bannerCards, (card) => {
             banners.push(<div key={ card.code ? card.code : card }><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span></div>);
         });
+
         return banners;
     }
 
     getCardsToRender() {
-        var cardsToRender = [];
-        var groupedCards = {};
-        var combinedCards = _.union(this.props.deck.plotCards, this.props.deck.drawCards);
+        let cardsToRender = [];
+        let groupedCards = {};
+        let combinedCards = _.union(this.props.deck.plotCards, this.props.deck.drawCards);
 
         _.each(combinedCards, (card) => {
-            if(!groupedCards[card.card.type_name]) {
-                groupedCards[card.card.type_name] = [card];
+            let type = card.card.type_name;
+
+            if(this.props.deck.agenda && this.props.deck.agenda.code === '05045') {
+                if(this.hasTrait(card.card, 'scheme')) {
+                    type = 'Scheme';
+                }
+            }
+
+            if(!groupedCards[type]) {
+                groupedCards[type] = [card];
             } else {
-                groupedCards[card.card.type_name].push(card);
+                groupedCards[type].push(card);
             }
         });
 
         _.each(groupedCards, (cardList, key) => {
-            var cards = [];
-            var count = 0;
+            let cards = [];
+            let count = 0;
 
             _.each(cardList, card => {
                 cards.push(<div key={ card.card.code }><span>{ card.count + 'x ' }</span><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.card.label }</span></div>);
@@ -68,8 +81,8 @@ class DeckSummary extends React.Component {
             return <div>Waiting for selected deck...</div>;
         }
 
-        var cardsToRender = this.getCardsToRender();
-        var banners = this.getBannersToRender();
+        let cardsToRender = this.getCardsToRender();
+        let banners = this.getBannersToRender();
 
         return (
             <div>
