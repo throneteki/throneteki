@@ -8,18 +8,18 @@ class TheBoneway extends DrawCard {
             },
             handler: () => {
                 this.addToken('vengeance', 1);
-                this.game.addMessage('{0} adds 1 vengeance token to {1}', this.controller, this);
+                this.game.addMessage('{0} places 1 vengeance token on {1}', this.controller, this);
             }
         });
 
         this.action({
             title: 'Gain 3 power for your faction',
-            cost: ability.costs.kneelSelf(),
-            condition: () => this.tokens['vengeance'] >= 6,
+            cost: [
+                ability.costs.kneelSelf(),
+                ability.costs.discardTokenFromSelf('vengeance', 6)
+            ],
             handler: () => {
-                this.removeToken('vengeance', 6);
                 this.game.addPower(this.controller, 3);
-
                 this.game.addMessage('{0} kneels and discards 6 vengeance tokens from {1} to gain 3 power for their faction',
                     this.controller, this);
             }
