@@ -242,6 +242,16 @@ const Effects = {
             }
         };
     },
+    doesNotReturnUnspentGold: function() {
+        return {
+            apply: function(player) {
+                player.doesNotReturnUnspentGold = true;
+            },
+            unapply: function(player) {
+                player.doesNotReturnUnspentGold = false;
+            }
+        };
+    },
     addStealthLimit: function(value) {
         return {
             apply: function(card) {

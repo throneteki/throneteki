@@ -39,6 +39,7 @@ class Player extends Spectator {
         this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, this, 'hand'));
         this.usedPlotsModifier = 0;
         this.cannotGainGold = false;
+        this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
         this.cannotTriggerCardAbilities = false;
         this.cannotMarshalOrPutIntoPlayByTitle = [];
