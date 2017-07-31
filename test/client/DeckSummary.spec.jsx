@@ -7,16 +7,6 @@ import TestUtils from 'react-addons-test-utils';
 describe('the <DeckSummary /> component', function() {
     var component;
 
-    describe('when initially rendered', function() {
-        it('should show the component elements with defaults set', function() {
-            component = TestUtils.renderIntoDocument(<DeckSummary deck={ { faction: { name: 'House Stark', value: 'stark' }, name: 'Test Deck', validation: {} } } />);
-
-            var nameHeader = TestUtils.findRenderedDOMComponentWithTag(component, 'h3');
-
-            expect(nameHeader.innerText).toBe('Test Deck');
-        });
-    });
-
     describe('when no agenda specified', function() {
         it('should render "none" and no agenda image', function() {
             component = TestUtils.renderIntoDocument(<DeckSummary deck={ { faction: { name: 'House Stark', value: 'stark' }, name: 'Test Deck', validation: {} } } />);
@@ -32,8 +22,10 @@ describe('the <DeckSummary /> component', function() {
 
     describe('when agenda specified', function() {
         it('should render the agenda name and image', function() {
-            component = TestUtils.renderIntoDocument(<DeckSummary deck={ { faction: { name: 'House Stark', value: 'stark' }, name: 'Test Deck',
-                agenda:{ code: 'TestCode', label: 'Test Label' }, validation: {} } } />);
+            component = TestUtils.renderIntoDocument(<DeckSummary deck={ {
+                faction: { name: 'House Stark', value: 'stark' }, name: 'Test Deck',
+                agenda: { code: 'TestCode', label: 'Test Label' }, validation: {}
+            } } />);
 
             var agendaImages = TestUtils.scryRenderedDOMComponentsWithClass(component, 'pull-right');
             var cardNames = TestUtils.scryRenderedDOMComponentsWithClass(component, 'card-link');
