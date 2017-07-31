@@ -46,7 +46,7 @@
 }
 
 .cards {
-  column-count: 2;
+  column-count: 3;
 }
 
 .deck-list {
@@ -70,11 +70,13 @@
 
 .deck-row:hover {
   border-color: @brand-info;
+  background-color: fade(@brand-info, 40%);
 }
 
 .deck-row.active {
   border-color: @brand-danger;
   color: @brand-danger;
+  background-color: fade(black, 60%);
 }
 
 .select-button {

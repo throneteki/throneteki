@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'underscore';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import AlertPanel from './SiteComponents/AlertPanel.jsx';
 import DeckSummary from './DeckSummary.jsx';
@@ -68,22 +68,27 @@ class InnerDecks extends React.Component {
         var deckInfo = null;
 
         if(this.props.selectedDeck) {
-            deckInfo = (<div className='col-sm-6'>
-                <div className='btn-group'>
-                    <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
-                    <button className='btn btn-primary' onClick={ this.onDeleteClick }>Delete</button>
-                    { this.state.showDelete ?
-                        <button className='btn btn-danger' onClick={ this.onConfirmDeleteClick }>Delete</button> :
-                        null }
+            deckInfo = (<div className='col-sm-7'>
+                <div className='panel-title text-center'>
+                    { this.props.selectedDeck.name }
                 </div>
-                <DeckSummary deck={ this.props.selectedDeck } cards={ this.props.cards } />
+                <div className='panel'>
+                    <div className='btn-group'>
+                        <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
+                        <button className='btn btn-primary' onClick={ this.onDeleteClick }>Delete</button>
+                        { this.state.showDelete ?
+                            <button className='btn btn-danger' onClick={ this.onConfirmDeleteClick }>Delete</button> :
+                            null }
+                    </div>
+                    <DeckSummary deck={ this.props.selectedDeck } cards={ this.props.cards } />
+                </div>
             </div>);
         }
 
         let content = null;
 
         let successPanel = null;
-        
+
         if(this.props.deckDeleted) {
             setTimeout(() => {
                 this.props.clearDeckStatus();
@@ -91,7 +96,7 @@ class InnerDecks extends React.Component {
             successPanel = (
                 <AlertPanel message='Deck deleted successfully' type={ 'success' } />
             );
-        }    
+        }
 
         if(this.props.loading) {
             content = <div>Loading decks from the server...</div>;
@@ -101,9 +106,14 @@ class InnerDecks extends React.Component {
             content = (
                 <div>
                     { successPanel }
-                    <div className='col-sm-6'>
-                        <Link className='btn btn-primary' href='/decks/add'>Add new deck</Link>
-                        <div className='deck-list'>{ !this.props.decks || this.props.decks.length === 0 ? 'You have no decks, try adding one.' : deckList }</div>
+                    <div className='col-sm-5'>
+                        <div className='panel-title text-center'>
+                            Your decks
+                        </div>
+                        <div className='panel'>
+                            <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
+                            <div className='deck-list'>{ !this.props.decks || this.props.decks.length === 0 ? 'You have no decks, try adding one.' : deckList }</div>
+                        </div>
                     </div>
                     { deckInfo }
                 </div>);
