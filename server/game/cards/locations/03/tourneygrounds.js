@@ -14,7 +14,7 @@ class TourneyGrounds extends DrawCard {
                     effect: ability.effects.reduceNextPlayedCardCost(1, card => card.getType() === 'event')
                 }));
 
-                this.game.addMessage('{0} kneels {1} to reduce the cost of the next event they play by 1', this.controller, this);
+                this.game.addMessage('{0} kneels {1} to reduce the cost of the next event they play this phase by 1', this.controller, this);
             }
         });
     }

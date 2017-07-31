@@ -11,7 +11,7 @@ class BridgeOfSkulls extends DrawCard {
                         .getNumberOfChallengesInitiatedByType('military') < 1
             },
             handler: () => {
-                var opponent = this.game.getOtherPlayer(this.controller);
+                let opponent = this.game.getOtherPlayer(this.controller);
                 if(!opponent) {
                     return true;
                 }

@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class Astapor extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel to give character -STR',
+            title: 'Give character -STR',
             condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
@@ -19,7 +19,7 @@ class Astapor extends DrawCard {
                     effect: ability.effects.modifyStrength(-this.tokens['gold'])
                 }));
 
-                this.game.addMessage('{0} uses {1} to give {2} -{3} STR until the end of the challenge', 
+                this.game.addMessage('{0} kneels {1} to give {2} -{3} STR until the end of the challenge', 
                     context.player, this, context.target, this.tokens['gold']);
             }
         });

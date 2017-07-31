@@ -22,7 +22,7 @@ class NorthernEncampment extends DrawCard {
         });
 
         this.action({
-            title: 'Kneel this card to gain 2 gold',
+            title: 'Gain 2 gold',
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
             handler: context => {

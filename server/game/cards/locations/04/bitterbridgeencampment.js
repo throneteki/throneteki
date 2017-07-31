@@ -33,14 +33,14 @@ class BitterbridgeEncampment extends DrawCard {
 
     doPutIntoPlay() {
         _.each(this.selections, selection => {
-            var player = selection.player;
+            let player = selection.player;
             player.putIntoPlay(selection.card);
         });
     }
 
     proceedToNextStep() {
         if(this.remainingPlayers.length > 0) {
-            var currentPlayer = this.remainingPlayers.shift();
+            let currentPlayer = this.remainingPlayers.shift();
             this.game.promptForSelect(currentPlayer, {
                 activePromptTitle: 'Select a character',
                 source: this,

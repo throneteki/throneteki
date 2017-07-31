@@ -11,18 +11,18 @@ class LannisportTreasury extends DrawCard {
             handler: () => {
                 this.game.addGold(this.controller, -1);
                 this.addToken('gold', 1);
-                this.game.addMessage('{0} uses {1} to move 1 gold from their gold pool to {1}', this.controller, this);
+                this.game.addMessage('{0} moves 1 gold from their gold pool to {1}', this.controller, this);
             }
         });
 
         this.action({
-            title: 'Kneel ' + this.name + ' to move gold',
+            title: 'Move gold to gold pool',
             phase: 'marshal',
             condition: () => this.hasToken('gold'),
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                var range = _.range(1, this.tokens['gold'] + 1).reverse();
-                var buttons = _.map(range, gold => {
+                let range = _.range(1, this.tokens['gold'] + 1).reverse();
+                let buttons = _.map(range, gold => {
                     return { text: gold, method: 'moveGold', arg: gold };
                 });
 
@@ -40,7 +40,7 @@ class LannisportTreasury extends DrawCard {
     moveGold(player, gold) {
         this.addToken('gold', -gold);
         this.game.addGold(player, gold);
-        this.game.addMessage('{0} kneels {1} to move {2} gold from {1} to their gold pool', this.controller, this, gold);
+        this.game.addMessage('{0} moves {1} gold from {2} to their gold pool', this.controller, gold, this);
 
         return true;
     }

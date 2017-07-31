@@ -4,14 +4,14 @@ class PlazaOfPride extends DrawCard {
 
     setupCardAbilities(ability) {
         this.action({
-            title: 'Stand a character',
+            title: 'Stand character',
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.discardFromHand()
             ],
             handler: context => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select character',
+                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card =>
                         card.location === 'play area'
@@ -26,9 +26,7 @@ class PlazaOfPride extends DrawCard {
 
     onCardSelected(player, card, discardedCard) {
         player.standCard(card);
-
-        this.game.addMessage('{0} kneels {1} and discard {2} to stand {3}',
-            this.controller, this, discardedCard, card);
+        this.game.addMessage('{0} kneels {1} and discards {2} to stand {3}', this.controller, this, discardedCard, card);
 
         return true;
     }

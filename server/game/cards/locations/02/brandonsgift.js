@@ -19,8 +19,8 @@ class BrandonsGift extends DrawCard {
                     effect: ability.effects.reduceNextMarshalledCardCost(1, card => card.isFaction('thenightswatch'))
                 }));
                 
-                this.game.addMessage('{0} uses {1} to reduce the cost of the next The Night\'s Watch card they marshal by 1', 
-                    this.controller, this);
+                this.game.addMessage('{0} uses {1} to reduce the cost of the next {2} card they marshal this phase by 1', 
+                    this.controller, this, 'thenightswatch');
             }
         });
     }

@@ -5,7 +5,7 @@ class GhastonGrey extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: ({challenge}) => challenge.loser === this.controller &&
-                                                      challenge.defendingPlayer === this.controller
+                                                 challenge.defendingPlayer === this.controller
             },
             cost: [
                 ability.costs.kneelSelf(),

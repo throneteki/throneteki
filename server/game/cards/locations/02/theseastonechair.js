@@ -10,28 +10,19 @@ class TheSeastoneChair extends DrawCard {
                     event.challenge.attackingPlayer === this.controller)
             },
             cost: ability.costs.kneelFactionCard(),
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
+                                       card.controller !== this.controller && card.attachments.size() === 0,
+                gameAction: 'kill'
+            },
             handler: context => {
                 context.skipHandler();
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' && 
-                        card.getType() === 'character' && 
-                        card.controller !== this.controller &&
-                        card.attachments.size() === 0),
-                    gameAction: 'kill',
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+                this.game.addMessage('{0} uses {1} and kneels their faction card to kill {2} instead of normal claim effects',
+                    this.controller, this, context.target);
+                context.target.controller.killCharacter(context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to kneel their faction and kill {2} instead of normal claim effects', player, this, card);
-        card.controller.killCharacter(card);
-
-        return true;
     }
 }
 

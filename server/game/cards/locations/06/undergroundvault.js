@@ -3,14 +3,11 @@ const DrawCard = require('../../../drawcard.js');
 class UndergroundVault extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel this card to gain gold',
+            title: 'Gain gold',
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let opponent = this.game.getOtherPlayer(this.controller);
-                if(!opponent) {
-                    return;
-                }
                 let gold = opponent && opponent.activePlot.getIncome() >= 5 ? 2 : 1;
 
                 this.game.addGold(context.player, gold);
