@@ -107,6 +107,9 @@ class AbilityResolver extends BaseStep {
             onSelect: opponent => {
                 this.context.opponent = opponent;
             },
+            onCancel: () => {
+                this.cancelled = true;
+            },
             source: this.context.source
         }));
     }

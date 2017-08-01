@@ -10,6 +10,7 @@ class ChooseOpponentPrompt extends BaseStep {
         this.player = player;
         this.condition = properties.condition || (() => true);
         this.onSelect = properties.onSelect;
+        this.onCancel = properties.onCancel || (() => true);
         this.source = properties.source;
     }
 
@@ -17,6 +18,7 @@ class ChooseOpponentPrompt extends BaseStep {
         let otherPlayers = _.filter(this.game.getPlayers(), player => player !== this.player && this.condition(player));
 
         if(otherPlayers.length === 0) {
+            this.onCancel();
             return;
         }
 
@@ -28,6 +30,7 @@ class ChooseOpponentPrompt extends BaseStep {
         let buttons = _.map(otherPlayers, player => {
             return { text: player.name, arg: player.name, method: 'selectPlayer' };
         });
+        buttons.push({ text: 'Cancel', method: 'cancel' });
         this.game.promptWithMenu(this.player, this, {
             activePrompt: {
                 menuTitle: 'Select an opponent',
@@ -46,6 +49,11 @@ class ChooseOpponentPrompt extends BaseStep {
         }
 
         this.onSelect(selectedPlayer);
+        return true;
+    }
+
+    cancel() {
+        this.onCancel();
         return true;
     }
 }
