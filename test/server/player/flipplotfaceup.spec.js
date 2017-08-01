@@ -6,7 +6,7 @@ const Player = require('../../../server/game/player.js');
 
 describe('Player', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'getOtherPlayer', 'raiseMergedEvent', 'playerDecked']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'getOtherPlayer', 'raiseEvent', 'playerDecked']);
 
         this.player = new Player('1', 'Player 1', true, this.gameSpy);
         this.player.initialise();
@@ -73,11 +73,11 @@ describe('Player', function() {
         });
 
         it('should raise the onCardLeftPlay event', function() {
-            expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onCardLeftPlay', { player: this.player, card: this.activePlotSpy });
+            expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardLeftPlay', { player: this.player, card: this.activePlotSpy });
         });
 
         it('should raise the onPlotDiscarded event', function() {
-            expect(this.gameSpy.raiseMergedEvent).toHaveBeenCalledWith('onPlotDiscarded', { player: this.player, card: this.activePlotSpy });
+            expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onPlotDiscarded', { player: this.player, card: this.activePlotSpy });
         });
     });
 

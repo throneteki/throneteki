@@ -7,7 +7,7 @@ const DrawCard = require('../../../server/game/drawcard.js');
 
 describe('Challenge', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['applyGameAction', 'on', 'raiseMergedEvent']);
+        this.gameSpy = jasmine.createSpyObj('game', ['applyGameAction', 'on', 'raiseEvent']);
         this.gameSpy.applyGameAction.and.callFake((type, card, handler) => {
             handler(card);
         });

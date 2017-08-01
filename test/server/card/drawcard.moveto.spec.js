@@ -6,7 +6,7 @@ const DrawCard = require('../../../server/game/drawcard.js');
 describe('DrawCard', function () {
     beforeEach(function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
-        this.gameSpy = jasmine.createSpyObj('game', ['raiseMergedEvent']);
+        this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent']);
         this.card = new DrawCard({ game: this.gameSpy }, this.testCard);
         spyOn(this.card.events, 'register');
         spyOn(this.card.events, 'unregisterAll');
