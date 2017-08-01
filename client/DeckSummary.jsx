@@ -90,7 +90,7 @@ class DeckSummary extends React.Component {
             <div className='deck-summary'>
                 { this.state.cardToShow ? <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } /> : null }
                 <div className='decklist'>
-                    <div className='col-sm-3'>{ this.props.deck.faction ? <img className='card-medium' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }</div>
+                    <div className='col-sm-3'>{ this.props.deck.faction ? <img className='card-medium img-responsive' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }</div>
                     <div className='col-sm-6'>
                         <div className='info-row'><span>Faction:</span>{ this.props.deck.faction ? <span className={ 'pull-right' }>{ this.props.deck.faction.name }</span> : null }</div>
                         <div className='info-row' ref='agenda'><span>Agenda:</span> { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='pull-right card-link' onMouseOver={ this.onCardMouseOver }
