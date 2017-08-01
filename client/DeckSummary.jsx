@@ -34,10 +34,12 @@ class DeckSummary extends React.Component {
     getBannersToRender() {
         let banners = [];
         _.each(this.props.deck.bannerCards, (card) => {
-            banners.push(<div key={ card.code ? card.code : card }><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span></div>);
+            banners.push(<div className='pull-right' key={ card.code ? card.code : card }>
+                <span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span>
+            </div>);
         });
 
-        return banners;
+        return <div className='info-row'><span>Banners:</span>{ banners }</div>;
     }
 
     getCardsToRender() {
@@ -85,25 +87,23 @@ class DeckSummary extends React.Component {
         let banners = this.getBannersToRender();
 
         return (
-            <div>
+            <div className='deck-summary'>
                 { this.state.cardToShow ? <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } /> : null }
                 <div className='decklist'>
-                    { this.props.deck.faction ? <img className='pull-left' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }
-                    { this.props.deck.agenda && this.props.deck.agenda.code ? <img className='pull-right' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /> : null }
-                    <div>
-                        <h4>{ this.props.deck.faction ? this.props.deck.faction.name : null }</h4>
-                        <div ref='agenda'>Agenda: { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='card-link' onMouseOver={ this.onCardMouseOver }
+                    <div className='col-sm-3'>{ this.props.deck.faction ? <img className='card-medium' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }</div>
+                    <div className='col-sm-6'>
+                        <div className='info-row'><span>Faction:</span>{ this.props.deck.faction ? <span className={ 'pull-right' }>{ this.props.deck.faction.name }</span> : null }</div>
+                        <div className='info-row' ref='agenda'><span>Agenda:</span> { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='pull-right card-link' onMouseOver={ this.onCardMouseOver }
                             onMouseOut={ this.onCardMouseOut }>{ this.props.deck.agenda.label }</span> : <span>None</span> }</div>
-
                         { (this.props.deck.agenda && this.props.deck.agenda.label === 'Alliance') ? banners : null }
-
-                        <div ref='drawCount'>Draw deck: { this.props.deck.validation.drawCount } cards</div>
-                        <div ref='plotCount'>Plot deck: { this.props.deck.validation.plotCount } cards</div>
-                        <div className={ this.props.deck.validation.status === 'Valid' ? 'text-success' : 'text-danger' }>
+                        <div className='info-row' ref='drawCount'><span>Draw deck:</span><span className='pull-right'>{ this.props.deck.validation.drawCount } cards</span></div>
+                        <div className='info-row' ref='plotCount'><span>Plot deck:</span><span className='pull-right'>{ this.props.deck.validation.plotCount } cards</span></div>
+                        <div className={ this.props.deck.validation.status === 'Valid' ? 'btn btn-success' : 'btn btn-danger' }>
                             <StatusPopOver status={ this.props.deck.validation.status } list={ this.props.deck.validation.extendedStatus }
                                 show={ this.props.deck.validation.status !== 'Valid' } />
                         </div>
                     </div>
+                    <div className='col-sm-3'>{ this.props.deck.agenda && this.props.deck.agenda.code ? <img className='card-medium' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /> : null }</div>
                 </div>
                 <div className='cards'>
                     { cardsToRender }
