@@ -5,7 +5,7 @@ const CardAction = require('../../../server/game/cardaction.js');
 
 describe('CardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'raiseEvent', 'raiseMergedEvent', 'resolveAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'raiseMergedEvent', 'resolveAbility']);
         this.gameSpy.currentPhase = 'marshal';
 
         this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isBlank']);

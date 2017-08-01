@@ -17,7 +17,7 @@ describe('Player', function () {
     }
 
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['applyGameAction', 'raiseEvent', 'raiseMergedEvent', 'queueSimpleStep', 'addMessage']);
+        this.gameSpy = jasmine.createSpyObj('game', ['applyGameAction', 'raiseMergedEvent', 'queueSimpleStep', 'addMessage']);
         this.gameSpy.applyGameAction.and.callFake((type, cards, handler) => {
             if(cards.length > 0) {
                 handler(cards);

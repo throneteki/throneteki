@@ -5,7 +5,7 @@ const AbilityResolver = require('../../../server/game/gamesteps/abilityresolver.
 
 describe('AbilityResolver', function() {
     beforeEach(function() {
-        this.game = jasmine.createSpyObj('game', ['markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseEvent', 'raiseMergedEvent', 'reportError']);
+        this.game = jasmine.createSpyObj('game', ['markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseMergedEvent', 'reportError']);
         this.game.raiseMergedEvent.and.callFake((name, params, handler) => {
             if(handler) {
                 handler(params);

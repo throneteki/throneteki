@@ -5,7 +5,7 @@ const RevealPlots = require('../../../server/game/gamesteps/revealplots.js');
 
 describe('RevealPlots', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'raiseEvent']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers']);
         this.phase = new RevealPlots(this.gameSpy, []);
     });
 

@@ -633,16 +633,6 @@ class Game extends EventEmitter {
         }
     }
 
-    raiseEvent(eventName, ...params) {
-        var handler = () => true;
-
-        if(_.isFunction(_.last(params))) {
-            handler = params.pop();
-        }
-
-        this.queueStep(new EventWindow(this, eventName, params, handler));
-    }
-
     raiseMergedEvent(eventName, params, handler) {
         if(!handler) {
             handler = () => true;

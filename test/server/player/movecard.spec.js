@@ -8,7 +8,7 @@ const DrawCard = require('../../../server/game/drawcard.js');
 describe('Player', function() {
     describe('moveCard', function() {
         beforeEach(function() {
-            this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'raiseMergedEvent', 'getOtherPlayer', 'playerDecked']);
+            this.gameSpy = jasmine.createSpyObj('game', ['raiseMergedEvent', 'getOtherPlayer', 'playerDecked']);
             this.player = new Player('1', 'Player 1', true, this.gameSpy);
             this.player.initialise();
             this.player.phase = 'marshal';
@@ -73,7 +73,7 @@ describe('Player', function() {
             });
 
             it('should not to raise the left play event', function() {
-                expect(this.gameSpy.raiseEvent).not.toHaveBeenCalledWith('onCardLeftPlay', jasmine.any(Object), jasmine.any(Object));
+                expect(this.gameSpy.raiseMergedEvent).not.toHaveBeenCalledWith('onCardLeftPlay', jasmine.any(Object), jasmine.any(Object));
             });
         });
 
