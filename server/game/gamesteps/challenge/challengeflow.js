@@ -141,7 +141,8 @@ class ChallengeFlow extends BaseStep {
     allowAsDefender(card) {
         return this.challenge.defendingPlayer === card.controller &&
             card.canDeclareAsDefender(this.challenge.challengeType) &&
-            this.mustBeDeclaredAsDefender(card);
+            this.mustBeDeclaredAsDefender(card) &&
+            !this.challenge.isDefending(card);
     }
 
     mustBeDeclaredAsDefender(card) {
