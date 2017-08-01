@@ -6,12 +6,9 @@ class QueensMen extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
-            handler: () => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-
-                if(!opponent) {
-                    return;
-                }
+            chooseOpponent: opponent => opponent.hand.size() > 1,
+            handler: context => {
+                let opponent = context.opponent;
 
                 let buttons = opponent.hand.map(card => {
                     return { card: card, method: 'cardSelected' };
@@ -31,8 +28,8 @@ class QueensMen extends DrawCard {
     }
 
     cardSelected(player, cardId) {
-        let opponent = this.game.getOtherPlayer(this.controller);
-        let toDiscard = opponent.findCardByUuid(opponent.hand, cardId);
+        let toDiscard = this.game.findAnyCardInAnyList(cardId);
+        let opponent = toDiscard.controller;
         this.game.addMessage('{0} uses {1} to look at {2}\'s hand', this.controller, this, opponent);
 
         if(toDiscard && toDiscard.getType() !== 'character' && this.controller.anyCardsInPlay(card => !card.isFaction('baratheon') && card.getType() === 'character' && !card.kneeled)) {

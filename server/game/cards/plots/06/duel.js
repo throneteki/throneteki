@@ -3,11 +3,9 @@ const PlotCard = require('../../../plotcard.js');
 class Duel extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-                if(!opponent) {
-                    return;
-                }
+            chooseOpponent: true,
+            handler: context => {
+                let opponent = context.opponent;
 
                 if(this.notEnoughTargets()) {
                     return;

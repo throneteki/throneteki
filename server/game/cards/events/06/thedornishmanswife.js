@@ -4,58 +4,44 @@ class TheDornishmansWife extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Gain gold/power/card',
-            condition: () => this.opponentHasMorePower() || this.opponentHasMoreCardsInHand() || this.opponentControlsMoreCharacters(),
-            handler: () => {
+            chooseOpponent: opponent => (
+                this.opponentHasMorePower(opponent) ||
+                this.opponentHasMoreCardsInHand(opponent) ||
+                this.opponentControlsMoreCharacters(opponent)
+            ),
+            handler: context => {
                 let bonusMessage = [];
 
-                if(this.opponentHasMorePower()) {
+                if(this.opponentHasMorePower(context.opponent)) {
                     this.game.addGold(this.controller, 2);
                     bonusMessage.push('gain 2 gold');
                 }
 
-                if(this.opponentHasMoreCardsInHand()) {
+                if(this.opponentHasMoreCardsInHand(context.opponent)) {
                     this.game.addPower(this.controller, 1);
                     bonusMessage.push('gain 1 power for their faction');
                 }
 
-                if(this.opponentControlsMoreCharacters()) {
+                if(this.opponentControlsMoreCharacters(context.opponent)) {
                     this.controller.drawCardsToHand(1);
                     bonusMessage.push('draw 1 card');
                 }
 
-                this.game.addMessage('{0} uses {1} to {2}',
-                    this.controller, this, bonusMessage);
+                this.game.addMessage('{0} uses {1} to choose {2} and {3}',
+                    this.controller, this, context.player, bonusMessage);
             }
         });
     }
 
-    opponentHasMorePower() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-
-        if(!opponent || opponent.getTotalPower() <= this.controller.getTotalPower()) {
-            return false;
-        }
-
-        return true;
+    opponentHasMorePower(opponent) {
+        return opponent.getTotalPower() > this.controller.getTotalPower();
     }
 
-    opponentHasMoreCardsInHand() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-
-        if(!opponent || opponent.hand.size() <= this.controller.hand.size()) {
-            return false;
-        }
-
-        return true;
+    opponentHasMoreCardsInHand(opponent) {
+        return opponent.hand.size() > this.controller.hand.size();
     }
 
-    opponentControlsMoreCharacters() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-
-        if(!opponent) {
-            return false;
-        }
-
+    opponentControlsMoreCharacters(opponent) {
         let ownChars = this.controller.filterCardsInPlay(card => {
             return card.getType() === 'character';
         });
@@ -64,11 +50,7 @@ class TheDornishmansWife extends DrawCard {
             return card.getType() === 'character';
         });
 
-        if(oppChars.length <= ownChars.length) {
-            return false;
-        }
-
-        return true;
+        return oppChars.length > ownChars.length;
     }
 }
 

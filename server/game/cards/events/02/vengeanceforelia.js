@@ -7,11 +7,9 @@ class VengeanceForElia extends DrawCard {
             when: {
                 onClaimApplied: event => event.challenge.defendingPlayer === this.controller
             },
+            chooseOpponent: true,
             handler: context => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-                if(!opponent) {
-                    return;
-                }
+                let opponent = context.opponent;
 
                 context.skipHandler();
 
@@ -21,7 +19,7 @@ class VengeanceForElia extends DrawCard {
                     challengeType: this.game.currentChallenge.challengeType,
                     claim: this.game.currentChallenge.claim,
                     loser: opponent,
-                    winner: opponent
+                    winner: this.game.currentChallenge.winner
                 };
 
                 this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));

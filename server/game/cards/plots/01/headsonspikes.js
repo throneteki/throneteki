@@ -3,12 +3,9 @@ const PlotCard = require('../../../plotcard.js');
 class HeadsOnSpikes extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                if(!otherPlayer) {
-                    return true;
-                }
+            chooseOpponent: true,
+            handler: context => {
+                let otherPlayer = context.opponent;
 
                 if(otherPlayer.hand.size() === 0) {
                     return true;
