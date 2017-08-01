@@ -96,12 +96,6 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
-
-        if(!_.any(this.game.getPlayers(), player => player !== this.context.player && this.ability.canChooseOpponent(player))) {
-            this.cancelled = true;
-            return;
-        }
-
         this.game.queueStep(new ChooseOpponentPrompt(this.game, this.context.player, {
             condition: opponent => this.ability.canChooseOpponent(opponent),
             onSelect: opponent => {

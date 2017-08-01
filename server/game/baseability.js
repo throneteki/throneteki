@@ -106,10 +106,30 @@ class BaseAbility {
         });
     }
 
+    /**
+     * Returns whether the ability requires an opponent to be chosen.
+     */
     needsChooseOpponent() {
         return !!this.chooseOpponentFunc;
     }
 
+    /**
+     * Returns whether there are opponents that can be chosen, if the ability
+     * requires that an opponent be chosen.
+     */
+    canResolveOpponents(context) {
+        if(!this.needsChooseOpponent()) {
+            return true;
+        }
+
+        return _.any(context.game.getPlayers(), player => {
+            return player !== context.player && this.canChooseOpponent(player);
+        });
+    }
+
+    /**
+     * Returns whether a specific player can be chosen as an opponent.
+     */
     canChooseOpponent(opponent) {
         if(_.isFunction(this.chooseOpponentFunc)) {
             return this.chooseOpponentFunc(opponent);
