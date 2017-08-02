@@ -72,7 +72,11 @@ class DeckSummary extends React.Component {
                 count += parseInt(card.count);
             });
 
-            cardsToRender.push(<div key={ key } className='card-group'><h4>{ key + ' (' + count.toString() + ')' }</h4>{ cards }</div>);
+            cardsToRender.push(
+                <div className='cards-no-break'>
+                    <div className='card-group-title'>{ key + ' (' + count.toString() + ')' }</div>
+                    <div key={ key } className='card-group'>{ cards }</div>
+                </div>);
         });
 
         return cardsToRender;
@@ -91,7 +95,7 @@ class DeckSummary extends React.Component {
                 { this.state.cardToShow ? <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } /> : null }
                 <div className='decklist'>
                     <div className='col-xs-2 col-sm-3'>{ this.props.deck.faction ? <img className='img-responsive' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }</div>
-                    <div className='col-xs-7 col-sm-6'>
+                    <div className='col-xs-8 col-sm-6'>
                         <div className='info-row row'><span>Faction:</span>{ this.props.deck.faction ? <span className={ 'pull-right' }>{ this.props.deck.faction.name }</span> : null }</div>
                         <div className='info-row row' ref='agenda'><span>Agenda:</span> { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='pull-right card-link' onMouseOver={ this.onCardMouseOver }
                             onMouseOut={ this.onCardMouseOut }>{ this.props.deck.agenda.label }</span> : <span>None</span> }</div>
@@ -107,8 +111,10 @@ class DeckSummary extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className='cards'>
-                    { cardsToRender }
+                <div className='col-xs-12'>
+                    <div className='cards'>
+                        { cardsToRender }
+                    </div>
                 </div>
             </div>);
     }

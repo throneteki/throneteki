@@ -41,12 +41,40 @@
   z-index: @layer-top;
 }
 
-.card-group {
+.cards-no-break {
   break-inside: avoid;
 }
 
+.card-group {
+  position: relative;
+  background-color: fade(@brand-info, 5%);
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid rgba(71, 58, 56, 0.65);
+}
+
+.card-group-title {
+  background-color: fade(@brand-info, 20%);
+  color: white;
+  margin: 5px;
+  margin-bottom: 0;
+  padding: 1px;
+  border: 1px solid @header-border;
+  border-radius: 4px 4px 0 0;
+  border-bottom: none;
+  text-align: center;
+  position: relative;
+  top: 5px;
+}
+
 .cards {
-  column-count: 3;
+  column-count: 2;
+}
+
+@media (min-width: @screen-lg-min) { 
+  .cards {
+    column-count: 3;
+  }
 }
 
 .deck-list {
@@ -135,4 +163,5 @@
 
 .deck-status-button {
   margin-top: 10px;
+  margin-bottom: 10px;
 }

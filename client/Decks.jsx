@@ -69,10 +69,10 @@ class InnerDecks extends React.Component {
 
         if(this.props.selectedDeck) {
             deckInfo = (<div className='col-sm-7'>
-                <div className='panel-title text-center'>
+                <div className='panel-title text-center col-xs-12'>
                     { this.props.selectedDeck.name }
                 </div>
-                <div className='panel'>
+                <div className='panel col-xs-12'>
                     <div className='btn-group'>
                         <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
                         <button className='btn btn-primary' onClick={ this.onDeleteClick }>Delete</button>
