@@ -59,9 +59,6 @@ class PlotCard extends BaseCard {
     flipFaceup() {
         this.facedown = false;
     }
-
-    onBeginChallengePhase() {
-    }
 }
 
 module.exports = PlotCard;
