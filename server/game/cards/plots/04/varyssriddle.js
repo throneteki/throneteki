@@ -19,7 +19,7 @@ class VaryssRiddle extends PlotCard {
                 plot.controller = player;
                 this.resolving = true;
 
-                this.game.raiseMergedEvent('onPlotsWhenRevealed', { plots: [plot] });
+                this.game.raiseEvent('onPlotsWhenRevealed', { plots: [plot] });
                 this.game.queueSimpleStep(() => {
                     this.resolving = false;
                     plot.controller = plot.owner;

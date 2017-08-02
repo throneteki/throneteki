@@ -69,7 +69,7 @@ class Challenge {
 
         this.calculateStrength();
 
-        this.game.raiseMergedEvent('onRemovedFromChallenge', { card: card });
+        this.game.raiseEvent('onRemovedFromChallenge', { card: card });
     }
 
     markAsParticipating(cards, participantType, kneel) {

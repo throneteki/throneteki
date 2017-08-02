@@ -189,7 +189,7 @@ class Player extends Spectator {
 
     modifyUsedPlots(value) {
         this.usedPlotsModifier += value;
-        this.game.raiseMergedEvent('onUsedPlotsModified', { player: this });
+        this.game.raiseEvent('onUsedPlotsModified', { player: this });
     }
 
     modifyClaim(winner, challengeType, claim) {
@@ -213,7 +213,7 @@ class Player extends Spectator {
         });
 
         if(this.game.currentPhase !== 'setup') {
-            this.game.raiseMergedEvent('onCardsDrawn', { cards: cards, player: this });
+            this.game.raiseEvent('onCardsDrawn', { cards: cards, player: this });
         }
 
         if(this.drawDeck.size() === 0) {
@@ -528,7 +528,7 @@ class Player extends Spectator {
                 this.game.queueStep(new BestowPrompt(this.game, this, card));
             }
 
-            this.game.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
+            this.game.raiseEvent('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
         }
     }
 
@@ -585,7 +585,7 @@ class Player extends Spectator {
         this.moveCard(this.selectedPlot, 'active plot');
         this.selectedPlot.applyPersistentEffects();
 
-        this.game.raiseMergedEvent('onCardEntersPlay', { card: this.activePlot, playingType: 'plot' });
+        this.game.raiseEvent('onCardEntersPlay', { card: this.activePlot, playingType: 'plot' });
 
         this.selectedPlot = undefined;
     }
@@ -602,7 +602,7 @@ class Player extends Spectator {
         if(this.activePlot) {
             let plot = this.activePlot;
             this.moveCard(this.activePlot, 'revealed plots');
-            this.game.raiseMergedEvent('onPlotDiscarded', { player: this, card: plot });
+            this.game.raiseEvent('onPlotDiscarded', { player: this, card: plot });
             this.activePlot = undefined;
             return plot;
         }
@@ -617,7 +617,7 @@ class Player extends Spectator {
         this.game.addGold(this, this.getTotalIncome());
         this.game.addMessage('{0} collects {1} gold', this, this.getTotalIncome());
 
-        this.game.raiseMergedEvent('onIncomeCollected', { player: this });
+        this.game.raiseEvent('onIncomeCollected', { player: this });
 
         this.limitedPlayed = 0;
     }
@@ -665,10 +665,10 @@ class Player extends Spectator {
         });
 
         if(originalLocation !== 'play area') {
-            this.game.raiseMergedEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
+            this.game.raiseEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
         }
 
-        this.game.raiseMergedEvent('onCardAttached', { card: attachment, parent: card });
+        this.game.raiseEvent('onCardAttached', { card: attachment, parent: card });
     }
 
     showDrawDeck() {
@@ -842,7 +842,7 @@ class Player extends Spectator {
 
     sacrificeCard(card) {
         this.game.applyGameAction('sacrifice', card, card => {
-            this.game.raiseMergedEvent('onSacrificed', { player: this, card: card }, () => {
+            this.game.raiseEvent('onSacrificed', { player: this, card: card }, () => {
                 this.moveCard(card, 'discard pile');
             });
         });
@@ -852,7 +852,7 @@ class Player extends Spectator {
         if(!card.dupes.isEmpty() && allowSave) {
             if(this.removeDuplicate(card)) {
                 this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                this.game.raiseMergedEvent('onCardSaved', { card: card });
+                this.game.raiseEvent('onCardSaved', { card: card });
                 return;
             }
         }
@@ -868,7 +868,7 @@ class Player extends Spectator {
                 allowSave: allowSave,
                 originalLocation: cards[0].location
             };
-            this.game.raiseMergedEvent('onCardsDiscarded', params, event => {
+            this.game.raiseEvent('onCardsDiscarded', params, event => {
                 _.each(event.cards, card => {
                     this.doSingleCardDiscard(card, allowSave);
                 });
@@ -886,7 +886,7 @@ class Player extends Spectator {
             allowSave: allowSave,
             originalLocation: card.location
         };
-        this.game.raiseMergedEvent('onCardDiscarded', params, event => {
+        this.game.raiseEvent('onCardDiscarded', params, event => {
             this.moveCard(event.card, 'discard pile');
         });
     }
@@ -898,7 +898,7 @@ class Player extends Spectator {
                     this.moveCard(card, 'hand');
                 } else {
                     this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                    this.game.raiseMergedEvent('onCardSaved', { card: card });
+                    this.game.raiseEvent('onCardSaved', { card: card });
                 }
             } else {
                 this.moveCard(card, 'hand');
@@ -936,7 +936,7 @@ class Player extends Spectator {
     removeAttachment(attachment, allowSave = true) {
         if(allowSave && !attachment.dupes.isEmpty() && this.removeDuplicate(attachment)) {
             this.game.addMessage('{0} discards a duplicate to save {1}', this, attachment);
-            this.game.raiseMergedEvent('onCardSaved', { card: attachment });
+            this.game.raiseEvent('onCardSaved', { card: attachment });
             return;
         }
 
@@ -983,7 +983,7 @@ class Player extends Spectator {
                 card: card
             };
 
-            this.game.raiseMergedEvent('onCardLeftPlay', params, event => {
+            this.game.raiseEvent('onCardLeftPlay', params, event => {
                 card.attachments.each(attachment => {
                     this.removeAttachment(attachment, false);
                 });
@@ -1004,7 +1004,7 @@ class Player extends Spectator {
 
         if(card.location === 'active plot') {
             card.leavesPlay();
-            this.game.raiseMergedEvent('onCardLeftPlay', { player: this, card: card });
+            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card });
         }
 
         if(card.location !== 'play area') {
@@ -1020,7 +1020,7 @@ class Player extends Spectator {
         }
 
         if(['dead pile', 'discard pile'].includes(targetLocation)) {
-            this.game.raiseMergedEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
+            this.game.raiseEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
         }
     }
 
@@ -1032,7 +1032,7 @@ class Player extends Spectator {
         this.game.applyGameAction('kneel', card, card => {
             card.kneeled = true;
 
-            this.game.raiseMergedEvent('onCardKneeled', { player: this, card: card });
+            this.game.raiseEvent('onCardKneeled', { player: this, card: card });
         });
     }
 
@@ -1044,7 +1044,7 @@ class Player extends Spectator {
         this.game.applyGameAction('stand', card, card => {
             card.kneeled = false;
 
-            this.game.raiseMergedEvent('onCardStood', { player: this, card: card });
+            this.game.raiseEvent('onCardStood', { player: this, card: card });
         });
     }
 

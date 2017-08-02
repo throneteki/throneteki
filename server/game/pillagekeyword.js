@@ -19,7 +19,7 @@ class PillageKeyword extends BaseAbility {
         game.queueSimpleStep(() => {
             challenge.loser.discardFromDraw(1, cards => {
                 let discarded = cards[0];
-                game.raiseMergedEvent('onPillage', { challenge: challenge, source: source, discardedCard: discarded });
+                game.raiseEvent('onPillage', { challenge: challenge, source: source, discardedCard: discarded });
 
                 game.addMessage('{0} discards {1} from the top of their deck due to Pillage from {2}', challenge.loser, discarded, source);
             });

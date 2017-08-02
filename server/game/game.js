@@ -374,7 +374,7 @@ class Game extends EventEmitter {
         from.gold -= appliedGold;
         to.gold += appliedGold;
 
-        this.raiseMergedEvent('onGoldTransferred', { source: from, target: to, amount: gold });
+        this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: gold });
     }
 
     checkWinCondition(player) {
@@ -512,7 +512,7 @@ class Game extends EventEmitter {
     }
 
     promptForDeckSearch(player, properties) {
-        this.raiseMergedEvent('onBeforeDeckSearch', { source: properties.source, player: player }, event => {
+        this.raiseEvent('onBeforeDeckSearch', { source: properties.source, player: player }, event => {
             this.queueStep(new DeckSearchPrompt(this, event.player, properties));
         });
     }
@@ -568,7 +568,7 @@ class Game extends EventEmitter {
     }
 
     beginRound() {
-        this.raiseMergedEvent('onBeginRound');
+        this.raiseEvent('onBeginRound');
         this.queueStep(new PlotPhase(this));
         this.queueStep(new DrawPhase(this));
         this.queueStep(new MarshalingPhase(this));
@@ -633,17 +633,7 @@ class Game extends EventEmitter {
         }
     }
 
-    raiseEvent(eventName, ...params) {
-        var handler = () => true;
-
-        if(_.isFunction(_.last(params))) {
-            handler = params.pop();
-        }
-
-        this.queueStep(new EventWindow(this, eventName, params, handler));
-    }
-
-    raiseMergedEvent(eventName, params, handler) {
+    raiseEvent(eventName, params, handler) {
         if(!handler) {
             handler = () => true;
         }
@@ -699,10 +689,10 @@ class Game extends EventEmitter {
                 let originalLocation = card.location;
                 card.moveTo('play area');
                 card.applyPersistentEffects();
-                this.raiseMergedEvent('onCardEntersPlay', { card: card, playingType: 'play', originalLocation: originalLocation });
+                this.raiseEvent('onCardEntersPlay', { card: card, playingType: 'play', originalLocation: originalLocation });
             }
 
-            this.raiseMergedEvent('onCardTakenControl', { card: card });
+            this.raiseEvent('onCardTakenControl', { card: card });
         });
     }
 
