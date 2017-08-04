@@ -5,17 +5,10 @@ class SeenInFlames extends DrawCard {
         this.action({
             title: 'Discard from opponent\'s hand',
             phase: 'challenge',
-            condition: () => (
-                this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor')) &&
-                this.opponentHasCards()
-            ),
+            condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor')),
+            chooseOpponent: opponent => !opponent.hand.isEmpty(),
             handler: context => {
-                let otherPlayer = this.game.getOtherPlayer(context.player);
-                if(!otherPlayer) {
-                    return;
-                }
-
-                let buttons = otherPlayer.hand.map(card => {
+                let buttons = context.opponent.hand.map(card => {
                     return { method: 'cardSelected', card: card };
                 });
 
@@ -30,21 +23,13 @@ class SeenInFlames extends DrawCard {
         });
     }
 
-    opponentHasCards() {
-        let otherPlayer = this.game.getOtherPlayer(this.controller);
-        return otherPlayer && !otherPlayer.hand.isEmpty();
-    }
-
     cardSelected(player, cardId) {
-        var otherPlayer = this.game.getOtherPlayer(player);
-        if(!otherPlayer) {
-            return false;
-        }
-
-        var card = otherPlayer.findCardByUuid(otherPlayer.hand, cardId);
+        let card = this.game.findAnyCardInAnyList(cardId);
         if(!card) {
             return false;
         }
+
+        let otherPlayer = card.controller;
 
         otherPlayer.discardCard(card);
 

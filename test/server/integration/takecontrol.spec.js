@@ -429,7 +429,7 @@ describe('take control', function() {
         describe('put into play under control + abilities', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('greyjoy', [
-                    'Snowed Under',
+                    'Snowed Under', 'A Storm of Swords',
                     'Night Gathers...', 'Lost Ranger', 'Old Forest Hunter'
                 ]);
                 this.player1.selectDeck(deck);
@@ -447,7 +447,7 @@ describe('take control', function() {
                 this.completeSetup();
 
                 this.player1.selectPlot('Snowed Under');
-                this.player2.selectPlot('Snowed Under');
+                this.player2.selectPlot('A Storm of Swords');
 
                 this.selectFirstPlayer(this.player1);
 

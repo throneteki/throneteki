@@ -5,13 +5,13 @@ const PlotCard = require('../../../plotcard.js');
 class BattleOfTheBlackwater extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-                    this.removeAllDupes(player);
-                });
+            chooseOpponent: true,
+            handler: context => {
+                this.removeAllDupes(this.controller);
+                this.removeAllDupes(context.opponent);
 
-                this.game.addMessage('{0} uses {1} to have both players discard each duplicate they control', 
-                    this.controller, this);
+                this.game.addMessage('{0} uses {1} to have themself and {2} discard each duplicate they control',
+                    this.controller, this, context.opponent);
             }
         });
     }

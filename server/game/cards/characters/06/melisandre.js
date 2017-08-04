@@ -4,10 +4,11 @@ class Melisandre extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner && this.opponentHasCardsInHand()
+                onDominanceDetermined: event => this.controller === event.winner
             },
-            handler: () => {
-                let otherPlayer = this.game.getOtherPlayer(this.controller);
+            chooseOpponent: opponent => opponent.hand.size() >= 1,
+            handler: context => {
+                let otherPlayer = context.opponent;
                 let buttons = otherPlayer.hand.map(card => {
                     return { method: 'cardSelected', card: card };
                 });
@@ -24,12 +25,13 @@ class Melisandre extends DrawCard {
     }
 
     cardSelected(player, cardId) {
-        let otherPlayer = this.game.getOtherPlayer(player);
-        let card = otherPlayer.findCardByUuid(otherPlayer.hand, cardId);
+        let card = this.game.findAnyCardInAnyList(cardId);
 
         if(!card) {
             return false;
         }
+
+        let otherPlayer = card.controller;
 
         otherPlayer.discardCards([card], true, () => {
             let charMessage = '';
@@ -44,16 +46,6 @@ class Melisandre extends DrawCard {
         });
 
         return true;
-    }
-
-    opponentHasCardsInHand() {
-        let otherPlayer = this.game.getOtherPlayer(this.controller);
-
-        if(!otherPlayer) {
-            return false;
-        }
-
-        return otherPlayer.hand.size() >= 1;
     }
 }
 

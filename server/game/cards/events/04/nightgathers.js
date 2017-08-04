@@ -5,17 +5,13 @@ class NightGathers extends DrawCard {
         this.action({
             title: 'Allow marshaling from opponent discard',
             phase: 'marshal',
-            handler: () => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-                if(!opponent) {
-                    return;
-                }
-
-                this.game.addMessage('{0} plays {1} to allow cards from {2}\'s discard pile to be marshaled', this.controller, this, opponent);
+            chooseOpponent: opponent => opponent.getTotalReserve() < this.controller.getTotalReserve(),
+            handler: context => {
+                this.game.addMessage('{0} plays {1} to allow cards from {2}\'s discard pile to be marshaled', this.controller, this, context.opponent);
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
                     targetController: 'current',
-                    effect: ability.effects.canMarshalFrom(opponent, 'discard pile')
+                    effect: ability.effects.canMarshalFrom(context.opponent, 'discard pile')
                 }));
 
             }

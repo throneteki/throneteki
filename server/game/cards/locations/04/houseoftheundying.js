@@ -8,17 +8,13 @@ class HouseOfTheUndying extends DrawCard {
             title: 'Control opponent\'s dead characters',
             phase: 'challenge',
             cost: ability.costs.removeSelfFromGame(),
-            handler: context => this.controlDeadCharacters(context.player)
+            chooseOpponent: opponent => opponent.deadPile.size() > 0,
+            handler: context => this.controlDeadCharacters(context.player, context.opponent)
         });
     }
 
-    controlDeadCharacters(currentController) {
-        var opponent = this.game.getOtherPlayer(currentController);
-        if(!opponent) {
-            return;
-        }
-
-        var eligibleCharacters = opponent.deadPile.filter(card => {
+    controlDeadCharacters(currentController, opponent) {
+        let eligibleCharacters = opponent.deadPile.filter(card => {
             if(!card.isUnique()) {
                 return true;
             }

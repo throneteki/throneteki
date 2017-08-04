@@ -3,12 +3,16 @@ const DrawCard = require('../../../drawcard.js');
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
+        // TODO: For Melee, the challenge check should be updated to look at
+        // which challenges haven't been initiated against you instead of which
+        // a single opponent has initiated.
         this.interrupt({
             when: {
                 onPhaseEnded: event => event.phase === 'challenge' && !this.allChallengesInitiatedByOpponent()
             },
-            handler: () => {
-                let otherPlayer = this.game.getOtherPlayer(this.controller);
+            chooseOpponent: true,
+            handler: context => {
+                let otherPlayer = context.opponent;
                 let buttons = [];
 
                 if(otherPlayer.getNumberOfChallengesInitiatedByType('military') === 0) {
