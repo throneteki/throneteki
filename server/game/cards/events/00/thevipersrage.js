@@ -4,8 +4,8 @@ class TheVipersRage extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.defendingPlayer === this.controller &&
-                                                 challenge.strengthDifference >= 5
+                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.defendingPlayer === this.controller &&
+                                         event.challenge.strengthDifference >= 5
             },
             handler: () => {
                 let challenge = this.game.currentChallenge;
