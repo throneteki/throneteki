@@ -4,6 +4,7 @@ class Muster extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Search deck for Knight',
+            phase: 'marshal',
             cost: ability.costs.kneel(card => card.hasTrait('Knight') && card.getType() === 'character'),
             handler: context => {
                 this.game.promptForDeckSearch(this.controller, {
