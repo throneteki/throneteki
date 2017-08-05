@@ -20,6 +20,18 @@ const ValidKeywords = [
     'terminal',
     'limited'
 ];
+
+const ValidFactions = [
+    'stark',
+    'lannister',
+    'thenightswatch',
+    'tyrell',
+    'baratheon',
+    'targaryen',
+    'martell',
+    'greyjoy'
+];
+
 const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agenda'];
 
 class BaseCard {
@@ -290,6 +302,22 @@ class BaseCard {
         }
 
         return !!this.factions[normalizedFaction];
+    }
+
+    getFactions() {
+        let factions = [];
+
+        _.each(ValidFactions, faction => {
+            if(this.isFaction(faction)) {
+                factions.push(faction);
+            }
+        });
+
+        if(_.isEmpty(factions)) {
+            factions.push('neutral');
+        }
+
+        return factions;
     }
 
     isLoyal() {
