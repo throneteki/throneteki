@@ -8,7 +8,8 @@ class SupportOfSaltcliffe extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => this.controller === challenge.winner && challenge.isParticipating(this.parent) && challenge.isUnopposed()
+                afterChallenge: context => this.controller === context.challenge.winner && context.challenge.isParticipating(this.parent) &&
+                                           context.challenge.isUnopposed()
             },
             handler: () => {
                 this.parent.controller.standCard(this.parent);
