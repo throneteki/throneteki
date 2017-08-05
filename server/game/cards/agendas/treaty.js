@@ -15,7 +15,7 @@ class Treaty extends AgendaCard {
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 this.controller.drawCardsToHand(1);
-                this.game.addMessage('0} uses {1} and kneels their faction card to draw 1 card', this.controller, this);
+                this.game.addMessage('{0} uses {1} and kneels their faction card to draw 1 card', this.controller, this);
                 
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a card',
@@ -43,20 +43,18 @@ class Treaty extends AgendaCard {
         });
 
         let factionsToAnnounce = _.filter(factionsInDecks, faction => faction !== this.controller.getFaction() && faction !== 'neutral');
+        let message = '{0} names {1} as their {2} for {3}';
 
         if(factionsToAnnounce.length > 2) {
-            this.game.addMessage('{0} has included more than the maximum allowed number of factions for {1} in their draw and/or plot deck',
-                this.controller, this);
-            return;
+            message += ' (this exceeds the maximum allowed number of factions)';
         }
 
-        if(factionsToAnnounce.length < 2) {
-            //This is slightly more problematic than The Power of Wealth. Printing a message here doesn't allow bluffing a second faction,
-            //but not printing a message allows possibility to lie.
+        if(_.isEmpty(factionsToAnnounce)) {
+            //Don't print any message: allows the player to bluff any faction
             return;            
         }
 
-        this.game.addMessage('{0} names {1} as their factions for {2}', this.controller, factionsToAnnounce, this);
+        this.game.addMessage(message, this.controller, factionsToAnnounce, factionsToAnnounce.length > 1 ? 'factions' : 'faction', this);
     }
 }
 
