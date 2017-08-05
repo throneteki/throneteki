@@ -167,6 +167,10 @@ class Player extends Spectator {
         ));
     }
 
+    getFaction() {
+        return this.faction.getPrintedFaction();
+    }
+
     getNumberOfChallengesWon(challengeType) {
         return this.challenges.getWon(challengeType);
     }
