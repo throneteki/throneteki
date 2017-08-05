@@ -305,13 +305,7 @@ class BaseCard {
     }
 
     getFactions() {
-        let factions = [];
-
-        _.each(ValidFactions, faction => {
-            if(this.isFaction(faction)) {
-                factions.push(faction);
-            }
-        });
+        let factions = _.filter(ValidFactions, faction => this.isFaction(faction));
 
         if(_.isEmpty(factions)) {
             factions.push('neutral');

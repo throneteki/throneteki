@@ -11,13 +11,13 @@ class CommonCause extends PlotCard {
     }
 
     getNumberOfFactions() {
-        let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character');
+        let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character' && !card.isFaction('neutral'));
         let factionsInPlay = [];
 
         _.each(charactersInPlay, card => {
             let factions = card.getFactions();
             _.each(factions, faction => {
-                if(!factionsInPlay.includes(faction) && faction !== 'neutral') {
+                if(!factionsInPlay.includes(faction)) {
                     factionsInPlay.push(faction);
                 }
             });
