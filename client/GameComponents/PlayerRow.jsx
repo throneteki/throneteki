@@ -1,8 +1,6 @@
 import React from 'react';
-import _ from 'underscore';
 
 import AdditionalCardPile from './AdditionalCardPile.jsx';
-import Card from './Card.jsx';
 import CardCollection from './CardCollection.jsx';
 import PlayerHand from './PlayerHand.jsx';
 
@@ -35,32 +33,6 @@ class PlayerRow extends React.Component {
         if(this.props.onShuffleClick) {
             this.props.onShuffleClick();
         }
-    }
-
-    getDrawDeck() {
-        var drawDeckPopup = undefined;
-
-        if(this.props.showDrawDeck && this.props.drawDeck) {
-            var drawDeck = _.map(this.props.drawDeck, card => {
-                return (<Card key={ card.uuid } card={ card } source='draw deck'
-                    onMouseOver={ this.props.onMouseOver }
-                    onMouseOut={ this.props.onMouseOut }
-                    onClick={ this.props.onCardClick } />);
-            });
-
-            drawDeckPopup = (
-                <div className='popup panel' onClick={ event => event.stopPropagation() }>
-                    <div>
-                        <a onClick={ this.onCloseClick }>Close</a>
-                        <a onClick={ this.onCloseAndShuffleClick }>Close and shuffle</a>
-                    </div>
-                    <div className='inner'>
-                        { drawDeck }
-                    </div>
-                </div>);
-        }
-
-        return drawDeckPopup;
     }
 
     onDrawClick() {
