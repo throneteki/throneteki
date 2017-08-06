@@ -666,6 +666,16 @@ const Effects = {
             }
         };
     },
+    needsToWinIntrigueFirst: function() {
+        return {
+            apply: function(player) {
+                player.needsToWinIntrigueFirst = true;
+            },
+            unapply: function(player) {
+                player.needsToWinIntrigueFirst = false;
+            }
+        };
+    },
     contributeChallengeStrength: function(value) {
         return {
             apply: function(player, context) {

@@ -7,7 +7,7 @@ const AGameOfThrones = cards['01003'];
 describe('AGameOfThrones', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'addPower', 'addMessage']);
-        this.playerSpy = jasmine.createSpyObj('player', ['getNumberOfChallengesWon']);
+        this.playerSpy = jasmine.createSpyObj('player', ['needsToWinIntrigueFirst', 'getNumberOfChallengesWon']);
         this.otherPlayerSpy = jasmine.createSpyObj('player2', ['']);
 
         this.playerSpy.game = this.gameSpy;

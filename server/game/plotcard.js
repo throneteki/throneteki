@@ -62,7 +62,15 @@ class PlotCard extends BaseCard {
         return baseClaim + this.claimModifier;
     }
 
-    canChallenge() {
+    canChallenge(player, challengeType) {
+        if(!player.needsToWinIntrigueFirst) {
+            return true;
+        }
+
+        if((challengeType === 'power' || challengeType === 'military') && player.getNumberOfChallengesWon('intrigue') <= 0) {
+            return false;
+        }
+
         return true;
     }
 
