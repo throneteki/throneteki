@@ -37,15 +37,6 @@ class PlayerRow extends React.Component {
         }
     }
 
-    onDiscardedCardClick(event, cardId) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if(this.props.onDiscardedCardClick) {
-            this.props.onDiscardedCardClick(cardId);
-        }
-    }
-
     getDrawDeck() {
         var drawDeckPopup = undefined;
 
@@ -155,7 +146,6 @@ PlayerRow.propTypes = {
     isMe: React.PropTypes.bool,
     numDrawCards: React.PropTypes.number,
     onCardClick: React.PropTypes.func,
-    onDiscardedCardClick: React.PropTypes.func,
     onDragDrop: React.PropTypes.func,
     onDrawClick: React.PropTypes.func,
     onMenuItemClick: React.PropTypes.func,
