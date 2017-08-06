@@ -1,11 +1,10 @@
 import React from 'react';
 import _ from 'underscore';
-import $ from 'jquery';
 
 import AdditionalCardPile from './AdditionalCardPile.jsx';
 import Card from './Card.jsx';
 import CardCollection from './CardCollection.jsx';
-import {tryParseJSON} from '../util.js';
+import PlayerHand from './PlayerHand.jsx';
 
 class PlayerRow extends React.Component {
     constructor() {
@@ -16,42 +15,10 @@ class PlayerRow extends React.Component {
         this.onShowDeckClick = this.onShowDeckClick.bind(this);
         this.onCloseClick = this.onCloseClick.bind(this);
         this.onCloseAndShuffleClick = this.onCloseAndShuffleClick.bind(this);
-        this.onDragDrop = this.onDragDrop.bind(this);
 
         this.state = {
             showDrawMenu: false
         };
-    }
-
-    onDragOver(event) {
-        $(event.target).addClass('highlight-panel');
-        event.preventDefault();
-    }
-
-    onDragLeave(event) {
-        $(event.target).removeClass('highlight-panel');
-    }
-
-    onDragDrop(event, target) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        $(event.target).removeClass('highlight-panel');
-
-        var card = event.dataTransfer.getData('Text');
-
-        if(!card) {
-            return;
-        }
-
-        var dragData = tryParseJSON(card);
-        if(!dragData) {
-            return;
-        }
-
-        if(this.props.onDragDrop) {
-            this.props.onDragDrop(dragData.card, dragData.source, target);
-        }
     }
 
     onCloseClick() {
@@ -77,33 +44,6 @@ class PlayerRow extends React.Component {
         if(this.props.onDiscardedCardClick) {
             this.props.onDiscardedCardClick(cardId);
         }
-    }
-
-    getHand(needsSquish) {
-        var cardIndex = 0;
-        var handLength = this.props.hand ? this.props.hand.length : 0;
-        var requiredWidth = handLength * 64;
-        var overflow = requiredWidth - 342;
-        var offset = overflow / (handLength - 1);
-
-        var hand = _.map(this.props.hand, card => {
-            var left = (64 - offset) * cardIndex++;
-
-            var style = {};
-            if(needsSquish) {
-                style = {
-                    left: left + 'px'
-                };
-            }
-
-            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ !this.props.isMe } source='hand'
-                onMouseOver={ this.props.onMouseOver }
-                onMouseOut={ this.props.onMouseOut }
-                onClick={ this.props.onCardClick }
-                onDragDrop={ this.props.onDragDrop } />);
-        });
-
-        return hand;
     }
 
     getDrawDeck() {
@@ -168,15 +108,6 @@ class PlayerRow extends React.Component {
     }
 
     render() {
-        var className = 'panel hand';
-        var needsSquish = this.props.hand && this.props.hand.length * 64 > 342;
-
-        if(needsSquish) {
-            className += ' squish';
-        }
-
-        var hand = this.getHand(needsSquish);
-
         var drawDeckMenu = [
             { text: 'Show', handler: this.onShowDeckClick, showPopup: true },
             { text: 'Shuffle', handler: this.onShuffleClick}
@@ -190,13 +121,13 @@ class PlayerRow extends React.Component {
         return (
             <div className='player-home-row'>
                 <div className='deck-cards'>
-                    <div className={ className } onDragLeave={ this.onDragLeave } onDragOver={ this.onDragOver } onDrop={ (event) => this.onDragDrop(event, 'hand') }>
-                        <div className='panel-header'>
-                            { 'Hand (' + hand.length + ')' }
-                        </div>
-                        { hand }
-                    </div>
-
+                    <PlayerHand
+                        cards={ this.props.hand }
+                        isMe={ this.props.isMe }
+                        onCardClick={ this.props.onCardClick }
+                        onDragDrop={ this.props.onDragDrop }
+                        onMouseOut={ this.props.onMouseOut }
+                        onMouseOver={ this.props.onMouseOver } />
                     <CardCollection className='draw' title='Draw' source='draw deck' cards={ this.props.drawDeck }
                         onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick }
                         popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } onDragDrop={ this.props.onDragDrop }
