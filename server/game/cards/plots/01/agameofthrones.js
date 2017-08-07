@@ -1,12 +1,16 @@
 const PlotCard = require('../../../plotcard.js');
 
 class AGameOfThrones extends PlotCard {
-    canChallenge(player, challengeType) {
-        if((challengeType === 'power' || challengeType === 'military') && player.getNumberOfChallengesWon('intrigue') <= 0) {
-            return false;
-        }
-
-        return true;
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            targetType: 'player',
+            targetController: 'any',
+            match: player => player.getNumberOfChallengesWon('intrigue') < 1,
+            effect: [
+                ability.effects.cannotInitiateChallengeType('military'),
+                ability.effects.cannotInitiateChallengeType('power')
+            ]
+        });
     }
 }
 
