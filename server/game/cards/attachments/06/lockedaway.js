@@ -7,7 +7,7 @@ class LockedAway extends DrawCard {
                 onPhaseStarted: event => event.phase === 'marshal'
             },
             handler: () => {
-                this.parent.owner.returnCardToHand(this.parent, 'false');
+                this.parent.owner.returnCardToHand(this.parent, false);
                 this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand',
                     this.controller, this, this.parent, this.parent.owner);
             }
