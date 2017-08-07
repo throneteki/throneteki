@@ -5,7 +5,7 @@ const MarshalCardAction = require('../../server/game/marshalcardaction.js');
 
 describe('MarshalCardAction', function () {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'on', 'removeListener']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'on', 'removeListener', 'queueSimpleStep']);
         this.playerSpy = jasmine.createSpyObj('player', ['canPutIntoPlay', 'isCardInPlayableLocation', 'putIntoPlay']);
         this.cardSpy = jasmine.createSpyObj('card', ['canBeMarshaled', 'getType']);
         this.cardSpy.canBeMarshaled.and.returnValue(true);
