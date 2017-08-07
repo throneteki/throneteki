@@ -1,31 +1,53 @@
-const PlayerOrderPrompt = require('../playerorderprompt.js');
+const _ = require('underscore');
 
-class DiscardToReservePrompt extends PlayerOrderPrompt {
-    activePrompt() {
-        return {
-            menuTitle: 'Discard down to ' + this.currentPlayer.getTotalReserve() + ' cards',
-            buttons: [
-                { text: 'Done' }
-            ]
-        };
+const BaseStep = require('../basestep.js');
+
+class DiscardToReservePrompt extends BaseStep {
+    constructor(game) {
+        super(game);
+        this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
     }
 
-    waitingPrompt() {
-        return { menuTitle: 'Waiting for opponent to discard down to reserve' };
+    continue() {
+        this.remainingPlayers = _.reject(this.remainingPlayers, player => player.isBelowReserve());
+
+        if(_.isEmpty(this.remainingPlayers)) {
+            return true;
+        }
+
+        this.promptPlayerToDiscard(this.remainingPlayers[0]);
+
+        return false;
     }
 
-    onMenuCommand(player) {
-        if(player !== this.currentPlayer) {
+    promptPlayerToDiscard(currentPlayer) {
+        let overReserve = currentPlayer.hand.size() - currentPlayer.getTotalReserve();
+        this.game.promptForSelect(currentPlayer, {
+            ordered: true,
+            numCards: overReserve,
+            multiSelect: true,
+            activePromptTitle: 'Select ' + overReserve + ' cards to discard down to reserve (top first)',
+            waitingPromptTitle: 'Waiting for opponent to discard down to reserve',
+            cardCondition: card => card.location === 'hand' && card.controller === currentPlayer,
+            onSelect: (player, cards) => this.discardCards(player, cards, overReserve)
+        });
+    }
+
+    discardCards(player, cards, overReserve) {
+        if(cards.length !== overReserve) {
             return false;
         }
 
-        if(player.isBelowReserve()) {
-            this.completePlayer();
-        }
-    }
-
-    skipCondition(player) {
-        return player.isBelowReserve();
+        // Reverse the order selection so that the first card selected ends up
+        // on the top of the discard pile.
+        cards = cards.reverse();
+        player.discardCards(cards, false, () => {
+            this.game.addMessage('{0} discards {1}', player, cards);
+            if(player.isBelowReserve()) {
+                this.remainingPlayers = this.remainingPlayers.slice(1);
+            }
+        });
+        return true;
     }
 }
 
