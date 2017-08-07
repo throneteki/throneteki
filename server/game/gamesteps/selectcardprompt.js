@@ -127,7 +127,7 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     defaultActivePromptTitle() {
-        return this.properties.numCard === 1 ? 'Select a card' : ('Select ' + this.properties.numCard + ' cards');
+        return this.properties.numCards === 1 ? 'Select a character' : ('Select ' + this.properties.numCards + ' characters');
     }
 
     waitingPrompt() {
