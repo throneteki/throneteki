@@ -19,6 +19,7 @@ describe('Player', () => {
 
             this.cardSpy = jasmine.createSpyObj('card', ['getType', 'leavesPlay', 'moveTo']);
             this.cardSpy.controller = this.cardSpy.owner = this.player;
+            this.cardSpy.getType.and.returnValue('character');
             this.cardSpy.attachments = _([]);
             this.cardSpy.dupes = _([]);
         });
@@ -268,6 +269,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy2 = jasmine.createSpyObj('card', ['getType', 'moveTo']);
                     this.cardSpy2.controller = this.player;
+                    this.cardSpy2.getType.and.returnValue('event');
                     this.player.hand.push(this.cardSpy2);
                     this.cardSpy2.location = 'hand';
 

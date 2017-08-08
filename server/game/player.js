@@ -679,24 +679,31 @@ class Player extends Spectator {
         this.showDeck = true;
     }
 
-    isValidDropCombination(source, target) {
-        if(source === 'plot deck' && target !== 'revealed plots') {
+    isValidDropCombination(card, target) {
+        const PlotCardTypes = ['plot'];
+        const DrawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
+        const AllowedTypesForPile = {
+            'active plot': PlotCardTypes,
+            'dead pile': ['character'],
+            'discard pile': DrawDeckCardTypes,
+            'draw deck': DrawDeckCardTypes,
+            'hand': DrawDeckCardTypes,
+            'out of game': DrawDeckCardTypes.concat(PlotCardTypes),
+            'play area': ['attachment', 'character', 'location'],
+            'plot deck': PlotCardTypes,
+            'revealed plots': PlotCardTypes,
+            // Agenda specific piles
+            'scheme plots': PlotCardTypes,
+            'conclave': DrawDeckCardTypes
+        };
+
+        let allowedTypes = AllowedTypesForPile[target];
+
+        if(!allowedTypes) {
             return false;
         }
 
-        if(source === 'revealed plots' && target !== 'plot deck') {
-            return false;
-        }
-
-        if(target === 'plot deck' && source !== 'revealed plots') {
-            return false;
-        }
-
-        if(target === 'revealed plots' && source !== 'plot deck') {
-            return false;
-        }
-
-        return source !== target;
+        return allowedTypes.includes(card.getType());
     }
 
     getSourceList(source) {
@@ -759,23 +766,19 @@ class Player extends Spectator {
     }
 
     drop(card, source, target) {
-        if(!this.isValidDropCombination(source, target)) {
-            return false;
-        }
-
         if(!card) {
             return false;
         }
 
+        if(!this.isValidDropCombination(card, target)) {
+            return false;
+        }
+
+        if(source === target) {
+            return false;
+        }
+
         if(card.controller !== this) {
-            return false;
-        }
-
-        if(target === 'dead pile' && card.getType() !== 'character') {
-            return false;
-        }
-
-        if(target === 'play area' && card.getType() === 'event') {
             return false;
         }
 
