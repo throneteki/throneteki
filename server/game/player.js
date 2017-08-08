@@ -758,30 +758,13 @@ class Player extends Spectator {
         }
     }
 
-    drop(cardId, source, target) {
+    drop(card, source, target) {
         if(!this.isValidDropCombination(source, target)) {
             return false;
         }
 
-        var sourceList = this.getSourceList(source);
-        var card = this.findCardByUuid(sourceList, cardId);
-
         if(!card) {
-            if(source === 'play area') {
-                var otherPlayer = this.game.getOtherPlayer(this);
-
-                if(!otherPlayer) {
-                    return false;
-                }
-
-                card = otherPlayer.findCardInPlayByUuid(cardId);
-
-                if(!card) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            return false;
         }
 
         if(card.controller !== this) {
