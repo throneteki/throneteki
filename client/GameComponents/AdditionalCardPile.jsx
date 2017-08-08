@@ -16,9 +16,10 @@ class AdditionalCardPile extends React.Component {
             <CardCollection
                 className={ this.props.className }
                 title={ this.props.title }
-                source='additional'
+                source={ this.props.source }
                 cards={ this.props.pile.cards }
                 topCard={ topCard }
+                onDragDrop={ this.props.onDragDrop }
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
                 popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' }
@@ -32,9 +33,11 @@ AdditionalCardPile.displayName = 'AdditionalCardPile';
 AdditionalCardPile.propTypes = {
     className: React.PropTypes.string,
     isMe: React.PropTypes.bool,
+    onDragDrop: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
     pile: React.PropTypes.object,
+    source: React.PropTypes.string,
     spectating: React.PropTypes.bool,
     title: React.PropTypes.string
 };
