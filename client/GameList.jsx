@@ -64,10 +64,10 @@ class InnerGameList extends React.Component {
                 if(firstPlayer) {
                     gameRow.push(
                         <span className='col-xs-4 col-sm-3 game-row-avatar'>
-                            <span className='hidden-xs'>
+                            <span className='hidden-xs col-sm-3 game-row-avatar'>
                                 <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
                             </span>
-                            <span className='player-name text-center'>{ player.name }</span>
+                            <span className='player-name col-sm-8'>{ player.name }</span>
                         </span>);
                     gameRow.push();
                     gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
@@ -78,8 +78,8 @@ class InnerGameList extends React.Component {
                     gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
                     gameRow.push(
                         <span className='col-xs-4 col-sm-3 game-row-avatar'>
-                            <span className='player-name'>{ player.name }</span>
-                            <span className='hidden-xs game-row-avatar pull-right'>
+                            <span className='player-name col-sm-8'>{ player.name }</span>
+                            <span className='hidden-xs game-row-avatar pull-right col-sm-3'>
                                 <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
                             </span>
                         </span>);
@@ -107,10 +107,10 @@ class InnerGameList extends React.Component {
                     <div className='col-xs-3 game-row-buttons pull-right'>
                         { (this.props.currentGame || _.size(game.players) === 2 || game.started) ?
                             null :
-                            <button className='btn btn-primary' onClick={ event => this.joinGame(event, game) }>Join</button>
+                            <button className='btn btn-primary pull-right' onClick={ event => this.joinGame(event, game) }>Join</button>
                         }
                         { this.canWatch(game) ?
-                            <button className='btn btn-primary' onClick={ event => this.watchGame(event, game) }>Watch</button> : null }
+                            <button className='btn btn-primary pull-right' onClick={ event => this.watchGame(event, game) }>Watch</button> : null }
                         { /* { this.props.isAdmin ?
                             <button className='btn btn-primary' onClick={ event => this.removeGame(event, game) }>Remove</button> : null } */ }
                     </div>
