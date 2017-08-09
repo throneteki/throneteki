@@ -8,7 +8,12 @@
 }
 
 .game-list {
-  margin-top: 10px;
+  position: absolute;
+  top: 55px;
+  bottom: 0px;
+  left: 10px;
+  right: 10px;
+  overflow-y: auto;
 }
 
 .game-row {
@@ -22,11 +27,13 @@
 }
 
 .player-name {
-  padding-right: 5px;
+  padding-right: 0;
+  padding-left: 0;
 }
 
 .game-row:hover {
   border-color: @brand-info;
+  background-color: fade(@brand-info, 20%);
 }
 
 .game-row.active {
@@ -81,33 +88,62 @@
   margin-bottom: 10px;
 }
 
-.deck-status.valid {
-  margin-left: 10px;
+.deck-status {
+  text-align: center;
   padding: 6px 12px;
   border: 1px solid black;
   border-radius: 4px;
-  background: @brand-success;
   color: black;
-}
 
-.deck-status.unreleased {
-  margin-left: 10px;
-  padding: 6px 12px;
-  border: 1px solid black;
-  border-radius: 4px;
-  background: @brand-warning;
-  color: black;
-}
+  &.valid {
+    background: @brand-success;
+  }
 
-.deck-status.invalid {
-  margin-left: 10px;
-  padding: 6px 12px;
-  border: 1px solid black;
-  border-radius: 4px;
-  background: @brand-danger;
-  color: black;
+  &.unreleased {
+    background: @brand-warning;
+  }
+
+  &.invalid {
+    background: @brand-danger;
+  }
 }
 
 .player-row {
   margin-bottom: 10px;
+}
+
+.game-list-container {
+  position: absolute;
+  top: 30px;
+  bottom: 0px;
+  left: 15px;
+  right: 15px;
+}
+
+.node1 {
+  background-color: fade(@brand-warning, 20%);
+}
+
+.node2 {
+  background-color: fade(@brand-danger, 20%);
+}
+
+.game-row-avatar {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.game-row-vs {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.game-row-buttons {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.game-title {
+  padding-left: 0;
+  padding-right: 0;
 }

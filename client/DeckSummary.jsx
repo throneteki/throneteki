@@ -104,8 +104,8 @@ class DeckSummary extends React.Component {
                         <div className='info-row row' ref='plotCount'><span>Plot deck:</span><span className='pull-right'>{ this.props.deck.validation.plotCount } cards</span></div>
                     </div>
                     <div className='col-xs-2 col-sm-3'>{ this.props.deck.agenda && this.props.deck.agenda.code ? <img className='img-responsive' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /> : null }</div>
-                    <div className='col-xs-2 deck-status-button'>
-                        <div className={ this.props.deck.validation.status === 'Valid' ? 'btn btn-success' : 'btn btn-danger' }>
+                    <div className='col-xs-2'>
+                        <div className={ this.props.deck.validation.status === 'Valid' ? 'deck-status valid' : 'deck-status invalid' }>
                             <StatusPopOver status={ this.props.deck.validation.status } list={ this.props.deck.validation.extendedStatus }
                                 show={ this.props.deck.validation.status !== 'Valid' } />
                         </div>
