@@ -211,14 +211,13 @@ class InnerProfile extends React.Component {
 
         return (
             <div>
-                <h3 className='text-center'>Profile for { this.props.user.username }</h3>
                 { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
                 { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
                 <form className='form form-horizontal'>
                     <div className='row'>
                         <div className='col-sm-8 col-sm-offset-2'>
                             <div className='panel-title text-center'>
-                                User
+                                Profile
                             </div>
                             <div className='panel'>
                                 <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
