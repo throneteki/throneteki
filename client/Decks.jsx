@@ -104,13 +104,13 @@ class InnerDecks extends React.Component {
             content = <AlertPanel type='error' message={ this.props.apiError } />;
         } else {
             content = (
-                <div>
+                <div className='full-height'>
                     { successPanel }
-                    <div className='col-sm-5'>
+                    <div className='col-sm-5 full-height'>
                         <div className='panel-title text-center'>
                             Your decks
                         </div>
-                        <div className='panel'>
+                        <div className='panel deck-list-container'>
                             <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
                             <div className='deck-list'>{ !this.props.decks || this.props.decks.length === 0 ? 'You have no decks, try adding one.' : deckList }</div>
                         </div>

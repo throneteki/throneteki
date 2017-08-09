@@ -71,14 +71,20 @@
   column-count: 2;
 }
 
-@media (min-width: @screen-lg-min) { 
+@media (min-width: @screen-lg-min) {
   .cards {
     column-count: 3;
   }
 }
 
 .deck-list {
-  padding-top: 10px;
+  position: absolute;
+  top: 55px;
+  bottom: 0px;
+  left: 10px;
+  right: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .deck-row {
@@ -164,4 +170,12 @@
 .deck-status-button {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.deck-list-container {
+  position: absolute;
+  top: 30px;
+  bottom: 0px;
+  left: 15px;
+  right: 15px;
 }
