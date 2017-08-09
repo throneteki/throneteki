@@ -24,12 +24,12 @@ class AlertPanel extends React.Component {
                 break;
         }
 
-        return (<div className={ alertClass } ref='alertPanel' role='alert'>
-            <span className={ icon } aria-hidden='true' />
-            <span className='sr-only'>{ this.props.title }</span>
-                    &nbsp;{ this.props.message }
-                    &nbsp;{ this.props.children }
-        </div>);        
+        return (<div ref='alertPanel' className={ alertClass } role='alert'>
+            { this.props.noIcon ? null : <span className={ icon } aria-hidden='true' /> }
+            { this.props.title ? <span className='sr-only'>{ this.props.title }</span> : null }
+            &nbsp;{ this.props.message }
+            &nbsp;{ this.props.children }
+        </div>);
     }
 }
 
@@ -37,6 +37,7 @@ AlertPanel.displayName = 'AlertPanel';
 AlertPanel.propTypes = {
     children: React.PropTypes.any,
     message: React.PropTypes.string,
+    noIcon: React.PropTypes.bool,
     title: React.PropTypes.string,
     type: React.PropTypes.oneOf(['warning', 'info', 'success', 'error'])
 };

@@ -4,7 +4,7 @@ import moment from 'moment';
 class NewsItem extends React.Component {
     render() {
         return (
-            <div>
+            <div className={ this.props.icon + '-container' }>
                 <span className={ 'icon-' + this.props.icon } />
                 &nbsp;{ moment(this.props.date).format('YYYY-MM-DD') + ' - ' + this.props.text }
             </div>);
