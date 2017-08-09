@@ -62,16 +62,27 @@ class InnerGameList extends React.Component {
                 let playerElement = null;
 
                 if(firstPlayer) {
-                    gameRow.push(<span className='col-xs-1 game-row-avatar'><Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } /></span>);
-                    gameRow.push(<span className='player-name col-xs-2'>{ player.name }</span>);
-                    gameRow.push(<span className={ 'col-xs-1 game-icon icon-' + player.faction } />);
+                    gameRow.push(
+                        <span className='col-xs-4 col-sm-3 game-row-avatar'>
+                            <span className='hidden-xs'>
+                                <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
+                            </span>
+                            <span className='player-name text-center'>{ player.name }</span>
+                        </span>);
+                    gameRow.push();
+                    gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
 
                     firstPlayer = false;
                 } else {
                     gameRow.push(<span className='col-xs-1 game-row-vs text-center'><b> vs </b></span>);
-                    gameRow.push(<span className={ 'col-xs-1 game-icon icon-' + player.faction } />);
-                    gameRow.push(<span className='player-name col-xs-2'>{ player.name }</span>);
-                    gameRow.push(<span className='col-xs-1 game-row-avatar'><Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } /></span>);
+                    gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
+                    gameRow.push(
+                        <span className='col-xs-4 col-sm-3 game-row-avatar'>
+                            <span className='player-name'>{ player.name }</span>
+                            <span className='hidden-xs game-row-avatar pull-right'>
+                                <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
+                            </span>
+                        </span>);
                 }
 
                 return playerElement;
