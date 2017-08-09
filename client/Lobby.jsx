@@ -130,7 +130,7 @@ class InnerLobby extends React.Component {
         });
 
         return (
-            <div className='body'>
+            <div className='flex-container'>
                 <div className={ 'sidebar' + (this.state.showUsers ? ' expanded' : '') }>
                     { this.state.showUsers ?
                         <div>
@@ -163,28 +163,26 @@ class InnerLobby extends React.Component {
                         <News news={ this.props.news } />
                     </div>
                 </div>
-                <div className='col-sm-offset-1 col-sm-10 chat-outer'>
-                    <div className='chat-container'>
-                        <div className='panel-title text-center'>
+                <div className='col-sm-offset-1 col-sm-10 chat-container'>
+                    <div className='panel-title text-center'>
                             Lobby Chat ({ _.size(this.props.users) } online)
-                        </div>
-                        <div className='lobby-chat'>
-                            <div className='panel lobby-messages' ref='messages' onScroll={ this.onScroll }>
-                                { messages }
-                            </div>
-                        </div>
-                        <form className='form form-hozitontal' onSubmit={ event => this.onSendClick(event) }>
-                            <div className='form-group'>
-                                <div className='chat-box'>
-                                    <Typeahead ref='message' value={ this.state.message } placeholder='Enter a message...'
-                                        labelKey={ 'name' } onKeyDown={ this.onKeyPress }
-                                        options={ _.toArray(this.props.users) } onInputChange={ this.onChange } autoFocus
-                                        dropup emptyLabel={ '' }
-                                        minLength={ 2 } />
-                                </div>
-                            </div>
-                        </form>
                     </div>
+                    <div className='lobby-chat'>
+                        <div className='panel lobby-messages' ref='messages' onScroll={ this.onScroll }>
+                            { messages }
+                        </div>
+                    </div>
+                    <form className='form form-hozitontal chat-box-container' onSubmit={ event => this.onSendClick(event) }>
+                        <div className='form-group'>
+                            <div className='chat-box'>
+                                <Typeahead ref='message' value={ this.state.message } placeholder='Enter a message...'
+                                    labelKey={ 'name' } onKeyDown={ this.onKeyPress }
+                                    options={ _.toArray(this.props.users) } onInputChange={ this.onChange } autoFocus
+                                    dropup emptyLabel={ '' }
+                                    minLength={ 2 } />
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>);
     }

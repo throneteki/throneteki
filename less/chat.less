@@ -11,19 +11,12 @@
   overflow-y: auto;
 }
 
-.chat-outer {
-  margin-top: -320px;
-  height: 100%;
-}
-
-.chat-container {
-  padding-top: 320px;
-  height: 100%;
-  padding-bottom: 35px;
-}
-
 .lobby-chat {
-  height: 100%;
+  position: absolute;
+  top: 30px;
+  bottom: 45px;
+  left: 15px;
+  right: 15px;
 }
 
 .message {
@@ -34,7 +27,11 @@
 }
 
 .lobby-messages {
-  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0px;
+  left: 0;
+  right: 0;
   font-size: 11px;
   overflow-y: auto;
 }
@@ -82,4 +79,15 @@
   margin-left: 5px;
   margin-right: 5px;
   margin-top: 5px;
+}
+
+.chat-container {
+  flex: 1;
+}
+
+.chat-box-container {
+  position: absolute;
+  bottom: 0;
+  left: 15px;
+  right: 15px;
 }
