@@ -25,6 +25,12 @@ class About extends React.Component {
                     <p>This is handled by the good people at <a href='http://gravatar.com' target='_blank'>Gravatar</a>.  Sign up there with the same email address you did there and it should appear on the site after a short while.
                 It will also use the avatar on any site that uses gravatar.  Examples include github and jinteki.</p>
 
+                    <h3>The artwork on this site is pretty cool, where's that from?</h3>
+                    <p>You're right, it is pretty nice isn't it?</p>
+
+                    <p>The background of the site is by an artist named <a href='http://dumaker.deviantart.com/' target='_blank'>Dumaker</a> and can be found <a href='http://dumaker.deviantart.com/art/Looking-for-the-Iron-Throne-Game-of-Thrones-9-364330141' target='_blank'>here</a>.</p>
+                    <p>The in game backgrounds are by <a href='http://www.thomastanart.com/' target='_blank'>Thomas Tan</a>.  He's very talented, you should check out his work!</p>
+
                     <h3>Action windows</h3>
                     <p>Players will be prompted about whether they have actions or not during game <a href='https://thronesdb.com/rulesreference#Action_Windows'>action windows</a>. By default, however, not all action windows are enabled. For example: you will be prompted by default after challenge attackers are declared, but not before the end of the dominance pahse. You can choose which action windows to be prompted for in your <a href='/profile'>user profile</a> as well as override that while in-game by clicking on the small green triangle above the various dialog windows.</p>
 
