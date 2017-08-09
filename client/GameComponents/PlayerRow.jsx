@@ -1,6 +1,5 @@
 import React from 'react';
 
-import AdditionalCardPile from './AdditionalCardPile.jsx';
 import CardPile from './CardPile.jsx';
 import PlayerHand from './PlayerHand.jsx';
 
