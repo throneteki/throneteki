@@ -114,7 +114,7 @@ class InnerResetPassword extends React.Component {
             fieldsToRender.push(
                 <div key={ field.name } className={ className }>
                     <label htmlFor={ field.name } className='col-sm-2 control-label'>{ field.label }</label>
-                    <div className='col-sm-3'>
+                    <div className='col-sm-6'>
                         <input type={ field.inputType }
                             ref={ field.name }
                             className='form-control'
@@ -128,17 +128,22 @@ class InnerResetPassword extends React.Component {
                 </div>);
         });
 
-        return (       
+        return (
             <div>
                 { errorBar }
-                <form className='form form-horizontal'>
-                    { fieldsToRender }
-                    <div className='form-group'>
-                        <div className='col-sm-offset-2 col-sm-3'>
-                            <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSubmit }>Submit</button>
+                <div className='panel-title'>
+                    Reset password
+                </div>
+                <div className='panel'>
+                    <form className='form form-horizontal'>
+                        { fieldsToRender }
+                        <div className='form-group'>
+                            <div className='col-sm-offset-2 col-sm-3'>
+                                <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSubmit }>Submit</button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>);
     }
 }
