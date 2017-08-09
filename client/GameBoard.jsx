@@ -318,16 +318,21 @@ export class InnerGameBoard extends React.Component {
         }
 
         return (
-            <AdditionalCardPile
+            <CardPile
+                cards={ schemePile.cards }
                 className='plot'
-                isMe={ isMe }
+                disablePopup={ !isMe }
+                onCardClick={ this.onCardClick }
                 onDragDrop={ this.onDragDrop }
+                onMenuItemClick={ this.onMenuItemClick }
                 onMouseOut={ this.onMouseOut }
                 onMouseOver={ this.onMouseOver }
-                pile={ schemePile }
+                orientation='horizontal'
+                popupLocation={ isMe || this.state.spectating ? 'top' : 'bottom' }
                 source='scheme plots'
                 spectating={ this.state.spectating }
-                title='Schemes' />
+                title='Schemes'
+                topCard={ { facedown: true, kneeled: true } } />
         );
     }
 
