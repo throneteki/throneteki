@@ -24,7 +24,7 @@ import NewsAdmin from './NewsAdmin.jsx';
 import Unauthorised from './Unauthorised.jsx';
 import UserAdmin from './UserAdmin.jsx';
 
-import {toastr} from 'react-redux-toastr';
+import { toastr } from 'react-redux-toastr';
 
 import version from '../version.js';
 
@@ -42,7 +42,7 @@ class App extends React.Component {
             '/register': () => <Register />,
             '/decks': () => <Decks { ...boundActionCreators } />,
             '/decks/add': () => <AddDeck />,
-            '/decks/edit': params => <EditDeck deckId={ params.deckId }/>,
+            '/decks/edit': params => <EditDeck deckId={ params.deckId } />,
             '/play': () => (this.props.currentGame && this.props.currentGame.started) ? <GameBoard /> : <GameLobby />,
             '/about': () => <About />,
             '/forgot': () => <ForgotPassword />,
@@ -71,7 +71,7 @@ class App extends React.Component {
         let socket = io.connect(window.location.origin, {
             reconnection: true,
             reconnectionDelay: 1000,
-            reconnectionDelayMax : 5000,
+            reconnectionDelayMax: 5000,
             reconnectionAttempts: Infinity,
             query: queryString
         });
@@ -133,7 +133,7 @@ class App extends React.Component {
                 path: '/' + server.name + '/socket.io',
                 reconnection: true,
                 reconnectionDelay: 1000,
-                reconnectionDelayMax : 5000,
+                reconnectionDelayMax: 5000,
                 reconnectionAttempts: 5,
                 query: this.props.token ? 'token=' + this.props.token : undefined
             });
@@ -263,6 +263,7 @@ class App extends React.Component {
         let idArg;
         let tokenArg;
         let index;
+        let gameBoardVisible = false;
 
         index = path.indexOf('/reset-password');
         if(index !== -1) {
@@ -292,10 +293,16 @@ class App extends React.Component {
                 component = <AddDeck />;
                 break;
             case '/decks/edit':
-                component = <EditDeck deckId={ arg }/>;
+                component = <EditDeck deckId={ arg } />;
                 break;
             case '/play':
-                component = (this.props.currentGame && this.props.currentGame.started) ? <GameBoard /> : <GameLobby />;
+                if(this.props.currentGame && this.props.currentGame.started) {
+                    component = <GameBoard />;
+                    gameBoardVisible = true;
+                } else {
+                    component = <GameLobby />;
+                }
+
                 break;
             case '/about':
                 component = <About />;
@@ -333,7 +340,7 @@ class App extends React.Component {
                 break;
         }
 
-        return (<div>
+        return (<div className={ gameBoardVisible ? 'bg-board' : 'bg' }>
             <NavBar leftMenu={ leftMenu } rightMenu={ rightMenu } title='The Iron Throne' currentPath={ this.props.path } numGames={ this.props.games.length } />
             <div className='container'>
                 { component }

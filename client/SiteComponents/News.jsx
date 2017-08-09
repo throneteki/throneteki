@@ -21,8 +21,12 @@ class News extends React.Component {
             return retNews;
         });
 
+        if(_.size(news) === 0) {
+            news = <div className='military-container'>There is no site news at the moment</div>;
+        }
+
         return (
-            <div>
+            <div className='news-container'>
                 { news }
             </div>);
     }
