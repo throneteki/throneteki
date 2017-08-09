@@ -40,24 +40,28 @@ class InnerPasswordGame extends React.Component {
 
         return (
             <div>
-                <div className='col-sm-12'>
-                    <h3>Enter the password for { this.props.passwordGame.name }</h3>
+                <div className='panel-title'>
+                    { this.props.passwordGame.name }
                 </div>
-                <div className='col-sm-5 game-password'>
-                    <input className='form-control' type='password' onChange={ this.onPasswordChange.bind(this) } value={ this.state.password }/>
+                <div className='panel'>
+                    <div>
+                        <h3>Enter the password</h3>
+                    </div>
+                    <div className='game-password'>
+                        <input className='form-control' type='password' onChange={ this.onPasswordChange.bind(this) } value={ this.state.password }/>
+                    </div>
+                    { this.props.passwordError ?
+                        <div>
+                            <AlertPanel type='error' message={ this.props.passwordError } />
+                        </div>
+                        : null }
+                    <div>
+                        <div className='btn-group'>
+                            <button className='btn btn-primary' onClick={ this.onJoinClick.bind(this) }>{ this.props.passwordJoinType }</button>
+                            <button className='btn btn-primary' onClick={ this.onCancelClick.bind(this) }>Cancel</button>
+                        </div>
+                    </div>
                 </div>
-                <div className='row' />
-                { this.props.passwordError ?
-                    <div className='col-sm-6'>
-                        <AlertPanel type='error' message={ this.props.passwordError } />
-                    </div>
-                    : null }    
-                <div className='col-sm-12'>
-                    <div className='btn-group'>
-                        <button className='btn btn-primary' onClick={ this.onJoinClick.bind(this) }>{ this.props.passwordJoinType }</button>
-                        <button className='btn btn-primary' onClick={ this.onCancelClick.bind(this) }>Cancel</button>
-                    </div>
-                </div>    
             </div>);
     }
 }
