@@ -74,10 +74,21 @@
 .military-container {
   color: @military-icon-color;
   font-weight: bolder;
+
+  .icon-military {
+    float: left;
+  }
 }
 
 .intrigue-container, .power-container {
   color: @brand-secondary;
+  .icon-power {
+    float: left;
+  }
+
+  .icon-intrigue {
+    float: left;
+  }
 }
 
 .news-container {
@@ -94,7 +105,11 @@
   background-color: fade(@navbar-inverse-bg, 80%);
 
   & a {
-    color: @foreground-color;
+    color: saddlebrown;
+
+    &:active {
+      color: saddlebrown;
+    }
   }
 
   &.expanded {

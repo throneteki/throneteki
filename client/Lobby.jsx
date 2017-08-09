@@ -108,7 +108,7 @@ class InnerLobby extends React.Component {
                 if(!message.user) {
                     return;
                 }
-                return (<div className='message'>{ message.message }</div>);
+                return (<div className='lobby-message'>{ message.message }</div>);
             });
 
             return (
