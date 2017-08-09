@@ -55,7 +55,7 @@ export class InnerAddDeck extends React.Component {
                     </div>
                     <div className='col-sm-6'>
                         <div className='panel-title text-center col-xs-12'>
-                            { this.props.deck.name }
+                            { this.props.deck ? this.props.deck.name : 'New Deck' }
                         </div>
                         <div className='panel col-xs-12'>
                             <DeckSummary cards={ this.props.cards } deck={ this.props.deck } />
