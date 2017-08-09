@@ -59,15 +59,17 @@ class PlayerRow extends React.Component {
         }
 
         return (
-            <AdditionalCardPile
+            <CardPile
+                cards={ pile.cards }
                 className='additional-cards'
-                isMe={ this.props.isMe }
+                onCardClick={ this.props.onCardClick }
                 onDragDrop={ this.props.onDragDrop }
+                onMenuItemClick={ this.props.onMenuItemClick }
                 onMouseOut={ this.props.onMouseOut }
                 onMouseOver={ this.props.onMouseOver }
-                pile={ pile }
+                orientation='horizontal'
+                popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' }
                 source='out of game'
-                spectating={ this.props.spectating }
                 title='Out of Game' />
         );
     }
