@@ -283,10 +283,21 @@ class InnerDeckEditor extends React.Component {
 
         return {
             code: 'custom_' + type,
+            cost: 0,
             custom: true,
             faction_code: 'neutral',
+            is_intrigue: true,
+            is_loyal: false,
+            is_military: true,
+            is_power: true,
+            is_unique: false,
             label: match[2] + ' (Custom)',
             name: match[2],
+            pack_code: 'Custom',
+            pack_name: 'Custom',
+            strength: 0,
+            text: 'Custom',
+            traits: '',
             type_code: type,
             type_name: match[1]
         };
