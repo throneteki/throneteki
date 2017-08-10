@@ -41,15 +41,23 @@ class InnerDeckEditor extends React.Component {
 
         if(this.props.deck && (this.props.deck.drawCards || this.props.deck.plotCards)) {
             _.each(this.props.deck.drawCards, card => {
-                cardList += card.count + ' ' + card.card.label + '\n';
+                cardList += this.formatCardListItem(card) + '\n';
             });
 
             _.each(this.props.deck.plotCards, card => {
-                cardList += card.count + ' ' + card.card.label + '\n';
+                cardList += this.formatCardListItem(card) + '\n';
             });
 
             this.setState({ cardList: cardList });
         }
+    }
+
+    formatCardListItem(card) {
+        if(card.card.custom) {
+            return card.count + ' Custom ' + card.card.type_name + ' - ' + card.card.name;
+        }
+
+        return card.count + ' ' + card.card.label;
     }
 
     // XXX One could argue this is a bit hacky, because we're updating the innards of the deck object, react doesn't update components that use it unless we change the reference itself
