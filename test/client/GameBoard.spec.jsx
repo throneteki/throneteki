@@ -5,7 +5,7 @@ import GameBoard, { InnerGameBoard } from '../../client/GameBoard.jsx';
 import PlayerStats, { InnerPlayerStats } from '../../client/GameComponents/PlayerStats.jsx';
 import PlayerRow from '../../client/GameComponents/PlayerRow.jsx';
 import Card from '../../client/GameComponents/Card.jsx';
-import CardCollection from '../../client/GameComponents/CardCollection.jsx';
+import CardPile from '../../client/GameComponents/CardPile.jsx';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -28,7 +28,7 @@ describe('the <GameBoard /> component', function() {
     stubComponent(PlayerStats);
     stubComponent(InnerPlayerStats);
     stubComponent(Card);
-    stubComponent(CardCollection);
+    stubComponent(CardPile);
     stubComponent(PlayerRow);
 
     beforeEach(function() {
