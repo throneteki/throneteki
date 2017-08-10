@@ -399,7 +399,7 @@ describe('take control', function() {
                 this.player1.clickCard(knight);
 
                 this.player1.clickPrompt('Iron Mines');
-                expect(this.player1).toHavePrompt('Select character to save');
+                expect(this.player1).toHavePrompt('Select a character');
                 this.player1.clickCard(knight);
 
                 expect(this.player1).not.toHavePrompt('Select character to save');

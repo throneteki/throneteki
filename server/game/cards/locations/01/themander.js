@@ -11,7 +11,7 @@ class TheMander extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.controller.drawCardsToHand(2);
-                this.game.addMessage('{0} uses {1} to draw 2 cards', this.controller, this);
+                this.game.addMessage('{0} kneels {1} to draw 2 cards', this.controller, this);
             }
         });
     }

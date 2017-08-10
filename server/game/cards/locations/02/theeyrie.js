@@ -8,31 +8,21 @@ class TheEyrie extends DrawCard {
                 onPhaseStarted: () => true
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select character',
-                    cardCondition: card =>
-                        card.location === 'play area'
-                        && card.getType() === 'character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+            },
+            handler: context => {
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.cannotBeKilled()
+                }));
+
+                this.game.addMessage('{0} kneels {1} to make {2} unkillable until the end of the {3} phase',
+                    this.controller, this, context.target, this.game.currentPhase);
             }
         });
     }
-
-    onCardSelected(player, card) {
-        this.untilEndOfPhase(ability => ({
-            match: card,
-            effect: ability.effects.cannotBeKilled()
-        }));
-
-        this.game.addMessage('{0} uses {1} to make {2} unkillable until the end of the {3} phase',
-            this.controller, this, card, this.game.currentPhase);
-
-        return true;
-    }
-
 }
 
 TheEyrie.code = '02098';

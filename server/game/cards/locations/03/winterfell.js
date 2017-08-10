@@ -20,7 +20,8 @@ class Winterfell extends DrawCard {
                     effect: ability.effects.cannotTriggerCardAbilities()
                 }));
 
-                this.game.addMessage('{0} kneels {1} to prevent triggering card abilities', this.controller, this);
+                this.game.addMessage('{0} kneels {1} to prevent each player with a non-Winter plot card revealed from triggering card abilities until the end of the challenge',
+                    this.controller, this);
             }
         });
     }

@@ -46,7 +46,7 @@ describe('Ygritte', function() {
         });
 
         it('should be knelt as a cost', function() {
-            this.player1.clickMenu(this.brothel, 'Kneel a character to gain gold');
+            this.player1.clickMenu(this.brothel, 'Gain gold');
             this.player1.clickCard(this.ygritte);
 
             expect(this.player1Object.gold).toBe(6);

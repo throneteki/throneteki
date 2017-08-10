@@ -8,8 +8,9 @@ class DothrakiSea extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select Dothraki character to put into play',
-                cardCondition: card => card.location === 'hand' && card.getType() === 'character' && card.hasTrait('Dothraki')
+                activePromptTitle: 'Select a character',
+                cardCondition: (card, context) => card.location === 'hand' && card.getType() === 'character' &&
+                                                  card.controller === context.player && card.hasTrait('Dothraki')
             },
             handler: context => {
                 context.target.controller.putIntoPlay(context.target);
@@ -17,7 +18,7 @@ class DothrakiSea extends DrawCard {
                     match: context.target,
                     effect: ability.effects.returnToHandIfStillInPlay()
                 }));
-                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, context.target);
+                this.game.addMessage('{0} sacrifices {1} to put {2} into play from their hand', this.controller, this, context.target);
             }
         });
     }

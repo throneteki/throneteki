@@ -9,7 +9,7 @@ class IronMines extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select character to save',
+                activePromptTitle: 'Select a character',
                 cardCondition: (card, context) => context.event.cards.includes(card) && card.controller === context.player
             },
             handler: context => {

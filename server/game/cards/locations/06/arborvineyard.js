@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class ArborVineyard extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel this card to gain gold',
+            title: 'Gain gold',
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
             handler: context => {

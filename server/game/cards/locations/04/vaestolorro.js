@@ -9,7 +9,7 @@ class VaesTolorro extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let pendingCard = context.event.card;
-                var power = pendingCard.getPower() >= 2 && pendingCard.getStrength() === 0 ? 2 : 1;
+                let power = pendingCard.getPower() >= 2 && pendingCard.getStrength() === 0 ? 2 : 1;
 
                 pendingCard.modifyPower(-power);
                 this.modifyPower(power);

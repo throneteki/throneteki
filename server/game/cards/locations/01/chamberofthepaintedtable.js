@@ -4,20 +4,21 @@ class ChamberOfThePaintedTable extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner
+                onDominanceDetermined: event => this.controller === event.winner && this.opponentHasPower()
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer || otherPlayer.faction.power === 0) {
-                    return false;
-                }
-
+                let opponent = this.game.getOtherPlayer(this.controller);
                 this.game.addMessage('{0} kneels {1} to move 1 power from {2}\'s faction card to their own',
-                    this.controller, this, otherPlayer);
-                this.game.transferPower(this.controller, otherPlayer, 1);
+                    this.controller, this, opponent);
+                this.game.transferPower(this.controller, opponent, 1);
             }
         });
+    }
+
+    opponentHasPower() {
+        let opponent = this.game.getOtherPlayer(this.controller);
+        return opponent && opponent.faction.power > 0;
     }
 }
 

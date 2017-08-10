@@ -4,30 +4,15 @@ class WinterfellCrypt extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: event => {
-                    if(this.uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, event.card)) {
-                        this.triggerCard = event.card;
-                        return true;
-                    }
-
-                    return false;
-                },
-                onCharacterKilled: event => {
-                    if(this.uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, event.card)) {
-                        this.triggerCard = event.card;
-                        return true;
-                    }
-
-                    return false;
-                }
+                onSacrificed: event => this.triggerCondition(event),
+                onCharacterKilled: event => this.triggerCondition(event)
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => (
-                    card.location === 'play area' &&
-                    card.getPrintedStrength() <= this.triggerCard.getPrintedStrength() &&
-                    card.getType() === 'character')
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' &&
+                                                  card.getPrintedStrength() <= context.event.card.getPrintedStrength()
+                                                  
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({
@@ -40,14 +25,9 @@ class WinterfellCrypt extends DrawCard {
         });
     }
 
-    uniqueStarkCharacterSacrificedOrKilledDuringChallenges(event, card) {
-        return (
-            this.controller === card.controller &&
-            card.isUnique() &&
-            card.isFaction('stark') &&
-            card.getType() === 'character' &&
-            this.game.currentPhase === 'challenge'
-        );
+    triggerCondition(event) {
+        return (event.card.controller === this.controller && event.card.isUnique() && event.card.isFaction('stark') &&
+                event.card.getType() === 'character' && this.game.currentPhase === 'challenge');
     }
 }
 

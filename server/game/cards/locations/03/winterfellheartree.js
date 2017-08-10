@@ -8,7 +8,7 @@ class WinterfellHeartTree extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select character to grant immunity',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => card.controller === this.controller && card.isFaction('stark')
             },
             handler: context => {
@@ -16,6 +16,9 @@ class WinterfellHeartTree extends DrawCard {
                     match: context.target,
                     effect: ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'plot')
                 }));
+
+                this.game.addMessage('{0} sacrifices {1} to grant {2} immunity from opponents\' plot effects until the end of the phase',
+                    this.controller, this, context.target);
             }
         });
     }

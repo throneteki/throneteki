@@ -14,10 +14,9 @@ class WhiteTree extends DrawCard {
                     return;
                 }
 
-                this.game.addGold(this.controller, 1);
-                this.game.addGold(otherPlayer, -1);
-
-                this.game.addMessage('{0} kneels {1} to move 1 gold from {2}\'s gold pool to their own', this.controller, this, otherPlayer);
+                this.game.transferGold(this.controller, otherPlayer, 1);
+                this.game.addMessage('{0} kneels {1} to move 1 gold from {2}\'s gold pool to their own',
+                    this.controller, this, otherPlayer);
             }
         });
     }

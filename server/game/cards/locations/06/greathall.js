@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class GreatHall extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel to reduce next unique character',
+            title: 'Reduce next unique character',
             clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),

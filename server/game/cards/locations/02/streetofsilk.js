@@ -23,12 +23,12 @@ class StreetOfSilk extends DrawCard {
     }
 
     hasParticipatingLordOrLady() {
-        var challenge = this.game.currentChallenge;
+        let challenge = this.game.currentChallenge;
         if(!challenge) {
             return false;
         }
 
-        var ourCards = challenge.attackingPlayer === this.controller ? challenge.attackers : challenge.defenders;
+        let ourCards = challenge.attackingPlayer === this.controller ? challenge.attackers : challenge.defenders;
         return _.any(ourCards, card => card.hasTrait('Lord') || card.hasTrait('Lady'));
     }
 

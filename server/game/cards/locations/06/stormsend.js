@@ -9,24 +9,18 @@ class StormsEnd extends DrawCard {
                 onDominanceDetermined: event => this.controller === event.winner
             },
             cost: ability.costs.discardFactionPower(1),
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    numCards: 2,
-                    activePromptTitle: 'Select 2 characters to gain power',
-                    source: this,
-                    cardCondition: card => card.getType() === 'character',
-                    onSelect: (player, cards) => this.onSelect(player, cards)
-                });
+            target: {
+                activePromptTitle: 'Select 2 characters',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character',
+                numCards: 2,
+                multiSelect: true
+            },
+            handler: context => {
+                _.each(context.target, card => card.modifyPower(1));
+                this.game.addMessage('{0} uses {1} and discards 1 power from their faction card to have {2} gain 1 power', 
+                    this.controller, this, context.target);
             }
         });
-    }
-    
-    onSelect(player, cards) {
-        _.each(cards, card => card.modifyPower(1));
-        this.game.addMessage('{0} uses {1} to discard a power from their faction to have {2} gain 1 power', 
-            this.controller, this, cards);
-
-        return true;
     }
 }
 

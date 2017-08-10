@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class RenlysPavilion extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel this card to modify the strength of two characters',
+            title: 'Modify strength of 2 characters',
             cost: ability.costs.kneelSelf(),
             targets: {
                 toLower: {

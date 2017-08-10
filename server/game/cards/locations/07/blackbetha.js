@@ -7,25 +7,27 @@ class BlackBetha extends DrawCard {
             effect: ability.effects.addKeyword('renown')
         });
         this.action({
-            title: 'Kneel to give attacking character +X STR',
+            title: 'Give attacking character +STR',
             condition: () => this.game.currentChallenge && this.calculateStrength() >= 1,
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select character to gain STR',
+                activePromptTitle: 'Select a character',
                 cardCondition: card => this.game.currentChallenge.isAttacking(card)
             },
             handler: context => {
-                var str = this.calculateStrength();
+                let strBoost = this.calculateStrength();
 
                 this.untilEndOfChallenge(ability => ({
                     match: context.target,
-                    effect: ability.effects.modifyStrength(str)
+                    effect: ability.effects.modifyStrength(strBoost)
                 }));
 
-                this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge', context.player, this, context.target, str);
+                this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
+                    context.player, this, context.target, strBoost);
             }
         });
     }
+
     calculateStrength() {
         return this.game.allCards.reduce((counter, card) => {
             if(card === this || card.owner === this.game.currentChallenge.attackingPlayer || card.location !== 'play area' || card.getType() !== 'character' || !card.kneeled) {

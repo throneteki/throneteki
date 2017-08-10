@@ -3,23 +3,21 @@ const DrawCard = require('../../../drawcard.js');
 class GatesOfWinterfell extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel this card to reavel the top card of your deck',
-            method: 'kneel',
+            title: 'Reveal top card of deck',
+            phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            phase: 'challenge'
+            handler: () => {
+                let topCard = this.controller.drawDeck.first();
+                let message = '{0} kneels {1} to reveal {2} as the top card of their deck';
+
+                if(topCard.isFaction('stark')) {
+                    this.controller.drawCardsToHand(1);
+                    message += ' and draw it';
+                }
+
+                this.game.addMessage(message, this.controller, this, topCard);          
+            }
         });
-    }
-
-    kneel(player) {
-        var card = player.drawDeck.value()[0];
-
-        var message = '{0} uses {1} to reveal {2} as the top card of their deck';
-        if(card.isFaction('stark')) {
-            player.drawCardsToHand(1);
-            message += ' and draw it';
-        }
-
-        this.game.addMessage(message, player, this, card);
     }
 }
 
