@@ -256,7 +256,7 @@ class InnerDeckEditor extends React.Component {
         let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
         let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
 
-        if(cardName.indexOf('Custom ') === 0) {
+        if(cardName.startsWith('Custom ')) {
             return this.createCustomCard(cardName);
         }
 
@@ -294,7 +294,7 @@ class InnerDeckEditor extends React.Component {
             is_loyal: false,
             is_military: true,
             is_power: true,
-            is_unique: name.indexOf('*') !== -1,
+            is_unique: name.includes('*'),
             label: name + ' (Custom)',
             name: name,
             pack_code: 'Custom',
