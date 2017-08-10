@@ -6,14 +6,10 @@ class TheFrostfangs extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                let otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer) {
-                    return;
-                }
-
-                this.game.addMessage('{0} gives control of {1} to {2}', this.controller, this, otherPlayer);
-                this.game.takeControl(otherPlayer, this);
+            chooseOpponent: true,
+            handler: context => {
+                this.game.addMessage('{0} uses {1} to give control of {1} to {2}', this.controller, this, context.opponent);
+                this.game.takeControl(context.opponent, this);
             }
         });
         this.plotModifiers({

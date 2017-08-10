@@ -1,5 +1,3 @@
-@import "variables";
-
 .card-wrapper {
   margin: 0px 4px 0px 0px;
   vertical-align: middle;
@@ -43,7 +41,7 @@
   }
 
   &.selected {
-    box-shadow: 0 0 1px 4px @brand-primary;
+    box-shadow: 0 0 1px 4px @brand-secondary;
   }
 
   &.new {
@@ -259,7 +257,7 @@
 
   &.fade-out {
     opacity: 0.4;
-  }  
+  }
 
   &.cancel {
     position: relative;
@@ -338,4 +336,8 @@
 
 .plot-selected {
   box-shadow: 0 0 1px 2px @brand-danger;
+}
+
+.card-small {
+  max-width: 30px;
 }

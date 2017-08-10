@@ -202,6 +202,26 @@ const Effects = {
             }
         };
     },
+    dynamicClaim: function(calculate) {
+        return {
+            apply: function(card, context) {
+                context.dynamicClaim = context.dynamicClaim || {};
+                context.dynamicClaim[card.uuid] = calculate(card, context) || 0;
+                card.claimModifier += context.dynamicClaim[card.uuid];
+            },
+            reapply: function(card, context) {
+                let currentClaim = context.dynamicClaim[card.uuid];
+                let newClaim = calculate(card, context) || 0;
+                context.dynamicClaim[card.uuid] = newClaim;
+                card.claimModifier += newClaim - currentClaim;
+            },
+            unapply: function(card, context) {
+                card.claimModifier -= context.dynamicClaim[card.uuid];
+                delete context.dynamicClaim[card.uuid];
+            },
+            isStateDependent: true
+        };
+    },
     preventPlotModifier: function(modifier) {
         return {
             apply: function(card) {
@@ -239,6 +259,16 @@ const Effects = {
             },
             unapply: function(card) {
                 card.challengeOptions.doesNotContributeStrength = false;
+            }
+        };
+    },
+    doesNotReturnUnspentGold: function() {
+        return {
+            apply: function(player) {
+                player.doesNotReturnUnspentGold = true;
+            },
+            unapply: function(player) {
+                player.doesNotReturnUnspentGold = false;
             }
         };
     },

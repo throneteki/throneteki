@@ -139,7 +139,7 @@ class DrawCard extends BaseCard {
 
     modifyStrength(amount, applying = true) {
         this.strengthModifier += amount;
-        this.game.raiseMergedEvent('onCardStrengthChanged', {
+        this.game.raiseEvent('onCardStrengthChanged', {
             card: this,
             amount: amount,
             applying: applying
@@ -150,7 +150,7 @@ class DrawCard extends BaseCard {
         let strengthBefore = this.getStrength();
 
         this.strengthMultiplier *= amount;
-        this.game.raiseMergedEvent('onCardStrengthChanged', {
+        this.game.raiseEvent('onCardStrengthChanged', {
             card: this,
             amount: this.getStrength() - strengthBefore,
             applying: applying
@@ -257,7 +257,7 @@ class DrawCard extends BaseCard {
                 card.power = 0;
             }
 
-            this.game.raiseMergedEvent('onCardPowerChanged', { card: this, power: card.power - oldPower });
+            this.game.raiseEvent('onCardPowerChanged', { card: this, power: card.power - oldPower });
 
             this.game.checkWinCondition(this.controller);
         });

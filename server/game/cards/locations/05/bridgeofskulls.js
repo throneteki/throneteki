@@ -4,17 +4,13 @@ class BridgeOfSkulls extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onPhaseEnded: event =>
-                    event.phase === 'challenge'
-                    && this.game.getOtherPlayer(this.controller)
-                    && this.game.getOtherPlayer(this.controller)
-                        .getNumberOfChallengesInitiatedByType('military') < 1
+                onPhaseEnded: event => event.phase === 'challenge'
             },
-            handler: () => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-                if(!opponent) {
-                    return true;
-                }
+            // TODO: For Melee, this should check that they did not initiate a
+            // challenge specifically against you, not in general.
+            chooseOpponent: player => player.getNumberOfChallengesInitiatedByType('military') < 1,
+            handler: context => {
+                let opponent = context.opponent;
 
                 opponent.discardAtRandom(1);
 

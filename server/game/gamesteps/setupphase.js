@@ -19,7 +19,7 @@ class SetupPhase extends Phase {
     }
 
     prepareDecks() {
-        this.game.raiseMergedEvent('onDecksPrepared');
+        this.game.raiseEvent('onDecksPrepared');
         _.each(this.game.getPlayers(), player => {
             if(player.agenda) {
                 player.agenda.applyPersistentEffects();

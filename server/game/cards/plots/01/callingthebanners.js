@@ -3,14 +3,9 @@ const PlotCard = require('../../../plotcard.js');
 class CallingTheBanners extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                let otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                if(!otherPlayer) {
-                    return;
-                }
-
-                let characterCount = otherPlayer.getNumberOfCardsInPlay(card => card.getType() === 'character');
+            chooseOpponent: true,
+            handler: context => {
+                let characterCount = context.opponent.getNumberOfCardsInPlay(card => card.getType() === 'character');
 
                 if(characterCount <= 0) {
                     return;

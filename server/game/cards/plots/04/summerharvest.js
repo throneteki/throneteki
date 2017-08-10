@@ -3,13 +3,9 @@ const PlotCard = require('../../../plotcard.js');
 class SummerHarvest extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer) {
-                    return true;
-                }
-
-                this.baseIncome = otherPlayer.activePlot.getIncome(true) + 2;
+            chooseOpponent: true,
+            handler: context => {
+                this.baseIncome = context.opponent.activePlot.getIncome(true) + 2;
             }
         });
     }

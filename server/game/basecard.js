@@ -20,6 +20,18 @@ const ValidKeywords = [
     'terminal',
     'limited'
 ];
+
+const ValidFactions = [
+    'stark',
+    'lannister',
+    'thenightswatch',
+    'tyrell',
+    'baratheon',
+    'targaryen',
+    'martell',
+    'greyjoy'
+];
+
 const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agenda'];
 
 class BaseCard {
@@ -292,6 +304,16 @@ class BaseCard {
         return !!this.factions[normalizedFaction];
     }
 
+    getFactions() {
+        let factions = _.filter(ValidFactions, faction => this.isFaction(faction));
+
+        if(_.isEmpty(factions)) {
+            factions.push('neutral');
+        }
+
+        return factions;
+    }
+
     isLoyal() {
         return this.cardData.is_loyal;
     }
@@ -350,7 +372,7 @@ class BaseCard {
         }
 
         if(originalLocation !== targetLocation || originalParent !== parent) {
-            this.game.raiseMergedEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation, parentChanged: originalParent !== parent });
+            this.game.raiseEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation, parentChanged: originalParent !== parent });
         }
     }
 
@@ -392,7 +414,7 @@ class BaseCard {
         this.blankCount++;
         var after = this.isBlank();
         if(!before && after) {
-            this.game.raiseMergedEvent('onCardBlankToggled', { card: this, isBlank: after });
+            this.game.raiseEvent('onCardBlankToggled', { card: this, isBlank: after });
         }
     }
 
@@ -433,7 +455,7 @@ class BaseCard {
             this.traits[lowerCaseTrait]++;
         }
 
-        this.game.raiseMergedEvent('onCardTraitChanged', { card: this });
+        this.game.raiseEvent('onCardTraitChanged', { card: this });
     }
 
     addFaction(faction) {
@@ -445,7 +467,7 @@ class BaseCard {
         this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
         this.factions[lowerCaseFaction]++;
 
-        this.game.raiseMergedEvent('onCardFactionChanged', { card: this });
+        this.game.raiseEvent('onCardFactionChanged', { card: this });
     }
 
     removeKeyword(keyword) {
@@ -456,12 +478,12 @@ class BaseCard {
 
     removeTrait(trait) {
         this.traits[trait.toLowerCase()]--;
-        this.game.raiseMergedEvent('onCardTraitChanged', { card: this });
+        this.game.raiseEvent('onCardTraitChanged', { card: this });
     }
 
     removeFaction(faction) {
         this.factions[faction.toLowerCase()]--;
-        this.game.raiseMergedEvent('onCardFactionChanged', { card: this });
+        this.game.raiseEvent('onCardFactionChanged', { card: this });
     }
 
     clearBlank() {
@@ -469,7 +491,7 @@ class BaseCard {
         this.blankCount--;
         var after = this.isBlank();
         if(before && !after) {
-            this.game.raiseMergedEvent('onCardBlankToggled', { card: this, isBlank: after });
+            this.game.raiseEvent('onCardBlankToggled', { card: this, isBlank: after });
         }
     }
 

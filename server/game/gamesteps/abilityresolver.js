@@ -3,6 +3,7 @@ const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
+const ChooseOpponentPrompt = require('./chooseopponentprompt.js');
 
 class AbilityResolver extends BaseStep {
     constructor(game, ability, context) {
@@ -19,6 +20,7 @@ class AbilityResolver extends BaseStep {
             new SimpleStep(game, () => this.payCosts()),
             new SimpleStep(game, () => this.game.popAbilityContext()),
             new SimpleStep(game, () => this.game.pushAbilityContext('card', context.source, 'effect')),
+            new SimpleStep(game, () => this.chooseOpponents()),
             new SimpleStep(game, () => this.resolveTargets()),
             new SimpleStep(game, () => this.waitForTargetResolution()),
             new SimpleStep(game, () => this.executeHandler()),
@@ -89,6 +91,23 @@ class AbilityResolver extends BaseStep {
         this.ability.payCosts(this.context);
     }
 
+    chooseOpponents() {
+        if(this.cancelled || !this.ability.needsChooseOpponent()) {
+            return;
+        }
+
+        this.game.queueStep(new ChooseOpponentPrompt(this.game, this.context.player, {
+            condition: opponent => this.ability.canChooseOpponent(opponent),
+            onSelect: opponent => {
+                this.context.opponent = opponent;
+            },
+            onCancel: () => {
+                this.cancelled = true;
+            },
+            source: this.context.source
+        }));
+    }
+
     resolveTargets() {
         if(this.cancelled) {
             return;
@@ -126,7 +145,7 @@ class AbilityResolver extends BaseStep {
         // instance, marshaling does not count as initiating a card ability and
         // thus is not subject to cancels such as Treachery.
         if(this.ability.isCardAbility()) {
-            this.game.raiseMergedEvent('onCardAbilityInitiated', { player: this.context.player, source: this.context.source }, () => {
+            this.game.raiseEvent('onCardAbilityInitiated', { player: this.context.player, source: this.context.source }, () => {
                 this.ability.executeHandler(this.context);
             });
         } else {
@@ -142,7 +161,7 @@ class AbilityResolver extends BaseStep {
         // then this event will need to wrap the execution of the entire
         // ability instead.
         if(this.ability.isPlayableEventAbility()) {
-            this.game.raiseMergedEvent('onCardPlayed', { player: this.context.player, card: this.context.source });
+            this.game.raiseEvent('onCardPlayed', { player: this.context.player, card: this.context.source });
         }
     }
 }

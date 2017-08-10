@@ -48,8 +48,18 @@ class PlotCard extends BaseCard {
         return baseValue + this.reserveModifier;
     }
 
-    getClaim() {        
-        return _.isNumber(this.claimSet) ? this.claimSet : this.cardData.claim + this.claimModifier;
+    getPrintedClaim() {
+        return this.cardData.claim || 0;
+    }
+
+    getClaim() {
+        let baseClaim = this.getPrintedClaim();
+
+        if(_.isNumber(this.claimSet)) {
+            return this.claimSet;
+        }
+
+        return baseClaim + this.claimModifier;
     }
 
     canChallenge() {
@@ -58,9 +68,6 @@ class PlotCard extends BaseCard {
 
     flipFaceup() {
         this.facedown = false;
-    }
-
-    onBeginChallengePhase() {
     }
 }
 

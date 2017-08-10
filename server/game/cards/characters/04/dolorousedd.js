@@ -8,7 +8,8 @@ class DolorousEdd extends DrawCard {
             condition: () => (
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'intrigue' &&
-                this.game.currentChallenge.defendingPlayer === this.controller
+                this.game.currentChallenge.defendingPlayer === this.controller &&
+                this.controller.canPutIntoPlay(this)
             ),
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
@@ -16,7 +17,7 @@ class DolorousEdd extends DrawCard {
                 this.controller.putIntoPlay(this);
                 // Manually kneel Edd, since he enters play that way - should not fire a kneeling event.
                 this.kneeled = true;
-                this.game.currentChallenge.addDefender(this);
+                this.game.currentChallenge.addDefender(this, false);
                 this.game.once('afterChallenge', event => this.promptOnWin(event.challenge));
             }
         });

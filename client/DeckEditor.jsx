@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'underscore';
 import $ from 'jquery';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import Input from './FormComponents/Input.jsx';
 import Select from './FormComponents/Select.jsx';
@@ -55,7 +55,7 @@ class InnerDeckEditor extends React.Component {
     // XXX One could argue this is a bit hacky, because we're updating the innards of the deck object, react doesn't update components that use it unless we change the reference itself
     copyDeck(deck) {
         if(!deck) {
-            return { name: 'New Deck'};
+            return { name: 'New Deck' };
         }
 
         return {
@@ -159,7 +159,7 @@ class InnerDeckEditor extends React.Component {
         let deck = this.state.deck;
 
         deck = this.copyDeck(deck);
-        
+
         this.props.updateDeck(deck);
     }
 
@@ -306,8 +306,7 @@ class InnerDeckEditor extends React.Component {
         let banners = this.getBannerList();
 
         return (
-            <div className='col-sm-6'>
-                <h2>Deck Editor</h2>
+            <div>
                 <h4>Either type the cards manually into the box below, add the cards one by one using the card box and autocomplete or for best results, copy and paste a decklist from <a href='http://thronesdb.com' target='_blank'>Thrones DB</a> into the box below.</h4>
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
@@ -319,15 +318,15 @@ class InnerDeckEditor extends React.Component {
                         valueKey='code' nameKey='label' blankOption={ { label: '- Select -', code: '' } } />
 
                     { this.state.showBanners &&
-                    <div>
-                        <Select name='banners' label ='Banners' labelClass='col-sm-3' fieldClass='col-sm-9' options={ this.props.banners }
-                            onChange={ this.onBannerChange.bind(this) } value={ this.state.selectedBanner ? this.state.selectedBanner.code : undefined }
-                            valueKey='code' nameKey='label'
-                            blankOption={ { label: '- Select -', code: '' } } button={ { text:'Add', onClick: this.onAddBanner.bind(this) } } />
-                        <div className='col-sm-9 col-sm-offset-3 banner-list'>
-                            { banners }
+                        <div>
+                            <Select name='banners' label='Banners' labelClass='col-sm-3' fieldClass='col-sm-9' options={ this.props.banners }
+                                onChange={ this.onBannerChange.bind(this) } value={ this.state.selectedBanner ? this.state.selectedBanner.code : undefined }
+                                valueKey='code' nameKey='label'
+                                blankOption={ { label: '- Select -', code: '' } } button={ { text: 'Add', onClick: this.onAddBanner.bind(this) } } />
+                            <div className='col-sm-9 col-sm-offset-3 banner-list'>
+                                { banners }
+                            </div>
                         </div>
-                    </div>
                     }
                     <Typeahead label='Card' labelClass={ 'col-sm-3' } fieldClass='col-sm-4' labelKey={ 'label' } options={ _.toArray(this.props.cards) }
                         onChange={ this.addCardChange.bind(this) }>
@@ -338,7 +337,7 @@ class InnerDeckEditor extends React.Component {
                             </div>
                         </Input>
                     </Typeahead>
-                    <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='25' value={ this.state.cardList }
+                    <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.cardList }
                         onChange={ this.onCardListChange.bind(this) } />
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>

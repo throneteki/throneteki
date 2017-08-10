@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const Challenge = require('../challenge.js');
@@ -17,9 +16,6 @@ class ChallengePhase extends Phase {
 
     beginPhase() {
         this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
-        _.each(this.remainingPlayers, player => {
-            player.activePlot.onBeginChallengePhase();
-        });
     }
 
     promptForChallenge() {
