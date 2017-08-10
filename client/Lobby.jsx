@@ -82,13 +82,38 @@ class InnerLobby extends React.Component {
         this.setState({ showUsers: !this.state.showUsers });
     }
 
-    render() {
+    getMessages() {
+        let groupedMessages = {};
         let index = 0;
-        let groupedMessages = _.groupBy(this.props.messages, message => message.user && message.user.username + moment(message.time).format('YYYYMMDDHHmm'));
         let today = moment();
         let yesterday = moment().add(-1, 'days');
+        let lastUser;
+        let currentGroup = 0;
 
-        let messages = _.map(groupedMessages, messages => {
+        _.each(this.props.messages, message => {
+            if(!message.user) {
+                return;
+            }
+
+            let formattedTime = moment(message.time).format('YYYYMMDDHHmm');
+            if(lastUser && message.user && lastUser !== message.user.username) {
+                currentGroup++;
+            }
+
+            let key = message.user.username + formattedTime + currentGroup;
+
+            console.info(key);
+
+            if(!groupedMessages[key]) {
+                groupedMessages[key] = [];
+            }
+
+            groupedMessages[key].push(message);
+
+            lastUser = message.user.username;
+        });
+
+        return _.map(groupedMessages, messages => {
             let timestamp = '';
             let firstMessage = _.first(messages);
 
@@ -119,6 +144,10 @@ class InnerLobby extends React.Component {
                 </div>
             );
         });
+    }
+
+    render() {
+        let messages = this.getMessages();
 
         let userList = _.map(this.props.users, user => {
             return (
