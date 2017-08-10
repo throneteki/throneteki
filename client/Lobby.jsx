@@ -102,8 +102,6 @@ class InnerLobby extends React.Component {
 
             let key = message.user.username + formattedTime + currentGroup;
 
-            console.info(key);
-
             if(!groupedMessages[key]) {
                 groupedMessages[key] = [];
             }
