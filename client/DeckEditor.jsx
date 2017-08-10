@@ -283,10 +283,13 @@ class InnerDeckEditor extends React.Component {
         let name = match[2];
 
         return {
+            claim: 0,
             code: 'custom_' + type,
             cost: 0,
             custom: true,
             faction_code: 'neutral',
+            income: 0,
+            initiative: 0,
             is_intrigue: true,
             is_loyal: false,
             is_military: true,
@@ -296,6 +299,7 @@ class InnerDeckEditor extends React.Component {
             name: name,
             pack_code: 'Custom',
             pack_name: 'Custom',
+            reserve: 0,
             strength: 0,
             text: 'Custom',
             traits: '',
