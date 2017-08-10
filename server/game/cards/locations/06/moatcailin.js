@@ -16,8 +16,8 @@ class MoatCailin extends DrawCard {
     }
 
     moreWinterThanSummerPlotsRevealed() {
-        var winterPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Winter'));
-        var summerPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Summer'));
+        let winterPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Winter'));
+        let summerPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Summer'));
 
         return winterPlots.length > summerPlots.length;
     }

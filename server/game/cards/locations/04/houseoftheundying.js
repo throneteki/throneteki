@@ -5,7 +5,7 @@ const DrawCard = require('../../../drawcard.js');
 class HouseOfTheUndying extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Control opponent\'s dead characters',
+            title: 'Take control of opponent\'s dead characters',
             phase: 'challenge',
             cost: ability.costs.removeSelfFromGame(),
             chooseOpponent: opponent => opponent.deadPile.size() > 0,
@@ -30,7 +30,7 @@ class HouseOfTheUndying extends DrawCard {
             }));
         });
 
-        this.game.addMessage('{0} removes {1} from the game to control {2}',
+        this.game.addMessage('{0} removes {1} from the game to take control {2}',
             currentController, this, eligibleCharacters);
     }
 }

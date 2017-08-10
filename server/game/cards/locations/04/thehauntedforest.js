@@ -17,7 +17,7 @@ class TheHauntedForest extends DrawCard {
                 afterChallenge: ({challenge}) => this.controller === challenge.loser && !this.kneeled
             },
             handler: () => {
-                this.game.addMessage('{0} is forced to kneel {1} because they lost a challenge', this.controller, this);
+                this.game.addMessage('{0} is forced to kneel {1}', this.controller, this);
                 this.controller.kneelCard(this);
             }
         });

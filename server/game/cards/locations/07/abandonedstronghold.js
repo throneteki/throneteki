@@ -27,11 +27,7 @@ class AbandonedStronghold extends DrawCard {
     }
 
     getNumberOfBuilders() {
-        let cards = this.controller.filterCardsInPlay(card => {
-            return card.hasTrait('Builder') && card.getType() === 'character';
-        });
-
-        return cards.length;
+        return this.controller.getNumberOfCardsInPlay(card => card.controller === this.controller && card.hasTrait('Builder') && card.getType() === 'character');
     }
 }
 

@@ -3,36 +3,25 @@ const DrawCard = require('../../../drawcard.js');
 class CastleBlack extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel this card to stand and give a defending character +2 STR',
-            cost: ability.costs.kneelSelf(),
+            title: 'Stand and give defending character +2 STR',
             condition: () => this.game.currentChallenge,
-            method: 'kneel'
+            cost: ability.costs.kneelSelf(),
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
+                                       card.isFaction('thenightswatch') && this.game.currentChallenge.isDefending(card)
+            },
+            handler: context => {
+                context.target.controller.standCard(context.target);
+                this.game.addMessage('{0} kneels {1} to stand and give +2 STR to {2} until the end of the challenge',
+                    this.controller, this, context.target);
+
+                this.untilEndOfChallenge(ability => ({
+                    match: context.target,
+                    effect: ability.effects.modifyStrength(2)
+                }));  
+            }
         });
-    }
-
-    kneel(player) {
-        this.game.promptForSelect(player, {
-            cardCondition: card => this.cardCondition(card),
-            activePromptTitle: 'Select defender to stand and gain STR',
-            source: this,
-            onSelect: (player, card) => this.onCardSelected(player, card)
-        });
-    }
-
-    cardCondition(card) {
-        return card.getType() === 'character'
-            && this.game.currentChallenge.isDefending(card)
-            && card.isFaction('thenightswatch');
-    }
-
-    onCardSelected(player, card) {
-        player.standCard(card);
-        this.game.addMessage('{0} kneels {1} to stand {2} and give +2 STR until the end of the challenge', player, this, card);
-        this.untilEndOfChallenge(ability => ({
-            match: card,
-            effect: ability.effects.modifyStrength(2)
-        }));
-        return true;
     }
 }
 

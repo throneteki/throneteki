@@ -3,7 +3,7 @@ const DrawCard = require('../../../drawcard.js');
 class TheHandsSolar extends DrawCard {
     setupCardAbilities(ability) {  
         this.action({
-            title: 'Kneel to give INT icon',
+            title: 'Give INT icon',
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a character',

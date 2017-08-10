@@ -17,7 +17,7 @@ class Kingswood extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.challengeType === 'power'
             },
             handler: () => {
-                this.game.addMessage('{0} is forced by {1} to sacrifice {1}', this.controller, this);
+                this.game.addMessage('{0} is forced to sacrifice {1}', this.controller, this);
                 this.controller.sacrificeCard(this);
             }
         });

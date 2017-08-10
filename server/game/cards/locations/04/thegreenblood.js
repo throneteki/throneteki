@@ -11,7 +11,7 @@ class TheGreenblood extends DrawCard {
     }
 
     numOfSummerPlotsRevealed() {
-        var plots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Summer'));
+        let plots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Summer'));
 
         return plots.length;
     }
