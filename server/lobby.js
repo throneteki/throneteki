@@ -459,11 +459,11 @@ class Lobby {
                 this.deckRepository.getById(deckId, (err, deck) => {
 
                     _.each(deck.plotCards, plot => {
-                        plot.card = cards[plot.card.code];
+                        plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
                     });
 
                     _.each(deck.drawCards, draw => {
-                        draw.card = cards[draw.card.code];
+                        draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
                     });
 
                     if(deck.agenda) {
