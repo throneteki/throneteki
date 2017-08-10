@@ -280,6 +280,7 @@ class InnerDeckEditor extends React.Component {
         }
 
         let type = match[1].toLowerCase();
+        let name = match[2];
 
         return {
             code: 'custom_' + type,
@@ -290,9 +291,9 @@ class InnerDeckEditor extends React.Component {
             is_loyal: false,
             is_military: true,
             is_power: true,
-            is_unique: false,
-            label: match[2] + ' (Custom)',
-            name: match[2],
+            is_unique: name.indexOf('*') !== -1,
+            label: name + ' (Custom)',
+            name: name,
             pack_code: 'Custom',
             pack_name: 'Custom',
             strength: 0,
