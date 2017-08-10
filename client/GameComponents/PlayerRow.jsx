@@ -62,9 +62,11 @@ class PlayerRow extends React.Component {
             <AdditionalCardPile
                 className='additional-cards'
                 isMe={ this.props.isMe }
+                onDragDrop={ this.props.onDragDrop }
                 onMouseOut={ this.props.onMouseOut }
                 onMouseOver={ this.props.onMouseOver }
                 pile={ pile }
+                source='out of game'
                 spectating={ this.props.spectating }
                 title='Out of Game' />
         );

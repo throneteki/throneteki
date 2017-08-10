@@ -279,6 +279,7 @@ export class InnerGameBoard extends React.Component {
         let cards = [];
         let disablePopup = false;
         let title;
+        let source = 'agenda';
 
         // Alliance
         if(player.agenda.code === '06018') {
@@ -286,6 +287,7 @@ export class InnerGameBoard extends React.Component {
         } else if(player.agenda.code === '09045') {
             let pile = player.additionalPiles['conclave'];
             cards = pile.cards;
+            source = 'conclave';
             title = 'Conclave';
             disablePopup = !isMe;
         }
@@ -297,11 +299,12 @@ export class InnerGameBoard extends React.Component {
                 cards={ cards }
                 disablePopup={ disablePopup }
                 onCardClick={ this.onCardClick }
+                onDragDrop={ this.onDragDrop }
                 onMenuItemClick={ this.onMenuItemClick }
                 onMouseOut={ this.onMouseOut }
                 onMouseOver={ this.onMouseOver }
                 popupLocation={ popupLocation }
-                source='agenda'
+                source={ source }
                 title={ title }
                 topCard={ player.agenda } />
         );
@@ -318,9 +321,11 @@ export class InnerGameBoard extends React.Component {
             <AdditionalCardPile
                 className='plot'
                 isMe={ isMe }
+                onDragDrop={ this.onDragDrop }
                 onMouseOut={ this.onMouseOut }
                 onMouseOver={ this.onMouseOver }
                 pile={ schemePile }
+                source='scheme plots'
                 spectating={ this.state.spectating }
                 title='Schemes' />
         );

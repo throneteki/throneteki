@@ -315,19 +315,19 @@ class Game extends EventEmitter {
     }
 
     drop(playerName, cardId, source, target) {
-        var player = this.getPlayerByName(playerName);
+        let player = this.getPlayerByName(playerName);
+        let card = this.findAnyCardInAnyList(cardId);
 
-        if(!player) {
+        if(!player || !card) {
             return;
         }
 
-        if(player.drop(cardId, source, target)) {
+        if(player.drop(card, source, target)) {
             var movedCard = 'a card';
             if(!_.isEmpty(_.intersection(['dead pile', 'discard pile', 'out of game', 'play area'],
                 [source, target]))) {
                 // log the moved card only if it moved from/to a public place
-                var card = this.findAnyCardInAnyList(cardId);
-                if(card && this.currentPhase !== 'setup') {
+                if(this.currentPhase !== 'setup') {
                     movedCard = card;
                 }
             }
