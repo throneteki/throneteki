@@ -256,7 +256,7 @@ class InnerDeckEditor extends React.Component {
         let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
         let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
 
-        if(cardName.startsWith('Custom ')) {
+        if(cardName.indexOf('Custom ') === 0) {
             return this.createCustomCard(cardName);
         }
 
