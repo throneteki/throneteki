@@ -230,21 +230,7 @@ class InnerDeckEditor extends React.Component {
                 index++;
             }
 
-            let packOffset = line.indexOf('(');
-            let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
-            let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
-
-            let pack = _.find(this.props.packs, function(pack) {
-                return pack.code.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
-            });
-
-            let card = _.find(this.props.cards, function(card) {
-                if(pack) {
-                    return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
-                }
-
-                return card.label.toLowerCase() === cardName.toLowerCase();
-            });
+            let card = this.lookupCard(line, index);
 
             if(card) {
                 this.addCard(card, num);
@@ -255,6 +241,47 @@ class InnerDeckEditor extends React.Component {
 
         this.setState({ cardList: event.target.value, deck: deck, showBanners: deck.agenda && deck.agenda.code === '06018' }); // Alliance
         this.props.updateDeck(deck);
+    }
+
+    lookupCard(line, index) {
+        let packOffset = line.indexOf('(');
+        let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
+        let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
+
+        if(cardName.startsWith('Custom ')) {
+            return this.createCustomCard(cardName);
+        }
+
+        let pack = _.find(this.props.packs, function(pack) {
+            return pack.code.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
+        });
+
+        return _.find(this.props.cards, function(card) {
+            if(pack) {
+                return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
+            }
+
+            return card.label.toLowerCase() === cardName.toLowerCase();
+        });
+    }
+
+    createCustomCard(cardName) {
+        let match = /Custom (.*) - (.*)/.exec(cardName);
+        if(!match) {
+            return null;
+        }
+
+        let type = match[1].toLowerCase();
+
+        return {
+            code: 'custom_' + type,
+            custom: true,
+            faction_code: 'neutral',
+            label: match[2] + ' (Custom)',
+            name: match[2],
+            type_code: type,
+            type_name: match[1]
+        };
     }
 
     addCard(card, number) {

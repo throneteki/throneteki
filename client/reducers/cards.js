@@ -28,11 +28,11 @@ function processDecks(decks, state) {
         }
 
         deck.plotCards = _.map(deck.plotCards, card => {
-            return { count: card.count, card: state.cards[card.card.code] };
+            return { count: card.count, card: card.card.custom ? card.card : state.cards[card.card.code] };
         });
 
         deck.drawCards = _.map(deck.drawCards, card => {
-            return { count: card.count, card: state.cards[card.card.code] };
+            return { count: card.count, card: card.card.custom ? card.card : state.cards[card.card.code] };
         });
 
         deck.validation = validateDeck(deck, state.packs);
