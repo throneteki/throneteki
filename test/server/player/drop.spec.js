@@ -18,10 +18,20 @@ describe('Player', () => {
             this.gameSpy.playersAndSpectators[this.player.name] = this.player;
 
             this.cardSpy = jasmine.createSpyObj('card', ['getType', 'leavesPlay', 'moveTo']);
-            this.cardSpy.uuid = '1111';
             this.cardSpy.controller = this.cardSpy.owner = this.player;
+            this.cardSpy.getType.and.returnValue('character');
             this.cardSpy.attachments = _([]);
             this.cardSpy.dupes = _([]);
+        });
+
+        describe('when no card is pased', function() {
+            beforeEach(function() {
+                this.dropSucceeded = this.player.drop(null, 'hand', 'draw deck');
+            });
+
+            it('should return false', function() {
+                expect(this.dropSucceeded).toBe(false);
+            });
         });
 
         describe('when dragging a card from hand to play area', function() {
@@ -30,23 +40,11 @@ describe('Player', () => {
                 this.cardSpy.location = 'hand';
             });
 
-            describe('when the card is not in the hand', function() {
-                beforeEach(function() {
-                    this.dropSucceeded = this.player.drop('', 'hand', 'play area');
-                });
-
-                it('should return false and not change the game state', function() {
-                    expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.cardsInPlay.size()).toBe(0);
-                    expect(this.player.hand.size()).toBe(1);
-                });
-            });
-
             describe('when the card is in hand and a character', function() {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('character');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'play area');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'play area');
                 });
 
                 it('should return true and add the card to the play area', function() {
@@ -59,7 +57,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('location');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'play area');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'play area');
                 });
 
                 it('should return true and add the card to the play area', function() {
@@ -72,7 +70,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('event');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'play area');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'play area');
                 });
 
                 it('should return false and not add the card to the play area', function() {
@@ -85,7 +83,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('attachment');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'play area');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'play area');
                 });
 
                 it('should return true and play the card', function() {
@@ -101,22 +99,11 @@ describe('Player', () => {
                 this.cardSpy.location = 'hand';
             });
 
-            describe('when the card is not in hand', function() {
-                beforeEach(function() {
-                    this.dropSucceeded = this.player.drop('', 'hand', 'dead pile');
-                });
-
-                it('should return false and not update the game state', function() {
-                    expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.deadPile.size()).toBe(0);
-                });
-            });
-
             describe('when the card is in hand and is a location', function() {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('location');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'dead pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'dead pile');
                 });
 
                 it('should return false and not update the game state', function() {
@@ -129,7 +116,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('attachment');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'dead pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'dead pile');
                 });
 
                 it('should return false and not update the game state', function() {
@@ -142,7 +129,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('event');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'dead pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'dead pile');
                 });
 
                 it('should return false and not update the game state', function() {
@@ -155,7 +142,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('character');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'dead pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'dead pile');
                 });
 
                 it('should return true and put the character in the dead pile', function() {
@@ -171,22 +158,11 @@ describe('Player', () => {
                 this.cardSpy.location = 'hand';
             });
 
-            describe('when the card is not in hand', function() {
-                beforeEach(function() {
-                    this.dropSucceeded = this.player.drop('', 'hand', 'discard pile');
-                });
-
-                it('should return false and not update the game state', function() {
-                    expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.discardPile.size()).toBe(0);
-                });
-            });
-
             describe('when the card is in hand and is a location', function() {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('location');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'discard pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'discard pile');
                 });
 
                 it('should return true and update the game state', function() {
@@ -199,7 +175,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('attachment');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'discard pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'discard pile');
                 });
 
                 it('should return true and update the game state', function() {
@@ -212,7 +188,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('event');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'discard pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'discard pile');
                 });
 
                 it('should return true and update the game state', function() {
@@ -225,7 +201,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('character');
 
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'discard pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'discard pile');
                 });
 
                 it('should return true and put the character in the dead pile', function() {
@@ -241,21 +217,10 @@ describe('Player', () => {
                 this.cardSpy.location = 'hand';
             });
 
-            describe('when the card is not in hand', function() {
-                beforeEach(function() {
-                    this.dropSucceeded = this.player.drop('', 'hand', 'draw deck');
-                });
-
-                it('should return false and not update the game state', function() {
-                    expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.drawDeck.size()).toBe(0);
-                });
-            });
-
             describe('when the card is in hand and is a location', function() {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('location');
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'draw deck');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'draw deck');
                 });
 
                 it('should return true and put the card in the draw deck', function() {
@@ -267,7 +232,7 @@ describe('Player', () => {
             describe('when the card is in hand and is an attachment', function() {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('attachment');
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'draw deck');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'draw deck');
                 });
 
                 it('should return true and put the card in the draw deck', function() {
@@ -279,7 +244,7 @@ describe('Player', () => {
             describe('when the card is in hand and is an event', function() {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('event');
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'draw deck');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'draw deck');
                 });
 
                 it('should return true and put the card in the draw deck', function() {
@@ -291,7 +256,7 @@ describe('Player', () => {
             describe('when the card is in hand and is a character', function() {
                 beforeEach(function() {
                     this.cardSpy.getType.and.returnValue('character');
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'hand', 'draw deck');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'hand', 'draw deck');
                 });
 
                 it('should return true and put the card in the draw deck', function() {
@@ -303,13 +268,13 @@ describe('Player', () => {
             describe('when two cards are dragged to the draw deck', function() {
                 beforeEach(function() {
                     this.cardSpy2 = jasmine.createSpyObj('card', ['getType', 'moveTo']);
-                    this.cardSpy2.uuid = '2222';
                     this.cardSpy2.controller = this.player;
+                    this.cardSpy2.getType.and.returnValue('event');
                     this.player.hand.push(this.cardSpy2);
                     this.cardSpy2.location = 'hand';
 
-                    this.player.drop(this.cardSpy.uuid, 'hand', 'draw deck');
-                    this.dropSucceeded = this.player.drop(this.cardSpy2.uuid, 'hand', 'draw deck');
+                    this.player.drop(this.cardSpy, 'hand', 'draw deck');
+                    this.dropSucceeded = this.player.drop(this.cardSpy2, 'hand', 'draw deck');
                 });
 
                 it('should put the cards in the draw deck in the correct order', function() {
@@ -325,20 +290,9 @@ describe('Player', () => {
                 this.cardSpy.location = 'play area';
             });
 
-            describe('when the card is not in play', function() {
-                beforeEach(function() {
-                    this.dropSucceeded = this.player.drop('', 'play area', 'discard pile');
-                });
-
-                it('should return false and not update the game state', function() {
-                    expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.cardsInPlay.size()).toBe(1);
-                });
-            });
-
             describe('when the card is in play', function() {
                 beforeEach(function() {
-                    this.dropSucceeded = this.player.drop(this.cardSpy.uuid, 'play area', 'discard pile');
+                    this.dropSucceeded = this.player.drop(this.cardSpy, 'play area', 'discard pile');
                 });
 
                 it('should return true and put the card in the discard pile', function() {
@@ -358,7 +312,7 @@ describe('Player', () => {
             it('should rely on killCharacter to maintain event order', function() {
                 spyOn(this.player, 'killCharacter');
 
-                var result = this.player.drop(this.cardSpy.uuid, 'play area', 'dead pile');
+                let result = this.player.drop(this.cardSpy, 'play area', 'dead pile');
                 expect(result).toBe(true);
                 expect(this.player.killCharacter).toHaveBeenCalledWith(this.cardSpy, false);
             });
