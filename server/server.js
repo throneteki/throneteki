@@ -22,16 +22,7 @@ const pug = require('pug');
 
 const UserService = require('./repositories/UserService.js');
 const version = require('../version.js');
-
-const defaultWindows = {
-    plot: false,
-    draw: false,
-    challengeBegin: false,
-    attackersDeclared: true,
-    defendersDeclared: true,
-    dominance: false,
-    standing: false
-};
+const Util = require('./util.js');
 
 class Server {
     constructor(isDeveloping) {
@@ -97,14 +88,16 @@ class Server {
                 heartbeat: 2000
             }));
 
-            app.get('*', function response(req, res) {
+            app.get('*', (req, res) => {
                 var token = undefined;
 
                 if(req.user) {
                     token = jwt.sign(req.user, config.secret);
                 }
 
-                var html = pug.renderFile('views/index.pug', { basedir: path.join(__dirname, '..', 'views'), user: req.user, token: token });
+                let user = Util.getUserWithDefaultsSet(req.user);
+
+                var html = pug.renderFile('views/index.pug', { basedir: path.join(__dirname, '..', 'views'), user: user, token: token });
                 middleware.fileSystem.writeFileSync(path.join(__dirname, '..', 'public/index.html'), html);
                 res.write(middleware.fileSystem.readFileSync(path.join(__dirname, '..', 'public/index.html')));
                 res.end();
@@ -117,7 +110,7 @@ class Server {
                     token = jwt.sign(req.user, config.secret);
                 }
 
-                res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: req.user, token: token, production: !this.isDeveloping });
+                res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Util.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
             });
         }
 
@@ -156,16 +149,20 @@ class Server {
                         return done(null, false, { message: 'Invalid username/password' });
                     }
 
-                    return done(null, {
+                    let userObj = {
                         username: user.username,
                         email: user.email,
                         emailHash: user.emailHash,
                         _id: user._id,
                         admin: user.admin,
-                        settings: user.settings || {},
-                        promptedActionWindows: user.promptedActionWindows || defaultWindows,
-                        permissions: user.permissions || {}
-                    });
+                        settings: user.settings,
+                        promptedActionWindows: user.promptedActionWindows,
+                        permissions: user.permissions
+                    };
+
+                    userObj = Util.getUserWithDefaultsSet(userObj);
+
+                    return done(null, userObj);
                 });
             })
             .catch(err => {
@@ -188,16 +185,18 @@ class Server {
                     return done(new Error('user not found'));
                 }
 
-                done(null, {
+                let userObj = {
                     username: user.username,
                     email: user.email,
                     emailHash: user.emailHash,
                     _id: user._id,
                     admin: user.admin,
-                    settings: user.settings || {},
-                    promptedActionWindows: user.promptedActionWindows || defaultWindows,
-                    permissions: user.permissions || {}
-                });
+                    settings: user.settings,
+                    promptedActionWindows: user.promptedActionWindows,
+                    permissions: user.permissions
+                };
+
+                done(null, userObj);
             });
     }
 }

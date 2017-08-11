@@ -12,6 +12,7 @@ const MessageRepository = require('./repositories/messageRepository.js');
 const DeckRepository = require('./repositories/deckRepository.js');
 const CardService = require('./repositories/cardService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
+const Util = require('./util.js');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -113,7 +114,7 @@ class Lobby {
             return {
                 name: user.username,
                 emailHash: user.emailHash,
-                noAvatar: user.settings ? user.settings.disableGravatar : false
+                noAvatar: user.settings.disableGravatar
             };
         });
 
@@ -227,7 +228,7 @@ class Lobby {
         this.sockets[ioSocket.id] = socket;
 
         if(socket.user) {
-            this.users[socket.user.username] = socket.user;
+            this.users[socket.user.username] = Util.getUserWithDefaultsSet(socket.user);
 
             this.broadcastUserList();
         }
@@ -428,7 +429,7 @@ class Lobby {
     }
 
     onLobbyChat(socket, message) {
-        var chatMessage = { user: { username: socket.user.username, emailHash: socket.user.emailHash, noAvatar: socket.user.settings ? socket.user.settings.disableGravatar : false }, message: message, time: new Date() };
+        var chatMessage = { user: { username: socket.user.username, emailHash: socket.user.emailHash, noAvatar: socket.user.settings }, message: message, time: new Date() };
 
         this.messageRepository.addMessage(chatMessage);
         this.broadcastMessage('lobbychat', chatMessage);
