@@ -901,6 +901,21 @@ class Player extends Spectator {
         });
     }
 
+    moveCardToBottomOfDeck(card, allowSave = true) {
+        this.game.applyGameAction('moveToBottomOfDeck', card, card => {
+            if(!card.dupes.isEmpty() && allowSave) {
+                if(!this.removeDuplicate(card)) {
+                    this.moveCard(card, 'draw deck', { bottom: true });
+                } else {
+                    this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
+                    this.game.raiseEvent('onCardSaved', { card: card });
+                }
+            } else {
+                this.moveCard(card, 'draw deck', { bottom: true });
+            }
+        });
+    }
+
     /**
      * @deprecated Use `Game.killCharacter` instead.
      */
