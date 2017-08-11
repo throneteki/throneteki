@@ -22,7 +22,7 @@ const pug = require('pug');
 
 const UserService = require('./repositories/UserService.js');
 const version = require('../version.js');
-const Util = require('./util.js');
+const Settings = require('./settings.js');
 
 class Server {
     constructor(isDeveloping) {
@@ -95,9 +95,7 @@ class Server {
                     token = jwt.sign(req.user, config.secret);
                 }
 
-                let user = Util.getUserWithDefaultsSet(req.user);
-
-                var html = pug.renderFile('views/index.pug', { basedir: path.join(__dirname, '..', 'views'), user: user, token: token });
+                var html = pug.renderFile('views/index.pug', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token });
                 middleware.fileSystem.writeFileSync(path.join(__dirname, '..', 'public/index.html'), html);
                 res.write(middleware.fileSystem.readFileSync(path.join(__dirname, '..', 'public/index.html')));
                 res.end();
@@ -110,7 +108,7 @@ class Server {
                     token = jwt.sign(req.user, config.secret);
                 }
 
-                res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Util.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
+                res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
             });
         }
 
@@ -160,7 +158,7 @@ class Server {
                         permissions: user.permissions
                     };
 
-                    userObj = Util.getUserWithDefaultsSet(userObj);
+                    userObj = Settings.getUserWithDefaultsSet(userObj);
 
                     return done(null, userObj);
                 });

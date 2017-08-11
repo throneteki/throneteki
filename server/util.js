@@ -1,13 +1,3 @@
-const defaultWindows = {
-    plot: false,
-    draw: false,
-    challengeBegin: false,
-    attackersDeclared: true,
-    defendersDeclared: true,
-    dominance: false,
-    standing: false
-};
-
 function escapeRegex(regex) {
     return regex.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
 }
@@ -35,40 +25,7 @@ function httpRequest(url) {
     });
 }
 
-function getUserWithDefaultsSet(user) {
-    let userToReturn = user;
-
-    if(!userToReturn) {
-        return userToReturn;
-    }
-
-    if(!userToReturn.settings) {
-        userToReturn.settings = {
-            disableGravatar: false,
-            windowTimer: 10
-        };
-    }
-
-    if(!userToReturn.settings.timerSettings) {
-        userToReturn.settings.timerSettings = {
-            events: true,
-            abilities: false
-        };
-    }
-
-    if(!userToReturn.permissions) {
-        userToReturn.permissions = {};
-    }
-
-    if(!userToReturn.promptedActionWindows) {
-        userToReturn.promptedActionWindows = defaultWindows;
-    }
-
-    return userToReturn;
-}
-
 module.exports = {
     escapeRegex: escapeRegex,
-    httpRequest: httpRequest,
-    getUserWithDefaultsSet: getUserWithDefaultsSet
+    httpRequest: httpRequest
 };
