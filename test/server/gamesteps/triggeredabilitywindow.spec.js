@@ -10,6 +10,9 @@ describe('TriggeredAbilityWindow', function() {
         this.player1Spy = jasmine.createSpyObj('player', ['setPrompt', 'cancelPrompt', 'user']);
         this.player2Spy = jasmine.createSpyObj('player', ['setPrompt', 'cancelPrompt', 'user']);
 
+        this.player1Spy.noTimer = true;
+        this.player2Spy.noTimer = true;
+
         this.gameSpy = jasmine.createSpyObj('game', ['getPlayersInFirstPlayerOrder', 'promptWithMenu', 'resolveAbility']);
         this.gameSpy.getPlayersInFirstPlayerOrder.and.returnValue([this.player1Spy, this.player2Spy]);
 
