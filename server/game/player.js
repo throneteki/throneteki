@@ -501,6 +501,11 @@ class Player extends Spectator {
 
         if(card.getType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             this.promptForAttachment(card, playingType);
+
+            if(this.game.currentPhase !== 'setup' && card.isBestow()) {
+                this.game.queueStep(new BestowPrompt(this.game, this, card));
+            }
+            
             return;
         }
 
