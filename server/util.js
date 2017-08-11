@@ -49,6 +49,13 @@ function getUserWithDefaultsSet(user) {
         };
     }
 
+    if(!userToReturn.settings.timerSettings) {
+        userToReturn.settings.timerSettings = {
+            events: true,
+            abilities: false
+        };
+    }
+
     if(!userToReturn.permissions) {
         userToReturn.permissions = {};
     }
