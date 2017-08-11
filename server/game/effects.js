@@ -458,6 +458,21 @@ const Effects = {
             }
         };
     },
+    moveToBottomOfDeckIfStillInPlay: function(allowSave = true) {
+        return {
+            apply: function(card, context) {
+                context.moveToBottomOfDeckIfStillInPlay = context.moveToBottomOfDeckIfStillInPlay || [];
+                context.moveToBottomOfDeckIfStillInPlay.push(card);
+            },
+            unapply: function(card, context) {
+                if(card.location === 'play area' && context.moveToBottomOfDeckIfStillInPlay.includes(card)) {
+                    context.moveToBottomOfDeckIfStillInPlay = _.reject(context.moveToBottomOfDeckIfStillInPlay, c => c === card);
+                    card.owner.moveCardToBottomOfDeck(card, allowSave);
+                    context.game.addMessage('{0} moves {1} to the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
+                }
+            }
+        };
+    },
     returnToHandIfStillInPlay: function(allowSave = false) {
         return {
             apply: function(card, context) {
