@@ -17,6 +17,11 @@ class Gendry extends DrawCard {
                 onDominanceDetermined: event => event.winner && this.controller !== event.winner
             },
             handler: () => {
+                if(this.power < 1) {
+                    this.sacrificeBastard(this.controller);
+                    return;
+                }
+
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
                         menuTitle: 'Discard a power from ' + this.name + '?',
@@ -46,6 +51,7 @@ class Gendry extends DrawCard {
             onSelect: (player, card) => {
                 card.controller.sacrificeCard(card);
                 this.game.addMessage('{0} is forced by {1} to sacrifice {2}', player, this, card);
+                return true;
             }
         });
 
