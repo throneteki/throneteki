@@ -253,6 +253,10 @@ class Card extends React.Component {
             return <div />;
         }
 
+        if(this.props.card.code && this.props.card.code.startsWith('custom')) {
+            cardClass += ' custom-card';
+        }
+
         cardClass += ' card-type-' + this.props.card.type;
 
         if(this.props.orientation === 'kneeled' || this.props.card.kneeled || this.props.orientation === 'horizontal' && this.props.card.type !== 'plot') {
