@@ -7,18 +7,16 @@ class About extends React.Component {
         return (
             <div className='col-xs-12 full-height'>
                 <div className='panel-title text-center'>
-                    About throneteki - Help and information
+                    About The Iron Throne - Help and information
                 </div>
                 <div className='panel about-container'>
-                    <a className='btn btn-danger btn-lg pull-right' href='https://github.com/cryogen/throneteki/issues'>Report Problems</a>
+                    <a className='btn btn-danger btn-lg pull-right' target='_blank' href='https://github.com/cryogen/throneteki/issues'>Report Problems</a>
                     <h3>What is this?</h3>
 
                     <p>This site was setup to allow you to play A Game Of Thrones 2.0, an LCG from Fantasy Flight Games (FFG) in your browser.</p>
 
-                    <h3>That's pretty cool!  How do I play?</h3>
-                    <p>That's kind of you to say.  Start by registering for an account or logging in if you already have one.  You must be logged in to play games or spectate on them.
-                Once you're logged in, go to the <Link href='/decks'>decks page.</Link>  You can create a deck by going to <a href='http://www.thronesdb.com' target='_blank'>Thrones DB</a>,
-                 clicking on the button to download your deck to a TXT file and copy/pasting it into the deck builder.  Then either join or create a game and you're good to go.</p>
+                    <h3>That's pretty cool!  But how does any of this work?</h3>
+                    <p>Head on over to the <Link href='/how-to-play'>How To Play guide</Link> for a thorough explanation.</p>
 
 
                     <h3>Everyone has a shiny avatar, how do I get one?</h3>
@@ -30,41 +28,13 @@ class About extends React.Component {
 
                     <p>The background of the site is by an artist named <a href='http://dumaker.deviantart.com/' target='_blank'>Dumaker</a> and can be found <a href='http://dumaker.deviantart.com/art/Looking-for-the-Iron-Throne-Game-of-Thrones-9-364330141' target='_blank'>here</a>.</p>
                     <p>The in game backgrounds are by <a href='http://www.thomastanart.com/' target='_blank'>Thomas Tan</a>.  He's very talented, you should check out his work!</p>
-
-                    <h3>Action windows</h3>
-                    <p>Players will be prompted about whether they have actions or not during game <a href='https://thronesdb.com/rulesreference#Action_Windows'>action windows</a>. By default, however, not all action windows are enabled. For example: you will be prompted by default after challenge attackers are declared, but not before the end of the dominance pahse. You can choose which action windows to be prompted for in your <a href='/profile'>user profile</a> as well as override that while in-game by clicking on the small green triangle above the various dialog windows.</p>
-
-                    <h3>Why doesn't xyz work?</h3>
-                    <p>While the site has come on a lot recently, there are still some missing cards and things that aren't implemented. See <a href='http://bit.ly/throneteki'>This Link</a> for a list of the cards and their current implementation
-                status.  If it says 'Done' on that list, it should work and if it doesn't then it's a bug.</p>
-                    <p>If you do encounter a bug or issue which is not related to a missing or not implemented card
-                then please do report it.  There is an <a href='http://github.com/cryogen/throneteki'>Issue Tracker</a> on the GitHub page where you can make your report.  Please include as
-                much information as possible, including what the problem is, what you were expecting, what you did leading up to it, and if possible include a screenshot.  We are a very small
-                development team and if bugs are not reported, it is unlikely they will get fixed.</p>
-
-                    <h3>Manual Commands</h3>
-                    <p>The following manual commands have been implemented in order to allow for a smoother gameplay experience:
-                    </p>
-                    <ul>
-                        <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add.</li>
-                        <li>/cancel-prompt - Clear the current prompt and resume the game flow.  Use with caution and only when the prompt is 'stuck' and you are unable to continue</li>
-                        <li>/discard x - Discards x cards randomly from your hand</li>
-                        <li>/draw x - Draws x cards from your deck to your hand</li>
-                        <li>/give-control - Give control of a card to your opponent.  Use with caution</li>
-                        <li>/give-icon x - Give a character an x icon; where 'x' is one of 'military', 'intrigue', 'power'</li>
-                        <li>/kill - Manually kill a character.  Use with caution</li>
-                        <li>/pillage - Discards the top card from your deck</li>
-                        <li>/power x - Sets the power of a card to x</li>
-                        <li>/strength x - Sets the strength of a card to x</li>
-                        <li>/take-icon x - Take an x icon from a character; where 'x' is as per '/give-icon'</li>
-                        <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'betrayal', 'ear', 'gold', 'kiss', 'poison', 'stand', 'valarmorghulis', 'vengeance' and 'venom'.</li>
-                    </ul>
+                    <p>Don't want to be distracted by beautiful art during your games? In-game backgrounds can be disabled from your <Link href='/profile'>Profile</Link>.</p>
 
                     <h3>Can I help?</h3>
                     <p>Sure!  The project is all written in Javascript.  The server is node.js and the client is React.js.  The source code can be found in the&nbsp;
-                        <a href='http://github.com/cryogen/throneteki'>GitHub Repository</a>.  Check out the code and instructions on there on how to get started and hack away!  See the card implementation
+                        <a target='_blank' href='http://github.com/cryogen/throneteki'>GitHub Repository</a>.  Check out the code and instructions on there on how to get started and hack away!  See the card implementation
                 status list above to have a look at what needs to be done.  If you want to join the dev discord, or ask any other question, send me a note on here, over at&nbsp;
-                        <a href='http://www.twitter.com/cryogen'>Twitter</a> or post in the AGoT Facebook group.  I'll likely find it.
+                        <a target='_blank' href='http://www.twitter.com/cryogen'>Twitter</a> or post in the AGoT Facebook group.  I'll likely find it.
                     </p>
 
                     <h4>Donations</h4>
