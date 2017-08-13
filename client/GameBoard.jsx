@@ -9,9 +9,8 @@ import PlayerRow from './GameComponents/PlayerRow.jsx';
 import ActivePlayerPrompt from './GameComponents/ActivePlayerPrompt.jsx';
 import CardZoom from './GameComponents/CardZoom.jsx';
 import Messages from './GameComponents/Messages.jsx';
-import AdditionalCardPile from './GameComponents/AdditionalCardPile.jsx';
 import Card from './GameComponents/Card.jsx';
-import CardCollection from './GameComponents/CardCollection.jsx';
+import CardPile from './GameComponents/CardPile.jsx';
 import ActionWindowsMenu from './GameComponents/ActionWindowsMenu.jsx';
 import { tryParseJSON } from './util.js';
 
@@ -295,7 +294,7 @@ export class InnerGameBoard extends React.Component {
         disablePopup = disablePopup || !cards || cards.length === 0;
 
         return (
-            <CardCollection className='agenda'
+            <CardPile className='agenda'
                 cards={ cards }
                 disablePopup={ disablePopup }
                 onCardClick={ this.onCardClick }
@@ -318,16 +317,21 @@ export class InnerGameBoard extends React.Component {
         }
 
         return (
-            <AdditionalCardPile
+            <CardPile
+                cards={ schemePile.cards }
                 className='plot'
-                isMe={ isMe }
+                disablePopup={ !isMe }
+                onCardClick={ this.onCardClick }
                 onDragDrop={ this.onDragDrop }
+                onMenuItemClick={ this.onMenuItemClick }
                 onMouseOut={ this.onMouseOut }
                 onMouseOver={ this.onMouseOver }
-                pile={ schemePile }
+                orientation='horizontal'
+                popupLocation={ isMe || this.state.spectating ? 'top' : 'bottom' }
                 source='scheme plots'
                 spectating={ this.state.spectating }
-                title='Schemes' />
+                title='Schemes'
+                topCard={ { facedown: true, kneeled: true } } />
         );
     }
 
@@ -426,7 +430,7 @@ export class InnerGameBoard extends React.Component {
                                 reserve={ otherPlayer ? otherPlayer.reserve : 0 } power={ otherPlayer ? otherPlayer.totalPower : 0 } user={ otherPlayer ? otherPlayer.user : null } />
                             <div className='deck-info'>
                                 <div className='deck-type'>
-                                    <CardCollection className='faction' source='faction' cards={ [] } topCard={ otherPlayer ? otherPlayer.faction : undefined } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup />
+                                    <CardPile className='faction' source='faction' cards={ [] } topCard={ otherPlayer ? otherPlayer.faction : undefined } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup />
                                     { this.getAgenda(otherPlayer, false, 'bottom') }
                                 </div>
                                 { otherPlayer ? <div className={ 'first-player-indicator ' + (!thisPlayer.firstPlayer ? '' : 'hidden') }>First player</div> : '' }
@@ -436,20 +440,20 @@ export class InnerGameBoard extends React.Component {
                             <div className='plots-pane'>
                                 <div className='plot-group'>
                                     { this.getSchemePile(otherPlayer, false) }
-                                    <CardCollection className={ otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
+                                    <CardPile className={ otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
                                         title='Plots' source='plot deck' cards={ otherPlayer ? otherPlayer.plotDeck : [] }
                                         topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                                         onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disableMouseOver disablePopup
                                         onCardClick={ this.onCardClick } orientation='horizontal' />
-                                    <CardCollection className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer ? otherPlayer.plotDiscard : [] }
+                                    <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer ? otherPlayer.plotDiscard : [] }
                                         topCard={ otherPlayer ? otherPlayer.activePlot : undefined } orientation='horizontal' onMouseOver={ this.onMouseOver }
                                         onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } />
                                 </div>
                                 <div className='plot-group our-side'>
-                                    <CardCollection className='plot' title='Used Plots' source='revealed plots' cards={ thisPlayer.plotDiscard } topCard={ thisPlayer.activePlot }
+                                    <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ thisPlayer.plotDiscard } topCard={ thisPlayer.activePlot }
                                         onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } orientation='horizontal' onMenuItemClick={ this.onMenuItemClick }
                                         onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
-                                    <CardCollection className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
+                                    <CardPile className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
                                         title='Plots' source='plot deck' cards={ thisPlayer.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                                         onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop }
                                         closeOnClick />
@@ -483,7 +487,7 @@ export class InnerGameBoard extends React.Component {
                             <div className='deck-info'>
                                 <div className={ 'first-player-indicator ' + (thisPlayer.firstPlayer ? '' : 'hidden') }>First player</div>
                                 <div className='deck-type'>
-                                    <CardCollection className='faction' source='faction' cards={ [] } topCard={ thisPlayer.faction } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup onCardClick={ this.onFactionCardClick } />
+                                    <CardPile className='faction' source='faction' cards={ [] } topCard={ thisPlayer.faction } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup onCardClick={ this.onFactionCardClick } />
                                     { this.getAgenda(thisPlayer, !this.state.spectating, 'top') }
                                 </div>
                             </div>
