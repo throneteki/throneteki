@@ -5,7 +5,7 @@ import $ from 'jquery';
 import Card from './Card.jsx';
 import { tryParseJSON } from '../util.js';
 
-class CardCollection extends React.Component {
+class CardPile extends React.Component {
     constructor() {
         super();
 
@@ -201,8 +201,8 @@ class CardCollection extends React.Component {
     }
 }
 
-CardCollection.displayName = 'CardCollection';
-CardCollection.propTypes = {
+CardPile.displayName = 'CardPile';
+CardPile.propTypes = {
     cardCount: React.PropTypes.number,
     cards: React.PropTypes.array,
     className: React.PropTypes.string,
@@ -224,8 +224,8 @@ CardCollection.propTypes = {
     title: React.PropTypes.string,
     topCard: React.PropTypes.object
 };
-CardCollection.defaultProps = {
+CardPile.defaultProps = {
     orientation: 'vertical'
 };
 
-export default CardCollection;
+export default CardPile;
