@@ -27,7 +27,8 @@ class InnerProfile extends React.Component {
             promptedActionWindows: this.props.user.promptedActionWindows,
             validation: {},
             windowTimer: this.props.user.settings.windowTimer,
-            timerSettings: this.props.user.settings.timerSettings
+            timerSettings: this.props.user.settings.timerSettings,
+            selectedBackground: this.props.user.settings.background
         };
 
         this.windows = [
@@ -104,7 +105,8 @@ class InnerProfile extends React.Component {
                         settings: {
                             disableGravatar: this.state.disableGravatar,
                             windowTimer: this.state.windowTimer,
-                            timerSettings: this.state.timerSettings
+                            timerSettings: this.state.timerSettings,
+                            background: this.state.selectedBackground
                         }
                     })
                 }
@@ -178,6 +180,10 @@ class InnerProfile extends React.Component {
         this.setState({ windowTimer: value });
     }
 
+    onBackgroundClick(background) {
+        this.setState({ selectedBackground: background });
+    }
+
     render() {
         if(!this.props.user) {
             return <AlertPanel type='error' message='You must be logged in to update your profile' />;
@@ -195,32 +201,28 @@ class InnerProfile extends React.Component {
         });
 
         return (
-            <div>
-                { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
-                { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
-                <form className='form form-horizontal'>
-                    <div className='row'>
-                        <div className='col-sm-8 col-sm-offset-2'>
-                            <div className='panel-title text-center'>
-                                Profile
-                            </div>
-                            <div className='panel'>
-                                <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
-                                    type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
-                                    onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
-                                <Input name='newPassword' label='New Password' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password'
-                                    type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
-                                    onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
-                                <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
-                                    type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
-                                    onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
-                                <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
-                                    onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
-                            </div>
+            <div className='col-sm-8 col-sm-offset-2 profile full-height'>
+                <div className='about-container'>
+                    { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
+                    { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
+                    <form className='form form-horizontal'>
+                        <div className='panel-title text-center'>
+                            Profile
                         </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col-sm-offset-2 col-sm-8'>
+                        <div className='panel'>
+                            <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
+                                type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
+                                onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
+                            <Input name='newPassword' label='New Password' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password'
+                                type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
+                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
+                            <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
+                                type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
+                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
+                            <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
+                                onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
+                        </div>
+                        <div>
                             <div className='panel-title text-center'>
                                 Action window defaults
                             </div>
@@ -230,10 +232,6 @@ class InnerProfile extends React.Component {
                                     { windows }
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col-sm-offset-2 col-sm-8'>
                             <div className='panel-title text-center'>
                                 Action window timing
                             </div>
@@ -261,11 +259,35 @@ class InnerProfile extends React.Component {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className='col-sm-offset-9 col-sm-2'>
-                        <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
-                    </div>
-                </form>
+                        <div>
+                            <div className='panel-title'>
+                                Game Board Background
+                            </div>
+                            <div className='panel'>
+                                <div className='row'>
+                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('none') }>
+                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'none' ? ' selected' : '') }
+                                            src='img/blank.png' />
+                                        <span className='bg-label'>None</span>
+                                    </div>
+                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('BG1') }>
+                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'BG1' ? ' selected' : '') }
+                                            src='/img/background.png' />
+                                        <span className='bg-label'>Standard</span>
+                                    </div>
+                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('BG2') }>
+                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'BG2' ? ' selected' : '') }
+                                            src='img/background3.png' />
+                                        <span className='bg-label'>Winter</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='col-sm-offset-10 col-sm-2'>
+                            <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>);
     }
 }
