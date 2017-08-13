@@ -340,7 +340,22 @@ class App extends React.Component {
                 break;
         }
 
-        return (<div className={ gameBoardVisible ? 'bg-board' : 'bg' }>
+        let backgroundClass = 'bg';
+        if(gameBoardVisible && this.props.user) {
+            switch(this.props.user.settings.background) {
+                case 'BG1':
+                    backgroundClass = 'bg-board';
+                    break;
+                case 'BG2':
+                    backgroundClass = 'bg-board2';
+                    break;
+                default:
+                    backgroundClass = '';
+                    break;
+            }
+        }
+
+        return (<div className={ backgroundClass }>
             <NavBar leftMenu={ leftMenu } rightMenu={ rightMenu } title='The Iron Throne' currentPath={ this.props.path } numGames={ this.props.games.length } />
             <div className='container'>
                 { component }
