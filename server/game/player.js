@@ -40,6 +40,7 @@ class Player extends Spectator {
         this.usedPlotsModifier = 0;
         this.cannotGainGold = false;
         this.doesNotReturnUnspentGold = false;
+        this.needsToWinIntrigueFirst = false;
         this.cannotGainChallengeBonus = false;
         this.cannotTriggerCardAbilities = false;
         this.cannotMarshalOrPutIntoPlayByTitle = [];
