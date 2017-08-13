@@ -235,7 +235,7 @@ class InnerProfile extends React.Component {
                     <div className='row'>
                         <div className='col-sm-offset-2 col-sm-8'>
                             <div className='panel-title text-center'>
-                                Action window timing
+                                Timed Interrupt Window
                             </div>
                             <div className='panel'>
                                 <p className='help-block small'>Every time a game event occurs that you could possibly interrupt to cancel it, a timer will count down.  At the end of that timer, the window will automatically pass.
