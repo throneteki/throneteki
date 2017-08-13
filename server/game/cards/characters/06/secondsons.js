@@ -7,9 +7,14 @@ class SecondSons extends DrawCard {
                 onPhaseEnded: event => event.phase === 'challenge'
             },
             handler: () => {
+                if(!this.hasToken('gold')) {
+                    this.sacrifice();
+                    return;
+                }
+
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
-                        menuTitle: 'Discard a gold from ' + this.name + '?',
+                        menuTitle: 'Discard 1 gold from ' + this.name + '?',
                         buttons: [
                             { text: 'Yes', method: 'discardGold' },
                             { text: 'No', method: 'sacrifice' }
