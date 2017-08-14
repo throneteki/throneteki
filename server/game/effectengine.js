@@ -40,9 +40,8 @@ class EffectEngine {
     }
 
     onCardMoved(event) {
-        let originalArea = event.originalLocation === 'hand' ? 'hand' : 'play area';
         let newArea = event.newLocation === 'hand' ? 'hand' : 'play area';
-        this.removeTargetFromPersistentEffects(event.card, originalArea);
+        this.removeTargetFromEffects(event.card, event.originalLocation);
         this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === event.card && (effect.location === event.originalLocation || event.parentChanged));
         this.addTargetForPersistentEffects(event.card, newArea);
     }
@@ -94,9 +93,10 @@ class EffectEngine {
         });
     }
 
-    removeTargetFromPersistentEffects(card, targetLocation) {
+    removeTargetFromEffects(card, location) {
+        let area = location === 'hand' ? 'hand' : 'play area';
         _.each(this.effects, effect => {
-            if(effect.targetLocation === targetLocation && effect.location !== 'any') {
+            if(effect.targetLocation === area && effect.location !== 'any' || location === 'play area' && effect.duration !== 'persistent') {
                 effect.removeTarget(card);
             }
         });
