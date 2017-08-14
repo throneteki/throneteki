@@ -425,6 +425,11 @@ class Game extends EventEmitter {
             target = player.activePlot.cardData;
         }
 
+        // Ensure that manually setting reserve isn't limited by any min reserve effects
+        if(stat === 'reserve') {
+            player.minReserve = 0;
+        }
+
         if(stat === 'claim' && _.isNumber(player.activePlot.claimSet)) {
             player.activePlot.claimSet += value;
 
