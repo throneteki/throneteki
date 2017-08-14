@@ -42,7 +42,7 @@ class Player extends Spectator {
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
         this.cannotTriggerCardAbilities = false;
-        this.cannotMarshalOrPutIntoPlayByTitle = [];
+        this.playCardRestrictions = [];
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
         this.mustChooseAsClaim = [];
@@ -454,10 +454,10 @@ class Player extends Spectator {
         return true;
     }
 
-    canPutIntoPlay(card) {
+    canPutIntoPlay(card, playingType = 'play') {
         let owner = card.owner;
 
-        if(this.cannotMarshalOrPutIntoPlayByTitle.includes(card.name)) {
+        if(_.any(this.playCardRestrictions, restriction => restriction(card, playingType))) {
             return false;
         }
 
@@ -493,7 +493,7 @@ class Player extends Spectator {
     }
 
     putIntoPlay(card, playingType = 'play') {
-        if(!this.canPutIntoPlay(card)) {
+        if(!this.canPutIntoPlay(card, playingType)) {
             return;
         }
 

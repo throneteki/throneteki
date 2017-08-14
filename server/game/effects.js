@@ -561,12 +561,13 @@ const Effects = {
         };
     },
     cannotMarshalOrPutIntoPlayByTitle: function(name) {
+        let restriction = card => card.name === name;
         return {
             apply: function(player) {
-                player.cannotMarshalOrPutIntoPlayByTitle.push(name);
+                player.playCardRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.cannotMarshalOrPutIntoPlayByTitle = _.reject(player.cannotMarshalOrPutIntoPlayByTitle, n => n === name);
+                player.playCardRestrictions = _.reject(player.playCardRestrictions, r => r === restriction);
             }
         };
     },
