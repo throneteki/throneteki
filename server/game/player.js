@@ -1163,6 +1163,15 @@ class Player extends Spectator {
         this.promptState.cancelPrompt();
     }
 
+    getStats(isActivePlayer) {
+        return {
+            claim: this.getClaim(),
+            gold: !isActivePlayer && this.phase === 'setup' ? 0 : this.gold,
+            reserve: this.getTotalReserve(),
+            totalPower: this.getTotalPower()
+        };
+    }
+
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
@@ -1175,13 +1184,11 @@ class Player extends Spectator {
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
             bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
             cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
-            claim: this.getClaim(),
             deadPile: this.getSummaryForCardList(this.deadPile, activePlayer),
             discardPile: this.getSummaryForCardList(this.discardPile, activePlayer),
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
-            gold: !isActivePlayer && this.phase === 'setup' ? 0 : this.gold,
             hand: this.getSummaryForCardList(this.hand, activePlayer, true),
             id: this.id,
             left: this.left,
@@ -1193,8 +1200,7 @@ class Player extends Spectator {
             plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
-            reserve: this.getTotalReserve(),
-            totalPower: this.getTotalPower(),
+            stats: this.getStats(isActivePlayer),
             user: _.omit(this.user, ['password', 'email'])
         };
 

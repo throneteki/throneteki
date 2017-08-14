@@ -57,6 +57,10 @@
   text-transform: uppercase;
   position: relative;
   top: 5px;
+
+  span {
+    vertical-align: middle;
+  }
 }
 
 .main-header {
@@ -105,10 +109,10 @@
   background-color: fade(@navbar-inverse-bg, 80%);
 
   & a {
-    color: saddlebrown;
+    color: @brand-tertiary;
 
     &:active {
-      color: saddlebrown;
+      color: @brand-tertiary;
     }
   }
 

@@ -4,20 +4,22 @@
   bottom: 0;
   left: 0;
   right: 0;
-  top: 55px;
+  top: 50px;
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
 }
 
 .main-window {
   display: flex;
   flex-direction: row;
+  flex: 1;
 }
 
 .card-pile {
   padding: 0px;
   position: relative;
-  margin: 5px 7px;
+  margin: 0px 5px;
 
   &.vertical {
     height: @card-height;
@@ -28,6 +30,10 @@
     height: @card-width;
     width: @card-height;
   }
+
+  .card-placeholder {
+    height: @card-height;
+  }
 }
 
 .player-home-row .card-pile.horizontal {
@@ -37,15 +43,11 @@
 
 .popup {
   z-index: @layer-card-menu;
-
-  .inner {
-    display: flex;
-    flex-wrap: wrap;
-  }
+  background-color: rgba(0, 0, 0, 0.85);
 
   a {
     display: inline-block;
-    margin: 0 10px 8px 4px;
+    margin: 0 10px 8px 0;
     text-decoration: none;
 
     &:hover {
@@ -53,18 +55,20 @@
       cursor: pointer;
     }
   }
+
+  .panel-title {
+    margin: 0 5px;
+  }
 }
 
 .select-cursor {
   cursor: url(/img/crosshairs.cur), default;
 }
 
-// LEFT SIDE
-.left-side {
-  width: 310px;
+.prompt-area {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .player-info {
@@ -74,23 +78,29 @@
 }
 
 .player-stats {
-  width: 144px;
+  display: flex;
+
+  &.panel {
+    margin: 0;
+    border-radius: 0;
+  }
 }
 
 .player-stats b {
-  max-width: calc(~"100% - 40px");
   display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   vertical-align: middle;
 }
 
 .state {
   height: 27px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+  border-right: solid 2px;
 
   span {
-    padding-right: 5px;
+    padding-right: 3px;
+    padding-left: 3px;
   }
 }
 
@@ -101,19 +111,15 @@
   height: 22px;
   width: 22px;
   background-color: transparent;
-  border-color: black;
-  color: white;
 }
 
 .btn-stat:hover {
-  background-color: rgba(0,128,0,0.35);
-  border-color: @brand-primary;
-  color: white;
+  background-color: @brand-tertiary;
+  border-color: @brand-tertiary;
 }
 
 .btn-stat:focus {
   outline: 0px;
-  color: white;
 }
 
 .deck-info {
@@ -157,42 +163,229 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
 
   &.our-side {
-    justify-content: flex-start;
+    justify-content: flex-end;
+  }
+}
+
+.arrow {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  position: absolute;
+  border: 8px solid transparent;
+
+  &.left {
+    border-right-color: black;
+  }
+
+  &.right {
+    border-left-color: black;
+  }
+
+  &.up {
+    border-bottom-color: black;
+  }
+
+  &.down {
+    border-top-color: black;
+  }
+
+  &.lg {
+    border-width: 12px;
+  }
+}
+
+.our-side {
+  .plot {
+    .popup {
+      bottom: -2px;
+      top: initial;
+
+      .arrow {
+        top: calc(~'100% - 40px');
+      }
+    }
+  }
+
+  .discard {
+    .popup {
+      bottom: 95px;
+      top: initial;
+
+      .arrow {
+        bottom: -30px;
+        top: initial;
+      }
+    }
+  }
+
+  .dead {
+    .popup {
+      bottom: 75px;
+      top: initial;
+
+      .arrow {
+        bottom: -30px;
+        top: initial;
+      }
+    }
+  }
+
+  .agenda {
+    .popup {
+      bottom: 95px;
+      top: initial;
+
+      .arrow {
+        bottom: -30px;
+        top: initial;
+      }
+    }
+  }
+}
+
+.additional-cards {
+  .popup {
+    position: absolute;
+    bottom: 75px;
+    right: 0;
+
+    .inner {
+      min-width: @card-height * 2 + (2 * 5px);
+      min-height: @card-width * 2 + (2 * 5px);
+
+      .card-wrapper {
+        margin: 5px 5px 0 0;
+      }
+    }
+
+    .arrow {
+      bottom: -30px;
+      right: 20px;
+    }
   }
 }
 
 .plot {
   margin: 5px;
- 
-  .popup.panel {
+
+  .popup {
     position: absolute;
-    width: 200px;
     min-height: 92px;
-    left: 75px;
-    top: 0;
-    transform: translateY(-50%);
-    background-color: black;
-    &.hidden {
-      display: none;
+    min-width: 168px;
+    left: 90px;
+    top: -75px;
+
+    .inner {
+      columns: 2;
+      min-height: 128px;
+
+      .card-wrapper {
+        margin: 5px 0 0 0;
+      }
+    }
+
+    .arrow {
+      left: -25px;
+      top: calc(~'65% - 40px');
     }
   }
 }
 
-.arrow-indicator {
-  position: absolute;
-  left: -10px;
-  top: calc(~"50% + 10px");
-  display: inline-block;
-  height: 20px;
-  width: 20px;
-  background-color: black;
-  transform: rotate(45deg);
-  border: 1px solid rgba(71, 58, 56, 0.95);
-  border-top: none;
-  border-right: none;
+.discard {
+  .popup {
+    position: absolute;
+    min-height: 146px;
+    bottom: initial;
+    top: 95px;
+
+    .inner {
+      min-height: @card-height;
+      width: @card-width * 5 + (5 * 5px) + @scrollbar-width;
+      max-height: @card-height * 4 + (4 * 5px);
+      overflow-y: auto;
+
+      .card-wrapper {
+        margin: 5px 5px 0 0;
+      }
+    }
+
+    .arrow {
+      bottom: initial;
+      top: -60px;
+      left: 10px;
+    }
+  }
+}
+
+.dead {
+  .popup {
+    position: absolute;
+    top: 75px;
+    left: 0;
+
+    .inner {
+      min-height: @card-height;
+      width: @card-width * 5 + (5 * 5px) + @scrollbar-width;
+      max-height: @card-height * 4 + (4 * 5px);
+      overflow-y: auto;
+
+      .card-wrapper {
+        margin: 5px 5px 0 0;
+      }
+    }
+
+    .arrow {
+      bottom: initial;
+      top: -60px;
+      left: 10px;
+    }
+  }
+}
+
+.draw {
+  .popup {
+    position: absolute;
+    left: 0;
+    bottom: 95px;
+
+    .inner {
+      width: @card-width * 7 + (7 * 5px) + @scrollbar-width;
+      min-height: @card-height;
+      max-height: @card-height * 5 + (5 * 5px);
+
+      overflow-y: auto;
+    }
+  }
+
+  .arrow {
+    bottom: -30px;
+    left: 10px;
+  }
+}
+
+.agenda {
+  .popup {
+    position: absolute;
+    top: 95px;
+    left: 0;
+
+    .inner {
+      min-width: @card-width * 2 + (2 * 5px);
+      max-height: @card-height + 10px;
+      display: flex;
+    }
+
+    .arrow {
+      bottom: initial;
+      top: -60px;
+      left: 10px;
+    }
+  }
 }
 
 .middle-right {
@@ -252,7 +445,7 @@
   text-align: center;
   text-transform: uppercase;
   width: 200px !important;
-  position: relative; 
+  position: relative;
 }
 
 span.up-arrow {
@@ -267,7 +460,7 @@ span.up-arrow {
   border-bottom: 8px solid @brand-primary;
   left: 90px;
 
-  top: -9px;    
+  top: -9px;
 }
 
 span.down-arrow {
@@ -282,14 +475,7 @@ span.down-arrow {
   border-top: 8px solid @brand-primary;
   left: 90px;
 
-  top: -9px;    
-}
-
-.schemes-pane {
-  display: flex;
-  flex-direction: row;
-  margin: 5px;
-  margin-top: 0;
+  top: -9px;
 }
 
 // CENTER
@@ -314,146 +500,31 @@ span.down-arrow {
 
 .player-home-row {
   display: flex;
-  height: 100px;
+  margin-top: 5px;
+
+  &.our-side {
+    margin-top: 0;
+    margin-bottom: 5px;
+  }
+}
+
+.player-home-row-container {
+  display: flex;
 }
 
 .deck-cards {
   display: flex;
-  height: 100px;
 }
 
 .hand {
   height: @card-height;
   width: 342px;
   padding: 0px;
+  margin: 0px 5px;
 }
 
 .hand.squish .card-wrapper {
   position: absolute;
-}
-
-.agenda .popup {
-  position: absolute;
-  left: -100px;
-  top: 85px;
-  bottom: initial;
-  width: 500px;
-  min-height: 92px;
-
-  .arrow-indicator {
-    transform: rotate(135deg);
-    top: -11px;
-    left: 110px;
-  }
-
-  &.our-side {
-    top: initial;
-    bottom: 85px;
-
-    .arrow-indicator {
-      transform: rotate(-45deg);
-      top: inherit;
-      bottom: -11px;
-    }
-  }
-}
-
-.discard .popup {
-  position: absolute;
-  left: -100px;
-  top: 85px;
-  bottom: initial;
-  width: 500px;
-  min-height: 92px;
-  
-  .arrow-indicator {
-    transform: rotate(135deg);
-    top: -11px;
-    left: 110px;
-  }
-
-  &.our-side {
-    top: initial;
-    bottom: 85px;
-
-    .arrow-indicator {
-      transform: rotate(-45deg);
-      top: inherit;
-      bottom: -11px;
-    }
-  }
-}
-
-.player-home-row .additional-cards .popup {
-  position: absolute;
-  left: -380px;
-  top: 65px;
-  bottom: initial;
-  width: 465px;
-  min-height: 92px;
-
-  .arrow-indicator {
-    transform: rotate(135deg);
-    top: -11px;
-    left: 400px;
-  }
-
-  &.our-side {
-    top: initial;
-    bottom: 70px;
-
-    .arrow-indicator {
-      transform: rotate(-45deg);
-      top: inherit;
-      bottom: -11px;
-    }
-  }
-}
-
-.dead .popup {
-  position: absolute;
-  left: -90px;
-  top: 65px;
-  bottom: initial;
-  width: 465px;
-  min-height: 92px;
-  
-  .arrow-indicator {
-    transform: rotate(135deg);
-    top: -11px;
-    left: 100px;
-  }
-
-  &.our-side {
-    top: initial;
-    bottom: 70px;
-
-    .arrow-indicator {
-      transform: rotate(-45deg);
-      top: inherit;
-      bottom: -11px;
-    }
-  }
-}
-
-
-.draw {
-  .popup {
-    left: -271px;
-    position: absolute;
-    bottom: 85px;
-    width: 590px;
-    min-height: 92px;
-
-    .card {
-      margin: 2px;
-    }
-  }
-
-  .inner {
-    height: 450px;
-    overflow-y: scroll;
-  }
 }
 
 .card-row, .hand {
@@ -484,4 +555,25 @@ span.down-arrow {
 
 .game-status {
   margin-top: 10px;
+}
+
+.player-avatar {
+  padding-right: 10px;
+}
+
+.board-middle {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.board-inner {
+  flex: 1;
+  display: flex;
+}
+
+.close-button {
+  color: @foreground-color;
+  margin-bottom: 0 !important;
+  vertical-align: middle !important;
 }

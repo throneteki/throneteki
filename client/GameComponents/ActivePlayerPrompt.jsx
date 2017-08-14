@@ -136,7 +136,7 @@ class ActivePlayerPrompt extends React.Component {
 
             let option = (
                 <button key={ button.command + buttonIndex.toString() }
-                    className='btn btn-primary'
+                    className='btn btn-default'
                     onClick={ clickCallback }
                     onMouseOver={ event => this.onMouseOver(event, button.card) }
                     onMouseOut={ event => this.onMouseOut(event, button.card) }

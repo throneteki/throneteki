@@ -384,7 +384,7 @@ class InnerDeckEditor extends React.Component {
                         <Input name='numcards' type='text' label='Num' labelClass='col-sm-1' fieldClass='col-sm-2'
                             value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) }>
                             <div className='col-sm-1'>
-                                <button className='btn btn-default' onClick={ this.onAddCard.bind(this) }>Add</button>
+                                <button className='btn btn-primary' onClick={ this.onAddCard.bind(this) }>Add</button>
                             </div>
                         </Input>
                     </Typeahead>
