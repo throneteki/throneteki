@@ -571,8 +571,28 @@ const Effects = {
             }
         };
     },
-    cannotMarshal: cannotEffect('marshal'),
-    cannotPlay: cannotEffect('play'),
+    cannotMarshal: function(condition) {
+        let restriction = (card, playingType) => playingType === 'marshal' && condition(card);
+        return {
+            apply: function(player) {
+                player.playCardRestrictions.push(restriction);
+            },
+            unapply: function(player) {
+                player.playCardRestrictions = _.reject(player.playCardRestrictions, r => r === restriction);
+            }
+        };
+    },
+    cannotPlay: function(condition) {
+        let restriction = (card, playingType) => playingType === 'play' && condition(card);
+        return {
+            apply: function(player) {
+                player.playCardRestrictions.push(restriction);
+            },
+            unapply: function(player) {
+                player.playCardRestrictions = _.reject(player.playCardRestrictions, r => r === restriction);
+            }
+        };
+    },
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),
