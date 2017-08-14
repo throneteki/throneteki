@@ -38,6 +38,7 @@ class TheNorthRemembers extends DrawCard {
                 activePromptTitle: 'Select a character or location',
                 source: this,
                 cardCondition: card => (
+                    card.location === 'play area' &&
                     card.controller === currentPlayer && 
                     (card.getType() === 'character' || card.getType() === 'location')),
                 onSelect: (player, cards) => this.onCardSelected(player, cards),
