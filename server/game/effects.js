@@ -562,28 +562,17 @@ const Effects = {
     },
     cannotMarshalOrPutIntoPlayByTitle: function(name) {
         let restriction = card => card.name === name;
-        return {
-            apply: function(player) {
-                player.playCardRestrictions.push(restriction);
-            },
-            unapply: function(player) {
-                player.playCardRestrictions = _.reject(player.playCardRestrictions, r => r === restriction);
-            }
-        };
+        return this.cannotPutIntoPlay(restriction);
     },
     cannotMarshal: function(condition) {
         let restriction = (card, playingType) => playingType === 'marshal' && condition(card);
-        return {
-            apply: function(player) {
-                player.playCardRestrictions.push(restriction);
-            },
-            unapply: function(player) {
-                player.playCardRestrictions = _.reject(player.playCardRestrictions, r => r === restriction);
-            }
-        };
+        return this.cannotPutIntoPlay(restriction);
     },
     cannotPlay: function(condition) {
         let restriction = (card, playingType) => playingType === 'play' && condition(card);
+        return this.cannotPutIntoPlay(restriction);
+    },
+    cannotPutIntoPlay: function(restriction) {
         return {
             apply: function(player) {
                 player.playCardRestrictions.push(restriction);
