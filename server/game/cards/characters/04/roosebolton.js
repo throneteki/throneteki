@@ -4,14 +4,20 @@ class RooseBolton extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isAttacking(this)
+                afterChallenge: event => {
+                    if(event.challenge.winner === this.controller && event.challenge.isAttacking(this)) {
+                        this.str = this.getStrength();
+                        return true;
+                    }
+                    return false;
+                }
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
                 activePromptTitle: 'Select character(s)',
                 numCards: 99,
                 multiSelect: true,
-                maxStat: () => this.getStrength(),
+                maxStat: () => this.str,
                 cardStat: card => card.getStrength(),
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller !== this.controller,
                 gameAction: 'kill'
