@@ -6,7 +6,7 @@ class RooseBolton extends DrawCard {
             when: {
                 afterChallenge: event => {
                     if(event.challenge.winner === this.controller && event.challenge.isAttacking(this)) {
-                        this.str = this.getStrength();
+                        this.strengthAtInitiation = this.getStrength();
                         return true;
                     }
                     return false;
@@ -17,7 +17,7 @@ class RooseBolton extends DrawCard {
                 activePromptTitle: 'Select character(s)',
                 numCards: 99,
                 multiSelect: true,
-                maxStat: () => this.str,
+                maxStat: () => this.strengthAtInitiation,
                 cardStat: card => card.getStrength(),
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller !== this.controller,
                 gameAction: 'kill'
