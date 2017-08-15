@@ -71,12 +71,14 @@ const Effects = {
         return {
             apply: function(card, context) {
                 let challenge = context.game.currentChallenge;
-                challenge.addAttacker(card, false);
+                if(card.canParticipateInChallenge()) {
+                    challenge.addAttacker(card, false);
+                }
             },
             unapply: function(card, context) {
                 let challenge = context.game.currentChallenge;
 
-                if(challenge) {
+                if(challenge && challenge.isAttacking(card)) {
                     challenge.removeFromChallenge(card);
                 }
             }
