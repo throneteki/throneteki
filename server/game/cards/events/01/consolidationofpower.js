@@ -9,7 +9,7 @@ class ConsolidationOfPower extends DrawCard {
             phase: 'marshal',
             target: {
                 numCards: 99,
-                activePromptTitle: 'Select characters',
+                activePromptTitle: 'Select character(s)',
                 maxStat: () => 4,
                 cardStat: card => card.getStrength(),
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
@@ -37,7 +37,7 @@ class ConsolidationOfPower extends DrawCard {
 
         card.modifyPower(1);
 
-        this.game.addMessage('{0} uses {1} to kneel {2} and have {3} gain 1 power',
+        this.game.addMessage('{0} plays {1} to kneel {2} and have {3} gain 1 power',
             player, this, this.cards, card);
 
         return true;

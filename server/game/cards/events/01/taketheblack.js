@@ -7,12 +7,11 @@ class TakeTheBlack extends DrawCard {
             max: ability.limit.perRound(1),
             phase: 'dominance',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.cardCondition(card)
             },
             handler: context => {
                 this.game.takeControl(context.player, context.target);
-                this.game.addMessage('{0} uses {1} to take control of {2}', context.player, this, context.target);
+                this.game.addMessage('{0} plays {1} to take control of {2}', context.player, this, context.target);
             }
         });
     }

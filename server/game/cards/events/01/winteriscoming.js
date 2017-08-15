@@ -12,7 +12,7 @@ class WinterIsComing extends DrawCard {
                     effect: ability.effects.modifyClaim(1)
                 }));
 
-                this.game.addMessage('{0} uses {1} to raise the claim value on their revealed plot card by 1 until the end of the challenge', 
+                this.game.addMessage('{0} plays {1} to raise the claim value on their revealed plot card by 1 until the end of the challenge', 
                     this.controller, this);
             }
         });

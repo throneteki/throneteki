@@ -6,7 +6,6 @@ class WakingTheDragon extends DrawCard {
         this.action({
             title: 'Stand a character',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card =>
                     card.location === 'play area'
                     && card.getType() === 'character'
@@ -15,7 +14,7 @@ class WakingTheDragon extends DrawCard {
                     && card.controller === this.controller
             },
             handler: context => {
-                var targetCharacter = context.target;
+                let targetCharacter = context.target;
                 context.player.standCard(targetCharacter);
 
                 this.atEndOfPhase(ability => ({
@@ -23,7 +22,7 @@ class WakingTheDragon extends DrawCard {
                     effect: ability.effects.returnToHandIfStillInPlay(true)
                 }));
 
-                this.game.addMessage('{0} uses {1} to stand {2}',
+                this.game.addMessage('{0} plays {1} to stand {2}',
                     this.controller, this, targetCharacter);
             }
         });

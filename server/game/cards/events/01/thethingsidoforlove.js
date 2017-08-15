@@ -8,14 +8,14 @@ class TheThingsIDoForLove extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                activePromptTitle: 'Select character',
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' && card.getCost() <= this.controller.gold
             },
             handler: context => {
+                //TODO: needs a cost function
                 context.target.controller.returnCardToHand(context.target);
                 context.player.gold -= context.target.getCost();
 
-                this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', context.player, this, context.target, context.target.owner);
+                this.game.addMessage('{0} plays {1} to return {2} to {3}\'s hand', context.player, this, context.target, context.target.owner);
             }
         });
     }

@@ -9,7 +9,6 @@ class RisenFromTheSea extends DrawCard {
             },
             location: 'hand',
             target: {
-                activePromptTitle: 'Select character to save',
                 cardCondition: (card, context) => context.event.cards.includes(card) && card.isFaction('greyjoy') && card.controller === this.controller
             },
             handler: context => {

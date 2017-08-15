@@ -5,7 +5,6 @@ class Confinement extends DrawCard {
         this.action({
             title: 'Remove icons from character',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.cardCondition(card)
             },
             handler: context => {
@@ -17,6 +16,9 @@ class Confinement extends DrawCard {
                         ability.effects.removeIcon('power')
                     ]
                 }));
+
+                this.game.addMessage('{0} plays {1} to remove a {2}, an {3} and a {4} from {5} until the end of the phase',
+                    this.controller, this, 'military', 'intrigue', 'power', context.target);
             }
         });
     }
