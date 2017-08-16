@@ -629,6 +629,26 @@ const Costs = {
                 }
             }
         };
+    },
+    /**
+     * Cost implemented specifically for The Things I Do For Love
+     * TODO: needs to be reducable for cards like Littlefinger's Meddling and Paxter Redwyne.
+     */
+    payXGoldForTTIDFL: function(getMinimumCharCost) {
+        return {
+            canPay: function(context) {
+                return context.player.gold >= getMinimumCharCost();
+            },
+            resolve: function(context, result = { resolved: false }) {
+                context.game.queueStep(new PayXGoldPrompt(context.player.gold, context, getMinimumCharCost()));
+                result.value = true;
+                result.resolved = true;
+                return result;
+            },
+            pay: function(context) {
+                context.game.addGold(context.player, -context.goldCostAmount);
+            }
+        };
     }
 };
 
