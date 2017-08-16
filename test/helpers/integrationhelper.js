@@ -3,10 +3,10 @@
 
 const _ = require('underscore');
 
+require('./objectformatters.js');
+
 const DeckBuilder = require('./deckbuilder.js');
 const GameFlowWrapper = require('./gameflowwrapper.js');
-const BaseCard = require('../../server/game/basecard.js');
-const Player = require('../../server/game/player.js');
 
 const ProxiedGameFlowWrapperMethods = [
     'startGame', 'keepStartingHands', 'skipSetupPhase', 'selectFirstPlayer',
@@ -16,18 +16,6 @@ const ProxiedGameFlowWrapperMethods = [
 ];
 
 const deckBuilder = new DeckBuilder();
-
-// Add custom toString methods for better Jasmine output
-function formatObject(...keys) {
-    return function() {
-        let properties = _.pick(this, ...keys);
-        let formattedProperties = _.map(_.pairs(properties), ([key, value]) => key + ': ' + jasmine.pp(value));
-        return this.constructor.name + '({ ' + formattedProperties.join(', ') + ' })';
-    };
-}
-
-BaseCard.prototype.toString = formatObject('name', 'location');
-Player.prototype.toString = formatObject('name');
 
 var customMatchers = {
     toHavePrompt: function(util, customEqualityMatchers) {

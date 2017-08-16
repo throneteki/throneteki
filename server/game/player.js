@@ -978,11 +978,9 @@ class Player extends Spectator {
     }
 
     moveCard(card, targetLocation, options = {}) {
-        this.removeCardFromPile(card);
+        let targetPile = this.getSourceList(targetLocation);
 
-        var targetPile = this.getSourceList(targetLocation);
-
-        if(!targetPile || targetPile.contains(card)) {
+        if(!targetPile) {
             return;
         }
 
@@ -997,33 +995,51 @@ class Player extends Spectator {
                 card: card
             };
 
-            this.game.raiseEvent('onCardLeftPlay', params, event => {
-                card.attachments.each(attachment => {
-                    this.removeAttachment(attachment, false);
-                });
-
-                while(card.dupes.size() > 0 && targetLocation !== 'play area') {
-                    this.removeDuplicate(card, true);
-                }
-
-                event.card.leavesPlay();
-
-                if(event.card.parent) {
-                    event.card.parent.removeAttachment(event.card);
-                }
-
-                card.moveTo(targetLocation);
+            this.game.raiseEvent('onCardLeftPlay', params, () => {
+                this.synchronousMoveCard(card, targetLocation, options);
             });
+            return;
+        }
+
+        this.synchronousMoveCard(card, targetLocation, options);
+    }
+
+    synchronousMoveCard(card, targetLocation, options = {}) {
+        this.removeCardFromPile(card);
+
+        let targetPile = this.getSourceList(targetLocation);
+
+        if(!targetPile || targetPile.contains(card)) {
+            return;
+        }
+
+        if(card.location === 'play area') {
+            card.attachments.each(attachment => {
+                this.removeAttachment(attachment, false);
+            });
+
+            while(card.dupes.size() > 0 && targetLocation !== 'play area') {
+                this.removeDuplicate(card, true);
+            }
+
+            if(card.parent) {
+                card.parent.removeAttachment(card);
+            }
+        }
+
+        if(['play area', 'active plot'].includes(card.location)) {
+            card.leavesPlay();
         }
 
         if(card.location === 'active plot') {
-            card.leavesPlay();
             this.game.raiseEvent('onCardLeftPlay', { player: this, card: card });
         }
 
-        if(card.location !== 'play area') {
-            card.moveTo(targetLocation);
+        if(card.parent) {
+            card.parent.removeAttachment(card);
         }
+
+        card.moveTo(targetLocation);
 
         if(targetLocation === 'active plot') {
             this.activePlot = card;
