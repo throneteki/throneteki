@@ -3,19 +3,20 @@ const _ = require('underscore');
 const BaseStep = require('../gamesteps/basestep');
 
 class PayXGoldPrompt extends BaseStep {
-    constructor(limit, context) {
+    constructor(min, max, context) {
         super();
 
-        this.limit = limit;
+        this.min = min;
+        this.max = max;
         this.context = context;
     }
 
     continue() {
-        let range = _.range(1, this.limit + 1).reverse();
-
-        if(this.limit === 0) {
+        if(this.limit === 0 || this.min > this.max) {
             return;
         }
+
+        let range = _.range(this.min, this.max + 1).reverse();
 
         let buttons = _.map(range, gold => {
             return { text: gold, method: 'resolveCost', arg: gold };
