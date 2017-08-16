@@ -4,40 +4,22 @@ class JoffreyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => {
-                    let card = event.card;
-                    if(this.controller !== card.controller || event.playingType !== 'marshal' || card.getType() !== 'character' || !card.isLoyal()) {
-                        return false;
-                    }
-
-                    this.pendingCard = card;
-
-                    return true;
-                }
+                onCardEntersPlay: event => this.controller === event.card.controller && event.playingType === 'marshal' &&
+                                           event.card.getType() === 'character' && event.card.isLoyal()
             },
             cost: [
-                //Todo: this kneel cost will currently prompt, even though there is only 1 option. 
-                //Add kneelSpecificCard() to costs.js
-                ability.costs.kneel(card => card === this.pendingCard),
+                ability.costs.kneelSpecific(context => context.event.card),
                 ability.costs.kneelFactionCard()
             ],
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' && 
-                        !card.hasTrait('King') &&
-                        card.getType() === 'character' && 
-                        card.getCost() < this.pendingCard.getCost()),
-                    gameAction: 'kill',
-                    onSelect: (p, card) => {
-                        card.controller.killCharacter(card);
-                        this.game.addMessage('{0} uses {1} to kneel {2} and their faction card to kill {3}', this.controller, this, this.pendingCard, card);
-                        
-                        return true;
-                    }
-                });
+            target: {
+                cardCondition: (card, context) => card.location === 'play area' && !card.hasTrait('King') && card.getType() === 'character' &&
+                                                  card.getCost() < context.event.card.getCost(),
+                gameAction: 'kill'
+            },
+            handler: context => {
+                this.game.killCharacter(context.target);
+                this.game.addMessage('{0} uses {1}, kneels their faction card and kneels {2} to kill {3}',
+                    this.controller, this, context.event.card, context.target);
             }
         });
     }
