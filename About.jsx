@@ -53,6 +53,7 @@ class About extends React.Component {
                         <li>/give-control - Give control of a card to your opponent.  Use with caution</li>
                         <li>/give-icon x - Give a character an x icon; where 'x' is one of 'military', 'intrigue', 'power'</li>
                         <li>/kill - Manually kill a character.  Use with caution</li>
+                        <li>/move-bottom - Move a card to the bottom of your deck</li>
                         <li>/pillage - Discards the top card from your deck</li>
                         <li>/power x - Sets the power of a card to x</li>
                         <li>/strength x - Sets the strength of a card to x</li>
