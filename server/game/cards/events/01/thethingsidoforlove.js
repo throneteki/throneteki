@@ -10,7 +10,7 @@ class TheThingsIDoForLove extends DrawCard {
             phase: 'challenge',
             cost: [
                 ability.costs.kneelFactionCard(),
-                ability.costs.payXGoldForTTIDFL(() => this.getMinimumCharCost())
+                ability.costs.payXGold(() => this.getMinimumCharCost(), () => this.controller.gold)
             ],
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' &&

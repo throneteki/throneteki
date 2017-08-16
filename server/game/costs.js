@@ -602,21 +602,23 @@ const Costs = {
     /**
      * Cost where the player gets prompted to pay from 1 up to the lesser of two values: 
      * the passed value and either the player's or his opponent's gold.
-     * Used by Ritual of R'hllor and Loot.
+     * Used by Ritual of R'hllor, Loot and The Things I Do For Love.
      * TODO: needs to be reducable for cards like Littlefinger's Meddling and Paxter Redwyne.
      */
-    payXGold: function(maxFunc, opponentObj = false) {
+    payXGold: function(minFunc, maxFunc, opponentObj = false) {
         return {
             canPay: function(context) {
                 if(!opponentObj) {
-                    return context.player.gold >= 1;
+                    return context.player.gold >= minFunc();
                 }
-                return opponentObj.gold >= 1;
+                return opponentObj.gold >= minFunc();
             },
             resolve: function(context, result = { resolved: false }) {
                 let gold = opponentObj ? opponentObj.gold : context.player.gold;
-                let limit = _.min([maxFunc(), gold]);
-                context.game.queueStep(new PayXGoldPrompt(limit, context));
+                let max = _.min([maxFunc(), gold]);
+
+                context.game.queueStep(new PayXGoldPrompt(minFunc(), max, context));
+
                 result.value = true;
                 result.resolved = true;
                 return result;
@@ -627,26 +629,6 @@ const Costs = {
                 } else {
                     context.game.addGold(opponentObj, -context.goldCostAmount);
                 }
-            }
-        };
-    },
-    /**
-     * Cost implemented specifically for The Things I Do For Love
-     * TODO: needs to be reducable for cards like Littlefinger's Meddling and Paxter Redwyne.
-     */
-    payXGoldForTTIDFL: function(getMinimumCharCost) {
-        return {
-            canPay: function(context) {
-                return context.player.gold >= getMinimumCharCost();
-            },
-            resolve: function(context, result = { resolved: false }) {
-                context.game.queueStep(new PayXGoldPrompt(context.player.gold, context, getMinimumCharCost()));
-                result.value = true;
-                result.resolved = true;
-                return result;
-            },
-            pay: function(context) {
-                context.game.addGold(context.player, -context.goldCostAmount);
             }
         };
     }
