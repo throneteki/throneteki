@@ -71,6 +71,21 @@ const Costs = {
         };
     },
     /**
+     * Cost that kneels a specific card passed into the function
+     */
+    kneelSpecific: function(cardFunc) {
+        return {
+            canPay: function(context) {
+                let card = cardFunc(context);
+                return !card.kneeled;
+            },
+            pay: function(context) {
+                let card = cardFunc(context);
+                context.player.kneelCard(card);
+            }
+        };
+    },
+    /**
      * Cost that requires kneeling a card that matches the passed condition
      * predicate function.
      */
