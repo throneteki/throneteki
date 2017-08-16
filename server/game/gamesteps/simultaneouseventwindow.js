@@ -18,6 +18,7 @@ class SimultaneousEventWindow extends BaseStep {
         this.pipeline.initialise([
             new SimpleStep(game, () => this.openWindow('cancelinterrupt')),
             new SimpleStep(game, () => this.perCardWindow('cancelinterrupt')),
+            new SimpleStep(game, () => this.automaticSaveWithDupes()),
             new SimpleStep(game, () => this.openWindow('forcedinterrupt')),
             new SimpleStep(game, () => this.perCardWindow('forcedinterrupt')),
             new SimpleStep(game, () => this.openWindow('interrupt')),
@@ -92,6 +93,19 @@ class SimultaneousEventWindow extends BaseStep {
                 abilityType: abilityType,
                 event: event
             });
+        });
+    }
+
+    automaticSaveWithDupes() {
+        if(this.event.cancelled || !this.event.allowAutomaticSave()) {
+            return;
+        }
+
+        this.filterOutCancelledEvents();
+        _.each(this.event.cards, card => {
+            if(this.game.saveWithDupe(card)) {
+                this.event.removeCard(card);
+            }
         });
     }
 

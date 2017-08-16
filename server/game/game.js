@@ -663,6 +663,18 @@ class Game extends EventEmitter {
         this.queueStep(new SimultaneousEventWindow(this, cards, properties));
     }
 
+    saveWithDupe(card) {
+        let player = card.controller;
+        if(player.removeDuplicate(card)) {
+            card.markAsSaved();
+            this.addMessage('{0} discards a duplicate to save {1}', player, card);
+            this.raiseEvent('onCardSaved', { card: card });
+            return true;
+        }
+
+        return false;
+    }
+
     killCharacters(cards, allowSave = true) {
         this.queueStep(new KillCharacters(this, cards, allowSave));
     }
