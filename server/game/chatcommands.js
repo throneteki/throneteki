@@ -28,7 +28,8 @@ class ChatCommands {
             '/bestow': this.bestow,
             '/disconnectme': this.disconnectMe,
             '/add-faction': this.addFaction,
-            '/remove-faction': this.removeFaction
+            '/remove-faction': this.removeFaction,
+            '/move-bottom': this.moveBottom
         };
         this.tokens = [
             'power',
@@ -386,6 +387,19 @@ class ChatCommands {
                 card.removeFaction(faction);
 
                 this.game.addMessage('{0} uses the /remove-faction command to remove the {1} keyword from {2}', p, faction, card);
+                return true;
+            }
+        });
+    }
+
+    moveBottom(player) {
+        this.game.promptForSelect(player, {
+            activePromptTitle: 'Select a card',
+            waitingPromptTitle: 'Waiting for opponent to move a card to the bottom of his deck',
+            cardCondition: card => card.controller === player && card.owner === player,
+            onSelect: (p, card) => {
+                player.moveCard(card, 'draw deck', { bottom: true });
+                this.game.addMessage('{0} uses the /move-bottom command to move {1} to the bottom of their deck', p, card);
                 return true;
             }
         });
