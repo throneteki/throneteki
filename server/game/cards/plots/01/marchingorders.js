@@ -3,14 +3,12 @@ const PlotCard = require('../../../plotcard.js');
 class MarchingOrders extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'location' || card.getType() === 'attachment',
-            targetLocation: 'hand',
-            effect: ability.effects.cannotMarshal()
+            targetType: 'player',
+            effect: ability.effects.cannotMarshal(card => card.getType() === 'location' || card.getType() === 'attachment')
         });
         this.persistentEffect({
-            match: card => card.getType() === 'event',
-            targetLocation: 'hand',
-            effect: ability.effects.cannotPlay()
+            targetType: 'player',
+            effect: ability.effects.cannotPlay(card => card.getType() === 'event')
         });
     }
 }

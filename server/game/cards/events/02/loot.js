@@ -4,10 +4,10 @@ class Loot extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => this.controller === challenge.winner && challenge.isUnopposed() &&
-                                                 this.opponentDeckSize() >= 1
+                afterChallenge: event => this.controller === event.challenge.winner && event.challenge.isUnopposed() &&
+                                         this.getOpponentDeckSize() >= 1
             },
-            cost: ability.costs.payXGold(() => this.opponentDeckSize(), this.game.getOtherPlayer(this.controller)),
+            cost: ability.costs.payXGold(() => 1, () => this.getOpponentDeckSize(), this.game.getOtherPlayer(this.controller)),
             handler: context => {
                 let opponent = this.game.getOtherPlayer(this.controller);
                 opponent.discardFromDraw(context.goldCostAmount);
@@ -17,7 +17,7 @@ class Loot extends DrawCard {
         });
     }
 
-    opponentDeckSize() {
+    getOpponentDeckSize() {
         let opponent = this.game.getOtherPlayer(this.controller);
 
         if(!opponent) {
