@@ -20,7 +20,8 @@ class KillCharacters extends BaseStep {
             this.game.raiseSimultaneousEvent(killable, {
                 eventName: 'onCharactersKilled',
                 params: {
-                    allowSave: this.allowSave
+                    allowSave: this.allowSave,
+                    automaticSaveWithDupe: true
                 },
                 handler: event => this.handleMultipleKills(event),
                 perCardEventName: 'onCharacterKilled',
@@ -53,11 +54,6 @@ class KillCharacters extends BaseStep {
             this.game.addMessage('{0} controlled by {1} cannot be killed',
                 card, card.controller);
             this.event.saveCard(card);
-        } else if(!card.dupes.isEmpty() && this.event.allowSave) {
-            if(card.controller.removeDuplicate(card)) {
-                this.game.addMessage('{0} discards a duplicate to save {1}', card.controller, card);
-                this.event.saveCard(card);
-            }
         }
     }
 
