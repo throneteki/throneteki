@@ -848,14 +848,6 @@ class Player extends Spectator {
     }
 
     discardCard(card, allowSave = true) {
-        if(!card.dupes.isEmpty() && allowSave) {
-            if(this.removeDuplicate(card)) {
-                this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                this.game.raiseEvent('onCardSaved', { card: card });
-                return;
-            }
-        }
-
         this.discardCards([card], allowSave);
     }
 
@@ -865,6 +857,7 @@ class Player extends Spectator {
                 player: this,
                 cards: cards,
                 allowSave: allowSave,
+                automaticSaveWithDupe: true,
                 originalLocation: cards[0].location
             };
             this.game.raiseEvent('onCardsDiscarded', params, event => {
@@ -883,6 +876,7 @@ class Player extends Spectator {
             player: this,
             card: card,
             allowSave: allowSave,
+            automaticSaveWithDupe: true,
             originalLocation: card.location
         };
         this.game.raiseEvent('onCardDiscarded', params, event => {
