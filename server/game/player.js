@@ -924,20 +924,10 @@ class Player extends Spectator {
     }
 
     removeAttachment(attachment, allowSave = true) {
-        if(allowSave && !attachment.dupes.isEmpty() && this.removeDuplicate(attachment)) {
-            this.game.addMessage('{0} discards a duplicate to save {1}', this, attachment);
-            this.game.raiseEvent('onCardSaved', { card: attachment });
-            return;
-        }
-
-        while(attachment.dupes.size() > 0) {
-            this.removeDuplicate(attachment, true);
-        }
-
         if(attachment.isTerminal()) {
-            attachment.owner.moveCard(attachment, 'discard pile');
+            attachment.owner.moveCard(attachment, 'discard pile', { allowSave: allowSave });
         } else {
-            attachment.owner.moveCard(attachment, 'hand');
+            attachment.owner.moveCard(attachment, 'hand', { allowSave: allowSave });
         }
     }
 
