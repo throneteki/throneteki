@@ -886,16 +886,7 @@ class Player extends Spectator {
 
     returnCardToHand(card, allowSave = true) {
         this.game.applyGameAction('returnToHand', card, card => {
-            if(!card.dupes.isEmpty() && allowSave) {
-                if(!this.removeDuplicate(card)) {
-                    this.moveCard(card, 'hand');
-                } else {
-                    this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                    this.game.raiseEvent('onCardSaved', { card: card });
-                }
-            } else {
-                this.moveCard(card, 'hand');
-            }
+            this.moveCard(card, 'hand', { allowSave: allowSave });
         });
     }
 
