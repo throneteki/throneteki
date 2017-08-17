@@ -974,6 +974,8 @@ class Player extends Spectator {
     moveCard(card, targetLocation, options = {}) {
         let targetPile = this.getSourceList(targetLocation);
 
+        options = _.extend({ allowSave: false, bottom: false, isDupe: false }, options);
+
         if(!targetPile) {
             return;
         }
@@ -986,7 +988,9 @@ class Player extends Spectator {
 
             var params = {
                 player: this,
-                card: card
+                card: card,
+                allowSave: options.allowSave,
+                automaticSaveWithDupe: true
             };
 
             this.game.raiseEvent('onCardLeftPlay', params, () => {
