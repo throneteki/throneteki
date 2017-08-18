@@ -235,11 +235,7 @@ class Lobby {
 
         socket.send('users', this.getUserList());
 
-        this.messageRepository.getLastMessages((err, messages) => {
-            if(err) {
-                return;
-            }
-
+        this.messageRepository.getLastMessages().then(messages => {
             socket.send('lobbymessages', messages.reverse());
         });
 

@@ -1,24 +1,22 @@
+const monk = require('monk');
+
 const logger = require('../log.js');
 
-const BaseRepository = require('./baseRepository.js');
-
-class MessageRepository extends BaseRepository {
+class MessageRepository {
+    constructor(dbPath) {
+        let db = monk(dbPath);
+        this.messages = db.get('messages');
+    }
     addMessage(message) {
-        return this.db.collection('messages').insert(message, err => {
-            if(err) {
-                logger.error(err);
-            }
-        });
+        return this.messages.insert(message)
+            .catch(err => {
+                logger.error('Unable to insert message', err);
+                throw new Error('Unable to insert message');
+            });
     }
 
-    getLastMessages(callback) {
-        return this.db.collection('messages').find({}, { limit: 150, sort: { time: -1 } }).toArray((err, messages) => {
-            if(err) {
-                this.callCallbackIfPresent(callback, err);
-            }
-
-            this.callCallbackIfPresent(callback, err, messages);
-        });
+    getLastMessages() {
+        return this.messages.find({}, { limit: 150, sort: { time: -1 } });
     }
 }
 
