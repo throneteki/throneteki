@@ -1,53 +1,48 @@
 const _ = require('underscore');
+const monk = require('monk');
 
-const BaseRepository = require('./baseRepository.js');
 const logger = require('../log.js');
 
-class GameRepository extends BaseRepository {
+class GameRepository {
+    constructor(dbPath) {
+        let db = monk(dbPath);
+        this.games = db.get('games');
+    }
+
     create(game) {
-        return this.db.collection('games').insert(game, (err) => {
-            if(err) {
-                logger.error(err);
-            }
-        });
+        return this.games.insert(game)
+            .catch(err => {
+                logger.error('Unable to create game', err);
+                throw new Error('Unable to create game');
+            });
     }
 
     update(game) {
-        return this.db.collection('games').update({ gameId: game.gameId }, {
-            '$set': {
-                startedAt: game.startedAt,
-                players: game.players,
-                winner: game.winner,
-                winReason: game.winReason,
-                finishedAt: game.finishedAt
-            }
-        }, (err) => {
-            if(err) {
-                logger.error(err);
-            }
-        });
+        let properties = {
+            startedAt: game.startedAt,
+            players: game.players,
+            winner: game.winner,
+            winReason: game.winReason,
+            finishedAt: game.finishedAt
+        };
+        return this.games.update({ gameId: game.gameId }, { '$set': properties })
+            .catch(err => {
+                logger.error('Unable to update game', err);
+                throw new Error('Unable to update game');
+            });
     }
 
-    getAllGames(from, to, callback) {
-        this.db.collection('games').find().toArray((err, games) => {
-            if(err) {
-                logger.error(err);
-
-                if(callback) {
-                    return callback(err);
-                }
-
-                return;
-            }
-
-            if(callback) {
-                games = _.filter(games, game => {
+    getAllGames(from, to) {
+        return this.games.find()
+            .then(games => {
+                return _.filter(games, game => {
                     return game.startedAt >= from && game.startedAt < to;
                 });
-
-                return callback(err, games);
-            }
-        });
+            })
+            .catch(err => {
+                logger.error('Unable to get all games from', from, 'to', to, err);
+                throw new Error('Unable to get all games');
+            });
     }
 }
 
