@@ -1,19 +1,18 @@
 const logger = require('../log.js');
-const mongoskin = require('mongoskin');
+const monk = require('monk');
 
-const BaseRepository = require('./baseRepository.js');
+class DeckRepository {
+    constructor(dbPath) {
+        let db = monk(dbPath);
+        this.decks = db.get('decks');
+    }
 
-class DeckRepository extends BaseRepository {
-    getById(id, callback) {
-        return this.db.collection('decks').findOne({ _id: mongoskin.helper.toObjectID(id) }, (err, deck) => {
-            if(err) {
-                logger.error(err);
-
-                this.callCallbackIfPresent(callback, err);
-            }
-
-            this.callCallbackIfPresent(callback, err, deck);
-        });
+    getById(id) {
+        return this.decks.findOne({ _id: id })
+            .catch(err => {
+                logger.error('Unable to fetch deck', err);
+                throw new Error('Unable to fetch deck ' + id);
+            });
     }
 }
 

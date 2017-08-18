@@ -457,27 +457,27 @@ class Lobby {
             .then(result => {
                 packs = result;
 
-                this.deckRepository.getById(deckId, (err, deck) => {
-
-                    _.each(deck.plotCards, plot => {
-                        plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
-                    });
-
-                    _.each(deck.drawCards, draw => {
-                        draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
-                    });
-
-                    if(deck.agenda) {
-                        deck.agenda = cards[deck.agenda.code];
-                    }
-
-                    let validation = validateDeck(deck, packs);
-                    deck.status = validation.status;
-
-                    game.selectDeck(socket.user.username, deck);
-
-                    this.sendGameState(game);
+                return this.deckRepository.getById(deckId);
+            })
+            .then(deck => {
+                _.each(deck.plotCards, plot => {
+                    plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
                 });
+
+                _.each(deck.drawCards, draw => {
+                    draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
+                });
+
+                if(deck.agenda) {
+                    deck.agenda = cards[deck.agenda.code];
+                }
+
+                let validation = validateDeck(deck, packs);
+                deck.status = validation.status;
+
+                game.selectDeck(socket.user.username, deck);
+
+                this.sendGameState(game);
             })
             .catch(err => {
                 logger.info(err);
