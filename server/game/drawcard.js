@@ -90,7 +90,7 @@ class DrawCard extends BaseCard {
     }
 
     isLimited() {
-        return this.hasKeyword('limited') || !this.isBlank() && this.hasPrintedKeyword('limited');
+        return this.hasKeyword('limited') || (!this.isBlank() && this.hasPrintedKeyword('limited'));
     }
 
     isStealth() {
