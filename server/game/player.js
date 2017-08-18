@@ -932,6 +932,10 @@ class Player extends Spectator {
             return memo + card.getDominanceStrength();
         }, 0);
 
+        if(this.title) {
+            cardStrength += this.title.getDominanceStrength();
+        }
+
         return cardStrength + this.gold;
     }
 
