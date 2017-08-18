@@ -44,7 +44,6 @@ class UnbowedUnbentUnbroken extends DrawCard {
     }
 
     cancel(player) {
-        //I really want to get rid of stuff like this
         this.game.addMessage('{0} cancels the resolution of {1}', player, this);
 
         this.game.addGold(player, this.getCost());
