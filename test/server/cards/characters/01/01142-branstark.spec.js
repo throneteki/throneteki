@@ -1,12 +1,12 @@
 /* global describe, it, expect, beforeEach, integration */
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
-describe('Bran Stark', function() {
+describe('Bran Stark (Core)', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('stark', [
                 'Sneak Attack',
-                'Bran Stark',
+                'Bran Stark (Core)',
                 'Lady'
             ]);
             const deck2 = this.buildDeck('baratheon', [

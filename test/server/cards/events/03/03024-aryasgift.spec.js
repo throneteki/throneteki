@@ -6,7 +6,7 @@ describe('Arya\'s Gift', function() {
         beforeEach(function() {
             const deck = this.buildDeck('stark', [
                 'A Noble Cause',
-                'Winterfell Steward', 'Bran Stark', 'Milk of the Poppy', 'Arya\'s Gift'
+                'Winterfell Steward', 'Bran Stark (Core)', 'Milk of the Poppy', 'Arya\'s Gift'
             ]);
 
             this.player1.selectDeck(deck);
