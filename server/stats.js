@@ -17,7 +17,7 @@ if(_.size(args) < 2) {
 
 console.info('Running stats between', args[0], 'and', args[1]);
 
-gameRepository.getAllGames(args[0], args[1], (err, games) => {
+gameRepository.getAllGames(args[0], args[1]).then(games => {
     let rejected = { singlePlayer: 0, noWinner: 0 };
 
     console.info('' + _.size(games), 'total games');
