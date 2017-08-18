@@ -71,12 +71,14 @@ const Effects = {
         return {
             apply: function(card, context) {
                 let challenge = context.game.currentChallenge;
-                challenge.addAttacker(card, false);
+                if(card.canParticipateInChallenge()) {
+                    challenge.addAttacker(card, false);
+                }
             },
             unapply: function(card, context) {
                 let challenge = context.game.currentChallenge;
 
-                if(challenge) {
+                if(challenge && challenge.isAttacking(card)) {
                     challenge.removeFromChallenge(card);
                 }
             }
@@ -561,17 +563,27 @@ const Effects = {
         };
     },
     cannotMarshalOrPutIntoPlayByTitle: function(name) {
+        let restriction = card => card.name === name;
+        return this.cannotPutIntoPlay(restriction);
+    },
+    cannotMarshal: function(condition) {
+        let restriction = (card, playingType) => playingType === 'marshal' && condition(card);
+        return this.cannotPutIntoPlay(restriction);
+    },
+    cannotPlay: function(condition) {
+        let restriction = (card, playingType) => playingType === 'play' && condition(card);
+        return this.cannotPutIntoPlay(restriction);
+    },
+    cannotPutIntoPlay: function(restriction) {
         return {
             apply: function(player) {
-                player.cannotMarshalOrPutIntoPlayByTitle.push(name);
+                player.playCardRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.cannotMarshalOrPutIntoPlayByTitle = _.reject(player.cannotMarshalOrPutIntoPlayByTitle, n => n === name);
+                player.playCardRestrictions = _.reject(player.playCardRestrictions, r => r === restriction);
             }
         };
     },
-    cannotMarshal: cannotEffect('marshal'),
-    cannotPlay: cannotEffect('play'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),

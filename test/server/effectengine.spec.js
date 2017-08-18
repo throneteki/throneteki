@@ -97,10 +97,13 @@ describe('EffectEngine', function () {
         });
 
         describe('when coming into play', function() {
+            beforeEach(function() {
+                this.cardEnteringPlay = { location: 'play area' };
+            });
+
             describe('when an effect has persistent duration', function() {
                 beforeEach(function() {
                     this.effectSpy.duration = 'persistent';
-                    this.cardEnteringPlay = { location: 'play area' };
                     this.engine.onCardMoved({ card: this.cardEnteringPlay, originalLocation: 'hand', newLocation: 'play area' });
                 });
 
@@ -112,12 +115,25 @@ describe('EffectEngine', function () {
             describe('when an effect has a non-persistent duration', function() {
                 beforeEach(function() {
                     this.effectSpy.duration = 'untilEndOfChallenge';
-                    this.cardEnteringPlay = { location: 'play area' };
                     this.engine.onCardMoved({ card: this.cardEnteringPlay, originalLocation: 'hand', newLocation: 'play area' });
                 });
 
                 it('should not add the card entering play as a target', function() {
                     expect(this.effectSpy.addTargets).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('when a lasting effect has been applied as it comes into play', function() {
+                beforeEach(function() {
+                    this.effectSpy.duration = 'untilEndOfPhase';
+                    this.effectSpy.location = 'any';
+                    this.effectSpy.source = {};
+                    this.effectSpy.targetLocation = 'play area';
+                    this.engine.onCardMoved({ card: this.cardEnteringPlay, originalLocation: 'hand', newLocation: 'play area' });
+                });
+
+                it('should not remove the target from effects', function() {
+                    expect(this.effectSpy.removeTarget).not.toHaveBeenCalled();
                 });
             });
         });
@@ -155,6 +171,28 @@ describe('EffectEngine', function () {
                 describe('and the card leaving play is not the source for an effect', function() {
                     beforeEach(function() {
                         this.effectSpy.source = {};
+                        this.engine.onCardMoved({ card: this.cardLeavingPlay, originalLocation: 'play area', newLocation: 'discard pile' });
+                    });
+
+                    it('should remove the target from all effects', function() {
+                        expect(this.effectSpy.removeTarget).toHaveBeenCalledWith(this.cardLeavingPlay);
+                    });
+
+                    it('should not cancel the effect', function() {
+                        expect(this.effectSpy.cancel).not.toHaveBeenCalled();
+                    });
+
+                    it('should not remove the effect from the list', function() {
+                        expect(this.engine.effects).toContain(this.effectSpy);
+                    });
+                });
+
+                describe('and the card leaving play has a lasting effect applied', function() {
+                    beforeEach(function() {
+                        this.effectSpy.duration = 'untilEndOfPhase';
+                        this.effectSpy.location = 'any';
+                        this.effectSpy.source = {};
+                        this.effectSpy.targetLocation = 'play area';
                         this.engine.onCardMoved({ card: this.cardLeavingPlay, originalLocation: 'play area', newLocation: 'discard pile' });
                     });
 

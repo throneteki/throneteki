@@ -8,7 +8,7 @@ class RitualOfRhllor extends DrawCard {
             when: {
                 onDominanceDetermined: event => this.controller === event.winner && this.getNumberOfStandingRhllor() >= 1
             },
-            cost: ability.costs.payXGold(() => this.getNumberOfStandingRhllor()),
+            cost: ability.costs.payXGold(() => 1, () => this.getNumberOfStandingRhllor()),
             handler: context => {
                 let goldCost = context.goldCostAmount;
                 this.game.promptForSelect(this.controller, {
