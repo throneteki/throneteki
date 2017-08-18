@@ -527,10 +527,10 @@ const Costs = {
     playLimited: function() {
         return {
             canPay: function(context) {
-                return !context.source.hasPrintedKeyword('limited') || context.player.limitedPlayed < context.player.maxLimited;
+                return !context.source.isLimited() || context.player.limitedPlayed < context.player.maxLimited;
             },
             pay: function(context) {
-                if(context.source.hasPrintedKeyword('limited')) {
+                if(context.source.isLimited()) {
                     context.player.limitedPlayed += 1;
                 }
             }
