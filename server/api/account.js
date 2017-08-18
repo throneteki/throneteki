@@ -7,9 +7,11 @@ const crypto = require('crypto');
 const util = require('../util.js');
 const nodemailer = require('nodemailer');
 const moment = require('moment');
+const monk = require('monk');
 const UserService = require('../repositories/UserService.js');
 
-let userService = new UserService({ dbPath: config.dbPath });
+let db = monk(config.dbPath);
+let userService = new UserService(db);
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {

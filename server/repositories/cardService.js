@@ -1,12 +1,9 @@
 const _ = require('underscore');
 
-const monk = require('monk');
 const logger = require('../log.js');
 
 class CardService {
-    constructor(options) {
-        let db = monk(options.dbPath);
-
+    constructor(db) {
         this.cards = db.get('cards');
         this.packs = db.get('packs');
     }
