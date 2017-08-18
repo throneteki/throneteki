@@ -445,21 +445,10 @@ class Lobby {
             return;
         }
 
-        let cards = {};
-        let packs = {};
+        Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckRepository.getById(deckId)])
+            .then(results => {
+                let [cards, packs, deck] = results;
 
-        this.cardService.getAllCards()
-            .then(result => {
-                cards = result;
-
-                return this.cardService.getAllPacks();
-            })
-            .then(result => {
-                packs = result;
-
-                return this.deckRepository.getById(deckId);
-            })
-            .then(deck => {
                 _.each(deck.plotCards, plot => {
                     plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
                 });
