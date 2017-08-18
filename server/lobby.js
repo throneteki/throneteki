@@ -10,7 +10,7 @@ const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
 const MessageRepository = require('./repositories/messageRepository.js');
 const DeckRepository = require('./repositories/deckRepository.js');
-const CardService = require('./repositories/cardService.js');
+const CardService = require('./services/CardService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 const Settings = require('./settings.js');
 

@@ -21,7 +21,7 @@ const webpackConfig = require('../webpack.config.js');
 const pug = require('pug');
 const monk = require('monk');
 
-const UserService = require('./repositories/UserService.js');
+const UserService = require('./services/UserService.js');
 const version = require('../version.js');
 const Settings = require('./settings.js');
 

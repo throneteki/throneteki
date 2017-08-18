@@ -1,5 +1,5 @@
 const monk = require('monk');
-const NewsService = require('../repositories/newsService.js');
+const NewsService = require('../services/NewsService.js');
 const logger = require('../log.js');
 const config = require('../config.js');
 

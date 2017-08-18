@@ -5,7 +5,7 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
 
-const CardService = require('./repositories/cardService.js');
+const CardService = require('./services/CardService.js');
 
 function apiRequest(path) {
     const apiUrl = 'https://thronesdb.com/api/public/';

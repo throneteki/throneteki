@@ -1,6 +1,6 @@
 const monk = require('monk');
 const config = require('../config.js');
-const CardService = require('../repositories/cardService.js');
+const CardService = require('../services/CardService.js');
 
 let db = monk(config.dbPath);
 let cardService = new CardService(db);

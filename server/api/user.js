@@ -1,5 +1,5 @@
 const monk = require('monk');
-const UserService = require('../repositories/UserService.js');
+const UserService = require('../services/UserService.js');
 const logger = require('../log.js');
 const config = require('../config.js');
 
