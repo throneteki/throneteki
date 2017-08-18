@@ -8,6 +8,16 @@ class CardService {
         this.packs = db.get('packs');
     }
 
+    replaceCards(cards) {
+        return this.cards.remove({})
+            .then(() => this.cards.insert(cards));
+    }
+
+    replacePacks(cards) {
+        return this.packs.remove({})
+            .then(() => this.packs.insert(cards));
+    }
+
     getAllCards(options) {
         return this.cards.find({})
             .then(result => {
