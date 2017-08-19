@@ -12,12 +12,11 @@ class ScorchingDeserts extends DrawCard {
                 ability.costs.sacrificeSelf()
             ],
             target: {
-                activePromptTitle: 'Select a character',
-                cardCondition: card => (
+                cardCondition: (card, context) => (
                     card.location === 'play area' && 
                     card.getType() === 'character' &&
                     card.getNumberOfIcons() < 2 &&
-                    this.game.currentChallenge.isParticipating(card) &&
+                    (context.event.name === 'onAttackersDeclared' ? this.game.currentChallenge.isAttacking(card) : this.game.currentChallenge.isDefending(card)) &&
                     card.controller !== this.controller)
             },
             handler: context => {
