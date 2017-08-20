@@ -8,7 +8,7 @@ const logger = require('./log.js');
 const version = moment(require('../version.js'));
 const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
-const MessageRepository = require('./repositories/messageRepository.js');
+const MessageService = require('./services/MessageService.js');
 const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
@@ -20,7 +20,7 @@ class Lobby {
         this.users = {};
         this.games = {};
         this.config = options.config;
-        this.messageRepository = options.messageRepository || new MessageRepository(this.config.dbPath);
+        this.messageService = options.messageService || new MessageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
         this.router = options.router || new GameRouter(this.config);
@@ -235,7 +235,7 @@ class Lobby {
 
         socket.send('users', this.getUserList());
 
-        this.messageRepository.getLastMessages().then(messages => {
+        this.messageService.getLastMessages().then(messages => {
             socket.send('lobbymessages', messages.reverse());
         });
 
@@ -427,7 +427,7 @@ class Lobby {
     onLobbyChat(socket, message) {
         var chatMessage = { user: { username: socket.user.username, emailHash: socket.user.emailHash, noAvatar: socket.user.settings.disableGravatar }, message: message, time: new Date() };
 
-        this.messageRepository.addMessage(chatMessage);
+        this.messageService.addMessage(chatMessage);
         this.broadcastMessage('lobbychat', chatMessage);
     }
 

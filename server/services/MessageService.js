@@ -1,10 +1,7 @@
-const monk = require('monk');
-
 const logger = require('../log.js');
 
-class MessageRepository {
-    constructor(dbPath) {
-        let db = monk(dbPath);
+class MessageService {
+    constructor(db) {
         this.messages = db.get('messages');
     }
     addMessage(message) {
@@ -20,4 +17,4 @@ class MessageRepository {
     }
 }
 
-module.exports = MessageRepository;
+module.exports = MessageService;
