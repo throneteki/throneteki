@@ -14,6 +14,7 @@ class EventWindow extends BaseStep {
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(game, () => this.cancelInterrupts()),
+            new SimpleStep(game, () => this.automaticSaveWithDupes()),
             new SimpleStep(game, () => this.forcedInterrupts()),
             new SimpleStep(game, () => this.interrupts()),
             new SimpleStep(game, () => this.executeHandler()),
@@ -51,6 +52,16 @@ class EventWindow extends BaseStep {
             abilityType: 'cancelinterrupt',
             event: this.event
         });
+    }
+
+    automaticSaveWithDupes() {
+        if(this.event.cancelled || !this.event.allowAutomaticSave()) {
+            return;
+        }
+
+        if(this.event.card && this.game.saveWithDupe(this.event.card)) {
+            this.event.cancel();
+        }
     }
 
     forcedInterrupts() {

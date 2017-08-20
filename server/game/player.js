@@ -848,14 +848,6 @@ class Player extends Spectator {
     }
 
     discardCard(card, allowSave = true) {
-        if(!card.dupes.isEmpty() && allowSave) {
-            if(this.removeDuplicate(card)) {
-                this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                this.game.raiseEvent('onCardSaved', { card: card });
-                return;
-            }
-        }
-
         this.discardCards([card], allowSave);
     }
 
@@ -865,6 +857,7 @@ class Player extends Spectator {
                 player: this,
                 cards: cards,
                 allowSave: allowSave,
+                automaticSaveWithDupe: true,
                 originalLocation: cards[0].location
             };
             this.game.raiseEvent('onCardsDiscarded', params, event => {
@@ -883,6 +876,7 @@ class Player extends Spectator {
             player: this,
             card: card,
             allowSave: allowSave,
+            automaticSaveWithDupe: true,
             originalLocation: card.location
         };
         this.game.raiseEvent('onCardDiscarded', params, event => {
@@ -892,31 +886,13 @@ class Player extends Spectator {
 
     returnCardToHand(card, allowSave = true) {
         this.game.applyGameAction('returnToHand', card, card => {
-            if(!card.dupes.isEmpty() && allowSave) {
-                if(!this.removeDuplicate(card)) {
-                    this.moveCard(card, 'hand');
-                } else {
-                    this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                    this.game.raiseEvent('onCardSaved', { card: card });
-                }
-            } else {
-                this.moveCard(card, 'hand');
-            }
+            this.moveCard(card, 'hand', { allowSave: allowSave });
         });
     }
 
     moveCardToBottomOfDeck(card, allowSave = true) {
         this.game.applyGameAction('moveToBottomOfDeck', card, card => {
-            if(!card.dupes.isEmpty() && allowSave) {
-                if(!this.removeDuplicate(card)) {
-                    this.moveCard(card, 'draw deck', { bottom: true });
-                } else {
-                    this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                    this.game.raiseEvent('onCardSaved', { card: card });
-                }
-            } else {
-                this.moveCard(card, 'draw deck', { bottom: true });
-            }
+            this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
         });
     }
 
@@ -948,20 +924,10 @@ class Player extends Spectator {
     }
 
     removeAttachment(attachment, allowSave = true) {
-        if(allowSave && !attachment.dupes.isEmpty() && this.removeDuplicate(attachment)) {
-            this.game.addMessage('{0} discards a duplicate to save {1}', this, attachment);
-            this.game.raiseEvent('onCardSaved', { card: attachment });
-            return;
-        }
-
-        while(attachment.dupes.size() > 0) {
-            this.removeDuplicate(attachment, true);
-        }
-
         if(attachment.isTerminal()) {
-            attachment.owner.moveCard(attachment, 'discard pile');
+            attachment.owner.moveCard(attachment, 'discard pile', { allowSave: allowSave });
         } else {
-            attachment.owner.moveCard(attachment, 'hand');
+            attachment.owner.moveCard(attachment, 'hand', { allowSave: allowSave });
         }
     }
 
@@ -980,6 +946,8 @@ class Player extends Spectator {
     moveCard(card, targetLocation, options = {}) {
         let targetPile = this.getSourceList(targetLocation);
 
+        options = _.extend({ allowSave: false, bottom: false, isDupe: false }, options);
+
         if(!targetPile) {
             return;
         }
@@ -992,7 +960,9 @@ class Player extends Spectator {
 
             var params = {
                 player: this,
-                card: card
+                card: card,
+                allowSave: options.allowSave,
+                automaticSaveWithDupe: true
             };
 
             this.game.raiseEvent('onCardLeftPlay', params, () => {
