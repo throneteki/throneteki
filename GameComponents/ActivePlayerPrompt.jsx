@@ -68,7 +68,7 @@ class ActivePlayerPrompt extends React.Component {
     }
 
     buttonsAreEqual(oldButtons, newButtons) {
-        if(oldButtons.length !== newButtons.length) {
+        if(!oldButtons || !newButtons || oldButtons.length !== newButtons.length) {
             return false;
         }
 
