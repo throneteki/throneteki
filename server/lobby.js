@@ -235,11 +235,7 @@ class Lobby {
 
         socket.send('users', this.getUserList());
 
-        this.messageRepository.getLastMessages((err, messages) => {
-            if(err) {
-                return;
-            }
-
+        this.messageRepository.getLastMessages().then(messages => {
             socket.send('lobbymessages', messages.reverse());
         });
 
@@ -445,39 +441,28 @@ class Lobby {
             return;
         }
 
-        let cards = {};
-        let packs = {};
+        Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckRepository.getById(deckId)])
+            .then(results => {
+                let [cards, packs, deck] = results;
 
-        this.cardService.getAllCards()
-            .then(result => {
-                cards = result;
-
-                return this.cardService.getAllPacks();
-            })
-            .then(result => {
-                packs = result;
-
-                this.deckRepository.getById(deckId, (err, deck) => {
-
-                    _.each(deck.plotCards, plot => {
-                        plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
-                    });
-
-                    _.each(deck.drawCards, draw => {
-                        draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
-                    });
-
-                    if(deck.agenda) {
-                        deck.agenda = cards[deck.agenda.code];
-                    }
-
-                    let validation = validateDeck(deck, packs);
-                    deck.status = validation.status;
-
-                    game.selectDeck(socket.user.username, deck);
-
-                    this.sendGameState(game);
+                _.each(deck.plotCards, plot => {
+                    plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
                 });
+
+                _.each(deck.drawCards, draw => {
+                    draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
+                });
+
+                if(deck.agenda) {
+                    deck.agenda = cards[deck.agenda.code];
+                }
+
+                let validation = validateDeck(deck, packs);
+                deck.status = validation.status;
+
+                game.selectDeck(socket.user.username, deck);
+
+                this.sendGameState(game);
             })
             .catch(err => {
                 logger.info(err);

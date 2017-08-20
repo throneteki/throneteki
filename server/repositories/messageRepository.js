@@ -11,13 +11,15 @@ class MessageRepository extends BaseRepository {
         });
     }
 
-    getLastMessages(callback) {
-        return this.db.collection('messages').find({}, { limit: 150, sort: { time: -1 } }).toArray((err, messages) => {
-            if(err) {
-                this.callCallbackIfPresent(callback, err);
-            }
+    getLastMessages() {
+        return new Promise((resolve, reject) => {
+            this.db.collection('messages').find({}, { limit: 150, sort: { time: -1 } }).toArray((err, messages) => {
+                if(err) {
+                    return reject(err);
+                }
 
-            this.callCallbackIfPresent(callback, err, messages);
+                return resolve(messages);
+            });
         });
     }
 }

@@ -4,15 +4,16 @@ const mongoskin = require('mongoskin');
 const BaseRepository = require('./baseRepository.js');
 
 class DeckRepository extends BaseRepository {
-    getById(id, callback) {
-        return this.db.collection('decks').findOne({ _id: mongoskin.helper.toObjectID(id) }, (err, deck) => {
-            if(err) {
-                logger.error(err);
+    getById(id) {
+        return new Promise((resolve, reject) => {
+            this.db.collection('decks').findOne({ _id: mongoskin.helper.toObjectID(id) }, (err, deck) => {
+                if(err) {
+                    logger.error(err);
+                    return reject(err);
+                }
 
-                this.callCallbackIfPresent(callback, err);
-            }
-
-            this.callCallbackIfPresent(callback, err, deck);
+                return resolve(deck);
+            });
         });
     }
 }

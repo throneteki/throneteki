@@ -28,25 +28,20 @@ class GameRepository extends BaseRepository {
         });
     }
 
-    getAllGames(from, to, callback) {
-        this.db.collection('games').find().toArray((err, games) => {
-            if(err) {
-                logger.error(err);
-
-                if(callback) {
-                    return callback(err);
+    getAllGames(from, to) {
+        return new Promise((resolve, reject) => {
+            this.db.collection('games').find().toArray((err, games) => {
+                if(err) {
+                    logger.error(err);
+                    return reject(err);
                 }
 
-                return;
-            }
-
-            if(callback) {
                 games = _.filter(games, game => {
                     return game.startedAt >= from && game.startedAt < to;
                 });
 
-                return callback(err, games);
-            }
+                return resolve(games);
+            });
         });
     }
 }
