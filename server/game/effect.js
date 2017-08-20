@@ -59,8 +59,8 @@ class Effect {
         this.context = { game: game, source: source };
         this.active = true;
         this.recalculateWhen = properties.recalculateWhen || [];
-        this.isConditional = !!properties.condition;
-        this.isStateDependent = properties.condition || this.effect.isStateDependent;
+        this.isConditional = !!properties.condition || !_.isEmpty(properties.recalculateWhen);
+        this.isStateDependent = this.isConditional || this.effect.isStateDependent;
     }
 
     buildEffect(effect) {

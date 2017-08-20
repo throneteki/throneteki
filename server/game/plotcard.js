@@ -62,10 +62,6 @@ class PlotCard extends BaseCard {
         return baseClaim + this.claimModifier;
     }
 
-    canChallenge() {
-        return true;
-    }
-
     flipFaceup() {
         this.facedown = false;
     }
