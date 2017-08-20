@@ -16,6 +16,7 @@ import NotFound from './NotFound.jsx';
 import NavBar from './NavBar.jsx';
 import GameLobby from './GameLobby.jsx';
 import GameBoard from './GameBoard.jsx';
+import HowToPlay from './HowToPlay.jsx';
 import About from './About.jsx';
 import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
@@ -44,6 +45,7 @@ class App extends React.Component {
             '/decks/add': () => <AddDeck />,
             '/decks/edit': params => <EditDeck deckId={ params.deckId } />,
             '/play': () => (this.props.currentGame && this.props.currentGame.started) ? <GameBoard /> : <GameLobby />,
+            '/how-to-play': () => <HowToPlay />,
             '/about': () => <About />,
             '/forgot': () => <ForgotPassword />,
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
@@ -217,6 +219,7 @@ class App extends React.Component {
         let leftMenu = [
             { name: 'Decks', path: '/decks' },
             { name: 'Play', path: '/play' },
+            { name: 'How To Play', path: '/how-to-play' },
             { name: 'About', path: '/about' }
         ];
 
@@ -303,6 +306,9 @@ class App extends React.Component {
                     component = <GameLobby />;
                 }
 
+                break;
+            case '/how-to-play':
+                component = <HowToPlay />;
                 break;
             case '/about':
                 component = <About />;
