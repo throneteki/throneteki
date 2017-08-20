@@ -11,8 +11,8 @@ describe('the DominancePhase', () => {
     var player2;
 
     beforeEach(() => {
-        var gameRepository = jasmine.createSpyObj('gameRepository', ['save']);
-        game = new Game('1', 'Test Game', { gameRepository: gameRepository });
+        let gameService = jasmine.createSpyObj('gameService', ['save']);
+        game = new Game('1', 'Test Game', { gameService: gameService });
         player1 = new Player('1', { username: 'Player 1', settings: {} }, true, game);
         player2 = new Player('2', { username: 'Player 2', settings: {} }, false, game);
         player2.firstPlayer = true;

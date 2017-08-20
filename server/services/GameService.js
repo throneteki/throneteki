@@ -1,11 +1,9 @@
 const _ = require('underscore');
-const monk = require('monk');
 
 const logger = require('../log.js');
 
-class GameRepository {
-    constructor(dbPath) {
-        let db = monk(dbPath);
+class GameService {
+    constructor(db) {
         this.games = db.get('games');
     }
 
@@ -46,5 +44,5 @@ class GameRepository {
     }
 }
 
-module.exports = GameRepository;
+module.exports = GameService;
 
