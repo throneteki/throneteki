@@ -9,7 +9,7 @@ const version = moment(require('../version.js'));
 const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
 const MessageRepository = require('./repositories/messageRepository.js');
-const DeckRepository = require('./repositories/deckRepository.js');
+const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 const Settings = require('./settings.js');
@@ -21,7 +21,7 @@ class Lobby {
         this.games = {};
         this.config = options.config;
         this.messageRepository = options.messageRepository || new MessageRepository(this.config.dbPath);
-        this.deckRepository = options.deckRepository || new DeckRepository(this.config.dbPath);
+        this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
         this.router = options.router || new GameRouter(this.config);
 
@@ -445,7 +445,7 @@ class Lobby {
             return;
         }
 
-        Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckRepository.getById(deckId)])
+        Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId)])
             .then(results => {
                 let [cards, packs, deck] = results;
 

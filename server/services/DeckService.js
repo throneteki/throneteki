@@ -1,9 +1,7 @@
 const logger = require('../log.js');
-const monk = require('monk');
 
-class DeckRepository {
-    constructor(dbPath) {
-        let db = monk(dbPath);
+class DeckService {
+    constructor(db) {
         this.decks = db.get('decks');
     }
 
@@ -16,5 +14,5 @@ class DeckRepository {
     }
 }
 
-module.exports = DeckRepository;
+module.exports = DeckService;
 
