@@ -14,6 +14,7 @@ class ActivePlayerPrompt extends React.Component {
     shouldComponentUpdate(newProps, newState) {
         return newProps.phase !== this.props.phase || newProps.promptTitle !== this.props.promptTitle ||
             newProps.title !== this.props.title || newProps.arrowDirection !== this.props.arrowDirection ||
+            !this.buttonsAreEqual(this.props.buttons, newProps.buttons) ||
             newState.showTimer !== this.state.showTimer ||
             newState.timeLeft !== this.state.timeLeft || newState.timerClass !== this.state.timerClass;
     }
@@ -64,6 +65,20 @@ class ActivePlayerPrompt extends React.Component {
 
             this.setState({ showTimer: true, timerClass: '100%', timerHandle: handle });
         }
+    }
+
+    buttonsAreEqual(oldButtons, newButtons) {
+        if(oldButtons.length !== newButtons.length) {
+            return false;
+        }
+
+        for(let i = 0; i < oldButtons.length; ++i) {
+            if(!_.isEqual(oldButtons[i], newButtons[i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     onButtonClick(event, command, arg, method) {
