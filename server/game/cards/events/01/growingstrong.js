@@ -9,7 +9,7 @@ class GrowingStrong extends DrawCard {
             phase: 'challenge',
             target: {
                 numCards: 3,
-                activePromptTitle: 'Select up to three Tyrell characters',
+                activePromptTitle: 'Select up to three characters',
                 cardCondition: card => card.isFaction('tyrell') && card.getType() === 'character'
             },
             handler: context => {
@@ -19,7 +19,7 @@ class GrowingStrong extends DrawCard {
                         effect: ability.effects.modifyStrength(2)
                     }));
                 });
-                this.game.addMessage('{0} uses {1} to give +2 STR to {2}', context.player, this, context.target);
+                this.game.addMessage('{0} plays {1} to give +2 STR to {2}', context.player, this, context.target);
             }
         });
     }

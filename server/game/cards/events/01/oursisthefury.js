@@ -6,7 +6,6 @@ class OursIsTheFury extends DrawCard {
             title: 'Add knelt Baratheon as defender',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer === this.controller,
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.kneeled && card.controller === this.controller &&
                                        card.isFaction('baratheon') && card.canParticipateInChallenge()
             },
@@ -31,7 +30,7 @@ class OursIsTheFury extends DrawCard {
 
         if(event.challenge.winner === this.controller) {
             this.controller.standCard(this.selectedCard);
-            this.game.addMessage('{0} uses {1} to stand {2}', this.controller, this, this.selectedCard);
+            this.game.addMessage('{0} stands {1} because of {2}', this.controller, this.selectedCard, this);
         }
 
         this.selectedCard = undefined;

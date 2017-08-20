@@ -5,11 +5,8 @@ class UnbowedUnbentUnbroken extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: ({challenge}) => (
-                    !this.controller.firstPlayer &&
-                    challenge.defendingPlayer === this.controller &&
-                    challenge.loser === this.controller
-                )
+                afterChallenge: event => !this.controller.firstPlayer && event.challenge.defendingPlayer === this.controller &&
+                                         event.challenge.loser === this.controller
             },
             handler: () => {
                 this.game.promptWithMenu(this.controller, this, {
@@ -29,7 +26,7 @@ class UnbowedUnbentUnbroken extends DrawCard {
     }
 
     trigger(player, challengeType) {
-        var otherPlayer = this.game.getOtherPlayer(player);
+        let otherPlayer = this.game.getOtherPlayer(player);
 
         if(!otherPlayer) {
             return true;
@@ -41,13 +38,13 @@ class UnbowedUnbentUnbroken extends DrawCard {
             effect: ability.effects.cannotInitiateChallengeType(challengeType)
         }));
 
-        this.game.addMessage('{0} uses {1} to make {2} unable to initiate {3} challenges until the end of the phase', player, this, otherPlayer, challengeType);
+        this.game.addMessage('{0} plays {1} to make {2} unable to initiate {3} challenges until the end of the phase', player, this, otherPlayer, challengeType);
 
         return true;
     }
 
     cancel(player) {
-        this.game.addMessage('{0} cancel the resolution of {1}', player, this);
+        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
 
         this.game.addGold(player, this.getCost());
         player.moveCard(this, 'hand');

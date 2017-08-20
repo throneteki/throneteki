@@ -33,7 +33,7 @@ class SeenInFlames extends DrawCard {
 
         otherPlayer.discardCard(card);
 
-        this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand', player, this, card, otherPlayer);
+        this.game.addMessage('{0} plays {1} to discard {2} from {3}\'s hand', player, this, card, otherPlayer);
 
         return true;
     }
