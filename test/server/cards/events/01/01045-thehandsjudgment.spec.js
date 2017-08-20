@@ -27,7 +27,7 @@ describe('The Hand\'s Judgment', function() {
         describe('when an event is played', function() {
             beforeEach(function() {
                 this.player1.clickCard('Hear Me Roar!', 'hand');
-                expect(this.player1).toHavePrompt('Select character');
+                expect(this.player1).toHavePrompt('Select a character');
                 this.player1.clickCard(this.character);
             });
 

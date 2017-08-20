@@ -90,7 +90,7 @@ class DrawCard extends BaseCard {
     }
 
     isLimited() {
-        return this.hasKeyword('Limited') || this.hasPrintedKeyword('Limited');
+        return this.hasKeyword('limited') || (!this.isBlank() && this.hasPrintedKeyword('limited'));
     }
 
     isStealth() {
@@ -372,14 +372,6 @@ class DrawCard extends BaseCard {
 
     canBeKilled() {
         return this.allowGameAction('kill');
-    }
-
-    canBeMarshaled() {
-        return this.allowGameAction('marshal');
-    }
-
-    canBePlayed() {
-        return this.allowGameAction('play');
     }
 
     markAsInDanger() {

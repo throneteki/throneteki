@@ -5,10 +5,7 @@ class WeDoNotSow extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.isUnopposed()
-                )
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isUnopposed()
             },
             target: {
                 activePromptTitle: 'Select attachment or location',
@@ -17,8 +14,7 @@ class WeDoNotSow extends DrawCard {
             },
             handler: context => {
                 context.target.controller.discardCard(context.target);
-
-                this.game.addMessage('{0} uses {1} to discard {2} from play', context.player, this, context.target);
+                this.game.addMessage('{0} plays {1} to discard {2} from play', context.player, this, context.target);
             }
         });
     }

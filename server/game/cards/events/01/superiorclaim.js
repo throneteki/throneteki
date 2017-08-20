@@ -5,15 +5,12 @@ class SuperiorClaim extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.challengeType === 'power' &&
-                    challenge.winner === this.controller &&
-                    challenge.strengthDifference >= 5
-                )
+                afterChallenge: event => event.challenge.challengeType === 'power' && event.challenge.winner === this.controller &&
+                                         event.challenge.strengthDifference >= 5
             },
             handler: () => {
                 this.game.addPower(this.controller, 2);
-                this.game.addMessage('{0} uses {1} to gain 2 power for their faction', this.controller, this);
+                this.game.addMessage('{0} plays {1} to gain 2 power for their faction', this.controller, this);
             }
         });
     }

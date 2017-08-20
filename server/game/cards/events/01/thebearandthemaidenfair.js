@@ -7,7 +7,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
         this.action({
             title: 'Look at top 5 cards of a deck',
             handler: () => {
-                var buttons = _.map(this.game.getPlayers(), player => ({
+                let buttons = _.map(this.game.getPlayers(), player => ({
                     text: player.name, arg: player.name, method: 'selectPlayer'
                 }));
 
@@ -29,7 +29,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
             return false;
         }
 
-        this.game.addMessage('{0} uses {1} to look at the top 5 cards of {2}\'s deck', player, this, this.selectedPlayer);
+        this.game.addMessage('{0} plays {1} to look at the top 5 cards of {2}\'s deck', player, this, this.selectedPlayer);
 
         this.remainingCards = this.selectedPlayer.searchDrawDeck(5);
         this.cardsPlaced = 0;
@@ -40,7 +40,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
     }
 
     promptToPlaceNextCard() {
-        var buttons = _.map(this.remainingCards, card => ({
+        let buttons = _.map(this.remainingCards, card => ({
             method: 'selectCard', card: card
         }));
 
@@ -58,7 +58,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
     }
 
     selectCard(player, cardId) {
-        var card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = _.find(this.remainingCards, card => card.uuid === cardId);
 
         if(!card) {
             return false;
@@ -75,7 +75,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
         }
 
         if(this.remainingCards.length === 0) {
-            this.game.addMessage('{0} placed {1} cards on the bottom of {2}\'s deck and the rest on top', this.controller, this.cardsOnBottom, this.selectedPlayer);
+            this.game.addMessage('{0} places {1} cards on the bottom of {2}\'s deck and the rest on top', this.controller, this.cardsOnBottom, this.selectedPlayer);
         }
 
         return true;

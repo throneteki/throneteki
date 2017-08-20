@@ -425,6 +425,11 @@ class Game extends EventEmitter {
             target = player.activePlot.cardData;
         }
 
+        // Ensure that manually setting reserve isn't limited by any min reserve effects
+        if(stat === 'reserve') {
+            player.minReserve = 0;
+        }
+
         if(stat === 'claim' && _.isNumber(player.activePlot.claimSet)) {
             player.activePlot.claimSet += value;
 
@@ -656,6 +661,18 @@ class Game extends EventEmitter {
      */
     raiseSimultaneousEvent(cards, properties) {
         this.queueStep(new SimultaneousEventWindow(this, cards, properties));
+    }
+
+    saveWithDupe(card) {
+        let player = card.controller;
+        if(player.removeDuplicate(card)) {
+            card.markAsSaved();
+            this.addMessage('{0} discards a duplicate to save {1}', player, card);
+            this.raiseEvent('onCardSaved', { card: card });
+            return true;
+        }
+
+        return false;
     }
 
     killCharacters(cards, allowSave = true) {

@@ -7,6 +7,11 @@ class TheHound extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this)
             },
             handler: () => {
+                if(this.controller.hand.size() < 1) {
+                    this.returnToHand(this.controller);
+                    return;
+                }
+
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
                         menuTitle: 'Discard 1 card at random for ' + this.name + '?',

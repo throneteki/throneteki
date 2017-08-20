@@ -244,9 +244,7 @@ class Challenge {
     }
 
     onCardLeftPlay(event) {
-        if(!this.winnerDetermined) {
-            this.removeFromChallenge(event.card);
-        }
+        this.removeFromChallenge(event.card);
     }
 
     registerEvents(events) {

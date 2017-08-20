@@ -59,7 +59,7 @@ describe('The Annals of Castle Black', function() {
                 this.selectFirstPlayer(this.player1);
 
                 this.player1.clickCard(this.eventCard);
-                expect(this.player1).toHavePrompt('Select character');
+                expect(this.player1).toHavePrompt('Select a character');
                 this.player1.clickCard(this.character);
             });
 

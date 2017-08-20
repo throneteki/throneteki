@@ -41,15 +41,23 @@ class InnerDeckEditor extends React.Component {
 
         if(this.props.deck && (this.props.deck.drawCards || this.props.deck.plotCards)) {
             _.each(this.props.deck.drawCards, card => {
-                cardList += card.count + ' ' + card.card.label + '\n';
+                cardList += this.formatCardListItem(card) + '\n';
             });
 
             _.each(this.props.deck.plotCards, card => {
-                cardList += card.count + ' ' + card.card.label + '\n';
+                cardList += this.formatCardListItem(card) + '\n';
             });
 
             this.setState({ cardList: cardList });
         }
+    }
+
+    formatCardListItem(card) {
+        if(card.card.custom) {
+            return card.count + ' Custom ' + card.card.type_name + ' - ' + card.card.name;
+        }
+
+        return card.count + ' ' + card.card.label;
     }
 
     // XXX One could argue this is a bit hacky, because we're updating the innards of the deck object, react doesn't update components that use it unless we change the reference itself
@@ -230,21 +238,7 @@ class InnerDeckEditor extends React.Component {
                 index++;
             }
 
-            let packOffset = line.indexOf('(');
-            let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
-            let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
-
-            let pack = _.find(this.props.packs, function(pack) {
-                return pack.code.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
-            });
-
-            let card = _.find(this.props.cards, function(card) {
-                if(pack) {
-                    return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
-                }
-
-                return card.label.toLowerCase() === cardName.toLowerCase();
-            });
+            let card = this.lookupCard(line, index);
 
             if(card) {
                 this.addCard(card, num);
@@ -255,6 +249,63 @@ class InnerDeckEditor extends React.Component {
 
         this.setState({ cardList: event.target.value, deck: deck, showBanners: deck.agenda && deck.agenda.code === '06018' }); // Alliance
         this.props.updateDeck(deck);
+    }
+
+    lookupCard(line, index) {
+        let packOffset = line.indexOf('(');
+        let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
+        let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
+
+        if(cardName.startsWith('Custom ')) {
+            return this.createCustomCard(cardName);
+        }
+
+        let pack = _.find(this.props.packs, function(pack) {
+            return pack.code.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
+        });
+
+        return _.find(this.props.cards, function(card) {
+            if(pack) {
+                return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
+            }
+
+            return card.label.toLowerCase() === cardName.toLowerCase();
+        });
+    }
+
+    createCustomCard(cardName) {
+        let match = /Custom (.*) - (.*)/.exec(cardName);
+        if(!match) {
+            return null;
+        }
+
+        let type = match[1].toLowerCase();
+        let name = match[2];
+
+        return {
+            claim: 0,
+            code: 'custom_' + type,
+            cost: 0,
+            custom: true,
+            faction_code: 'neutral',
+            income: 0,
+            initiative: 0,
+            is_intrigue: true,
+            is_loyal: false,
+            is_military: true,
+            is_power: true,
+            is_unique: name.includes('*'),
+            label: name + ' (Custom)',
+            name: name,
+            pack_code: 'Custom',
+            pack_name: 'Custom',
+            reserve: 0,
+            strength: 0,
+            text: 'Custom',
+            traits: '',
+            type_code: type,
+            type_name: match[1]
+        };
     }
 
     addCard(card, number) {

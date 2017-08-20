@@ -6,7 +6,6 @@ class ForTheNorth extends DrawCard {
             title: 'Give +2 STR to character',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
             target: {
-                activePromptTitle: 'Select character',
                 cardCondition: card => this.game.currentChallenge.isParticipating(card) && card.isFaction('stark')
             },
             handler: context => {
@@ -17,7 +16,7 @@ class ForTheNorth extends DrawCard {
                 }));
                 this.game.once('afterChallenge', this.afterChallenge.bind(this));
 
-                this.game.addMessage('{0} uses {1} to give +2 STR to {2}', context.player, this, context.target);
+                this.game.addMessage('{0} plays {1} to give +2 STR to {2} until the end of the challenge', context.player, this, context.target);
             }
         });
     }
@@ -30,8 +29,7 @@ class ForTheNorth extends DrawCard {
         if(event.challenge.winner === this.controller) {
             this.controller.drawCardsToHand(1);
 
-            this.game.addMessage('{0} uses {1} to draw 1 card',
-                this.controller, this);
+            this.game.addMessage('{0} draws 1 card because of {1}', this.controller, this);
         }
 
         this.selectedCard = undefined;

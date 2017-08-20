@@ -5,7 +5,6 @@ class HearMeRoar extends DrawCard {
         this.action({
             title: 'Put card into play',
             target: {
-                activePromptTitle: 'Select character',
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.getType() === 'character' && card.isFaction('lannister')
             },
             handler: context => {
@@ -16,7 +15,7 @@ class HearMeRoar extends DrawCard {
                     effect: ability.effects.discardIfStillInPlay(false)
                 }));
 
-                this.game.addMessage('{0} uses {1} to put {2} into play from their hand', context.player, this, context.target);
+                this.game.addMessage('{0} plays {1} to put {2} into play from their hand', context.player, this, context.target);
             }
         });
     }

@@ -256,7 +256,7 @@ class Lobby {
     }
 
     onAuthenticated(user) {
-        this.users[user.username] = user;
+        this.users[user.username] = Settings.getUserWithDefaultsSet(user);
 
         this.broadcastUserList();
     }
@@ -460,11 +460,11 @@ class Lobby {
                 this.deckRepository.getById(deckId, (err, deck) => {
 
                     _.each(deck.plotCards, plot => {
-                        plot.card = cards[plot.card.code];
+                        plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
                     });
 
                     _.each(deck.drawCards, draw => {
-                        draw.card = cards[draw.card.code];
+                        draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
                     });
 
                     if(deck.agenda) {
@@ -550,7 +550,7 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
-            var syncGame = new PendingGame({ username: game.owner }, {spectators: game.allowSpectators, name: game.name});
+            var syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;

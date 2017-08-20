@@ -20,6 +20,11 @@ class IronVictory extends DrawCard {
 
     getPowerOnVictarion() {
         let card = this.controller.findCardByName(this.controller.cardsInPlay, 'Victarion Greyjoy');
+
+        if(!card) {
+            return 0;
+        }
+        
         return card.getPower();
     }
 }

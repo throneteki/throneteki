@@ -14,6 +14,10 @@ class Event {
         }
     }
 
+    allowAutomaticSave() {
+        return this.allowSave && this.automaticSaveWithDupe && !!(this.card || this.cards);
+    }
+
     cancel() {
         this.cancelled = true;
     }
@@ -27,9 +31,17 @@ class Event {
             return;
         }
 
+        this.removeCard(card);
         card.markAsSaved();
-        this.cards = _.reject(this.cards, c => c === card);
         card.game.raiseEvent('onCardSaved', { card: card });
+    }
+
+    removeCard(card) {
+        if(!this.cards) {
+            return;
+        }
+
+        this.cards = _.reject(this.cards, c => c === card);
 
         if(_.isEmpty(this.cards)) {
             this.cancel();

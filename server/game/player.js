@@ -42,7 +42,7 @@ class Player extends Spectator {
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
         this.cannotTriggerCardAbilities = false;
-        this.cannotMarshalOrPutIntoPlayByTitle = [];
+        this.playCardRestrictions = [];
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
         this.mustChooseAsClaim = [];
@@ -454,10 +454,14 @@ class Player extends Spectator {
         return true;
     }
 
-    canPutIntoPlay(card) {
+    canPlay(card, playingType = 'play') {
+        return !_.any(this.playCardRestrictions, restriction => restriction(card, playingType));
+    }
+
+    canPutIntoPlay(card, playingType = 'play') {
         let owner = card.owner;
 
-        if(this.cannotMarshalOrPutIntoPlayByTitle.includes(card.name)) {
+        if(!this.canPlay(card, playingType)) {
             return false;
         }
 
@@ -493,7 +497,7 @@ class Player extends Spectator {
     }
 
     putIntoPlay(card, playingType = 'play') {
-        if(!this.canPutIntoPlay(card)) {
+        if(!this.canPutIntoPlay(card, playingType)) {
             return;
         }
 
@@ -844,14 +848,6 @@ class Player extends Spectator {
     }
 
     discardCard(card, allowSave = true) {
-        if(!card.dupes.isEmpty() && allowSave) {
-            if(this.removeDuplicate(card)) {
-                this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                this.game.raiseEvent('onCardSaved', { card: card });
-                return;
-            }
-        }
-
         this.discardCards([card], allowSave);
     }
 
@@ -861,6 +857,7 @@ class Player extends Spectator {
                 player: this,
                 cards: cards,
                 allowSave: allowSave,
+                automaticSaveWithDupe: true,
                 originalLocation: cards[0].location
             };
             this.game.raiseEvent('onCardsDiscarded', params, event => {
@@ -879,6 +876,7 @@ class Player extends Spectator {
             player: this,
             card: card,
             allowSave: allowSave,
+            automaticSaveWithDupe: true,
             originalLocation: card.location
         };
         this.game.raiseEvent('onCardDiscarded', params, event => {
@@ -888,31 +886,13 @@ class Player extends Spectator {
 
     returnCardToHand(card, allowSave = true) {
         this.game.applyGameAction('returnToHand', card, card => {
-            if(!card.dupes.isEmpty() && allowSave) {
-                if(!this.removeDuplicate(card)) {
-                    this.moveCard(card, 'hand');
-                } else {
-                    this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                    this.game.raiseEvent('onCardSaved', { card: card });
-                }
-            } else {
-                this.moveCard(card, 'hand');
-            }
+            this.moveCard(card, 'hand', { allowSave: allowSave });
         });
     }
 
     moveCardToBottomOfDeck(card, allowSave = true) {
         this.game.applyGameAction('moveToBottomOfDeck', card, card => {
-            if(!card.dupes.isEmpty() && allowSave) {
-                if(!this.removeDuplicate(card)) {
-                    this.moveCard(card, 'draw deck', { bottom: true });
-                } else {
-                    this.game.addMessage('{0} discards a duplicate to save {1}', this, card);
-                    this.game.raiseEvent('onCardSaved', { card: card });
-                }
-            } else {
-                this.moveCard(card, 'draw deck', { bottom: true });
-            }
+            this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
         });
     }
 
@@ -944,20 +924,10 @@ class Player extends Spectator {
     }
 
     removeAttachment(attachment, allowSave = true) {
-        if(allowSave && !attachment.dupes.isEmpty() && this.removeDuplicate(attachment)) {
-            this.game.addMessage('{0} discards a duplicate to save {1}', this, attachment);
-            this.game.raiseEvent('onCardSaved', { card: attachment });
-            return;
-        }
-
-        while(attachment.dupes.size() > 0) {
-            this.removeDuplicate(attachment, true);
-        }
-
         if(attachment.isTerminal()) {
-            attachment.owner.moveCard(attachment, 'discard pile');
+            attachment.owner.moveCard(attachment, 'discard pile', { allowSave: allowSave });
         } else {
-            attachment.owner.moveCard(attachment, 'hand');
+            attachment.owner.moveCard(attachment, 'hand', { allowSave: allowSave });
         }
     }
 
@@ -974,11 +944,11 @@ class Player extends Spectator {
     }
 
     moveCard(card, targetLocation, options = {}) {
-        this.removeCardFromPile(card);
+        let targetPile = this.getSourceList(targetLocation);
 
-        var targetPile = this.getSourceList(targetLocation);
+        options = _.extend({ allowSave: false, bottom: false, isDupe: false }, options);
 
-        if(!targetPile || targetPile.contains(card)) {
+        if(!targetPile) {
             return;
         }
 
@@ -990,36 +960,56 @@ class Player extends Spectator {
 
             var params = {
                 player: this,
-                card: card
+                card: card,
+                allowSave: options.allowSave,
+                automaticSaveWithDupe: true
             };
 
-            this.game.raiseEvent('onCardLeftPlay', params, event => {
-                card.attachments.each(attachment => {
-                    this.removeAttachment(attachment, false);
-                });
-
-                while(card.dupes.size() > 0 && targetLocation !== 'play area') {
-                    this.removeDuplicate(card, true);
-                }
-
-                event.card.leavesPlay();
-
-                if(event.card.parent) {
-                    event.card.parent.removeAttachment(event.card);
-                }
-
-                card.moveTo(targetLocation);
+            this.game.raiseEvent('onCardLeftPlay', params, () => {
+                this.synchronousMoveCard(card, targetLocation, options);
             });
+            return;
+        }
+
+        this.synchronousMoveCard(card, targetLocation, options);
+    }
+
+    synchronousMoveCard(card, targetLocation, options = {}) {
+        this.removeCardFromPile(card);
+
+        let targetPile = this.getSourceList(targetLocation);
+
+        if(!targetPile || targetPile.contains(card)) {
+            return;
+        }
+
+        if(card.location === 'play area') {
+            card.attachments.each(attachment => {
+                this.removeAttachment(attachment, false);
+            });
+
+            while(card.dupes.size() > 0 && targetLocation !== 'play area') {
+                this.removeDuplicate(card, true);
+            }
+
+            if(card.parent) {
+                card.parent.removeAttachment(card);
+            }
+        }
+
+        if(['play area', 'active plot'].includes(card.location)) {
+            card.leavesPlay();
         }
 
         if(card.location === 'active plot') {
-            card.leavesPlay();
             this.game.raiseEvent('onCardLeftPlay', { player: this, card: card });
         }
 
-        if(card.location !== 'play area') {
-            card.moveTo(targetLocation);
+        if(card.parent) {
+            card.parent.removeAttachment(card);
         }
+
+        card.moveTo(targetLocation);
 
         if(targetLocation === 'active plot') {
             this.activePlot = card;
