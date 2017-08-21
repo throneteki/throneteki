@@ -405,10 +405,6 @@ class BaseCard {
         return this.cardData.faction_code;
     }
 
-    modifyClaim(player, type, claim) {
-        return claim;
-    }
-
     setBlank() {
         var before = this.isBlank();
         this.blankCount++;

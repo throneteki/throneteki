@@ -196,15 +196,6 @@ class Player extends Spectator {
         this.game.raiseEvent('onUsedPlotsModified', { player: this });
     }
 
-    modifyClaim(winner, challengeType, claim) {
-        claim = this.activePlot.modifyClaim(winner, challengeType, claim);
-        this.cardsInPlay.each(card => {
-            claim = card.modifyClaim(winner, challengeType, claim);
-        });
-
-        return claim;
-    }
-
     drawCardsToHand(numCards) {
         if(numCards > this.drawDeck.size()) {
             numCards = this.drawDeck.size();
