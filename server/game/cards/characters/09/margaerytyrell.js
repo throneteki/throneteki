@@ -19,7 +19,7 @@ class MargaeryTyrell extends DrawCard {
             },
             handler: context => {
                 context.target.controller.kneelCard(context.target);
-                this.game.currentChallenge.addDefender(context.target, false);
+                this.game.currentChallenge.addDefender(context.target);
 
                 this.game.addMessage('{0} uses {1} to kneel {2} and have them participate in the current challenge as a defender', 
                     this.controller, this, context.target);

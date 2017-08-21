@@ -72,7 +72,7 @@ const Effects = {
             apply: function(card, context) {
                 let challenge = context.game.currentChallenge;
                 if(card.canParticipateInChallenge()) {
-                    challenge.addAttacker(card, false);
+                    challenge.addAttacker(card);
                 }
             },
             unapply: function(card, context) {
