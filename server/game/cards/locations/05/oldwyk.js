@@ -15,9 +15,11 @@ class OldWyk extends DrawCard {
                 let card = _.last(this.controller.deadPile.filter(c => c.hasTrait('Drowned God')));
 
                 this.controller.putIntoPlay(card);
+                //Manually kneel instead of firing kneel event as character is put into play knelt
+                this.kneeled = true;
                 this.game.currentChallenge.addAttacker(card);
 
-                this.game.addMessage('{0} kneels {1} to put {2} into play from their dead pile as an attacker',
+                this.game.addMessage('{0} kneels {1} to put {2} into play from their dead pile knelt as an attacker',
                     this.controller, this, card);
 
                 this.game.once('afterChallenge', event => this.resolveAfterChallenge(event.challenge, card));

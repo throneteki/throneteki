@@ -61,7 +61,17 @@ class ChallengeFlow extends BaseStep {
     }
 
     chooseAttackers(player, attackers) {
+        this.attackersToKneel = [];
         this.challenge.addAttackers(attackers);
+
+        _.each(attackers, card => {
+            if(!card.kneeled && !card.challengeOptions.doesNotKneelAs['attacker']) {
+                this.game.applyGameAction('kneel', card, card => {
+                    card.kneeled = true;
+                    this.attackersToKneel.push(card);
+                });
+            }
+        });
 
         return true;
     }
@@ -77,10 +87,18 @@ class ChallengeFlow extends BaseStep {
             { name: 'onChallengeInitiated', params: { challenge: this.challenge } },
             { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
         ];
+
+        let kneelEvents = _.map(this.attackersToKneel, card => {
+            return { name: 'onCardKneeled', params: { player: this.challenge.attackingPlayer, card: card} };
+        });
+
         let stealthEvents = _.map(this.challenge.stealthData, stealth => {
             return { name: 'onBypassedByStealth', params: { challenge: this.challenge, source: stealth.source, target: stealth.target } };
         });
-        this.game.raiseAtomicEvent(events.concat(stealthEvents));
+
+        this.game.raiseAtomicEvent(events.concat(stealthEvents).concat(kneelEvents));
+
+        this.attackersToKneel = undefined;
     }
 
     announceAttackerStrength() {
@@ -164,9 +182,29 @@ class ChallengeFlow extends BaseStep {
             defenders = defenders.concat(this.forcedDefenders);
         }
 
+        let defendersToKneel = [];
         this.challenge.addDefenders(defenders);
 
-        this.game.raiseEvent('onDefendersDeclared', { challenge: this.challenge });
+        _.each(defenders, card => {
+            if(!card.kneeled && !card.challengeOptions.doesNotKneelAs['defender']) {
+                this.game.applyGameAction('kneel', card, card => {
+                    card.kneeled = true;
+                    defendersToKneel.push(card);
+                });
+            }
+        });
+
+        let events = [
+            { name: 'onDefendersDeclared', params: { challenge: this.challenge } }
+        ];
+
+        let kneelEvents = _.map(defendersToKneel, card => {
+            return { name: 'onCardKneeled', params: { player: this.challenge.defendingPlayer, card: card} };
+        });
+
+        this.game.raiseAtomicEvent(events.concat(kneelEvents));
+
+        defendersToKneel = undefined;
 
         return true;
     }

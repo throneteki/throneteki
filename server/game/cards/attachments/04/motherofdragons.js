@@ -11,9 +11,9 @@ class MotherOfDragons extends DrawCard {
                 let challenge = this.game.currentChallenge;
 
                 if(challenge.attackingPlayer === this.controller) {
-                    challenge.addAttacker(this.parent, false);
+                    challenge.addAttacker(this.parent);
                 } else {
-                    challenge.addDefender(this.parent, false);
+                    challenge.addDefender(this.parent);
                 }
                 this.game.addMessage('{0} kneels {1} to have {2} participate in the challenge on their side', this.controller, this, this.parent);
             }

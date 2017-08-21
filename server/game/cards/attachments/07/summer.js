@@ -9,9 +9,9 @@ class Summer extends DrawCard {
             limit: ability.limit.perChallenge(1),
             handler: () => {
                 if(this.game.currentChallenge.attackingPlayer === this.controller) {
-                    this.game.currentChallenge.addAttacker(this.parent, false);
+                    this.game.currentChallenge.addAttacker(this.parent);
                 } else {
-                    this.game.currentChallenge.addDefender(this.parent, false);
+                    this.game.currentChallenge.addDefender(this.parent);
                 }
                 this.game.addMessage('{0} uses {1} and kneels {2} to have {2} participate in the challenge on their side',
                     this.controller, this, this.parent);

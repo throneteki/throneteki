@@ -17,7 +17,7 @@ class DolorousEdd extends DrawCard {
                 this.controller.putIntoPlay(this);
                 // Manually kneel Edd, since he enters play that way - should not fire a kneeling event.
                 this.kneeled = true;
-                this.game.currentChallenge.addDefender(this, false);
+                this.game.currentChallenge.addDefender(this);
                 this.game.once('afterChallenge', event => this.promptOnWin(event.challenge));
             }
         });
