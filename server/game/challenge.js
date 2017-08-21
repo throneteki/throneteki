@@ -219,14 +219,7 @@ class Challenge {
     }
 
     getClaim() {
-        var claim = this.winner.getClaim();
-        claim = this.winner.modifyClaim(this.winner, this.challengeType, claim);
-
-        if(!this.isSinglePlayer) {
-            claim = this.loser.modifyClaim(this.winner, this.challengeType, claim);
-        }
-
-        return claim;
+        return this.winner.getClaim();
     }
 
     getWinnerCards() {
