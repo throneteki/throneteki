@@ -19,14 +19,16 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js');
 const pug = require('pug');
+const monk = require('monk');
 
-const UserService = require('./repositories/UserService.js');
+const UserService = require('./services/UserService.js');
 const version = require('../version.js');
 const Settings = require('./settings.js');
 
 class Server {
     constructor(isDeveloping) {
-        this.userService = new UserService({ dbPath: config.dbPath });
+        let db = monk(config.dbPath);
+        this.userService = new UserService(db);
         this.isDeveloping = isDeveloping;
         this.server = http.Server(app);
     }

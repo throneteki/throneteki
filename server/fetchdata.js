@@ -1,12 +1,25 @@
 /*eslint no-console:0 */
 const request = require('request');
-const mongoskin = require('mongoskin');
-const db = mongoskin.db('mongodb://127.0.0.1:27017/throneteki');
+const monk = require('monk');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
 
-var apiUrl = 'https://thronesdb.com/api/public/';
+const CardService = require('./services/CardService.js');
+
+function apiRequest(path) {
+    const apiUrl = 'https://thronesdb.com/api/public/';
+
+    return new Promise((resolve, reject) => {
+        request.get(apiUrl + path, function(error, res, body) {
+            if(error) {
+                return reject(error);
+            }
+
+            resolve(JSON.parse(body));
+        });
+    });
+}
 
 function fetchImage(urlPath, code, imagePath, timeout) {
     setTimeout(function() {
@@ -16,52 +29,43 @@ function fetchImage(urlPath, code, imagePath, timeout) {
     }, timeout);
 }
 
-request.get(apiUrl + 'cards', function(error, res, body) {
-    if(error) {
+let db = monk('mongodb://127.0.0.1:27017/throneteki');
+let cardService = new CardService(db);
+
+let fetchCards = apiRequest('cards')
+    .then(cards => cardService.replaceCards(cards))
+    .then(cards => {
+        console.info(cards.length + ' cards fetched');
+
+        let imageDir = path.join(__dirname, '..', 'public', 'img', 'cards');
+        mkdirp(imageDir);
+
+        var i = 0;
+
+        cards.forEach(function(card) {
+            var imagePath = path.join(imageDir, card.code + '.png');
+
+            if(card.imagesrc && !fs.existsSync(imagePath)) {
+                fetchImage(card.imagesrc, card.code, imagePath, i++ * 200);
+            }
+        });
+
+        return cards;
+    })
+    .catch(() => {
         console.error('Unable to fetch cards');
-        return;
-    }
-
-    var cards = JSON.parse(body);
-
-    var imageDir = path.join(__dirname, '..', 'public', 'img', 'cards');
-    mkdirp(imageDir);
-
-    var i = 0;
-
-    cards.forEach(function(card) {
-        var imagePath = path.join(imageDir, card.code + '.png');
-
-        if(card.imagesrc && !fs.existsSync(imagePath)) {
-            fetchImage(card.imagesrc, card.code, imagePath, i++ * 200);
-        }
     });
 
-    db.collection('cards').remove({}, function() {
-        db.collection('cards').insert(cards, function() {
-            fs.writeFile('got-cards.json', JSON.stringify(cards), function() {
-                console.info(cards.length + ' cards fetched');
-
-                db.close();
-            });
-        });
-    });
-});
-
-request.get(apiUrl + 'packs', function(error, res, body) {
-    if(error) {
+let fetchPacks = apiRequest('packs')
+    .then(packs => cardService.replacePacks(packs))
+    .then(packs => {
+        console.info(packs.length + ' packs fetched');
+    })
+    .catch(() => {
         console.error('Unable to fetch packs');
-        return;
-    }
-
-    var packs = JSON.parse(body);
-
-    db.collection('packs').remove({}, function() {
-        db.collection('packs').insert(packs, function() {
-            fs.writeFile('got-packs.json', JSON.stringify(packs), function() {
-                console.info(packs.length + ' packs fetched');
-            });
-        });
     });
-});
+
+Promise.all([fetchCards, fetchPacks])
+    .then(() => db.close())
+    .catch(() => db.close());
 
