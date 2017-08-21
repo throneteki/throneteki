@@ -4,9 +4,14 @@ class FickleBannerman extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.challengeType === 'power'
+                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'power'
             },
             handler: () => {
+                if(!this.hasToken('gold')) {
+                    this.loseControl();
+                    return;
+                }
+
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
                         menuTitle: 'Discard a gold from ' + this.name + '?',
