@@ -371,7 +371,7 @@ const Effects = {
             context.killByStrength = context.killByStrength || {};
             if(card.getStrength() <= 0 && !context.killByStrength[card.uuid]) {
                 context.killByStrength[card.uuid] = true;
-                card.controller.killCharacter(card, false);
+                context.game.killCharacter(card, { allowSave: false, isBurn: true });
                 context.game.addMessage('{0} is killed as its STR is 0', card);
             }
         },

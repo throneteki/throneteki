@@ -21,7 +21,8 @@ class KillCharacters extends BaseStep {
                 eventName: 'onCharactersKilled',
                 params: {
                     allowSave: this.options.allowSave,
-                    automaticSaveWithDupe: true
+                    automaticSaveWithDupe: true,
+                    isBurn: this.options.isBurn
                 },
                 handler: event => this.handleMultipleKills(event),
                 perCardEventName: 'onCharacterKilled',
