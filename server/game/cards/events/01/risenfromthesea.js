@@ -5,11 +5,11 @@ class RisenFromTheSea extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => event.allowSave
+                onCharactersKilled: () => true
             },
             location: 'hand',
             target: {
-                cardCondition: (card, context) => context.event.cards.includes(card) && card.isFaction('greyjoy') && card.controller === this.controller
+                cardCondition: (card, context) => this.cardCondition(card, context)
             },
             handler: context => {
                 context.event.saveCard(context.target);
@@ -31,6 +31,20 @@ class RisenFromTheSea extends DrawCard {
                 ability.effects.addTrait('Condition')
             ]
         });
+    }
+
+    cardCondition(card, context) {
+        if(!context.event.cards.includes(card)) {
+            return false;
+        }
+
+        let allowSave = context.event.allowSave || this.canSurviveBurn(card, context);
+
+        return allowSave && card.isFaction('greyjoy') && card.controller === this.controller;
+    }
+
+    canSurviveBurn(card, context) {
+        return context.event.isBurn && card.controller.canAttach(this, card) && card.getBoostedStrength(1) > 0;
     }
 
     canAttach(player, card) {

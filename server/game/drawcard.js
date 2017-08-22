@@ -162,6 +162,10 @@ class DrawCard extends BaseCard {
     }
 
     getStrength() {
+        return this.getBoostedStrength(0);
+    }
+
+    getBoostedStrength(boostValue) {
         let baseStrength = this.getPrintedStrength();
 
         if(this.controller.phase === 'setup') {
@@ -172,7 +176,7 @@ class DrawCard extends BaseCard {
             return this.strengthSet;
         }
 
-        let modifiedStrength = this.strengthModifier + baseStrength;
+        let modifiedStrength = this.strengthModifier + baseStrength + boostValue;
         let multipliedStrength = Math.round(this.strengthMultiplier * modifiedStrength);
         return Math.max(0, multipliedStrength);
     }
