@@ -9,12 +9,12 @@ class BloodMagicRitual extends DrawCard {
             },
             location: 'hand',
             target: {
-                activePromptTitle: 'Select character to save',
                 cardCondition: (card, context) => context.event.cards.includes(card) && !card.hasTrait('Army')
             },
             handler: context => {
                 context.event.saveCard(context.target);
                 context.target.controller.attach(this.controller, this, context.target, 'play');
+                this.setCardType('attachment');
 
                 this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.target);
             }

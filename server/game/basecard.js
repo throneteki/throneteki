@@ -68,6 +68,7 @@ class BaseCard {
         this.setupCardAbilities(AbilityDsl);
 
         this.factions = {};
+        this.cardTypeSet = undefined;
         this.addFaction(cardData.faction_code);
     }
 
@@ -335,6 +336,7 @@ class BaseCard {
     }
 
     leavesPlay() {
+        this.cardTypeSet = undefined;
         this.tokens = {};
     }
 
@@ -397,7 +399,15 @@ class BaseCard {
         return this.blankCount > 0;
     }
 
+    setCardType(cardType) {
+        this.cardTypeSet = cardType;
+    }
+
     getType() {
+        return this.cardTypeSet || this.getPrintedType();
+    }
+
+    getPrintedType() {
         return this.cardData.type_code;
     }
 
