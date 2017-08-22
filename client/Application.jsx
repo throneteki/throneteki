@@ -220,8 +220,8 @@ class App extends React.Component {
             { name: 'Decks', path: '/decks' },
             { name: 'Play', path: '/play' },
             { name: 'Help', childItems: [
-            { name: 'How To Play', path: '/how-to-play' },
-            { name: 'About', path: '/about' }
+                { name: 'How To Play', path: '/how-to-play' },
+                { name: 'About', path: '/about' }
             ]}
         ];
 
