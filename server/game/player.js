@@ -891,7 +891,7 @@ class Player extends Spectator {
      * @deprecated Use `Game.killCharacter` instead.
      */
     killCharacter(card, allowSave = true) {
-        this.game.killCharacter(card, allowSave);
+        this.game.killCharacter(card, { allowSave: allowSave });
     }
 
     getDominance() {

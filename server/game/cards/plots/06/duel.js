@@ -54,7 +54,7 @@ class Duel extends PlotCard {
 
     resolve(player, index) {
         player.kneelCard(this.targets[index[0]]);
-        this.game.killCharacter(this.targets[index[1]], false);
+        this.game.killCharacter(this.targets[index[1]], { allowSave: false });
 
         this.game.addMessage('{0} then chooses {1} to kneel, {2} is killed', player, this.targets[index[0]], this.targets[index[1]]);
 
