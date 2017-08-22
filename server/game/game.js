@@ -675,12 +675,13 @@ class Game extends EventEmitter {
         return false;
     }
 
-    killCharacters(cards, allowSave = true) {
-        this.queueStep(new KillCharacters(this, cards, allowSave));
+    killCharacters(cards, options = {}) {
+        options = Object.assign({ allowSave: true, isBurn: false }, options);
+        this.queueStep(new KillCharacters(this, cards, options));
     }
 
-    killCharacter(card, allowSave = true) {
-        this.killCharacters([card], allowSave);
+    killCharacter(card, options = {}) {
+        this.killCharacters([card], options);
     }
 
     takeControl(player, card) {

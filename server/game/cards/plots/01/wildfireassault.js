@@ -45,7 +45,7 @@ class WildfireAssault extends PlotCard {
             }
         });
 
-        this.game.killCharacters(characters, false);
+        this.game.killCharacters(characters, { allowSave: false });
 
         this.selections = [];
     }

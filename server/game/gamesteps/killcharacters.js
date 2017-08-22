@@ -3,11 +3,11 @@ const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 
 class KillCharacters extends BaseStep {
-    constructor(game, cards, allowSave) {
+    constructor(game, cards, options) {
         super(game);
 
         this.cards = cards;
-        this.allowSave = allowSave;
+        this.options = options;
     }
 
     continue() {
@@ -20,8 +20,9 @@ class KillCharacters extends BaseStep {
             this.game.raiseSimultaneousEvent(killable, {
                 eventName: 'onCharactersKilled',
                 params: {
-                    allowSave: this.allowSave,
-                    automaticSaveWithDupe: true
+                    allowSave: this.options.allowSave,
+                    automaticSaveWithDupe: true,
+                    isBurn: this.options.isBurn
                 },
                 handler: event => this.handleMultipleKills(event),
                 perCardEventName: 'onCharacterKilled',

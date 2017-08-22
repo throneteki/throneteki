@@ -6,10 +6,8 @@ const Effects = require('../../../server/game/effects.js');
 describe('Effects.killByStrength', function() {
     describe('apply()', function() {
         beforeEach(function() {
-            this.gameSpy = jasmine.createSpyObj('game', ['addMessage']);
-            this.playerSpy = jasmine.createSpyObj('player', ['killCharacter']);
+            this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'killCharacter']);
             this.cardSpy = jasmine.createSpyObj('card', ['getStrength']);
-            this.cardSpy.controller = this.playerSpy;
             this.context = { game: this.gameSpy };
             this.effect = Effects.killByStrength;
         });
@@ -21,7 +19,7 @@ describe('Effects.killByStrength', function() {
             });
 
             it('should not kill the card', function() {
-                expect(this.playerSpy.killCharacter).not.toHaveBeenCalled();
+                expect(this.gameSpy.killCharacter).not.toHaveBeenCalled();
             });
         });
 
@@ -32,12 +30,12 @@ describe('Effects.killByStrength', function() {
             });
 
             it('should kill the card', function() {
-                expect(this.playerSpy.killCharacter).toHaveBeenCalledWith(this.cardSpy, false);
+                expect(this.gameSpy.killCharacter).toHaveBeenCalledWith(this.cardSpy, { allowSave: false, isBurn: true });
             });
 
             it('should not double kill when applied twice', function() {
                 this.effect.apply(this.cardSpy, this.context);
-                expect(this.playerSpy.killCharacter.calls.count()).toBe(1);
+                expect(this.gameSpy.killCharacter.calls.count()).toBe(1);
             });
         });
     });
