@@ -219,8 +219,10 @@ class App extends React.Component {
         let leftMenu = [
             { name: 'Decks', path: '/decks' },
             { name: 'Play', path: '/play' },
+            { name: 'Help', childItems: [
             { name: 'How To Play', path: '/how-to-play' },
             { name: 'About', path: '/about' }
+            ]}
         ];
 
         let adminMenuItems = [];
