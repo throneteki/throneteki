@@ -9,7 +9,7 @@ class BloodMagicRitual extends DrawCard {
             },
             location: 'hand',
             target: {
-                cardCondition: (card, context) => context.event.cards.includes(card) && !card.hasTrait('Army')
+                cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && !card.hasTrait('Army')
             },
             handler: context => {
                 context.event.saveCard(context.target);

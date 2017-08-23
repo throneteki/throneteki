@@ -8,8 +8,7 @@ class SerBarristanSelmy extends DrawCard {
                 onCharactersKilled: event => event.allowSave
             },
             target: {
-                activePromptTitle: 'Select character to save',
-                cardCondition: (card, context) => context.event.cards.includes(card) && this.isControlledLordOrLady(card)
+                cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && this.isControlledLordOrLady(card)
             },
             cost: ability.costs.standSelf(),
             handler: context => {

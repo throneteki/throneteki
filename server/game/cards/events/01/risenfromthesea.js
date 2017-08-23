@@ -35,7 +35,7 @@ class RisenFromTheSea extends DrawCard {
     }
 
     cardCondition(card, context) {
-        if(!context.event.cards.includes(card)) {
+        if(!context.event.cards.includes(card) || !card.canBeSaved()) {
             return false;
         }
 

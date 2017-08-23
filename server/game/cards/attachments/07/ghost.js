@@ -5,7 +5,7 @@ class Ghost extends DrawCard {
         this.interrupt({
             when: {
                 onCharactersKilled: event => {
-                    if(event.cards.includes(this.parent) && event.allowSave) {
+                    if(event.cards.includes(this.parent) && this.parent.canBeSaved() && event.allowSave) {
                         this.parentCard = this.parent;
                         return true;
                     }

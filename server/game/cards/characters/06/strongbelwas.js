@@ -9,9 +9,9 @@ class StrongBelwas extends DrawCard {
             },
             cost: ability.costs.discardGold(),
             target: {
-                activePromptTitle: 'Select character to save',
                 cardCondition: (card, context) => context.event.cards.includes(card) && card.controller === this.controller &&
-                                                  card !== this && card.isUnique() && card.isFaction('targaryen')
+                                                  card !== this && card.isUnique() && card.isFaction('targaryen') &&
+                                                  card.canBeSaved()
             },
             handler: context => {
                 context.event.saveCard(context.target);
