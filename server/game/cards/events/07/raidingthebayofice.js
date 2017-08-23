@@ -4,7 +4,7 @@ class RaidingTheBayOfIce extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.attackingPlayer === this.controller
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.attackingPlayer === this.controller
             },
             cost: ability.costs.kneel(card => card.hasTrait('Warship') && card.getType() === 'location'),
             target: {
@@ -16,7 +16,7 @@ class RaidingTheBayOfIce extends DrawCard {
                     card.controller !== this.controller)
             },
             handler: context => {
-                context.target.owner.moveCard(context.target, 'draw deck');
+                context.target.owner.moveCardToTopOfDeck(context.target);
                 this.game.addMessage('{0} plays {1} to move {2} to the top of {3}\'s deck',
                     this.controller, this, context.target, context.target.owner);
 
