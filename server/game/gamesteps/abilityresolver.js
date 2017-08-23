@@ -46,6 +46,7 @@ class AbilityResolver extends BaseStep {
     }
 
     cancelStep() {
+        this.cancelled = true;
         this.pipeline.cancelStep();
     }
 
