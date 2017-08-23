@@ -286,10 +286,24 @@ class DrawCard extends BaseCard {
         return true;
     }
 
+    removeTrait(trait) {
+        super.removeTrait(trait);
+        this.enforceAttachmentValidity();
+    }
+
+    removeFaction(faction) {
+        super.removeFaction(faction);
+        this.enforceAttachmentValidity();
+    }
+
     clearBlank() {
         super.clearBlank();
+        this.enforceAttachmentValidity();
+    }
+
+    enforceAttachmentValidity() {
         this.attachments.each(attachment => {
-            if(!this.allowAttachment(attachment)) {
+            if(!this.allowAttachment(attachment) || !attachment.canAttach(this.controller, this)) {
                 this.controller.discardCard(attachment, false);
             }
         });

@@ -20,7 +20,8 @@ describe('DrawCard', function() {
 
         describe('when the card has attachments', function() {
             beforeEach(function() {
-                this.attachment = {};
+                this.attachment = jasmine.createSpyObj('attachment', ['canAttach']);
+                this.attachment.canAttach.and.returnValue(true);
                 this.card.attachments.push(this.attachment);
             });
 
