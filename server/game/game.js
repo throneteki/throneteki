@@ -53,6 +53,7 @@ class Game extends EventEmitter {
         this.abilityCardStack = [];
         this.abilityWindowStack = [];
         this.password = details.password;
+        this.cancelPromptUsed = false;
         this.claim = {
             isApplying: false,
             type: undefined
@@ -887,7 +888,8 @@ class Game extends EventEmitter {
                     };
                 }),
                 started: this.started,
-                winner: this.winner ? this.winner.name : undefined
+                winner: this.winner ? this.winner.name : undefined,
+                cancelPromptUsed: this.cancelPromptUsed
             };
         }
 

@@ -303,6 +303,7 @@ class ChatCommands {
     cancelPrompt(player) {
         this.game.addMessage('{0} uses the /cancel-prompt to skip the current step.', player);
         this.game.pipeline.cancelStep();
+        this.game.cancelPromptUsed = true;
     }
 
     setToken(player, args) {
