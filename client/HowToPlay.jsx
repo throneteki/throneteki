@@ -20,13 +20,13 @@ class HowToPlay extends React.Component {
                         <li><a href='#decks'>Adding Decks</a></li>
                         <li><a href='#profile'>Profile Options</a></li>
                         <ul className='htp-sub-list'>
-                            <li><a href='#action'>>Action Windows</a></li>
-                            <li><a href='#timed'>>Timed Interrupt Window</a></li>
+                            <li><a href='#action'>Action Windows</a></li>
+                            <li><a href='#timed'>Timed Interrupt Window</a></li>
                         </ul>
                         <li><a href='#bugs'>Bugs and Automation</a></li>
                         <li><a href='#interactions'>Specific Card Interactions</a></li>
                         <ul className='htp-sub-list'>
-                            <li><a href='#riddle'>>Varys' Riddle vs Summer Harvest</a></li>
+                            <li><a href='#riddle'>Varys' Riddle vs Summer Harvest</a></li>
                         </ul>
                         <li><a href='#commands'>Manual Commands</a></li>
                         <li><a href='#conceding'>About Stats, Conceding and Leaving Games</a></li>
@@ -40,12 +40,12 @@ class HowToPlay extends React.Component {
                     <h3 id='profile'>Profile Options</h3>
                     <p>Clicking your <Link href='/profile'>Profile</Link> at the top right of the page allows you to tailor certain aspects of gameplay to your wishes.</p>
 
-                    <h4 id='action'>> Action Windows</h4>
+                    <h4 id='action'>Action Windows</h4>
                     <p>Thrones 2nd Edition has quite a large number of phases and their associated action windows, a number of which are not used regularly by all decks. Always prompting these action windows leads to a lot of tediously clicking ‘Pass’, while never prompting these action windows leads to certain cards not being able to be used to their fullest extent. To solve this issue you can check/uncheck any action windows in your profile to determine when you’ll be prompted or not.</p>
 
                     <p>For example: if you play cards like <a target='_blank' href='https://thronesdb.com/card/01088'>The Tickler</a>, <a target='_blank' href='https://thronesdb.com/card/06031'>Wex Pyke</a>, <a target='_blank' href='https://thronesdb.com/card/01130'>Messenger Raven</a> or <a target='_blank' href='https://thronesdb.com/card/01139'>Take the Black</a> in your deck, be sure to check Dominance Actions in your profile. Your action window settings can also be changed during a game by clicking the triangle above the ‘Done’/‘Pass’ button. Lastly, the Taxation phase action window is technically not implemented currently, but actions in Taxation should be taken during the ‘End Round’ prompt</p>
 
-                    <h4 id='timed'>> Timed Interrupt Window</h4>
+                    <h4 id='timed'>Timed Interrupt Window</h4>
                     <p>The combination of automated gameplay and the ability to play reactions or interrupts from hand has the potential to “leak” information about what your opponent might hold in his hand. For example: if after playing an event there is a pause before it resolves, you might guess correctly that was due to your opponent being prompted to use The Hand’s Judgment. The three most notable cards that would be leaked this way are <a target='_blank' href='https://thronesdb.com/card/01045'>The Hand's Judgment</a>, <a target='_blank' href='https://thronesdb.com/card/01102'>Treachery</a> and <a target='_blank' href='https://thronesdb.com/card/02096'>Vengeance for Elia</a>. To solve this issue, the Timed Interrupt Window was created. Depending on which options you have checked, you get a timed prompt during certain triggers asking for interrupts whether you are able to interrupt these triggers or not. Now your opponent experiences the same pause any time and won’t be able to correctly guess whether you’re holding certain cards anymore.</p>
 
                     <p>There are a couple of options: you can decide whether you want to always be prompted for triggered card abilities (useful if you’re playing Treachery), events (useful if you’re playing The Hand’s Judgment, The Pack Survives, etc.) or both. Claim (useful if you’re playing Vengeance for Elia) is currently combined with the event option. The timer duration can be modified too. Obviously, if you don’t care about leaking cards from your hand (or you don’t play these cards anyway) and just want a quick game, deselecting both options will allow for that. You will still get prompted to use the aforementioned cards, but only when you actually have them.</p>
@@ -54,7 +54,7 @@ class HowToPlay extends React.Component {
                     <p>While The Iron Throne is still a work in progress, the vast majority of cards are implemented and should be working correctly. We try to keep a list up to date with the current state of the automation which can be found <a target='_blank' href='https://docs.google.com/spreadsheets/d/1t7ITlfkaUvso30QEZIbqswv3FM0N95UtWc-RDtPLdIQ'>here</a>. If you happen upon a card that you believe is not working as it should and it is not on that list, it would help immensely if you would submit an issue on <a target='_blank' href='https://github.com/cryogen/throneteki/issues'>GitHub</a>. Other comments and/or feedback can be left on GitHub as well.</p>
 
                     <h3 id='interactions'>Specific Card Interactions</h3>
-                    <h4 id='riddle'>><a href='https://thronesdb.com/card/04020' target='_blank'>Varys' Riddle</a> vs <a href='https://thronesdb.com/card/04039' target='_blank'>Summer Harvest</a></h4>
+                    <h4 id='riddle'><a href='https://thronesdb.com/card/04020' target='_blank'>Varys' Riddle</a> vs <a href='https://thronesdb.com/card/04039' target='_blank'>Summer Harvest</a></h4>
                     <p>CardGameDB rule threads on this interaction: <a href='http://www.cardgamedb.com/forums/index.php?/topic/32255-varys-riddle-vs-summer-harvest/' target='_blank'>1</a>, <a href='http://www.cardgamedb.com/forums/index.php?/topic/33283-timming-varys-riddle-summer-harvest/' target='_blank'>2</a>.</p>
                     <p>These plots have a very specific interaction that's implemented a little differently from the official ruling. Officially, X will be defined by both plots and thus will be both 2 and 7. The first player will consequently decide what value X is whenever it gets referenced (a more thorough explanation is detailed in the above links). On The Iron Throne it is implemented a little differently. As the player who revealed Varys' Riddle, to make sure your opponent's value of X will be 2, you have to go first and trigger Summer Harvest first. As the player who revealed Summer Harvest, if the Varys' Riddle player has made you first player (or you won initiative somehow), you'd want to trigger Varys' Riddle first to make sure your X is 7.</p>
 
