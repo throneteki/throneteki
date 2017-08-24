@@ -310,7 +310,14 @@ class Player extends Spectator {
             card.moveTo('draw deck');
             this.drawDeck.push(card);
         });
+        this.cardsInPlay.each(card => {
+            card.moveTo('draw deck');
+            this.drawDeck.push(card);
+        });
+
         this.hand = _([]);
+        this.cardsInPlay = _([]);
+
         this.shuffleDrawDeck();
         this.drawCardsToHand(StartingHandSize);
     }
@@ -500,7 +507,7 @@ class Player extends Spectator {
             if(this.game.currentPhase !== 'setup' && card.isBestow()) {
                 this.game.queueStep(new BestowPrompt(this.game, this, card));
             }
-            
+
             return;
         }
 
