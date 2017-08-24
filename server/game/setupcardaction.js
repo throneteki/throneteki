@@ -18,7 +18,7 @@ class SetupCardAction extends BaseAbility {
 
     meetsRequirements(context) {
         return (
-            context.game.readyToStart &&
+            context.player.readyToStart &&
             context.game.currentPhase === 'setup' &&
             context.player.hand.contains(context.source) &&
             context.source.getType() !== 'event'

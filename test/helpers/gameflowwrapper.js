@@ -36,7 +36,8 @@ class GameFlowWrapper {
 
     startGame() {
         this.game.initialise();
-        this.game.readyToStart = true;
+        this.player1.readyToStart = true;
+        this.player2.readyToStart = true;
     }
 
     keepStartingHands() {
