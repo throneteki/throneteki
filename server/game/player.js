@@ -46,15 +46,7 @@ class Player extends Spectator {
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
         this.mustChooseAsClaim = [];
-        this.promptedActionWindows = user.promptedActionWindows || {
-            plot: false,
-            draw: false,
-            challengeBegin: false,
-            attackersDeclared: true,
-            defendersDeclared: true,
-            dominance: false,
-            standing: false
-        };
+        this.promptedActionWindows = user.promptedActionWindows;
 
         this.createAdditionalPile('out of game');
 
