@@ -205,6 +205,8 @@ class DeckValidator {
             errors.push('Too few plot cards');
         } else if(plotCount > rules.requiredPlots) {
             errors.push('Too many plot cards');
+        } else if(deck.plotCards.length < rules.requiredPlots - 1) {
+            errors.push('Only a single plot can have multiple copies');
         }
 
         if(drawCount < rules.requiredDraw) {
