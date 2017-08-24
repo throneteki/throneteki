@@ -12,18 +12,57 @@ class KeywordWindow extends BaseStep {
         this.winnerCardsWithContext = _.map(challenge.getWinnerCards(), card => {
             return { card: card, context: { game: this.game, challenge: this.challenge, source: card } };
         });
+        this.firstPlayer = game.getFirstPlayer();
+        this.remainingKeywords = challengeKeywords;
     }
 
     continue() {
         if(!this.challenge.winner) {
-            return;
+            return true;
         }
 
-        _.each(challengeKeywords, keyword => {
-            this.applyKeyword(keyword);
-        });
+        if(this.firstPlayer.keywordSettings.chooseOrder && this.remainingKeywords.length > 1) {
+            this.promptForKeywordOrder();
+            return false;
+        }
+
+        this.processRemainingInAutomaticOrder();
 
         return true;
+    }
+
+    promptForKeywordOrder() {
+        let buttons = _.map(this.remainingKeywords, keyword => {
+            return { text: GameKeywords[keyword].title, arg: keyword, method: 'chooseKeyword' };
+        });
+        this.game.promptWithMenu(this.firstPlayer, this, {
+            activePrompt: {
+                menuTitle: 'Choose keyword order',
+                buttons: [
+                    { text: 'Automatic', arg: 'automatic', method: 'chooseKeyword' }
+                ].concat(_.sortBy(buttons, button => button.title))
+            },
+            waitingPromptTitle: 'Waiting for first player to choose keyword order'
+        });
+    }
+
+    chooseKeyword(player, keyword) {
+        if(keyword === 'automatic') {
+            this.processRemainingInAutomaticOrder();
+            return true;
+        }
+
+        this.applyKeyword(keyword);
+        this.remainingKeywords = _.reject(this.remainingKeywords, k => k === keyword);
+        return true;
+    }
+
+    processRemainingInAutomaticOrder() {
+        while(this.remainingKeywords.length !== 0) {
+            let keyword = this.remainingKeywords[0];
+            this.applyKeyword(keyword);
+            this.remainingKeywords = this.remainingKeywords.slice(1);
+        }
     }
 
     applyKeyword(keyword) {

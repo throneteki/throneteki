@@ -9,6 +9,10 @@ const defaultWindows = {
     taxation: false
 };
 
+const defaultKeywordSettings = {
+    chooseOrder: false
+};
+
 const defaultSettings = {
     disableGravatar: false,
     windowTimer: 10,
@@ -28,6 +32,7 @@ function getUserWithDefaultsSet(user) {
     }
 
     userToReturn.settings = Object.assign({}, defaultSettings, userToReturn.settings);
+    userToReturn.settings.keywordSettings = Object.assign({}, defaultKeywordSettings, userToReturn.settings.keywordSettings);
     userToReturn.settings.timerSettings = Object.assign({}, defaultTimerSettings, userToReturn.settings.timerSettings);
     userToReturn.permissions = Object.assign({}, userToReturn.permissions);
     userToReturn.promptedActionWindows = Object.assign({}, defaultWindows, userToReturn.promptedActionWindows);

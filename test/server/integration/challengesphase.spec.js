@@ -159,5 +159,101 @@ describe('challenges phase', function() {
                 expect(this.merchant.kneeled).toBe(true);
             });
         });
+
+        describe('when cards have keywords', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('tyrell', [
+                    'Sneak Attack',
+                    'Renly Baratheon (FFH)', 'Brienne of Tarth', 'Ser Garlan Tyrell (OR)', 'Garden Caretaker'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.renly = this.player1.findCardByName('Renly Baratheon', 'hand');
+                this.brienne = this.player1.findCardByName('Brienne of Tarth', 'hand');
+                this.garlan = this.player1.findCardByName('Ser Garlan Tyrell', 'hand');
+                this.chud = this.player1.findCardByName('Garden Caretaker', 'hand');
+
+                this.player1.dragCard(this.renly, 'play area');
+                this.player1.dragCard(this.brienne, 'play area');
+                this.player1.dragCard(this.garlan, 'play area');
+
+                this.completeSetup();
+
+                this.player1.selectPlot('Sneak Attack');
+                this.player2.selectPlot('Sneak Attack');
+                this.selectFirstPlayer(this.player2);
+
+                // Put the remaining card back in draw deck for insight
+                this.player1.dragCard(this.chud, 'draw deck');
+
+                this.completeMarshalPhase();
+
+                // Skip player 2's challenges
+                this.player2.clickPrompt('Done');
+
+                this.player1.clickPrompt('Power');
+                this.player1.clickCard(this.renly);
+                this.player1.clickCard(this.brienne);
+                this.player1.clickCard(this.garlan);
+                this.player1.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                // No defenders
+                this.player2.clickPrompt('Done');
+
+                this.skipActionWindow();
+            });
+
+            describe('when no settings are set', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Apply Claim');
+                    // Pass on Renly's ability
+                    this.player1.clickPrompt('Pass');
+                });
+
+                it('should apply all keywords automatically', function() {
+                    expect(this.chud.location).toBe('hand');
+                    expect(this.renly.power).toBe(1);
+                    expect(this.brienne.power).toBe(1);
+                    expect(this.garlan.power).toBe(1);
+                });
+            });
+
+            describe('and the first player wants to choose keyword order', function() {
+                beforeEach(function() {
+                    this.player2.toggleKeywordSettings('chooseOrder', true);
+
+                    this.player1.clickPrompt('Apply Claim');
+                });
+
+                it('should allow the first player to choose the order', function() {
+                    this.player2.clickPrompt('Insight');
+                    // Pass on Renly's ability
+                    this.player1.clickPrompt('Pass');
+
+                    expect(this.chud.location).toBe('hand');
+                    // No Renown power yet
+                    expect(this.player2).toHavePromptButton('Renown');
+                    expect(this.renly.power).toBe(0);
+                    expect(this.brienne.power).toBe(0);
+                    expect(this.garlan.power).toBe(0);
+                });
+
+                it('should allow the first player to process all keywords automatically', function() {
+                    this.player2.clickPrompt('Automatic');
+                    // Pass on Renly's ability
+                    this.player1.clickPrompt('Pass');
+
+                    expect(this.chud.location).toBe('hand');
+                    expect(this.renly.power).toBe(1);
+                    expect(this.brienne.power).toBe(1);
+                    expect(this.garlan.power).toBe(1);
+                });
+            });
+        });
     });
 });
