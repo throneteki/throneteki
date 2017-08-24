@@ -1,7 +1,14 @@
+const _ = require('underscore');
+
 const DrawCard = require('../../../drawcard.js');
 
 class RenlyBaratheon extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => this.anyOpponentControlsKing(),
+            match: this,
+            effect: ability.effects.cannotBeSaved()
+        });
         this.reaction({
             when: {
                 onInsight: event => {
@@ -23,6 +30,16 @@ class RenlyBaratheon extends DrawCard {
                         this.controller, this, drawnCard);
                 }
             }
+        });
+    }
+
+    anyOpponentControlsKing() {
+        return _.any(this.game.getPlayers(), player => {
+            if(player === this.controller) {
+                return false;
+            }
+
+            return player.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait('King'));
         });
     }
 }

@@ -589,6 +589,7 @@ const Effects = {
     cannotBeKneeled: cannotEffect('kneel'),
     cannotBeStood: cannotEffect('stand'),
     cannotBeKilled: cannotEffect('kill'),
+    cannotBeSaved: cannotEffect('save'),
     cannotGainPower: cannotEffect('gainPower'),
     cannotGainGold: function() {
         return {

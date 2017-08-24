@@ -10,9 +10,9 @@ class JoryCassel extends DrawCard {
                 onCharactersKilled: event => event.allowSave
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: (card, context) => (
                     context.event.cards.includes(card) &&
+                    card.canBeSaved() &&
                     card.controller === this.controller &&
                     card.isUnique() &&
                     card.isFaction('stark')

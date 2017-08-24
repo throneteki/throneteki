@@ -6,14 +6,14 @@ class BodyGuard extends DrawCard {
             canCancel: true,
             when: {
                 onCharactersKilled: event => {
-                    if(event.cards.includes(this.parent) && event.allowSave) {
+                    if(event.cards.includes(this.parent) && this.parent.canBeSaved() && event.allowSave) {
                         this.parentCard = this.parent;
                         return true;
                     }
                     return false;
                 },
                 onCardsDiscarded: event => {
-                    if(event.cards.includes(this.parent) && event.allowSave) {
+                    if(event.cards.includes(this.parent) && this.parent.canBeSaved() && event.allowSave) {
                         this.parentCard = this.parent;
                         return true;
                     }

@@ -9,8 +9,7 @@ class PodrickPayne extends DrawCard {
                 onCharactersKilled: () => this.game.claim.isApplying && this.game.claim.type === 'military'
             },
             target: {
-                activePromptTitle: 'Select character to save',
-                cardCondition: (card, context) => context.event.cards.includes(card) && card.controller === this.controller
+                cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && card.controller === this.controller
             },
             cost: [
                 ability.costs.payGold(2),

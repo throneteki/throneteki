@@ -9,8 +9,7 @@ class MaesterAemon extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select character to save',
-                cardCondition: (card, context) => context.event.cards.includes(card) && card.isFaction('thenightswatch') && card.controller === this.controller
+                cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && card.isFaction('thenightswatch') && card.controller === this.controller
             },
             handler: context => {
                 context.event.saveCard(context.target);

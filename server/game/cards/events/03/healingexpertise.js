@@ -10,8 +10,7 @@ class HealingExpertise extends DrawCard {
             location: 'hand',
             cost: ability.costs.kneel(card => card.hasTrait('Maester') && card.getType() === 'character'),
             target: {
-                activePromptTitle: 'Select character to save',
-                cardCondition: (card, context) => context.event.cards.includes(card) && !card.hasTrait('Army') && card.controller === this.controller
+                cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && !card.hasTrait('Army') && card.controller === this.controller
             },
             handler: context => {
                 context.event.saveCard(context.target);                
