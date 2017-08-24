@@ -305,18 +305,35 @@ class Player extends Spectator {
         this.challenges.setCannotInitiateForType(type, value);
     }
 
-    initDrawDeck() {
-        this.hand.each(card => {
+    resetCardPile(pile) {
+        pile.each(card => {
             card.moveTo('draw deck');
             this.drawDeck.push(card);
         });
-        this.cardsInPlay.each(card => {
-            card.moveTo('draw deck');
-            this.drawDeck.push(card);
-        });
+    }
 
+    resetDrawDeck() {
+        this.resetCardPile(this.hand);
         this.hand = _([]);
+
+        this.resetCardPile(this.cardsInPlay);
         this.cardsInPlay = _([]);
+
+        this.resetCardPile(this.discardPile);
+        this.discardPile = _([]);
+
+        this.resetCardPile(this.deadPile);
+        this.deadPile = _([]);
+
+        _.each(this.additionalPiles, pile => {
+            this.resetCardPile(_(pile.cards));
+        });
+        this.additionalPiles = {};
+        this.createAdditionalPile('out of game');
+    }
+
+    initDrawDeck() {
+        this.resetDrawDeck();
 
         this.shuffleDrawDeck();
         this.drawCardsToHand(StartingHandSize);
