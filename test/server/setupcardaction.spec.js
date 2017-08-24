@@ -21,6 +21,7 @@ describe('SetupCardAction', function () {
     describe('meetsRequirements()', function() {
         beforeEach(function() {
             this.gameSpy.currentPhase = 'setup';
+            this.gameSpy.readyToStart = true;
             this.playerSpy.hand = _([this.cardSpy]);
             this.cardSpy.getType.and.returnValue('character');
         });

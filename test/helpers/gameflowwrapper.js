@@ -36,6 +36,7 @@ class GameFlowWrapper {
 
     startGame() {
         this.game.initialise();
+        this.game.readyToStart = true;
     }
 
     keepStartingHands() {
