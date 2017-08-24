@@ -47,6 +47,7 @@ class RepeatableAbilityLimit extends FixedAbilityLimit {
 
     unregisterEvents(eventEmitter) {
         eventEmitter.removeListener(this.eventName, this.resetHandler);
+        this.reset();
     }
 }
 

@@ -54,6 +54,12 @@ describe('AbilityLimit', function () {
             this.limit.unregisterEvents(this.eventEmitterSpy);
             expect(this.eventEmitterSpy.removeListener).toHaveBeenCalledWith('onEventForReset', jasmine.any(Function));
         });
+
+        it('should reset the count to 0', function() {
+            this.limit.increment();
+            this.limit.unregisterEvents(this.eventEmitterSpy);
+            expect(this.limit.useCount).toBe(0);
+        });
     });
 
     describe('resetting the use count', function() {

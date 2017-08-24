@@ -99,5 +99,44 @@ describe('leaving play', function() {
                 expect(this.attachment.location).toBe('discard pile');
             });
         });
+
+        describe('when a card ability limit has been reached', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('baratheon', [
+                    'Trading with the Pentoshi',
+                    'Melisandre (Core)', 'Dragonstone Faithful', 'Dragonstone Faithful'
+                ]);
+
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.character = this.player1.findCardByName('Melisandre', 'hand');
+                [this.chud1, this.chud2] = this.player2.filterCardsByName('Dragonstone Faithful', 'hand');
+
+                this.player2.clickCard(this.chud1);
+                this.player2.clickCard(this.chud2);
+
+                this.completeSetup();
+
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.player2.selectPlot('Trading with the Pentoshi');
+
+                this.selectFirstPlayer(this.player1);
+                this.selectPlotOrder(this.player1);
+
+                this.player1.clickCard(this.character);
+                this.player1.clickPrompt('Melisandre');
+                this.player1.clickCard(this.chud1);
+
+                this.player1.dragCard(this.character, 'hand');
+                this.player1.clickCard(this.character);
+            });
+
+            it('should reset after leaving play', function() {
+                expect(this.player1).toHavePromptButton('Melisandre');
+            });
+        });
     });
 });
