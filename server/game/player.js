@@ -305,12 +305,30 @@ class Player extends Spectator {
         this.challenges.setCannotInitiateForType(type, value);
     }
 
-    initDrawDeck() {
-        this.hand.each(card => {
+    resetCardPile(pile) {
+        pile.each(card => {
             card.moveTo('draw deck');
             this.drawDeck.push(card);
         });
+    }
+
+    resetDrawDeck() {
+        this.resetCardPile(this.hand);
         this.hand = _([]);
+
+        this.resetCardPile(this.cardsInPlay);
+        this.cardsInPlay = _([]);
+
+        this.resetCardPile(this.discardPile);
+        this.discardPile = _([]);
+
+        this.resetCardPile(this.deadPile);
+        this.deadPile = _([]);
+    }
+
+    initDrawDeck() {
+        this.resetDrawDeck();
+
         this.shuffleDrawDeck();
         this.drawCardsToHand(StartingHandSize);
     }
@@ -500,7 +518,7 @@ class Player extends Spectator {
             if(this.game.currentPhase !== 'setup' && card.isBestow()) {
                 this.game.queueStep(new BestowPrompt(this.game, this, card));
             }
-            
+
             return;
         }
 
