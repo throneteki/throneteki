@@ -119,7 +119,7 @@ class PendingGame {
 
     join(id, user, password, callback) {
         if(_.size(this.players) === 2) {
-            callback(new Error('Too many players'), 'Too many players');
+            return;
         }
 
         if(this.password) {
