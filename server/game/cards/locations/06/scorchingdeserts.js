@@ -3,26 +3,19 @@ const DrawCard = require('../../../drawcard.js');
 class ScorchingDeserts extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
+            title: context => context.event.card.name,
             when: {
-                onAttackersDeclared: () => true,
-                onDefendersDeclared: () => true
+                onDeclaredAsAttacker: event => event.card.getNumberOfIcons() < 2 && event.card.controller !== this.controller,
+                onDeclaredAsDefender: event => event.card.getNumberOfIcons() < 2 && event.card.controller !== this.controller
             },
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.sacrificeSelf()
             ],
-            target: {
-                cardCondition: (card, context) => (
-                    card.location === 'play area' && 
-                    card.getType() === 'character' &&
-                    card.getNumberOfIcons() < 2 &&
-                    (context.event.name === 'onAttackersDeclared' ? this.game.currentChallenge.isAttacking(card) : this.game.currentChallenge.isDefending(card)) &&
-                    card.controller !== this.controller)
-            },
             handler: context => {
-                this.game.currentChallenge.removeFromChallenge(context.target);
+                this.game.currentChallenge.removeFromChallenge(context.event.card);
                 this.game.addMessage('{0} kneels and sacrifices {1} to remove {2} from the challenge', 
-                    this.controller, this, context.target);
+                    this.controller, this, context.event.card);
             }
         });
     }
