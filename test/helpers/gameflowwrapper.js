@@ -71,6 +71,17 @@ class GameFlowWrapper {
 
     completeDominancePhase() {
         this.guardCurrentPhase('dominance');
+        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+    }
+
+    completeStandingPhase() {
+        this.guardCurrentPhase('standing');
+        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
+    }
+
+    completeTaxationPhase() {
+        this.guardCurrentPhase('taxation');
+        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Done'));
     }
 
     skipActionWindow() {
