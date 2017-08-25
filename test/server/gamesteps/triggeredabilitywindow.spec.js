@@ -46,10 +46,10 @@ describe('TriggeredAbilityWindow', function() {
             this.context3 = { context: 3 };
 
             this.window.abilityChoices = [
-                { id: '1', ability: this.ability1Spy, card: this.abilityCard1, choice: 'choice1', context: this.context1, player: this.player1Spy, text: 'My Choice 1' },
-                { id: '2', ability: this.ability1Spy, card: this.abilityCard1, choice: 'choice2', context: this.context1, player: this.player1Spy, text: 'My Choice 2' },
-                { id: '3', ability: this.ability2Spy, card: this.abilityCard2, choice: 'default', context: this.context2, player: this.player1Spy, text: 'default' },
-                { id: '4', ability: this.ability3Spy, card: this.abilityCard3, choice: 'default', context: this.context3, player: this.player2Spy, text: 'default' }
+                { id: '1', abilityGroupId: 1, ability: this.ability1Spy, card: this.abilityCard1, choice: 'choice1', context: this.context1, player: this.player1Spy, text: 'My Choice 1' },
+                { id: '2', abilityGroupId: 1, ability: this.ability1Spy, card: this.abilityCard1, choice: 'choice2', context: this.context1, player: this.player1Spy, text: 'My Choice 2' },
+                { id: '3', abilityGroupId: 2, ability: this.ability2Spy, card: this.abilityCard2, choice: 'default', context: this.context2, player: this.player1Spy, text: 'default' },
+                { id: '4', abilityGroupId: 3, ability: this.ability3Spy, card: this.abilityCard3, choice: 'default', context: this.context3, player: this.player2Spy, text: 'default' }
             ];
         };
 
@@ -301,7 +301,7 @@ describe('TriggeredAbilityWindow', function() {
                 expect(this.gameSpy.resolveAbility).toHaveBeenCalledWith(this.ability1Spy, this.context1);
             });
 
-            it('should remove all choices for that card', function() {
+            it('should remove all choices for that ability grouping', function() {
                 let remainingIds = _.pluck(this.window.abilityChoices, 'id');
                 expect(remainingIds).toEqual(['3', '4']);
             });

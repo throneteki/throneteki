@@ -149,6 +149,15 @@ describe('challenges phase', function() {
                 expect(this.player1).toHavePromptButton('Marya Seaworth - Kneel Hedge Knight');
                 expect(this.player1).toHavePromptButton('Marya Seaworth - Kneel Lannisport Merchant');
             });
+
+            it('should allow multiple reactions from the same card to be triggered', function() {
+                this.initiateChallenge();
+                this.player1.clickPrompt('Marya Seaworth - Kneel Hedge Knight');
+                this.player1.clickPrompt('Marya Seaworth - Kneel Lannisport Merchant');
+
+                expect(this.knight.kneeled).toBe(true);
+                expect(this.merchant.kneeled).toBe(true);
+            });
         });
     });
 });

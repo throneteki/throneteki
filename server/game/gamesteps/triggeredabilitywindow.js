@@ -21,10 +21,12 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         let context = ability.createContext(event);
         let player = context.player;
         let choiceTexts = ability.getChoices(context);
+        let abilityGroupId = uuid.v1();
 
         _.each(choiceTexts, choiceText => {
             this.abilityChoices.push({
                 id: uuid.v1(),
+                abilityGroupId: abilityGroupId,
                 player: player,
                 ability: ability,
                 card: ability.card,
@@ -140,7 +142,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         choice.context.choice = choice.choice;
         this.game.resolveAbility(choice.ability, choice.context);
 
-        this.abilityChoices = _.reject(this.abilityChoices, ability => ability.card === choice.card);
+        this.abilityChoices = _.reject(this.abilityChoices, ability => ability.abilityGroupId === choice.abilityGroupId);
 
         // Always rotate player order without filtering, in case an ability is
         // triggered that could then make another ability eligible after it is
