@@ -12,7 +12,8 @@ class ActionWindowsMenu extends React.Component {
             { name: 'attackersDeclared', label: 'Attackers declared' },
             { name: 'defendersDeclared', label: 'Defenders declared' },
             { name: 'dominance', label: 'Dominance phase' },
-            { name: 'standing', label: 'Standing phase' }
+            { name: 'standing', label: 'Standing phase' },
+            { name: 'taxation', label: 'Taxation phase'}
         ];
     }
 

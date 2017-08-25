@@ -38,7 +38,8 @@ class InnerProfile extends React.Component {
             { name: 'attackersDeclared', label: 'Attackers declared', style: 'col-sm-4' },
             { name: 'defendersDeclared', label: 'Defenders declared', style: 'col-sm-4' },
             { name: 'dominance', label: 'Dominance phase', style: 'col-sm-4' },
-            { name: 'standing', label: 'Standing phase', style: 'col-sm-4' }
+            { name: 'standing', label: 'Standing phase', style: 'col-sm-4' },
+            { name: 'taxation', label: 'Taxation phase', style: 'col-sm-4' }
         ];
     }
 

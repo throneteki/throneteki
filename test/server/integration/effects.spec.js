@@ -162,7 +162,6 @@ describe('effects', function() {
                 beforeEach(function() {
                     this.completeMarshalPhase();
                     this.completeChallengesPhase();
-                    this.completeTaxationPhase();
 
                     this.player2.selectPlot('Famine');
                     this.player1.selectPlot('Sneak Attack');
@@ -173,7 +172,7 @@ describe('effects', function() {
 
                 it('should not apply the effect', function() {
                     expect(this.player2.player.gold).toBe(1);
-                });                
+                });
             });
         });
     });

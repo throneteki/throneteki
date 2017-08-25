@@ -50,7 +50,6 @@ describe('event maximums', function() {
                 this.player1.clickPrompt('Done');
 
                 this.completeChallengesPhase();
-                this.completeTaxationPhase();
 
                 this.player1.selectPlot('A Game of Thrones');
                 this.player2.selectPlot('A Game of Thrones');

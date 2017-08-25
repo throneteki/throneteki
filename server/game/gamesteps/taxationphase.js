@@ -2,7 +2,7 @@ const _ = require('underscore');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const DiscardToReservePrompt = require('./taxation/discardtoreserveprompt.js');
-const EndRoundPrompt = require('./taxation/endroundprompt.js');
+const ActionWindow = require('./actionwindow.js');
 
 class TaxationPhase extends Phase {
     constructor(game) {
@@ -10,7 +10,7 @@ class TaxationPhase extends Phase {
         this.initialise([
             new SimpleStep(game, () => this.returnGold()),
             new DiscardToReservePrompt(game),
-            new EndRoundPrompt(game),
+            new ActionWindow(game, 'After reserve check', 'taxation'),
             new SimpleStep(game, () => this.roundEnded())
         ]);
     }

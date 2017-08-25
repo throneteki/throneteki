@@ -73,12 +73,6 @@ class GameFlowWrapper {
         this.guardCurrentPhase('dominance');
     }
 
-    completeTaxationPhase() {
-        this.guardCurrentPhase('taxation');
-        // TODO: Discard down to reserve in case of tests that fill up the player's hand
-        this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('End Round'));
-    }
-
     skipActionWindow() {
         this.eachPlayerInFirstPlayerOrder(player => player.clickPrompt('Pass'));
     }

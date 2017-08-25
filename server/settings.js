@@ -5,7 +5,8 @@ const defaultWindows = {
     attackersDeclared: true,
     defendersDeclared: true,
     dominance: false,
-    standing: false
+    standing: false,
+    taxation: false
 };
 
 const defaultSettings = {

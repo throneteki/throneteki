@@ -47,7 +47,6 @@ describe('Retaliation', function() {
 
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
-                this.completeTaxationPhase();
 
                 this.player1.selectPlot('Retaliation');
                 this.player2.selectPlot('A Noble Cause');
