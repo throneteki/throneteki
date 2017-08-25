@@ -324,12 +324,6 @@ class Player extends Spectator {
 
         this.resetCardPile(this.deadPile);
         this.deadPile = _([]);
-
-        _.each(this.additionalPiles, pile => {
-            this.resetCardPile(_(pile.cards));
-        });
-        this.additionalPiles = {};
-        this.createAdditionalPile('out of game');
     }
 
     initDrawDeck() {
