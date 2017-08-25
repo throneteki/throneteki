@@ -11,7 +11,7 @@ const GameFlowWrapper = require('./gameflowwrapper.js');
 const ProxiedGameFlowWrapperMethods = [
     'startGame', 'keepStartingHands', 'skipSetupPhase', 'selectFirstPlayer',
     'completeMarshalPhase', 'completeChallengesPhase', 'completeDominancePhase',
-    'completeTaxationPhase', 'selectPlotOrder', 'completeSetup',
+    'selectPlotOrder', 'completeSetup',
     'skipActionWindow', 'unopposedChallenge'
 ];
 

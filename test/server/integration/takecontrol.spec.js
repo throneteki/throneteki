@@ -26,7 +26,7 @@ describe('take control', function() {
                 this.player2.clickCard(this.dupe);
 
                 this.completeSetup();
-                expect(this.paxter.dupes.size()).toBe(1);                
+                expect(this.paxter.dupes.size()).toBe(1);
 
                 this.player1.selectPlot('Sneak Attack');
                 this.player2.selectPlot('Sneak Attack');
@@ -44,7 +44,6 @@ describe('take control', function() {
                     // Complete round 1
                     this.completeMarshalPhase();
                     this.completeChallengesPhase();
-                    this.completeTaxationPhase();
 
                     // Select plots for round 2
                     this.player1.selectPlot('Valar Morghulis');
@@ -100,7 +99,6 @@ describe('take control', function() {
                     // Complete round 1
                     this.completeMarshalPhase();
                     this.completeChallengesPhase();
-                    this.completeTaxationPhase();
 
                     // Select plots for round 2
                     this.player1.selectPlot('A Noble Cause');
@@ -161,9 +159,9 @@ describe('take control', function() {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.euron);
                 this.player1.clickPrompt('Done');
-                
+
                 this.skipActionWindow();
-                
+
                 this.player2.clickPrompt('Done');
 
                 this.skipActionWindow();
@@ -180,9 +178,6 @@ describe('take control', function() {
                 // Complete challenges phase
                 this.player1.clickPrompt('Done');
                 this.player2.clickPrompt('Done');
-
-                // Complete round
-                this.completeTaxationPhase();
 
                 // Round 2
                 this.player1.selectPlot('Sneak Attack');
@@ -661,7 +656,6 @@ describe('take control', function() {
 
                 this.player2.clickPrompt('Done');
                 this.completeChallengesPhase();
-                this.completeTaxationPhase();
 
                 this.player1.selectPlot('The First Snow of Winter');
                 this.player2.selectPlot('A Game of Thrones');
@@ -674,7 +668,6 @@ describe('take control', function() {
                 expect(this.ward1.location).toBe('discard pile');
 
                 this.completeChallengesPhase();
-                this.completeTaxationPhase();
 
                 this.player1.selectPlot('A Game of Thrones');
                 this.player2.selectPlot('A Game of Thrones');

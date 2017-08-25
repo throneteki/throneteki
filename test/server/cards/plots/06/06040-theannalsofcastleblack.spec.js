@@ -95,7 +95,6 @@ describe('The Annals of Castle Black', function() {
                 this.selectFirstPlayer(this.player1);
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
-                this.completeTaxationPhase();
 
                 this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('A Noble Cause');

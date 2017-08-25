@@ -35,7 +35,6 @@ describe('SummerHarvest', function() {
                 beforeEach(function() {
                     this.completeMarshalPhase();
                     this.completeChallengesPhase();
-                    this.completeTaxationPhase();
 
                     // Move Summer Harvest back to the plot deck so it's eligible to be picked again.
                     this.summerHarvest.controller.moveCard(this.summerHarvest, 'plot deck');
