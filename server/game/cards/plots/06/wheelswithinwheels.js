@@ -6,6 +6,8 @@ class WheelsWithinWheels extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
+                this.cards = undefined;
+
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
                     numToSelect: 10,
@@ -23,20 +25,20 @@ class WheelsWithinWheels extends PlotCard {
         this.cards = this.cards || [];
         this.cards.push(card);
         player.removeCardFromPile(card);
-        
+
         return true;
     }
 
     doneSelecting(player) {
         if(_.isEmpty(this.cards)) {
-            this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards', 
+            this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards',
                 player, this);
-        
+
             return true;
         }
 
         if(this.cards.length === 1) {
-            this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', 
+            this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
                 player, this, this.cards[0]);
 
             player.moveCard(this.cards[0], 'hand');
@@ -68,7 +70,7 @@ class WheelsWithinWheels extends PlotCard {
             player.moveCard(card, 'discard pile');
         });
 
-        this.game.addMessage('{0} uses {1} to add {2} to their hand and place {3} in their discard pile', 
+        this.game.addMessage('{0} uses {1} to add {2} to their hand and place {3} in their discard pile',
             player, this, cardToHand, this.cards);
 
         return true;
