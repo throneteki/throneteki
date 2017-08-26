@@ -10,7 +10,8 @@ const defaultWindows = {
 };
 
 const defaultKeywordSettings = {
-    chooseOrder: false
+    chooseOrder: false,
+    chooseCards: false
 };
 
 const defaultSettings = {

@@ -254,6 +254,30 @@ describe('challenges phase', function() {
                     expect(this.garlan.power).toBe(1);
                 });
             });
+
+            describe('and the winner wants to choose which cards', function() {
+                beforeEach(function() {
+                    this.player1.toggleKeywordSettings('chooseCards', true);
+
+                    this.player1.clickPrompt('Apply Claim');
+                });
+
+                it('should allow the winner to choose cards', function() {
+                    expect(this.player1).toHavePrompt('Select insight cards');
+                    this.player1.clickPrompt('Done');
+
+                    expect(this.chud.location).toBe('draw deck');
+
+                    expect(this.player1).toHavePrompt('Select renown cards');
+                    this.player1.clickCard(this.renly);
+                    this.player1.clickCard(this.garlan);
+                    this.player1.clickPrompt('Done');
+
+                    expect(this.renly.power).toBe(1);
+                    expect(this.brienne.power).toBe(0);
+                    expect(this.garlan.power).toBe(1);
+                });
+            });
         });
     });
 });
