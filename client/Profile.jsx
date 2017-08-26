@@ -203,7 +203,7 @@ class InnerProfile extends React.Component {
 
         return (
             <div className='col-sm-8 col-sm-offset-2 profile full-height'>
-                <div className='about-container'>
+                <div>
                     { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
                     { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
                     <form className='form form-horizontal'>
