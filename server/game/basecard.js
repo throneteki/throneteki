@@ -197,10 +197,11 @@ class BaseCard {
      * is both in play and not blank.
      */
     persistentEffect(properties) {
-        const allowedLocations = ['active plot', 'agenda', 'any', 'play area'];
+        const allowedLocations = ['active plot', 'agenda', 'any', 'play area', 'title'];
         const defaultLocationForType = {
             agenda: 'agenda',
-            plot: 'active plot'
+            plot: 'active plot',
+            title: 'title'
         };
 
         let location = properties.location || defaultLocationForType[this.getType()] || 'play area';
