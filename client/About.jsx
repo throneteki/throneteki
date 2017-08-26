@@ -9,7 +9,7 @@ class About extends React.Component {
                 <div className='panel-title text-center'>
                     About The Iron Throne - Help and information
                 </div>
-                <div className='panel about-container'>
+                <div className='panel'>
                     <a className='btn btn-danger btn-lg pull-right' target='_blank' href='https://github.com/cryogen/throneteki/issues'>Report Problems</a>
                     <h3>What is this?</h3>
 
