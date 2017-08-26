@@ -37,6 +37,16 @@ class CardService {
             });
     }
 
+    getTitleCards() {
+        return this.cards.find({ type_code: 'title' })
+            .then(cards => {
+                return cards.reduce((memo, card) => {
+                    memo[card.code] = card;
+                    return memo;
+                }, {});
+            });
+    }
+
     getAllPacks() {
         return this.packs.find({}).catch(err => {
             logger.info(err);

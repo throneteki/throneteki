@@ -5,12 +5,14 @@ const Raven = require('raven');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const monk = require('monk');
 
 const config = require('./nodeconfig.js');
 const logger = require('../log.js');
 const ZmqSocket = require('./zmqsocket.js');
 const Game = require('../game/game.js');
 const Socket = require('../socket.js');
+const CardService = require('../services/CardService.js');
 const version = require('../../version.js');
 
 if(config.sentryDsn) {
@@ -66,6 +68,22 @@ class GameServer {
         }
 
         this.io.on('connection', this.onConnection.bind(this));
+
+        this.titleCardData = [];
+        this.loadTitleCardData();
+    }
+
+    loadTitleCardData() {
+        let db = monk(config.dbPath);
+        let cardService = new CardService(db);
+        cardService.getTitleCards()
+            .then(cards => {
+                this.titleCardData = cards;
+                db.close();
+            })
+            .catch(() => {
+                db.close();
+            });
     }
 
     debugDump() {
@@ -169,7 +187,7 @@ class GameServer {
     }
 
     onStartGame(pendingGame) {
-        var game = new Game(pendingGame, { router: this });
+        var game = new Game(pendingGame, { router: this, titleCardData: this.titleCardData });
         this.games[pendingGame.id] = game;
 
         game.started = true;
