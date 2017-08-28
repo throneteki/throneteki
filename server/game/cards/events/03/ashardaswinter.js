@@ -4,17 +4,17 @@ class AsHardAsWinter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onSacrificed: event => this.checkConditionsAndSaveCharacter(event.card),
-                onCharacterKilled: (event) => this.checkConditionsAndSaveCharacter(event.card)
+                onSacrificed: event => this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(event.card),
+                onCharacterKilled: event => this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(event.cardStateWhenKilled)
             },
 
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => (
+                cardCondition: (card, context) => (
                     card.location === 'hand' &&
                     card.getType() === 'character' &&
-                    card.isFaction('stark') && 
-                    card.getCost() <= this.triggerCard.getCost()
+                    card.isFaction('stark') &&
+                    card.getCost() <= context.event.card.getCost()
                 )
             },
 
@@ -23,16 +23,6 @@ class AsHardAsWinter extends DrawCard {
                 this.game.addMessage('{0} uses {1} to put into play {2} for free in reaction to a {3} character being sacrificed or killed', this.controller, this, context.target, 'stark');
             }
         });
-    }
-
-    checkConditionsAndSaveCharacter(card) {
-        if(this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(card)) {
-            this.triggerCard = card;
-
-            return true;
-        }
-
-        return false;
     }
 
     hasUsedWinterPlot() {

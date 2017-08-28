@@ -92,6 +92,7 @@ class KillCharacters extends BaseStep {
             return;
         }
 
+        event.cardStateWhenKilled = card.createSnapshot();
         player.moveCard(card, 'dead pile');
         this.game.addMessage('{0} kills {1}', player, card);
     }

@@ -4,8 +4,8 @@ class WinterfellCrypt extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: event => this.triggerCondition(event),
-                onCharacterKilled: event => this.triggerCondition(event)
+                onSacrificed: event => this.triggerCondition(event.card),
+                onCharacterKilled: event => this.triggerCondition(event.cardStateWhenKilled)
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
@@ -25,9 +25,9 @@ class WinterfellCrypt extends DrawCard {
         });
     }
 
-    triggerCondition(event) {
-        return (event.card.controller === this.controller && event.card.isUnique() && event.card.isFaction('stark') &&
-                event.card.getType() === 'character' && this.game.currentPhase === 'challenge');
+    triggerCondition(card) {
+        return (card.controller === this.controller && card.isUnique() && card.isFaction('stark') &&
+                card.getType() === 'character' && this.game.currentPhase === 'challenge');
     }
 }
 
