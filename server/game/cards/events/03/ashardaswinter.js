@@ -4,7 +4,7 @@ class AsHardAsWinter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onSacrificed: event => this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(event.card),
+                onSacrificed: event => this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(event.cardStateWhenSacrificed),
                 onCharacterKilled: event => this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(event.cardStateWhenKilled)
             },
 

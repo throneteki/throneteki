@@ -4,7 +4,7 @@ class WinterfellCrypt extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onSacrificed: event => this.triggerCondition(event.card),
+                onSacrificed: event => this.triggerCondition(event.cardStateWhenSacrificed),
                 onCharacterKilled: event => this.triggerCondition(event.cardStateWhenKilled)
             },
             cost: ability.costs.sacrificeSelf(),
