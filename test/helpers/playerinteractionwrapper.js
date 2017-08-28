@@ -131,6 +131,10 @@ class PlayerInteractionWrapper {
     togglePromptedActionWindow(window, value) {
         this.player.promptedActionWindows[window] = value;
     }
+
+    toggleKeywordSettings(setting, value) {
+        this.player.keywordSettings[setting] = value;
+    }
 }
 
 module.exports = PlayerInteractionWrapper;
