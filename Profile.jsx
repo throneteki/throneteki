@@ -27,6 +27,7 @@ class InnerProfile extends React.Component {
             promptedActionWindows: this.props.user.promptedActionWindows,
             validation: {},
             windowTimer: this.props.user.settings.windowTimer,
+            keywordSettings: this.props.user.settings.keywordSettings,
             timerSettings: this.props.user.settings.timerSettings,
             selectedBackground: this.props.user.settings.background
         };
@@ -78,6 +79,14 @@ class InnerProfile extends React.Component {
         this.setState(newState);
     }
 
+    onKeywordSettingToggle(field, event) {
+        var newState = {};
+        newState.keywordSettings = this.state.keywordSettings;
+
+        newState.keywordSettings[field] = event.target.checked;
+        this.setState(newState);
+    }
+
     onSaveClick(event) {
         event.preventDefault();
 
@@ -106,6 +115,7 @@ class InnerProfile extends React.Component {
                         settings: {
                             disableGravatar: this.state.disableGravatar,
                             windowTimer: this.state.windowTimer,
+                            keywordSettings: this.state.keywordSettings,
                             timerSettings: this.state.timerSettings,
                             background: this.state.selectedBackground
                         }
@@ -257,6 +267,17 @@ class InnerProfile extends React.Component {
                                         onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.state.timerSettings.events } />
                                     <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for card abilities' } fieldClass='col-sm-6'
                                         onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.state.timerSettings.abilities } />
+                                </div>
+                            </div>
+                            <div className='panel-title text-center'>
+                                Keywords
+                            </div>
+                            <div className='panel'>
+                                <div className='form-group'>
+                                    <Checkbox name='keywordSettings.chooseOrder' noGroup label={ 'Choose order of keywords' } fieldClass='col-sm-6'
+                                        onChange={ this.onKeywordSettingToggle.bind(this, 'chooseOrder') } checked={ this.state.keywordSettings.chooseOrder } />
+                                    <Checkbox name='keywordSettings.chooseCards' noGroup label={ 'Make keywords optional' } fieldClass='col-sm-6'
+                                        onChange={ this.onKeywordSettingToggle.bind(this, 'chooseCards') } checked={ this.state.keywordSettings.chooseCards } />
                                 </div>
                             </div>
                         </div>
