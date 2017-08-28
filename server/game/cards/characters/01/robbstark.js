@@ -6,8 +6,8 @@ class RobbStark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => this.isStarkCharacter(event.card),
-                onSacrificed: event => this.isStarkCharacter(event.card)
+                onCharacterKilled: event => this.isStarkCharacter(event.cardStateWhenKilled),
+                onSacrificed: event => this.isStarkCharacter(event.cardStateWhenSacrificed)
             },
             limit: ability.limit.perRound(1),
             handler: () => {
@@ -25,8 +25,7 @@ class RobbStark extends DrawCard {
         return (
             card.controller === this.controller &&
             card.isFaction('stark') &&
-            card.getType() === 'character' &&
-            card !== this
+            card.getType() === 'character'
         );
     }
 }

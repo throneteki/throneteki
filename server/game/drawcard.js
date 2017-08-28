@@ -1,6 +1,7 @@
 const _ = require('underscore');
 
 const BaseCard = require('./basecard.js');
+const CardSnapshot = require('./cardsnapshot.js');
 const SetupCardAction = require('./setupcardaction.js');
 const MarshalCardAction = require('./marshalcardaction.js');
 const AmbushCardAction = require('./ambushcardaction.js');
@@ -56,6 +57,10 @@ class DrawCard extends BaseCard {
         };
         this.stealthLimit = 1;
         this.minCost = 0;
+    }
+
+    createSnapshot() {
+        return new CardSnapshot(this);
     }
 
     canBeDuplicated() {

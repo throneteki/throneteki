@@ -4,7 +4,7 @@ class TheWhiteShadows extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCharacterKilled: event => this.controller !== event.card.controller
+                onCharacterKilled: event => this.controller !== event.cardStateWhenKilled.controller
             },
             handler: context => {
                 this.controller.putIntoPlay(context.event.card);
