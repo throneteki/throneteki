@@ -58,6 +58,26 @@ class DrawCard extends BaseCard {
         this.minCost = 0;
     }
 
+    createSnapshot() {
+        let clone = new DrawCard(this.owner, this.cardData);
+
+        clone.attachments = _(this.attachments.map(attachment => attachment.createSnapshot()));
+        clone.blankCount = this.blankCount;
+        clone.controller = this.controller;
+        clone.dupes = _(this.dupes.map(dupe => dupe.createSnapshot()));
+        clone.factions = Object.assign({}, this.factions);
+        clone.icons = Object.assign({}, this.icons);
+        clone.keywords = Object.assign({}, this.keywords);
+        clone.kneeled = this.kneeled;
+        clone.power = this.power;
+        clone.strengthModifier = this.strengthModifier;
+        clone.strengthMultiplier = this.strengthMultiplier;
+        clone.strengthSet = this.strengthSet;
+        clone.tokens = Object.assign({}, this.tokens);
+        clone.traits = Object.assign({}, this.traits);
+        return clone;
+    }
+
     canBeDuplicated() {
         return this.controller === this.owner;
     }
