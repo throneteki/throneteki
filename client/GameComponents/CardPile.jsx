@@ -197,9 +197,7 @@ class CardPile extends React.Component {
         var topCard = this.props.topCard || _.last(this.props.cards);
         var cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
 
-        if(this.props.hiddenTopCard && topCard) {
-            topCard.facedown = true;
-        } else if(this.props.hiddenTopCard) {
+        if(this.props.hiddenTopCard && !topCard) {
             topCard = { facedown: true };
         }
 
@@ -218,7 +216,7 @@ class CardPile extends React.Component {
                 { topCard ? <Card card={ topCard } source={ this.props.source }
                     onMouseOver={ this.props.onMouseOver }
                     onMouseOut={ this.props.onMouseOut }
-                    disableMouseOver={ topCard.facedown }
+                    disableMouseOver={ this.props.hiddenTopCard }
                     onClick={ this.onTopCardClick }
                     onMenuItemClick={ this.props.onMenuItemClick }
                     onDragDrop={ this.props.onDragDrop }
