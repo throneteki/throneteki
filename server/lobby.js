@@ -162,7 +162,7 @@ class Lobby {
             gameSummaries.push(game.getSummary());
         });
 
-        gameSummaries = _(gameSummaries).chain().sortBy('createdAt').reverse().sortBy('started').value();
+        gameSummaries = _(gameSummaries).chain().sortBy('createdAt').sortBy('started').reverse().value();
 
         if(socket) {
             socket.send('games', gameSummaries);
