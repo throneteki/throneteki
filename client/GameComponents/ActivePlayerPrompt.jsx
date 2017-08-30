@@ -169,17 +169,9 @@ class ActivePlayerPrompt extends React.Component {
                 </div>);
         }
 
-        var arrow = null;
-        if(this.props.arrowDirection === 'up') {
-            arrow = <span className='up-arrow' />;
-        } else if(this.props.arrowDirection === 'down') {
-            arrow = <span className='down-arrow' />;
-        }
-
         return (<div>
             { timer }
             <div className={ 'phase-indicator ' + this.props.phase } onClick={ this.props.onTitleClick }>
-                { arrow }
                 { this.props.phase } phase
             </div>
             { promptTitle }
