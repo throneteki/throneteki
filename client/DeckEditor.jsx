@@ -116,12 +116,16 @@ class InnerDeckEditor extends React.Component {
     onAddBanner(event) {
         event.preventDefault();
 
-        if(!this.state.selectedBanner) {
+        if(!this.state.selectedBanner || !this.state.selectedBanner.code) {
             return;
         }
 
         if(!this.state.deck.bannerCards) {
             this.state.deck.bannerCards = [];
+        }
+
+        if(_.size(this.state.deck.bannerCards) >= 2) {
+            return;
         }
 
         if(_.any(this.state.deck.bannerCards, banner => {
@@ -342,7 +346,7 @@ class InnerDeckEditor extends React.Component {
         }
 
         return _.map(this.props.deck.bannerCards, card => {
-            return (<div>
+            return (<div key={ card.code }>
                 <span key={ card.code } className='card-link col-sm-10'>{ card.label }</span>
                 <span className='glyphicon glyphicon-remove icon-danger btn col-sm-1' aria-hidden='true' onClick={ this.onRemoveBanner.bind(this, card) } />
             </div>);
