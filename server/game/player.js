@@ -32,6 +32,7 @@ class Player extends Spectator {
         this.takenMulligan = false;
         this.game = game;
 
+        this.setupGold = 8;
         this.deck = {};
         this.challenges = new ChallengeTracker();
         this.minReserve = 0;
@@ -360,7 +361,7 @@ class Player extends Spectator {
             return;
         }
 
-        this.gold = 8;
+        this.gold = this.setupGold;
     }
 
     mulligan() {
