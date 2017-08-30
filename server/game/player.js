@@ -329,8 +329,10 @@ class Player extends Spectator {
 
     initDrawDeck() {
         this.resetDrawDeck();
-
         this.shuffleDrawDeck();
+    }
+
+    drawSetupHand() {
         this.drawCardsToHand(StartingHandSize);
     }
 
@@ -370,6 +372,7 @@ class Player extends Spectator {
         }
 
         this.initDrawDeck();
+        this.drawSetupHand();
         this.takenMulligan = true;
         this.readyToStart = true;
 
