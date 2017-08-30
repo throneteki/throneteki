@@ -13,24 +13,22 @@ const fixBanners = async () => {
     let chunkSize = 1000;
 
     while(numberProcessed < count) {
-        await dbDecks.find({}, { limit: chunkSize, skip: numberProcessed}).then(decks => {
-            console.info('loaded', _.size(decks), 'decks');
-            _.each(decks, deck => {
-                if(deck.bannerCards) {
-                    if(_.any(deck.bannerCards, card => {
+        let decks = await dbDecks.find({}, { limit: chunkSize, skip: numberProcessed});
+        console.info('loaded', _.size(decks), 'decks');
+        _.each(decks, deck => {
+            if(deck.bannerCards) {
+                if(_.any(deck.bannerCards, card => {
+                    return !card.code;
+                })) {
+                    console.info('found one', deck.name);
+                    deck.bannerCards = _.reject(deck.bannerCards, card => {
                         return !card.code;
-                    })) {
-                        console.info('found one', deck.name);
-                        deck.bannerCards = _.reject(deck.bannerCards, card => {
-                            return !card.code;
-                        });
-                    }
+                    });
                 }
-            });
-
-            numberProcessed += _.size(decks);
+            }
         });
 
+        numberProcessed += _.size(decks);
         console.info('processed', numberProcessed, 'decks');
     }
 
