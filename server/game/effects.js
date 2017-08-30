@@ -44,6 +44,16 @@ const Effects = {
             order: _.max(_.pluck(effects, 'order'))
         };
     },
+    setSetupGold: function(value) {
+        return {
+            apply: function(player) {
+                player.setupGold = value;
+            },
+            unapply: function(player) {
+                player.setupGold = 8;
+            }
+        };
+    },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
