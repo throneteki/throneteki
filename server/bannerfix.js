@@ -15,7 +15,7 @@ const fixBanners = async () => {
     while(numberProcessed < count) {
         let decks = await dbDecks.find({}, { limit: chunkSize, skip: numberProcessed});
         console.info('loaded', _.size(decks), 'decks');
-        await _.each(decks, async deck => {
+        for(let deck of decks) {
             if(deck.bannerCards) {
                 if(_.any(deck.bannerCards, card => {
                     return !card.code;
@@ -30,7 +30,7 @@ const fixBanners = async () => {
                     }});
                 }
             }
-        });
+        }
 
         numberProcessed += _.size(decks);
         console.info('processed', numberProcessed, 'decks');
