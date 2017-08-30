@@ -33,6 +33,7 @@ class Player extends Spectator {
         this.game = game;
 
         this.setupGold = 8;
+        this.cardsInPlayBeforeSetup = [];
         this.deck = {};
         this.challenges = new ChallengeTracker();
         this.minReserve = 0;
@@ -308,8 +309,10 @@ class Player extends Spectator {
 
     resetCardPile(pile) {
         pile.each(card => {
-            card.moveTo('draw deck');
-            this.drawDeck.push(card);
+            if(pile !== this.cardsInPlay || !this.cardsInPlayBeforeSetup.includes(card)) {
+                card.moveTo('draw deck');
+                this.drawDeck.push(card);
+            }
         });
     }
 
@@ -318,7 +321,7 @@ class Player extends Spectator {
         this.hand = _([]);
 
         this.resetCardPile(this.cardsInPlay);
-        this.cardsInPlay = _([]);
+        this.cardsInPlay = _(this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card)));
 
         this.resetCardPile(this.discardPile);
         this.discardPile = _([]);
