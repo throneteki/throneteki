@@ -4,26 +4,19 @@ const PlotCard = require('../../../plotcard.js');
 class FallenFromFavor extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card =>
-                        card.location === 'play area'
-                        && card.controller === this.controller
-                        && card.getType() === 'character',
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select a character',
+                cardCondition: card =>
+                    card.location === 'play area'
+                    && card.controller === this.controller
+                    && card.getType() === 'character'
+            },
+            handler: context => {
+                let card = context.target;
+                context.player.sacrificeCard(card);
+                this.game.addMessage('{0} sacrifices {1} for {2}', context.player, card, this);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        player.sacrificeCard(card);
-
-        this.game.addMessage('{0} sacrifices {1} for {2}', player, card, this);
-
-        return true;
     }
 }
 

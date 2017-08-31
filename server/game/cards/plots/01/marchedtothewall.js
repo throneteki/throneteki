@@ -37,7 +37,6 @@ class MarchedToTheWall extends PlotCard {
             let currentPlayer = this.remainingPlayers.shift();
 
             if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'character')) {
-                this.game.addMessage('{0} has no characters in play to discard for {1}', currentPlayer, this);
                 this.proceedToNextStep();
                 return true;
             }
