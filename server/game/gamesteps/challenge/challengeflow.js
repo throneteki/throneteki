@@ -88,6 +88,10 @@ class ChallengeFlow extends BaseStep {
             { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
         ];
 
+        let attackerEvents = _.map(this.challenge.attackers, card => {
+            return { name: 'onDeclaredAsAttacker', params: { card: card } };
+        });
+
         let kneelEvents = _.map(this.attackersToKneel, card => {
             return { name: 'onCardKneeled', params: { player: this.challenge.attackingPlayer, card: card} };
         });
@@ -96,7 +100,7 @@ class ChallengeFlow extends BaseStep {
             return { name: 'onBypassedByStealth', params: { challenge: this.challenge, source: stealth.source, target: stealth.target } };
         });
 
-        this.game.raiseAtomicEvent(events.concat(stealthEvents).concat(kneelEvents));
+        this.game.raiseAtomicEvent(events.concat(attackerEvents).concat(stealthEvents).concat(kneelEvents));
 
         this.attackersToKneel = undefined;
     }
@@ -198,11 +202,15 @@ class ChallengeFlow extends BaseStep {
             { name: 'onDefendersDeclared', params: { challenge: this.challenge } }
         ];
 
+        let defenderEvents = _.map(this.challenge.defenders, card => {
+            return { name: 'onDeclaredAsDefender', params: { card: card } };
+        });
+
         let kneelEvents = _.map(defendersToKneel, card => {
             return { name: 'onCardKneeled', params: { player: this.challenge.defendingPlayer, card: card} };
         });
 
-        this.game.raiseAtomicEvent(events.concat(kneelEvents));
+        this.game.raiseAtomicEvent(events.concat(defenderEvents).concat(kneelEvents));
 
         defendersToKneel = undefined;
 
