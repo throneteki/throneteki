@@ -55,7 +55,6 @@ class WildfireAssault extends PlotCard {
             let currentPlayer = this.remainingPlayers.shift();
 
             if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'character')) {
-                this.game.addMessage('{0} has no characters in play to choose for {1}', currentPlayer, this);
                 this.selections.push({ player: currentPlayer, cards: [] });
                 this.proceedToNextStep();
                 return true;

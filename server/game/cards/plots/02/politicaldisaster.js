@@ -38,9 +38,7 @@ class PoliticalDisaster extends PlotCard {
                 player.discardCard(card);
             });
 
-            if(_.isEmpty(toDiscard)) {
-                this.game.addMessage('{0} does not discard any locations for {1}', player, this);
-            } else {
+            if(!_.isEmpty(toDiscard)) {
                 this.game.addMessage('{0} discards {1} for {2}', player, toDiscard, this);
             }
         });
@@ -53,7 +51,6 @@ class PoliticalDisaster extends PlotCard {
             let currentPlayer = this.remainingPlayers.shift();
 
             if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'location')) {
-                this.game.addMessage('{0} has no locations in play to choose for {1}', currentPlayer, this);
                 this.selections.push({ player: currentPlayer, cards: [] });
                 this.proceedToNextStep();
                 return true;
