@@ -12,8 +12,11 @@ class BreakerOfChains extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.getCost() <= 2
+                cardCondition: card =>
+                    card.location === 'hand'
+                    && card.controller === this.controller
+                    && card.getType() === 'character'
+                    && card.getCost() <= 2
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);
