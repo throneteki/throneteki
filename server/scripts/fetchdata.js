@@ -1,71 +1,56 @@
 /*eslint no-console:0 */
-const request = require('request');
+const commandLineArgs = require('command-line-args');
 const monk = require('monk');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
 const path = require('path');
 
-const CardService = require('../services/CardService.js');
+const CardImport = require('./fetchdata/CardImport.js');
+const CardgameDbImageSource = require('./fetchdata/CardgameDbImageSource.js');
+const JsonCardSource = require('./fetchdata/JsonCardSource.js');
+const NoImageSource = require('./fetchdata/NoImageSource.js');
+const ThronesDbApiCardSource = require('./fetchdata/ThronesDbApiCardSource.js');
+const ThronesDbImageSource = require('./fetchdata/ThronesDbImageSource.js');
 
-function apiRequest(path) {
-    const apiUrl = 'https://thronesdb.com/api/public/';
+const optionsDefinition = [
+    { name: 'card-source', type: String, defaultValue: 'thronesdb' },
+    { name: 'image-source', type: String, defaultValue: 'thronesdb' },
+    { name: 'image-dir', type: String, defaultValue: path.join(__dirname, '..', '..', 'public', 'img', 'cards') },
+    { name: 'no-images', type: Boolean, defaultValue: false }
+];
 
-    return new Promise((resolve, reject) => {
-        request.get(apiUrl + path, function(error, res, body) {
-            if(error) {
-                return reject(error);
-            }
+function createDataSource(options) {
+    switch(options['card-source']) {
+        case 'thronesdb':
+            return new ThronesDbApiCardSource();
+        case 'json':
+            return new JsonCardSource();
+    }
 
-            resolve(JSON.parse(body));
-        });
-    });
+    throw new Error(`Unknown card source '${options['card-source']}'`);
 }
 
-function fetchImage(urlPath, code, imagePath, timeout) {
-    setTimeout(function() {
-        console.log('Downloading image for ' + code);
-        var url = 'https://thronesdb.com/' + urlPath;
-        request(url).pipe(fs.createWriteStream(imagePath));
-    }, timeout);
+function createImageSource(options) {
+    if(options['no-images']) {
+        return new NoImageSource();
+    }
+
+    switch(options['image-source']) {
+        case 'none':
+            return new NoImageSource();
+        case 'thronesdb':
+            return new ThronesDbImageSource();
+        case 'cardgamedb':
+            return new CardgameDbImageSource();
+    }
+
+    throw new Error(`Unknown image source '${options['image-source']}'`);
 }
+
+let options = commandLineArgs(optionsDefinition);
 
 let db = monk('mongodb://127.0.0.1:27017/throneteki');
-let cardService = new CardService(db);
+let dataSource = createDataSource(options);
+let imageSource = createImageSource(options);
+let cardImport = new CardImport(db, dataSource, imageSource, options['image-dir']);
 
-let fetchCards = apiRequest('cards')
-    .then(cards => cardService.replaceCards(cards))
-    .then(cards => {
-        console.info(cards.length + ' cards fetched');
-
-        let imageDir = path.join(__dirname, '..', '..', 'public', 'img', 'cards');
-        mkdirp(imageDir);
-
-        var i = 0;
-
-        cards.forEach(function(card) {
-            var imagePath = path.join(imageDir, card.code + '.png');
-
-            if(card.imagesrc && !fs.existsSync(imagePath)) {
-                fetchImage(card.imagesrc, card.code, imagePath, i++ * 200);
-            }
-        });
-
-        return cards;
-    })
-    .catch(() => {
-        console.error('Unable to fetch cards');
-    });
-
-let fetchPacks = apiRequest('packs')
-    .then(packs => cardService.replacePacks(packs))
-    .then(packs => {
-        console.info(packs.length + ' packs fetched');
-    })
-    .catch(() => {
-        console.error('Unable to fetch packs');
-    });
-
-Promise.all([fetchCards, fetchPacks])
-    .then(() => db.close())
-    .catch(() => db.close());
+cardImport.import();
 
