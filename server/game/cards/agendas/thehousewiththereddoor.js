@@ -26,6 +26,14 @@ class TheHouseWithTheRedDoor extends AgendaCard {
 
         this.controller.cardsInPlayBeforeSetup.push(card);
         this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
+
+        this.lastingEffect(ability => ({
+            until: {
+                onCardLeftPlay: event => event.card === this.startLocation
+            },
+            match: card => card === this.startLocation,
+            effect: ability.effects.cannotBeDiscarded(context => context.stage === 'effect')
+        }));
     }
 
     doneSelecting(player) {
@@ -36,11 +44,6 @@ class TheHouseWithTheRedDoor extends AgendaCard {
         this.persistentEffect({
             targetType: 'player',
             effect: ability.effects.setSetupGold(4)
-        });
-
-        this.persistentEffect({
-            match: this.startLocation,
-            effect: ability.effects.cannotBeDiscarded(context => context.stage === 'effect')
         });
     }
 }
