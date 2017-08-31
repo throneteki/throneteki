@@ -32,6 +32,8 @@ class Player extends Spectator {
         this.takenMulligan = false;
         this.game = game;
 
+        this.setupGold = 8;
+        this.cardsInPlayBeforeSetup = [];
         this.deck = {};
         this.challenges = new ChallengeTracker();
         this.minReserve = 0;
@@ -300,8 +302,10 @@ class Player extends Spectator {
 
     resetCardPile(pile) {
         pile.each(card => {
-            card.moveTo('draw deck');
-            this.drawDeck.push(card);
+            if(pile !== this.cardsInPlay || !this.cardsInPlayBeforeSetup.includes(card)) {
+                card.moveTo('draw deck');
+                this.drawDeck.push(card);
+            }
         });
     }
 
@@ -310,7 +314,7 @@ class Player extends Spectator {
         this.hand = _([]);
 
         this.resetCardPile(this.cardsInPlay);
-        this.cardsInPlay = _([]);
+        this.cardsInPlay = _(this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card)));
 
         this.resetCardPile(this.discardPile);
         this.discardPile = _([]);
@@ -321,8 +325,10 @@ class Player extends Spectator {
 
     initDrawDeck() {
         this.resetDrawDeck();
-
         this.shuffleDrawDeck();
+    }
+
+    drawSetupHand() {
         this.drawCardsToHand(StartingHandSize);
     }
 
@@ -353,7 +359,7 @@ class Player extends Spectator {
             return;
         }
 
-        this.gold = 8;
+        this.gold = this.setupGold;
     }
 
     mulligan() {
@@ -362,6 +368,7 @@ class Player extends Spectator {
         }
 
         this.initDrawDeck();
+        this.drawSetupHand();
         this.takenMulligan = true;
         this.readyToStart = true;
 
