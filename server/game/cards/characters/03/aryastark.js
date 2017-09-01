@@ -5,8 +5,8 @@ class AryaStark extends DrawCard {
         this.reaction({
             when: {
                 onCharacterKilled: event => (
-                    this.controller === event.card.controller &&
-                    event.card.isFaction('stark'))
+                    event.cardStateWhenKilled.controller === this.controller &&
+                    event.cardStateWhenKilled.isFaction('stark'))
             },
             cost: ability.costs.sacrificeSelf(),
             handler: () => {

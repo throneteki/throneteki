@@ -4,9 +4,11 @@ class MargaeryTyrell extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => {
-                    return event.card.isUnique() && (event.card.hasTrait('king') || event.card.hasTrait('lord')) && event.card.controller === this.controller;
-                }
+                onCharacterKilled: event => (
+                    event.card.isUnique() &&
+                    (event.cardStateWhenKilled.hasTrait('king') || event.cardStateWhenKilled.hasTrait('lord')) &&
+                    event.cardStateWhenKilled.controller === this.controller
+                )
             },
             limit: ability.limit.perRound(1),
             handler: () => {

@@ -850,7 +850,8 @@ class Player extends Spectator {
 
     sacrificeCard(card) {
         this.game.applyGameAction('sacrifice', card, card => {
-            this.game.raiseEvent('onSacrificed', { player: this, card: card }, () => {
+            this.game.raiseEvent('onSacrificed', { player: this, card: card }, event => {
+                event.cardStateWhenSacrificed = card.createSnapshot();
                 this.moveCard(card, 'discard pile');
             });
         });

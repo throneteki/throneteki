@@ -20,7 +20,7 @@ class TheNorthRemembers extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                onCharacterKilled: event => event.card.controller === this.controller
+                onCharacterKilled: event => event.cardStateWhenKilled.controller === this.controller
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
