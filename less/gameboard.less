@@ -56,8 +56,12 @@
     }
   }
 
+  .panel {
+    margin-bottom: 0;
+  }
+
   .panel-title {
-    margin: 0 5px;
+    margin: 5px 5px;
   }
 }
 
@@ -211,7 +215,8 @@
       top: initial;
 
       .arrow {
-        top: calc(~'100% - 40px');
+        bottom: 15px;
+        top: initial;
       }
     }
   }
@@ -222,7 +227,7 @@
       top: initial;
 
       .arrow {
-        bottom: -34px;
+        bottom: -30px;
         top: initial;
       }
     }
@@ -296,7 +301,8 @@
 
     .arrow {
       left: -25px;
-      top: calc(~'65% - 40px');
+      top: 55px;
+      bottom: initial;
     }
   }
 }
@@ -321,7 +327,7 @@
 
     .arrow {
       bottom: initial;
-      top: -55px;
+      top: -63px;
       left: 10px;
     }
   }
@@ -346,7 +352,7 @@
 
     .arrow {
       bottom: initial;
-      top: -55px;
+      top: -63px;
       left: 10px;
     }
   }
@@ -361,7 +367,7 @@
     .inner {
       width: @card-width * 7 + (7 * 5px) + @scrollbar-width;
       min-height: @card-height;
-      max-height: @card-height * 5 + (5 * 5px);
+      max-height: @card-height * 4 + (4 * 5px);
 
       overflow-y: auto;
     }
