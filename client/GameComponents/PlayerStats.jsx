@@ -53,7 +53,7 @@ export class PlayerStats extends React.Component {
                 { this.getButton('reserve', 'Reserve') }
                 { this.getButton('claim', 'Claim') }
 
-                { this.props.firstPlayer ? <div className=''>First player</div> : null }
+                { this.props.firstPlayer ? <div className='first-player'>First player</div> : null }
             </div>
         );
     }

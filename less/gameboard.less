@@ -83,7 +83,12 @@
   &.panel {
     margin: 0;
     border-radius: 0;
+    padding: 10px 0 10px 5px;
+    position: initial;
   }
+
+  display: flex;
+  align-items: center;
 }
 
 .player-stats b {
@@ -137,11 +142,11 @@
   height: 100px;
 }
 
-.first-player-indicator {
-  margin: 5px 7px;
+.first-player {
+  margin: 0px 5px;
   padding: 5px;
   text-align: center;
-  background: rgba(183, 183, 183, 0.12);
+  background: @brand-tertiary;
   border-radius: 0.25rem;
   border: 1px solid rgba(128, 128, 128, 0.53);
 }
