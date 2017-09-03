@@ -170,7 +170,7 @@ class CardPile extends React.Component {
                     <div className='inner'>
                         { cardList }
                     </div>
-                    <div className={ arrowClass }/>
+                    <div className={ arrowClass } />
                 </div>
             </div>);
 
@@ -197,7 +197,7 @@ class CardPile extends React.Component {
         var topCard = this.props.topCard || _.last(this.props.cards);
         var cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
 
-        if(this.props.hiddenTopCard && !topCard) {
+        if(this.props.hiddenTopCard && !this.props.topCard) {
             topCard = { facedown: true };
         }
 
