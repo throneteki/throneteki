@@ -23,7 +23,7 @@
 
   &.vertical {
     height: @card-height;
-    width: @card-width;
+    min-width: @card-width;
   }
 
   &.horizontal {
@@ -363,6 +363,12 @@
   }
 }
 
+.hand {
+  .card-wrapper {
+    margin: 0 5px 0 0;
+  }
+}
+
 .draw {
   .popup {
     position: absolute;
@@ -375,6 +381,10 @@
       max-height: @card-height * 4 + (4 * 5px);
 
       overflow-y: auto;
+
+      .card-wrapper {
+        margin: 5px 5px 0 0;
+      }
     }
   }
 

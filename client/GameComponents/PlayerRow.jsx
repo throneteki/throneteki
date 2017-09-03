@@ -113,6 +113,12 @@ class PlayerRow extends React.Component {
         );
     }
 
+    onFactionCardClick() {
+        if(this.props.onFactionCardClick) {
+            this.props.onFactionCardClick();
+        }
+    }
+
     render() {
         var drawDeckMenu = this.props.isMe && !this.props.spectating ? [
             { text: 'Show', handler: this.onShowDeckClick, showPopup: true },
@@ -126,7 +132,8 @@ class PlayerRow extends React.Component {
         return (
             <div className='player-home-row-container'>
                 <CardPile className='faction' source='faction' cards={ [] } topCard={ this.props.faction }
-                    onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup />
+                    onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup
+                    onCardClick={ this.props.isMe && !this.props.spectating ? this.onFactionCardClick.bind(this) : null } />
                 { this.getAgenda() }
                 <PlayerHand
                     cards={ this.props.hand }
@@ -166,6 +173,7 @@ PlayerRow.propTypes = {
     onCardClick: React.PropTypes.func,
     onDragDrop: React.PropTypes.func,
     onDrawClick: React.PropTypes.func,
+    onFactionCardClick: React.PropTypes.func,
     onMenuItemClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
