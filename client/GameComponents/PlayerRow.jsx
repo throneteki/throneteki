@@ -66,7 +66,7 @@ class PlayerRow extends React.Component {
                 onMenuItemClick={ this.props.onMenuItemClick }
                 onMouseOut={ this.props.onMouseOut }
                 onMouseOver={ this.props.onMouseOver }
-                orientation='horizontal'
+                orientation='kneeled'
                 popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' }
                 source='out of game'
                 title='Out of Game' />
