@@ -95,21 +95,26 @@
   align-items: center;
 }
 
-.player-stats b {
-  display: inline-block;
-  vertical-align: middle;
-}
 
 .state {
   height: 27px;
   padding-left: 5px;
   padding-right: 5px;
-
   border-right: solid 2px;
+  display: flex;
+  align-items: center;
 
   span {
     padding-right: 3px;
     padding-left: 3px;
+  }
+
+  &:last-of-type {
+    border-right: none;
+  }
+
+  .glyphicon {
+    color: @brand-primary;
   }
 }
 
@@ -589,4 +594,24 @@ span.down-arrow {
   color: @foreground-color;
   margin-bottom: 0 !important;
   vertical-align: middle !important;
+}
+
+.settings-popup {
+  background: @background-color;
+
+  .modal-header {
+    background: @brand-tertiary;
+  }
+}
+
+.close {
+  color: @foreground-color;
+
+  :hover {
+    color: @brand-info;
+  }
+}
+
+.modal-title {
+  text-align: center;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { findDOMNode } from 'react-dom';
 import _ from 'underscore';
 import $ from 'jquery';
 import { toastr } from 'react-redux-toastr';
@@ -12,7 +13,7 @@ import CardZoom from './GameComponents/CardZoom.jsx';
 import Messages from './GameComponents/Messages.jsx';
 import Card from './GameComponents/Card.jsx';
 import CardPile from './GameComponents/CardPile.jsx';
-import ActionWindowsMenu from './GameComponents/ActionWindowsMenu.jsx';
+import GameConfiguration from './GameComponents/GameConfiguration.jsx';
 import { tryParseJSON } from './util.js';
 
 import * as actions from './actions';
@@ -355,16 +356,24 @@ export class InnerGameBoard extends React.Component {
         this.props.sendGameMessage('menuItemClick', card.uuid, menuItem);
     }
 
-    onMenuTitleClick() {
-        this.setState({ showActionWindowsMenu: !this.state.showActionWindowsMenu });
-    }
-
     onPromptedActionWindowToggle(option, value) {
         this.props.sendGameMessage('togglePromptedActionWindow', option, value);
     }
 
+    onTimerSettingToggle(option, value) {
+        this.props.sendGameMessage('toggleTimerSetting', option, value);
+    }
+
+    onKeywordSettingToggle(option, value) {
+        this.props.sendGameMessage('toggleKeywordSetting', option, value);
+    }
+
     onTimerExpired() {
         this.props.sendGameMessage('menuButton', null, 'pass');
+    }
+
+    onSettingsClick() {
+        $(findDOMNode(this.refs.modal)).modal('show');
     }
 
     render() {
@@ -409,8 +418,29 @@ export class InnerGameBoard extends React.Component {
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
+        let popup = (
+            <div id='settings-modal' ref='modal' className='modal fade' tabIndex='-1' role='dialog'>
+                <form className='form form-horizontal'>
+                    <div className='modal-dialog' role='document'>
+                        <div className='modal-content settings-popup row'>
+                            <div className='modal-header'>
+                                <button type='button' className='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button>
+                                <h4 className='modal-title'>Game Configuration</h4>
+                            </div>
+                            <div className='modal-body col-xs-12'>
+                                <GameConfiguration actionWindows={ thisPlayer.promptedActionWindows } timerSettings={ thisPlayer.timerSettings }
+                                    keywordSettings={ thisPlayer.keywordSettings } onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
+                                    onToggle={ this.onPromptedActionWindowToggle.bind(this) } onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>);
+
         return (
             <div className='game-board'>
+                { popup }
                 <div className='player-stats-row'>
                     <PlayerStats stats={ otherPlayer ? otherPlayer.stats : null }
                         user={ otherPlayer ? otherPlayer.user : null } firstPlayer={ otherPlayer && otherPlayer.firstPlayer } />
@@ -435,18 +465,12 @@ export class InnerGameBoard extends React.Component {
                         <div className='board-inner'>
                             <div className='prompt-area'>
                                 <div className='inset-pane'>
-                                    { !this.state.spectating && this.state.showActionWindowsMenu ?
-                                        <ActionWindowsMenu options={ thisPlayer.promptedActionWindows }
-                                            onToggle={ this.onPromptedActionWindowToggle.bind(this) } />
-                                        : null }
                                     <ActivePlayerPrompt title={ thisPlayer.menuTitle }
-                                        arrowDirection={ this.state.spectating ? 'none' : this.state.showActionWindowsMenu ? 'down' : 'up' }
                                         buttons={ thisPlayer.buttons }
                                         promptTitle={ thisPlayer.promptTitle }
                                         onButtonClick={ this.onCommand }
                                         onMouseOver={ this.onMouseOver }
                                         onMouseOut={ this.onMouseOut }
-                                        onTitleClick={ this.onMenuTitleClick.bind(this) }
                                         user={ this.props.user }
                                         onTimerExpired={ this.onTimerExpired.bind(this) }
                                         phase={ thisPlayer.phase } />
@@ -501,7 +525,7 @@ export class InnerGameBoard extends React.Component {
                 </div>
                 <div className='player-stats-row'>
                     <PlayerStats { ...boundActionCreators } stats={ thisPlayer.stats } showControls={ !this.state.spectating } user={ thisPlayer.user }
-                        firstPlayer={ thisPlayer.firstPlayer } />
+                        firstPlayer={ thisPlayer.firstPlayer } onSettingsClick={ this.onSettingsClick.bind(this) } />
                 </div>
             </div>);
     }

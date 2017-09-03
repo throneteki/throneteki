@@ -37,6 +37,14 @@ export class PlayerStats extends React.Component {
         );
     }
 
+    onSettingsClick(event) {
+        event.preventDefault();
+
+        if(this.props.onSettingsClick) {
+            this.props.onSettingsClick();
+        }
+    }
+
     render() {
         var playerAvatar = (
             <div className='player-avatar'>
@@ -53,7 +61,11 @@ export class PlayerStats extends React.Component {
                 { this.getButton('reserve', 'Reserve') }
                 { this.getButton('claim', 'Claim') }
 
-                { this.props.firstPlayer ? <div className='first-player'>First player</div> : null }
+                { this.props.firstPlayer ? <div className='state'><div className='first-player'>First player</div></div> : null }
+
+                { this.props.showControls ? <div className='state'>
+                    <button className='btn btn-transparent' onClick={ this.onSettingsClick.bind(this) }><span className='glyphicon glyphicon-cog' />Settings</button>
+                </div> : null }
             </div>
         );
     }
@@ -62,6 +74,7 @@ export class PlayerStats extends React.Component {
 PlayerStats.displayName = 'PlayerStats';
 PlayerStats.propTypes = {
     firstPlayer: React.PropTypes.bool,
+    onSettingsClick: React.PropTypes.func,
     playerName: React.PropTypes.string,
     sendGameMessage: React.PropTypes.func,
     showControls: React.PropTypes.bool,

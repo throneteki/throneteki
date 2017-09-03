@@ -46,8 +46,10 @@ class Player extends Spectator {
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
         this.mustChooseAsClaim = [];
-        this.keywordSettings = Object.assign({}, user.settings ? user.settings.keywordSettings : {});
         this.promptedActionWindows = user.promptedActionWindows;
+        this.timerSettings = user.settings.timerSettings;
+        this.timerSettings.windowTimer = user.settings.windowTimer;
+        this.keywordSettings = user.settings.keywordSettings;
 
         this.createAdditionalPile('out of game');
 
@@ -1191,6 +1193,7 @@ class Player extends Spectator {
             firstPlayer: this.firstPlayer,
             hand: this.getSummaryForCardList(this.hand, activePlayer, true),
             id: this.id,
+            keywordSettings: this.keywordSettings,
             left: this.left,
             numDrawCards: this.drawDeck.size(),
             name: this.name,
@@ -1200,6 +1203,7 @@ class Player extends Spectator {
             plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
+            timerSettings: this.timerSettings,
             stats: this.getStats(isActivePlayer),
             user: _.omit(this.user, ['password', 'email'])
         };
