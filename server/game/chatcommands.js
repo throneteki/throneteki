@@ -307,8 +307,8 @@ class ChatCommands {
     }
 
     setToken(player, args) {
-        var token = args[1];
-        var num = this.getNumberOrDefault(args[2], 1);
+        let token = args[1];
+        let num = this.getNumberOrDefault(args[2], 1);
 
         if(!this.isValidToken(token)) {
             return false;
@@ -319,10 +319,10 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to set token',
             cardCondition: card => (card.location === 'play area' || card.location === 'plot') && card.controller === player,
             onSelect: (p, card) => {
-                var numTokens = card.tokens[token] || 0;
+                let numTokens = card.tokens[token] || 0;
 
                 card.addToken(token, num - numTokens);
-                this.game.addMessage('{0} uses the /token command to set the {1} token count of {2} to {3}', p, token, card, num - numTokens);
+                this.game.addMessage('{0} uses the /token command to set the {1} token count of {2} to {3}', p, token, card, num);
 
                 return true;
             }
