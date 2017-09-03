@@ -6,7 +6,7 @@ class QuietAsAShadow extends DrawCard {
             title: 'Give character stealth',
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => card.isUnique() && card.getType() === 'character' && card.getCost() <= 3
+                cardCondition: card => card.isUnique() && card.getType() === 'character' && card.getCost() <= 3 && card.location === 'play area'
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({
