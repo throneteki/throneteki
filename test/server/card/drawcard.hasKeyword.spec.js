@@ -49,7 +49,7 @@ describe('the DrawCard', function() {
             this.gameRepository = jasmine.createSpyObj('gameRepository', ['save']);
             this.game = new Game({}, { gameRepository: this.gameRepository });
 
-            this.player = new Player(1, { username: 'foo' }, false, this.game);
+            this.player = new Player(1, { username: 'foo', settings: {} }, false, this.game);
             this.player.noTimer = true;
 
             this.game.playersAndSpectators['foo'] = this.player;

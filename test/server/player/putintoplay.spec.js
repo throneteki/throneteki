@@ -8,7 +8,7 @@ const Player = require('../../../server/game/player.js');
 describe('Player', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['queueStep', 'raiseEvent', 'playerDecked']);
-        this.player = new Player('1', 'Player 1', true, this.gameSpy);
+        this.player = new Player('1', {username: 'Player 1', settings: {}}, true, this.gameSpy);
         this.player.initialise();
 
         spyOn(this.player, 'getDuplicateInPlay');
@@ -276,7 +276,7 @@ describe('Player', function() {
 
         describe('when the card is not controlled by the player', function() {
             beforeEach(function() {
-                this.opponent = new Player('2', 'Player 2', true, this.gameSpy);
+                this.opponent = new Player('2', {username: 'Player 2', settings: {}}, true, this.gameSpy);
                 this.opponent.initialise();
                 spyOn(this.opponent, 'getDuplicateInPlay');
                 spyOn(this.opponent, 'isCharacterDead');

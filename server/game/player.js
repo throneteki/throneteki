@@ -47,7 +47,7 @@ class Player extends Spectator {
         this.standPhaseRestrictions = [];
         this.mustChooseAsClaim = [];
         this.promptedActionWindows = user.promptedActionWindows;
-        this.timerSettings = user.settings.timerSettings;
+        this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
 
