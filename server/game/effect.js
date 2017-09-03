@@ -132,9 +132,11 @@ class Effect {
 
             if(this.targetController === 'opponent') {
                 return target !== this.source.controller;
-            } 
-            
-            return target === this.targetController;
+            }
+
+            if(this.targetController !== 'any') {
+                return target === this.targetController;
+            }
         }
 
         return true;
