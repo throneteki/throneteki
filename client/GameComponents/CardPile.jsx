@@ -194,7 +194,7 @@ class CardPile extends React.Component {
         var className = 'panel card-pile ' + this.props.className;
         var cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
         var headerText = this.props.title ? this.props.title + ' (' + (cardCount) + ')' : '';
-        var topCard = this.props.topCard || _.last(this.props.cards);
+        var topCard = this.props.topCard || _.first(this.props.cards);
         var cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
 
         if(this.props.hiddenTopCard && !this.props.topCard) {
