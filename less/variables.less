@@ -1,11 +1,12 @@
-@brand-primary: #473A38;
-@background-color: #1E1E1E;
+@brand-primary: #41658A;
+@background-color: #0E0B10;
 @foreground-color: #C1C2C3;
-@brand-secondary: green;
+@brand-secondary: #79B473;
+@brand-tertiary: #414073;
 
 @navbar-inverse-bg: rgba(34, 34, 34, 0.75);
 
-@header-background: rgba(71, 58, 56, 0.95);
+@header-background: fade(@brand-tertiary, 90%);
 @header-border: rgba(71, 58, 56, 0.95);
 
 @power-icon-color: #2A2E5E;
@@ -22,6 +23,10 @@
 
 @attachment-offset: 10px;
 
+@btn-default-bg: @brand-primary;
+@btn-default-border: darken(@btn-default-bg, 5%);
+@btn-default-color: white;
+
 // Z-index layers
 @layer-cards: 10;
 @layer-pile-header: 20;
@@ -29,3 +34,5 @@
 @layer-prompt: 110;
 @layer-card-menu: 120;
 @layer-top: 9999;
+
+@scrollbar-width: 20px;

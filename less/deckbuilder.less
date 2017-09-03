@@ -48,17 +48,16 @@
 .card-group {
   position: relative;
   background-color: fade(@brand-info, 5%);
-  margin: 5px;
+  margin: 5px 5px 5px 0;
   padding: 10px;
   border: 1px solid rgba(71, 58, 56, 0.65);
 }
 
 .card-group-title {
-  background-color: fade(@brand-info, 20%);
+  background-color: @header-background;
   color: white;
-  margin: 5px;
-  margin-bottom: 0;
-  padding: 1px;
+  margin: 5px 5px 0 0;
+  padding: 5px 1px;
   border: 1px solid @header-border;
   border-radius: 4px 4px 0 0;
   border-bottom: none;
@@ -109,9 +108,8 @@
 }
 
 .deck-row.active {
-  border-color: @brand-danger;
-  color: @brand-danger;
-  background-color: fade(black, 60%);
+  border-color: @brand-secondary;
+  background-color: fade(@brand-secondary, 60%);
 }
 
 .select-button {
@@ -174,7 +172,7 @@
 
 .deck-list-container {
   position: absolute;
-  top: 30px;
+  top: 33px;
   bottom: 0px;
   left: 15px;
   right: 15px;

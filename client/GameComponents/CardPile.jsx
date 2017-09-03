@@ -40,6 +40,17 @@ class CardPile extends React.Component {
         menuItem.handler();
     }
 
+    onCloseClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        this.setState({ showPopup: !this.state.showPopup });
+
+        if(this.props.onCloseClick) {
+            this.props.onCloseClick();
+        }
+    }
+
     onPopupMenuItemClick(menuItem) {
         menuItem.handler();
 
@@ -119,31 +130,48 @@ class CardPile extends React.Component {
                 onTouchMove={ this.props.onTouchMove }
                 onClick={ this.onCardClick.bind(this, card) }
                 onDragDrop={ this.props.onDragDrop }
-                orientation={ this.props.orientation } />);
+                orientation={ this.props.orientation === 'kneeled' ? 'vertical' : this.props.orientation } />);
         });
 
-        let popupClass = 'popup panel';
+        if(this.props.disablePopup || !this.state.showPopup) {
+            return null;
+        }
+
+        let popupClass = 'panel';
+        let arrowClass = 'arrow lg';
 
         if(this.props.popupLocation === 'top') {
             popupClass += ' our-side';
+            arrowClass += ' down';
+        } else {
+            arrowClass += ' up';
+        }
+
+        if(this.props.orientation === 'horizontal') {
+            arrowClass = 'arrow lg left';
         }
 
         let linkIndex = 0;
 
         var popupMenu = this.props.popupMenu ? (<div>{ _.map(this.props.popupMenu, menuItem => {
-            return <a key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{ menuItem.text }</a>;
-        }) }</div>) : (
-            <div>
-                <a onClick={ this.onCollectionClick }>Close</a>
-            </div>);
+            return <a className='btn btn-default' key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{ menuItem.text }</a>;
+        }) }</div>) : null;
 
         popup = (
-            <div className={ popupClass + (this.state.showPopup ? '' : ' hidden') } onClick={ event => event.stopPropagation() }>
-                { popupMenu }
-                <div className='inner'>
-                    { cardList }
+            <div className='popup'>
+                <div className='panel-title' onClick={ event => event.stopPropagation() }>
+                    <span className='text-center'>{ this.props.title }</span>
+                    <span className='pull-right'>
+                        <a className='close-button glyphicon glyphicon-remove' onClick={ this.onCloseClick.bind(this) } />
+                    </span>
                 </div>
-                <div className='arrow-indicator' />
+                <div className={ popupClass } onClick={ event => event.stopPropagation() }>
+                    { popupMenu }
+                    <div className='inner'>
+                        { cardList }
+                    </div>
+                    <div className={ arrowClass } />
+                </div>
             </div>);
 
         return popup;
@@ -166,12 +194,10 @@ class CardPile extends React.Component {
         var className = 'panel card-pile ' + this.props.className;
         var cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
         var headerText = this.props.title ? this.props.title + ' (' + (cardCount) + ')' : '';
-        var topCard = this.props.topCard || _.last(this.props.cards);
+        var topCard = this.props.topCard || _.first(this.props.cards);
         var cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
 
-        if(this.props.hiddenTopCard && topCard) {
-            topCard.facedown = true;
-        } else if(this.props.hiddenTopCard) {
+        if(this.props.hiddenTopCard && !this.props.topCard) {
             topCard = { facedown: true };
         }
 
@@ -190,11 +216,11 @@ class CardPile extends React.Component {
                 { topCard ? <Card card={ topCard } source={ this.props.source }
                     onMouseOver={ this.props.onMouseOver }
                     onMouseOut={ this.props.onMouseOut }
-                    disableMouseOver={ topCard.facedown }
+                    disableMouseOver={ this.props.hiddenTopCard }
                     onClick={ this.onTopCardClick }
                     onMenuItemClick={ this.props.onMenuItemClick }
                     onDragDrop={ this.props.onDragDrop }
-                    orientation={ cardOrientation } /> : null }
+                    orientation={ cardOrientation } /> : <div className='card-placeholder' /> }
                 { this.state.showMenu ? this.getMenu() : null }
                 { this.getPopup() }
             </div>);
@@ -212,6 +238,7 @@ CardPile.propTypes = {
     hiddenTopCard: React.PropTypes.bool,
     menu: React.PropTypes.array,
     onCardClick: React.PropTypes.func,
+    onCloseClick: React.PropTypes.func,
     onDragDrop: React.PropTypes.func,
     onMenuItemClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
@@ -220,7 +247,9 @@ CardPile.propTypes = {
     orientation: React.PropTypes.string,
     popupLocation: React.PropTypes.string,
     popupMenu: React.PropTypes.array,
-    source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional']).isRequired,
+    source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
+        'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional',
+        'scheme plots']).isRequired,
     title: React.PropTypes.string,
     topCard: React.PropTypes.object
 };

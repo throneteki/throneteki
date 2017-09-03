@@ -2,10 +2,11 @@
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
 import GameBoard, { InnerGameBoard } from '../../client/GameBoard.jsx';
-import PlayerStats, { InnerPlayerStats } from '../../client/GameComponents/PlayerStats.jsx';
+import PlayerStats from '../../client/GameComponents/PlayerStats.jsx';
 import PlayerRow from '../../client/GameComponents/PlayerRow.jsx';
 import Card from '../../client/GameComponents/Card.jsx';
 import CardPile from '../../client/GameComponents/CardPile.jsx';
+import GameConfiguration from '../../client/GameComponents/GameConfiguration.jsx';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -26,18 +27,18 @@ describe('the <GameBoard /> component', function() {
     var node, component;
 
     stubComponent(PlayerStats);
-    stubComponent(InnerPlayerStats);
     stubComponent(Card);
     stubComponent(CardPile);
     stubComponent(PlayerRow);
+    stubComponent(GameConfiguration);
 
     beforeEach(function() {
         node = document.createElement('div');
 
         component = ReactDOM.render(<InnerGameBoard />, node);
 
-        state.games.currentGame.players['1'] = { id: 1, name: '1', additionalPiles: {} };
-        state.games.currentGame.players['2'] = { id: 2, name: '2', additionalPiles: {} };
+        state.games.currentGame.players['1'] = { id: 1, name: '1', additionalPiles: {}, timerSettings: {} };
+        state.games.currentGame.players['2'] = { id: 2, name: '2', additionalPiles: {}, timerSettings: {} };
         state.socket.socket = jasmine.createSpyObj('socket', ['emit']);
         state.auth.username = '1';
         state.socket.username = '1';
@@ -64,7 +65,7 @@ describe('the <GameBoard /> component', function() {
                     { uuid: '2', code: '00002', type: 'character', label: 'Test Character' }
                 ];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
             });
 
@@ -83,7 +84,7 @@ describe('the <GameBoard /> component', function() {
                     { uuid: '2', code: '00001', type: 'location', label: 'Test Location' }
                 ];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
             });
 
@@ -103,7 +104,7 @@ describe('the <GameBoard /> component', function() {
                     { uuid: '3', code: '00003', type: 'character', label: 'Test Character2' }
                 ];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
             });
 
@@ -129,7 +130,7 @@ describe('the <GameBoard /> component', function() {
                     { uuid: '4', code: '00002', type: 'character', label: 'Test Character' }
                 ];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
             });
 
@@ -152,7 +153,7 @@ describe('the <GameBoard /> component', function() {
                     { uuid: '3', code: '00001', type: 'location', label: 'Test Location' }
                 ];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
             });
 
@@ -177,7 +178,7 @@ describe('the <GameBoard /> component', function() {
                     { uuid: '6', code: '00003', type: 'character', label: 'Test Character2' }
                 ];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
             });
 
@@ -201,8 +202,8 @@ describe('the <GameBoard /> component', function() {
                     { uuid: '4', code: '00002', type: 'character', label: 'Test Character' }
                 ];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
             });
 
@@ -221,14 +222,14 @@ describe('the <GameBoard /> component', function() {
                 state.games.state.players['1'].activePlot = { code: '00001' };
                 state.games.state.players['1'].plotDiscard = [];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
 
                 var usedPlots = component.refs.thisPlayerUsedPlot;
 
                 TestUtils.Simulate.click(usedPlots);
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
 
                 var popup = TestUtils.scryRenderedDOMComponentsWithClass(component, 'plot-popup');
@@ -242,14 +243,14 @@ describe('the <GameBoard /> component', function() {
                 state.games.state.players['1'].activePlot = { code: '00001', menu: [{ text: 'Test', command: 'plot', method: 'testMethod', arg: 'test' }] };
                 state.games.state.players['1'].plotDiscard = [];
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
 
                 var usedPlots = component.refs.thisPlayerUsedPlot;
 
                 TestUtils.Simulate.click(usedPlots);
 
-                component = ReactDOM.render(<Provider store={store}><GameBoard /></Provider>, node);
+                component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
 
                 this.popup = TestUtils.scryRenderedDOMComponentsWithClass(component, 'plot-popup');

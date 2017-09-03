@@ -11,8 +11,8 @@ describe('the Game', () => {
     beforeEach(() => {
         var gameRepository = jasmine.createSpyObj('gameRepository', ['save']);
         game = new Game('1', 'Test Game', { gameRepository: gameRepository });
-        winner = new Player('1', 'Player 1', true, game);
-        loser = new Player('1', 'Player 1', true, game);
+        winner = new Player('1', { username: 'Player 1', settings: {} }, true, game);
+        loser = new Player('1', { username: 'Player 2', settings: {} }, true, game);
 
         game.initialise();
         winner.initialise();
