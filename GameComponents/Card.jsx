@@ -100,7 +100,7 @@ class Card extends React.Component {
             }
         }
 
-        target.css({left: this.state.touchStart.left + 'px', top: this.state.touchStart.top + 'px'});
+        target.css({ left: this.state.touchStart.left + 'px', top: this.state.touchStart.top + 'px' });
         event.currentTarget.style.position = 'initial';
     }
 
@@ -113,7 +113,7 @@ class Card extends React.Component {
         event.stopPropagation();
 
         if(this.isAllowedMenuSource() && !_.isEmpty(this.props.card.menu)) {
-            this.setState({showMenu: !this.state.showMenu});
+            this.setState({ showMenu: !this.state.showMenu });
 
             return;
         }
@@ -126,7 +126,7 @@ class Card extends React.Component {
     onMenuItemClick(menuItem) {
         if(this.props.onMenuItemClick) {
             this.props.onMenuItemClick(this.props.card, menuItem);
-            this.setState({showMenu: !this.state.showMenu});
+            this.setState({ showMenu: !this.state.showMenu });
         }
     }
 
@@ -369,7 +369,8 @@ Card.propTypes = {
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
     orientation: React.PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
-    source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional']).isRequired,
+    source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction',
+        'additional', 'scheme plots']).isRequired,
     style: React.PropTypes.object,
     wrapped: React.PropTypes.bool
 };
