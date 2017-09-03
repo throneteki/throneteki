@@ -6,6 +6,7 @@ import PlayerStats from '../../client/GameComponents/PlayerStats.jsx';
 import PlayerRow from '../../client/GameComponents/PlayerRow.jsx';
 import Card from '../../client/GameComponents/Card.jsx';
 import CardPile from '../../client/GameComponents/CardPile.jsx';
+import GameConfiguration from '../../client/GameComponents/GameConfiguration.jsx';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -29,14 +30,15 @@ describe('the <GameBoard /> component', function() {
     stubComponent(Card);
     stubComponent(CardPile);
     stubComponent(PlayerRow);
+    stubComponent(GameConfiguration);
 
     beforeEach(function() {
         node = document.createElement('div');
 
         component = ReactDOM.render(<InnerGameBoard />, node);
 
-        state.games.currentGame.players['1'] = { id: 1, name: '1', additionalPiles: {} };
-        state.games.currentGame.players['2'] = { id: 2, name: '2', additionalPiles: {} };
+        state.games.currentGame.players['1'] = { id: 1, name: '1', additionalPiles: {}, timerSettings: {} };
+        state.games.currentGame.players['2'] = { id: 2, name: '2', additionalPiles: {}, timerSettings: {} };
         state.socket.socket = jasmine.createSpyObj('socket', ['emit']);
         state.auth.username = '1';
         state.socket.username = '1';

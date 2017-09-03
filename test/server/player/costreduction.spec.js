@@ -3,11 +3,11 @@
 
 const Player = require('../../../server/game/player.js');
 
-describe('Player', function () {
+describe('Player', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['drop', 'getOtherPlayer', 'playerDecked']);
 
-        this.player = new Player('1', 'Test 1', true, this.gameSpy);
+        this.player = new Player('1', { username: 'Test 1', settings: {} }, true, this.gameSpy);
 
         this.reducerSpy = jasmine.createSpyObj('reducer', ['canReduce', 'getAmount', 'markUsed', 'isExpired', 'unregisterEvents']);
         this.reducerSpy.getAmount.and.returnValue(1);
@@ -15,7 +15,7 @@ describe('Player', function () {
         this.cardSpy = jasmine.createSpyObj('card', ['getCost', 'getMinCost', 'getAmbushCost']);
     });
 
-    describe('getReducedCost()', function () {
+    describe('getReducedCost()', function() {
         describe('when marshaling', function() {
             beforeEach(function() {
                 this.cardSpy.getCost.and.returnValue(4);
