@@ -419,22 +419,20 @@ export class InnerGameBoard extends React.Component {
 
         let popup = (
             <div id='settings-modal' ref='modal' className='modal fade' tabIndex='-1' role='dialog'>
-                <form className='form form-horizontal'>
-                    <div className='modal-dialog' role='document'>
-                        <div className='modal-content settings-popup row'>
-                            <div className='modal-header'>
-                                <button type='button' className='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button>
-                                <h4 className='modal-title'>Game Configuration</h4>
-                            </div>
-                            <div className='modal-body col-xs-12'>
-                                <GameConfiguration actionWindows={ thisPlayer.promptedActionWindows } timerSettings={ thisPlayer.timerSettings }
-                                    keywordSettings={ thisPlayer.keywordSettings } onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
-                                    onToggle={ this.onPromptedActionWindowToggle.bind(this) } onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
-                                />
-                            </div>
+                <div className='modal-dialog' role='document'>
+                    <div className='modal-content settings-popup row'>
+                        <div className='modal-header'>
+                            <button type='button' className='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button>
+                            <h4 className='modal-title'>Game Configuration</h4>
+                        </div>
+                        <div className='modal-body col-xs-12'>
+                            <GameConfiguration actionWindows={ thisPlayer.promptedActionWindows } timerSettings={ thisPlayer.timerSettings }
+                                keywordSettings={ thisPlayer.keywordSettings } onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
+                                onToggle={ this.onPromptedActionWindowToggle.bind(this) } onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
+                            />
                         </div>
                     </div>
-                </form>
+                </div>
             </div>);
 
         return (
