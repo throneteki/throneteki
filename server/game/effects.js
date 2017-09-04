@@ -581,7 +581,7 @@ const Effects = {
         return this.cannotPutIntoPlay(restriction);
     },
     cannotPlay: function(condition) {
-        let restriction = (card, playingType) => playingType === 'play' && condition(card);
+        let restriction = (card, playingType) => card.getType() === 'event' && playingType === 'play' && condition(card);
         return this.cannotPutIntoPlay(restriction);
     },
     cannotPutIntoPlay: function(restriction) {
