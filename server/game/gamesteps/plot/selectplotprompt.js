@@ -19,10 +19,18 @@ class SelectPlotPrompt extends AllPlayerPrompt {
             menuTitle: 'Waiting for opponent to select plot',
             buttons: [
                 { arg: 'changeplot', text: 'Change Plot' }
-            ] };
+            ]
+        };
     }
 
-    onMenuCommand(player) {
+    onMenuCommand(player, arg) {
+        if(arg === 'changeplot') {
+            player.selectedPlot = undefined;
+            this.game.addMessage('{0} has cancelled their plot selection', player);
+
+            return;
+        }
+
         var plot = player.findCard(player.plotDeck, card => {
             return card.selected;
         });
@@ -31,15 +39,9 @@ class SelectPlotPrompt extends AllPlayerPrompt {
             return;
         }
 
-        let newPlot = !!player.selectedPlot;
-
         player.selectedPlot = plot;
 
-        if(newPlot) {
-            this.game.addMessage('{0} has changed their plot selection', player);
-        } else {
-            this.game.addMessage('{0} has selected a plot', player);
-        }
+        this.game.addMessage('{0} has selected a plot', player);
     }
 }
 
