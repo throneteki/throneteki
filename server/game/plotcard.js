@@ -63,7 +63,11 @@ class PlotCard extends BaseCard {
     }
 
     flipFaceup() {
+        // This probably isn't necessary now
         this.facedown = false;
+
+        // But this is
+        this.selected = false;
     }
 }
 

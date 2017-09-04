@@ -15,7 +15,11 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 
     waitingPrompt() {
-        return { menuTitle: 'Waiting for opponent to select plot' };
+        return {
+            menuTitle: 'Waiting for opponent to select plot',
+            buttons: [
+                { arg: 'changeplot', text: 'Change Plot' }
+            ] };
     }
 
     onMenuCommand(player) {
@@ -27,11 +31,15 @@ class SelectPlotPrompt extends AllPlayerPrompt {
             return;
         }
 
-        plot.facedown = true;
-        plot.selected = false;
+        let newPlot = !!player.selectedPlot;
+
         player.selectedPlot = plot;
 
-        this.game.addMessage('{0} has selected a plot', player);
+        if(newPlot) {
+            this.game.addMessage('{0} has changed their plot selection', player);
+        } else {
+            this.game.addMessage('{0} has selected a plot', player);
+        }
     }
 }
 
