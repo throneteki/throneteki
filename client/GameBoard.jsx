@@ -154,7 +154,7 @@ export class InnerGameBoard extends React.Component {
             return false;
         }
 
-        if(otherPlayer.disconnected) {
+        if(otherPlayer.disconnected || otherPlayer.left) {
             return false;
         }
 
