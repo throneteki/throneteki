@@ -961,7 +961,7 @@ class Player extends Spectator {
         this.faction.cardData.strength = 0;
     }
 
-    moveCard(card, targetLocation, options = {}) {
+    moveCard(card, targetLocation, options = {}, callback) {
         let targetPile = this.getSourceList(targetLocation);
 
         options = _.extend({ allowSave: false, bottom: false, isDupe: false }, options);
@@ -985,11 +985,18 @@ class Player extends Spectator {
 
             this.game.raiseEvent('onCardLeftPlay', params, () => {
                 this.synchronousMoveCard(card, targetLocation, options);
+
+                if(callback) {
+                    callback();
+                }
             });
             return;
         }
 
         this.synchronousMoveCard(card, targetLocation, options);
+        if(callback) {
+            callback();
+        }
     }
 
     synchronousMoveCard(card, targetLocation, options = {}) {
