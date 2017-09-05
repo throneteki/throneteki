@@ -101,6 +101,10 @@ class GameServer {
         var debugData = {};
 
         debugData.game = game.getState();
+        debugData.game.players = undefined;
+
+        debugData.messages = game.messages;
+        debugData.game.messages = undefined;
 
         _.each(game.getPlayers(), player => {
             debugData[player.name] = player.getState(player);
