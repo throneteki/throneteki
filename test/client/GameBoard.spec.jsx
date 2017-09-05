@@ -37,8 +37,8 @@ describe('the <GameBoard /> component', function() {
 
         component = ReactDOM.render(<InnerGameBoard />, node);
 
-        state.games.currentGame.players['1'] = { id: 1, name: '1', additionalPiles: {}, timerSettings: {} };
-        state.games.currentGame.players['2'] = { id: 2, name: '2', additionalPiles: {}, timerSettings: {} };
+        state.games.currentGame.players['1'] = { id: 1, name: '1', timerSettings: {} };
+        state.games.currentGame.players['2'] = { id: 2, name: '2', timerSettings: {} };
         state.socket.socket = jasmine.createSpyObj('socket', ['emit']);
         state.auth.username = '1';
         state.socket.username = '1';

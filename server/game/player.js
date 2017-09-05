@@ -24,7 +24,11 @@ class Player extends Spectator {
         this.cardsInPlay = _([]);
         this.deadPile = _([]);
         this.discardPile = _([]);
-        this.additionalPiles = {};
+        this.outOfGamePile = _([]);
+
+        // Agenda specific piles
+        this.schemePlots = _([]);
+        this.conclavePile = _([]);
 
         this.faction = new DrawCard(this, {});
 
@@ -52,8 +56,6 @@ class Player extends Spectator {
         this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
-
-        this.createAdditionalPile('out of game');
 
         this.promptState = new PlayerPromptState();
     }
@@ -744,15 +746,14 @@ class Player extends Spectator {
                 return this.plotDeck;
             case 'revealed plots':
                 return this.plotDiscard;
-            default:
-                if(this.additionalPiles[source]) {
-                    return this.additionalPiles[source].cards;
-                }
+            case 'out of game':
+                return this.outOfGamePile;
+            // Agenda specific piles
+            case 'schemes plots':
+                return this.schemesPlots;
+            case 'conclave':
+                return this.conclavePile;
         }
-    }
-
-    createAdditionalPile(name, properties = {}) {
-        this.additionalPiles[name] = _.extend({ cards: _([]) }, properties);
     }
 
     updateSourceList(source, targetList) {
@@ -778,10 +779,15 @@ class Player extends Spectator {
             case 'revealed plots':
                 this.plotDiscard = targetList;
                 break;
-            default:
-                if(this.additionalPiles[source]) {
-                    this.additionalPiles[source].cards = targetList;
-                }
+            case 'out of game':
+                this.outOfGamePile = targetList;
+                break;
+            // Agenda specific piles
+            case 'scheme plots':
+                this.schemePlots = targetList;
+                break;
+            case 'conclave':
+                this.conclavePile = targetList;
         }
     }
 
@@ -1194,13 +1200,10 @@ class Player extends Spectator {
         let promptState = isActivePlayer ? this.promptState.getState() : {};
         let state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
-            additionalPiles: _.mapObject(this.additionalPiles, pile => ({
-                isPrivate: pile.isPrivate,
-                cards: this.getSummaryForCardList(pile.cards, activePlayer, pile.isPrivate)
-            })),
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
             bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
             cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
+            conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer, true),
             deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
             discardPile: this.getSummaryForCardList(this.discardPile, activePlayer).reverse(),
             disconnected: this.disconnected,
@@ -1213,13 +1216,15 @@ class Player extends Spectator {
             numDrawCards: this.drawDeck.size(),
             name: this.name,
             numPlotCards: this.plotDeck.size(),
+            outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
             phase: this.phase,
             plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
             plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
-            timerSettings: this.timerSettings,
+            schemePlots: this.getSummaryForCardList(this.schemePlots, activePlayer, true),
             stats: this.getStats(isActivePlayer),
+            timerSettings: this.timerSettings,
             user: _.omit(this.user, ['password', 'email'])
         };
 

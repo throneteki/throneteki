@@ -6,7 +6,6 @@ class TheConclave extends AgendaCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.owner.createAdditionalPile('conclave', { isPrivate: true });
         this.registerEvents(['onPlayerKeepHandOrMulligan']);
     }
 

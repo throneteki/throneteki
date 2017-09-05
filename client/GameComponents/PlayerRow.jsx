@@ -51,15 +51,15 @@ class PlayerRow extends React.Component {
     }
 
     getOutOfGamePile() {
-        let pile = this.props.additionalPiles['out of game'];
+        let pile = this.props.outOfGamePile;
 
-        if(!pile || pile.cards.length === 0) {
+        if(pile.length === 0) {
             return;
         }
 
         return (
             <CardPile
-                cards={ pile.cards }
+                cards={ pile }
                 className='additional-cards'
                 onCardClick={ this.props.onCardClick }
                 onDragDrop={ this.props.onDragDrop }
@@ -88,8 +88,7 @@ class PlayerRow extends React.Component {
             cards = this.props.bannerCards;
             title = 'Banners';
         } else if(this.props.agenda.code === '09045') {
-            let pile = this.props.additionalPiles['conclave'];
-            cards = pile.cards;
+            cards = this.props.conclavePile;
             source = 'conclave';
             title = 'Conclave';
             disablePopup = !this.props.isMe;
@@ -160,9 +159,9 @@ class PlayerRow extends React.Component {
 
 PlayerRow.displayName = 'PlayerRow';
 PlayerRow.propTypes = {
-    additionalPiles: React.PropTypes.object,
     agenda: React.PropTypes.object,
     bannerCards: React.PropTypes.array,
+    conclavePile: React.PropTypes.array,
     deadPile: React.PropTypes.array,
     discardPile: React.PropTypes.array,
     drawDeck: React.PropTypes.array,
@@ -178,6 +177,7 @@ PlayerRow.propTypes = {
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
     onShuffleClick: React.PropTypes.func,
+    outOfGamePile: React.PropTypes.array,
     plotDeck: React.PropTypes.array,
     power: React.PropTypes.number,
     showDrawDeck: React.PropTypes.bool,

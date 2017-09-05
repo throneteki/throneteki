@@ -30,7 +30,7 @@ describe('The Rains of Castamere', function() {
         this.scheme1 = scheme('3333');
         this.scheme2 = scheme('4444');
 
-        this.player = jasmine.createSpyObj('player', ['createAdditionalPile', 'flipPlotFaceup', 'removeActivePlot', 'kneelCard', 'moveCard']);
+        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup', 'removeActivePlot', 'kneelCard', 'moveCard']);
         this.player.game = this.gameSpy;
         this.player.faction = {};
 
@@ -42,10 +42,6 @@ describe('The Rains of Castamere', function() {
             this.player.plotDeck = _([this.plot1, this.scheme1, this.plot2, this.scheme2]);
 
             this.agenda.onDecksPrepared();
-        });
-
-        it('should create the schemes plot pile', function() {
-            expect(this.player.createAdditionalPile).toHaveBeenCalledWith('scheme plots', { isPrivate: true });
         });
 
         it('should remove the schemes from the players plot deck', function() {
