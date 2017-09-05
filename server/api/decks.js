@@ -2,12 +2,13 @@ const monk = require('monk');
 const config = require('../config.js');
 const logger = require('../log.js');
 const DeckService = require('../services/DeckService.js');
+const {wrapAsync} = require('../util.js');
 
 let db = monk(config.dbPath);
 let deckService = new DeckService(db);
 
 module.exports.init = function(server) {
-    server.get('/api/decks/:id', function(req, res, next) {
+    server.get('/api/decks/:id', wrapAsync(async function(req, res, next) {
         if(!req.user) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
@@ -16,122 +17,113 @@ module.exports.init = function(server) {
             return res.status(404).send({ message: 'No such deck' });
         }
 
-        deckService.getById(req.params.id)
-            .then(deck => {
-                if(!deck) {
-                    res.status(404).send({ message: 'No such deck' });
+        try {
+            let deck = await deckService.getById(req.params.id);
 
-                    return next();
-                }
+            if(!deck) {
+                res.status(404).send({ message: 'No such deck' });
 
-                if(deck.username !== req.user.username) {
-                    return res.status(401).send({ message: 'Unauthorized' });
-                }
+                return next();
+            }
 
-                res.send({ success: true, deck: deck });
-            })
-            .catch(err => {
-                res.send({ success: false, message: 'Error fetching deck' });
-                logger.info(err.message);
-                return next(err);
-            });
-    });
+            if(deck.username !== req.user.username) {
+                return res.status(401).send({ message: 'Unauthorized' });
+            }
 
-    server.get('/api/decks', function(req, res, next) {
+            res.send({ success: true, deck: deck });
+        } catch(err) {
+            res.send({ success: false, message: 'Error fetching deck' });
+            logger.info(err.message);
+            return next(err);
+        }
+    }));
+
+    server.get('/api/decks', wrapAsync(async function(req, res, next) {
         if(!req.user) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
 
-        deckService.findByUserName(req.user.username)
-            .then(decks => {
-                res.send({ success: true, decks: decks });
-            })
-            .catch(err => {
-                logger.info(err);
-                return next(err);
-            });
-    });
+        try {
+            let decks = await deckService.findByUserName(req.user.username);
+            res.send({ success: true, decks: decks });
+        } catch(err) {
+            res.send({ success: false, message: 'Error fetching decks' });
+            logger.info(err);
+            return next(err);
+        }
+    }));
 
-    server.put('/api/decks/:id', function(req, res, next) {
+    server.put('/api/decks/:id', wrapAsync(async function(req, res, next) {
         if(!req.user) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
 
-        deckService.getById(req.params.id)
-            .then(deck => {
-                if(!deck) {
-                    res.status(404).send({ message: 'No such deck' });
+        try {
+            let deck = await deckService.getById(req.params.id);
 
-                    return next();
-                }
+            if(!deck) {
+                res.status(404).send({ message: 'No such deck' });
 
-                if(deck.username !== req.user.username) {
-                    return res.status(401).send({ message: 'Unauthorized' });
-                }
+                return next();
+            }
 
-                let data = Object.assign({ id: req.params.id }, JSON.parse(req.body.data));
+            if(deck.username !== req.user.username) {
+                return res.status(401).send({ message: 'Unauthorized' });
+            }
 
-                deckService.update(data);
+            let data = Object.assign({ id: req.params.id }, JSON.parse(req.body.data));
 
-                res.send({ success: true, message: 'Saved' });
-            })
-            .catch(err => {
-                res.send({ success: false, message: 'Error saving deck' });
-                logger.info(err.message);
-                return next(err);
-            });
-    });
+            deckService.update(data);
 
-    server.post('/api/decks', function(req, res, next) {
+            res.send({ success: true, message: 'Saved' });
+        } catch(err) {
+            res.send({ success: false, message: 'Error saving deck' });
+            logger.info(err.message);
+            return next(err);
+        }
+    }));
+
+    server.post('/api/decks', wrapAsync(async function(req, res, next) {
         if(!req.user) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
 
-        let data = Object.assign({ username: req.user.username }, JSON.parse(req.body.data));
+        try {
+            let deck = Object.assign(JSON.parse(req.body.data), { username: req.user.username });
+            await deckService.create(deck);
+            res.send({ success: true });
+        } catch(err) {
+            logger.info(err);
+            return next(err);
+        }
+    }));
 
-        deckService.create(data)
-            .then(() => {
-                res.send({ success: true });
-            })
-            .catch(err => {
-                logger.info(err);
-                return next(err);
-            });
-    });
-
-    server.delete('/api/decks/:id', function(req, res, next) {
+    server.delete('/api/decks/:id', wrapAsync(async function(req, res, next) {
         if(!req.user) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
 
         let id = req.params.id;
 
-        deckService.getById(id)
-            .then(deck => {
-                if(!deck) {
-                    res.status(404).send({ success: false, message: 'No such deck' });
+        try {
+            let deck = await deckService.getById(id);
 
-                    return next();
-                }
+            if(!deck) {
+                res.status(404).send({ success: false, message: 'No such deck' });
 
-                if(deck.username !== req.user.username) {
-                    return res.status(401).send({ message: 'Unauthorized' });
-                }
+                return next();
+            }
 
-                deckService.delete(id)
-                    .then(() => {
-                        res.send({ success: true, message: 'Deck deleted successfully', deckId: id });
-                    })
-                    .catch(err => {
-                        res.send({ success: false, message: 'Error deleting deck' });
-                        logger.info(err.message);
-                        return next(err);
-                    });
-            })
-            .catch(err => {
-                res.send({ success: false, message: 'Error fetching deck' });
-                logger.info(err.message);
-                return next(err);
-            });
-    });
+            if(deck.username !== req.user.username) {
+                return res.status(401).send({ message: 'Unauthorized' });
+            }
+
+            await deckService.delete(id);
+            res.send({ success: true, message: 'Deck deleted successfully', deckId: id });
+        } catch(err) {
+            res.send({ success: false, message: 'Error deleting deck' });
+            logger.info(err.message);
+            return next(err);
+        }
+    }));
 };
