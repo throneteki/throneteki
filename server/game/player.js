@@ -24,7 +24,11 @@ class Player extends Spectator {
         this.cardsInPlay = _([]);
         this.deadPile = _([]);
         this.discardPile = _([]);
-        this.additionalPiles = {};
+        this.outOfGamePile = _([]);
+
+        // Agenda specific piles
+        this.schemePlots = _([]);
+        this.conclavePile = _([]);
 
         this.faction = new DrawCard(this, {});
 
@@ -52,8 +56,6 @@ class Player extends Spectator {
         this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
-
-        this.createAdditionalPile('out of game');
 
         this.promptState = new PlayerPromptState();
     }
@@ -744,15 +746,14 @@ class Player extends Spectator {
                 return this.plotDeck;
             case 'revealed plots':
                 return this.plotDiscard;
-            default:
-                if(this.additionalPiles[source]) {
-                    return this.additionalPiles[source].cards;
-                }
+            case 'out of game':
+                return this.outOfGamePile;
+            // Agenda specific piles
+            case 'scheme plots':
+                return this.schemePlots;
+            case 'conclave':
+                return this.conclavePile;
         }
-    }
-
-    createAdditionalPile(name, properties = {}) {
-        this.additionalPiles[name] = _.extend({ cards: _([]) }, properties);
     }
 
     updateSourceList(source, targetList) {
@@ -778,10 +779,15 @@ class Player extends Spectator {
             case 'revealed plots':
                 this.plotDiscard = targetList;
                 break;
-            default:
-                if(this.additionalPiles[source]) {
-                    this.additionalPiles[source].cards = targetList;
-                }
+            case 'out of game':
+                this.outOfGamePile = targetList;
+                break;
+            // Agenda specific piles
+            case 'scheme plots':
+                this.schemePlots = targetList;
+                break;
+            case 'conclave':
+                this.conclavePile = targetList;
         }
     }
 
@@ -1194,19 +1200,22 @@ class Player extends Spectator {
         let promptState = isActivePlayer ? this.promptState.getState() : {};
         let state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
-            additionalPiles: _.mapObject(this.additionalPiles, pile => ({
-                isPrivate: pile.isPrivate,
-                cards: this.getSummaryForCardList(pile.cards, activePlayer, pile.isPrivate)
-            })),
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
-            bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
-            cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
-            deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
-            discardPile: this.getSummaryForCardList(this.discardPile, activePlayer).reverse(),
+            cardPiles: {
+                bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
+                cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
+                conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer, true),
+                deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
+                discardPile: this.getSummaryForCardList(this.discardPile, activePlayer).reverse(),
+                hand: this.getSummaryForCardList(this.hand, activePlayer, true),
+                outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
+                plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
+                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
+                schemePlots: this.getSummaryForCardList(this.schemePlots, activePlayer, true)
+            },
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
-            hand: this.getSummaryForCardList(this.hand, activePlayer, true),
             id: this.id,
             keywordSettings: this.keywordSettings,
             left: this.left,
@@ -1214,18 +1223,16 @@ class Player extends Spectator {
             name: this.name,
             numPlotCards: this.plotDeck.size(),
             phase: this.phase,
-            plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
-            plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
-            timerSettings: this.timerSettings,
             stats: this.getStats(isActivePlayer),
+            timerSettings: this.timerSettings,
             user: _.omit(this.user, ['password', 'email'])
         };
 
         if(this.showDeck) {
             state.showDeck = true;
-            state.drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
+            state.cardPiles.drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
         }
 
         return _.extend(state, promptState);

@@ -245,7 +245,7 @@ export class InnerGameBoard extends React.Component {
             return [];
         }
 
-        let sortedCards = _.sortBy(player.cardsInPlay, card => {
+        let sortedCards = _.sortBy(player.cardPiles.cardsInPlay, card => {
             return card.type;
         });
 
@@ -272,15 +272,13 @@ export class InnerGameBoard extends React.Component {
     }
 
     getSchemePile(player, isMe) {
-        let schemePile = player && player.additionalPiles['scheme plots'];
-
-        if(!schemePile) {
+        if(!player || !player.agenda || player.agenda.code !== '05045') {
             return;
         }
 
         return (
             <CardPile
-                cards={ schemePile.cards }
+                cards={ player.cardPiles.schemePlots }
                 className='plot'
                 disablePopup={ !isMe }
                 onCardClick={ this.onCardClick }
@@ -302,20 +300,20 @@ export class InnerGameBoard extends React.Component {
             <div className='plot-group'>
                 { this.getSchemePile(otherPlayer, false) }
                 <CardPile className={ otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
-                    title='Plots' source='plot deck' cards={ otherPlayer ? otherPlayer.plotDeck : [] }
+                    title='Plots' source='plot deck' cards={ otherPlayer ? otherPlayer.cardPiles.plotDeck : [] }
                     topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disableMouseOver disablePopup
                     onCardClick={ this.onCardClick } orientation='horizontal' />
-                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer ? otherPlayer.plotDiscard : [] }
+                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer ? otherPlayer.cardPiles.plotDiscard : [] }
                     topCard={ otherPlayer ? otherPlayer.activePlot : undefined } orientation='horizontal' onMouseOver={ this.onMouseOver }
                     onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } />
             </div>
             <div className='plot-group our-side'>
-                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ thisPlayer.plotDiscard } topCard={ thisPlayer.activePlot }
+                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ thisPlayer.cardPiles.plotDiscard } topCard={ thisPlayer.activePlot }
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } orientation='horizontal' onMenuItemClick={ this.onMenuItemClick }
                     onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
                 <CardPile className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
-                    title='Plots' source='plot deck' cards={ thisPlayer.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
+                    title='Plots' source='plot deck' cards={ thisPlayer.cardPiles.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop }
                     closeOnClick />
                 { this.getSchemePile(thisPlayer, !this.state.spectating) }
@@ -447,17 +445,18 @@ export class InnerGameBoard extends React.Component {
                     <div className='board-middle'>
                         <div className='player-home-row'>
                             <PlayerRow
-                                additionalPiles={ otherPlayer ? otherPlayer.additionalPiles : {} }
                                 agenda={ otherPlayer ? otherPlayer.agenda : null }
-                                bannerCards={ otherPlayer ? otherPlayer.bannerCards : [] }
+                                bannerCards={ otherPlayer ? otherPlayer.cardPiles.bannerCards : [] }
+                                conclavePile={ otherPlayer ? otherPlayer.cardPiles.conclavePile : [] }
                                 faction={ otherPlayer ? otherPlayer.faction : null }
-                                hand={ otherPlayer ? otherPlayer.hand : [] } isMe={ false }
+                                hand={ otherPlayer ? otherPlayer.cardPiles.hand : [] } isMe={ false }
                                 numDrawCards={ otherPlayer ? otherPlayer.numDrawCards : 0 }
-                                discardPile={ otherPlayer ? otherPlayer.discardPile : [] }
-                                deadPile={ otherPlayer ? otherPlayer.deadPile : [] }
+                                discardPile={ otherPlayer ? otherPlayer.cardPiles.discardPile : [] }
+                                deadPile={ otherPlayer ? otherPlayer.cardPiles.deadPile : [] }
                                 onCardClick={ this.onCardClick }
                                 onMouseOver={ this.onMouseOver }
-                                onMouseOut={ this.onMouseOut } />
+                                onMouseOut={ this.onMouseOut }
+                                outOfGamePile={ otherPlayer ? otherPlayer.cardPiles.outOfGamePile : [] } />
                         </div>
                         <div className='board-inner'>
                             <div className='prompt-area'>
@@ -485,11 +484,11 @@ export class InnerGameBoard extends React.Component {
                         </div>
                         <div className='player-home-row our-side'>
                             <PlayerRow isMe={ !this.state.spectating }
-                                additionalPiles={ thisPlayer.additionalPiles }
                                 agenda={ thisPlayer.agenda }
-                                bannerCards={ thisPlayer.bannerCards }
+                                bannerCards={ thisPlayer.cardPiles.bannerCards }
+                                conclavePile={ thisPlayer.cardPiles.conclavePile }
                                 faction={ thisPlayer.faction }
-                                hand={ thisPlayer.hand }
+                                hand={ thisPlayer.cardPiles.hand }
                                 onCardClick={ this.onCardClick }
                                 onMouseOver={ this.onMouseOver }
                                 onMouseOut={ this.onMouseOut }
@@ -497,11 +496,12 @@ export class InnerGameBoard extends React.Component {
                                 onDrawClick={ this.onDrawClick }
                                 onFactionCardClick={ this.onFactionCardClick.bind(this) }
                                 onShuffleClick={ this.onShuffleClick }
+                                outOfGamePile={ thisPlayer.cardPiles.outOfGamePile }
                                 showDrawDeck={ this.state.showDrawDeck }
-                                drawDeck={ thisPlayer.drawDeck }
+                                drawDeck={ thisPlayer.cardPiles.drawDeck }
                                 onDragDrop={ this.onDragDrop }
-                                discardPile={ thisPlayer.discardPile }
-                                deadPile={ thisPlayer.deadPile }
+                                discardPile={ thisPlayer.cardPiles.discardPile }
+                                deadPile={ thisPlayer.cardPiles.deadPile }
                                 spectating={ this.state.spectating }
                                 onMenuItemClick={ this.onMenuItemClick } />
                         </div>
