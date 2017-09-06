@@ -749,8 +749,8 @@ class Player extends Spectator {
             case 'out of game':
                 return this.outOfGamePile;
             // Agenda specific piles
-            case 'schemes plots':
-                return this.schemesPlots;
+            case 'scheme plots':
+                return this.schemePlots;
             case 'conclave':
                 return this.conclavePile;
         }
