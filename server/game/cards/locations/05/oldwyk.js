@@ -28,6 +28,10 @@ class OldWyk extends DrawCard {
     }
 
     resolveAfterChallenge(challenge, card) {
+        if(card.location !== 'play area') {
+            return;
+        }
+
         if(challenge.winner === this.controller && challenge.strengthDifference >= 5) {
             this.controller.returnCardToHand(card);
             this.game.addMessage('{0} is returned to {1}\'s hand because of {2}',
