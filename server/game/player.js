@@ -1201,28 +1201,30 @@ class Player extends Spectator {
         let state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
-            bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
-            cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
-            conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer, true),
-            deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
-            discardPile: this.getSummaryForCardList(this.discardPile, activePlayer).reverse(),
+            cardPiles: {
+                bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
+                cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
+                conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer, true),
+                deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
+                discardPile: this.getSummaryForCardList(this.discardPile, activePlayer).reverse(),
+                hand: this.getSummaryForCardList(this.hand, activePlayer, true),
+                outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
+                plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
+                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
+                schemePlots: this.getSummaryForCardList(this.schemePlots, activePlayer, true)
+            },
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
-            hand: this.getSummaryForCardList(this.hand, activePlayer, true),
             id: this.id,
             keywordSettings: this.keywordSettings,
             left: this.left,
             numDrawCards: this.drawDeck.size(),
             name: this.name,
             numPlotCards: this.plotDeck.size(),
-            outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
             phase: this.phase,
-            plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
-            plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
-            schemePlots: this.getSummaryForCardList(this.schemePlots, activePlayer, true),
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
             user: _.omit(this.user, ['password', 'email'])
@@ -1230,7 +1232,7 @@ class Player extends Spectator {
 
         if(this.showDeck) {
             state.showDeck = true;
-            state.drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
+            state.cardPiles.drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
         }
 
         return _.extend(state, promptState);

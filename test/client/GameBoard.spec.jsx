@@ -37,8 +37,8 @@ describe('the <GameBoard /> component', function() {
 
         component = ReactDOM.render(<InnerGameBoard />, node);
 
-        state.games.currentGame.players['1'] = { id: 1, name: '1', timerSettings: {} };
-        state.games.currentGame.players['2'] = { id: 2, name: '2', timerSettings: {} };
+        state.games.currentGame.players['1'] = { id: 1, name: '1', cardPiles: {}, timerSettings: {} };
+        state.games.currentGame.players['2'] = { id: 2, name: '2', cardPiles: {}, timerSettings: {} };
         state.socket.socket = jasmine.createSpyObj('socket', ['emit']);
         state.auth.username = '1';
         state.socket.username = '1';
@@ -60,7 +60,7 @@ describe('the <GameBoard /> component', function() {
     describe('when player has cards in play', function() {
         describe('that include locations followed by characters', function() {
             beforeEach(function() {
-                state.games.currentGame.players['1'].cardsInPlay = [
+                state.games.currentGame.players['1'].cardPiles.cardsInPlay = [
                     { uuid: '1', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '2', code: '00002', type: 'character', label: 'Test Character' }
                 ];
@@ -79,7 +79,7 @@ describe('the <GameBoard /> component', function() {
 
         describe('that include characters followed by locations', function() {
             beforeEach(function() {
-                state.games.currentGame.players['1'].cardsInPlay = [
+                state.games.currentGame.players['1'].cardPiles.cardsInPlay = [
                     { uuid: '1', code: '00002', type: 'character', label: 'Test Character' },
                     { uuid: '2', code: '00001', type: 'location', label: 'Test Location' }
                 ];
@@ -98,7 +98,7 @@ describe('the <GameBoard /> component', function() {
 
         describe('that include characters mixed with locations', function() {
             beforeEach(function() {
-                state.games.currentGame.players['1'].cardsInPlay = [
+                state.games.currentGame.players['1'].cardPiles.cardsInPlay = [
                     { uuid: '2', code: '00002', type: 'character', label: 'Test Character' },
                     { uuid: '1', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '3', code: '00003', type: 'character', label: 'Test Character2' }
@@ -121,11 +121,11 @@ describe('the <GameBoard /> component', function() {
     describe('when other player has cards in play', function() {
         describe('that include locations followed by characters', function() {
             beforeEach(function() {
-                state.games.currentGame.players['1'].cardsInPlay = [
+                state.games.currentGame.players['1'].cardPiles.cardsInPlay = [
                     { uuid: '1', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '2', code: '00002', type: 'character', label: 'Test Character' }
                 ];
-                state.games.currentGame.players['2'].cardsInPlay = [
+                state.games.currentGame.players['2'].cardPiles.cardsInPlay = [
                     { uuid: '3', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '4', code: '00002', type: 'character', label: 'Test Character' }
                 ];
@@ -144,11 +144,11 @@ describe('the <GameBoard /> component', function() {
 
         describe('that include characters followed by locations', function() {
             beforeEach(function() {
-                state.games.currentGame.players['1'].cardsInPlay = [
+                state.games.currentGame.players['1'].cardPiles.cardsInPlay = [
                     { uuid: '2', code: '00002', type: 'character', label: 'Test Character' },
                     { uuid: '1', code: '00001', type: 'location', label: 'Test Location' }
                 ];
-                state.games.currentGame.players['2'].cardsInPlay = [
+                state.games.currentGame.players['2'].cardPiles.cardsInPlay = [
                     { uuid: '4', code: '00002', type: 'character', label: 'Test Character' },
                     { uuid: '3', code: '00001', type: 'location', label: 'Test Location' }
                 ];
@@ -167,12 +167,12 @@ describe('the <GameBoard /> component', function() {
 
         describe('that include characters mixed with locations', function() {
             beforeEach(function() {
-                state.games.currentGame.players['1'].cardsInPlay = [
+                state.games.currentGame.players['1'].cardPiles.cardsInPlay = [
                     { uuid: '2', code: '00002', type: 'character', label: 'Test Character' },
                     { uuid: '1', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '3', code: '00003', type: 'character', label: 'Test Character2' }
                 ];
-                state.games.currentGame.players['2'].cardsInPlay = [
+                state.games.currentGame.players['2'].cardPiles.cardsInPlay = [
                     { uuid: '5', code: '00002', type: 'character', label: 'Test Character' },
                     { uuid: '4', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '6', code: '00003', type: 'character', label: 'Test Character2' }
@@ -193,11 +193,11 @@ describe('the <GameBoard /> component', function() {
 
         describe('when the control is re-rendered', function() {
             beforeEach(function() {
-                state.games.currentGame.players['1'].cardsInPlay = [
+                state.games.currentGame.players['1'].cardPiles.cardsInPlay = [
                     { uuid: '1', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '2', code: '00002', type: 'character', label: 'Test Character' }
                 ];
-                state.games.currentGame.players['2'].cardsInPlay = [
+                state.games.currentGame.players['2'].cardPiles.cardsInPlay = [
                     { uuid: '3', code: '00001', type: 'location', label: 'Test Location' },
                     { uuid: '4', code: '00002', type: 'character', label: 'Test Character' }
                 ];
@@ -220,7 +220,7 @@ describe('the <GameBoard /> component', function() {
         describe('when there is no menu and the plot is clicked', function() {
             it('should show the used plot popup', function() {
                 state.games.state.players['1'].activePlot = { code: '00001' };
-                state.games.state.players['1'].plotDiscard = [];
+                state.games.state.players['1'].cardPiles.plotDiscard = [];
 
                 component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
@@ -241,7 +241,7 @@ describe('the <GameBoard /> component', function() {
         xdescribe('when there is a menu and the plot is clicked', function() {
             beforeEach(function() {
                 state.games.state.players['1'].activePlot = { code: '00001', menu: [{ text: 'Test', command: 'plot', method: 'testMethod', arg: 'test' }] };
-                state.games.state.players['1'].plotDiscard = [];
+                state.games.state.players['1'].cardPiles.plotDiscard = [];
 
                 component = ReactDOM.render(<Provider store={ store }><GameBoard /></Provider>, node);
                 component = TestUtils.findRenderedComponentWithType(component, GameBoard).getWrappedInstance();
