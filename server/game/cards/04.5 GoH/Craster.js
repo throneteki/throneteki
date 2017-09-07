@@ -2,18 +2,6 @@ const _ = require('underscore');
 
 const DrawCard = require('../../drawcard.js');
 
-class KillTracker {
-    constructor(game) {
-        this.killedThisPhase = [];
-        game.on('onCharacterKilled', event => this.killedThisPhase.push(event.card));
-        game.on('onPhaseStarted', () => this.killedThisPhase = []);
-    }
-
-    anyKilled() {
-        return this.killedThisPhase.length !== 0;
-    }
-}
-
 class Craster extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
@@ -37,6 +25,18 @@ class Craster extends DrawCard {
                 this.game.addMessage('{0} sacrifices {1} to put into play each character killed this phase', this.controller, this);
             }
         });
+    }
+}
+
+class KillTracker {
+    constructor(game) {
+        this.killedThisPhase = [];
+        game.on('onCharacterKilled', event => this.killedThisPhase.push(event.card));
+        game.on('onPhaseStarted', () => this.killedThisPhase = []);
+    }
+
+    anyKilled() {
+        return this.killedThisPhase.length !== 0;
     }
 }
 
