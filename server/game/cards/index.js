@@ -1,21 +1,44 @@
 const _ = require('underscore');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
-const plots = require('./plots');
-const locations = require('./locations');
-const characters = require('./characters');
-const attachments = require('./attachments');
-const events = require('./events');
+function getDirectories(srcpath) {
+    let fullPath = path.join(__dirname, srcpath);
+    return fs.readdirSync(fullPath).filter(function(file) {
+        return fs.statSync(path.join(fullPath, file)).isDirectory();
+    });
+}
 
-var cards = {};
+function loadFiles(directory) {
+    let fullPath = path.join(__dirname, directory);
+    let files = fs.readdirSync(fullPath).filter(file => {
+        return !fs.statSync(path.join(fullPath, file)).isDirectory();
+    });
 
-_.each(fs.readdirSync(path.join(__dirname, 'agendas')), file => {
-    var card = require('./agendas/' + file);
+    for(let file of files) {
+        let card = require('./' + directory + '/' + file);
 
-    cards[card.code] = card;
-});
+        cards[card.code] = card;
+    }
+}
 
-cards = _.extend(cards, plots, locations, characters, attachments, events);
+function loadCards(directory) {
+    let cards = {};
+
+    loadFiles(directory);
+
+    _.each(getDirectories(directory), dir => {
+        cards = Object.assign(cards, loadCards(path.join(directory, dir)));
+    });
+
+    return cards;
+}
+
+let cards = {};
+let directories = getDirectories('.');
+
+for(let directory of directories) {
+    cards = Object.assign(cards, loadCards(directory));
+}
 
 module.exports = cards;
