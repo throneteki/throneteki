@@ -9,26 +9,15 @@ class RenlyBaratheon extends DrawCard {
             match: this,
             effect: ability.effects.cannotBeSaved()
         });
+
         this.reaction({
             when: {
-                onInsight: event => {
-                    if(event.source.controller !== this.controller) {
-                        return false;
-                    }
-
-                    // postpone the check about drawn card loyalty, to avoid
-                    // leaking game state to the opponent
-                    return true;
-                }
+                onInsight: event => event.source.controller === this.controller && event.card.isLoyal()
             },
+            cost: ability.costs.revealSpecific(context => context.event.card),
             handler: context => {
-                let drawnCard = context.event.drawnCard;
-                if(drawnCard.isLoyal()) {
-                    this.controller.drawCardsToHand(1);
-
-                    this.game.addMessage('{0} uses {1} to reveal {2} and draw a card',
-                        this.controller, this, drawnCard);
-                }
+                this.controller.drawCardsToHand(1);
+                this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this, context.event.card);
             }
         });
     }

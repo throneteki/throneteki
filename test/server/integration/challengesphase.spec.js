@@ -211,8 +211,6 @@ describe('challenges phase', function() {
             describe('when no settings are set', function() {
                 beforeEach(function() {
                     this.player1.clickPrompt('Apply Claim');
-                    // Pass on Renly's ability
-                    this.player1.clickPrompt('Pass');
                 });
 
                 it('should apply all keywords automatically', function() {
@@ -232,8 +230,6 @@ describe('challenges phase', function() {
 
                 it('should allow the first player to choose the order', function() {
                     this.player2.clickPrompt('Insight');
-                    // Pass on Renly's ability
-                    this.player1.clickPrompt('Pass');
 
                     expect(this.chud.location).toBe('hand');
                     // No Renown power yet
@@ -245,8 +241,6 @@ describe('challenges phase', function() {
 
                 it('should allow the first player to process all keywords automatically', function() {
                     this.player2.clickPrompt('Automatic');
-                    // Pass on Renly's ability
-                    this.player1.clickPrompt('Pass');
 
                     expect(this.chud.location).toBe('hand');
                     expect(this.renly.power).toBe(1);
