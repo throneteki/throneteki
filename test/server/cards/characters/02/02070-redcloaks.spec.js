@@ -1,7 +1,7 @@
 /* global describe, it, expect, beforeEach, jasmine */
 /* eslint camelcase: 0, no-invalid-this: 0 */
 
-const RedCloaks = require('../../../../../server/game/cards/NMG/RedCloaks.js');
+const RedCloaks = require('../../../../../server/game/cards/02.4 NMG/RedCloaks.js');
 
 describe('RedCloaks', function() {
     beforeEach(function() {

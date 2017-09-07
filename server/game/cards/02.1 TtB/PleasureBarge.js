@@ -1,17 +1,5 @@
 const DrawCard = require('../../drawcard.js');
 
-class DrawTracker {
-    constructor(game, player) {
-        this.hasDrawnCardsThisPhase = false;
-        game.on('onCardsDrawn', event => {
-            if(event.player === player) {
-                this.hasDrawnCardsThisPhase = true;
-            }
-        });
-        game.on('onPhaseEnded', () => this.hasDrawnCardsThisPhase = false);
-    }
-}
-
 class PleasureBarge extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
@@ -36,6 +24,18 @@ class PleasureBarge extends DrawCard {
                 this.game.addMessage('{0} uses {1} to draw 3 cards', this.controller, this);
             }
         });
+    }
+}
+
+class DrawTracker {
+    constructor(game, player) {
+        this.hasDrawnCardsThisPhase = false;
+        game.on('onCardsDrawn', event => {
+            if(event.player === player) {
+                this.hasDrawnCardsThisPhase = true;
+            }
+        });
+        game.on('onPhaseEnded', () => this.hasDrawnCardsThisPhase = false);
     }
 }
 

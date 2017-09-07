@@ -1,13 +1,5 @@
 const DrawCard = require('../../drawcard.js');
 
-class DominanceTracker {
-    constructor(game, card) {
-        this.hasWonDominanceThisRound = undefined;
-        game.on('onDominanceDetermined', event => this.hasWonDominanceThisRound = card.controller === event.winner);
-        game.on('onRoundEnded', () => this.hasWonDominanceThisRound = undefined);
-    }
-}
-
 class NorthernEncampment extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
@@ -30,6 +22,14 @@ class NorthernEncampment extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to gain 2 gold', context.player, this);
             }
         });
+    }
+}
+
+class DominanceTracker {
+    constructor(game, card) {
+        this.hasWonDominanceThisRound = undefined;
+        game.on('onDominanceDetermined', event => this.hasWonDominanceThisRound = card.controller === event.winner);
+        game.on('onRoundEnded', () => this.hasWonDominanceThisRound = undefined);
     }
 }
 
