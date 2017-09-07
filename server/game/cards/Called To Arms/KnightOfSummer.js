@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 const _ = require('underscore');
 
 
@@ -9,8 +9,8 @@ class KnightOfSummer extends DrawCard {
             match: this,
             effect: [
                 ability.effects.addKeyword('Renown'),
-                ability.effects.modifyStrength(2)   
-            ]                 
+                ability.effects.modifyStrength(2)
+            ]
         });
     }
 
@@ -30,7 +30,7 @@ class KnightOfSummer extends DrawCard {
         }
         return false;
     }
-}   
+}
 KnightOfSummer.code = '04023';
 
 module.exports = KnightOfSummer;

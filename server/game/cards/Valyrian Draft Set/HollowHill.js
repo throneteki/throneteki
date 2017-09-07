@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class HollowHill extends DrawCard {
     setupCardAbilities() {
@@ -35,7 +35,7 @@ class HollowHill extends DrawCard {
                 });
             }
         });
-        
+
         return !factionsInPlay.includes(marshalledFaction);
     }
 }

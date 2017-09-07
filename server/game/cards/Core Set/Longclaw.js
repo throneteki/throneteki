@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class Longclaw extends DrawCard {
     setupCardAbilities(ability) {

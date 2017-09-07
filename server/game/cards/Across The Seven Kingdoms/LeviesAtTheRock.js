@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class LeviesAtTheRock extends DrawCard {
     setupCardAbilities() {
@@ -11,7 +11,7 @@ class LeviesAtTheRock extends DrawCard {
                 let gold = Math.min(opponent.gold, this.game.currentChallenge.attackers.length);
                 this.game.addGold(opponent, -gold);
                 this.game.addGold(this.controller, gold);
-                this.game.addMessage('{0} plays {1} to move {2} gold from {3}\'s gold pool to their own', 
+                this.game.addMessage('{0} plays {1} to move {2} gold from {3}\'s gold pool to their own',
                     this.controller, this, gold, opponent);
             }
         });

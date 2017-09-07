@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class PodrickPayne extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,7 +17,7 @@ class PodrickPayne extends DrawCard {
             ],
             handler: context => {
                 context.event.saveCard(context.target);
-                this.game.addMessage('{0} puts {1} into play and pays 2 gold to save {2}', 
+                this.game.addMessage('{0} puts {1} into play and pays 2 gold to save {2}',
                     this.controller, this, context.target);
 
                 if(context.target.name === 'Tyrion Lannister' && this.controller.gold >= 2 &&
@@ -48,7 +48,7 @@ class PodrickPayne extends DrawCard {
                 this.game.addGold(this.controller, -2);
                 card.controller.killCharacter(card);
                 this.game.addMessage('{0} then uses {1} and pays 2 gold to kill {2}', this.controller, this, card);
-                        
+
                 return true;
             }
         });

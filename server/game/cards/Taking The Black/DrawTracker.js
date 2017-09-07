@@ -1,10 +1,10 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class DrawTracker {
     constructor(game, player) {
         this.hasDrawnCardsThisPhase = false;
-        game.on('onCardsDrawn', event => { 
-            if(event.player === player) { 
+        game.on('onCardsDrawn', event => {
+            if(event.player === player) {
                 this.hasDrawnCardsThisPhase = true;
             }
         });

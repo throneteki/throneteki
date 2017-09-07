@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class SerGarlanTyrell extends DrawCard {
     setupCardAbilities(ability) {
@@ -21,7 +21,7 @@ class SerGarlanTyrell extends DrawCard {
 
     hasParticipatingKnight() {
         return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isParticipating(card) &&
-                                                      card.hasTrait('Knight') && 
+                                                      card.hasTrait('Knight') &&
                                                       card.getType() === 'character');
     }
 }

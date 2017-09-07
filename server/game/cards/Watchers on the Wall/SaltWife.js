@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class SaltWife extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,7 +15,7 @@ class SaltWife extends DrawCard {
                     match: context.target,
                     effect: ability.effects.cannotBeDeclaredAsDefender()
                 }));
-                this.game.addMessage('{0} sacrifices {1} to make {2} unable to be declared as a defender', 
+                this.game.addMessage('{0} sacrifices {1} to make {2} unable to be declared as a defender',
                     context.player, this, context.target);
             }
         });

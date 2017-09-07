@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class WithoutHisBeard extends DrawCard {
     setupCardAbilities() {
@@ -30,7 +30,7 @@ class WithoutHisBeard extends DrawCard {
                         buttons: buttons
                     },
                     source: this
-                }); 
+                });
             }
         });
     }
@@ -39,7 +39,7 @@ class WithoutHisBeard extends DrawCard {
         let opponent = this.game.getOtherPlayer(this.controller);
         opponent.discardAtRandom(num);
         opponent.drawCardsToHand(2);
-        this.game.addMessage('{0} plays {1} to have {2} discard {3} cards at random, then draw 2 cards', 
+        this.game.addMessage('{0} plays {1} to have {2} discard {3} cards at random, then draw 2 cards',
             player, this, opponent, num);
 
         return true;

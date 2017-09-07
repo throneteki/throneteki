@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class MoonBrothers extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +14,7 @@ class MoonBrothers extends DrawCard {
             handler: () => {
                 this.controller.putIntoPlay(this);
                 this.game.currentChallenge.addAttacker(this);
-                this.game.addMessage('{0} kneels their faction card to put {1} into play participating as an attacker', 
+                this.game.addMessage('{0} kneels their faction card to put {1} into play participating as an attacker',
                     this.controller, this);
             }
         });

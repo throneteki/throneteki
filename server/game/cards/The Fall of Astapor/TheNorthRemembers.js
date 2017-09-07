@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class TheNorthRemembers extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,7 +8,7 @@ class TheNorthRemembers extends DrawCard {
             title: 'Each player sacrifices a character or location',
             phase: 'challenge',
             handler: () => {
-                this.game.addMessage('{0} plays {1} to have each player sacrifice a character or location', 
+                this.game.addMessage('{0} plays {1} to have each player sacrifice a character or location',
                     this.controller, this);
 
                 this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
@@ -39,7 +39,7 @@ class TheNorthRemembers extends DrawCard {
                 source: this,
                 cardCondition: card => (
                     card.location === 'play area' &&
-                    card.controller === currentPlayer && 
+                    card.controller === currentPlayer &&
                     (card.getType() === 'character' || card.getType() === 'location')),
                 onSelect: (player, cards) => this.onCardSelected(player, cards),
                 onCancel: (player) => this.cancelSelection(player)

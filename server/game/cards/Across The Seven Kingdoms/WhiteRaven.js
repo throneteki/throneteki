@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class WhiteRaven extends DrawCard {
     setupCardAbilities() {
@@ -27,7 +27,7 @@ class WhiteRaven extends DrawCard {
     }
 
     anyPlotHasTrait(trait) {
-        return _.any(this.game.getPlayers(), player => 
+        return _.any(this.game.getPlayers(), player =>
             player.activePlot &&
             player.activePlot.hasTrait(trait));
     }

@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class GuardingTheRealm extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,7 +11,7 @@ class GuardingTheRealm extends DrawCard {
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);
-                this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s discard pile under their control', 
+                this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s discard pile under their control',
                     this.controller, this, context.target, context.target.owner);
             }
         });

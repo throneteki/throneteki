@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class FreyLordling extends DrawCard {
     setupCardAbilities() {
@@ -12,7 +12,7 @@ class FreyLordling extends DrawCard {
                     effect: ability.effects.modifyStrength(1)
                 }));
 
-                this.game.addMessage('{0} uses {1} to give {1} +1 STR until the end of the phase', 
+                this.game.addMessage('{0} uses {1} to give {1} +1 STR until the end of the phase',
                     this.controller, this);
             }
         });

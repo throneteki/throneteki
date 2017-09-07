@@ -1,4 +1,4 @@
-const PlotCard = require('../../../plotcard.js');
+const PlotCard = require('../../plotcard.js');
 
 class WardensOfTheWest extends PlotCard {
     setupCardAbilities(ability) {

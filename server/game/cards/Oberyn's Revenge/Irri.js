@@ -1,7 +1,7 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class Irri extends DrawCard {
-    setupCardAbilities(ability) {  
+    setupCardAbilities(ability) {
         this.action({
             title: 'Stand Lord or Lady',
             cost: ability.costs.discardGold(),

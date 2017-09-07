@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class Lady extends DrawCard {
 
@@ -23,7 +23,7 @@ class Lady extends DrawCard {
                     context.target.controller.standCard(context.target);
                     message += ' and stand her';
                 }
-                
+
                 this.game.addMessage(message, this.controller, this, context.target);
             }
         });

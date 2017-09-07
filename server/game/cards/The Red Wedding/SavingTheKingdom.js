@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class SavingTheKingdom extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,7 +18,7 @@ class SavingTheKingdom extends DrawCard {
                     effect: ability.effects.cannotBeStood()
                 }));
 
-                this.game.addMessage('{0} plays {1} to kneel and make {2} unable to stand during the standing phase this round', 
+                this.game.addMessage('{0} plays {1} to kneel and make {2} unable to stand during the standing phase this round',
                     this.controller, this, context.target);
             }
         });

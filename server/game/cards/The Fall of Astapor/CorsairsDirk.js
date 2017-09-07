@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class CorsairsDirk extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,7 +16,7 @@ class CorsairsDirk extends DrawCard {
             handler: () => {
                 let opponent = this.game.getOtherPlayer(this.controller);
                 this.game.transferGold(this.controller, opponent, 1);
-                this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own', 
+                this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own',
                     this.controller, this, opponent);
             }
         });

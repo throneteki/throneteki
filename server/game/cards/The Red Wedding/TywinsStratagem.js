@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class TywinsStratagem extends DrawCard {
     setupCardAbilities(ability) {
@@ -32,8 +32,8 @@ class TywinsStratagem extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                onCardsDiscarded: event => this.controller !== event.player && 
-                                           ['hand', 'draw deck'].includes(event.originalLocation) && 
+                onCardsDiscarded: event => this.controller !== event.player &&
+                                           ['hand', 'draw deck'].includes(event.originalLocation) &&
                                            _.any(event.cards, card => card.getType() === 'character')
             },
             ignoreEventCosts: true,

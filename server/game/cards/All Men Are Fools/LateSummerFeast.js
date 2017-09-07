@@ -1,4 +1,4 @@
-const PlotCard = require('../../../plotcard.js');
+const PlotCard = require('../../plotcard.js');
 
 class LateSummerFeast extends PlotCard {
     setupCardAbilities() {
@@ -23,7 +23,7 @@ class LateSummerFeast extends PlotCard {
                         ]
                     },
                     source: this
-                }); 
+                });
             }
         });
     }

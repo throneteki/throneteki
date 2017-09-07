@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const PlotCard = require('../../../plotcard.js');
+const PlotCard = require('../../plotcard.js');
 
 class TheFirstSnowOfWinter extends PlotCard {
     setupCardAbilities() {

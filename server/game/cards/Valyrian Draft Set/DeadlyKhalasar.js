@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class DeadlyKhalasar extends DrawCard {
     setupCardAbilities() {
@@ -22,7 +22,7 @@ class DeadlyKhalasar extends DrawCard {
                     ]
                 }));
 
-                this.game.addMessage('{0} plays {1} to give {2} +{3} STR and intimidate until the end of the challenge', 
+                this.game.addMessage('{0} plays {1} to give {2} +{3} STR and intimidate until the end of the challenge',
                     context.player, this, context.target, strBoost);
             }
         });

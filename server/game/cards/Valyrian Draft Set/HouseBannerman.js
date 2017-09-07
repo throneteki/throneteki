@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard');
+const DrawCard = require('../../drawcard');
 
 class HouseBannerman extends DrawCard {
     setupCardAbilities(ability) {
