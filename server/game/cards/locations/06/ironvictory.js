@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class IronVictory extends DrawCard {
     setupCardAbilities(ability) {
@@ -24,7 +24,7 @@ class IronVictory extends DrawCard {
         if(!card) {
             return 0;
         }
-
+        
         return card.getPower();
     }
 }

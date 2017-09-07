@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class SecondSons extends DrawCard {
     setupCardAbilities() {
@@ -21,7 +21,7 @@ class SecondSons extends DrawCard {
                         ]
                     },
                     source: this
-                });
+                });  
             }
         });
     }

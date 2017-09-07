@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class MarriagePact extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,7 +13,7 @@ class MarriagePact extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => (
-                    card.location === 'play area' &&
+                    card.location === 'play area' && 
                     card.controller === this.controller &&
                     card.getType() === 'character')
             },

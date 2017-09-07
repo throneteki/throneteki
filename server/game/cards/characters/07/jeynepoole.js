@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class JeynePoole extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,14 +9,14 @@ class JeynePoole extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => (
-                    card.location === 'discard pile' &&
+                    card.location === 'discard pile' && 
                     card.controller === this.controller &&
-                    card.hasTrait('Lady') &&
+                    card.hasTrait('Lady') && 
                     card.getType() === 'character')
             },
             handler: context => {
                 context.player.moveCard(context.target, 'hand');
-                this.game.addMessage('{0} sacrifices {1} to move {2} from their discard pile to their hand',
+                this.game.addMessage('{0} sacrifices {1} to move {2} from their discard pile to their hand', 
                     context.player, this, context.target);
             }
         });

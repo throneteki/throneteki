@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class MountainsOfTheMoon extends DrawCard {
     setupCardAbilities() {
@@ -15,7 +15,7 @@ class MountainsOfTheMoon extends DrawCard {
 
                     this.game.addMessage('{0} uses {1} to have {2} gain {3} {4} icon until the end of the phase',
                         this.controller, this, context.event.card, icon === 'intrigue' ? 'an' : 'a', icon);
-                });
+                });            
             }
         });
     }

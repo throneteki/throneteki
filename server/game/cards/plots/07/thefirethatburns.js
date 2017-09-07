@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../../plotcard.js');
 
 class TheFireThatBurns extends PlotCard {
     setupCardAbilities(ability) {

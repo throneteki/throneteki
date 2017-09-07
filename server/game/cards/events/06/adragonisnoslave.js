@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class ADragonIsNoSlave extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,7 +15,7 @@ class ADragonIsNoSlave extends DrawCard {
                     effect: ability.effects.modifyStrength(-2)
                 }));
 
-                this.game.addMessage('{0} uses {1} to give {2} -2 STR until the end of the phase',
+                this.game.addMessage('{0} uses {1} to give {2} -2 STR until the end of the phase', 
                     this.controller, this, context.target);
             }
         });
@@ -37,7 +37,7 @@ class ADragonIsNoSlave extends DrawCard {
     hasParticipatingDragonOrDany() {
         let cards = this.controller.filterCardsInPlay(card => {
             return (this.game.currentChallenge.isParticipating(card) &&
-                    (card.hasTrait('Dragon') || card.name === 'Daenerys Targaryen') &&
+                    (card.hasTrait('Dragon') || card.name === 'Daenerys Targaryen') && 
                     card.getType() === 'character');
         });
 

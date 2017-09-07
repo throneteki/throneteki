@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class CastleBlack extends DrawCard {
     setupCardAbilities(ability) {
@@ -19,7 +19,7 @@ class CastleBlack extends DrawCard {
                 this.untilEndOfChallenge(ability => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(2)
-                }));
+                }));  
             }
         });
     }

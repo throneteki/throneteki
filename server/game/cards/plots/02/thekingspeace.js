@@ -1,10 +1,10 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../../plotcard.js');
 
 class TheKingsPeace extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.attackingPlayer !== this.controller &&
+                onChallengeInitiated: event => event.challenge.attackingPlayer !== this.controller && 
                                                (event.challenge.challengeType === 'military' || event.challenge.challengeType === 'power')
             },
             handler: () => {

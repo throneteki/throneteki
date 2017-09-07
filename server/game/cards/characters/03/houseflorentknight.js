@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 const _ = require('underscore');
 
 class HouseFlorentKnight extends DrawCard {

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class UlfSonOfUmar extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,16 +12,16 @@ class UlfSonOfUmar extends DrawCard {
 
                     this.strBoost = card.getPrintedStrength();
                     return true;
-                }
+                }             
             },
             limit: ability.limit.perPhase(3),
             handler: () => {
                 this.untilEndOfPhase(ability => ({
                     match: this,
                     effect: ability.effects.modifyStrength(this.strBoost)
-                }));
+                }));        
 
-                this.game.addMessage('{0} uses {1} to give {1} +{2} STR until the end of the phase',
+                this.game.addMessage('{0} uses {1} to give {1} +{2} STR until the end of the phase', 
                     this.controller, this, this.strBoost);
             }
         });

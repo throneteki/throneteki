@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class MaesterOfStarfall extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +14,7 @@ class MaesterOfStarfall extends DrawCard {
                     activePromptTitle: 'Select a character',
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+                });                
             }
         });
     }

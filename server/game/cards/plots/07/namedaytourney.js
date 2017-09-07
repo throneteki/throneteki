@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../../plotcard.js');
 
 class NameDayTourney extends PlotCard {
     setupCardAbilities() {
@@ -19,7 +19,7 @@ class NameDayTourney extends PlotCard {
             },
             handler: context => {
                 context.target.modifyPower(1);
-                this.game.addMessage('{0} uses {1} to have {2} gain 1 power',
+                this.game.addMessage('{0} uses {1} to have {2} gain 1 power', 
                     this.controller, this, context.target);
             }
         });
@@ -28,7 +28,7 @@ class NameDayTourney extends PlotCard {
     hasParticipatingKnight() {
         var cards = this.controller.filterCardsInPlay(card => {
             return (this.game.currentChallenge.isParticipating(card) &&
-                    card.hasTrait('Knight') &&
+                    card.hasTrait('Knight') && 
                     card.getType() === 'character');
         });
 

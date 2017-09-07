@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 const keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
 
@@ -39,7 +39,7 @@ class Stonesnake extends DrawCard {
             effect: ability.effects.addKeyword(keyword)
         }));
 
-        this.game.addMessage('{0} uses {1} to have {1} gain {2} until the end of the phase',
+        this.game.addMessage('{0} uses {1} to have {1} gain {2} until the end of the phase', 
             this.controller, this, keyword);
 
         return true;

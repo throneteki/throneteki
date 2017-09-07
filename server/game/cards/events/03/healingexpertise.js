@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class HealingExpertise extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,8 +13,8 @@ class HealingExpertise extends DrawCard {
                 cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && !card.hasTrait('Army') && card.controller === this.controller
             },
             handler: context => {
-                context.event.saveCard(context.target);
-                this.game.addMessage('{0} plays {1} to kneel {2} to save {3}',
+                context.event.saveCard(context.target);                
+                this.game.addMessage('{0} plays {1} to kneel {2} to save {3}', 
                     this.controller, this, context.kneelingCostCard, context.target);
             }
         });

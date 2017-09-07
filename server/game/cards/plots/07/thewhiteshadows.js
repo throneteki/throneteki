@@ -1,4 +1,4 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../../plotcard.js');
 
 class TheWhiteShadows extends PlotCard {
     setupCardAbilities() {
@@ -8,7 +8,7 @@ class TheWhiteShadows extends PlotCard {
             },
             handler: context => {
                 this.controller.putIntoPlay(context.event.card);
-                this.game.addMessage('{0} uses {1} to put {2} into play under their control, blank',
+                this.game.addMessage('{0} uses {1} to put {2} into play under their control, blank', 
                     this.controller, this, context.event.card);
 
                 this.atEndOfPhase(ability => ({

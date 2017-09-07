@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class RedKeepSpy extends DrawCard {
     setupCardAbilities() {
@@ -15,8 +15,8 @@ class RedKeepSpy extends DrawCard {
                     activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.controller !== this.controller &&
+                        card.location === 'play area' && 
+                        card.controller !== this.controller && 
                         card.getType() === 'character' &&
                         card.getCost() <= 3),
                     onSelect: (player, card) => {
@@ -29,7 +29,7 @@ class RedKeepSpy extends DrawCard {
             }
         });
     }
-
+    
     hasMoreCardsInHand() {
         var otherPlayer = this.game.getOtherPlayer(this.controller);
 

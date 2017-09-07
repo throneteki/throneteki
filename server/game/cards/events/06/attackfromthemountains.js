@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class AttackFromTheMountains extends DrawCard {
     setupCardAbilities() {
@@ -10,7 +10,7 @@ class AttackFromTheMountains extends DrawCard {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.owner === this.controller &&
-                    card.location === 'hand' &&
+                    card.location === 'hand' && 
                     card.hasTrait('Clansman') &&
                     card.getType() === 'character')
             },
@@ -18,14 +18,14 @@ class AttackFromTheMountains extends DrawCard {
                 context.target.owner.putIntoPlay(context.target);
                 this.game.addMessage('{0} plays {1} to put {2} into play from their hand',
                     this.controller, this, context.target);
-
+                
             }
         });
     }
 
     hasAttackingClansman() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
-                                                      card.hasTrait('Clansman') &&
+        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) && 
+                                                      card.hasTrait('Clansman') && 
                                                       card.getType() === 'character');
     }
 }

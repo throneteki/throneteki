@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class SouthronMessenger extends DrawCard {
     setupCardAbilities() {
@@ -9,8 +9,8 @@ class SouthronMessenger extends DrawCard {
             target: {
                 activePromptTitle: 'Select participating character',
                 cardCondition: card => (
-                    card.getType() === 'character' &&
-                    this.game.currentChallenge.isParticipating(card) &&
+                    card.getType() === 'character' && 
+                    this.game.currentChallenge.isParticipating(card) && 
                     card.getNumberOfIcons() <= 1)
             },
             handler: context => {

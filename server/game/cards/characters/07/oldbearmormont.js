@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class OldBearMormont extends DrawCard {
     setupCardAbilities() {
@@ -23,9 +23,9 @@ class OldBearMormont extends DrawCard {
 
     onCardSelected(player, card) {
         player.putIntoPlay(card);
-
+            
         var otherPlayer = this.game.getOtherPlayer(this.controller);
-        this.game.addMessage('{0} uses {1} to put {2} into play under their control from {3}\'s discard pile',
+        this.game.addMessage('{0} uses {1} to put {2} into play under their control from {3}\'s discard pile', 
             player, this, card, otherPlayer);
 
         return true;

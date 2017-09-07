@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class GatesOfWinterfell extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,7 +15,7 @@ class GatesOfWinterfell extends DrawCard {
                     message += ' and draw it';
                 }
 
-                this.game.addMessage(message, this.controller, this, topCard);
+                this.game.addMessage(message, this.controller, this, topCard);          
             }
         });
     }

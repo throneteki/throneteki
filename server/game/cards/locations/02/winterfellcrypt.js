@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class WinterfellCrypt extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,7 +12,7 @@ class WinterfellCrypt extends DrawCard {
                 activePromptTitle: 'Select a character',
                 cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' &&
                                                   card.getPrintedStrength() <= context.event.card.getPrintedStrength()
-
+                                                  
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({

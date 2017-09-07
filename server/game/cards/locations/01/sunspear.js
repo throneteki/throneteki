@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class Sunspear extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,7 @@ class Sunspear extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 let challengeType = this.game.currentChallenge.challengeType;
-                this.game.addMessage('{0} kneels {1} to raise the claim on their plot card during {2} challenges by 1 until the end of the phase',
+                this.game.addMessage('{0} kneels {1} to raise the claim on their plot card during {2} challenges by 1 until the end of the phase', 
                     this.controller, this, challengeType);
                 this.untilEndOfPhase(ability => ({
                     condition: () => (

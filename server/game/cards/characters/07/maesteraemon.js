@@ -1,5 +1,5 @@
-const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
-const DrawCard = require('../../drawcard.js');
+const ApplyClaim = require('../../../gamesteps/challenge/applyclaim.js');
+const DrawCard = require('../../../drawcard.js');
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {

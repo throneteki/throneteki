@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class RaidingTheBayOfIce extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,8 +11,8 @@ class RaidingTheBayOfIce extends DrawCard {
                 activePromptTitle: 'Select a location',
                 cardCondition: card => (
                     card.location === 'play area' &&
-                    !card.isLimited() &&
-                    card.getType() === 'location' &&
+                    !card.isLimited() && 
+                    card.getType() === 'location' && 
                     card.controller !== this.controller)
             },
             handler: context => {

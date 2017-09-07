@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class GreyWorm extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,8 +8,8 @@ class GreyWorm extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => (
-                    card.location === 'play area' &&
-                    card.getType() === 'character' &&
+                    card.location === 'play area' && 
+                    card.getType() === 'character' && 
                     this.game.currentChallenge.isDefending(card))
             },
             limit: ability.limit.perChallenge(1),
@@ -19,7 +19,7 @@ class GreyWorm extends DrawCard {
                     effect: ability.effects.modifyStrength(-3)
                 }));
 
-                this.game.addMessage('{0} uses {1} to give {2} -3 STR until the end of the challenge',
+                this.game.addMessage('{0} uses {1} to give {2} -3 STR until the end of the challenge', 
                     context.player, this, context.target);
             }
         });

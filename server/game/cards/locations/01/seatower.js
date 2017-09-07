@@ -1,4 +1,4 @@
-const FactionCostReducer = require('../reducer.js').FactionCostReducer;
+const FactionCostReducer = require('../../reducer.js').FactionCostReducer;
 
 class SeaTower extends FactionCostReducer {
     constructor(owner, cardData) {

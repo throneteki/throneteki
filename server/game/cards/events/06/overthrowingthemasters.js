@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class OverthrowingTheMasters extends DrawCard {
     setupCardAbilities() {
@@ -8,7 +8,7 @@ class OverthrowingTheMasters extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       this.game.currentChallenge.isDefending(card) &&
+                                       this.game.currentChallenge.isDefending(card) && 
                                        card.getStrength() <= this.game.currentChallenge.defendingPlayer.deadPile.size()
             },
             handler: context => {

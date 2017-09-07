@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TheNightfort extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,7 @@ class TheNightfort extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && 
                                        this.game.currentChallenge.isDefending(card) && card.isFaction('thenightswatch')
             },
             handler: context => {
@@ -19,7 +19,7 @@ class TheNightfort extends DrawCard {
                     effect: ability.effects.modifyStrength(strBoost)
                 }));
 
-                this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
+                this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge', 
                     context.player, this, context.target, strBoost);
             }
         });

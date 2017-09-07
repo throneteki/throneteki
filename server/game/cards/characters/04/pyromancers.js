@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class Pyromancers extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,7 +17,7 @@ class Pyromancers extends DrawCard {
                     onSelect: (p, card) => {
                         card.controller.discardCard(card);
                         this.game.addMessage('{0} kneels {1} and discards a power from their faction to discard {2} from play', this.controller, this, card);
-
+                        
                         return true;
                     }
                 });

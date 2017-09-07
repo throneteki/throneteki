@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class OursIsTheOldWay extends DrawCard {
     setupCardAbilities() {
@@ -15,18 +15,18 @@ class OursIsTheOldWay extends DrawCard {
                         ]
                     },
                     source: this
-                });
+                }); 
             }
         });
     }
-
+    
     gainStealth() {
         this.untilEndOfPhase(ability => ({
             match: card => card.isFaction('greyjoy') && card.getType() === 'character' && card.controller === this.controller,
             effect: ability.effects.addKeyword('stealth')
         }));
 
-        this.game.addMessage('{0} plays {1} to have each {2} character they control gain stealth until the end of the phase',
+        this.game.addMessage('{0} plays {1} to have each {2} character they control gain stealth until the end of the phase', 
             this.controller, this, 'greyjoy');
 
         return true;
@@ -38,7 +38,7 @@ class OursIsTheOldWay extends DrawCard {
             effect: ability.effects.removeKeyword('stealth')
         }));
 
-        this.game.addMessage('{0} plays {1} to have each non-{2} character lose stealth until the end of the phase',
+        this.game.addMessage('{0} plays {1} to have each non-{2} character lose stealth until the end of the phase', 
             this.controller, this, 'greyjoy');
 
         return true;

@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class SerArysOakheart extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities(ability) {  
         this.reaction({
             when: {
                 onCardEntersPlay: event => event.card === this

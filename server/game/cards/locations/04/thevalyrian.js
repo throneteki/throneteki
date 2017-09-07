@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TheValyrian extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +14,7 @@ class TheValyrian extends DrawCard {
                 let strBoost = this.game.currentChallenge.defendingPlayer.gold;
                 this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
                     this.controller, this, context.target, strBoost);
-
+                
                 this.untilEndOfChallenge(ability => ({
                     match: context.target,
                     effect: ability.effects.modifyStrength(strBoost)

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class LadySansasRose extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +14,7 @@ class LadySansasRose extends DrawCard {
                 let power = this.hasLadyCharacter() ? 3 : 1;
                 let participatingCard = this.controller.filterCardsInPlay(card => {
                     return (this.game.currentChallenge.isParticipating(card) &&
-                    card.hasTrait('Knight') &&
+                    card.hasTrait('Knight') && 
                     card.getType() === 'character');
                 });
                 participatingCard[0].modifyPower(power);
@@ -33,7 +33,7 @@ class LadySansasRose extends DrawCard {
     hasParticipatingKnight() {
         let cards = this.controller.filterCardsInPlay(card => {
             return (this.game.currentChallenge.isParticipating(card) &&
-                    card.hasTrait('Knight') &&
+                    card.hasTrait('Knight') && 
                     card.getType() === 'character');
         });
 

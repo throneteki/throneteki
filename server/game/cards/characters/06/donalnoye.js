@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class DonalNoye extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities(ability) {  
         this.action({
             title: 'Put Weapon into play',
             cost: ability.costs.discardGold(),
@@ -12,7 +12,7 @@ class DonalNoye extends DrawCard {
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);
-                this.game.addMessage('{0} discards 1 gold from {1} to put {2} into play',
+                this.game.addMessage('{0} discards 1 gold from {1} to put {2} into play', 
                     this.controller, this, context.target);
             }
         });

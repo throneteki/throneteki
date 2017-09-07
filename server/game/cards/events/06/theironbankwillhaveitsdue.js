@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TheIronBankWillHaveItsDue extends DrawCard {
     setupCardAbilities(ability) {
@@ -21,7 +21,7 @@ class TheIronBankWillHaveItsDue extends DrawCard {
 
                 this.game.addMessage('{0} plays {1}, kneels their faction card and returns {2} to their hand to gain {3} gold',
                     this.controller, this, returnedCard, gold);
-                this.game.addMessage('{0} cannot marshal or put into play any card titled {1} until the end of the round',
+                this.game.addMessage('{0} cannot marshal or put into play any card titled {1} until the end of the round', 
                     this.controller, returnedCard.name);
             }
         });

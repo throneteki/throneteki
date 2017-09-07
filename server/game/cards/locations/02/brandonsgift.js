@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class BrandonsGift extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,8 +18,8 @@ class BrandonsGift extends DrawCard {
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(1, card => card.isFaction('thenightswatch'))
                 }));
-
-                this.game.addMessage('{0} uses {1} to reduce the cost of the next {2} card they marshal this phase by 1',
+                
+                this.game.addMessage('{0} uses {1} to reduce the cost of the next {2} card they marshal this phase by 1', 
                     this.controller, this, 'thenightswatch');
             }
         });

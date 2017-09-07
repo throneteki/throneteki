@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class VaesDothrak extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,14 +14,14 @@ class VaesDothrak extends DrawCard {
                     activePromptTitle: 'Select an attachment',
                     source: this,
                     cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.getType() === 'attachment' &&
+                        card.location === 'play area' && 
+                        card.getType() === 'attachment' && 
                         card.getCost(true) <= context.discardCostCard.getCost(true)),
                     onSelect: (p, card) => {
                         card.controller.discardCard(card);
-                        this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {3} from play',
+                        this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {3} from play', 
                             this.controller, this, context.discardCostCard, card);
-
+                        
                         return true;
                     }
                 });

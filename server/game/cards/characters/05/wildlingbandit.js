@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class WildlingBandit extends DrawCard {
     setupCardAbilities(ability) {

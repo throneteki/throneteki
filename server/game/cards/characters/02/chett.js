@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class Chett extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +14,7 @@ class Chett extends DrawCard {
                     source: this,
                     onSelect: (player, card) => {
                         player.moveCard(card, 'hand');
-                        this.game.addMessage('{0} uses {1} to kneel {2} to return {3} to their hand',
+                        this.game.addMessage('{0} uses {1} to kneel {2} to return {3} to their hand', 
                             context.player, this, context.kneelingCostCard, card);
                     }
                 });

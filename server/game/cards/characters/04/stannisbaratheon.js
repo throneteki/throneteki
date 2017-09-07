@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class StannisBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -28,7 +28,7 @@ class StannisBaratheon extends DrawCard {
                     effect: ability.effects.cannotBeStood()
                 }));
 
-                this.game.addMessage('{0} uses {1} to make {2} unable to stand during the standing phase this round',
+                this.game.addMessage('{0} uses {1} to make {2} unable to stand during the standing phase this round', 
                     this.controller, this, context.target);
             }
         });

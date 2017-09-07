@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class DaenerysFavor extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,7 +17,7 @@ class DaenerysFavor extends DrawCard {
         if(card.getType() !== 'character' || !card.isFaction('targaryen')) {
             return false;
         }
-
+        
         return super.canAttach(player, card);
     }
 }

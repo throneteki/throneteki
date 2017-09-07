@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class ValyrianSteelDagger extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,7 +11,7 @@ class ValyrianSteelDagger extends DrawCard {
                 ability.effects.modifyStrength(2),
                 ability.effects.addKeyword('stealth')
             ]
-        });
+        });      
     }
 
     canAttach(player, card) {

@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class ToTheRoseBanner extends DrawCard {
     setupCardAbilities() {
@@ -8,7 +8,7 @@ class ToTheRoseBanner extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => (
-                    card.location === 'play area' &&
+                    card.location === 'play area' && 
                     card.controller === this.controller &&
                     card.isFaction('tyrell') &&
                     card.getType() === 'character')

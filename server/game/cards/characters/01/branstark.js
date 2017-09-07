@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class BranStark extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,7 +10,7 @@ class BranStark extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
                 context.event.cancel();
-
+                
                 this.game.addMessage('{0} sacrifices {1} to cancel {2}', this.controller, this, context.event.source);
             }
         });

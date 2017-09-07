@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class SilencesCrew extends DrawCard {
     setupCardAbilities(ability) {

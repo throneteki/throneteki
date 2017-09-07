@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const AbilityLimit = require('../../abilitylimit.js');
+const DrawCard = require('../../../drawcard.js');
+const AbilityLimit = require('../../../abilitylimit.js');
 
 class XaroXhoanDaxos extends DrawCard {
     setupCardAbilities() {

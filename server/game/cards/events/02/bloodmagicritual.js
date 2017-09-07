@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class BloodMagicRitual extends DrawCard {
     setupCardAbilities(ability) {
@@ -19,7 +19,7 @@ class BloodMagicRitual extends DrawCard {
                 this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.target);
             }
         });
-
+        
         this.whileAttached({
             effect: ability.effects.blank
         });

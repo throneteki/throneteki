@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities(ability) {

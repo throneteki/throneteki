@@ -1,6 +1,6 @@
 const _ = require('underscore');
 
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class Oldtown extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,7 +30,7 @@ class Oldtown extends DrawCard {
 
         let topCard = this.controller.drawDeck.first();
         let message = '{0} then reveals {1} as the top card of their deck';
-
+                
         if(topCard.getType() === cardType) {
             this.controller.drawCardsToHand(1);
             this.game.addPower(this.controller, 1);

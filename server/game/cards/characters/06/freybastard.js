@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class FreyBastard extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,7 @@ class FreyBastard extends DrawCard {
             cost: ability.costs.discardGold(),
             handler: () => {
                 this.game.addPower(this.controller, 1);
-                this.game.addMessage('{0} discards a gold from {1} to gain 1 power for their faction',
+                this.game.addMessage('{0} discards a gold from {1} to gain 1 power for their faction', 
                     this.controller, this);
             }
         });

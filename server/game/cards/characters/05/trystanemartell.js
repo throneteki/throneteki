@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TrystaneMartell extends DrawCard {
     setupCardAbilities() {
@@ -11,7 +11,7 @@ class TrystaneMartell extends DrawCard {
                     activePromptTitle: 'Select character',
                     waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
                     cardCondition: card => (
-                        card.location === 'play area' &&
+                        card.location === 'play area' && 
                         card.getType() === 'character' &&
                         card.getStrength() < this.getStrength()),
                     onSelect: (player, card) => {

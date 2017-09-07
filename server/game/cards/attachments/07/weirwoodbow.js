@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class WeirwoodBow extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,7 +9,7 @@ class WeirwoodBow extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: card => (
-                    card.location === 'play area' &&
+                    card.location === 'play area' && 
                     card.getType() === 'character' &&
                     this.game.currentChallenge.isDefending(card))
             },
@@ -19,7 +19,7 @@ class WeirwoodBow extends DrawCard {
                     effect: ability.effects.modifyStrength(-2)
                 }));
 
-                this.game.addMessage('{0} kneels {1} to give {2} -2 STR until the end of the challenge',
+                this.game.addMessage('{0} kneels {1} to give {2} -2 STR until the end of the challenge', 
                     context.player, this, context.target);
             }
         });

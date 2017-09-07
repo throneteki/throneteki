@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard');
+const DrawCard = require('../../../drawcard');
 
 class BuilderAtTheWall extends DrawCard {
     setupCardAbilities(ability) {

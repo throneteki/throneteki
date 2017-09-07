@@ -1,10 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TyrionLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller &&
+                afterChallenge: event => event.challenge.winner === this.controller && 
                                          (event.challenge.challengeType === 'intrigue' || event.challenge.isParticipating(this))
             },
             cost: ability.costs.payGold(1),

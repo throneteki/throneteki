@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TommenBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,7 +22,7 @@ class TommenBaratheon extends DrawCard {
         if(!opponent) {
             return true;
         }
-
+        
         return opponent.hand.size() === 0;
     }
 }

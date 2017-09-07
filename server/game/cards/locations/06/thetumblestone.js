@@ -1,7 +1,7 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TheTumblestone extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities(ability) {  
         this.reaction({
             when: {
                 // TODO: Currently has false positive when power is moved to a character, should only trigger on 'gains'

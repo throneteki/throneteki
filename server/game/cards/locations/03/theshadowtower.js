@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class TheShadowTower extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +14,7 @@ class TheShadowTower extends DrawCard {
             handler: context => {
                 this.game.addMessage('{0} kneels {1} to make {2} unable to be declared as attacker this phase',
                     this.controller, this, context.target);
-
+                
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
                     effect: ability.effects.cannotBeDeclaredAsAttacker()

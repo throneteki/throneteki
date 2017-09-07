@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class Grenn extends DrawCard {
     setupCardAbilities() {
@@ -24,7 +24,7 @@ class Grenn extends DrawCard {
                 this.game.addPower(otherPlayer, -power);
                 context.target.modifyPower(power);
 
-                this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction to {4}',
+                this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction to {4}', 
                     this.controller, this, power, otherPlayer, context.target);
             }
         });

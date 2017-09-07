@@ -1,4 +1,4 @@
-const FactionCharacterCostReducer = require('../reducer.js').FactionCharacterCostReducer;
+const FactionCharacterCostReducer = require('../../reducer.js').FactionCharacterCostReducer;
 
 class GardenCaretaker extends FactionCharacterCostReducer {
     constructor(owner, cardData) {

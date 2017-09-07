@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../../drawcard.js');
 
 class RiverrunMinstrel extends DrawCard {
     setupCardAbilities() {
@@ -17,7 +17,7 @@ class RiverrunMinstrel extends DrawCard {
 
                         return true;
                     }
-                });
+                });   
             }
         });
     }
