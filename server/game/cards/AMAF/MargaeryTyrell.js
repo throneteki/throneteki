@@ -1,0 +1,40 @@
+const DrawCard = require('../../drawcard.js');
+
+class MargaeryTyrell extends DrawCard {
+    setupCardAbilities(ability) {
+        this.reaction({
+            when: {
+                onCharacterKilled: event => (
+                    event.card.isUnique() &&
+                    (event.cardStateWhenKilled.hasTrait('king') || event.cardStateWhenKilled.hasTrait('lord')) &&
+                    event.cardStateWhenKilled.controller === this.controller
+                )
+            },
+            limit: ability.limit.perRound(1),
+            handler: () => {
+                this.game.promptForDeckSearch(this.controller, {
+                    activePromptTitle: 'Select a card',
+                    cardCondition: card => card.isUnique() && (card.hasTrait('king') || card.hasTrait('lord')) && this.controller.canPutIntoPlay(card),
+                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onCancel: player => this.doneSelecting(player),
+                    source: this
+                });
+            }
+        });
+    }
+
+    cardSelected(player, card) {
+        player.putIntoPlay(card);
+        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play',
+            player, this, card);
+    }
+
+    doneSelecting(player) {
+        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into play',
+            player, this);
+    }
+}
+
+MargaeryTyrell.code = '06003';
+
+module.exports = MargaeryTyrell;

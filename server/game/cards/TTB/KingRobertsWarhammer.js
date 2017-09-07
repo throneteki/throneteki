@@ -1,0 +1,47 @@
+const _ = require('underscore');
+
+const DrawCard = require('../../drawcard.js');
+
+class KingRobertsWarhammer extends DrawCard {
+    setupCardAbilities(ability) {
+        this.whileAttached({
+            effect: ability.effects.modifyStrength(1)
+        });
+        this.reaction({
+            when: {
+                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this.parent)
+            },
+            target: {
+                activePromptTitle: 'Select character(s)',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
+                numCards: 99,
+                maxStat: () => this.parent.getStrength(),
+                cardStat: card => card.getStrength(),
+                multiSelect: true,
+                gameAction: 'kneel'
+            },
+            handler: context => {
+                _.each(context.target, card => {
+                    card.controller.kneelCard(card);
+                });
+
+                this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, context.target);
+                // King Robert's Warhammer specifically has its sacrifice as a then-effect, not a cost
+                this.controller.sacrificeCard(this);
+                this.game.addMessage('{0} then sacrifices {1}', this.controller, this);
+            }
+        });
+    }
+
+    canAttach(player, card) {
+        if(card.getType() !== 'character') {
+            return false;
+        }
+
+        return super.canAttach(player, card);
+    }
+}
+
+KingRobertsWarhammer.code = '02008';
+
+module.exports = KingRobertsWarhammer;
