@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class GhastonGrey extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,7 +13,7 @@ class GhastonGrey extends DrawCard {
             ],
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && 
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        this.game.currentChallenge.isAttacking(card)
             },
             handler: context => {

@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class TheTwins extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,7 +15,7 @@ class TheTwins extends DrawCard {
 
     hasAttackingFrey() {
         return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
-                                                      card.hasTrait('House Frey') && 
+                                                      card.hasTrait('House Frey') &&
                                                       card.getType() === 'character');
     }
 }

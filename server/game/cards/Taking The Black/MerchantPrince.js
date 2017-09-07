@@ -1,5 +1,5 @@
-const DrawCard = require('../../../drawcard.js');
- 
+const DrawCard = require('../../drawcard.js');
+
 class MerchantPrince extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({

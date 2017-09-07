@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class SilverHairNet extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,7 +18,7 @@ class SilverHairNet extends DrawCard {
                 amount: 1,
                 match: card => card.getType() === 'event'
             })
-        });      
+        });
     }
 
     canAttach(player, card) {

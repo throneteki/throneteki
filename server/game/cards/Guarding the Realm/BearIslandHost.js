@@ -1,7 +1,7 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class BearIslandHost extends DrawCard {
-    setupCardAbilities(ability) {  
+    setupCardAbilities(ability) {
         this.action({
             title: 'Discard 1 gold from ' + this.name,
             cost: ability.costs.discardGold(),
@@ -25,7 +25,7 @@ class BearIslandHost extends DrawCard {
             effect: ability.effects.doesNotKneelAsAttacker()
         }));
 
-        this.game.addMessage('{0} discards a gold from {1} to make {2} not kneel as an attacker in a military challenge', 
+        this.game.addMessage('{0} discards a gold from {1} to make {2} not kneel as an attacker in a military challenge',
             player, this, card);
 
         return true;

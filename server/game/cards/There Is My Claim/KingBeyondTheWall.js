@@ -1,11 +1,11 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class KingBeyondTheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
             effect: ability.effects.addTrait('King')
         });
-        
+
         this.persistentEffect({
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this.parent) && this.hasLessTotalPower(),
             match: (card) => card === this.controller.activePlot,

@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class ThePrincesPass extends DrawCard {
     setupCardAbilities(ability) {
@@ -43,8 +43,8 @@ class ThePrincesPass extends DrawCard {
     sacrifice() {
         this.controller.sacrificeCard(this);
         this.targetCharacter.controller.discardCard(this.targetCharacter);
-        this.game.addMessage('{0} sacrifices {1} to discard {2} from play', this.controller, this, this.targetCharacter);  
-        return true;      
+        this.game.addMessage('{0} sacrifices {1} to discard {2} from play', this.controller, this, this.targetCharacter);
+        return true;
     }
 
     pass() {

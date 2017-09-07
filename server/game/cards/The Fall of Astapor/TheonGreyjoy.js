@@ -1,11 +1,11 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class TheonGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.currentChallenge && 
-                this.game.currentChallenge.isAttacking(this) && 
+                this.game.currentChallenge &&
+                this.game.currentChallenge.isAttacking(this) &&
                 this.game.currentChallenge.attackers.length === 1),
             match: card => card.getType() === 'character' && card.getStrength() > this.getStrength(),
             targetController: 'any',

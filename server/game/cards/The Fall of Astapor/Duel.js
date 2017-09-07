@@ -1,4 +1,4 @@
-const PlotCard = require('../../../plotcard.js');
+const PlotCard = require('../../plotcard.js');
 
 class Duel extends PlotCard {
     setupCardAbilities() {
@@ -11,7 +11,7 @@ class Duel extends PlotCard {
                     return;
                 }
 
-                this.game.addMessage('{0} uses {1} to have {2} choose 2 non-Army characters with printed cost 6 or higher', 
+                this.game.addMessage('{0} uses {1} to have {2} choose 2 non-Army characters with printed cost 6 or higher',
                     this.controller, this, opponent);
 
                 this.game.promptForSelect(opponent, {
@@ -19,9 +19,9 @@ class Duel extends PlotCard {
                     activePromptTitle: 'Select two characters',
                     source: this,
                     cardCondition: card => (
-                        card.location === 'play area' && 
-                        !card.hasTrait('Army') && 
-                        card.getType() === 'character' && 
+                        card.location === 'play area' &&
+                        !card.hasTrait('Army') &&
+                        card.getType() === 'character' &&
                         card.getCost() >= 6),
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
                 });

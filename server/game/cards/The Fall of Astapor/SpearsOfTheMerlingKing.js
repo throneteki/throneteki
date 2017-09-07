@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class SpearsOfTheMerlingKing extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,7 +10,7 @@ class SpearsOfTheMerlingKing extends DrawCard {
             handler: (context) => {
                 context.skipHandler();
                 this.controller.moveCard(context.event.card, 'hand');
-                this.game.addMessage('{0} sacrifices {1} to return {2} to their hand', 
+                this.game.addMessage('{0} sacrifices {1} to return {2} to their hand',
                     this.controller, this, context.event.card);
             }
         });

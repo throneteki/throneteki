@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class KingRobbsHost extends DrawCard {
     setupCardAbilities() {
@@ -33,9 +33,9 @@ class KingRobbsHost extends DrawCard {
         this.game.addPower(loser, -power);
         card.modifyPower(power);
 
-        this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction card to {4}', 
+        this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction card to {4}',
             this.controller, this, power, loser, card);
-                        
+
         return true;
     }
 }

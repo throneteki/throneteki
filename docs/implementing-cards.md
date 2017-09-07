@@ -24,7 +24,7 @@ Agenda cards should be derived from the `AgendaCard` class.
 The card class should have its `code` property set to the unique card identifier for that card. You can find these combining the 2-digit pack number (01) and 3-digit card number (036), or on [thronesdb.com](https://thronesdb.com/) by looking at the URL for the specific card.
 
 ```javascript
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class NobleLineage extends DrawCard {
     // Card definition

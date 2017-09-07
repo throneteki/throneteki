@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class Satin extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,9 +10,9 @@ class Satin extends DrawCard {
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: (
-                    card => card !== this && 
-                    card.location === 'play area' && 
-                    card.hasTrait('Steward') && 
+                    card => card !== this &&
+                    card.location === 'play area' &&
+                    card.hasTrait('Steward') &&
                     card.getType() === 'character' &&
                     card.kneeled)
             },

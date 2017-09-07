@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class DesmeraRedwyne extends DrawCard {
     setupCardAbilities(ability) {

@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class TarredHeads extends DrawCard {
     setupCardAbilities() {
@@ -11,7 +11,7 @@ class TarredHeads extends DrawCard {
             },
             handler: () => {
                 let opponent = this.game.getOtherPlayer(this.controller);
-                
+
                 opponent.discardAtRandom(1, cards => {
                     let card = cards[0];
                     let deadMessage = '';

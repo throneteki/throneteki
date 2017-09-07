@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class TheHandsJudgment extends DrawCard {
     setupCardAbilities() {
@@ -17,7 +17,7 @@ class TheHandsJudgment extends DrawCard {
             },
             handler: context => {
                 context.event.cancel();
-                
+
                 this.game.addMessage('{0} plays {1} to cancel {2}', this.controller, this, context.event.source);
             }
         });

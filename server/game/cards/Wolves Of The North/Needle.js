@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class Needle extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,7 +23,7 @@ class Needle extends DrawCard {
         if(card.getType() !== 'character' || !card.isFaction('stark')) {
             return false;
         }
-        
+
         return super.canAttach(player, card);
     }
 }

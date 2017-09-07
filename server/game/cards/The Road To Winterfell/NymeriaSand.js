@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class NymeriaSand extends DrawCard {
     setupCardAbilities(ability) {
@@ -23,7 +23,7 @@ class NymeriaSand extends DrawCard {
                         effect: ability.effects.addIcon(icon)
                     }));
 
-                    this.game.addMessage('{0} uses {1} to remove {2} {3} icon from {4} and have each Sand Snake character they control gain it', 
+                    this.game.addMessage('{0} uses {1} to remove {2} {3} icon from {4} and have each Sand Snake character they control gain it',
                         this.controller, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
                 });
             }

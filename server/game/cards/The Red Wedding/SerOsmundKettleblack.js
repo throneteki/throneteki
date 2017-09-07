@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class SerOsmundKettleblack extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,7 +8,7 @@ class SerOsmundKettleblack extends DrawCard {
             cost: ability.costs.discardGold(),
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller && 
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
                                        card.getType() === 'character' && card.hasTrait('Knight')
             },
             handler: context => {

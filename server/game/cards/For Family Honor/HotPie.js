@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class HotPie extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,7 +15,7 @@ class HotPie extends DrawCard {
                     )
                 }));
 
-                this.game.addMessage('{0} uses {1} and kneels {2} to reduce the cost of the next unique character they marshal this phase by 1', 
+                this.game.addMessage('{0} uses {1} and kneels {2} to reduce the cost of the next unique character they marshal this phase by 1',
                     context.player, this, context.kneelingCostCard);
             }
         });

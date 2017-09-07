@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class TheScorpionsSting extends DrawCard {
     setupCardAbilities() {
@@ -28,7 +28,7 @@ class TheScorpionsSting extends DrawCard {
             effect: ability.effects.addKeyword('renown')
         }));
 
-        this.game.addMessage('{0} plays {1} to give {2} renown until the end of the phase', 
+        this.game.addMessage('{0} plays {1} to give {2} renown until the end of the phase',
             player, this, cards);
 
         return true;

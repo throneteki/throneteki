@@ -1,4 +1,4 @@
-const PlotCard = require('../../../plotcard.js');
+const PlotCard = require('../../plotcard.js');
 
 class AFeastForCrows extends PlotCard {
     setupCardAbilities() {

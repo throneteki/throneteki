@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 // XXX Restrict to one effect per card title (ie multiple madames should not trigger)
 class BrothelMadame extends DrawCard {

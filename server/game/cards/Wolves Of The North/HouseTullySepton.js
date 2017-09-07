@@ -1,4 +1,4 @@
-const DrawCard = require('../../../drawcard.js');
+const DrawCard = require('../../drawcard.js');
 
 class HouseTullySepton extends DrawCard {
     setupCardAbilities(ability) {
@@ -16,7 +16,7 @@ class HouseTullySepton extends DrawCard {
                     )
                 }));
 
-                this.game.addMessage('{0} uses {1} and discards a power from {2} to reduce the cost of the next House Tully or The Seven character they marshal this phase by 2', 
+                this.game.addMessage('{0} uses {1} and discards a power from {2} to reduce the cost of the next House Tully or The Seven character they marshal this phase by 2',
                     context.player, this, context.discardPowerCostCard);
             }
         });
