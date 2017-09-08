@@ -3,7 +3,7 @@
 
 const _ = require('underscore');
 
-const TheRainsOfCastamere = require('../../../../server/game/cards/agendas/therainsofcastamere.js');
+const TheRainsOfCastamere = require('../../../../server/game/cards/agendas/TheRainsOfCastamere.js');
 const RevealPlots = require('../../../../server/game/gamesteps/revealplots.js');
 
 describe('The Rains of Castamere', function() {
