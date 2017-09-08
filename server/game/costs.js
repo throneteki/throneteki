@@ -304,6 +304,20 @@ const Costs = {
         };
     },
     /**
+     * Cost that reveals a specific card passed into the function
+     */
+    revealSpecific: function(cardFunc) {
+        return {
+            canPay: function() {
+                return true;
+            },
+            pay: function(context) {
+                let card = cardFunc(context);
+                context.game.addMessage('{0} reveals {1} from their hand', context.player, card);
+            }
+        };
+    },
+    /**
      * Cost that requires revealing a certain number of cards in hand that match
      * the passed condition predicate function.
      */
