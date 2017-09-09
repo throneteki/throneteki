@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, integration */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 describe('burn effects', function() {
     integration(function() {
         describe('when external effects are applied to a card that will be burned', function() {

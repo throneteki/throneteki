@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, integration */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 describe('TheWall', function() {
     integration(function() {
         describe('when dupes are put out in the setup phase', function() {

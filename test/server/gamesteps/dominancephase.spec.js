@@ -1,5 +1,3 @@
-/*global describe, it, beforeEach, expect, spyOn, jasmine*/
-
 const DominancePhase = require('../../../server/game/gamesteps/dominancephase.js');
 const Game = require('../../../server/game/game.js');
 const Player = require('../../../server/game/player.js');

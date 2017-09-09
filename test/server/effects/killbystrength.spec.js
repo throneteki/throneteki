@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, integration, jasmine */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 const Effects = require('../../../server/game/effects.js');
 
 describe('Effects.killByStrength', function() {

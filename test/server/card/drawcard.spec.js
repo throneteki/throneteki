@@ -1,6 +1,3 @@
-// describe('isLimited', function () {
-//     describe('when a card has the limited keyword', function() {
-//         beforeEach(function () {
 //             this.card = new Card({}, this.limitedCard);
 
 //             this.isLimited = this.card.isLimited();

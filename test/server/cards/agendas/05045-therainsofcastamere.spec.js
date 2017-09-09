@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, jasmine, integration */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 const _ = require('underscore');
 
 const TheRainsOfCastamere = require('../../../../server/game/cards/agendas/TheRainsOfCastamere.js');

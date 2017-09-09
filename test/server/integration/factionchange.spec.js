@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, integration */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 describe('faction change', function() {
     integration(function() {
         describe('when using an attachment to gain faction affiliation', function() {
