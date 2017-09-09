@@ -711,7 +711,11 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(!newController.canPutIntoPlay(card)) {
+        if(card.location !== 'play area' && !newController.canPutIntoPlay(card)) {
+            return;
+        }
+
+        if(card.location === 'play area' && !newController.canControl(card)) {
             return;
         }
 
