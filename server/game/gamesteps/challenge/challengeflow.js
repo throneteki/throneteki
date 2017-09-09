@@ -26,6 +26,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.determineWinner()),
             new SimpleStep(this.game, () => this.unopposedPower()),
             new SimpleStep(this.game, () => this.beforeClaim()),
+            new SimpleStep(this.game, () => game.reapplyStateDependentEffects()),
             () => new KeywordWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.completeChallenge())
         ]);
