@@ -15,7 +15,8 @@ class SetupPhase extends Phase {
             new SimpleStep(game, () => this.startGame()),
             new SetupCardsPrompt(game),
             new SimpleStep(game, () => this.setupDone()),
-            new CheckAttachmentsPrompt(game)
+            new CheckAttachmentsPrompt(game),
+            new SimpleStep(game, () => game.activatePersistentEffects())
         ]);
     }
 

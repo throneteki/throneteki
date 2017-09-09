@@ -851,6 +851,10 @@ class Game extends EventEmitter {
         this.addMessage('{0} has reconnected', player);
     }
 
+    activatePersistentEffects() {
+        this.effectEngine.activatePersistentEffects();
+    }
+
     reapplyStateDependentEffects() {
         this.effectEngine.reapplyStateDependentEffects();
     }
