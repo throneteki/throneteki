@@ -107,17 +107,21 @@ describe('setup phase', function() {
 
         describe('when attachments are put out in the setup phase', function() {
             beforeEach(function() {
-                const deck = this.buildDeck('baratheon', ['Sneak Attack', 'Valyrian Steel Dagger', 'Northern Refugee']);
+                const deck = this.buildDeck('baratheon', ['Sneak Attack', 'Valyrian Steel Dagger', 'Northern Refugee', 'Crow Killers']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.keepStartingHands();
 
-                this.character = this.player1.findCardByName('Northern Refugee');
+                this.refugee = this.player1.findCardByName('Northern Refugee');
                 this.attachment = this.player1.findCardByName('Valyrian Steel Dagger');
 
-                this.player1.clickCard(this.character);
+                this.killers = this.player2.findCardByName('Crow Killers');
+
+                this.player1.clickCard(this.refugee);
                 this.player1.clickCard(this.attachment);
+
+                this.player2.clickCard(this.killers);
 
                 this.completeSetup();
             });
@@ -126,14 +130,25 @@ describe('setup phase', function() {
                 expect(this.player1).toHavePrompt('Select attachment locations');
             });
 
+            describe('when the attachments are being placed', function() {
+                beforeEach(function() {
+                    this.player1.clickCard(this.attachment);
+                    this.player1.clickCard(this.killers);
+                });
+
+                it('it should not allow attaching to an opponent\'s character', function() {
+                    expect(this.killers.attachments).not.toContain(this.attachment);
+                });
+            });
+
             describe('when the attachments have been placed', function() {
                 beforeEach(function() {
                     this.player1.clickCard(this.attachment);
-                    this.player1.clickCard(this.character);
+                    this.player1.clickCard(this.refugee);
                 });
 
-                it('should attach to the selected card', function() {
-                    expect(this.character.attachments).toContain(this.attachment);
+                it('should attach to a card controlled by the attachment controller', function() {
+                    expect(this.refugee.attachments).toContain(this.attachment);
                 });
 
                 it('should properly calculate the effects of the attachment', function() {
@@ -145,10 +160,10 @@ describe('setup phase', function() {
                     this.completeMarshalPhase();
 
                     this.player1.clickPrompt('Intrigue');
-                    this.player1.clickCard(this.character);
+                    this.player1.clickCard(this.refugee);
                     this.player1.clickPrompt('Done');
 
-                    expect(this.character.getStrength()).toBe(3);
+                    expect(this.refugee.getStrength()).toBe(3);
                 });
 
                 it('should continue to the plot phase', function() {
