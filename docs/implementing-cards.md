@@ -7,11 +7,11 @@ To implement a card, follow these steps:
 
 ##### 1. Create a file named after the card.
 
-Cards are organized under the `/server/game/cards` directory by grouping them by "<cycle number> <pack code>". Each word in the file name should be capitalized.
+Cards are organized under the `/server/game/cards` directory by grouping them by "\<cycle number>-\<pack code>". Each word in the file name should be capitalized.
 
 ```
-/server/game/cards/01 Core/NobleLineage.js
-/server/game/cards/02.2 TRtW/UnswornApprentice.js
+/server/game/cards/01-Core/NobleLineage.js
+/server/game/cards/02.2-TRtW/UnswornApprentice.js
 ```
 
 Because there are so few agenda cards and they generally do special things, they should be grouped together under the agendas sub-directory instead of with their pack.
