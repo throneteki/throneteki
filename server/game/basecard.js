@@ -32,7 +32,7 @@ const ValidFactions = [
     'greyjoy'
 ];
 
-const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agenda'];
+const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agenda', 'title'];
 
 class BaseCard {
     constructor(owner, cardData) {
