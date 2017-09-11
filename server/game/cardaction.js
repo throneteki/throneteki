@@ -16,10 +16,6 @@ const EventRegistrar = require('./eventregistrar.js');
  *                resolution in the rules).
  * cost         - object or array of objects representing the cost required to
  *                be paid before the action will activate. See Costs.
- * method       - string indicating the method on card that should be called
- *                when the action is executed. If this method returns an
- *                explicit `false` value then that execution of the action does
- *                not count toward the limit amount.
  * phase        - string representing which phases the action may be executed.
  *                Defaults to 'any' which allows the action to be executed in
  *                any phase.
@@ -70,21 +66,11 @@ class CardAction extends BaseAbility {
     }
 
     buildHandler(card, properties) {
-        if(!properties.handler && !card[properties.method]) {
-            throw new Error('Actions must have either a `handler` or `method` property.');
+        if(!properties.handler) {
+            throw new Error('Actions must have a `handler` property.');
         }
 
-        if(properties.handler) {
-            return properties.handler;
-        }
-
-        return function(context) {
-            // TODO: Method-based handlers need to have player and arg sent for
-            //       backwards compatibility. These actions should either be
-            //       converted to use the handler property, or rewritten to use
-            //       the context object directly.
-            return card[properties.method].call(card, context.player, context.arg, context);
-        };
+        return properties.handler;
     }
 
     allowMenu() {
