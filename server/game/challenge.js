@@ -96,7 +96,14 @@ class Challenge {
         return _.any(participants, predicate);
     }
 
-    getNumberOfParticipants(predicate) {
+    hasSingleParticipant(player) {
+        if(this.attackingPlayer === player) {
+            return this.attackers.length === 1;
+        }
+        return this.game.defenders.length === 1;
+    }
+
+    getNumberOfParticipants(predicate = () => true) {
         let participants = this.attackers.concat(this.defenders);
         return _.reduce(participants, (count, card) => {
             if(predicate(card)) {
