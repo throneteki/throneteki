@@ -554,7 +554,7 @@ class BaseCard {
         let selectionState = activePlayer.getCardSelectionState(this);
         let state = {
             code: this.cardData.code,
-            controlled: this.owner !== this.controller,
+            controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
             menu: this.getMenu(),
             name: this.cardData.label,

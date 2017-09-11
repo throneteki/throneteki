@@ -1231,6 +1231,7 @@ class Player extends Spectator {
             promptedActionWindows: this.promptedActionWindows,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
+            title: this.title ? this.title.getSummary(activePlayer) : undefined,
             user: _.omit(this.user, ['password', 'email'])
         };
 
