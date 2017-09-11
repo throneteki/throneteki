@@ -4,7 +4,16 @@ class MasterOfShips extends TitleCard {
     setupCardAbilities(ability) {
         this.supports('Master of Whispers');
         this.rivals('Master of Laws', 'Hand of the King');
-        // TODO: Raise claim for military when attacking a rival
+        this.persistentEffect({
+            condition: () => (
+                this.game.currentChallenge &&
+                this.game.currentChallenge.challengeType === 'military' &&
+                this.game.currentChallenge.attackingPlayer === this.controller &&
+                this.controller.isRival(this.game.currentChallenge.defendingPlayer)
+            ),
+            match: card => card === this.controller.activePlot,
+            effect: ability.effects.modifyClaim(1)
+        });
         this.persistentEffect({
             condition: () => (
                 this.game.currentChallenge &&
