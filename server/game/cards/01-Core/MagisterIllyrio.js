@@ -3,34 +3,21 @@ const DrawCard = require('../../drawcard.js');
 class MagisterIllyrio extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Pay 2 gold to stand a character',
-            method: 'stand',
-            limit: ability.limit.perPhase(1)
+            title: 'Stand a character',
+            limit: ability.limit.perPhase(1),
+            cost: ability.costs.payGold(2),
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+            },
+            handler: context => {
+                let player = context.player;
+                let card = context.target;
+
+                this.game.addMessage('{0} uses {1} to pay 2 gold and stand {2}', player, this, card);
+
+                player.standCard(card);
+            }
         });
-    }
-
-    stand(player) {
-        if(this.controller !== player || player.gold < 2) {
-            return;
-        }
-
-        this.game.promptForSelect(player, {
-            activePromptTitle: 'Select a character',
-            source: this,
-            cardCondition: card => card.location === 'play area' && card.getType() === 'character',
-            onSelect: (p, card) => this.onStandSelected(p, card)
-        });
-
-        return true;
-    }
-
-    onStandSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to pay 2 gold and stand {2}', player, this, card);
-
-        player.standCard(card);
-        player.gold -= 2;
-
-        return true;
     }
 }
 
