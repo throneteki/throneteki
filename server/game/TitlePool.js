@@ -19,7 +19,7 @@ class TitlePool {
         });
     }
 
-    getRandomCards() {
+    getCardsForSelection() {
         let amount = this.amountToSetAside();
         let shuffledPool = _.shuffle(this.cards);
 

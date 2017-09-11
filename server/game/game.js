@@ -59,7 +59,7 @@ class Game extends EventEmitter {
             isApplying: false,
             type: undefined
         };
-        this.isMelee = details.isMelee || false;
+        this.isMelee = !!details.isMelee;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
 
         _.each(details.players, player => {

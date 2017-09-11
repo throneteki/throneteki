@@ -10,6 +10,7 @@ class TaxationPhase extends Phase {
         this.initialise([
             new SimpleStep(game, () => this.returnGold()),
             new DiscardToReservePrompt(game),
+            new SimpleStep(game, () => this.returnTitleCards()),
             new ActionWindow(game, 'After reserve check', 'taxation'),
             new SimpleStep(game, () => this.roundEnded())
         ]);
@@ -20,6 +21,16 @@ class TaxationPhase extends Phase {
             if(!player.doesNotReturnUnspentGold) {
                 player.taxation();
             }
+        });
+    }
+
+    returnTitleCards() {
+        if(!this.game.isMelee) {
+            return;
+        }
+
+        _.each(this.game.getPlayers(), player => {
+            this.game.titlePool.returnToPool(player, player.title);
         });
     }
 
