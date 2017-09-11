@@ -1,31 +1,23 @@
 const DrawCard = require('../../drawcard.js');
 
 class VerteranBuilder extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
-            title: 'Sacrifice this card to stand a location',
-            method: 'sacrifice'
+            title: 'Stand a location',
+            cost: ability.costs.sacrificeSelf(),
+            target: {
+                activePromptTitle: 'Select a location',
+                cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.getType() === 'location'
+            },
+            handler: context => {
+                let player = context.player;
+                let card = context.target;
+
+                this.game.addMessage('{0} sacrifices {1} to stand {2}', player, this, card);
+
+                player.standCard(card);
+            }
         });
-    }
-
-    sacrifice() {
-        this.game.promptForSelect(this.controller, {
-            activePromptTitle: 'Select a location',
-            source: this,
-            cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.getType() === 'location',
-            onSelect: (p, card) => this.onStandSelected(p, card)
-        });
-
-        return true;
-    }
-
-    onStandSelected(player, card) {
-        this.game.addMessage('{0} sacrifices {1} to stand {2}', player, this, card);
-
-        player.standCard(card);
-        player.sacrificeCard(this);
-
-        return true;
     }
 }
 
