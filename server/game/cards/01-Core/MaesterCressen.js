@@ -6,27 +6,18 @@ class MaesterCressen extends DrawCard {
             title: 'Kneel to discard condition',
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            method: 'kneel'
+            target: {
+                activePromptTitle: 'Select an attachment',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'attachment' && card.hasTrait('condition')
+            },
+            handler: context => {
+                let player = context.player;
+                let card = context.target;
+                player.discardCard(card);
+
+                this.game.addMessage('{0} uses {1} to discard {2}', player, this, card);
+            }
         });
-    }
-
-    kneel(player) {
-        this.game.promptForSelect(player, {
-            activePromptTitle: 'Select an attachment',
-            source: this,
-            cardCondition: card => card.location === 'play area' && card.getType() === 'attachment' && card.hasTrait('condition'),
-            onSelect: (p, card) => this.onCardSelected(p, card)
-        });
-
-        return true;
-    }
-
-    onCardSelected(player, card) {
-        player.discardCard(card);
-
-        this.game.addMessage('{0} uses {1} to discard {2}', player, this, card);
-
-        return true;
     }
 }
 
