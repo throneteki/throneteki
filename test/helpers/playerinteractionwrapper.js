@@ -88,8 +88,8 @@ class PlayerInteractionWrapper {
     }
 
     clickPrompt(text) {
-        var currentPrompt = this.player.currentPrompt();
-        var promptButton = _.find(currentPrompt.buttons, button => button.text.toLowerCase() === text.toLowerCase());
+        let currentPrompt = this.player.currentPrompt();
+        let promptButton = _.find(currentPrompt.buttons, button => button.text.toLowerCase() === text.toLowerCase());
 
         if(!promptButton) {
             throw new Error(`Couldn't click on "${text}" for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`);

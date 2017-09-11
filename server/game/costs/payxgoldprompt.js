@@ -19,7 +19,7 @@ class PayXGoldPrompt extends BaseStep {
         let range = _.range(this.min, this.max + 1).reverse();
 
         let buttons = _.map(range, gold => {
-            return { text: gold, method: 'resolveCost', arg: gold };
+            return { text: gold.toString(), method: 'resolveCost', arg: gold };
         });
 
         this.context.game.promptWithMenu(this.context.player, this, {

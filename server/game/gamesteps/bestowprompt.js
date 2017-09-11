@@ -11,15 +11,15 @@ class BestowPrompt extends BaseStep {
     }
 
     continue() {
-        var limit = Math.min(this.player.gold, this.card.bestowMax);
-        var range = _.range(1, limit + 1).reverse();
+        let limit = Math.min(this.player.gold, this.card.bestowMax);
+        let range = _.range(1, limit + 1).reverse();
 
         if(limit === 0) {
             return;
         }
 
-        var buttons = _.map(range, gold => {
-            return { text: gold, method: 'bestow', arg: gold };
+        let buttons = _.map(range, gold => {
+            return { text: gold.toString(), method: 'bestow', arg: gold };
         });
         buttons.push({ text: 'Done', method: 'bestow', arg: 0 });
 
