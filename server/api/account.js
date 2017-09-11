@@ -386,16 +386,16 @@ async function addToBlockList(req, res) {
     }
 
     if(_.find(user.blockList, user => {
-        return user === req.body.username;
+        return user === req.body.username.toLowerCase();
     })) {
         return res.send({ success: false, message: 'Entry already on block list'});
     }
 
-    user.blockList.push(req.body.username);
+    user.blockList.push(req.body.username.toLowerCase());
 
     await userService.updateBlockList(user);
 
-    res.send({ success: true, message: 'Block list entry added successfully', username: req.body.username });
+    res.send({ success: true, message: 'Block list entry added successfully', username: req.body.username.toLowerCase() });
 }
 
 async function deleteFromBlockList(req, res) {
@@ -410,16 +410,16 @@ async function deleteFromBlockList(req, res) {
     }
 
     if(!_.find(user.blockList, user => {
-        return user === req.params.entry;
+        return user === req.params.entry.toLowerCase();
     })) {
         return res.status(404).send({ message: 'Not found'});
     }
 
     user.blockList = _.reject(user.blockList, user => {
-        return user === req.params.entry;
+        return user === req.params.entry.toLowerCase();
     });
 
     await userService.updateBlockList(user);
 
-    res.send({ success: true, message: 'Block list entry removed successfully', username: req.params.entry });
+    res.send({ success: true, message: 'Block list entry removed successfully', username: req.params.entry.toLowerCase() });
 }

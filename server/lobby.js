@@ -151,10 +151,6 @@ class Lobby {
     }
 
     // Actions
-    broadcastMessage(message, ...params) {
-        this.io.emit(message, ...params);
-    }
-
     broadcastGameList(socket) {
         var gameSummaries = [];
 
@@ -165,9 +161,37 @@ class Lobby {
         gameSummaries = _(gameSummaries).chain().sortBy('createdAt').sortBy('started').reverse().value();
 
         if(socket) {
-            socket.send('games', gameSummaries);
+            let filteredGames = [];
+
+            if(socket.user) {
+                _.each(gameSummaries, game => {
+                    if(!_.any(game.players, player => {
+                        return _.contains(socket.user.blockList, player.name.toLowerCase());
+                    })) {
+                        filteredGames.push(game);
+                    }
+                });
+            }
+
+            socket.send('games', filteredGames);
         } else {
-            this.broadcastMessage('games', gameSummaries);
+            let filteredGames = [];
+
+            _.each(this.sockets, socket => {
+                if(socket.user) {
+                    _.each(gameSummaries, game => {
+                        if(!_.any(game.players, player => {
+                            return _.contains(socket.user.blockList, player.name.toLowerCase());
+                        })) {
+                            filteredGames.push(game);
+                        }
+                    });
+                } else {
+                    filteredGames = gameSummaries;
+                }
+
+                socket.send('games', filteredGames);
+            });
         }
     }
 
@@ -180,7 +204,19 @@ class Lobby {
 
         this.lastUserBroadcast = moment();
 
-        this.broadcastMessage('users', this.getUserList());
+        let users = this.getUserList();
+
+        _.each(this.sockets, socket => {
+            let filteredUsers = users;
+
+            if(socket.user) {
+                filteredUsers = _.reject(users, user => {
+                    return _.contains(socket.user.blockList, user.name.toLowerCase());
+                });
+            }
+
+            socket.send('users', filteredUsers);
+        });
     }
 
     sendGameState(game) {
@@ -193,6 +229,7 @@ class Lobby {
                 logger.info('Wanted to send to ', player.id, ' but have no socket');
                 return;
             }
+
             this.sockets[player.id].send('gamestate', game.getSummary(player.name));
         });
     }
@@ -233,7 +270,15 @@ class Lobby {
             this.broadcastUserList();
         }
 
-        socket.send('users', this.getUserList());
+        let filteredUsers = this.getUserList();
+
+        if(socket.user) {
+            filteredUsers = _.reject(filteredUsers, user => {
+                return _.contains(socket.user.blockList, user.name.toLowerCase());
+            });
+        }
+
+        socket.send('users', filteredUsers);
 
         this.messageService.getLastMessages().then(messages => {
             socket.send('lobbymessages', messages.reverse());
@@ -427,8 +472,17 @@ class Lobby {
     onLobbyChat(socket, message) {
         var chatMessage = { user: { username: socket.user.username, emailHash: socket.user.emailHash, noAvatar: socket.user.settings.disableGravatar }, message: message, time: new Date() };
 
+        this.messageRepository.addMessage(chatMessage);
+
+        _.each(this.sockets, s => {
+            if(s.user && _.contains(s.user.blockList, chatMessage.user.username.toLowerCase())) {
+                return;
+            }
+
+            s.send('lobbychat', chatMessage);
+        });
+
         this.messageService.addMessage(chatMessage);
-        this.broadcastMessage('lobbychat', chatMessage);
     }
 
     onSelectDeck(socket, gameId, deckId) {

@@ -37,6 +37,9 @@ function getUserWithDefaultsSet(user) {
     userToReturn.settings.timerSettings = Object.assign({}, defaultTimerSettings, userToReturn.settings.timerSettings);
     userToReturn.permissions = Object.assign({}, userToReturn.permissions);
     userToReturn.promptedActionWindows = Object.assign({}, defaultWindows, userToReturn.promptedActionWindows);
+    if(!userToReturn.blockList) {
+        userToReturn.blockList = [];
+    }
 
     return userToReturn;
 }
