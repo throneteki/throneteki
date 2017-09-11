@@ -39,7 +39,7 @@ describe('Randyll Tarly', function() {
                 this.completeMarshalPhase();
 
                 // Activate Margaery's ability
-                this.player1.clickMenu(margaery, 'Kneel this character to give another +3 STR');
+                this.player1.clickMenu(margaery, 'Give character +3 STR');
                 this.player1.clickCard(this.randyll);
 
                 this.player1.clickPrompt('Randyll Tarly');
