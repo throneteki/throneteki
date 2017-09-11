@@ -2,7 +2,8 @@ const TitleCard = require('../../TitleCard.js');
 
 class MasterOfLaws extends TitleCard {
     setupCardAbilities(ability) {
-        // TODO: Rivals + Supports
+        this.supports('Master of Coin');
+        this.rivals('Master of Whispers', 'Master of Ships');
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'draw',
             targetType: 'player',

@@ -2,7 +2,8 @@ const TitleCard = require('../../TitleCard.js');
 
 class MasterOfCoin extends TitleCard {
     setupCardAbilities() {
-        // TODO: Rivals + Supports
+        this.supports('Master of Ships');
+        this.rivals('Hand of the King', 'Master of Whispers');
         this.plotModifiers({
             gold: 2
         });

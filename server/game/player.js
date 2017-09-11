@@ -1152,6 +1152,22 @@ class Player extends Spectator {
         return this.hand.size() <= this.getTotalReserve();
     }
 
+    isRival(opponent) {
+        if(!this.title) {
+            return false;
+        }
+
+        return this.title.isRival(opponent.title);
+    }
+
+    isSupporter(opponent) {
+        if(!this.title) {
+            return false;
+        }
+
+        return this.title.isSupporter(opponent.title);
+    }
+
     setSelectedCards(cards) {
         this.promptState.setSelectedCards(cards);
     }

@@ -2,7 +2,8 @@ const TitleCard = require('../../TitleCard.js');
 
 class HandOfTheKing extends TitleCard {
     setupCardAbilities(ability) {
-        // TODO: Rivals + Supports
+        this.supports('Master of Laws');
+        this.rivals('Master of Coin', 'Master of Ships');
         // TODO: Additional power challenge against different opponent
         this.persistentEffect({
             condition: () => (
