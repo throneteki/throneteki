@@ -264,15 +264,8 @@ class Lobby {
             this.broadcastUserList();
         }
 
-        let filteredUsers = this.getUserList();
-
-        if(socket.user) {
-            filteredUsers = _.reject(filteredUsers, user => {
-                return _.contains(socket.user.blockList, user.name.toLowerCase());
-            });
-        }
-
-        socket.send('users', filteredUsers);
+        // Force user list send for the newly connected socket, bypassing the throttle
+        this.sendUserListFilteredWithBlockList(socket, this.getUserList());
 
         this.messageService.getLastMessages().then(messages => {
             socket.send('lobbymessages', messages.reverse());
