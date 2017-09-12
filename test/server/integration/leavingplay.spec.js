@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, integration */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 describe('leaving play', function() {
     integration(function() {
         describe('when a lasting effect has been applied to the card', function() {

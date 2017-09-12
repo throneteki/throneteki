@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, integration */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 describe('The Haunted Forest', function() {
     integration(function() {
         beforeEach(function() {

@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, integration */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 describe('Melee at Bitterbridge', function() {
     integration(function() {
         beforeEach(function() {

@@ -1,6 +1,3 @@
-/*global describe, it, beforeEach, expect, jasmine*/
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 const FulfillMilitaryClaim = require('../../../server/game/gamesteps/challenge/fulfillmilitaryclaim.js');
 
 describe('FulfillMilitaryClaim', function() {

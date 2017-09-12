@@ -1,6 +1,3 @@
-/* global describe, it, expect, beforeEach, jasmine */
-/* eslint camelcase: 0, no-invalid-this: 0 */
-
 const KingsOfWinter = require('../../../../server/game/cards/agendas/KingsOfWinter.js');
 
 describe('Kings Of Winter', function() {

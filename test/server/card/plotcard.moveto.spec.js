@@ -1,6 +1,3 @@
-/*global describe, it, beforeEach, expect, spyOn, jasmine*/
-/*eslint camelcase: 0, no-invalid-this: 0 */
-
 const PlotCard = require('../../../server/game/plotcard.js');
 
 describe('PlotCard', function () {
