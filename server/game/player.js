@@ -472,11 +472,15 @@ class Player extends Spectator {
     }
 
     canPutIntoPlay(card, playingType = 'play') {
-        let owner = card.owner;
-
         if(!this.canPlay(card, playingType)) {
             return false;
         }
+
+        return this.canControl(card);
+    }
+
+    canControl(card) {
+        let owner = card.owner;
 
         if(!card.isUnique()) {
             return true;
