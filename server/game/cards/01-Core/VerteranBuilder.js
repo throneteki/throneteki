@@ -10,12 +10,9 @@ class VerteranBuilder extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.getType() === 'location'
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
+                this.game.addMessage('{0} sacrifices {1} to stand {2}', context.player, this, context.target);
 
-                this.game.addMessage('{0} sacrifices {1} to stand {2}', player, this, card);
-
-                player.standCard(card);
+                context.player.standCard(context.target);
             }
         });
     }

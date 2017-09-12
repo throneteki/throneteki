@@ -7,11 +7,9 @@ class MessengerRaven extends DrawCard {
             phase: 'dominance',
             cost: ability.costs.returnSelfToHand(),
             handler: context => {
-                let player = context.player;
+                context.player.drawCardsToHand(1);
 
-                player.drawCardsToHand(1);
-
-                this.game.addMessage('{0} returns {1} to their hand and draws 1 card', player, this);
+                this.game.addMessage('{0} returns {1} to their hand and draws 1 card', context.player, this);
             }
         });
     }

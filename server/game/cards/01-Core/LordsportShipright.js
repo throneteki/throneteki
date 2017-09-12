@@ -11,11 +11,9 @@ class LordsportShipright extends DrawCard {
                 cardCondition: card => this.cardCondition(card)
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
-                player.controller.kneelCard(card);
+                context.player.kneelCard(context.target);
 
-                this.game.addMessage('{0} uses {1} to kneel {2}', player, this, card);
+                this.game.addMessage('{0} uses {1} to kneel {2}', context.player, this, context.target);
             }
         });
     }

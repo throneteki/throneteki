@@ -10,11 +10,9 @@ class MargaeryTyrell extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
-                this.game.addMessage('{0} kneels {1} to give {2} +3 STR until the end of the phase', player, this, card);
+                this.game.addMessage('{0} kneels {1} to give {2} +3 STR until the end of the phase', this.controller, this, context.target);
                 this.untilEndOfPhase(ability => ({
-                    match: card,
+                    match: context.target,
                     effect: ability.effects.modifyStrength(3)
                 }));
             }

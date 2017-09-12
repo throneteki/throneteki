@@ -11,12 +11,9 @@ class SerIlynPayne extends DrawCard {
                 gameAction: 'kill'
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
+                this.game.addMessage('{0} kneels {1} to kill {2}', this.controller, this, context.target);
 
-                this.game.addMessage('{0} kneels {1} to kill {2}', player, this, card);
-
-                card.controller.killCharacter(card);
+                this.game.killCharacter(context.target);
             }
         });
     }

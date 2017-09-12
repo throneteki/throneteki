@@ -10,12 +10,9 @@ class SyrioForel extends DrawCard {
                 cardCondition: card => card.getType() === 'character' && card.controller === this.controller
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
-
-                this.game.addMessage('{0} uses {1} to give {2} a {3} icon and stealth until the end of the phase', player, this, card, 'military');
+                this.game.addMessage('{0} uses {1} to give {2} a {3} icon and stealth until the end of the phase', this.controller, this, context.target, 'military');
                 this.untilEndOfPhase(ability => ({
-                    match: card,
+                    match: context.target,
                     effect: [
                         ability.effects.addIcon('military'),
                         ability.effects.addKeyword('Stealth')

@@ -11,11 +11,9 @@ class MaesterCressen extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'attachment' && card.hasTrait('condition')
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
-                player.discardCard(card);
+                this.controller.discardCard(context.target);
 
-                this.game.addMessage('{0} uses {1} to discard {2}', player, this, card);
+                this.game.addMessage('{0} uses {1} to discard {2}', this.controller, this, context.target);
             }
         });
     }

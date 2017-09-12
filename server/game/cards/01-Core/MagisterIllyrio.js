@@ -10,12 +10,9 @@ class MagisterIllyrio extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
+                this.game.addMessage('{0} uses {1} to pay 2 gold and stand {2}', this.controller, this, context.target);
 
-                this.game.addMessage('{0} uses {1} to pay 2 gold and stand {2}', player, this, card);
-
-                player.standCard(card);
+                this.controller.standCard(context.target);
             }
         });
     }

@@ -15,12 +15,9 @@ class PowerBehindTheThrone extends PlotCard {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.kneeled
             },
             handler: context => {
-                let player = context.player;
-                let card = context.target;
+                this.game.addMessage('{0} uses {1} to remove a stand token and stand {2}', this.controller, this, context.target);
 
-                this.game.addMessage('{0} uses {1} to remove a stand token and stand {2}', player, this, card);
-
-                player.standCard(card);
+                this.controller.standCard(context.target);
             }
         });
     }
