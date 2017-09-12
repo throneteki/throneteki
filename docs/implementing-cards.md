@@ -295,12 +295,6 @@ class SealOfTheHand extends DrawCard {
 }
 ```
 
-#### DEPRECATED - Specifying handler using `method` property.
-
-**Note:** This syntax is being phased out. Prefer using `handler` instead.
-
-You can specify a method on the card to call instead of a specific handler function by using the `method` property. The method is a string that references a method on the card object to be called when the player chooses to trigger the action. The player executing the action is passed into the method.
-
 #### Checking ability restrictions
 
 Card abilities can only be triggered if they have the potential to modify game state (outside of paying costs). To ensure that the action's play restrictions are met, pass a `condition` function that returns `true` when the restrictions are met, and `false` otherwise. If the condition returns `false`, the action will not be executed and costs will not be paid.

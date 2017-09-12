@@ -10,7 +10,6 @@ class SerJaimeLannister extends DrawCard {
 
         this.action({
             title: 'Give an intrigue icon to a character',
-            method: 'addIcon',
             limit: ability.limit.perPhase(1),
             phase: 'challenge',
             target: {

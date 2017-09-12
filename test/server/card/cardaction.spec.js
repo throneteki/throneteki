@@ -1,4 +1,4 @@
-/*global describe, it, beforeEach, expect, jasmine, spyOn */
+/*global describe, it, beforeEach, expect, jasmine */
 /*eslint camelcase: 0, no-invalid-this: 0 */
 
 const CardAction = require('../../../server/game/cardaction.js');
@@ -9,8 +9,7 @@ describe('CardAction', function () {
         this.gameSpy.currentPhase = 'marshal';
 
         this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isBlank']);
-        this.cardSpy.handler = function() {};
-        spyOn(this.cardSpy, 'handler').and.returnValue(true);
+        this.handlerSpy = jasmine.createSpy('handler');
 
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
 
@@ -22,7 +21,7 @@ describe('CardAction', function () {
 
         this.properties = {
             title: 'Do the thing',
-            method: 'handler'
+            handler: this.handlerSpy
         };
     });
 
@@ -36,18 +35,17 @@ describe('CardAction', function () {
                 };
             });
 
-            describe('when passed a method reference', function() {
+            describe('when handler is missing', function() {
                 beforeEach(function() {
                     this.properties = {
-                        title: 'Do the thing',
-                        method: 'handler'
+                        title: 'Do the thing'
                     };
-                    this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 });
 
-                it('should use the specified method on the card object', function() {
-                    this.action.handler(this.context);
-                    expect(this.cardSpy.handler).toHaveBeenCalledWith('player', 'arg', this.context);
+                it('should throw an error', function() {
+                    expect(() => {
+                        new CardAction(this.gameSpy, this.cardSpy, this.properties);
+                    }).toThrow();
                 });
             });
 

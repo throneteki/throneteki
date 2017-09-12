@@ -25,8 +25,8 @@ class TheRainsOfCastamere extends AgendaCard {
 
         this.action({
             title: 'Manually trigger',
-            method: 'trigger',
-            cost: ability.costs.kneelFactionCard()
+            cost: ability.costs.kneelFactionCard(),
+            handler: this.trigger.bind(this)
         });
     }
 
