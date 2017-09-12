@@ -127,6 +127,14 @@ class EffectEngine {
         this.unapplyAndRemove(effect => effect.duration === 'untilEndOfRound');
     }
 
+    activatePersistentEffects() {
+        let targets = this.getTargets();
+        let persistentEffects = this.effects.filter(effect => effect.duration === 'persistent');
+        for(let effect of persistentEffects) {
+            effect.setActive(true, targets);
+        }
+    }
+
     registerRecalculateEvents(eventNames) {
         _.each(eventNames, eventName => {
             if(!this.recalculateEvents[eventName]) {

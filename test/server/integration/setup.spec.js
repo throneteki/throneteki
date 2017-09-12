@@ -78,7 +78,7 @@ describe('setup phase', function() {
 
         describe('when a card is limited', function() {
             beforeEach(function() {
-                const deck = this.buildDeck('tyrell', ['The Roseroad', 'The Arbor', 'The Arbor']);
+                const deck = this.buildDeck('tyrell', ['Elinor Tyrell', 'The Roseroad', 'The Arbor', 'The Arbor']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
@@ -102,6 +102,15 @@ describe('setup phase', function() {
 
                 expect(this.arbor1.location).toBe('play area');
                 expect(this.arbor2.location).toBe('hand');
+            });
+
+            it('should not allow effects from facedown cards to allow more limited cards', function() {
+                this.player1.clickCard('Elinor Tyrell', 'hand');
+                this.player1.clickCard(this.roseroad);
+                this.player1.clickCard(this.arbor1);
+
+                expect(this.roseroad.location).toBe('play area');
+                expect(this.arbor1.location).toBe('hand');
             });
         });
 
