@@ -102,6 +102,8 @@ class InnerGameList extends React.Component {
 
             return (
                 <div key={ game.id } className={ 'game-row' + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
+                    { this.props.isAdmin ?
+                        <div className='remove-container'><button className='btn btn-primary remove-button' onClick={ event => this.removeGame(event, game) }>Remove</button></div> : null }
                     <span className='col-xs-12 game-title'><b>{ gameTitle }</b></span>
                     <div>{ gameRow }</div>
                     <div className='col-xs-3 game-row-buttons pull-right'>
@@ -111,8 +113,6 @@ class InnerGameList extends React.Component {
                         }
                         { this.canWatch(game) ?
                             <button className='btn btn-primary pull-right' onClick={ event => this.watchGame(event, game) }>Watch</button> : null }
-                        { /* { this.props.isAdmin ?
-                            <button className='btn btn-primary' onClick={ event => this.removeGame(event, game) }>Remove</button> : null } */ }
                     </div>
                 </div>
             );

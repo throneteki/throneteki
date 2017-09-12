@@ -18,7 +18,6 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js');
-const pug = require('pug');
 const monk = require('monk');
 const _ = require('underscore');
 
@@ -90,32 +89,18 @@ class Server {
                 path: '/__webpack_hmr',
                 heartbeat: 2000
             }));
-
-            app.get('*', (req, res) => {
-                let token = undefined;
-
-                if(req.user) {
-                    token = jwt.sign(req.user, config.secret);
-                    req.user = _.omit(req.user, 'blockList');
-                }
-
-                let html = pug.renderFile('views/index.pug', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token });
-                middleware.fileSystem.writeFileSync(path.join(__dirname, '..', 'public/index.html'), html);
-                res.write(middleware.fileSystem.readFileSync(path.join(__dirname, '..', 'public/index.html')));
-                res.end();
-            });
-        } else {
-            app.get('*', (req, res) => {
-                let token = undefined;
-
-                if(req.user) {
-                    token = jwt.sign(req.user, config.secret);
-                    req.user = _.omit(req.user, 'blockList');
-                }
-
-                res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
-            });
         }
+
+        app.get('*', (req, res) => {
+            let token = undefined;
+
+            if(req.user) {
+                token = jwt.sign(req.user, config.secret);
+                req.user = _.omit(req.user, 'blockList');
+            }
+
+            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
+        });
 
         // Define error middleware last
         app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
@@ -134,7 +119,7 @@ class Server {
                 logger.error(err);
             }
 
-            logger.info('==> 🌎 Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.', port, port);
+            logger.info('==> ?? Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.', port, port);
         });
     }
 
