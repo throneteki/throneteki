@@ -43,9 +43,7 @@ git submodule init
 git submodule update
 Run npm install
 mkdir server/logs
-cd server
-node scripts/fetchdata.js
-cd ..
+node server/scripts/fetchdata.js
 node .
 node server/gamenode
 ```
