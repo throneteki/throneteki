@@ -118,7 +118,7 @@ class PendingGame {
     }
 
     join(id, user, password, callback) {
-        if(_.size(this.players) === 2) {
+        if(_.size(this.players) === 2 || this.started) {
             return;
         }
 
@@ -148,7 +148,7 @@ class PendingGame {
     }
 
     watch(id, user, password, callback) {
-        if(!this.allowSpectators || this.started) {
+        if(!this.allowSpectators) {
             callback(new Error('Join not permitted'));
 
             return;
