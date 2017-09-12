@@ -267,13 +267,27 @@
       }
     }
   }
+
+  .additional-cards {
+    .popup {
+      bottom: 75px;
+      left: initial;
+      top: initial;
+
+      .arrow {
+        bottom: -30px;
+        top: initial;
+      }
+    }
+  }
 }
 
 .additional-cards {
   .popup {
     position: absolute;
-    bottom: 75px;
-    right: 0;
+    bottom: initial;
+    top: 75px;
+    left: 20px;
 
     .inner {
       min-width: @card-height * 2 + (2 * 5px);
@@ -281,8 +295,8 @@
     }
 
     .arrow {
-      bottom: -30px;
-      right: 20px;
+      left: 0;
+      top: -60px;
     }
   }
 }
