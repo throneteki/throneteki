@@ -151,6 +151,34 @@ class Lobby {
     }
 
     // Actions
+    sendGameListFilteredWithBlockList(socket, gameList) {
+        let filteredGames = gameList;
+
+        if(socket.user) {
+            _.each(gameList, game => {
+                if(!_.any(game.players, player => {
+                    return _.contains(socket.user.blockList, player.name.toLowerCase());
+                })) {
+                    filteredGames.push(game);
+                }
+            });
+        }
+
+        socket.send('games', filteredGames);
+    }
+
+    sendUserListFilteredWithBlockList(socket, userList) {
+        let filteredUsers = userList;
+
+        if(socket.user) {
+            filteredUsers = _.reject(userList, user => {
+                return _.contains(socket.user.blockList, user.name.toLowerCase());
+            });
+        }
+
+        socket.send('users', filteredUsers);
+    }
+
     broadcastGameList(socket) {
         var gameSummaries = [];
 
@@ -161,36 +189,10 @@ class Lobby {
         gameSummaries = _(gameSummaries).chain().sortBy('createdAt').sortBy('started').reverse().value();
 
         if(socket) {
-            let filteredGames = [];
-
-            if(socket.user) {
-                _.each(gameSummaries, game => {
-                    if(!_.any(game.players, player => {
-                        return _.contains(socket.user.blockList, player.name.toLowerCase());
-                    })) {
-                        filteredGames.push(game);
-                    }
-                });
-            }
-
-            socket.send('games', filteredGames);
+            this.sendGameListFilteredWithBlockList(socket, gameSummaries);
         } else {
-            let filteredGames = [];
-
             _.each(this.sockets, socket => {
-                if(socket.user) {
-                    _.each(gameSummaries, game => {
-                        if(!_.any(game.players, player => {
-                            return _.contains(socket.user.blockList, player.name.toLowerCase());
-                        })) {
-                            filteredGames.push(game);
-                        }
-                    });
-                } else {
-                    filteredGames = gameSummaries;
-                }
-
-                socket.send('games', filteredGames);
+                this.sendGameListFilteredWithBlockList(socket, gameSummaries);
             });
         }
     }
@@ -207,15 +209,7 @@ class Lobby {
         let users = this.getUserList();
 
         _.each(this.sockets, socket => {
-            let filteredUsers = users;
-
-            if(socket.user) {
-                filteredUsers = _.reject(users, user => {
-                    return _.contains(socket.user.blockList, user.name.toLowerCase());
-                });
-            }
-
-            socket.send('users', filteredUsers);
+            this.sendUserListFilteredWithBlockList(socket, users);
         });
     }
 

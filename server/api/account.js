@@ -11,6 +11,7 @@ const monk = require('monk');
 const UserService = require('../services/UserService.js');
 const Settings = require('../settings.js');
 const _ = require('underscore');
+const {wrapAsync} = require('../util.js');
 
 let db = monk(config.dbPath);
 let userService = new UserService(db);
@@ -323,29 +324,69 @@ module.exports.init = function(server) {
             });
     });
 
-    server.get('/api/account/:username/blocklist', (req, res) => {
-        getBlockList(req, res).catch(err => {
-            logger.error(err);
+    server.get('/api/account/:username/blocklist', wrapAsync(async (req, res) => {
+        let user = await checkAuth(req, res);
 
-            return res.send({ success: false, message: 'An error occured fetching the block list' });
+        if(!user) {
+            return;
+        }
+
+        res.send({ success: true, blockList: user.blockList });
+    }));
+
+    server.post('/api/account/:username/blocklist', wrapAsync(async (req, res) => {
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        if(!user.blockList) {
+            user.blockList = [];
+        }
+
+        if(_.find(user.blockList, user => {
+            return user === req.body.username.toLowerCase();
+        })) {
+            return res.send({ success: false, message: 'Entry already on block list'});
+        }
+
+        user.blockList.push(req.body.username.toLowerCase());
+
+        await userService.updateBlockList(user);
+
+        res.send({ success: true, message: 'Block list entry added successfully', username: req.body.username.toLowerCase() });
+    }));
+
+    server.delete('/api/account/:username/blocklist/:entry', wrapAsync(async (req, res) => {
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        if(!req.params.entry) {
+            return res.send({ success: false, message: 'Parameter "entry" is required' });
+        }
+
+        if(!user.blockList) {
+            user.blockList = [];
+        }
+
+        if(!_.find(user.blockList, user => {
+            return user === req.params.entry.toLowerCase();
+        })) {
+            return res.status(404).send({ message: 'Not found'});
+        }
+
+        user.blockList = _.reject(user.blockList, user => {
+            return user === req.params.entry.toLowerCase();
         });
-    });
 
-    server.post('/api/account/:username/blocklist', (req, res) => {
-        addToBlockList(req, res).catch(err => {
-            logger.error(err);
+        await userService.updateBlockList(user);
 
-            return res.send({ success: false, message: 'An error occured adding to block list' });
-        });
-    });
-
-    server.delete('/api/account/:username/blocklist/:entry', (req, res) => {
-        deleteFromBlockList(req, res).catch(err => {
-            logger.error(err);
-
-            return res.send({ success: false, message: 'An error occured deleting from the block list' });
-        });
-    });
+        res.send({ success: true, message: 'Block list entry removed successfully', username: req.params.entry.toLowerCase() });
+    }));
 };
 
 async function checkAuth(req, res) {
@@ -370,56 +411,4 @@ async function checkAuth(req, res) {
     }
 
     return user;
-}
-
-async function getBlockList(req, res) {
-    let user = await checkAuth(req, res);
-
-    res.send({ success: true, blockList: user.blockList });
-}
-
-async function addToBlockList(req, res) {
-    let user = await checkAuth(req, res);
-
-    if(!user.blockList) {
-        user.blockList = [];
-    }
-
-    if(_.find(user.blockList, user => {
-        return user === req.body.username.toLowerCase();
-    })) {
-        return res.send({ success: false, message: 'Entry already on block list'});
-    }
-
-    user.blockList.push(req.body.username.toLowerCase());
-
-    await userService.updateBlockList(user);
-
-    res.send({ success: true, message: 'Block list entry added successfully', username: req.body.username.toLowerCase() });
-}
-
-async function deleteFromBlockList(req, res) {
-    let user = await checkAuth(req, res);
-
-    if(!req.params.entry) {
-        return res.send({ success: false, message: 'Parameter "entry" is required' });
-    }
-
-    if(!user.blockList) {
-        user.blockList = [];
-    }
-
-    if(!_.find(user.blockList, user => {
-        return user === req.params.entry.toLowerCase();
-    })) {
-        return res.status(404).send({ message: 'Not found'});
-    }
-
-    user.blockList = _.reject(user.blockList, user => {
-        return user === req.params.entry.toLowerCase();
-    });
-
-    await userService.updateBlockList(user);
-
-    res.send({ success: true, message: 'Block list entry removed successfully', username: req.params.entry.toLowerCase() });
 }
