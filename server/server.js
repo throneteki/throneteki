@@ -20,6 +20,7 @@ const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js');
 const pug = require('pug');
 const monk = require('monk');
+const _ = require('underscore');
 
 const UserService = require('./services/UserService.js');
 const version = require('../version.js');
@@ -91,23 +92,25 @@ class Server {
             }));
 
             app.get('*', (req, res) => {
-                var token = undefined;
+                let token = undefined;
 
                 if(req.user) {
                     token = jwt.sign(req.user, config.secret);
+                    req.user = _.omit(req.user, 'blockList');
                 }
 
-                var html = pug.renderFile('views/index.pug', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token });
+                let html = pug.renderFile('views/index.pug', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token });
                 middleware.fileSystem.writeFileSync(path.join(__dirname, '..', 'public/index.html'), html);
                 res.write(middleware.fileSystem.readFileSync(path.join(__dirname, '..', 'public/index.html')));
                 res.end();
             });
         } else {
             app.get('*', (req, res) => {
-                var token = undefined;
+                let token = undefined;
 
                 if(req.user) {
                     token = jwt.sign(req.user, config.secret);
+                    req.user = _.omit(req.user, 'blockList');
                 }
 
                 res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
@@ -124,7 +127,7 @@ class Server {
     }
 
     run() {
-        var port = this.isDeveloping ? 4000 : process.env.PORT;
+        let port = this.isDeveloping ? 4000 : process.env.PORT;
 
         this.server.listen(port, '0.0.0.0', function onStart(err) {
             if(err) {
@@ -163,7 +166,8 @@ class Server {
                         admin: user.admin,
                         settings: user.settings,
                         promptedActionWindows: user.promptedActionWindows,
-                        permissions: user.permissions
+                        permissions: user.permissions,
+                        blockList: user.blockList
                     };
 
                     userObj = Settings.getUserWithDefaultsSet(userObj);
@@ -199,7 +203,8 @@ class Server {
                     admin: user.admin,
                     settings: user.settings,
                     promptedActionWindows: user.promptedActionWindows,
-                    permissions: user.permissions
+                    permissions: user.permissions,
+                    blockList: user.blockList
                 };
 
                 done(null, userObj);
