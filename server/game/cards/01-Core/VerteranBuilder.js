@@ -7,7 +7,7 @@ class VerteranBuilder extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.getType() === 'location'
+                cardCondition: card => card.location === 'play area' && card.getType() === 'location'
             },
             handler: context => {
                 this.game.addMessage('{0} sacrifices {1} to stand {2}', context.player, this, context.target);

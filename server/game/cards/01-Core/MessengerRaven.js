@@ -9,7 +9,7 @@ class MessengerRaven extends DrawCard {
             handler: context => {
                 context.player.drawCardsToHand(1);
 
-                this.game.addMessage('{0} returns {1} to their hand and draws 1 card', context.player, this);
+                this.game.addMessage('{0} returns {1} to their hand to draw 1 card', context.player, this);
             }
         });
     }
