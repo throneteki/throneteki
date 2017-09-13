@@ -276,8 +276,8 @@ class Player extends Spectator {
         });
     }
 
-    canInitiateChallenge(challengeType) {
-        return !this.challenges.isAtMax(challengeType);
+    canInitiateChallenge(challengeType, opponent) {
+        return !this.challenges.isAtMax(challengeType, opponent);
     }
 
     canSelectAsFirstPlayer(player) {

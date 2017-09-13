@@ -41,11 +41,12 @@ class ChallengePhase extends Phase {
     }
 
     initiateChallenge(attackingPlayer, challengeType) {
-        if(!attackingPlayer.canInitiateChallenge(challengeType)) {
+        let defendingPlayer = this.chooseOpponent(attackingPlayer);
+
+        if(!attackingPlayer.canInitiateChallenge(challengeType, defendingPlayer)) {
             return;
         }
 
-        let defendingPlayer = this.chooseOpponent(attackingPlayer);
         let challenge = new Challenge(this.game, {
             attackingPlayer: attackingPlayer,
             defendingPlayer: defendingPlayer,

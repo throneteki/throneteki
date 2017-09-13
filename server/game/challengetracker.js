@@ -50,7 +50,7 @@ class ChallengeTracker {
         this.challengeTypes[challengeType].lost = 0;
     }
 
-    isAtMax(challengeType) {
+    isAtMax(challengeType, opponent) { // eslint-disable-line no-unused-vars
         if(!_.isUndefined(this.maxTotal) && this.complete >= this.maxTotal) {
             return true;
         }
