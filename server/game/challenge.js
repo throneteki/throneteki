@@ -36,6 +36,8 @@ class Challenge {
 
     initiateChallenge() {
         this.attackingPlayer.initiateChallenge(this.challengeType);
+        this.attackingPlayer.trackChallenge(this);
+        this.defendingPlayer.trackChallenge(this);
     }
 
     addAttackers(attackers) {

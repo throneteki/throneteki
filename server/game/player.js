@@ -846,6 +846,10 @@ class Player extends Spectator {
         });
     }
 
+    trackChallenge(challenge) {
+        this.challenges.track(challenge);
+    }
+
     initiateChallenge(challengeType) {
         this.challenges.perform(challengeType);
     }

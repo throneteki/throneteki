@@ -33,11 +33,17 @@ class ChallengeTracker {
                 lost: 0
             }
         };
+        this.challenges = [];
         this.restrictions = [];
+    }
+
+    track(challenge) {
+        this.challenges.push(challenge);
     }
 
     reset() {
         this.complete = 0;
+        this.challenges = [];
         this.resetForType('military');
         this.resetForType('intrigue');
         this.resetForType('power');
