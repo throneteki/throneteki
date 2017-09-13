@@ -277,7 +277,7 @@ class Player extends Spectator {
     }
 
     canInitiateChallenge(challengeType, opponent) {
-        return !this.challenges.isAtMax(challengeType, opponent);
+        return this.challenges.canInitiate(challengeType, opponent);
     }
 
     canSelectAsFirstPlayer(player) {

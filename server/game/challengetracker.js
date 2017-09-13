@@ -51,16 +51,16 @@ class ChallengeTracker {
         this.challengeTypes[challengeType].lost = 0;
     }
 
-    isAtMax(challengeType, opponent) {
+    canInitiate(challengeType, opponent) {
         if(!_.isUndefined(this.maxTotal) && this.complete >= this.maxTotal) {
-            return true;
+            return false;
         }
 
         if(this.restrictions.some(restriction => restriction.isMatch(challengeType, opponent))) {
-            return true;
+            return false;
         }
 
-        return this.challengeTypes[challengeType].performed >= this.challengeTypes[challengeType].max;
+        return this.challengeTypes[challengeType].performed < this.challengeTypes[challengeType].max;
     }
 
     getWon(challengeType) {
