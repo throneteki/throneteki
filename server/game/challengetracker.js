@@ -24,14 +24,6 @@ class ChallengeTracker {
 
     reset() {
         this.challenges = [];
-        this.resetForType('military');
-        this.resetForType('intrigue');
-        this.resetForType('power');
-        this.resetForType('defender');
-        this.resetForType('attacker');
-    }
-
-    resetForType(challengeType) {
     }
 
     canInitiate(challengeType, opponent) {
