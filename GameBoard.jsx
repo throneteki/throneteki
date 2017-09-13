@@ -450,13 +450,15 @@ export class InnerGameBoard extends React.Component {
                                 conclavePile={ otherPlayer ? otherPlayer.cardPiles.conclavePile : [] }
                                 faction={ otherPlayer ? otherPlayer.faction : null }
                                 hand={ otherPlayer ? otherPlayer.cardPiles.hand : [] } isMe={ false }
+                                isMelee={ this.props.currentGame.isMelee }
                                 numDrawCards={ otherPlayer ? otherPlayer.numDrawCards : 0 }
                                 discardPile={ otherPlayer ? otherPlayer.cardPiles.discardPile : [] }
                                 deadPile={ otherPlayer ? otherPlayer.cardPiles.deadPile : [] }
                                 onCardClick={ this.onCardClick }
                                 onMouseOver={ this.onMouseOver }
                                 onMouseOut={ this.onMouseOut }
-                                outOfGamePile={ otherPlayer ? otherPlayer.cardPiles.outOfGamePile : [] } />
+                                outOfGamePile={ otherPlayer ? otherPlayer.cardPiles.outOfGamePile : [] }
+                                title={ otherPlayer ? otherPlayer.title : null } />
                         </div>
                         <div className='board-inner'>
                             <div className='prompt-area'>
@@ -489,6 +491,7 @@ export class InnerGameBoard extends React.Component {
                                 conclavePile={ thisPlayer.cardPiles.conclavePile }
                                 faction={ thisPlayer.faction }
                                 hand={ thisPlayer.cardPiles.hand }
+                                isMelee={ this.props.currentGame.isMelee }
                                 onCardClick={ this.onCardClick }
                                 onMouseOver={ this.onMouseOver }
                                 onMouseOut={ this.onMouseOut }
@@ -503,6 +506,7 @@ export class InnerGameBoard extends React.Component {
                                 discardPile={ thisPlayer.cardPiles.discardPile }
                                 deadPile={ thisPlayer.cardPiles.deadPile }
                                 spectating={ this.state.spectating }
+                                title={ thisPlayer.title }
                                 onMenuItemClick={ this.onMenuItemClick } />
                         </div>
                     </div>

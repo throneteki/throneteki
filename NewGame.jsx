@@ -15,6 +15,7 @@ class InnerNewGame extends React.Component {
 
         this.state = {
             spectators: true,
+            selectedGameFormat: 'joust',
             selectedGameType: 'casual',
             password: ''
         };
@@ -49,6 +50,7 @@ class InnerNewGame extends React.Component {
             name: this.state.gameName,
             spectators: this.state.spectators,
             gameType: this.state.selectedGameType,
+            isMelee: this.state.selectedGameFormat === 'melee',
             password: this.state.password
         });
     }
@@ -57,8 +59,36 @@ class InnerNewGame extends React.Component {
         this.setState({ selectedGameType: gameType });
     }
 
+    onGameFormatChange(format) {
+        this.setState({ selectedGameFormat: format });
+    }
+
     isGameTypeSelected(gameType) {
         return this.state.selectedGameType === gameType;
+    }
+
+    getMeleeOptions() {
+        if(!this.props.allowMelee) {
+            return;
+        }
+
+        return (
+            <div className='row'>
+                <div className='col-sm-12'>
+                    <b>Game Format</b>
+                </div>
+                <div className='col-sm-10'>
+                    <label className='radio-inline'>
+                        <input type='radio' onChange={ this.onGameFormatChange.bind(this, 'joust') } checked={ this.state.selectedGameFormat === 'joust' } />
+                        Joust
+                    </label>
+                    <label className='radio-inline'>
+                        <input type='radio' onChange={ this.onGameFormatChange.bind(this, 'melee') } checked={ this.state.selectedGameFormat === 'melee' } />
+                        Melee
+                    </label>
+                </div>
+            </div>
+        );
     }
 
     render() {
@@ -85,6 +115,7 @@ class InnerNewGame extends React.Component {
                                 </label>
                             </div>
                         </div>
+                        { this.getMeleeOptions() }
                         <div className='row'>
                             <div className='col-sm-12'>
                                 <b>Game Type</b>
@@ -126,6 +157,7 @@ class InnerNewGame extends React.Component {
 
 InnerNewGame.displayName = 'NewGame';
 InnerNewGame.propTypes = {
+    allowMelee: React.PropTypes.bool,
     cancelNewGame: React.PropTypes.func,
     defaultGameName: React.PropTypes.string,
     socket: React.PropTypes.object
@@ -133,6 +165,7 @@ InnerNewGame.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        allowMelee: state.auth.user.permissions.allowMelee,
         socket: state.socket.socket
     };
 }
