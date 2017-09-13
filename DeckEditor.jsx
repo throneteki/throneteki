@@ -257,7 +257,7 @@ class InnerDeckEditor extends React.Component {
 
     lookupCard(line, index) {
         let packOffset = line.indexOf('(');
-        let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
+        let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1).trim();
         let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
 
         if(cardName.startsWith('Custom ')) {
