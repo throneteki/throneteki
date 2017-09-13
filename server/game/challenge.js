@@ -180,8 +180,6 @@ class Challenge {
             this.winnerStrength = this.defenderStrength;
         }
 
-        this.winner.winChallenge(this.challengeType, this.attackingPlayer === this.winner);
-        this.loser.loseChallenge(this.challengeType, this.attackingPlayer === this.loser);
         this.strengthDifference = this.winnerStrength - this.loserStrength;
     }
 

@@ -10,11 +10,7 @@ describe('Challenge', function() {
         });
 
         this.attackingPlayer = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
-        spyOn(this.attackingPlayer, 'winChallenge');
-        spyOn(this.attackingPlayer, 'loseChallenge');
         this.defendingPlayer = new Player('2', { username: 'Player 2', settings: {} }, true, this.gameSpy);
-        spyOn(this.defendingPlayer, 'winChallenge');
-        spyOn(this.defendingPlayer, 'loseChallenge');
 
         this.attackerCard = new DrawCard(this.attackingPlayer, {});
         this.defenderCard = new DrawCard(this.defendingPlayer, {});
@@ -36,16 +32,8 @@ describe('Challenge', function() {
                 expect(this.challenge.winner).toBe(this.attackingPlayer);
             });
 
-            it('should mark the win for the attacking player', function() {
-                expect(this.attackingPlayer.winChallenge).toHaveBeenCalledWith('military', true);
-            });
-
             it('should have the defending player be the loser', function() {
                 expect(this.challenge.loser).toBe(this.defendingPlayer);
-            });
-
-            it('should mark the loss for the defending player', function() {
-                expect(this.defendingPlayer.loseChallenge).toHaveBeenCalledWith('military', false);
             });
         });
 
@@ -63,16 +51,8 @@ describe('Challenge', function() {
                 expect(this.challenge.winner).toBe(this.attackingPlayer);
             });
 
-            it('should mark the win for the attacking player', function() {
-                expect(this.attackingPlayer.winChallenge).toHaveBeenCalledWith('military', true);
-            });
-
             it('should have the defending player be the loser', function() {
                 expect(this.challenge.loser).toBe(this.defendingPlayer);
-            });
-
-            it('should mark the loss for the defending player', function() {
-                expect(this.defendingPlayer.loseChallenge).toHaveBeenCalledWith('military', false);
             });
         });
 
@@ -89,16 +69,8 @@ describe('Challenge', function() {
                 expect(this.challenge.winner).toBe(this.defendingPlayer);
             });
 
-            it('should mark the win for the defending player', function() {
-                expect(this.defendingPlayer.winChallenge).toHaveBeenCalledWith('military', false);
-            });
-
             it('should have the attacking player be the loser', function() {
                 expect(this.challenge.loser).toBe(this.attackingPlayer);
-            });
-
-            it('should mark the loss for the attacking player', function() {
-                expect(this.attackingPlayer.loseChallenge).toHaveBeenCalledWith('military', true);
             });
         });
     });

@@ -850,14 +850,6 @@ class Player extends Spectator {
         this.challenges.track(challenge);
     }
 
-    winChallenge(challengeType, wasAttacker) {
-        this.challenges.won(challengeType, wasAttacker);
-    }
-
-    loseChallenge(challengeType, wasAttacker) {
-        this.challenges.lost(challengeType, wasAttacker);
-    }
-
     resetForChallenge() {
         this.cardsInPlay.each(card => {
             card.resetForChallenge();

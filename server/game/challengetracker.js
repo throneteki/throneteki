@@ -5,27 +5,13 @@ class ChallengeTracker {
         this.player = player;
         this.challengeTypes = {
             military: {
-                max: 1,
-                won: 0,
-                lost: 0
+                max: 1
             },
             intrigue: {
-                max: 1,
-                won: 0,
-                lost: 0
+                max: 1
             },
             power: {
-                max: 1,
-                won: 0,
-                lost: 0
-            },
-            defender: {
-                won: 0,
-                lost: 0
-            },
-            attacker: {
-                won: 0,
-                lost: 0
+                max: 1
             }
         };
         this.challenges = [];
@@ -46,8 +32,6 @@ class ChallengeTracker {
     }
 
     resetForType(challengeType) {
-        this.challengeTypes[challengeType].won = 0;
-        this.challengeTypes[challengeType].lost = 0;
     }
 
     canInitiate(challengeType, opponent) {
@@ -108,16 +92,6 @@ class ChallengeTracker {
 
     removeRestriction(restriction) {
         this.restrictions = this.restrictions.filter(r => r !== restriction);
-    }
-
-    won(challengeType, wasAttacker) {
-        this.challengeTypes[challengeType].won++;
-        this.challengeTypes[wasAttacker ? 'attacker' : 'defender'].won++;
-    }
-
-    lost(challengeType, wasAttacker) {
-        this.challengeTypes[challengeType].lost++;
-        this.challengeTypes[wasAttacker ? 'attacker' : 'defender'].lost++;
     }
 
     modifyMaxForType(challengeType, number) {
