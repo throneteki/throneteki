@@ -850,6 +850,10 @@ class Player extends Spectator {
         this.challenges.track(challenge);
     }
 
+    getParticipatedChallenges() {
+        return this.challenges.getChallenges();
+    }
+
     resetForChallenge() {
         this.cardsInPlay.each(card => {
             card.resetForChallenge();

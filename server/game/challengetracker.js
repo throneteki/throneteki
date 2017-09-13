@@ -26,6 +26,10 @@ class ChallengeTracker {
         this.challenges = [];
     }
 
+    getChallenges() {
+        return this.challenges;
+    }
+
     canInitiate(challengeType, opponent) {
         if(!_.isUndefined(this.maxTotal) && this.getPerformed() >= this.maxTotal) {
             return false;
