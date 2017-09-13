@@ -25,7 +25,7 @@ class BrothelMadame extends DrawCard {
                     targetType: 'player',
                     targetController: 'opponent',
                     condition: () => !this.hasPaidGoldThisPhase,
-                    effect: ability.effects.cannotInitiateChallengeType('military')
+                    effect: ability.effects.cannotInitiateChallengeType('military', opponent => opponent === this.controller)
                 }));
 
                 if(otherPlayer.gold >= 1) {

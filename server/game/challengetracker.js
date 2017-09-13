@@ -33,6 +33,7 @@ class ChallengeTracker {
                 lost: 0
             }
         };
+        this.restrictions = [];
     }
 
     reset() {
@@ -50,16 +51,16 @@ class ChallengeTracker {
         this.challengeTypes[challengeType].lost = 0;
     }
 
-    isAtMax(challengeType) {
+    canInitiate(challengeType, opponent) {
         if(!_.isUndefined(this.maxTotal) && this.complete >= this.maxTotal) {
-            return true;
+            return false;
         }
 
-        if(this.challengeTypes[challengeType].cannotInitiate) {
-            return true;
+        if(this.restrictions.some(restriction => restriction.isMatch(challengeType, opponent))) {
+            return false;
         }
 
-        return this.challengeTypes[challengeType].performed >= this.challengeTypes[challengeType].max;
+        return this.challengeTypes[challengeType].performed < this.challengeTypes[challengeType].max;
     }
 
     getWon(challengeType) {
@@ -82,8 +83,12 @@ class ChallengeTracker {
         delete this.maxTotal;
     }
 
-    setCannotInitiateForType(challengeType, value) {
-        this.challengeTypes[challengeType].cannotInitiate = value;
+    addRestriction(restriction) {
+        this.restrictions.push(restriction);
+    }
+
+    removeRestriction(restriction) {
+        this.restrictions = this.restrictions.filter(r => r !== restriction);
     }
 
     perform(challengeType) {
