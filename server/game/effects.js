@@ -4,6 +4,7 @@ const AbilityLimit = require('./abilitylimit.js');
 const CostReducer = require('./costreducer.js');
 const PlayableLocation = require('./playablelocation.js');
 const CannotRestriction = require('./cannotrestriction.js');
+const ChallengeRestriction = require('./ChallengeRestriction.js');
 const ImmunityRestriction = require('./immunityrestriction.js');
 
 function cannotEffect(type) {
@@ -662,13 +663,14 @@ const Effects = {
             }
         };
     },
-    cannotInitiateChallengeType(challengeType) {
+    cannotInitiateChallengeType(challengeType, opponentCondition = () => true) {
+        let restriction = new ChallengeRestriction(challengeType, opponentCondition);
         return {
             apply: function(player) {
-                player.setCannotInitiateChallengeForType(challengeType, true);
+                player.addChallengeRestriction(restriction);
             },
             unapply: function(player) {
-                player.setCannotInitiateChallengeForType(challengeType, false);
+                player.removeChallengeRestriction(restriction);
             }
         };
     },

@@ -33,6 +33,7 @@ class ChallengeTracker {
                 lost: 0
             }
         };
+        this.restrictions = [];
     }
 
     reset() {
@@ -50,12 +51,12 @@ class ChallengeTracker {
         this.challengeTypes[challengeType].lost = 0;
     }
 
-    isAtMax(challengeType, opponent) { // eslint-disable-line no-unused-vars
+    isAtMax(challengeType, opponent) {
         if(!_.isUndefined(this.maxTotal) && this.complete >= this.maxTotal) {
             return true;
         }
 
-        if(this.challengeTypes[challengeType].cannotInitiate) {
+        if(this.restrictions.some(restriction => restriction.isMatch(challengeType, opponent))) {
             return true;
         }
 
@@ -82,8 +83,12 @@ class ChallengeTracker {
         delete this.maxTotal;
     }
 
-    setCannotInitiateForType(challengeType, value) {
-        this.challengeTypes[challengeType].cannotInitiate = value;
+    addRestriction(restriction) {
+        this.restrictions.push(restriction);
+    }
+
+    removeRestriction(restriction) {
+        this.restrictions = this.restrictions.filter(r => r !== restriction);
     }
 
     perform(challengeType) {

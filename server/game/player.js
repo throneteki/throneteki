@@ -300,8 +300,12 @@ class Player extends Spectator {
         this.challenges.clearMax();
     }
 
-    setCannotInitiateChallengeForType(type, value) {
-        this.challenges.setCannotInitiateForType(type, value);
+    addChallengeRestriction(restriction) {
+        this.challenges.addRestriction(restriction);
+    }
+
+    removeChallengeRestriction(restriction) {
+        this.challenges.removeRestriction(restriction);
     }
 
     resetCardPile(pile) {
