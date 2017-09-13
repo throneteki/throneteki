@@ -41,12 +41,24 @@ class InnerMessages extends React.Component {
 
     formatMessageText(message) {
         var index = 0;
-        return _.map(message, fragment => {
+        return _.map(message, (fragment, key) => {
             if(_.isNull(fragment) || _.isUndefined(fragment)) {
                 return '';
             }
 
-            if(fragment.message) {
+            if(key === 'alert') {
+                let message = this.formatMessageText(fragment.message);
+
+                if(fragment.type === 'endofround') {
+                    return (
+                        <div>
+                            <hr />
+                            { message }
+                            <hr />
+                        </div>
+                    );
+                }
+            } else if(fragment.message) {
                 return this.formatMessageText(fragment.message);
             } else if(fragment.code && fragment.label) {
                 return (

@@ -85,6 +85,10 @@ class Game extends EventEmitter {
         this.gameChat.addMessage(...arguments);
     }
 
+    addAlert() {
+        this.gameChat.addAlert(...arguments);
+    }
+
     get messages() {
         return this.gameChat.messages;
     }
@@ -588,6 +592,8 @@ class Game extends EventEmitter {
 
         this.playStarted = true;
         this.startedAt = new Date();
+
+        this.round = 0;
 
         this.continue();
     }
