@@ -663,6 +663,9 @@ const Effects = {
             }
         };
     },
+    cannotInitiateChallengeAgainst(opponent) {
+        return this.cannotInitiateChallengeType('any', o => o === opponent);
+    },
     cannotInitiateChallengeType(challengeType, opponentCondition = () => true) {
         let restriction = new ChallengeRestriction(challengeType, opponentCondition);
         return {

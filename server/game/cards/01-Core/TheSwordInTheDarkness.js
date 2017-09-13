@@ -21,7 +21,7 @@ class TheSwordInTheDarkness extends DrawCard {
                 this.untilEndOfRound(ability => ({
                     targetType: 'player',
                     targetController: 'opponent',
-                    effect: ability.effects.setMaxChallenge(0)
+                    effect: ability.effects.cannotInitiateChallengeAgainst(this.controller)
                 }));
             }
         });
