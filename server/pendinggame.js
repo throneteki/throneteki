@@ -15,6 +15,7 @@ class PendingGame {
         this.allowSpectators = details.spectators;
         this.gameType = details.gameType;
         this.isMelee = details.isMelee;
+        this.titleCardData = details.titleCardData;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
     }

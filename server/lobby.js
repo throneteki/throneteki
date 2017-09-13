@@ -36,6 +36,14 @@ class Lobby {
         this.io.on('connection', this.onConnection.bind(this));
 
         this.lastUserBroadcast = moment();
+
+        this.loadTitleCardData();
+    }
+
+    loadTitleCardData() {
+        this.cardService.getTitleCards().then(cards => {
+            this.titleCardData = cards;
+        });
     }
 
     // External methods
@@ -324,12 +332,12 @@ class Lobby {
     }
 
     onNewGame(socket, gameDetails) {
-        var existingGame = this.findGameForUser(socket.user.username);
+        let existingGame = this.findGameForUser(socket.user.username);
         if(existingGame) {
             return;
         }
 
-        var game = new PendingGame(socket.user, gameDetails);
+        let game = new PendingGame(socket.user, Object.assign({ titleCardData: this.titleCardData }, gameDetails));
         game.newGame(socket.id, socket.user, gameDetails.password, (err, message) => {
             if(err) {
                 logger.info('game failed to create', err, message);
@@ -577,7 +585,7 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
-            var syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
+            let syncGame = new PendingGame({ username: game.owner, titleCardData: this.titleCardData }, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
