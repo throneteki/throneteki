@@ -29,6 +29,7 @@ const AbilityResolver = require('./gamesteps/abilityresolver.js');
 const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredabilitywindow.js');
 const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
 const KillCharacters = require('./gamesteps/killcharacters.js');
+const TitlePool = require('./TitlePool.js');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -58,6 +59,8 @@ class Game extends EventEmitter {
             isApplying: false,
             type: undefined
         };
+        this.isMelee = !!details.isMelee;
+        this.titlePool = new TitlePool(this, options.titleCardData || []);
 
         _.each(details.players, player => {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -576,9 +579,7 @@ class Game extends EventEmitter {
             player.initialise();
         });
 
-        this.allCards = _(_.reduce(this.getPlayers(), (cards, player) => {
-            return cards.concat(player.allCards.toArray());
-        }, []));
+        this.allCards = _(this.gatherAllCards());
 
         this.pipeline.initialise([
             new SetupPhase(this),
@@ -589,6 +590,18 @@ class Game extends EventEmitter {
         this.startedAt = new Date();
 
         this.continue();
+    }
+
+    gatherAllCards() {
+        let playerCards = _.reduce(this.getPlayers(), (cards, player) => {
+            return cards.concat(player.allCards.toArray());
+        }, []);
+
+        if(this.isMelee) {
+            return this.titlePool.cards.concat(playerCards);
+        }
+
+        return playerCards;
     }
 
     beginRound() {
@@ -903,6 +916,7 @@ class Game extends EventEmitter {
 
             return {
                 id: this.id,
+                isMelee: this.isMelee,
                 name: this.name,
                 owner: this.owner,
                 players: playerState,
@@ -957,6 +971,7 @@ class Game extends EventEmitter {
             createdAt: this.createdAt,
             gameType: this.gameType,
             id: this.id,
+            isMelee: this.isMelee,
             messages: this.gameChat.messages,
             name: this.name,
             owner: this.owner,

@@ -112,6 +112,22 @@ class PlayerRow extends React.Component {
         );
     }
 
+    getTitleCard() {
+        if(!this.props.isMelee) {
+            return;
+        }
+
+        return (
+            <CardPile className='title'
+                cards={ [] }
+                disablePopup
+                onMouseOut={ this.props.onMouseOut }
+                onMouseOver={ this.props.onMouseOver }
+                source='title'
+                topCard={ this.props.title } />
+        );
+    }
+
     onFactionCardClick() {
         if(this.props.onFactionCardClick) {
             this.props.onFactionCardClick();
@@ -134,6 +150,7 @@ class PlayerRow extends React.Component {
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disablePopup
                     onCardClick={ this.props.isMe && !this.props.spectating ? this.onFactionCardClick.bind(this) : null } />
                 { this.getAgenda() }
+                { this.getTitleCard() }
                 <PlayerHand
                     cards={ this.props.hand }
                     isMe={ this.props.isMe }
@@ -168,6 +185,7 @@ PlayerRow.propTypes = {
     faction: React.PropTypes.object,
     hand: React.PropTypes.array,
     isMe: React.PropTypes.bool,
+    isMelee: React.PropTypes.bool,
     numDrawCards: React.PropTypes.number,
     onCardClick: React.PropTypes.func,
     onDragDrop: React.PropTypes.func,
@@ -181,7 +199,8 @@ PlayerRow.propTypes = {
     plotDeck: React.PropTypes.array,
     power: React.PropTypes.number,
     showDrawDeck: React.PropTypes.bool,
-    spectating: React.PropTypes.bool
+    spectating: React.PropTypes.bool,
+    title: React.PropTypes.object
 };
 
 export default PlayerRow;

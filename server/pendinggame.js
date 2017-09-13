@@ -14,6 +14,7 @@ class PendingGame {
         this.name = details.name;
         this.allowSpectators = details.spectators;
         this.gameType = details.gameType;
+        this.isMelee = details.isMelee;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
     }

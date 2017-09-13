@@ -940,6 +940,10 @@ class Player extends Spectator {
             return memo + card.getDominanceStrength();
         }, 0);
 
+        if(this.title) {
+            cardStrength += this.title.getDominanceStrength();
+        }
+
         return cardStrength + this.gold;
     }
 
@@ -1156,6 +1160,22 @@ class Player extends Spectator {
         return this.hand.size() <= this.getTotalReserve();
     }
 
+    isRival(opponent) {
+        if(!this.title) {
+            return false;
+        }
+
+        return this.title.isRival(opponent.title);
+    }
+
+    isSupporter(opponent) {
+        if(!this.title) {
+            return false;
+        }
+
+        return this.title.isSupporter(opponent.title);
+    }
+
     setSelectedCards(cards) {
         this.promptState.setSelectedCards(cards);
     }
@@ -1235,6 +1255,7 @@ class Player extends Spectator {
             promptedActionWindows: this.promptedActionWindows,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
+            title: this.title ? this.title.getSummary(activePlayer) : undefined,
             user: _.omit(this.user, ['password', 'email'])
         };
 

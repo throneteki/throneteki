@@ -3,6 +3,7 @@ const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const SelectPlotPrompt = require('./plot/selectplotprompt.js');
 const RevealPlots = require('./revealplots.js');
+const ChooseTitlePrompt = require('./plot/ChooseTitlePrompt.js');
 const ActionWindow = require('./actionwindow.js');
 
 class PlotPhase extends Phase {
@@ -14,6 +15,7 @@ class PlotPhase extends Phase {
             new SimpleStep(game, () => this.removeActivePlots()),
             new SimpleStep(game, () => this.flipPlotsFaceup()),
             () => new RevealPlots(game, _.map(this.game.getPlayers(), player => player.activePlot)),
+            () => new ChooseTitlePrompt(game, game.titlePool),
             new ActionWindow(this.game, 'After plots revealed', 'plot'),
             new SimpleStep(game, () => this.recyclePlots())
         ]);

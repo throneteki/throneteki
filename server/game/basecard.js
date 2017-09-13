@@ -32,7 +32,7 @@ const ValidFactions = [
     'greyjoy'
 ];
 
-const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agenda'];
+const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agenda', 'title'];
 
 class BaseCard {
     constructor(owner, cardData) {
@@ -197,10 +197,11 @@ class BaseCard {
      * is both in play and not blank.
      */
     persistentEffect(properties) {
-        const allowedLocations = ['active plot', 'agenda', 'any', 'play area'];
+        const allowedLocations = ['active plot', 'agenda', 'any', 'play area', 'title'];
         const defaultLocationForType = {
             agenda: 'agenda',
-            plot: 'active plot'
+            plot: 'active plot',
+            title: 'title'
         };
 
         let location = properties.location || defaultLocationForType[this.getType()] || 'play area';
@@ -553,7 +554,7 @@ class BaseCard {
         let selectionState = activePlayer.getCardSelectionState(this);
         let state = {
             code: this.cardData.code,
-            controlled: this.owner !== this.controller,
+            controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
             menu: this.getMenu(),
             name: this.cardData.label,
