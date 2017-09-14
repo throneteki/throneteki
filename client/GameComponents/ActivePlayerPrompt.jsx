@@ -13,7 +13,7 @@ class ActivePlayerPrompt extends React.Component {
 
     shouldComponentUpdate(newProps, newState) {
         return newProps.phase !== this.props.phase || newProps.promptTitle !== this.props.promptTitle ||
-            newProps.title !== this.props.title || newProps.arrowDirection !== this.props.arrowDirection ||
+            newProps.title !== this.props.title ||
             !this.buttonsAreEqual(this.props.buttons, newProps.buttons) ||
             newState.showTimer !== this.state.showTimer ||
             newState.timeLeft !== this.state.timeLeft || newState.timerClass !== this.state.timerClass;
@@ -187,11 +187,6 @@ class ActivePlayerPrompt extends React.Component {
 
 ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
 ActivePlayerPrompt.propTypes = {
-    arrowDirection: React.PropTypes.oneOf([
-        'up',
-        'down',
-        'none'
-    ]),
     buttons: React.PropTypes.array,
     onButtonClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
