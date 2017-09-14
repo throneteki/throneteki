@@ -61,9 +61,10 @@ describe('EventWindow', function() {
             });
         });
 
-        describe('when an event has its handler skipped', function() {
+        describe('when an event has its handler replaced', function() {
             beforeEach(function() {
-                this.eventWindow.event.skipHandler();
+                this.replacementHandler = jasmine.createSpy('replacementHandler');
+                this.eventWindow.event.replaceHandler(this.replacementHandler);
                 this.eventWindow.continue();
             });
 
@@ -78,6 +79,10 @@ describe('EventWindow', function() {
 
             it('should not call the handler', function() {
                 expect(this.handler).not.toHaveBeenCalled();
+            });
+
+            it('should call the replacement handler', function() {
+                expect(this.replacementHandler).toHaveBeenCalled();
             });
         });
 

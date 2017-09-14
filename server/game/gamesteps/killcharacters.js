@@ -26,7 +26,8 @@ class KillCharacters extends BaseStep {
                 },
                 handler: event => this.handleMultipleKills(event),
                 perCardEventName: 'onCharacterKilled',
-                perCardHandler: event => this.doKill(event)
+                perCardHandler: event => this.doKill(event),
+                postHandler: () => this.promptForDeadPileOrder()
             });
             this.game.queueSimpleStep(() => {
                 _.each(killable, card => {
@@ -42,10 +43,6 @@ class KillCharacters extends BaseStep {
         _.each(event.cards, card => {
             this.automaticSave(card);
         });
-
-        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-            this.promptPlayerForDeadPileOrder(player);
-        });
     }
 
     automaticSave(card) {
@@ -58,10 +55,17 @@ class KillCharacters extends BaseStep {
         }
     }
 
+    promptForDeadPileOrder() {
+        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+            this.promptPlayerForDeadPileOrder(player);
+        });
+    }
+
     promptPlayerForDeadPileOrder(player) {
-        let cardsOwnedByPlayer = _.filter(this.event.cards, card => card.owner === player);
+        let cardsOwnedByPlayer = this.event.cards.filter(card => card.owner === player && card.location === 'play area');
 
         if(_.size(cardsOwnedByPlayer) <= 1) {
+            this.moveCardsToDeadPile(cardsOwnedByPlayer);
             return;
         }
 
@@ -76,11 +80,21 @@ class KillCharacters extends BaseStep {
                     return false;
                 }
 
-                this.event.cards = _.reject(this.event.cards, card => card.owner === player).concat(selectedCards.reverse());
+                this.moveCardsToDeadPile(selectedCards.reverse());
 
+                return true;
+            },
+            onCancel: () => {
+                this.moveCardsToDeadPile(cardsOwnedByPlayer);
                 return true;
             }
         });
+    }
+
+    moveCardsToDeadPile(cards) {
+        for(let card of cards) {
+            card.owner.moveCard(card, 'dead pile');
+        }
     }
 
     doKill(event) {
@@ -93,7 +107,6 @@ class KillCharacters extends BaseStep {
         }
 
         event.cardStateWhenKilled = card.createSnapshot();
-        player.moveCard(card, 'dead pile');
         this.game.addMessage('{0} kills {1}', player, card);
     }
 }

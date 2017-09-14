@@ -17,10 +17,11 @@ class TheSeastoneChair extends DrawCard {
                 gameAction: 'kill'
             },
             handler: context => {
-                context.skipHandler();
                 this.game.addMessage('{0} uses {1} and kneels their faction card to kill {2} instead of normal claim effects',
                     this.controller, this, context.target);
-                context.target.controller.killCharacter(context.target);
+                context.replaceHandler(() => {
+                    context.target.controller.killCharacter(context.target);
+                });
             }
         });
     }

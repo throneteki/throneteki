@@ -18,7 +18,7 @@ class Craster extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             condition: () => this.tracker.anyKilled(),
             handler: () => {
-                let characters = this.tracker.killedThisPhase;
+                let characters = this.tracker.killedThisPhase.filter(card => card.location === 'dead pile');
                 _.each(characters, character => {
                     character.owner.putIntoPlay(character);
                 });

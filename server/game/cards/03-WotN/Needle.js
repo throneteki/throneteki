@@ -12,9 +12,10 @@ class Needle extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
-                context.skipHandler();
                 this.game.addMessage('{0} sacrifices {1} to return {2} to their hand', this.controller, this, context.event.card);
-                this.controller.returnCardToHand(context.event.card, false);
+                context.replaceHandler(() => {
+                    this.controller.returnCardToHand(context.event.card, false);
+                });
             }
         });
     }

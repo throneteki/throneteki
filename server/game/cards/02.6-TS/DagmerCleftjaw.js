@@ -9,28 +9,23 @@ class DagmerCleftjaw extends DrawCard {
                     event.challenge.isAttacking(this) &&
                     event.challenge.attackers.length === 1)
             },
+            target: {
+                activePromptTitle: 'Select a location',
+                source: this,
+                cardCondition: card => (
+                    card.location === 'play area' &&
+                    card.getType() === 'location' &&
+                    card.getCost() <= 3 &&
+                    !card.isLimited() &&
+                    card.controller !== this.controller)
+            },
             handler: context => {
-                context.skipHandler();
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a location',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.getType() === 'location' &&
-                        card.getCost() <= 3 &&
-                        !card.isLimited() &&
-                        card.controller !== this.controller),
-                    onSelect: (p, card) => this.onCardSelected(p, card)
+                this.game.addMessage('{0} uses {1} to take control of {2} instead of normal claim effects', context.player, this, context.target);
+                context.replaceHandler(() => {
+                    this.game.takeControl(context.player, context.target);
                 });
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.game.takeControl(player, card);
-        this.game.addMessage('{0} uses {1} to take control of {2} instead of normal claim effects', player, this, card);
-
-        return true;
     }
 }
 

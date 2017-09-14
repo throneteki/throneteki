@@ -539,7 +539,7 @@ this.interrupt({
 });
 ```
 
-In other cases, abilities contain the word 'instead' to indicate that the event will not be cancelled, but the normal effect will be replaced. In these case, `context.skipHandler()` can be called to replace the effect.
+In other cases, abilities contain the word 'instead' to indicate that the event will not be cancelled, but the normal effect will be replaced. In these cases, the `context.replaceHandler` method can be used to replace the effect. It must be passed a function that will execute instead of the normal handler.
 
 ```javascript
 this.interrupt({
@@ -547,8 +547,9 @@ this.interrupt({
         // claim is applied and Mirri is attacking alone
     },
     handler: context => {
-        context.skipHandler();
-        // prompt the player to select a character to kill
+        context.replaceHandler(() => {
+            // kill the chosen character
+        });
     }
 });
 ```

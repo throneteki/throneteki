@@ -4,7 +4,7 @@ class Event {
     constructor(name, params, merge = false) {
         this.name = name;
         this.cancelled = false;
-        this.shouldSkipHandler = false;
+        this.replacementHandler = null;
 
         if(merge) {
             _.extend(this, params);
@@ -22,8 +22,16 @@ class Event {
         this.cancelled = true;
     }
 
-    skipHandler() {
-        this.shouldSkipHandler = true;
+    replaceHandler(handler) {
+        this.replacementHandler = handler;
+    }
+
+    executeHandler(handler) {
+        if(this.replacementHandler) {
+            this.replacementHandler(...this.params);
+        } else {
+            handler(...this.params);
+        }
     }
 
     saveCard(card) {

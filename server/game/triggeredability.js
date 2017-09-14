@@ -16,8 +16,8 @@ class TriggeredAbilityContext {
         this.event.cancel();
     }
 
-    skipHandler() {
-        this.event.skipHandler();
+    replaceHandler(handler) {
+        this.event.replaceHandler(handler);
     }
 }
 
