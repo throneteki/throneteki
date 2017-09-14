@@ -3,25 +3,24 @@ const DrawCard = require('../../drawcard.js');
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
-        // TODO: For Melee, the challenge check should be updated to look at
-        // which challenges haven't been initiated against you instead of which
-        // a single opponent has initiated.
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && !this.allChallengesInitiatedByOpponent()
+                onPhaseEnded: event => event.phase === 'challenge' && !this.allChallengesDefended()
             },
             chooseOpponent: true,
             handler: context => {
-                let otherPlayer = context.opponent;
-                let buttons = [];
+                this.chosenOpponent = context.opponent;
 
-                if(otherPlayer.getNumberOfChallengesInitiatedByType('military') === 0) {
+                let buttons = [];
+                let challengeTypes = this.challengeTypesDefended();
+
+                if(!challengeTypes.includes('military')) {
                     buttons.push({ text: 'Military', method: 'satisfyClaim', arg: 'military' });
                 }
-                if(otherPlayer.getNumberOfChallengesInitiatedByType('intrigue') === 0) {
+                if(!challengeTypes.includes('intrigue')) {
                     buttons.push({ text: 'Intrigue', method: 'satisfyClaim', arg: 'intrigue' });
                 }
-                if(otherPlayer.getNumberOfChallengesInitiatedByType('power') === 0) {
+                if(!challengeTypes.includes('power')) {
                     buttons.push({ text: 'Power', method: 'satisfyClaim', arg: 'power' });
                 }
                 buttons.push({ text: 'Done', method: 'cancel' });
@@ -38,16 +37,15 @@ class MaesterAemon extends DrawCard {
     }
 
     satisfyClaim(player, claimType) {
-        let otherPlayer = this.game.getOtherPlayer(this.controller);
         let challenge = {
             winner: player,
-            loser: otherPlayer,
+            loser: this.chosenOpponent,
             challengeType: claimType,
             claim: player.getClaim()
         };
 
         this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim',
-            player, this, otherPlayer, claimType);
+            player, this, this.chosenOpponent, claimType);
 
         this.game.queueStep(new ApplyClaim(this.game, challenge));
 
@@ -60,18 +58,20 @@ class MaesterAemon extends DrawCard {
         return true;
     }
 
-    allChallengesInitiatedByOpponent() {
-        let otherPlayer = this.game.getOtherPlayer(this.controller);
-
-        if(!otherPlayer) {
-            return true;
-        }
+    allChallengesDefended() {
+        let challengeTypes = this.challengeTypesDefended();
 
         return (
-            otherPlayer.getNumberOfChallengesInitiatedByType('military') > 0 &&
-            otherPlayer.getNumberOfChallengesInitiatedByType('intrigue') > 0 &&
-            otherPlayer.getNumberOfChallengesInitiatedByType('power') > 0
+            challengeTypes.includes('military') &&
+            challengeTypes.includes('intrigue') &&
+            challengeTypes.includes('power')
         );
+    }
+
+    challengeTypesDefended() {
+        let challenges = this.controller.getParticipatedChallenges();
+        let challengesDefended = challenges.filter(challenge => challenge.defendingPlayer === this.controller);
+        return challengesDefended.map(challenge => challenge.challengeType);
     }
 }
 

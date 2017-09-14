@@ -39,7 +39,7 @@ class Player extends Spectator {
         this.setupGold = 8;
         this.cardsInPlayBeforeSetup = [];
         this.deck = {};
-        this.challenges = new ChallengeTracker();
+        this.challenges = new ChallengeTracker(this);
         this.minReserve = 0;
         this.costReducers = [];
         this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, this, 'hand'));
@@ -183,7 +183,7 @@ class Player extends Spectator {
     }
 
     getNumberOfChallengesInitiated() {
-        return this.challenges.complete;
+        return this.challenges.getPerformed();
     }
 
     getNumberOfUsedPlots() {
@@ -846,16 +846,12 @@ class Player extends Spectator {
         });
     }
 
-    initiateChallenge(challengeType) {
-        this.challenges.perform(challengeType);
+    trackChallenge(challenge) {
+        this.challenges.track(challenge);
     }
 
-    winChallenge(challengeType, wasAttacker) {
-        this.challenges.won(challengeType, wasAttacker);
-    }
-
-    loseChallenge(challengeType, wasAttacker) {
-        this.challenges.lost(challengeType, wasAttacker);
+    getParticipatedChallenges() {
+        return this.challenges.getChallenges();
     }
 
     resetForChallenge() {

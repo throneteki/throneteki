@@ -5,10 +5,7 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
         this.action({
             max: ability.limit.perPhase(1),
             title: 'Raise challenge limit',
-            // TODO: This condition and opponent choice should be limited to
-            // players who won a challenge against the current player for Melee.
-            condition: () => this.hasLostChallenge(),
-            chooseOpponent: true,
+            chooseOpponent: opponent => this.hasLostChallengeAgainst(opponent),
             phase: 'challenge',
             handler: () => {
                 this.untilEndOfPhase(ability => ({
@@ -26,10 +23,9 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
         });
     }
 
-    hasLostChallenge() {
-        return (this.controller.getNumberOfChallengesLost('military') +
-               this.controller.getNumberOfChallengesLost('intrigue') +
-               this.controller.getNumberOfChallengesLost('power')) > 0;
+    hasLostChallengeAgainst(opponent) {
+        let challenges = this.controller.getParticipatedChallenges();
+        return challenges.some(challenge => challenge.winner === opponent);
     }
 }
 
