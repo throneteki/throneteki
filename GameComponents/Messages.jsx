@@ -52,7 +52,7 @@ class InnerMessages extends React.Component {
                 switch(fragment.type) {
                     case 'endofround':
                         return (
-                            <div>
+                            <div className='seperator'>
                                 <hr />
                                 { message }
                                 <hr />
