@@ -29,7 +29,8 @@ class InnerProfile extends React.Component {
             windowTimer: this.props.user.settings.windowTimer,
             keywordSettings: this.props.user.settings.keywordSettings,
             timerSettings: this.props.user.settings.timerSettings,
-            selectedBackground: this.props.user.settings.background
+            selectedBackground: this.props.user.settings.background,
+            selectedCardSize: this.props.user.settings.cardSize
         };
 
         this.windows = [
@@ -117,7 +118,8 @@ class InnerProfile extends React.Component {
                             windowTimer: this.state.windowTimer,
                             keywordSettings: this.state.keywordSettings,
                             timerSettings: this.state.timerSettings,
-                            background: this.state.selectedBackground
+                            background: this.state.selectedBackground,
+                            cardSize: this.state.selectedCardSize
                         }
                     })
                 }
@@ -195,6 +197,10 @@ class InnerProfile extends React.Component {
         this.setState({ selectedBackground: background });
     }
 
+    onCardClick(size) {
+        this.setState({ selectedCardSize: size });
+    }
+
     render() {
         if(!this.props.user) {
             return <AlertPanel type='error' message='You must be logged in to update your profile' />;
@@ -217,7 +223,7 @@ class InnerProfile extends React.Component {
                     { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
                     { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
                     <form className='form form-horizontal'>
-                        <div className='panel-title text-center'>
+                        <div className='panel-title'>
                             Profile
                         </div>
                         <div className='panel'>
@@ -234,7 +240,7 @@ class InnerProfile extends React.Component {
                                 onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
                         </div>
                         <div>
-                            <div className='panel-title text-center'>
+                            <div className='panel-title'>
                                 Action window defaults
                             </div>
                             <div className='panel'>
@@ -243,7 +249,7 @@ class InnerProfile extends React.Component {
                                     { windows }
                                 </div>
                             </div>
-                            <div className='panel-title text-center'>
+                            <div className='panel-title'>
                                 Timed Interrupt Window
                             </div>
                             <div className='panel'>
@@ -269,7 +275,7 @@ class InnerProfile extends React.Component {
                                         onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.state.timerSettings.abilities } />
                                 </div>
                             </div>
-                            <div className='panel-title text-center'>
+                            <div className='panel-title'>
                                 Keywords
                             </div>
                             <div className='panel'>
@@ -301,6 +307,45 @@ class InnerProfile extends React.Component {
                                         <img className={ 'img-responsive' + (this.state.selectedBackground === 'BG2' ? ' selected' : '') }
                                             src='img/background3.png' />
                                         <span className='bg-label'>Winter</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div className='panel-title'>
+                                Card Image Size
+                            </div>
+                            <div className='panel'>
+                                <div className='row'>
+                                    <div className='col-xs-12'>
+                                        <div className='card-settings' onClick={ () => this.onCardClick('small') }>
+                                            <div className={ 'card small vertical' + (this.state.selectedCardSize === 'small' ? ' selected' : '') }>
+                                                <img className='card small vertical'
+                                                    src='img/cards/cardback.jpg' />
+                                            </div>
+                                            <span className='bg-label'>Small</span>
+                                        </div>
+                                        <div className='card-settings' onClick={ () => this.onCardClick('normal') }>
+                                            <div className={ 'card vertical' + (this.state.selectedCardSize === 'normal' ? ' selected' : '') }>
+                                                <img className='card vertical'
+                                                    src='img/cards/cardback.jpg' />
+                                            </div>
+                                            <span className='bg-label'>Normal</span>
+                                        </div>
+                                        <div className='card-settings' onClick={ () => this.onCardClick('large') }>
+                                            <div className={ 'card vertical large' + (this.state.selectedCardSize === 'large' ? ' selected' : '') } >
+                                                <img className='card-image large vertical'
+                                                    src='/img/cards/cardback.jpg' />
+                                            </div>
+                                            <span className='bg-label'>Large</span>
+                                        </div>
+                                        <div className='card-settings' onClick={ () => this.onCardClick('x-large') }>
+                                            <div className={ 'card vertical x-large' + (this.state.selectedCardSize === 'x-large' ? ' selected' : '') }>
+                                                <img className='card-image x-large vertical'
+                                                    src='img/cards/cardback.jpg' />
+                                            </div>
+                                            <span className='bg-label'>Extra-Large</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

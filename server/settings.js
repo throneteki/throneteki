@@ -17,7 +17,8 @@ const defaultKeywordSettings = {
 const defaultSettings = {
     disableGravatar: false,
     windowTimer: 10,
-    background: 'BG1'
+    background: 'BG1',
+    cardSize: 'normal'
 };
 
 const defaultTimerSettings = {

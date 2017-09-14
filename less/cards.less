@@ -15,6 +15,41 @@
   overflow: hidden;
   z-index: @layer-cards;
 
+  &.small {
+    &.vertical {
+      height: @card-sm-height;
+      width: @card-sm-width;
+    }
+
+    &.horizontal {
+      height: @card-sm-width;
+      width: @card-sm-height;
+    }
+  }
+
+  &.large {
+    &.vertical {
+      height: @card-lg-height;
+      width: @card-lg-width;
+    }
+
+    &.horizontal {
+      height: @card-lg-width;
+      width: @card-lg-height;
+    }
+  }
+
+  &.x-large {
+    &.vertical {
+      height: @card-xl-height;
+      width: @card-xl-width;
+    }
+
+    &.horizontal {
+      height: @card-xl-width;
+      width: @card-xl-height;
+    }}
+
   &.vertical {
     height: @card-height;
     width: @card-width;
@@ -67,6 +102,52 @@
   position: absolute;
   top: 0;
 
+  &.small {
+    &.vertical {
+      height: @card-sm-height;
+      width: @card-sm-width;      
+    }
+
+    &.horizontal {
+      height: @card-sm-width;
+      width: @card-sm-height;
+    }
+  }
+
+  &.large {
+    &.vertical {
+      height: @card-lg-height;
+      width: @card-lg-width;      
+    }
+
+    &.horizontal {
+      height: @card-lg-width;
+      width: @card-lg-height;
+    }
+
+    &.kneeled {
+      left: 19px;
+      top: -20px;
+    }
+  }
+
+  &.x-large {
+    &.vertical {
+      height: @card-xl-height;
+      width: @card-xl-width;      
+    }
+
+    &.horizontal {
+      height: @card-xl-width;
+      width: @card-xl-height;
+    }
+
+    &.kneeled {
+      left: 24px;
+      top: -26px;
+    }
+  }
+
   &.vertical {
     height: @card-height;
     width: @card-width;
@@ -78,8 +159,8 @@
   }
 
   &.kneeled {
-    left: 9px;
-    top: -10px;
+    left: 11px;
+    top: -14px;
     transform: rotate(90deg);
   }
 }
@@ -147,6 +228,18 @@
 
 .attachment {
   margin-top: @attachment-offset - @card-height;
+
+  &.small {
+    margin-top: @attachment-offset - @card-sm-height;    
+  }
+
+  &.large {
+    margin-top: @attachment-offset - @card-lg-height;    
+  }
+
+  &.x-large {
+    margin-top: @attachment-offset - @card-xl-height;    
+  }
 }
 
 .generate-attachments(@n, @i: 1) when (@i =< @n) {

@@ -167,12 +167,14 @@ class Card extends React.Component {
 
         var index = 1;
         var attachments = _.map(this.props.card.attachments, attachment => {
-            var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment } className={ 'attachment attachment-' + index } wrapped={ false }
+            var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment }
+                className={ 'attachment attachment-' + index } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment) }
                 onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
                 onClick={ this.props.onClick }
                 onMenuItemClick={ this.props.onMenuItemClick }
-                onDragStart={ ev => this.onCardDragStart(ev, attachment, this.props.source) } />);
+                onDragStart={ ev => this.onCardDragStart(ev, attachment, this.props.source) }
+                size={ this.props.size } />);
 
             index += 1;
 
@@ -197,9 +199,11 @@ class Card extends React.Component {
 
         var index = 1;
         var dupes = _.map(facedownDupes, dupe => {
-            var returnedDupe = (<Card key={ dupe.uuid } className={ 'card-dupe card-dupe-' + index } source={ this.props.source } card={ dupe } wrapped={ false }
+            var returnedDupe = (<Card key={ dupe.uuid } className={ 'card-dupe card-dupe-' + index }
+                source={ this.props.source } card={ dupe } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe) }
-                onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut } />);
+                onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
+                size={ this.props.size } />);
 
             index += 1;
 
@@ -251,6 +255,11 @@ class Card extends React.Component {
 
         if(!this.props.card) {
             return <div />;
+        }
+
+        if(this.props.size !== 'normal') {
+            cardClass += ' ' + this.props.size;
+            imageClass += ' ' + this.props.size;
         }
 
         if(this.props.card.code && this.props.card.code.startsWith('custom')) {
@@ -369,6 +378,7 @@ Card.propTypes = {
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
     orientation: React.PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
+    size: React.PropTypes.string,
     source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction',
         'additional', 'scheme plots']).isRequired,
     style: React.PropTypes.object,
