@@ -41,12 +41,46 @@ class InnerMessages extends React.Component {
 
     formatMessageText(message) {
         var index = 0;
-        return _.map(message, fragment => {
+        return _.map(message, (fragment, key) => {
             if(_.isNull(fragment) || _.isUndefined(fragment)) {
                 return '';
             }
 
-            if(fragment.message) {
+            if(key === 'alert') {
+                let message = this.formatMessageText(fragment.message);
+
+                switch(fragment.type) {
+                    case 'endofround':
+                        return (
+                            <div>
+                                <hr />
+                                { message }
+                                <hr />
+                            </div>
+                        );
+                    case 'success':
+                        return (<div className='alert alert-success'>
+                            <span className='glyphicon glyphicon-ok-sign' />&nbsp;
+                            { message }
+                        </div>);
+                    case 'info':
+                        return (<div className='alert alert-info'>
+                            <span className='glyphicon glyphicon-info-sign' />&nbsp;
+                            { message }
+                        </div>);
+                    case 'danger':
+                        return (<div className='alert alert-danger'>
+                            <span className='glyphicon glyphicon-exclamation-sign' />&nbsp;
+                            { message }
+                        </div>);
+                    case 'warning':
+                        return (<div className='alert alert-warning'>
+                            <span className='glyphicon glyphicon-warning-sign' />&nbsp;
+                            { message }
+                        </div>);
+                }
+                return message;
+            } else if(fragment.message) {
                 return this.formatMessageText(fragment.message);
             } else if(fragment.code && fragment.label) {
                 return (
