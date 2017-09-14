@@ -72,7 +72,7 @@ class PlayerHand extends React.Component {
             case 'small':
                 return 65 * 0.8;
             case 'large':
-                return 65 * 1.5;
+                return 65 * 1.4;
             case 'x-large':
                 return 65 * 2;
             case 'normal':

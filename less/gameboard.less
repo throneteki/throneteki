@@ -24,7 +24,7 @@
   &.small {
     &.vertical {
       height: @card-sm-height;
-      min-width: @card-sm-width;      
+      min-width: @card-sm-width;
     }
 
     &.horizontal {
@@ -36,7 +36,7 @@
   &.large {
     &.vertical {
       height: @card-lg-height;
-      min-width: @card-lg-width;      
+      min-width: @card-lg-width;
     }
 
     &.horizontal {
@@ -48,7 +48,7 @@
   &.x-large {
     &.vertical {
       height: @card-xl-height;
-      min-width: @card-xl-width;      
+      min-width: @card-xl-width;
     }
 
     &.horizontal {
@@ -587,21 +587,38 @@ span.down-arrow {
 .hand {
   &.small {
     height: @card-sm-height;
-    width: @card-sm-width * 5;
+    width: @card-sm-width * 5 + (5 * 5);
+
+    &.squish {
+      width: @card-sm-width * 5;
+    }
   }
-  
+
   &.large {
     height: @card-lg-height;
-    width: @card-lg-width * 5;
+    width: @card-lg-width * 5 + (5 * 5);
+
+    &.squish {
+      width: @card-lg-width * 5;
+    }
   }
 
   &.x-large {
     height: @card-xl-height;
-    width: @card-xl-width * 5;
+    width: @card-xl-width * 5 + (5 * 5);
+
+    &.squish {
+      width: @card-xl-width * 5;
+    }
   }
-  
+
   height: @card-height;
-  width: (@card-width * 5);
+  width: (@card-width * 5) + (5 * 5);
+
+  &.squish {
+    width: @card-width * 5;
+  }
+
   padding: 0px;
   margin: 0px 5px;
 }
