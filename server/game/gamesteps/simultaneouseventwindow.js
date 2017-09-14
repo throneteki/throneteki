@@ -152,13 +152,12 @@ class SimultaneousEventWindow extends BaseStep {
     }
 
     executeEventHandler(event, handler) {
-        if(!event.shouldSkipHandler) {
-            handler(...event.params);
+        event.executeHandler(handler);
 
-            if(event.cancelled) {
-                return;
-            }
+        if(event.cancelled) {
+            return;
         }
+
         this.game.emit(event.name, ...event.params);
     }
 }

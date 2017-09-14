@@ -11,18 +11,18 @@ class VengeanceForElia extends DrawCard {
             handler: context => {
                 let opponent = context.opponent;
 
-                context.skipHandler();
-
                 this.game.addMessage('{0} uses {1} to apply claim to {2} instead', context.player, this, opponent);
 
-                let replacementChallenge = {
-                    challengeType: this.game.currentChallenge.challengeType,
-                    claim: this.game.currentChallenge.claim,
-                    loser: opponent,
-                    winner: this.game.currentChallenge.winner
-                };
+                context.replaceHandler(() => {
+                    let replacementChallenge = {
+                        challengeType: this.game.currentChallenge.challengeType,
+                        claim: this.game.currentChallenge.claim,
+                        loser: opponent,
+                        winner: this.game.currentChallenge.winner
+                    };
 
-                this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
+                    this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
+                });
             }
         });
     }

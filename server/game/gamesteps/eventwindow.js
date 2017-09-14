@@ -91,14 +91,12 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        if(!this.event.shouldSkipHandler) {
-            this.handler(...this.event.params);
+        this.event.executeHandler(this.handler);
 
-            if(this.event.cancelled) {
-                return;
-            }
+        if(this.event.cancelled) {
+            return;
         }
-        
+
         this.game.emit(this.eventName, ...this.event.params);
         if(this.eventName === 'onPlotsWhenRevealed') {
             this.game.openAbilityWindow({

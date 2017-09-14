@@ -122,7 +122,8 @@ describe('SimultaneousEventWindow', function() {
 
         describe('when an event has its handler skipped', function() {
             beforeEach(function() {
-                this.eventWindow.event.skipHandler();
+                this.replacementHandler = jasmine.createSpy('replacementHandler');
+                this.eventWindow.event.replaceHandler(this.replacementHandler);
                 this.eventWindow.continue();
             });
 
@@ -137,6 +138,10 @@ describe('SimultaneousEventWindow', function() {
 
             it('should not call the handler', function() {
                 expect(this.handler).not.toHaveBeenCalled();
+            });
+
+            it('should call the replacement handler', function() {
+                expect(this.replacementHandler).toHaveBeenCalled();
             });
         });
 
