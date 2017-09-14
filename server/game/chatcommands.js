@@ -56,7 +56,7 @@ class ChatCommands {
     draw(player, args) {
         var num = this.getNumberOrDefault(args[1], 1);
 
-        this.game.addMessage('{0} uses the /draw command to draw {1} cards to their hand', player, num);
+        this.game.addAlert('danger', '{0} uses the /draw command to draw {1} cards to their hand', player, num);
 
         player.drawCardsToHand(num);
     }
@@ -75,7 +75,7 @@ class ChatCommands {
                     card.power = 0;
                 }
 
-                this.game.addMessage('{0} uses the /power command to set the power of {1} to {2}', p, card, num);
+                this.game.addAlert('danger', '{0} uses the /power command to set the power of {1} to {2}', p, card, num);
                 return true;
             }
         });
@@ -90,7 +90,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.controller.killCharacter(card);
 
-                this.game.addMessage('{0} uses the /kill command to kill {1}', p, card);
+                this.game.addAlert('danger', '{0} uses the /kill command to kill {1}', p, card);
                 return true;
             }
         });
@@ -104,7 +104,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.setBlank();
 
-                this.game.addMessage('{0} uses the /blank command to blank {1}', p, card);
+                this.game.addAlert('danger', '{0} uses the /blank command to blank {1}', p, card);
                 return true;
             }
         });
@@ -118,7 +118,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.clearBlank();
 
-                this.game.addMessage('{0} uses the /unblank command to remove the blank condition from {1}', p, card);
+                this.game.addAlert('danger', '{0} uses the /unblank command to remove the blank condition from {1}', p, card);
                 return true;
             }
         });
@@ -138,7 +138,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.addTrait(trait);
 
-                this.game.addMessage('{0} uses the /add-trait command to add the {1} trait to {2}', p, trait, card);
+                this.game.addAlert('danger', '{0} uses the /add-trait command to add the {1} trait to {2}', p, trait, card);
                 return true;
             }
         });
@@ -157,7 +157,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.removeTrait(trait);
 
-                this.game.addMessage('{0} uses the /remove-trait command to remove the {1} trait from {2}', p, trait, card);
+                this.game.addAlert('danger', '{0} uses the /remove-trait command to remove the {1} trait from {2}', p, trait, card);
                 return true;
             }
         });
@@ -176,7 +176,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.addKeyword(keyword);
 
-                this.game.addMessage('{0} uses the /add-keyword command to add the {1} keyword to {2}', p, keyword, card);
+                this.game.addAlert('danger', '{0} uses the /add-keyword command to add the {1} keyword to {2}', p, keyword, card);
                 return true;
             }
         });
@@ -195,7 +195,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.removeKeyword(keyword);
 
-                this.game.addMessage('{0} uses the /remove-keyword command to remove the {1} keyword from {2}', p, keyword, card);
+                this.game.addAlert('danger', '{0} uses the /remove-keyword command to remove the {1} keyword from {2}', p, keyword, card);
                 return true;
             }
         });
@@ -204,13 +204,13 @@ class ChatCommands {
     discard(player, args) {
         var num = this.getNumberOrDefault(args[1], 1);
 
-        this.game.addMessage('{0} uses the /discard command to discard {1} card{2} at random', player, num, num > 1 ? 's' : '');
+        this.game.addAlert('danger', '{0} uses the /discard command to discard {1} card{2} at random', player, num, num > 1 ? 's' : '');
 
         player.discardAtRandom(num);
     }
 
     pillage(player) {
-        this.game.addMessage('{0} uses the /pillage command to discard 1 card from the top of their draw deck', player);
+        this.game.addAlert('danger', '{0} uses the /pillage command to discard 1 card from the top of their draw deck', player);
 
         player.discardFromDraw(1, discarded => {
             this.game.addMessage('{0} discards {1} due to Pillage', player, discarded);
@@ -230,7 +230,7 @@ class ChatCommands {
                 } else {
                     card.strengthModifier = num - card.cardData.strength;
                 }
-                this.game.addMessage('{0} uses the /strength command to set the strength of {1} to {2}', p, card, num);
+                this.game.addAlert('danger', '{0} uses the /strength command to set the strength of {1} to {2}', p, card, num);
                 return true;
             }
         });
@@ -249,7 +249,7 @@ class ChatCommands {
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
                 card.addIcon(icon);
-                this.game.addMessage('{0} uses the /give-icon command to give {1} a {2} icon', p, card, icon);
+                this.game.addAlert('danger', '{0} uses the /give-icon command to give {1} a {2} icon', p, card, icon);
 
                 return true;
             }
@@ -269,7 +269,7 @@ class ChatCommands {
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
                 card.removeIcon(icon);
-                this.game.addMessage('{0} uses the /take-icon command to remove a {1} icon from {2}', p, icon, card);
+                this.game.addAlert('danger', '{0} uses the /take-icon command to remove a {1} icon from {2}', p, icon, card);
 
                 return true;
             }
@@ -288,7 +288,7 @@ class ChatCommands {
                 }
 
                 this.game.takeControl(otherPlayer, card);
-                this.game.addMessage('{0} uses the /give-control command to pass control of {1} to {2}', p, card, otherPlayer);
+                this.game.addAlert('danger', '{0} uses the /give-control command to pass control of {1} to {2}', p, card, otherPlayer);
 
                 return true;
             }
@@ -297,11 +297,11 @@ class ChatCommands {
 
     resetChallengeCount(player) {
         player.challenges.reset();
-        this.game.addMessage('{0} uses /reset-challenges-count to reset the number of challenges performed', player);
+        this.game.addAlert('danger', '{0} uses /reset-challenges-count to reset the number of challenges performed', player);
     }
 
     cancelPrompt(player) {
-        this.game.addMessage('{0} uses the /cancel-prompt to skip the current step.', player);
+        this.game.addAlert('danger', '{0} uses the /cancel-prompt to skip the current step.', player);
         this.game.pipeline.cancelStep();
         this.game.cancelPromptUsed = true;
     }
@@ -322,7 +322,7 @@ class ChatCommands {
                 let numTokens = card.tokens[token] || 0;
 
                 card.addToken(token, num - numTokens);
-                this.game.addMessage('{0} uses the /token command to set the {1} token count of {2} to {3}', p, token, card, num);
+                this.game.addAlert('danger', '{0} uses the /token command to set the {1} token count of {2} to {3}', p, token, card, num);
 
                 return true;
             }
@@ -344,7 +344,7 @@ class ChatCommands {
                 player.gold -= num;
 
                 card.addToken('gold', num);
-                this.game.addMessage('{0} uses the /bestow command to add {1} gold to {2}', p, num, card);
+                this.game.addAlert('danger', '{0} uses the /bestow command to add {1} gold to {2}', p, num, card);
 
                 return true;
             }
@@ -368,7 +368,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.addFaction(faction);
 
-                this.game.addMessage('{0} uses the /add-faction command to add the {1} faction to {2}', p, faction, card);
+                this.game.addAlert('danger', '{0} uses the /add-faction command to add the {1} faction to {2}', p, faction, card);
                 return true;
             }
         });
@@ -387,7 +387,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 card.removeFaction(faction);
 
-                this.game.addMessage('{0} uses the /remove-faction command to remove the {1} keyword from {2}', p, faction, card);
+                this.game.addAlert('danger', '{0} uses the /remove-faction command to remove the {1} keyword from {2}', p, faction, card);
                 return true;
             }
         });
@@ -400,7 +400,7 @@ class ChatCommands {
             cardCondition: card => card.controller === player && card.owner === player,
             onSelect: (p, card) => {
                 player.moveCard(card, 'draw deck', { bottom: true });
-                this.game.addMessage('{0} uses the /move-bottom command to move {1} to the bottom of their deck', p, card);
+                this.game.addAlert('danger', '{0} uses the /move-bottom command to move {1} to the bottom of their deck', p, card);
                 return true;
             }
         });

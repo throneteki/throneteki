@@ -2,7 +2,7 @@ const ChatCommands = require('../../../server/game/chatcommands.js');
 
 describe('ChatCommands', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'addAlert']);
 
         this.playerSpy = jasmine.createSpyObj('player', ['drawCardsToHand', 'discardAtRandom', 'discardFromDraw']);
         this.chatCommands = new ChatCommands(this.gameSpy);

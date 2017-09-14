@@ -85,6 +85,10 @@ class Game extends EventEmitter {
         this.gameChat.addMessage(...arguments);
     }
 
+    addAlert() {
+        this.gameChat.addAlert(...arguments);
+    }
+
     get messages() {
         return this.gameChat.messages;
     }
@@ -206,7 +210,7 @@ class Game extends EventEmitter {
             player.kneelCard(player.faction);
         }
 
-        this.addMessage('{0} {1} their faction card', player, player.faction.kneeled ? 'kneels' : 'stands');
+        this.addAlert('danger', '{0} {1} their faction card', player, player.faction.kneeled ? 'kneels' : 'stands');
     }
 
     cardClicked(sourcePlayer, cardId) {
@@ -247,7 +251,7 @@ class Game extends EventEmitter {
                 player.kneelCard(card);
             }
 
-            this.addMessage('{0} {1} {2}', player, card.kneeled ? 'kneels' : 'stands', card);
+            this.addAlert('danger', '{0} {1} {2}', player, card.kneeled ? 'kneels' : 'stands', card);
         }
     }
 
@@ -310,11 +314,11 @@ class Game extends EventEmitter {
         if(!player.showDeck) {
             player.showDrawDeck();
 
-            this.addMessage('{0} is looking at their deck', player);
+            this.addAlert('danger', '{0} is looking at their deck', player);
         } else {
             player.showDeck = false;
 
-            this.addMessage('{0} stops looking at their deck', player);
+            this.addAlert('info', '{0} stops looking at their deck', player);
         }
     }
 
@@ -336,7 +340,7 @@ class Game extends EventEmitter {
                 }
             }
 
-            this.addMessage('{0} has moved {1} from their {2} to their {3}',
+            this.addAlert('danger', '{0} has moved {1} from their {2} to their {3}',
                 player, movedCard, source, target);
         }
     }
@@ -390,7 +394,7 @@ class Game extends EventEmitter {
     playerDecked(player) {
         let otherPlayer = this.getOtherPlayer(player);
 
-        this.addMessage('{0} loses the game because their draw deck is empty', player);
+        this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
 
         if(otherPlayer) {
             this.recordWinner(otherPlayer, 'decked');
@@ -402,7 +406,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} has won the game', winner);
+        this.addAlert('success', '{0} has won the game', winner);
 
         this.winner = winner;
         this.finishedAt = new Date();
@@ -440,7 +444,7 @@ class Game extends EventEmitter {
             if(player.activePlot.claimSet < 0) {
                 player.activePlot.claimSet = 0;
             } else {
-                this.addMessage('{0} changes the set claim value to be {1} ({2})', player, player.activePlot.claimSet, (value > 0 ? '+' : '') + value);
+                this.addAlert('danger', '{0} changes the set claim value to be {1} ({2})', player, player.activePlot.claimSet, (value > 0 ? '+' : '') + value);
             }
             return;
         }
@@ -450,7 +454,7 @@ class Game extends EventEmitter {
         if(target[stat] < 0) {
             target[stat] = 0;
         } else {
-            this.addMessage('{0} sets {1} to {2} ({3})', player, stat, target[stat], (value > 0 ? '+' : '') + value);
+            this.addAlert('danger', '{0} sets {1} to {2} ({3})', player, stat, target[stat], (value > 0 ? '+' : '') + value);
         }
     }
 
@@ -478,7 +482,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} concedes', player);
+        this.addAlert('info', '{0} concedes', player);
 
         var otherPlayer = this.getOtherPlayer(player);
 
@@ -503,7 +507,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} shuffles their deck', player);
+        this.addAlert('danger', '{0} shuffles their deck', player);
 
         player.shuffleDrawDeck();
     }
@@ -588,6 +592,8 @@ class Game extends EventEmitter {
 
         this.playStarted = true;
         this.startedAt = new Date();
+
+        this.round = 0;
 
         this.continue();
     }
@@ -778,7 +784,7 @@ class Game extends EventEmitter {
         }
 
         this.playersAndSpectators[user.username] = new Spectator(socketId, user);
-        this.addMessage('{0} has joined the game as a spectator', user.username);
+        this.addAlert('info', '{0} has joined the game as a spectator', user.username);
 
         return true;
     }
@@ -804,7 +810,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} has left the game', player);
+        this.addAlert('info', '{0} has left the game', player);
 
         if(this.isSpectator(player) || !this.started) {
             delete this.playersAndSpectators[playerName];
@@ -824,7 +830,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addMessage('{0} has disconnected', player);
+        this.addAlert('warning', '{0} has disconnected', player);
 
         if(this.isSpectator(player)) {
             delete this.playersAndSpectators[playerName];
@@ -845,7 +851,7 @@ class Game extends EventEmitter {
         if(this.isSpectator(player) || !this.started) {
             delete this.playersAndSpectators[playerName];
         } else {
-            this.addMessage('{0} has failed to connect to the game', player);
+            this.addAlert('danger', '{0} has failed to connect to the game', player);
 
             player.disconnected = true;
 
@@ -865,7 +871,7 @@ class Game extends EventEmitter {
         player.socket = socket;
         player.disconnected = false;
 
-        this.addMessage('{0} has reconnected', player);
+        this.addAlert('info', '{0} has reconnected', player);
     }
 
     activatePersistentEffects() {
