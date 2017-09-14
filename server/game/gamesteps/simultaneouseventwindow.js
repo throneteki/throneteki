@@ -10,6 +10,7 @@ class SimultaneousEventWindow extends BaseStep {
         super(game);
 
         this.handler = properties.handler || (() => true);
+        this.postHandler = properties.postHandler || (() => true);
 
         this.event = new Event(properties.eventName, _.extend({ cards: cards }, properties.params), true);
         this.perCardEventMap = this.buildPerCardEvents(cards, properties);
@@ -25,6 +26,7 @@ class SimultaneousEventWindow extends BaseStep {
             new SimpleStep(game, () => this.perCardWindow('interrupt')),
             new SimpleStep(game, () => this.executeHandler()),
             new SimpleStep(game, () => this.executePerCardHandlers()),
+            new SimpleStep(game, () => this.executePostHandler()),
             new SimpleStep(game, () => this.openWindow('forcedreaction')),
             new SimpleStep(game, () => this.perCardWindow('forcedreaction')),
             new SimpleStep(game, () => this.openWindow('reaction')),
@@ -139,6 +141,14 @@ class SimultaneousEventWindow extends BaseStep {
                 this.executeEventHandler(event, this.perCardHandler);
             });
         });
+    }
+
+    executePostHandler() {
+        if(this.event.cancelled) {
+            return;
+        }
+
+        this.executeEventHandler(this.event, this.postHandler);
     }
 
     executeEventHandler(event, handler) {
