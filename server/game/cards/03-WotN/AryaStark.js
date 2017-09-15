@@ -9,26 +9,18 @@ class AryaStark extends DrawCard {
                     event.cardStateWhenKilled.isFaction('stark'))
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.getType() === 'character' &&
-                        card.getStrength() <= 3),
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    gameAction: 'kill',
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                cardCondition: card => (
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getStrength() <= 3),
+                gameAction: 'kill'
+            },
+            handler: context => {
+                this.game.killCharacter(context.target);
+                this.game.addMessage('{0} sacrifices {1} to kill {2}', context.player, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        card.controller.killCharacter(card);
-        this.game.addMessage('{0} sacrifices {1} to kill {2}', player, this, card);
-
-        return true;
     }
 }
 
