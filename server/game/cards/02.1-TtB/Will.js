@@ -6,23 +6,15 @@ class Will extends DrawCard {
             when: {
                 afterChallenge: ({challenge}) => this.controller === challenge.loser && challenge.isUnopposed()
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Ranger') && card.controller === this.controller,
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Ranger') && card.controller === this.controller
+            },
+            handler: context => {
+                this.controller.sacrificeCard(context.target);
+
+                this.game.addMessage('{0} is forced to use {1} to sacrifice {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        player.sacrificeCard(card);
-
-        this.game.addMessage('{0} is forced to use {1} to sacrifice {2}', player, this, card);
-
-        return true;
     }
 }
 
