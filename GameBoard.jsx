@@ -468,6 +468,7 @@ export class InnerGameBoard extends React.Component {
                                 <div className='inset-pane'>
                                     <ActivePlayerPrompt title={ thisPlayer.menuTitle }
                                         buttons={ thisPlayer.buttons }
+                                        controls={ thisPlayer.controls }
                                         promptTitle={ thisPlayer.promptTitle }
                                         onButtonClick={ this.onCommand }
                                         onMouseOver={ this.onMouseOver }

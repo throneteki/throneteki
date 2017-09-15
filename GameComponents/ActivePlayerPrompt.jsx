@@ -1,6 +1,9 @@
 import React from 'react';
 import _ from 'underscore';
 
+import AbilityTargeting from './AbilityTargeting.jsx';
+
+
 class ActivePlayerPrompt extends React.Component {
     constructor() {
         super();
@@ -13,7 +16,7 @@ class ActivePlayerPrompt extends React.Component {
 
     shouldComponentUpdate(newProps, newState) {
         return newProps.phase !== this.props.phase || newProps.promptTitle !== this.props.promptTitle ||
-            newProps.title !== this.props.title || newProps.arrowDirection !== this.props.arrowDirection ||
+            newProps.title !== this.props.title ||
             !this.buttonsAreEqual(this.props.buttons, newProps.buttons) ||
             newState.showTimer !== this.state.showTimer ||
             newState.timeLeft !== this.state.timeLeft || newState.timerClass !== this.state.timerClass;
@@ -150,6 +153,20 @@ class ActivePlayerPrompt extends React.Component {
         return buttons;
     }
 
+    getControls() {
+        return _.map(this.props.controls, control => {
+            switch(control.type) {
+                case 'targeting':
+                    return (
+                        <AbilityTargeting
+                            onMouseOut={ this.props.onMouseOut }
+                            onMouseOver={ this.props.onMouseOver }
+                            source={ control.source }
+                            targets={ control.targets } />);
+            }
+        });
+    }
+
     render() {
         let promptTitle;
 
@@ -178,6 +195,7 @@ class ActivePlayerPrompt extends React.Component {
             <div className='menu-pane'>
                 <div className='panel'>
                     <h4>{ this.props.title }</h4>
+                    { this.getControls() }
                     { this.getButtons() }
                 </div>
             </div>
@@ -187,12 +205,8 @@ class ActivePlayerPrompt extends React.Component {
 
 ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
 ActivePlayerPrompt.propTypes = {
-    arrowDirection: React.PropTypes.oneOf([
-        'up',
-        'down',
-        'none'
-    ]),
     buttons: React.PropTypes.array,
+    controls: React.PropTypes.array,
     onButtonClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
