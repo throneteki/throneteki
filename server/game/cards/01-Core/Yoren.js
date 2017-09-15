@@ -6,22 +6,14 @@ class Yoren extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => card.location === 'discard pile' && card.getType() === 'character' && card.owner !== this.controller && card.getCost() <= 3,
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                cardCondition: card => card.location === 'discard pile' && card.getType() === 'character' && card.owner !== this.controller && card.getCost() <= 3
+            },
+            handler: context => {
+                this.controller.putIntoPlay(context.target);
+                this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s discard pile under their control', this.controller, this, context.target, context.target.owner);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        player.putIntoPlay(card);
-        this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s discard pile under their control', player, this, card, card.owner);
-
-        return true;
     }
 }
 
