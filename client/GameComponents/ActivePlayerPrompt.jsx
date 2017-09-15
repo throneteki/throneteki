@@ -188,6 +188,7 @@ class ActivePlayerPrompt extends React.Component {
 ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
 ActivePlayerPrompt.propTypes = {
     buttons: React.PropTypes.array,
+    controls: React.PropTypes.array,
     onButtonClick: React.PropTypes.func,
     onMouseOut: React.PropTypes.func,
     onMouseOver: React.PropTypes.func,
