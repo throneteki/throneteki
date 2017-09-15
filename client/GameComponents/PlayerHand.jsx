@@ -3,7 +3,7 @@ import _ from 'underscore';
 import $ from 'jquery';
 
 import Card from './Card.jsx';
-import {tryParseJSON} from '../util.js';
+import { tryParseJSON } from '../util.js';
 
 class PlayerHand extends React.Component {
     onDragOver(event) {
@@ -40,12 +40,14 @@ class PlayerHand extends React.Component {
     getCards(needsSquish) {
         let cardIndex = 0;
         let handLength = this.props.cards ? this.props.cards.length : 0;
-        let requiredWidth = handLength * 64;
-        let overflow = requiredWidth - 342;
+        let cardWidth = this.getCardWidth();
+
+        let requiredWidth = handLength * cardWidth;
+        let overflow = requiredWidth - (cardWidth * 5);
         let offset = overflow / (handLength - 1);
 
         let hand = _.map(this.props.cards, card => {
-            let left = (64 - offset) * cardIndex++;
+            let left = (cardWidth - offset) * cardIndex++;
 
             let style = {};
             if(needsSquish) {
@@ -58,16 +60,37 @@ class PlayerHand extends React.Component {
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
                 onClick={ this.props.onCardClick }
-                onDragDrop={ this.props.onDragDrop } />);
+                onDragDrop={ this.props.onDragDrop }
+                size={ this.props.cardSize } />);
         });
 
         return hand;
     }
 
+    getCardWidth() {
+        switch(this.props.cardSize) {
+            case 'small':
+                return 65 * 0.8;
+            case 'large':
+                return 65 * 1.4;
+            case 'x-large':
+                return 65 * 2;
+            case 'normal':
+            default:
+                return 65;
+        }
+    }
 
     render() {
         let className = 'panel hand';
-        let needsSquish = this.props.cards && this.props.cards.length * 64 > 342;
+
+        if(this.props.cardSize !== 'normal') {
+            className += ' ' + this.props.cardSize;
+        }
+
+        let cardWidth = this.getCardWidth();
+
+        let needsSquish = this.props.cards && this.props.cards.length * cardWidth > (cardWidth * 5);
 
         if(needsSquish) {
             className += ' squish';
@@ -91,6 +114,7 @@ class PlayerHand extends React.Component {
 
 PlayerHand.displayName = 'PlayerHand';
 PlayerHand.propTypes = {
+    cardSize: React.PropTypes.string,
     cards: React.PropTypes.array,
     isMe: React.PropTypes.bool,
     onCardClick: React.PropTypes.func,

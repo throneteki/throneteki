@@ -41,6 +41,7 @@ describe('the <GameBoard /> component', function() {
         state.games.currentGame.players['2'] = { id: 2, name: '2', cardPiles: {}, timerSettings: {} };
         state.socket.socket = jasmine.createSpyObj('socket', ['emit']);
         state.auth.username = '1';
+        state.auth.user = { settings: {} };
         state.socket.username = '1';
         state.games.state = state.games.currentGame;
     });

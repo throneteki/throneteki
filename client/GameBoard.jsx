@@ -262,8 +262,9 @@ export class InnerGameBoard extends React.Component {
 
         _.each(cardsByType, cards => {
             let cardsInPlay = _.map(cards, card => {
-                return (<Card key={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code } onMenuItemClick={ this.onMenuItemClick }
-                    onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />);
+                return (<Card key={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code }
+                    onMenuItemClick={ this.onMenuItemClick } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut }
+                    onClick={ this.onCardClick } onDragDrop={ this.onDragDrop } size={ this.props.user.settings.cardSize } />);
             });
             cardsByLocation.push(cardsInPlay);
         });
@@ -291,7 +292,8 @@ export class InnerGameBoard extends React.Component {
                 source='scheme plots'
                 spectating={ this.state.spectating }
                 title='Schemes'
-                topCard={ { facedown: true, kneeled: true } } />
+                topCard={ { facedown: true, kneeled: true } }
+                size={ this.props.user.settings.cardSize } />
         );
     }
 
@@ -303,19 +305,19 @@ export class InnerGameBoard extends React.Component {
                     title='Plots' source='plot deck' cards={ otherPlayer ? otherPlayer.cardPiles.plotDeck : [] }
                     topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disableMouseOver disablePopup
-                    onCardClick={ this.onCardClick } orientation='horizontal' />
+                    onCardClick={ this.onCardClick } orientation='horizontal' size={ this.props.user.settings.cardSize } />
                 <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer ? otherPlayer.cardPiles.plotDiscard : [] }
                     topCard={ otherPlayer ? otherPlayer.activePlot : undefined } orientation='horizontal' onMouseOver={ this.onMouseOver }
-                    onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } />
+                    onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } size={ this.props.user.settings.cardSize } />
             </div>
             <div className='plot-group our-side'>
                 <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ thisPlayer.cardPiles.plotDiscard } topCard={ thisPlayer.activePlot }
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } orientation='horizontal' onMenuItemClick={ this.onMenuItemClick }
-                    onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } />
+                    onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } size={ this.props.user.settings.cardSize } />
                 <CardPile className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
                     title='Plots' source='plot deck' cards={ thisPlayer.cardPiles.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop }
-                    closeOnClick />
+                    closeOnClick size={ this.props.user.settings.cardSize } />
                 { this.getSchemePile(thisPlayer, !this.state.spectating) }
             </div>
         </div>);
@@ -458,7 +460,8 @@ export class InnerGameBoard extends React.Component {
                                 onMouseOver={ this.onMouseOver }
                                 onMouseOut={ this.onMouseOut }
                                 outOfGamePile={ otherPlayer ? otherPlayer.cardPiles.outOfGamePile : [] }
-                                title={ otherPlayer ? otherPlayer.title : null } />
+                                title={ otherPlayer ? otherPlayer.title : null }
+                                cardSize={ this.props.user.settings.cardSize } />
                         </div>
                         <div className='board-inner'>
                             <div className='prompt-area'>
@@ -507,7 +510,8 @@ export class InnerGameBoard extends React.Component {
                                 deadPile={ thisPlayer.cardPiles.deadPile }
                                 spectating={ this.state.spectating }
                                 title={ thisPlayer.title }
-                                onMenuItemClick={ this.onMenuItemClick } />
+                                onMenuItemClick={ this.onMenuItemClick }
+                                cardSize={ this.props.user.settings.cardSize } />
                         </div>
                     </div>
                     <div className='right-side'>
