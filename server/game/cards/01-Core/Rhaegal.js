@@ -12,22 +12,14 @@ class Rhaegal extends DrawCard {
                 )
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select character to stand',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Stormborn'),
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Stormborn')
+            },
+            handler: context => {
+                this.controller.standCard(context.target);
+                this.game.addMessage('{0} uses {1} to stand {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        player.standCard(card);
-        this.game.addMessage('{0} uses {1} to stand {2}', player, this, card);
-
-        return true;
     }
 }
 
