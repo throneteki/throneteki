@@ -4,7 +4,7 @@ class FilthyAccusations extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             target: {
-                cardCondition: card => card.getType() === 'character' && !card.kneeled,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
                 gameAction: 'kneel'
             },
             handler: context => {

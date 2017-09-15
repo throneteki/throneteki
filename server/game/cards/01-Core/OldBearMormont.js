@@ -12,6 +12,7 @@ class OldBearMormont extends DrawCard {
                 onPhaseEnded: event => event.phase === 'challenge' && this.controller.getNumberOfChallengesLost('defender') === 0
             },
             target: {
+                activePromptTitle: 'Select a card',
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.isFaction('thenightswatch')
             },
             handler: context => {

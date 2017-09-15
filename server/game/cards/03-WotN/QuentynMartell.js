@@ -15,7 +15,7 @@ class QuentynMartell extends DrawCard {
                 onCharacterKilled: event => event.card === this
             },
             target: {
-                cardCondition: card => card.getType() === 'character' && card.getStrength() < this.getStrength(),
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getStrength() < this.getStrength(),
                 gameAction: 'kill'
             },
             handler: context => {

@@ -13,7 +13,7 @@ class Rhaegal extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Stormborn')
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Stormborn') && card.kneeled
             },
             handler: context => {
                 this.controller.standCard(context.target);

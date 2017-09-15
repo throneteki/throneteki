@@ -10,7 +10,7 @@ class Melisandre extends DrawCard {
             },
             limit: ability.limit.perRound(1),
             target: {
-                cardCondition: card => card.getType() === 'character' && !card.kneeled,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
                 gameAction: 'kneel'
             },
             handler: context => {

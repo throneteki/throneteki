@@ -7,7 +7,7 @@ class AsshaiPriestess extends DrawCard {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
             target: {
-                cardCondition: card => card.getType() === 'character' && card.getStrength() <= 2 && !card.kneeled,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getStrength() <= 2 && !card.kneeled,
                 gameAction: 'kneel'
             },
             handler: context => {
