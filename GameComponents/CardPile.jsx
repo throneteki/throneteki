@@ -90,13 +90,13 @@ class CardPile extends React.Component {
 
         $(event.target).removeClass('highlight-panel');
 
-        var card = event.dataTransfer.getData('Text');
+        let card = event.dataTransfer.getData('Text');
 
         if(!card) {
             return;
         }
 
-        var dragData = tryParseJSON(card);
+        let dragData = tryParseJSON(card);
 
         if(!dragData) {
             return;
@@ -130,7 +130,8 @@ class CardPile extends React.Component {
                 onTouchMove={ this.props.onTouchMove }
                 onClick={ this.onCardClick.bind(this, card) }
                 onDragDrop={ this.props.onDragDrop }
-                orientation={ this.props.orientation === 'kneeled' ? 'vertical' : this.props.orientation } />);
+                orientation={ this.props.orientation === 'kneeled' ? 'vertical' : this.props.orientation }
+                size={ this.props.size } />);
         });
 
         if(this.props.disablePopup || !this.state.showPopup) {
@@ -153,7 +154,7 @@ class CardPile extends React.Component {
 
         let linkIndex = 0;
 
-        var popupMenu = this.props.popupMenu ? (<div>{ _.map(this.props.popupMenu, menuItem => {
+        let popupMenu = this.props.popupMenu ? (<div>{ _.map(this.props.popupMenu, menuItem => {
             return <a className='btn btn-default' key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{ menuItem.text }</a>;
         }) }</div>) : null;
 
@@ -178,9 +179,9 @@ class CardPile extends React.Component {
     }
 
     getMenu() {
-        var menuIndex = 0;
+        let menuIndex = 0;
 
-        var menu = _.map(this.props.menu, item => {
+        let menu = _.map(this.props.menu, item => {
             return <div key={ (menuIndex++).toString() } onClick={ this.onMenuItemClick.bind(this, item) }>{ item.text }</div>;
         });
 
@@ -191,11 +192,15 @@ class CardPile extends React.Component {
     }
 
     render() {
-        var className = 'panel card-pile ' + this.props.className;
-        var cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
-        var headerText = this.props.title ? this.props.title + ' (' + (cardCount) + ')' : '';
-        var topCard = this.props.topCard || _.first(this.props.cards);
-        var cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
+        let className = 'panel card-pile ' + this.props.className;
+        if(this.props.size !== 'normal') {
+            className += ' ' + this.props.size;
+        }
+
+        let cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
+        let headerText = this.props.title ? this.props.title + ' (' + (cardCount) + ')' : '';
+        let topCard = this.props.topCard || _.first(this.props.cards);
+        let cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
 
         if(this.props.hiddenTopCard && !this.props.topCard) {
             topCard = { facedown: true };
@@ -220,7 +225,8 @@ class CardPile extends React.Component {
                     onClick={ this.onTopCardClick }
                     onMenuItemClick={ this.props.onMenuItemClick }
                     onDragDrop={ this.props.onDragDrop }
-                    orientation={ cardOrientation } /> : <div className='card-placeholder' /> }
+                    orientation={ cardOrientation }
+                    size={ this.props.size } /> : <div className='card-placeholder' /> }
                 { this.state.showMenu ? this.getMenu() : null }
                 { this.getPopup() }
             </div>);
@@ -247,6 +253,7 @@ CardPile.propTypes = {
     orientation: React.PropTypes.string,
     popupLocation: React.PropTypes.string,
     popupMenu: React.PropTypes.array,
+    size: React.PropTypes.string,
     source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
         'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional',
         'scheme plots']).isRequired,
