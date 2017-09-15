@@ -6,24 +6,18 @@ class TrystaneMartell extends DrawCard {
             when: {
                 afterChallenge: ({challenge}) => this.controller === challenge.loser && challenge.isParticipating(this)
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select character',
-                    waitingPromptTitle: 'Waiting for opponent to use ' + this.name,
-                    cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.getType() === 'character' &&
-                        card.getStrength() < this.getStrength()),
-                    onSelect: (player, card) => {
-                        this.game.addMessage('{0} uses {1} to make {2} unable to be declared as a defender', player, this, card);
-                        this.untilEndOfPhase(ability => ({
-                            match: card,
-                            effect: ability.effects.cannotBeDeclaredAsDefender()
-                        }));
-
-                        return true;
-                    }
-                });
+            target: {
+                cardCondition: card => (
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    card.getStrength() < this.getStrength())
+            },
+            handler: context => {
+                this.game.addMessage('{0} uses {1} to make {2} unable to be declared as a defender', this.controller, this, context.target);
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.cannotBeDeclaredAsDefender()
+                }));
             }
         });
     }
