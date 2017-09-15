@@ -6,22 +6,17 @@ class SerKevanLannister extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select location or attachment',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'discard pile' &&
-                        card.controller === this.controller &&
-                        (card.isFaction('lannister') || card.isFaction('neutral')) &&
-                        (card.getType() === 'location' || card.getType() === 'attachment')),
-                    onSelect: (player, card) => {
-                        player.putIntoPlay(card);
-                        this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, card);
-
-                        return true;
-                    }
-                });
+            target: {
+                activePromptTitle: 'Select a location or attachment',
+                cardCondition: card => (
+                    card.location === 'discard pile' &&
+                    card.controller === this.controller &&
+                    (card.isFaction('lannister') || card.isFaction('neutral')) &&
+                    (card.getType() === 'location' || card.getType() === 'attachment'))
+            },
+            handler: context => {
+                this.controller.putIntoPlay(context.target);
+                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, context.target);
             }
         });
     }
