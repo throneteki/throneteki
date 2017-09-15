@@ -5,30 +5,22 @@ class BearIslandHost extends DrawCard {
         this.action({
             title: 'Discard 1 gold from ' + this.name,
             cost: ability.costs.discardGold(),
+            target: {
+                cardCondition: card => card.location === 'play area' && card.hasTrait('House Mormont') && card.getType() === 'character'
+            },
             handler: context => {
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.hasTrait('House Mormont') && card.getType() === 'character',
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+                this.untilEndOfPhase(ability => ({
+                    condition: () => (
+                        this.game.currentChallenge &&
+                        this.game.currentChallenge.challengeType === 'military'),
+                    match: context.target,
+                    effect: ability.effects.doesNotKneelAsAttacker()
+                }));
+
+                this.game.addMessage('{0} discards a gold from {1} to make {2} not kneel as an attacker in a military challenge',
+                    this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.untilEndOfPhase(ability => ({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'military'),
-            match: card,
-            effect: ability.effects.doesNotKneelAsAttacker()
-        }));
-
-        this.game.addMessage('{0} discards a gold from {1} to make {2} not kneel as an attacker in a military challenge',
-            player, this, card);
-
-        return true;
     }
 }
 
