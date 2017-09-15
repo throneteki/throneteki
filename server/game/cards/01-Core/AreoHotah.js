@@ -10,27 +10,15 @@ class AreoHotah extends DrawCard {
                     this.game.currentPhase === 'challenge'
                 )
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.cardCondition(card),
-                    activePromptTitle: 'Select character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                cardCondition: card => card.getType() === 'character' && this.game.currentChallenge.isParticipating(card)
+            },
+            handler: context => {
+                this.game.currentChallenge.removeFromChallenge(context.target);
+
+                this.game.addMessage('{0} uses {1} to remove {2} from the challenge', context.player, this, context.target);
             }
         });
-    }
-
-    cardCondition(card) {
-        return card.getType() === 'character' && this.game.currentChallenge.isParticipating(card);
-    }
-
-    onCardSelected(player, card) {
-        this.game.currentChallenge.removeFromChallenge(card);
-
-        this.game.addMessage('{0} uses {1} to remove {2} from the challenge', player, this, card);
-
-        return true;
     }
 }
 
