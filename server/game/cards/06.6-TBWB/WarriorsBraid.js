@@ -11,7 +11,7 @@ class WarriorsBraid extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'military' && event.challenge.winner === this.controller &&
-                                         event.challenge.isParticipating(this.parent)
+                                         event.challenge.isAttacking(this.parent)
             },
             handler: () => {
                 this.addToken('bell', 1);
