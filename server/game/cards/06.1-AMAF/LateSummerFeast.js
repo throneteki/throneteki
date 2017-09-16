@@ -4,14 +4,10 @@ class LateSummerFeast extends PlotCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller
+                afterChallenge: event => event.challenge.winner === this.controller
             },
-            handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                if(!otherPlayer) {
-                    return;
-                }
+            handler: context => {
+                let otherPlayer = context.event.loser;
 
                 this.game.addMessage('{0} is forced by {1} to allow {2} to draw 1 card', this.controller, this, otherPlayer);
                 this.game.promptWithMenu(otherPlayer, this, {
