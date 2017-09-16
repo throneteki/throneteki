@@ -4,11 +4,10 @@ class SerBarristanSelmy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) =>
-                    challenge.winner === this.controller
-                    && challenge.isParticipating(this)
-                    && this.game.getOtherPlayer(this.controller)
-                    && this.controller.hand.size() < this.game.getOtherPlayer(this.controller).hand.size()
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller
+                    && event.challenge.isParticipating(this)
+                    && this.controller.hand.size() < event.challenge.loser.hand.size()
             },
             handler: () => {
                 this.controller.standCard(this);
