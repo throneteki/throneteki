@@ -4,29 +4,22 @@ class RattleshirtsRaiders extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.attackingPlayer === this.controller &&
-                    challenge.winner === this.controller &&
-                    challenge.isAttacking(this)
+                afterChallenge: event => (
+                    event.challenge.attackingPlayer === this.controller &&
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isAttacking(this)
                 )
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select an attachment',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'attachment',
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            target: {
+                activePromptTitle: 'Select an attachment',
+                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'attachment'
+            },
+            handler: context => {
+                context.target.owner.discardCard(context.target);
+
+                this.game.addMessage('{0} uses {1} to discard {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        card.owner.discardCard(card);
-
-        this.game.addMessage('{0} uses {1} to discard {2}', player, this, card);
-
-        return true;
     }
 }
 

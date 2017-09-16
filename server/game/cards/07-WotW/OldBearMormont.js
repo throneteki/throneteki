@@ -6,29 +6,21 @@ class OldBearMormont extends DrawCard {
             when: {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this)
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => (
-                        !card.isUnique() &&
-                        card.getType() === 'character' &&
-                        card.controller !== this.controller &&
-                        card.location === 'discard pile'),
-                    activePromptTitle: 'Select character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                cardCondition: card => (
+                    !card.isUnique() &&
+                    card.getType() === 'character' &&
+                    card.controller !== this.controller &&
+                    card.location === 'discard pile')
+            },
+            handler: context => {
+                let originalPlayer = context.target.controller;
+                this.controller.putIntoPlay(context.target);
+
+                this.game.addMessage('{0} uses {1} to put {2} into play under their control from {3}\'s discard pile',
+                    this.controller, this, context.target, originalPlayer);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        player.putIntoPlay(card);
-
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-        this.game.addMessage('{0} uses {1} to put {2} into play under their control from {3}\'s discard pile',
-            player, this, card, otherPlayer);
-
-        return true;
     }
 }
 

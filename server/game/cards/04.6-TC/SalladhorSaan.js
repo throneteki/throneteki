@@ -8,22 +8,17 @@ class SalladhorSaan extends DrawCard {
                     challenge.winner === this.controller &&
                     challenge.isParticipating(this))
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a card',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'hand' &&
-                        card.controller === this.controller &&
-                        ((card.hasTrait('Warship') && card.getType() === 'location') ||
-                        (card.hasTrait('Weapon') && card.getType() === 'attachment'))),
-                    onSelect: (player, card) => {
-                        player.putIntoPlay(card);
-                        this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, card);
-
-                        return true;
-                    }
-                });
+            target: {
+                activePromptTitle: 'Select a card',
+                cardCondition: card => (
+                    card.location === 'hand' &&
+                    card.controller === this.controller &&
+                    ((card.hasTrait('Warship') && card.getType() === 'location') ||
+                    (card.hasTrait('Weapon') && card.getType() === 'attachment')))
+            },
+            handler: context => {
+                this.controller.putIntoPlay(context.target);
+                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, context.target);
             }
         });
     }

@@ -7,38 +7,22 @@ class WildlingHorde extends DrawCard {
             phase: 'challenge',
             condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelFactionCard(),
-            handler: (context) => {
-                this.game.promptForSelect(context.player, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => this.cardCondition(context.player, card),
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            target: {
+                cardCondition: card => (
+                    card.location === 'play area' &&
+                    card.controller === this.controller &&
+                    card.hasTrait('Wildling') &&
+                    this.game.currentChallenge.isParticipating(card)
+                )
+            },
+            handler: context => {
+                this.game.addMessage('{0} uses {1} to kneel their faction card and increase the strength of {2} by 2 until the end of the challenge', this.controller, this, context.target);
+                this.untilEndOfChallenge(ability => ({
+                    match: context.target,
+                    effect: ability.effects.modifyStrength(2)
+                }));
             }
         });
-    }
-
-    cardCondition(player, card) {
-        var currentChallenge = this.game.currentChallenge;
-        if(!currentChallenge) {
-            return false;
-        }
-
-        return card.location === 'play area' && card.controller === player && card.hasTrait('Wildling') && currentChallenge.isParticipating(card);
-    }
-
-    onCardSelected(player, card) {
-        if(this.controller !== player) {
-            return false;
-        }
-
-        this.game.addMessage('{0} uses {1} to kneel their faction card and increase the strength of {2} by 2 until the end of the challenge', player, this, card);
-        this.untilEndOfChallenge(ability => ({
-            match: card,
-            effect: ability.effects.modifyStrength(2)
-        }));
-
-        return true;
     }
 }
 

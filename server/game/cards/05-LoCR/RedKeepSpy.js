@@ -10,22 +10,16 @@ class RedKeepSpy extends DrawCard {
                     this.hasMoreCardsInHand()
                 )
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.controller !== this.controller &&
-                        card.getType() === 'character' &&
-                        card.getCost() <= 3),
-                    onSelect: (player, card) => {
-                        card.owner.returnCardToHand(card);
-                        this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', player, this, card, card.controller);
-
-                        return true;
-                    }
-                });
+            target: {
+                cardCondition: card => (
+                    card.location === 'play area' &&
+                    card.controller !== this.controller &&
+                    card.getType() === 'character' &&
+                    card.getCost() <= 3)
+            },
+            handler: context => {
+                context.target.owner.returnCardToHand(context.target);
+                this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', this.controller, this, context.target, context.target.controller);
             }
         });
     }

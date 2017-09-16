@@ -9,28 +9,16 @@ class Melisandre extends DrawCard {
                 onCardPlayed: event => event.card.controller === this.controller && event.card.hasTrait('R\'hllor')
             },
             limit: ability.limit.perRound(1),
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.cardCondition(card),
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    gameAction: 'kneel',
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
+                gameAction: 'kneel'
+            },
+            handler: context => {
+                this.controller.kneelCard(context.target);
+
+                this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    cardCondition(card) {
-        return card.getType() === 'character' && !card.kneeled;
-    }
-
-    onCardSelected(player, card) {
-        player.kneelCard(card);
-
-        this.game.addMessage('{0} uses {1} to kneel {2}', player, this, card);
-
-        return true;
     }
 }
 

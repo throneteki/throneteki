@@ -5,38 +5,30 @@ const DrawCard = require('../../drawcard.js');
 class MaesterOfStarfall extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel this card to remove keyword',
+            title: 'Remove a keyword',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+            },
             handler: context => {
-                this.game.promptForSelect(context.player, {
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character',
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
+                let keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
+
+                this.selectedCard = context.target;
+
+                var buttons = _.map(keywords, keyword => {
+                    return { text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() };
+                });
+
+                this.game.promptWithMenu(this.controller, this, {
+                    activePrompt: {
+                        menuTitle: 'Select a keyword',
+                        buttons: buttons
+                    },
+                    source: this
                 });
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        var keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
-
-        this.selectedCard = card;
-
-        var buttons = _.map(keywords, keyword => {
-            return { text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() };
-        });
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Select a keyword',
-                buttons: buttons
-            },
-            source: this
-        });
-
-        return true;
     }
 
     keywordSelected(player, keyword) {

@@ -15,13 +15,14 @@ class RobbStark extends DrawCard {
             title: 'Stand and remove a character from the challenge',
             limit: ability.limit.perChallenge(1),
             condition: () => this.isParticipatingInMilitaryChallenge(),
+            target: {
+                cardCondition: card => this.isParticipatingNonKing(card)
+            },
             handler: context => {
-                this.game.promptForSelect(context.player, {
-                    cardCondition: card => this.isParticipatingNonKing(card),
-                    activePromptTitle: 'Select character to stand and remove',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+                context.target.controller.standCard(context.target);
+                this.game.currentChallenge.removeFromChallenge(context.target);
+
+                this.game.addMessage('{0} uses {1} to stand {2} and remove them from the challenge', this.controller, this, context.target);
             }
         });
     }
@@ -41,15 +42,6 @@ class RobbStark extends DrawCard {
             !card.hasTrait('King') &&
             this.game.currentChallenge.isParticipating(card)
         );
-    }
-
-    onCardSelected(player, card) {
-        card.controller.standCard(card);
-        this.game.currentChallenge.removeFromChallenge(card);
-
-        this.game.addMessage('{0} uses {1} to stand {2} and remove them from the challenge', player, this, card);
-
-        return true;
     }
 
     numberOfLoyalChars () {

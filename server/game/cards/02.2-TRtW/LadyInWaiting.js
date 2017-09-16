@@ -5,13 +5,12 @@ class LadyInWaiting extends DrawCard {
         this.playAction({
             title: 'Marshal as dupe',
             condition: () => this.canMarshalAsDupe(),
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady') &&
-                                           card.controller === this.controller && card.owner === this.controller,
-                    onSelect: (player, card) => this.marshalAsDupe(card)
-                });
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady') &&
+                card.controller === this.controller && card.owner === this.controller
+            },
+            handler: context => {
+                this.marshalAsDupe(context.target);
             }
         });
     }

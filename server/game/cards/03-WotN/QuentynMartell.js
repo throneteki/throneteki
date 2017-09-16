@@ -14,28 +14,15 @@ class QuentynMartell extends DrawCard {
             when: {
                 onCharacterKilled: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.cardCondition(card),
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    gameAction: 'kill',
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getStrength() < this.getStrength(),
+                gameAction: 'kill'
+            },
+            handler: context => {
+                this.game.killCharacter(context.target);
+                this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    cardCondition(card) {
-        return card.getType() === 'character' && card.getStrength() < this.getStrength();
-    }
-
-    onCardSelected(player, card) {
-        card.controller.killCharacter(card);
-
-        this.game.addMessage('{0} uses {1} to kill {2}', player, this, card);
-
-        return true;
     }
 }
 

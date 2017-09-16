@@ -9,13 +9,13 @@ class GhiscariElite extends DrawCard {
                     this.controller.discardPile.any(c => this.eventOrAttachmentInDiscard(c))
                 )
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    source: this,
-                    cardCondition: card => this.eventOrAttachmentInDiscard(card),
-                    activePromptTitle: 'Select attachment or event',
-                    onSelect: (player, card) => this.moveToBottomOfDeck(card)
-                });
+            target: {
+                activePromptTitle: 'Select attachment or event',
+                cardCondition: card => this.eventOrAttachmentInDiscard(card)
+            },
+            handler: context => {
+                this.game.addMessage('{0} uses {1} to move {2} to the bottom of their deck', this.controller, this, context.target);
+                this.controller.moveCard(context.target, 'draw deck', { bottom: true });
             }
         });
     }
@@ -26,12 +26,6 @@ class GhiscariElite extends DrawCard {
             card.location === 'discard pile' &&
             ['event', 'attachment'].includes(card.getType())
         );
-    }
-
-    moveToBottomOfDeck(card) {
-        this.game.addMessage('{0} uses {1} to move {2} to the bottom of their deck', this.controller, this, card);
-        this.controller.moveCard(card, 'draw deck', { bottom: true });
-        return true;
     }
 }
 

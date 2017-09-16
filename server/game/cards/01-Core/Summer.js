@@ -11,13 +11,14 @@ class Summer extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: (card) => this.cardCondition(card),
-                    onSelect: (p, card) => this.onCardSelected(p, card)
-                });
+            target: {
+                cardCondition: (card) => this.cardCondition(card)
+            },
+            handler: context => {
+                let oldLocation = context.target.location;
+
+                this.controller.moveCard(context.target, 'hand');
+                this.game.addMessage('{0} uses {1} to move {2} from their {3} to their hand', this.controller, this, context.target, oldLocation);
             }
         });
     }
@@ -25,16 +26,6 @@ class Summer extends DrawCard {
     cardCondition(card) {
         return (card.location === 'dead pile' || card.location === 'discard pile') && card.controller === this.controller && card.getType() === 'character' &&
             card.isFaction('stark') && card.getPrintedStrength() <= 2;
-    }
-
-    onCardSelected(player, card) {
-        var oldLocation = card.location;
-
-        player.moveCard(card, 'hand');
-
-        this.game.addMessage('{0} uses {1} to move {2} from their {3} to their hand', player, this, card, oldLocation);
-
-        return true;
     }
 }
 

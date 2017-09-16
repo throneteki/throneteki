@@ -6,18 +6,12 @@ class RiverrunMinstrel extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => card.hasTrait('House Tully') && card.getType() === 'character',
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    onSelect: (player, card) => {
-                        card.modifyPower(1);
-                        this.game.addMessage('{0} uses {1} to have {2} gain a power', this.controller, this, card);
-
-                        return true;
-                    }
-                });
+            target: {
+                cardCondition: card => card.location === 'play area' && card.hasTrait('House Tully') && card.getType() === 'character'
+            },
+            handler: context => {
+                context.target.modifyPower(1);
+                this.game.addMessage('{0} uses {1} to have {2} gain a power', this.controller, this, context.target);
             }
         });
     }

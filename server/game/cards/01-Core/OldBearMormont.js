@@ -11,23 +11,16 @@ class OldBearMormont extends DrawCard {
             when: {
                 onPhaseEnded: event => event.phase === 'challenge' && this.controller.getNumberOfChallengesLost('defender') === 0
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.isFaction('thenightswatch'),
-                    activePromptTitle: 'Select character',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
+            target: {
+                activePromptTitle: 'Select a card',
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.isFaction('thenightswatch')
+            },
+            handler: context => {
+                this.controller.putIntoPlay(context.target);
+
+                this.game.addMessage('{0} uses {1} to put {2} into play from their hand', this.controller, this, context.target);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        player.putIntoPlay(card);
-
-        this.game.addMessage('{0} uses {1} to put {2} into play from their hand', player, this, card);
-
-        return true;
     }
 }
 
