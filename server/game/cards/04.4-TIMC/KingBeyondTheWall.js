@@ -7,7 +7,7 @@ class KingBeyondTheWall extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this.parent) && this.hasLessTotalPower(),
+            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this.parent) && this.hasLessTotalPower(this.game.currentChallenge.defendingPlayer),
             match: (card) => card === this.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
         });
@@ -21,12 +21,8 @@ class KingBeyondTheWall extends DrawCard {
         return super.canAttach(player, card);
     }
 
-    hasLessTotalPower() {
-        let otherPlayer = this.game.getOtherPlayer(this.controller);
-        if(!otherPlayer) {
-            return false;
-        }
-        return this.controller.getTotalPower() < otherPlayer.getTotalPower();
+    hasLessTotalPower(opponent) {
+        return this.controller.getTotalPower() < opponent.getTotalPower();
     }
 }
 
