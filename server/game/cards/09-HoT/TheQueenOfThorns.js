@@ -26,7 +26,7 @@ class TheQueenOfThorns extends DrawCard {
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck but does not add any card to their hand',
+        this.game.addMessage('{0} uses {1} and discards {2} from their hand to search their deck but does not add any card to their hand',
             player, this);
     }
 }
