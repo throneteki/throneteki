@@ -102,11 +102,17 @@ class Game extends EventEmitter {
     }
 
     getPlayers() {
-        return _.omit(this.playersAndSpectators, player => this.isSpectator(player));
+        return Object.values(this.playersAndSpectators).filter(player => !this.isSpectator(player));
     }
 
     getPlayerByName(playerName) {
-        return this.getPlayers()[playerName];
+        let player = this.playersAndSpectators[playerName];
+
+        if(!player || this.isSpectator(player)) {
+            return;
+        }
+
+        return player;
     }
 
     getPlayersInFirstPlayerOrder() {
