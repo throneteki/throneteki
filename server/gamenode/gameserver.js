@@ -169,7 +169,7 @@ class GameServer {
     }
 
     onStartGame(pendingGame) {
-        let game = new Game(pendingGame, { router: this, titleCardData: pendingGame.titleCardData });
+        let game = new Game(pendingGame, { router: this, titleCardData: pendingGame.titleCardData, shortCardData: pendingGame.shortCardData });
         this.games[pendingGame.id] = game;
 
         game.started = true;

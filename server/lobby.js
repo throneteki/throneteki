@@ -37,13 +37,12 @@ class Lobby {
 
         this.lastUserBroadcast = moment();
 
-        this.loadTitleCardData();
+        this.loadCardData();
     }
 
-    loadTitleCardData() {
-        this.cardService.getTitleCards().then(cards => {
-            this.titleCardData = cards;
-        });
+    async loadCardData() {
+        this.titleCardData = await this.cardService.getTitleCards();
+        this.shortCardData = await this.cardService.getAllCards({ shortForm: true });
     }
 
     // External methods
@@ -337,7 +336,7 @@ class Lobby {
             return;
         }
 
-        let game = new PendingGame(socket.user, Object.assign({ titleCardData: this.titleCardData }, gameDetails));
+        let game = new PendingGame(socket.user, Object.assign({ titleCardData: this.titleCardData, shortCardData: this.shortCardData }, gameDetails));
         game.newGame(socket.id, socket.user, gameDetails.password, (err, message) => {
             if(err) {
                 logger.info('game failed to create', err, message);
@@ -585,7 +584,7 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
-            let syncGame = new PendingGame({ username: game.owner, titleCardData: this.titleCardData }, { spectators: game.allowSpectators, name: game.name });
+            let syncGame = new PendingGame({ username: game.owner, titleCardData: this.titleCardData, shortCardData: this.shortCardData }, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
