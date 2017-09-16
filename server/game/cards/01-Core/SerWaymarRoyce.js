@@ -7,13 +7,10 @@ class SerWaymarRoyce extends DrawCard {
                 onCharacterKilled: event => event.card === this
             },
             handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer) {
-                    return;
+                this.game.addMessage('{0} uses {1} to 1 card at random from each opponent\'s hand', this.controller, this);
+                for(let opponent of this.game.getOpponents(this.controller)) {
+                    opponent.discardAtRandom(1);
                 }
-
-                this.game.addMessage('{0} uses {1} to 1 card at random from {2}\'s hand', this.controller, this, otherPlayer);
-                otherPlayer.discardAtRandom(1);
             }
         });
     }
