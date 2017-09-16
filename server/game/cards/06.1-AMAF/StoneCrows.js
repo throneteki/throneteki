@@ -4,14 +4,14 @@ class StoneCrows extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.isAttacking(this) &&
-                    challenge.defenders.length >= 1)
+                afterChallenge: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isAttacking(this) &&
+                    event.challenge.defenders.length >= 1)
             },
             cost: ability.costs.discardGold(),
-            handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
+            handler: context => {
+                let otherPlayer = context.event.challenge.loser;
                 this.game.promptForSelect(otherPlayer, {
                     cardCondition: card => (
                         this.game.currentChallenge.isDefending(card) &&
