@@ -12,9 +12,9 @@ class HisViperEyes extends DrawCard {
                 )
             },
             handler: () => {
-                let otherPlayer = this.game.currentChallenge.winner;
+                this.challengeWinner = this.game.currentChallenge.winner;
 
-                let buttons = otherPlayer.hand.map(card => {
+                let buttons = this.challengeWinner.hand.map(card => {
                     return { method: 'cardSelected', card: card };
                 });
 
@@ -30,10 +30,7 @@ class HisViperEyes extends DrawCard {
     }
 
     cardSelected(player, cardId) {
-        var otherPlayer = this.game.getOtherPlayer(player);
-        if(!otherPlayer) {
-            return false;
-        }
+        var otherPlayer = this.challengeWinner;
 
         var card = otherPlayer.findCardByUuid(otherPlayer.hand, cardId);
         if(!card) {
