@@ -4,12 +4,9 @@ class BalonGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                return !otherPlayer ||
-                    (this.game.currentChallenge &&
+                return (this.game.currentChallenge &&
                     this.game.currentChallenge.challengeType === 'military' &&
-                    !otherPlayer.anyCardsInPlay(card => card.hasTrait('King')));
+                    !this.game.currentChallenge.defendingPlayer.anyCardsInPlay(card => card.hasTrait('King')));
             },
             match: this,
             effect: [
