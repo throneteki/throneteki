@@ -14,6 +14,7 @@ class Needle extends DrawCard {
             handler: context => {
                 this.game.addMessage('{0} sacrifices {1} to return {2} to their hand', this.controller, this, context.event.card);
                 context.replaceHandler(() => {
+                    context.event.cardStateWhenSacrificed = context.event.card.createSnapshot();
                     this.controller.returnCardToHand(context.event.card, false);
                 });
             }
