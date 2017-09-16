@@ -18,8 +18,8 @@ class EastwatchByTheSea extends DrawCard {
     }
 
     hasHigherReserveThanOpponent() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-        return opponent && this.controller.getTotalReserve() > opponent.getTotalReserve();
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.some(opponent => this.controller.getTotalReserve() > opponent.getTotalReserve());
     }
 }
 
