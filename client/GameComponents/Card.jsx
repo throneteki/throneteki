@@ -28,7 +28,8 @@ class Card extends React.Component {
             vengeance: 'N',
             ear: 'E',
             venom: 'M',
-            kiss: 'K'
+            kiss: 'K',
+            bell: 'L'
         };
     }
 
