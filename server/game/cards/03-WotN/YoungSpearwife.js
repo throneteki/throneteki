@@ -10,11 +10,8 @@ class YoungSpearwife extends DrawCard {
     }
 
     hasLessFactionPower() {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-        if(!otherPlayer) {
-            return false;
-        }
-        return this.controller.faction.power < otherPlayer.faction.power;
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.some(opponent => this.controller.faction.power < opponent.faction.power);
     }
 }
 
