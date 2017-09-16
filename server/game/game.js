@@ -163,6 +163,10 @@ class Game extends EventEmitter {
         return foundCards;
     }
 
+    anyCardsInPlay(predicate) {
+        return this.allCards.any(card => card.location === 'play area' && predicate(card));
+    }
+
     anyPlotHasTrait(trait) {
         return _.any(this.getPlayers(), player =>
             player.activePlot &&
