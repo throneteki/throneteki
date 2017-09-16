@@ -11,15 +11,13 @@ class HoldingTheTrident extends PlotCard {
 
     controlsFewerCharactersThanOpponent() {
         let numOwnChars = this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character');
-        let opponent = this.game.getOtherPlayer(this.controller);
+        let opponents = this.game.getOpponents(this.controller);
 
-        if(!opponent) {
-            return false;
-        }
+        return opponents.every(opponent => {
+            let numOpponentChars = opponent.getNumberOfCardsInPlay(card => card.getType() === 'character');
 
-        let numOpponentChars = opponent.getNumberOfCardsInPlay(card => card.getType() === 'character');
-
-        return numOwnChars < numOpponentChars;
+            return numOwnChars < numOpponentChars;
+        });
     }
 }
 
