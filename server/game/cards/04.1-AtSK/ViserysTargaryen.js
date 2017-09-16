@@ -21,8 +21,8 @@ class ViserysTargaryen extends DrawCard {
     }
 
     opponentHasNoKing() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-        return opponent && !opponent.anyCardsInPlay(card => card.hasTrait('King'));
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.every(opponent => !opponent.anyCardsInPlay(card => card.hasTrait('King')));
     }
 }
 
