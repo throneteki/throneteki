@@ -41,7 +41,8 @@ class ChatCommands {
             'vengeance',
             'ear',
             'venom',
-            'kiss'
+            'kiss',
+            'bell'
         ];
     }
 
