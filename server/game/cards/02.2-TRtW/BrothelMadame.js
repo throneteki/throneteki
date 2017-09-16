@@ -13,23 +13,20 @@ class BrothelMadame extends DrawCard {
             when: {
                 onPhaseStarted: event => event.phase === 'challenge'
             },
-            handler: () => {
-                let otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer) {
-                    return false;
-                }
-
+            chooseOpponent: true,
+            handler: context => {
+                this.chosenOpponent = context.opponent;
                 this.hasPaidGoldThisPhase = false;
 
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
-                    targetController: 'opponent',
+                    targetController: context.opponent,
                     condition: () => !this.hasPaidGoldThisPhase,
                     effect: ability.effects.cannotInitiateChallengeType('military', opponent => opponent === this.controller)
                 }));
 
-                if(otherPlayer.gold >= 1) {
-                    this.game.promptWithMenu(otherPlayer, this, {
+                if(context.opponent.gold >= 1) {
+                    this.game.promptWithMenu(context.opponent, this, {
                         activePrompt: {
                             menuTitle: 'Pay 1 gold to initiate military challenges this phase?',
                             buttons: [
@@ -40,14 +37,14 @@ class BrothelMadame extends DrawCard {
                         source: this
                     });
                 } else {
-                    this.doNotPay(otherPlayer);
+                    this.doNotPay(context.opponent);
                 }
             }
         });
     }
 
     onGoldTransferred(event) {
-        if(event.target !== this.controller || event.amount <= 0) {
+        if(event.target !== this.controller || event.source !== this.chosenOpponent || event.amount <= 0) {
             return false;
         }
 
