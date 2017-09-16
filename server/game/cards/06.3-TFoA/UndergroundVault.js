@@ -7,13 +7,17 @@ class UndergroundVault extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-                let gold = opponent && opponent.activePlot.getIncome() >= 5 ? 2 : 1;
+                let gold = this.opponentHasIncomeOf5() ? 2 : 1;
 
                 this.game.addGold(context.player, gold);
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
         });
+    }
+
+    opponentHasIncomeOf5() {
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.some(opponent => opponent.activePlot.getIncome() >= 5);
     }
 }
 
