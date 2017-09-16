@@ -76,7 +76,7 @@ class PlayerRow extends React.Component {
 
     getAgenda() {
         if(!this.props.agenda || this.props.agenda.code === '') {
-            return <div className='agenda card-pile vertical panel' />;
+            return <div className={ `agenda ${this.props.cardSize === 'medium' ? '' : this.props.cardSize} card-pile vertical panel` } />;
         }
 
         let cards = [];
