@@ -101,7 +101,8 @@ class Challenge {
         if(this.attackingPlayer === player) {
             return this.attackers.length === 1;
         }
-        return this.game.defenders.length === 1;
+
+        return this.defenders.length === 1;
     }
 
     getNumberOfParticipants(predicate = () => true) {
