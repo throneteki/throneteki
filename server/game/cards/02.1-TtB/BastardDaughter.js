@@ -10,15 +10,11 @@ class BastardDaughter extends DrawCard {
                 )
             },
             handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
+                this.game.addMessage('{0} uses {1} to discard 1 card at random from each opponent\'s hand', this.controller, this);
 
-                if(!otherPlayer) {
-                    return true;
+                for(let opponent of this.game.getOpponents(this.controller)) {
+                    opponent.discardAtRandom(1);
                 }
-
-                this.game.addMessage('{0} uses {1} to discard 1 card at random from {2}\'s hand', this.controller, this, otherPlayer);
-
-                otherPlayer.discardAtRandom(1);
             }
         });
     }
