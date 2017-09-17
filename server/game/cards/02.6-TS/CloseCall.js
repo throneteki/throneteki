@@ -23,8 +23,7 @@ class CloseCall extends PlotCard {
 
         this.game.addMessage('{0} uses {1} to move {2} to their discard pile', player, this, card);
 
-        let otherPlayer = this.game.getOtherPlayer(player);
-        if(!otherPlayer || !otherPlayer.activePlot.hasTrait('Winter')) {
+        if(!this.game.anyPlotHasTrait('Winter')) {
             player.drawCardsToHand(1);
             this.game.addMessage('{0} uses {1} to draw 1 card', player, this);
         }

@@ -5,13 +5,16 @@ class CityWatch extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            condition: () =>
-                this.game.getOtherPlayer(this.controller)
-                && this.controller.faction.power > this.game.getOtherPlayer(this.controller).faction.power,
+            condition: () => this.hasMorePowerThanAnOpponent(),
             targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('ambush', 2)
         });
+    }
+
+    hasMorePowerThanAnOpponent() {
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.some(opponent => this.controller.faction.power > opponent.faction.power);
     }
 
 }

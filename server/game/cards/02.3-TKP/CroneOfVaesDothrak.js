@@ -8,22 +8,17 @@ class CroneOfVaesDothrak extends DrawCard {
                 onCardDiscarded: event =>
                     ((event.originalLocation === 'hand' || event.originalLocation === 'draw deck')
                      && event.card.getType() === 'character'
-                     && event.player !== this.controller)
+                     && event.card.controller !== this.controller)
             },
             cost: ability.costs.kneel(card => (
                 card.getType() === 'character' && card.hasTrait('Dothraki')
             )),
             handler: (context) => {
-                var discardedCard = context.event.card;
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer) {
-                    return true;
-                }
-
-                otherPlayer.moveCard(discardedCard, 'dead pile');
+                let discardedCard = context.event.card;
+                discardedCard.owner.moveCard(discardedCard, 'dead pile');
 
                 this.game.addMessage('{0} uses {1} to place {2} in the dead pile',
-                    this.controler, this, discardedCard);
+                    this.controller, this, discardedCard);
             }
         });
     }

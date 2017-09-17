@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheCouncilConsents extends DrawCard {
@@ -12,27 +10,20 @@ class TheCouncilConsents extends DrawCard {
                     this.anySmallCouncilCharacterInPlay())
             },
             handler: () => {
-                let ownSmallCouncilChars = this.controller.filterCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character');
+                let smallCouncilChars = this.game.filterCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character');
 
-                let opponent = this.game.getOtherPlayer(this.controller);
-                let opponentSmallCouncilChars = opponent.filterCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character');
-
-                let allSmallCouncilChars = ownSmallCouncilChars.concat(opponentSmallCouncilChars);
-
-                _.each(allSmallCouncilChars, card => {
+                for(let card of smallCouncilChars) {
                     card.controller.standCard(card);
-                });
+                }
 
                 this.game.addMessage('{0} plays {1} to stand {2}',
-                    this.controller, this, allSmallCouncilChars);
+                    this.controller, this, smallCouncilChars);
             }
         });
     }
 
     anySmallCouncilCharacterInPlay() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-        return this.controller.anyCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character') ||
-               (opponent && opponent.anyCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character'));
+        return this.game.anyCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character');
     }
 }
 

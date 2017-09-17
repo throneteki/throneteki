@@ -4,13 +4,13 @@ class TarredHeads extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.challengeType === 'power' &&
-                    challenge.winner === this.controller &&
-                    this.opponentHasCards())
+                afterChallenge: event => (
+                    event.challenge.challengeType === 'power' &&
+                    event.challenge.winner === this.controller &&
+                    event.challenge.loser.hand.size() >= 1)
             },
-            handler: () => {
-                let opponent = this.game.getOtherPlayer(this.controller);
+            handler: context => {
+                let opponent = context.event.challenge.loser;
 
                 opponent.discardAtRandom(1, cards => {
                     let card = cards[0];
@@ -26,11 +26,6 @@ class TarredHeads extends DrawCard {
                 });
             }
         });
-    }
-
-    opponentHasCards() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-        return opponent && opponent.hand.size() >= 1;
     }
 }
 

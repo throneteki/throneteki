@@ -3,13 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class DisputedClaim extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => {
-                let otherPlayer = this.game.getOtherPlayer(this.controller);
-                if(!otherPlayer || this.controller.faction.power > otherPlayer.faction.power) {
-                    return true;
-                }
-                return false;
-            },
+            condition: () => this.hasMostFactionPower(),
             effect: [
                 ability.effects.modifyStrength(2),
                 ability.effects.addKeyword('Renown')
@@ -22,6 +16,11 @@ class DisputedClaim extends DrawCard {
             return false;
         }
         return super.canAttach(player, card);
+    }
+
+    hasMostFactionPower() {
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.every(opponent => this.controller.faction.power > opponent.faction.power);
     }
 }
 

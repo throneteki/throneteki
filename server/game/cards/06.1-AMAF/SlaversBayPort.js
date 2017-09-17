@@ -7,13 +7,17 @@ class SlaversBayPort extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-                let gold = opponent && opponent.deadPile.size() >= 4 ? 2 : 1;
+                let gold = this.opponentDeadPileHas4() ? 2 : 1;
 
                 this.game.addGold(context.player, gold);
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
         });
+    }
+
+    opponentDeadPileHas4() {
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.some(opponent => opponent.deadPile.size() >= 4);
     }
 }
 

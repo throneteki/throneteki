@@ -6,7 +6,9 @@ class FickleBannerman extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'power'
             },
-            handler: () => {
+            handler: context => {
+                this.challengeWinner = context.event.challenge.winner;
+
                 if(!this.hasToken('gold')) {
                     this.loseControl();
                     return;
@@ -34,9 +36,8 @@ class FickleBannerman extends DrawCard {
     }
 
     loseControl() {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-        this.game.takeControl(otherPlayer, this);
-        this.game.addMessage('{0} takes control of {1}', otherPlayer, this);
+        this.game.takeControl(this.challengeWinner, this);
+        this.game.addMessage('{0} takes control of {1}', this.challengeWinner, this);
 
         return true;
     }

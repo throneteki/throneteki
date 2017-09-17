@@ -4,11 +4,9 @@ class TradingWithThePentoshi extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                if(otherPlayer) {
-                    this.game.addGold(otherPlayer, 3);
-                    this.game.addMessage('{0} gains 3 gold from {1}\'s {2}', otherPlayer, this.controller, this);
+                this.game.addMessage('Each opponent gains 3 gold from {0}\'s {1}', this.controller, this);
+                for(let opponent of this.game.getOpponents(this.controller)) {
+                    this.game.addGold(opponent, 3);
                 }
             }
         });

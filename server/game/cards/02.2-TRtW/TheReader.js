@@ -19,15 +19,10 @@ class TheReader extends DrawCard {
                     this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
                 },
                 'Discard 3 cards': () => {
-                    var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                    if(!otherPlayer) {
-                        return true;
+                    this.game.addMessage('{0} uses {1} to discard the top 3 cards from each opponent\'s deck', this.controller, this);
+                    for(let opponent of this.game.getOpponents(this.controller)) {
+                        opponent.discardFromDraw(3);
                     }
-
-                    otherPlayer.discardFromDraw(3);
-
-                    this.game.addMessage('{0} uses {1} to discard the top 3 cards from {2}\'s deck', this.controller, this, otherPlayer);
                 }
             }
         });

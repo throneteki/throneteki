@@ -4,13 +4,13 @@ class OldBearMormont extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
             },
             target: {
-                cardCondition: card => (
+                cardCondition: (card, context) => (
                     !card.isUnique() &&
                     card.getType() === 'character' &&
-                    card.controller !== this.controller &&
+                    card.controller === context.event.challenge.loser &&
                     card.location === 'discard pile')
             },
             handler: context => {

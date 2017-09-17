@@ -10,13 +10,10 @@ class SerAmoryLorch extends DrawCard {
     }
 
     opponentHasThreeOrFewerChars() {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-        if(!otherPlayer) {
-            return true;
-        }
-
-        return otherPlayer.getNumberOfCardsInPlay(card => card.getType() === 'character') <= 3;
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.some(opponent => {
+            return opponent.getNumberOfCardsInPlay(card => card.getType() === 'character') <= 3;
+        });
     }
 }
 

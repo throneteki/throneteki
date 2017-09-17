@@ -6,12 +6,16 @@ class GoldenTooth extends DrawCard {
             title: 'Gain gold',
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                let opponent = this.game.getOtherPlayer(this.controller);
-                let gold = opponent && opponent.hand.size() === 0 ? 3 : 1;
+                let gold = this.opponentHasEmptyHand() ? 3 : 1;
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
                 this.game.addGold(this.controller, gold);
             }
         });
+    }
+
+    opponentHasEmptyHand() {
+        let opponents = this.game.getOpponents(this.controller);
+        return opponents.some(opponent => opponent.hand.size() === 0);
     }
 }
 

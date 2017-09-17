@@ -102,11 +102,17 @@ class Game extends EventEmitter {
     }
 
     getPlayers() {
-        return _.omit(this.playersAndSpectators, player => this.isSpectator(player));
+        return Object.values(this.playersAndSpectators).filter(player => !this.isSpectator(player));
     }
 
     getPlayerByName(playerName) {
-        return this.getPlayers()[playerName];
+        let player = this.playersAndSpectators[playerName];
+
+        if(!player || this.isSpectator(player)) {
+            return;
+        }
+
+        return player;
     }
 
     getPlayersInFirstPlayerOrder() {
@@ -125,6 +131,10 @@ class Game extends EventEmitter {
         return _.find(this.getPlayers(), p => {
             return p.firstPlayer;
         });
+    }
+
+    getOpponents(player) {
+        return this.getPlayers().filter(p => p !== player);
     }
 
     getOtherPlayer(player) {
@@ -161,6 +171,14 @@ class Game extends EventEmitter {
         });
 
         return foundCards;
+    }
+
+    anyCardsInPlay(predicate) {
+        return this.allCards.any(card => card.location === 'play area' && predicate(card));
+    }
+
+    filterCardsInPlay(predicate) {
+        return this.allCards.filter(card => card.location === 'play area' && predicate(card));
     }
 
     anyPlotHasTrait(trait) {

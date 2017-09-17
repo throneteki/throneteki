@@ -32,7 +32,7 @@ class DornishRevenge extends DrawCard {
             return;
         }
 
-        let opponent = this.game.getOtherPlayer(this.controller);
+        let opponent = challenge.defendingPlayer;
 
         this.game.addMessage('{0} uses {1} to have {2} choose and kill a defending character',
             this.controller, this, opponent);

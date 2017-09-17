@@ -5,7 +5,7 @@ class SummerHarvest extends PlotCard {
         this.whenRevealed({
             chooseOpponent: true,
             handler: context => {
-                this.baseIncome = context.opponent.activePlot.getIncome(true) + 2;
+                this.baseIncome = context.opponent.activePlot.getPrintedIncome() + 2;
             }
         });
     }
