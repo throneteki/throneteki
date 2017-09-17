@@ -10,8 +10,15 @@ class CerseisAttendant extends DrawCard {
     }
 
     opponentHasNoCardsInHand() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-        return opponent && opponent.hand.size() === 0;
+        let challenge = this.game.currentChallenge;
+        if(!challenge) {
+            return false;
+        }
+
+        return (
+            (challenge.isAttacking(this) && challenge.defendingPlayer.hand.size() === 0) ||
+            (challenge.isDefending(this) && challenge.attackingPlayer.hand.size() === 0)
+        );
     }
 }
 
