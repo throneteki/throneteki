@@ -29,6 +29,7 @@ class Lobby {
         this.router.on('onPlayerLeft', this.onPlayerLeft.bind(this));
         this.router.on('onWorkerTimedOut', this.onWorkerTimedOut.bind(this));
         this.router.on('onNodeReconnected', this.onNodeReconnected.bind(this));
+        this.router.on('onWorkerStarted', this.onWorkerStarted.bind(this));
 
         this.io = options.io || socketio(server, { perMessageDeflate: false });
         this.io.set('heartbeat timeout', 30000);
@@ -37,13 +38,12 @@ class Lobby {
 
         this.lastUserBroadcast = moment();
 
-        this.loadTitleCardData();
+        this.loadCardData();
     }
 
-    loadTitleCardData() {
-        this.cardService.getTitleCards().then(cards => {
-            this.titleCardData = cards;
-        });
+    async loadCardData() {
+        this.titleCardData = await this.cardService.getTitleCards();
+        this.shortCardData = await this.cardService.getAllCards({ shortForm: true });
     }
 
     // External methods
@@ -337,7 +337,7 @@ class Lobby {
             return;
         }
 
-        let game = new PendingGame(socket.user, Object.assign({ titleCardData: this.titleCardData }, gameDetails));
+        let game = new PendingGame(socket.user, gameDetails);
         game.newGame(socket.id, socket.user, gameDetails.password, (err, message) => {
             if(err) {
                 logger.info('game failed to create', err, message);
@@ -583,9 +583,13 @@ class Lobby {
         this.clearGamesForNode(nodeName);
     }
 
+    onWorkerStarted(nodeName) {
+        this.router.sendCommand(nodeName, 'CARDDATA', { titleCardData: this.titleCardData, shortCardData: this.shortCardData });
+    }
+
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
-            let syncGame = new PendingGame({ username: game.owner, titleCardData: this.titleCardData }, { spectators: game.allowSpectators, name: game.name });
+            let syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
