@@ -215,22 +215,6 @@ class Game extends EventEmitter {
         plot.selected = true;
     }
 
-    factionCardClicked(sourcePlayer) {
-        var player = this.getPlayerByName(sourcePlayer);
-
-        if(!player) {
-            return;
-        }
-
-        if(player.faction.kneeled) {
-            player.standCard(player.faction);
-        } else {
-            player.kneelCard(player.faction);
-        }
-
-        this.addAlert('danger', '{0} {1} their faction card', player, player.faction.kneeled ? 'kneels' : 'stands');
-    }
-
     cardClicked(sourcePlayer, cardId) {
         var player = this.getPlayerByName(sourcePlayer);
 
@@ -262,15 +246,24 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(!card.facedown && card.location === 'play area' && card.controller === player) {
-            if(card.kneeled) {
-                player.standCard(card);
-            } else {
-                player.kneelCard(card);
-            }
+        this.defaultCardClick(player, card);
+    }
 
-            this.addAlert('danger', '{0} {1} {2}', player, card.kneeled ? 'kneels' : 'stands', card);
+    defaultCardClick(player, card) {
+        if(card.facedown || card.controller !== player || !['faction', 'play area'].includes(card.location)) {
+            return;
         }
+
+        if(card.kneeled) {
+            player.standCard(card);
+        } else {
+            player.kneelCard(card);
+        }
+
+        let standStatus = card.kneeled ? 'kneels' : 'stands';
+        let cardFragment = card.getType() === 'faction' ? 'their faction card' : card;
+
+        this.addAlert('danger', '{0} {1} {2}', player, standStatus, cardFragment);
     }
 
     cardHasMenuItem(card, menuItem) {

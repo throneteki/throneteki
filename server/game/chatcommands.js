@@ -67,7 +67,8 @@ class ChatCommands {
         this.game.promptForSelect(player, {
             activePromptTitle: 'Select a card to set power for',
             waitingPromptTitle: 'Waiting for opponent to set power',
-            cardCondition: card => card.location === 'play area' && card.controller === player,
+            cardCondition: card => ['faction', 'play area'].includes(card.location) && card.controller === player,
+            cardType: ['attachment', 'character', 'faction', 'location'],
             onSelect: (p, card) => {
                 let power = num - card.power;
                 card.power += power;
@@ -76,7 +77,8 @@ class ChatCommands {
                     card.power = 0;
                 }
 
-                this.game.addAlert('danger', '{0} uses the /power command to set the power of {1} to {2}', p, card, num);
+                let cardFragment = card.getType() === 'faction' ? 'their faction card' : card;
+                this.game.addAlert('danger', '{0} uses the /power command to set the power of {1} to {2}', p, cardFragment, num);
                 return true;
             }
         });

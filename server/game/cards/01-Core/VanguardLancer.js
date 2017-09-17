@@ -6,45 +6,21 @@ class VanguardLancer extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a card',
-                    source: this,
-                    additionalButtons: [{ text: 'Faction Card', arg: 'faction' }],
-                    cardCondition: card => card.controller !== this.controller && card.getPower() > 0,
-                    onSelect: (player, card) => this.onCardSelected(player, card),
-                    onMenuCommand: (player, arg) => this.selectFactionCard(player, arg),
-                    onCancel: (player) => this.cancelSelection(player)
-                });
+            target: {
+                activePromptTitle: 'Select a card',
+                cardCondition: card => card.controller !== this.controller && card.getPower() > 0,
+                cardType: ['character', 'faction']
+            },
+            handler: context => {
+                if(context.target.getType() === 'faction') {
+                    this.game.addMessage('{0} uses {1} to remove 1 power from {2}\'s faction card', this.controller, this, context.target.owner);
+                } else {
+                    this.game.addMessage('{0} uses {1} to remove 1 power from {2}', this.controller, this, context.target);
+                }
+
+                context.target.modifyPower(-1);
             }
         });
-    }
-
-    onCardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to remove 1 power from {2}', player, this, card);
-
-        card.modifyPower(-1);
-
-        return true;
-    }
-
-    selectFactionCard(player) {
-        var otherPlayer = this.game.getOtherPlayer(player);
-        if(!otherPlayer) {
-            return true;
-        }
-
-        this.game.addPower(otherPlayer, -1);
-
-        this.game.addMessage('{0} uses {1} to remove 1 power from {2}\'s faction card', player, this, otherPlayer);
-
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
-
-        return true;
     }
 }
 
