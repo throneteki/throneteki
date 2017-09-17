@@ -7,9 +7,8 @@ class SerOsmundKettleblack extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.discardGold(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.getType() === 'character' && card.hasTrait('Knight')
+                                       card.getType() === 'character' && card.hasTrait('Knight') && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);

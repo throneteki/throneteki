@@ -6,9 +6,9 @@ class ATaskForEveryTool extends DrawCard {
             title: 'Put character into play',
             phase: 'challenge',
             target: {
-                activePromptTitle: 'Select character',
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.getType() === 'character' && card.isFaction('lannister') && card.getPrintedStrength() <= 2
+                                       card.getType() === 'character' && card.isFaction('lannister') && card.getPrintedStrength() <= 2 &&
+                                       this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);

@@ -13,7 +13,8 @@ class OldBearMormont extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.isFaction('thenightswatch')
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
+                                       card.isFaction('thenightswatch') && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);

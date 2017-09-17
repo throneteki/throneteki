@@ -7,9 +7,8 @@ class Harrenhal extends DrawCard {
             cost: ability.costs.kneelSelf(),
             phase: 'challenge',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.getType() === 'character' &&
-                                       (card.isFaction('lannister') || card.hasTrait('House Bolton'))
+                                       (card.isFaction('lannister') || card.hasTrait('House Bolton')) && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);

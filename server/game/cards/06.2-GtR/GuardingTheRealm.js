@@ -6,8 +6,8 @@ class GuardingTheRealm extends DrawCard {
             title: 'Take control of character in discard pile',
             phase: 'marshal',
             target: {
-                activePromptTitle: 'Select a character',
-                cardCondition: card => card.controller !== this.controller && card.location === 'discard pile' && card.getType() === 'character' && card.getCost() <= 3
+                cardCondition: card => card.controller !== this.controller && card.location === 'discard pile' &&
+                                       card.getType() === 'character' && card.getCost() <= 3 && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);

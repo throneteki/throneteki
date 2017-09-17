@@ -8,9 +8,9 @@ class DothrakiSea extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: (card, context) => card.location === 'hand' && card.getType() === 'character' &&
-                                                  card.controller === context.player && card.hasTrait('Dothraki')
+                                                  card.controller === context.player && card.hasTrait('Dothraki') &&
+                                                  context.player.canPutIntoPlay(card)
             },
             handler: context => {
                 context.target.controller.putIntoPlay(context.target);

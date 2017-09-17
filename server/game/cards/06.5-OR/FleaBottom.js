@@ -7,7 +7,7 @@ class FleaBottom extends DrawCard {
             phase: 'challenge',
             target: {
                 cardCondition: card => card.location === 'discard pile' && card.controller === this.controller &&
-                                       card.getType() === 'character' && card.getCost() <= 3
+                                       card.getType() === 'character' && card.getCost() <= 3 && this.controller.canPutIntoPlay(card)
             },
             cost: [
                 ability.costs.payGold(1),

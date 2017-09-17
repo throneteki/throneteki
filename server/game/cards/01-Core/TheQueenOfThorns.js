@@ -7,9 +7,9 @@ class TheQueenOfThorns extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this) && challenge.challengeType === 'intrigue'
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.getPrintedCost() <= 6 && card.getType() === 'character' && card.isFaction('tyrell')
+                                       card.getPrintedCost() <= 6 && card.getType() === 'character' && card.isFaction('tyrell') &&
+                                       this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);
