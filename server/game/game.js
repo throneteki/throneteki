@@ -117,7 +117,16 @@ class Game extends EventEmitter {
     }
 
     getPlayersInFirstPlayerOrder() {
-        return _.sortBy(this.getPlayers(), player => !player.firstPlayer);
+        let players = this.getPlayers();
+        let firstPlayerIndex = players.findIndex(player => player.firstPlayer);
+        if(firstPlayerIndex === -1) {
+            return players;
+        }
+
+        let beforeFirstPlayer = players.slice(0, firstPlayerIndex);
+        let firstPlayerAndAfter = players.slice(firstPlayerIndex);
+
+        return firstPlayerAndAfter.concat(beforeFirstPlayer);
     }
 
     getPlayersAndSpectators() {
