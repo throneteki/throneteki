@@ -33,14 +33,14 @@ class PlotCard extends BaseCard {
         return baseValue + this.initiativeModifier;
     }
 
-    getIncome(printed) {
-        if(printed) {
-            return this.cardData.income;
-        }
-
-        var baseValue = this.canProvidePlotModifier['gold'] ? (this.baseIncome || this.cardData.income) : 0;
+    getIncome() {
+        let baseValue = this.canProvidePlotModifier['gold'] ? (this.baseIncome || this.getPrintedIncome()) : 0;
 
         return baseValue + this.goldModifier;
+    }
+
+    getPrintedIncome() {
+        return this.cardData.income;
     }
 
     getReserve() {
