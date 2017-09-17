@@ -10,6 +10,8 @@ class QueensMen extends DrawCard {
             handler: context => {
                 let opponent = context.opponent;
 
+                this.chosenOpponent = opponent;
+
                 let buttons = opponent.hand.map(card => {
                     return { card: card, method: 'cardSelected' };
                 });
@@ -47,8 +49,7 @@ class QueensMen extends DrawCard {
     }
 
     doneSelected() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-        this.game.addMessage('{0} uses {1} to look at {2}\'s hand', this.controller, this, opponent);
+        this.game.addMessage('{0} uses {1} to look at {2}\'s hand', this.controller, this, this.chosenOpponent);
         return true;
     }
 
