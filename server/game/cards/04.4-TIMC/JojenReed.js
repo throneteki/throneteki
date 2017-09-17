@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class JojenReed extends DrawCard {
@@ -9,17 +7,10 @@ class JojenReed extends DrawCard {
                 onCardStood: event => event.card === this
             },
             handler: () => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-                if(!otherPlayer) {
-                    return;
+                for(let player of this.game.getPlayers()) {
+                    let card = player.drawDeck.first();
+                    this.game.addMessage('{0} uses {1} to reveal {2} from {3}\'s deck', this.controller, this, card, player);
                 }
-
-                var ownCard = this.controller.drawDeck.first();
-                var opponentCard = otherPlayer.drawDeck.first();
-
-                this.game.addMessage('{0} uses {1} to reveal {2} from their own deck and {3} from {4}\'s deck',
-                    this.controller, this, ownCard, opponentCard, otherPlayer);
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
@@ -36,9 +27,9 @@ class JojenReed extends DrawCard {
     }
 
     draw() {
-        _.each(this.game.getPlayers(), player => {
+        for(let player of this.game.getPlayers()) {
             player.drawCardsToHand(1);
-        });
+        }
 
         this.game.addMessage('{0} uses {1} to have revealed cards drawn', this.controller, this);
 
@@ -46,9 +37,9 @@ class JojenReed extends DrawCard {
     }
 
     discard() {
-        _.each(this.game.getPlayers(), player => {
+        for(let player of this.game.getPlayers()) {
             player.discardFromDraw(1);
-        });
+        }
 
         this.game.addMessage('{0} uses {1} to have revealed cards discarded', this.controller, this);
 
