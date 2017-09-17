@@ -10,6 +10,7 @@ class SetupPhase extends Phase {
         super(game, 'setup');
         this.initialise([
             new SimpleStep(game, () => this.prepareDecks()),
+            new SimpleStep(game, () => this.determineFirstPlayer()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
             new SimpleStep(game, () => this.startGame()),
@@ -30,6 +31,15 @@ class SetupPhase extends Phase {
         this.game.allCards.each(card => {
             card.applyAnyLocationPersistentEffects();
         });
+    }
+
+    determineFirstPlayer() {
+        let players = this.game.getPlayers();
+
+        let firstPlayer = _.sample(players);
+        firstPlayer.firstPlayer = true;
+
+        this.game.addMessage('{0} is randomly selected to be the first player', firstPlayer);
     }
 
     drawSetupHand() {

@@ -1,26 +1,44 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
+const _ = require('underscore');
 
-class SetupCardsPrompt extends AllPlayerPrompt {
-    completionCondition(player) {
-        return player.setup;
+const BaseStep = require('../basestep.js');
+
+class SetupCardsPrompt extends BaseStep {
+    constructor(game) {
+        super(game);
+        this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
     }
 
-    activePrompt() {
-        return {
-            menuTitle: 'Select setup cards',
-            buttons: [
-                { arg: 'setupdone', text: 'Done' }
-            ]
-        };
+    continue() {
+        this.remainingPlayers = _.reject(this.remainingPlayers, player => player.setup);
+
+        if(_.isEmpty(this.remainingPlayers)) {
+            return true;
+        }
+
+        this.promptPlayerToSetup(this.remainingPlayers[0]);
+
+        return false;
     }
 
-    waitingPrompt() {
-        return { menuTitle: 'Waiting for opponent to finish setup' };
+    promptPlayerToSetup(currentPlayer) {
+        let buttons = [
+            { method: 'setupDone', text: 'Done' }
+        ];
+
+        this.game.promptWithMenu(currentPlayer, this, {
+            activePrompt: {
+                menuTitle: 'Select setup cards',
+                buttons: buttons
+            },
+            waitingPromptTitle: `Waiting for ${currentPlayer.name} to finish setup`
+        });
     }
 
-    onMenuCommand(player) {
+    setupDone(player) {
         player.setup = true;
-        this.game.addMessage('{0} has finished setup', player);
+        this.game.addMessage('{0} finishes setup', player);
+
+        return true;
     }
 }
 
