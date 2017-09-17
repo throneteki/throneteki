@@ -4,10 +4,10 @@ class Grenn extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.isAttacking(this)) &&
-                    this.opponentHasFactionPower()
+                afterChallenge: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isAttacking(this)) &&
+                    event.challenge.loser.power > 0
             },
             target: {
                 activePromptTitle: 'Select a character',
@@ -19,7 +19,7 @@ class Grenn extends DrawCard {
                     card.getType() === 'character')
             },
             handler: context => {
-                var otherPlayer = this.game.getOtherPlayer(this.controller);
+                var otherPlayer = context.event.challenge.loser;
                 var power = otherPlayer.faction.power > 1 && context.target.kneeled === false ? 2 : 1;
                 this.game.addPower(otherPlayer, -power);
                 context.target.modifyPower(power);
@@ -28,16 +28,6 @@ class Grenn extends DrawCard {
                     this.controller, this, power, otherPlayer, context.target);
             }
         });
-    }
-
-    opponentHasFactionPower() {
-        var otherPlayer = this.game.getOtherPlayer(this.controller);
-
-        if(!otherPlayer) {
-            return false;
-        }
-
-        return otherPlayer.faction.power > 0;
     }
 }
 
