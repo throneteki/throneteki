@@ -38,6 +38,7 @@ class GameServer {
         this.zmqSocket.on('onGameSync', this.onGameSync.bind(this));
         this.zmqSocket.on('onFailedConnect', this.onFailedConnect.bind(this));
         this.zmqSocket.on('onCloseGame', this.onCloseGame.bind(this));
+        this.zmqSocket.on('onCardData', this.onCardData.bind(this));
 
         var server = undefined;
 
@@ -169,7 +170,7 @@ class GameServer {
     }
 
     onStartGame(pendingGame) {
-        let game = new Game(pendingGame, { router: this, titleCardData: pendingGame.titleCardData, shortCardData: pendingGame.shortCardData });
+        let game = new Game(pendingGame, { router: this, titleCardData: this.titleCardData, shortCardData: this.shortCardData });
         this.games[pendingGame.id] = game;
 
         game.started = true;
@@ -229,6 +230,11 @@ class GameServer {
 
         delete this.games[gameId];
         this.zmqSocket.send('GAMECLOSED', { game: game.id });
+    }
+
+    onCardData(cardData) {
+        this.titleCardData = cardData.titleCardData;
+        this.shortCardData = cardData.shortCardData;
     }
 
     onConnection(ioSocket) {
