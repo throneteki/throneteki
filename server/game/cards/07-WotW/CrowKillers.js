@@ -10,13 +10,16 @@ class CrowKillers extends DrawCard {
     }
 
     opponentHasHigherReserve() {
-        let opponent = this.game.getOtherPlayer(this.controller);
+        let challenge = this.game.currentChallenge;
 
-        if(!opponent) {
+        if(!challenge) {
             return false;
         }
 
-        return this.controller.getTotalReserve() < opponent.getTotalReserve();
+        return (
+            challenge.attackingPlayer === this.controller &&
+            this.controller.getTotalReserve() < challenge.defendingPlayer.getTotalReserve()
+        );
     }
 }
 
