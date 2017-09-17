@@ -7,14 +7,13 @@ class AsHardAsWinter extends DrawCard {
                 onSacrificed: event => this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(event.cardStateWhenSacrificed),
                 onCharacterKilled: event => this.hasUsedWinterPlot() && this.starkCharacterSacrificedOrKilled(event.cardStateWhenKilled)
             },
-
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: (card, context) => (
                     card.location === 'hand' &&
                     card.getType() === 'character' &&
                     card.isFaction('stark') &&
-                    card.getCost() <= context.event.card.getCost()
+                    card.getCost() <= context.event.card.getCost() &&
+                    this.controller.canPutIntoPlay(card)
                 )
             },
 

@@ -11,7 +11,8 @@ class OldBearMormont extends DrawCard {
                     !card.isUnique() &&
                     card.getType() === 'character' &&
                     card.controller === context.event.challenge.loser &&
-                    card.location === 'discard pile')
+                    card.location === 'discard pile' &&
+                    this.controller.canPutIntoPlay(card))
             },
             handler: context => {
                 let originalPlayer = context.target.controller;

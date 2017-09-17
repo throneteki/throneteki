@@ -8,7 +8,8 @@ class MoonBrothers extends DrawCard {
             condition: () => (
                 this.game.currentChallenge &&
                 this.game.currentChallenge.attackingPlayer === this.controller &&
-                this.hasAttackingClansman()
+                this.hasAttackingClansman() &&
+                this.controller.canPutIntoPlay(this)
             ),
             cost: ability.costs.kneelFactionCard(),
             handler: () => {

@@ -9,7 +9,7 @@ class FireAndBlood extends DrawCard {
                 cardCondition: card => card.controller === this.controller && card.location === 'dead pile' && card.isUnique() && card.isFaction('targaryen')
             },
             handler: context => {
-                if(context.target.hasTrait('Hatchling')) {
+                if(context.target.hasTrait('Hatchling') && this.controller.canPutIntoPlay(context.target)) {
                     this.selectedCard = context.target;
                     this.game.promptWithMenu(context.player, this, {
                         activePrompt: {

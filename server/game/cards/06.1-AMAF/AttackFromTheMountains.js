@@ -12,7 +12,8 @@ class AttackFromTheMountains extends DrawCard {
                     card.owner === this.controller &&
                     card.location === 'hand' &&
                     card.hasTrait('Clansman') &&
-                    card.getType() === 'character')
+                    card.getType() === 'character') &&
+                    this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 context.target.owner.putIntoPlay(context.target);

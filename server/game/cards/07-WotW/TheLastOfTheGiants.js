@@ -3,10 +3,10 @@ const DrawCard = require('../../drawcard.js');
 class TheLastOfTheGiants extends DrawCard {
     setupCardAbilities() {
         this.action({
-            title: 'Put card into play',
+            title: 'Put character into play',
             target: {
-                activePromptTitle: 'Select character',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.getType() === 'character' && card.isFaction('neutral')
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.getType() === 'character' &&
+                                       card.isFaction('neutral') && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);

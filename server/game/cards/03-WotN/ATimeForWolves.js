@@ -18,7 +18,7 @@ class ATimeForWolves extends PlotCard {
     cardSelected(player, card) {
         player.moveCard(card, 'hand');
 
-        if(card.getCost() > 3) {
+        if(card.getCost() > 3 || !this.controller.canPutIntoPlay(card)) {
             this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
                 player, this, card);
             return;

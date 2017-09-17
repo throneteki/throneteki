@@ -3,9 +3,10 @@ const DrawCard = require('../../drawcard.js');
 class HearMeRoar extends DrawCard {
     setupCardAbilities() {
         this.action({
-            title: 'Put card into play',
+            title: 'Put character into play',
             target: {
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.getType() === 'character' && card.isFaction('lannister')
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.getType() === 'character' &&
+                                       card.isFaction('lannister') && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);

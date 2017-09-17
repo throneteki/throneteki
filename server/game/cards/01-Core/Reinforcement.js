@@ -8,7 +8,8 @@ class Reinforcements extends PlotCard {
                     this.controller === card.controller &&
                     card.getCost() <= 5 &&
                     card.getType() === 'character' &&
-                    ['hand', 'discard pile'].includes(card.location)
+                    ['hand', 'discard pile'].includes(card.location) &&
+                    this.controller.canPutIntoPlay(card)
                 )
             },
             handler: context => {

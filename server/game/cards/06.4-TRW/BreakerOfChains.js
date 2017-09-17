@@ -11,12 +11,12 @@ class BreakerOfChains extends DrawCard {
                 onAttackersDeclared: event => event.challenge.isAttacking(this.parent)
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card =>
                     card.location === 'hand'
                     && card.controller === this.controller
                     && card.getType() === 'character'
                     && card.getCost() <= 2
+                    && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);
