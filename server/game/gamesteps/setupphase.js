@@ -9,8 +9,8 @@ class SetupPhase extends Phase {
     constructor(game) {
         super(game, 'setup');
         this.initialise([
-            new SimpleStep(game, () => this.prepareDecks()),
             new SimpleStep(game, () => this.determineFirstPlayer()),
+            new SimpleStep(game, () => this.prepareDecks()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
             new SimpleStep(game, () => this.startGame()),
