@@ -4,27 +4,50 @@ class VaryssRiddle extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                let player = this.controller;
-                let otherPlayer = this.game.getOtherPlayer(player);
-                if(this.resolving || !otherPlayer) {
+                let opponents = this.game.getOpponents(this.controller);
+                this.nonRiddlePlots = opponents.map(opponent => opponent.activePlot).filter(plot => !plot.hasTrait('Riddle'));
+
+                if(this.resolving || this.nonRiddlePlots.length === 0) {
                     return;
                 }
 
-                let plot = otherPlayer.activePlot;
-                if(plot.hasTrait('Riddle')) {
+                if(this.nonRiddlePlots.length === 1) {
+                    this.resolveWhenRevealed(this.nonRiddlePlots[0]);
                     return;
                 }
 
-                this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', player, this, plot);
-                plot.controller = player;
-                this.resolving = true;
-
-                this.game.raiseEvent('onPlotsWhenRevealed', { plots: [plot] });
-                this.game.queueSimpleStep(() => {
-                    this.resolving = false;
-                    plot.controller = plot.owner;
+                // TODO: It would be more consistent if this were a card select
+                // prompt, but that requires a bunch of reworking on the client
+                // side to allow clicking of the active plot.
+                let buttons = this.nonRiddlePlots.map(plot => {
+                    return { text: `${plot.owner.name} - ${plot.name}`, method: 'selectPlot', card: plot };
+                });
+                this.game.promptWithMenu(this.controller, this, {
+                    activePrompt: {
+                        menuTitle: 'Select a plot',
+                        buttons: buttons
+                    },
+                    source: this
                 });
             }
+        });
+    }
+
+    selectPlot(player, plotId) {
+        let plot = this.nonRiddlePlots.find(plot => plot.uuid === plotId);
+        this.resolveWhenRevealed(plot);
+        return true;
+    }
+
+    resolveWhenRevealed(plot) {
+        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, plot);
+        plot.controller = this.controller;
+        this.resolving = true;
+
+        this.game.raiseEvent('onPlotsWhenRevealed', { plots: [plot] });
+        this.game.queueSimpleStep(() => {
+            this.resolving = false;
+            plot.controller = plot.owner;
         });
     }
 }
