@@ -189,10 +189,6 @@ export class InnerGameBoard extends React.Component {
         this.props.sendGameMessage('cardClicked', card.uuid);
     }
 
-    onFactionCardClick() {
-        this.props.sendGameMessage('factionCardClicked');
-    }
-
     onDrawClick() {
         this.props.sendGameMessage('showDrawDeck');
 
@@ -501,7 +497,6 @@ export class InnerGameBoard extends React.Component {
                                 onMouseOut={ this.onMouseOut }
                                 numDrawCards={ thisPlayer.numDrawCards }
                                 onDrawClick={ this.onDrawClick }
-                                onFactionCardClick={ this.onFactionCardClick.bind(this) }
                                 onShuffleClick={ this.onShuffleClick }
                                 outOfGamePile={ thisPlayer.cardPiles.outOfGamePile }
                                 showDrawDeck={ this.state.showDrawDeck }
