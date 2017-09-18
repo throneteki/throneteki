@@ -68,6 +68,10 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
+        if(event.cannotBeCanceled && this.eventType === 'cancelinterrupt') {
+            return;
+        }
+
         return listener(...event.params);
     }
 

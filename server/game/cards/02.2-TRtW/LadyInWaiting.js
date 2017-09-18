@@ -5,6 +5,7 @@ class LadyInWaiting extends DrawCard {
         this.playAction({
             title: 'Marshal as dupe',
             condition: () => this.canMarshalAsDupe(),
+            cannotBeCanceled: true,
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Lady') &&
                 card.controller === this.controller && card.owner === this.controller

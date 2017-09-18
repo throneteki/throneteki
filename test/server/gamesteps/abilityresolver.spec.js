@@ -56,7 +56,7 @@ describe('AbilityResolver', function() {
             });
 
             it('should raise the onCardAbilityInitiated event', function() {
-                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [] }, jasmine.any(Function));
+                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [], cannotBeCanceled: false }, jasmine.any(Function));
             });
         });
 
@@ -197,7 +197,7 @@ describe('AbilityResolver', function() {
                         });
 
                         it('should raise the onCardAbilityInitiated event with appropriate targets', function() {
-                            expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [this.target] }, jasmine.any(Function));
+                            expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [this.target], cannotBeCanceled: false }, jasmine.any(Function));
                         });
                     });
 
