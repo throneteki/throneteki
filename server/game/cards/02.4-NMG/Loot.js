@@ -5,11 +5,11 @@ class Loot extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => this.controller === event.challenge.winner && event.challenge.isUnopposed() &&
-                                         this.getOpponentDeckSize() >= 1
+                                         this.getLoserDeckSize(event.challenge) >= 1
             },
-            cost: ability.costs.payXGold(() => 1, () => this.getOpponentDeckSize(), this.game.getOtherPlayer(this.controller)),
+            cost: ability.costs.payXGold(() => 1, context => this.getLoserDeckSize(context.event.challenge), context => context.event.challenge.loser),
             handler: context => {
-                let opponent = this.game.getOtherPlayer(this.controller);
+                let opponent = context.event.challenge.loser;
                 opponent.discardFromDraw(context.goldCostAmount);
                 this.game.addMessage('{0} plays {1} and pays {2} gold from {3}\'s gold pool to discard the top {2} cards from {3}\'s deck',
                     this.controller, this, context.goldCostAmount, opponent);
@@ -17,14 +17,8 @@ class Loot extends DrawCard {
         });
     }
 
-    getOpponentDeckSize() {
-        let opponent = this.game.getOtherPlayer(this.controller);
-
-        if(!opponent) {
-            return false;
-        }
-
-        return opponent.drawDeck.size();
+    getLoserDeckSize(challenge) {
+        return challenge.loser.drawDeck.size();
     }
 }
 

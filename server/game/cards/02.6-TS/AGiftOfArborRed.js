@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class AGiftOfArborRed extends DrawCard {
@@ -8,77 +6,56 @@ class AGiftOfArborRed extends DrawCard {
             title: 'Reveal top 4 cards of each deck',
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
-                let player = this.controller;
-                this.thisPlayerCards = player.searchDrawDeck(4);
+                let opponents = this.game.getOpponents(this.controller);
+                let opponentCards = opponents.map(opponent => {
+                    return { player: opponent, cards: opponent.searchDrawDeck(4) };
+                });
 
-                this.revealCards(player, this.thisPlayerCards);
+                this.revealedCards = [
+                    { player: this.controller, cards: this.controller.searchDrawDeck(4) }
+                ].concat(opponentCards);
 
-                this.otherPlayer = this.game.getOtherPlayer(player);
-                if(this.otherPlayer) {
-                    this.otherPlayerCards = this.otherPlayer.searchDrawDeck(4);
-                    this.revealCards(this.otherPlayer, this.otherPlayerCards);
+                for(let revealed of this.revealedCards) {
+                    this.game.addMessage('{0} uses {1} and kneels their faction card to reveal the top 4 cards of {2}\'s deck as: {3}', this.controller, this, revealed.player, revealed.cards);
                 }
 
-                var buttons = _.map(this.thisPlayerCards, card => ({
-                    method: 'selectThisPlayerCardForHand', card: card
-                }));
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Choose a card to add to your hand',
-                        buttons: buttons
-                    },
-                    source: this
-                });
+                this.promptToAddToHand();
             }
         });
     }
 
-    revealCards(player, cards) {
-        this.game.addMessage('{0} uses {1} to kneel their faction card and reveal the top 4 cards of {2}\'s deck as: {3}', this.controller, this, player, cards);
-    }
-
-    selectThisPlayerCardForHand(player, cardId) {
-        this.selectCardForHand(player, this.thisPlayerCards, cardId);
-
-        if(!this.otherPlayer) {
-            return true;
+    promptToAddToHand() {
+        if(this.revealedCards.length === 0) {
+            return;
         }
 
-        var buttons = _.map(this.otherPlayerCards, card => ({
-            method: 'selectOtherPlayerCardForHand', card: card
+        let currentRevealed = this.revealedCards[0];
+
+        let title = currentRevealed.player === this.controller ? 'Choose a card to add to your hand' : `Choose a card to add to ${currentRevealed.player.name}'s hand`;
+        let buttons = currentRevealed.cards.map(card => ({
+            method: 'selectCardForHand', card: card
         }));
 
         this.game.promptWithMenu(this.controller, this, {
             activePrompt: {
-                menuTitle: 'Choose opponent card to add to their hand',
+                menuTitle: title,
                 buttons: buttons
             },
             source: this
         });
-
-        return true;
     }
 
-    selectOtherPlayerCardForHand(player, cardId) {
-        this.selectCardForHand(this.otherPlayer, this.otherPlayerCards, cardId);
+    selectCardForHand(player, cardId) {
+        let current = this.revealedCards.shift();
+        let card = current.cards.find(card => card.uuid === cardId);
 
-        return true;
-    }
-
-    selectCardForHand(player, cards, cardId) {
-        var card = _.find(cards, card => card.uuid === cardId);
-
-        if(!card) {
-            return false;
-        }
-
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
-        player.moveCard(card, 'hand');
-        player.shuffleDrawDeck();
+        current.player.moveCard(card, 'hand');
+        current.player.shuffleDrawDeck();
 
         this.game.addMessage('{0} adds {1} to {2}\'s hand and shuffles their deck',
-            this.controller, card, player);
+            this.controller, card, current.player);
+
+        this.promptToAddToHand();
 
         return true;
     }

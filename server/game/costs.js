@@ -629,30 +629,33 @@ const Costs = {
         };
     },
     /**
-     * Cost where the player gets prompted to pay from 1 up to the lesser of two values: 
+     * Cost where the player gets prompted to pay from 1 up to the lesser of two values:
      * the passed value and either the player's or his opponent's gold.
      * Used by Ritual of R'hllor, Loot and The Things I Do For Love.
      * TODO: needs to be reducable for cards like Littlefinger's Meddling and Paxter Redwyne.
      */
-    payXGold: function(minFunc, maxFunc, opponentObj = false) {
+    payXGold: function(minFunc, maxFunc, opponentFunc) {
         return {
             canPay: function(context) {
+                let opponentObj = opponentFunc && opponentFunc(context);
                 if(!opponentObj) {
-                    return context.player.gold >= minFunc();
+                    return context.player.gold >= minFunc(context);
                 }
-                return opponentObj.gold >= minFunc();
+                return opponentObj.gold >= minFunc(context);
             },
             resolve: function(context, result = { resolved: false }) {
+                let opponentObj = opponentFunc && opponentFunc(context);
                 let gold = opponentObj ? opponentObj.gold : context.player.gold;
-                let max = _.min([maxFunc(), gold]);
+                let max = _.min([maxFunc(context), gold]);
 
-                context.game.queueStep(new PayXGoldPrompt(minFunc(), max, context));
+                context.game.queueStep(new PayXGoldPrompt(minFunc(context), max, context));
 
                 result.value = true;
                 result.resolved = true;
                 return result;
             },
             pay: function(context) {
+                let opponentObj = opponentFunc && opponentFunc(context);
                 if(!opponentObj) {
                     context.game.addGold(context.player, -context.goldCostAmount);
                 } else {
