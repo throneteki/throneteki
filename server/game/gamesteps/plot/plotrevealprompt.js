@@ -12,14 +12,14 @@ class PlotRevealPrompt extends UIPrompt {
     }
 
     activePrompt() {
-        var otherPlayer = this.game.getOtherPlayer(this.player);
+        let players = this.game.getPlayersInBoardOrder(player => player === this.player);
+        let buttons = players.map(player => {
+            return { text: player.name, arg: player.name };
+        });
 
         return {
             menuTitle: 'Select first player',
-            buttons: [
-                { text: this.player.name, arg: this.player.name },
-                { text: otherPlayer.name, arg: otherPlayer.name }
-            ]
+            buttons: buttons
         };
     }
 
@@ -28,15 +28,13 @@ class PlotRevealPrompt extends UIPrompt {
             return false;
         }
 
-        var firstPlayer = this.game.getPlayerByName(playerName);
+        let firstPlayer = this.game.getPlayerByName(playerName);
         if(!firstPlayer) {
             return;
         }
 
-        firstPlayer.firstPlayer = true;
-        var otherPlayer = this.game.getOtherPlayer(firstPlayer);
-        if(otherPlayer) {
-            otherPlayer.firstPlayer = false;
+        for(let player of this.game.getPlayers()) {
+            player.firstPlayer = (firstPlayer === player);
         }
 
         this.game.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);

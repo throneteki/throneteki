@@ -117,16 +117,20 @@ class Game extends EventEmitter {
     }
 
     getPlayersInFirstPlayerOrder() {
+        return this.getPlayersInBoardOrder(player => player.firstPlayer);
+    }
+
+    getPlayersInBoardOrder(predicate) {
         let players = this.getPlayers();
-        let firstPlayerIndex = players.findIndex(player => player.firstPlayer);
-        if(firstPlayerIndex === -1) {
+        let index = players.findIndex(predicate);
+        if(index === -1) {
             return players;
         }
 
-        let beforeFirstPlayer = players.slice(0, firstPlayerIndex);
-        let firstPlayerAndAfter = players.slice(firstPlayerIndex);
+        let beforeMatch = players.slice(0, index);
+        let matchAndAfter = players.slice(index);
 
-        return firstPlayerAndAfter.concat(beforeFirstPlayer);
+        return matchAndAfter.concat(beforeMatch);
     }
 
     getPlayersAndSpectators() {
