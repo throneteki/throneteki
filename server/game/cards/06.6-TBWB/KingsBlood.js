@@ -15,6 +15,7 @@ class KingsBlood extends DrawCard {
                 }
                 return false;
             },
+            phase: 'plot',
             cost: [
                 ability.costs.kneelParent(),
                 ability.costs.sacrificeSelf()
