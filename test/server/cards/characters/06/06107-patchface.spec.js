@@ -32,7 +32,7 @@ describe('Patchface', function() {
                 this.player1.clickCard(this.patchface);
             });
 
-            it('should give match the keyword', function() {
+            it('should match the keyword', function() {
                 expect(this.patchface.hasKeyword('insight')).toBe(true);
             });
         });
