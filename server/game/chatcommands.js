@@ -285,13 +285,12 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to give control',
             cardCondition: card => ['play area', 'discard pile', 'dead pile'].includes(card.location) && card.controller === player,
             onSelect: (p, card) => {
-                var otherPlayer = this.game.getOtherPlayer(player);
-                if(!otherPlayer) {
-                    return true;
-                }
-
-                this.game.takeControl(otherPlayer, card);
-                this.game.addAlert('danger', '{0} uses the /give-control command to pass control of {1} to {2}', p, card, otherPlayer);
+                this.game.promptForOpponentChoice(player, {
+                    onSelect: otherPlayer => {
+                        this.game.takeControl(otherPlayer, card);
+                        this.game.addAlert('danger', '{0} uses the /give-control command to pass control of {1} to {2}', p, card, otherPlayer);
+                    }
+                });
 
                 return true;
             }
