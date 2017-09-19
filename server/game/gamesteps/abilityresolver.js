@@ -67,7 +67,7 @@ class AbilityResolver extends BaseStep {
     }
 
     createSnapshot() {
-        if(this.context.source.getType() !== 'plot') {
+        if(this.context.source.getType() === 'character' || this.context.source.getType() === 'location' || this.context.source.getType() === 'attachment') {
             this.context.cardStateWhenInitiated = this.context.source.createSnapshot();
         }
     }
