@@ -109,7 +109,7 @@ class ChallengeFlow extends BaseStep {
     announceAttackerStrength() {
         // Explicitly recalculate strength in case an effect has modified character strength.
         this.challenge.calculateStrength();
-        this.game.addMessage('{0} has initiated a {1} challenge with strength {2}', this.challenge.attackingPlayer, this.challenge.challengeType, this.challenge.attackerStrength);
+        this.game.addMessage('{0} has initiated a {1} challenge against {2} with strength {3}', this.challenge.attackingPlayer, this.challenge.defendingPlayer, this.challenge.challengeType, this.challenge.attackerStrength);
     }
 
     promptForDefenders() {
