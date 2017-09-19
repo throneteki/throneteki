@@ -2,7 +2,6 @@ const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const Challenge = require('../challenge.js');
 const ChallengeFlow = require('./challenge/challengeflow.js');
-const ChooseOpponentPrompt = require('./chooseopponentprompt.js');
 const ActionWindow = require('./actionwindow.js');
 
 class ChallengePhase extends Phase {
@@ -49,11 +48,11 @@ class ChallengePhase extends Phase {
             return;
         }
 
-        this.game.queueStep(new ChooseOpponentPrompt(this.game, attackingPlayer, {
+        this.game.promptForOpponentChoice(attackingPlayer, {
             onSelect: opponent => {
                 this.initiateChallenge(attackingPlayer, opponent, challengeType);
             }
-        }));
+        });
     }
 
     initiateChallenge(attackingPlayer, defendingPlayer, challengeType) {

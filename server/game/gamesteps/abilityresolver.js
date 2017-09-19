@@ -3,7 +3,6 @@ const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
-const ChooseOpponentPrompt = require('./chooseopponentprompt.js');
 
 class AbilityResolver extends BaseStep {
     constructor(game, ability, context) {
@@ -97,7 +96,7 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
-        this.game.queueStep(new ChooseOpponentPrompt(this.game, this.context.player, {
+        this.game.promptForOpponentChoice(this.context.player, {
             condition: opponent => this.ability.canChooseOpponent(opponent),
             onSelect: opponent => {
                 this.context.opponent = opponent;
@@ -106,7 +105,7 @@ class AbilityResolver extends BaseStep {
                 this.cancelled = true;
             },
             source: this.context.source
-        }));
+        });
     }
 
     resolveTargets() {

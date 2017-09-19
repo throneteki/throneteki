@@ -18,6 +18,7 @@ const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
 const SimpleStep = require('./gamesteps/simplestep.js');
+const ChooseOpponentPrompt = require('./gamesteps/chooseopponentprompt.js');
 const DeckSearchPrompt = require('./gamesteps/decksearchprompt.js');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const IconPrompt = require('./gamesteps/iconprompt.js');
@@ -563,6 +564,10 @@ class Game extends EventEmitter {
         this.raiseEvent('onBeforeDeckSearch', { source: properties.source, player: player }, event => {
             this.queueStep(new DeckSearchPrompt(this, event.player, properties));
         });
+    }
+
+    promptForOpponentChoice(player, properties) {
+        this.queueStep(new ChooseOpponentPrompt(this, player, properties));
     }
 
     menuButton(playerName, arg, method) {
