@@ -305,6 +305,25 @@ const Effects = {
             }
         };
     },
+    dynamicIcons: function(iconsFunc) {
+        return {
+            apply: function(card, context) {
+                context.dynamicIcons = context.dynamicIcons || {};
+                context.dynamicIcons[card.uuid] = iconsFunc(card, context) || 0;
+                _.each(context.dynamicIcons[card.uuid], icon => card.addIcon(icon));
+            },
+            reapply: function(card, context) {
+                _.each(context.dynamicIcons[card.uuid], icon => card.removeIcon(icon));
+                context.dynamicIcons[card.uuid] = iconsFunc(card, context);
+                _.each(context.dynamicIcons[card.uuid], icon => card.addIcon(icon));
+            },
+            unapply: function(card, context) {
+                _.each(context.dynamicIcons[card.uuid], icon => card.removeIcon(icon));
+                delete context.dynamicIcons[card.uuid];
+            },
+            isStateDependent: true
+        };
+    },
     removeIcon: function(icon) {
         return {
             apply: function(card) {
@@ -323,6 +342,25 @@ const Effects = {
             unapply: function(card) {
                 card.removeKeyword(keyword);
             }
+        };
+    },
+    dynamicKeywords: function(keywordsFunc) {
+        return {
+            apply: function(card, context) {
+                context.dynamicKeywords = context.dynamicKeywords || {};
+                context.dynamicKeywords[card.uuid] = keywordsFunc(card, context) || 0;
+                _.each(context.dynamicKeywords[card.uuid], keyword => card.addKeyword(keyword));
+            },
+            reapply: function(card, context) {
+                _.each(context.dynamicKeywords[card.uuid], icon => card.removeKeyword(icon));
+                context.dynamicKeywords[card.uuid] = keywordsFunc(card, context);
+                _.each(context.dynamicKeywords[card.uuid], keyword => card.addKeyword(keyword));
+            },
+            unapply: function(card, context) {
+                _.each(context.dynamicKeywords[card.uuid], keyword => card.removeKeyword(keyword));
+                delete context.dynamicKeywords[card.uuid];
+            },
+            isStateDependent: true
         };
     },
     removeKeyword: function(keyword) {
