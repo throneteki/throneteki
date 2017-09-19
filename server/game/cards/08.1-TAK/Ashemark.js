@@ -6,25 +6,22 @@ class Ashemark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: () => {
-                    this.gold = this.tokens['gold'];
-                    return true;
-                }
+                onPhaseStarted: () => this.hasToken('gold')
             },
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.sacrificeSelf()
             ],
-            handler: () => {
+            handler: context => {
                 _.each(this.game.getPlayers(), player => {
-                    let characters = player.filterCardsInPlay(card => card.getType() === 'character' && card.getPrintedCost() <= this.gold);
+                    let characters = player.filterCardsInPlay(card => card.getType() === 'character' && card.getPrintedCost() <= context.cardStateWhenInitiated.tokens.gold);
                     _.each(characters, card => {
                         card.owner.returnCardToHand(card);
                     });
                 });
 
                 this.game.addMessage('{0} kneels and sacrifices {1} to return each character with printed cost {2} or less to its owner\'s hand',
-                    this.controller, this, this.gold);
+                    this.controller, this, context.cardStateWhenInitiated.tokens.gold);
             }
         });
     }
