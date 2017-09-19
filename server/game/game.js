@@ -418,12 +418,12 @@ class Game extends EventEmitter {
     }
 
     playerDecked(player) {
-        let otherPlayer = this.getOtherPlayer(player);
-
         this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
+        player.lost = true;
 
-        if(otherPlayer) {
-            this.recordWinner(otherPlayer, 'decked');
+        let remainingPlayers = this.getPlayers().filter(player => !player.lost);
+        if(remainingPlayers.length === 1) {
+            this.recordWinner(remainingPlayers[0], 'decked');
         }
     }
 
@@ -519,11 +519,12 @@ class Game extends EventEmitter {
         }
 
         this.addAlert('info', '{0} concedes', player);
+        player.lost = true;
 
-        var otherPlayer = this.getOtherPlayer(player);
+        let remainingPlayers = this.getPlayers().filter(player => !player.lost);
 
-        if(otherPlayer) {
-            this.recordWinner(otherPlayer, 'concede');
+        if(remainingPlayers.length === 1) {
+            this.recordWinner(remainingPlayers[0], 'concede');
         }
     }
 
