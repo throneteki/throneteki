@@ -305,6 +305,18 @@ const Effects = {
             }
         };
     },
+    addIcons: function(iconsFunc) {
+        return {
+            apply: function(card) {
+                let icons = iconsFunc();
+                _.each(icons, icon => card.addIcon(icon));
+            },
+            unapply: function(card) {
+                let icons = iconsFunc();
+                _.each(icons, icon => card.removeIcon(icon));
+            }
+        };
+    },
     removeIcon: function(icon) {
         return {
             apply: function(card) {
@@ -322,6 +334,18 @@ const Effects = {
             },
             unapply: function(card) {
                 card.removeKeyword(keyword);
+            }
+        };
+    },
+    addKeywords: function(keywordsFunc) {
+        return {
+            apply: function(card) {
+                let keywords = keywordsFunc();
+                _.each(keywords, keyword => card.addKeyword(keyword));
+            },
+            unapply: function(card) {
+                let keywords = keywordsFunc();
+                _.each(keywords, keyword => card.removeKeyword(keyword));
             }
         };
     },

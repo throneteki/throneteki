@@ -264,11 +264,11 @@ class DrawCard extends BaseCard {
     }
 
     addIcon(icon) {
-        this.icons[icon]++;
+        this.icons[icon.toLowerCase()]++;
     }
 
     removeIcon(icon) {
-        this.icons[icon]--;
+        this.icons[icon.toLowerCase()]--;
     }
 
     modifyPower(power) {
