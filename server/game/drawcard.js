@@ -69,6 +69,7 @@ class DrawCard extends BaseCard {
         clone.icons = Object.assign({}, this.icons);
         clone.keywords = Object.assign({}, this.keywords);
         clone.kneeled = this.kneeled;
+        clone.parent = this.parent;
         clone.power = this.power;
         clone.strengthModifier = this.strengthModifier;
         clone.strengthMultiplier = this.strengthMultiplier;
