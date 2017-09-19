@@ -39,9 +39,9 @@ describe('Patchface', function() {
 
         describe('when the fool trait is added to a character', function() {
             beforeEach(function() {
+                this.player1.clickCard(this.patchface);
                 this.player1.clickCard(this.motley);
                 this.player1.clickCard(this.renly);
-                this.player1.clickCard(this.patchface);
             });
 
             it('should match keywords and icons', function() {

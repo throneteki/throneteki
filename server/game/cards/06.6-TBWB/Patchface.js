@@ -9,8 +9,8 @@ class Patchface extends DrawCard {
         this.persistentEffect({
             match: this,
             effect: [
-                ability.effects.addKeywords(() => this.getFoolKeywords()),
-                ability.effects.addIcons(() => this.getFoolIcons())
+                ability.effects.dynamicKeywords(() => this.getFoolKeywords()),
+                ability.effects.dynamicIcons(() => this.getFoolIcons())
             ]
         });
     }
