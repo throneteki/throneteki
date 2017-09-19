@@ -1,14 +1,21 @@
 describe('Lady-in-Waiting', function() {
     integration(function() {
         beforeEach(function() {
-            const deck = this.buildDeck('tyrell', [
+            const deck1 = this.buildDeck('tyrell', [
                 'A Noble Cause',
                 'Lady-in-Waiting', 'Margaery Tyrell (Core)'
             ]);
-            this.player1.selectDeck(deck);
-            this.player2.selectDeck(deck);
+            const deck2 = this.buildDeck('lannister', [
+                'A Noble Cause',
+                'Cersei Lannister (Core)', 'Treachery'
+            ]);
+            this.player1.selectDeck(deck1);
+            this.player2.selectDeck(deck2);
             this.startGame();
             this.keepStartingHands();
+
+            this.player2.clickCard('Cersei Lannister', 'hand');
+
             this.completeSetup();
             this.player1.selectPlot('A Noble Cause');
             this.player2.selectPlot('A Noble Cause');
@@ -63,6 +70,22 @@ describe('Lady-in-Waiting', function() {
                     // 5 gold from plot - 1 from Margaery - 0 for LiW.
                     expect(this.player1Object.gold).toBe(4);
                 });
+            });
+        });
+
+        describe('when marshalling as a dupe', function() {
+            beforeEach(function() {
+                // Give Player 2 some gold for Treachery
+                this.player2Object.gold = 3;
+
+                this.player1.clickCard('Margaery Tyrell', 'hand');
+                this.player1.clickCard('Lady-in-Waiting', 'hand');
+                this.player1.clickPrompt('Marshal as dupe');
+                this.player1.clickCard('Margaery Tyrell', 'play area');
+            });
+
+            it('should not allow it to be canceled', function() {
+                expect(this.player2).not.toHavePromptButton('Treachery');
             });
         });
     });

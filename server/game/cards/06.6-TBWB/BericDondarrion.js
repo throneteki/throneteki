@@ -7,11 +7,11 @@ class BericDondarrion extends DrawCard {
             effect: ability.effects.dynamicStrength(() => this.tokens['kiss'])
         });
 
-        //TODO: needs an ability flag preventing it from being cancellable
         this.forcedReaction({
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
+            cannotBeCanceled: true,
             handler: () => {
                 this.addToken('kiss', 6);
                 this.game.addMessage('{0} is forced to place 6 kiss tokens on {1}', this.controller, this);
