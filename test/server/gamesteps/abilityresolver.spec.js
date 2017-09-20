@@ -10,7 +10,7 @@ describe('AbilityResolver', function() {
         });
         this.ability = jasmine.createSpyObj('ability', ['isAction', 'isCardAbility', 'isPlayableEventAbility', 'needsChooseOpponent', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
         this.ability.isCardAbility.and.returnValue(true);
-        this.source = { source: 1 };
+        this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);
         this.player = { player: 1 };
         this.context = { foo: 'bar', player: this.player, source: this.source };
         this.resolver = new AbilityResolver(this.game, this.ability, this.context);

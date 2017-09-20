@@ -5,25 +5,14 @@ class BodyGuard extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => {
-                    if(event.cards.includes(this.parent) && this.parent.canBeSaved() && event.allowSave) {
-                        this.parentCard = this.parent;
-                        return true;
-                    }
-                    return false;
-                },
-                onCardsDiscarded: event => {
-                    if(event.cards.includes(this.parent) && this.parent.canBeSaved() && event.allowSave) {
-                        this.parentCard = this.parent;
-                        return true;
-                    }
-                    return false;
-                }
+                onCharactersKilled: event => event.cards.includes(this.parent) && this.parent.canBeSaved() && event.allowSave,
+                onCardsDiscarded: event => event.cards.includes(this.parent) && this.parent.canBeSaved() && event.allowSave
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
-                context.event.saveCard(this.parentCard);
-                this.game.addMessage('{0} sacrifices {1} to save {2}', this.controller, this, this.parentCard);
+                let parent = context.cardStateWhenInitiated.parent;
+                context.event.saveCard(parent);
+                this.game.addMessage('{0} sacrifices {1} to save {2}', this.controller, this, parent);
             }
         });
     }

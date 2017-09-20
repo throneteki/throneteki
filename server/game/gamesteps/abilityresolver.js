@@ -13,6 +13,7 @@ class AbilityResolver extends BaseStep {
         this.context = context;
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
+            new SimpleStep(game, () => this.createSnapshot()),
             new SimpleStep(game, () => this.markActionAsTaken()),
             new SimpleStep(game, () => this.game.pushAbilityContext('card', context.source, 'cost')),
             new SimpleStep(game, () => this.resolveCosts()),
@@ -62,6 +63,12 @@ class AbilityResolver extends BaseStep {
             }
 
             return true;
+        }
+    }
+
+    createSnapshot() {
+        if(this.context.source.getType() === 'character' || this.context.source.getType() === 'location' || this.context.source.getType() === 'attachment') {
+            this.context.cardStateWhenInitiated = this.context.source.createSnapshot();
         }
     }
 
