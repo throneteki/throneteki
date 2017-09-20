@@ -378,6 +378,34 @@ const Costs = {
         };
     },
     /**
+     * Cost that will stand the parent card the current card is attached to.
+     */
+    standParent: function() {
+        return {
+            canPay: function(context) {
+                return !!context.source.parent && context.source.parent.kneeled;
+            },
+            pay: function(context) {
+                context.source.parent.controller.standCard(context.source.parent);
+            }
+        };
+    },
+    /**
+     * Cost that will remove the parent card the current card is attached to from the challenge.
+     */
+    removeParentFromChallenge: function(challengeFunc) {
+        return {
+            canPay: function(context) {
+                let challenge = challengeFunc();
+                return !!context.source.parent && challenge.isParticipating(context.source.parent);
+            },
+            pay: function(context) {
+                let challenge = challengeFunc();
+                challenge.removeFromChallenge(context.source.parent);
+            }
+        };
+    },
+    /**
      * Cost that will place the played event card in the player's discard pile.
      */
     expendEvent: function() {
