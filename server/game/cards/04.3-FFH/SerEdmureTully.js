@@ -5,9 +5,6 @@ class SerEdmureTully extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                // TODO this should trigger only when power is *gained*, but currently also
-                // triggers when power is *moved* between cards. To make the distinction we
-                // need a new high-level event and review all uses of card power modifications
                 onCardPowerChanged: event => {
                     let {card, power} = event;
                     let tullyCharacters = this.game.findAnyCardsInPlay(this.isTullyCharacter);

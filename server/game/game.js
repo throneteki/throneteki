@@ -395,6 +395,8 @@ class Game extends EventEmitter {
             fromCard.power -= appliedPower;
             toCard.power += appliedPower;
 
+            this.raiseEvent('onCardPowerMoved', { source: fromCard, target: toCard, power: appliedPower });
+
             this.checkWinCondition(toCard.controller);
         });
     }
