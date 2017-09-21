@@ -20,13 +20,13 @@ describe('the Game', () => {
         game.playersAndSpectators[loser.id] = loser;
     });
 
-    describe('the transferPower() function', () => {
+    describe('the movePower() function', () => {
         describe('when the loser has enough power', () => {
             it('should transfer the exact amount of power', () => {
                 winner.faction.power = 1;
                 loser.faction.power = 2;
 
-                game.transferPower(winner, loser, 2);
+                game.movePower(loser.faction, winner.faction, 2);
 
                 expect(winner.faction.power).toBe(3);
             });
@@ -36,7 +36,7 @@ describe('the Game', () => {
             beforeEach(() => {
                 winner.faction.power = 1;
                 loser.faction.power = 2;
-                game.transferPower(winner, loser, 3);
+                game.movePower(loser.faction, winner.faction, 3);
             });
 
             it('should increase the winner power by the losers total power', () => {

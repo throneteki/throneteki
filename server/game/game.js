@@ -389,12 +389,12 @@ class Game extends EventEmitter {
         }
     }
 
-    transferPower(winner, loser, power) {
-        var appliedPower = Math.min(loser.faction.power, power);
-        loser.faction.power -= appliedPower;
-        winner.faction.power += appliedPower;
+    movePower(fromCard, toCard, power) {
+        let appliedPower = Math.min(fromCard.power, power);
+        fromCard.power -= appliedPower;
+        toCard.power += appliedPower;
 
-        this.checkWinCondition(winner);
+        this.checkWinCondition(toCard.controller);
     }
 
     transferGold(to, from, gold) {
