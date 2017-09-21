@@ -8,7 +8,11 @@ class ChamberOfThePaintedTable extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                let opponents = this.game.getOpponents(this.controller).filter(card => card.power > 0);
+                let opponents = this.game.getOpponents(this.controller).filter(opponent => opponent.faction.power > 0);
+
+                if(opponents.length === 0) {
+                    return;
+                }
 
                 if(opponents.length === 1) {
                     this.stealPowerFromOpponent(opponents[0]);
@@ -17,7 +21,7 @@ class ChamberOfThePaintedTable extends DrawCard {
 
                 let factionCards = opponents.map(opponent => opponent.faction);
 
-                this.promptForSelect(this.controller, {
+                this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a faction card',
                     cardCondition: card => factionCards.includes(card),
                     cardType: 'faction',
