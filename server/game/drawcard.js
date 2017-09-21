@@ -282,7 +282,9 @@ class DrawCard extends BaseCard {
                 card.power = 0;
             }
 
-            this.game.raiseEvent('onCardPowerChanged', { card: this, power: card.power - oldPower });
+            if(power > 0) {
+                this.game.raiseEvent('onCardPowerGained', { card: this, power: card.power - oldPower });
+            }
 
             this.game.checkWinCondition(this.controller);
         });

@@ -33,7 +33,7 @@ class ApplyClaim extends BaseStep {
                 let appliedPower = Math.min(this.challenge.loser.faction.power, this.challenge.claim);
                 this.game.addMessage('{0} {1} claim is applied.  {2} removes {3} power and {4} gains {3} power', this.challenge.claim, this.challenge.challengeType, this.challenge.loser, appliedPower,
                     this.challenge.winner);
-                this.game.transferPower(this.challenge.winner, this.challenge.loser, this.challenge.claim);
+                this.game.movePower(this.challenge.loser.faction, this.challenge.winner.faction, this.challenge.claim);
                 break;
             }
         }

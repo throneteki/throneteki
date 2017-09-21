@@ -386,12 +386,20 @@ class Game extends EventEmitter {
         }
     }
 
-    transferPower(winner, loser, power) {
-        var appliedPower = Math.min(loser.faction.power, power);
-        loser.faction.power -= appliedPower;
-        winner.faction.power += appliedPower;
+    movePower(fromCard, toCard, power) {
+        if(power < 1) {
+            return;
+        }
 
-        this.checkWinCondition(winner);
+        this.applyGameAction('movePower', fromCard, fromCard => {
+            let appliedPower = Math.min(fromCard.power, power);
+            fromCard.power -= appliedPower;
+            toCard.power += appliedPower;
+
+            this.raiseEvent('onCardPowerMoved', { source: fromCard, target: toCard, power: appliedPower });
+
+            this.checkWinCondition(toCard.controller);
+        });
     }
 
     transferGold(to, from, gold) {

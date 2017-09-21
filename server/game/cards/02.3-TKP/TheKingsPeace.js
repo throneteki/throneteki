@@ -52,7 +52,7 @@ class TheKingsPeace extends PlotCard {
     }
 
     movePower(player) {
-        this.game.transferPower(this.controller, player, 1);
+        this.game.movePower(player.faction, this.controller.faction, 1);
 
         this.game.addMessage('{0} chooses to transfer 1 power to {1} to let the challenge continue', player, this.controller);
 

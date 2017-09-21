@@ -1,13 +1,14 @@
 const EventToTitleFunc = {
-    onCardAbilityInitiated: event => 'the effects of ' + event.source.name,
-    onCardPowerChanged: event => event.card.name + ' gaining power',
+    onCardAbilityInitiated: event => `the effects of ${event.source.name}`,
+    onCardPowerGained: event => `${event.card.name} gaining power`,
+    onCardPowerMoved: event => `power moved from ${event.source.name} to ${event.target.name}`,
     onClaimApplied: () => 'to claim effects being applied',
-    onCharacterKilled: event => event.card.name + ' being killed',
+    onCharacterKilled: event => `${event.card.name} being killed`,
     onCharactersKilled: () => 'characters being killed',
-    onPhaseEnded: event => event.phase + ' phase ending',
-    onPhaseStarted: event => event.phase + ' phase starting',
-    onSacrificed: event => event.card.name + ' being sacrificed',
-    onRemovedFromChallenge: event => event.card.name + ' being removed from the challenge'
+    onPhaseEnded: event => `${event.phase} phase ending`,
+    onPhaseStarted: event => `${event.phase} phase starting`,
+    onSacrificed: event => `${event.card.name} being sacrificed`,
+    onRemovedFromChallenge: event => `${event.card.name} being removed from the challenge`
 };
 
 const AbilityTypeToWord = {
@@ -26,17 +27,17 @@ const AbilityWindowTitles = {
 
         if(['forcedreaction', 'forcedinterrupt', 'whenrevealed'].includes(abilityType)) {
             if(titleFunc) {
-                return 'Choose ' + abilityWord + ' order for ' + titleFunc(event);
+                return `Choose ${abilityWord} order for ${titleFunc(event)}`;
             }
 
-            return 'Choose ' + abilityWord + ' order';
+            return `Choose ${abilityWord} order`;
         }
 
         if(titleFunc) {
-            return 'Any ' + abilityWord + 's to ' + titleFunc(event) + '?';
+            return `Any ${abilityWord}s to ${titleFunc(event)}?`;
         }
 
-        return 'Any ' + abilityWord + 's?';
+        return `Any ${abilityWord}s?`;
     }
 };
 

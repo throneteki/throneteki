@@ -4,9 +4,7 @@ class TheTumblestone extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                // TODO: Currently has false positive when power is moved to a character, should only trigger on 'gains'
-                onCardPowerChanged: event => (
-                    event.power > 0 &&
+                onCardPowerGained: event => (
                     event.card.getType() === 'character' &&
                     event.card.hasTrait('House Tully') &&
                     event.card.kneeled

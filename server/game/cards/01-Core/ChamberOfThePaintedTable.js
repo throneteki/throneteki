@@ -30,7 +30,7 @@ class ChamberOfThePaintedTable extends DrawCard {
     stealPowerFromOpponent(opponent) {
         this.game.addMessage('{0} kneels {1} to move 1 power from {2}\'s faction card to their own',
             this.controller, this, opponent);
-        this.game.transferPower(this.controller, opponent, 1);
+        this.game.movePower(opponent.faction, this.controller.faction, 1);
         return true;
     }
 
