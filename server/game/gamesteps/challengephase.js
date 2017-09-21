@@ -28,9 +28,9 @@ class ChallengePhase extends Phase {
             activePrompt: {
                 menuTitle: '',
                 buttons: [
-                    { text: 'Military', method: 'initiateChallenge', arg: 'military' },
-                    { text: 'Intrigue', method: 'initiateChallenge', arg: 'intrigue' },
-                    { text: 'Power', method: 'initiateChallenge', arg: 'power' },
+                    { text: 'Military', method: 'chooseChallengeType', arg: 'military' },
+                    { text: 'Intrigue', method: 'chooseChallengeType', arg: 'intrigue' },
+                    { text: 'Power', method: 'chooseChallengeType', arg: 'power' },
                     { text: 'Done', method: 'completeChallenges' }
                 ]
             },
@@ -40,9 +40,22 @@ class ChallengePhase extends Phase {
         return false;
     }
 
-    initiateChallenge(attackingPlayer, challengeType) {
-        let defendingPlayer = this.chooseOpponent(attackingPlayer);
+    chooseChallengeType(attackingPlayer, challengeType) {
+        let opponents = this.game.getOpponents(attackingPlayer);
 
+        if(opponents.length === 0) {
+            this.initiateChallenge(attackingPlayer, null, challengeType);
+            return;
+        }
+
+        this.game.promptForOpponentChoice(attackingPlayer, {
+            onSelect: opponent => {
+                this.initiateChallenge(attackingPlayer, opponent, challengeType);
+            }
+        });
+    }
+
+    initiateChallenge(attackingPlayer, defendingPlayer, challengeType) {
         if(!attackingPlayer.canInitiateChallenge(challengeType, defendingPlayer)) {
             return;
         }
@@ -62,10 +75,6 @@ class ChallengePhase extends Phase {
     cleanupChallenge() {
         this.game.currentChallenge.unregisterEvents();
         this.game.currentChallenge = null;
-    }
-
-    chooseOpponent(attackingPlayer) {
-        return this.game.getOtherPlayer(attackingPlayer);
     }
 
     completeChallenges(player) {

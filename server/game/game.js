@@ -18,6 +18,7 @@ const DominancePhase = require('./gamesteps/dominancephase.js');
 const StandingPhase = require('./gamesteps/standingphase.js');
 const TaxationPhase = require('./gamesteps/taxationphase.js');
 const SimpleStep = require('./gamesteps/simplestep.js');
+const ChooseOpponentPrompt = require('./gamesteps/chooseopponentprompt.js');
 const DeckSearchPrompt = require('./gamesteps/decksearchprompt.js');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const IconPrompt = require('./gamesteps/iconprompt.js');
@@ -117,16 +118,20 @@ class Game extends EventEmitter {
     }
 
     getPlayersInFirstPlayerOrder() {
+        return this.getPlayersInBoardOrder(player => player.firstPlayer);
+    }
+
+    getPlayersInBoardOrder(predicate) {
         let players = this.getPlayers();
-        let firstPlayerIndex = players.findIndex(player => player.firstPlayer);
-        if(firstPlayerIndex === -1) {
+        let index = players.findIndex(predicate);
+        if(index === -1) {
             return players;
         }
 
-        let beforeFirstPlayer = players.slice(0, firstPlayerIndex);
-        let firstPlayerAndAfter = players.slice(firstPlayerIndex);
+        let beforeMatch = players.slice(0, index);
+        let matchAndAfter = players.slice(index);
 
-        return firstPlayerAndAfter.concat(beforeFirstPlayer);
+        return matchAndAfter.concat(beforeMatch);
     }
 
     getPlayersAndSpectators() {
@@ -145,14 +150,6 @@ class Game extends EventEmitter {
 
     getOpponents(player) {
         return this.getPlayers().filter(p => p !== player);
-    }
-
-    getOtherPlayer(player) {
-        var otherPlayer = _.find(this.getPlayers(), p => {
-            return p.name !== player.name;
-        });
-
-        return otherPlayer;
     }
 
     findAnyCardInPlayByUuid(cardId) {
@@ -413,12 +410,12 @@ class Game extends EventEmitter {
     }
 
     playerDecked(player) {
-        let otherPlayer = this.getOtherPlayer(player);
-
         this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
+        player.lost = true;
 
-        if(otherPlayer) {
-            this.recordWinner(otherPlayer, 'decked');
+        let remainingPlayers = this.getPlayers().filter(player => !player.lost);
+        if(remainingPlayers.length === 1) {
+            this.recordWinner(remainingPlayers[0], 'decked');
         }
     }
 
@@ -514,11 +511,12 @@ class Game extends EventEmitter {
         }
 
         this.addAlert('info', '{0} concedes', player);
+        player.lost = true;
 
-        var otherPlayer = this.getOtherPlayer(player);
+        let remainingPlayers = this.getPlayers().filter(player => !player.lost);
 
-        if(otherPlayer) {
-            this.recordWinner(otherPlayer, 'concede');
+        if(remainingPlayers.length === 1) {
+            this.recordWinner(remainingPlayers[0], 'concede');
         }
     }
 
@@ -559,6 +557,10 @@ class Game extends EventEmitter {
         this.raiseEvent('onBeforeDeckSearch', { source: properties.source, player: player }, event => {
             this.queueStep(new DeckSearchPrompt(this, event.player, properties));
         });
+    }
+
+    promptForOpponentChoice(player, properties) {
+        this.queueStep(new ChooseOpponentPrompt(this, player, properties));
     }
 
     menuButton(playerName, arg, method) {

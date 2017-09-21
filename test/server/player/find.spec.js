@@ -3,7 +3,7 @@ const DrawCard = require('../../../server/game/drawcard.js');
 
 describe('the Player', function() {
     beforeEach(function() {
-        this.game = jasmine.createSpyObj('game', ['getOtherPlayer', 'playerDecked', 'raiseEvent']);
+        this.game = jasmine.createSpyObj('game', ['playerDecked', 'raiseEvent']);
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.game);
         this.attachment = new DrawCard(this.player, { code: '1', label: 'Attachment', type_code: 'attachment' });
         this.attachment.uuid = '1111';

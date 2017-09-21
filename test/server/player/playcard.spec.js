@@ -4,7 +4,7 @@ const PlayActionPrompt = require('../../../server/game/gamesteps/playactionpromp
 
 describe('Player', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getOtherPlayer', 'playerDecked', 'resolveAbility', 'queueStep', 'raiseEvent']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'playerDecked', 'resolveAbility', 'queueStep', 'raiseEvent']);
         this.player = new Player('1', {username: 'Player 1', settings: {}}, true, this.gameSpy);
         this.player.initialise();
     });
