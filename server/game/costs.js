@@ -397,11 +397,14 @@ const Costs = {
         return {
             canPay: function(context) {
                 let challenge = challengeFunc();
-                return !!context.source.parent && challenge.isParticipating(context.source.parent);
+                return !!context.source.parent && challenge && challenge.isParticipating(context.source.parent);
             },
             pay: function(context) {
                 let challenge = challengeFunc();
-                challenge.removeFromChallenge(context.source.parent);
+
+                if(challenge) {
+                    challenge.removeFromChallenge(context.source.parent);
+                }
             }
         };
     },
