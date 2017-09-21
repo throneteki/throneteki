@@ -47,8 +47,7 @@ class SerEdmureTully extends DrawCard {
             return false;
         }
 
-        this.powerGainingCharacter.modifyPower(-1);
-        toCharacter.modifyPower(1);
+        this.game.movePower(this.powerGainingCharacter, toCharacter, 1);
 
         this.game.addMessage('{0} uses {1} to move 1 power from {2} to {3}',
             this.controller, this, this.powerGainingCharacter, toCharacter);

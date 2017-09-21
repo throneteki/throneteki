@@ -21,8 +21,7 @@ class Grenn extends DrawCard {
             handler: context => {
                 var otherPlayer = context.event.challenge.loser;
                 var power = otherPlayer.faction.power > 1 && context.target.kneeled === false ? 2 : 1;
-                this.game.addPower(otherPlayer, -power);
-                context.target.modifyPower(power);
+                this.game.movePower(otherPlayer.faction, context.target, power);
 
                 this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction to {4}',
                     this.controller, this, power, otherPlayer, context.target);

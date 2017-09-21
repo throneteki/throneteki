@@ -11,8 +11,7 @@ class VaesTolorro extends DrawCard {
                 let pendingCard = context.event.card;
                 let power = pendingCard.getPower() >= 2 && pendingCard.getStrength() === 0 ? 2 : 1;
 
-                pendingCard.modifyPower(-power);
-                this.modifyPower(power);
+                this.game.movePower(pendingCard, this, power);
                 this.game.addMessage('{0} kneels {1} to move {2} power from {3} to {1}',
                     this.controller, this, power, pendingCard);
             }
