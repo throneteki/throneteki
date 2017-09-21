@@ -390,6 +390,10 @@ class Game extends EventEmitter {
     }
 
     movePower(fromCard, toCard, power) {
+        if(power < 1) {
+            return;
+        }
+
         this.applyGameAction('movePower', fromCard, fromCard => {
             let appliedPower = Math.min(fromCard.power, power);
             fromCard.power -= appliedPower;

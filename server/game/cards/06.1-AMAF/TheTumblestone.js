@@ -4,8 +4,7 @@ class TheTumblestone extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerChanged: event => (
-                    event.power > 0 &&
+                onCardPowerGained: event => (
                     event.card.getType() === 'character' &&
                     event.card.hasTrait('House Tully') &&
                     event.card.kneeled

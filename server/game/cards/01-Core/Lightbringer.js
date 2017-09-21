@@ -8,7 +8,7 @@ class Lightbringer extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPowerChanged: event => event.card === this.parent && event.power > 0 && event.card.kneeled
+                onCardPowerGained: event => event.card === this.parent && event.card.kneeled
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

@@ -5,12 +5,11 @@ class SerEdmureTully extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerChanged: event => {
-                    let {card, power} = event;
+                onCardPowerGained: event => {
+                    let card = event.card;
                     let tullyCharacters = this.game.findAnyCardsInPlay(this.isTullyCharacter);
 
                     if(card.getType() === 'character'
-                       && power > 0
                        && tullyCharacters.length > 0) {
                         this.powerGainingCharacter = card;
 

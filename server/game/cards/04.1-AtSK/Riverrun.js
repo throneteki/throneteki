@@ -4,8 +4,8 @@ class Riverrun extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerChanged: event => event.power > 0 && this.isTullyCharacter(event.card),
-                onCardPowerMoved: event => event.power > 0 && this.isTullyCharacter(event.target)
+                onCardPowerGained: event => this.isTullyCharacter(event.card),
+                onCardPowerMoved: event => this.isTullyCharacter(event.target)
             },
             cost: ability.costs.kneelSelf(),
             handler: context => {
