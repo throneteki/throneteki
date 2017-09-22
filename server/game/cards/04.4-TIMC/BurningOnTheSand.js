@@ -7,7 +7,7 @@ class BurningOnTheSand extends DrawCard {
                 afterChallenge: event => event.challenge.loser === this.controller && event.challenge.isUnopposed()
             },
             handler: context => {
-                let opponent = context.event.winner;
+                let opponent = context.event.challenge.winner;
                 this.untilEndOfChallenge(ability => ({
                     match: card => card === card.controller.activePlot,
                     targetController: opponent,
