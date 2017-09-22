@@ -10,7 +10,7 @@ class TheSwordInTheDarkness extends DrawCard {
                                          event.challenge.strengthDifference >= 5 && this.hasNightsWatchParticipant()
             },
             handler: context => {
-                let opponent = context.challenge.loser;
+                let opponent = context.event.challenge.loser;
 
                 this.game.addMessage('{0} plays {1} to prevent {2} from initiating any more challenges this round', this.controller, this, opponent);
 
