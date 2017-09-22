@@ -28,7 +28,7 @@ class TheDornishmansWife extends DrawCard {
                 }
 
                 this.game.addMessage('{0} uses {1} to choose {2} and {3}',
-                    this.controller, this, context.player, bonusMessage);
+                    this.controller, this, context.opponent, bonusMessage);
             }
         });
     }
