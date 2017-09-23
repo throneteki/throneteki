@@ -25,6 +25,7 @@ class ChatCommands {
             '/remove-keyword': this.removeKeyword,
             '/remove-trait': this.removeTrait,
             '/reset-challenges-count': this.resetChallengeCount,
+            '/reveal-hand': this.revealHand,
             '/str': this.strength,
             '/strength': this.strength,
             '/take-icon': this.removeIcon,
@@ -406,6 +407,11 @@ class ChatCommands {
                 return true;
             }
         });
+    }
+
+    revealHand(player) {
+        this.game.addAlert('danger',
+            '{0} uses the /reveal-hand command to reveal their hand as: {1}', player, player.hand);
     }
 
     getNumberOrDefault(string, defaultNumber) {
