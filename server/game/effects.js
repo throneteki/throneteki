@@ -132,7 +132,8 @@ const Effects = {
             },
             unapply: function(card) {
                 card.modifyStrength(-value, false);
-            }
+            },
+            order: value >= 0 ? 0 : 1000
         };
     },
     setStrength: function(value) {

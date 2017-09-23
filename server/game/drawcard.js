@@ -36,6 +36,7 @@ class DrawCard extends BaseCard {
         }
 
         this.power = 0;
+        this.burnValue = 0;
         this.strengthModifier = 0;
         this.strengthMultiplier = 1;
         this.strengthSet = undefined;
@@ -159,6 +160,16 @@ class DrawCard extends BaseCard {
     }
 
     modifyStrength(amount, applying = true) {
+        if(this.isBurning && this.burnValue === 0 && this.getBoostedStrength(amount) <= 0) {
+            this.burnValue = amount;
+            this.game.killCharacter(this, { allowSave: false, isBurn: true });
+            this.game.queueSimpleStep(() => {
+                this.strengthModifier += amount;
+                this.burnValue = 0;
+            });
+            return;
+        }
+
         this.strengthModifier += amount;
         this.game.raiseEvent('onCardStrengthChanged', {
             card: this,
