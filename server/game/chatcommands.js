@@ -4,45 +4,46 @@ class ChatCommands {
     constructor(game) {
         this.game = game;
         this.commands = {
-            '/draw': this.draw,
-            '/power': this.power,
-            '/kill': this.kill,
-            '/blank': this.blank,
-            '/unblank': this.unblank,
-            '/add-trait': this.addTrait,
-            '/remove-trait': this.removeTrait,
-            '/add-keyword': this.addKeyword,
-            '/remove-keyword': this.removeKeyword,
-            '/discard': this.discard,
-            '/pillage': this.pillage,
-            '/strength': this.strength,
-            '/str': this.strength,
-            '/give-icon': this.addIcon,
-            '/add-icon': this.addIcon,
-            '/take-icon': this.removeIcon,
-            '/remove-icon': this.removeIcon,
-            '/give-control': this.giveControl,
-            '/reset-challenges-count': this.resetChallengeCount,
-            '/cancel-prompt': this.cancelPrompt,
-            '/token': this.setToken,
-            '/bestow': this.bestow,
-            '/disconnectme': this.disconnectMe,
             '/add-faction': this.addFaction,
+            '/add-icon': this.addIcon,
+            '/add-keyword': this.addKeyword,
+            '/add-trait': this.addTrait,
+            '/bestow': this.bestow,
+            '/blank': this.blank,
+            '/cancel-prompt': this.cancelPrompt,
+            '/discard': this.discard,
+            '/disconnectme': this.disconnectMe,
+            '/draw': this.draw,
+            '/give-control': this.giveControl,
+            '/give-icon': this.addIcon,
+            '/kill': this.kill,
+            '/move-bottom': this.moveBottom,
+            '/pillage': this.pillage,
+            '/power': this.power,
             '/remove-faction': this.removeFaction,
-            '/move-bottom': this.moveBottom
+            '/remove-icon': this.removeIcon,
+            '/remove-keyword': this.removeKeyword,
+            '/remove-trait': this.removeTrait,
+            '/reset-challenges-count': this.resetChallengeCount,
+            '/reveal-hand': this.revealHand,
+            '/str': this.strength,
+            '/strength': this.strength,
+            '/take-icon': this.removeIcon,
+            '/token': this.setToken,
+            '/unblank': this.unblank
         };
         this.tokens = [
-            'power',
-            'gold',
-            'valarmorghulis',
-            'stand',
-            'poison',
+            'bell',
             'betrayal',
-            'vengeance',
             'ear',
-            'venom',
+            'gold',
             'kiss',
-            'bell'
+            'poison',
+            'power',
+            'stand',
+            'valarmorghulis',
+            'vengeance',
+            'venom'
         ];
     }
 
@@ -406,6 +407,11 @@ class ChatCommands {
                 return true;
             }
         });
+    }
+
+    revealHand(player) {
+        this.game.addAlert('danger',
+            '{0} uses the /reveal-hand command to reveal their hand as: {1}', player, player.hand);
     }
 
     getNumberOrDefault(string, defaultNumber) {
