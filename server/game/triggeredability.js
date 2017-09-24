@@ -133,10 +133,6 @@ class TriggeredAbility extends BaseAbility {
         return this.card.getType() === 'event' && this.location === 'hand';
     }
 
-    isForcedAbility() {
-        return false;
-    }
-
     hasMax() {
         return !!this.max;
     }

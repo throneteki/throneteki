@@ -209,6 +209,10 @@ class BaseAbility {
         return true;
     }
 
+    isForcedAbility() {
+        return false;
+    }
+
     hasMax() {
         return false;
     }

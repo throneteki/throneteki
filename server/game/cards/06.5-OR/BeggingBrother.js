@@ -5,8 +5,8 @@ class BeggingBrother extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                //Nested cancels can get quite disorienting as this can cancel itself too, so limiting it to opponent's Begging Brother only
-                onCardAbilityInitiated: event => event.source.getType() === 'character' && (event.source.name !== this.name || event.source.controller !== this.controller)
+                //Restrict triggering on own character abilities to forced triggered abilities
+                onCardAbilityInitiated: event => event.source.getType() === 'character' && (event.isForced || event.source.controller !== this.controller)
             },
             cost: ability.costs.discardGold(),
             handler: context => {
