@@ -8,7 +8,7 @@ describe('AbilityResolver', function() {
                 handler(params);
             }
         });
-        this.ability = jasmine.createSpyObj('ability', ['isAction', 'isCardAbility', 'isPlayableEventAbility', 'needsChooseOpponent', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
+        this.ability = jasmine.createSpyObj('ability', ['isAction', 'isCardAbility', 'isForcedAbility', 'isPlayableEventAbility', 'needsChooseOpponent', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
         this.ability.isCardAbility.and.returnValue(true);
         this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);
         this.player = { player: 1 };
@@ -56,7 +56,7 @@ describe('AbilityResolver', function() {
             });
 
             it('should raise the onCardAbilityInitiated event', function() {
-                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [], cannotBeCanceled: false }, jasmine.any(Function));
+                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [], cannotBeCanceled: false, isForced: false }, jasmine.any(Function));
             });
         });
 
@@ -197,7 +197,7 @@ describe('AbilityResolver', function() {
                         });
 
                         it('should raise the onCardAbilityInitiated event with appropriate targets', function() {
-                            expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [this.target], cannotBeCanceled: false }, jasmine.any(Function));
+                            expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, targets: [this.target], cannotBeCanceled: false, isForced: false }, jasmine.any(Function));
                         });
                     });
 
