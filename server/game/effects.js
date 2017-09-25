@@ -132,7 +132,8 @@ const Effects = {
             },
             unapply: function(card) {
                 card.modifyStrength(-value, false);
-            }
+            },
+            order: value >= 0 ? 0 : 1000
         };
     },
     setStrength: function(value) {
@@ -415,20 +416,19 @@ const Effects = {
             }
         };
     },
-    killByStrength: {
-        apply: function(card, context) {
-            context.killByStrength = context.killByStrength || {};
-            if(card.getStrength() <= 0 && !context.killByStrength[card.uuid]) {
-                context.killByStrength[card.uuid] = true;
-                context.game.killCharacter(card, { allowSave: false, isBurn: true });
-                context.game.addMessage('{0} is killed as its STR is 0', card);
-            }
+    burn: {
+        apply: function(card) {
+            card.isBurning = true;
         },
-        unapply: function() {
-            // nothing happens when this effect expires.
-        },
-        isStateDependent: true,
-        order: 1000
+        unapply: function(card) {
+            card.isBurning = false;
+        }
+    },
+    killByStrength: function(value) {
+        return Effects.all([
+            Effects.burn,
+            Effects.modifyStrength(value)
+        ]);
     },
     blank: {
         apply: function(card) {

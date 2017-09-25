@@ -5,8 +5,7 @@ class CrownOfGold extends DrawCard {
         this.whileAttached({
             effect: [
                 ability.effects.addTrait('King'),
-                ability.effects.modifyStrength(-4),
-                ability.effects.killByStrength
+                ability.effects.killByStrength(-4)
             ]
         });
     }

@@ -14,10 +14,7 @@ class PlazaOfPunishment extends DrawCard {
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
-                    effect: [
-                        ability.effects.modifyStrength(-2),
-                        ability.effects.killByStrength
-                    ]
+                    effect: ability.effects.killByStrength(-2)
                 }));
 
                 this.game.addMessage('{0} kneels {1} to give {2} -2 STR until the end of the phase and kill it if its STR is 0',

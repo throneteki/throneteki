@@ -5,10 +5,7 @@ class BloodOfTheDragon extends PlotCard {
         this.persistentEffect({
             match: card => card.getType() === 'character' && !card.hasTrait('Dragon'),
             targetController: 'any',
-            effect: [
-                ability.effects.modifyStrength(-1),
-                ability.effects.killByStrength
-            ]
+            effect: ability.effects.killByStrength(-1)
         });
     }
 }

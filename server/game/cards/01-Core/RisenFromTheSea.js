@@ -45,7 +45,7 @@ class RisenFromTheSea extends DrawCard {
     }
 
     canSurviveBurn(card, context) {
-        return context.event.isBurn && card.controller.canAttach(this, card) && card.getBoostedStrength(1) > 0;
+        return context.event.isBurn && card.controller.canAttach(this, card) && card.getBoostedStrength(1 + card.burnValue) > 0;
     }
 
     canAttach(player, card) {
