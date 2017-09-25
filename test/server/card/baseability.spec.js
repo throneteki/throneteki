@@ -55,7 +55,7 @@ describe('BaseAbility', function () {
                 });
 
                 it('should set cost to be empty object', function() {
-                    expect(this.ability.targets).toEqual({});
+                    expect(this.ability.targets).toEqual([]);
                 });
             });
 
@@ -67,7 +67,7 @@ describe('BaseAbility', function () {
                 });
 
                 it('should set the target sub-property of targets', function() {
-                    expect(this.ability.targets.target).toEqual(this.target);
+                    expect(this.ability.targets).toEqual([jasmine.objectContaining({ name: 'target' })]);
                 });
             });
 
@@ -80,8 +80,7 @@ describe('BaseAbility', function () {
                 });
 
                 it('should set all targets', function() {
-                    expect(this.ability.targets.toKill).toEqual(this.target1);
-                    expect(this.ability.targets.toSave).toEqual(this.target2);
+                    expect(this.ability.targets).toEqual([jasmine.objectContaining({ name: 'toKill' }), jasmine.objectContaining({ name: 'toSave' })]);
                 });
             });
         });
@@ -191,9 +190,9 @@ describe('BaseAbility', function () {
 
     describe('canResolveTargets()', function() {
         beforeEach(function() {
-            this.ability = new BaseAbility(this.properties);
             this.cardCondition = jasmine.createSpy('cardCondition');
-            this.ability.targets.target = { cardCondition: this.cardCondition };
+            this.properties.target = { cardCondition: this.cardCondition };
+            this.ability = new BaseAbility(this.properties);
 
             this.card1 = jasmine.createSpyObj('card', ['getType']);
             this.card1.getType.and.returnValue('character');
@@ -245,9 +244,9 @@ describe('BaseAbility', function () {
 
             this.target1 = { target: 1 };
             this.target2 = { target: 2 };
+
+            this.properties.targets = { target1: this.target1, target2: this.target2 };
             this.ability = new BaseAbility(this.properties);
-            this.ability.targets.target1 = this.target1;
-            this.ability.targets.target2 = this.target2;
 
             this.context = { game: this.gameSpy, player: this.player, source: this.source };
         });

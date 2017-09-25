@@ -1,5 +1,7 @@
 const _ = require('underscore');
 
+const AbilityTarget = require('./AbilityTarget.js');
+
 /**
  * Base class representing an ability that can be done by the player. This
  * includes card actions, reactions, interrupts, playing a card, marshaling a
@@ -40,16 +42,15 @@ class BaseAbility {
 
     buildTargets(properties) {
         if(properties.target) {
-            return {
-                target: properties.target
-            };
+            return [new AbilityTarget('target', properties.target)];
         }
 
         if(properties.targets) {
-            return properties.targets;
+            let targetPairs = Object.entries(properties.targets);
+            return targetPairs.map(([name, properties]) => new AbilityTarget(name, properties));
         }
 
-        return {};
+        return [];
     }
 
     /**
@@ -145,16 +146,7 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canResolveTargets(context) {
-        const ValidTypes = ['character', 'attachment', 'location', 'event', 'faction'];
-        return _.all(this.targets, target => {
-            return context.game.allCards.any(card => {
-                if(!ValidTypes.includes(card.getType())) {
-                    return false;
-                }
-
-                return target.cardCondition(card, context);
-            });
-        });
+        return this.targets.every(target => target.canResolve(context));
     }
 
     /**
@@ -163,30 +155,7 @@ class BaseAbility {
      * @returns {Array} An array of target resolution objects.
      */
     resolveTargets(context) {
-        return _.map(this.targets, (targetProperties, name) => {
-            return this.resolveTarget(context, name, targetProperties);
-        });
-    }
-
-    resolveTarget(context, name, targetProperties) {
-        let cardCondition = targetProperties.cardCondition;
-        let otherProperties = _.omit(targetProperties, 'cardCondition');
-        let result = { resolved: false, name: name, value: null };
-        let promptProperties = {
-            source: context.source,
-            cardCondition: card => cardCondition(card, context),
-            onSelect: (player, card) => {
-                result.resolved = true;
-                result.value = card;
-                return true;
-            },
-            onCancel: () => {
-                result.resolved = true;
-                return true;
-            }
-        };
-        context.game.promptForSelect(context.player, _.extend(promptProperties, otherProperties));
-        return result;
+        return this.targets.map(target => target.resolve(context));
     }
 
     /**
