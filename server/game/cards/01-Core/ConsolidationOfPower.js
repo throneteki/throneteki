@@ -8,7 +8,6 @@ class ConsolidationOfPower extends DrawCard {
             title: 'Kneel 4 STR worth of characters',
             phase: 'marshal',
             target: {
-                numCards: 99,
                 activePromptTitle: 'Select character(s)',
                 maxStat: () => 4,
                 cardStat: card => card.getStrength(),

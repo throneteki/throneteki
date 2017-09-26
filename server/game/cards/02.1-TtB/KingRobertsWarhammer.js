@@ -14,10 +14,8 @@ class KingRobertsWarhammer extends DrawCard {
             target: {
                 activePromptTitle: 'Select character(s)',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
-                numCards: 99,
                 maxStat: () => this.parent.getStrength(),
                 cardStat: card => card.getStrength(),
-                multiSelect: true,
                 gameAction: 'kneel'
             },
             handler: context => {
