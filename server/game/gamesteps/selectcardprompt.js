@@ -55,7 +55,7 @@ class SelectCardPrompt extends UiPrompt {
         this.properties = properties;
         this.context = properties.context;
         _.defaults(this.properties, this.defaultProperties());
-        this.selector = new CardSelector(properties);
+        this.selector = CardSelector.for(properties);
         this.selectedCards = [];
         this.savePreviouslySelectedCards();
     }
@@ -97,16 +97,12 @@ class SelectCardPrompt extends UiPrompt {
         return {
             selectCard: true,
             selectOrder: this.properties.ordered,
-            menuTitle: this.properties.activePromptTitle || this.defaultActivePromptTitle(),
+            menuTitle: this.properties.activePromptTitle || this.selector.defaultActivePromptTitle(),
             buttons: this.properties.additionalButtons.concat([
                 { text: 'Done', arg: 'done' }
             ]),
             promptTitle: this.properties.source ? this.properties.source.name : undefined
         };
-    }
-
-    defaultActivePromptTitle() {
-        return this.selector.numCards === 1 ? 'Select a character' : ('Select ' + this.selector.numCards + ' characters');
     }
 
     waitingPrompt() {

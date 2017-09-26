@@ -7,37 +7,32 @@ const defaultProperties = {
 };
 
 class CardSelector {
-    constructor(properties) {
+    static for(properties) {
         properties = Object.assign({}, defaultProperties, properties);
 
-
-        this.gameAction = properties.gameAction;
-        this.numCards = properties.numCards;
-        this.multiSelect = properties.multiSelect;
-
-        if(Array.isArray(properties.cardType)) {
-            this.cardType = properties.cardType;
-        } else {
-            this.cardType = [properties.cardType];
+        if(properties.maxStat) {
+            return new MaxStatCardSelector(properties);
         }
 
-        if(properties.maxStat && properties.cardStat) {
-            this.cardCondition = this.createMaxStatCardCondition(properties);
-        } else {
-            this.cardCondition = properties.cardCondition;
+        if(properties.numCards === 1 && !properties.multiSelect) {
+            return new SingleCardSelector(properties);
         }
 
-        this.properties = properties;
+        if(properties.numCards === 0) {
+            return new UnlimitedCardSelector(properties);
+        }
+
+        return new UpToXCardSelector(properties.numCards, properties);
     }
 
-    createMaxStatCardCondition(properties) {
-        return (card, context) => {
-            if(!properties.cardCondition(card, context)) {
-                return false;
-            }
+    constructor(properties) {
+        this.cardCondition = properties.cardCondition;
+        this.cardType = properties.cardType;
+        this.gameAction = properties.gameAction;
 
-            return properties.cardStat(card) <= properties.maxStat();
-        };
+        if(!Array.isArray(properties.cardType)) {
+            this.cardType = [properties.cardType];
+        }
     }
 
     canTarget(card, context) {
@@ -48,39 +43,94 @@ class CardSelector {
         );
     }
 
-    // TODO: Candidate for polymorphism
+    defaultActivePromptTitle() {
+        return 'Select characters';
+    }
+
     automaticFireOnSelect() {
-        return this.properties.numCards === 1 && !this.properties.multiSelect;
+        return false;
     }
 
-    // TODO: candidate for polymorphism
-    wouldExceedLimit(selectedCards, card) {
-        if(!this.properties.maxStat) {
-            return false;
-        }
-
-        let currentStatSum = selectedCards.reduce((sum, c) => sum + this.properties.cardStat(c), 0);
-
-        return this.properties.cardStat(card) + currentStatSum > this.properties.maxStat();
+    wouldExceedLimit(selectedCards, card) { // eslint-disable-line no-unused-vars
+        return false;
     }
 
-    // TODO: Candidate for polymorphism
-    hasReachedLimit(selectedCards) {
-        return !this.isUnlimited() && selectedCards.length >= this.properties.numCards;
+    hasReachedLimit(selectedCards) { // eslint-disable-line no-unused-vars
+        return false;
     }
 
-    // TODO: Candidate for polymorphism
-    isUnlimited() {
-        return this.properties.numCards === 0;
-    }
-
-    // TODO: Candidate for polymorphism
     formatSelectParam(cards) {
-        if(this.properties.numCards === 1 && !this.properties.multiSelect) {
-            return cards[0];
-        }
-
         return cards;
+    }
+}
+
+class SingleCardSelector extends CardSelector {
+    constructor(properties) {
+        super(properties);
+
+        this.numCards = 1;
+    }
+
+    defaultActivePromptTitle() {
+        return 'Select a character';
+    }
+
+    automaticFireOnSelect() {
+        return true;
+    }
+
+    hasReachedLimit(selectedCards) {
+        return selectedCards.length >= this.numCards;
+    }
+
+    formatSelectParam(cards) {
+        return cards[0];
+    }
+}
+
+class UpToXCardSelector extends CardSelector {
+    constructor(numCards, properties) {
+        super(properties);
+
+        this.numCards = numCards;
+    }
+
+    defaultActivePromptTitle() {
+        return this.numCards === 1 ? 'Select a character' : `Select ${this.numCards} characters`;
+    }
+
+    hasReachedLimit(selectedCards) {
+        return selectedCards.length >= this.numCards;
+    }
+}
+
+class UnlimitedCardSelector extends CardSelector {
+    hasReachedLimit() {
+        return false;
+    }
+}
+
+class MaxStatCardSelector extends CardSelector {
+    constructor(properties) {
+        super(properties);
+
+        this.cardStat = properties.cardStat;
+        this.maxStat = properties.maxStat;
+    }
+
+    canTarget(card, context) {
+        return super.canTarget(card, context) && this.cardStat(card) <= this.maxStat();
+    }
+
+    wouldExceedLimit(selectedCards, card) {
+        let currentStatSum = selectedCards.reduce((sum, c) => sum + this.cardStat(c), 0);
+
+        return this.cardStat(card) + currentStatSum > this.maxStat();
+    }
+
+    hasReachedLimit(selectedCards) {
+        let currentStatSum = selectedCards.reduce((sum, c) => sum + this.cardStat(c), 0);
+        return currentStatSum >= this.maxStat();
     }
 }
 
