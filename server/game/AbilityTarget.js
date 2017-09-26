@@ -1,9 +1,12 @@
 const _ = require('underscore');
 
+const CardSelector = require('./CardSelector.js');
+
 class AbilityTarget {
     constructor(name, properties) {
         this.name = name;
         this.properties = properties;
+        this.selector = CardSelector.for(properties);
     }
 
     canResolve(context) {
@@ -19,12 +22,12 @@ class AbilityTarget {
     }
 
     resolve(context) {
-        let cardCondition = this.properties.cardCondition;
         let otherProperties = _.omit(this.properties, 'cardCondition');
         let result = { resolved: false, name: this.name, value: null };
         let promptProperties = {
+            context: context,
             source: context.source,
-            cardCondition: card => cardCondition(card, context),
+            selector: this.selector,
             onSelect: (player, card) => {
                 result.resolved = true;
                 result.value = card;

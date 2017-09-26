@@ -71,7 +71,7 @@ describe('AbilityTarget', function () {
 
         it('should prompt the player to select the target', function() {
             this.target.resolve(this.context);
-            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 1, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), cardCondition: jasmine.any(Function) });
+            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 1, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context });
         });
 
         describe('the select prompt', function() {

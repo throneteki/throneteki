@@ -257,8 +257,8 @@ describe('BaseAbility', function () {
 
         it('should prompt the player to select each target', function() {
             this.ability.resolveTargets(this.context);
-            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 1, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), cardCondition: jasmine.any(Function) });
-            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 2, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), cardCondition: jasmine.any(Function) });
+            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 1, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context });
+            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 2, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context });
         });
 
         describe('the select prompt', function() {

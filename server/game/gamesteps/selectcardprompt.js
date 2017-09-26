@@ -1,6 +1,6 @@
 const _ = require('underscore');
 const UiPrompt = require('./uiprompt.js');
-const CardSelector = require('./CardSelector.js');
+const CardSelector = require('../CardSelector.js');
 
 /**
  * General purpose prompt that asks the user to select 1 or more cards.
@@ -55,7 +55,7 @@ class SelectCardPrompt extends UiPrompt {
         this.properties = properties;
         this.context = properties.context;
         _.defaults(this.properties, this.defaultProperties());
-        this.selector = CardSelector.for(properties);
+        this.selector = properties.selector || CardSelector.for(properties);
         this.selectedCards = [];
         this.savePreviouslySelectedCards();
     }
