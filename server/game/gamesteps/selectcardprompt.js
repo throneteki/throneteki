@@ -52,6 +52,7 @@ class SelectCardPrompt extends UiPrompt {
         }
 
         this.properties = properties;
+        this.context = properties.context;
         _.defaults(this.properties, this.defaultProperties());
         if(!_.isArray(this.properties.cardType)) {
             this.properties.cardType = [this.properties.cardType];
@@ -79,8 +80,8 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     createMaxStatCardCondition(properties) {
-        return card => {
-            if(!properties.cardCondition(card)) {
+        return (card, context) => {
+            if(!properties.cardCondition(card, context)) {
                 return false;
             }
 
@@ -153,7 +154,7 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     checkCardCondition(card) {
-        return this.properties.cardType.includes(card.getType()) && this.cardCondition(card) && card.allowGameAction(this.properties.gameAction);
+        return this.properties.cardType.includes(card.getType()) && this.cardCondition(card, this.context) && card.allowGameAction(this.properties.gameAction);
     }
 
     selectCard(card) {
