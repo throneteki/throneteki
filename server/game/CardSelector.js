@@ -43,6 +43,10 @@ class CardSelector {
         );
     }
 
+    hasEnoughTargets(context) {
+        return context.game.allCards.any(card => this.canTarget(card, context));
+    }
+
     defaultActivePromptTitle() {
         return 'Select characters';
     }

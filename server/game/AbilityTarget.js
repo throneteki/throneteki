@@ -10,15 +10,7 @@ class AbilityTarget {
     }
 
     canResolve(context) {
-        const ValidTypes = ['character', 'attachment', 'location', 'event', 'faction'];
-
-        return context.game.allCards.any(card => {
-            if(!ValidTypes.includes(card.getType())) {
-                return false;
-            }
-
-            return this.properties.cardCondition(card, context);
-        });
+        return this.selector.hasEnoughTargets(context);
     }
 
     resolve(context) {

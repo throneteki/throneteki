@@ -194,9 +194,11 @@ describe('BaseAbility', function () {
             this.properties.target = { cardCondition: this.cardCondition };
             this.ability = new BaseAbility(this.properties);
 
-            this.card1 = jasmine.createSpyObj('card', ['getType']);
+            this.card1 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
+            this.card1.allowGameAction.and.returnValue(true);
             this.card1.getType.and.returnValue('character');
-            this.card2 = jasmine.createSpyObj('card', ['getType']);
+            this.card2 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
+            this.card2.allowGameAction.and.returnValue(true);
             this.card2.getType.and.returnValue('location');
             let game = { allCards: _([this.card1, this.card2]) };
             this.context = { game: game };
