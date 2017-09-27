@@ -60,7 +60,7 @@
     "react-dom": "^15.6.2",
     "react-google-recaptcha": "^0.9.7",
     "react-redux": "^4.4.8",
-    "react-redux-toastr": "^5.0.0",
+    "react-redux-toastr": "^7.1.5",
     "redux": "^3.7.2",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^6.0.6",
