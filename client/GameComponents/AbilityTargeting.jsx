@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 
 class AbilityTargeting extends React.Component {
@@ -38,10 +39,10 @@ class AbilityTargeting extends React.Component {
 
 AbilityTargeting.displayName = 'AbilityTargeting';
 AbilityTargeting.propTypes = {
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func,
-    source: React.PropTypes.object,
-    targets: React.PropTypes.array
+    onMouseOut: PropTypes.func,
+    onMouseOver: PropTypes.func,
+    source: PropTypes.object,
+    targets: PropTypes.array
 };
 
 export default AbilityTargeting;

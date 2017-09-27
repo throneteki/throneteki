@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 import $ from 'jquery';
 
@@ -235,30 +236,30 @@ class CardPile extends React.Component {
 
 CardPile.displayName = 'CardPile';
 CardPile.propTypes = {
-    cardCount: React.PropTypes.number,
-    cards: React.PropTypes.array,
-    className: React.PropTypes.string,
-    closeOnClick: React.PropTypes.bool,
-    disableMouseOver: React.PropTypes.bool,
-    disablePopup: React.PropTypes.bool,
-    hiddenTopCard: React.PropTypes.bool,
-    menu: React.PropTypes.array,
-    onCardClick: React.PropTypes.func,
-    onCloseClick: React.PropTypes.func,
-    onDragDrop: React.PropTypes.func,
-    onMenuItemClick: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func,
-    onTouchMove: React.PropTypes.func,
-    orientation: React.PropTypes.string,
-    popupLocation: React.PropTypes.string,
-    popupMenu: React.PropTypes.array,
-    size: React.PropTypes.string,
-    source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
+    cardCount: PropTypes.number,
+    cards: PropTypes.array,
+    className: PropTypes.string,
+    closeOnClick: PropTypes.bool,
+    disableMouseOver: PropTypes.bool,
+    disablePopup: PropTypes.bool,
+    hiddenTopCard: PropTypes.bool,
+    menu: PropTypes.array,
+    onCardClick: PropTypes.func,
+    onCloseClick: PropTypes.func,
+    onDragDrop: PropTypes.func,
+    onMenuItemClick: PropTypes.func,
+    onMouseOut: PropTypes.func,
+    onMouseOver: PropTypes.func,
+    onTouchMove: PropTypes.func,
+    orientation: PropTypes.string,
+    popupLocation: PropTypes.string,
+    popupMenu: PropTypes.array,
+    size: PropTypes.string,
+    source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
         'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional',
         'scheme plots']).isRequired,
-    title: React.PropTypes.string,
-    topCard: React.PropTypes.object
+    title: PropTypes.string,
+    topCard: PropTypes.object
 };
 CardPile.defaultProps = {
     orientation: 'vertical'

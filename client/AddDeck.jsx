@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import DeckSummary from './DeckSummary.jsx';
@@ -70,16 +71,16 @@ export class InnerAddDeck extends React.Component {
 
 InnerAddDeck.displayName = 'InnerAddDeck';
 InnerAddDeck.propTypes = {
-    addDeck: React.PropTypes.func,
-    agendas: React.PropTypes.object,
-    apiError: React.PropTypes.string,
-    cards: React.PropTypes.object,
-    deck: React.PropTypes.object,
-    deckSaved: React.PropTypes.bool,
-    factions: React.PropTypes.object,
-    loading: React.PropTypes.bool,
-    navigate: React.PropTypes.func,
-    saveDeck: React.PropTypes.func
+    addDeck: PropTypes.func,
+    agendas: PropTypes.object,
+    apiError: PropTypes.string,
+    cards: PropTypes.object,
+    deck: PropTypes.object,
+    deckSaved: PropTypes.bool,
+    factions: PropTypes.object,
+    loading: PropTypes.bool,
+    navigate: PropTypes.func,
+    saveDeck: PropTypes.func
 };
 
 function mapStateToProps(state) {

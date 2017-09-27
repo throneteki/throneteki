@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 import $ from 'jquery';
 import {connect} from 'react-redux';
@@ -171,9 +172,9 @@ class InnerLogin extends React.Component {
 
 InnerLogin.displayName = 'Login';
 InnerLogin.propTypes = {
-    login: React.PropTypes.func,
-    navigate: React.PropTypes.func,
-    socket: React.PropTypes.object
+    login: PropTypes.func,
+    navigate: PropTypes.func,
+    socket: PropTypes.object
 };
 
 function mapStateToProps(state) {

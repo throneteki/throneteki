@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class Counter extends React.Component {
     render() {
@@ -21,11 +22,11 @@ class Counter extends React.Component {
 
 Counter.displayName = 'Counter';
 Counter.propTypes = {
-    cancel: React.PropTypes.bool,
-    fade: React.PropTypes.bool,
-    name: React.PropTypes.string.isRequired,
-    shortName: React.PropTypes.string,
-    value: React.PropTypes.number
+    cancel: PropTypes.bool,
+    fade: PropTypes.bool,
+    name: PropTypes.string.isRequired,
+    shortName: PropTypes.string,
+    value: PropTypes.number
 };
 
 export default Counter;

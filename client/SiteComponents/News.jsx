@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 
 import NewsItem from './NewsItem.jsx';
@@ -34,7 +35,7 @@ class News extends React.Component {
 
 News.displayName = 'News';
 News.propTypes = {
-    news: React.PropTypes.array
+    news: PropTypes.array
 };
 
 export default News;

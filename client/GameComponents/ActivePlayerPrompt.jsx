@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 
 import AbilityTargeting from './AbilityTargeting.jsx';
@@ -205,18 +206,18 @@ class ActivePlayerPrompt extends React.Component {
 
 ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
 ActivePlayerPrompt.propTypes = {
-    buttons: React.PropTypes.array,
-    controls: React.PropTypes.array,
-    onButtonClick: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func,
-    onTimerExpired: React.PropTypes.func,
-    onTitleClick: React.PropTypes.func,
-    phase: React.PropTypes.string,
-    promptTitle: React.PropTypes.string,
-    socket: React.PropTypes.object,
-    title: React.PropTypes.string,
-    user: React.PropTypes.object
+    buttons: PropTypes.array,
+    controls: PropTypes.array,
+    onButtonClick: PropTypes.func,
+    onMouseOut: PropTypes.func,
+    onMouseOver: PropTypes.func,
+    onTimerExpired: PropTypes.func,
+    onTitleClick: PropTypes.func,
+    phase: PropTypes.string,
+    promptTitle: PropTypes.string,
+    socket: PropTypes.object,
+    title: PropTypes.string,
+    user: PropTypes.object
 };
 
 export default ActivePlayerPrompt;

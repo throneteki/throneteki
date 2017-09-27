@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import CardPile from './CardPile.jsx';
 import PlayerHand from './PlayerHand.jsx';
@@ -180,31 +181,31 @@ class PlayerRow extends React.Component {
 
 PlayerRow.displayName = 'PlayerRow';
 PlayerRow.propTypes = {
-    agenda: React.PropTypes.object,
-    bannerCards: React.PropTypes.array,
-    cardSize: React.PropTypes.string,
-    conclavePile: React.PropTypes.array,
-    deadPile: React.PropTypes.array,
-    discardPile: React.PropTypes.array,
-    drawDeck: React.PropTypes.array,
-    faction: React.PropTypes.object,
-    hand: React.PropTypes.array,
-    isMe: React.PropTypes.bool,
-    isMelee: React.PropTypes.bool,
-    numDrawCards: React.PropTypes.number,
-    onCardClick: React.PropTypes.func,
-    onDragDrop: React.PropTypes.func,
-    onDrawClick: React.PropTypes.func,
-    onMenuItemClick: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func,
-    onShuffleClick: React.PropTypes.func,
-    outOfGamePile: React.PropTypes.array,
-    plotDeck: React.PropTypes.array,
-    power: React.PropTypes.number,
-    showDrawDeck: React.PropTypes.bool,
-    spectating: React.PropTypes.bool,
-    title: React.PropTypes.object
+    agenda: PropTypes.object,
+    bannerCards: PropTypes.array,
+    cardSize: PropTypes.string,
+    conclavePile: PropTypes.array,
+    deadPile: PropTypes.array,
+    discardPile: PropTypes.array,
+    drawDeck: PropTypes.array,
+    faction: PropTypes.object,
+    hand: PropTypes.array,
+    isMe: PropTypes.bool,
+    isMelee: PropTypes.bool,
+    numDrawCards: PropTypes.number,
+    onCardClick: PropTypes.func,
+    onDragDrop: PropTypes.func,
+    onDrawClick: PropTypes.func,
+    onMenuItemClick: PropTypes.func,
+    onMouseOut: PropTypes.func,
+    onMouseOver: PropTypes.func,
+    onShuffleClick: PropTypes.func,
+    outOfGamePile: PropTypes.array,
+    plotDeck: PropTypes.array,
+    power: PropTypes.number,
+    showDrawDeck: PropTypes.bool,
+    spectating: PropTypes.bool,
+    title: PropTypes.object
 };
 
 export default PlayerRow;
