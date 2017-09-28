@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Avatar from '../Avatar.jsx';
 
@@ -73,13 +74,13 @@ export class PlayerStats extends React.Component {
 
 PlayerStats.displayName = 'PlayerStats';
 PlayerStats.propTypes = {
-    firstPlayer: React.PropTypes.bool,
-    onSettingsClick: React.PropTypes.func,
-    playerName: React.PropTypes.string,
-    sendGameMessage: React.PropTypes.func,
-    showControls: React.PropTypes.bool,
-    stats: React.PropTypes.object,
-    user: React.PropTypes.object
+    firstPlayer: PropTypes.bool,
+    onSettingsClick: PropTypes.func,
+    playerName: PropTypes.string,
+    sendGameMessage: PropTypes.func,
+    showControls: PropTypes.bool,
+    stats: PropTypes.object,
+    user: PropTypes.object
 };
 
 export default PlayerStats;

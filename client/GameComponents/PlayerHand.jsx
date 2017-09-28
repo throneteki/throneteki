@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 import $ from 'jquery';
 
@@ -114,13 +115,13 @@ class PlayerHand extends React.Component {
 
 PlayerHand.displayName = 'PlayerHand';
 PlayerHand.propTypes = {
-    cardSize: React.PropTypes.string,
-    cards: React.PropTypes.array,
-    isMe: React.PropTypes.bool,
-    onCardClick: React.PropTypes.func,
-    onDragDrop: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func
+    cardSize: PropTypes.string,
+    cards: PropTypes.array,
+    isMe: PropTypes.bool,
+    onCardClick: PropTypes.func,
+    onDragDrop: PropTypes.func,
+    onMouseOut: PropTypes.func,
+    onMouseOver: PropTypes.func
 };
 
 export default PlayerHand;
