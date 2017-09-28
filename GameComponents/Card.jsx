@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 import $ from 'jquery';
 import 'jquery-migrate';
@@ -344,46 +345,46 @@ class Card extends React.Component {
 
 Card.displayName = 'Card';
 Card.propTypes = {
-    card: React.PropTypes.shape({
-        attached: React.PropTypes.bool,
-        attachments: React.PropTypes.array,
-        baseStrength: React.PropTypes.number,
-        code: React.PropTypes.string,
-        controlled: React.PropTypes.bool,
-        dupes: React.PropTypes.array,
-        facedown: React.PropTypes.bool,
-        iconsAdded: React.PropTypes.array,
-        iconsRemoved: React.PropTypes.array,
-        inChallenge: React.PropTypes.bool,
-        inDanger: React.PropTypes.bool,
-        kneeled: React.PropTypes.bool,
-        menu: React.PropTypes.array,
-        name: React.PropTypes.string,
-        new: React.PropTypes.bool,
-        order: React.PropTypes.number,
-        power: React.PropTypes.number,
-        saved: React.PropTypes.bool,
-        selectable: React.PropTypes.bool,
-        selected: React.PropTypes.bool,
-        stealth: React.PropTypes.bool,
-        strength: React.PropTypes.number,
-        tokens: React.PropTypes.object,
-        type: React.PropTypes.string,
-        unselectable: React.PropTypes.bool
+    card: PropTypes.shape({
+        attached: PropTypes.bool,
+        attachments: PropTypes.array,
+        baseStrength: PropTypes.number,
+        code: PropTypes.string,
+        controlled: PropTypes.bool,
+        dupes: PropTypes.array,
+        facedown: PropTypes.bool,
+        iconsAdded: PropTypes.array,
+        iconsRemoved: PropTypes.array,
+        inChallenge: PropTypes.bool,
+        inDanger: PropTypes.bool,
+        kneeled: PropTypes.bool,
+        menu: PropTypes.array,
+        name: PropTypes.string,
+        new: PropTypes.bool,
+        order: PropTypes.number,
+        power: PropTypes.number,
+        saved: PropTypes.bool,
+        selectable: PropTypes.bool,
+        selected: PropTypes.bool,
+        stealth: PropTypes.bool,
+        strength: PropTypes.number,
+        tokens: PropTypes.object,
+        type: PropTypes.string,
+        unselectable: PropTypes.bool
     }).isRequired,
-    className: React.PropTypes.string,
-    disableMouseOver: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    onDragDrop: React.PropTypes.func,
-    onMenuItemClick: React.PropTypes.func,
-    onMouseOut: React.PropTypes.func,
-    onMouseOver: React.PropTypes.func,
-    orientation: React.PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
-    size: React.PropTypes.string,
-    source: React.PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction',
+    className: PropTypes.string,
+    disableMouseOver: PropTypes.bool,
+    onClick: PropTypes.func,
+    onDragDrop: PropTypes.func,
+    onMenuItemClick: PropTypes.func,
+    onMouseOut: PropTypes.func,
+    onMouseOver: PropTypes.func,
+    orientation: PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
+    size: PropTypes.string,
+    source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction',
         'additional', 'scheme plots']).isRequired,
-    style: React.PropTypes.object,
-    wrapped: React.PropTypes.bool
+    style: PropTypes.object,
+    wrapped: PropTypes.bool
 };
 Card.defaultProps = {
     orientation: 'vertical',

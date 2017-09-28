@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 import $ from 'jquery';
 import { connect } from 'react-redux';
@@ -361,9 +362,9 @@ class InnerProfile extends React.Component {
 
 InnerProfile.displayName = 'Profile';
 InnerProfile.propTypes = {
-    refreshUser: React.PropTypes.func,
-    socket: React.PropTypes.object,
-    user: React.PropTypes.object
+    refreshUser: PropTypes.func,
+    socket: PropTypes.object,
+    user: PropTypes.object
 };
 
 function mapStateToProps(state) {

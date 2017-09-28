@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import _ from 'underscore';
 
 import StatusPopOver from './StatusPopOver.jsx';
@@ -122,8 +123,8 @@ class DeckSummary extends React.Component {
 
 DeckSummary.displayName = 'DeckSummary';
 DeckSummary.propTypes = {
-    cards: React.PropTypes.object,
-    deck: React.PropTypes.object
+    cards: PropTypes.object,
+    deck: PropTypes.object
 };
 
 export default DeckSummary;
