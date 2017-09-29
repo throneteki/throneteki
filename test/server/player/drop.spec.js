@@ -266,6 +266,7 @@ describe('Player', () => {
                 beforeEach(function() {
                     this.cardSpy2 = jasmine.createSpyObj('card', ['getType', 'moveTo']);
                     this.cardSpy2.controller = this.player;
+                    this.cardSpy2.owner = this.player;
                     this.cardSpy2.getType.and.returnValue('event');
                     this.player.hand.push(this.cardSpy2);
                     this.cardSpy2.location = 'hand';

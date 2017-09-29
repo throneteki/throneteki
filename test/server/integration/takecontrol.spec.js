@@ -686,5 +686,50 @@ describe('take control', function() {
                 expect(this.character).toBeControlledBy(this.player2);
             });
         });
+
+        describe('take control + leaving play', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('greyjoy', [
+                    'Snowed Under',
+                    'Night Gathers...', 'Varys'
+                ]);
+                const deck2 = this.buildDeck('greyjoy', [
+                    'A Storm of Swords',
+                    'Old Forest Hunter'
+                ]);
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.player1.clickCard('Varys', 'hand');
+
+                this.character = this.player2.findCardByName('Old Forest Hunter', 'hand');
+
+                this.completeSetup();
+
+                this.player1.selectPlot('Snowed Under');
+                this.player2.selectPlot('A Storm of Swords');
+                this.selectFirstPlayer(this.player1);
+
+                // Drag these to discard to be available for Night Gathers
+                this.player2.dragCard(this.character, 'discard pile');
+
+                this.player1.clickCard('Night Gathers...', 'hand');
+                this.player1.clickCard(this.character);
+
+                expect(this.character.location).toBe('play area');
+                expect(this.character).toBeControlledBy(this.player1);
+
+                this.completeMarshalPhase();
+                this.completeChallengesPhase();
+
+                this.player1.clickPrompt('Varys');
+            });
+
+            it('should place the character in the proper owner\'s pile', function() {
+                expect(this.player2Object.discardPile).toContain(this.character);
+            });
+        });
     });
 });

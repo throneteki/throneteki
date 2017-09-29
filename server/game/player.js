@@ -548,10 +548,8 @@ class Player extends Spectator {
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
             if(card.controller !== this) {
-                card.controller.allCards = _(card.controller.allCards.reject(c => c === card));
-                this.allCards.push(card);
+                this.controlCard(card);
             }
-            card.controller = this;
             card.wasAmbush = (playingType === 'ambush');
 
             if(!dupeCard && !isSetupAttachment) {
@@ -984,12 +982,12 @@ class Player extends Spectator {
             return;
         }
 
-        if(card.location === 'play area') {
-            if(card.owner !== this) {
-                card.owner.moveCard(card, targetLocation);
-                return;
-            }
+        if(card.owner !== this && targetLocation !== 'play area') {
+            card.owner.moveCard(card, targetLocation, options, callback);
+            return;
+        }
 
+        if(card.location === 'play area') {
             var params = {
                 player: this,
                 card: card,
@@ -1103,15 +1101,16 @@ class Player extends Spectator {
         return true;
     }
 
+    controlCard(card) {
+        card.controller.allCards = _(card.controller.allCards.reject(c => c === card));
+        this.allCards.push(card);
+        card.controller = this;
+    }
+
     removeCardFromPile(card) {
         if(card.controller !== this) {
-            let oldController = card.controller;
-            oldController.removeCardFromPile(card);
-
-            oldController.allCards = _(oldController.allCards.reject(c => c === card));
-            this.allCards.push(card);
-            card.controller = card.owner;
-
+            card.controller.removeCardFromPile(card);
+            card.owner.controlCard(card);
             return;
         }
 

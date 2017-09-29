@@ -191,5 +191,50 @@ describe('Player', function() {
                 expect(this.player.activePlot).toBe(this.card);
             });
         });
+
+        describe('when moving a controlled card', function() {
+            beforeEach(function() {
+                this.options = { options: 1 };
+                this.callback = jasmine.createSpy('callback');
+                this.opponent = new Player('2', {username: 'Player 2', settings: {}}, true, this.gameSpy);
+                spyOn(this.opponent, 'moveCard');
+                this.card.owner = this.opponent;
+            });
+
+            describe('from out-of-play to in-play', function() {
+                beforeEach(function() {
+                    this.card.location = 'discard pile';
+                    this.player.moveCard(this.card, 'play area');
+                });
+
+                it('should not use the owner\'s moveCard', function() {
+                    expect(this.opponent.moveCard).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('from in-play to out-of-play', function() {
+                beforeEach(function() {
+                    this.card.location = 'play area';
+
+                    this.player.moveCard(this.card, 'discard pile', this.options, this.callback);
+                });
+
+                it('should use the owner\'s moveCard instead', function() {
+                    expect(this.opponent.moveCard).toHaveBeenCalledWith(this.card, 'discard pile', jasmine.objectContaining(this.options), this.callback);
+                });
+            });
+
+            describe('from out-of-play to out-of-play', function() {
+                beforeEach(function() {
+                    this.card.location = 'discard pile';
+
+                    this.player.moveCard(this.card, 'hand', this.options, this.callback);
+                });
+
+                it('should use the owner\'s moveCard instead', function() {
+                    expect(this.opponent.moveCard).toHaveBeenCalledWith(this.card, 'hand', jasmine.objectContaining(this.options), this.callback);
+                });
+            });
+        });
     });
 });
