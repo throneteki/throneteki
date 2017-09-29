@@ -346,6 +346,7 @@ class Player extends Spectator {
         this.drawDeck = _(preparedDeck.drawCards);
         this.bannerCards = _(preparedDeck.bannerCards);
         this.allCards = _(preparedDeck.allCards);
+        this.preparedDeck = preparedDeck;
     }
 
     initialise() {

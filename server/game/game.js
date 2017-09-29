@@ -636,7 +636,7 @@ class Game extends EventEmitter {
 
     gatherAllCards() {
         let playerCards = _.reduce(this.getPlayers(), (cards, player) => {
-            return cards.concat(player.allCards.toArray());
+            return cards.concat(player.preparedDeck.allCards);
         }, []);
 
         if(this.isMelee) {
