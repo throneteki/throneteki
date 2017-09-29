@@ -281,7 +281,6 @@ describe('Player', function() {
                 this.cardSpy.controller = this.opponent;
                 this.cardSpy.owner = this.opponent;
                 this.opponent.hand.push(this.cardSpy);
-                this.opponent.allCards.push(this.cardSpy);
                 this.player.hand = _([]);
 
                 this.player.putIntoPlay(this.cardSpy, 'marshal');
@@ -293,15 +292,10 @@ describe('Player', function() {
 
             it('should remove the card from the other player', function() {
                 expect(this.opponent.hand).not.toContain(this.cardSpy);
-                expect(this.opponent.allCards).not.toContain(this.cardSpy);
             });
 
             it('should transfer control to the player', function () {
                 expect(this.cardSpy.controller).toBe(this.player);
-            });
-
-            it('should not duplicate the card in the allCards array', function() {
-                expect(this.player.allCards.toArray()).toEqual([this.player.faction, this.cardSpy]);
             });
         });
     });

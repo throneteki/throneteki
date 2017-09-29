@@ -776,7 +776,7 @@ class Game extends EventEmitter {
 
         this.applyGameAction('takeControl', card, card => {
             oldController.removeCardFromPile(card);
-            newController.controlCard(card);
+            card.controller = newController;
             newController.cardsInPlay.push(card);
 
             if(card.location !== 'play area') {

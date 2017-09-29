@@ -345,7 +345,6 @@ class Player extends Spectator {
         this.faction = preparedDeck.faction;
         this.drawDeck = _(preparedDeck.drawCards);
         this.bannerCards = _(preparedDeck.bannerCards);
-        this.allCards = _(preparedDeck.allCards);
         this.preparedDeck = preparedDeck;
     }
 
@@ -545,9 +544,7 @@ class Player extends Spectator {
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
-            if(card.controller !== this) {
-                this.controlCard(card);
-            }
+            card.controller = this;
             card.wasAmbush = (playingType === 'ambush');
 
             if(!dupeCard && !isSetupAttachment) {
@@ -1099,16 +1096,10 @@ class Player extends Spectator {
         return true;
     }
 
-    controlCard(card) {
-        card.controller.allCards = _(card.controller.allCards.reject(c => c === card));
-        this.allCards.push(card);
-        card.controller = this;
-    }
-
     removeCardFromPile(card) {
         if(card.controller !== this) {
             card.controller.removeCardFromPile(card);
-            card.owner.controlCard(card);
+            card.controller = card.owner;
             return;
         }
 
