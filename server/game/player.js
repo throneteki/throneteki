@@ -525,6 +525,7 @@ class Player extends Spectator {
         var dupeCard = this.getDuplicateInPlay(card);
 
         if(card.getType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
+            card.controller = this;
             this.promptForAttachment(card, playingType);
 
             if(this.game.currentPhase !== 'setup' && card.isBestow()) {
@@ -690,6 +691,7 @@ class Player extends Spectator {
             originalParent.removeAttachment(attachment);
         }
         attachment.moveTo('play area', card);
+        attachment.controller = player;
         card.attachments.push(attachment);
 
         this.game.queueSimpleStep(() => {
