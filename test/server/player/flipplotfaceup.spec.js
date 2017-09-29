@@ -12,10 +12,12 @@ describe('Player', function() {
         this.selectedPlotSpy.uuid = '111';
         this.selectedPlotSpy.location = 'plot deck';
         this.selectedPlotSpy.controller = this.player;
+        this.selectedPlotSpy.owner = this.player;
         this.anotherPlotSpy = jasmine.createSpyObj('plot', ['flipFaceup', 'moveTo', 'applyPersistentEffects']);
         this.anotherPlotSpy.uuid = '222';
         this.anotherPlotSpy.location = 'plot deck';
         this.anotherPlotSpy.controller = this.player;
+        this.anotherPlotSpy.owner = this.player;
 
         this.player.selectedPlot = this.selectedPlotSpy;
         this.player.plotDeck = _([this.selectedPlotSpy, this.anotherPlotSpy]);
@@ -55,6 +57,7 @@ describe('Player', function() {
             this.activePlotSpy = jasmine.createSpyObj('plot', ['leavesPlay', 'moveTo']);
             this.activePlotSpy.location = 'active plot';
             this.activePlotSpy.controller = this.player;
+            this.activePlotSpy.owner = this.player;
             this.player.activePlot = this.activePlotSpy;
 
             this.player.removeActivePlot();

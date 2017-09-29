@@ -982,12 +982,12 @@ class Player extends Spectator {
             return;
         }
 
-        if(card.location === 'play area') {
-            if(card.owner !== this) {
-                card.owner.moveCard(card, targetLocation);
-                return;
-            }
+        if(card.owner !== this && targetLocation !== 'play area') {
+            card.owner.moveCard(card, targetLocation, options, callback);
+            return;
+        }
 
+        if(card.location === 'play area') {
             var params = {
                 player: this,
                 card: card,
