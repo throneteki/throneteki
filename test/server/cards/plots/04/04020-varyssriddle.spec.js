@@ -60,16 +60,22 @@ describe('Varys\'s Riddle', function() {
         describe('when played against Calm Over Westeros', function() {
             integration(function() {
                 beforeEach(function() {
-                    const deck = this.buildDeck('lannister', [
-                        'Calm Over Westeros', 'Varys\'s Riddle',
-                        'The Tickler'
+                    const deck1 = this.buildDeck('lannister', [
+                        'Varys\'s Riddle',
+                        'Hedge Knight'
                     ]);
-                    this.player1.selectDeck(deck);
-                    this.player2.selectDeck(deck);
+                    const deck2 = this.buildDeck('lannister', [
+                        '"The Rains of Castamere"',
+                        'Calm Over Westeros', 'Power Behind the Throne',
+                        'The Tickler', 'Ser Jaime Lannister (Core)'
+                    ]);
+                    this.player1.selectDeck(deck1);
+                    this.player2.selectDeck(deck2);
                     this.startGame();
                     this.keepStartingHands();
 
-                    this.player2.clickCard('The Tickler', 'hand');
+                    this.player2.clickCard('Ser Jaime Lannister', 'hand');
+
                     this.completeSetup();
 
                     this.player1.selectPlot('Varys\'s Riddle');
@@ -84,23 +90,33 @@ describe('Varys\'s Riddle', function() {
                     // Reduce claim on Military this round.
                     this.player2.clickPrompt('Military');
 
+                    // Marshal cards
+                    this.player2.clickCard('The Tickler', 'hand');
                     this.completeMarshalPhase();
-
-                    this.player2.clickPrompt('Intrigue');
-                    this.player2.clickCard('The Tickler', 'play area');
-                    this.player2.clickPrompt('Done');
-
-                    this.skipActionWindow();
-
-                    this.player1.clickPrompt('Done');
-
-                    this.skipActionWindow();
-
-                    this.player2.clickPrompt('Apply Claim');
                 });
 
-                it('should reduce the claim', function() {
-                    expect(this.player1Object.discardPile.size()).toBe(0);
+                describe('on a normal challenge', function() {
+                    beforeEach(function() {
+                        this.unopposedChallenge(this.player2, 'Intrigue', 'The Tickler');
+                        this.player2.clickPrompt('Apply Claim');
+                    });
+
+                    it('should reduce the claim', function() {
+                        expect(this.player1Object.discardPile.size()).toBe(0);
+                    });
+                });
+
+                describe('when Calm is replaced using Rains', function() {
+                    beforeEach(function() {
+                        this.unopposedChallenge(this.player2, 'Intrigue', 'Ser Jaime Lannister');
+                        this.player2.clickPrompt('"The Rains of Castamere"');
+                        this.player2.clickPrompt('Power Behind the Throne');
+                        this.player2.clickPrompt('Apply Claim');
+                    });
+
+                    it('should reduce the claim', function() {
+                        expect(this.player1Object.discardPile.size()).toBe(0);
+                    });
                 });
             });
         });
