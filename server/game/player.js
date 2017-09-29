@@ -128,16 +128,16 @@ class Player extends Spectator {
     }
 
     anyCardsInPlay(predicate) {
-        return this.allCards.any(card => card.location === 'play area' && predicate(card));
+        return this.game.allCards.any(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
     filterCardsInPlay(predicate) {
-        return this.allCards.filter(card => card.location === 'play area' && predicate(card));
+        return this.game.allCards.filter(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
     getNumberOfCardsInPlay(predicate) {
-        return this.allCards.reduce((num, card) => {
-            if(card.location === 'play area' && predicate(card)) {
+        return this.game.allCards.reduce((num, card) => {
+            if(card.controller === this && card.location === 'play area' && predicate(card)) {
                 return num + 1;
             }
 
@@ -154,7 +154,8 @@ class Player extends Spectator {
             return undefined;
         }
 
-        return this.allCards.find(playCard => (
+        return this.game.allCards.find(playCard => (
+            playCard.controller === this &&
             playCard.location === 'play area' &&
             playCard !== card &&
             (playCard.code === card.code || playCard.name === card.name) &&
