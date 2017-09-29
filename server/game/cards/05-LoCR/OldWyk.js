@@ -46,7 +46,7 @@ class OldWyk extends DrawCard {
     }
 
     anyDrownedGodInDeadPile() {
-        return this.controller.allCards.any(card => card.location === 'dead pile' && card.hasTrait('Drowned God'));
+        return this.controller.deadPile.any(card => card.hasTrait('Drowned God'));
     }
 }
 

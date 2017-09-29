@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class WeaponsAtTheDoor extends PlotCard {
@@ -9,17 +7,12 @@ class WeaponsAtTheDoor extends PlotCard {
                 onPhaseStarted: event => event.phase === 'challenge'
             },
             handler: () => {
-                _.each(this.game.getPlayers(), player => this.returnCardsToHand(player));
+                let attachments = this.game.allCards.filter(card => card.getPrintedType() === 'attachment' && card.parent);
+                for(let card of attachments) {
+                    card.owner.returnCardToHand(card);
+                }
 
                 this.game.addMessage('{0} uses {1} to force both players to return each card with printed attachment card type to their hand', this.controller, this);
-            }
-        });
-    }
-
-    returnCardsToHand(player) {
-        player.allCards.each(card => {
-            if(card.getPrintedType() === 'attachment' && card.parent) {
-                player.returnCardToHand(card);
             }
         });
     }

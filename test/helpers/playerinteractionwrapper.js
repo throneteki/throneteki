@@ -44,8 +44,8 @@ class PlayerInteractionWrapper {
     }
 
     filterCardsByName(name, location = 'any') {
-        var matchFunc = matchCardByNameAndPack(name);
-        var cards = this.player.allCards.filter(card => matchFunc(card.cardData) && (location === 'any' || card.location === location));
+        let matchFunc = matchCardByNameAndPack(name);
+        let cards = this.game.allCards.filter(card => card.controller === this.player && matchFunc(card.cardData) && (location === 'any' || card.location === location));
 
         if(cards.length === 0) {
             var locationString = location === 'any' ? 'any location' : location;
@@ -60,7 +60,7 @@ class PlayerInteractionWrapper {
     }
 
     filterCards(condition) {
-        var cards = this.player.allCards.filter(condition);
+        let cards = this.game.allCards.filter(card => card.controller === this.player && condition(card));
 
         if(cards.length === 0) {
             throw new Error(`Could not find any matching cards for ${this.player.name}`);

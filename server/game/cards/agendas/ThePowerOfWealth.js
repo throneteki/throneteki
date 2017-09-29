@@ -20,8 +20,8 @@ class ThePowerOfWealth extends AgendaCard {
     onDecksPrepared() {
         let factionsInDecks = [];
 
-        this.controller.allCards.each(card => {
-            if(!factionsInDecks.includes(card.getPrintedFaction())) {
+        this.game.allCards.each(card => {
+            if(card.owner === this.owner && !factionsInDecks.includes(card.getPrintedFaction())) {
                 factionsInDecks.push(card.getPrintedFaction());
             }
         });

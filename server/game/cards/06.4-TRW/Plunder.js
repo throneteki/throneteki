@@ -16,7 +16,7 @@ class Plunder extends DrawCard {
     }
 
     getGold(opponent) {
-        return opponent.allCards.reduce((num, card) => {
+        return opponent.discardPile.reduce((num, card) => {
             if(card.location === 'discard pile' && (card.getType() === 'location' || card.getType() === 'attachment')) {
                 return num + 1;
             }

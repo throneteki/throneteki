@@ -433,7 +433,7 @@ const Costs = {
         );
         return {
             canPay: function(context) {
-                return context.player.allCards.any(card => fullCondition(card, context));
+                return context.game.allCards.any(card => fullCondition(card, context));
             },
             resolve: function(context, result = { resolved: false }) {
                 context.game.promptForSelect(context.player, {
