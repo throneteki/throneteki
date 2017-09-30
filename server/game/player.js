@@ -610,10 +610,6 @@ class Player extends Spectator {
     flipPlotFaceup() {
         this.selectedPlot.flipFaceup();
         this.moveCard(this.selectedPlot, 'active plot');
-        this.selectedPlot.applyPersistentEffects();
-
-        this.game.raiseEvent('onCardEntersPlay', { card: this.activePlot, playingType: 'plot' });
-
         this.selectedPlot = undefined;
     }
 

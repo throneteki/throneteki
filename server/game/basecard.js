@@ -328,12 +328,14 @@ class BaseCard {
         });
     }
 
+    getPersistentEffects() {
+        return this.abilities.persistentEffects.filter(effect => effect.location !== 'any');
+    }
+
     applyPersistentEffects() {
-        _.each(this.abilities.persistentEffects, effect => {
-            if(effect.location !== 'any') {
-                this.game.addEffect(this, effect);
-            }
-        });
+        for(let effect of this.getPersistentEffects()) {
+            this.game.addEffect(this, effect);
+        }
     }
 
     leavesPlay() {

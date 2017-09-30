@@ -11,6 +11,12 @@ class RevealPlots extends BaseStep {
     }
 
     continue() {
+        this.game.addSimultaneousEffects(this.getPlotEffects());
+
+        for(let plot of this.plots) {
+            this.game.raiseEvent('onCardEntersPlay', { card: plot, playingType: 'plot' });
+        }
+
         let params = {
             plots: this.plots
         };
@@ -22,6 +28,16 @@ class RevealPlots extends BaseStep {
             }
             this.game.raiseEvent('onPlotsWhenRevealed', params);
         });
+    }
+
+    getPlotEffects() {
+        return this.plots
+            .reduce((memo, plot) => {
+                let effectProperties = plot.getPersistentEffects();
+                let results = effectProperties.map(properties => ({ source: plot, properties: properties }));
+
+                return memo.concat(results);
+            }, []);
     }
 
     needsFirstPlayerChoice() {
