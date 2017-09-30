@@ -44,8 +44,8 @@ class TyrionsChain extends DrawCard {
         return revealedPlots;
     }
 
-    selectWarPlot(player, card) {
-        var warPlot = this.controller.findCardByUuid(this.game.allCards, card);
+    selectWarPlot(player, cardId) {
+        var warPlot = this.game.findAnyCardInAnyList(cardId);
         this.resolving = true;
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, warPlot);

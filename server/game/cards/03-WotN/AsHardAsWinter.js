@@ -25,7 +25,7 @@ class AsHardAsWinter extends DrawCard {
     }
 
     hasUsedWinterPlot() {
-        return this.controller.allCards.any(card => (
+        return this.game.allCards.any(card => (
             card.controller === this.controller &&
             card.location === 'revealed plots' &&
             card.hasTrait('Winter')

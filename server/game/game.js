@@ -162,12 +162,7 @@ class Game extends EventEmitter {
     }
 
     findAnyCardInAnyList(cardId) {
-        return _.reduce(this.getPlayers(), (card, player) => {
-            if(card) {
-                return card;
-            }
-            return player.findCardByUuidInAnyList(cardId);
-        }, null);
+        return this.allCards.find(card => card.uuid === cardId);
     }
 
     findAnyCardsInPlay(predicate) {
@@ -641,7 +636,7 @@ class Game extends EventEmitter {
 
     gatherAllCards() {
         let playerCards = _.reduce(this.getPlayers(), (cards, player) => {
-            return cards.concat(player.allCards.toArray());
+            return cards.concat(player.preparedDeck.allCards);
         }, []);
 
         if(this.isMelee) {
@@ -781,7 +776,7 @@ class Game extends EventEmitter {
 
         this.applyGameAction('takeControl', card, card => {
             oldController.removeCardFromPile(card);
-            newController.controlCard(card);
+            card.controller = newController;
             newController.cardsInPlay.push(card);
 
             if(card.location !== 'play area') {

@@ -88,10 +88,6 @@ class Player extends Spectator {
         return this.findCard(list, card => card.name === name);
     }
 
-    findCardByUuidInAnyList(uuid) {
-        return this.findCardByUuid(this.allCards, uuid);
-    }
-
     findCardByUuid(list, uuid) {
         return this.findCard(list, card => card.uuid === uuid);
     }
@@ -132,16 +128,16 @@ class Player extends Spectator {
     }
 
     anyCardsInPlay(predicate) {
-        return this.allCards.any(card => card.location === 'play area' && predicate(card));
+        return this.game.allCards.any(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
     filterCardsInPlay(predicate) {
-        return this.allCards.filter(card => card.location === 'play area' && predicate(card));
+        return this.game.allCards.filter(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
     getNumberOfCardsInPlay(predicate) {
-        return this.allCards.reduce((num, card) => {
-            if(card.location === 'play area' && predicate(card)) {
+        return this.game.allCards.reduce((num, card) => {
+            if(card.controller === this && card.location === 'play area' && predicate(card)) {
                 return num + 1;
             }
 
@@ -158,7 +154,8 @@ class Player extends Spectator {
             return undefined;
         }
 
-        return this.allCards.find(playCard => (
+        return this.game.allCards.find(playCard => (
+            playCard.controller === this &&
             playCard.location === 'play area' &&
             playCard !== card &&
             (playCard.code === card.code || playCard.name === card.name) &&
@@ -348,7 +345,7 @@ class Player extends Spectator {
         this.faction = preparedDeck.faction;
         this.drawDeck = _(preparedDeck.drawCards);
         this.bannerCards = _(preparedDeck.bannerCards);
-        this.allCards = _(preparedDeck.allCards);
+        this.preparedDeck = preparedDeck;
     }
 
     initialise() {
@@ -547,9 +544,7 @@ class Player extends Spectator {
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
-            if(card.controller !== this) {
-                this.controlCard(card);
-            }
+            card.controller = this;
             card.wasAmbush = (playingType === 'ambush');
 
             if(!dupeCard && !isSetupAttachment) {
@@ -1101,16 +1096,10 @@ class Player extends Spectator {
         return true;
     }
 
-    controlCard(card) {
-        card.controller.allCards = _(card.controller.allCards.reject(c => c === card));
-        this.allCards.push(card);
-        card.controller = this;
-    }
-
     removeCardFromPile(card) {
         if(card.controller !== this) {
             card.controller.removeCardFromPile(card);
-            card.owner.controlCard(card);
+            card.controller = card.owner;
             return;
         }
 

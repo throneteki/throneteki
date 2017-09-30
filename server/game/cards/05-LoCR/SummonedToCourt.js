@@ -82,7 +82,7 @@ class SummonedToCourt extends PlotCard {
     }
 
     putChoiceIntoPlay(player, cardId) {
-        let card = player.findCardByUuidInAnyList(cardId);
+        let card = this.game.findAnyCardInAnyList(cardId);
         player.putIntoPlay(card);
         this.game.addMessage('{0} chooses to put {1} into play using {2}', player, card, this);
         this.promptNextPlayerToPutIntoPlay();
@@ -90,7 +90,7 @@ class SummonedToCourt extends PlotCard {
     }
 
     declinePutIntoPlay(player, cardId) {
-        let card = player.findCardByUuidInAnyList(cardId);
+        let card = this.game.findAnyCardInAnyList(cardId);
         this.game.addMessage('{0} declines to put {1} into play using {2}', player, card, this);
         this.promptNextPlayerToPutIntoPlay();
         return true;
