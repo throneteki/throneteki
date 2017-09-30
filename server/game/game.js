@@ -208,6 +208,11 @@ class Game extends EventEmitter {
         this.effectEngine.add(new Effect(this, source, properties));
     }
 
+    addSimultaneousEffects(effectProperties) {
+        let effects = effectProperties.map(effect => new Effect(this, effect.source, effect.properties));
+        this.effectEngine.addSimultaneous(effects);
+    }
+
     selectPlot(player, plotId) {
         var plot = player.findCardByUuid(player.plotDeck, plotId);
 

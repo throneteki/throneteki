@@ -33,10 +33,6 @@ describe('Player', function() {
                 expect(this.selectedPlotSpy.flipFaceup).toHaveBeenCalled();
             });
 
-            it('should apply effects for the selected plot', function() {
-                expect(this.selectedPlotSpy.applyPersistentEffects).toHaveBeenCalled();
-            });
-
             it('should move the plot to the active plot slot', function() {
                 expect(this.selectedPlotSpy.moveTo).toHaveBeenCalledWith('active plot');
                 expect(this.player.activePlot).toBe(this.selectedPlotSpy);

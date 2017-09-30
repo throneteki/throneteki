@@ -26,6 +26,13 @@ class EffectEngine {
         }
     }
 
+    addSimultaneous(effects) {
+        let sortedEffects = _.sortBy(effects, effect => effect.order);
+        for(let effect of sortedEffects) {
+            this.add(effect);
+        }
+    }
+
     getTargets() {
         var validTargets = this.game.allCards.filter(card => card.location === 'play area' || card.location === 'active plot' || card.location === 'hand');
         return validTargets.concat(_.values(this.game.getPlayers()));
