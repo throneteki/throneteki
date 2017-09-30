@@ -15,8 +15,6 @@ class RooseBolton extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             target: {
                 activePromptTitle: 'Select character(s)',
-                numCards: 99,
-                multiSelect: true,
                 maxStat: () => this.strengthAtInitiation,
                 cardStat: card => card.getStrength(),
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller !== this.controller,

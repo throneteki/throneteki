@@ -26,7 +26,6 @@ class ValarDohaeris extends PlotCard {
             }
 
             this.game.promptForSelect(currentPlayer, {
-                numCards: 99,
                 activePromptTitle: 'Select character(s)',
                 maxStat: () => 10,
                 cardStat: card => card.getPrintedCost(),
