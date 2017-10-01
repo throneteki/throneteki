@@ -44,7 +44,7 @@ describe('the DrawCard', function() {
 
         beforeEach(function() {
             this.gameService = jasmine.createSpyObj('gameService', ['save']);
-            this.game = new Game({}, { gameService: this.gameService });
+            this.game = new Game({ owner: {} }, { gameService: this.gameService });
 
             this.player = new Player(1, { username: 'foo', settings: {} }, false, this.game);
             this.player.noTimer = true;

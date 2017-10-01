@@ -6,7 +6,7 @@ const Settings = require('../../../server/settings.js');
 describe('ActionWindow', function() {
     beforeEach(function() {
         this.gameService = jasmine.createSpyObj('gameService', ['save']);
-        this.game = new Game('1', 'Test Game', { gameService: this.gameService });
+        this.game = new Game({ owner: {} }, { gameService: this.gameService });
         this.player1 = new Player('1', Settings.getUserWithDefaultsSet({ username: 'Player 1' }), true, this.game);
         this.player2 = new Player('2', Settings.getUserWithDefaultsSet({ username: 'Player 2' }), false, this.game);
         this.player2.firstPlayer = true;

@@ -15,7 +15,7 @@ class GameFlowWrapper {
         let details = {
             name: 'player1\'s game',
             id: 12345,
-            owner: 'player1',
+            owner: { username: 'player1' },
             saveGameId: 12345,
             players: [
                 { id: '111', user: Settings.getUserWithDefaultsSet({ username: 'player1' }) },

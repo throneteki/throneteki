@@ -46,7 +46,7 @@ class Game extends EventEmitter {
         this.id = details.id;
         this.name = details.name;
         this.allowSpectators = details.allowSpectators;
-        this.owner = details.owner;
+        this.owner = details.owner.username;
         this.started = false;
         this.playStarted = false;
         this.createdAt = new Date();

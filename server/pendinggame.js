@@ -7,7 +7,7 @@ const GameChat = require('./game/gamechat.js');
 
 class PendingGame {
     constructor(owner, details) {
-        this.owner = owner.username;
+        this.owner = owner;
         this.players = {};
         this.spectators = {};
         this.id = uuid.v1();
@@ -82,7 +82,7 @@ class PendingGame {
             name: user.username,
             user: user,
             emailHash: user.emailHash,
-            owner: this.owner === user.username
+            owner: this.owner.username === user.username
         };
     }
 
@@ -308,7 +308,7 @@ class PendingGame {
             name: this.name,
             needsPassword: !!this.password,
             node: this.node ? this.node.identity : undefined,
-            owner: this.owner,
+            owner: this.owner.username,
             players: playerSummaries,
             started: this.started,
             spectators: _.map(this.spectators, spectator => {
