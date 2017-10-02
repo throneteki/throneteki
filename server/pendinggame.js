@@ -118,12 +118,16 @@ class PendingGame {
         }
     }
 
+    isUserBlocked(user) {
+        return _.contains(this.owner.blockList, user.username.toLowerCase());
+    }
+
     join(id, user, password, callback) {
         if(_.size(this.players) === 2 || this.started) {
             return;
         }
 
-        if(_.contains(this.owner.blockList, user.username.toLowerCase())) {
+        if(this.isUserBlocked(user)) {
             return;
         }
 
@@ -155,7 +159,7 @@ class PendingGame {
             return;
         }
 
-        if(_.contains(this.owner.blockList, user.username.toLowerCase())) {
+        if(this.isUserBlocked(user)) {
             return;
         }
 
