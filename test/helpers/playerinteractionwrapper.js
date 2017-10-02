@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const uuid = require('uuid');
 
 const { matchCardByNameAndPack } = require('./cardutil.js');
 
@@ -134,6 +135,11 @@ class PlayerInteractionWrapper {
 
     toggleKeywordSettings(setting, value) {
         this.player.keywordSettings[setting] = value;
+    }
+
+    reconnect() {
+        let newSocket = { id: uuid.v1() };
+        this.game.reconnect(newSocket, this.player.name);
     }
 }
 
