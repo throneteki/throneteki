@@ -144,14 +144,10 @@ const Costs = {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select ' + number + ' cards to kneel',
+                    mode: 'exactly',
                     numCards: number,
-                    multiSelect: true,
                     source: context.source,
                     onSelect: (player, cards) => {
-                        if(cards.length !== number) {
-                            return false;
-                        }
-
                         context.kneelingCostCards = cards;
                         result.value = true;
                         result.resolved = true;
@@ -336,14 +332,10 @@ const Costs = {
                 context.game.promptForSelect(context.player, {
                     cardCondition: card => fullCondition(card, context),
                     activePromptTitle: 'Select ' + number + ' cards to reveal',
+                    mode: 'exactly',
                     numCards: number,
-                    multiSelect: true,
                     source: context.source,
                     onSelect: (player, cards) => {
-                        if(cards.length !== number) {
-                            return false;
-                        }
-
                         context.revealingCostCards = cards;
                         result.value = true;
                         result.resolved = true;
