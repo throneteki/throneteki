@@ -4,11 +4,13 @@ class RiseOfTheKraken extends PlotCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onUnopposedWin: event => event.challenge.winner === this.controller
+                onUnopposedGain: event => event.challenge.winner === this.controller
             },
-            handler: () => {
-                this.game.addMessage('{0} uses {1} to gain an additional power from winning an unopposed challenge', this.controller, this);
-                this.game.addPower(this.controller, 1);
+            handler: context => {
+                this.game.addMessage('{0} uses {1} to gain 2 power for winning an unopposed challenge instead of 1', this.controller, this);
+                context.replaceHandler(() => {
+                    this.game.addPower(this.controller, 2);
+                });
             }
         });
     }
