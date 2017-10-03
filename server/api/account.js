@@ -261,21 +261,26 @@ module.exports.init = function(server) {
             });
     });
 
+    function updateUserData(user) {
+        return {
+            user: {
+                username: user.username,
+                email: user.email,
+                emailHash: user.emailHash,
+                _id: user._id,
+                admin: user.admin,
+                settings: user.settings,
+                promptedActionWindows: user.promptedActionWindows,
+                permissions: user.permissions || {}
+            },
+            token: jwt.sign(user, config.secret)
+        };
+    }
+
     function updateUser(res, user) {
         return userService.update(user)
             .then(() => {
-                res.send({
-                    success: true, user: {
-                        username: user.username,
-                        email: user.email,
-                        emailHash: user.emailHash,
-                        _id: user._id,
-                        admin: user.admin,
-                        settings: user.settings,
-                        promptedActionWindows: user.promptedActionWindows,
-                        permissions: user.permissions || {}
-                    }, token: jwt.sign(user, config.secret)
-                });
+                res.send(Object.assign({ success: true }, updateUserData(user)));
             })
             .catch(() => {
                 return res.send({ success: false, message: 'An error occured updating your user profile' });
@@ -357,7 +362,10 @@ module.exports.init = function(server) {
 
         await userService.updateBlockList(user);
 
-        res.send({ success: true, message: 'Block list entry added successfully', username: req.body.username.toLowerCase() });
+        res.send(Object.assign(
+            { success: true, message: 'Block list entry added successfully', username: req.body.username.toLowerCase() },
+            updateUserData(user)
+        ));
     }));
 
     server.delete('/api/account/:username/blocklist/:entry', wrapAsync(async (req, res) => {
@@ -387,7 +395,10 @@ module.exports.init = function(server) {
 
         await userService.updateBlockList(user);
 
-        res.send({ success: true, message: 'Block list entry removed successfully', username: req.params.entry.toLowerCase() });
+        res.send(Object.assign(
+            { success: true, message: 'Block list entry removed successfully', username: req.params.entry.toLowerCase() },
+            updateUserData(user)
+        ));
     }));
 };
 
