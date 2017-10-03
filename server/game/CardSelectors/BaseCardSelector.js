@@ -17,6 +17,10 @@ class BaseCardSelector {
         );
     }
 
+    hasEnoughSelected(selectedCards) {
+        return selectedCards.length > 0;
+    }
+
     hasEnoughTargets(context) {
         return context.game.allCards.any(card => this.canTarget(card, context));
     }
