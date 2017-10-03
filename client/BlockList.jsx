@@ -47,6 +47,7 @@ class InnerBlockList extends React.Component {
             successPanel = (
                 <AlertPanel message='Block list entry added successfully' type={ 'success' } />
             );
+            this.props.socket.emit('authenticate', this.props.token);
         }
 
         if(this.props.blockListDeleted) {
@@ -56,7 +57,7 @@ class InnerBlockList extends React.Component {
             successPanel = (
                 <AlertPanel message='Block list entry removed successfully' type={ 'success' } />
             );
-
+            this.props.socket.emit('authenticate', this.props.token);
         }
 
         let content;
@@ -134,6 +135,8 @@ InnerBlockList.propTypes = {
     loadBlockList: PropTypes.func,
     loading: PropTypes.bool,
     removeBlockListEntry: PropTypes.func,
+    socket: PropTypes.object,
+    token: PropTypes.string,
     user: PropTypes.object
 };
 
@@ -144,6 +147,8 @@ function mapStateToProps(state) {
         blockListAdded: state.user.blockListAdded,
         blockListDeleted: state.user.blockListDeleted,
         loading: state.api.loading,
+        socket: state.socket.socket,
+        token: state.auth.token,
         user: state.auth.user
     };
 }

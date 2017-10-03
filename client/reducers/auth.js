@@ -35,6 +35,13 @@ export default function(state = {}, action) {
                 username: action.user.username,
                 token: action.token
             });
+        case 'BLOCKLIST_ADDED':
+        case 'BLOCKLIST_DELETED':
+            return Object.assign({}, state, {
+                user: action.response.user,
+                username: action.response.user.username,
+                token: action.response.token
+            });
     }
 
     return state;
