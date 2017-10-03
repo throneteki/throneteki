@@ -3,7 +3,7 @@ const Game = require('../../../server/game/game.js');
 describe('Game', function() {
     beforeEach(function() {
         let gameService = jasmine.createSpyObj('gameService', ['save']);
-        this.game = new Game('1', 'Test Game', { gameService: gameService });
+        this.game = new Game({ owner: {} }, { gameService: gameService });
 
         this.source = jasmine.createSpyObj('source', ['allowGameAction']);
         this.source.allowGameAction.and.returnValue(true);
