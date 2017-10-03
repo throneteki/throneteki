@@ -6,8 +6,8 @@ class Grenn extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this)) &&
-                    event.challenge.loser.power > 0
+                    event.challenge.isAttacking(this) &&
+                    event.challenge.loser.faction.power > 0)
             },
             target: {
                 activePromptTitle: 'Select a character',
