@@ -24,20 +24,16 @@ class DiscardToReservePrompt extends BaseStep {
         let overReserve = currentPlayer.hand.size() - currentPlayer.getTotalReserve();
         this.game.promptForSelect(currentPlayer, {
             ordered: true,
+            mode: 'exactly',
             numCards: overReserve,
-            multiSelect: true,
             activePromptTitle: 'Select ' + overReserve + ' cards to discard down to reserve (top first)',
             waitingPromptTitle: 'Waiting for opponent to discard down to reserve',
             cardCondition: card => card.location === 'hand' && card.controller === currentPlayer,
-            onSelect: (player, cards) => this.discardCards(player, cards, overReserve)
+            onSelect: (player, cards) => this.discardCards(player, cards)
         });
     }
 
-    discardCards(player, cards, overReserve) {
-        if(cards.length !== overReserve) {
-            return false;
-        }
-
+    discardCards(player, cards) {
         // Reverse the order selection so that the first card selected ends up
         // on the top of the discard pile.
         cards = cards.reverse();

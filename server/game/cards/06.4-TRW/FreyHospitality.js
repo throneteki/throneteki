@@ -12,8 +12,8 @@ class FreyHospitality extends DrawCard {
                 let numTargets = this.game.currentChallenge.strengthDifference >= 20 ? 3 : 1;
 
                 this.game.promptForSelect(this.controller, {
+                    mode: 'exactly',
                     numCards: numTargets,
-                    multiSelect: true,
                     activePromptTitle: 'Select character(s)',
                     source: this,
                     gameAction: 'kill',
@@ -27,10 +27,6 @@ class FreyHospitality extends DrawCard {
     }
 
     targetsSelected(player, cards) {
-        if(this.game.currentChallenge.strengthDifference >= 20 && cards.length !== 3) {
-            return false;
-        }
-
         this.game.killCharacters(cards);
         this.game.addMessage('{0} plays {1} to kill {2}', this.controller, this, cards);
 

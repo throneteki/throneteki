@@ -11,8 +11,8 @@ class OldtownInformer extends DrawCard {
                 this.game.addMessage('{0} uses {1} to draw {2} cards', this.controller, this, this.tokens['gold']);
 
                 this.game.promptForSelect(this.controller, {
+                    mode: 'exactly',
                     numCards: this.tokens['gold'],
-                    multiSelect: true,
                     activePromptTitle: 'Select ' + this.tokens['gold'] + ' cards',
                     source: this,
                     cardCondition: card => card.location === 'hand' && card.controller === this.controller,
@@ -23,10 +23,6 @@ class OldtownInformer extends DrawCard {
     }
 
     cardsSelected(player, cards) {
-        if(cards.length !== this.tokens['gold']) {
-            return false;
-        }
-
         player.discardCards(cards);
         this.game.addMessage('{0} then discards {1} for {2}', this.controller, cards, this);
         return true;

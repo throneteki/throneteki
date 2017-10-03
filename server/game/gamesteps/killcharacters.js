@@ -71,15 +71,11 @@ class KillCharacters extends BaseStep {
 
         this.game.promptForSelect(player, {
             ordered: true,
-            multiSelect: true,
+            mode: 'exactly',
             numCards: _.size(cardsOwnedByPlayer),
             activePromptTitle: 'Select order to place cards in dead pile (top first)',
             cardCondition: card => cardsOwnedByPlayer.includes(card),
             onSelect: (player, selectedCards) => {
-                if(cardsOwnedByPlayer.length !== selectedCards.length) {
-                    return false;
-                }
-
                 this.moveCardsToDeadPile(selectedCards.reverse());
 
                 return true;

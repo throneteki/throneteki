@@ -15,6 +15,7 @@ class Duel extends PlotCard {
                     this.controller, this, opponent);
 
                 this.game.promptForSelect(opponent, {
+                    mode: 'exactly',
                     numCards: 2,
                     activePromptTitle: 'Select two characters',
                     source: this,
@@ -30,10 +31,6 @@ class Duel extends PlotCard {
     }
 
     targetsSelected(player, cards) {
-        if(cards.length !== 2) {
-            return false;
-        }
-
         this.targets = cards;
         this.game.addMessage('{0} chooses {1} as the targets for {2}', player, cards, this);
 

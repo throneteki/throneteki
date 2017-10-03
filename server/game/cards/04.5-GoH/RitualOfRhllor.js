@@ -12,8 +12,8 @@ class RitualOfRhllor extends DrawCard {
             handler: context => {
                 let goldCost = context.goldCostAmount;
                 this.game.promptForSelect(this.controller, {
+                    mode: 'exactly',
                     numCards: goldCost,
-                    multiSelect: true,
                     activePromptTitle: 'Select ' + (goldCost === 1 ? 'a' : goldCost) + ' character' + (goldCost === 1 ? '' : 's'),
                     source: this,
                     cardCondition: card => card.location === 'play area' && !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',
@@ -24,10 +24,6 @@ class RitualOfRhllor extends DrawCard {
     }
 
     targetsSelected(player, cards, goldCost) {
-        if(cards.length !== goldCost) {
-            return false;
-        }
-
         _.each(cards, card => {
             card.modifyPower(1);
         });

@@ -76,9 +76,8 @@ class KeywordWindow extends BaseStep {
         if(this.challenge.winner.keywordSettings.chooseCards) {
             let cards = _.pluck(participantsWithKeyword, 'card');
             this.game.promptForSelect(this.challenge.winner, {
+                mode: 'unlimited',
                 ordered: true,
-                multiSelect: true,
-                numCards: 0,
                 activePromptTitle: 'Select ' + keyword + ' cards',
                 cardCondition: card => cards.includes(card),
                 onSelect: (player, selectedCards) => {
@@ -117,15 +116,11 @@ class KeywordWindow extends BaseStep {
         let cards = _.pluck(participants, 'card');
         this.game.promptForSelect(this.challenge.winner, {
             ordered: true,
-            multiSelect: true,
+            mode: 'exactly',
             numCards: _.size(participants),
             activePromptTitle: 'Select order for pillage',
             cardCondition: card => cards.includes(card),
             onSelect: (player, selectedCards) => {
-                if(selectedCards.length !== cards.length) {
-                    return false;
-                }
-
                 let finalParticipants = _.map(selectedCards, card => _.find(participants, participant => participant.card === card));
 
                 this.resolveAbility(ability, finalParticipants);

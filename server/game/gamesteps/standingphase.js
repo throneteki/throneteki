@@ -79,8 +79,7 @@ class StandingPhase extends Phase {
         cardsToStand.automatic = _.filter(cardsToStand.automatic, card => !card.optionalStandDuringStanding);
 
         this.game.promptForSelect(player, {
-            numCards: 0,
-            multiSelect: true,
+            mode: 'unlimited',
             activePromptTitle: 'Select optional cards to stand',
             cardCondition: card => optionalStandCards.includes(card),
             onSelect: (player, cards) => {

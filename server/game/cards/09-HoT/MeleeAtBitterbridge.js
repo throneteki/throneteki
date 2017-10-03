@@ -11,8 +11,8 @@ class MeleeAtBitterbridge extends DrawCard {
             handler: context => {
                 let goldCost = context.goldCostAmount;
                 this.game.promptForSelect(this.controller, {
+                    mode: 'exactly',
                     numCards: goldCost,
-                    multiSelect: true,
                     activePromptTitle: 'Select ' + (goldCost === 1 ? 'a' : goldCost) + ' character' + (goldCost === 1 ? '' : 's'),
                     source: this,
                     cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card),
@@ -23,10 +23,6 @@ class MeleeAtBitterbridge extends DrawCard {
     }
 
     targetsSelected(player, cards, goldCost) {
-        if(cards.length !== goldCost) {
-            return false;
-        }
-
         let strengths = _.map(cards, card => card.getStrength());
         let highestStrength = _.max(strengths);
         let renownCharacters = _.filter(cards, card => card.getStrength() === highestStrength);
