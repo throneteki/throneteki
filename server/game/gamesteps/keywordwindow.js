@@ -76,9 +76,8 @@ class KeywordWindow extends BaseStep {
         if(this.challenge.winner.keywordSettings.chooseCards) {
             let cards = _.pluck(participantsWithKeyword, 'card');
             this.game.promptForSelect(this.challenge.winner, {
+                mode: 'unlimited',
                 ordered: true,
-                multiSelect: true,
-                numCards: 0,
                 activePromptTitle: 'Select ' + keyword + ' cards',
                 cardCondition: card => cards.includes(card),
                 onSelect: (player, selectedCards) => {
