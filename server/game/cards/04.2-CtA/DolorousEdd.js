@@ -24,7 +24,7 @@ class DolorousEdd extends DrawCard {
     }
 
     promptOnWin(challenge) {
-        if(challenge.winner !== this.controller) {
+        if(challenge.winner !== this.controller || this.location !== 'play area') {
             return;
         }
 
