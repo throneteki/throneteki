@@ -11,23 +11,43 @@ const defaultProperties = {
     multiSelect: false
 };
 
+const ModeToSelector = {
+    maxStat: p => new MaxStatCardSelector(p),
+    single: p => new SingleCardSelector(p),
+    unlimited: p => new UnlimitedCardSelector(p),
+    upTo: p => new UpToXCardSelector(p.numCards, p),
+};
+
 class CardSelector {
     static for(properties) {
+        properties = CardSelector.getDefaultedProperties(properties);
+
+        let factory = ModeToSelector[properties.mode];
+
+        if(!factory) {
+            throw new Error(`Unknown card selector mode of ${properties.mode}`);
+        }
+
+        return factory(properties);
+    }
+
+    static getDefaultedProperties(properties) {
         properties = Object.assign({}, defaultProperties, properties);
+        if(properties.mode) {
+            return properties;
+        }
 
         if(properties.maxStat) {
-            return new MaxStatCardSelector(properties);
+            properties.mode = 'maxStat';
+        } else if(properties.numCards === 1 && !properties.multiSelect) {
+            properties.mode = 'single';
+        } else if(properties.numCards === 0) {
+            properties.mode = 'unlimited';
+        } else {
+            properties.mode = 'upTo';
         }
 
-        if(properties.numCards === 1 && !properties.multiSelect) {
-            return new SingleCardSelector(properties);
-        }
-
-        if(properties.numCards === 0) {
-            return new UnlimitedCardSelector(properties);
-        }
-
-        return new UpToXCardSelector(properties.numCards, properties);
+        return properties;
     }
 }
 
