@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class CitaldelNovice extends DrawCard {
+class CitadelNovice extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -23,6 +23,6 @@ class CitaldelNovice extends DrawCard {
     }
 }
 
-CitaldelNovice.code = '09041';
+CitadelNovice.code = '09041';
 
-module.exports = CitaldelNovice;
+module.exports = CitadelNovice;
