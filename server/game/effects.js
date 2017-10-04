@@ -955,16 +955,6 @@ const Effects = {
                 player.mustChooseAsClaim = _.reject(player.mustChooseAsClaim, c => c === card);
             }
         };
-    },
-    gainIconsKeywordsFactionsTraits: function(copyObj) {
-        let effectFunctions = [];
-
-        _.each(copyObj.icons, icon => effectFunctions.push(this.addIcon(icon)));
-        _.each(copyObj.keywords, keyword => effectFunctions.push(this.addKeyword(keyword)));
-        _.each(copyObj.factions, faction => effectFunctions.push(this.addFaction(faction)));
-        _.each(copyObj.traits, trait => effectFunctions.push(this.addTrait(trait)));
-
-        return effectFunctions;
     }
 };
 

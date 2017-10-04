@@ -1,5 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
+const _ = require('underscore');
+
 class FacelessMan extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
@@ -10,16 +12,16 @@ class FacelessMan extends DrawCard {
                 cardCondition: card => card.location === 'dead pile' && card.getType() === 'character'
             },
             handler: context => {
-                let copyObj = {
-                    icons: context.target.getIcons(),
-                    keywords: context.target.getPrintedKeywords(),
-                    factions: context.target.getFactions(),
-                    traits: context.target.getTraits()
-                };
+                let effectArr = _.flatten([
+                    context.target.getIcons().map(icon => ability.effects.addIcon(icon)),
+                    context.target.getPrintedKeywords().map(keyword => ability.effects.addKeyword(keyword)),
+                    context.target.getFactions().map(faction => ability.effects.addFaction(faction)),
+                    context.target.getTraits().map(trait => ability.effects.addTrait(trait))
+                ]);
 
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfPhase(() => ({
                     match: this,
-                    effect: ability.effects.gainIconsKeywordsFactionsTraits(copyObj)
+                    effect: effectArr
                 }));
 
                 this.game.addMessage('{0} uses {1} to have {1} gain each of {2}\'s printed challenge icons, keywords, faction affiliations and traits',
