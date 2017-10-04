@@ -292,6 +292,10 @@ class BaseCard {
         return this.printedKeywords.includes(keyword.toLowerCase());
     }
 
+    getPrintedKeywords() {
+        return _.filter(ValidKeywords, keyword => this.hasPrintedKeyword(keyword));
+    }
+
     hasTrait(trait) {
         return !!this.traits[trait.toLowerCase()];
     }
@@ -465,6 +469,10 @@ class BaseCard {
         }
 
         this.game.raiseEvent('onCardTraitChanged', { card: this });
+    }
+
+    getTraits() {
+        return _.keys(_.omit(this.traits, trait => trait < 1));
     }
 
     addFaction(faction) {
