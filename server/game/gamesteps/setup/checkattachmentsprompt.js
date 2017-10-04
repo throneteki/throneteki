@@ -1,33 +1,37 @@
-const AllPlayerPrompt = require('../allplayerprompt.js');
+const _ = require('underscore');
+
+const BaseStep = require('../basestep.js');
 const AttachmentPrompt = require('../attachmentprompt.js');
 
-class CheckAttachmentsPrompt extends AllPlayerPrompt {
-    completionCondition(player) {
-        return !player.hasUnmappedAttachments();
+class CheckAttachmentsPrompt extends BaseStep {
+    constructor(game) {
+        super(game);
+        this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
     }
 
-    activePrompt() {
-        return {
-            menuTitle: 'Select attachment locations',
-            buttons: [
-                { command: 'mapattachments', text: 'Done' }
-            ]
-        };
+    continue() {
+        this.remainingPlayers = _.reject(this.remainingPlayers, player => !player.hasUnmappedAttachments());
+
+        if(_.isEmpty(this.remainingPlayers)) {
+            return true;
+        }
+
+        this.promptPlayerToAttach(this.remainingPlayers[0]);
+
+        return false;
     }
 
-    waitingPrompt() {
-        return { menuTitle: 'Waiting for opponent to finish setup' };
+    promptPlayerToAttach(currentPlayer) {
+        this.game.promptForSelect(currentPlayer, {
+            activePromptTitle: 'Select attachment to attach',
+            cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'attachment' && !card.parent,
+            onSelect: (player, card) => this.onCardClicked(player, card)
+        });
+
+        return true;
     }
 
     onCardClicked(player, card) {
-        if(player !== card.controller) {
-            return false;
-        }
-
-        if(card.getType() !== 'attachment') {
-            return false;
-        }
-
         this.game.queueStep(new AttachmentPrompt(this.game, player, card));
     }
 }
