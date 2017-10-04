@@ -15,10 +15,10 @@ class WordsAreWind extends DrawCard {
 
                 this.game.promptWithMenu(context.event.player, this, {
                     activePrompt: {
-                        menuTitle: 'Cancel ' + context.event.source.name + ' or ' + context.player.name + ' draws 2 cards?',
+                        menuTitle: `Cancel ${context.event.source.name} or ${context.player.name} draws 2 cards?`,
                         buttons: [
-                            { text: 'Cancel event', method: 'cancel' },
-                            { text: 'Draw 2 cards', method: 'draw' }
+                            { text: `Cancel ${context.event.source.name}`, method: 'cancel' },
+                            { text: `${context.player.name} draws 2 cards`, method: 'draw' }
                         ]
                     },
                     source: this
