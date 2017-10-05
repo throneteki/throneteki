@@ -10,6 +10,8 @@ const PlayableLocation = require('./playablelocation.js');
 const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
 
+const logger = require('../log.js');
+
 const StartingHandSize = 7;
 const DrawPhaseCards = 2;
 
@@ -1129,6 +1131,17 @@ class Player extends Spectator {
     getTotalReserve() {
         if(!this.activePlot) {
             return 0;
+        }
+
+        let totalReserve = Math.max(this.activePlot.getReserve(), this.minReserve);
+        if(_.isNaN(totalReserve) || _.isUndefined(totalReserve)) {
+            let payload = {
+                minReserve: this.minReserve,
+                baseReserve: this.activePlot.cardData.reserve,
+                reserveModifier: this.activePlot.reserveModifier
+            };
+
+            logger.error('RESERVE BUG: ', payload);
         }
 
         return Math.max(this.activePlot.getReserve(), this.minReserve);
