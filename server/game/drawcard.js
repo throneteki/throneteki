@@ -11,6 +11,8 @@ const StandardPlayActions = [
     new AmbushCardAction()
 ];
 
+const Icons = ['military', 'intrigue', 'power'];
+
 class DrawCard extends BaseCard {
     constructor(owner, cardData) {
         super(owner, cardData);
@@ -221,6 +223,10 @@ class DrawCard extends BaseCard {
         let baseStrength = !this.kneeled && this.getType() === 'character' && this.contributesToDominance ? this.getStrength() : 0;
 
         return Math.max(0, baseStrength + this.dominanceStrengthModifier);
+    }
+
+    getIcons() {
+        return _.filter(Icons, icon => this.hasIcon(icon));
     }
 
     getIconsAdded() {
