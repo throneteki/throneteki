@@ -53,6 +53,7 @@
     "pmx": "^1.5.4",
     "prop-types": "^15.6.0",
     "raven": "^1.2.1",
+    "raven-js": "^3.18.1",
     "react": "^15.6.2",
     "react-async-script": "^0.9.1",
     "react-bootstrap-slider": "^2.0.1",
