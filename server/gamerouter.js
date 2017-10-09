@@ -124,6 +124,11 @@ class GameRouter extends EventEmitter {
             return;
         }
 
+        if(worker && worker.disconnected) {
+            logger.info(`Worker ${identityStr} came back`);
+            worker.disconnected = false;
+        }
+
         switch(message.command) {
             case 'HELLO':
                 this.emit('onWorkerStarted', identityStr);
