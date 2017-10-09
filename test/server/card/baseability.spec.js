@@ -241,6 +241,7 @@ describe('BaseAbility', function () {
     describe('resolveTargets()', function() {
         beforeEach(function() {
             this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect']);
+            this.gameSpy.allCards = _([]);
             this.player = { player: 1 };
             this.source = { source: 1 };
 
@@ -254,7 +255,7 @@ describe('BaseAbility', function () {
         });
 
         it('should return target results for each target', function() {
-            expect(this.ability.resolveTargets(this.context)).toEqual([{ resolved: false, name: 'target1', value: null }, { resolved: false, name: 'target2', value: null }]);
+            expect(this.ability.resolveTargets(this.context)).toEqual([jasmine.objectContaining({ resolved: false, name: 'target1', value: null }), jasmine.objectContaining({ resolved: false, name: 'target2', value: null })]);
         });
 
         it('should prompt the player to select each target', function() {

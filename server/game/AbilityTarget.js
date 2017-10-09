@@ -1,5 +1,6 @@
 const _ = require('underscore');
 
+const AbilityTargetSelection = require('./AbilityTargetSelection.js');
 const CardSelector = require('./CardSelector.js');
 
 class AbilityTarget {
@@ -14,19 +15,23 @@ class AbilityTarget {
     }
 
     resolve(context) {
+        let eligibleCards = this.selector.getEligibleTargets(context);
         let otherProperties = _.omit(this.properties, 'cardCondition');
-        let result = { resolved: false, name: this.name, value: null };
+        let result = new AbilityTargetSelection({
+            choosingPlayer: context.player,
+            eligibleCards: eligibleCards,
+            name: this.name
+        });
         let promptProperties = {
             context: context,
             source: context.source,
             selector: this.selector,
             onSelect: (player, card) => {
-                result.resolved = true;
-                result.value = card;
+                result.resolve(card);
                 return true;
             },
             onCancel: () => {
-                result.resolved = true;
+                result.reject();
                 return true;
             }
         };
