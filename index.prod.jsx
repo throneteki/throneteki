@@ -33,7 +33,8 @@ const ravenOptions = {
         'bmi_SafeAddOnload',
         'EBCallBackMessageReceived',
         // See http://toolbar.conduit.com/Developer/HtmlAndGadget/Methods/JSInjection.aspx
-        'conduitPage'
+        'conduitPage',
+        'YoukuAntiAds.eval'
     ],
     ignoreUrls: [
         // Facebook flakiness
