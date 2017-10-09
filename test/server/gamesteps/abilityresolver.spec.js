@@ -157,7 +157,7 @@ describe('AbilityResolver', function() {
 
         describe('when there are targets that need to be resolved', function() {
             beforeEach(function() {
-                this.targetResult = { resolved: false, name: 'foo', value: null };
+                this.targetResult = { resolved: false, name: 'foo', value: null, targetingType: 'choose' };
                 this.ability.resolveTargets.and.returnValue([this.targetResult]);
                 this.resolver.continue();
             });

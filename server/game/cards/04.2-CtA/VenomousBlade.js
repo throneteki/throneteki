@@ -5,12 +5,12 @@ class VenomousBlade extends DrawCard {
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)
         });
-        //TODO: uses target API but doesn't 'target' per the game rules (doesn't use the word choose)
         this.reaction({
             when: {
                 onCardEntersPlay: event => event.card === this
             },
             target: {
+                type: 'select',
                 activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedStrength() <= 2
             },

@@ -16,13 +16,13 @@ class Summer extends DrawCard {
                 this.game.addMessage('{0} uses {1} and kneels {2} to have {2} participate in the challenge on their side',
                     this.controller, this, this.parent);
             }
-        }),
-        //TODO: uses target API but doesn't 'target' per the game rules (doesn't use the word choose)
+        });
         this.action({
             title: 'Attach Summer to another character',
             cost: ability.costs.payGold(1),
             limit: ability.limit.perPhase(1),
             target: {
+                type: 'select',
                 activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card !== this.parent && this.controller.canAttach(this, card)
             },

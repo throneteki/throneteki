@@ -5,6 +5,7 @@ const CardSelector = require('./CardSelector.js');
 
 class AbilityTarget {
     constructor(name, properties) {
+        this.type = properties.type || 'choose';
         this.name = name;
         this.properties = properties;
         this.selector = CardSelector.for(properties);
@@ -20,6 +21,7 @@ class AbilityTarget {
         let result = new AbilityTargetSelection({
             choosingPlayer: context.player,
             eligibleCards: eligibleCards,
+            targetingType: this.type,
             name: this.name
         });
         let promptProperties = {

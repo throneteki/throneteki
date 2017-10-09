@@ -10,19 +10,15 @@ class TyeneSand extends DrawCard {
                     challenge.isAttacking(this)
                 )
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasIcon('intrigue'),
-                    onSelect: (p, card) => {
-                        this.atEndOfPhase(ability => ({
-                            match: card,
-                            effect: ability.effects.poison
-                        }));
-                        return true;
-                    }
-                });
+            target: {
+                type: 'select',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasIcon('intrigue')
+            },
+            handler: context => {
+                this.atEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.poison
+                }));
             }
         });
     }

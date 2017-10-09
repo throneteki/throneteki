@@ -1,5 +1,9 @@
 const _ = require('underscore');
 
+/**
+ * Encapsulates logic around what targets have been selected during resolution
+ * of an ability.
+ */
 class ResolvedTargets {
     constructor() {
         this.selections = [];
@@ -23,7 +27,7 @@ class ResolvedTargets {
     }
 
     hasSingleTarget() {
-        return this.selections.length === 1;
+        return this.selections.length === 1 && this.selections[0].targetingType === 'choose' && !Array.isArray(this.selections[0].value);
     }
 
     hasTargets() {
@@ -31,7 +35,8 @@ class ResolvedTargets {
     }
 
     getTargets() {
-        return _.flatten(this.selections.map(selection => selection.value));
+        let targetingSelections = this.selections.filter(selection => selection.targetingType === 'choose');
+        return _.flatten(targetingSelections.map(selection => selection.value));
     }
 }
 

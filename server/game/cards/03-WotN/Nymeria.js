@@ -6,11 +6,11 @@ class Nymeria extends DrawCard {
         this.whileAttached({
             effect: ability.effects.addKeyword('Intimidate')
         });
-        //TODO: uses target API but doesn't 'target' per the game rules (doesn't use the word choose)
         this.action({
             title: 'Attach Nymeria to another character',
             cost: ability.costs.payGold(1),
             target: {
+                type: 'select',
                 activePromptTitle: 'Select a character',
                 cardCondition: card => this.controller.canAttach(this, card) && card.location === 'play area' && card !== this
             },
