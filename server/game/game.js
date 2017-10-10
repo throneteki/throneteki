@@ -929,6 +929,10 @@ class Game extends EventEmitter {
         this.pipeline.continue();
     }
 
+    getGameElementType() {
+        return 'game';
+    }
+
     getSaveState() {
         var players = _.map(this.getPlayers(), player => {
             return {

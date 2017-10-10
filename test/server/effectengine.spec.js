@@ -29,7 +29,7 @@ describe('EffectEngine', function () {
         });
 
         it('should add existing valid targets to the effect', function() {
-            expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard]);
+            expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.gameSpy]);
         });
 
         describe('when the effect has custom duration', function() {
@@ -55,8 +55,8 @@ describe('EffectEngine', function () {
             this.gameSpy.getPlayers.and.returnValue([this.player]);
         });
 
-        it('should return all play area cards and players', function() {
-            expect(this.engine.getTargets()).toEqual([this.handCard, this.playAreaCard, this.player]);
+        it('should return all play area cards, players and the game object', function() {
+            expect(this.engine.getTargets()).toEqual([this.handCard, this.playAreaCard, this.player, this.gameSpy]);
         });
     });
 
@@ -72,7 +72,7 @@ describe('EffectEngine', function () {
             });
 
             it('should reapply valid targets', function() {
-                expect(this.effectSpy.reapply).toHaveBeenCalledWith([this.handCard, this.playAreaCard]);
+                expect(this.effectSpy.reapply).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.gameSpy]);
             });
         });
 
@@ -271,7 +271,7 @@ describe('EffectEngine', function () {
                 });
 
                 it('should set the active value for the effect along with cards to target', function() {
-                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true, [this.handCard, this.playAreaCard]);
+                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true, [this.handCard, this.playAreaCard, this.gameSpy]);
                 });
             });
 

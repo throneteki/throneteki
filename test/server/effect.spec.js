@@ -365,6 +365,26 @@ describe('Effect', function() {
                 });
             });
         });
+
+        describe('when the effect target type is game', function() {
+            beforeEach(function() {
+                this.properties.match.and.returnValue(true);
+                this.effect.targetType = 'game';
+                this.effect.active = true;
+                this.gameTarget = jasmine.createSpyObj('game', ['getGameElementType']);
+                this.gameTarget.getGameElementType.and.returnValue('game');
+                this.player = createPlayerTarget();
+                this.sourceSpy.controller = this.player;
+            });
+
+            it('should only add the game as a target', function() {
+                this.effect.addTargets([this.player, this.matchingCard, this.gameTarget]);
+
+                expect(this.effect.targets).toContain(this.gameTarget);
+                expect(this.effect.targets).not.toContain(this.player);
+                expect(this.effect.targets).not.toContain(this.matchingCard);
+            });
+        });
     });
 
     describe('removeTarget()', function() {
