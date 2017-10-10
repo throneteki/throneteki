@@ -1,7 +1,6 @@
 const _ = require('underscore');
 
 const Effects = require('./effects.js');
-const Player = require('./player.js');
 
 const PlayAreaLocations = ['play area', 'active plot'];
 
@@ -109,7 +108,7 @@ class Effect {
             return target === this.match;
         }
 
-        if(this.targetType === 'card' && (target instanceof Player) || this.targetType === 'player' && !(target instanceof Player)) {
+        if(this.targetType !== target.getGameElementType()) {
             return false;
         }
 

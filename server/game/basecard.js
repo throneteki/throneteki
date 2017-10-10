@@ -545,6 +545,10 @@ class BaseCard {
         return false;
     }
 
+    getGameElementType() {
+        return 'card';
+    }
+
     getShortSummary() {
         return {
             code: this.cardData.code,

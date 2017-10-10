@@ -1,13 +1,20 @@
 const _ = require('underscore');
 
 const Effect = require('../../server/game/effect.js');
-const Player = require('../../server/game/player.js');
 
 function createTarget(properties = {}) {
-    let card = jasmine.createSpyObj('card', ['allowEffectFrom']);
+    let card = jasmine.createSpyObj('card', ['allowEffectFrom', 'getGameElementType']);
     card.allowEffectFrom.and.returnValue(true);
+    card.getGameElementType.and.returnValue('card');
     _.extend(card, properties);
     return card;
+}
+
+function createPlayerTarget(properties = {}) {
+    let player = jasmine.createSpyObj('player', ['getGameElementType']);
+    player.getGameElementType.and.returnValue('player');
+    _.extend(player, properties);
+    return player;
 }
 
 describe('Effect', function() {
@@ -305,8 +312,8 @@ describe('Effect', function() {
                 this.properties.match.and.returnValue(true);
                 this.effect.targetType = 'player';
                 this.effect.active = true;
-                this.player = new Player(1, { settings: {} }, true, {});
-                this.anotherPlayer = new Player(2, { settings: {} }, false, {});
+                this.player = createPlayerTarget();
+                this.anotherPlayer = createPlayerTarget();
                 this.sourceSpy.controller = this.player;
             });
 
