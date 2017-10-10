@@ -955,6 +955,16 @@ const Effects = {
                 player.mustChooseAsClaim = _.reject(player.mustChooseAsClaim, c => c === card);
             }
         };
+    },
+    skipPhase: function(name) {
+        return {
+            apply: function(game) {
+                game.skipPhase[name] = true;
+            },
+            unapply: function(game) {
+                game.skipPhase[name] = false;
+            }
+        };
     }
 };
 

@@ -37,7 +37,7 @@ class Phase extends BaseStep {
     }
 
     continue() {
-        return this.pipeline.continue();
+        return this.game.isPhaseSkipped(this.name) || this.pipeline.continue();
     }
 
     startPhase() {
