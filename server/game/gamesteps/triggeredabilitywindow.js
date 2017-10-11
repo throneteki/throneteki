@@ -95,7 +95,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             if(abilityChoice.text !== 'default') {
                 title += ' - ' + abilityChoice.text;
             }
-            if(abilityChoice.card.location !== 'hand' && abilityChoice.card.location !== 'play area') {
+            if(abilityChoice.card.location !== abilityChoice.ability.location) {
                 title += ' (' + abilityChoice.card.location + ')';
             }
 
