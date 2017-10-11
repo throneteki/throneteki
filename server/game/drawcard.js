@@ -1,6 +1,7 @@
 const _ = require('underscore');
 
 const BaseCard = require('./basecard.js');
+const CardMatcher = require('./CardMatcher.js');
 const SetupCardAction = require('./setupcardaction.js');
 const MarshalCardAction = require('./marshalcardaction.js');
 const AmbushCardAction = require('./ambushcardaction.js');
@@ -60,6 +61,12 @@ class DrawCard extends BaseCard {
         this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
+
+        // If setupCardAbilities did not set an attachment restriction, default
+        // to allowing attaching on any character.
+        if(this.getType() === 'attachment' && !this.attachmentRestrictions) {
+            this.attachmentRestriction({ type: 'character' });
+        }
     }
 
     createSnapshot() {
@@ -337,6 +344,19 @@ class DrawCard extends BaseCard {
     }
 
     /**
+     * Defines restrictions on what cards this attachment can be placed on.
+     */
+    attachmentRestriction(...restrictions) {
+        this.attachmentRestrictions = restrictions.map(restriction => {
+            if(_.isFunction(restriction)) {
+                return restriction;
+            }
+
+            return CardMatcher.createAttachmentMatcher(restriction);
+        });
+    }
+
+    /**
      * Checks 'no attachment' restrictions for this card when attempting to
      * attach the passed attachment card.
      */
@@ -353,7 +373,13 @@ class DrawCard extends BaseCard {
      * Opponent cards only, specific factions, etc) for this card.
      */
     canAttach(player, card) {
-        return card && this.getType() === 'attachment';
+        if(this.getType() !== 'attachment' || !card) {
+            return false;
+        }
+
+        let context = { player: this.controller };
+
+        return this.attachmentRestrictions.some(restriction => restriction(card, context));
     }
 
     removeChildCard(card) {
