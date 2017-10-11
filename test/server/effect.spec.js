@@ -1,13 +1,20 @@
 const _ = require('underscore');
 
 const Effect = require('../../server/game/effect.js');
-const Player = require('../../server/game/player.js');
 
 function createTarget(properties = {}) {
-    let card = jasmine.createSpyObj('card', ['allowEffectFrom']);
+    let card = jasmine.createSpyObj('card', ['allowEffectFrom', 'getGameElementType']);
     card.allowEffectFrom.and.returnValue(true);
+    card.getGameElementType.and.returnValue('card');
     _.extend(card, properties);
     return card;
+}
+
+function createPlayerTarget(properties = {}) {
+    let player = jasmine.createSpyObj('player', ['getGameElementType']);
+    player.getGameElementType.and.returnValue('player');
+    _.extend(player, properties);
+    return player;
 }
 
 describe('Effect', function() {
@@ -305,8 +312,8 @@ describe('Effect', function() {
                 this.properties.match.and.returnValue(true);
                 this.effect.targetType = 'player';
                 this.effect.active = true;
-                this.player = new Player(1, { settings: {} }, true, {});
-                this.anotherPlayer = new Player(2, { settings: {} }, false, {});
+                this.player = createPlayerTarget();
+                this.anotherPlayer = createPlayerTarget();
                 this.sourceSpy.controller = this.player;
             });
 
@@ -356,6 +363,26 @@ describe('Effect', function() {
                     this.effect.addTargets([this.anotherPlayer]);
                     expect(this.effect.targets).toContain(this.anotherPlayer);
                 });
+            });
+        });
+
+        describe('when the effect target type is game', function() {
+            beforeEach(function() {
+                this.properties.match.and.returnValue(true);
+                this.effect.targetType = 'game';
+                this.effect.active = true;
+                this.gameTarget = jasmine.createSpyObj('game', ['getGameElementType']);
+                this.gameTarget.getGameElementType.and.returnValue('game');
+                this.player = createPlayerTarget();
+                this.sourceSpy.controller = this.player;
+            });
+
+            it('should only add the game as a target', function() {
+                this.effect.addTargets([this.player, this.matchingCard, this.gameTarget]);
+
+                expect(this.effect.targets).toContain(this.gameTarget);
+                expect(this.effect.targets).not.toContain(this.player);
+                expect(this.effect.targets).not.toContain(this.matchingCard);
             });
         });
     });

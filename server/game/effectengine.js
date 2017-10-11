@@ -35,7 +35,7 @@ class EffectEngine {
 
     getTargets() {
         var validTargets = this.game.allCards.filter(card => card.location === 'play area' || card.location === 'active plot' || card.location === 'hand');
-        return validTargets.concat(_.values(this.game.getPlayers()));
+        return validTargets.concat(this.game.getPlayers()).concat([this.game]);
     }
 
     reapplyStateDependentEffects() {

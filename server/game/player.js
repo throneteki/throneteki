@@ -1209,6 +1209,10 @@ class Player extends Spectator {
         this.promptState.cancelPrompt();
     }
 
+    getGameElementType() {
+        return 'player';
+    }
+
     getStats(isActivePlayer) {
         return {
             claim: this.getClaim(),
