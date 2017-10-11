@@ -8,7 +8,7 @@ class DrownedGodsApostle extends DrawCard {
             },
             cost: ability.costs.killSelf(),
             target: {
-                //isTargeting: false,
+                // TODO: non-targeting ability
                 cardCondition: card => card.location === 'dead pile' && card.controller === this.controller &&
                                        !card.isUnique() && card.isFaction('greyjoy') && card.getPrintedCost() <= 3
             },
