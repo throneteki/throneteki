@@ -2,6 +2,7 @@ const _ = require('underscore');
 
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
+const ResolvedTargets = require('./ResolvedTargets.js');
 const SimpleStep = require('./simplestep.js');
 
 class AbilityResolver extends BaseStep {
@@ -120,7 +121,7 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
-        this.context.targets = {};
+        this.context.targets = new ResolvedTargets();
         this.targetResults = this.ability.resolveTargets(this.context);
     }
 
@@ -135,12 +136,14 @@ class AbilityResolver extends BaseStep {
             return false;
         }
 
-        _.each(this.targetResults, result => {
-            this.context.targets[result.name] = result.value;
-            if(result.name === 'target') {
-                this.context.target = result.value;
-            }
-        });
+        this.context.targets.setSelections(this.targetResults);
+
+        if(this.context.targets.hasTargets()) {
+            this.game.raiseEvent('onTargetsChosen', { ability: this.ability, targets: this.context.targets }, () => {
+                this.context.targets.updateTargets();
+                this.context.target = this.context.targets.defaultTarget;
+            });
+        }
     }
 
     executeHandler() {
@@ -152,7 +155,7 @@ class AbilityResolver extends BaseStep {
         // instance, marshaling does not count as initiating a card ability and
         // thus is not subject to cancels such as Treachery.
         if(this.ability.isCardAbility()) {
-            let targets = _.flatten(_.values(this.context.targets));
+            let targets = this.context.targets.getTargets();
             this.game.raiseEvent('onCardAbilityInitiated', { player: this.context.player, source: this.context.source, targets: targets, cannotBeCanceled: !!this.ability.cannotBeCanceled, isForced: !!this.ability.isForcedAbility() }, () => {
                 this.ability.executeHandler(this.context);
             });

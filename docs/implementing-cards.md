@@ -401,6 +401,21 @@ this.action({
 });
 ```
 
+#### Non-targeting card choices
+
+Some abilities such as Tears of Lys require selecting a target but do not count as targeting because the ability does not use the word 'choose'. These abilities can be implemented using the target API but should specify the `type` property as `'select'`. This will prevent immunity from being checked as well as properly interact with cards that modify targeting.
+
+```javascript
+this.action({
+    // ...
+    target: {
+        type: 'select',
+        // ...
+    },
+    // ...
+});
+```
+
 #### Cancelling an action
 
 If after checking play requirements and paying costs an action needs to be cancelled for some reason, simply return `false` from the handler. **Note**: This should be very rare.

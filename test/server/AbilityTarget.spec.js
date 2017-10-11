@@ -61,6 +61,7 @@ describe('AbilityTarget', function () {
     describe('resolve()', function() {
         beforeEach(function() {
             this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect']);
+            this.gameSpy.allCards = _([]);
             this.player = { player: 1 };
             this.source = { source: 1 };
 
@@ -68,7 +69,7 @@ describe('AbilityTarget', function () {
         });
 
         it('should return a pending target result', function() {
-            expect(this.target.resolve(this.context)).toEqual({ resolved: false, name: 'foo', value: null });
+            expect(this.target.resolve(this.context)).toEqual(jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player, eligibleCards: [] }));
         });
 
         it('should prompt the player to select the target', function() {

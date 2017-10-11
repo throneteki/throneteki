@@ -10,8 +10,8 @@ class GhastonGrey extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.sacrificeSelf()
             ],
-            //TODO: not a true target
             target: {
+                type: 'select',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        this.game.currentChallenge.isAttacking(card)
             },

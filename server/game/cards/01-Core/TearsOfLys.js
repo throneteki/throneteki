@@ -8,8 +8,8 @@ class TearsOfLys extends DrawCard {
                 afterChallenge: event => event.challenge.attackingPlayer === this.controller && event.challenge.winner === this.controller &&
                                          event.challenge.challengeType === 'intrigue'
             },
-            //TODO Uses target API but does not technically target (contain the word 'choose')
             target: {
+                type: 'select',
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
                                        card.getType() === 'character' && !card.hasIcon('intrigue')
             },
