@@ -222,6 +222,19 @@ const Costs = {
         };
     },
     /**
+     * Cost that will kill the card that initiated the ability.
+     */
+    killSelf: function() {
+        return {
+            canPay: function(context) {
+                return context.source.canBeKilled();
+            },
+            pay: function(context) {
+                context.game.killCharacter(context.source, { allowSave: false });
+            }
+        };
+    },
+    /**
      * Cost that will put into play the card that initiated the ability.
      */
     putSelfIntoPlay: function() {
