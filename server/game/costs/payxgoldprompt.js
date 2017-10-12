@@ -23,16 +23,9 @@ class PayXGoldPrompt extends BaseStep {
             return { text: xValue.toString(), method: 'resolveCost', arg: xValue };
         });
 
-        let titleStr;
-        if(this.reduction > 0) {
-            titleStr = 'Select value of X (before reduction of ' + this.reduction + ')';
-        } else {
-            titleStr = 'Select gold amount to pay';
-        }
-
         this.context.game.promptWithMenu(this.context.player, this, {
             activePrompt: {
-                menuTitle: titleStr,
+                menuTitle: 'Select value of X',
                 buttons: buttons
             },
             source: this.context.source
