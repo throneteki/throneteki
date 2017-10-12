@@ -9,14 +9,14 @@ class MeleeAtBitterbridge extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.getNumberOfParticipants() > 0,
             cost: ability.costs.payXGold(() => 1, () => this.game.currentChallenge.getNumberOfParticipants()),
             handler: context => {
-                let goldCost = context.goldCostAmount;
+                let xValue = context.xValue;
                 this.game.promptForSelect(this.controller, {
                     mode: 'exactly',
-                    numCards: goldCost,
-                    activePromptTitle: 'Select ' + (goldCost === 1 ? 'a' : goldCost) + ' character' + (goldCost === 1 ? '' : 's'),
+                    numCards: xValue,
+                    activePromptTitle: 'Select ' + (xValue === 1 ? 'a' : xValue) + ' character' + (xValue === 1 ? '' : 's'),
                     source: this,
                     cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card),
-                    onSelect: (player, cards) => this.targetsSelected(player, cards, goldCost)
+                    onSelect: (player, cards) => this.targetsSelected(player, cards, context.goldCost)
                 });
             }
         });

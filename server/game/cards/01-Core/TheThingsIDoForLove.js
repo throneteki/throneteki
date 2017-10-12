@@ -10,16 +10,17 @@ class TheThingsIDoForLove extends DrawCard {
             phase: 'challenge',
             cost: [
                 ability.costs.kneelFactionCard(),
-                ability.costs.payXGold(() => this.getMinimumCharCost(), () => this.controller.gold)
+                //There's no max aside from the player's gold which is handled in the cost function
+                ability.costs.payXGold(() => this.getMinimumCharCost(), () => 99)
             ],
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' &&
-                                                  (context.goldCostAmount ? (card.getCost() <= context.goldCostAmount) : (card.getCost() <= this.controller.gold))
+                                                  (context.xValue ? (card.getCost() <= context.xValue) : (card.getCost() <= this.controller.gold))
             },
             handler: context => {
                 context.target.controller.returnCardToHand(context.target);
                 this.game.addMessage('{0} plays {1}, kneels their faction card and pays {2} gold to return {3} to {4}\'s hand',
-                    context.player, this, context.goldCostAmount, context.target, context.target.owner);
+                    context.player, this, context.goldCost, context.target, context.target.owner);
             }
         });
     }
