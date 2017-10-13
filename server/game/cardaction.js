@@ -44,7 +44,6 @@ class CardAction extends BaseAbility {
         this.game = game;
         this.card = card;
         this.title = properties.title;
-        this.limit = properties.limit;
         this.max = properties.max;
         this.phase = properties.phase || 'any';
         this.anyPlayer = properties.anyPlayer || false;

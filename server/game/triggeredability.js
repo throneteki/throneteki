@@ -33,7 +33,6 @@ class TriggeredAbility extends BaseAbility {
 
         this.game = game;
         this.card = card;
-        this.limit = properties.limit;
         this.max = properties.max;
         this.when = properties.when;
         this.playerFunc = properties.player || (() => this.card.controller);
@@ -111,12 +110,6 @@ class TriggeredAbility extends BaseAbility {
         }
 
         return true;
-    }
-
-    incrementLimit() {
-        if(this.limit) {
-            this.limit.increment();
-        }
     }
 
     isEventListeningLocation(location) {
