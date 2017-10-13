@@ -5,7 +5,7 @@ class SeenInFlames extends DrawCard {
         this.action({
             title: 'Discard from opponent\'s hand',
             phase: 'challenge',
-            condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor')),
+            condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor') && card.getType() === 'character'),
             chooseOpponent: opponent => !opponent.hand.isEmpty(),
             handler: context => {
                 let buttons = context.opponent.hand.map(card => {
