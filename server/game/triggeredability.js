@@ -113,6 +113,12 @@ class TriggeredAbility extends BaseAbility {
         return true;
     }
 
+    incrementLimit() {
+        if(this.limit) {
+            this.limit.increment();
+        }
+    }
+
     isEventListeningLocation(location) {
         // Reactions / interrupts for playable event cards need to listen for
         // game events in all open information locations plus while in hand.

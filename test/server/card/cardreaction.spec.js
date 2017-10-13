@@ -259,35 +259,6 @@ describe('CardReaction', function () {
                     expect(this.properties.handler).not.toHaveBeenCalled();
                 });
             });
-
-            describe('when there is a limit', function() {
-                beforeEach(function() {
-                    this.properties.limit = this.limitSpy;
-                    this.reaction = this.createReaction();
-                });
-
-                describe('and the handler returns a non-false value', function() {
-                    beforeEach(function() {
-                        this.properties.handler.and.returnValue(undefined);
-                        this.reaction.executeHandler(this.context);
-                    });
-
-                    it('should increment the limit', function() {
-                        expect(this.limitSpy.increment).toHaveBeenCalled();
-                    });
-                });
-
-                describe('and the handler returns false', function() {
-                    beforeEach(function() {
-                        this.properties.handler.and.returnValue(false);
-                        this.reaction.executeHandler(this.context);
-                    });
-
-                    it('should not increment the limit', function() {
-                        expect(this.limitSpy.increment).not.toHaveBeenCalled();
-                    });
-                });
-            });
         });
 
         describe('with multiple choice reactions', function() {
@@ -330,35 +301,6 @@ describe('CardReaction', function () {
                     expect(this.properties.choices['Foo']).not.toHaveBeenCalled();
                     expect(this.properties.choices['Bar']).not.toHaveBeenCalled();
                     expect(this.properties.choices['Baz']).not.toHaveBeenCalled();
-                });
-            });
-
-            describe('when there is a limit', function() {
-                beforeEach(function() {
-                    this.properties.limit = this.limitSpy;
-                    this.reaction = this.createReaction();
-                });
-
-                describe('and the handler returns a non-false value', function() {
-                    beforeEach(function() {
-                        this.properties.choices['Baz'].and.returnValue(undefined);
-                        this.reaction.executeHandler(this.context);
-                    });
-
-                    it('should increment the limit', function() {
-                        expect(this.limitSpy.increment).toHaveBeenCalled();
-                    });
-                });
-
-                describe('and the handler returns false', function() {
-                    beforeEach(function() {
-                        this.properties.choices['Baz'].and.returnValue(false);
-                        this.reaction.executeHandler(this.context);
-                    });
-
-                    it('should not increment the limit', function() {
-                        expect(this.limitSpy.increment).not.toHaveBeenCalled();
-                    });
                 });
             });
         });

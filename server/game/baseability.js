@@ -159,6 +159,12 @@ class BaseAbility {
     }
 
     /**
+     * Increments the usage of the ability toward its limit, if it has one.
+     */
+    incrementLimit() {
+    }
+
+    /**
      * Executes the ability once all costs have been paid. Inheriting classes
      * should override this method to implement their behavior; by default it
      * does nothing.

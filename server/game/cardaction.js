@@ -137,10 +137,7 @@ class CardAction extends BaseAbility {
     }
 
     executeHandler(context) {
-        var success = this.handler(context);
-        if(success !== false && this.limit) {
-            this.limit.increment();
-        }
+        this.handler(context);
     }
 
     getMenuItem(arg) {
