@@ -3,12 +3,13 @@ const _ = require('underscore');
 const BaseStep = require('../gamesteps/basestep');
 
 class PayXGoldPrompt extends BaseStep {
-    constructor(min, max, context) {
+    constructor(min, max, context, reduction) {
         super();
 
         this.min = min;
         this.max = max;
         this.context = context;
+        this.reduction = reduction;
     }
 
     continue() {
@@ -18,21 +19,22 @@ class PayXGoldPrompt extends BaseStep {
 
         let range = _.range(this.min, this.max + 1).reverse();
 
-        let buttons = _.map(range, gold => {
-            return { text: gold.toString(), method: 'resolveCost', arg: gold };
+        let buttons = _.map(range, xValue => {
+            return { text: xValue.toString(), method: 'resolveCost', arg: xValue };
         });
 
         this.context.game.promptWithMenu(this.context.player, this, {
             activePrompt: {
-                menuTitle: 'Select gold amount to pay',
+                menuTitle: 'Select value of X',
                 buttons: buttons
             },
             source: this.context.source
         });
     }
 
-    resolveCost(player, gold) {
-        this.context.goldCostAmount = gold;
+    resolveCost(player, xValue) {
+        this.context.xValue = xValue;
+        this.context.goldCost = _.max([xValue - this.reduction, 0]);
 
         return true;
     }

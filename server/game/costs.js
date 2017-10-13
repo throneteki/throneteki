@@ -665,26 +665,28 @@ const Costs = {
         };
     },
     /**
-     * Cost where the player gets prompted to pay from 1 up to the lesser of two values:
-     * the passed value and either the player's or his opponent's gold.
-     * Used by Ritual of R'hllor, Loot and The Things I Do For Love.
-     * TODO: needs to be reducable for cards like Littlefinger's Meddling and Paxter Redwyne.
+     * Reducable cost where the player gets prompted to pay from a passed minimum up to the lesser of two values:
+     * the passed maximum and either the player's or his opponent's gold.
+     * Used by Ritual of R'hllor, Loot, The Things I Do For Love and Melee at Bitterbridge.
      */
     payXGold: function(minFunc, maxFunc, opponentFunc) {
         return {
             canPay: function(context) {
+                let reduction = context.player.getCostReduction('play', context.source);
                 let opponentObj = opponentFunc && opponentFunc(context);
+
                 if(!opponentObj) {
-                    return context.player.gold >= minFunc(context);
+                    return context.player.gold >= minFunc(context) - reduction;
                 }
-                return opponentObj.gold >= minFunc(context);
+                return opponentObj.gold >= minFunc(context) - reduction;
             },
             resolve: function(context, result = { resolved: false }) {
+                let reduction = context.player.getCostReduction('play', context.source);
                 let opponentObj = opponentFunc && opponentFunc(context);
                 let gold = opponentObj ? opponentObj.gold : context.player.gold;
-                let max = _.min([maxFunc(context), gold]);
+                let max = _.min([maxFunc(context), gold + reduction]);
 
-                context.game.queueStep(new PayXGoldPrompt(minFunc(context), max, context));
+                context.game.queueStep(new PayXGoldPrompt(minFunc(context), max, context, reduction));
 
                 result.value = true;
                 result.resolved = true;
@@ -693,10 +695,11 @@ const Costs = {
             pay: function(context) {
                 let opponentObj = opponentFunc && opponentFunc(context);
                 if(!opponentObj) {
-                    context.game.addGold(context.player, -context.goldCostAmount);
+                    context.game.addGold(context.player, -context.goldCost);
                 } else {
-                    context.game.addGold(opponentObj, -context.goldCostAmount);
+                    context.game.addGold(opponentObj, -context.goldCost);
                 }
+                context.player.markUsedReducers('play', context.source);
             }
         };
     }

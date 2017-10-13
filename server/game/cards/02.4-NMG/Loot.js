@@ -10,9 +10,9 @@ class Loot extends DrawCard {
             cost: ability.costs.payXGold(() => 1, context => this.getLoserDeckSize(context.event.challenge), context => context.event.challenge.loser),
             handler: context => {
                 let opponent = context.event.challenge.loser;
-                opponent.discardFromDraw(context.goldCostAmount);
+                opponent.discardFromDraw(context.xValue);
                 this.game.addMessage('{0} plays {1} and pays {2} gold from {3}\'s gold pool to discard the top {2} cards from {3}\'s deck',
-                    this.controller, this, context.goldCostAmount, opponent);
+                    this.controller, this, context.goldCost, opponent);
             }
         });
     }
