@@ -44,7 +44,6 @@ class CardAction extends BaseAbility {
         this.game = game;
         this.card = card;
         this.title = properties.title;
-        this.limit = properties.limit;
         this.max = properties.max;
         this.phase = properties.phase || 'any';
         this.anyPlayer = properties.anyPlayer || false;
@@ -137,10 +136,7 @@ class CardAction extends BaseAbility {
     }
 
     executeHandler(context) {
-        var success = this.handler(context);
-        if(success !== false && this.limit) {
-            this.limit.increment();
-        }
+        this.handler(context);
     }
 
     getMenuItem(arg) {

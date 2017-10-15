@@ -24,6 +24,7 @@ class AbilityResolver extends BaseStep {
             new SimpleStep(game, () => this.chooseOpponents()),
             new SimpleStep(game, () => this.resolveTargets()),
             new SimpleStep(game, () => this.waitForTargetResolution()),
+            new SimpleStep(game, () => this.incrementAbilityLimit()),
             new SimpleStep(game, () => this.executeHandler()),
             new SimpleStep(game, () => this.raiseCardPlayedIfEvent()),
             new SimpleStep(game, () => this.game.popAbilityContext())
@@ -144,6 +145,14 @@ class AbilityResolver extends BaseStep {
                 this.context.target = this.context.targets.defaultTarget;
             });
         }
+    }
+
+    incrementAbilityLimit() {
+        if(this.cancelled) {
+            return;
+        }
+
+        this.ability.incrementLimit();
     }
 
     executeHandler() {

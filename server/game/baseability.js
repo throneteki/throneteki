@@ -24,6 +24,7 @@ class BaseAbility {
     constructor(properties) {
         this.cost = this.buildCost(properties.cost);
         this.targets = this.buildTargets(properties);
+        this.limit = properties.limit;
         this.cannotBeCanceled = !!properties.cannotBeCanceled;
         this.chooseOpponentFunc = properties.chooseOpponent;
     }
@@ -156,6 +157,15 @@ class BaseAbility {
      */
     resolveTargets(context) {
         return this.targets.map(target => target.resolve(context));
+    }
+
+    /**
+     * Increments the usage of the ability toward its limit, if it has one.
+     */
+    incrementLimit() {
+        if(this.limit) {
+            this.limit.increment();
+        }
     }
 
     /**

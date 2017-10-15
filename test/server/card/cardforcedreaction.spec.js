@@ -151,34 +151,6 @@ describe('CardForcedReaction', function () {
             this.reaction.executeHandler(this.context);
             expect(this.properties.handler).toHaveBeenCalledWith(this.context);
         });
-
-        describe('when there is a limit', function() {
-            beforeEach(function() {
-                this.reaction.limit = this.limitSpy;
-            });
-
-            describe('and the handler returns non-false', function() {
-                beforeEach(function() {
-                    this.properties.handler.and.returnValue(undefined);
-                    this.reaction.executeHandler(this.context);
-                });
-
-                it('should increment the limit', function() {
-                    expect(this.limitSpy.increment).toHaveBeenCalled();
-                });
-            });
-
-            describe('and the handler returns explicitly false', function() {
-                beforeEach(function() {
-                    this.properties.handler.and.returnValue(false);
-                    this.reaction.executeHandler(this.context);
-                });
-
-                it('should not increment the limit', function() {
-                    expect(this.limitSpy.increment).not.toHaveBeenCalled();
-                });
-            });
-        });
     });
 
     describe('registerEvents()', function() {

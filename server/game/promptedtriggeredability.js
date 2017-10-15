@@ -66,10 +66,10 @@ class PromptedTriggeredAbility extends TriggeredAbility {
     }
 
     executeHandler(context) {
-        var handler = this.choices[context.choice];
+        let handler = this.choices[context.choice];
 
-        if(handler && handler(context) !== false && this.limit) {
-            this.limit.increment();
+        if(handler) {
+            handler(context);
         }
     }
 }

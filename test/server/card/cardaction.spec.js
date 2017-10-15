@@ -447,56 +447,12 @@ describe('CardAction', function () {
             };
             this.handler = jasmine.createSpy('handler');
             this.properties.handler = this.handler;
+            this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
+            this.action.executeHandler(this.context);
         });
 
-        describe('when the action has no limit', function() {
-            beforeEach(function() {
-                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-                this.action.executeHandler(this.context);
-            });
-
-            it('should call the handler', function() {
-                expect(this.handler).toHaveBeenCalledWith(this.context);
-            });
-        });
-
-        describe('when the action has limited uses', function() {
-            beforeEach(function() {
-                this.properties.limit = this.limitSpy;
-                this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-            });
-
-            describe('and the handler returns false', function() {
-                beforeEach(function() {
-                    this.handler.and.returnValue(false);
-
-                    this.action.executeHandler(this.context);
-                });
-
-                it('should call the handler', function() {
-                    expect(this.handler).toHaveBeenCalledWith(this.context);
-                });
-
-                it('should not count towards the limit', function() {
-                    expect(this.limitSpy.increment).not.toHaveBeenCalled();
-                });
-            });
-
-            describe('and the handler returns undefined or a non-false value', function() {
-                beforeEach(function() {
-                    this.handler.and.returnValue(undefined);
-
-                    this.action.executeHandler(this.context);
-                });
-
-                it('should call the handler', function() {
-                    expect(this.handler).toHaveBeenCalledWith(this.context);
-                });
-
-                it('should count towards the limit', function() {
-                    expect(this.limitSpy.increment).toHaveBeenCalled();
-                });
-            });
+        it('should call the handler', function() {
+            expect(this.handler).toHaveBeenCalledWith(this.context);
         });
     });
 });
