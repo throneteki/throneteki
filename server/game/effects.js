@@ -6,7 +6,6 @@ const PlayableLocation = require('./playablelocation.js');
 const CannotRestriction = require('./cannotrestriction.js');
 const ChallengeRestriction = require('./ChallengeRestriction.js');
 const ImmunityRestriction = require('./immunityrestriction.js');
-const logger = require('../log.js');
 
 function cannotEffect(type) {
     return function(predicate) {
@@ -730,15 +729,12 @@ const Effects = {
         return {
             apply: function(player, context) {
                 context.setMinReserve = context.setMinReserve || {};
-                context.setMinReserve[player.id] = player.minReserve;
+                context.setMinReserve[player.name] = player.minReserve;
                 player.minReserve = min;
             },
             unapply: function(player, context) {
-                if(!_.isNumber(context.setMinReserve[player.id])) {
-                    logger.error('RESERVE BUG', new Error('Unapplying without previous value'));
-                }
-                player.minReserve = context.setMinReserve[player.id];
-                delete context.setMinReserve[player.id];
+                player.minReserve = context.setMinReserve[player.name];
+                delete context.setMinReserve[player.name];
             }
         };
     },
@@ -786,12 +782,12 @@ const Effects = {
         return {
             apply: function(player, context) {
                 context.setChallengerLimit = context.setChallengerLimit || {};
-                context.setChallengerLimit[player.id] = player.challengerLimit;
+                context.setChallengerLimit[player.name] = player.challengerLimit;
                 player.challengerLimit = value;
             },
             unapply: function(player, context) {
-                player.challengerLimit = context.setChallengerLimit[player.id];
-                delete context.setChallengerLimit[player.id];
+                player.challengerLimit = context.setChallengerLimit[player.name];
+                delete context.setChallengerLimit[player.name];
             }
         };
     },

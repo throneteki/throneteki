@@ -1,5 +1,4 @@
 const _ = require('underscore');
-const logger = require('../log.js');
 
 const Effects = require('./effects.js');
 
@@ -171,26 +170,8 @@ class Effect {
     }
 
     cancel() {
-        this.logDuplicatedTargets();
         _.each(this.targets, target => this.effect.unapply(target, this.context));
         this.targets = [];
-    }
-
-    logDuplicatedTargets() {
-        if(this.targets.length <= 1) {
-            return;
-        }
-
-        let counts = new Map();
-        for(let target of this.targets) {
-            let currentCount = counts.get(target) || 0;
-            counts.set(target, currentCount + 1);
-        }
-        let dupes = Array.from(counts.keys()).filter(target => counts.get(target) > 1).map(target => target.name);
-
-        if(dupes.length > 0) {
-            logger.error('RESERVE BUG:', this.source.name, 'has duplicated targets', dupes.join(', '));
-        }
     }
 
     reapply(newTargets) {

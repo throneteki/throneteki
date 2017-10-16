@@ -2,7 +2,7 @@ describe('WraithsInTheirMidst', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('greyjoy', [
-                'Wraiths in Their Midst',
+                'Wraiths in Their Midst', 'A Noble Cause',
                 'Alannys Greyjoy'
             ]);
             const deck2 = this.buildDeck('lannister', [
@@ -68,6 +68,31 @@ describe('WraithsInTheirMidst', function() {
 
             it('should reduce the new plot revealed', function() {
                 // Reduce 6 by 2 from plot, 0 from Alannys since not first player
+                expect(this.player2Object.getTotalReserve()).toBe(4);
+            });
+        });
+
+        describe('when a player reconnects after revealing Wraiths', function() {
+            beforeEach(function() {
+                this.player1.selectPlot('Wraiths in Their Midst');
+                this.player2.selectPlot('A Noble Cause');
+                this.selectFirstPlayer(this.player2);
+
+                // Explicitly reconnect the player affected by Wraiths
+                this.player2.reconnect();
+
+                this.completeMarshalPhase();
+                this.completeChallengesPhase();
+
+                this.player1.selectPlot('A Noble Cause');
+                this.player2.selectPlot('A Feast for Crows');
+                this.selectFirstPlayer(this.player2);
+
+                this.completeMarshalPhase();
+                this.completeChallengesPhase();
+            });
+
+            it('should not get a NaN reserve prompt', function() {
                 expect(this.player2Object.getTotalReserve()).toBe(4);
             });
         });
