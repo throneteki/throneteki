@@ -16,7 +16,7 @@ class Sunspear extends DrawCard {
                         this.game.currentChallenge &&
                         this.game.currentChallenge.challengeType === challengeType
                     ),
-                    match: this.controller.activePlot,
+                    match: card => card === this.controller.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
             }
