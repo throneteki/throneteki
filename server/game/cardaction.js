@@ -1,5 +1,6 @@
 const _ = require('underscore');
 
+const AbilityContext = require('./AbilityContext.js');
 const BaseAbility = require('./baseability.js');
 const Costs = require('./costs.js');
 const EventRegistrar = require('./eventregistrar.js');
@@ -76,13 +77,12 @@ class CardAction extends BaseAbility {
         return ['play area', 'agenda', 'active plot'].includes(this.location);
     }
 
-    createContext(player, arg) {
-        return {
-            arg: arg,
+    createContext(player) {
+        return new AbilityContext({
             game: this.game,
             player: player,
             source: this.card
-        };
+        });
     }
 
     meetsRequirements(context) {
