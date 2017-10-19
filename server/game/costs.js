@@ -294,95 +294,24 @@ const Costs = {
      * Cost that will discard a gold from the card. Used mainly by cards
      * having the bestow keyword.
      */
-    discardGold: function() {
-        return {
-            canPay: function(context) {
-                return context.source.hasToken('gold');
-            },
-            pay: function(context) {
-                context.source.removeToken('gold', 1);
-            }
-        };
-    },
+    discardGold: amount => CostBuilders.discardToken('gold', amount).self(),
     /**
      * Cost that will discard a fixed amount of power from the current card.
      */
-    discardPowerFromSelf: function(amount = 1) {
-        return {
-            canPay: function(context) {
-                return context.source.power >= amount;
-            },
-            pay: function(context) {
-                context.source.modifyPower(-amount);
-            }
-        };
-    },
+    discardPowerFromSelf: amount => CostBuilders.discardPower(amount).self(),
     /**
      * Cost that will discard a fixed amount of a passed type token from the current card.
      */
-    discardTokenFromSelf: function(type, amount = 1) {
-        return {
-            canPay: function(context) {
-                return context.source.tokens[type] >= amount;
-            },
-            pay: function(context) {
-                context.source.removeToken(type, amount);
-            }
-        };
-    },
+    discardTokenFromSelf: (type, amount) => CostBuilders.discardToken(type, amount).self(),
     /**
      * Cost that will discard faction power matching the passed amount.
      */
-    discardFactionPower: function(amount) {
-        return {
-            canPay: function(context) {
-                return context.player.faction.power >= amount;
-            },
-            pay: function(context) {
-                context.source.game.addPower(context.player, -amount);
-            }
-        };
-    },
+    discardFactionPower: amount => CostBuilders.discardPower(amount).faction(),
     /**
      * Cost that requires discarding a power from a card that matches the passed condition
      * predicate function.
      */
-    discardPower: function(amount, condition) {
-        var fullCondition = (card, context) => (
-            card.getPower() >= amount &&
-            card.location === 'play area' &&
-            card.controller === context.player &&
-            condition(card)
-        );
-        return {
-            canPay: function(context) {
-                return context.player.anyCardsInPlay(card => fullCondition(card, context));
-            },
-            resolve: function(context, result = { resolved: false }) {
-                context.game.promptForSelect(context.player, {
-                    cardCondition: card => fullCondition(card, context),
-                    activePromptTitle: 'Select card to discard ' + amount + ' power from',
-                    source: context.source,
-                    onSelect: (player, card) => {
-                        context.discardPowerCostCard = card;
-                        result.value = true;
-                        result.resolved = true;
-
-                        return true;
-                    },
-                    onCancel: () => {
-                        result.value = false;
-                        result.resolved = true;
-                    }
-                });
-
-                return result;
-            },
-            pay: function(context) {
-                context.discardPowerCostCard.modifyPower(-amount);
-            }
-        };
-    },
+    discardPower: (amount, condition) => CostBuilders.discardPower(amount).select(condition),
     /**
      * Cost that ensures that the player can still play a Limited card this
      * round.
