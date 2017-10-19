@@ -202,21 +202,7 @@ const Costs = {
     /**
      * Cost that will remove the parent card the current card is attached to from the challenge.
      */
-    removeParentFromChallenge: function(challengeFunc) {
-        return {
-            canPay: function(context) {
-                let challenge = challengeFunc();
-                return !!context.source.parent && challenge && challenge.isParticipating(context.source.parent);
-            },
-            pay: function(context) {
-                let challenge = challengeFunc();
-
-                if(challenge) {
-                    challenge.removeFromChallenge(context.source.parent);
-                }
-            }
-        };
-    },
+    removeParentFromChallenge: () => CostBuilders.removeFromChallenge.parent(),
     /**
      * Cost that will place the played event card in the player's discard pile.
      */

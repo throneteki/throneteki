@@ -11,7 +11,7 @@ class QueenOfTheSevenKingdoms extends DrawCard {
             condition: () => this.game.currentChallenge,
             cost: [
                 ability.costs.standParent(),
-                ability.costs.removeParentFromChallenge(() => this.game.currentChallenge)
+                ability.costs.removeParentFromChallenge()
             ],
             target: {
                 cardCondition: card => this.game.currentChallenge.isParticipating(card)
