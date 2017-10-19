@@ -20,7 +20,7 @@ class CrownOfGoldenRoses extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} and discards {2} from their hand to give +{3} STR to {4} until the end of the phase',
-                    this.controller, this, context.discardCostCard, strBoost, this.parent);
+                    this.controller, this, context.costs.discardFromHand, strBoost, this.parent);
             }
         });
 

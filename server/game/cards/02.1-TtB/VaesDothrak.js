@@ -16,11 +16,11 @@ class VaesDothrak extends DrawCard {
                     cardCondition: card => (
                         card.location === 'play area' &&
                         card.getType() === 'attachment' &&
-                        card.getCost(true) <= context.discardCostCard.getCost(true)),
+                        card.getCost(true) <= context.costs.discardFromHand.getCost(true)),
                     onSelect: (p, card) => {
                         card.controller.discardCard(card);
                         this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {3} from play',
-                            this.controller, this, context.discardCostCard, card);
+                            this.controller, this, context.costs.discardFromHand, card);
 
                         return true;
                     }

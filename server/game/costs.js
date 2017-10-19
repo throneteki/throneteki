@@ -277,41 +277,7 @@ const Costs = {
      * Cost that requires discarding a card from hand matching the passed
      * condition predicate function.
      */
-    discardFromHand: function(condition = () => true) {
-        var fullCondition = (card, context) => (
-            card.location === 'hand' &&
-            card.controller === context.player &&
-            condition(card)
-        );
-        return {
-            canPay: function(context) {
-                return context.game.allCards.any(card => fullCondition(card, context));
-            },
-            resolve: function(context, result = { resolved: false }) {
-                context.game.promptForSelect(context.player, {
-                    cardCondition: card => fullCondition(card, context),
-                    activePromptTitle: 'Select card to discard',
-                    source: context.source,
-                    onSelect: (player, card) => {
-                        context.discardCostCard = card;
-                        result.value = true;
-                        result.resolved = true;
-
-                        return true;
-                    },
-                    onCancel: () => {
-                        result.value = false;
-                        result.resolved = true;
-                    }
-                });
-
-                return result;
-            },
-            pay: function(context) {
-                context.player.discardCard(context.discardCostCard);
-            }
-        };
-    },
+    discardFromHand: condition => CostBuilders.discardFromHand.select(condition),
     /**
      * Cost that will pay the reduceable gold cost associated with an event card
      * and place it in discard.
