@@ -103,7 +103,7 @@ class EffectEngine {
     removeTargetFromEffects(card, location) {
         let area = location === 'hand' ? 'hand' : 'play area';
         _.each(this.effects, effect => {
-            if(effect.targetLocation === area && effect.location !== 'any' || location === 'play area' && effect.duration !== 'persistent') {
+            if(effect.targetLocation === area && effect.location !== 'any' || location === 'play area' && !['custom', 'persistent'].includes(effect.duration)) {
                 effect.removeTarget(card);
             }
         });

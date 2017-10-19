@@ -479,8 +479,8 @@ class Player extends Spectator {
         return !_.any(this.playCardRestrictions, restriction => restriction(card, playingType));
     }
 
-    canPutIntoPlay(card, playingType = 'play') {
-        if(!this.canPlay(card, playingType)) {
+    canPutIntoPlay(card, playingType = 'play', options = {}) {
+        if(!options.isEffectExpiration && !this.canPlay(card, playingType)) {
             return false;
         }
 
@@ -521,8 +521,8 @@ class Player extends Spectator {
         return this.deadPile.includes(card) && (!card.isUnique() || this.deadPile.filter(c => c.name === card.name).length === 1);
     }
 
-    putIntoPlay(card, playingType = 'play') {
-        if(!this.canPutIntoPlay(card, playingType)) {
+    putIntoPlay(card, playingType = 'play', options = {}) {
+        if(!this.canPutIntoPlay(card, playingType, options)) {
             return;
         }
 
