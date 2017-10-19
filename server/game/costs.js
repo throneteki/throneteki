@@ -102,29 +102,11 @@ const Costs = {
      * Cost that will stand the card that initiated the ability (e.g.,
      * Barristan Selmy (TS)).
      */
-    standSelf: function() {
-        return {
-            canPay: function(context) {
-                return context.source.kneeled;
-            },
-            pay: function(context) {
-                context.source.controller.standCard(context.source);
-            }
-        };
-    },
+    standSelf: () => CostBuilders.stand.self(),
     /**
      * Cost that will stand the parent card the current card is attached to.
      */
-    standParent: function() {
-        return {
-            canPay: function(context) {
-                return !!context.source.parent && context.source.parent.kneeled;
-            },
-            pay: function(context) {
-                context.source.parent.controller.standCard(context.source.parent);
-            }
-        };
-    },
+    standParent: () => CostBuilders.stand.parent(),
     /**
      * Cost that will remove the parent card the current card is attached to from the challenge.
      */
