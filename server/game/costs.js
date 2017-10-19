@@ -111,54 +111,11 @@ const Costs = {
      * Cost that requires you return a card matching the condition to the
      * player's hand.
      */
-    returnToHand: function(condition) {
-        var fullCondition = (card, context) => (
-            card.location === 'play area' &&
-            card.controller === context.player &&
-            condition(card)
-        );
-        return {
-            canPay: function(context) {
-                return context.player.anyCardsInPlay(card => fullCondition(card, context));
-            },
-            resolve: function(context, result = { resolved: false }) {
-                context.game.promptForSelect(context.player, {
-                    cardCondition: card => fullCondition(card, context),
-                    activePromptTitle: 'Select card to return to hand',
-                    source: context.source,
-                    onSelect: (player, card) => {
-                        context.costs.returnedToHandCard = card;
-                        result.value = true;
-                        result.resolved = true;
-
-                        return true;
-                    },
-                    onCancel: () => {
-                        result.value = false;
-                        result.resolved = true;
-                    }
-                });
-
-                return result;
-            },
-            pay: function(context) {
-                context.player.returnCardToHand(context.costs.returnedToHandCard, false);
-            }
-        };
-    },
+    returnToHand: condition => CostBuilders.returnToHand.select(condition),
     /**
      * Cost that will return to hand the card that initiated the ability.
      */
-    returnSelfToHand: function() {
-        return {
-            canPay: function() {
-                return true;
-            },
-            pay: function(context) {
-                context.source.controller.returnCardToHand(context.source, false);
-            }
-        };
-    },
+    returnSelfToHand: () => CostBuilders.returnToHand.self(),
     /**
      * Cost that reveals a specific card passed into the function
      */
