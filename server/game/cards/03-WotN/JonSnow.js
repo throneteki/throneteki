@@ -17,7 +17,7 @@ class JonSnow extends DrawCard {
                 gameAction: 'stand'
             },
             handler: context => {
-                this.game.addMessage('{0} uses {1} and sacrifices {2} to stand {3}', this.controller, this, context.sacrificeCostCard, context.target);
+                this.game.addMessage('{0} uses {1} and sacrifices {2} to stand {3}', this.controller, this, context.costs.sacrifice, context.target);
                 context.target.controller.standCard(context.target);
             }
 

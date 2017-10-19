@@ -62,55 +62,12 @@ const Costs = {
     /**
      * Cost that will sacrifice the card that initiated the ability.
      */
-    sacrificeSelf: function() {
-        return {
-            canPay: function() {
-                return true;
-            },
-            pay: function(context) {
-                context.source.controller.sacrificeCard(context.source);
-            }
-        };
-    },
+    sacrificeSelf: () => CostBuilders.sacrifice.self(),
     /**
      * Cost that requires sacrificing a card that matches the passed condition
      * predicate function.
      */
-    sacrifice: function(condition) {
-        var fullCondition = (card, context) => (
-            card.location === 'play area' &&
-            card.controller === context.player &&
-            condition(card)
-        );
-        return {
-            canPay: function(context) {
-                return context.player.anyCardsInPlay(card => fullCondition(card, context));
-            },
-            resolve: function(context, result = { resolved: false }) {
-                context.game.promptForSelect(context.player, {
-                    cardCondition: card => fullCondition(card, context),
-                    activePromptTitle: 'Select card to sacrifice',
-                    source: context.source,
-                    onSelect: (player, card) => {
-                        context.sacrificeCostCard = card;
-                        result.value = true;
-                        result.resolved = true;
-
-                        return true;
-                    },
-                    onCancel: () => {
-                        result.value = false;
-                        result.resolved = true;
-                    }
-                });
-
-                return result;
-            },
-            pay: function(context) {
-                context.player.sacrificeCard(context.sacrificeCostCard);
-            }
-        };
-    },
+    sacrifice: condition => CostBuilders.sacrifice.select(condition),
     /**
      * Cost that will kill the card that initiated the ability.
      */
