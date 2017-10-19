@@ -92,59 +92,12 @@ const Costs = {
     /**
      * Cost that reveals a specific card passed into the function
      */
-    revealSpecific: function(cardFunc) {
-        return {
-            canPay: function() {
-                return true;
-            },
-            pay: function(context) {
-                let card = cardFunc(context);
-                context.game.addMessage('{0} reveals {1} from their hand', context.player, card);
-            }
-        };
-    },
+    revealSpecific: cardFunc => CostBuilders.reveal.specific(cardFunc),
     /**
      * Cost that requires revealing a certain number of cards in hand that match
      * the passed condition predicate function.
      */
-    revealCards: function(number, condition) {
-        var fullCondition = (card, context) => (
-            card.location === 'hand' &&
-            card.controller === context.player &&
-            condition(card)
-        );
-        return {
-            canPay: function(context) {
-                let potentialCards = context.player.findCards(context.player.hand, card => fullCondition(card, context));
-                return _.size(potentialCards) >= number;
-            },
-            resolve: function(context, result = { resolved: false }) {
-                context.game.promptForSelect(context.player, {
-                    cardCondition: card => fullCondition(card, context),
-                    activePromptTitle: 'Select ' + number + ' cards to reveal',
-                    mode: 'exactly',
-                    numCards: number,
-                    source: context.source,
-                    onSelect: (player, cards) => {
-                        context.revealingCostCards = cards;
-                        result.value = true;
-                        result.resolved = true;
-
-                        return true;
-                    },
-                    onCancel: () => {
-                        result.value = false;
-                        result.resolved = true;
-                    }
-                });
-
-                return result;
-            },
-            pay: function(context) {
-                context.game.addMessage('{0} reveals {1} from their hand', context.player, context.revealingCostCards);
-            }
-        };
-    },
+    revealCards: (number, condition) => CostBuilders.reveal.selectMultiple(number, condition),
     /**
      * Cost that will stand the card that initiated the ability (e.g.,
      * Barristan Selmy (TS)).
