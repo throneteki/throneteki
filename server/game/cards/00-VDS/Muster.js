@@ -10,7 +10,7 @@ class Muster extends DrawCard {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Knight'),
-                    onSelect: (player, card) => this.cardSelected(player, card, context.kneelingCostCard),
+                    onSelect: (player, card) => this.cardSelected(player, card, context.costs.kneel),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });

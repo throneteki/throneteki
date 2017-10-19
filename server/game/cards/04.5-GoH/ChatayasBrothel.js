@@ -9,7 +9,7 @@ class ChatayasBrothel extends DrawCard {
             cost: ability.costs.kneel(card => card.hasIcon('intrigue')),
             handler: context => {
                 this.game.addGold(context.player, 1);
-                this.game.addMessage('{0} uses {1} and kneels {2} to gain 1 gold', context.player, context.source, context.kneelingCostCard);
+                this.game.addMessage('{0} uses {1} and kneels {2} to gain 1 gold', context.player, context.source, context.costs.kneel);
             }
         });
     }

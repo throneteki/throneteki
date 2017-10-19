@@ -11,8 +11,8 @@ class CastleBlackMason extends DrawCard {
                     numCards: 10,
                     activePromptTitle: 'Select a card',
                     cardType: ['attachment', 'location'],
-                    onSelect: (player, card) => this.cardSelected(player, card, context.kneelingCostCards),
-                    onCancel: player => this.doneSelecting(player, context.kneelingCostCards),
+                    onSelect: (player, card) => this.cardSelected(player, card, context.costs.kneel),
+                    onCancel: player => this.doneSelecting(player, context.costs.kneel),
                     source: this
                 });
             }

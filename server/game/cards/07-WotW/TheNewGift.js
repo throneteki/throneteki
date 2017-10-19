@@ -9,7 +9,7 @@ class TheNewGift extends DrawCard {
             cost: ability.costs.kneel(card => card.hasTrait('Steward') && card.getType() === 'character'),
             handler: context => {
                 this.game.addGold(context.player, 1);
-                this.game.addMessage('{0} uses {1} and kneels {2} to gain 1 gold', context.player, context.source, context.kneelingCostCard);
+                this.game.addMessage('{0} uses {1} and kneels {2} to gain 1 gold', context.player, context.source, context.costs.kneel);
             }
         });
 
@@ -20,7 +20,7 @@ class TheNewGift extends DrawCard {
             cost: ability.costs.kneel(card => card.hasTrait('Steward') && card.getType() === 'character'),
             handler: context => {
                 this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} and kneels {2} to draw 1 card', context.player, context.source, context.kneelingCostCard);
+                this.game.addMessage('{0} uses {1} and kneels {2} to draw 1 card', context.player, context.source, context.costs.kneel);
             }
         });
     }

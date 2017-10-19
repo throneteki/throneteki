@@ -10,7 +10,7 @@ class Dracarys extends DrawCard {
                 cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card)
             },
             handler: context => {
-                this.game.addMessage('{0} plays {1} to kneel {2} and give {3} -4 STR until the end of the phase', context.player, this, context.kneelingCostCard, context.target);
+                this.game.addMessage('{0} plays {1} to kneel {2} and give {3} -4 STR until the end of the phase', context.player, this, context.costs.kneel, context.target);
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
                     effect: ability.effects.killByStrength(-4)

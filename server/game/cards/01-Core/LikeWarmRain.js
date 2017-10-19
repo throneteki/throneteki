@@ -14,7 +14,7 @@ class LikeWarmRain extends DrawCard {
             },
             handler: context => {
                 context.target.owner.killCharacter(context.target);
-                this.game.addMessage('{0} plays {1} and kneels {2} to kill {3}', context.player, context.source, context.kneelingCostCard, context.target);
+                this.game.addMessage('{0} plays {1} and kneels {2} to kill {3}', context.player, context.source, context.costs.kneel, context.target);
             }
         });
     }

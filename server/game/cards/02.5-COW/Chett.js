@@ -18,7 +18,7 @@ class Chett extends DrawCard {
             handler: context => {
                 this.controller.moveCard(context.target, 'hand');
                 this.game.addMessage('{0} uses {1} to kneel {2} to return {3} to their hand',
-                    context.player, this, context.kneelingCostCard, context.target);
+                    context.player, this, context.costs.kneel, context.target);
             }
         });
     }
