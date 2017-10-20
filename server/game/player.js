@@ -20,6 +20,7 @@ class Player extends Spectator {
     constructor(id, user, owner, game) {
         super(id, user);
 
+        this.beingPlayed = _([]);
         this.drawDeck = _([]);
         this.plotDeck = _([]);
         this.plotDiscard = _([]);
@@ -713,6 +714,7 @@ class Player extends Spectator {
         const DrawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
         const AllowedTypesForPile = {
             'active plot': PlotCardTypes,
+            'being played': ['event'],
             'dead pile': ['character'],
             'discard pile': DrawDeckCardTypes,
             'draw deck': DrawDeckCardTypes,
@@ -737,6 +739,8 @@ class Player extends Spectator {
 
     getSourceList(source) {
         switch(source) {
+            case 'being played':
+                return this.beingPlayed;
             case 'hand':
                 return this.hand;
             case 'draw deck':
@@ -765,6 +769,9 @@ class Player extends Spectator {
 
     updateSourceList(source, targetList) {
         switch(source) {
+            case 'being played':
+                this.beingPlayed = targetList;
+                return;
             case 'hand':
                 this.hand = targetList;
                 break;
@@ -1231,6 +1238,7 @@ class Player extends Spectator {
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
+        let fullDiscardPile = this.discardPile.toArray().concat(this.beingPlayed.toArray());
         let state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
@@ -1239,7 +1247,7 @@ class Player extends Spectator {
                 cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
                 conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer, true),
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
-                discardPile: this.getSummaryForCardList(this.discardPile, activePlayer).reverse(),
+                discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
                 hand: this.getSummaryForCardList(this.hand, activePlayer, true),
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
                 plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),

@@ -178,6 +178,7 @@ class AbilityResolver extends BaseStep {
         // then this event will need to wrap the execution of the entire
         // ability instead.
         if(this.ability.isPlayableEventAbility()) {
+            this.context.source.owner.moveCard(this.context.source, 'discard pile');
             this.game.raiseEvent('onCardPlayed', { player: this.context.player, card: this.context.source });
         }
     }
