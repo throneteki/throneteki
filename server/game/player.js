@@ -3,6 +3,7 @@ const _ = require('underscore');
 const Spectator = require('./spectator.js');
 const DrawCard = require('./drawcard.js');
 const Deck = require('./deck.js');
+const AbilityContext = require('./AbilityContext.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 const BestowPrompt = require('./gamesteps/bestowprompt.js');
 const ChallengeTracker = require('./challengetracker.js');
@@ -455,11 +456,11 @@ class Player extends Spectator {
             return false;
         }
 
-        var context = {
+        let context = new AbilityContext({
             game: this.game,
             player: this,
             source: card
-        };
+        });
         var playActions = _.filter(card.getPlayActions(), action => action.meetsRequirements(context) && action.canPayCosts(context) && action.canResolveTargets(context));
 
         if(playActions.length === 0) {

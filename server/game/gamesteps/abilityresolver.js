@@ -2,7 +2,6 @@ const _ = require('underscore');
 
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
-const ResolvedTargets = require('./ResolvedTargets.js');
 const SimpleStep = require('./simplestep.js');
 
 class AbilityResolver extends BaseStep {
@@ -80,7 +79,6 @@ class AbilityResolver extends BaseStep {
     }
 
     resolveCosts() {
-        this.context.costs = {};
         this.canPayResults = this.ability.resolveCosts(this.context);
     }
 
@@ -122,7 +120,6 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
-        this.context.targets = new ResolvedTargets();
         this.targetResults = this.ability.resolveTargets(this.context);
     }
 

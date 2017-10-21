@@ -48,7 +48,7 @@ describe('Player', function() {
 
                 it('should resolve the play action', function() {
                     this.player.playCard(this.cardSpy);
-                    expect(this.gameSpy.resolveAbility).toHaveBeenCalledWith(this.playActionSpy, { game: this.gameSpy, player: this.player, source: this.cardSpy });
+                    expect(this.gameSpy.resolveAbility).toHaveBeenCalledWith(this.playActionSpy, jasmine.objectContaining({ game: this.gameSpy, player: this.player, source: this.cardSpy }));
                 });
 
                 it('should return true', function() {

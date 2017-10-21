@@ -2,24 +2,7 @@ const _ = require('underscore');
 
 const BaseAbility = require('./baseability.js');
 const Costs = require('./costs.js');
-
-class TriggeredAbilityContext {
-    constructor(event, game, source, player) {
-        this.event = event;
-        this.game = game;
-        this.source = source;
-        this.player = player;
-        this.costs = {};
-    }
-
-    cancel() {
-        this.event.cancel();
-    }
-
-    replaceHandler(handler) {
-        this.event.replaceHandler(handler);
-    }
-}
+const TriggeredAbilityContext = require('./TriggeredAbilityContext.js');
 
 class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
@@ -57,7 +40,7 @@ class TriggeredAbility extends BaseAbility {
     }
 
     createContext(event) {
-        return new TriggeredAbilityContext(event, this.game, this.card, this.playerFunc());
+        return new TriggeredAbilityContext({ event: event, game: this.game, source: this.card, player: this.playerFunc() });
     }
 
     isTriggeredByEvent(event) {

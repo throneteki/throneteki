@@ -10,7 +10,7 @@ class TheIronBankWillHaveItsDue extends DrawCard {
                 ability.costs.returnToHand(card => card.getType() === 'character')
             ],
             handler: context => {
-                let returnedCard = context.costs.returnedToHandCard;
+                let returnedCard = context.costs.returnToHand;
                 let gold = returnedCard.getPrintedCost();
                 this.game.addGold(this.controller, gold);
 

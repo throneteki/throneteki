@@ -15,7 +15,10 @@ describe('AbilityResolver', function() {
         this.ability.isCardAbility.and.returnValue(true);
         this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);
         this.player = { player: 1 };
-        this.context = { foo: 'bar', player: this.player, source: this.source };
+        let targets = jasmine.createSpyObj('targets', ['getTargets', 'hasTargets', 'setSelections', 'updateTargets']);
+        targets.hasTargets.and.returnValue(true);
+        targets.getTargets.and.returnValue([]);
+        this.context = { foo: 'bar', player: this.player, source: this.source, targets: targets };
         this.resolver = new AbilityResolver(this.game, this.ability, this.context);
     });
 
@@ -184,11 +187,12 @@ describe('AbilityResolver', function() {
                     describe('and the target name is arbitrary', function() {
                         beforeEach(function() {
                             this.targetResult.name = 'foo';
+                            this.context.targets.getTargets.and.returnValue([this.target]);
                             this.resolver.continue();
                         });
 
-                        it('should add the target to context.targets', function() {
-                            expect(this.context.targets.foo).toBe(this.target);
+                        it('should set target selections', function() {
+                            expect(this.context.targets.setSelections).toHaveBeenCalledWith([jasmine.objectContaining({ name: 'foo', value: this.target })]);
                         });
 
                         it('should not add the target directly to context', function() {
@@ -207,11 +211,12 @@ describe('AbilityResolver', function() {
                     describe('and the target name is "target"', function() {
                         beforeEach(function() {
                             this.targetResult.name = 'target';
+                            this.context.targets.defaultTarget = this.target;
                             this.resolver.continue();
                         });
 
-                        it('should add the target to context.targets', function() {
-                            expect(this.context.targets.target).toBe(this.target);
+                        it('should set target selections', function() {
+                            expect(this.context.targets.setSelections).toHaveBeenCalledWith([jasmine.objectContaining({ value: this.target })]);
                         });
 
                         it('should add the target directly to context', function() {

@@ -15,7 +15,7 @@ class MutinyAtCrastersKeep extends DrawCard {
             handler: context => {
                 context.target.owner.discardCard(context.target);
                 this.game.addMessage('{0} plays {1} and sacrifices {2} to discard {3} from play',
-                    context.player, this, context.sacrificeCostCard, context.target);
+                    context.player, this, context.costs.sacrifice, context.target);
             }
         });
     }

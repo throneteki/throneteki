@@ -12,7 +12,7 @@ class SparringInSecret extends DrawCard {
             handler: context => {
                 context.target.controller.standCard(context.target);
                 this.game.addMessage('{0} plays {1} and kneels {2} to stand {3}',
-                    context.player, this, context.kneelingCostCard, context.target);
+                    context.player, this, context.costs.kneel, context.target);
             }
         });
     }

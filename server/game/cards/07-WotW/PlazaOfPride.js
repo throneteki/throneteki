@@ -17,8 +17,8 @@ class PlazaOfPride extends DrawCard {
                         card.location === 'play area'
                         && card.getType() === 'character'
                         && card.kneeled
-                        && card.getCost() <= context.discardCostCard.getCost() + 3,
-                    onSelect: (player, card) => this.onCardSelected(player, card, context.discardCostCard)
+                        && card.getCost() <= context.costs.discardFromHand.getCost() + 3,
+                    onSelect: (player, card) => this.onCardSelected(player, card, context.costs.discardFromHand)
                 });
             }
         });

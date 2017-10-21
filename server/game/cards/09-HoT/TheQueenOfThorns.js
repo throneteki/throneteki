@@ -11,7 +11,7 @@ class TheQueenOfThorns extends DrawCard {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'event',
-                    onSelect: (player, card) => this.cardSelected(player, card, context.discardCostCard),
+                    onSelect: (player, card) => this.cardSelected(player, card, context.costs.discardFromHand),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });

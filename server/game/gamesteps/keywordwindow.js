@@ -1,5 +1,6 @@
 const _ = require('underscore');
 
+const AbilityContext = require('../AbilityContext.js');
 const BaseStep = require('./basestep.js');
 const GameKeywords = require('../gamekeywords.js');
 
@@ -10,7 +11,7 @@ class KeywordWindow extends BaseStep {
         super(game);
         this.challenge = challenge;
         this.winnerCardsWithContext = _.map(challenge.getWinnerCards(), card => {
-            return { card: card, context: { game: this.game, challenge: this.challenge, source: card } };
+            return { card: card, context: new AbilityContext({ game: this.game, challenge: this.challenge, source: card }) };
         });
         this.firstPlayer = game.getFirstPlayer();
         this.remainingKeywords = challengeKeywords;
