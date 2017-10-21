@@ -895,6 +895,9 @@ const Effects = {
     reduceNextPlayedCardCost: function(amount, match) {
         return this.reduceNextCardCost('play', amount, match);
     },
+    reduceNextAmbushedOrPlayedCardCost: function(amount, match) {
+        return this.reduceNextCardCost(['ambush', 'play'], amount, match);
+    },
     reduceNextMarshalledOrPlayedCardCost: function(amount, match) {
         return this.reduceNextCardCost(['marshal', 'play'], amount, match);
     },
