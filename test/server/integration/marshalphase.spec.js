@@ -55,7 +55,7 @@ describe('marshal phase', function() {
             it('should allow events to be played', function() {
                 this.player1.clickCard(this.hearMeRoar);
 
-                expect(this.hearMeRoar.location).toBe('discard pile');
+                expect(this.hearMeRoar.location).toBe('being played');
             });
 
             describe('when marshaling dupes', function() {

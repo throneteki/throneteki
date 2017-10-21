@@ -120,7 +120,11 @@ const Costs = {
                 return context.player.isCardInPlayableLocation(context.source, 'play') && context.player.canPlay(context.source, 'play');
             },
             pay: function(context) {
-                context.source.controller.moveCard(context.source, 'discard pile');
+                // Events become in a "state of being played" while they resolve
+                // and are not placed in discard until after resolution / cancel
+                // of their effects.
+                // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/35981-the-annals-of-castle-black/
+                context.source.controller.moveCard(context.source, 'being played');
             }
         };
     },

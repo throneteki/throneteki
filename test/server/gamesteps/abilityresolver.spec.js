@@ -13,8 +13,9 @@ describe('AbilityResolver', function() {
         });
         this.ability = jasmine.createSpyObj('ability', ['incrementLimit', 'isAction', 'isCardAbility', 'isForcedAbility', 'isPlayableEventAbility', 'needsChooseOpponent', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
         this.ability.isCardAbility.and.returnValue(true);
+        this.player = jasmine.createSpyObj('player', ['moveCard']);
         this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);
-        this.player = { player: 1 };
+        this.source.owner = this.player;
         let targets = jasmine.createSpyObj('targets', ['getTargets', 'hasTargets', 'setSelections', 'updateTargets']);
         targets.hasTargets.and.returnValue(true);
         targets.getTargets.and.returnValue([]);
@@ -84,6 +85,10 @@ describe('AbilityResolver', function() {
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
                 this.ability.isPlayableEventAbility.and.returnValue(true);
                 this.resolver.continue();
+            });
+
+            it('should move the card to discard', function() {
+                expect(this.player.moveCard).toHaveBeenCalledWith(this.source, 'discard pile');
             });
 
             it('should raise the onCardPlayed event', function() {
