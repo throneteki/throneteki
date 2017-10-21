@@ -562,7 +562,7 @@ const Effects = {
                 card.owner.moveCard(card, 'out of game');
             },
             unapply: function(card, context) {
-                card.owner.putIntoPlay(card);
+                card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
                 context.game.addMessage('{0} is put into play because of {1}', card, context.source);
             }
         };
