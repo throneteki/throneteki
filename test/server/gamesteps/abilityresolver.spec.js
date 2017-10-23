@@ -82,13 +82,14 @@ describe('AbilityResolver', function() {
 
         describe('when the ability is an event being played', function() {
             beforeEach(function() {
+                this.source.eventPlacementLocation = 'event placement location';
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
                 this.ability.isPlayableEventAbility.and.returnValue(true);
                 this.resolver.continue();
             });
 
-            it('should move the card to discard', function() {
-                expect(this.player.moveCard).toHaveBeenCalledWith(this.source, 'discard pile');
+            it('should move the card to the specified event location', function() {
+                expect(this.player.moveCard).toHaveBeenCalledWith(this.source, 'event placement location');
             });
 
             it('should raise the onCardPlayed event', function() {

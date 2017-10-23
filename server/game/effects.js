@@ -464,6 +464,19 @@ const Effects = {
             }
         };
     },
+    setEventPlacementLocation: function(location) {
+        return {
+            apply: function(card, context) {
+                context.setEventPlacementLocation = context.setEventPlacementLocation || {};
+                context.setEventPlacementLocation[card.uuid] = card.eventPlacementLocation;
+                card.eventPlacementLocation = location;
+            },
+            unapply: function(card, context) {
+                card.eventPlacementLocation = context.setEventPlacementLocation[card.uuid];
+                delete context.setEventPlacementLocation[card.uuid];
+            }
+        };
+    },
     discardIfStillInPlay: function(allowSave = false) {
         return {
             apply: function(card, context) {

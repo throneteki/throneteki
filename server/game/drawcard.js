@@ -59,6 +59,7 @@ class DrawCard extends BaseCard {
         };
         this.stealthLimit = 1;
         this.minCost = 0;
+        this.eventPlacementLocation = 'discard pile';
     }
 
     createSnapshot() {
