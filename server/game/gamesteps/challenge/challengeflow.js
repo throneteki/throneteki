@@ -125,6 +125,7 @@ class ChallengeFlow extends BaseStep {
         });
 
         let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
+        let defenderMinimum = this.challenge.defendingPlayer.defenderMinimum;
         let selectableLimit = defenderLimit;
 
         if(!_.isEmpty(this.forcedDefenders)) {
@@ -147,8 +148,15 @@ class ChallengeFlow extends BaseStep {
         }
 
         let title = 'Select defenders';
+        let restrictions = [];
+        if(defenderMinimum !== 0) {
+            restrictions.push(`min ${defenderMinimum}`);
+        }
         if(defenderLimit !== 0) {
-            title += ' (limit ' + defenderLimit + ')';
+            restrictions.push(`limit ${defenderLimit}`);
+        }
+        if(restrictions.length !== 0) {
+            title += ` (${restrictions.join(', ')})`;
         }
 
         this.game.promptForSelect(this.challenge.defendingPlayer, {
@@ -183,9 +191,15 @@ class ChallengeFlow extends BaseStep {
     }
 
     chooseDefenders(defenders) {
-        let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
+        let defendingPlayer = this.challenge.defendingPlayer;
+        let defenderLimit = defendingPlayer.challengerLimit;
+        let defenderMinimum = defendingPlayer.defenderMinimum;
         if(this.forcedDefenders.length <= defenderLimit || defenderLimit === 0) {
             defenders = defenders.concat(this.forcedDefenders);
+        }
+
+        if(!this.hasMetDefenderMinimum(defenders)) {
+            this.game.addAlert('danger', '{0} did not declare at least {1} defender but had characters to do so', defendingPlayer, defenderMinimum);
         }
 
         let defendersToKneel = [];
@@ -217,6 +231,20 @@ class ChallengeFlow extends BaseStep {
         defendersToKneel = undefined;
 
         return true;
+    }
+
+    hasMetDefenderMinimum(defenders) {
+        let defendingPlayer = this.challenge.defendingPlayer;
+        let defenderMinimum = defendingPlayer.defenderMinimum;
+
+        if(defenderMinimum === 0) {
+            return true;
+        }
+
+        let potentialDefenders = defendingPlayer.getNumberOfCardsInPlay(card => this.allowAsDefender(card));
+        let actualMinimum = Math.min(defenderMinimum, potentialDefenders);
+
+        return defenders.length >= actualMinimum;
     }
 
     announceDefenderStrength() {
