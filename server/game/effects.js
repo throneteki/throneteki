@@ -828,7 +828,7 @@ const Effects = {
         };
     },
     canMarshalFrom: function(p, location) {
-        var playableLocation = new PlayableLocation('marshal', p, location);
+        let playableLocation = new PlayableLocation('marshal', card => card.controller === p && card.location === location);
         return {
             apply: function(player) {
                 player.playableLocations.push(playableLocation);
@@ -841,7 +841,7 @@ const Effects = {
     canPlayFromOwn: function(location) {
         return {
             apply: function(player, context) {
-                let playableLocation = new PlayableLocation('play', player, location);
+                let playableLocation = new PlayableLocation('play', card => card.controller === player && card.location === location);
                 context.canPlayFromOwn = context.canPlayFromOwn || {};
                 context.canPlayFromOwn[player.name] = playableLocation;
                 player.playableLocations.push(playableLocation);

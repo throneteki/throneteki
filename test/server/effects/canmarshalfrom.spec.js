@@ -9,7 +9,7 @@ describe('Effects.canMarshalFrom', function() {
         this.context = {};
 
         this.player = { playableLocations: [] };
-        this.playerHand = new PlayableLocation('marshal', this.player, 'hand');
+        this.playerHand = new PlayableLocation('marshal', card => card.controller === this.player && card.location === 'hand');
         this.player.playableLocations.push(this.playerHand);
 
         this.opponent = { opponent: 1 };
@@ -24,8 +24,10 @@ describe('Effects.canMarshalFrom', function() {
 
         it('should add a marshal location', function() {
             let marshalLocation = _.last(this.player.playableLocations);
-            expect(marshalLocation.location).toBe('discard pile');
-            expect(marshalLocation.player).toBe(this.opponent);
+            expect(marshalLocation.playingType).toBe('marshal');
+            expect(marshalLocation.contains({ controller: this.player, location: 'discard pile'})).toBe(false);
+            expect(marshalLocation.contains({ controller: this.opponent, location: 'hand'})).toBe(false);
+            expect(marshalLocation.contains({ controller: this.opponent, location: 'discard pile'})).toBe(true);
         });
     });
 
