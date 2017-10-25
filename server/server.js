@@ -17,7 +17,7 @@ const Raven = require('raven');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
-const webpackConfig = require('../webpack.config.js');
+const webpackConfig = require('../webpack.config.js')();
 const monk = require('monk');
 const _ = require('underscore');
 

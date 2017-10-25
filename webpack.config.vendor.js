@@ -21,15 +21,23 @@ module.exports = (env) => {
                 'babel-polyfill',
                 'event-source-polyfill',
                 'react',
+                'react-async-script',
+                'react-bootstrap-slider',
+                'react-bootstrap-typeahead',
+                'react-google-recaptcha',
                 'react-dom',
                 'react-redux',
+                'react-redux-toastr',
                 'redux',
                 'redux-thunk',
                 'jquery',
+                'jquery-migrate',
+                'jquery-nearest',
                 'moment',
                 'prop-types',
                 'query-string',
-                'react-bootstrap-typeahead'
+                'socket.io-client',
+                'underscore'
             ]
         },
         output: {

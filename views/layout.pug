@@ -8,10 +8,8 @@ html
     title The Iron Throne - Play A Game Of Thrones LCG in your browser
   body
     block content
-    if !production
-      script(src='/bundle.js')
-    else
-      script(src='/bundle.min.js')
+    script(src='/vendor.js')
+    script(src='/bundle.js')
     script.
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
