@@ -1,10 +1,7 @@
 var webpack = require('webpack');
 var path = require('path');
-var precss = require('precss');
-var autoprefixer = require('autoprefixer');
 
 var BUILD_DIR = path.resolve(__dirname, 'public');
-var APP_DIR = path.resolve(__dirname, 'client');
 var LESS_DIR = path.resolve(__dirname, 'less');
 
 var config = {
@@ -67,7 +64,7 @@ var config = {
                     'sass-loader'
                 ]
             }, {
-                test: /.(png|woff(2)?|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/,
+                test: /.(png|woff(2)?|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
                 loader: 'url-loader?limit=100000'
             }]
     }
