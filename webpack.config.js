@@ -15,7 +15,7 @@ module.exports = (env) => {
         },
         module: {
             rules: [
-                { test: /\.jsx?/, include: /Client/, loader: 'babel-loader' },
+                { test: /\.jsx?/, exclude: /node_modules/, loader: 'babel-loader' },
                 { test: /.(png|woff(2)?|eot|ttf|svg)(\?[a-z0-9=.]+)?$/, use: 'url-loader?limit=25000' },
                 { test: /\.json$/, loader: 'json-loader' }
             ]

@@ -99,7 +99,7 @@ class Server {
                 req.user = _.omit(req.user, 'blockList');
             }
 
-            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
+            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token });
         });
 
         // Define error middleware last
