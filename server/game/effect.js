@@ -95,7 +95,7 @@ class Effect {
                 return false;
             }
 
-            if(this.targetLocation === 'hand' && target.location !== 'hand') {
+            if(!['any', 'play area'].includes(this.targetLocation) && target.location !== this.targetLocation) {
                 return false;
             }
 

@@ -7,10 +7,11 @@ describe('EffectEngine', function () {
         this.playAreaCard = { location: 'play area' };
         this.handCard = { location: 'hand' };
         this.discardedCard = { location: 'discard pile' };
+        this.drawCard = { location: 'draw deck' };
 
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'getPlayers']);
         this.gameSpy.getPlayers.and.returnValue([]);
-        this.gameSpy.allCards = _([this.handCard, this.playAreaCard, this.discardedCard]);
+        this.gameSpy.allCards = _([this.handCard, this.playAreaCard, this.discardedCard, this.drawCard]);
 
         this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
         this.effectSpy.isInActiveLocation.and.returnValue(true);
@@ -29,7 +30,7 @@ describe('EffectEngine', function () {
         });
 
         it('should add existing valid targets to the effect', function() {
-            expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.gameSpy]);
+            expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]);
         });
 
         describe('when the effect has custom duration', function() {
@@ -55,8 +56,8 @@ describe('EffectEngine', function () {
             this.gameSpy.getPlayers.and.returnValue([this.player]);
         });
 
-        it('should return all play area cards, players and the game object', function() {
-            expect(this.engine.getTargets()).toEqual([this.handCard, this.playAreaCard, this.player, this.gameSpy]);
+        it('should return all play area cards, discarded cards, players and the game object', function() {
+            expect(this.engine.getTargets()).toEqual([this.handCard, this.playAreaCard, this.discardedCard, this.player, this.gameSpy]);
         });
     });
 
@@ -72,7 +73,7 @@ describe('EffectEngine', function () {
             });
 
             it('should reapply valid targets', function() {
-                expect(this.effectSpy.reapply).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.gameSpy]);
+                expect(this.effectSpy.reapply).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]);
             });
         });
 
@@ -271,7 +272,7 @@ describe('EffectEngine', function () {
                 });
 
                 it('should set the active value for the effect along with cards to target', function() {
-                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true, [this.handCard, this.playAreaCard, this.gameSpy]);
+                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true, [this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]);
                 });
             });
 
