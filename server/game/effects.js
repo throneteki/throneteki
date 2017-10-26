@@ -791,6 +791,19 @@ const Effects = {
             }
         };
     },
+    setDefenderMinimum: function(value) {
+        return {
+            apply: function(player, context) {
+                context.setDefenderMinimum = context.setDefenderMinimum || {};
+                context.setDefenderMinimum[player.name] = player.defenderMinimum;
+                player.defenderMinimum = value;
+            },
+            unapply: function(player, context) {
+                player.defenderMinimum = context.setDefenderMinimum[player.name];
+                delete context.setDefenderMinimum[player.name];
+            }
+        };
+    },
     setChallengerLimit: function(value) {
         return {
             apply: function(player, context) {

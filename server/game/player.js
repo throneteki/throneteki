@@ -48,6 +48,7 @@ class Player extends Spectator {
         this.costReducers = [];
         this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, this, 'hand'));
         this.usedPlotsModifier = 0;
+        this.defenderMinimum = 0;
         this.cannotGainGold = false;
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
