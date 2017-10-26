@@ -466,14 +466,11 @@ const Effects = {
     },
     setEventPlacementLocation: function(location) {
         return {
-            apply: function(card, context) {
-                context.setEventPlacementLocation = context.setEventPlacementLocation || {};
-                context.setEventPlacementLocation[card.uuid] = card.eventPlacementLocation;
+            apply: function(card) {
                 card.eventPlacementLocation = location;
             },
-            unapply: function(card, context) {
-                card.eventPlacementLocation = context.setEventPlacementLocation[card.uuid];
-                delete context.setEventPlacementLocation[card.uuid];
+            unapply: function(card) {
+                card.eventPlacementLocation = 'discard pile';
             }
         };
     },
@@ -827,8 +824,22 @@ const Effects = {
             }
         };
     },
+    canPlay: function(card) {
+        return {
+            apply: function(player, context) {
+                let playableLocation = new PlayableLocation('play', c => c === card);
+                context.canPlay = context.canPlay || {};
+                context.canPlay[player.name] = playableLocation;
+                player.playableLocations.push(playableLocation);
+            },
+            unapply: function(player, context) {
+                player.playableLocations = _.reject(player.playableLocations, l => l === context.canPlay[player.name]);
+                delete context.canPlay[player.name];
+            }
+        };
+    },
     canMarshalFrom: function(p, location) {
-        var playableLocation = new PlayableLocation('marshal', p, location);
+        let playableLocation = new PlayableLocation('marshal', card => card.controller === p && card.location === location);
         return {
             apply: function(player) {
                 player.playableLocations.push(playableLocation);
@@ -841,7 +852,7 @@ const Effects = {
     canPlayFromOwn: function(location) {
         return {
             apply: function(player, context) {
-                let playableLocation = new PlayableLocation('play', player, location);
+                let playableLocation = new PlayableLocation('play', card => card.controller === player && card.location === location);
                 context.canPlayFromOwn = context.canPlayFromOwn || {};
                 context.canPlayFromOwn[player.name] = playableLocation;
                 player.playableLocations.push(playableLocation);

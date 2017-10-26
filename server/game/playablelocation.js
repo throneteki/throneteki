@@ -1,13 +1,11 @@
 class PlayableLocation {
-    constructor(playingType, player, location) {
+    constructor(playingType, predicate) {
         this.playingType = playingType;
-        this.player = player;
-        this.location = location;
+        this.predicate = predicate;
     }
 
     contains(card) {
-        var pile = this.player.getSourceList(this.location);
-        return pile.contains(card);
+        return this.predicate(card);
     }
 }
 
