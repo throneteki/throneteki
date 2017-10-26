@@ -35,7 +35,6 @@ module.exports = (env) => {
                 'jquery-nearest',
                 'moment',
                 'prop-types',
-                'query-string',
                 'socket.io-client',
                 'underscore'
             ]
