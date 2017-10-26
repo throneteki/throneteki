@@ -5,11 +5,12 @@ class SpecificCardCost {
     }
 
     canPay(context) {
-        return this.action.isEligible(this.cardFunc(), context);
+        let card = this.cardFunc(context);
+        return this.action.isEligible(card, context);
     }
 
     resolve(context, result = { resolved: false }) {
-        let card = this.cardFunc();
+        let card = this.cardFunc(context);
         context.costs[this.action.name] = card;
 
         result.resolved = true;
