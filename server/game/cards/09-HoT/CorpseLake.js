@@ -4,7 +4,7 @@ class CorpseLake extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardsDiscarded: event =>
+                onCardDiscarded: event =>
                     event.originalLocation === 'draw deck'
                     && event.card.getType() === 'character'
                     && event.card.controller !== this.controller
