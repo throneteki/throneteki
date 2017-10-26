@@ -25,7 +25,7 @@ module.exports = (env) => {
     // Configuration for client-side bundle suitable for running in browsers
     const clientBundleOutputDir = './public';
     const clientBundleConfig = merge(sharedConfig(), {
-        entry: { 'bundle': ['./Client/index.jsx', './less/site.less'] },
+        entry: { 'bundle': ['./client/index.jsx', './less/site.less'] },
         module: {
             rules: isDevBuild ? [
                 {
