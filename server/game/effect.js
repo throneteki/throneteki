@@ -90,7 +90,7 @@ class Effect {
     }
 
     isValidTarget(target) {
-        if(this.targetType === 'card') {
+        if(this.targetType === 'card' && target.getGameElementType() === 'card') {
             if(this.targetLocation === 'play area' && !PlayAreaLocations.includes(target.location)) {
                 return false;
             }

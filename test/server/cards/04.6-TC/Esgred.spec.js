@@ -3,7 +3,7 @@ describe('Esgred', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('greyjoy', [
                 'Trading with the Pentoshi',
-                'Esgred', 'Asha Greyjoy'
+                'Esgred', 'Asha Greyjoy (Core)'
             ]);
             const deck2 = this.buildDeck('lannister', [
                 'Trading with the Pentoshi',

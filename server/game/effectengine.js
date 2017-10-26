@@ -34,7 +34,8 @@ class EffectEngine {
     }
 
     getTargets() {
-        var validTargets = this.game.allCards.filter(card => card.location === 'play area' || card.location === 'active plot' || card.location === 'hand');
+        const validLocations = ['active plot', 'being played', 'hand', 'play area'];
+        let validTargets = this.game.allCards.filter(card => validLocations.includes(card.location));
         return validTargets.concat(this.game.getPlayers()).concat([this.game]);
     }
 
