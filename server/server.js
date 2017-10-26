@@ -17,7 +17,7 @@ const Raven = require('raven');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
-const webpackConfig = require('../webpack.config.js');
+const webpackConfig = require('../webpack.config.js')();
 const monk = require('monk');
 const _ = require('underscore');
 
@@ -99,7 +99,7 @@ class Server {
                 req.user = _.omit(req.user, 'blockList');
             }
 
-            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token, production: !this.isDeveloping });
+            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token });
         });
 
         // Define error middleware last
