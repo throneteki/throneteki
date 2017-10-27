@@ -12,6 +12,7 @@ class HighgardenCourtier extends DrawCard {
                     event.card.kneeled
                 )
             },
+            cost: ability.costs.kneelSelf(),
             limit: ability.limit.perPhase(1),
             handler: context => {
                 this.game.addMessage('{0} kneels {1} to stand {2}', this.controller, this, context.event.card);
