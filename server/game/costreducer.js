@@ -6,7 +6,7 @@ class CostReducer {
         this.source = source;
         this.uses = 0;
         this.limit = properties.limit;
-        this.match = properties.match;
+        this.match = properties.match || (() => true);
         this.amount = properties.amount || 1;
         this.playingTypes = _.isArray(properties.playingTypes) ? properties.playingTypes : [properties.playingTypes];
         if(this.limit) {
