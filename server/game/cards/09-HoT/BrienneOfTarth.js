@@ -9,7 +9,7 @@ class BrienneOfTarth extends DrawCard {
             handler: () => {
                 if(this.getStrength() >= 10 && this.controller.anyCardsInPlay(card => card !== this && card.getType() === 'character')) {
                     this.game.promptForSelect(this.controller, {
-                        cardCondition: card => card !== this && card.getType() === 'character',
+                        cardCondition: card => card !== this && card.location === 'play area' && card.getType() === 'character',
                         onSelect: (player, card) => this.activateBonuses(card),
                         onCancel: () => this.activateBonuses(null),
                         source: this
