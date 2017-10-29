@@ -53,7 +53,7 @@ class NothingBurnsLikeTheCold extends PlotCard {
         this.game.promptForSelect(currentPlayer, {
             activePromptTitle: 'Select a location',
             source: this,
-            cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'location',
+            cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'location' && !card.isLimited(),
             onSelect: (player, card) => this.onSelectLocation(player, attachment, card),
             onCancel: (player) => this.onSelectLocation(player, attachment, null)
         });
