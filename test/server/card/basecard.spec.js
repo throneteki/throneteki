@@ -213,4 +213,44 @@ describe('BaseCard', function () {
             });
         });
     });
+
+    describe('tokens', function() {
+        it('should not have tokens by default', function() {
+            expect(this.card.hasToken('foo')).toBe(false);
+        });
+
+        describe('adding a token', function() {
+            it('should increase the tokens by the given amount', function() {
+                this.card.addToken('foo', 1);
+
+                expect(this.card.tokens.foo).toBe(1);
+                expect(this.card.hasToken('foo')).toBe(true);
+            });
+        });
+
+        describe('removing an existing tokens', function() {
+            beforeEach(function() {
+                this.card.addToken('foo', 2);
+            });
+
+            it('should reduce the tokens by the given amount', function() {
+                this.card.removeToken('foo', 1);
+
+                expect(this.card.tokens.foo).toBe(1);
+                expect(this.card.hasToken('foo')).toBe(true);
+
+                this.card.removeToken('foo', 1);
+                expect(this.card.hasToken('foo')).toBe(false);
+            });
+        });
+
+        describe('remove a missing token', function() {
+            it('should not set the token value', function() {
+                this.card.removeToken('foo', 1);
+
+                expect(this.card.tokens.foo).toBeUndefined();
+                expect(this.card.hasToken('foo')).toBe(false);
+            });
+        });
+    });
 });

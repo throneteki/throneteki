@@ -525,6 +525,10 @@ class BaseCard {
     }
 
     removeToken(type, number) {
+        if(_.isUndefined(this.tokens[type])) {
+            return;
+        }
+
         this.tokens[type] -= number;
 
         if(this.tokens[type] < 0) {
