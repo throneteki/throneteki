@@ -17,7 +17,7 @@ class RooseBolton extends DrawCard {
                 activePromptTitle: 'Select character(s)',
                 maxStat: () => this.strengthAtInitiation,
                 cardStat: card => card.getStrength(),
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller !== this.controller,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller === this.game.currentChallenge.loser,
                 gameAction: 'kill'
             },
             handler: context => {

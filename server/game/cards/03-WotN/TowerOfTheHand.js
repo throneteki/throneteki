@@ -11,8 +11,7 @@ class TowerOfTheHand extends DrawCard {
                 ability.costs.returnToHand(card => this.isParticipatingLannister(card))
             ],
             target: {
-                activePromptTitle: 'Select a character',
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller !== this.controller &&
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.controller === this.game.currentChallenge.loser &&
                                                   (!context.costs.returnToHand || card.getPrintedCost() < context.costs.returnToHand.getPrintedCost())
             },
             handler: context => {

@@ -17,7 +17,7 @@ class DagmerCleftjaw extends DrawCard {
                     card.getType() === 'location' &&
                     card.getCost() <= 3 &&
                     !card.isLimited() &&
-                    card.controller !== this.controller)
+                    card.controller === this.game.currentChallenge.loser)
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to take control of {2} instead of normal claim effects', context.player, this, context.target);

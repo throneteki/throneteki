@@ -9,9 +9,8 @@ class TheQueensAssassin extends DrawCard {
             chooseOpponent: opponent => opponent.hand.size() < this.controller.hand.size(),
             handler: context => {
                 this.game.promptForSelect(context.opponent, {
-                    activePromptTitle: 'Select a character',
                     source: this,
-                    cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character',
+                    cardCondition: card => card.location === 'play area' && card.controller === context.opponent && card.getType() === 'character',
                     gameAction: 'kill',
                     onSelect: (p, card) => this.onCardSelected(p, card)
                 });

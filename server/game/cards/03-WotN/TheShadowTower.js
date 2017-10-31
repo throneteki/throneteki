@@ -8,8 +8,7 @@ class TheShadowTower extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller !== this.controller
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller === this.game.currentChallenge.loser
             },
             handler: context => {
                 this.game.addMessage('{0} kneels {1} to make {2} unable to be declared as attacker this phase',

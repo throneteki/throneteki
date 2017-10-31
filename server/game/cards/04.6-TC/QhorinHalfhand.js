@@ -11,8 +11,7 @@ class QhorinHalfhand extends DrawCard {
                 )
             },
             target: {
-                activePromptTitle: 'Select a character',
-                cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' &&
+                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'character' &&
                                        !card.isUnique() && card.getStrength() < this.getStrength(),
                 gameAction: 'kill'
             },

@@ -13,7 +13,7 @@ class RaidingTheBayOfIce extends DrawCard {
                     card.location === 'play area' &&
                     !card.isLimited() &&
                     card.getType() === 'location' &&
-                    card.controller !== this.controller)
+                    card.controller === this.game.currentChallenge.loser)
             },
             handler: context => {
                 context.target.owner.moveCardToTopOfDeck(context.target);

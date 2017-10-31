@@ -5,7 +5,7 @@ class BalonGreyjoy extends DrawCard {
         this.persistentEffect({
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
             match: card => (
-                card.controller !== this.controller &&
+                this.game.currentChallenge.isDefending(card) &&
                 card.getType() === 'character' &&
                 card.getStrength() < this.getStrength()
             ),

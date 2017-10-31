@@ -11,9 +11,8 @@ class TheSeastoneChair extends DrawCard {
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.controller !== this.controller && card.attachments.size() === 0,
+                                       card.controller === this.game.currentChallenge.loser && card.attachments.size() === 0,
                 gameAction: 'kill'
             },
             handler: context => {
