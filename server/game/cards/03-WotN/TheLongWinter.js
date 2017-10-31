@@ -39,14 +39,18 @@ class TheLongWinter extends PlotCard {
     proceedToNextStep() {
         if(this.remainingPlayers.length > 0) {
             var currentPlayer = this.remainingPlayers.shift();
-            this.game.promptForSelect(currentPlayer, {
-                activePromptTitle: 'Select a card',
-                source: this,
-                cardCondition: card => card.controller === currentPlayer && card.getPower() > 0,
-                cardType: ['attachment', 'character', 'faction', 'location'],
-                onSelect: (player, card) => this.onCardSelected(player, card),
-                onCancel: (player) => this.cancelSelection(player)
-            });
+            if(currentPlayer.getTotalPower() >= 1) {
+                this.game.promptForSelect(currentPlayer, {
+                    activePromptTitle: 'Select a card',
+                    source: this,
+                    cardCondition: card => card.controller === currentPlayer && card.getPower() > 0,
+                    cardType: ['attachment', 'character', 'faction', 'location'],
+                    onSelect: (player, card) => this.onCardSelected(player, card),
+                    onCancel: (player) => this.cancelSelection(player)
+                });
+            } else {
+                this.game.addMessage('{0} does not have any power to discard for {1}', currentPlayer, this);
+            }
         } else {
             this.doPower();
         }
