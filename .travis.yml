@@ -12,7 +12,6 @@ addons:
     - gcc-4.9
     - g++-4.9
     - libzmq-dev
-    - libmagick++-dev
 script:
   - npm test
   - npm run lint
