@@ -2,6 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const merge = require('webpack-merge');
+var AssetsPlugin = require('assets-webpack-plugin');
+var assetsPluginInstance = new AssetsPlugin({ filename: 'assets.json' });
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -10,7 +12,7 @@ module.exports = (env) => {
         stats: { modules: false },
         resolve: { extensions: ['.js', '.jsx'] },
         output: {
-            filename: '[name].js',
+            filename: isDevBuild ? '[name].js' : '[name]-[hash].js',
             publicPath: '/'
         },
         module: {
@@ -59,8 +61,9 @@ module.exports = (env) => {
                 moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]')
             })
         ] : [
-            new ExtractTextPlugin('site.css'),
-            new webpack.optimize.UglifyJsPlugin()
+            new ExtractTextPlugin('site-[hash].css'),
+            new webpack.optimize.UglifyJsPlugin(),
+            assetsPluginInstance
         ])
     });
 
