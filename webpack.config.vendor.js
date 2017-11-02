@@ -35,6 +35,8 @@ module.exports = (env) => {
                 'jquery',
                 'jquery-migrate',
                 'jquery-nearest',
+                'jquery-validation',
+                'jquery-validation-unobtrusive',
                 'moment',
                 'prop-types',
                 'socket.io-client',

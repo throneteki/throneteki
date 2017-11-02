@@ -3,19 +3,14 @@ import PropTypes from 'prop-types';
 
 class Input extends React.Component {
     render() {
-        let inputControl = (
+        const inputControl = (
             <div>
                 <label htmlFor={ this.props.name } className={ this.props.labelClass + ' control-label' }>{ this.props.label }</label>
                 <div className={ this.props.fieldClass }>
-                    <input type={ this.props.type }
-                        ref={ this.props.name }
-                        className='form-control'
-                        id={ this.props.name }
-                        placeholder={ this.props.placeholder }
-                        value={ this.props.value }
-                        onChange={ this.props.onChange }
-                        onBlur={ this.props.onBlur } />
-                    { this.props.validationMessage ? <span className='help-block'>{ this.props.validationMessage } </span> : null }
+                    <input name={ this.props.name } type={ this.props.type } className='form-control' id={ this.props.name }
+                        placeholder={ this.props.placeholder } value={ this.props.value } onChange={ this.props.onChange } onBlur={ this.props.onBlur }
+                        { ...this.props.validationAttributes } />
+                    <span className='text-danger' data-valmsg-replace='true' data-valmsg-for={ this.props.name } />
                 </div>
                 { this.props.children }
             </div>
@@ -45,7 +40,7 @@ Input.propTypes = {
     onChange: PropTypes.func,
     placeholder: PropTypes.string,
     type: PropTypes.oneOf(['text', 'password']),
-    validationMessage: PropTypes.string,
+    validationAttributes: PropTypes.object,
     value: PropTypes.string
 };
 

@@ -8,7 +8,7 @@ import io from 'socket.io-client';
 
 import Login from './Login.jsx';
 import Logout from './Logout.jsx';
-import Register from './Register.jsx';
+import Register from './pages/Register.jsx';
 import Lobby from './Lobby.jsx';
 import Decks from './Decks.jsx';
 import AddDeck from './AddDeck.jsx';
