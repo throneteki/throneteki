@@ -1,6 +1,6 @@
 /*eslint no-console:0 */
 const fs = require('fs');
-const imagemagick = require('imagemagick-native');
+const jimp = require('jimp');
 const request = require('request');
 
 class CardgameDbImageSource {
@@ -20,10 +20,11 @@ class CardgameDbImageSource {
             }
 
             console.log('Downloading image for ' + card.code);
-            fs.writeFileSync(imagePath, imagemagick.convert({
-                srcData: body,
-                format: 'PNG'
-            }));
+            jimp.read(body).then(lenna => {
+                lenna.write(imagePath);
+            }).catch(err => {
+                console.log(`Error converting image for ${card.code}: ${err}`);
+            });
         });
     }
 }
