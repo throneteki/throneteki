@@ -30,6 +30,12 @@ export class Register extends React.Component {
         this.validator = $('form').validate();
     }
 
+    componentWillReceiveProps(props) {
+        // this.props.register(data.user, data.token);
+        //     this.props.socket.emit('authenticate', data.token);
+        //     this.props.navigate('/');
+    }
+
     componentWillUnmount() {
         this.validator.destroy();
     }
@@ -48,25 +54,7 @@ export class Register extends React.Component {
             return;
         }
 
-        this.setState({ error: '' });
-
-        $.ajax({
-            url: '/api/account/register',
-            type: 'POST',
-            data: JSON.stringify({ username: this.state.username, password: this.state.password, email: this.state.email }),
-            contentType: 'application/json'
-        }).done((data) => {
-            if(!data.success) {
-                this.setState({ error: data.message });
-                return;
-            }
-
-            this.props.register(data.user, data.token);
-            this.props.socket.emit('authenticate', data.token);
-            this.props.navigate('/');
-        }).fail(() => {
-            this.setState({ error: 'Could not communicate with the server.  Please try again later.' });
-        });
+        this.props.registerAccount({ username: this.state.username, password: this.state.password, email: this.state.email });
     }
 
     render() {
@@ -102,6 +90,7 @@ Register.displayName = 'Register';
 Register.propTypes = {
     navigate: PropTypes.func,
     register: PropTypes.func,
+    registerAccount: PropTypes.func,
     socket: PropTypes.object
 };
 
