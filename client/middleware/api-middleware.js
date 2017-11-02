@@ -30,7 +30,8 @@ export default function callAPIMiddleware({ dispatch, getState }) {
         }
 
         dispatch(Object.assign({}, payload, {
-            type: 'API_LOADING'
+            type: 'API_LOADING',
+            request: requestType
         }));
 
         return callAPI().then(
@@ -39,7 +40,8 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                     return dispatch(Object.assign({}, payload, {
                         status: 200,
                         message: response.message,
-                        type: 'API_FAILURE'
+                        type: 'API_FAILURE',
+                        request: requestType
                     }));
                 }
 
@@ -49,7 +51,8 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                 }));
 
                 dispatch(Object.assign({}, payload, {
-                    type: 'API_LOADED'
+                    type: 'API_LOADED',
+                    request: requestType
                 }));
 
                 return ret;
@@ -58,13 +61,15 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                 dispatch(Object.assign({}, payload, {
                     status: error.status,
                     message: 'An error occured communicating with the server.  Please try again later.',
-                    type: 'API_LOADED'
+                    type: 'API_LOADED',
+                    request: requestType
                 }));
 
                 dispatch(Object.assign({}, payload, {
                     status: error.status,
                     message: 'An error occured communicating with the server.  Please try again later.',
-                    type: 'API_FAILURE'
+                    type: 'API_FAILURE',
+                    request: requestType
                 }));
             }
         );

@@ -1,33 +1,29 @@
 export default function(state = {}, action) {
-    let loadingCount = state.loadingCount || 0;
+    let retState = Object.assign({}, state);
 
     switch(action.type) {
         case 'API_FAILURE':
-            loadingCount--;
-
-            return Object.assign({}, state, {
+            retState[action.request] = {
                 status: action.status,
-                message: action.message,
-                loading: loadingCount > 0,
-                loadingCount: loadingCount
-            });
+                message: action.message
+            };
+
+            return retState;
         case 'API_LOADED':
-            loadingCount--;
-
-            return Object.assign({}, state, {
-                loading: loadingCount > 0,
-                loadingCount: loadingCount,
-                message: undefined
-            });
+            retState[action.request] = {
+                loading: false,
+                message: undefined,
+                status: action.status
+            };
+            return retState;
         case 'API_LOADING':
-            loadingCount++;
-
-            return Object.assign({}, state, {
+            retState[action.request] = {
                 status: undefined,
                 message: undefined,
-                loading: loadingCount > 0,
-                loadingCount: loadingCount
-            });
+                loading: true
+            };
+
+            return retState;
     }
 
     return state;

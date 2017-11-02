@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import AlertPanel from '../SiteComponents/AlertPanel';
 import Input from '../FormComponents/Input';
@@ -31,6 +31,9 @@ export class Register extends React.Component {
     }
 
     componentWillReceiveProps(props) {
+        if(props.accountRegistered) {
+
+        }
         // this.props.register(data.user, data.token);
         //     this.props.socket.emit('authenticate', data.token);
         //     this.props.navigate('/');
@@ -64,7 +67,7 @@ export class Register extends React.Component {
                 type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
         });
 
-        var errorBar = this.state.error ? <AlertPanel type='error' message={ this.state.error } /> : null;
+        var errorBar = this.props.apiMessage ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
 
         return (
             <div className='col-sm-6 col-sm-offset-3'>
@@ -88,6 +91,8 @@ export class Register extends React.Component {
 
 Register.displayName = 'Register';
 Register.propTypes = {
+    accountRegistered: PropTypes.bool,
+    apiMessage: PropTypes.string,
     navigate: PropTypes.func,
     register: PropTypes.func,
     registerAccount: PropTypes.func,
@@ -96,6 +101,8 @@ Register.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        accountRegistered: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success : false,
+        apiMessage: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.message : undefined,
         socket: state.socket.socket
     };
 }
