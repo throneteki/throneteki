@@ -8,7 +8,7 @@ class ParentCost {
     }
 
     resolve(context, result = { resolved: false }) {
-        context.costs[this.action.name] = context.source.parent;
+        context.addCost(this.action.name, context.source.parent);
 
         result.resolved = true;
         result.value = context.source.parent;
@@ -16,7 +16,7 @@ class ParentCost {
     }
 
     pay(context) {
-        this.action.pay([context.costs[this.action.name]], context);
+        this.action.pay(context.getCostValuesFor(this.action.name), context);
     }
 }
 

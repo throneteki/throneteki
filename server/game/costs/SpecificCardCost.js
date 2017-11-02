@@ -11,7 +11,7 @@ class SpecificCardCost {
 
     resolve(context, result = { resolved: false }) {
         let card = this.cardFunc(context);
-        context.costs[this.action.name] = card;
+        context.addCost(this.action.name, card);
 
         result.resolved = true;
         result.value = card;
@@ -19,7 +19,7 @@ class SpecificCardCost {
     }
 
     pay(context) {
-        this.action.pay([context.costs[this.action.name]], context);
+        this.action.pay(context.getCostValuesFor(this.action.name), context);
     }
 }
 

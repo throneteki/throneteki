@@ -8,7 +8,7 @@ class FactionCardCost {
     }
 
     resolve(context, result = { resolved: false }) {
-        context.costs[this.action.name] = context.player.faction;
+        context.addCost(this.action.name, context.player.faction);
 
         result.resolved = true;
         result.value = context.player.faction;
@@ -16,7 +16,7 @@ class FactionCardCost {
     }
 
     pay(context) {
-        this.action.pay([context.costs[this.action.name]], context);
+        this.action.pay(context.getCostValuesFor(this.action.name), context);
     }
 }
 
