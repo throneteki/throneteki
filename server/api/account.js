@@ -59,67 +59,95 @@ function sendEmail(address, email) {
     });
 }
 
+function validateUserName(username) {
+    if(!username) {
+        return 'You must specify a username';
+    }
+
+    if(username.length < 3 || username.length > 15) {
+        return 'Username must be at least 3 characters and no more than 15 characters long';
+    }
+
+    if(!username.match(/^[A-Za-z0-9_-]+$/)) {
+        return 'Usernames must only use the characters a-z, 0-9, _ and -';
+    }
+
+    return undefined;
+}
+
+function validateEmail(email) {
+    if(!email) {
+        return 'You must specify an email address';
+    }
+
+    if(!email.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+        return 'Please enter a valid email address';
+    }
+
+    return undefined;
+}
+
+function validatePassword(password) {
+    if(!password) {
+        return 'You must specify a password';
+    }
+
+    if(password.length < 6) {
+        return 'Password must be at least 6 characters';
+    }
+
+    return undefined;
+}
+
 module.exports.init = function(server) {
-    server.post('/api/account/register', function(req, res) {
-        if(!req.body.password) {
-            res.send({ success: false, message: 'No password specified' });
+    server.post('/api/account/register', wrapAsync(async (req, res, next) => {
+        let message = validateUserName(req.body.username);
+        if(message) {
+            res.send({ success: false, message: message });
 
-            return Promise.reject('No password');
+            return next();
         }
 
-        if(!req.body.email) {
-            res.send({ success: false, message: 'No email specified' });
-
-            return Promise.reject('No email');
+        message = validateEmail(req.body.email);
+        if(message) {
+            res.send({ success: false, message: message });
+            return next();
         }
 
-        if(!req.body.username) {
-            res.send({ success: false, message: 'No username specified' });
-
-            return Promise.reject('No username');
+        message = validatePassword(req.body.password);
+        if(message) {
+            res.send({ success: false, message: message });
+            return next();
         }
 
-        userService.getUserByEmail(req.body.email)
-            .then(user => {
-                if(user) {
-                    res.send({ success: false, message: 'An account with that email already exists, please use another' });
+        let user = await userService.getUserByEmail(req.body.email);
+        if(user) {
+            res.send({ success: false, message: 'An account with that email already exists, please use another' });
 
-                    return Promise.reject('Account email exists');
-                }
+            return next();
+        }
 
-                return userService.getUserByUsername(req.body.username);
-            })
-            .then(user => {
-                if(user) {
-                    res.send({ success: false, message: 'An account with that name already exists, please choose another' });
+        user = await userService.getUserByUsername(req.body.username);
+        if(user) {
+            res.send({ success: false, message: 'An account with that name already exists, please choose another' });
 
-                    return Promise.reject('Account exists');
-                }
-            })
-            .then(() => {
-                return hashPassword(req.body.password, 10);
-            })
-            .then(passwordHash => {
-                let user = {
-                    password: passwordHash,
-                    registered: new Date(),
-                    username: req.body.username,
-                    email: req.body.email,
-                    emailHash: crypto.createHash('md5').update(req.body.email).digest('hex')
-                };
+            return next();
+        }
 
-                return userService.addUser(user);
-            })
-            .then(user => {
-                return loginUser(req, user);
-            })
-            .then(() => {
-                res.send({ success: true, user: Settings.getUserWithDefaultsSet(req.body), token: jwt.sign(req.user, config.secret) });
-            })
-            .catch(() => {
-                res.send({ success: false, message: 'An error occured registering your account' });
-            });
-    });
+        let passwordHash = await hashPassword(req.body.password, 10);
+        let newUser = {
+            password: passwordHash,
+            registered: new Date(),
+            username: req.body.username,
+            email: req.body.email,
+            emailHash: crypto.createHash('md5').update(req.body.email).digest('hex')
+        };
+
+        user = await userService.addUser(newUser);
+        await loginUser(req, user);
+
+        res.send({ success: true, user: Settings.getUserWithDefaultsSet(user), token: jwt.sign(req.user, config.secret) });
+    }));
 
     server.post('/api/account/check-username', function(req, res) {
         userService.getUserByUsername(req.body.username)
