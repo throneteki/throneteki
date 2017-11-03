@@ -31,6 +31,11 @@ class Server {
         this.userService = new UserService(db);
         this.isDeveloping = isDeveloping;
         this.server = http.Server(app);
+
+        this.vendorAssets = require('../vendor-assets.json');
+        if(!this.isDeveloping) {
+            this.assets = require('../assets.json');
+        }
     }
 
     init() {
@@ -99,14 +104,17 @@ class Server {
                 req.user = _.omit(req.user, 'blockList');
             }
 
-            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user), token: token });
+            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user),
+                token: token, vendorAssets: this.vendorAssets, assets: this.assets });
         });
 
         // Define error middleware last
-        app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
-            res.status(500).send({ success: false });
-            logger.error(err);
-        });
+        if(!this.isDeveloping) {
+            app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
+                res.status(500).send({ success: false });
+                logger.error(err);
+            });
+        }
 
         return this.server;
     }

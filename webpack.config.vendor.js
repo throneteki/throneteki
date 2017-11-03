@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+var AssetsPlugin = require('assets-webpack-plugin');
+var assetsPluginInstance = new AssetsPlugin({ filename: 'vendor-assets.json' });
 
 const BUILD_DIR = path.resolve(__dirname, 'public');
 
@@ -40,8 +42,8 @@ module.exports = (env) => {
             ]
         },
         output: {
-            publicPath: 'dist/',
-            filename: '[name].js',
+            publicPath: '/',
+            filename: '[name]-[hash].js',
             library: '[name]_[hash]'
         },
         plugins: [
@@ -49,7 +51,8 @@ module.exports = (env) => {
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
-            })
+            }),
+            assetsPluginInstance
         ]
     };
 

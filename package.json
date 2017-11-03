@@ -81,6 +81,7 @@
     "zmq": "^2.15.3"
   },
   "devDependencies": {
+    "assets-webpack-plugin": "^3.5.1",
     "autoprefixer": "^7.1.4",
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
