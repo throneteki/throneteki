@@ -10,7 +10,7 @@ class PutToTheTorch extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'location',
+                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'location',
                 gameAction: 'discard'
             },
             handler: (context) => {

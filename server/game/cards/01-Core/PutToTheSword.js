@@ -9,7 +9,7 @@ class PutToTheSword extends DrawCard {
                                          event.challenge.attackingPlayer === this.controller && event.challenge.strengthDifference >= 5
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character',
+                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser && card.getType() === 'character',
                 gameAction: 'kill'
             },
             handler: (context) => {

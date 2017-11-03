@@ -18,7 +18,7 @@ class EuronCrowsEye extends DrawCard {
     }
 
     cardCondition(card) {
-        return card.controller !== this.controller && card.getType() === 'location' && card.location === 'discard pile' && this.controller.canPutIntoPlay(card);
+        return card.controller === this.game.currentChallenge.loser && card.getType() === 'location' && card.location === 'discard pile' && this.controller.canPutIntoPlay(card);
     }
 }
 

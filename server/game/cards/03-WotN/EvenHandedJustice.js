@@ -6,6 +6,7 @@ class EvenHandedJustice extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Kneel a character for each player',
+            // TODO: Rework for Melee
             targets: {
                 yourCard: {
                     activePromptTitle: 'Select a character of yours',

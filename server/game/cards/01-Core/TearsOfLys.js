@@ -10,7 +10,7 @@ class TearsOfLys extends DrawCard {
             },
             target: {
                 type: 'select',
-                cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
+                cardCondition: card => card.location === 'play area' && card.controller === this.game.currentChallenge.loser &&
                                        card.getType() === 'character' && !card.hasIcon('intrigue')
             },
             handler: context => {

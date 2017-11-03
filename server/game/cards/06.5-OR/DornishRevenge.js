@@ -7,11 +7,10 @@ class DornishRevenge extends DrawCard {
                 onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller
             },
             target: {
-                activePromptTitle: 'Select a character to force as defender',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.controller !== this.controller)
+                    card.controller === this.game.currentChallenge.defendingPlayer)
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({

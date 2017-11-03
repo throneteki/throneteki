@@ -7,10 +7,9 @@ class Spearmaiden extends DrawCard {
                 onAttackersDeclared: event => event.challenge.challengeType === 'military' && event.challenge.isAttacking(this)
             },
             target: {
-                activePromptTitle: 'Select character',
                 cardCondition: card => (
                     card.location === 'play area' &&
-                    card.controller !== this.controller &&
+                    card.controller === this.game.currentChallenge.defendingPlayer &&
                     card.getType() === 'character')
             },
             handler: context => {

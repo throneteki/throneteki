@@ -14,7 +14,7 @@ class WardensOfTheWest extends PlotCard {
                     numCards: 2,
                     activePromptTitle: 'Select 2 cards to discard',
                     source: this,
-                    cardCondition: card => card.controller !== this.controller && card.location === 'hand',
+                    cardCondition: card => card.controller === this.game.currentChallenge.loser && card.location === 'hand',
                     onSelect: (player, cards) => this.onSelect(player, cards),
                     onCancel: (player) => this.cancelSelection(player)
                 });

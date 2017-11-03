@@ -7,6 +7,7 @@ class TywinsStratagem extends DrawCard {
         this.action({
             title: 'Return characters to hand',
             phase: 'challenge',
+            // TODO: Rework for Melee
             targets: {
                 ownToReturn: {
                     activePromptTitle: 'Select a character',
