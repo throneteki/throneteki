@@ -9,7 +9,7 @@ class SelfCost {
     }
 
     resolve(context, result = { resolved: false }) {
-        context.costs[this.action.name] = context.source;
+        context.addCost(this.action.name, context.source);
 
         result.resolved = true;
         result.value = context.source;
@@ -17,7 +17,7 @@ class SelfCost {
     }
 
     pay(context) {
-        this.action.pay([context.costs[this.action.name]], context);
+        this.action.pay(context.getCostValuesFor(this.action.name), context);
     }
 
     canUnpay(context) {

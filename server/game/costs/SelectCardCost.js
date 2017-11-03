@@ -28,7 +28,7 @@ class SelectCardCost {
             selector: this.selector,
             source: context.source,
             onSelect: (player, cards) => {
-                context.costs[this.action.name] = cards;
+                context.addCost(this.action.name, cards);
                 result.value = true;
                 result.resolved = true;
 
@@ -44,7 +44,7 @@ class SelectCardCost {
     }
 
     pay(context) {
-        let selected = context.costs[this.action.name];
+        let selected = context.getCostValuesFor(this.action.name);
         let selectedAsArray = Array.isArray(selected) ? selected : [selected];
         this.action.pay(selectedAsArray, context);
     }
