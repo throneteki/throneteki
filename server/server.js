@@ -109,12 +109,13 @@ class Server {
         });
 
         // Define error middleware last
-        if(!this.isDeveloping) {
-            app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
+        app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
+            if(!res.headersSent) {
                 res.status(500).send({ success: false });
-                logger.error(err);
-            });
-        }
+            }
+
+            logger.error(err);
+        });
 
         return this.server;
     }
@@ -135,9 +136,7 @@ class Server {
         this.userService.getUserByUsername(username)
             .then(user => {
                 if(!user) {
-                    done(null, false, { message: 'Invalid username/password' });
-
-                    return Promise.reject('Failed auth');
+                    return done(null, false, { message: 'Invalid username/password' });
                 }
 
                 bcrypt.compare(password, user.password, function(err, valid) {
@@ -171,7 +170,7 @@ class Server {
             .catch(err => {
                 done(err);
 
-                logger.info(err);
+                logger.error(err);
             });
     }
 

@@ -71,8 +71,8 @@ export class Register extends React.Component {
                 type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
         });
 
-        var errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
-        var successBar = this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null;
+        let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+        let successBar = this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null;
 
         return (
             <div className='col-sm-6 col-sm-offset-3'>
@@ -116,7 +116,7 @@ function mapStateToProps(state) {
         accountRegistered: state.account.registered,
         apiLoading: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.loading : undefined,
         apiMessage: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.message : undefined,
-        apiSuccess: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success || undefined : undefined,
+        apiSuccess: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success : undefined,
         registeredToken: state.account.token,
         registeredUser: state.account.registeredUser,
         socket: state.socket.socket

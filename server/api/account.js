@@ -169,8 +169,36 @@ module.exports.init = function(server) {
         res.send({ success: true });
     });
 
-    server.post('/api/account/login', passport.authenticate('local'), function(req, res) {
-        res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
+    server.post('/api/account/login', (req, res, next) => {
+        if(!req.body.username) {
+            res.send({ success: false, message: 'Username must be specified' });
+
+            return next();
+        }
+
+        if(!req.body.password) {
+            res.send({ success: false, message: 'Password must be specified' });
+
+            return next();
+        }
+
+        passport.authenticate('local', (err, user) => {
+            if(err) {
+                return next(err);
+            }
+
+            if(!user) {
+                return res.status(401).send({ success: false, message: 'Invalid username or password' });
+            }
+
+            req.logIn(user, err => {
+                if(err) {
+                    return next(err);
+                }
+
+                res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
+            });
+        })(req, res, next);
     });
 
     server.post('/api/account/password-reset-finish', function(req, res) {

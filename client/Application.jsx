@@ -6,9 +6,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
 
-import Login from './Login.jsx';
+import Login from './pages/Login';
 import Logout from './Logout.jsx';
-import Register from './pages/Register.jsx';
+import Register from './pages/Register';
 import Lobby from './Lobby.jsx';
 import Decks from './Decks.jsx';
 import AddDeck from './AddDeck.jsx';

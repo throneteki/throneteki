@@ -5,7 +5,8 @@ export default function(state = {}, action) {
         case 'API_FAILURE':
             retState[action.request] = {
                 status: action.status,
-                message: action.message
+                message: action.message,
+                success: false
             };
 
             return retState;
@@ -13,7 +14,8 @@ export default function(state = {}, action) {
             retState[action.request] = {
                 loading: false,
                 message: undefined,
-                status: action.status
+                status: action.status,
+                success: true
             };
             return retState;
         case 'API_LOADING':

@@ -10,6 +10,16 @@ export default function(state = {}, action) {
                 registeredUser: action.response.user,
                 token: action.response.token
             });
+        case 'LOGIN_ACCOUNT':
+            return Object.assign({}, state, {
+                loggedIn: false
+            });
+        case 'ACCOUNT_LOGGEDIN':
+            return Object.assign({}, state, {
+                loggedIn: true,
+                loggedInUser: action.response.user,
+                token: action.response.token
+            });
     }
 
     return state;
