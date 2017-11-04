@@ -20,7 +20,8 @@ export class Register extends React.Component {
             username: '',
             email: '',
             password: '',
-            password1: ''
+            password1: '',
+            successMessage: ''
         };
     }
 
@@ -32,11 +33,15 @@ export class Register extends React.Component {
 
     componentWillReceiveProps(props) {
         if(props.accountRegistered) {
+            this.setState({ successMessage: 'Your account was successfully registered.  You will be redirected shortly.' });
+            this.props.register(props.registeredUser, props.registeredToken);
+            this.props.socket.emit('authenticate', props.registeredToken);
 
+            setTimeout(() => {
+                this.setState({ successMessage: '' });
+                this.props.navigate('/');
+            }, 2000);
         }
-        // this.props.register(data.user, data.token);
-        //     this.props.socket.emit('authenticate', data.token);
-        //     this.props.navigate('/');
     }
 
     componentWillUnmount() {
@@ -67,11 +72,13 @@ export class Register extends React.Component {
                 type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
         });
 
-        var errorBar = this.props.apiMessage ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+        var errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+        var successBar = this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null;
 
         return (
             <div className='col-sm-6 col-sm-offset-3'>
                 { errorBar }
+                { successBar }
                 <div className='panel-title'>
                     Register an account
                 </div>
@@ -93,16 +100,22 @@ Register.displayName = 'Register';
 Register.propTypes = {
     accountRegistered: PropTypes.bool,
     apiMessage: PropTypes.string,
+    apiSuccess: PropTypes.bool,
     navigate: PropTypes.func,
     register: PropTypes.func,
     registerAccount: PropTypes.func,
+    registeredToken: PropTypes.string,
+    registeredUser: PropTypes.object,
     socket: PropTypes.object
 };
 
 function mapStateToProps(state) {
     return {
-        accountRegistered: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success : false,
+        accountRegistered: state.account.registered,
         apiMessage: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.message : undefined,
+        apiSuccess: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success || undefined : undefined,
+        registeredToken: state.account.token,
+        registeredUser: state.account.registeredUser,
         socket: state.socket.socket
     };
 }
