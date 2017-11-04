@@ -19,7 +19,7 @@ import GameLobby from './GameLobby.jsx';
 import GameBoard from './GameBoard.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import About from './About.jsx';
-import ForgotPassword from './ForgotPassword.jsx';
+import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 import Profile from './Profile.jsx';
 import NewsAdmin from './NewsAdmin.jsx';

@@ -263,59 +263,42 @@ module.exports.init = function(server) {
             });
     });
 
-    server.post('/api/account/password-reset', function(req, res) {
+    server.post('/api/account/password-reset', wrapAsync(async (req, res) => {
         let emailUser;
         let resetToken;
-        let captchaDone = false;
 
-        util.httpRequest('https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha)
-            .then(response => {
-                let answer = JSON.parse(response);
+        let response = await util.httpRequest('https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha);
+        let answer = JSON.parse(response);
 
-                if(!answer.success) {
-                    return res.send({ success: false, message: 'Please complete the captcha correctly' });
-                }
+        if(!answer.success) {
+            return res.send({ success: false, message: 'Please complete the captcha correctly' });
+        }
 
-                res.send({ success: true });
+        res.send({ success: true });
 
-                captchaDone = true;
+        let user = await userService.getUserByUsername(req.body.username);
+        if(!user) {
+            logger.error('Username not found for password reset', req.body.username);
 
-                return userService.getUserByUsername(req.body.username);
-            })
-            .then(user => {
-                if(!user) {
-                    logger.error('Username not found for password reset', req.body.username);
+            return;
+        }
 
-                    return Promise.reject('Username not found');
-                }
+        let expiration = moment().add(4, 'hours');
+        let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
 
-                let expiration = moment().add(4, 'hours');
-                let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-                let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        resetToken = hmac.update(`RESET ${user.username} ${formattedExpiration}`).digest('hex');
+        emailUser = user;
 
-                resetToken = hmac.update('RESET ' + user.username + ' ' + formattedExpiration).digest('hex');
-
-                emailUser = user;
-
-                return userService.setResetToken(user, resetToken, formattedExpiration);
-            })
-            .then(() => {
-                let url = 'https://theironthrone.net/reset-password?id=' + emailUser._id + '&token=' + resetToken;
-                let emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthrone.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
+        await userService.setResetToken(user, resetToken, formattedExpiration);
+        let url = 'https://theironthrone.net/reset-password?id=' + emailUser._id + '&token=' + resetToken;
+        let emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthrone.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
                     'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
                     'Kind regards,\n\n' +
                     'The Iron Throne team';
 
-                return sendEmail(emailUser.email, emailText);
-            })
-            .catch(err => {
-                logger.error(err);
-
-                if(!captchaDone) {
-                    return res.send({ success: false, message: 'There was a problem verifying the capthca, please try again' });
-                }
-            });
-    });
+        await sendEmail(emailUser.email, emailText);
+    }));
 
     function updateUserData(user) {
         return {

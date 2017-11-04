@@ -41,6 +41,10 @@ class Login extends React.Component {
         }
     }
 
+    componentWillUnmount() {
+        this.validator.destroy();
+    }
+
     onChange(field, event) {
         var newState = {};
 

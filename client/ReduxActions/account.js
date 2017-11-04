@@ -25,3 +25,16 @@ export function loginAccount(auth) {
         })
     };
 }
+
+export function forgotPassword(details) {
+    return {
+        types: ['FORGOTPASSWORD_ACCOUNT', 'ACCOUNT_FORGOTPASSWORD'],
+        shouldCallAPI: () => true,
+        callAPI: () => $.ajax({
+            url: '/api/account/password-reset',
+            type: 'POST',
+            data: JSON.stringify({ username: details.username, captcha: details.captcha }),
+            contentType: 'application/json'
+        })
+    };
+}

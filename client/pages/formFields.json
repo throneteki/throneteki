@@ -69,7 +69,7 @@
         "inputType": "text",
         "validationProperties": {
           "data-val": true,
-          "data-val-required": "You must specify a username"
+          "data-val-required": "Please enter your username"
         },
         "labelClass": "col-sm-2",
         "fieldClass": "col-sm-8"
@@ -81,7 +81,21 @@
         "inputType": "password",
         "validationProperties": {
           "data-val": true,
-          "data-val-required": "You must specify a password"
+          "data-val-required": "Please enter your password"
+        },
+        "labelClass": "col-sm-2",
+        "fieldClass": "col-sm-8"
+      }
+    ],
+    "forgotpassword": [
+      {
+        "name": "username",
+        "label": "Username",
+        "placeholder": "Enter a username",
+        "inputType": "text",
+        "validationProperties": {
+          "data-val": true,
+          "data-val-required": "Please enter your username"
         },
         "labelClass": "col-sm-2",
         "fieldClass": "col-sm-8"
