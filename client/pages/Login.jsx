@@ -56,14 +56,6 @@ class Login extends React.Component {
         }
 
         this.props.loginAccount({ username: this.state.username, password: this.state.password });
-
-        // fail((xhr) => {
-        //     if(xhr.status === 401) {
-        //         this.setState({ error: 'Invalid Username/password' });
-        //     } else {
-        //         this.setState({ error: 'Could not communicate with the server.  Please try again later.' });
-        //     }
-        // });
     }
 
     render() {
