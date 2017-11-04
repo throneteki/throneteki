@@ -38,7 +38,6 @@ export class Register extends React.Component {
             this.props.socket.emit('authenticate', props.registeredToken);
 
             setTimeout(() => {
-                this.setState({ successMessage: '' });
                 this.props.navigate('/');
             }, 2000);
         }
