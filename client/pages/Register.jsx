@@ -87,7 +87,9 @@ export class Register extends React.Component {
                         { fieldsToRender }
                         <div className='form-group'>
                             <div className='col-sm-offset-4 col-sm-3'>
-                                <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onRegister }>Register</button>
+                                <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onRegister } disabled={ this.props.apiLoading }>
+                                    Register { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -99,6 +101,7 @@ export class Register extends React.Component {
 Register.displayName = 'Register';
 Register.propTypes = {
     accountRegistered: PropTypes.bool,
+    apiLoading: PropTypes.bool,
     apiMessage: PropTypes.string,
     apiSuccess: PropTypes.bool,
     navigate: PropTypes.func,
@@ -112,6 +115,7 @@ Register.propTypes = {
 function mapStateToProps(state) {
     return {
         accountRegistered: state.account.registered,
+        apiLoading: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.loading : undefined,
         apiMessage: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.message : undefined,
         apiSuccess: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success || undefined : undefined,
         registeredToken: state.account.token,
