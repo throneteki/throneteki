@@ -38,3 +38,16 @@ export function forgotPassword(details) {
         })
     };
 }
+
+export function resetPassword(details) {
+    return {
+        types: ['RESETPASSWORD_ACCOUNT', 'ACCOUNT_PASSWORDRESET'],
+        shouldCallAPI: () => true,
+        callAPI: () => $.ajax({
+            url: '/api/account/password-reset-finish',
+            type: 'POST',
+            data: JSON.stringify({ id: details.id, token: details.token, newPassword: details.newPassword }),
+            contentType: 'application/json'
+        })
+    };
+}

@@ -201,73 +201,62 @@ module.exports.init = function(server) {
         })(req, res, next);
     });
 
-    server.post('/api/account/password-reset-finish', function(req, res) {
+    server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
         let resetUser;
 
         if(!req.body.id || !req.body.token || !req.body.newPassword) {
             return res.send({ success: false, message: 'Invalid parameters' });
         }
 
-        userService.getUserById(req.body.id)
-            .then(user => {
-                if(!user) {
-                    return Promise.reject('User not found');
-                }
+        let user = await userService.getUserById(req.body.id);
+        if(!user) {
+            res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
-                if(!user.resetToken) {
-                    logger.error('Got unexpected reset request for user', user.username);
+            return next();
+        }
 
-                    res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again' });
+        if(!user.resetToken) {
+            logger.error('Got unexpected reset request for user', user.username);
 
-                    return Promise.reject('No reset token');
-                }
+            res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
-                let now = moment();
+            return next();
+        }
 
-                if(user.tokenExpires < now) {
-                    res.send({ success: false, message: 'The reset token you have provided has expired' });
+        let now = moment();
+        if(user.tokenExpires < now) {
+            res.send({ success: false, message: 'The reset token you have provided has expired.' });
 
-                    logger.error('Token expired', user.username);
+            logger.error('Token expired', user.username);
 
-                    return Promise.reject('Token expires');
-                }
+            return next();
+        }
 
-                let hmac = crypto.createHmac('sha512', config.hmacSecret);
-                let resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
 
-                if(resetToken !== req.body.token) {
-                    logger.error('Invalid reset token', user.username, req.body.token);
+        if(resetToken !== req.body.token) {
+            logger.error('Invalid reset token', user.username, req.body.token);
 
-                    res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again' });
+            res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
-                    return Promise.reject('Invalid token');
-                }
+            return next();
+        }
 
-                resetUser = user;
+        resetUser = user;
 
-                return hashPassword(req.body.newPassword, 10);
-            })
-            .then(passwordHash => {
-                return userService.setPassword(resetUser, passwordHash);
-            })
-            .then(() => {
-                return userService.clearResetToken(resetUser);
-            })
-            .then(() => {
-                res.send({ success: true });
-            })
-            .catch(err => {
-                logger.error(err);
+        let passwordHash = await hashPassword(req.body.newPassword, 10);
+        await userService.setPassword(resetUser, passwordHash);
+        await userService.clearResetToken(resetUser);
 
-                res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again' });
-            });
-    });
+        res.send({ success: true });
+    }));
 
     server.post('/api/account/password-reset', wrapAsync(async (req, res) => {
         let emailUser;
         let resetToken;
 
-        let response = await util.httpRequest('https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha);
+        let response = await util.httpRequest(`https://www.google.com/recaptcha/api/siteverify?secret=${config.captchaKey}&response=${req.body.captcha}`);
         let answer = JSON.parse(response);
 
         if(!answer.success) {
@@ -291,11 +280,11 @@ module.exports.init = function(server) {
         emailUser = user;
 
         await userService.setResetToken(user, resetToken, formattedExpiration);
-        let url = 'https://theironthrone.net/reset-password?id=' + emailUser._id + '&token=' + resetToken;
+        let url = `https://theironthrone.net/reset-password?id=${emailUser._id}&token=${resetToken}`;
         let emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthrone.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
-                    'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
-                    'Kind regards,\n\n' +
-                    'The Iron Throne team';
+            'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
+            'Kind regards,\n\n' +
+            'The Iron Throne team';
 
         await sendEmail(emailUser.email, emailText);
     }));

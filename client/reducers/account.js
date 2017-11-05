@@ -20,6 +20,14 @@ export default function(state = {}, action) {
                 loggedInUser: action.response.user,
                 token: action.response.token
             });
+        case 'RESETPASSWORD_ACCOUNT':
+            return Object.assign({}, state, {
+                passwordReset: false
+            });
+        case 'ACCOUNT_PASSWORDRESET':
+            return Object.assign({}, state, {
+                passwordReset: true
+            });
     }
 
     return state;

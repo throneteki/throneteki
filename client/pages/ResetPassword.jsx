@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 import $ from 'jquery';
 
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import AlertPanel from '../SiteComponents/AlertPanel.jsx';
 import Input from '../FormComponents/Input';
 
@@ -22,6 +21,22 @@ class ResetPassword extends React.Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    componentDidMount() {
+        $.validator.unobtrusive.parse('form');
+
+        this.validator = $('form').validate();
+    }
+
+    componentWillReceiveProps(props) {
+        if(props.accountPasswordReset) {
+            this.setState({ successMessage: 'Your password has been changed.  You will shortly be redirected to the login page.' });
+
+            setTimeout(() => {
+                this.props.navigate('/login');
+            }, 3000);
+        }
+    }
+
     onChange(field, event) {
         var newState = {};
 
@@ -32,21 +47,11 @@ class ResetPassword extends React.Component {
     onSubmit(event) {
         event.preventDefault();
 
-        $.ajax({
-            url: '/api/account/password-reset-finish',
-            type: 'POST',
-            data: JSON.stringify({ id: this.props.id, token: this.props.token, newPassword: this.state.password }),
-            contentType: 'application/json'
-        }).done((data) => {
-            if(!data.success) {
-                this.setState({ error: data.message });
-                return;
-            }
+        if(!$('form').valid()) {
+            return;
+        }
 
-            this.props.navigate('/login');
-        }).fail(() => {
-            this.setState({ error: 'Could not communicate with the server.  Please try again later.' });
-        });
+        this.props.resetPassword({ id: this.props.id, token: this.props.token, newPassword: this.state.password });
     }
 
     render() {
@@ -61,44 +66,51 @@ class ResetPassword extends React.Component {
         });
 
         let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+        let successBar = this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null;
 
         return (
             <div>
-                { errorBar }
-                <div className='panel-title'>
-                    Reset password
-                </div>
-                <div className='panel'>
-                    <form className='form form-horizontal'>
-                        { fieldsToRender }
-                        <div className='form-group'>
-                            <div className='col-sm-offset-2 col-sm-3'>
-                                <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onLogin } disabled={ this.props.apiLoading }>
-                                    Submit { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
-                                </button>
+                <div className='col-sm-6 col-sm-offset-3'>
+                    { errorBar }
+                    { successBar }
+                    <div className='panel-title'>
+                        Reset password
+                    </div>
+                    <div className='panel'>
+                        <form className='form form-horizontal'>
+                            { fieldsToRender }
+                            <div className='form-group'>
+                                <div className='col-sm-offset-2 col-sm-3'>
+                                    <button type='submit' className='btn btn-primary' onClick={ this.onSubmit } disabled={ this.props.apiLoading }>
+                                        Submit { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>);
     }
 }
 
 ResetPassword.propTypes = {
+    accountPasswordReset: PropTypes.bool,
     apiLoading: PropTypes.bool,
     apiMessage: PropTypes.string,
     apiSuccess: PropTypes.bool,
     id: PropTypes.string,
     navigate: PropTypes.func,
+    resetPassword: PropTypes.func,
     token: PropTypes.string
 };
 ResetPassword.displayName = 'ResetPassword';
 
 function mapStateToProps(state) {
     return {
-        apiLoading: state.api.FORGOTPASSWORD_ACCOUNT ? state.api.FORGOTPASSWORD_ACCOUNT.loading : undefined,
-        apiMessage: state.api.FORGOTPASSWORD_ACCOUNT ? state.api.FORGOTPASSWORD_ACCOUNT.message : undefined,
-        apiSuccess: state.api.FORGOTPASSWORD_ACCOUNT ? state.api.FORGOTPASSWORD_ACCOUNT.success : undefined
+        accountPasswordReset: state.account.passwordReset,
+        apiLoading: state.api.RESETPASSWORD_ACCOUNT ? state.api.RESETPASSWORD_ACCOUNT.loading : undefined,
+        apiMessage: state.api.RESETPASSWORD_ACCOUNT ? state.api.RESETPASSWORD_ACCOUNT.message : undefined,
+        apiSuccess: state.api.RESETPASSWORD_ACCOUNT ? state.api.RESETPASSWORD_ACCOUNT.success : undefined
     };
 }
 

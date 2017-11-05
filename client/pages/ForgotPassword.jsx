@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import AlertPanel from '../SiteComponents/AlertPanel.jsx';
@@ -71,11 +71,11 @@ class ForgotPassword extends React.Component {
 
         return (
             <div>
-                { errorBar }
                 <div className='col-sm-6 col-sm-offset-3'>
-                    <AlertPanel type='info' message='To start the password recovery process, please enter your username and click the submit button.' />
+                    { errorBar }
+                    { this.props.apiSuccess === false ? null : <AlertPanel type='info' message='To start the password recovery process, please enter your username and click the submit button.' /> }
                     <div className='panel-title'>
-                    Forgot password
+                        Forgot password
                     </div>
                     <div className='panel'>
                         <form className='form form-horizontal'>
@@ -87,8 +87,8 @@ class ForgotPassword extends React.Component {
                             </div>
                             <div className='form-group'>
                                 <div className='col-sm-offset-2 col-sm-3'>
-                                    <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onLogin } disabled={ this.props.apiLoading }>
-                                    Submit { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
+                                    <button type='submit' className='btn btn-primary' onClick={ this.onSubmit } disabled={ this.props.apiLoading }>
+                                        Submit { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
                                     </button>
                                 </div>
                             </div>
