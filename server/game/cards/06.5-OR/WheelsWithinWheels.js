@@ -52,7 +52,7 @@ class WheelsWithinWheels extends PlotCard {
 
         this.game.promptWithMenu(this.controller, this, {
             activePrompt: {
-                menuTitle: 'Select a card',
+                menuTitle: 'Select a card to draw',
                 buttons: buttons
             },
             source: this
