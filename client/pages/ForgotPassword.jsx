@@ -87,9 +87,9 @@ class ForgotPassword extends React.Component {
                             </div>
                             <div className='form-group'>
                                 <div className='col-sm-offset-2 col-sm-3'>
-                                    { this.state.submitting ? <button type='submit' className='btn btn-primary' disabled>Submitting...</button> :
-                                        <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSubmit }>Submit</button>
-                                    }
+                                    <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onLogin } disabled={ this.props.apiLoading }>
+                                    Submit { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
+                                    </button>
                                 </div>
                             </div>
                         </form>
