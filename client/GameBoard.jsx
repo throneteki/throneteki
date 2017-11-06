@@ -18,6 +18,29 @@ import PlayerBoard from './GameComponents/PlayerBoard.jsx';
 
 import * as actions from './actions';
 
+const placeholderPlayer = {
+    activePlot: null,
+    agenda: null,
+    cardPiles: {
+        bannerCards: [],
+        cardsInPlay: [],
+        conclavePile: [],
+        deadPile: [],
+        discardPile: [],
+        hand: [],
+        outOfGamePile: [],
+        plotDeck: [],
+        plotDiscard: []
+    },
+    faction: null,
+    firstPlayer: false,
+    numDrawCards: 0,
+    plotSelected: false,
+    stats: null,
+    title: null,
+    user: null
+};
+
 export class InnerGameBoard extends React.Component {
     constructor() {
         super();
@@ -260,13 +283,13 @@ export class InnerGameBoard extends React.Component {
         return (<div className='plots-pane'>
             <div className='plot-group'>
                 { this.getSchemePile(otherPlayer, false) }
-                <CardPile className={ otherPlayer && otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
-                    title='Plots' source='plot deck' cards={ otherPlayer ? otherPlayer.cardPiles.plotDeck : [] }
+                <CardPile className={ otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
+                    title='Plots' source='plot deck' cards={ otherPlayer.cardPiles.plotDeck }
                     topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
                     onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disableMouseOver disablePopup
                     onCardClick={ this.onCardClick } orientation='horizontal' size={ this.props.user.settings.cardSize } />
-                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer ? otherPlayer.cardPiles.plotDiscard : [] }
-                    topCard={ otherPlayer ? otherPlayer.activePlot : undefined } orientation='horizontal' onMouseOver={ this.onMouseOver }
+                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer.cardPiles.plotDiscard }
+                    topCard={ otherPlayer.activePlot } orientation='horizontal' onMouseOver={ this.onMouseOver }
                     onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } size={ this.props.user.settings.cardSize } />
             </div>
             <div className='plot-group our-side'>
@@ -328,7 +351,7 @@ export class InnerGameBoard extends React.Component {
 
         let otherPlayer = _.find(this.props.currentGame.players, player => {
             return player.name !== thisPlayer.name;
-        });
+        }) || placeholderPlayer;
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
@@ -354,28 +377,28 @@ export class InnerGameBoard extends React.Component {
             <div className='game-board'>
                 { popup }
                 <div className='player-stats-row'>
-                    <PlayerStats stats={ otherPlayer ? otherPlayer.stats : null }
-                        user={ otherPlayer ? otherPlayer.user : null } firstPlayer={ otherPlayer && otherPlayer.firstPlayer } />
+                    <PlayerStats stats={ otherPlayer.stats }
+                        user={ otherPlayer.user } firstPlayer={ otherPlayer.firstPlayer } />
                 </div>
                 <div className='main-window'>
                     { this.getPlots(thisPlayer, otherPlayer) }
                     <div className='board-middle'>
                         <div className='player-home-row'>
                             <PlayerRow
-                                agenda={ otherPlayer ? otherPlayer.agenda : null }
-                                bannerCards={ otherPlayer ? otherPlayer.cardPiles.bannerCards : [] }
-                                conclavePile={ otherPlayer ? otherPlayer.cardPiles.conclavePile : [] }
-                                faction={ otherPlayer ? otherPlayer.faction : null }
-                                hand={ otherPlayer ? otherPlayer.cardPiles.hand : [] } isMe={ false }
+                                agenda={ otherPlayer.agenda }
+                                bannerCards={ otherPlayer.cardPiles.bannerCards }
+                                conclavePile={ otherPlayer.cardPiles.conclavePile }
+                                faction={ otherPlayer.faction }
+                                hand={ otherPlayer.cardPiles.hand } isMe={ false }
                                 isMelee={ this.props.currentGame.isMelee }
-                                numDrawCards={ otherPlayer ? otherPlayer.numDrawCards : 0 }
-                                discardPile={ otherPlayer ? otherPlayer.cardPiles.discardPile : [] }
-                                deadPile={ otherPlayer ? otherPlayer.cardPiles.deadPile : [] }
+                                numDrawCards={ otherPlayer.numDrawCards }
+                                discardPile={ otherPlayer.cardPiles.discardPile }
+                                deadPile={ otherPlayer.cardPiles.deadPile }
                                 onCardClick={ this.onCardClick }
                                 onMouseOver={ this.onMouseOver }
                                 onMouseOut={ this.onMouseOut }
-                                outOfGamePile={ otherPlayer ? otherPlayer.cardPiles.outOfGamePile : [] }
-                                title={ otherPlayer ? otherPlayer.title : null }
+                                outOfGamePile={ otherPlayer.cardPiles.outOfGamePile }
+                                title={ otherPlayer.title }
                                 cardSize={ this.props.user.settings.cardSize } />
                         </div>
                         <div className='board-inner'>
@@ -395,7 +418,7 @@ export class InnerGameBoard extends React.Component {
                             </div>
                             <div className='play-area'>
                                 <PlayerBoard
-                                    cardsInPlay={ otherPlayer ? otherPlayer.cardPiles.cardsInPlay : [] }
+                                    cardsInPlay={ otherPlayer.cardPiles.cardsInPlay }
                                     onCardClick={ this.onCardClick }
                                     onMenuItemClick={ this.onMenuItemClick }
                                     onMouseOut={ this.onMouseOut }
