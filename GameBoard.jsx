@@ -12,10 +12,9 @@ import PlayerRow from './GameComponents/PlayerRow.jsx';
 import ActivePlayerPrompt from './GameComponents/ActivePlayerPrompt.jsx';
 import CardZoom from './GameComponents/CardZoom.jsx';
 import Messages from './GameComponents/Messages.jsx';
-import Card from './GameComponents/Card.jsx';
 import CardPile from './GameComponents/CardPile.jsx';
 import GameConfiguration from './GameComponents/GameConfiguration.jsx';
-import { tryParseJSON } from './util.js';
+import PlayerBoard from './GameComponents/PlayerBoard.jsx';
 
 import * as actions from './actions';
 
@@ -232,43 +231,6 @@ export class InnerGameBoard extends React.Component {
         this.props.sendGameMessage('drop', card.uuid, source, target);
     }
 
-    onCardDragStart(event, card, source) {
-        let dragData = { card: card, source: source };
-        event.dataTransfer.setData('Text', JSON.stringify(dragData));
-    }
-
-    getCardsInPlay(player, isMe) {
-        if(!player) {
-            return [];
-        }
-
-        let sortedCards = _.sortBy(player.cardPiles.cardsInPlay, card => {
-            return card.type;
-        });
-
-        if(!isMe) {
-            // we want locations on the bottom, other side wants locations on top
-            sortedCards = sortedCards.reverse();
-        }
-
-        let cardsByType = _.groupBy(sortedCards, card => {
-            return card.type;
-        });
-
-        let cardsByLocation = [];
-
-        _.each(cardsByType, cards => {
-            let cardsInPlay = _.map(cards, card => {
-                return (<Card key={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code }
-                    onMenuItemClick={ this.onMenuItemClick } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut }
-                    onClick={ this.onCardClick } onDragDrop={ this.onDragDrop } size={ this.props.user.settings.cardSize } />);
-            });
-            cardsByLocation.push(cardsInPlay);
-        });
-
-        return cardsByLocation;
-    }
-
     getSchemePile(player, isMe) {
         if(!player || !player.agenda || player.agenda.code !== '05045') {
             return;
@@ -326,28 +288,6 @@ export class InnerGameBoard extends React.Component {
         this.props.sendGameMessage(command, commandArg, method);
     }
 
-    onDragOver(event) {
-        event.preventDefault();
-    }
-
-    onDragDropEvent(event, target) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        let card = event.dataTransfer.getData('Text');
-        if(!card) {
-            return;
-        }
-
-        let dragData = tryParseJSON(card);
-
-        if(!dragData) {
-            return;
-        }
-
-        this.onDragDrop(dragData.card, dragData.source, target);
-    }
-
     onMenuItemClick(card, menuItem) {
         this.props.sendGameMessage('menuItemClick', card.uuid, menuItem);
     }
@@ -389,28 +329,6 @@ export class InnerGameBoard extends React.Component {
         let otherPlayer = _.find(this.props.currentGame.players, player => {
             return player.name !== thisPlayer.name;
         });
-
-        let thisPlayerCards = [];
-        let index = 0;
-        let thisCardsInPlay = this.getCardsInPlay(thisPlayer, true);
-        _.each(thisCardsInPlay, cards => {
-            thisPlayerCards.push(<div className='card-row' key={ 'this-loc' + index++ }>{ cards }</div>);
-        });
-
-        let otherPlayerCards = [];
-        if(otherPlayer) {
-            _.each(this.getCardsInPlay(otherPlayer, false), cards => {
-                otherPlayerCards.push(<div className='card-row' key={ 'other-loc' + index++ }>{ cards }</div>);
-            });
-        }
-
-        for(let i = thisPlayerCards.length; i < 2; i++) {
-            thisPlayerCards.push(<div className='card-row' key={ 'this-empty' + i } />);
-        }
-
-        for(let i = otherPlayerCards.length; i < 2; i++) {
-            thisPlayerCards.push(<div className='card-row' key={ 'other-empty' + i } />);
-        }
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
@@ -476,13 +394,23 @@ export class InnerGameBoard extends React.Component {
                                 </div>
                             </div>
                             <div className='play-area'>
-                                <div className='player-board'>
-                                    { otherPlayerCards }
-                                </div>
-                                <div className='player-board our-side' onDragOver={ this.onDragOver }
-                                    onDrop={ event => this.onDragDropEvent(event, 'play area') } >
-                                    { thisPlayerCards }
-                                </div>
+                                <PlayerBoard
+                                    cardsInPlay={ otherPlayer ? otherPlayer.cardPiles.cardsInPlay : [] }
+                                    onCardClick={ this.onCardClick }
+                                    onMenuItemClick={ this.onMenuItemClick }
+                                    onMouseOut={ this.onMouseOut }
+                                    onMouseOver={ this.onMouseOver }
+                                    rowDirection='reverse'
+                                    user={ this.props.user } />
+                                <PlayerBoard
+                                    cardsInPlay={ thisPlayer.cardPiles.cardsInPlay }
+                                    onCardClick={ this.onCardClick }
+                                    onDragDrop={ this.onDragDrop }
+                                    onMenuItemClick={ this.onMenuItemClick }
+                                    onMouseOut={ this.onMouseOut }
+                                    onMouseOver={ this.onMouseOver }
+                                    rowDirection='default'
+                                    user={ this.props.user } />
                             </div>
                         </div>
                         <div className='player-home-row our-side'>
