@@ -38,10 +38,12 @@ Check out the [About page](https://theironthrone.net/about) of a Throneteki live
 The game uses mongodb as storage so you'll need that installed and running.
 
 ```
-Clone the repository
+git clone https://github.com/cryogen/throneteki.git
+cd throneteki
 git submodule init
 git submodule update
-Run npm install
+npm install
+npm run build-vendor
 mkdir server/logs
 node server/scripts/fetchdata.js
 node .
