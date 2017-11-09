@@ -8,3 +8,4 @@ export * from './ReduxActions/socket';
 export * from './ReduxActions/deck';
 export * from './ReduxActions/admin';
 export * from './ReduxActions/user';
+export * from './ReduxActions/account';
