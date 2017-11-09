@@ -6,10 +6,11 @@ import $ from 'jquery';
 import moment from 'moment';
 
 import * as actions from './actions';
-import Avatar from './Avatar.jsx';
-import News from './SiteComponents/News.jsx';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import Typeahead from './FormComponents/Typeahead.jsx';
+import Avatar from './Avatar';
+import News from './SiteComponents/News';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
+import Typeahead from './FormComponents/Typeahead';
 
 class InnerLobby extends React.Component {
     constructor() {
@@ -185,23 +186,17 @@ class InnerLobby extends React.Component {
                     <AlertPanel message={ this.props.bannerNotice } type='error' />
                 </div> : null }
                 <div className='col-sm-offset-1 col-sm-10'>
-                    <div className='panel-title text-center'>
-                        Latest site news
-                    </div>
-                    <div className='panel panel-darker'>
+                    <Panel title='Latest site news'>
                         { this.props.loading ? <div>News loading...</div> : null }
                         <News news={ this.props.news } />
-                    </div>
+                    </Panel>
                 </div>
                 <div className='col-sm-offset-1 col-sm-10 chat-container'>
-                    <div className='panel-title text-center'>
-                        Lobby Chat ({ _.size(this.props.users) } online)
-                    </div>
-                    <div className='lobby-chat'>
+                    <Panel title={ `Lobby Chat (${ _.size(this.props.users) } online)` }>
                         <div className='panel lobby-messages' ref='messages' onScroll={ this.onScroll }>
                             { messages }
                         </div>
-                    </div>
+                    </Panel>
                     <form className='form form-hozitontal chat-box-container' onSubmit={ event => this.onSendClick(event) }>
                         <div className='form-group'>
                             <div className='chat-box'>

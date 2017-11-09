@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import DeckSummary from './DeckSummary.jsx';
-import DeckEditor from './DeckEditor.jsx';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import DeckSummary from './DeckSummary';
+import DeckEditor from './DeckEditor';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
 
 import * as actions from './actions';
 
@@ -47,20 +48,14 @@ export class InnerAddDeck extends React.Component {
             content = (
                 <div>
                     <div className='col-sm-6'>
-                        <div className='panel-title text-center'>
-                            Deck Editor
-                        </div>
-                        <div className='panel'>
+                        <Panel title='Deck Editor'>
                             <DeckEditor mode='Add' onDeckSave={ this.onAddDeck } />
-                        </div>
+                        </Panel>
                     </div>
                     <div className='col-sm-6'>
-                        <div className='panel-title text-center col-xs-12'>
-                            { this.props.deck ? this.props.deck.name : 'New Deck' }
-                        </div>
-                        <div className='panel col-xs-12'>
+                        <Panel title={ this.props.deck ? this.props.deck.name : 'New Deck' }>
                             <DeckSummary cards={ this.props.cards } deck={ this.props.deck } />
-                        </div>
+                        </Panel>
                     </div>
                 </div>);
         }

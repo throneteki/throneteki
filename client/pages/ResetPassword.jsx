@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import AlertPanel from '../SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
 import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
@@ -43,12 +44,9 @@ class ResetPassword extends React.Component {
                 <div className='col-sm-6 col-sm-offset-3'>
                     { errorBar }
                     { successBar }
-                    <div className='panel-title'>
-                        Reset password
-                    </div>
-                    <div className='panel'>
+                    <Panel title='Reset password'>
                         <Form name='resetpassword' apiLoading={ this.props.apiLoading } buttonText='Submit' onSubmit={ this.onSubmit } />
-                    </div>
+                    </Panel>
                 </div>
             </div>);
     }

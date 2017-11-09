@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
+
 import * as actions from './actions';
 
 class InnerPasswordGame extends React.Component {
@@ -41,10 +43,7 @@ class InnerPasswordGame extends React.Component {
 
         return (
             <div>
-                <div className='panel-title'>
-                    { this.props.passwordGame.name }
-                </div>
-                <div className='panel'>
+                <Panel title={ this.props.passwordGame.name }>
                     <div>
                         <h3>Enter the password</h3>
                     </div>
@@ -62,7 +61,7 @@ class InnerPasswordGame extends React.Component {
                             <button className='btn btn-primary' onClick={ this.onCancelClick.bind(this) }>Cancel</button>
                         </div>
                     </div>
-                </div>
+                </Panel>
             </div>);
     }
 }

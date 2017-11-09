@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 
 import Link from '../Link.jsx';
 import AlertPanel from '../SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
 import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
@@ -37,10 +38,7 @@ class Login extends React.Component {
         return (
             <div className='col-sm-6 col-sm-offset-3'>
                 { errorBar }
-                <div className='panel-title'>
-                    Login
-                </div>
-                <div className='panel'>
+                <Panel title='Login'>
                     <Form name='login' apiLoading={ this.props.apiLoading } buttonText='Log In' onSubmit={ this.onLogin }>
                         <div className='form-group'>
                             <div className='col-sm-offset-2 col-sm-10'>
@@ -48,7 +46,7 @@ class Login extends React.Component {
                             </div>
                         </div>
                     </Form>
-                </div>
+                </Panel>
             </div>);
     }
 }

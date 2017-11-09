@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'underscore';
 
-import Checkbox from '../FormComponents/Checkbox.jsx';
+import Checkbox from '../FormComponents/Checkbox';
+import Panel from '../SiteComponents/Panel';
 
 class GameConfiguration extends React.Component {
     constructor(props) {
@@ -75,36 +76,27 @@ class GameConfiguration extends React.Component {
         return (
             <div>
                 <form className='form form-horizontal'>
-                    <div className='panel-title'>
-                        Action window defaults
-                    </div>
-                    <div className='panel'>
+                    <Panel title='Action window defaults'>
                         <div className='form-group'>
                             { windows }
                         </div>
-                    </div>
-                    <div className='panel-title text-center'>
-                        Timed Interrupt Window
-                    </div>
-                    <div className='panel'>
+                    </Panel>
+                    <Panel title='Timed Interrupt Window'>
                         <div className='form-group'>
                             <Checkbox name='timerSettings.events' noGroup label={ 'Show timer for events' } fieldClass='col-sm-6'
                                 onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.props.timerSettings.events } />
                             <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for card abilities' } fieldClass='col-sm-6'
                                 onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.props.timerSettings.abilities } />
                         </div>
-                    </div>
-                    <div className='panel-title text-center'>
-                        Keywords
-                    </div>
-                    <div className='panel'>
+                    </Panel>
+                    <Panel title='Keywords'>
                         <div className='form-group'>
                             <Checkbox name='keywordSettings.chooseOrder' noGroup label={ 'Choose order of keywords' } fieldClass='col-sm-6'
                                 onChange={ this.onKeywordSettingToggle.bind(this, 'chooseOrder') } checked={ this.props.keywordSettings.chooseOrder } />
                             <Checkbox name='keywordSettings.chooseCards' noGroup label={ 'Make keywords optional' } fieldClass='col-sm-6'
                                 onChange={ this.onKeywordSettingToggle.bind(this, 'chooseCards') } checked={ this.props.keywordSettings.chooseCards } />
                         </div>
-                    </div>
+                    </Panel>
                 </form>
             </div>
         );
