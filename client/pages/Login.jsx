@@ -1,32 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
 import {connect} from 'react-redux';
 
 import Link from '../Link.jsx';
-import AlertPanel from '../SiteComponents/AlertPanel.jsx';
-import Input from '../FormComponents/Input';
+import AlertPanel from '../SiteComponents/AlertPanel';
+import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
-import formFields from './formFields.json';
 
 class Login extends React.Component {
     constructor() {
         super();
 
-        this.state = {
-            username: '',
-            password: ''
-        };
-
-        this.onChange = this.onChange.bind(this);
         this.onLogin = this.onLogin.bind(this);
-    }
-
-    componentDidMount() {
-        $.validator.unobtrusive.parse('form');
-
-        this.validator = $('form').validate();
     }
 
     componentWillReceiveProps(props) {
@@ -41,34 +27,11 @@ class Login extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        this.validator.destroy();
-    }
-
-    onChange(field, event) {
-        var newState = {};
-
-        newState[field] = event.target.value;
-        this.setState(newState);
-    }
-
-    onLogin(event) {
-        event.preventDefault();
-
-        if(!$('form').valid()) {
-            return;
-        }
-
-        this.props.loginAccount({ username: this.state.username, password: this.state.password });
+    onLogin(state) {
+        this.props.loginAccount({ username: state.username, password: state.password });
     }
 
     render() {
-        const fieldsToRender = formFields.login.map(field => {
-            return (<Input key={ field.name } name={ field.name } label={ field.label } placeholder={ field.placeholder }
-                validationAttributes={ field.validationProperties } fieldClass={ field.fieldClass } labelClass={ field.labelClass }
-                type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
-        });
-
         let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
 
         return (
@@ -78,21 +41,13 @@ class Login extends React.Component {
                     Login
                 </div>
                 <div className='panel'>
-                    <form className='form form-horizontal'>
-                        { fieldsToRender }
+                    <Form name='login' apiLoading={ this.props.apiLoading } buttonText='Log In' onSubmit={ this.onLogin }>
                         <div className='form-group'>
                             <div className='col-sm-offset-2 col-sm-10'>
                                 <Link href='/forgot' >Forgot your password?</Link>
                             </div>
                         </div>
-                        <div className='form-group'>
-                            <div className='col-sm-offset-2 col-sm-3'>
-                                <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onLogin } disabled={ this.props.apiLoading }>
-                                    Log in { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    </Form>
                 </div>
             </div>);
     }

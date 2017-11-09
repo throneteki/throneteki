@@ -1,34 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
 import { connect } from 'react-redux';
 
 import AlertPanel from '../SiteComponents/AlertPanel';
-import Input from '../FormComponents/Input';
+import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
-import formFields from './formFields.json';
 
 export class Register extends React.Component {
     constructor() {
         super();
 
         this.onRegister = this.onRegister.bind(this);
-        this.onChange = this.onChange.bind(this);
 
         this.state = {
-            username: '',
-            email: '',
-            password: '',
-            password1: '',
             successMessage: ''
         };
-    }
-
-    componentDidMount() {
-        $.validator.unobtrusive.parse('form');
-
-        this.validator = $('form').validate();
     }
 
     componentWillReceiveProps(props) {
@@ -43,34 +30,11 @@ export class Register extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        this.validator.destroy();
-    }
-
-    onChange(field, event) {
-        var newState = {};
-
-        newState[field] = event.target.value;
-        this.setState(newState);
-    }
-
-    onRegister(event) {
-        event.preventDefault();
-
-        if(!$('form').valid()) {
-            return;
-        }
-
-        this.props.registerAccount({ username: this.state.username, password: this.state.password, email: this.state.email });
+    onRegister(state) {
+        this.props.registerAccount({ username: state.username, password: state.password, email: state.email });
     }
 
     render() {
-        const fieldsToRender = formFields.register.map(field => {
-            return (<Input key={ field.name } name={ field.name } label={ field.label } placeholder={ field.placeholder }
-                validationAttributes={ field.validationProperties } fieldClass={ field.fieldClass } labelClass={ field.labelClass }
-                type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
-        });
-
         let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
         let successBar = this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null;
 
@@ -82,16 +46,7 @@ export class Register extends React.Component {
                     Register an account
                 </div>
                 <div className='panel'>
-                    <form className='form form-horizontal'>
-                        { fieldsToRender }
-                        <div className='form-group'>
-                            <div className='col-sm-offset-4 col-sm-3'>
-                                <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onRegister } disabled={ this.props.apiLoading }>
-                                    Register { this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    <Form name='register' apiLoading={ this.props.apiLoading } buttonText='Register' onSubmit={ this.onRegister } />
                 </div>
             </div>);
     }
