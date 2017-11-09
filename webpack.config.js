@@ -27,7 +27,11 @@ module.exports = (env) => {
     // Configuration for client-side bundle suitable for running in browsers
     const clientBundleOutputDir = './public';
     const clientBundleConfig = merge(sharedConfig(), {
-        entry: { 'bundle': ['./client/index.jsx', './less/site.less', 'babel-polyfill'] },
+        entry: { 'bundle': (isDevBuild ? [
+            'react-hot-loader/patch',
+            'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000',
+            'webpack/hot/only-dev-server'] : []).concat(['./client/index.jsx', './less/site.less', 'babel-polyfill']) },
+        devtool: isDevBuild ? 'inline-source-map' : 'source-map',
         module: {
             rules: isDevBuild ? [
                 {
@@ -56,6 +60,7 @@ module.exports = (env) => {
                 jQuery: 'jquery'
             })
         ].concat(isDevBuild ? [
+            new webpack.HotModuleReplacementPlugin(),
             new webpack.SourceMapDevToolPlugin({
                 filename: '[file].map',
                 moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]')

@@ -59,67 +59,95 @@ function sendEmail(address, email) {
     });
 }
 
+function validateUserName(username) {
+    if(!username) {
+        return 'You must specify a username';
+    }
+
+    if(username.length < 3 || username.length > 15) {
+        return 'Username must be at least 3 characters and no more than 15 characters long';
+    }
+
+    if(!username.match(/^[A-Za-z0-9_-]+$/)) {
+        return 'Usernames must only use the characters a-z, 0-9, _ and -';
+    }
+
+    return undefined;
+}
+
+function validateEmail(email) {
+    if(!email) {
+        return 'You must specify an email address';
+    }
+
+    if(!email.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+        return 'Please enter a valid email address';
+    }
+
+    return undefined;
+}
+
+function validatePassword(password) {
+    if(!password) {
+        return 'You must specify a password';
+    }
+
+    if(password.length < 6) {
+        return 'Password must be at least 6 characters';
+    }
+
+    return undefined;
+}
+
 module.exports.init = function(server) {
-    server.post('/api/account/register', function(req, res) {
-        if(!req.body.password) {
-            res.send({ success: false, message: 'No password specified' });
+    server.post('/api/account/register', wrapAsync(async (req, res, next) => {
+        let message = validateUserName(req.body.username);
+        if(message) {
+            res.send({ success: false, message: message });
 
-            return Promise.reject('No password');
+            return next();
         }
 
-        if(!req.body.email) {
-            res.send({ success: false, message: 'No email specified' });
-
-            return Promise.reject('No email');
+        message = validateEmail(req.body.email);
+        if(message) {
+            res.send({ success: false, message: message });
+            return next();
         }
 
-        if(!req.body.username) {
-            res.send({ success: false, message: 'No username specified' });
-
-            return Promise.reject('No username');
+        message = validatePassword(req.body.password);
+        if(message) {
+            res.send({ success: false, message: message });
+            return next();
         }
 
-        userService.getUserByEmail(req.body.email)
-            .then(user => {
-                if(user) {
-                    res.send({ success: false, message: 'An account with that email already exists, please use another' });
+        let user = await userService.getUserByEmail(req.body.email);
+        if(user) {
+            res.send({ success: false, message: 'An account with that email already exists, please use another' });
 
-                    return Promise.reject('Account email exists');
-                }
+            return next();
+        }
 
-                return userService.getUserByUsername(req.body.username);
-            })
-            .then(user => {
-                if(user) {
-                    res.send({ success: false, message: 'An account with that name already exists, please choose another' });
+        user = await userService.getUserByUsername(req.body.username);
+        if(user) {
+            res.send({ success: false, message: 'An account with that name already exists, please choose another' });
 
-                    return Promise.reject('Account exists');
-                }
-            })
-            .then(() => {
-                return hashPassword(req.body.password, 10);
-            })
-            .then(passwordHash => {
-                let user = {
-                    password: passwordHash,
-                    registered: new Date(),
-                    username: req.body.username,
-                    email: req.body.email,
-                    emailHash: crypto.createHash('md5').update(req.body.email).digest('hex')
-                };
+            return next();
+        }
 
-                return userService.addUser(user);
-            })
-            .then(user => {
-                return loginUser(req, user);
-            })
-            .then(() => {
-                res.send({ success: true, user: Settings.getUserWithDefaultsSet(req.body), token: jwt.sign(req.user, config.secret) });
-            })
-            .catch(() => {
-                res.send({ success: false, message: 'An error occured registering your account' });
-            });
-    });
+        let passwordHash = await hashPassword(req.body.password, 10);
+        let newUser = {
+            password: passwordHash,
+            registered: new Date(),
+            username: req.body.username,
+            email: req.body.email,
+            emailHash: crypto.createHash('md5').update(req.body.email).digest('hex')
+        };
+
+        user = await userService.addUser(newUser);
+        await loginUser(req, user);
+
+        res.send({ success: true, user: Settings.getUserWithDefaultsSet(user), token: jwt.sign(req.user, config.secret) });
+    }));
 
     server.post('/api/account/check-username', function(req, res) {
         userService.getUserByUsername(req.body.username)
@@ -141,125 +169,125 @@ module.exports.init = function(server) {
         res.send({ success: true });
     });
 
-    server.post('/api/account/login', passport.authenticate('local'), function(req, res) {
-        res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
+    server.post('/api/account/login', (req, res, next) => {
+        if(!req.body.username) {
+            res.send({ success: false, message: 'Username must be specified' });
+
+            return next();
+        }
+
+        if(!req.body.password) {
+            res.send({ success: false, message: 'Password must be specified' });
+
+            return next();
+        }
+
+        passport.authenticate('local', (err, user) => {
+            if(err) {
+                return next(err);
+            }
+
+            if(!user) {
+                return res.status(401).send({ success: false, message: 'Invalid username or password' });
+            }
+
+            req.logIn(user, err => {
+                if(err) {
+                    return next(err);
+                }
+
+                res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
+            });
+        })(req, res, next);
     });
 
-    server.post('/api/account/password-reset-finish', function(req, res) {
+    server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
         let resetUser;
 
         if(!req.body.id || !req.body.token || !req.body.newPassword) {
             return res.send({ success: false, message: 'Invalid parameters' });
         }
 
-        userService.getUserById(req.body.id)
-            .then(user => {
-                if(!user) {
-                    return Promise.reject('User not found');
-                }
+        let user = await userService.getUserById(req.body.id);
+        if(!user) {
+            res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
-                if(!user.resetToken) {
-                    logger.error('Got unexpected reset request for user', user.username);
+            return next();
+        }
 
-                    res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again' });
+        if(!user.resetToken) {
+            logger.error('Got unexpected reset request for user', user.username);
 
-                    return Promise.reject('No reset token');
-                }
+            res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
-                let now = moment();
+            return next();
+        }
 
-                if(user.tokenExpires < now) {
-                    res.send({ success: false, message: 'The reset token you have provided has expired' });
+        let now = moment();
+        if(user.tokenExpires < now) {
+            res.send({ success: false, message: 'The reset token you have provided has expired.' });
 
-                    logger.error('Token expired', user.username);
+            logger.error('Token expired', user.username);
 
-                    return Promise.reject('Token expires');
-                }
+            return next();
+        }
 
-                let hmac = crypto.createHmac('sha512', config.hmacSecret);
-                let resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
 
-                if(resetToken !== req.body.token) {
-                    logger.error('Invalid reset token', user.username, req.body.token);
+        if(resetToken !== req.body.token) {
+            logger.error('Invalid reset token', user.username, req.body.token);
 
-                    res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again' });
+            res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again.' });
 
-                    return Promise.reject('Invalid token');
-                }
+            return next();
+        }
 
-                resetUser = user;
+        resetUser = user;
 
-                return hashPassword(req.body.newPassword, 10);
-            })
-            .then(passwordHash => {
-                return userService.setPassword(resetUser, passwordHash);
-            })
-            .then(() => {
-                return userService.clearResetToken(resetUser);
-            })
-            .then(() => {
-                res.send({ success: true });
-            })
-            .catch(err => {
-                logger.error(err);
+        let passwordHash = await hashPassword(req.body.newPassword, 10);
+        await userService.setPassword(resetUser, passwordHash);
+        await userService.clearResetToken(resetUser);
 
-                res.send({ success: false, message: 'An error occured resetting your password, check the url you have entered and try again' });
-            });
-    });
+        res.send({ success: true });
+    }));
 
-    server.post('/api/account/password-reset', function(req, res) {
+    server.post('/api/account/password-reset', wrapAsync(async (req, res) => {
         let emailUser;
         let resetToken;
-        let captchaDone = false;
 
-        util.httpRequest('https://www.google.com/recaptcha/api/siteverify?secret=' + config.captchaKey + '&response=' + req.body.captcha)
-            .then(response => {
-                let answer = JSON.parse(response);
+        let response = await util.httpRequest(`https://www.google.com/recaptcha/api/siteverify?secret=${config.captchaKey}&response=${req.body.captcha}`);
+        let answer = JSON.parse(response);
 
-                if(!answer.success) {
-                    return res.send({ success: false, message: 'Please complete the captcha correctly' });
-                }
+        if(!answer.success) {
+            return res.send({ success: false, message: 'Please complete the captcha correctly' });
+        }
 
-                res.send({ success: true });
+        res.send({ success: true });
 
-                captchaDone = true;
+        let user = await userService.getUserByUsername(req.body.username);
+        if(!user) {
+            logger.error('Username not found for password reset', req.body.username);
 
-                return userService.getUserByUsername(req.body.username);
-            })
-            .then(user => {
-                if(!user) {
-                    logger.error('Username not found for password reset', req.body.username);
+            return;
+        }
 
-                    return Promise.reject('Username not found');
-                }
+        let expiration = moment().add(4, 'hours');
+        let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
 
-                let expiration = moment().add(4, 'hours');
-                let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-                let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        resetToken = hmac.update(`RESET ${user.username} ${formattedExpiration}`).digest('hex');
+        emailUser = user;
 
-                resetToken = hmac.update('RESET ' + user.username + ' ' + formattedExpiration).digest('hex');
+        await userService.setResetToken(user, resetToken, formattedExpiration);
+        let url = `https://theironthrone.net/reset-password?id=${emailUser._id}&token=${resetToken}`;
+        let emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthrone.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
+            'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
+            'Kind regards,\n\n' +
+            'The Iron Throne team';
 
-                emailUser = user;
-
-                return userService.setResetToken(user, resetToken, formattedExpiration);
-            })
-            .then(() => {
-                let url = 'https://theironthrone.net/reset-password?id=' + emailUser._id + '&token=' + resetToken;
-                let emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthrone.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
-                    'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
-                    'Kind regards,\n\n' +
-                    'The Iron Throne team';
-
-                return sendEmail(emailUser.email, emailText);
-            })
-            .catch(err => {
-                logger.error(err);
-
-                if(!captchaDone) {
-                    return res.send({ success: false, message: 'There was a problem verifying the capthca, please try again' });
-                }
-            });
-    });
+        await sendEmail(emailUser.email, emailText);
+    }));
 
     function updateUserData(user) {
         return {
