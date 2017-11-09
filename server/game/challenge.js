@@ -241,7 +241,9 @@ class Challenge {
     }
 
     onCardLeftPlay(event) {
-        this.removeFromChallenge(event.card);
+        if(this.isParticipating(event.card)) {
+            this.removeFromChallenge(event.card);
+        }
     }
 
     registerEvents(events) {
