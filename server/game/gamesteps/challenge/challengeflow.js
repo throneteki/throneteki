@@ -218,7 +218,7 @@ class ChallengeFlow extends BaseStep {
             { name: 'onDefendersDeclared', params: { challenge: this.challenge } }
         ];
 
-        let defenderEvents = _.map(this.challenge.defenders, card => {
+        let defenderEvents = _.map(defenders, card => {
             return { name: 'onDeclaredAsDefender', params: { card: card } };
         });
 
