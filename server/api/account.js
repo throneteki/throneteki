@@ -338,7 +338,8 @@ module.exports.init = function(server) {
             return;
         }
 
-        res.send({ success: true, blockList: user.blockList });
+        let blockList = user.blockList || [];
+        res.send({ success: true, blockList: blockList.sort() });
     }));
 
     server.post('/api/account/:username/blocklist', wrapAsync(async (req, res) => {
