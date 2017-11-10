@@ -9,7 +9,7 @@ import io from 'socket.io-client';
 import Login from './pages/Login';
 import Logout from './Logout.jsx';
 import Register from './pages/Register';
-import Lobby from './Lobby.jsx';
+import Lobby from './pages/Lobby.jsx';
 import Decks from './Decks.jsx';
 import AddDeck from './AddDeck.jsx';
 import EditDeck from './EditDeck.jsx';

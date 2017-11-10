@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 
 import Link from '../Link.jsx';
 import AlertPanel from '../SiteComponents/AlertPanel';
-import Panel from './SiteComponents/Panel';
+import Panel from '../SiteComponents/Panel';
 import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
