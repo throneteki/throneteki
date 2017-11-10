@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 import $ from 'jquery';
 import _ from 'underscore';
@@ -9,6 +8,7 @@ import AlertPanel from './SiteComponents/AlertPanel.jsx';
 import DeckRow from './DeckRow.jsx';
 import Messages from './GameComponents/Messages.jsx';
 import Avatar from './Avatar.jsx';
+import Modal from './SiteComponents/Modal.jsx';
 
 import * as actions from './actions';
 
@@ -68,11 +68,11 @@ class InnerPendingGame extends React.Component {
     }
 
     onSelectDeckClick() {
-        $(findDOMNode(this.refs.modal)).modal('show');
+        $('#decks-modal').modal('show');
     }
 
     selectDeck(index) {
-        $(findDOMNode(this.refs.modal)).modal('hide');
+        $('#decks-modal').modal('hide');
 
         this.props.socket.emit('selectdeck', this.props.currentGame.id, this.props.decks[index]);
     }
@@ -86,7 +86,7 @@ class InnerPendingGame extends React.Component {
 
         if(player && player.deck && player.deck.selected) {
             if(playerIsMe) {
-                deck = <span className='deck-selection clickable' data-toggle='modal' data-target='#decks-modal'>{ player.deck.name }</span>;
+                deck = <span className='deck-selection clickable' onClick={ this.onSelectDeckClick }>{ player.deck.name }</span>;
             } else {
                 deck = <span className='deck-selection'>Deck Selected</span>;
             }
@@ -102,7 +102,7 @@ class InnerPendingGame extends React.Component {
 
             status = <span className={ statusClass }>{ player.deck.status }</span>;
         } else if(player && playerIsMe) {
-            selectLink = <span className='card-link' data-toggle='modal' data-target='#decks-modal'>Select deck...</span>;
+            selectLink = <span className='card-link' onClick={ this.onSelectDeckClick }>Select deck...</span>;
         }
 
         return (
@@ -204,21 +204,11 @@ class InnerPendingGame extends React.Component {
         }
 
         let popup = (
-            <div id='decks-modal' ref='modal' className='modal fade' tabIndex='-1' role='dialog'>
-                <div className='modal-dialog' role='document'>
-                    <div className='modal-content deck-popup'>
-                        <div className='modal-header'>
-                            <button type='button' className='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button>
-                            <h4 className='modal-title'>Select Deck</h4>
-                        </div>
-                        <div className='modal-body'>
-                            <div className='deck-list-popup'>
-                                { decks }
-                            </div>
-                        </div>
-                    </div>
+            <Modal id='decks-modal' className='deck-popup' title='Select Deck'>
+                <div className='deck-list-popup'>
+                    { decks }
                 </div>
-            </div>);
+            </Modal>);
 
         return (
             <div>

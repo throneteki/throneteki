@@ -15,6 +15,7 @@ import GameConfiguration from './GameComponents/GameConfiguration.jsx';
 import PlayerBoard from './GameComponents/PlayerBoard.jsx';
 import GameChat from './GameComponents/GameChat.jsx';
 import PlayerPlots from './GameComponents/PlayerPlots.jsx';
+import Modal from './SiteComponents/Modal.jsx';
 
 import * as actions from './actions';
 
@@ -267,7 +268,7 @@ export class InnerGameBoard extends React.Component {
     }
 
     onSettingsClick() {
-        $(findDOMNode(this.refs.modal)).modal('show');
+        $('#settings-modal').modal('show');
     }
 
     render() {
@@ -291,22 +292,12 @@ export class InnerGameBoard extends React.Component {
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
         let popup = (
-            <div id='settings-modal' ref='modal' className='modal fade' tabIndex='-1' role='dialog'>
-                <div className='modal-dialog' role='document'>
-                    <div className='modal-content settings-popup row'>
-                        <div className='modal-header'>
-                            <button type='button' className='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button>
-                            <h4 className='modal-title'>Game Configuration</h4>
-                        </div>
-                        <div className='modal-body col-xs-12'>
-                            <GameConfiguration actionWindows={ thisPlayer.promptedActionWindows } timerSettings={ thisPlayer.timerSettings }
-                                keywordSettings={ thisPlayer.keywordSettings } onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
-                                onToggle={ this.onPromptedActionWindowToggle.bind(this) } onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>);
+            <Modal id='settings-modal' className='settings-popup row' bodyClassName='col-xs-12' title='Game Configuration'>
+                <GameConfiguration actionWindows={ thisPlayer.promptedActionWindows } timerSettings={ thisPlayer.timerSettings }
+                    keywordSettings={ thisPlayer.keywordSettings } onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
+                    onToggle={ this.onPromptedActionWindowToggle.bind(this) } onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
+                />
+            </Modal>);
 
         return (
             <div className='game-board'>
