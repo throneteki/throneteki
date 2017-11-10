@@ -64,6 +64,10 @@ class Challenge {
     }
 
     removeFromChallenge(card) {
+        if(!this.isParticipating(event.card)) {
+            return;
+        }
+
         this.attackers = _.reject(this.attackers, c => c === card);
         this.defenders = _.reject(this.defenders, c => c === card);
 
@@ -241,9 +245,7 @@ class Challenge {
     }
 
     onCardLeftPlay(event) {
-        if(this.isParticipating(event.card)) {
-            this.removeFromChallenge(event.card);
-        }
+        this.removeFromChallenge(event.card);
     }
 
     registerEvents(events) {
