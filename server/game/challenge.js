@@ -64,7 +64,7 @@ class Challenge {
     }
 
     removeFromChallenge(card) {
-        if(!this.isParticipating(event.card)) {
+        if(!this.isParticipating(card)) {
             return;
         }
 
