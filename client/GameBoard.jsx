@@ -11,7 +11,6 @@ import PlayerStats from './GameComponents/PlayerStats.jsx';
 import PlayerRow from './GameComponents/PlayerRow.jsx';
 import ActivePlayerPrompt from './GameComponents/ActivePlayerPrompt.jsx';
 import CardZoom from './GameComponents/CardZoom.jsx';
-import CardPile from './GameComponents/CardPile.jsx';
 import GameConfiguration from './GameComponents/GameConfiguration.jsx';
 import PlayerBoard from './GameComponents/PlayerBoard.jsx';
 import GameChat from './GameComponents/GameChat.jsx';
@@ -206,31 +205,6 @@ export class InnerGameBoard extends React.Component {
 
     onDragDrop(card, source, target) {
         this.props.sendGameMessage('drop', card.uuid, source, target);
-    }
-
-    getSchemePile(player, isMe) {
-        if(!player || !player.agenda || player.agenda.code !== '05045') {
-            return;
-        }
-
-        return (
-            <CardPile
-                cards={ player.cardPiles.schemePlots }
-                className='plot'
-                disablePopup={ !isMe }
-                onCardClick={ this.onCardClick }
-                onDragDrop={ this.onDragDrop }
-                onMenuItemClick={ this.onMenuItemClick }
-                onMouseOut={ this.onMouseOut }
-                onMouseOver={ this.onMouseOver }
-                orientation='horizontal'
-                popupLocation={ isMe || this.state.spectating ? 'top' : 'bottom' }
-                source='scheme plots'
-                spectating={ this.state.spectating }
-                title='Schemes'
-                topCard={ { facedown: true, kneeled: true } }
-                size={ this.props.user.settings.cardSize } />
-        );
     }
 
     getPlots(thisPlayer, otherPlayer) {
