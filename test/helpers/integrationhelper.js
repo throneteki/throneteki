@@ -79,10 +79,15 @@ beforeEach(function() {
     jasmine.addMatchers(customMatchers);
 });
 
-global.integration = function(definitions) {
+global.integration = function(options, definitions) {
+    if(_.isFunction(options)) {
+        definitions = options;
+        options = {};
+    }
+
     describe('integration', function() {
         beforeEach(function() {
-            this.flow = new GameFlowWrapper();
+            this.flow = new GameFlowWrapper(options);
 
             this.game = this.flow.game;
             for(let player of this.flow.allPlayers) {
