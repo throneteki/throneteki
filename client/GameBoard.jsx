@@ -234,33 +234,31 @@ export class InnerGameBoard extends React.Component {
     }
 
     getPlots(thisPlayer, otherPlayer) {
+        let commonProps = {
+            cardSize: this.props.user.settings.cardSize,
+            onCardClick: this.onCardClick,
+            onCardMouseOut: this.onMouseOut,
+            onCardMouseOver: this.onMouseOver,
+            onDragDrop: this.onDragDrop,
+            onMenuItemClick: this.onMenuItemClick
+        };
         return (<div className='plots-pane'>
             <PlayerPlots
+                { ...commonProps }
                 activePlot={ otherPlayer.activePlot }
                 agenda={ otherPlayer.agenda }
-                cardSize={ this.props.user.settings.cardSize }
                 direction='reverse'
                 isMe={ false }
-                onCardClick={ this.onCardClick }
-                onCardMouseOut={ this.onMouseOut }
-                onCardMouseOver={ this.onMouseOver }
-                onDragDrop={ this.onDragDrop }
-                onMenuItemClick={ this.onMenuItemClick }
                 plotDeck={ otherPlayer.cardPiles.plotDeck }
                 plotDiscard={ otherPlayer.cardPiles.plotDiscard }
                 plotSelected={ otherPlayer.plotSelected }
                 schemePlots={ otherPlayer.cardPiles.schemePlots } />
             <PlayerPlots
+                { ...commonProps }
                 activePlot={ thisPlayer.activePlot }
                 agenda={ thisPlayer.agenda }
-                cardSize={ this.props.user.settings.cardSize }
                 direction='default'
                 isMe
-                onCardClick={ this.onCardClick }
-                onCardMouseOut={ this.onMouseOut }
-                onCardMouseOver={ this.onMouseOver }
-                onDragDrop={ this.onDragDrop }
-                onMenuItemClick={ this.onMenuItemClick }
                 plotDeck={ thisPlayer.cardPiles.plotDeck }
                 plotDiscard={ thisPlayer.cardPiles.plotDiscard }
                 plotSelected={ thisPlayer.plotSelected }
