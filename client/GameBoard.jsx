@@ -15,6 +15,7 @@ import CardPile from './GameComponents/CardPile.jsx';
 import GameConfiguration from './GameComponents/GameConfiguration.jsx';
 import PlayerBoard from './GameComponents/PlayerBoard.jsx';
 import GameChat from './GameComponents/GameChat.jsx';
+import PlayerPlots from './GameComponents/PlayerPlots.jsx';
 
 import * as actions from './actions';
 
@@ -234,27 +235,36 @@ export class InnerGameBoard extends React.Component {
 
     getPlots(thisPlayer, otherPlayer) {
         return (<div className='plots-pane'>
-            <div className='plot-group'>
-                { this.getSchemePile(otherPlayer, false) }
-                <CardPile className={ otherPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
-                    title='Plots' source='plot deck' cards={ otherPlayer.cardPiles.plotDeck }
-                    topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
-                    onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } disableMouseOver disablePopup
-                    onCardClick={ this.onCardClick } orientation='horizontal' size={ this.props.user.settings.cardSize } />
-                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ otherPlayer.cardPiles.plotDiscard }
-                    topCard={ otherPlayer.activePlot } orientation='horizontal' onMouseOver={ this.onMouseOver }
-                    onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } size={ this.props.user.settings.cardSize } />
-            </div>
-            <div className='plot-group our-side'>
-                <CardPile className='plot' title='Used Plots' source='revealed plots' cards={ thisPlayer.cardPiles.plotDiscard } topCard={ thisPlayer.activePlot }
-                    onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } orientation='horizontal' onMenuItemClick={ this.onMenuItemClick }
-                    onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop } size={ this.props.user.settings.cardSize } />
-                <CardPile className={ thisPlayer.plotSelected ? 'plot plot-selected' : 'plot' }
-                    title='Plots' source='plot deck' cards={ thisPlayer.cardPiles.plotDeck } topCard={ { facedown: true, kneeled: true } } orientation='horizontal'
-                    onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut } onCardClick={ this.onCardClick } onDragDrop={ this.onDragDrop }
-                    closeOnClick size={ this.props.user.settings.cardSize } />
-                { this.getSchemePile(thisPlayer, !this.state.spectating) }
-            </div>
+            <PlayerPlots
+                activePlot={ otherPlayer.activePlot }
+                agenda={ otherPlayer.agenda }
+                cardSize={ this.props.user.settings.cardSize }
+                direction='reverse'
+                isMe={ false }
+                onCardClick={ this.onCardClick }
+                onCardMouseOut={ this.onMouseOut }
+                onCardMouseOver={ this.onMouseOver }
+                onDragDrop={ this.onDragDrop }
+                onMenuItemClick={ this.onMenuItemClick }
+                plotDeck={ otherPlayer.cardPiles.plotDeck }
+                plotDiscard={ otherPlayer.cardPiles.plotDiscard }
+                plotSelected={ otherPlayer.plotSelected }
+                schemePlots={ otherPlayer.cardPiles.schemePlots } />
+            <PlayerPlots
+                activePlot={ thisPlayer.activePlot }
+                agenda={ thisPlayer.agenda }
+                cardSize={ this.props.user.settings.cardSize }
+                direction='default'
+                isMe
+                onCardClick={ this.onCardClick }
+                onCardMouseOut={ this.onMouseOut }
+                onCardMouseOver={ this.onMouseOver }
+                onDragDrop={ this.onDragDrop }
+                onMenuItemClick={ this.onMenuItemClick }
+                plotDeck={ thisPlayer.cardPiles.plotDeck }
+                plotDiscard={ thisPlayer.cardPiles.plotDiscard }
+                plotSelected={ thisPlayer.plotSelected }
+                schemePlots={ thisPlayer.cardPiles.schemePlots } />
         </div>);
     }
 
