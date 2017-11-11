@@ -88,6 +88,13 @@ class PlayerInteractionWrapper {
         this.clickPrompt('Done');
     }
 
+    selectTitle(title) {
+        if(!this.hasPrompt('Select a title')) {
+            throw new Error(`Couldn't select a title for ${this.name}. Current prompt is:\n\n${this.formatPrompt()}`);
+        }
+        this.clickPrompt(title);
+    }
+
     clickPrompt(text) {
         let currentPrompt = this.player.currentPrompt();
         let promptButton = _.find(currentPrompt.buttons, button => button.text.toLowerCase() === text.toLowerCase());

@@ -6,6 +6,18 @@ const Game = require('../../server/game/game.js');
 const PlayerInteractionWrapper = require('./playerinteractionwrapper.js');
 const Settings = require('../../server/settings.js');
 
+const coreCardData = require('../../thronesdb-json-data/pack/Core.json');
+const titleCardData = createTitleCardLookup(coreCardData);
+
+function createTitleCardLookup(cards) {
+    return cards
+        .filter(card => card.type_code === 'title')
+        .reduce((cardIndex, card) => {
+            cardIndex[card.code] = card;
+            return cardIndex;
+        }, {});
+}
+
 class GameFlowWrapper {
     constructor(options) {
         let gameRouter = jasmine.createSpyObj('gameRouter', ['gameWon', 'handleError', 'playerLeft']);
@@ -18,9 +30,10 @@ class GameFlowWrapper {
             owner: { username: 'player1' },
             saveGameId: 12345,
             isMelee: !!options.isMelee,
+            noTitleSetAside: true,
             players: this.generatePlayerDetails(options.numOfPlayers || options.isMelee ? 3 : 2)
         };
-        this.game = new Game(details, { router: gameRouter });
+        this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
 
         this.allPlayers = this.game.getPlayers().map(player => new PlayerInteractionWrapper(this.game, player));
     }

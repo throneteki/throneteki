@@ -61,6 +61,7 @@ class Game extends EventEmitter {
             type: undefined
         };
         this.isMelee = !!details.isMelee;
+        this.noTitleSetAside = !!details.noTitleSetAside;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
         this.shortCardData = options.shortCardData || [];
         this.skipPhase = {};
