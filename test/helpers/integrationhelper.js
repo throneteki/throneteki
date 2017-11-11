@@ -85,10 +85,10 @@ global.integration = function(definitions) {
             this.flow = new GameFlowWrapper();
 
             this.game = this.flow.game;
-            this.player1Object = this.game.getPlayerByName('player1');
-            this.player2Object = this.game.getPlayerByName('player2');
-            this.player1 = this.flow.player1;
-            this.player2 = this.flow.player2;
+            for(let player of this.flow.allPlayers) {
+                this[player.name] = player;
+                this[player.name + 'Object'] = this.game.getPlayerByName(player.name);
+            }
 
             _.each(ProxiedGameFlowWrapperMethods, method => {
                 this[method] = (...args) => this.flow[method].apply(this.flow, args);

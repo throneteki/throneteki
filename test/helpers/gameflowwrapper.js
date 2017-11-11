@@ -24,9 +24,7 @@ class GameFlowWrapper {
         };
         this.game = new Game(details, { router: gameRouter });
 
-        this.player1 = new PlayerInteractionWrapper(this.game, this.game.getPlayerByName('player1'));
-        this.player2 = new PlayerInteractionWrapper(this.game, this.game.getPlayerByName('player2'));
-        this.allPlayers = [this.player1, this.player2];
+        this.allPlayers = this.game.getPlayers().map(player => new PlayerInteractionWrapper(this.game, player));
     }
 
     eachPlayerInFirstPlayerOrder(handler) {
