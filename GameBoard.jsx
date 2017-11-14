@@ -11,10 +11,10 @@ import PlayerStats from './GameComponents/PlayerStats.jsx';
 import PlayerRow from './GameComponents/PlayerRow.jsx';
 import ActivePlayerPrompt from './GameComponents/ActivePlayerPrompt.jsx';
 import CardZoom from './GameComponents/CardZoom.jsx';
-import Messages from './GameComponents/Messages.jsx';
 import CardPile from './GameComponents/CardPile.jsx';
 import GameConfiguration from './GameComponents/GameConfiguration.jsx';
 import PlayerBoard from './GameComponents/PlayerBoard.jsx';
+import GameChat from './GameComponents/GameChat.jsx';
 
 import * as actions from './actions';
 
@@ -54,18 +54,13 @@ export class InnerGameBoard extends React.Component {
         this.onConcedeClick = this.onConcedeClick.bind(this);
         this.onLeaveClick = this.onLeaveClick.bind(this);
         this.onShuffleClick = this.onShuffleClick.bind(this);
-        this.onKeyPress = this.onKeyPress.bind(this);
-        this.onSendClick = this.onSendClick.bind(this);
-        this.onChange = this.onChange.bind(this);
-        this.onScroll = this.onScroll.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
+        this.sendChatMessage = this.sendChatMessage.bind(this);
 
         this.state = {
-            canScroll: true,
             cardToZoom: undefined,
             showDrawDeck: false,
             spectating: true,
-            message: '',
             showActionWindowsMenu: false,
             showCardMenu: {}
         };
@@ -77,12 +72,6 @@ export class InnerGameBoard extends React.Component {
 
     componentWillReceiveProps(props) {
         this.updateContextMenu(props);
-    }
-
-    componentDidUpdate() {
-        if(this.state.canScroll) {
-            $(this.refs.messagePanel).scrollTop(999999);
-        }
     }
 
     updateContextMenu(props) {
@@ -137,18 +126,6 @@ export class InnerGameBoard extends React.Component {
         if(this.props.setContextMenu) {
             this.props.setContextMenu(menu);
         }
-    }
-
-    onScroll() {
-        let messages = this.refs.messagePanel;
-
-        setTimeout(() => {
-            if(messages.scrollTop >= messages.scrollHeight - messages.offsetHeight - 20) {
-                this.setState({ canScroll: true });
-            } else {
-                this.setState({ canScroll: false });
-            }
-        }, 500);
     }
 
     onConcedeClick() {
@@ -218,32 +195,8 @@ export class InnerGameBoard extends React.Component {
         this.setState({ showDrawDeck: !this.state.showDrawDeck });
     }
 
-    sendMessage() {
-        if(this.state.message === '') {
-            return;
-        }
-
-        this.props.sendGameMessage('chat', this.state.message);
-
-        this.setState({ message: '' });
-    }
-
-    onChange(event) {
-        this.setState({ message: event.target.value });
-    }
-
-    onKeyPress(event) {
-        if(event.key === 'Enter') {
-            this.sendMessage();
-
-            event.preventDefault();
-        }
-    }
-
-    onSendClick(event) {
-        event.preventDefault();
-
-        this.sendMessage();
+    sendChatMessage(message) {
+        this.props.sendGameMessage('chat', message);
     }
 
     onShuffleClick() {
@@ -466,15 +419,11 @@ export class InnerGameBoard extends React.Component {
                         <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
                             orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
                             show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
-                        <div className='chat'>
-                            <div className='messages panel' ref='messagePanel' onScroll={ this.onScroll }>
-                                <Messages messages={ this.props.currentGame.messages } onCardMouseOver={ this.onMouseOver } onCardMouseOut={ this.onMouseOut } />
-                            </div>
-                            <form>
-                                <input className='form-control' placeholder='Chat...' onKeyPress={ this.onKeyPress } onChange={ this.onChange }
-                                    value={ this.state.message } />
-                            </form>
-                        </div>
+                        <GameChat
+                            messages={ this.props.currentGame.messages }
+                            onCardMouseOut={ this.onMouseOut }
+                            onCardMouseOver={ this.onMouseOver }
+                            onSendChat={ this.sendChatMessage } />
                     </div>
                 </div>
                 <div className='player-stats-row'>
