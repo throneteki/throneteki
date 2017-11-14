@@ -27,6 +27,10 @@ class TitlePool {
     }
 
     amountToSetAside() {
+        if(this.game.noTitleSetAside) {
+            return 0;
+        }
+
         let players = this.game.getPlayers();
 
         if(players.length >= 6) {
