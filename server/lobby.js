@@ -40,7 +40,7 @@ class Lobby {
 
         this.loadCardData();
 
-        setInterval(() => this.clearStalePendingGames(), 60000);
+        setInterval(() => this.clearStalePendingGames(), 60 * 1000);
     }
 
     async loadCardData() {
@@ -245,7 +245,7 @@ class Lobby {
     }
 
     clearStalePendingGames() {
-        const timeout = 900000;
+        const timeout = 15 * 60 * 1000;
         let staleGames = _.filter(this.games, game => !game.started && Date.now() - game.createdAt > timeout);
         for(let game of staleGames) {
             logger.info('closed pending game', game.id, 'due to inactivity');
