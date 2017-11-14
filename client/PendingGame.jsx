@@ -4,11 +4,9 @@ import { connect } from 'react-redux';
 import $ from 'jquery';
 import _ from 'underscore';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import DeckRow from './DeckRow.jsx';
 import Messages from './GameComponents/Messages.jsx';
 import Avatar from './Avatar.jsx';
-import Modal from './SiteComponents/Modal.jsx';
+import SelectDeckModal from './PendingGameComponents/SelectDeckModal.jsx';
 
 import * as actions from './actions';
 
@@ -71,10 +69,10 @@ class InnerPendingGame extends React.Component {
         $('#decks-modal').modal('show');
     }
 
-    selectDeck(index) {
+    selectDeck(deck) {
         $('#decks-modal').modal('hide');
 
-        this.props.socket.emit('selectdeck', this.props.currentGame.id, this.props.decks[index]);
+        this.props.socket.emit('selectdeck', this.props.currentGame.id, deck);
     }
 
     getPlayerStatus(player, username) {
@@ -186,30 +184,6 @@ class InnerPendingGame extends React.Component {
             return <div>Loading game in progress, please wait...</div>;
         }
 
-        let index = 0;
-        let decks = null;
-
-        if(this.props.loading) {
-            decks = <div>Loading decks from the server...</div>;
-        } else if(this.props.apiError) {
-            decks = <AlertPanel type='error' message={ this.props.apiError } />;
-        } else {
-            decks = _.size(this.props.decks) > 0 ? _.map(this.props.decks, deck => {
-                let row = <DeckRow key={ deck.name + index.toString() } deck={ deck } onClick={ this.selectDeck.bind(this, index) } active={ index === this.state.selectedDeck } />;
-
-                index++;
-
-                return row;
-            }) : <div>You have no decks, please add one</div>;
-        }
-
-        let popup = (
-            <Modal id='decks-modal' className='deck-popup' title='Select Deck'>
-                <div className='deck-list-popup'>
-                    { decks }
-                </div>
-            </Modal>);
-
         return (
             <div>
                 <audio ref='notification'>
@@ -257,7 +231,12 @@ class InnerPendingGame extends React.Component {
                         </div>
                     </form>
                 </div>
-                { popup }
+                <SelectDeckModal
+                    apiError={ this.props.apiError }
+                    decks={ this.props.decks }
+                    id='decks-modal'
+                    loading={ this.props.loading }
+                    onDeckSelected={ this.selectDeck.bind(this) } />
             </div >);
     }
 }
