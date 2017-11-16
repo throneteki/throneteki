@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { findDOMNode } from 'react-dom';
 import _ from 'underscore';
 import $ from 'jquery';
 import { toastr } from 'react-redux-toastr';
@@ -11,10 +10,10 @@ import PlayerStats from './GameComponents/PlayerStats.jsx';
 import PlayerRow from './GameComponents/PlayerRow.jsx';
 import ActivePlayerPrompt from './GameComponents/ActivePlayerPrompt.jsx';
 import CardZoom from './GameComponents/CardZoom.jsx';
-import GameConfiguration from './GameComponents/GameConfiguration.jsx';
 import PlayerBoard from './GameComponents/PlayerBoard.jsx';
 import GameChat from './GameComponents/GameChat.jsx';
 import PlayerPlots from './GameComponents/PlayerPlots.jsx';
+import GameConfigurationModal from './GameComponents/GameConfigurationModal.jsx';
 
 import * as actions from './actions';
 
@@ -267,7 +266,7 @@ export class InnerGameBoard extends React.Component {
     }
 
     onSettingsClick() {
-        $(findDOMNode(this.refs.modal)).modal('show');
+        $('#settings-modal').modal('show');
     }
 
     render() {
@@ -290,27 +289,16 @@ export class InnerGameBoard extends React.Component {
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
-        let popup = (
-            <div id='settings-modal' ref='modal' className='modal fade' tabIndex='-1' role='dialog'>
-                <div className='modal-dialog' role='document'>
-                    <div className='modal-content settings-popup row'>
-                        <div className='modal-header'>
-                            <button type='button' className='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button>
-                            <h4 className='modal-title'>Game Configuration</h4>
-                        </div>
-                        <div className='modal-body col-xs-12'>
-                            <GameConfiguration actionWindows={ thisPlayer.promptedActionWindows } timerSettings={ thisPlayer.timerSettings }
-                                keywordSettings={ thisPlayer.keywordSettings } onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
-                                onToggle={ this.onPromptedActionWindowToggle.bind(this) } onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>);
-
         return (
             <div className='game-board'>
-                { popup }
+                <GameConfigurationModal
+                    id='settings-modal'
+                    keywordSettings={ thisPlayer.keywordSettings }
+                    onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
+                    onPromptedActionWindowToggle={ this.onPromptedActionWindowToggle.bind(this) }
+                    onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
+                    promptedActionWindows={ thisPlayer.promptedActionWindows }
+                    timerSettings={ thisPlayer.timerSettings } />
                 <div className='player-stats-row'>
                     <PlayerStats stats={ otherPlayer.stats }
                         user={ otherPlayer.user } firstPlayer={ otherPlayer.firstPlayer } />
