@@ -1,14 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
 import $ from 'jquery';
 import _ from 'underscore';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import DeckRow from './DeckRow.jsx';
 import Messages from './GameComponents/Messages.jsx';
 import Avatar from './Avatar.jsx';
+import SelectDeckModal from './PendingGameComponents/SelectDeckModal.jsx';
 
 import * as actions from './actions';
 
@@ -68,13 +66,13 @@ class InnerPendingGame extends React.Component {
     }
 
     onSelectDeckClick() {
-        $(findDOMNode(this.refs.modal)).modal('show');
+        $('#decks-modal').modal('show');
     }
 
-    selectDeck(index) {
-        $(findDOMNode(this.refs.modal)).modal('hide');
+    selectDeck(deck) {
+        $('#decks-modal').modal('hide');
 
-        this.props.socket.emit('selectdeck', this.props.currentGame.id, this.props.decks[index]);
+        this.props.socket.emit('selectdeck', this.props.currentGame.id, deck);
     }
 
     getPlayerStatus(player, username) {
@@ -86,7 +84,7 @@ class InnerPendingGame extends React.Component {
 
         if(player && player.deck && player.deck.selected) {
             if(playerIsMe) {
-                deck = <span className='deck-selection clickable' data-toggle='modal' data-target='#decks-modal'>{ player.deck.name }</span>;
+                deck = <span className='deck-selection clickable' onClick={ this.onSelectDeckClick }>{ player.deck.name }</span>;
             } else {
                 deck = <span className='deck-selection'>Deck Selected</span>;
             }
@@ -102,7 +100,7 @@ class InnerPendingGame extends React.Component {
 
             status = <span className={ statusClass }>{ player.deck.status }</span>;
         } else if(player && playerIsMe) {
-            selectLink = <span className='card-link' data-toggle='modal' data-target='#decks-modal'>Select deck...</span>;
+            selectLink = <span className='card-link' onClick={ this.onSelectDeckClick }>Select deck...</span>;
         }
 
         return (
@@ -186,40 +184,6 @@ class InnerPendingGame extends React.Component {
             return <div>Loading game in progress, please wait...</div>;
         }
 
-        let index = 0;
-        let decks = null;
-
-        if(this.props.loading) {
-            decks = <div>Loading decks from the server...</div>;
-        } else if(this.props.apiError) {
-            decks = <AlertPanel type='error' message={ this.props.apiError } />;
-        } else {
-            decks = _.size(this.props.decks) > 0 ? _.map(this.props.decks, deck => {
-                let row = <DeckRow key={ deck.name + index.toString() } deck={ deck } onClick={ this.selectDeck.bind(this, index) } active={ index === this.state.selectedDeck } />;
-
-                index++;
-
-                return row;
-            }) : <div>You have no decks, please add one</div>;
-        }
-
-        let popup = (
-            <div id='decks-modal' ref='modal' className='modal fade' tabIndex='-1' role='dialog'>
-                <div className='modal-dialog' role='document'>
-                    <div className='modal-content deck-popup'>
-                        <div className='modal-header'>
-                            <button type='button' className='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>×</span></button>
-                            <h4 className='modal-title'>Select Deck</h4>
-                        </div>
-                        <div className='modal-body'>
-                            <div className='deck-list-popup'>
-                                { decks }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>);
-
         return (
             <div>
                 <audio ref='notification'>
@@ -267,7 +231,12 @@ class InnerPendingGame extends React.Component {
                         </div>
                     </form>
                 </div>
-                { popup }
+                <SelectDeckModal
+                    apiError={ this.props.apiError }
+                    decks={ this.props.decks }
+                    id='decks-modal'
+                    loading={ this.props.loading }
+                    onDeckSelected={ this.selectDeck.bind(this) } />
             </div >);
     }
 }
