@@ -12,7 +12,7 @@ class PowerBehindTheThrone extends PlotCard {
             title: 'Discard a stand token',
             cost: ability.costs.discardTokenFromSelf('stand'),
             target: {
-                cardCondition: card => card.location === 'play area' && card.kneeled
+                cardCondition: card => card.location === 'play area' && card.kneeled && card.getType() === 'character'
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to remove a stand token and stand {2}', this.controller, this, context.target);
