@@ -16,7 +16,7 @@ class OldWyk extends DrawCard {
 
                 this.controller.putIntoPlay(card);
                 //Manually kneel instead of firing kneel event as character is put into play knelt
-                this.kneeled = true;
+                card.kneeled = true;
                 this.game.currentChallenge.addAttacker(card);
 
                 this.game.addMessage('{0} kneels {1} to put {2} into play from their dead pile knelt as an attacker',
