@@ -16,7 +16,7 @@ class DaarioNaharis extends DrawCard {
                 }
 
                 if(context.target.controller !== this.controller) {
-                    this.untilEndOfRound(ability => ({
+                    this.untilEndOfPhase(ability => ({
                         match: context.target,
                         effect: ability.effects.takeControl(this.controller)
                     }));
