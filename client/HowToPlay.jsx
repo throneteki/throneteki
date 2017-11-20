@@ -27,6 +27,7 @@ class HowToPlay extends React.Component {
                         <li><a href='#interactions'>Specific Card Interactions</a></li>
                         <ul className='htp-sub-list'>
                             <li><a href='#riddle'>Varys' Riddle vs Summer Harvest</a></li>
+                            <li><a href='#mag'>Mag the Mighty vs. saves</a></li>
                         </ul>
                         <li><a href='#commands'>Manual Commands</a></li>
                         <li><a href='#conceding'>About Stats, Conceding and Leaving Games</a></li>
@@ -57,6 +58,10 @@ class HowToPlay extends React.Component {
                     <h4 id='riddle'><a href='https://thronesdb.com/card/04020' target='_blank'>Varys' Riddle</a> vs <a href='https://thronesdb.com/card/04039' target='_blank'>Summer Harvest</a></h4>
                     <p>CardGameDB rule threads on this interaction: <a href='http://www.cardgamedb.com/forums/index.php?/topic/32255-varys-riddle-vs-summer-harvest/' target='_blank'>1</a>, <a href='http://www.cardgamedb.com/forums/index.php?/topic/33283-timming-varys-riddle-summer-harvest/' target='_blank'>2</a>.</p>
                     <p>These plots have a very specific interaction that's implemented a little differently from the official ruling. Officially, X will be defined by both plots and thus will be both 2 and 7. The first player will consequently decide what value X is whenever it gets referenced (a more thorough explanation is detailed in the above links). On The Iron Throne it is implemented a little differently. As the player who revealed Varys' Riddle, to make sure your opponent's value of X will be 2, you have to go first and trigger Summer Harvest first. As the player who revealed Summer Harvest, if the Varys' Riddle player has made you first player (or you won initiative somehow), you'd want to trigger Varys' Riddle first to make sure your X is 7.</p>
+
+                    <h4 id='mag'><a href='https://thronesdb.com/card/08018' target='_blank'>Mag the Mighty</a> vs saves</h4>
+                    <p>Mag the Mighty's forced reaction has the controller of Mag first choose a character they control to kill. Since the second part (opponent's kill) for Mag is worded as a 'then'-effect, this part of the effect will only resolve if the first part was resolved completely (<a href='https://thronesdb.com/rulesreference#The_word_Then' target='_blank'>source</a>). This means that if Mag's controller chose to save their kill, the other player would not have to kill a character as the pre-then effect did not resolve completely.</p>
+                    <p>This interaction is currently not implemented on The Iron Throne as the opponent is always prompted for the second kill. The solution here is to just click 'Done' on the second prompt without selecting a character if such a situation ever occurs.</p>
 
                     <h3 id='commands'>Manual Commands</h3>
                     <p>Every once in a while something happens during a game that shouldn’t have happened. This can occur due to a misclick, an unimplemented card or a bug in the software. To fix the game state in such situations a variety of manual commands are implemented. Typing these commands as a chatmessage during a game will have the following effect:</p>
