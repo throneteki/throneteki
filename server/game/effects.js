@@ -166,6 +166,26 @@ const Effects = {
             }
         };
     },
+    dynamicDominanceStrength: function(calculate) {
+        return {
+            apply: function(card, context) {
+                context.dynamicDominanceStrength = context.dynamicDominanceStrength || {};
+                context.dynamicDominanceStrength[card.uuid] = calculate(card, context) || 0;
+                card.modifyDominanceStrength(context.dynamicDominanceStrength[card.uuid], true);
+            },
+            reapply: function(card, context) {
+                let currentDominanceStrength = context.dynamicDominanceStrength[card.uuid];
+                let newDominanceStrength = calculate(card, context) || 0;
+                context.dynamicDominanceStrength[card.uuid] = newDominanceStrength;
+                card.modifyDominanceStrength(newDominanceStrength - currentDominanceStrength, true);
+            },
+            unapply: function(card, context) {
+                card.modifyDominanceStrength(-context.dynamicDominanceStrength[card.uuid], false);
+                delete context.dynamicDominanceStrength[card.uuid];
+            },
+            isStateDependent: true
+        };
+    },
     modifyGold: function(value) {
         return {
             apply: function(card) {
