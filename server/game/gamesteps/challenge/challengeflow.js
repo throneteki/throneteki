@@ -153,7 +153,7 @@ class ChallengeFlow extends BaseStep {
             restrictions.push(`min ${defenderMinimum}`);
         }
         if(defenderLimit !== 0) {
-            restrictions.push(`limit ${defenderLimit}`);
+            restrictions.push(`max ${defenderLimit}`);
         }
         if(restrictions.length !== 0) {
             title += ` (${restrictions.join(', ')})`;
