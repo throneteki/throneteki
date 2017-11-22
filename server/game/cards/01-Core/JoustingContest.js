@@ -5,7 +5,10 @@ class JoustingContest extends PlotCard {
         this.persistentEffect({
             targetType: 'player',
             targetController: 'any',
-            effect: ability.effects.setChallengerLimit(1)
+            effect: [
+                ability.effects.setAttackerMaximum(1),
+                ability.effects.setDefenderMaximum(1)
+            ]
         });
     }
 }

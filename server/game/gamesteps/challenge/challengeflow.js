@@ -41,13 +41,14 @@ class ChallengeFlow extends BaseStep {
     }
 
     promptForAttackers() {
-        var title = 'Select challenge attackers';
-        if(this.challenge.attackingPlayer.challengerLimit !== 0) {
-            title += ' (limit ' + this.challenge.attackingPlayer.challengerLimit + ')';
+        let title = 'Select challenge attackers';
+        let attackerMax = this.challenge.attackingPlayer.attackerLimits.getMax();
+        if(attackerMax !== 0) {
+            title += ' (max ' + attackerMax + ')';
         }
 
         this.game.promptForSelect(this.challenge.attackingPlayer, {
-            numCards: this.challenge.attackingPlayer.challengerLimit,
+            numCards: attackerMax,
             multiSelect: true,
             activePromptTitle: title,
             waitingPromptTitle: 'Waiting for opponent to select attackers',
@@ -124,12 +125,12 @@ class ChallengeFlow extends BaseStep {
                 card.challengeOptions.mustBeDeclaredAsDefender;
         });
 
-        let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
-        let defenderMinimum = this.challenge.defendingPlayer.defenderMinimum;
-        let selectableLimit = defenderLimit;
+        let defenderMaximum = this.challenge.defendingPlayer.defenderLimits.getMax();
+        let defenderMinimum = this.challenge.defendingPlayer.defenderLimits.getMin();
+        let selectableLimit = defenderMaximum;
 
         if(!_.isEmpty(this.forcedDefenders)) {
-            if(this.forcedDefenders.length === defenderLimit) {
+            if(this.forcedDefenders.length === defenderMaximum) {
                 this.game.addMessage('{0} {1} automatically declared as {2}',
                     this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
 
@@ -137,11 +138,11 @@ class ChallengeFlow extends BaseStep {
                 return;
             }
 
-            if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
+            if(this.forcedDefenders.length < defenderMaximum || defenderMaximum === 0) {
                 this.game.addMessage('{0} {1} automatically declared as {2}',
                     this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
 
-                if(defenderLimit !== 0) {
+                if(defenderMaximum !== 0) {
                     selectableLimit -= this.forcedDefenders.length;
                 }
             }
@@ -152,8 +153,8 @@ class ChallengeFlow extends BaseStep {
         if(defenderMinimum !== 0) {
             restrictions.push(`min ${defenderMinimum}`);
         }
-        if(defenderLimit !== 0) {
-            restrictions.push(`max ${defenderLimit}`);
+        if(defenderMaximum !== 0) {
+            restrictions.push(`max ${defenderMaximum}`);
         }
         if(restrictions.length !== 0) {
             title += ` (${restrictions.join(', ')})`;
@@ -182,8 +183,8 @@ class ChallengeFlow extends BaseStep {
             return true;
         }
 
-        let defenderLimit = this.challenge.defendingPlayer.challengerLimit;
-        if(this.forcedDefenders.length < defenderLimit || defenderLimit === 0) {
+        let defenderMax = this.challenge.defendingPlayer.defenderLimits.getMax();
+        if(this.forcedDefenders.length < defenderMax || defenderMax === 0) {
             return !this.forcedDefenders.includes(card);
         }
 
@@ -192,9 +193,9 @@ class ChallengeFlow extends BaseStep {
 
     chooseDefenders(defenders) {
         let defendingPlayer = this.challenge.defendingPlayer;
-        let defenderLimit = defendingPlayer.challengerLimit;
-        let defenderMinimum = defendingPlayer.defenderMinimum;
-        if(this.forcedDefenders.length <= defenderLimit || defenderLimit === 0) {
+        let defenderMaximum = defendingPlayer.defenderLimits.getMax();
+        let defenderMinimum = defendingPlayer.defenderLimits.getMin();
+        if(this.forcedDefenders.length <= defenderMaximum || defenderMaximum === 0) {
             defenders = defenders.concat(this.forcedDefenders);
         }
 
@@ -235,7 +236,7 @@ class ChallengeFlow extends BaseStep {
 
     hasMetDefenderMinimum(defenders) {
         let defendingPlayer = this.challenge.defendingPlayer;
-        let defenderMinimum = defendingPlayer.defenderMinimum;
+        let defenderMinimum = defendingPlayer.defenderLimits.getMin();
 
         if(defenderMinimum === 0) {
             return true;

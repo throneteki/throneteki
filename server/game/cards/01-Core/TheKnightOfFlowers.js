@@ -10,7 +10,7 @@ class TheKnightOfFlowers extends DrawCard {
                 && this.game.currentChallenge.attackers.length === 1,
             targetType: 'player',
             targetController: 'opponent',
-            effect: ability.effects.setChallengerLimit(1)
+            effect: ability.effects.setDefenderMaximum(1)
         });
     }
 

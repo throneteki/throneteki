@@ -1,6 +1,6 @@
 const PlotCard = require('../../plotcard.js');
 
-class Beseiged extends PlotCard {
+class Besieged extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetType: 'player',
@@ -10,6 +10,6 @@ class Beseiged extends PlotCard {
     }
 }
 
-Beseiged.code = '09047';
+Besieged.code = '09047';
 
-module.exports = Beseiged;
+module.exports = Besieged;

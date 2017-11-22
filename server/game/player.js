@@ -10,6 +10,7 @@ const ChallengeTracker = require('./challengetracker.js');
 const PlayableLocation = require('./playablelocation.js');
 const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
+const MinMaxProperty = require('./MinMaxProperty.js');
 
 const logger = require('../log.js');
 
@@ -48,7 +49,8 @@ class Player extends Spectator {
         this.costReducers = [];
         this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
         this.usedPlotsModifier = 0;
-        this.defenderMinimum = 0;
+        this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
+        this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.cannotGainGold = false;
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
@@ -610,7 +612,6 @@ class Player extends Spectator {
 
         this.challenges.reset();
 
-        this.challengerLimit = 0;
         this.drawPhaseCards = DrawPhaseCards;
 
         this.cardsInPlay.each(card => {
