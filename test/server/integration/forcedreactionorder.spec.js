@@ -3,7 +3,7 @@ describe('forced reaction order', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('lannister', [
                 'Trading with the Pentoshi',
-                'The Hound', 'The Hound'
+                'The Hound (TtB)', 'The Hound (TtB)'
             ]);
             const deck2 = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',

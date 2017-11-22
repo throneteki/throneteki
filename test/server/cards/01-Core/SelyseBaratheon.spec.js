@@ -1,9 +1,9 @@
-describe('Selyse Baratheon', function() {
+describe('Selyse Baratheon (Core)', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('baratheon', [
                 'Sneak Attack',
-                'Selyse Baratheon'
+                'Selyse Baratheon (Core)'
             ]);
             const deck2 = this.buildDeck('martell', [
                 'Sneak Attack',

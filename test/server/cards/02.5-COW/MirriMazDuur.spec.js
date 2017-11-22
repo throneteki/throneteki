@@ -3,7 +3,7 @@ describe('Mirri Maz Duur', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('targaryen', [
                 'Marching Orders',
-                'Mirri Maz Duur', 'The Hound', 'Targaryen Loyalist'
+                'Mirri Maz Duur', 'The Hound (TtB)', 'Targaryen Loyalist'
             ]);
             const deck2 = this.buildDeck('targaryen', [
                 'Marching Orders',

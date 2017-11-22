@@ -161,7 +161,7 @@ describe('challenges phase', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('tyrell', [
                     'Sneak Attack',
-                    'Renly Baratheon (FFH)', 'Brienne of Tarth', 'Ser Garlan Tyrell (OR)', 'Garden Caretaker'
+                    'Renly Baratheon (FFH)', 'Brienne of Tarth (GoH)', 'Ser Garlan Tyrell (OR)', 'Garden Caretaker'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
