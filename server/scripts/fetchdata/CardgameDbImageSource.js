@@ -10,6 +10,11 @@ class CardgameDbImageSource {
 
     fetchImage(card, imagePath) {
         let pack = this.packs.find(pack => pack.code === card.pack_code);
+        if(!pack) {
+            console.log(`Could not find pack '${card.pack_code}' for ${card.name}, submodule data may be out of date.`);
+            return;
+        }
+
         let cgdbId = pack.cgdb_id.toString().padStart(2, '0');
         let url = `http://lcg-cdn.fantasyflightgames.com/got2nd/GT${cgdbId}_${card.position}.jpg`;
 
