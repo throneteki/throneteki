@@ -24,7 +24,7 @@ export class InnerAddDeck extends React.Component {
         this.props.addDeck();
     }
 
-    componentWillUpdate() {
+    componentDidUpdate() {
         if(this.props.deckSaved) {
             this.props.navigate('/decks');
 
