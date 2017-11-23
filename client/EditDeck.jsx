@@ -25,7 +25,7 @@ class InnerEditDeck extends React.Component {
         }
     }
 
-    componentWillUpdate() {
+    componentDidUpdate() {
         if(this.props.deckSaved) {
             this.props.navigate('/decks');
 
