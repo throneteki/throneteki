@@ -4,7 +4,7 @@ class DaarioNaharis extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isAttacking(this)
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card !== this && (card.kneeled || card.controller !== this.controller) &&
