@@ -4,7 +4,7 @@ describe('The Lord of the Crossing', function() {
             const deck = this.buildDeck('baratheon', [
                 'The Lord of the Crossing',
                 'A Noble Cause', 'Blood of the Dragon',
-                'Selyse Baratheon', 'Bastard in Hiding', 'Fiery Followers'
+                'Selyse Baratheon (Core)', 'Bastard in Hiding', 'Fiery Followers'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
