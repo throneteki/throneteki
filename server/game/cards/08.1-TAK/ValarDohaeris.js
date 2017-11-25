@@ -59,7 +59,7 @@ class ValarDohaeris extends PlotCard {
     promptPlayersForOrder() {
         _.each(this.selections, selection => {
             let player = selection.player;
-            let playerSpecificToMove = _.difference(player.filterCardsInPlay(card => card.getType() === 'character'), selection.cards);
+            let playerSpecificToMove = _.difference(player.filterCardsInPlay(card => card.getType() === 'character' && card.allowGameAction('placeOnBottomOfDeck')), selection.cards);
             this.toMove = this.toMove.concat(playerSpecificToMove);
         });
 
@@ -93,7 +93,7 @@ class ValarDohaeris extends PlotCard {
 
             if(!_.isEmpty(cardsOwnedByPlayer)) {
                 _.each(cardsOwnedByPlayer, card => {
-                    card.owner.moveCard(card, 'draw deck', { bottom: true });
+                    this.game.placeOnBottomOfDeck(card, { allowSave: false });
                 });
 
                 this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}',

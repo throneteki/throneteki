@@ -40,7 +40,7 @@ class OldWyk extends DrawCard {
             return;
         }
 
-        this.controller.moveCard(card, 'draw deck', { bottom: true });
+        this.game.placeOnBottomOfDeck(card);
         this.game.addMessage('{0} is placed on the bottom of {1}\'s deck because of {2}',
             card, this.controller, this);
     }
