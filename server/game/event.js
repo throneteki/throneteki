@@ -1,17 +1,13 @@
 const _ = require('underscore');
 
 class Event {
-    constructor(name, params, merge = false) {
+    constructor(name, params) {
         this.name = name;
         this.cancelled = false;
         this.replacementHandler = null;
 
-        if(merge) {
-            _.extend(this, params);
-            this.params = [this].concat([params]);
-        } else {
-            this.params = [this].concat(params);
-        }
+        _.extend(this, params);
+        this.params = [this].concat([params]);
     }
 
     emitTo(emitter, suffix) {

@@ -54,7 +54,7 @@ class TriggeredAbility extends BaseAbility {
             return;
         }
 
-        return listener(...event.params);
+        return listener(event);
     }
 
     meetsRequirements(context) {

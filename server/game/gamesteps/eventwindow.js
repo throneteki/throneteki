@@ -4,13 +4,13 @@ const SimpleStep = require('./simplestep.js');
 const Event = require('../event.js');
 
 class EventWindow extends BaseStep {
-    constructor(game, eventName, params, handler, merged = false) {
+    constructor(game, eventName, params, handler) {
         super(game);
 
         this.eventName = eventName;
         this.handler = handler;
 
-        this.event = new Event(eventName, params, merged);
+        this.event = new Event(eventName, params);
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(game, () => this.cancelInterrupts()),

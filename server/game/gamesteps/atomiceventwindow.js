@@ -9,7 +9,7 @@ class AtomicEventWindow extends BaseStep {
     constructor(game, eventProperties, handler) {
         super(game);
 
-        this.events = _.map(eventProperties, event => new Event(event.name, event.params, true));
+        this.events = _.map(eventProperties, event => new Event(event.name, event.params));
         this.handler = handler || (() => true);
 
         this.pipeline = new GamePipeline();

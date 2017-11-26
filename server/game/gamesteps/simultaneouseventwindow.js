@@ -12,7 +12,7 @@ class SimultaneousEventWindow extends BaseStep {
         this.handler = properties.handler || (() => true);
         this.postHandler = properties.postHandler || (() => true);
 
-        this.event = new Event(properties.eventName, _.extend({ cards: cards }, properties.params), true);
+        this.event = new Event(properties.eventName, _.extend({ cards: cards }, properties.params));
         this.perCardEventMap = this.buildPerCardEvents(cards, properties);
         this.perCardHandler = properties.perCardHandler || (() => true);
         this.pipeline = new GamePipeline();
@@ -38,7 +38,7 @@ class SimultaneousEventWindow extends BaseStep {
         let eventMap = {};
         _.each(cards, card => {
             let perCardParams = _.extend({ card: card }, properties.params);
-            eventMap[card.uuid] = new Event(properties.perCardEventName, perCardParams, true);
+            eventMap[card.uuid] = new Event(properties.perCardEventName, perCardParams);
         });
         return eventMap;
     }

@@ -1,6 +1,16 @@
 const Event = require('../../server/game/event.js');
 
 describe('Event', function() {
+    describe('constructor', function() {
+        beforeEach(function() {
+            this.event = new Event('onEvent', { foo: 'bar' });
+        });
+
+        it('should merge parameters onto the event', function() {
+            expect(this.event.foo).toBe('bar');
+        });
+    });
+
     describe('emitTo', function() {
         beforeEach(function() {
             this.event = new Event('onEvent', { foo: 'bar' });
