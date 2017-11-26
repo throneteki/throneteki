@@ -9,12 +9,10 @@ class SimultaneousEventWindow extends BaseStep {
     constructor(game, cards, properties) {
         super(game);
 
-        this.handler = properties.handler || (() => true);
         this.postHandler = properties.postHandler || (() => true);
 
-        this.event = new Event(properties.eventName, _.extend({ cards: cards }, properties.params));
+        this.event = new Event(properties.eventName, _.extend({ cards: cards }, properties.params), properties.handler);
         this.perCardEventMap = this.buildPerCardEvents(cards, properties);
-        this.perCardHandler = properties.perCardHandler || (() => true);
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(game, () => this.openWindow('cancelinterrupt')),
@@ -38,7 +36,7 @@ class SimultaneousEventWindow extends BaseStep {
         let eventMap = {};
         _.each(cards, card => {
             let perCardParams = _.extend({ card: card }, properties.params);
-            eventMap[card.uuid] = new Event(properties.perCardEventName, perCardParams);
+            eventMap[card.uuid] = new Event(properties.perCardEventName, perCardParams, properties.perCardHandler);
         });
         return eventMap;
     }
@@ -120,7 +118,7 @@ class SimultaneousEventWindow extends BaseStep {
             return;
         }
 
-        this.executeEventHandler(this.event, this.handler);
+        this.executeEventHandler(this.event);
     }
 
     executePerCardHandlers() {
@@ -138,7 +136,7 @@ class SimultaneousEventWindow extends BaseStep {
             }
 
             this.game.queueSimpleStep(() => {
-                this.executeEventHandler(event, this.perCardHandler);
+                this.executeEventHandler(event);
             });
         });
     }
@@ -148,11 +146,11 @@ class SimultaneousEventWindow extends BaseStep {
             return;
         }
 
-        this.executeEventHandler(this.event, this.postHandler);
+        this.postHandler(this.event);
     }
 
-    executeEventHandler(event, handler) {
-        event.executeHandler(handler);
+    executeEventHandler(event) {
+        event.executeHandler();
 
         if(event.cancelled) {
             return;

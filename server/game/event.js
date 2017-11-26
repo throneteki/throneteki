@@ -1,10 +1,10 @@
 const _ = require('underscore');
 
 class Event {
-    constructor(name, params) {
+    constructor(name, params, handler = () => true) {
         this.name = name;
         this.cancelled = false;
-        this.replacementHandler = null;
+        this.handler = handler;
 
         _.extend(this, params);
         this.params = [this].concat([params]);
@@ -24,15 +24,11 @@ class Event {
     }
 
     replaceHandler(handler) {
-        this.replacementHandler = handler;
+        this.handler = handler;
     }
 
-    executeHandler(handler) {
-        if(this.replacementHandler) {
-            this.replacementHandler(...this.params);
-        } else {
-            handler(...this.params);
-        }
+    executeHandler() {
+        this.handler(this);
     }
 
     saveCard(card) {

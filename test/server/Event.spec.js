@@ -37,4 +37,32 @@ describe('Event', function() {
             });
         });
     });
+
+    describe('executeHandler', function() {
+        beforeEach(function() {
+            this.handlerSpy = jasmine.createSpy('handler');
+            this.event = new Event('onEvent', { foo: 'bar' }, this.handlerSpy);
+        });
+
+        it('should call the handler with appropriate parameters', function() {
+            this.event.executeHandler();
+            expect(this.handlerSpy).toHaveBeenCalledWith(this.event);
+        });
+
+        describe('when the handler has been replaced', function() {
+            beforeEach(function() {
+                this.replacementHandlerSpy = jasmine.createSpy('replacementHandler');
+                this.event.replaceHandler(this.replacementHandlerSpy);
+                this.event.executeHandler();
+            });
+
+            it('should call the replacement handler', function() {
+                expect(this.replacementHandlerSpy).toHaveBeenCalledWith(this.event);
+            });
+
+            it('should not call the original handler', function() {
+                expect(this.handlerSpy).not.toHaveBeenCalled();
+            });
+        });
+    });
 });

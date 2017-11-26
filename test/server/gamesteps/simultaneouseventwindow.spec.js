@@ -13,12 +13,14 @@ describe('SimultaneousEventWindow', function() {
         this.params = { foo: 'bar' };
         this.handler = jasmine.createSpy('handler');
         this.perCardHandler = jasmine.createSpy('perCardHandler');
+        this.postHandler = jasmine.createSpy('postHandler');
         this.eventWindow = new SimultaneousEventWindow(this.gameSpy, this.cards, {
             eventName: 'myevent',
             params: this.params,
             handler: this.handler,
             perCardEventName: 'percardevent',
-            perCardHandler: this.perCardHandler
+            perCardHandler: this.perCardHandler,
+            postHandler: this.postHandler
         });
     });
 
@@ -53,8 +55,29 @@ describe('SimultaneousEventWindow', function() {
             });
 
             it('should call the handlers for each card', function() {
-                expect(this.perCardHandler).toHaveBeenCalledWith(jasmine.objectContaining({ card: this.card1 }), jasmine.any(Object));
-                expect(this.perCardHandler).toHaveBeenCalledWith(jasmine.objectContaining({ card: this.card2 }), jasmine.any(Object));
+                expect(this.perCardHandler).toHaveBeenCalledWith(jasmine.objectContaining({ card: this.card1 }));
+                expect(this.perCardHandler).toHaveBeenCalledWith(jasmine.objectContaining({ card: this.card2 }));
+            });
+
+            it('should call the post-handler', function() {
+                expect(this.postHandler).toHaveBeenCalledWith(jasmine.any(Event));
+            });
+        });
+
+        describe('the post-handler', function() {
+            beforeEach(function() {
+                this.childHandlersCalled = false;
+                this.perCardHandler.and.callFake(() => {
+                    this.childHandlersCalled = true;
+                });
+                this.postHandler.and.callFake(() => {
+                    this.postHandlerAfterChildren = this.childHandlersCalled;
+                });
+                this.eventWindow.continue();
+            });
+
+            it('should be called after the child handlers', function() {
+                expect(this.postHandlerAfterChildren).toBe(true);
             });
         });
 

@@ -8,9 +8,8 @@ class EventWindow extends BaseStep {
         super(game);
 
         this.eventName = eventName;
-        this.handler = handler;
 
-        this.event = new Event(eventName, params);
+        this.event = new Event(eventName, params, handler);
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(game, () => this.cancelInterrupts()),
@@ -91,7 +90,7 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.event.executeHandler(this.handler);
+        this.event.executeHandler();
 
         if(this.event.cancelled) {
             return;

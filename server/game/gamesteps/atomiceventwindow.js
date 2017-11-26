@@ -9,8 +9,7 @@ class AtomicEventWindow extends BaseStep {
     constructor(game, eventProperties, handler) {
         super(game);
 
-        this.events = _.map(eventProperties, event => new Event(event.name, event.params));
-        this.handler = handler || (() => true);
+        this.events = _.map(eventProperties, event => new Event(event.name, event.params, handler));
 
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
@@ -72,7 +71,7 @@ class AtomicEventWindow extends BaseStep {
         }
 
         let primaryEvent = this.events[0];
-        primaryEvent.executeHandler(this.handler);
+        primaryEvent.executeHandler();
 
         _.each(this.events, event => {
             event.emitTo(this.game);
