@@ -4,7 +4,7 @@ const Event = require('../../../server/game/event.js');
 describe('EventWindow', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['emit', 'openAbilityWindow']);
-        this.params = ['foo', 'bar'];
+        this.params = { 'foo': 'bar' };
         this.handler = jasmine.createSpy('handler');
         this.eventWindow = new EventWindow(this.gameSpy, 'myevent', this.params, this.handler);
     });
@@ -19,7 +19,7 @@ describe('EventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'cancelinterrupt', event: jasmine.any(Event) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedinterrupt', event: jasmine.any(Event) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'interrupt', event: jasmine.any(Event) });
-                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event), 'foo', 'bar');
+                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event));
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.any(Event) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.any(Event) });
             });
@@ -72,7 +72,7 @@ describe('EventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'cancelinterrupt', event: jasmine.any(Event) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedinterrupt', event: jasmine.any(Event) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'interrupt', event: jasmine.any(Event) });
-                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event), 'foo', 'bar');
+                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event));
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.any(Event) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.any(Event) });
             });

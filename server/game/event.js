@@ -14,6 +14,11 @@ class Event {
         }
     }
 
+    emitTo(emitter, suffix) {
+        let fullName = suffix ? `${this.name}:${suffix}` : this.name;
+        emitter.emit(fullName, this);
+    }
+
     allowAutomaticSave() {
         return this.allowSave && this.automaticSaveWithDupe && !!(this.card || this.cards);
     }

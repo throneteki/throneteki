@@ -75,7 +75,7 @@ class AtomicEventWindow extends BaseStep {
         primaryEvent.executeHandler(this.handler);
 
         _.each(this.events, event => {
-            this.game.emit(event.name, ...event.params);
+            event.emitTo(this.game);
         });
     }
 }

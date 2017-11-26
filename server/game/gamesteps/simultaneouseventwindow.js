@@ -158,7 +158,7 @@ class SimultaneousEventWindow extends BaseStep {
             return;
         }
 
-        this.game.emit(event.name, ...event.params);
+        event.emitTo(this.game);
     }
 }
 

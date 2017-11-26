@@ -32,7 +32,7 @@ describe('SimultaneousEventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'cancelinterrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedinterrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'interrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
-                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event), { cards: this.cards, foo: 'bar' });
+                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event));
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
             });
@@ -46,7 +46,7 @@ describe('SimultaneousEventWindow', function() {
                     expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'cancelinterrupt', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
                     expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedinterrupt', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
                     expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'interrupt', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
-                    expect(this.gameSpy.emit).toHaveBeenCalledWith('percardevent', jasmine.any(Event), { card: card, foo: 'bar' });
+                    expect(this.gameSpy.emit).toHaveBeenCalledWith('percardevent', jasmine.any(Event));
                     expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
                     expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
                 });
@@ -87,7 +87,7 @@ describe('SimultaneousEventWindow', function() {
                 this.eventWindow.continue();
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({ abilityType: 'forcedinterrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({ abilityType: 'interrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
-                expect(this.gameSpy.emit).not.toHaveBeenCalledWith('myevent', jasmine.any(Event), jasmine.any(Object));
+                expect(this.gameSpy.emit).not.toHaveBeenCalledWith('myevent', jasmine.any(Event));
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
             });
@@ -100,7 +100,7 @@ describe('SimultaneousEventWindow', function() {
             it('should not emit all of the interrupt/reaction events for each card', function() {
                 this.eventWindow.continue();
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith(jasmine.objectContaining({ event: jasmine.objectContaining({ name: 'percardevent' }) }));
-                expect(this.gameSpy.emit).not.toHaveBeenCalledWith('percardevent', jasmine.any(Event), jasmine.any(Object));
+                expect(this.gameSpy.emit).not.toHaveBeenCalledWith('percardevent', jasmine.any(Event));
             });
 
             it('should not call the handlers for each card', function() {
@@ -131,7 +131,7 @@ describe('SimultaneousEventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'cancelinterrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedinterrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'interrupt', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
-                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event), { cards: this.cards, foo: 'bar' });
+                expect(this.gameSpy.emit).toHaveBeenCalledWith('myevent', jasmine.any(Event));
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
             });
@@ -158,7 +158,7 @@ describe('SimultaneousEventWindow', function() {
             });
 
             it('should not emit the post-cancel events', function() {
-                expect(this.gameSpy.emit).not.toHaveBeenCalledWith('myevent', jasmine.any(Event), jasmine.any(Object));
+                expect(this.gameSpy.emit).not.toHaveBeenCalledWith('myevent', jasmine.any(Event));
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
                 expect(this.gameSpy.openAbilityWindow).not.toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.objectContaining({ name: 'myevent', cards: this.cards }) });
             });
@@ -184,7 +184,7 @@ describe('SimultaneousEventWindow', function() {
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'cancelinterrupt', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedinterrupt', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'interrupt', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
-                expect(this.gameSpy.emit).toHaveBeenCalledWith('percardevent', jasmine.any(Event), { card: card, foo: 'bar' });
+                expect(this.gameSpy.emit).toHaveBeenCalledWith('percardevent', jasmine.any(Event));
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'forcedreaction', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
                 expect(this.gameSpy.openAbilityWindow).toHaveBeenCalledWith({ abilityType: 'reaction', event: jasmine.objectContaining({ name: 'percardevent', card: card }) });
             });
