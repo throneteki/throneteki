@@ -14,6 +14,7 @@ class EventWindow extends BaseStep {
             new SimpleStep(game, () => this.openAbilityWindow('forcedinterrupt')),
             new SimpleStep(game, () => this.openAbilityWindow('interrupt')),
             new SimpleStep(game, () => this.executeHandler()),
+            new SimpleStep(game, () => this.executePostHandler()),
             new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
             new SimpleStep(game, () => this.openAbilityWindow('reaction'))
         ]);
@@ -44,12 +45,14 @@ class EventWindow extends BaseStep {
     }
 
     automaticSaveWithDupes() {
-        if(this.event.cancelled || !this.event.allowAutomaticSave()) {
+        if(this.event.cancelled) {
             return;
         }
 
-        if(this.event.card && this.game.saveWithDupe(this.event.card)) {
-            this.event.cancel();
+        for(let event of this.event.getConcurrentEvents()) {
+            if(event.allowAutomaticSave() && this.game.saveWithDupe(event.card)) {
+                event.cancel();
+            }
         }
     }
 
@@ -79,6 +82,14 @@ class EventWindow extends BaseStep {
         if(this.event.name === 'onPlotsWhenRevealed') {
             this.openAbilityWindow('whenrevealed');
         }
+    }
+
+    executePostHandler() {
+        if(this.event.cancelled) {
+            return;
+        }
+
+        this.event.executePostHandler();
     }
 }
 

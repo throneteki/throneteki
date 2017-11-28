@@ -2,8 +2,9 @@ const EventWindow = require('../../../server/game/gamesteps/eventwindow.js');
 
 describe('EventWindow', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['openAbilityWindow']);
-        this.eventSpy = jasmine.createSpyObj('event', ['allowAutomaticSave', 'emitTo', 'executeHandler']);
+        this.gameSpy = jasmine.createSpyObj('game', ['openAbilityWindow', 'saveWithDupe']);
+        this.eventSpy = jasmine.createSpyObj('event', ['allowAutomaticSave', 'cancel', 'emitTo', 'executeHandler', 'executePostHandler', 'getConcurrentEvents']);
+        this.eventSpy.getConcurrentEvents.and.returnValue([]);
         this.eventWindow = new EventWindow(this.gameSpy, this.eventSpy);
     });
 
@@ -24,6 +25,51 @@ describe('EventWindow', function() {
 
             it('should call the handler', function() {
                 expect(this.eventSpy.executeHandler).toHaveBeenCalled();
+            });
+        });
+
+        describe('when a concurrent event can be saved', function() {
+            beforeEach(function() {
+                this.concurrentEventSpy = jasmine.createSpyObj('concurrentEvent', ['allowAutomaticSave', 'cancel']);
+                this.concurrentEventSpy.allowAutomaticSave.and.returnValue(true);
+                this.concurrentEventSpy.card = { card: 1 };
+                this.eventSpy.card = { card: 2 };
+                this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy, this.concurrentEventSpy]);
+            });
+
+            it('should not attempt to cancel any non-automatic-save event', function() {
+                this.eventWindow.continue();
+
+                expect(this.gameSpy.saveWithDupe).not.toHaveBeenCalledWith(this.eventSpy.card);
+                expect(this.eventSpy.cancel).not.toHaveBeenCalled();
+            });
+
+            it('should attempt to save the automatic-save event', function() {
+                this.eventWindow.continue();
+
+                expect(this.gameSpy.saveWithDupe).toHaveBeenCalledWith(this.concurrentEventSpy.card);
+            });
+
+            describe('when the card cannot be saved with a dupe', function() {
+                beforeEach(function() {
+                    this.gameSpy.saveWithDupe.and.returnValue(false);
+                    this.eventWindow.continue();
+                });
+
+                it('should not cancel the automatic-save event', function() {
+                    expect(this.concurrentEventSpy.cancel).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('when the card can be saved with a dupe', function() {
+                beforeEach(function() {
+                    this.gameSpy.saveWithDupe.and.returnValue(true);
+                    this.eventWindow.continue();
+                });
+
+                it('should cancel the automatic-save event', function() {
+                    expect(this.concurrentEventSpy.cancel).toHaveBeenCalled();
+                });
             });
         });
 

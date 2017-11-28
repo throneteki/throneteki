@@ -1,10 +1,11 @@
 const _ = require('underscore');
 
 class Event {
-    constructor(name, params, handler = () => true) {
+    constructor(name, params, handler = () => true, postHandler = () => true) {
         this.name = name;
         this.cancelled = false;
         this.handler = handler;
+        this.postHandler = postHandler;
         this.childEvents = [];
 
         _.extend(this, params);
@@ -26,7 +27,7 @@ class Event {
     }
 
     allowAutomaticSave() {
-        return this.allowSave && this.automaticSaveWithDupe && !!(this.card || this.cards);
+        return this.allowSave && this.automaticSaveWithDupe && !!this.card;
     }
 
     cancel() {
@@ -53,26 +54,8 @@ class Event {
         }
     }
 
-    saveCard(card) {
-        if(!this.cards) {
-            return;
-        }
-
-        this.removeCard(card);
-        card.markAsSaved();
-        card.game.raiseEvent('onCardSaved', { card: card });
-    }
-
-    removeCard(card) {
-        if(!this.cards) {
-            return;
-        }
-
-        this.cards = _.reject(this.cards, c => c === card);
-
-        if(_.isEmpty(this.cards)) {
-            this.cancel();
-        }
+    executePostHandler() {
+        this.postHandler(this);
     }
 
     onChildCancelled(event) {

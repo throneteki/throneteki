@@ -24,7 +24,6 @@ const MenuPrompt = require('./gamesteps/menuprompt.js');
 const IconPrompt = require('./gamesteps/iconprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
-const SimultaneousEventWindow = require('./gamesteps/simultaneouseventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
 const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredabilitywindow.js');
 const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
@@ -32,6 +31,7 @@ const KillCharacters = require('./gamesteps/killcharacters.js');
 const TitlePool = require('./TitlePool.js');
 const Event = require('./event.js');
 const AtomicEvent = require('./AtomicEvent.js');
+const GroupedCardEvent = require('./GroupedCardEvent.js');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -748,7 +748,14 @@ class Game extends EventEmitter {
      * version of the event that lists all cards.
      */
     raiseSimultaneousEvent(cards, properties) {
-        this.queueStep(new SimultaneousEventWindow(this, cards, properties));
+        let event = new GroupedCardEvent(properties.eventName, _.extend({ cards: cards }, properties.params), properties.handler, properties.postHandler);
+        for(let card of cards) {
+            let perCardParams = _.extend({ card: card }, properties.params);
+            let childEvent = new Event(properties.perCardEventName, perCardParams, properties.perCardHandler);
+            event.addChildEvent(childEvent);
+        }
+
+        this.queueStep(new EventWindow(this, event));
     }
 
     isPhaseSkipped(name) {
