@@ -84,6 +84,10 @@ class Event {
             return concurrentEvents.concat(event.getConcurrentEvents());
         }, [this]);
     }
+
+    getPrimaryEvent() {
+        return this;
+    }
 }
 
 module.exports = Event;
