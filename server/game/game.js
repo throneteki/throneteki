@@ -24,7 +24,6 @@ const MenuPrompt = require('./gamesteps/menuprompt.js');
 const IconPrompt = require('./gamesteps/iconprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
-const AtomicEventWindow = require('./gamesteps/atomiceventwindow.js');
 const SimultaneousEventWindow = require('./gamesteps/simultaneouseventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
 const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredabilitywindow.js');
@@ -32,6 +31,7 @@ const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
 const KillCharacters = require('./gamesteps/killcharacters.js');
 const TitlePool = require('./TitlePool.js');
 const Event = require('./event.js');
+const AtomicEvent = require('./AtomicEvent.js');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -734,8 +734,13 @@ class Game extends EventEmitter {
      * abilities triggered by these events will appear within the same prompt
      * for the player.
      */
-    raiseAtomicEvent(events, handler = () => true) {
-        this.queueStep(new AtomicEventWindow(this, events, handler));
+    raiseAtomicEvent(events) {
+        let event = new AtomicEvent();
+        for(let childEventProperties of events) {
+            let childEvent = new Event(childEventProperties.name, childEventProperties.params, childEventProperties.handler);
+            event.addChildEvent(childEvent);
+        }
+        this.queueStep(new EventWindow(this, event));
     }
 
     /**
