@@ -9,13 +9,13 @@ class EventWindow extends BaseStep {
         this.event = event;
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
-            new SimpleStep(game, () => this.cancelInterrupts()),
+            new SimpleStep(game, () => this.openAbilityWindow('cancelinterrupt')),
             new SimpleStep(game, () => this.automaticSaveWithDupes()),
-            new SimpleStep(game, () => this.forcedInterrupts()),
-            new SimpleStep(game, () => this.interrupts()),
+            new SimpleStep(game, () => this.openAbilityWindow('forcedinterrupt')),
+            new SimpleStep(game, () => this.openAbilityWindow('interrupt')),
             new SimpleStep(game, () => this.executeHandler()),
-            new SimpleStep(game, () => this.forcedReactions()),
-            new SimpleStep(game, () => this.reactions())
+            new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
+            new SimpleStep(game, () => this.openAbilityWindow('reaction'))
         ]);
     }
 
@@ -43,13 +43,6 @@ class EventWindow extends BaseStep {
         return this.pipeline.continue();
     }
 
-    cancelInterrupts() {
-        this.game.openAbilityWindow({
-            abilityType: 'cancelinterrupt',
-            event: this.event
-        });
-    }
-
     automaticSaveWithDupes() {
         if(this.event.cancelled || !this.event.allowAutomaticSave()) {
             return;
@@ -60,24 +53,13 @@ class EventWindow extends BaseStep {
         }
     }
 
-    forcedInterrupts() {
+    openAbilityWindow(abilityType) {
         if(this.event.cancelled) {
             return;
         }
 
         this.game.openAbilityWindow({
-            abilityType: 'forcedinterrupt',
-            event: this.event
-        });
-    }
-
-    interrupts() {
-        if(this.event.cancelled) {
-            return;
-        }
-
-        this.game.openAbilityWindow({
-            abilityType: 'interrupt',
+            abilityType: abilityType,
             event: this.event
         });
     }
@@ -95,33 +77,8 @@ class EventWindow extends BaseStep {
 
         this.event.emitTo(this.game);
         if(this.event.name === 'onPlotsWhenRevealed') {
-            this.game.openAbilityWindow({
-                abilityType: 'whenrevealed',
-                event: this.event
-            });
+            this.openAbilityWindow('whenrevealed');
         }
-    }
-
-    forcedReactions() {
-        if(this.event.cancelled) {
-            return;
-        }
-
-        this.game.openAbilityWindow({
-            abilityType: 'forcedreaction',
-            event: this.event
-        });
-    }
-
-    reactions() {
-        if(this.event.cancelled) {
-            return;
-        }
-
-        this.game.openAbilityWindow({
-            abilityType: 'reaction',
-            event: this.event
-        });
     }
 }
 
