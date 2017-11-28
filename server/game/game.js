@@ -31,6 +31,7 @@ const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredability
 const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
 const KillCharacters = require('./gamesteps/killcharacters.js');
 const TitlePool = require('./TitlePool.js');
+const Event = require('./event.js');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -723,8 +724,9 @@ class Game extends EventEmitter {
         if(!handler) {
             handler = () => true;
         }
+        let event = new Event(eventName, params, handler);
 
-        this.queueStep(new EventWindow(this, eventName, params || {}, handler, true));
+        this.queueStep(new EventWindow(this, event));
     }
 
     /**

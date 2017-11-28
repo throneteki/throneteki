@@ -1,15 +1,12 @@
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
-const Event = require('../event.js');
 
 class EventWindow extends BaseStep {
-    constructor(game, eventName, params, handler) {
+    constructor(game, event) {
         super(game);
 
-        this.eventName = eventName;
-
-        this.event = new Event(eventName, params, handler);
+        this.event = event;
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(game, () => this.cancelInterrupts()),
@@ -97,7 +94,7 @@ class EventWindow extends BaseStep {
         }
 
         this.event.emitTo(this.game);
-        if(this.eventName === 'onPlotsWhenRevealed') {
+        if(this.event.name === 'onPlotsWhenRevealed') {
             this.game.openAbilityWindow({
                 abilityType: 'whenrevealed',
                 event: this.event
