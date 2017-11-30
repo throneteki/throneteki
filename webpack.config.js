@@ -51,9 +51,6 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
-            new webpack.DefinePlugin({
-                'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
-            }),
             new webpack.DllReferencePlugin({
                 context: __dirname,
                 manifest: require('./public/vendor-manifest.json')
@@ -70,7 +67,6 @@ module.exports = (env) => {
             })
         ] : [
             new ExtractTextPlugin('site-[hash].css'),
-            new webpack.optimize.UglifyJsPlugin(),
             assetsPluginInstance
         ])
     });
