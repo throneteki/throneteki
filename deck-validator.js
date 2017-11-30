@@ -57,6 +57,7 @@ function rulesForDraft(properties) {
  *
  * requiredDraw  - the minimum amount of cards required for the draw deck.
  * requiredPlots - the exact number of cards required for the plot deck.
+ * maxDoubledPlots - the maximum amount of plot cards that can be contained twice in the plot deck.
  * mayInclude    - function that takes a card and returns true if it is allowed in the overall deck.
  * cannotInclude - function that takes a card and return true if it is not allowed in the overall deck.
  * rules         - an array of objects containing a `condition` function that takes a deck and return true if the deck is valid for that rule, and a `message` used for errors when invalid.
@@ -150,6 +151,11 @@ const agendaRules = {
             }
         ]
     },
+    // The Wars To Come
+    '10045': {
+        requiredPlots: 10,
+        maxDoubledPlots: 2
+    },
     // Draft Agendas
     // The Power of Wealth
     '00001': rulesForDraft({
@@ -205,8 +211,6 @@ class DeckValidator {
             errors.push('Too few plot cards');
         } else if(plotCount > rules.requiredPlots) {
             errors.push('Too many plot cards');
-        } else if(deck.plotCards.length < rules.requiredPlots - 1) {
-            errors.push('Only a single plot can have multiple copies');
         }
 
         if(drawCount < rules.requiredDraw) {
@@ -223,7 +227,7 @@ class DeckValidator {
         let cardCountByName = {};
 
         _.each(allCards, cardQuantity => {
-            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, limit: cardQuantity.card.deck_limit, count: 0 };
+            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, type: cardQuantity.card.type_code, limit: cardQuantity.card.deck_limit, count: 0 };
             cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
 
             if(!rules.mayInclude(cardQuantity.card) || rules.cannotInclude(cardQuantity.card)) {
@@ -234,6 +238,11 @@ class DeckValidator {
                 unreleasedCards.push(cardQuantity.card.label + ' is not yet released');
             }
         });
+
+        let doubledPlots = _.filter(cardCountByName, card => card.type === 'plot' && card.count === 2);
+        if(doubledPlots.length > rules.maxDoubledPlots) {
+            errors.push('Maximum allowed number of doubled plots: ' + rules.maxDoubledPlots);
+        }
 
         _.each(cardCountByName, card => {
             if(card.count > card.limit) {
@@ -265,7 +274,8 @@ class DeckValidator {
     getRules(deck) {
         const standardRules = {
             requiredDraw: 60,
-            requiredPlots: 7
+            requiredPlots: 7,
+            maxDoubledPlots: 1
         };
         let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
         let agendaRules = this.getAgendaRules(deck);
