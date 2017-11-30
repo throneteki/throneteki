@@ -4,10 +4,10 @@ class TyeneSand extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.defendingPlayer === this.controller
+                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.defendingPlayer === this.controller &&
+                                         this.controller.canPutIntoPlay(this)
             },
             location: 'hand',
-            condition: () => this.controller.canPutIntoPlay(this),
             cost: ability.costs.kneel(card => card.hasTrait('Sand Snake') && card.getType() === 'character'),
             handler: context => {
                 context.player.putIntoPlay(this);
