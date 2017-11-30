@@ -43,7 +43,7 @@ cd throneteki
 git submodule init
 git submodule update
 npm install
-npm run build-vendor:dev
+npm run build-vendor-dev
 mkdir server/logs
 node server/scripts/fetchdata.js
 node .

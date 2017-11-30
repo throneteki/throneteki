@@ -9,7 +9,7 @@
     "cover": "cross-env JASMINE_CONFIG_PATH=./jasmine.json istanbul cover --include-all-sources jasmine",
     "lint": "eslint server/ test/server/ client/ --ext=js --ext=jsx",
     "build-vendor": "webpack --config webpack.config.vendor.js --env.prod",
-    "build-vendor:dev": "webpack --config webpack.config.vendor.js",
+    "build-vendor-dev": "webpack --config webpack.config.vendor.js",
     "build": "webpack --config webpack.config.js --env.prod"
   },
   "repository": {
