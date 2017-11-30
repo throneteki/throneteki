@@ -206,6 +206,26 @@ const Effects = {
             }
         };
     },
+    dynamicInitiative: function(calculate) {
+        return {
+            apply: function(card, context) {
+                context.dynamicInitiative = context.dynamicInitiative || {};
+                context.dynamicInitiative[card.uuid] = calculate(card, context) || 0;
+                card.initiativeModifier += context.dynamicInitiative[card.uuid];
+            },
+            reapply: function(card, context) {
+                let currentInitiative = context.dynamicInitiative[card.uuid];
+                let newInitiative = calculate(card, context) || 0;
+                context.dynamicInitiative[card.uuid] = newInitiative;
+                card.initiativeModifier += newInitiative - currentInitiative;
+            },
+            unapply: function(card, context) {
+                card.initiativeModifier -= context.dynamicInitiative[card.uuid];
+                delete context.dynamicInitiative[card.uuid];
+            },
+            isStateDependent: true
+        };
+    },
     modifyReserve: function(value) {
         return {
             apply: function(card) {
