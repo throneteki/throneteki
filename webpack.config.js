@@ -67,7 +67,6 @@ module.exports = (env) => {
             })
         ] : [
             new ExtractTextPlugin('site-[hash].css'),
-            new webpack.optimize.UglifyJsPlugin(),
             assetsPluginInstance
         ])
     });

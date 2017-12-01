@@ -43,7 +43,7 @@ cd throneteki
 git submodule init
 git submodule update
 npm install
-npm run build-vendor
+npm run build-vendor-dev
 mkdir server/logs
 node server/scripts/fetchdata.js
 node .
@@ -82,6 +82,7 @@ This will get you up and running in development mode.
 For production:
 
 ```
+npm run build-vendor
 npm run build
 NODE_ENV=production PORT=4000 node .
 ```

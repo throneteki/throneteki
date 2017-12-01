@@ -51,9 +51,6 @@ module.exports = (env) => {
         plugins: [
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
-            new webpack.DefinePlugin({
-                'process.env.NODE_ENV': isDevBuild ? '"development"' : '"production"'
-            }),
             assetsPluginInstance
         ]
     };
@@ -69,9 +66,7 @@ module.exports = (env) => {
                 path: path.join(BUILD_DIR, '[name]-manifest.json'),
                 name: '[name]_[hash]'
             })
-        ].concat(isDevBuild ? [] : [
-            new webpack.optimize.UglifyJsPlugin()
-        ])
+        ]
     });
 
     return clientBundleConfig;
