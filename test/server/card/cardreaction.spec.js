@@ -76,7 +76,7 @@ describe('CardReaction', function () {
 
     describe('eventHandler()', function() {
         beforeEach(function() {
-            this.executeEventHandler = (...args) => {
+            this.executeEventHandler = (args = {}) => {
                 this.event = new Event('onSomething', args);
                 this.reaction = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 this.reaction.eventHandler(this.event);
@@ -84,14 +84,14 @@ describe('CardReaction', function () {
         });
 
         it('should call the when handler with the appropriate arguments', function() {
-            this.executeEventHandler(1, 2, 3);
-            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event, 1, 2, 3);
+            this.executeEventHandler();
+            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event);
         });
 
         describe('when the when condition returns false', function() {
             beforeEach(function() {
                 this.properties.when.onSomething.and.returnValue(false);
-                this.executeEventHandler(1, 2, 3);
+                this.executeEventHandler();
             });
 
             it('should not register the ability', function() {
@@ -102,7 +102,7 @@ describe('CardReaction', function () {
         describe('when the when condition returns true', function() {
             beforeEach(function() {
                 this.properties.when.onSomething.and.returnValue(true);
-                this.executeEventHandler(1, 2, 3);
+                this.executeEventHandler();
             });
 
             it('should register the ability', function() {
@@ -114,7 +114,7 @@ describe('CardReaction', function () {
     describe('meetsRequirements()', function() {
         beforeEach(function() {
             this.meetsRequirements = () => {
-                this.event = new Event('onSomething', [1, 2, 3]);
+                this.event = new Event('onSomething', {});
                 this.reaction = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 this.context = this.reaction.createContext(this.event);
                 return this.reaction.meetsRequirements(this.context);
@@ -123,7 +123,7 @@ describe('CardReaction', function () {
 
         it('should call the when handler with the appropriate arguments', function() {
             this.meetsRequirements();
-            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event, 1, 2, 3);
+            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event);
         });
 
         describe('when in the setup phase', function() {

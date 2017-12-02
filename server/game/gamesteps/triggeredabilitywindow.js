@@ -75,7 +75,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             onClaimApplied: 'interrupt'
         };
 
-        return this.isTimerEnabled(player) && _.any(this.events, event => {
+        return this.isTimerEnabled(player) && _.any(this.event.getConcurrentEvents(), event => {
             return event.player !== player && cancellableEvents[event.name] && cancellableEvents[event.name] === this.abilityType && this.isWindowEnabledForEvent(player, event);
         });
     }
@@ -111,7 +111,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         buttons.push({ text: 'Pass', method: 'pass' });
         this.game.promptWithMenu(player, this, {
             activePrompt: {
-                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.events[0]),
+                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvent()),
                 buttons: buttons,
                 controls: this.getAdditionalPromptControls()
             },
@@ -123,7 +123,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
     getAdditionalPromptControls() {
         let controls = [];
-        for(let event of this.events) {
+        for(let event of this.event.getConcurrentEvents()) {
             if(event.name === 'onCardAbilityInitiated' && event.targets.length > 0) {
                 controls.push({
                     type: 'targeting',

@@ -6,22 +6,20 @@ class BaseAbilityWindow extends BaseStep {
     constructor(game, properties) {
         super(game);
         this.abilityChoices = [];
-        this.events = _.flatten([properties.event]);
+        this.event = properties.event;
         this.abilityType = properties.abilityType;
     }
 
     canTriggerAbility(ability) {
-        return ability.eventType === this.abilityType && _.any(this.events, event => ability.isTriggeredByEvent(event));
+        return ability.eventType === this.abilityType && _.any(this.event.getConcurrentEvents(), event => ability.isTriggeredByEvent(event));
     }
 
     emitEvents() {
-        _.each(this.events, event => {
-            this.game.emit(event.name + ':' + this.abilityType, ...event.params);
-        });
+        this.event.emitTo(this.game, this.abilityType);
     }
 
     registerAbilityForEachEvent(ability) {
-        let matchingEvents = _.filter(this.events, event => ability.isTriggeredByEvent(event));
+        let matchingEvents = _.filter(this.event.getConcurrentEvents(), event => ability.isTriggeredByEvent(event));
         _.each(matchingEvents, event => {
             this.registerAbility(ability, event);
         });

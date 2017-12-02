@@ -1,15 +1,7 @@
-const _ = require('underscore');
-
-class Event {
-    constructor(name, params, handler = () => true, postHandler = () => true) {
-        this.name = name;
+class AtomicEvent {
+    constructor() {
         this.cancelled = false;
-        this.handler = handler;
-        this.postHandler = postHandler;
         this.childEvents = [];
-
-        _.extend(this, params);
-        this.params = [this].concat([params]);
     }
 
     addChildEvent(event) {
@@ -18,59 +10,63 @@ class Event {
     }
 
     emitTo(emitter, suffix) {
-        let fullName = suffix ? `${this.name}:${suffix}` : this.name;
-        emitter.emit(fullName, this);
-
         for(let event of this.childEvents) {
             event.emitTo(emitter, suffix);
         }
     }
 
     allowAutomaticSave() {
-        return this.allowSave && this.automaticSaveWithDupe && !!this.card;
+        return false;
     }
 
     cancel() {
         this.cancelled = true;
 
         for(let event of this.childEvents) {
+            // Disassociate the child with the parent so that indirect calls to
+            // onChildCancelled are not made. This will prevent an infinite loop.
+            event.parent = null;
             event.cancel();
         }
+
+        this.childEvents = [];
 
         if(this.parent) {
             this.parent.onChildCancelled(this);
         }
     }
 
+
     replaceHandler(handler) {
-        this.handler = handler;
+        if(this.childEvents.length !== 0) {
+            this.childEvents[0].replaceHandler(handler);
+        }
     }
 
     executeHandler() {
-        this.handler(this);
-
         for(let event of this.childEvents) {
             event.executeHandler();
         }
     }
 
     executePostHandler() {
-        this.postHandler(this);
+        for(let event of this.childEvents) {
+            event.executePostHandler();
+        }
     }
 
     onChildCancelled(event) {
         this.childEvents = this.childEvents.filter(e => e !== event);
+        this.cancel();
     }
 
     getConcurrentEvents() {
-        return this.childEvents.reduce((concurrentEvents, event) => {
-            return concurrentEvents.concat(event.getConcurrentEvents());
-        }, [this]);
+        return this.childEvents.reduce((concurrentEvents, event) => concurrentEvents.concat(event.getConcurrentEvents()), []);
     }
 
     getPrimaryEvent() {
-        return this;
+        return this.childEvents[0];
     }
 }
 
-module.exports = Event;
+module.exports = AtomicEvent;

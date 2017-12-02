@@ -1,25 +1,22 @@
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
-const Event = require('../event.js');
 
 class EventWindow extends BaseStep {
-    constructor(game, eventName, params, handler, merged = false) {
+    constructor(game, event) {
         super(game);
 
-        this.eventName = eventName;
-        this.handler = handler;
-
-        this.event = new Event(eventName, params, merged);
+        this.event = event;
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
-            new SimpleStep(game, () => this.cancelInterrupts()),
+            new SimpleStep(game, () => this.openAbilityWindow('cancelinterrupt')),
             new SimpleStep(game, () => this.automaticSaveWithDupes()),
-            new SimpleStep(game, () => this.forcedInterrupts()),
-            new SimpleStep(game, () => this.interrupts()),
+            new SimpleStep(game, () => this.openAbilityWindow('forcedinterrupt')),
+            new SimpleStep(game, () => this.openAbilityWindow('interrupt')),
             new SimpleStep(game, () => this.executeHandler()),
-            new SimpleStep(game, () => this.forcedReactions()),
-            new SimpleStep(game, () => this.reactions())
+            new SimpleStep(game, () => this.executePostHandler()),
+            new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
+            new SimpleStep(game, () => this.openAbilityWindow('reaction'))
         ]);
     }
 
@@ -47,41 +44,25 @@ class EventWindow extends BaseStep {
         return this.pipeline.continue();
     }
 
-    cancelInterrupts() {
-        this.game.openAbilityWindow({
-            abilityType: 'cancelinterrupt',
-            event: this.event
-        });
-    }
-
     automaticSaveWithDupes() {
-        if(this.event.cancelled || !this.event.allowAutomaticSave()) {
+        if(this.event.cancelled) {
             return;
         }
 
-        if(this.event.card && this.game.saveWithDupe(this.event.card)) {
-            this.event.cancel();
+        for(let event of this.event.getConcurrentEvents()) {
+            if(event.allowAutomaticSave() && this.game.saveWithDupe(event.card)) {
+                event.cancel();
+            }
         }
     }
 
-    forcedInterrupts() {
+    openAbilityWindow(abilityType) {
         if(this.event.cancelled) {
             return;
         }
 
         this.game.openAbilityWindow({
-            abilityType: 'forcedinterrupt',
-            event: this.event
-        });
-    }
-
-    interrupts() {
-        if(this.event.cancelled) {
-            return;
-        }
-
-        this.game.openAbilityWindow({
-            abilityType: 'interrupt',
+            abilityType: abilityType,
             event: this.event
         });
     }
@@ -91,41 +72,24 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        this.event.executeHandler(this.handler);
+        this.event.executeHandler();
 
         if(this.event.cancelled) {
             return;
         }
 
-        this.game.emit(this.eventName, ...this.event.params);
-        if(this.eventName === 'onPlotsWhenRevealed') {
-            this.game.openAbilityWindow({
-                abilityType: 'whenrevealed',
-                event: this.event
-            });
+        this.event.emitTo(this.game);
+        if(this.event.name === 'onPlotsWhenRevealed') {
+            this.openAbilityWindow('whenrevealed');
         }
     }
 
-    forcedReactions() {
+    executePostHandler() {
         if(this.event.cancelled) {
             return;
         }
 
-        this.game.openAbilityWindow({
-            abilityType: 'forcedreaction',
-            event: this.event
-        });
-    }
-
-    reactions() {
-        if(this.event.cancelled) {
-            return;
-        }
-
-        this.game.openAbilityWindow({
-            abilityType: 'reaction',
-            event: this.event
-        });
+        this.event.executePostHandler();
     }
 }
 
