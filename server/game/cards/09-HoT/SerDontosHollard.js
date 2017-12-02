@@ -21,7 +21,7 @@ class SerDontosHollard extends DrawCard {
     }
 
     isControlledLady(card) {
-        return card.controller === this.controller && card.hasTrait('Lady');
+        return card.location === 'play area' && card.controller === this.controller && card.hasTrait('Lady');
     }
 }
 
