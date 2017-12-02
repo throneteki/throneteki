@@ -74,7 +74,7 @@ class AbilityResolver extends BaseStep {
 
     markActionAsTaken() {
         if(this.ability.isAction()) {
-            this.game.markActionAsTaken();
+            this.game.markActionAsTaken(this.context);
         }
     }
 

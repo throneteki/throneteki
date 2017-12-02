@@ -12,6 +12,10 @@ class AmbushCardAction extends BaseAbility {
         this.title = 'Ambush';
     }
 
+    isAction() {
+        return true;
+    }
+
     isCardAbility() {
         return false;
     }

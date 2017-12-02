@@ -673,9 +673,11 @@ class Game extends EventEmitter {
         this.pipeline.queueStep(new SimpleStep(this, handler));
     }
 
-    markActionAsTaken() {
+    markActionAsTaken(context) {
         if(this.currentActionWindow) {
             this.currentActionWindow.markActionAsTaken();
+        } else if(this.currentPhase !== 'marshal') {
+            this.addAlert('danger', '{0} has used {1} outside the proper action window', context.player, context.source);
         }
     }
 

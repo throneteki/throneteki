@@ -107,10 +107,6 @@ class TriggeredAbility extends BaseAbility {
         return this.location === location;
     }
 
-    isAction() {
-        return false;
-    }
-
     isPlayableEventAbility() {
         return this.card.getType() === 'event' && this.location === 'hand';
     }
