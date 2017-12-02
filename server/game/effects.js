@@ -828,29 +828,33 @@ const Effects = {
             }
         };
     },
-    setDefenderMinimum: function(value) {
+    setAttackerMaximum: function(value) {
         return {
-            apply: function(player, context) {
-                context.setDefenderMinimum = context.setDefenderMinimum || {};
-                context.setDefenderMinimum[player.name] = player.defenderMinimum;
-                player.defenderMinimum = value;
+            apply: function(player) {
+                player.attackerLimits.setMax(value);
             },
-            unapply: function(player, context) {
-                player.defenderMinimum = context.setDefenderMinimum[player.name];
-                delete context.setDefenderMinimum[player.name];
+            unapply: function(player) {
+                player.attackerLimits.removeMax(value);
             }
         };
     },
-    setChallengerLimit: function(value) {
+    setDefenderMinimum: function(value) {
         return {
-            apply: function(player, context) {
-                context.setChallengerLimit = context.setChallengerLimit || {};
-                context.setChallengerLimit[player.name] = player.challengerLimit;
-                player.challengerLimit = value;
+            apply: function(player) {
+                player.defenderLimits.setMin(value);
             },
-            unapply: function(player, context) {
-                player.challengerLimit = context.setChallengerLimit[player.name];
-                delete context.setChallengerLimit[player.name];
+            unapply: function(player) {
+                player.defenderLimits.removeMin(value);
+            }
+        };
+    },
+    setDefenderMaximum: function(value) {
+        return {
+            apply: function(player) {
+                player.defenderLimits.setMax(value);
+            },
+            unapply: function(player) {
+                player.defenderLimits.removeMax(value);
             }
         };
     },
