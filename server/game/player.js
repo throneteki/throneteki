@@ -885,32 +885,22 @@ class Player extends Spectator {
         this.game.applyGameAction('discard', cards, cards => {
             var params = {
                 player: this,
-                cards: cards,
                 allowSave: allowSave,
                 automaticSaveWithDupe: true,
                 originalLocation: cards[0].location
             };
-            this.game.raiseEvent('onCardsDiscarded', params, event => {
-                _.each(event.cards, card => {
-                    this.doSingleCardDiscard(card, allowSave);
-                });
-                this.game.queueSimpleStep(() => {
+            this.game.raiseSimultaneousEvent(cards, {
+                eventName: 'onCardsDiscarded',
+                params: params,
+                handler: () => true,
+                perCardEventName: 'onCardDiscarded',
+                perCardHandler: event => {
+                    this.moveCard(event.card, 'discard pile');
+                },
+                postHandler: event => {
                     callback(event.cards);
-                });
+                }
             });
-        });
-    }
-
-    doSingleCardDiscard(card, allowSave = true) {
-        var params = {
-            player: this,
-            card: card,
-            allowSave: allowSave,
-            automaticSaveWithDupe: true,
-            originalLocation: card.location
-        };
-        this.game.raiseEvent('onCardDiscarded', params, event => {
-            this.moveCard(event.card, 'discard pile');
         });
     }
 
