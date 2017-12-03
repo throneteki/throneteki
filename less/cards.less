@@ -254,6 +254,18 @@
 .card-dupe {
   margin-bottom: @attachment-offset;
   margin-top: -(@attachment-offset + @card-height);
+
+  &.small {
+    margin-top: -(@attachment-offset + @card-sm-height);
+  }
+
+  &.large {
+    margin-top: -(@attachment-offset + @card-lg-height);
+  }
+
+  &.x-large {
+    margin-top: -(@attachment-offset + @card-xl-height);
+  }
 }
 
 .generate-card-dupes(@n, @i: 1) when (@i =< @n) {
