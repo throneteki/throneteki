@@ -6,7 +6,7 @@ class QueensMen extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
-            chooseOpponent: opponent => opponent.hand.size() > 1,
+            chooseOpponent: opponent => opponent.hand.size() > 0,
             handler: context => {
                 let opponent = context.opponent;
 
