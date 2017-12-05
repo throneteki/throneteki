@@ -143,6 +143,10 @@ class CardAction extends BaseAbility {
         return { text: this.title, method: 'doAction', anyPlayer: !!this.anyPlayer, arg: arg };
     }
 
+    isAction() {
+        return true;
+    }
+
     isClickToActivate() {
         return this.clickToActivate;
     }

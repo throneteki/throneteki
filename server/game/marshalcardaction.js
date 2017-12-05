@@ -12,6 +12,10 @@ class MarshalCardAction extends BaseAbility {
         this.title = 'Marshal';
     }
 
+    isAction() {
+        return true;
+    }
+
     meetsRequirements(context) {
         var {game, player, source} = context;
 
