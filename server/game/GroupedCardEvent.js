@@ -26,6 +26,21 @@ class GroupedCardEvent extends Event {
         }
     }
 
+    replaceCards(newCards) {
+        if(newCards.length !== this.childEvents.length) {
+            return;
+        }
+
+        let index = 0;
+
+        for(let card of newCards) {
+            this.childEvents[index].card = card;
+            ++index;
+        }
+
+        this.cards = newCards;
+    }
+
     onChildCancelled(event) {
         super.onChildCancelled(event);
         this.removeCard(event.card);

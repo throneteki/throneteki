@@ -35,7 +35,7 @@ class TywinLannister extends DrawCard {
             return false;
         }
 
-        this.eventObj.cards = [card];
+        this.eventObj.replaceCards([card]);
         this.game.addMessage('{0} uses {1} to choose {2} to be discarded for {3}', this.controller, this, card, this.discardingPlayer);
 
         return true;
