@@ -677,7 +677,7 @@ class Game extends EventEmitter {
         if(this.currentActionWindow) {
             this.currentActionWindow.markActionAsTaken();
         } else if(this.currentPhase !== 'marshal') {
-            this.addAlert('danger', '{0} has used {1} outside the proper action window', context.player, context.source);
+            this.addAlert('danger', '{0} uses {1} outside of an action window', context.player, context.source);
         }
     }
 
