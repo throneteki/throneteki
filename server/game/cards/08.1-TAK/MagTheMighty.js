@@ -15,6 +15,7 @@ class MagTheMighty extends DrawCard {
 
                 //TODO Technically should only trigger when the first kill was not saved
                 this.game.promptForSelect(context.event.challenge.loser, {
+                    activePromptTitle: 'Select a character (only when first kill was not saved)',
                     cardCondition: card => card.location === 'play area' && card.controller === context.event.challenge.loser && card.getType() === 'character',
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card)
