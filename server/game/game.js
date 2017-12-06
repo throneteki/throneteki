@@ -238,12 +238,12 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(card.location === 'plot deck') {
-            this.selectPlot(player, cardId);
+        if(this.pipeline.handleCardClicked(player, card)) {
             return;
         }
 
-        if(this.pipeline.handleCardClicked(player, card)) {
+        if(card.location === 'plot deck') {
+            this.selectPlot(player, cardId);
             return;
         }
 
