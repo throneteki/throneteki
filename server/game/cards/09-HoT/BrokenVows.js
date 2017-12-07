@@ -18,6 +18,7 @@ class BrokenVows extends DrawCard {
                         card.getType() === 'character' &&
                         card.controller === context.opponent &&
                         card.getPrintedCost() < context.target.getPrintedCost() &&
+                        !card.isLoyal() &&
                         this.controller.canControl(card)
                     ),
                     onSelect: (player, card) => this.resolveAbility(context, card),
