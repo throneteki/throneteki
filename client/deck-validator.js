@@ -239,6 +239,10 @@ class DeckValidator {
             }
         });
 
+        if(deck.agenda && !isCardInReleasedPack(this.packs, deck.agenda)) {
+            unreleasedCards.push(deck.agenda.label + ' is not yet released');
+        }
+
         let doubledPlots = _.filter(cardCountByName, card => card.type === 'plot' && card.count === 2);
         if(doubledPlots.length > rules.maxDoubledPlots) {
             errors.push('Maximum allowed number of doubled plots: ' + rules.maxDoubledPlots);
