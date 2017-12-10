@@ -1,9 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const PaidGoldTracker = require('../../PaidGoldTracker.js');
 
 // XXX Restrict to one effect per card title (ie multiple madames should not trigger)
 class BrothelMadame extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
+
+        this.tracker = new PaidGoldTracker(this.game);
 
         this.registerEvents(['onGoldTransferred']);
     }
@@ -15,13 +18,18 @@ class BrothelMadame extends DrawCard {
             },
             chooseOpponent: true,
             handler: context => {
+                if(this.tracker.hasPaid(context.opponent, this.controller)) {
+                    this.game.addMessage('{0} has already paid {1} for {2} and does not need to pay again', context.opponent, this.controller, this);
+                    return;
+                }
+
                 this.chosenOpponent = context.opponent;
-                this.hasPaidGoldThisPhase = false;
+                this.hasPaymentMessageBeenPrinted = false;
 
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
                     targetController: context.opponent,
-                    condition: () => !this.hasPaidGoldThisPhase,
+                    condition: () => !this.tracker.hasPaid(context.opponent, this.controller),
                     effect: ability.effects.cannotInitiateChallengeType('military', opponent => opponent === this.controller)
                 }));
 
@@ -48,11 +56,11 @@ class BrothelMadame extends DrawCard {
             return false;
         }
 
-        if(this.hasPaidGoldThisPhase) {
+        if(this.hasPaymentMessageBeenPrinted) {
             return true;
         }
 
-        this.hasPaidGoldThisPhase = true;
+        this.hasPaymentMessageBeenPrinted = true;
         this.game.addMessage('{0} pays {1} and can now initiate {2} challenges this phase', event.source, event.target, 'military');
     }
 
