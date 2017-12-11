@@ -686,12 +686,8 @@ class Player extends Spectator {
         }
 
         let originalLocation = attachment.location;
-        let originalParent = attachment.parent;
 
         attachment.owner.removeCardFromPile(attachment);
-        if(originalParent) {
-            originalParent.removeAttachment(attachment);
-        }
         attachment.moveTo('play area', card);
         attachment.controller = player;
         card.attachments.push(attachment);
@@ -1028,10 +1024,6 @@ class Player extends Spectator {
             while(card.dupes.size() > 0 && targetLocation !== 'play area') {
                 this.removeDuplicate(card, true);
             }
-
-            if(card.parent) {
-                card.parent.removeAttachment(card);
-            }
         }
 
         if(['play area', 'active plot'].includes(card.location)) {
@@ -1040,10 +1032,6 @@ class Player extends Spectator {
 
         if(card.location === 'active plot') {
             this.game.raiseEvent('onCardLeftPlay', { player: this, card: card });
-        }
-
-        if(card.parent) {
-            card.parent.removeAttachment(card);
         }
 
         card.moveTo(targetLocation);
@@ -1106,6 +1094,10 @@ class Player extends Spectator {
             card.controller.removeCardFromPile(card);
             card.controller = card.owner;
             return;
+        }
+
+        if(card.parent) {
+            card.parent.removeAttachment(card);
         }
 
         var originalLocation = card.location;
