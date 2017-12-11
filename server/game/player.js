@@ -1021,8 +1021,8 @@ class Player extends Spectator {
                 this.removeAttachment(attachment, false);
             });
 
-            while(card.dupes.size() > 0 && targetLocation !== 'play area') {
-                this.removeDuplicate(card, true);
+            if(!card.dupes.isEmpty()) {
+                this.discardCards(card.dupes.toArray(), false);
             }
         }
 
@@ -1073,22 +1073,6 @@ class Player extends Spectator {
         });
     }
 
-    removeDuplicate(card, force = false) {
-        if(card.dupes.isEmpty()) {
-            return false;
-        }
-
-        var dupe = card.removeDuplicate(force);
-        if(!dupe) {
-            return false;
-        }
-
-        dupe.moveTo('discard pile');
-        dupe.owner.discardPile.push(dupe);
-
-        return true;
-    }
-
     removeCardFromPile(card) {
         if(card.controller !== this) {
             card.controller.removeCardFromPile(card);
@@ -1097,7 +1081,8 @@ class Player extends Spectator {
         }
 
         if(card.parent) {
-            card.parent.removeAttachment(card);
+            card.parent.removeChildCard(card);
+            card.parent = undefined;
         }
 
         var originalLocation = card.location;

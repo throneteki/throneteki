@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class BattleOfTheBlackwater extends PlotCard {
@@ -22,11 +20,8 @@ class BattleOfTheBlackwater extends PlotCard {
         // control, not discarding the dupes on cards you or the opponent
         // control. But for 2 player, discarding each dupe is fine.
         let characters = player.filterCardsInPlay(card => card.dupes.size() > 0);
-        _.each(characters, character => {
-            while(character.dupes.size() > 0) {
-                player.removeDuplicate(character, true);
-            }
-        });
+        let dupes = characters.reduce((dupes, card) => dupes.concat(card.dupes.toArray()), []);
+        player.discardCards(dupes, false);
     }
 }
 

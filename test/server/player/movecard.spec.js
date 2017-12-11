@@ -132,12 +132,13 @@ describe('Player', function() {
                     this.dupe = new DrawCard(this.player, {});
                     this.card.addDuplicate(this.dupe);
 
+                    spyOn(this.player, 'discardCards');
+
                     this.player.moveCard(this.card, 'hand');
                 });
 
                 it('should discard the dupes', function() {
-                    expect(this.player.discardPile).toContain(this.dupe);
-                    expect(this.dupe.location).toBe('discard pile');
+                    expect(this.player.discardCards).toHaveBeenCalledWith([this.dupe], false);
                 });
             });
         });

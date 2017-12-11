@@ -766,7 +766,9 @@ class Game extends EventEmitter {
 
     saveWithDupe(card) {
         let player = card.controller;
-        if(card.canBeSaved() && player.removeDuplicate(card)) {
+        let dupe = card.dupes.find(dupe => dupe.owner === card.controller);
+        if(card.canBeSaved() && dupe) {
+            dupe.owner.discardCard(dupe, false);
             card.markAsSaved();
             this.addMessage('{0} discards a duplicate to save {1}', player, card);
             this.raiseEvent('onCardSaved', { card: card });
