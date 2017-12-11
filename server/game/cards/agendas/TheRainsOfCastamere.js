@@ -7,7 +7,7 @@ class TheRainsOfCastamere extends AgendaCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.registerEvents(['onDecksPrepared', 'onPlotDiscarded']);
+        this.registerEvents(['onDecksPrepared', 'onPlotDiscarded', 'onPlotsRecycled']);
     }
 
     setupCardAbilities(ability) {
@@ -47,6 +47,12 @@ class TheRainsOfCastamere extends AgendaCard {
         _.each(this.schemes, scheme => {
             this.owner.moveCard(scheme, 'scheme plots');
         });
+    }
+
+    onPlotsRecycled(event) {
+        if(event.player === this.controller) {
+            this.onDecksPrepared();
+        }
     }
 
     onPlotDiscarded(event) {
