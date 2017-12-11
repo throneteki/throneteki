@@ -4,10 +4,15 @@ class ArianneMartell extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return character to hand',
+            //TODO: This should ideally use the snapshot functionality instead
+            condition: () => {
+                this.strengthWhenInitiated = this.getStrength();
+                return true;
+            },
             cost: ability.costs.returnSelfToHand(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.getStrength() < this.getStrength()
+                                       card.getStrength() < this.strengthWhenInitiated
             },
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);

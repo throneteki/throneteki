@@ -628,12 +628,10 @@ class Player extends Spectator {
     recyclePlots() {
         if(this.plotDeck.isEmpty()) {
             this.plotDiscard.each(plot => {
-                if(this.agenda && this.agenda.code === '05045' && plot.hasTrait('Scheme')) {
-                    this.moveCard(plot, 'scheme plots');
-                } else {
-                    this.moveCard(plot, 'plot deck');
-                }
+                this.moveCard(plot, 'plot deck');
             });
+
+            this.game.raiseEvent('onPlotsRecycled', { player: this });
         }
     }
 
