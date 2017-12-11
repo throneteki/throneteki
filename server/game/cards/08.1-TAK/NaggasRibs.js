@@ -9,7 +9,7 @@ class NaggasRibs extends DrawCard {
 
         this.reaction({
             when: {
-                onCardPlaced: event => event.card.getType() === 'character' && event.location === 'discard pile' &&
+                onCardPlaced: event => event.card.getType() === 'character' && event.card.location === 'discard pile' &&
                                        event.card.owner === this.controller
             },
             handler: context => {

@@ -8,7 +8,8 @@ class CroneOfVaesDothrak extends DrawCard {
                 onCardDiscarded: event =>
                     ((event.originalLocation === 'hand' || event.originalLocation === 'draw deck')
                      && event.card.getType() === 'character'
-                     && event.card.controller !== this.controller)
+                     && event.card.controller !== this.controller
+                     && event.card.location === 'discard pile')
             },
             cost: ability.costs.kneel(card => (
                 card.getType() === 'character' && card.hasTrait('Dothraki')

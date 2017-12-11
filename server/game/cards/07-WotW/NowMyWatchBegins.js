@@ -4,7 +4,7 @@ class NowMyWatchBegins extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardPlaced: event => event.location === 'discard pile' &&
+                onCardPlaced: event => event.card.location === 'discard pile' &&
                                        event.player !== this.controller &&
                                        event.card.getType() === 'character' &&
                                        event.card.getCost() <= 5 &&
