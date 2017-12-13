@@ -686,12 +686,8 @@ class Player extends Spectator {
         }
 
         let originalLocation = attachment.location;
-        let originalParent = attachment.parent;
 
         attachment.owner.removeCardFromPile(attachment);
-        if(originalParent) {
-            originalParent.removeAttachment(attachment);
-        }
         attachment.moveTo('play area', card);
         attachment.controller = player;
         card.attachments.push(attachment);
@@ -1025,12 +1021,8 @@ class Player extends Spectator {
                 this.removeAttachment(attachment, false);
             });
 
-            while(card.dupes.size() > 0 && targetLocation !== 'play area') {
-                this.removeDuplicate(card, true);
-            }
-
-            if(card.parent) {
-                card.parent.removeAttachment(card);
+            if(!card.dupes.isEmpty()) {
+                this.discardCards(card.dupes.toArray(), false);
             }
         }
 
@@ -1040,10 +1032,6 @@ class Player extends Spectator {
 
         if(card.location === 'active plot') {
             this.game.raiseEvent('onCardLeftPlay', { player: this, card: card });
-        }
-
-        if(card.parent) {
-            card.parent.removeAttachment(card);
         }
 
         card.moveTo(targetLocation);
@@ -1085,27 +1073,16 @@ class Player extends Spectator {
         });
     }
 
-    removeDuplicate(card, force = false) {
-        if(card.dupes.isEmpty()) {
-            return false;
-        }
-
-        var dupe = card.removeDuplicate(force);
-        if(!dupe) {
-            return false;
-        }
-
-        dupe.moveTo('discard pile');
-        dupe.owner.discardPile.push(dupe);
-
-        return true;
-    }
-
     removeCardFromPile(card) {
         if(card.controller !== this) {
             card.controller.removeCardFromPile(card);
             card.controller = card.owner;
             return;
+        }
+
+        if(card.parent) {
+            card.parent.removeChildCard(card);
+            card.parent = undefined;
         }
 
         var originalLocation = card.location;

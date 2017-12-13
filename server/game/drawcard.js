@@ -93,7 +93,7 @@ class DrawCard extends BaseCard {
         }
 
         this.dupes.push(card);
-        card.moveTo('duplicate');
+        card.moveTo('duplicate', this);
     }
 
     removeDuplicate(force = false) {
@@ -356,13 +356,13 @@ class DrawCard extends BaseCard {
         return card && this.getType() === 'attachment';
     }
 
-    removeAttachment(attachment) {
-        if(!attachment || !this.attachments.includes(attachment)) {
+    removeChildCard(card) {
+        if(!card) {
             return;
         }
 
-        this.attachments = _(this.attachments.reject(a => a === attachment));
-        attachment.parent = undefined;
+        this.attachments = _(this.attachments.reject(a => a === card));
+        this.dupes = _(this.dupes.reject(a => a === card));
     }
 
     getPlayActions() {

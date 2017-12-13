@@ -4,7 +4,7 @@ class SerGregorClegane extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => event.source === this && event.discardedCard.getType() === 'character'
+                onPillage: event => event.source === this && event.discardedCard.getType() === 'character' && event.discardedCard.location === 'discard pile'
             },
             handler: context => {
                 let discarded = context.event.discardedCard;
