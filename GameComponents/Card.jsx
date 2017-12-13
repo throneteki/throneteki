@@ -133,33 +133,37 @@ class Card extends React.Component {
     }
 
     getCountersForCard(card) {
-        var counters = {};
+        let counters = [];
 
-        counters['card-power'] = card.power ? { count: card.power, fade: card.type === 'attachment', shortName: 'P' } : undefined;
-        counters['strength'] = card.baseStrength !== card.strength ? { count: card.strength, fade: card.type === 'attachment', shortName: 'S' } : undefined;
-        counters['dupe'] = card.dupes && card.dupes.length > 0 ? { count: card.dupes.length, fade: card.type === 'attachment', shortName: 'D' } : undefined;
+        if(card.power) {
+            counters.push({ name: 'power', count: card.power, fade: card.type === 'attachment', shortName: 'P' });
+        }
 
-        _.map(card.iconsAdded, icon => {
-            counters[icon] = { count: 0, cancel: false };
+        if(card.baseStrength !== card.strength) {
+            counters.push({ name: 'strength', count: card.strength, fade: card.type === 'attachment', shortName: 'S' });
+        }
+
+        if(card.dupes && card.dupes.length > 0) {
+            counters.push({ name: 'dupe', count: card.dupes.length, fade: card.type === 'attachment', shortName: 'D' });
+        }
+
+        _.each(card.iconsAdded, icon => {
+            counters.push({ name: icon, count: 0, cancel: false });
         });
 
-        _.map(card.iconsRemoved, icon => {
-            counters[icon] = { count: 0, cancel: true };
+        _.each(card.iconsRemoved, icon => {
+            counters.push({ name: icon, count: 0, cancel: true });
         });
 
         _.each(card.tokens, (token, key) => {
-            counters[key] = { count: token, fade: card.type === 'attachment', shortName: this.shortNames[key] };
+            counters.push({ name: key, count: token, fade: card.type === 'attachment', shortName: this.shortNames[key] });
         });
 
         _.each(card.attachments, attachment => {
-            _.extend(counters, this.getCountersForCard(attachment));
+            counters = counters.concat(this.getCountersForCard(attachment));
         });
 
-        var filteredCounters = _.omit(counters, counter => {
-            return _.isUndefined(counter) || _.isNull(counter) || counter < 0;
-        });
-
-        return filteredCounters;
+        return _.reject(counters, counter => counter.count < 0);
     }
 
     getAttachments() {
