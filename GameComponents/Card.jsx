@@ -136,7 +136,7 @@ class Card extends React.Component {
         let counters = [];
 
         if(card.power) {
-            counters.push({ name: 'power', count: card.power, fade: card.type === 'attachment', shortName: 'P' });
+            counters.push({ name: 'card-power', count: card.power, fade: card.type === 'attachment', shortName: 'P' });
         }
 
         if(card.baseStrength !== card.strength) {
