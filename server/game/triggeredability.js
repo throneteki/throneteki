@@ -46,7 +46,7 @@ class TriggeredAbility extends BaseAbility {
     isTriggeredByEvent(event) {
         let listener = this.when[event.name];
 
-        if(!listener) {
+        if(!listener || event.cancelled) {
             return false;
         }
 
