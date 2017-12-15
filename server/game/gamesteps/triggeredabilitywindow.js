@@ -76,7 +76,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         };
 
         return this.isTimerEnabled(player) && _.any(this.event.getConcurrentEvents(), event => {
-            return event.player !== player && cancellableEvents[event.name] && cancellableEvents[event.name] === this.abilityType && this.isWindowEnabledForEvent(player, event);
+            return !event.cancelled && event.player !== player && cancellableEvents[event.name] && cancellableEvents[event.name] === this.abilityType && this.isWindowEnabledForEvent(player, event);
         });
     }
 
