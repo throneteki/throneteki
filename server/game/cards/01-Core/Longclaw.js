@@ -11,7 +11,7 @@ class Longclaw extends DrawCard {
     }
 
     canAttach(player, card) {
-        if(card.getType() !== 'character' || card.isFaction('thenightswatch')) {
+        if(card.getType() !== 'character' || !card.isFaction('thenightswatch')) {
             return false;
         }
 
