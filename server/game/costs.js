@@ -2,7 +2,7 @@ const _ = require('underscore');
 const ChooseCost = require('./costs/choosecost.js');
 const CostBuilders = require('./costs/CostBuilders.js');
 const KneelCost = require('./costs/KneelCost.js');
-const XValuePrompt = require('./costs/xvalueprompt.js');
+const XValuePrompt = require('./costs/XValuePrompt.js');
 const SelfCost = require('./costs/SelfCost.js');
 const StandCost = require('./costs/StandCost.js');
 
