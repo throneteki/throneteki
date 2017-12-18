@@ -2,7 +2,7 @@ const _ = require('underscore');
 const ChooseCost = require('./costs/choosecost.js');
 const CostBuilders = require('./costs/CostBuilders.js');
 const KneelCost = require('./costs/KneelCost.js');
-const PayXGoldPrompt = require('./costs/payxgoldprompt.js');
+const XValuePrompt = require('./costs/xvalueprompt.js');
 const SelfCost = require('./costs/SelfCost.js');
 const StandCost = require('./costs/StandCost.js');
 
@@ -288,7 +288,7 @@ const Costs = {
                 let gold = opponentObj ? opponentObj.gold : context.player.gold;
                 let max = _.min([maxFunc(context), gold + reduction]);
 
-                context.game.queueStep(new PayXGoldPrompt(minFunc(context), max, context, reduction));
+                context.game.queueStep(new XValuePrompt(minFunc(context), max, context, reduction));
 
                 result.value = true;
                 result.resolved = true;
@@ -302,6 +302,30 @@ const Costs = {
                     context.game.addGold(opponentObj, -context.goldCost);
                 }
                 context.player.markUsedReducers('play', context.source);
+            }
+        };
+    },
+    /**
+     * Cost where the player gets prompted to discard gold from the card from a passed minimum up to the lesser of two values:
+     * the passed maximum and the amount of gold on the source card.
+     * Used by The House of Black and White and Stormcrows.
+     */
+    discardXGold: function(minFunc, maxFunc) {
+        return {
+            canPay: function(context) {
+                return context.source.tokens.gold >= minFunc(context);
+            },
+            resolve: function(context, result = { resolved: false }) {
+                let max = _.min([maxFunc(context), context.source.tokens.gold]);
+                
+                context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
+                
+                result.value = true;
+                result.resolved = true;
+                return result;
+            },
+            pay: function(context) {
+                context.source.addToken('gold', -context.xValue);
             }
         };
     }
