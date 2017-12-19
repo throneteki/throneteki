@@ -2,8 +2,8 @@ const _ = require('underscore');
 
 const BaseStep = require('../gamesteps/basestep');
 
-class PayXGoldPrompt extends BaseStep {
-    constructor(min, max, context, reduction) {
+class XValuePrompt extends BaseStep {
+    constructor(min, max, context, reduction = 0) {
         super();
 
         this.min = min;
@@ -13,7 +13,7 @@ class PayXGoldPrompt extends BaseStep {
     }
 
     continue() {
-        if(this.limit === 0 || this.min > this.max) {
+        if(this.max === 0 || this.min > this.max) {
             return;
         }
 
@@ -40,4 +40,4 @@ class PayXGoldPrompt extends BaseStep {
     }
 }
 
-module.exports = PayXGoldPrompt;
+module.exports = XValuePrompt;
