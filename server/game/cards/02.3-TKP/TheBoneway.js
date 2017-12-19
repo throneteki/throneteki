@@ -14,6 +14,7 @@ class TheBoneway extends DrawCard {
 
         this.action({
             title: 'Gain 3 power for your faction',
+            phase: 'dominance',
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.discardTokenFromSelf('vengeance', 6)
