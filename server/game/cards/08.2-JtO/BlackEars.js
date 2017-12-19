@@ -4,10 +4,9 @@ class BlackEars extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: () => true
+                onCharacterKilled: () => this.controller.canPutIntoPlay(this)
             },
             location: 'hand',
-            condition: () => this.controller.canPutIntoPlay(this),
             cost: ability.costs.payGold(2),
             handler: context => {
                 this.controller.putIntoPlay(this);
