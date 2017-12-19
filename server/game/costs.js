@@ -308,7 +308,7 @@ const Costs = {
     /**
      * Cost where the player gets prompted to discard gold from the card from a passed minimum up to the lesser of two values:
      * the passed maximum and the amount of gold on the source card.
-     * Used by The House of Black and White and Stormcrows.
+     * Used by The House of Black and White, Stormcrows and Devan Seaworth.
      */
     discardXGold: function(minFunc, maxFunc) {
         return {
