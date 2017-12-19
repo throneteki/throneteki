@@ -73,4 +73,8 @@ AbilityLimit.perRound = function(max) {
     return new RepeatableAbilityLimit(max, 'onRoundEnded');
 };
 
+AbilityLimit.perGame = function(max) {
+    return new RepeatableAbilityLimit(max, 'onGameEnded');
+};
+
 module.exports = AbilityLimit;
