@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class PaidOff extends DrawCard {
     setupCardAbilities() {
+        this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
                 afterChallenge: ({challenge}) => challenge.challengeType === 'intrigue' && !this.parent.kneeled && challenge.winner === this.controller
@@ -48,14 +49,6 @@ class PaidOff extends DrawCard {
             player, this, this.parent);
 
         return true;
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.controller === this.controller) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

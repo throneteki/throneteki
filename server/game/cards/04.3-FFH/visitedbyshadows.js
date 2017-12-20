@@ -2,16 +2,10 @@ const DrawCard = require('../../drawcard.js');
 
 class VisitedByShadows extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ controller: 'opponent' });
         this.whileAttached({
             effect: ability.effects.modifyStrength(-1)
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.controller === this.controller) {
-            return false;
-        }
-        return super.canAttach(player, card);
     }
 }
 

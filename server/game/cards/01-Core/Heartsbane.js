@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Heartsbane extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'tyrell' });
         this.action({
             title: 'Give attached character +3 STR',
             condition: () => this.parent && this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent),
@@ -14,14 +15,6 @@ class Heartsbane extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to give {2} +3 STR until the end of the challenge', this.controller, this, this.parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('tyrell')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

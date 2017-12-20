@@ -3,6 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class Lady extends DrawCard {
 
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
@@ -27,14 +28,6 @@ class Lady extends DrawCard {
                 this.game.addMessage(message, this.controller, this, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('stark')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

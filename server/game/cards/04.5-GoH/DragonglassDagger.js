@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class DragonglassDagger extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'thenightswatch' });
         this.whileAttached({
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent),
             effect: [
@@ -9,14 +10,6 @@ class DragonglassDagger extends DrawCard {
                 ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'character')
             ]
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('thenightswatch')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

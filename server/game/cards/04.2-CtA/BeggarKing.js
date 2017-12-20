@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class BeggarKing extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'targaryen' });
         this.whileAttached({
             effect: ability.effects.addTrait('King')
         });
@@ -27,14 +28,6 @@ class BeggarKing extends DrawCard {
 
     opponentHasKing() {
         return this.game.anyCardsInPlay(card => card.controller !== this.controller && card.getType() === 'character' && card.hasTrait('King'));
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('targaryen')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

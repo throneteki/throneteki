@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class VenomousBlade extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'martell', controller: 'current' });
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)
         });
@@ -21,14 +22,6 @@ class VenomousBlade extends DrawCard {
                 }));
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('martell') || card.controller !== this.controller) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

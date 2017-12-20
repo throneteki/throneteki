@@ -10,13 +10,6 @@ class OldBearsRaven extends DrawCard {
             effect: ability.effects.addKeyword('stealth')
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-        return super.canAttach(player, card);
-    }
 }
 
 OldBearsRaven.code = '02106';

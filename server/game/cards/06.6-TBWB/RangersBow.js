@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class RangersBow extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'thenightswatch' });
+
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)
         });
@@ -22,14 +24,6 @@ class RangersBow extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to give {2} +2 STR until the end of the challenge', this.controller, this, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('thenightswatch')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

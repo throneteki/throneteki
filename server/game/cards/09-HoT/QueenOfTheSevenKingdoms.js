@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class QueenOfTheSevenKingdoms extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Lady' });
+
         this.whileAttached({
             effect: ability.effects.addTrait('Queen')
         });
@@ -23,14 +25,6 @@ class QueenOfTheSevenKingdoms extends DrawCard {
                     context.player, this, this.parent, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Lady')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

@@ -48,6 +48,7 @@ class RisenFromTheSea extends DrawCard {
         return context.event.isBurn && card.controller.canAttach(this, card) && card.getBoostedStrength(1 + card.burnValue) > 0;
     }
 
+    // Explicitly override since it has printed type 'event'.
     canAttach(player, card) {
         return card.getType() === 'character';
     }

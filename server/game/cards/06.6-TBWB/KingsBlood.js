@@ -4,6 +4,7 @@ const DrawCard = require('../../drawcard.js');
 
 class KingsBlood extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: ['Bastard', 'King'], controller: 'current' });
         this.action({
             title: 'Discard power from opponent\'s faction',
             condition: () => this.hasToken('gold'),
@@ -23,13 +24,6 @@ class KingsBlood extends DrawCard {
                     context.player, context.cardStateWhenInitiated.parent, this, gold);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !(card.hasTrait('Bastard') || card.hasTrait('King')) || card.controller !== this.controller) {
-            return false;
-        }
-        return super.canAttach(player, card);
     }
 }
 

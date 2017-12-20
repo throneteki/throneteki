@@ -17,14 +17,6 @@ class LingeringVenom extends DrawCard {
             }
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 LingeringVenom.code = '07032';

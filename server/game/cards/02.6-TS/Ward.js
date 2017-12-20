@@ -2,20 +2,13 @@ const DrawCard = require('../../drawcard.js');
 
 class Ward extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction(card => card.getType() === 'character' && card.getCost() <= 4);
         this.whileAttached({
             effect: [
                 ability.effects.addFaction('stark'),
                 ability.effects.takeControl(this.controller)
             ]
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.getCost() > 4) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

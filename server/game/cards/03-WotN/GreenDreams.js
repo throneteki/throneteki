@@ -35,14 +35,6 @@ class GreenDreams extends DrawCard {
 
         return true;
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 GreenDreams.code = '03043';

@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Motley extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ controller: 'opponent' });
         this.whileAttached({
             effect: ability.effects.addTrait('Fool')
         });
@@ -16,14 +17,6 @@ class Motley extends DrawCard {
                     this.controller, this, this.parent.controller);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.controller === this.controller) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

@@ -13,14 +13,6 @@ class RedGodsBlessing extends DrawCard {
     getNumberOfCardsWithRhllor() {
         return this.controller.getNumberOfCardsInPlay(c => c.hasTrait('R\'hllor') && c.getType() === 'character');
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 RedGodsBlessing.code = '04068';

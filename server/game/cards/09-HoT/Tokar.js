@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class Tokar extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'targaryen' });
+
         this.whileAttached({
             effect: ability.effects.dynamicStrength(() => this.parent.attachments.size())
         });
@@ -12,14 +14,6 @@ class Tokar extends DrawCard {
             targetController: 'any',
             effect: ability.effects.cannotGainPower()
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('targaryen')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

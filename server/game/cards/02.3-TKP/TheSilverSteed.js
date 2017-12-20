@@ -2,6 +2,10 @@ const DrawCard = require('../../drawcard.js');
 
 class TheSilverSteed extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction(
+            { trait: 'Dothraki' },
+            { name: 'Daenerys Targaryen' }
+        );
         this.whileAttached({
             condition: () => (
                 this.game.currentChallenge &&
@@ -27,14 +31,6 @@ class TheSilverSteed extends DrawCard {
                 this.game.addMessage('{0} sacrifices {1} and is able to initiate an additional {2} challenge this phase', this.controller, this, 'power');
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || (!card.hasTrait('Dothraki') && card.name !== 'Daenerys Targaryen')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

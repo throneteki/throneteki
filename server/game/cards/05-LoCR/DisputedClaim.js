@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class DisputedClaim extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: ['Bastard', 'Lord', 'Lady'] });
         this.whileAttached({
             condition: () => this.hasMostFactionPower(),
             effect: [
@@ -9,13 +10,6 @@ class DisputedClaim extends DrawCard {
                 ability.effects.addKeyword('Renown')
             ]
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !(card.hasTrait('Bastard') || card.hasTrait('Lord') || card.hasTrait('Lady'))) {
-            return false;
-        }
-        return super.canAttach(player, card);
     }
 
     hasMostFactionPower() {

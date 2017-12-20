@@ -23,14 +23,6 @@ class MarriagePact extends DrawCard {
             }
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 MarriagePact.code = '06022';

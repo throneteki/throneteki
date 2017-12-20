@@ -2,17 +2,10 @@ const DrawCard = require('../../drawcard.js');
 
 class Attainted extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ controller: 'opponent' });
         this.whileAttached({
             effect: ability.effects.removeIcon('intrigue')
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.controller === this.controller) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

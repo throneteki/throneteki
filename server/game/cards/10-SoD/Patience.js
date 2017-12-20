@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Patience extends DrawCard {
     setupCardAbilities() {
+        this.attachmentRestriction({ controller: 'current' });
         this.action({
             title: 'Return parent to hand',
             phase: 'challenge',
@@ -11,14 +12,6 @@ class Patience extends DrawCard {
                     context.player, this, this.parent, this.parent.owner);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.controller !== this.controller) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

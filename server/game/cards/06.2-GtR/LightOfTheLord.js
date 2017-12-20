@@ -2,6 +2,10 @@ const DrawCard = require('../../drawcard.js');
 
 class LightOfTheLord extends DrawCard {
     setupCardAbilities() {
+        this.attachmentRestriction(
+            { faction: 'baratheon' },
+            { trait: 'R\'hllor' }
+        );
         this.reaction({
             when: {
                 onPhaseStarted: event => event.phase === 'dominance'
@@ -12,14 +16,6 @@ class LightOfTheLord extends DrawCard {
                 this.game.addMessage('{0} uses {1} to stand {2} and gain 1 gold', this.controller, this, this.parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !(card.isFaction('baratheon') || card.hasTrait('R\'hllor'))) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

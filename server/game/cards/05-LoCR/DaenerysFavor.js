@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class DaenerysFavor extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'targaryen' });
         this.persistentEffect({
             condition: () => (
                 this.game.currentChallenge &&
@@ -12,13 +13,6 @@ class DaenerysFavor extends DrawCard {
             effect: ability.effects.modifyStrength(-1),
             recalculateWhen: ['onAttackersDeclared', 'onDefendersDeclared']
         });
-    }
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('targaryen')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

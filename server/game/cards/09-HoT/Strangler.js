@@ -7,14 +7,6 @@ class Strangler extends DrawCard {
             effect: ability.effects.setStrength(1)
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 Strangler.code = '09043';

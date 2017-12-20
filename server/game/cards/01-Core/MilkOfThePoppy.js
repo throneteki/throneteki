@@ -6,14 +6,6 @@ class MilkOfThePoppy extends DrawCard {
             effect: ability.effects.blank
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 MilkOfThePoppy.code = '01035';

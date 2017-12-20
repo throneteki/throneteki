@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class ImprovedFortifications extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ type: 'location' });
         this.interrupt({
             canCancel: true,
             when: {
@@ -13,14 +14,6 @@ class ImprovedFortifications extends DrawCard {
                 this.game.addMessage('{0} sacrifices {1} to save {2}', this.controller, this, this.parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'location') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

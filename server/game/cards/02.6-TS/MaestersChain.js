@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class MaestersChain extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Maester' });
         this.action({
             title: 'Discard condition attachment',
             phase: 'dominance',
@@ -15,13 +16,6 @@ class MaestersChain extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to discard {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('maester')) {
-            return false;
-        }
-        return super.canAttach(player, card);
     }
 }
 

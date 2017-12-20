@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Lightbringer extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'baratheon' });
         this.whileAttached({
             match: card => card.name === 'Stannis Baratheon',
             effect: ability.effects.addKeyword('Renown')
@@ -17,14 +18,6 @@ class Lightbringer extends DrawCard {
                 this.game.addMessage('{0} uses {1} to stand {2}', this.controller, this, this.parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('baratheon')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

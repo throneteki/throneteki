@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Ghost extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: ['thenightswatch', 'stark'] });
         this.interrupt({
             when: {
                 onCharactersKilled: event => {
@@ -19,14 +20,6 @@ class Ghost extends DrawCard {
                 this.game.addMessage('{0} returns {1} to their hand to save {2}', this.controller, this, this.parentCard);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('thenightswatch') && !card.isFaction('stark')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

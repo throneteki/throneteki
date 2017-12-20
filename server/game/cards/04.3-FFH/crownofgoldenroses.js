@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class CrownOfGoldenRoses extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Lord' });
+
         this.whileAttached({
             effect: ability.effects.addTrait('King')
         });
@@ -24,14 +26,6 @@ class CrownOfGoldenRoses extends DrawCard {
             }
         });
 
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Lord')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

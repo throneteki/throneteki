@@ -24,14 +24,6 @@ class CatapultOnTheWall extends DrawCard {
             }
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 CatapultOnTheWall.code = '07020';

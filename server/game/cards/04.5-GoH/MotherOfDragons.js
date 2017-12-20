@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class MotherOfDragons extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Stormborn' });
         this.action({
             title: 'Add attached character to the challenge',
             condition: () => this.game.currentChallenge && this.parent.canParticipateInChallenge() &&
@@ -18,14 +19,6 @@ class MotherOfDragons extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to have {2} participate in the challenge on their side', this.controller, this, this.parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Stormborn')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

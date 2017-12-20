@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class SupportOfSaltcliffe extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'greyjoy' });
+
         this.whileAttached({
             effect: ability.effects.addKeyword('stealth')
         });
@@ -16,14 +18,6 @@ class SupportOfSaltcliffe extends DrawCard {
                 this.game.addMessage('{0} uses {1} to stand {2}', this.controller, this, this.parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('greyjoy')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

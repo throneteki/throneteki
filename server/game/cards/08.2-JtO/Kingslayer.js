@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class Kingslayer extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Kingsguard' });
+
         this.action({
             title: 'Kill character',
             limit: ability.limit.perGame(1),
@@ -33,14 +35,6 @@ class Kingslayer extends DrawCard {
                     context.player, this);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Kingsguard')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 
