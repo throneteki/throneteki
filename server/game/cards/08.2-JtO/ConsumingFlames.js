@@ -4,6 +4,7 @@ class ConsumingFlames extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -3 STR',
+            condition: () => this.game.currentChallenge,
             cost: ability.costs.discardFromHand(card => card !== this && card.isFaction('targaryen')),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
