@@ -28,8 +28,8 @@ class AlertPanel extends React.Component {
         return (<div ref='alertPanel' className={ alertClass } role='alert'>
             { this.props.noIcon ? null : <span className={ icon } aria-hidden='true' /> }
             { this.props.title ? <span className='sr-only'>{ this.props.title }</span> : null }
-            &nbsp;{ this.props.message }
-            &nbsp;{ this.props.children }
+            { this.props.message ? <span>&nbsp;{ this.props.message }</span> : null }
+            { this.props.children }
         </div>);
     }
 }
