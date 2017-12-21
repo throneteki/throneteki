@@ -181,7 +181,16 @@ class InnerLobby extends React.Component {
                         <span className='text-center'><h1>A # LCG second edition</h1></span>
                     </div>
                 </div>
-                { this.props.bannerNotice ? <AlertPanel message={ this.props.bannerNotice } type='error' /> : null }
+                { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
+                    <AlertPanel message={ this.props.bannerNotice } type='error' />
+                </div> : null }
+                <div className='col-sm-offset-1 col-sm-10 announcement'>
+                    <AlertPanel type='success' noIcon>
+                        <div>
+                            Registration for the Champions of Westeros Online League Winter Season is open until Jan 7.  See <a href='https://championsofwesteros.blogspot.com/' target='_blank'>Here</a> for details.
+                        </div>
+                    </AlertPanel>
+                </div>
                 <div className='col-sm-offset-1 col-sm-10'>
                     <div className='panel-title text-center'>
                         Latest site news
@@ -193,7 +202,7 @@ class InnerLobby extends React.Component {
                 </div>
                 <div className='col-sm-offset-1 col-sm-10 chat-container'>
                     <div className='panel-title text-center'>
-                            Lobby Chat ({ _.size(this.props.users) } online)
+                        Lobby Chat ({ _.size(this.props.users) } online)
                     </div>
                     <div className='lobby-chat'>
                         <div className='panel lobby-messages' ref='messages' onScroll={ this.onScroll }>
