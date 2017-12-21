@@ -45,8 +45,9 @@ describe('The Rains of Castamere', function() {
             expect(this.player.plotDeck.toArray()).toEqual([this.plot1, this.plot2]);
         });
 
-        it('should save the schemes for later use', function() {
-            expect(this.agenda.schemes).toEqual([this.scheme1, this.scheme2]);
+        it('should move the schemes to the scheme plot pile', function() {
+            expect(this.player.moveCard).toHaveBeenCalledWith(this.scheme1, 'scheme plots');
+            expect(this.player.moveCard).toHaveBeenCalledWith(this.scheme2, 'scheme plots');
         });
     });
 
@@ -154,7 +155,7 @@ describe('The Rains of Castamere', function() {
 
     describe('revealScheme()', function() {
         beforeEach(function() {
-            this.agenda.schemes = [this.scheme1, this.scheme2];
+            this.player.schemePlots = _([this.scheme1, this.scheme2]);
         });
 
         describe('when the argument is not one of the schemes', function() {
