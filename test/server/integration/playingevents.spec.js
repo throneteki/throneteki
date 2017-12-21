@@ -7,7 +7,7 @@ describe('playing events', function() {
             ]);
             const deck2 = this.buildDeck('martell', [
                 'Trading with the Pentoshi',
-                'The Hand\'s Judgment', 'Hedge Knight', 'Tower of the Sun', 'The Prince\'s Plan'
+                'The Hand\'s Judgment', 'The Hand\'s Judgment', 'Hedge Knight', 'Tower of the Sun', 'The Prince\'s Plan'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
@@ -57,6 +57,12 @@ describe('playing events', function() {
 
                 // Pass on Tower of the Sun
                 this.player2.clickPrompt('Pass');
+            });
+
+            it('should not prompt to cancel the event again', function() {
+                // The second copy of Hand's Judgment should not prompt for the
+                // already cancelled event.
+                expect(this.player2).not.toHavePromptButton('The Hand\'s Judgment');
             });
 
             it('should still count as having played the event', function() {

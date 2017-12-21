@@ -113,8 +113,8 @@ describe('CardReaction', function () {
 
     describe('meetsRequirements()', function() {
         beforeEach(function() {
+            this.event = new Event('onSomething', {});
             this.meetsRequirements = () => {
-                this.event = new Event('onSomething', {});
                 this.reaction = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 this.context = this.reaction.createContext(this.event);
                 return this.reaction.meetsRequirements(this.context);
@@ -149,6 +149,16 @@ describe('CardReaction', function () {
         describe('when the when condition returns false', function() {
             beforeEach(function() {
                 this.properties.when.onSomething.and.returnValue(false);
+            });
+
+            it('should return false', function() {
+                expect(this.meetsRequirements()).toBe(false);
+            });
+        });
+
+        describe('when the event has already been cancelled', function() {
+            beforeEach(function() {
+                this.event.cancel();
             });
 
             it('should return false', function() {
