@@ -47,6 +47,7 @@ class Game extends EventEmitter {
         this.id = details.id;
         this.name = details.name;
         this.allowSpectators = details.allowSpectators;
+        this.showHand = details.showHand;
         this.owner = details.owner.username;
         this.started = false;
         this.playStarted = false;
@@ -1010,6 +1011,7 @@ class Game extends EventEmitter {
                 owner: this.owner,
                 players: playerState,
                 messages: this.gameChat.messages,
+                showHand: this.showHand,
                 spectators: _.map(this.getSpectators(), spectator => {
                     return {
                         id: spectator.id,
@@ -1065,6 +1067,7 @@ class Game extends EventEmitter {
             name: this.name,
             owner: this.owner,
             players: playerSummaries,
+            showHand: this.showHand,
             started: this.started,
             startedAt: this.startedAt,
             spectators: _.map(this.getSpectators(), spectator => {

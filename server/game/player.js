@@ -1204,6 +1204,10 @@ class Player extends Spectator {
         };
     }
 
+    showHandtoSpectators(player) {
+        return this.game.isSpectator(player) && this.game.showHand;
+    }
+
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
@@ -1217,7 +1221,7 @@ class Player extends Spectator {
                 conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer, true),
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
-                hand: this.getSummaryForCardList(this.hand, activePlayer, true),
+                hand: this.getSummaryForCardList(this.hand, activePlayer, !this.showHandtoSpectators(activePlayer)),
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
                 plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
                 plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
