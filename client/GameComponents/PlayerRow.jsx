@@ -157,6 +157,8 @@ class PlayerRow extends React.Component {
                     onDragDrop={ this.props.onDragDrop }
                     onMouseOut={ this.props.onMouseOut }
                     onMouseOver={ this.props.onMouseOver }
+                    showHand={ this.props.showHand }
+                    spectating={ this.props.spectating }
                     cardSize={ this.props.cardSize } />
                 <CardPile className='draw' title='Draw' source='draw deck' cards={ this.props.drawDeck }
                     onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut }
@@ -204,6 +206,7 @@ PlayerRow.propTypes = {
     plotDeck: PropTypes.array,
     power: PropTypes.number,
     showDrawDeck: PropTypes.bool,
+    showHand: PropTypes.bool,
     spectating: PropTypes.bool,
     title: PropTypes.object
 };

@@ -321,6 +321,8 @@ export class InnerGameBoard extends React.Component {
                                 onMouseOver={ this.onMouseOver }
                                 onMouseOut={ this.onMouseOut }
                                 outOfGamePile={ otherPlayer.cardPiles.outOfGamePile }
+                                showHand={ this.props.currentGame.showHand }
+                                spectating={ this.state.spectating }
                                 title={ otherPlayer.title }
                                 cardSize={ this.props.user.settings.cardSize } />
                         </div>
@@ -379,6 +381,7 @@ export class InnerGameBoard extends React.Component {
                                 onDragDrop={ this.onDragDrop }
                                 discardPile={ thisPlayer.cardPiles.discardPile }
                                 deadPile={ thisPlayer.cardPiles.deadPile }
+                                showHand={ this.props.currentGame.showHand }
                                 spectating={ this.state.spectating }
                                 title={ thisPlayer.title }
                                 onMenuItemClick={ this.onMenuItemClick }
