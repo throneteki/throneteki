@@ -512,24 +512,16 @@ class BaseCard {
         }
     }
 
-    addToken(type, number) {
+    hasToken(type) {
+        return !!this.tokens[type];
+    }
+
+    modifyToken(type, number) {
         if(_.isUndefined(this.tokens[type])) {
             this.tokens[type] = 0;
         }
 
         this.tokens[type] += number;
-    }
-
-    hasToken(type) {
-        return !!this.tokens[type];
-    }
-
-    removeToken(type, number) {
-        if(_.isUndefined(this.tokens[type])) {
-            return;
-        }
-
-        this.tokens[type] -= number;
 
         if(this.tokens[type] < 0) {
             this.tokens[type] = 0;
