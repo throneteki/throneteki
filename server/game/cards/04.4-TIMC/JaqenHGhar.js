@@ -59,7 +59,7 @@ class JaqenHGhar extends DrawCard {
         }
 
         _.each(this.selectedCards, card => {
-            card.removeToken('valarmorghulis', 1);
+            card.modifyToken('valarmorghulis', -1);
         });
 
         this.selectedCards = null;

@@ -485,7 +485,7 @@ const Effects = {
         },
         unapply: function(card, context) {
             if(card.location === 'play area' && card.hasToken('poison')) {
-                card.removeToken('poison', 1);
+                card.modifyToken('poison', -1);
                 card.controller.killCharacter(card);
                 context.game.addMessage('{0} uses {1} to kill {2} at the end of the phase', context.source.controller, context.source, card);
             }

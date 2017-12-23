@@ -29,7 +29,7 @@ class FickleBannerman extends DrawCard {
     }
 
     discardGold() {
-        this.removeToken('gold', 1);
+        this.modifyToken('gold', -1);
         this.game.addMessage('{0} is forced to discard a gold from {1}', this.controller, this);
 
         return true;

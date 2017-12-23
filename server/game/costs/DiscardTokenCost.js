@@ -11,7 +11,7 @@ class DiscardTokenCost {
 
     pay(cards) {
         for(let card of cards) {
-            card.removeToken(this.token, this.amount);
+            card.modifyToken(this.token, -this.amount);
         }
     }
 }
