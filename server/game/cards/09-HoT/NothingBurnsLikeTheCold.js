@@ -30,6 +30,7 @@ class NothingBurnsLikeTheCold extends PlotCard {
             activePromptTitle: 'Select an attachment',
             source: this,
             cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'attachment',
+            gameAction: 'discard',
             onSelect: (player, card) => this.onSelectAttachment(player, card),
             onCancel: (player) => this.onSelectAttachment(player, null)
         });
@@ -54,6 +55,7 @@ class NothingBurnsLikeTheCold extends PlotCard {
             activePromptTitle: 'Select a location',
             source: this,
             cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'location' && !card.isLimited(),
+            gameAction: 'discard',
             onSelect: (player, card) => this.onSelectLocation(player, attachment, card),
             onCancel: (player) => this.onSelectLocation(player, attachment, null)
         });

@@ -9,7 +9,8 @@ class NewlyMadeLord extends DrawCard {
             target: {
                 activePromptTitle: 'Select a location',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'location' &&
-                                       !card.isLimited() && card.getCost() <= 3
+                                       !card.isLimited() && card.getCost() <= 3,
+                gameAction: 'discard'
             },
             handler: context => {
                 context.target.owner.discardCard(context.target);
