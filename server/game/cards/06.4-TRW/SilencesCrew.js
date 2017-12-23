@@ -13,7 +13,7 @@ class SilencesCrew extends DrawCard {
                                     (event.discardedCard.getType() === 'location' || event.discardedCard.getType() === 'attachment')
             },
             handler: () => {
-                this.addToken('gold', 1);
+                this.modifyToken('gold', 1);
                 this.game.addMessage('{0} moves 1 gold token from the treasury to {1}', this.controller, this);
             }
         });

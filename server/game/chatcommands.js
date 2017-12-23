@@ -324,7 +324,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 let numTokens = card.tokens[token] || 0;
 
-                card.addToken(token, num - numTokens);
+                card.modifyToken(token, num - numTokens);
                 this.game.addAlert('danger', '{0} uses the /token command to set the {1} token count of {2} to {3}', p, token, card, num);
 
                 return true;
@@ -346,7 +346,7 @@ class ChatCommands {
             onSelect: (p, card) => {
                 player.gold -= num;
 
-                card.addToken('gold', num);
+                card.modifyToken('gold', num);
                 this.game.addAlert('danger', '{0} uses the /bestow command to add {1} gold to {2}', p, num, card);
 
                 return true;

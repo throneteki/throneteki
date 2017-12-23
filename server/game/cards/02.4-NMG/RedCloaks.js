@@ -7,7 +7,7 @@ class RedCloaks extends DrawCard {
             limit: ability.limit.perPhase(1),
             condition: () => this.controller.gold > 0,
             handler: () => {
-                this.addToken('gold', 1);
+                this.modifyToken('gold', 1);
                 this.game.addGold(this.controller, -1);
 
                 this.game.addMessage('{0} moves 1 gold from their gold pool to {1}', this.controller, this);

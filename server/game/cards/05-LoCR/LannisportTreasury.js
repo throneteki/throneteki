@@ -10,7 +10,7 @@ class LannisportTreasury extends DrawCard {
             },
             handler: () => {
                 this.game.addGold(this.controller, -1);
-                this.addToken('gold', 1);
+                this.modifyToken('gold', 1);
                 this.game.addMessage('{0} moves 1 gold from their gold pool to {1}', this.controller, this);
             }
         });
@@ -38,7 +38,7 @@ class LannisportTreasury extends DrawCard {
     }
 
     moveGold(player, gold) {
-        this.addToken('gold', -gold);
+        this.modifyToken('gold', -gold);
         this.game.addGold(player, gold);
         this.game.addMessage('{0} moves {1} gold from {2} to their gold pool', this.controller, gold, this);
 

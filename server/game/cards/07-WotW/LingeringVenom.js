@@ -7,7 +7,7 @@ class LingeringVenom extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.loser === this.controller
             },
             handler: () => {
-                this.addToken('venom', 1);
+                this.modifyToken('venom', 1);
                 this.game.addMessage('{0} uses {1} to place a venom token on {1}', this.controller, this);
 
                 if(this.parent.getStrength() <= this.tokens['venom']) {

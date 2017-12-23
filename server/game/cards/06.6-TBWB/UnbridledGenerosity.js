@@ -14,7 +14,7 @@ class UnbridledGenerosity extends DrawCard {
             },
             handler: context => {
                 _.each(context.target, card => {
-                    card.addToken('gold', 1);
+                    card.modifyToken('gold', 1);
                 });
 
                 this.game.addMessage('{0} plays {1} to move 1 gold from the treasury to {2}',

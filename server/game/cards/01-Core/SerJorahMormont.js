@@ -7,7 +7,7 @@ class SerJorahMormont extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this)
             },
             handler: () => {
-                this.addToken('betrayal', 1);
+                this.modifyToken('betrayal', 1);
                 this.game.addMessage('{0} is forced to place a betrayal token on {1} after winning a challenge in which he was participating', this.controller, this);
 
                 if(this.tokens['betrayal'] >= 3) {

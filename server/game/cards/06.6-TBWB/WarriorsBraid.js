@@ -14,7 +14,7 @@ class WarriorsBraid extends DrawCard {
                                          event.challenge.isAttacking(this.parent)
             },
             handler: () => {
-                this.addToken('bell', 1);
+                this.modifyToken('bell', 1);
                 this.game.addMessage('{0} places 1 bell token on {1}', this.controller, this);
             }
         });

@@ -13,7 +13,7 @@ class BericDondarrion extends DrawCard {
             },
             cannotBeCanceled: true,
             handler: () => {
-                this.addToken('kiss', 6);
+                this.modifyToken('kiss', 6);
                 this.game.addMessage('{0} is forced to place 6 kiss tokens on {1}', this.controller, this);
             }
         });

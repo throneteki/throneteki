@@ -22,7 +22,7 @@ class JaqenHGhar extends DrawCard {
             handler: context => {
                 this.selectedCards = context.target;
                 _.each(this.selectedCards, card => {
-                    card.addToken('valarmorghulis', 1);
+                    card.modifyToken('valarmorghulis', 1);
                 });
 
                 this.game.addMessage('{0} uses {1} to add Valar Morghulis tokens to {2}',
