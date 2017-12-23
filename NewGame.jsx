@@ -11,11 +11,13 @@ class InnerNewGame extends React.Component {
         this.onCancelClick = this.onCancelClick.bind(this);
         this.onSubmitClick = this.onSubmitClick.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
-        this.onSpecatorsClick = this.onSpecatorsClick.bind(this);
+        this.onSpectatorsClick = this.onSpectatorsClick.bind(this);
+        this.onShowHandClick = this.onShowHandClick.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
 
         this.state = {
             spectators: true,
+            showHand: false,
             selectedGameFormat: 'joust',
             selectedGameType: 'casual',
             password: ''
@@ -40,8 +42,12 @@ class InnerNewGame extends React.Component {
         this.setState({ password: event.target.value });
     }
 
-    onSpecatorsClick(event) {
+    onSpectatorsClick(event) {
         this.setState({ spectators: event.target.checked });
+    }
+
+    onShowHandClick(event) {
+        this.setState({ showHand: event.target.checked });
     }
 
     onSubmitClick(event) {
@@ -50,6 +56,7 @@ class InnerNewGame extends React.Component {
         this.props.socket.emit('newgame', {
             name: this.state.gameName,
             spectators: this.state.spectators,
+            showHand: this.state.showHand,
             gameType: this.state.selectedGameType,
             isMelee: this.state.selectedGameFormat === 'melee',
             password: this.state.password
@@ -111,8 +118,14 @@ class InnerNewGame extends React.Component {
                         <div className='row'>
                             <div className='checkbox col-sm-8'>
                                 <label>
-                                    <input type='checkbox' onChange={ this.onSpecatorsClick } checked={ this.state.spectators } />
+                                    <input type='checkbox' onChange={ this.onSpectatorsClick } checked={ this.state.spectators } />
                                     Allow spectators
+                                </label>
+                            </div>
+                            <div className='checkbox col-sm-8'>
+                                <label>
+                                    <input type='checkbox' onChange={ this.onShowHandClick } checked={ this.state.showHand } />
+                                    Show hands to spectators
                                 </label>
                             </div>
                         </div>
@@ -174,4 +187,3 @@ function mapStateToProps(state) {
 const NewGame = connect(mapStateToProps, actions)(InnerNewGame);
 
 export default NewGame;
-

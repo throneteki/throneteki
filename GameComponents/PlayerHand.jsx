@@ -38,6 +38,14 @@ class PlayerHand extends React.Component {
         }
     }
 
+    disableMouseOver() {
+        if(this.props.spectating && this.props.showHand) {
+            return false;
+        }
+
+        return !this.props.isMe;
+    }
+
     getCards(needsSquish) {
         let cardIndex = 0;
         let handLength = this.props.cards ? this.props.cards.length : 0;
@@ -57,7 +65,7 @@ class PlayerHand extends React.Component {
                 };
             }
 
-            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ !this.props.isMe } source='hand'
+            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ this.disableMouseOver() } source='hand'
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
                 onClick={ this.props.onCardClick }
@@ -121,7 +129,9 @@ PlayerHand.propTypes = {
     onCardClick: PropTypes.func,
     onDragDrop: PropTypes.func,
     onMouseOut: PropTypes.func,
-    onMouseOver: PropTypes.func
+    onMouseOver: PropTypes.func,
+    showHand: PropTypes.bool,
+    spectating: PropTypes.bool
 };
 
 export default PlayerHand;
