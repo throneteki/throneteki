@@ -22,8 +22,8 @@ class AshaGreyjoy extends DrawCard {
 
     cardSelected(player, card, amount) {
         player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search the top {2} cards of their deck and add {2} to their hand',
-            player, this, amount, card);
+        this.game.addMessage('{0} uses {1} to search the top {2} cards of their deck and add 1 to their hand',
+            player, this, amount);
     }
 
     doneSelecting(player, amount) {
