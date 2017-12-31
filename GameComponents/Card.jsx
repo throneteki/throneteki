@@ -163,7 +163,7 @@ class Card extends React.Component {
             counters = counters.concat(this.getCountersForCard(attachment));
         });
 
-        return _.reject(counters, counter => counter.count < 0);
+        return _.reject(counters, counter => counter.count < 1);
     }
 
     getAttachments() {
