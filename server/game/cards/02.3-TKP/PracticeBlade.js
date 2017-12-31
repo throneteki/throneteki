@@ -2,20 +2,13 @@ const DrawCard = require('../../drawcard.js');
 
 class PracticeBlade extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'thenightswatch' });
         this.whileAttached({
             effect: [
                 ability.effects.modifyStrength(1),
                 ability.effects.addIcon('military')
             ]
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('thenightswatch')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

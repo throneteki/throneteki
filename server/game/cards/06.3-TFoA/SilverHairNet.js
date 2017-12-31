@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class SilverHairNet extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Lady' });
+
         this.whileAttached({
             effect: ability.effects.addKeyword('stealth')
         });
@@ -19,13 +21,6 @@ class SilverHairNet extends DrawCard {
                 match: card => card.getType() === 'event'
             })
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Lady')) {
-            return false;
-        }
-        return super.canAttach(player, card);
     }
 }
 

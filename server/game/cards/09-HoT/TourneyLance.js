@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class TourneyLance extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Knight' });
+
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)
         });
@@ -13,14 +15,6 @@ class TourneyLance extends DrawCard {
             targetController: 'opponent',
             effect: ability.effects.setDefenderMaximum(1)
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Knight')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

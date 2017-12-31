@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class StinkingDrunk extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
                 onCardStood: event => event.card === this.parent
@@ -12,14 +13,6 @@ class StinkingDrunk extends DrawCard {
                 context.event.card.controller.kneelCard(context.event.card);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.controller === this.controller) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class BloodyArakh extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Dothraki' });
         this.reaction({
             max: ability.limit.perPhase(1),
             when: {
@@ -20,14 +21,6 @@ class BloodyArakh extends DrawCard {
                     context.player, this, 'military');
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('dothraki')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class ThrowingAxe extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Ironborn' });
         this.reaction({
             when: {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this.parent)
@@ -18,14 +19,6 @@ class ThrowingAxe extends DrawCard {
                 this.game.addMessage('{0} sacrifices {1} to kill {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('ironborn')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

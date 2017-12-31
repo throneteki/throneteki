@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class CorsairsDirk extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Ironborn' });
+
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
@@ -20,14 +22,6 @@ class CorsairsDirk extends DrawCard {
                     this.controller, this, opponent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('ironborn')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

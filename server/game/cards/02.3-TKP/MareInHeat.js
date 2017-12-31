@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class MareInHeat extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Knight' });
         this.action({
             title: 'Remove character from challenge',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent) &&
@@ -25,14 +26,6 @@ class MareInHeat extends DrawCard {
             return this.game.currentChallenge.attackers.length === 1;
         }
         return this.game.currentChallenge.defenders.length === 1;
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Knight')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

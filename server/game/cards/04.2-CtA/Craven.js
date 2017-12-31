@@ -6,14 +6,6 @@ class Craven extends DrawCard {
             effect: ability.effects.cannotBeDeclaredAsAttacker()
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 Craven.code = '04026';

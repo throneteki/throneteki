@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class LionsTooth extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'lannister', unique: true });
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)
         });
@@ -20,14 +21,6 @@ class LionsTooth extends DrawCard {
                 context.target.owner.returnCardToHand(context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('lannister') || !card.isUnique()) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

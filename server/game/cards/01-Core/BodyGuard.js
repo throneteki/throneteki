@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class BodyGuard extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: ['Lord', 'Lady'] });
         this.interrupt({
             canCancel: true,
             when: {
@@ -15,14 +16,6 @@ class BodyGuard extends DrawCard {
                 this.game.addMessage('{0} sacrifices {1} to save {2}', this.controller, this, parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('Lady') && !card.hasTrait('Lord')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

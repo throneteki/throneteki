@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Needle extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
@@ -19,14 +20,6 @@ class Needle extends DrawCard {
                 });
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('stark')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

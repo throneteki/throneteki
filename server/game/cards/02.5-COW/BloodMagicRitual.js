@@ -34,6 +34,7 @@ class BloodMagicRitual extends DrawCard {
         });
     }
 
+    // Explicitly override since it has printed type 'event'.
     canAttach(player, card) {
         return card.getType() === 'character';
     }

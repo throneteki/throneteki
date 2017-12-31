@@ -3,6 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class Nymeria extends DrawCard {
 
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'stark', unique: true });
         this.whileAttached({
             effect: ability.effects.addKeyword('Intimidate')
         });
@@ -20,14 +21,6 @@ class Nymeria extends DrawCard {
                 this.game.addMessage('{0} pays 1 gold to attach {1} to {2}', this.controller, this, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('stark') || !card.isUnique()) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

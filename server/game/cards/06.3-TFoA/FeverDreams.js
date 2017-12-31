@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class FeverDreams extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
                 onCardKneeled: event => event.card === this.parent
@@ -12,13 +13,6 @@ class FeverDreams extends DrawCard {
                 this.game.addMessage('{0} discards a gold from {1} to draw 2 cards', this.controller, this);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || card.controller === this.controller) {
-            return false;
-        }
-        return super.canAttach(player, card);
     }
 }
 

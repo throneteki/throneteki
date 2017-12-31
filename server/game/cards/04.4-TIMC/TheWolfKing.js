@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class TheWolfKing extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({
             effect: ability.effects.addTrait('King')
         });
@@ -12,14 +13,6 @@ class TheWolfKing extends DrawCard {
             ),
             effect: ability.effects.doesNotKneelAsAttacker()
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('stark')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

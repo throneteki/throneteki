@@ -6,14 +6,6 @@ class NobleLineage extends DrawCard {
             effect: ability.effects.addIcon('power')
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 NobleLineage.code = '01036';

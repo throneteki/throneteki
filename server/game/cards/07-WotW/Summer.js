@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Summer extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'stark', unique: true });
         this.action({
             title: 'Add attached character to the challenge',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
@@ -32,14 +33,6 @@ class Summer extends DrawCard {
                     this.controller, this, this.parent);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('stark') || !card.isUnique()) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

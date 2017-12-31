@@ -34,14 +34,6 @@ class Oathkeeper extends DrawCard {
         this.game.addMessage('{0} sacrifices {1} to search their deck, but does not add any card to their hand',
             player, this);
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 Oathkeeper.code = '08005';

@@ -2,6 +2,10 @@ const DrawCard = require('../../drawcard.js');
 
 class WeirwoodBow extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction(
+            { faction: 'thenightswatch' },
+            { trait: 'Wildling' }
+        );
         this.action({
             title: 'Give defending character -2 STR',
             cost: ability.costs.kneelSelf(),
@@ -23,14 +27,6 @@ class WeirwoodBow extends DrawCard {
                     context.player, this, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !(card.isFaction('thenightswatch') || card.hasTrait('Wildling'))) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

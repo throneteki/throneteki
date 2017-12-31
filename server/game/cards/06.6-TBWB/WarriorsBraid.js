@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class WarriorsBraid extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'targaryen' });
         this.whileAttached({
             effect: [
                 ability.effects.addKeyword('renown'),
@@ -18,14 +19,6 @@ class WarriorsBraid extends DrawCard {
                 this.game.addMessage('{0} places 1 bell token on {1}', this.controller, this);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('targaryen')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

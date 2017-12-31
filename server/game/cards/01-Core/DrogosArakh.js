@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class DrogosArakh extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ trait: 'Dothraki' });
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
@@ -14,14 +15,6 @@ class DrogosArakh extends DrawCard {
             match: card => card.name === 'Khal Drogo',
             effect: ability.effects.doesNotKneelAsAttacker()
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.hasTrait('dothraki')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

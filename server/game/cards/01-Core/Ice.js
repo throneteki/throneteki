@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Ice extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
@@ -23,14 +24,6 @@ class Ice extends DrawCard {
                 this.game.addMessage('{0} sacrifices {1} to kill {2}', context.player, this, context.target);
             }
         });
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('stark')) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

@@ -75,6 +75,40 @@ this.plotModifiers({
 });
 ```
 
+### Attachment restrictions
+
+Attachments often have restrictions on what cards they can be used on. For example, Bodyguard can only be attached to a character with a **Lord** or **Lady** trait. These restrictions can be defined using the `attachmentRestriction` method and passing the appropriate target specification object. By default, it's assumed that the attachment target is a character. Some examples:
+
+```javascript
+// Bodyguard - has either a 'Lord' or 'Lady' trait.
+this.attachmentRestriction({ trait: ['Lord', 'Lady'] });
+// Attainted - opponent character only
+this.attachmentRestriction({ controller: 'opponent' });
+// Breaker of Chains - unique Targaryen characters
+this.attachmentRestriction({ faction: 'targaryen', unique: true });
+// Improved Foritifications - locations instead of characters
+this.attachmentRestriction({ type: 'location' });
+```
+
+If an attachment has two mutually exclusive restrictions, you can pass multiple objects into the method.
+
+```javascript
+// The Silver Steed
+this.attachmentRestriction(
+    // Has trait 'Dothraki'
+    { trait: 'Dothraki' },
+    // OR is named Daenerys Targaryen
+    { name: 'Daenerys Targaryen' }
+);
+```
+
+For more complicated restrictions or restrictions that can't be checked with the target specification object, you can pass a function into `attachmentRestriction` instead. **Note** - if you do this, you need to explicitly check card type:
+
+```javascript
+// Ward - character with cost 4 or less
+this.attachmentRestriction(card => card.getType() === 'character' && card.getCost() <= 4);
+```
+
 ### Persistent effects
 
 Many cards provide continuous bonuses to other cards you control or detrimental effects to opponents cards in certain situations. These can be defined using the `persistentEffect` method. Cards that enter play while the persistent effect is in play will automatically have the effect applied, and cards that leave play will have the effect removed. If the card providing the effect becomes blank, the effect is automatically removed from all previously applied cards.

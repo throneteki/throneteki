@@ -2,6 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class ShieldOfLannisport extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'lannister', trait: ['Lord', 'Lady'] });
         this.whileAttached({
             condition: () => this.noOtherLordsOrLadies(),
             effect: [
@@ -20,14 +21,6 @@ class ShieldOfLannisport extends DrawCard {
             (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
             card.getCost() >= 4
         ));
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('lannister') || (!card.hasTrait('Lord') && !card.hasTrait('Lady'))) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 

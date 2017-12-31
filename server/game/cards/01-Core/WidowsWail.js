@@ -10,14 +10,6 @@ class WidowsWail extends DrawCard {
             effect: ability.effects.addIcon('military')
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 WidowsWail.code = '01096';

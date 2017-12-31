@@ -11,14 +11,6 @@ class Dawn extends DrawCard {
             effect: ability.effects.addKeyword('Intimidate')
         });
     }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character') {
-            return false;
-        }
-
-        return super.canAttach(player, card);
-    }
 }
 
 Dawn.code = '01115';

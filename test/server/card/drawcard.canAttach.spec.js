@@ -10,12 +10,42 @@ describe('DrawCard', function() {
     describe('canAttach()', function() {
         describe('when the card is an attachment', function() {
             beforeEach(function() {
-                this.targetCard = new DrawCard(this.owner, { text: '' });
+                this.targetCard = new DrawCard(this.owner, { type_code: 'character' });
+                this.targetCard.location = 'play area';
                 this.attachment = new DrawCard(this.owner, { type_code: 'attachment' });
             });
 
             it('should return true', function() {
                 expect(this.attachment.canAttach(this.player, this.targetCard)).toBe(true);
+            });
+
+            describe('when the target card is not a character', function() {
+                beforeEach(function() {
+                    spyOn(this.targetCard, 'getType').and.returnValue('location');
+                });
+
+                it('should return false', function() {
+                    expect(this.attachment.canAttach(this.player, this.targetCard)).toBe(false);
+                });
+            });
+
+            describe('when custom restrictions are added', function() {
+                beforeEach(function() {
+                    this.matcherSpy = jasmine.createSpy('matcher');
+                    this.attachment.attachmentRestriction(this.matcherSpy);
+                });
+
+                it('should call the matcher', function() {
+                    let controller = { controller: true };
+                    this.attachment.controller = controller;
+                    this.attachment.canAttach(this.player, this.targetCard);
+                    expect(this.matcherSpy).toHaveBeenCalledWith(this.targetCard, jasmine.objectContaining({ player: controller }));
+                });
+
+                it('should return the result of the matcher', function() {
+                    this.matcherSpy.and.returnValue(true);
+                    expect(this.attachment.canAttach(this.player, this.targetCard)).toBe(true);
+                });
             });
         });
 

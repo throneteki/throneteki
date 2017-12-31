@@ -2,6 +2,8 @@ const DrawCard = require('../../drawcard.js');
 
 class BreakerOfChains extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ faction: 'targaryen', unique: true });
+
         this.whileAttached({
             effect: ability.effects.dynamicStrength(() => this.getSTRBoost())
         });
@@ -27,14 +29,6 @@ class BreakerOfChains extends DrawCard {
 
     getSTRBoost() {
         return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.getCost() <= 2);
-    }
-
-    canAttach(player, card) {
-        if(card.getType() !== 'character' || !card.isFaction('targaryen') || !card.isUnique()) {
-            return false;
-        }
-
-        return super.canAttach(player, card);
     }
 }
 
