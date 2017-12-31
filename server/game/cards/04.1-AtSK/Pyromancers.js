@@ -11,7 +11,8 @@ class Pyromancers extends DrawCard {
             ],
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.location === 'play area' && !card.isLimited() && card.getType() === 'location'
+                cardCondition: card => card.location === 'play area' && !card.isLimited() && card.getType() === 'location',
+                gameAction: 'discard'
             },
             handler: context => {
                 context.target.controller.discardCard(context.target);

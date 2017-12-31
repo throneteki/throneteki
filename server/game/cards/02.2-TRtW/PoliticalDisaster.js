@@ -64,6 +64,7 @@ class PoliticalDisaster extends PlotCard {
                     card.controller === currentPlayer
                     && card.getType() === 'location'
                     && card.location === 'play area',
+                gameAction: 'discard',
                 onSelect: (player, cards) => this.onSelect(player, cards),
                 onCancel: (player) => this.cancelSelection(player)
             });
