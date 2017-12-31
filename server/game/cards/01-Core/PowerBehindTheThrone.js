@@ -5,7 +5,7 @@ class PowerBehindTheThrone extends PlotCard {
         this.whenRevealed({
             handler: () => {
                 this.game.addMessage('{0} adds 1 stand token to {1}', this.controller, this);
-                this.addToken('stand', 1);
+                this.modifyToken('stand', 1);
             }
         });
         this.action({

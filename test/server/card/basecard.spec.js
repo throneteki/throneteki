@@ -221,7 +221,7 @@ describe('BaseCard', function () {
 
         describe('adding a token', function() {
             it('should increase the tokens by the given amount', function() {
-                this.card.addToken('foo', 1);
+                this.card.modifyToken('foo', 1);
 
                 expect(this.card.tokens.foo).toBe(1);
                 expect(this.card.hasToken('foo')).toBe(true);
@@ -230,23 +230,23 @@ describe('BaseCard', function () {
 
         describe('removing an existing tokens', function() {
             beforeEach(function() {
-                this.card.addToken('foo', 2);
+                this.card.modifyToken('foo', 2);
             });
 
             it('should reduce the tokens by the given amount', function() {
-                this.card.removeToken('foo', 1);
+                this.card.modifyToken('foo', -1);
 
                 expect(this.card.tokens.foo).toBe(1);
                 expect(this.card.hasToken('foo')).toBe(true);
 
-                this.card.removeToken('foo', 1);
+                this.card.modifyToken('foo', -1);
                 expect(this.card.hasToken('foo')).toBe(false);
             });
         });
 
         describe('remove a missing token', function() {
             it('should not set the token value', function() {
-                this.card.removeToken('foo', 1);
+                this.card.modifyToken('foo', -1);
 
                 expect(this.card.tokens.foo).toBeUndefined();
                 expect(this.card.hasToken('foo')).toBe(false);

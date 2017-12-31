@@ -7,7 +7,7 @@ class TheBoneway extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.loser === this.controller
             },
             handler: () => {
-                this.addToken('vengeance', 1);
+                this.modifyToken('vengeance', 1);
                 this.game.addMessage('{0} places 1 vengeance token on {1}', this.controller, this);
             }
         });

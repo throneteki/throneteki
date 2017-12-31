@@ -46,7 +46,7 @@ class TheHouseOfBlackAndWhite extends DrawCard {
         }
 
         this.game.addGold(player, -gold);
-        this.addToken('gold', gold);
+        this.modifyToken('gold', gold);
         this.game.addMessage('{0} moves {1} gold to {2}', player, gold, this);
 
         return true;

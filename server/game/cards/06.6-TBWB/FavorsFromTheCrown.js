@@ -9,7 +9,7 @@ class FavorsFromTheCrown extends PlotCard {
             },
             handler: context => {
                 let numToAdd = context.event.card.tokens['gold'] >= 3 ? 2 : 1;
-                context.event.card.addToken('gold', numToAdd);
+                context.event.card.modifyToken('gold', numToAdd);
                 this.game.addMessage('{0} uses {1} to place {2} gold from the treasury on {3}',
                     this.controller, this, numToAdd, context.event.card);
             }

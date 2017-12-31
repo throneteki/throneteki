@@ -480,12 +480,12 @@ const Effects = {
     },
     poison: {
         apply: function(card, context) {
-            card.addToken('poison', 1);
+            card.modifyToken('poison', 1);
             context.game.addMessage('{0} uses {1} to place 1 poison token on {2}', context.source.controller, context.source, card);
         },
         unapply: function(card, context) {
             if(card.location === 'play area' && card.hasToken('poison')) {
-                card.removeToken('poison', 1);
+                card.modifyToken('poison', -1);
                 card.controller.killCharacter(card);
                 context.game.addMessage('{0} uses {1} to kill {2} at the end of the phase', context.source.controller, context.source, card);
             }

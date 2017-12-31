@@ -16,7 +16,7 @@ class WexPyke extends DrawCard {
             limit: ability.limit.perPhase(2),
             handler: context => {
                 this.game.addGold(this.controller, -1);
-                this.addToken('gold', 1);
+                this.modifyToken('gold', 1);
                 this.game.addMessage('{0} moves 1 gold from their gold pool to {1}', context.player, this);
             }
         });

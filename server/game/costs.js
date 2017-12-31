@@ -325,7 +325,7 @@ const Costs = {
                 return result;
             },
             pay: function(context) {
-                context.source.addToken('gold', -context.xValue);
+                context.source.modifyToken('gold', -context.xValue);
             }
         };
     }
