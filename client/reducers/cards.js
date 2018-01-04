@@ -156,8 +156,8 @@ export default function(state = {}, action) {
 
             return newState;
         case 'ADD_DECK':
-            var newDeck = { name: 'New Deck' };
-            
+            var newDeck = { name: 'New Deck', drawCards: [], plotCards: [] };
+
             newState = Object.assign({}, state, {
                 selectedDeck: newDeck,
                 deckSaved: false
