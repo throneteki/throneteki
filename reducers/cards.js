@@ -27,16 +27,21 @@ function processDecks(decks, state) {
             deck.bannerCards = _.map(deck.bannerCards, card => state.cards[card.code]);
         }
 
-        deck.plotCards = _.map(deck.plotCards, card => {
-            return { count: card.count, card: card.card.custom ? card.card : state.cards[card.card.code] };
-        });
+        deck.plotCards = processCardCounts(deck.plotCards, state.cards);
 
-        deck.drawCards = _.map(deck.drawCards, card => {
-            return { count: card.count, card: card.card.custom ? card.card : state.cards[card.card.code] };
-        });
+        deck.drawCards = processCardCounts(deck.drawCards, state.cards);
 
         deck.validation = validateDeck(deck, state.packs);
     });
+}
+
+function processCardCounts(cardCounts, cardData) {
+    let cardCountsWithData = cardCounts.map(cardCount => {
+        return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : cardData[cardCount.card.code] };
+    });
+
+    // Filter out any cards that aren't available in the card data.
+    return cardCountsWithData.filter(cardCount => !!cardCount.card);
 }
 
 export default function(state = {}, action) {
