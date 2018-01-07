@@ -55,7 +55,7 @@ class HowToPlay extends React.Component {
                     </div>
                     <div className='htp-topic'>
                         <h3 className='htp-title' id='bugs'>Bugs and automation</h3>
-                        <p>While The Iron Throne is still a work in progress, the vast majority of cards are implemented and should be working correctly. We try to keep a list up to date with the current state of the automation which can be found <a target='_blank' href='https://docs.google.com/spreadsheets/d/1t7ITlfkaUvso30QEZIbqswv3FM0N95UtWc-RDtPLdIQ'>here</a>. If you happen upon a card that you believe is not working as it should and it is not on that list, it would help immensely if you would submit an issue on <a target='_blank' href='https://github.com/cryogen/throneteki/issues'>GitHub</a>. Other comments and/or feedback can be left on GitHub as well.</p>
+                        <p>While The Iron Throne is still a work in progress, the vast majority of cards are implemented and should be working correctly. We keep a list up to date with unimplemented and partially implemented cards <a target='_blank' href='https://github.com/cryogen/throneteki/projects'>here</a>. If you happen upon a card that you believe is not working as it should and it is not on that list, it would help immensely if you would submit an issue on <a target='_blank' href='https://github.com/cryogen/throneteki/issues'>GitHub</a>. Other comments and/or feedback can be left on GitHub as well.</p>
                     </div>
                     <div className='htp-topic'>
                         <h3 className='htp-title' id='interactions'>Specific Card Interactions</h3>
@@ -76,20 +76,20 @@ class HowToPlay extends React.Component {
                         <h3 className='htp-title' id='commands'>Manual Commands</h3>
                         <p>Every once in a while something happens during a game that shouldn’t have happened. This can occur due to a misclick, an unimplemented card or a bug in the software. To fix the game state in such situations a variety of manual commands are implemented. Typing these commands as a chatmessage during a game will have the following effect:</p>
                         <ul>
-                            <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add</li>
-                            <li>/cancel-prompt - Clear the current prompt and resume the game flow.  Use with caution and only when the prompt is 'stuck' and you are unable to continue</li>
-                            <li>/discard x - Discards x cards randomly from your hand</li>
-                            <li>/draw x - Draws x cards from your deck to your hand</li>
-                            <li>/give-control - Give control of a card to your opponent.  Use with caution</li>
-                            <li>/give-icon x - Give a character an x icon; where 'x' is one of 'military', 'intrigue', 'power'</li>
-                            <li>/kill - Manually kill a character.  Use with caution</li>
-                            <li>/move-bottom - Moves a card to the bottom of your draw deck</li>
-                            <li>/pillage - Discards the top card from your deck</li>
-                            <li>/power x - Sets the power of a card to x</li>
-                            <li>/reveal-hand - Reveal your hand to the opponent</li>
-                            <li>/strength x - Sets the strength of a card to x</li>
-                            <li>/take-icon x - Take an x icon from a character; where 'x' is as per '/give-icon'</li>
-                            <li>/token t x - Set the token count of a card of type 't' to 'x'. Currently used token types are: 'bell', betrayal', 'ear', 'gold', 'kiss', 'poison', 'stand', 'valarmorghulis', 'vengeance' and 'venom'</li>
+                            <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add.</li>
+                            <li>/cancel-prompt - Clears the current prompt and resume the game flow.  Use with caution and only when the prompt is 'stuck' and you are unable to continue.</li>
+                            <li>/discard x - Discards x cards randomly from your hand.</li>
+                            <li>/draw x - Draws x cards from your deck to your hand.</li>
+                            <li>/give-control - Gives control of a card to your opponent.  Use with caution.</li>
+                            <li>/give-icon x - Gives a character an x icon; where 'x' is one of 'military', 'intrigue', 'power'.</li>
+                            <li>/kill - Kills a character.  Use with caution.</li>
+                            <li>/move-bottom - Moves a card to the bottom of your draw deck.</li>
+                            <li>/pillage - Discards the top card from your deck.</li>
+                            <li>/power x - Sets the power of a card to x.</li>
+                            <li>/reveal-hand - Reveals your hand to the opponent.</li>
+                            <li>/strength x - Sets the strength of a card to x.</li>
+                            <li>/take-icon x - Takes an x icon from a character; where 'x' is as per '/give-icon'.</li>
+                            <li>/token t x - Sets the token count of a card of type 't' to 'x'. Currently used token types are: 'bell', betrayal', 'ear', 'gold', 'kiss', 'poison', 'stand', 'valarmorghulis', 'vengeance' and 'venom'.</li>
                         </ul>
                     </div>
                     <div className='htp-topic'>
