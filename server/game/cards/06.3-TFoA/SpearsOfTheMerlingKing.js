@@ -3,6 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class SpearsOfTheMerlingKing extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
+            title: context => context.event.card.name,
             when: {
                 onCharacterKilled: event => event.card.controller === this.controller
             },
