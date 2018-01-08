@@ -20,9 +20,7 @@ export class Register extends React.Component {
 
     componentWillReceiveProps(props) {
         if(props.accountRegistered) {
-            this.setState({ successMessage: 'Your account was successfully registered.  You will be redirected shortly.' });
-            this.props.register(props.registeredUser, props.registeredToken);
-            this.props.socket.emit('authenticate', props.registeredToken);
+            this.setState({ successMessage: 'Your account was successfully registered.  Please verify your account using the link in the email sent to the address you have provided.' });
 
             setTimeout(() => {
                 this.props.navigate('/');

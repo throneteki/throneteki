@@ -140,7 +140,8 @@ module.exports.init = function(server) {
             registered: new Date(),
             username: req.body.username,
             email: req.body.email,
-            emailHash: crypto.createHash('md5').update(req.body.email).digest('hex')
+            emailHash: crypto.createHash('md5').update(req.body.email).digest('hex'),
+            verified: false
         };
 
         user = await userService.addUser(newUser);
