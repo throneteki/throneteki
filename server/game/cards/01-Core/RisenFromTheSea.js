@@ -13,8 +13,11 @@ class RisenFromTheSea extends DrawCard {
             },
             handler: context => {
                 context.event.saveCard(context.target);
-                this.controller.attach(this.controller, this, context.target, 'play');
-                this.setCardType('attachment');
+
+                if(this.controller.canAttach(this, context.target)) {
+                    this.controller.attach(this.controller, this, context.target, 'play');
+                    this.setCardType('attachment');
+                }
 
                 this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.target);
             }
