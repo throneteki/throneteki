@@ -13,9 +13,9 @@ class BloodMagicRitual extends DrawCard {
             },
             handler: context => {
                 context.event.saveCard(context.target);
-                context.target.controller.attach(this.controller, this, context.target, 'play');
 
-                if(this.parent) {
+                if(this.controller.canAttach(this, context.target)) {
+                    this.controller.attach(this.controller, this, context.target, 'play');
                     this.setCardType('attachment');
                 }
 
