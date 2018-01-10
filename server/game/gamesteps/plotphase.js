@@ -10,6 +10,7 @@ class PlotPhase extends Phase {
     constructor(game) {
         super(game, 'plot');
         this.initialise([
+            new SimpleStep(game, () => this.clearNewCards()),
             new SimpleStep(game, () => this.startPlotPhase()),
             new SelectPlotPrompt(game),
             new SimpleStep(game, () => this.removeActivePlots()),
@@ -19,6 +20,12 @@ class PlotPhase extends Phase {
             () => new ChooseTitlePrompt(game, game.titlePool),
             new ActionWindow(this.game, 'After plots revealed', 'plot')
         ]);
+    }
+
+    clearNewCards() {
+        this.game.allCards.each(card => {
+            card.new = false;
+        });
     }
 
     startPlotPhase() {
