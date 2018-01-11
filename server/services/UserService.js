@@ -109,6 +109,15 @@ class UserService {
                 throw new Error('Error clearing reset token');
             });
     }
+
+    activateUser(user) {
+        return this.users.update({ username: user.username }, { '$set': { activationToken: undefined, activationExpiry: undefined, verified: true } })
+            .catch(err => {
+                logger.error(err);
+
+                throw new Error('Error activating user');
+            });
+    }
 }
 
 module.exports = UserService;

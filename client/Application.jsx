@@ -26,6 +26,7 @@ import NewsAdmin from './NewsAdmin.jsx';
 import Unauthorised from './Unauthorised.jsx';
 import UserAdmin from './UserAdmin.jsx';
 import BlockList from './BlockList.jsx';
+import Activation from './pages/Activation.jsx';
 
 import { toastr } from 'react-redux-toastr';
 
@@ -52,7 +53,8 @@ class App extends React.Component {
             '/forgot': () => <ForgotPassword />,
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
             '/profile': () => <Profile />,
-            '/news': () => <NewsAdmin />
+            '/news': () => <NewsAdmin />,
+            '/activation': () => <Activation />
         };
     }
 
@@ -361,6 +363,9 @@ class App extends React.Component {
                 break;
             case '/blocklist':
                 component = <BlockList />;
+                break;
+            case '/activation':
+                component = <Activation />;
                 break;
             default:
                 component = <NotFound />;

@@ -28,6 +28,14 @@ export default function(state = {}, action) {
             return Object.assign({}, state, {
                 passwordReset: true
             });
+        case 'ACTIVATE_ACCOUNT':
+            return Object.assign({}, state, {
+                activated: false
+            });
+        case 'ACCOUNT_ACTIVATED':
+            return Object.assign({}, state, {
+                activated: true
+            });
     }
 
     return state;
