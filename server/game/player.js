@@ -613,10 +613,6 @@ class Player extends Spectator {
         this.challenges.reset();
 
         this.drawPhaseCards = DrawPhaseCards;
-
-        this.cardsInPlay.each(card => {
-            card.new = false;
-        });
     }
 
     flipPlotFaceup() {
