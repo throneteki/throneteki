@@ -1046,7 +1046,7 @@ class Player extends Spectator {
             targetPile.push(card);
         }
 
-        if(['dead pile', 'discard pile'].includes(targetLocation)) {
+        if(['dead pile', 'discard pile', 'revealed plots'].includes(targetLocation)) {
             this.game.raiseEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
         }
     }
