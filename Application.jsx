@@ -26,6 +26,7 @@ import NewsAdmin from './NewsAdmin.jsx';
 import Unauthorised from './Unauthorised.jsx';
 import UserAdmin from './UserAdmin.jsx';
 import BlockList from './BlockList.jsx';
+import Activation from './pages/Activation.jsx';
 
 import { toastr } from 'react-redux-toastr';
 
@@ -52,7 +53,8 @@ class App extends React.Component {
             '/forgot': () => <ForgotPassword />,
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
             '/profile': () => <Profile />,
-            '/news': () => <NewsAdmin />
+            '/news': () => <NewsAdmin />,
+            '/activation': () => params => <Activation id={ params.id } token={ params.token } />
         };
     }
 
@@ -291,6 +293,11 @@ class App extends React.Component {
             idArg = this.getUrlParameter('id');
             tokenArg = this.getUrlParameter('token');
         }
+        index = path.indexOf('/activation');
+        if(index !== -1) {
+            idArg = this.getUrlParameter('id');
+            tokenArg = this.getUrlParameter('token');
+        }
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
@@ -361,6 +368,9 @@ class App extends React.Component {
                 break;
             case '/blocklist':
                 component = <BlockList />;
+                break;
+            case '/activation':
+                component = <Activation id={ idArg } token={ tokenArg } />;
                 break;
             default:
                 component = <NotFound />;

@@ -51,3 +51,16 @@ export function resetPassword(details) {
         })
     };
 }
+
+export function activateAccount(details) {
+    return {
+        types: ['ACTIVATE_ACCOUNT', 'ACCOUNT_ACTIVATED'],
+        shouldCallAPI: () => true,
+        callAPI: () => $.ajax({
+            url: '/api/account/activate',
+            type: 'POST',
+            data: JSON.stringify({ id: details.id, token: details.token }),
+            contentType: 'application/json'
+        })
+    };
+}

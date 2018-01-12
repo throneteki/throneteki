@@ -1,11 +1,3 @@
-export function register(user, token) {
-    return {
-        type: 'AUTH_REGISTER',
-        user: user,
-        token: token
-    };
-}
-
 export function login(user, token, isAdmin) {
     return {
         type: 'AUTH_LOGIN',
