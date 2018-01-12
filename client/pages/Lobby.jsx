@@ -70,7 +70,9 @@ class InnerLobby extends React.Component {
                         <span className='text-center'><h1>A # LCG second edition</h1></span>
                     </div>
                 </div>
-                { this.props.bannerNotice ? <AlertPanel message={ this.props.bannerNotice } type='error' /> : null }
+                { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
+                    <AlertPanel message={ this.props.bannerNotice } type='error' />
+                </div> : null }
                 <div className='col-sm-offset-1 col-sm-10'>
                     <Panel title='Latest site news'>
                         { this.props.loading ? <div>News loading...</div> : null }
