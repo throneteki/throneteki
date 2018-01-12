@@ -394,8 +394,10 @@ class App extends React.Component {
 
         return (<div className={ backgroundClass }>
             <NavBar leftMenu={ leftMenu } rightMenu={ rightMenu } title='The Iron Throne' currentPath={ this.props.path } numGames={ this.props.games.length } />
-            <div className='container'>
-                { component }
+            <div className='wrapper'>
+                <div className='container content'>
+                    { component }
+                </div>
             </div>
         </div>);
     }

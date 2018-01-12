@@ -6,7 +6,7 @@ import Panel from './SiteComponents/Panel';
 class HowToPlay extends React.Component {
     render() {
         return (
-            <div className='col-xs-12 full-height'>
+            <div className='col-xs-12'>
                 <Panel title='How To Play on The Iron Throne'>
                     <h3 className='htp-intro'>Introduction</h3>
                     <a className='btn btn-danger btn-lg pull-right' target='_blank' href='https://github.com/cryogen/throneteki/issues'>Report Problems</a>
