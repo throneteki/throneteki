@@ -121,7 +121,7 @@ class Server {
     }
 
     run() {
-        let port = this.isDeveloping ? 4000 : process.env.PORT;
+        let port = process.env.PORT || config.port || 4000;
 
         this.server.listen(port, '0.0.0.0', function onStart(err) {
             if(err) {
@@ -159,7 +159,8 @@ class Server {
                         settings: user.settings,
                         promptedActionWindows: user.promptedActionWindows,
                         permissions: user.permissions,
-                        blockList: user.blockList
+                        blockList: user.blockList,
+                        verified: user.verified
                     };
 
                     userObj = Settings.getUserWithDefaultsSet(userObj);
@@ -196,7 +197,8 @@ class Server {
                     settings: user.settings,
                     promptedActionWindows: user.promptedActionWindows,
                     permissions: user.permissions,
-                    blockList: user.blockList
+                    blockList: user.blockList,
+                    verified: user.verified
                 };
 
                 done(null, userObj);

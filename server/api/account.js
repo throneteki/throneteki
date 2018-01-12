@@ -5,16 +5,19 @@ const config = require('../config.js');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const util = require('../util.js');
-const nodemailer = require('nodemailer');
 const moment = require('moment');
 const monk = require('monk');
 const UserService = require('../services/UserService.js');
-const Settings = require('../settings.js');
 const _ = require('underscore');
 const { wrapAsync } = require('../util.js');
+const sendgrid = require('@sendgrid/mail');
 
 let db = monk(config.dbPath);
 let userService = new UserService(db);
+
+if(config.emailKey) {
+    sendgrid.setApiKey(config.emailKey);
+}
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
@@ -28,34 +31,16 @@ function hashPassword(password, rounds) {
     });
 }
 
-function loginUser(request, user) {
-    return new Promise((resolve, reject) => {
-        request.login(user, function(err) {
-            if(err) {
-                return reject(err);
-            }
+function sendEmail(address, subject, email) {
+    const message = {
+        to: address,
+        from: 'The Iron Throne <noreply@theironthrone.net>',
+        subject: subject,
+        text: email
+    };
 
-            resolve();
-        });
-    });
-}
-
-function sendEmail(address, email) {
-    return new Promise((resolve, reject) => {
-        var emailTransport = nodemailer.createTransport(config.emailPath);
-
-        emailTransport.sendMail({
-            from: 'The Iron Throne <noreply@theironthrone.net>',
-            to: address,
-            subject: 'Your account at The Iron Throne',
-            text: email
-        }, function(error) {
-            if(error) {
-                reject(error);
-            }
-
-            resolve();
-        });
+    return sendgrid.send(message).catch(err => {
+        logger.error('Unable to send email', err);
     });
 }
 
@@ -135,18 +120,79 @@ module.exports.init = function(server) {
         }
 
         let passwordHash = await hashPassword(req.body.password, 10);
+
+        let expiration = moment().add(7, 'days');
+        let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+
+        let activiationToken = hmac.update(`ACTIVATE ${req.body.username} ${formattedExpiration}`).digest('hex');
+
         let newUser = {
             password: passwordHash,
             registered: new Date(),
             username: req.body.username,
             email: req.body.email,
-            emailHash: crypto.createHash('md5').update(req.body.email).digest('hex')
+            emailHash: crypto.createHash('md5').update(req.body.email).digest('hex'),
+            verified: false,
+            activiationToken: activiationToken,
+            activiationTokenExpiry: formattedExpiration
         };
 
         user = await userService.addUser(newUser);
-        await loginUser(req, user);
+        let url = `https://theironthrone.net/activation?id=${user._id}&token=${activiationToken}`;
+        let emailText = 'Hi,\n\nSomeone, hopefully you, has requested an account to be created on The Iron Throne (https://theironthrone.net).  If this was you, click this link ' + url + ' to complete the process.\n\n' +
+            'If you did not request this please disregard this email.\n' +
+            'Kind regards,\n\n' +
+            'The Iron Throne team';
 
-        res.send({ success: true, user: Settings.getUserWithDefaultsSet(user), token: jwt.sign(req.user, config.secret) });
+        await sendEmail(user.email, 'The Iron Throne - Account activation', emailText);
+
+        res.send({ success: true });
+    }));
+
+    server.post('/api/account/activate', wrapAsync(async (req, res, next) => {
+        if(!req.body.id || !req.body.token) {
+            return res.send({ success: false, message: 'Invalid parameters' });
+        }
+
+        let user = await userService.getUserById(req.body.id);
+        if(!user) {
+            res.send({ success: false, message: 'An error occured activating your account, check the url you have entered and try again.' });
+
+            return next();
+        }
+
+        if(!user.activiationToken) {
+            logger.error('Got unexpected activate request for user', user.username);
+
+            res.send({ success: false, message: 'An error occured activating your account, check the url you have entered and try again.' });
+
+            return next();
+        }
+
+        let now = moment();
+        if(user.activiationTokenExpiry < now) {
+            res.send({ success: false, message: 'The activation token you have provided has expired.' });
+
+            logger.error('Token expired', user.username);
+
+            return next();
+        }
+
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let resetToken = hmac.update('ACTIVATE ' + user.username + ' ' + user.activiationTokenExpiry).digest('hex');
+
+        if(resetToken !== req.body.token) {
+            logger.error('Invalid activation token', user.username, req.body.token);
+
+            res.send({ success: false, message: 'An error occured activating your account, check the url you have entered and try again.' });
+
+            return next();
+        }
+
+        await userService.activateUser(user);
+
+        res.send({ success: true });
     }));
 
     server.post('/api/account/check-username', function(req, res) {
@@ -189,6 +235,10 @@ module.exports.init = function(server) {
 
             if(!user) {
                 return res.status(401).send({ success: false, message: 'Invalid username or password' });
+            }
+
+            if(!user.verified) {
+                return res.send({ success: false, message: 'Your account is not verified, please click on the link we have emailed to you' });
             }
 
             req.logIn(user, err => {
@@ -286,7 +336,7 @@ module.exports.init = function(server) {
             'Kind regards,\n\n' +
             'The Iron Throne team';
 
-        await sendEmail(emailUser.email, emailText);
+        await sendEmail(emailUser.email, 'The Iron Throne - Password reset', emailText);
     }));
 
     function updateUserData(user) {
