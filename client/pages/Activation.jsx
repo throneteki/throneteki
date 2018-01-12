@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 import AlertPanel from '../SiteComponents/AlertPanel';
-import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
 
@@ -11,7 +10,12 @@ class Activation extends React.Component {
     constructor() {
         super();
 
-        this.onSubmit = this.onSubmit.bind(this);
+        this.state = {
+        };
+    }
+
+    componentWillMount() {
+        this.props.activateAccount({ id: this.props.id, token: this.props.token });
     }
 
     componentWillReceiveProps(props) {
@@ -22,10 +26,6 @@ class Activation extends React.Component {
                 this.props.navigate('/login');
             }, 3000);
         }
-    }
-
-    onSubmit() {
-        this.props.activateAccount({ id: this.props.id, token: this.props.token });
     }
 
     render() {
@@ -41,12 +41,6 @@ class Activation extends React.Component {
                 <div className='col-sm-6 col-sm-offset-3'>
                     { errorBar }
                     { successBar }
-                    <div className='panel-title'>
-                        Reset password
-                    </div>
-                    <div className='panel'>
-                        <Form name='activateAccount' apiLoading={ this.props.apiLoading } buttonText='Submit' onSubmit={ this.onSubmit } />
-                    </div>
                 </div>
             </div>);
     }

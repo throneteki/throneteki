@@ -54,7 +54,7 @@ class App extends React.Component {
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
             '/profile': () => <Profile />,
             '/news': () => <NewsAdmin />,
-            '/activation': () => <Activation />
+            '/activation': () => params => <Activation id={ params.id } token={ params.token } />
         };
     }
 
@@ -293,6 +293,11 @@ class App extends React.Component {
             idArg = this.getUrlParameter('id');
             tokenArg = this.getUrlParameter('token');
         }
+        index = path.indexOf('/activation');
+        if(index !== -1) {
+            idArg = this.getUrlParameter('id');
+            tokenArg = this.getUrlParameter('token');
+        }
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
@@ -365,7 +370,7 @@ class App extends React.Component {
                 component = <BlockList />;
                 break;
             case '/activation':
-                component = <Activation />;
+                component = <Activation id={ idArg } token={ tokenArg } />;
                 break;
             default:
                 component = <NotFound />;
