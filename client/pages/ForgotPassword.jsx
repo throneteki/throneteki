@@ -24,7 +24,7 @@ class ForgotPassword extends React.Component {
     }
 
     onSubmit(state) {
-        this.props.forgotPassword({ username: state.username, captcha: state.captcha });
+        this.props.forgotPassword({ username: state.username, captcha: this.state.captcha });
     }
 
     render() {
