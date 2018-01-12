@@ -12,6 +12,8 @@ class ResetPassword extends React.Component {
         super();
 
         this.onSubmit = this.onSubmit.bind(this);
+
+        this.state = {};
     }
 
     componentWillReceiveProps(props) {
