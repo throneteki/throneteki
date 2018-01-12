@@ -184,13 +184,6 @@ class InnerLobby extends React.Component {
                 { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
                     <AlertPanel message={ this.props.bannerNotice } type='error' />
                 </div> : null }
-                <div className='col-sm-offset-1 col-sm-10 announcement'>
-                    <AlertPanel type='success' noIcon>
-                        <div>
-                            Registration for the Champions of Westeros Online League Winter Season is open until Jan 7.  See <a href='https://championsofwesteros.blogspot.com/' target='_blank'>Here</a> for details.
-                        </div>
-                    </AlertPanel>
-                </div>
                 <div className='col-sm-offset-1 col-sm-10'>
                     <div className='panel-title text-center'>
                         Latest site news
