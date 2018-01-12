@@ -70,8 +70,6 @@ function mapStateToProps(state) {
         apiLoading: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.loading : undefined,
         apiMessage: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.message : undefined,
         apiSuccess: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success : undefined,
-        registeredToken: state.account.token,
-        registeredUser: state.account.registeredUser,
         socket: state.socket.socket
     };
 }

@@ -6,9 +6,7 @@ export default function(state = {}, action) {
             });
         case 'ACCOUNT_REGISTERED':
             return Object.assign({}, state, {
-                registered: true,
-                registeredUser: action.response.user,
-                token: action.response.token
+                registered: true
             });
         case 'LOGIN_ACCOUNT':
             return Object.assign({}, state, {
