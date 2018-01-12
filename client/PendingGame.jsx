@@ -220,7 +220,7 @@ class InnerPendingGame extends React.Component {
                                 onKeyPress={ this.onKeyPress } onChange={ this.onChange } />
                         </div>
                     </form>
-                </div>
+                </Panel>
                 <SelectDeckModal
                     apiError={ this.props.apiError }
                     decks={ this.props.decks }
