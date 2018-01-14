@@ -59,7 +59,7 @@ class PlotCard extends BaseCard {
             return this.claimSet;
         }
 
-        return baseClaim + this.claimModifier;
+        return Math.max(baseClaim + this.claimModifier, 0);
     }
 
     flipFaceup() {
