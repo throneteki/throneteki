@@ -61,7 +61,7 @@ class InnerLobby extends React.Component {
 
     render() {
         return (
-            <div className='full-height'>
+            <div className='flex-container'>
                 <SideBar>
                     <UserList users={ this.props.users } />
                 </SideBar>
