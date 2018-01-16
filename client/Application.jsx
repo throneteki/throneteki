@@ -195,7 +195,6 @@ class App extends React.Component {
     }
 
     componentDidUpdate() {
-        this.props.receiveLobbyMessage({});
         if(!this.props.currentGame) {
             this.props.setContextMenu([]);
         }
