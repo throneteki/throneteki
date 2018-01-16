@@ -89,7 +89,7 @@ class LobbyChat extends React.Component {
             });
 
             return (
-                <div key={ timestamp + firstMessage.user.username + (index++).toString() } ref='messages' onScroll={ this.onScroll }>
+                <div key={ timestamp + firstMessage.user.username + (index++).toString() }>
                     <Avatar emailHash={ firstMessage.user.emailHash } float />
                     <span className='username'>{ firstMessage.user.username }</span>
                     <span>{ timestamp }</span>
@@ -100,7 +100,7 @@ class LobbyChat extends React.Component {
     }
 
     render() {
-        return (<div className='lobby-messages'>
+        return (<div className='lobby-messages' ref='messages' onScroll={ this.onScroll }>
             { this.getMessages() }
         </div>);
     }
