@@ -60,11 +60,7 @@ module.exports = (env) => {
                 jQuery: 'jquery'
             })
         ].concat(isDevBuild ? [
-            new webpack.HotModuleReplacementPlugin(),
-            new webpack.SourceMapDevToolPlugin({
-                filename: '[file].map',
-                moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]')
-            })
+            new webpack.HotModuleReplacementPlugin()
         ] : [
             new ExtractTextPlugin('site-[hash].css'),
             assetsPluginInstance
