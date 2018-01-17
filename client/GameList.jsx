@@ -105,7 +105,7 @@ class InnerGameList extends React.Component {
                 <div key={ game.id } className={ 'game-row' + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
                     <span className='col-xs-12 game-title'>
                         { this.props.isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
-                        <b>{ gameTitle }</b>
+                        <b>{ gameTitle }</b> { game.showHand ? <img src='/img/ShowHandIcon.png' className='show-hand-icon'/> : null }
                     </span>
                     <div>{ gameRow }</div>
                     <div className='col-xs-3 game-row-buttons pull-right'>
