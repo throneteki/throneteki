@@ -2,6 +2,7 @@ import $ from 'jquery';
 import 'jquery-validation';
 import 'jquery-validation-unobtrusive';
 import 'react-redux-toastr/src/styles/index.scss';
+import 'babel-polyfill';
 
 $.validator.setDefaults({
     highlight: function(element) {
