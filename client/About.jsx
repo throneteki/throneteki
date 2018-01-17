@@ -29,6 +29,7 @@ class About extends React.Component {
                     <p>The background of the site is by an artist named <a href='http://dumaker.deviantart.com/' target='_blank'>Dumaker</a> and can be found <a href='http://dumaker.deviantart.com/art/Looking-for-the-Iron-Throne-Game-of-Thrones-9-364330141' target='_blank'>here</a>.</p>
                     <p>The in game backgrounds are by <a href='http://www.thomastanart.com/' target='_blank'>Thomas Tan</a>.  He's very talented, you should check out his work!</p>
                     <p>Don't want to be distracted by beautiful art during your games? In-game backgrounds can be disabled from your <Link href='/profile'>Profile</Link>.</p>
+                    <p>Finally, the icon used to show which games reveal hands to spectators is by Henry Ryder from <a href='http://www.thenounproject.com' target='_blank'>the Noun Project</a>.</p>
 
                     <h3>Can I help?</h3>
                     <p>Sure!  The project is all written in Javascript.  The server is node.js and the client is React.js.  The source code can be found in the&nbsp;
