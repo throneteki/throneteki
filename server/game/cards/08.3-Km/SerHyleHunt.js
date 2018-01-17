@@ -4,6 +4,7 @@ class SerHyleHunt extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
+            limit: ability.limit.perChallenge(1),
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this),
             cost: ability.costs.payGold(1),
             target: {
