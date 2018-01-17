@@ -67,14 +67,15 @@ class DeckSummary extends React.Component {
         _.each(groupedCards, (cardList, key) => {
             let cards = [];
             let count = 0;
+            let index = 0;
 
             _.each(cardList, card => {
-                cards.push(<div key={ card.card.code }><span>{ card.count + 'x ' }</span><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.card.label }</span></div>);
+                cards.push(<div key={ `${card.card.code}${index++}` }><span>{ card.count + 'x ' }</span><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.card.label }</span></div>);
                 count += parseInt(card.count);
             });
 
             cardsToRender.push(
-                <div className='cards-no-break'>
+                <div className='cards-no-break' key={ key }>
                     <div className='card-group-title'>{ key + ' (' + count.toString() + ')' }</div>
                     <div key={ key } className='card-group'>{ cards }</div>
                 </div>);

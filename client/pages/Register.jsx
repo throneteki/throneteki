@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import AlertPanel from '../SiteComponents/AlertPanel';
+import Panel from '../SiteComponents/Panel';
 import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
@@ -40,12 +41,9 @@ export class Register extends React.Component {
             <div className='col-sm-6 col-sm-offset-3'>
                 { errorBar }
                 { successBar }
-                <div className='panel-title'>
-                    Register an account
-                </div>
-                <div className='panel'>
+                <Panel title='Register an account'>
                     <Form name='register' apiLoading={ this.props.apiLoading } buttonText='Register' onSubmit={ this.onRegister } />
-                </div>
+                </Panel>
             </div>);
     }
 }

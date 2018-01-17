@@ -4,9 +4,10 @@ import _ from 'underscore';
 import $ from 'jquery';
 import { connect } from 'react-redux';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import Input from './FormComponents/Input.jsx';
-import Checkbox from './FormComponents/Checkbox.jsx';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
+import Input from './FormComponents/Input';
+import Checkbox from './FormComponents/Checkbox';
 import Slider from 'react-bootstrap-slider';
 
 import * as actions from './actions';
@@ -224,10 +225,7 @@ class InnerProfile extends React.Component {
                     { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
                     { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
                     <form className='form form-horizontal'>
-                        <div className='panel-title'>
-                            Profile
-                        </div>
-                        <div className='panel'>
+                        <Panel title='Profile'>
                             <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
                                 type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
                                 onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
@@ -239,21 +237,15 @@ class InnerProfile extends React.Component {
                                 onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
                             <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
                                 onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
-                        </div>
+                        </Panel>
                         <div>
-                            <div className='panel-title'>
-                                Action window defaults
-                            </div>
-                            <div className='panel'>
+                            <Panel title='Action window defaults'>
                                 <p className='help-block small'>If an option is selected here, you will always be prompted if you want to take an action in that window.  If an option is not selected, you will receive no prompts for that window.  For some windows (e.g. dominance) this could mean the whole window is skipped.</p>
                                 <div className='form-group'>
                                     { windows }
                                 </div>
-                            </div>
-                            <div className='panel-title'>
-                                Timed Interrupt Window
-                            </div>
-                            <div className='panel'>
+                            </Panel>
+                            <Panel title='Timed Interrupt Window'>
                                 <p className='help-block small'>Every time a game event occurs that you could possibly interrupt to cancel it, a timer will count down.  At the end of that timer, the window will automatically pass.
                                 This option controls the duration of the timer.  The timer can be configure to show when events are played (useful if you play cards like The Hand's Judgement) and to show when card abilities are triggered (useful if you play a lot of Treachery).</p>
                                 <div className='form-group'>
@@ -275,24 +267,18 @@ class InnerProfile extends React.Component {
                                     <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for card abilities' } fieldClass='col-sm-6'
                                         onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.state.timerSettings.abilities } />
                                 </div>
-                            </div>
-                            <div className='panel-title'>
-                                Keywords
-                            </div>
-                            <div className='panel'>
+                            </Panel>
+                            <Panel title='Keywords'>
                                 <div className='form-group'>
                                     <Checkbox name='keywordSettings.chooseOrder' noGroup label={ 'Choose order of keywords' } fieldClass='col-sm-6'
                                         onChange={ this.onKeywordSettingToggle.bind(this, 'chooseOrder') } checked={ this.state.keywordSettings.chooseOrder } />
                                     <Checkbox name='keywordSettings.chooseCards' noGroup label={ 'Make keywords optional' } fieldClass='col-sm-6'
                                         onChange={ this.onKeywordSettingToggle.bind(this, 'chooseCards') } checked={ this.state.keywordSettings.chooseCards } />
                                 </div>
-                            </div>
+                            </Panel>
                         </div>
                         <div>
-                            <div className='panel-title'>
-                                Game Board Background
-                            </div>
-                            <div className='panel'>
+                            <Panel title='Game Board Background'>
                                 <div className='row'>
                                     <div className='col-sm-4' onClick={ () => this.onBackgroundClick('none') }>
                                         <img className={ 'img-responsive' + (this.state.selectedBackground === 'none' ? ' selected' : '') }
@@ -310,13 +296,10 @@ class InnerProfile extends React.Component {
                                         <span className='bg-label'>Winter</span>
                                     </div>
                                 </div>
-                            </div>
+                            </Panel>
                         </div>
                         <div>
-                            <div className='panel-title'>
-                                Card Image Size
-                            </div>
-                            <div className='panel'>
+                            <Panel title='Card Image Size'>
                                 <div className='row'>
                                     <div className='col-xs-12'>
                                         <div className='card-settings' onClick={ () => this.onCardClick('small') }>
@@ -349,7 +332,7 @@ class InnerProfile extends React.Component {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Panel>
                         </div>
                         <div className='col-sm-offset-10 col-sm-2'>
                             <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>

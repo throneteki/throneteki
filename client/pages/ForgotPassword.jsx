@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 import AlertPanel from '../SiteComponents/AlertPanel';
+import Panel from '../SiteComponents/Panel';
 import Form from '../FormComponents/Form';
 
 import * as actions from '../actions';
@@ -40,10 +41,7 @@ class ForgotPassword extends React.Component {
                 <div className='col-sm-6 col-sm-offset-3'>
                     { errorBar }
                     { this.props.apiSuccess === false ? null : <AlertPanel type='info' message='To start the password recovery process, please enter your username and click the submit button.' /> }
-                    <div className='panel-title'>
-                        Forgot password
-                    </div>
-                    <div className='panel'>
+                    <Panel title='Forgot password'>
                         <Form name='forgotpassword' buttonText='Submit' onSubmit={ this.onSubmit } apiLoading={ this.props.apiLoading }>
                             <div className='form-group'>
                                 <div className='col-sm-offset-2 col-sm-3'>
@@ -51,7 +49,7 @@ class ForgotPassword extends React.Component {
                                 </div>
                             </div>
                         </Form>
-                    </div>
+                    </Panel>
                 </div>
             </div>);
     }

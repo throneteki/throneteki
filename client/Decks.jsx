@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import _ from 'underscore';
 import { connect } from 'react-redux';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import DeckSummary from './DeckSummary.jsx';
-import Link from './Link.jsx';
-import DeckRow from './DeckRow.jsx';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
+import DeckSummary from './DeckSummary';
+import Link from './Link';
+import DeckRow from './DeckRow';
 
 import * as actions from './actions';
 
@@ -70,10 +71,7 @@ class InnerDecks extends React.Component {
 
         if(this.props.selectedDeck) {
             deckInfo = (<div className='col-sm-7'>
-                <div className='panel-title text-center col-xs-12'>
-                    { this.props.selectedDeck.name }
-                </div>
-                <div className='panel col-xs-12'>
+                <Panel title={ this.props.selectedDeck.name }>
                     <div className='btn-group col-xs-12'>
                         <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
                         <button className='btn btn-primary' onClick={ this.onDeleteClick }>Delete</button>
@@ -82,7 +80,7 @@ class InnerDecks extends React.Component {
                             null }
                     </div>
                     <DeckSummary deck={ this.props.selectedDeck } cards={ this.props.cards } />
-                </div>
+                </Panel>
             </div>);
         }
 
@@ -108,13 +106,10 @@ class InnerDecks extends React.Component {
                 <div className='full-height'>
                     { successPanel }
                     <div className='col-sm-5 full-height'>
-                        <div className='panel-title text-center'>
-                            Your decks
-                        </div>
-                        <div className='panel deck-list-container'>
+                        <Panel title='Your decks'>
                             <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
                             <div className='deck-list'>{ !this.props.decks || this.props.decks.length === 0 ? 'You have no decks, try adding one.' : deckList }</div>
-                        </div>
+                        </Panel>
                     </div>
                     { deckInfo }
                 </div>);

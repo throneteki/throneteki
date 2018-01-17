@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import NewGame from './NewGame.jsx';
-import GameList from './GameList.jsx';
-import PendingGame from './PendingGame.jsx';
-import PasswordGame from './PasswordGame.jsx';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import NewGame from './NewGame';
+import GameList from './GameList';
+import PendingGame from './PendingGame';
+import PasswordGame from './PasswordGame';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
 
 import * as actions from './actions';
 
@@ -58,13 +59,10 @@ class InnerGameLobby extends React.Component {
                 { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
 
                 <div className='col-sm-7 full-height'>
-                    <div className='panel-title text-center'>
-                        Current Games
-                    </div>
-                    <div className='panel game-list-container'>
+                    <Panel title='Current Games'>
                         <button className='btn btn-primary' onClick={ this.onNewGameClick } disabled={ !!this.props.currentGame }>New Game</button>
                         { this.props.games.length === 0 ? <h4>No games are currently in progress</h4> : <GameList games={ this.props.games } /> }
-                    </div>
+                    </Panel>
                 </div>
                 <div className='col-sm-5'>
                     { (!this.props.currentGame && this.props.newGame) ? <NewGame defaultGameName={ this.props.username + '\'s game' } /> : null }

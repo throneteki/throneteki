@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import Panel from './SiteComponents/Panel';
+
 import * as actions from './actions';
 
 class InnerNewGame extends React.Component {
@@ -103,10 +105,7 @@ class InnerNewGame extends React.Component {
         let charsLeft = 140 - this.state.gameName.length;
         return this.props.socket ? (
             <div>
-                <div className='panel-title text-center'>
-                    New game
-                </div>
-                <div className='panel'>
+                <Panel title='New game'>
                     <form className='form'>
                         <div className='row'>
                             <div className='col-sm-8'>
@@ -160,7 +159,7 @@ class InnerNewGame extends React.Component {
                             <button className='btn btn-primary' onClick={ this.onCancelClick }>Cancel</button>
                         </div>
                     </form>
-                </div>
+                </Panel>
             </div>) : (
             <div>
                     Connecting to the server, please wait...

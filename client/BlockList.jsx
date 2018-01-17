@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'underscore';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import Input from './FormComponents/Input.jsx';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Panel from './SiteComponents/Panel';
+import Input from './FormComponents/Input';
 
 import * as actions from './actions';
 
@@ -98,10 +99,7 @@ class InnerBlockList extends React.Component {
                         { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
 
                         <form className='form form-horizontal'>
-                            <div className='panel-title text-center'>
-                            Block list
-                            </div>
-                            <div className='panel'>
+                            <Panel title='Block list'>
                                 <p>It can sometimes become necessary to prevent someone joining your games, or stop seeing their messages, or both.
                                 Users on this list will not be able to join your games, and you will not see their chat messages or their games.
                                 </p>
@@ -114,7 +112,7 @@ class InnerBlockList extends React.Component {
 
                                 <h3>Users Blocked</h3>
                                 { table }
-                            </div>
+                            </Panel>
                         </form>
                     </div>
                 </div>);
