@@ -1,8 +1,11 @@
+const _ = require('underscore');
+
 class BaseCardSelector {
     constructor(properties) {
         this.cardCondition = properties.cardCondition;
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
+        this.singleController = properties.singleController;
 
         if(!Array.isArray(properties.cardType)) {
             this.cardType = [properties.cardType];
@@ -15,6 +18,14 @@ class BaseCardSelector {
             this.cardCondition(card, context) &&
             card.allowGameAction(this.gameAction)
         );
+    }
+
+    checkForSingleController(selectedCards, card) {
+        if(!this.singleController || _.isEmpty(selectedCards)) {
+            return true;
+        }
+
+        return card.controller === selectedCards[0].controller;
     }
 
     getEligibleTargets(context) {

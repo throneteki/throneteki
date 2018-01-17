@@ -11,6 +11,7 @@ class ConsolidationOfPower extends DrawCard {
                 activePromptTitle: 'Select character(s)',
                 maxStat: () => 4,
                 cardStat: card => card.getStrength(),
+                singleController: true,
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
                 gameAction: 'kneel'
             },

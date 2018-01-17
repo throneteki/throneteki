@@ -135,6 +135,7 @@ class SelectCardPrompt extends UiPrompt {
 
         return (
             this.selector.canTarget(card, this.context) &&
+            this.selector.checkForSingleController(this.selectedCards, card) &&
             !this.selector.wouldExceedLimit(this.selectedCards, card)
         );
     }

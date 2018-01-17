@@ -9,7 +9,8 @@ const defaultProperties = {
     cardCondition: () => true,
     cardType: ['attachment', 'character', 'event', 'location'],
     gameAction: 'target',
-    multiSelect: false
+    multiSelect: false,
+    singleController: false
 };
 
 const ModeToSelector = {
