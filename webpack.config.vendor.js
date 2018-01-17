@@ -43,6 +43,7 @@ module.exports = (env) => {
                 'underscore'
             ]
         },
+        devtool: isDevBuild ? 'inline-source-map' : 'source-map',
         output: {
             publicPath: '/',
             filename: '[name]-[hash].js',
