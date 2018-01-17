@@ -1,15 +1,13 @@
 import React from 'react';
 
-import Link from './Link.jsx';
+import Panel from './SiteComponents/Panel';
+import Link from './Link';
 
 class About extends React.Component {
     render() {
         return (
             <div className='col-xs-12 full-height'>
-                <div className='panel-title text-center'>
-                    About The Iron Throne - Help and information
-                </div>
-                <div className='panel about-container'>
+                <Panel title='About The Iron Throne - Help and information'>
                     <a className='btn btn-danger btn-lg pull-right' target='_blank' href='https://github.com/cryogen/throneteki/issues'>Report Problems</a>
                     <h3>What is this?</h3>
 
@@ -62,7 +60,7 @@ class About extends React.Component {
                 artwork or trademarks.  This site exists for passionate fans to play a game they enjoy and augment, rather than replace, the in person LCG.  FFG does not endorse, support, and is not
                 involved with, this site in any way.
                     </p>
-                </div>
+                </Panel>
             </div>
         );
     }

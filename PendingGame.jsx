@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import $ from 'jquery';
 import _ from 'underscore';
 
+import Panel from './SiteComponents/Panel';
 import Messages from './GameComponents/Messages.jsx';
 import Avatar from './Avatar.jsx';
 import SelectDeckModal from './PendingGameComponents/SelectDeckModal.jsx';
@@ -190,37 +191,26 @@ class InnerPendingGame extends React.Component {
                     <source src='/sound/charge.mp3' type='audio/mpeg' />
                     <source src='/sound/charge.ogg' type='audio/ogg' />
                 </audio>
-                <div className='panel-title text-center'>
-                    { this.props.currentGame.name }
-                </div>
-                <div className='panel'>
+                <Panel title={ this.props.currentGame.name }>
                     <div className='btn-group'>
                         <button className='btn btn-primary' disabled={ !this.isGameReady() || this.props.connecting || this.state.waiting } onClick={ this.onStartClick }>Start</button>
                         <button className='btn btn-primary' onClick={ this.onLeaveClick }>Leave</button>
                     </div>
                     <div className='game-status'>{ this.getGameStatus() }</div>
-                </div>
-                <div className='panel-title text-center'>
-                    Players
-                </div>
-                <div className='players panel'>
+                </Panel>
+                <Panel title='Players'>
                     {
                         _.map(this.props.currentGame.players, player => {
                             return this.getPlayerStatus(player, this.props.username);
                         })
                     }
-                </div>
-                <div className='panel-title text-center'>
-                    Spectators({ this.props.currentGame.spectators.length })
-                </div>
-                <div className='spectators panel'>
+                </Panel>
+                <Panel title={ `Spectators(${ this.props.currentGame.spectators.length })` }>
                     { _.map(this.props.currentGame.spectators, spectator => {
                         return <div key={ spectator.name }>{ spectator.name }</div>;
                     }) }
-                </div>
-                <div className='panel-title text-center'>
-                    Chat</div>
-                <div className='chat-box panel'>
+                </Panel>
+                <Panel title='Chat'>
                     <div className='message-list'>
                         <Messages messages={ this.props.currentGame.messages } onCardMouseOver={ this.onMouseOver } onCardMouseOut={ this.onMouseOut } />
                     </div>
@@ -230,7 +220,7 @@ class InnerPendingGame extends React.Component {
                                 onKeyPress={ this.onKeyPress } onChange={ this.onChange } />
                         </div>
                     </form>
-                </div>
+                </Panel>
                 <SelectDeckModal
                     apiError={ this.props.apiError }
                     decks={ this.props.decks }

@@ -1,7 +1,7 @@
 import _ from 'underscore';
 
 function games(state = {
-    games: []
+    games: [], users: []
 }, action) {
     let retState = {};
     switch(action.type) {

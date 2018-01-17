@@ -28,7 +28,6 @@ function processDecks(decks, state) {
         }
 
         deck.plotCards = processCardCounts(deck.plotCards, state.cards);
-
         deck.drawCards = processCardCounts(deck.drawCards, state.cards);
 
         deck.validation = validateDeck(deck, state.packs);
@@ -60,11 +59,16 @@ export default function(state = {}, action) {
                 return card.label.startsWith('Banner of the');
             });
 
-            return Object.assign({}, state, {
+            newState = Object.assign({}, state, {
                 cards: action.response.cards,
                 agendas: agendas,
                 banners: banners
             });
+
+            // In case the card list is received after the decks, updated the decks now
+            processDecks(newState.decks, newState);
+
+            return newState;
         case 'RECEIVE_PACKS':
             return Object.assign({}, state, {
                 packs: action.response.packs
@@ -113,7 +117,7 @@ export default function(state = {}, action) {
                     newState.selectedDeck = newState.decks[0];
                 }
             }
-            
+
             return newState;
         case 'RECEIVE_DECK':
             newState = Object.assign({}, state, {
@@ -190,7 +194,7 @@ export default function(state = {}, action) {
             });
 
             return newState;
-        case 'DECK_DELETED':            
+        case 'DECK_DELETED':
             newState = Object.assign({}, state, {
                 deckDeleted: true
             });

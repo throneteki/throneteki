@@ -9,7 +9,7 @@ import io from 'socket.io-client';
 import Login from './pages/Login';
 import Logout from './Logout.jsx';
 import Register from './pages/Register';
-import Lobby from './Lobby.jsx';
+import Lobby from './pages/Lobby.jsx';
 import Decks from './Decks.jsx';
 import AddDeck from './AddDeck.jsx';
 import EditDeck from './EditDeck.jsx';
@@ -195,7 +195,6 @@ class App extends React.Component {
     }
 
     componentDidUpdate() {
-        this.props.receiveLobbyMessage({});
         if(!this.props.currentGame) {
             this.props.setContextMenu([]);
         }
@@ -394,8 +393,10 @@ class App extends React.Component {
 
         return (<div className={ backgroundClass }>
             <NavBar leftMenu={ leftMenu } rightMenu={ rightMenu } title='The Iron Throne' currentPath={ this.props.path } numGames={ this.props.games.length } />
-            <div className='container'>
-                { component }
+            <div className='wrapper'>
+                <div className='container content'>
+                    { component }
+                </div>
             </div>
         </div>);
     }
