@@ -8,6 +8,42 @@
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+
+  .panel {
+    position: relative;
+    margin: 5px;
+    border: 1px solid rgba(71, 58, 56, 0.65);
+    overflow: visible;
+    border-radius: 0 0 5px 5px;
+    top: -5px;
+  }
+
+  .messages {
+    flex: 1;
+    overflow: auto;
+    position: absolute;
+    top: 0;
+    bottom: 42px;
+    left: 0;
+    right: 4px;
+    margin: 0;
+    font-size: 12px;
+    overflow-y: auto;
+  }
+
+  .panel-title {
+      background-color: @header-background;
+      color: white;
+      font-weight: bold;
+      margin: 5px;
+      margin-bottom: 0;
+      padding: 5px 0;
+      border: 1px solid @header-border;
+      border-radius: 4px 4px 0 0;
+      border-bottom: none;
+      text-align: center;
+      position: relative;
+    }
 }
 
 .main-window {
