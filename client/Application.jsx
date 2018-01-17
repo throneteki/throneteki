@@ -4,7 +4,6 @@ import $ from 'jquery';
 import _ from 'underscore';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import io from 'socket.io-client';
 
 import Login from './pages/Login';
 import Logout from './Logout.jsx';
@@ -29,8 +28,6 @@ import BlockList from './BlockList.jsx';
 import Activation from './pages/Activation.jsx';
 
 import { toastr } from 'react-redux-toastr';
-
-import version from '../version.js';
 
 import * as actions from './actions';
 
@@ -71,127 +68,69 @@ class App extends React.Component {
             }
         });
 
-        let queryString = this.props.token ? 'token=' + this.props.token + '&' : '';
-        queryString += 'version=' + version;
+        this.props.connectLobby();
 
-        let socket = io.connect(window.location.origin, {
-            reconnection: true,
-            reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            reconnectionAttempts: Infinity,
-            query: queryString
-        });
+        // socket.on('handoff', server => {
+        //     let url = '//' + server.address;
+        //     if(server.port && server.port !== 80 && server.port !== 443) {
+        //         url += ':' + server.port;
+        //     }
 
-        socket.on('connect', () => {
-            this.props.socketConnected(socket);
-        });
+        //     if(this.props.gameSocket) {
+        //         this.props.closeGameSocket();
+        //     }
 
-        socket.on('disconnect', () => {
-            toastr.error('Connection lost', 'You have been disconnected from the lobby server, attempting reconnect..');
-        });
+        //     this.props.gameSocketConnecting(url + '/' + server.name);
 
-        socket.on('reconnect', () => {
-            toastr.success('Reconnected', 'The reconnection to the lobby has been successful');
-            this.props.socketConnected(socket);
-        });
+        //     let gameSocket = io.connect(url, {
+        //         path: '/' + server.name + '/socket.io',
+        //         reconnection: true,
+        //         reconnectionDelay: 1000,
+        //         reconnectionDelayMax: 5000,
+        //         reconnectionAttempts: 5,
+        //         query: this.props.token ? 'token=' + this.props.token : undefined
+        //     });
 
-        socket.on('games', games => {
-            this.props.receiveGames(games);
-        });
+        //     gameSocket.on('connect_error', (err) => {
+        //         toastr.error('Connect Error', 'There was an error connecting to the game server: ' + err.message + '(' + err.description + ')');
+        //     });
 
-        socket.on('users', users => {
-            this.props.receiveUsers(users);
-        });
+        //     gameSocket.on('disconnect', () => {
+        //         if(!gameSocket.gameClosing) {
+        //             toastr.error('Connection lost', 'You have been disconnected from the game server');
+        //         }
 
-        socket.on('newgame', game => {
-            this.props.receiveNewGame(game);
-        });
+        //         this.props.gameSocketDisconnect();
+        //     });
 
-        socket.on('gamestate', game => {
-            this.props.receiveGameState(game, this.props.username);
-        });
+        //     gameSocket.on('reconnecting', (attemptNumber) => {
+        //         toastr.info('Reconnecting', 'Attempt number ' + attemptNumber + ' to reconnect..');
 
-        socket.on('cleargamestate', () => {
-            this.props.clearGameState();
-        });
+        //         this.props.gameSocketReconnecting(attemptNumber);
+        //     });
 
-        socket.on('lobbychat', message => {
-            this.props.receiveLobbyMessage(message);
-        });
+        //     gameSocket.on('reconnect', () => {
+        //         toastr.success('Reconnected', 'The reconnection has been successful');
+        //         this.props.gameSocketConnected(gameSocket);
+        //     });
 
-        socket.on('lobbymessages', messages => {
-            this.props.receiveLobbyMessages(messages);
-        });
+        //     gameSocket.on('reconnect_failed', () => {
+        //         toastr.error('Reconnect failed', 'Given up trying to connect to the server');
+        //         this.props.sendGameSocketConnectFailed();
+        //     });
 
-        socket.on('passworderror', message => {
-            this.props.receivePasswordError(message);
-        });
+        //     gameSocket.on('connect', () => {
+        //         this.props.gameSocketConnected(gameSocket);
+        //     });
 
-        socket.on('handoff', server => {
-            let url = '//' + server.address;
-            if(server.port && server.port !== 80 && server.port !== 443) {
-                url += ':' + server.port;
-            }
+        //     gameSocket.on('gamestate', game => {
+        //         this.props.receiveGameState(game, this.props.username);
+        //     });
 
-            if(this.props.gameSocket) {
-                this.props.closeGameSocket();
-            }
-
-            this.props.gameSocketConnecting(url + '/' + server.name);
-
-            let gameSocket = io.connect(url, {
-                path: '/' + server.name + '/socket.io',
-                reconnection: true,
-                reconnectionDelay: 1000,
-                reconnectionDelayMax: 5000,
-                reconnectionAttempts: 5,
-                query: this.props.token ? 'token=' + this.props.token : undefined
-            });
-
-            gameSocket.on('connect_error', (err) => {
-                toastr.error('Connect Error', 'There was an error connecting to the game server: ' + err.message + '(' + err.description + ')');
-            });
-
-            gameSocket.on('disconnect', () => {
-                if(!gameSocket.gameClosing) {
-                    toastr.error('Connection lost', 'You have been disconnected from the game server');
-                }
-
-                this.props.gameSocketDisconnect();
-            });
-
-            gameSocket.on('reconnecting', (attemptNumber) => {
-                toastr.info('Reconnecting', 'Attempt number ' + attemptNumber + ' to reconnect..');
-
-                this.props.gameSocketReconnecting(attemptNumber);
-            });
-
-            gameSocket.on('reconnect', () => {
-                toastr.success('Reconnected', 'The reconnection has been successful');
-                this.props.gameSocketConnected(gameSocket);
-            });
-
-            gameSocket.on('reconnect_failed', () => {
-                toastr.error('Reconnect failed', 'Given up trying to connect to the server');
-                this.props.sendGameSocketConnectFailed();
-            });
-
-            gameSocket.on('connect', () => {
-                this.props.gameSocketConnected(gameSocket);
-            });
-
-            gameSocket.on('gamestate', game => {
-                this.props.receiveGameState(game, this.props.username);
-            });
-
-            gameSocket.on('cleargamestate', () => {
-                this.props.clearGameState();
-            });
-        });
-
-        socket.on('banner', notice => {
-            this.props.receiveBannerNotice(notice);
-        });
+        //     gameSocket.on('cleargamestate', () => {
+        //         this.props.clearGameState();
+        //     });
+        // });
     }
 
     componentDidUpdate() {
@@ -404,8 +343,7 @@ class App extends React.Component {
 
 App.displayName = 'Application';
 App.propTypes = {
-    clearGameState: PropTypes.func,
-    closeGameSocket: PropTypes.func,
+    connectLobby: PropTypes.func,
     currentGame: PropTypes.object,
     disconnecting: PropTypes.bool,
     dispatch: PropTypes.func,
@@ -422,15 +360,6 @@ App.propTypes = {
     loggedIn: PropTypes.bool,
     navigate: PropTypes.func,
     path: PropTypes.string,
-    receiveBannerNotice: PropTypes.func,
-    receiveGameState: PropTypes.func,
-    receiveGames: PropTypes.func,
-    receiveJoinGame: PropTypes.func,
-    receiveLobbyMessage: PropTypes.func,
-    receiveLobbyMessages: PropTypes.func,
-    receiveNewGame: PropTypes.func,
-    receivePasswordError: PropTypes.func,
-    receiveUsers: PropTypes.func,
     sendGameSocketConnectFailed: PropTypes.func,
     setContextMenu: PropTypes.func,
     socketConnected: PropTypes.func,
