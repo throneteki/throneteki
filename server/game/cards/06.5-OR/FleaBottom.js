@@ -18,6 +18,7 @@ class FleaBottom extends DrawCard {
 
                 this.atEndOfPhase(ability => ({
                     match: context.target,
+                    targetLocation: 'any',
                     effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
                 }));
 
