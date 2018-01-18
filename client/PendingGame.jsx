@@ -251,12 +251,12 @@ function mapStateToProps(state) {
     return {
         apiError: state.api.message,
         connecting: state.socket.gameConnecting,
-        currentGame: state.games.currentGame,
+        currentGame: state.lobby.currentGame,
         decks: state.cards.decks,
 
         host: state.socket.gameHost,
         loading: state.api.loading,
-        socket: state.socket.socket,
+        socket: state.lobby.socket,
         username: state.auth.username
     };
 }

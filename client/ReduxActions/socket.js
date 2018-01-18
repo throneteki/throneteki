@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { toastr } from 'react-redux-toastr';
 
 import version from '../../version.js';
 
@@ -73,8 +74,8 @@ export function sendGameSocketConnectFailed() {
     return (dispatch, getState) => {
         var state = getState();
 
-        if(state.socket.socket) {
-            state.socket.socket.emit('connectfailed');
+        if(state.lobby.socket) {
+            state.lobby.socket.emit('connectfailed');
         }
 
         return dispatch(gameSocketConnectFailed());
@@ -122,12 +123,16 @@ export function lobbyConnected(socket) {
 }
 
 export function lobbyDisconnected() {
+    toastr.error('Connection lost', 'You have been disconnected from the lobby server, attempting reconnect..');
+
     return {
         type: 'LOBBY_DISCONNECTED'
     };
 }
 
 export function lobbyReconnected() {
+    toastr.success('Reconnected', 'The reconnection to the lobby has been successful');
+
     return {
         type: 'LOBBY_RECONNECTED'
     };
@@ -163,11 +168,9 @@ export function connectLobby() {
 
         socket.on('disconnect', () => {
             dispatch(lobbyDisconnected());
-            //toastr.error('Connection lost', 'You have been disconnected from the lobby server, attempting reconnect..');
         });
 
         socket.on('reconnect', () => {
-            //toastr.success('Reconnected', 'The reconnection to the lobby has been successful');
             dispatch(lobbyReconnected());
         });
 
@@ -200,11 +203,11 @@ export function connectLobby() {
         });
 
         socket.on('gamestate', game => {
-            dispatch(lobbyMessageReceived, 'gamestate', game);
+            dispatch(lobbyMessageReceived('gamestate', game, state.auth.username));
         });
 
         socket.on('cleargamestate', () => {
-            dispatch(lobbyMessageReceived, 'cleargamestate');
+            dispatch(lobbyMessageReceived('cleargamestate'));
         });
     };
 }

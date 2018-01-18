@@ -425,8 +425,8 @@ InnerGameBoard.propTypes = {
 function mapStateToProps(state) {
     return {
         cardToZoom: state.cards.zoomCard,
-        currentGame: state.games.currentGame,
-        socket: state.socket.socket,
+        currentGame: state.lobby.currentGame,
+        socket: state.lobby.socket,
         user: state.auth.user,
         username: state.auth.username
     };

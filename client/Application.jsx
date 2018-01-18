@@ -27,8 +27,6 @@ import UserAdmin from './UserAdmin.jsx';
 import BlockList from './BlockList.jsx';
 import Activation from './pages/Activation.jsx';
 
-import { toastr } from 'react-redux-toastr';
-
 import * as actions from './actions';
 
 class App extends React.Component {
@@ -370,10 +368,10 @@ App.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        currentGame: state.games.currentGame,
+        currentGame: state.lobby.currentGame,
         disconnecting: state.socket.gameDisconnecting,
         gameSocket: state.socket.gameSocket,
-        games: state.games.games,
+        games: state.lobby.games,
         path: state.navigation.path,
         loggedIn: state.auth.loggedIn,
         token: state.auth.token,

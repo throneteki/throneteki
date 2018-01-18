@@ -64,21 +64,21 @@ class InnerGameList extends React.Component {
 
                 if(firstPlayer) {
                     gameRow.push(
-                        <span className='col-xs-4 col-sm-3 game-row-avatar'>
+                        <span key={ player.emailHash } className='col-xs-4 col-sm-3 game-row-avatar'>
                             <span className='hidden-xs col-sm-3 game-row-avatar'>
                                 <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
                             </span>
                             <span className='player-name col-sm-8'>{ player.name }</span>
                         </span>);
                     gameRow.push();
-                    gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
+                    gameRow.push(<span key={ player.emailHash + player.faction } className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
 
                     firstPlayer = false;
                 } else {
-                    gameRow.push(<span className='col-xs-1 game-row-vs text-center'><b> vs </b></span>);
-                    gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
+                    gameRow.push(<span key={ 'vs' + game.id } className='col-xs-1 game-row-vs text-center'><b> vs </b></span>);
+                    gameRow.push(<span key={ player.emailHash + player.faction } className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
                     gameRow.push(
-                        <span className='col-xs-4 col-sm-3 game-row-avatar'>
+                        <span key={ player.emailHash } className='col-xs-4 col-sm-3 game-row-avatar'>
                             <span className='player-name col-sm-8'>{ player.name }</span>
                             <span className='hidden-xs game-row-avatar pull-right col-sm-3'>
                                 <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
@@ -140,9 +140,9 @@ InnerGameList.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        currentGame: state.games.currentGame,
+        currentGame: state.lobby.currentGame,
         isAdmin: state.auth.isAdmin,
-        socket: state.socket.socket,
+        socket: state.lobby.socket,
         username: state.auth.username
     };
 }
