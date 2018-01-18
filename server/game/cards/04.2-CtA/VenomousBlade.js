@@ -12,7 +12,6 @@ class VenomousBlade extends DrawCard {
             },
             target: {
                 type: 'select',
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedStrength() <= 2
             },
             handler: context => {

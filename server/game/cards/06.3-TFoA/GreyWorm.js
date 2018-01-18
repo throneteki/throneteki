@@ -6,7 +6,6 @@ class GreyWorm extends DrawCard {
             title: 'Give character -3 STR',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&

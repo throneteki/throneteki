@@ -7,7 +7,6 @@ class OfferOfAPeach extends DrawCard {
             condition: () => this.game.currentChallenge && this.controller.anyCardsInPlay(card => card.hasTrait('Lady') || card.name === 'Renly Baratheon'),
             phase: 'challenge',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.cardCondition(card)
             },
             handler: context => {

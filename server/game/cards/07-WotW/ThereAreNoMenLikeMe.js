@@ -5,7 +5,6 @@ class ThereAreNoMenLikeMe extends DrawCard {
         this.action({
             title: 'Select character that doesn\'t kneel for military challenges',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('knight')
             },
             handler: context => {

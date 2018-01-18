@@ -10,11 +10,11 @@ class TywinsStratagem extends DrawCard {
             // TODO: Rework for Melee
             targets: {
                 ownToReturn: {
-                    activePromptTitle: 'Select a character',
+                    activePromptTitle: 'Select a character of yours',
                     cardCondition: card => card.controller === this.controller && this.cardCondition(card)
                 },
                 opponentToReturn: {
-                    activePromptTitle: 'Select a character',
+                    activePromptTitle: 'Select a character controlled by your opponent',
                     cardCondition: card => card.controller !== this.controller && this.cardCondition(card)
                 }
             },

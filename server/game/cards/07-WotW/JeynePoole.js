@@ -7,7 +7,6 @@ class JeynePoole extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'discard pile' &&
                     card.controller === this.controller &&

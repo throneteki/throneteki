@@ -10,7 +10,6 @@ class TheBrotherhoodWithoutBanners extends AgendaCard {
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                                        card.getType() === 'character' && card.isFaction('neutral')
             },

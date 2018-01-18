@@ -9,7 +9,6 @@ class MareInHeat extends DrawCard {
                              this.hasSingleParticipatingChar(),
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
                                        this.game.currentChallenge.isParticipating(card) &&
                                        card.getStrength() > this.parent.getStrength()

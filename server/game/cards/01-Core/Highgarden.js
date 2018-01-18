@@ -11,7 +11,6 @@ class Highgarden extends DrawCard {
                 ability.costs.payGold(1)
             ],
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
                                        this.game.currentChallenge.isAttacking(card)
             },

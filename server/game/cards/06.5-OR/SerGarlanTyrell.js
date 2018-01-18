@@ -11,7 +11,6 @@ class SerGarlanTyrell extends DrawCard {
             title: 'Give character +2 STR',
             cost: ability.costs.discardGold(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.isFaction('tyrell') && card.getType() === 'character'
             },
             handler: context => {

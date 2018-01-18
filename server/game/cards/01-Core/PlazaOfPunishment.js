@@ -8,7 +8,6 @@ class PlazaOfPunishment extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.size() === 0
             },
             handler: context => {

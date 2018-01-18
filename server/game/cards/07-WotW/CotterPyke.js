@@ -7,7 +7,6 @@ class CotterPyke extends DrawCard {
                 onBypassedByStealth: event => event.source === this && this.game.anyPlotHasTrait('Winter')
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.isFaction('thenightswatch') &&
                     card.getType() === 'character' &&

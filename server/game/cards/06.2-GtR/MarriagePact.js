@@ -11,7 +11,6 @@ class MarriagePact extends DrawCard {
                 onCardLeftPlay: event => event.card === this.parent
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.controller === this.controller &&

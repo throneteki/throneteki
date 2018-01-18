@@ -7,7 +7,6 @@ class SaltWife extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {

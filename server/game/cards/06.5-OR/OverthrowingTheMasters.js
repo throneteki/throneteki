@@ -6,7 +6,6 @@ class OverthrowingTheMasters extends DrawCard {
             title: 'Remove character from challenge',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.attackingPlayer === this.controller,
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        this.game.currentChallenge.isDefending(card) &&
                                        card.getStrength() <= this.game.currentChallenge.defendingPlayer.deadPile.size()

@@ -5,7 +5,6 @@ class ThePrincesPlan extends DrawCard {
         this.action({
             title: 'Give +1 STR per used plot + icon',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {

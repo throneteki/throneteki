@@ -19,7 +19,6 @@ class MaceTyrell extends DrawCard {
             title: 'Remove character from game',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                                        card !== this && card.isFaction('tyrell') && card.getType() === 'character'
             },

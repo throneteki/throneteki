@@ -7,7 +7,6 @@ class DeadlyKhalasar extends DrawCard {
             condition: () => this.game.currentChallenge,
             phase: 'challenge',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                                        card.getType() === 'character' && card.isFaction('targaryen') &&
                                        this.game.currentChallenge.isAttacking(card)

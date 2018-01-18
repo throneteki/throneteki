@@ -7,7 +7,6 @@ class GreyWind extends DrawCard {
             cost: ability.costs.kneelSelf(),
             phase: 'challenge',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.cardCondition(card),
                 gameAction: 'kill'
             },

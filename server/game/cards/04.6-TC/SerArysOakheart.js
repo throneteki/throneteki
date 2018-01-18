@@ -8,7 +8,6 @@ class SerArysOakheart extends DrawCard {
             },
             cost: ability.costs.payGold(2),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.hasTrait('Ally') && card.getType() === 'character'
             },
             handler: context => {

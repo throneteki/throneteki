@@ -6,7 +6,6 @@ class WolfInTheNight extends DrawCard {
             title: 'Give +3 STR and renown to character',
             condition: () => this.game.currentChallenge,
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isFaction('stark') &&
                     this.game.currentChallenge.attackers.length === 1 && this.game.currentChallenge.isAttacking(card)
             },
