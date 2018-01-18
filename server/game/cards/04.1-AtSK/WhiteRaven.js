@@ -27,9 +27,7 @@ class WhiteRaven extends DrawCard {
     }
 
     anyPlotHasTrait(trait) {
-        return _.any(this.game.getPlayers(), player =>
-            player.activePlot &&
-            player.activePlot.hasTrait(trait));
+        return this.game.getNumberOfPlotsWithTrait(trait) > 0;
     }
 }
 
