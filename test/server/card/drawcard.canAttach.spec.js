@@ -36,10 +36,8 @@ describe('DrawCard', function() {
                 });
 
                 it('should call the matcher', function() {
-                    let controller = { controller: true };
-                    this.attachment.controller = controller;
                     this.attachment.canAttach(this.player, this.targetCard);
-                    expect(this.matcherSpy).toHaveBeenCalledWith(this.targetCard, jasmine.objectContaining({ player: controller }));
+                    expect(this.matcherSpy).toHaveBeenCalledWith(this.targetCard, jasmine.objectContaining({ player: this.player }));
                 });
 
                 it('should return the result of the matcher', function() {
