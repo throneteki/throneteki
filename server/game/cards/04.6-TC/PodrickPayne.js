@@ -39,7 +39,6 @@ class PodrickPayne extends DrawCard {
 
     killAttacker() {
         this.game.promptForSelect(this.controller, {
-            activePromptTitle: 'Select a character',
             source: this,
             cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                    this.game.currentChallenge.isAttacking(card),

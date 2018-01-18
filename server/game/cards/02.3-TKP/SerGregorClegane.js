@@ -17,7 +17,6 @@ class SerGregorClegane extends DrawCard {
 
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => this.cardCondition(discarded, card),
-                    activePromptTitle: 'Select a character',
                     source: this,
                     gameAction: 'kill',
                     onSelect: (player, card) => this.onCardSelected(player, card)

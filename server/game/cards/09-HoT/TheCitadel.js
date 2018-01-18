@@ -8,7 +8,6 @@ class TheCitadel extends DrawCard {
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
-                    activePromptTitle: 'Select a character',
                     cardCondition: card => card.getType() === 'character' && card.hasTrait('Maester'),
                     onSelect: (player, card) => this.selectCard(player, card),
                     onCancel: player => this.doneSelecting(player),

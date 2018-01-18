@@ -11,7 +11,6 @@ class PlazaOfPride extends DrawCard {
             ],
             handler: context => {
                 this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select a character',
                     source: this,
                     cardCondition: card =>
                         card.location === 'play area'
