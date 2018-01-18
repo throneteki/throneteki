@@ -7,7 +7,6 @@ class IronFleetScout extends DrawCard {
             condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
                                        this.game.currentChallenge.isParticipating(card) && card.isFaction('greyjoy')
             },

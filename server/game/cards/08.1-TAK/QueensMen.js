@@ -36,7 +36,6 @@ class QueensMen extends DrawCard {
 
         if(toDiscard && toDiscard.getType() !== 'character' && this.controller.anyCardsInPlay(card => !card.isFaction('baratheon') && card.getType() === 'character' && !card.kneeled)) {
             this.game.promptForSelect(this.controller, {
-                activePromptTitle: 'Select a character',
                 source: this,
                 gameAction: 'kneel',
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&

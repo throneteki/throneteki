@@ -7,7 +7,6 @@ class RaidingLongship extends DrawCard {
             condition: () => this.game.currentChallenge && this.controller.firstPlayer,
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
                                        this.game.currentChallenge.isDefending(card) && card.attachments.size() === 0
             },

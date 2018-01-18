@@ -7,7 +7,6 @@ class AttackFromTheMountains extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && this.hasAttackingClansman()
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.owner === this.controller &&
                     card.location === 'hand' &&

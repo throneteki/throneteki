@@ -6,7 +6,6 @@ class ProtectorsOfTheRealm extends AgendaCard {
             title: 'Give Knight or Army renown',
             cost: ability.costs.kneelFactionCard(),
             target: {
-                activePrompTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        (card.hasTrait('Knight') || card.hasTrait('Army'))
             },

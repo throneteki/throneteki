@@ -7,7 +7,6 @@ class JonSnow extends DrawCard {
             limit: ability.limit.perRound(1),
             cost: ability.costs.sacrifice(card => card.isFaction('stark') && card.getType() === 'character'),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card =>
                     card.location === 'play area'
                     && card.kneeled

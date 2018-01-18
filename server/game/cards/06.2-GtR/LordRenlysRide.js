@@ -5,7 +5,6 @@ class LordRenlysRide extends DrawCard {
         this.action({
             title: 'Give +STR and intimidate',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {

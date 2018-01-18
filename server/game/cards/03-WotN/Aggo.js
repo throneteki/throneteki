@@ -6,7 +6,6 @@ class Aggo extends DrawCard {
             title: 'Stand a Bloodrider (if a Summer plot is revealed)',
             condition: () => this.game.anyPlotHasTrait('Summer'),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Bloodrider')
             },
             limit: ability.limit.perRound(1),

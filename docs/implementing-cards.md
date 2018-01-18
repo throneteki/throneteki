@@ -379,7 +379,7 @@ Cards that specify to 'choose' or otherwise target a specific card can be implem
 this.action({
     title: 'Stand a Bloodrider (if a Summer plot is revealed)',
     target: {
-        activePromptTitle: 'Select a character',
+        // activePromptTitle: 'Select a character',  // <- default prompt message, overridable
         cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Bloodrider')
     },
     // ...

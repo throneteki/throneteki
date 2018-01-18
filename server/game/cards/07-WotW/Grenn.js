@@ -10,7 +10,6 @@ class Grenn extends DrawCard {
                     event.challenge.loser.faction.power > 0)
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card !== this &&

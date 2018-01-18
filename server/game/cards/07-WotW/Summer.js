@@ -24,7 +24,6 @@ class Summer extends DrawCard {
             limit: ability.limit.perPhase(1),
             target: {
                 type: 'select',
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card !== this.parent && this.controller.canAttach(this, card)
             },
             handler: context => {

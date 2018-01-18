@@ -12,7 +12,6 @@ class Lady extends DrawCard {
             cost: ability.costs.payGold(1),
             target: {
                 type: 'select',
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.controller.canAttach(this, card) && card.location === 'play area' && card !== this.parent
             },
             limit: ability.limit.perPhase(1),

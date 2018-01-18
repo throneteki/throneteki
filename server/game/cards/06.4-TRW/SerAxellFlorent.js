@@ -8,7 +8,6 @@ class SerAxellFlorent extends DrawCard {
             },
             cost: ability.costs.discardGold(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.size() === 0
             },
             handler: context => {

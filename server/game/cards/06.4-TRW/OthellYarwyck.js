@@ -6,7 +6,6 @@ class OthellYarwyck extends DrawCard {
             title: 'Give icon',
             cost: ability.costs.kneel(card => card.isFaction('thenightswatch') && card.getType() === 'location'),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.isFaction('thenightswatch') &&
                                        card.getType() === 'character'
             },

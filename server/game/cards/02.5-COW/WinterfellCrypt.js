@@ -9,7 +9,6 @@ class WinterfellCrypt extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' &&
                                                   card.getPrintedStrength() <= context.event.card.getPrintedStrength()
 

@@ -7,7 +7,6 @@ class WinterfellArcheryRange extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.game.currentChallenge.isParticipating(card) && card.getType() === 'character' &&
                                        card.getStrength() <= 3
             },

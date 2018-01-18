@@ -7,7 +7,6 @@ class CompelledByTheKing extends DrawCard {
                 onPhaseStarted: event => event.phase === 'dominance'
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        card.controller === this.controller && card.kneeled,
                 gameAction: 'stand'

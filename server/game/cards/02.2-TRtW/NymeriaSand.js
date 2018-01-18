@@ -7,7 +7,6 @@ class NymeriaSand extends DrawCard {
             limit: ability.limit.perPhase(1),
             phase: 'challenge',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
                                        card.getType() === 'character'
             },

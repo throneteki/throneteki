@@ -11,7 +11,6 @@ class BlackBetha extends DrawCard {
             condition: () => this.game.currentChallenge && this.calculateStrength() >= 1,
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.game.currentChallenge.isAttacking(card)
             },
             handler: context => {

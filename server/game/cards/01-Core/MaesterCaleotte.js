@@ -7,7 +7,6 @@ class MaesterCaleotte extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.isParticipating(this)
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {

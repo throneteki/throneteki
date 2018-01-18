@@ -17,7 +17,6 @@ class StannisBaratheon extends DrawCard {
                 onDominanceDetermined: event => this.controller === event.winner
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        !card.isLoyal()
             },

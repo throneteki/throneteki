@@ -8,7 +8,6 @@ class TheNightfort extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        this.game.currentChallenge.isDefending(card) && card.isFaction('thenightswatch')
             },

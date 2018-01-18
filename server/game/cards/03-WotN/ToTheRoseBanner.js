@@ -6,7 +6,6 @@ class ToTheRoseBanner extends DrawCard {
             title: 'Gain gold then sacrifice character',
             phase: 'marshal',
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.controller === this.controller &&

@@ -7,7 +7,6 @@ class Pyp extends DrawCard {
                 afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this)
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card !== this &&

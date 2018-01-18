@@ -6,7 +6,6 @@ class Pyke extends DrawCard {
             title: 'Give character stealth',
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area'
             },
             handler: context => {

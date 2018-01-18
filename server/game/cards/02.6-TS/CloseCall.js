@@ -6,7 +6,6 @@ class CloseCall extends PlotCard {
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => this.cardCondition(card),
-                    activePromptTitle: 'Select a character',
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });

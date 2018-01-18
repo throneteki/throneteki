@@ -8,7 +8,6 @@ class WinterfellHeartTree extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.controller === this.controller && card.isFaction('stark')
             },
             handler: context => {

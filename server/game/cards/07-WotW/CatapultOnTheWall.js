@@ -10,7 +10,6 @@ class CatapultOnTheWall extends DrawCard {
                 ability.costs.kneelParent()
             ],
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => this.game.currentChallenge.isAttacking(card) && card.getStrength() <= 4
             },
             handler: context => {

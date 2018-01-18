@@ -5,7 +5,6 @@ class FallenFromFavor extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card =>
                     card.location === 'play area'
                     && card.controller === this.controller
