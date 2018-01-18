@@ -96,5 +96,18 @@ describe('Pay The Iron Price', function() {
                 expect(this.milk.location).toBe('discard pile');
             });
         });
+
+        describe('when the attachment takes control', function() {
+            beforeEach(function() {
+                this.player1.clickCard(this.ward);
+                this.player1.clickCard(this.opponentCharacter);
+
+                expect(this.opponentCharacter.attachments).toContain(this.ward);
+            });
+
+            it('should take control of the character', function() {
+                expect(this.opponentCharacter).toBeControlledBy(this.player1);
+            });
+        });
     });
 });
