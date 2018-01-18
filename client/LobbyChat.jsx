@@ -16,6 +16,10 @@ class LobbyChat extends React.Component {
         };
     }
 
+    componentWillMount() {
+        $(this.refs.messages).scrollTop(999999);
+    }
+
     componentDidUpdate() {
         if(this.state.canScroll) {
             $(this.refs.messages).scrollTop(999999);
