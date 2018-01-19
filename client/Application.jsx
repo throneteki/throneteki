@@ -282,12 +282,6 @@ App.propTypes = {
     connectLobby: PropTypes.func,
     currentGame: PropTypes.object,
     dispatch: PropTypes.func,
-    gameSocket: PropTypes.object,
-    gameSocketConnectError: PropTypes.func,
-    gameSocketConnected: PropTypes.func,
-    gameSocketConnecting: PropTypes.func,
-    gameSocketDisconnect: PropTypes.func,
-    gameSocketReconnecting: PropTypes.func,
     games: PropTypes.array,
     loadCards: PropTypes.func,
     loadFactions: PropTypes.func,
@@ -295,9 +289,7 @@ App.propTypes = {
     loggedIn: PropTypes.bool,
     navigate: PropTypes.func,
     path: PropTypes.string,
-    sendGameSocketConnectFailed: PropTypes.func,
     setContextMenu: PropTypes.func,
-    socketConnected: PropTypes.func,
     token: PropTypes.string,
     user: PropTypes.object,
     username: PropTypes.string
@@ -306,7 +298,6 @@ App.propTypes = {
 function mapStateToProps(state) {
     return {
         currentGame: state.lobby.currentGame,
-        gameSocket: state.games.socket,
         games: state.lobby.games,
         path: state.navigation.path,
         loggedIn: state.auth.loggedIn,
