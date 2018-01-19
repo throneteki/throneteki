@@ -8,9 +8,45 @@ function games(state = {}, action) {
             return Object.assign({}, state, {
                 newGame: false
             });
+        case 'GAME_SOCKET_CONNECTED':
+            return Object.assign({}, state, {
+                socket: action.socket,
+                connecting: false,
+                connected: true
+            });
+        case 'GAME_SOCKET_CONNECTING':
+            return Object.assign({}, state, {
+                connecting: true,
+                connected: false,
+                gameHost: action.host
+            });
+        case 'GAME_SOCKET_CONNECT_FAILED':
+            return Object.assign({}, state, {
+                connecting: false,
+                connected: false,
+                gameHost: undefined
+            });
+        case 'GAME_SOCKET_DISCONNECTED':
+            return Object.assign({}, state, {
+                connecting: false,
+                connected: false
+            });
+        case 'GAME_SOCKET_RECONNECTING':
+            return Object.assign({}, state, {
+                connecting: true,
+                connected: false
+            });
+        case 'GAME_SOCKET_RECONNETED':
+            return Object.assign({}, state, {
+                connecting: false,
+                connected: true
+            });
         case 'GAME_SOCKET_CLOSED':
             return Object.assign({}, state, {
-                currentGame: undefined
+                currentGame: undefined,
+                connecting: false,
+                gameHost: undefined,
+                gameSocket: undefined
             });
         case 'JOIN_PASSWORD_GAME':
             return Object.assign({}, state, {
