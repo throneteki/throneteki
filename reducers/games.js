@@ -1,9 +1,4 @@
-import _ from 'underscore';
-
-function games(state = {
-    games: [], users: []
-}, action) {
-    let retState = {};
+function games(state = {}, action) {
     switch(action.type) {
         case 'START_NEWGAME':
             return Object.assign({}, state, {
@@ -13,69 +8,50 @@ function games(state = {
             return Object.assign({}, state, {
                 newGame: false
             });
-        case 'RECEIVE_GAMES':
-            var ret = Object.assign({}, state, {
-                games: action.games
-            });
-
-            if(state.currentGame && !_.find(action.games, game => {
-                return game.id === state.currentGame.id;
-            })) {
-                ret.currentGame = undefined;
-                ret.newGame = false;
-            }
-
-            return ret;
-        case 'RECEIVE_NEWGAME':
+        case 'GAME_SOCKET_CONNECTED':
             return Object.assign({}, state, {
-                currentGame: action.game,
-                newGame: false
+                socket: action.socket,
+                connecting: false,
+                connected: true
             });
-        case 'RECEIVE_GAMESTATE':
-            retState = Object.assign({}, state, {
-                currentGame: action.currentGame
+        case 'GAME_SOCKET_CONNECTING':
+            return Object.assign({}, state, {
+                connecting: true,
+                connected: false,
+                gameHost: action.host
             });
-
-            var currentState = retState.currentGame;
-            if(!currentState) {
-                retState.newGame = false;
-                return retState;
-            }
-
-            if(currentState && _.any(currentState.spectators, spectator => {
-                return spectator.name === action.username;
-            })) {
-                return retState;
-            }
-
-            if(!currentState || !currentState.players[action.username] || currentState.players[action.username].left) {
-                delete retState.currentGame;
-                retState.newGame = false;
-            }
-
-            if(currentState) {
-                delete retState.passwordGame;
-                delete retState.passwordJoinType;
-                delete retState.passwordError;
-            }
-
-            return retState;
+        case 'GAME_SOCKET_CONNECT_FAILED':
+            return Object.assign({}, state, {
+                connecting: false,
+                connected: false,
+                gameHost: undefined
+            });
+        case 'GAME_SOCKET_DISCONNECTED':
+            return Object.assign({}, state, {
+                connecting: false,
+                connected: false
+            });
+        case 'GAME_SOCKET_RECONNECTING':
+            return Object.assign({}, state, {
+                connecting: true,
+                connected: false
+            });
+        case 'GAME_SOCKET_RECONNETED':
+            return Object.assign({}, state, {
+                connecting: false,
+                connected: true
+            });
         case 'GAME_SOCKET_CLOSED':
             return Object.assign({}, state, {
-                currentGame: undefined
-            });
-        case 'RECEIVE_USERS':
-            return Object.assign({}, state, {
-                users: action.users
+                currentGame: undefined,
+                connecting: false,
+                gameHost: undefined,
+                gameSocket: undefined
             });
         case 'JOIN_PASSWORD_GAME':
             return Object.assign({}, state, {
                 passwordGame: action.game,
                 passwordJoinType: action.joinType
-            });
-        case 'RECEIVE_PASSWORD_ERROR':
-            return Object.assign({}, state, {
-                passwordError: action.message
             });
         case 'CANCEL_PASSWORD_JOIN':
             return Object.assign({}, state, {
@@ -83,10 +59,6 @@ function games(state = {
                 passwordError: undefined,
                 passwordJoinType: undefined
             });
-        case 'CLEAR_GAMESTATE':
-            retState = _.omit(state, 'currentGame');
-            retState.newGame = false;
-            return retState;
         default:
             return state;
     }

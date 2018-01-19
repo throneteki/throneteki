@@ -77,10 +77,10 @@ InnerPasswordGame.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        passwordError: state.games.passwordError,
+        passwordError: state.lobby.passwordError,
         passwordGame: state.games.passwordGame,
         passwordJoinType: state.games.passwordJoinType,
-        socket: state.socket.socket
+        socket: state.lobby.socket
     };
 }
 

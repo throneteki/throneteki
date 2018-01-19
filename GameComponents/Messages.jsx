@@ -126,7 +126,7 @@ InnerMessages.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        socket: state.socket.socket
+        socket: state.lobby.socket
     };
 }
 
