@@ -74,7 +74,7 @@ function mapStateToProps(state) {
         loggedIn: state.account.loggedIn,
         loggedInToken: state.account.token,
         loggedInUser: state.account.loggedInUser,
-        socket: state.socket.socket
+        socket: state.lobby.socket
     };
 }
 

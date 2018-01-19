@@ -1,9 +1,8 @@
-export function socketConnected(socket) {
-    return {
-        type: 'SOCKET_CONNECTED',
-        socket: socket
-    };
-}
+import io from 'socket.io-client';
+import { toastr } from 'react-redux-toastr';
+
+import version from '../../version.js';
+import * as actions from '../actions';
 
 export function socketMessageSent(message) {
     return {
@@ -16,7 +15,7 @@ export function sendSocketMessage(message, ...args) {
     return (dispatch, getState) => {
         var state = getState();
 
-        state.socket.socket.emit(message, ...args);
+        state.lobby.socket.emit(message, ...args);
 
         return dispatch(socketMessageSent(message));
     };
@@ -26,86 +25,129 @@ export function sendGameMessage(message, ...args) {
     return (dispatch, getState) => {
         var state = getState();
 
-        if(state.socket.gameSocket) {
-            state.socket.gameSocket.emit('game', message, ...args);
+        if(state.games.socket) {
+            state.games.socket.emit('game', message, ...args);
         }
 
         return dispatch(socketMessageSent(message));
     };
 }
 
-export function gameSocketConnected(socket) {
+export function lobbyConnecting(socket) {
     return {
-        type: 'GAME_SOCKET_CONNECTED',
+        type: 'LOBBY_CONNECTING',
         socket: socket
     };
 }
 
-export function gameSocketConnectError() {
+export function lobbyConnected(socket) {
     return {
-        type: 'GAME_SOCKET_CONNECT_ERROR'
+        type: 'LOBBY_CONNECTED',
+        socket: socket
     };
 }
 
-export function gameSocketDisconnect() {
+export function lobbyDisconnected() {
+    toastr.error('Connection lost', 'You have been disconnected from the lobby server, attempting reconnect..');
+
     return {
-        type: 'GAME_SOCKET_DISCONNETED'
+        type: 'LOBBY_DISCONNECTED'
     };
 }
 
-export function gameSocketReconnecting() {
+export function lobbyReconnected() {
+    toastr.success('Reconnected', 'The reconnection to the lobby has been successful');
+
     return {
-        type: 'GAME_SOCKET_RECONNECTED'
+        type: 'LOBBY_RECONNECTED'
     };
 }
 
-export function gameSocketConnecting(host) {
+export function lobbyMessageReceived(message, ...args) {
     return {
-        type: 'GAME_SOCKET_CONNECTING',
-        host: host
+        type: 'LOBBY_MESSAGE_RECEIVED',
+        message: message,
+        args
     };
 }
 
-export function gameSocketConnectFailed() {
-    return {
-        type: 'GAME_SOCKET_CONNECT_FAILED'
-    };
-}
-
-export function sendGameSocketConnectFailed() {
+export function connectLobby() {
     return (dispatch, getState) => {
-        var state = getState();
+        let state = getState();
+        let queryString = state.auth.token ? 'token=' + state.auth.token + '&' : '';
+        queryString += 'version=' + version;
 
-        if(state.socket.socket) {
-            state.socket.socket.emit('connectfailed');
-        }
+        let socket = io.connect(window.location.origin, {
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: Infinity,
+            query: queryString
+        });
 
-        return dispatch(gameSocketConnectFailed());
-    };
-}
+        dispatch(lobbyConnecting(socket));
 
-export function gameSocketClosed(message) {
-    return {
-        type: 'GAME_SOCKET_CLOSED',
-        message: message
-    };
-}
+        socket.on('connect', () => {
+            dispatch(lobbyConnected());
+        });
 
-export function gameSocketClose() {
-    return (dispatch) => {
-        return dispatch(gameSocketClosed());
-    };
-}
+        socket.on('disconnect', () => {
+            dispatch(lobbyDisconnected());
+        });
 
-export function closeGameSocket() {
-    return (dispatch, getState) => {
-        var state = getState();
+        socket.on('reconnect', () => {
+            dispatch(lobbyReconnected());
+        });
 
-        if(state.socket.gameSocket) {
-            state.socket.gameSocket.gameClosing = true;
-            state.socket.gameSocket.close();
-        }
+        socket.on('games', games => {
+            dispatch(lobbyMessageReceived('games', games));
+        });
 
-        return dispatch(gameSocketClosed());
+        socket.on('users', users => {
+            dispatch(lobbyMessageReceived('users', users));
+        });
+
+        socket.on('newgame', game => {
+            dispatch(lobbyMessageReceived, 'newgame', game);
+        });
+
+        socket.on('passworderror', message => {
+            dispatch(lobbyMessageReceived('passworderror', message));
+        });
+
+        socket.on('lobbychat', message => {
+            dispatch(lobbyMessageReceived('lobbychat', message));
+        });
+
+        socket.on('lobbymessages', messages => {
+            dispatch(lobbyMessageReceived('lobbymessages', messages));
+        });
+
+        socket.on('banner', notice => {
+            dispatch(lobbyMessageReceived('banner', notice));
+        });
+
+        socket.on('gamestate', game => {
+            dispatch(lobbyMessageReceived('gamestate', game, state.auth.username));
+        });
+
+        socket.on('cleargamestate', () => {
+            dispatch(lobbyMessageReceived('cleargamestate'));
+        });
+
+        socket.on('handoff', server => {
+            let url = '//' + server.address;
+            let standardPorts = [80, 443];
+
+            if(server.port && !standardPorts.some(p => p === server.port)) {
+                url += ':' + server.port;
+            }
+
+            if(state.games.socket) {
+                dispatch(actions.closeGameSocket());
+            }
+
+            dispatch(actions.connectGameSocket(url, server.name));
+        });
     };
 }

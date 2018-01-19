@@ -87,13 +87,13 @@ InnerGameLobby.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        bannerNotice: state.chat.notice,
-        currentGame: state.games.currentGame,
+        bannerNotice: state.lobby.notice,
+        currentGame: state.lobby.currentGame,
         isAdmin: state.auth.isAdmin,
-        games: state.games.games,
+        games: state.lobby.games,
         newGame: state.games.newGame,
         passwordGame: state.games.passwordGame,
-        socket: state.socket.socket,
+        socket: state.lobby.socket,
         username: state.auth.username
     };
 }

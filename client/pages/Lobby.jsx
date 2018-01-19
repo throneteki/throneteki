@@ -115,13 +115,13 @@ InnerLobby.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        bannerNotice: state.chat.notice,
+        bannerNotice: state.lobby.notice,
         loading: state.api.loading,
-        messages: state.chat.messages,
+        messages: state.lobby.messages,
         news: state.news.news,
         newsLoading: state.news.newsLoading,
-        socket: state.socket.socket,
-        users: state.games.users
+        socket: state.lobby.socket,
+        users: state.lobby.users
     };
 }
 
