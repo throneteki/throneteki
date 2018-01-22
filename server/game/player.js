@@ -536,11 +536,6 @@ class Player extends Spectator {
         if(card.getType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             card.controller = this;
             this.promptForAttachment(card, playingType);
-
-            if(this.game.currentPhase !== 'setup' && card.isBestow()) {
-                this.game.queueStep(new BestowPrompt(this.game, this, card));
-            }
-
             return;
         }
 
@@ -564,9 +559,11 @@ class Player extends Spectator {
                 card.applyPersistentEffects();
             }
 
-            if(this.game.currentPhase !== 'setup' && card.isBestow()) {
-                this.game.queueStep(new BestowPrompt(this.game, this, card));
-            }
+            this.game.queueSimpleStep(() => {
+                if(this.game.currentPhase !== 'setup' && card.isBestow()) {
+                    this.game.queueStep(new BestowPrompt(this.game, this, card));
+                }
+            });
 
             this.game.raiseEvent('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
         }
@@ -692,6 +689,12 @@ class Player extends Spectator {
 
         this.game.queueSimpleStep(() => {
             attachment.applyPersistentEffects();
+        });
+
+        this.game.queueSimpleStep(() => {
+            if(this.game.currentPhase !== 'setup' && attachment.isBestow()) {
+                this.game.queueStep(new BestowPrompt(this.game, player, attachment));
+            }
         });
 
         if(originalLocation !== 'play area') {

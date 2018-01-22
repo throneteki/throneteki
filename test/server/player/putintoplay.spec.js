@@ -4,13 +4,15 @@ const Player = require('../../../server/game/player.js');
 
 describe('Player', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['queueStep', 'raiseEvent', 'playerDecked']);
+        this.gameSpy = jasmine.createSpyObj('game', ['queueSimpleStep', 'queueStep', 'raiseEvent', 'playerDecked']);
         this.player = new Player('1', {username: 'Player 1', settings: {}}, true, this.gameSpy);
         this.player.initialise();
 
         spyOn(this.player, 'getDuplicateInPlay');
         spyOn(this.player, 'isCharacterDead');
         spyOn(this.player, 'canResurrect');
+
+        this.gameSpy.queueSimpleStep.and.callFake(func => func());
 
         this.cardSpy = jasmine.createSpyObj('card', ['getType', 'getCost', 'isBestow', 'isUnique', 'applyPersistentEffects', 'moveTo']);
         this.cardSpy.controller = this.player;
