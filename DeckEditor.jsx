@@ -103,10 +103,16 @@ class InnerDeckEditor extends React.Component {
 
     onAgendaChange(selectedAgenda) {
         let deck = this.copyDeck(this.state.deck);
-
         deck.agenda = selectedAgenda;
 
-        this.setState({ deck: deck, showBanners: deck.agenda && deck.agenda.code === '06018' }); // Alliance
+        let isAlliance = deck.agenda && deck.agenda.code === '06018';
+
+        this.setState({ deck: deck, showBanners: isAlliance });
+
+        if(!isAlliance) {
+            deck.bannerCards = [];
+        }
+
         this.props.updateDeck(deck);
     }
 
