@@ -6,7 +6,7 @@ class Ward extends DrawCard {
         this.whileAttached({
             effect: [
                 ability.effects.addFaction('stark'),
-                ability.effects.takeControl(this.controller)
+                ability.effects.takeControl(() => this.controller)
             ]
         });
     }

@@ -534,7 +534,6 @@ class Player extends Spectator {
         var dupeCard = this.getDuplicateInPlay(card);
 
         if(card.getType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
-            card.controller = this;
             this.promptForAttachment(card, playingType);
             return;
         }
@@ -671,12 +670,12 @@ class Player extends Spectator {
         );
     }
 
-    attach(player, attachment, card, playingType) {
+    attach(controller, attachment, card, playingType) {
         if(!card || !attachment) {
             return;
         }
 
-        if(!this.canAttach(attachment, card)) {
+        if(!controller.canAttach(attachment, card)) {
             return;
         }
 
@@ -684,7 +683,7 @@ class Player extends Spectator {
 
         attachment.owner.removeCardFromPile(attachment);
         attachment.moveTo('play area', card);
-        attachment.controller = player;
+        attachment.controller = controller;
         card.attachments.push(attachment);
 
         this.game.queueSimpleStep(() => {
