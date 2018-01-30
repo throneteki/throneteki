@@ -361,10 +361,6 @@ class InnerDeckEditor extends React.Component {
     }
 
     render() {
-        if(!this.props.deck || this.props.loading) {
-            return <div>Waiting for deck...</div>;
-        }
-
         let banners = this.getBannerList();
 
         return (
@@ -403,7 +399,7 @@ class InnerDeckEditor extends React.Component {
                         onChange={ this.onCardListChange.bind(this) } />
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
-                            <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>{ this.props.mode }</button>
+                            <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save</button>
                         </div>
                     </div>
                 </form>
@@ -419,8 +415,6 @@ InnerDeckEditor.propTypes = {
     cards: PropTypes.object,
     deck: PropTypes.object,
     factions: PropTypes.object,
-    loading: PropTypes.bool,
-    mode: PropTypes.string,
     onDeckSave: PropTypes.func,
     packs: PropTypes.array,
     updateDeck: PropTypes.func
@@ -428,7 +422,6 @@ InnerDeckEditor.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        apiError: state.api.message,
         agendas: state.cards.agendas,
         banners: state.cards.banners,
         cards: state.cards.cards,
