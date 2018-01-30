@@ -5,6 +5,7 @@ const KneelCost = require('./costs/KneelCost.js');
 const XValuePrompt = require('./costs/XValuePrompt.js');
 const SelfCost = require('./costs/SelfCost.js');
 const StandCost = require('./costs/StandCost.js');
+const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
 
 const Costs = {
     /**
@@ -163,6 +164,11 @@ const Costs = {
      * Cost that will discard a fixed amount of a passed type token from the current card.
      */
     discardTokenFromSelf: (type, amount) => CostBuilders.discardToken(type, amount).self(),
+    /**
+     * Cost that will move a fixed amount of a passed type token from the current card to a
+     * destination card matching the passed condition predicate function.
+     */
+    moveTokenFromSelf: (type, amount, condition) => new MoveTokenFromSelfCost(type, amount, condition),
     /**
      * Cost that will discard faction power matching the passed amount.
      */
