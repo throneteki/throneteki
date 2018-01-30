@@ -692,7 +692,7 @@ class Player extends Spectator {
 
         this.game.queueSimpleStep(() => {
             if(this.game.currentPhase !== 'setup' && attachment.isBestow()) {
-                this.game.queueStep(new BestowPrompt(this.game, player, attachment));
+                this.game.queueStep(new BestowPrompt(this.game, controller, attachment));
             }
         });
 
