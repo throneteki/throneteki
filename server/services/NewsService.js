@@ -1,3 +1,5 @@
+const logger = require('../log.js');
+
 class NewsService {
     constructor(db) {
         this.news = db.get('news');
@@ -16,6 +18,18 @@ class NewsService {
 
     addNews(news) {
         return this.news.insert(news);
+    }
+
+    deleteNews(id) {
+        return this.news.remove({_id: id})
+            .then(() => {
+                return true;
+            })
+            .catch(err => {
+                logger.error('Error deleting news item', err, id);
+
+                throw new Error('Error occured deleting news item');
+            });
     }
 }
 

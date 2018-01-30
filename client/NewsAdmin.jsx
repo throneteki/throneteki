@@ -9,7 +9,7 @@ import TextArea from './FormComponents/TextArea.jsx';
 
 import * as actions from './actions';
 
-class InnerNewsAdmin extends React.Component {
+class NewsAdmin extends React.Component {
     constructor(props) {
         super(props);
 
@@ -34,6 +34,10 @@ class InnerNewsAdmin extends React.Component {
         this.setState({ newsText: '' });
     }
 
+    onDeleteClick(id) {
+        this.props.deleteNews(id);
+    }
+
     render() {
         let content = null;
 
@@ -42,6 +46,12 @@ class InnerNewsAdmin extends React.Component {
                 <td>{ moment(newsItem.datePublished).format('YYYY-MM-DD') }</td>
                 <td>{ newsItem.poster }</td>
                 <td>{ newsItem.text }</td>
+                <td>
+                    <div className='btn-group'>
+                        <button type='button' className='btn btn-primary'>Edit</button>
+                        <button type='button' className='btn btn-danger' onClick={ this.onDeleteClick.bind(this, newsItem._id) }>Delete</button>
+                    </div>
+                </td>
             </tr>);
         });
 
@@ -72,6 +82,7 @@ class InnerNewsAdmin extends React.Component {
                                 <th>Date</th>
                                 <th>Poster</th>
                                 <th>Text</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,11 +102,12 @@ class InnerNewsAdmin extends React.Component {
     }
 }
 
-InnerNewsAdmin.displayName = 'NewsAdmin';
-InnerNewsAdmin.propTypes = {
+NewsAdmin.displayName = 'NewsAdmin';
+NewsAdmin.propTypes = {
     addNews: PropTypes.func,
     apiError: PropTypes.string,
     clearNewsStatus: PropTypes.func,
+    deleteNews: PropTypes.func,
     loadNews: PropTypes.func,
     loading: PropTypes.bool,
     news: PropTypes.array,
@@ -112,7 +124,4 @@ function mapStateToProps(state) {
     };
 }
 
-const NewsAdmin = connect(mapStateToProps, actions)(InnerNewsAdmin);
-
-export default NewsAdmin;
-
+export default connect(mapStateToProps, actions)(NewsAdmin);

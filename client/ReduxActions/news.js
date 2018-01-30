@@ -56,6 +56,16 @@ export function addNews(newsText) {
     };
 }
 
+export function deleteNews(id) {
+    return {
+        types: ['DELETE_NEWS', 'NEWS_DELETED'],
+        shouldCallAPI: () => true,
+        callAPI: () => $.ajax(`/api/news/${id}`, {
+            type: 'DELETE'
+        })
+    };
+}
+
 export function clearNewsStatus() {
     return {
         type: 'CLEAR_NEWS_STATUS'
