@@ -26,8 +26,8 @@ class InnerEditDeck extends React.Component {
         }
     }
 
-    componentWillUpdate() {
-        if(this.props.deckSaved) {
+    componentWillUpdate(props) {
+        if(props.deckSaved) {
             this.props.navigate('/decks');
 
             return;
@@ -41,10 +41,10 @@ class InnerEditDeck extends React.Component {
     render() {
         let content;
 
-        if(this.props.loading) {
-            content = <div>Loading decks from the server...</div>;
-        } else if(this.props.apiError) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
+        if(this.props.apiLoading || !this.props.cards) {
+            content = <div>Loading deck from the server...</div>;
+        } else if(this.props.apiSuccess === false) {
+            content = <AlertPanel type='error' message={ this.props.apiMessage } />;
         } else if(!this.props.deck) {
             content = <AlertPanel message='The specified deck was not found' type='error' />;
         } else {
@@ -52,7 +52,7 @@ class InnerEditDeck extends React.Component {
                 <div>
                     <div className='col-sm-6'>
                         <Panel title='Deck Editor'>
-                            <DeckEditor mode='Save' onDeckSave={ this.onEditDeck } />
+                            <DeckEditor onDeckSave={ this.onEditDeck } />
                         </Panel>
                     </div>
                     <div className='col-sm-6'>
@@ -70,7 +70,9 @@ class InnerEditDeck extends React.Component {
 InnerEditDeck.displayName = 'InnerEditDeck';
 InnerEditDeck.propTypes = {
     agendas: PropTypes.object,
-    apiError: PropTypes.string,
+    apiLoading: PropTypes.bool,
+    apiMessage: PropTypes.string,
+    apiSuccess: PropTypes.bool,
     banners: PropTypes.array,
     cards: PropTypes.object,
     deck: PropTypes.object,
@@ -78,7 +80,6 @@ InnerEditDeck.propTypes = {
     deckSaved: PropTypes.bool,
     factions: PropTypes.object,
     loadDeck: PropTypes.func,
-    loading: PropTypes.bool,
     navigate: PropTypes.func,
     packs: PropTypes.array,
     saveDeck: PropTypes.func,
@@ -87,6 +88,9 @@ InnerEditDeck.propTypes = {
 
 function mapStateToProps(state) {
     return {
+        apiLoading: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.loading : undefined,
+        apiMessage: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.message : undefined,
+        apiSuccess: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.success : undefined,
         agendas: state.cards.agendas,
         apiError: state.api.message,
         banners: state.cards.banners,

@@ -25,8 +25,8 @@ export class InnerAddDeck extends React.Component {
         this.props.addDeck();
     }
 
-    componentWillUpdate() {
-        if(this.props.deckSaved) {
+    componentWillUpdate(props) {
+        if(props.deckSaved) {
             this.props.navigate('/decks');
 
             return;
@@ -49,7 +49,7 @@ export class InnerAddDeck extends React.Component {
                 <div>
                     <div className='col-sm-6'>
                         <Panel title='Deck Editor'>
-                            <DeckEditor mode='Add' onDeckSave={ this.onAddDeck } />
+                            <DeckEditor onDeckSave={ this.onAddDeck } />
                         </Panel>
                     </div>
                     <div className='col-sm-6'>

@@ -97,14 +97,16 @@ class InnerDecks extends React.Component {
             );
         }
 
-        if(this.props.loading) {
+        if(this.props.apiLoading) {
             content = <div>Loading decks from the server...</div>;
-        } else if(this.props.apiError) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
+        } else if(!this.props.apiSuccess) {
+            content = <AlertPanel type='error' message={ this.props.apiMessage } />;
         } else {
             content = (
                 <div className='full-height'>
-                    { successPanel }
+                    <div className='col-xs-12'>
+                        { successPanel }
+                    </div>
                     <div className='col-sm-5 full-height'>
                         <Panel title='Your decks'>
                             <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
@@ -121,7 +123,9 @@ class InnerDecks extends React.Component {
 
 InnerDecks.displayName = 'Decks';
 InnerDecks.propTypes = {
-    apiError: PropTypes.string,
+    apiLoading: PropTypes.bool,
+    apiMessage: PropTypes.string,
+    apiSuccess: PropTypes.bool,
     cards: PropTypes.object,
     clearDeckStatus: PropTypes.func,
     deckDeleted: PropTypes.bool,
@@ -136,7 +140,9 @@ InnerDecks.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        apiError: state.api.message,
+        apiLoading: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.loading : undefined,
+        apiMessage: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.message : undefined,
+        apiSuccess: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.success : undefined,
         cards: state.cards.cards,
         deckDeleted: state.cards.deckDeleted,
         decks: state.cards.decks,
