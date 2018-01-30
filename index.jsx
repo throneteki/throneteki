@@ -3,6 +3,7 @@ import 'jquery-validation';
 import 'jquery-validation-unobtrusive';
 import 'react-redux-toastr/src/styles/index.scss';
 import 'babel-polyfill';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 $.validator.setDefaults({
     highlight: function(element) {
