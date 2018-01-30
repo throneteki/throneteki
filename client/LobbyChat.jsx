@@ -16,7 +16,7 @@ class LobbyChat extends React.Component {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         $(this.refs.messages).scrollTop(999999);
     }
 
