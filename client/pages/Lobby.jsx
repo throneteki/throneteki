@@ -60,6 +60,9 @@ class InnerLobby extends React.Component {
     }
 
     render() {
+        let isLoggedIn = !!this.props.username;
+        let placeholder = isLoggedIn ? 'Enter a message...' : 'You must be logged in to send lobby chat messages';
+
         return (
             <div className='flex-container'>
                 <SideBar>
@@ -88,7 +91,7 @@ class InnerLobby extends React.Component {
                     <form className='form form-hozitontal chat-box-container' onSubmit={ event => this.onSendClick(event) }>
                         <div className='form-group'>
                             <div className='chat-box'>
-                                <Typeahead ref='message' value={ this.state.message } placeholder='Enter a message...'
+                                <Typeahead disabled={ !isLoggedIn } ref='message' value={ this.state.message } placeholder={ placeholder }
                                     labelKey={ 'name' } onKeyDown={ this.onKeyPress }
                                     options={ this.props.users } onInputChange={ this.onChange } autoFocus
                                     dropup emptyLabel={ '' }
@@ -110,6 +113,7 @@ InnerLobby.propTypes = {
     messages: PropTypes.array,
     news: PropTypes.array,
     socket: PropTypes.object,
+    username: PropTypes.string,
     users: PropTypes.array
 };
 
@@ -121,6 +125,7 @@ function mapStateToProps(state) {
         news: state.news.news,
         newsLoading: state.news.newsLoading,
         socket: state.lobby.socket,
+        username: state.auth.username,
         users: state.lobby.users
     };
 }
