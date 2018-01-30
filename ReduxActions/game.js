@@ -182,9 +182,9 @@ export function closeGameSocket() {
     return (dispatch, getState) => {
         let state = getState();
 
-        if(state.games.gameSocket) {
-            state.games.gameSocket.gameClosing = true;
-            state.games.gameSocket.close();
+        if(state.games.socket) {
+            state.games.socket.gameClosing = true;
+            state.games.socket.close();
         }
 
         return dispatch(gameSocketClosed());
