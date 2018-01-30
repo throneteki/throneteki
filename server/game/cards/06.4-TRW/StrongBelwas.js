@@ -7,6 +7,7 @@ class StrongBelwas extends DrawCard {
             when: {
                 onCharactersKilled: event => event.allowSave
             },
+            limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
             target: {
                 cardCondition: (card, context) => context.event.cards.includes(card) && card.controller === this.controller &&
