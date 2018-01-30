@@ -29,6 +29,11 @@ export default function(state = defaultState, action) {
             });
         case 'LOBBY_MESSAGE_RECEIVED':
             return handleMessage(action, state);
+        case 'GAME_SOCKET_CLOSED':
+            return Object.assign({}, state, {
+                currentGame: undefined
+            });
+
     }
 
     return state;

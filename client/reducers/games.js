@@ -36,17 +36,17 @@ function games(state = {}, action) {
                 connecting: true,
                 connected: false
             });
-        case 'GAME_SOCKET_RECONNETED':
+        case 'GAME_SOCKET_RECONNECTED':
             return Object.assign({}, state, {
                 connecting: false,
                 connected: true
             });
         case 'GAME_SOCKET_CLOSED':
             return Object.assign({}, state, {
-                currentGame: undefined,
+                connected: false,
                 connecting: false,
                 gameHost: undefined,
-                gameSocket: undefined
+                socket: undefined
             });
         case 'JOIN_PASSWORD_GAME':
             return Object.assign({}, state, {
