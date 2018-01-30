@@ -108,7 +108,7 @@ class TriggeredAbility extends BaseAbility {
     }
 
     isPlayableEventAbility() {
-        return this.card.getType() === 'event' && this.location === 'hand';
+        return this.card.getPrintedType() === 'event' && this.location === 'hand';
     }
 
     hasMax() {

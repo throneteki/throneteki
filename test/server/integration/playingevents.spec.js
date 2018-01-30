@@ -3,7 +3,7 @@ describe('playing events', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('baratheon', [
                 'Trading with the Pentoshi',
-                'Melisandre (Core)', 'Seen In Flames'
+                'Melisandre (Core)', 'Seen In Flames', 'Theon Greyjoy (Core)', 'Risen from the Sea'
             ]);
             const deck2 = this.buildDeck('martell', [
                 'Trading with the Pentoshi',
@@ -94,6 +94,26 @@ describe('playing events', function() {
 
             it('should not count as playing an event', function() {
                 expect(this.player2).not.toHavePromptButton('Tower of the Sun');
+            });
+        });
+
+        describe('when an event becomes an attachment', function() {
+            beforeEach(function() {
+                let character = this.player1.findCardByName('Theon Greyjoy', 'hand');
+                this.player1.dragCard(character, 'play area');
+
+                this.game.killCharacter(character, { allowSave: true });
+                this.game.continue();
+
+                this.player1.clickPrompt('Risen from the Sea');
+                this.player1.clickCard(character);
+
+                // Pass on Hand's Judgment to allow the save
+                this.player2.clickPrompt('Pass');
+            });
+
+            it('should count as playing an event', function() {
+                expect(this.player2).toHavePromptButton('Tower of the Sun');
             });
         });
     });

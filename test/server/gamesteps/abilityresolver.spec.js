@@ -83,17 +83,31 @@ describe('AbilityResolver', function() {
         describe('when the ability is an event being played', function() {
             beforeEach(function() {
                 this.source.eventPlacementLocation = 'event placement location';
+                this.source.location = 'being played';
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
                 this.ability.isPlayableEventAbility.and.returnValue(true);
-                this.resolver.continue();
             });
 
             it('should move the card to the specified event location', function() {
+                this.resolver.continue();
                 expect(this.player.moveCard).toHaveBeenCalledWith(this.source, 'event placement location');
             });
 
             it('should raise the onCardPlayed event', function() {
+                this.resolver.continue();
                 expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardPlayed', jasmine.any(Object));
+            });
+
+            describe('and the event is no longer in the "being played" state', function() {
+                beforeEach(function() {
+                    // Example: Risen from the Sea attached to character after playing it
+                    this.source.location = 'play area';
+                    this.resolver.continue();
+                });
+
+                it('should not move the card', function() {
+                    expect(this.player.moveCard).not.toHaveBeenCalled();
+                });
             });
         });
 
