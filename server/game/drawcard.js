@@ -138,7 +138,7 @@ class DrawCard extends BaseCard {
     }
 
     isBestow() {
-        return !_.isUndefined(this.bestowMax);
+        return !this.isBlank() && !_.isUndefined(this.bestowMax);
     }
 
     isRenown() {
