@@ -42,7 +42,7 @@ class NewsAdmin extends React.Component {
         let content = null;
 
         var renderedNews = _.map(this.props.news, newsItem => {
-            return (<tr>
+            return (<tr key={ newsItem._id }>
                 <td>{ moment(newsItem.datePublished).format('YYYY-MM-DD') }</td>
                 <td>{ newsItem.poster }</td>
                 <td>{ newsItem.text }</td>
@@ -57,21 +57,21 @@ class NewsAdmin extends React.Component {
 
         let successPanel = null;
 
-        if(this.props.newsSaved) {
+        if(this.props.newsChanged) {
             setTimeout(() => {
                 this.props.clearNewsStatus();
             }, 5000);
             successPanel = (
-                <AlertPanel message='News added successfully' type={ 'success' } />
+                <AlertPanel message={ this.props.successMessage } type={ 'success' } />
             );
 
             this.props.loadNews({ forceLoad: true });
         }
 
-        if(this.props.loading) {
+        if(this.props.apiLoading) {
             content = <div>Loading news from the server...</div>;
-        } else if(this.props.apiError) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
+        } else if(this.props.apiSuccess === false) {
+            content = <AlertPanel type='error' message={ this.props.apiMessage } />;
         } else {
             content = (
                 <div>
@@ -105,22 +105,69 @@ class NewsAdmin extends React.Component {
 NewsAdmin.displayName = 'NewsAdmin';
 NewsAdmin.propTypes = {
     addNews: PropTypes.func,
-    apiError: PropTypes.string,
+    apiLoading: PropTypes.bool,
+    apiMessage: PropTypes.string,
+    apiSuccess: PropTypes.bool,
     clearNewsStatus: PropTypes.func,
     deleteNews: PropTypes.func,
     loadNews: PropTypes.func,
-    loading: PropTypes.bool,
     news: PropTypes.array,
-    newsSaved: PropTypes.bool
+    newsChanged: PropTypes.bool,
+    successMessage: PropTypes.string
 };
+
+function getApiLoadingStatus(state) {
+    if(state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.loading) {
+        return true;
+    }
+
+    if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.loading) {
+        return true;
+    }
+
+    return false;
+}
+
+function getApiMessage(state) {
+    if(state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.message) {
+        return state.api.REQUEST_NEWS.message;
+    }
+
+    if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.message) {
+        return state.api.DELETE_NEWS.message;
+    }
+
+    return undefined;
+}
+
+function getApiSuccess(state) {
+    if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.success) {
+        return true;
+    }
+}
+
+function getSuccessMessage(state) {
+    if(state.news.newsSaved) {
+        return 'News item added successfully';
+    }
+
+    if(state.news.newsDeleted) {
+        return 'News item deleted successfully';
+    }
+
+    return undefined;
+}
 
 function mapStateToProps(state) {
     return {
-        apiError: state.api.message,
+        apiLoading: getApiLoadingStatus(state),
+        apiMessage: getApiMessage(state),
+        apiSuccess: getApiSuccess(state),
         loadNews: state.news.loadNews,
         loading: state.api.loading,
         news: state.news.news,
-        newsSaved: state.news.newsSaved
+        newsChanged: state.news.newsSaved || state.news.newsDeleted,
+        successMessage: getSuccessMessage(state)
     };
 }
 
