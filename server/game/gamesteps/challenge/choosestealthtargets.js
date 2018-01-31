@@ -6,16 +6,16 @@ class ChooseStealthTargets extends BaseStep {
     constructor(game, challenge, stealthCharacters) {
         super(game);
         this.challenge = challenge;
-        this.stealthCharacters = stealthCharacters;
+        this.stealthCharacters = stealthCharacters.filter(character => this.hasStealthTargets(character));
+    }
+
+    hasStealthTargets(character) {
+        return this.challenge.defendingPlayer.anyCardsInPlay(card => this.canStealth(card, this.challenge, character));
     }
 
     continue() {
         if(this.stealthCharacters.length > 0) {
             let character = this.stealthCharacters.shift();
-
-            if(!this.challenge.defendingPlayer.anyCardsInPlay(card => this.canStealth(card, this.challenge, character))) {
-                return false;
-            }
 
             let title = character.stealthLimit === 1 ? 'Select stealth target for ' + character.name : 'Select up to ' + character.stealthLimit + ' stealth targets for ' + character.name;
             this.game.promptForSelect(character.controller, {
