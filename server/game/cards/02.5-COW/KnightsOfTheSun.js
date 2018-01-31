@@ -5,8 +5,7 @@ class KnightsOfTheSun extends DrawCard {
         this.persistentEffect({
             condition: () => this.controller.getNumberOfUsedPlots() >= 3,
             match: this,
-            effect: ability.effects.addKeyword('Renown'),
-            recalculateWhen: ['onUsedPlotsModified']
+            effect: ability.effects.addKeyword('Renown')
         });
     }
 }

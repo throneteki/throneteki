@@ -6,8 +6,7 @@ class DaenerysTargaryen extends DrawCard {
             condition: () => !this.kneeled && this.game.currentChallenge,
             match: card => this.game.currentChallenge.isParticipating(card) && card.getType() === 'character',
             targetController: 'opponent',
-            effect: ability.effects.modifyStrength(-1),
-            recalculateWhen: ['onCardStood', 'onCardKneeled', 'onAttackersDeclared', 'onDefendersDeclared']
+            effect: ability.effects.modifyStrength(-1)
         });
     }
 }

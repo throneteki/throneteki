@@ -8,7 +8,6 @@ class EffectEngine {
         this.events = new EventRegistrar(game, this);
         this.events.register(['onCardMoved', 'onCardTraitChanged', 'onCardFactionChanged', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
         this.effects = [];
-        this.recalculateEvents = {};
         this.customDurationEvents = [];
         this.effectsBeingRecalculated = [];
     }
@@ -21,7 +20,6 @@ class EffectEngine {
         this.effects.push(effect);
         this.effects = _.sortBy(this.effects, effect => effect.order);
         effect.addTargets(this.getTargets());
-        this.registerRecalculateEvents(effect.recalculateWhen);
         if(effect.duration === 'custom') {
             this.registerCustomDurationEvents(effect);
         }
@@ -157,42 +155,6 @@ class EffectEngine {
         }
     }
 
-    registerRecalculateEvents(eventNames) {
-        _.each(eventNames, eventName => {
-            if(!this.recalculateEvents[eventName]) {
-                var handler = this.recalculateEvent.bind(this);
-                this.recalculateEvents[eventName] = {
-                    name: eventName,
-                    handler: handler,
-                    count: 1
-                };
-                this.game.on(eventName, handler);
-            } else {
-                this.recalculateEvents[eventName].count++;
-            }
-        });
-    }
-
-    unregisterRecalculateEvents(eventNames) {
-        _.each(eventNames, eventName => {
-            var event = this.recalculateEvents[eventName];
-            if(event && event.count <= 1) {
-                this.game.removeListener(event.name, event.handler);
-                delete this.recalculateEvents[eventName];
-            } else if(event) {
-                event.count--;
-            }
-        });
-    }
-
-    recalculateEvent(event) {
-        _.each(this.effects, effect => {
-            if(effect.isStateDependent && effect.recalculateWhen.includes(event.name)) {
-                effect.reapply(this.getTargets());
-            }
-        });
-    }
-
     registerCustomDurationEvents(effect) {
         if(!effect.until) {
             return;
@@ -226,7 +188,6 @@ class EffectEngine {
             let listener = customDurationEffect.until[event.name];
             if(listener && listener(...args)) {
                 customDurationEffect.cancel();
-                this.unregisterRecalculateEvents(customDurationEffect.recalculateWhen);
                 this.unregisterCustomDurationEvents(customDurationEffect);
                 this.effects = _.reject(this.effects, effect => effect === customDurationEffect);
             }
@@ -237,7 +198,6 @@ class EffectEngine {
         var [matchingEffects, remainingEffects] = _.partition(this.effects, match);
         _.each(matchingEffects, effect => {
             effect.cancel();
-            this.unregisterRecalculateEvents(effect.recalculateWhen);
         });
         this.effects = remainingEffects;
     }

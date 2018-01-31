@@ -6,7 +6,6 @@ class Unsullied extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
             match: (card) => this.game.currentChallenge && this.game.currentChallenge.isDefending(card),
             targetController: 'opponent',
-            recalculateWhen: ['onDefendersDeclared'],
             effect: ability.effects.modifyStrength(-1)
         });
     }

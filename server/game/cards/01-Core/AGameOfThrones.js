@@ -3,9 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class AGameOfThrones extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            // Add an explicit recalculate event here to ensure the effect is
-            // recalculated properly. This is pretty hacky.
-            recalculateWhen: ['afterChallenge'],
             targetType: 'player',
             targetController: 'any',
             match: player => player.getNumberOfChallengesWon('intrigue') < 1,
