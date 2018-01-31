@@ -10,6 +10,7 @@ class EffectEngine {
         this.effects = [];
         this.recalculateEvents = {};
         this.customDurationEvents = [];
+        this.effectsBeingRecalculated = [];
     }
 
     add(effect) {
@@ -40,10 +41,23 @@ class EffectEngine {
     }
 
     reapplyStateDependentEffects() {
-        _.each(this.effects, effect => {
-            if(effect.isStateDependent) {
+        let stateDependentEffects = this.effects.filter(effect => effect.isStateDependent);
+        let needsRecalc = _.difference(stateDependentEffects, this.effectsBeingRecalculated);
+
+        if(needsRecalc.length === 0) {
+            return;
+        }
+
+        this.game.queueSimpleStep(() => {
+            this.effectsBeingRecalculated = this.effectsBeingRecalculated.concat(needsRecalc);
+
+            for(let effect of needsRecalc) {
                 effect.reapply(this.getTargets());
             }
+        });
+
+        this.game.queueSimpleStep(() => {
+            this.effectsBeingRecalculated = _.difference(this.effectsBeingRecalculated, needsRecalc);
         });
     }
 
