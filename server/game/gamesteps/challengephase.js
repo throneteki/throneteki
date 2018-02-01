@@ -73,8 +73,12 @@ class ChallengePhase extends Phase {
     }
 
     cleanupChallenge() {
-        this.game.currentChallenge.unregisterEvents();
+        let challenge = this.game.currentChallenge;
+        challenge.resetCards();
+        challenge.finish();
+        challenge.unregisterEvents();
         this.game.currentChallenge = null;
+        this.game.raiseEvent('onChallengeFinished', { challenge: challenge });
     }
 
     completeChallenges(player) {

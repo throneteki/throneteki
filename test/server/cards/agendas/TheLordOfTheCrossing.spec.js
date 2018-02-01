@@ -48,8 +48,19 @@ describe('The Lord of the Crossing', function() {
                 this.player2.clickPrompt('Done');
                 this.skipActionWindow();
 
+                expect(this.followers.getStrength()).toBe(1);
                 expect(this.game.currentChallenge.attackerStrength).toBe(1);
                 expect(this.game.currentChallenge.winnerStrength).toBe(1);
+            });
+
+            it('should reset the character strength after the challenge', function() {
+                this.skipActionWindow();
+                this.player2.clickPrompt('Done');
+                this.skipActionWindow();
+                this.player1.clickPrompt('Apply Claim');
+                this.player2.clickPrompt('Done');
+
+                expect(this.followers.getStrength()).toBe(2);
             });
         });
 
