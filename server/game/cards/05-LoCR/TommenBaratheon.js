@@ -5,6 +5,8 @@ class TommenBaratheon extends DrawCard {
         this.persistentEffect({
             targetType: 'player',
             targetController: 'any',
+            //This forces a recalculate for player level effects
+            condition: () => true,
             match: player => player.hand.size() === 0,
             effect: ability.effects.cannotGainChallengeBonus()
         });
