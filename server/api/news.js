@@ -20,7 +20,7 @@ module.exports.init = function(server) {
             });
     });
 
-    server.put('/api/news', function(req, res) {
+    server.put('/api/news', wrapAsync(async function(req, res) {
         if(!req.user) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
@@ -29,16 +29,9 @@ module.exports.init = function(server) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        newsService.addNews({ poster: req.user.username, text: req.body.text, datePublished: new Date() })
-            .then(() => {
-                res.send({ success: true });
-            })
-            .catch(err => {
-                logger.error(err);
-
-                res.send({ success: false, message: 'Error saving news item' });
-            });
-    });
+        let newsItem = await newsService.addNews({ poster: req.user.username, text: req.body.text, datePublished: new Date() });
+        res.send({ success: true, newsItem: newsItem });
+    }));
 
     server.delete('/api/news/:id', wrapAsync(async function(req, res) {
         if(!req.user) {
@@ -51,6 +44,6 @@ module.exports.init = function(server) {
 
         await newsService.deleteNews(req.params.id);
 
-        res.send({success: true, message: 'News item deleted successfully'});
+        res.send({success: true, message: 'News item deleted successfully', id: req.params.id });
     }));
 };

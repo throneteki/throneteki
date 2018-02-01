@@ -17,7 +17,15 @@ class NewsService {
     }
 
     addNews(news) {
-        return this.news.insert(news);
+        return this.news.insert(news)
+            .then(result => {
+                return result;
+            })
+            .catch(err => {
+                logger.error('Error adding news item', err);
+
+                throw new Error('Error occured adding news item');
+            });
     }
 
     deleteNews(id) {

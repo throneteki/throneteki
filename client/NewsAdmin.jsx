@@ -22,6 +22,14 @@ class NewsAdmin extends React.Component {
         this.props.loadNews({ forceLoad: true });
     }
 
+    componentWillUpdate(props) {
+        if(props.newsChanged) {
+            setTimeout(() => {
+                this.props.clearNewsStatus();
+            }, 5000);
+        }
+    }
+
     onNewsTextChange(event) {
         this.setState({ newsText: event.target.value });
     }
@@ -58,14 +66,9 @@ class NewsAdmin extends React.Component {
         let successPanel = null;
 
         if(this.props.newsChanged) {
-            setTimeout(() => {
-                this.props.clearNewsStatus();
-            }, 5000);
             successPanel = (
                 <AlertPanel message={ this.props.successMessage } type={ 'success' } />
             );
-
-            this.props.loadNews({ forceLoad: true });
         }
 
         if(this.props.apiLoading) {
