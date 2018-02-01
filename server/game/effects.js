@@ -710,13 +710,13 @@ const Effects = {
             }
         };
     },
-    cannotTriggerCardAbilities: function() {
+    cannotTriggerCardAbilities: function(restriction = () => true) {
         return {
             apply: function(player) {
-                player.cannotTriggerCardAbilities = true;
+                player.triggerRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.cannotTriggerCardAbilities = false;
+                player.triggerRestrictions = _.reject(player.triggerRestrictions, r => r === restriction);
             }
         };
     },
