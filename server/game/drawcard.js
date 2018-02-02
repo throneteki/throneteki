@@ -334,15 +334,6 @@ class DrawCard extends BaseCard {
         return true;
     }
 
-    clearBlank() {
-        super.clearBlank();
-        this.attachments.each(attachment => {
-            if(!this.allowAttachment(attachment)) {
-                this.controller.discardCard(attachment, false);
-            }
-        });
-    }
-
     /**
      * Defines restrictions on what cards this attachment can be placed on.
      */

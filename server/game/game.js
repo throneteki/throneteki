@@ -1,6 +1,7 @@
 const _ = require('underscore');
 const EventEmitter = require('events');
 
+const AttachmentValidityCheck = require('./AttachmentValidityCheck.js');
 const ChatCommands = require('./chatcommands.js');
 const GameChat = require('./gamechat.js');
 const EffectEngine = require('./effectengine.js');
@@ -37,6 +38,7 @@ class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
 
+        this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
         this.playersAndSpectators = {};
         this.playerPlots = {};
@@ -778,6 +780,7 @@ class Game extends EventEmitter {
      */
     postEventCalculations() {
         this.effectEngine.reapplyStateDependentEffects();
+        this.attachmentValidityCheck.enforceValidity();
     }
 
     isPhaseSkipped(name) {
