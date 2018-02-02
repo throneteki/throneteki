@@ -42,7 +42,7 @@ class Login extends React.Component {
                     <Form name='login' apiLoading={ this.props.apiLoading } buttonText='Log In' onSubmit={ this.onLogin }>
                         <div className='form-group'>
                             <div className='col-sm-offset-2 col-sm-10'>
-                                <Link href='/forgot' >Forgot your password?</Link>
+                                <Link href='/forgot'>Forgot your password?</Link>
                             </div>
                         </div>
                     </Form>

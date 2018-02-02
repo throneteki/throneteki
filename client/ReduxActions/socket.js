@@ -128,6 +128,7 @@ export function connectLobby() {
         });
 
         socket.on('gamestate', game => {
+            state = getState();
             dispatch(lobbyMessageReceived('gamestate', game, state.auth.username));
         });
 
