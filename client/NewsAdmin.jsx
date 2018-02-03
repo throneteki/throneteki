@@ -16,10 +16,12 @@ class NewsAdmin extends React.Component {
         this.state = {
             newsText: ''
         };
+
+        this.onSaveClick = this.onSaveClick.bind(this);
     }
 
     componentWillMount() {
-        this.props.loadNews({ forceLoad: true });
+        this.props.loadNews({ limit: 5, forceLoad: true });
     }
 
     componentWillUpdate(props) {
@@ -34,6 +36,10 @@ class NewsAdmin extends React.Component {
         this.setState({ newsText: event.target.value });
     }
 
+    onEditTextChange(event) {
+        this.setState({ editText: event.target.value });
+    }
+
     onAddNews(event) {
         event.preventDefault();
 
@@ -46,6 +52,15 @@ class NewsAdmin extends React.Component {
         this.props.deleteNews(id);
     }
 
+    onEditClick(item) {
+        this.setState({ editItemId: item._id, editText: item.text });
+    }
+
+    onSaveClick() {
+        this.props.saveNews(this.state.editItemId, this.state.editText);
+        this.setState({ editItemId: undefined, editText: undefined });
+    }
+
     render() {
         let content = null;
 
@@ -53,10 +68,17 @@ class NewsAdmin extends React.Component {
             return (<tr key={ newsItem._id }>
                 <td>{ moment(newsItem.datePublished).format('YYYY-MM-DD') }</td>
                 <td>{ newsItem.poster }</td>
-                <td>{ newsItem.text }</td>
+                <td>
+                    { this.state.editItemId === newsItem._id ?
+                        <TextArea name='newsEditText' value={ this.state.editText } onChange={ this.onEditTextChange.bind(this) } rows='4' /> :
+                        newsItem.text }
+                </td>
                 <td>
                     <div className='btn-group'>
-                        <button type='button' className='btn btn-primary'>Edit</button>
+                        { this.state.editItemId === newsItem._id ?
+                            <button type='button' className='btn btn-primary' onClick={ this.onSaveClick }>Save</button> :
+                            <button type='button' className='btn btn-primary' onClick={ this.onEditClick.bind(this, newsItem) }>Edit</button>
+                        }
                         <button type='button' className='btn btn-danger' onClick={ this.onDeleteClick.bind(this, newsItem._id) }>Delete</button>
                     </div>
                 </td>
@@ -82,10 +104,10 @@ class NewsAdmin extends React.Component {
                     <table className='table table-striped'>
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Poster</th>
-                                <th>Text</th>
-                                <th>Action</th>
+                                <th className='col-sm-1'>Date</th>
+                                <th className='col-sm-1'>Poster</th>
+                                <th className='col-sm-8'>Text</th>
+                                <th className='col-sm-2'>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -116,6 +138,7 @@ NewsAdmin.propTypes = {
     loadNews: PropTypes.func,
     news: PropTypes.array,
     newsChanged: PropTypes.bool,
+    saveNews: PropTypes.func,
     successMessage: PropTypes.string
 };
 
@@ -125,6 +148,10 @@ function getApiLoadingStatus(state) {
     }
 
     if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.loading) {
+        return true;
+    }
+
+    if(state.api.SAVE_NEWS && state.api.SAVE_NEWS.loading) {
         return true;
     }
 
@@ -140,6 +167,10 @@ function getApiMessage(state) {
         return state.api.DELETE_NEWS.message;
     }
 
+    if(state.api.SAVE_NEWS && state.api.SAVE_NEWS.message) {
+        return state.api.SAVE_NEWS.message;
+    }
+
     return undefined;
 }
 
@@ -147,15 +178,23 @@ function getApiSuccess(state) {
     if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.success) {
         return true;
     }
+
+    if(state.api.SAVE_NEWS && state.api.SAVE_NEWS.success) {
+        return true;
+    }
 }
 
 function getSuccessMessage(state) {
-    if(state.news.newsSaved) {
+    if(state.news.newsAdded) {
         return 'News item added successfully';
     }
 
     if(state.news.newsDeleted) {
         return 'News item deleted successfully';
+    }
+
+    if(state.news.newsSaved) {
+        return 'News item saved successfully';
     }
 
     return undefined;
@@ -169,7 +208,7 @@ function mapStateToProps(state) {
         loadNews: state.news.loadNews,
         loading: state.api.loading,
         news: state.news.news,
-        newsChanged: state.news.newsSaved || state.news.newsDeleted,
+        newsChanged: state.news.newsSaved || state.news.newsDeleted || state.news.newsAdded,
         successMessage: getSuccessMessage(state)
     };
 }

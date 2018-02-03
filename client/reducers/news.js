@@ -11,8 +11,29 @@ function news(state = {
             return Object.assign({}, state, {
                 news: action.response.news
             });
+        case 'ADD_NEWS':
+            return Object.assign({}, state, {
+                newsAdded: false
+            });
         case 'NEWS_ADDED':
             news.unshift(action.response.newsItem);
+
+            return Object.assign({}, state, {
+                newsAdded: true,
+                news: news
+            });
+        case 'SAVE_NEWS':
+            return Object.assign({}, state, {
+                newsSaved: false
+            });
+        case 'NEWS_SAVED':
+            var matchingNews = news.find(n => {
+                return n._id === action.response.id;
+            });
+
+            if(matchingNews) {
+                matchingNews.text = action.response.text;
+            }
 
             return Object.assign({}, state, {
                 newsSaved: true,
@@ -20,8 +41,7 @@ function news(state = {
             });
         case 'DELETE_NEWS':
             return Object.assign({}, state, {
-                newsDeleted: false,
-                newsSaved: false
+                newsDeleted: false
             });
         case 'NEWS_DELETED':
             news = news.filter(n => {
@@ -34,6 +54,7 @@ function news(state = {
             });
         case 'CLEAR_NEWS_STATUS':
             return Object.assign({}, state, {
+                newsAdded: false,
                 newsSaved: false,
                 newsDeleted: false
             });

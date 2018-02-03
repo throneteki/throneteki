@@ -20,7 +20,7 @@ module.exports.init = function(server) {
             });
     });
 
-    server.put('/api/news', wrapAsync(async function(req, res) {
+    server.post('/api/news', wrapAsync(async function(req, res) {
         if(!req.user) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
@@ -31,6 +31,19 @@ module.exports.init = function(server) {
 
         let newsItem = await newsService.addNews({ poster: req.user.username, text: req.body.text, datePublished: new Date() });
         res.send({ success: true, newsItem: newsItem });
+    }));
+
+    server.put('/api/news/:id', wrapAsync(async function(req, res) {
+        if(!req.user) {
+            return res.status(401).send({ message: 'Unauthorized' });
+        }
+
+        if(!req.user.permissions || !req.user.permissions.canEditNews) {
+            return res.status(403).send({ message: 'Forbidden' });
+        }
+
+        await newsService.editNews(req.params.id, req.body.text);
+        res.send({ success: true, id: req.params.id, text: req.body.text });
     }));
 
     server.delete('/api/news/:id', wrapAsync(async function(req, res) {

@@ -28,6 +28,18 @@ class NewsService {
             });
     }
 
+    editNews(id, text) {
+        return this.news.update({ _id: id }, { '$set': { text: text } })
+            .then(() => {
+                return true;
+            })
+            .catch(err => {
+                logger.error('Error saving news item', err);
+
+                throw new Error('Error occured saving news item');
+            });
+    }
+
     deleteNews(id) {
         return this.news.remove({_id: id})
             .then(() => {
