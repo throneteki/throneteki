@@ -50,8 +50,29 @@ export function addNews(newsText) {
             return state.news.news;
         },
         callAPI: () => $.ajax('/api/news', {
-            type: 'PUT',
+            type: 'POST',
             data: { text: newsText }
+        })
+    };
+}
+
+export function saveNews(id, text) {
+    return {
+        types: ['SAVE_NEWS', 'NEWS_SAVED'],
+        shouldCallAPI: () => true,
+        callAPI: () => $.ajax(`/api/news/${id}`, {
+            type: 'PUT',
+            data: { text: text }
+        })
+    };
+}
+
+export function deleteNews(id) {
+    return {
+        types: ['DELETE_NEWS', 'NEWS_DELETED'],
+        shouldCallAPI: () => true,
+        callAPI: () => $.ajax(`/api/news/${id}`, {
+            type: 'DELETE'
         })
     };
 }
