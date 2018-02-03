@@ -11,8 +11,6 @@ class NewsItem extends React.Component {
     render() {
         let tokens = this.props.text.split(/\s/);
 
-        console.info(this.tokens);
-
         let i = 0;
         let parts = tokens.map(t => {
             if(t.match(this.regex)) {
