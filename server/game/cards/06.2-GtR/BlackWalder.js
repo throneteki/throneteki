@@ -8,7 +8,6 @@ class BlackWalder extends DrawCard {
                 this.game.currentChallenge.attackingPlayer === this.controller &&
                 this.game.currentChallenge.number === 3),
             match: this,
-            recalculateWhen: ['onAttackersDeclared'],
             effect: [
                 ability.effects.addKeyword('Renown'),
                 ability.effects.dynamicStrength(() => this.tokens['gold'] * 2)

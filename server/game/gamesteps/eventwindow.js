@@ -3,7 +3,7 @@ const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
 
 class EventWindow extends BaseStep {
-    constructor(game, event) {
+    constructor(game, event, postHandlerFunc = () => true) {
         super(game);
 
         this.event = event;
@@ -18,6 +18,7 @@ class EventWindow extends BaseStep {
             new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
             new SimpleStep(game, () => this.openAbilityWindow('reaction'))
         ]);
+        this.postHandlerFunc = postHandlerFunc;
     }
 
     queueStep(step) {
@@ -73,6 +74,7 @@ class EventWindow extends BaseStep {
         }
 
         this.event.executeHandler();
+        this.postHandlerFunc();
 
         if(this.event.cancelled) {
             return;

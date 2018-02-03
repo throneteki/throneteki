@@ -38,8 +38,6 @@ const PlayAreaLocations = ['play area', 'active plot'];
  *                    the card to apply the effect.
  * effect.unapply   - function that takes a card and a context object and modifies
  *                    the card to remove the previously applied effect.
- * recalculateWhen  - optional array of event names that indicate when an effect
- *                    should be recalculated by the engine.
  */
 class Effect {
     constructor(game, source, properties) {
@@ -57,8 +55,7 @@ class Effect {
         this.targets = [];
         this.context = { game: game, source: source };
         this.active = !source.facedown;
-        this.recalculateWhen = properties.recalculateWhen || [];
-        this.isConditional = !!properties.condition || !_.isEmpty(properties.recalculateWhen);
+        this.isConditional = !!properties.condition;
         this.isStateDependent = this.isConditional || this.effect.isStateDependent;
     }
 

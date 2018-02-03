@@ -29,8 +29,10 @@ describe('Jhogo', function() {
 
             this.completeMarshalPhase();
 
-            this.player2Object.moveCard(this.chud1, 'dead pile');
-            this.player2Object.moveCard(this.chud2, 'dead pile');
+            this.player2.dragCard(this.chud1, 'dead pile');
+            this.player2.dragCard(this.chud2, 'dead pile');
+
+            expect(this.player2Object.deadPile.size()).toBe(2);
         });
 
         describe('when attacking', function() {
@@ -41,7 +43,6 @@ describe('Jhogo', function() {
             });
 
             it('get strength boosted by the number of opponent dead characters', function() {
-                expect(this.player2Object.deadPile.size()).toBe(2);
                 expect(this.jhogo.getStrength()).toBe(5);
             });
 

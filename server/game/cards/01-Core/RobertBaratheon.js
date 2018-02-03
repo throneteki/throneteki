@@ -4,7 +4,6 @@ class RobertBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            recalculateWhen: ['onCardStood', 'onCardKneeled'],
             effect: ability.effects.dynamicStrength(() => this.calculateStrength())
         });
     }

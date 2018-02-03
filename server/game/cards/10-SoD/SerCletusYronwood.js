@@ -4,8 +4,7 @@ class SerCletusYronwood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: card => card === card.controller.activePlot,
-            effect: ability.effects.dynamicInitiative(() => this.controller.getNumberOfUsedPlots()),
-            recalculateWhen: ['onUsedPlotsModified']
+            effect: ability.effects.dynamicInitiative(() => this.controller.getNumberOfUsedPlots())
         });
     }
 }
