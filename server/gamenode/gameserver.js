@@ -67,6 +67,8 @@ class GameServer {
         }
 
         this.io.on('connection', this.onConnection.bind(this));
+
+        setInterval(() => this.clearStaleFinishedGames(), 60 * 1000);
     }
 
     debugDump() {
@@ -147,6 +149,18 @@ class GameServer {
         }
 
         return results;
+    }
+
+    clearStaleFinishedGames() {
+        const timeout = 20 * 60 * 1000;
+
+        let staleGames = _.filter(this.games, game => (!!game.finishedAt || !game.players.some(p => !p.left && !p.disconnected)) && Date.now() - game.createdAt > timeout);
+
+        for(let game of staleGames) {
+            logger.info('closed finished game', game.id, 'due to inactivity');
+            delete this.games[game.id];
+            this.zmqSocket.send('GAMECLOSED', { game: game.id });
+        }
     }
 
     runAndCatchErrors(game, func) {
