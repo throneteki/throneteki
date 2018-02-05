@@ -4,18 +4,15 @@ class ScalingTheWall extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.attackingPlayer === this.controller &&
-                    this.hasAttackingWildling()
-                )
+                afterChallenge: event => event.challenge.winner === this.controller && this.hasAttackingWildling()
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.getType() === 'location' && !card.isLimited()
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'location' && !card.isLimited() &&
+                                                  card.controller === context.event.challenge.loser
             },
             handler: context => {
-                this.game.addMessage('{0} uses {1} to return {2} to it\'s owners hand', context.player, this, context.target);
+                this.game.addMessage('{0} plays {1} to return {2} to {3}\'s hand', context.player, this, context.target, context.target.owner);
                 context.target.owner.returnCardToHand(context.target);
             }
         });
