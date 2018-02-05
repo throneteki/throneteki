@@ -190,3 +190,21 @@ export function closeGameSocket() {
         return dispatch(gameSocketClosed());
     };
 }
+
+export function gameStarting() {
+    return {
+        type: 'GAME_STARTING'
+    };
+}
+
+export function startGame(id) {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        if(state.lobby.socket) {
+            state.lobby.socket.emit('startgame', id);
+        }
+
+        return dispatch(gameStarting());
+    };
+}
