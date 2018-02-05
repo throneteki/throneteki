@@ -152,12 +152,16 @@ class GameServer {
     }
 
     clearStaleFinishedGames() {
-        const timeout = 20 * 60 * 1000;
+        const timeout = 1 * 60 * 1000;
 
-        let staleGames = _.filter(this.games, game => (!!game.finishedAt || !game.players.some(p => !p.left && !p.disconnected)) && Date.now() - game.createdAt > timeout);
+        let staleGames = _.filter(this.games, game => (!!game.finishedAt || !game.getPlayers().some(p => !p.left && !p.disconnected)) && Date.now() - game.createdAt > timeout);
 
         for(let game of staleGames) {
             logger.info('closed finished game', game.id, 'due to inactivity');
+            for(let player of Object.values(game.getPlayersAndSpectators())) {
+                player.socket.disconnect();
+            }
+
             delete this.games[game.id];
             this.zmqSocket.send('GAMECLOSED', { game: game.id });
         }
