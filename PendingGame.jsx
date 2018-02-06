@@ -145,7 +145,7 @@ class InnerPendingGame extends React.Component {
 
         this.setState({ waiting: true });
 
-        this.props.socket.emit('startgame', this.props.currentGame.id);
+        this.props.startGame(this.props.currentGame.id);
     }
 
     sendMessage() {
@@ -243,6 +243,7 @@ InnerPendingGame.propTypes = {
     loading: PropTypes.bool,
     sendSocketMessage: PropTypes.func,
     socket: PropTypes.object,
+    startGame: PropTypes.func,
     username: PropTypes.string,
     zoomCard: PropTypes.func
 };
