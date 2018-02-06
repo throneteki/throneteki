@@ -159,7 +159,9 @@ class GameServer {
         for(let game of staleGames) {
             logger.info('closed finished game', game.id, 'due to inactivity');
             for(let player of Object.values(game.getPlayersAndSpectators())) {
-                player.socket.disconnect();
+                if(player.socket) {
+                    player.socket.disconnect();
+                }
             }
 
             delete this.games[game.id];
