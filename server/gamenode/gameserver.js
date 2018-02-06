@@ -152,7 +152,7 @@ class GameServer {
     }
 
     clearStaleFinishedGames() {
-        const timeout = 1 * 60 * 1000;
+        const timeout = 20 * 60 * 1000;
 
         let staleGames = _.filter(this.games, game => (!!game.finishedAt || !game.getPlayers().some(p => !p.left && !p.disconnected)) && Date.now() - game.createdAt > timeout);
 
