@@ -14,6 +14,7 @@ class ChallengeFlow extends BaseStep {
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(this.game, () => this.resetCards()),
+            new SimpleStep(this.game, () => this.recalculateEffects()),
             new SimpleStep(this.game, () => this.announceChallenge()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
             new SimpleStep(this.game, () => this.chooseStealthTargets()),
@@ -32,6 +33,14 @@ class ChallengeFlow extends BaseStep {
 
     resetCards() {
         this.challenge.resetCards();
+    }
+
+    recalculateEffects() {
+        // Explicit effect recalculation is needed here since conditions that
+        // watch the currentChallenge property need recalculation before
+        // attackers are chosen, but the challenge initiation event isn't fired
+        // until after attackers have been chosen.
+        this.game.effectEngine.reapplyStateDependentEffects();
     }
 
     announceChallenge() {
