@@ -958,10 +958,15 @@ class Player extends Spectator {
     }
 
     removeAttachment(attachment, allowSave = true) {
+        attachment.isBeingRemoved = true;
         if(attachment.isTerminal()) {
-            attachment.owner.moveCard(attachment, 'discard pile', { allowSave: allowSave });
+            attachment.owner.moveCard(attachment, 'discard pile', { allowSave: allowSave }, () => {
+                attachment.isBeingRemoved = false;
+            });
         } else {
-            attachment.owner.moveCard(attachment, 'hand', { allowSave: allowSave });
+            attachment.owner.moveCard(attachment, 'hand', { allowSave: allowSave }, () => {
+                attachment.isBeingRemoved = false;
+            });
         }
     }
 

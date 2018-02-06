@@ -114,5 +114,57 @@ describe('attachments', function() {
                 expect(this.character.attachments).not.toContain(this.attachment);
             });
         });
+
+        describe('when the character an attachment is placed on leaves play', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Winterfell Steward', 'Little Bird'
+                ]);
+                const deck2 = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Milk of the Poppy'
+                ]);
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.character = this.player1.findCardByName('Winterfell Steward', 'hand');
+                this.nonTerminalAttachment = this.player1.findCardByName('Little Bird', 'hand');
+                this.terminalAttachment = this.player2.findCardByName('Milk of the Poppy', 'hand');
+
+                this.player1.clickCard(this.character);
+                this.player1.clickCard(this.nonTerminalAttachment);
+                this.completeSetup();
+
+                // Attach the non-terminal attachment
+                this.player1.clickCard(this.nonTerminalAttachment);
+                this.player1.clickCard(this.character);
+
+                this.player1.selectPlot('A Noble Cause');
+                this.player2.selectPlot('A Noble Cause');
+                this.selectFirstPlayer(this.player2);
+
+                // Attach the terminal attachment
+                this.player2.clickCard(this.terminalAttachment);
+                this.player2.clickCard(this.character);
+
+                expect(this.character.attachments).toContain(this.nonTerminalAttachment);
+                expect(this.character.attachments).toContain(this.terminalAttachment);
+
+                this.player1.dragCard(this.character, 'dead pile');
+            });
+
+            it('should return the non-terminal attachment back to hand', function() {
+                expect(this.nonTerminalAttachment.location).toBe('hand');
+                expect(this.player1Object.hand).toContain(this.nonTerminalAttachment);
+            });
+
+            it('should place the terminal attachment in discard', function() {
+                expect(this.terminalAttachment.location).toBe('discard pile');
+                expect(this.player2Object.discardPile).toContain(this.terminalAttachment);
+            });
+        });
     });
 });
