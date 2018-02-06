@@ -46,6 +46,7 @@ function games(state = {}, action) {
                 connected: false,
                 connecting: false,
                 gameHost: undefined,
+                newGame: false,
                 socket: undefined
             });
         case 'JOIN_PASSWORD_GAME':
