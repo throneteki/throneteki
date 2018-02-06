@@ -556,6 +556,7 @@ class Player extends Spectator {
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
             card.controller = this;
+            card.kneeled = playingType !== 'setup' && !!card.entersPlayKneeled || !!options.kneeled;
             card.wasAmbush = (playingType === 'ambush');
 
             if(!dupeCard && !isSetupAttachment) {

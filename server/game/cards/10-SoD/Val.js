@@ -11,8 +11,7 @@ class Val extends DrawCard {
                                        card.getType() === 'character' && card.hasTrait('Wildling') && card.getPrintedCost() <= 4
             },
             handler: context => {
-                context.player.putIntoPlay(context.target);
-                context.target.kneeled = true;
+                context.player.putIntoPlay(context.target, 'play', { kneeled: true });
                 this.game.currentChallenge.addAttacker(context.target);
 
                 this.game.addMessage('{0} uses {1} to put {2} into play from their hand knelt, participating as an attacker',

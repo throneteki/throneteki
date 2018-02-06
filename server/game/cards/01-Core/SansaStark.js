@@ -1,21 +1,13 @@
 const DrawCard = require('../../drawcard.js');
 
 class SansaStark extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onCardEntersPlay']);
-    }
-
-    onCardEntersPlay(event) {
-        if(event.card !== this || this.controller.phase === 'setup') {
-            return;
-        }
-
-        this.controller.kneelCard(this);
-    }
-
     setupCardAbilities(ability) {
+        this.persistentEffect({
+            location: 'any',
+            targetLocation: 'any',
+            match: this,
+            effect: ability.effects.entersPlayKneeled()
+        });
         this.reaction({
             when: {
                 onCardStood: event => event.card === this
