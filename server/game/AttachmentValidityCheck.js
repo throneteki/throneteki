@@ -28,7 +28,7 @@ class AttachmentValidityCheck {
     }
 
     filterInvalidAttachments() {
-        let attachmentsInPlay = this.game.filterCardsInPlay(card => card.parent && card.getType() === 'attachment');
+        let attachmentsInPlay = this.game.filterCardsInPlay(card => card.parent && card.getType() === 'attachment' && !card.isBeingRemoved);
         return attachmentsInPlay.filter(card => !card.controller.canAttach(card, card.parent));
     }
 
