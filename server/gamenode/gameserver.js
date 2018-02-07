@@ -154,7 +154,7 @@ class GameServer {
     clearStaleFinishedGames() {
         const timeout = 20 * 60 * 1000;
 
-        let staleGames = _.filter(this.games, game => (!!game.finishedAt || !game.getPlayers().some(p => !p.left && !p.disconnected)) && Date.now() - game.createdAt > timeout);
+        let staleGames = _.filter(this.games, game => game.finishedAt && (Date.now() - game.finishedAt > timeout));
 
         for(let game of staleGames) {
             logger.info('closed finished game', game.id, 'due to inactivity');
