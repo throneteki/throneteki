@@ -50,7 +50,9 @@ class EffectEngine {
             this.effectsBeingRecalculated = this.effectsBeingRecalculated.concat(needsRecalc);
 
             for(let effect of needsRecalc) {
-                effect.reapply(this.getTargets());
+                if(this.effects.includes(effect)) {
+                    effect.reapply(this.getTargets());
+                }
             }
         });
 
