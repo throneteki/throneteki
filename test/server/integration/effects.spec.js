@@ -61,7 +61,7 @@ describe('effects', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'Sneak Attack', 'Winter Festival',
-                    'Eddard Stark (WotN)', 'Tyene Sand',
+                    'Eddard Stark (WotN)', 'Tyene Sand (TS)',
                     // Add enough cards to prevent being decked to make the
                     // winner assertion in the test reliable.
                     'Hedge Knight', 'Hedge Knight', 'Hedge Knight', 'Hedge Knight',
@@ -75,11 +75,11 @@ describe('effects', function() {
 
                 this.character = this.player1.findCardByName('Eddard Stark');
                 this.player1Object.moveCard(this.character, 'hand');
-                let tyene = this.player2.findCardByName('Tyene Sand');
+                let tyene = this.player2.findCardByName('Tyene Sand (TS)');
                 this.player2Object.moveCard(tyene, 'hand');
 
                 this.player1.clickCard(this.character);
-                this.player2.clickCard('Tyene Sand', 'hand');
+                this.player2.clickCard('Tyene Sand (TS)', 'hand');
                 this.completeSetup();
 
                 this.player1.selectPlot('Winter Festival');
@@ -94,7 +94,7 @@ describe('effects', function() {
                 this.player1.clickPrompt('Done');
 
                 this.player2.clickPrompt('Intrigue');
-                this.player2.clickCard('Tyene Sand');
+                this.player2.clickCard('Tyene Sand (TS)');
                 this.player2.clickPrompt('Done');
 
                 this.skipActionWindow();
@@ -129,7 +129,7 @@ describe('effects', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'Sneak Attack', 'Famine',
-                    'Eddard Stark (WotN)', 'Tyene Sand', 'Winterfell Steward', 'Winterfell Steward'
+                    'Eddard Stark (WotN)', 'Tyene Sand (TS)', 'Winterfell Steward', 'Winterfell Steward'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -139,7 +139,7 @@ describe('effects', function() {
                 this.character = this.player1.findCardByName('Eddard Stark', 'hand');
 
                 this.player1.clickCard(this.character);
-                this.player2.clickCard('Tyene Sand', 'hand');
+                this.player2.clickCard('Tyene Sand (TS)', 'hand');
                 this.completeSetup();
 
                 this.player1.selectPlot('Famine');

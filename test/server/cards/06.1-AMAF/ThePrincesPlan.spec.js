@@ -3,7 +3,7 @@ describe('The Prince\'s Plan', function() {
         beforeEach(function() {
             const deck = this.buildDeck('martell', [
                 'A Noble Cause',
-                'The Prince\'s Plan', 'Obara Sand', 'The Red Viper (Core)'
+                'The Prince\'s Plan', 'Obara Sand (Core)', 'The Red Viper (Core)'
             ]);
 
             this.player1.selectDeck(deck);

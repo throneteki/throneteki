@@ -4,14 +4,14 @@ describe('trait change', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('martell', [
                     'A Tourney for the King',
-                    'Arianne Martell', 'Knighted'
+                    'Arianne Martell (Core)', 'Knighted'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.keepStartingHands();
 
-                this.character = this.player1.findCardByName('Arianne Martell', 'hand');
+                this.character = this.player1.findCardByName('Arianne Martell (Core)', 'hand');
                 this.knighted = this.player1.findCardByName('Knighted', 'hand');
 
             });

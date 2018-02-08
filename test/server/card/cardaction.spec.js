@@ -5,6 +5,12 @@ describe('CardAction', function () {
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'raiseEvent', 'resolveAbility']);
         this.gameSpy.currentPhase = 'marshal';
 
+        this.playerSpy = jasmine.createSpyObj('player', ['canTrigger']);
+        this.playerSpy.canTrigger.and.returnValue(true);
+
+        this.otherPlayerSpy = jasmine.createSpyObj('player', ['canTrigger']);
+        this.otherPlayerSpy.canTrigger.and.returnValue(true);
+
         this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isBlank']);
         this.handlerSpy = jasmine.createSpy('handler');
 
@@ -110,7 +116,7 @@ describe('CardAction', function () {
 
     describe('execute()', function() {
         beforeEach(function() {
-            this.player = {};
+            this.player = this.playerSpy;
             this.cardSpy.controller = this.player;
             this.cardSpy.location = 'play area';
         });
@@ -146,7 +152,7 @@ describe('CardAction', function () {
 
         describe('when executed with a player other than the card controller', function() {
             beforeEach(function() {
-                this.otherPlayer = {};
+                this.otherPlayer = this.otherPlayerSpy;
             });
 
             describe('and the anyPlayer property is not set', function() {

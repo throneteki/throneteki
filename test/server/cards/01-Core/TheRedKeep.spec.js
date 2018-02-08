@@ -3,7 +3,7 @@ describe('The Red Keep', function() {
         beforeEach(function() {
             const deck = this.buildDeck('stark', [
                 'Trading with the Pentoshi',
-                'The Red Keep', 'Areo Hotah', 'Maester Caleotte', 'Nightmares'
+                'The Red Keep', 'Areo Hotah (Core)', 'Maester Caleotte', 'Nightmares'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
