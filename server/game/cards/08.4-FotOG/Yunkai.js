@@ -10,7 +10,7 @@ class Yunkai extends DrawCard {
                              this.game.currentChallenge.getNumberOfParticipants() > 0,
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.discardXGold(() => this.getExtremeParticipatingStr(true), () => this.getExtremeParticipatingStr(false))
+                ability.costs.discardXGold(() => this.getLowestParticipatingStr(), () => this.getHighestParticipatingStr())
             ],
             handler: context => {
                 let participantsToRemove = this.game.filterCardsInPlay(card => this.game.currentChallenge.isParticipating(card) && card.getStrength() <= context.xValue);
@@ -36,17 +36,21 @@ class Yunkai extends DrawCard {
         this.game.addMessage('{0} places 2 gold tokens from the treasury on {1}', this.controller, this);
     }
 
-    getExtremeParticipatingStr(lowest) {
-        let participatingCharacters = this.game.filterCardsInPlay(card => this.game.currentChallenge.isParticipating(card));
-        let strengths = _.map(participatingCharacters, card => card.getStrength());
-        
-        if(lowest) {
-            let lowestStrength = _.min(strengths);
-            return _.max([lowestStrength, 1]);
-        }
+    getLowestParticipatingStr() {
+        let strengths = this.getParticipatingStrengths();
+        let lowestStrength = _.min(strengths);
+        return _.max([lowestStrength, 1]);
+    }
 
+    getHighestParticipatingStr() {
+        let strengths = this.getParticipatingStrengths();
         let highestStrength = _.max(strengths);
         return _.max([highestStrength, 1]);
+    }
+
+    getParticipatingStrengths() {
+        let participatingCharacters = this.game.filterCardsInPlay(card => this.game.currentChallenge.isParticipating(card));
+        return _.map(participatingCharacters, card => card.getStrength());
     }
 }
 
