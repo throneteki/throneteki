@@ -54,7 +54,7 @@ class Player extends Spectator {
         this.cannotGainGold = false;
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
-        this.cannotTriggerCardAbilities = false;
+        this.triggerRestrictions = [];
         this.playCardRestrictions = [];
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
@@ -478,6 +478,10 @@ class Player extends Spectator {
         }
 
         return true;
+    }
+
+    canTrigger(card) {
+        return !_.any(this.triggerRestrictions, restriction => restriction(card));
     }
 
     canPlay(card, playingType = 'play') {

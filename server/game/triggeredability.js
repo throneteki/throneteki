@@ -64,7 +64,7 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if(!this.isForcedAbility() && context.player && context.player.cannotTriggerCardAbilities) {
+        if(!this.isForcedAbility() && context.player && !context.player.canTrigger(this.card)) {
             return false;
         }
 
