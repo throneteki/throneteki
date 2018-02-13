@@ -61,6 +61,11 @@ const Costs = {
      */
     kneelMultiple: (amount, condition) => CostBuilders.kneel.selectMultiple(amount, condition),
     /**
+     * Cost that requires kneeling any number of cards that match the
+     * passed condition predicate function.
+     */
+    kneelAny: (condition) => CostBuilders.kneel.selectAny(condition),
+    /**
      * Cost that will sacrifice the card that initiated the ability.
      */
     sacrificeSelf: () => CostBuilders.sacrifice.self(),

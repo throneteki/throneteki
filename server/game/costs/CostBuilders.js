@@ -35,7 +35,8 @@ const CostBuilders = {
     }),
     kneel: new CostBuilder(new KneelCost(), {
         select: 'Select card to kneel',
-        selectMultiple: number => `Select ${number} cards to kneel`
+        selectMultiple: number => `Select ${number} cards to kneel`,
+        selectAny: 'Select any number of cards to kneel'
     }),
     putIntoPlay: new CostBuilder(new PutIntoPlayCost(), {
         select: 'Select card to put into play',
