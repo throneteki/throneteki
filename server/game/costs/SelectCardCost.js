@@ -36,11 +36,7 @@ class SelectCardCost {
                 return true;
             },
             onCancel: () => {
-                if(this.proceedOnCancel) {
-                    result.value = true;
-                } else {
-                    result.value = false;
-                }
+                result.value = this.proceedOnCancel;
                 result.resolved = true;
             }
         });
