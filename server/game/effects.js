@@ -699,6 +699,7 @@ const Effects = {
     cannotBeStood: cannotEffect('stand'),
     cannotBeKilled: cannotEffect('kill'),
     cannotBeSaved: cannotEffect('save'),
+    cannotBeReturnedToHand: cannotEffect('returnToHand'),
     cannotGainPower: cannotEffect('gainPower'),
     cannotGainGold: function() {
         return {
