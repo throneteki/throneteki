@@ -58,6 +58,18 @@ class CostBuilder {
     }
 
     /**
+     * Returns a cost that asks the player to select any number of cards (including 0) matching the passed condition.
+     * @param {function} condition Function that takes a card and ability context and returns whether to allow the player to select it.
+     */
+    selectAny(condition = () => true) {
+        return new SelectCardCost(this.action, {
+            mode: 'optional',
+            activePromptTitle: this.titles.selectAny,
+            cardCondition: condition
+        });
+    }
+
+    /**
      * Returns a cost that is applied to the parent card that the activating card is attached to.
      */
     parent() {

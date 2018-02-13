@@ -5,6 +5,7 @@ class SelectCardCost {
         this.action = action;
         this.selector = this.createSelector(action, promptProperties);
         this.activePromptTitle = promptProperties.activePromptTitle;
+        this.proceedOnCancel = promptProperties.mode === 'optional';
     }
 
     createSelector(action, properties) {
@@ -35,7 +36,7 @@ class SelectCardCost {
                 return true;
             },
             onCancel: () => {
-                result.value = false;
+                result.value = this.proceedOnCancel;
                 result.resolved = true;
             }
         });
