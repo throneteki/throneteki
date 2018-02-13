@@ -309,6 +309,10 @@ class BaseCard {
         return !!this.factions[normalizedFaction];
     }
 
+    isOutOfFaction() {
+        return !this.isFaction(this.controller.getFaction()) && !this.isFaction('neutral');
+    }
+
     getFactions() {
         let factions = _.filter(ValidFactions, faction => this.isFaction(faction));
 
