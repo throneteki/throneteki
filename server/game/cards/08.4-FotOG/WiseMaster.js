@@ -10,7 +10,7 @@ class WiseMaster extends DrawCard {
                 type: 'select',
                 activePromptTitle: 'Select an attachment or event',
                 cardCondition: card => card.location === 'discard pile' && card.controller === this.controller &&
-                                       ['attachment', 'event'].includes(card.getType()) && !card.isFaction(this.controller.getFaction())
+                                       ['attachment', 'event'].includes(card.getType()) && card.isOutOfFaction()
             },
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);
