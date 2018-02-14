@@ -55,7 +55,7 @@ class Effect {
         this.targets = [];
         this.context = { game: game, source: source };
         this.active = !source.facedown;
-        this.isConditional = !!properties.condition;
+        this.isConditional = !!properties.condition || this.targetType === 'player' && _.isFunction(properties.match);
         this.isStateDependent = this.isConditional || this.effect.isStateDependent;
     }
 
