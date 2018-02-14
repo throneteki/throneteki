@@ -8,11 +8,17 @@ describe('EffectEngine', function () {
         this.handCard = { location: 'hand' };
         this.discardedCard = { location: 'discard pile' };
         this.drawCard = { location: 'draw deck' };
+        this.deadCard = { location: 'dead pile' };
+        this.activePlot = { location: 'active plot' };
+        this.plotCard = { location: 'plot deck' };
+        this.revealedPlot = { location: 'revealed plot' };
+        this.agendaCard = { location: 'agenda' };
+        this.factionCard = { location: 'faction card' };
 
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'getPlayers', 'queueSimpleStep']);
         this.gameSpy.getPlayers.and.returnValue([]);
         this.gameSpy.queueSimpleStep.and.callFake(func => func());
-        this.gameSpy.allCards = _([this.handCard, this.playAreaCard, this.discardedCard, this.drawCard]);
+        this.gameSpy.allCards = _([this.handCard, this.playAreaCard, this.discardedCard, this.drawCard, this.deadCard, this.activePlot, this.plotCard, this.revealedPlot, this.agendaCard, this.factionCard]);
 
         this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
         this.effectSpy.isInActiveLocation.and.returnValue(true);
@@ -31,7 +37,7 @@ describe('EffectEngine', function () {
         });
 
         it('should add existing valid targets to the effect', function() {
-            expect(this.effectSpy.addTargets).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]);
+            expect(this.effectSpy.addTargets).toHaveBeenCalledWith(jasmine.arrayContaining([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]));
         });
 
         describe('when the effect has custom duration', function() {
@@ -57,8 +63,28 @@ describe('EffectEngine', function () {
             this.gameSpy.getPlayers.and.returnValue([this.player]);
         });
 
-        it('should return all play area cards, discarded cards, players and the game object', function() {
-            expect(this.engine.getTargets()).toEqual([this.handCard, this.playAreaCard, this.discardedCard, this.player, this.gameSpy]);
+        it('should not include cards in the plot deck', function() {
+            expect(this.engine.getTargets()).not.toContain(this.plotCard);
+        });
+
+        it('should not include cards in the revealed plots pile', function() {
+            expect(this.engine.getTargets()).not.toContain(this.revealedPlot);
+        });
+
+        it('should not include agenda cards', function() {
+            expect(this.engine.getTargets()).not.toContain(this.agendaCard);
+        });
+
+        it('should not include faction cards', function() {
+            expect(this.engine.getTargets()).not.toContain(this.factionCard);
+        });
+
+        it('should include player objects', function() {
+            expect(this.engine.getTargets()).toContain(this.player);
+        });
+
+        it('should include the game object', function() {
+            expect(this.engine.getTargets()).toContain(this.gameSpy);
         });
     });
 
@@ -74,7 +100,7 @@ describe('EffectEngine', function () {
             });
 
             it('should reapply valid targets', function() {
-                expect(this.effectSpy.reapply).toHaveBeenCalledWith([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]);
+                expect(this.effectSpy.reapply).toHaveBeenCalledWith(jasmine.arrayContaining([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]));
             });
         });
 
@@ -273,7 +299,7 @@ describe('EffectEngine', function () {
                 });
 
                 it('should set the active value for the effect along with cards to target', function() {
-                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true, [this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]);
+                    expect(this.effectSpy.setActive).toHaveBeenCalledWith(true, jasmine.arrayContaining([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]));
                 });
             });
 

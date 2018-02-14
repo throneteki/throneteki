@@ -55,6 +55,16 @@ const Effects = {
             }
         };
     },
+    entersPlayKneeled: function() {
+        return {
+            apply: function(card) {
+                card.entersPlayKneeled = true;
+            },
+            unapply: function(card) {
+                card.entersPlayKneeled = false;
+            }
+        };
+    },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),

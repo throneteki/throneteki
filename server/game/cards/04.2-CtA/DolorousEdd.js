@@ -14,9 +14,7 @@ class DolorousEdd extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 this.game.addMessage('{0} kneels their faction card to put {1} into play as a defender', this.controller, this);
-                this.controller.putIntoPlay(this);
-                // Manually kneel Edd, since he enters play that way - should not fire a kneeling event.
-                this.kneeled = true;
+                this.controller.putIntoPlay(this, 'play', { kneeled: true });
                 this.game.currentChallenge.addDefender(this);
                 this.game.once('afterChallenge', event => this.promptOnWin(event.challenge));
             }
