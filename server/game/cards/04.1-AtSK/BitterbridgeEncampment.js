@@ -6,7 +6,7 @@ class BitterbridgeEncampment extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Summer'))
+                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Summer')) && !this.kneeled
             },
             handler: () => {
                 this.controller.kneelCard(this);
@@ -19,7 +19,7 @@ class BitterbridgeEncampment extends DrawCard {
     }
 
     cancelSelection(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
+        this.game.addMessage('{0} does not select a character for {1}', player, this);
         this.proceedToNextStep();
     }
 
@@ -44,7 +44,7 @@ class BitterbridgeEncampment extends DrawCard {
             this.game.promptForSelect(currentPlayer, {
                 source: this,
                 cardCondition: card => card.controller === currentPlayer && card.getType() === 'character' && card.location === 'hand' &&
-                                       this.controller.canPutIntoPlay(card),
+                                       currentPlayer.canPutIntoPlay(card),
                 onSelect: (player, card) => this.onCardSelected(player, card),
                 onCancel: (player) => this.cancelSelection(player)
             });
