@@ -8,11 +8,10 @@ const CardgameDbImageSource = require('./fetchdata/CardgameDbImageSource.js');
 const JsonCardSource = require('./fetchdata/JsonCardSource.js');
 const NoImageSource = require('./fetchdata/NoImageSource.js');
 const ThronesDbApiCardSource = require('./fetchdata/ThronesDbApiCardSource.js');
-const ThronesDbImageSource = require('./fetchdata/ThronesDbImageSource.js');
 
 const optionsDefinition = [
     { name: 'card-source', type: String, defaultValue: 'thronesdb' },
-    { name: 'image-source', type: String, defaultValue: 'thronesdb' },
+    { name: 'image-source', type: String, defaultValue: 'cardgamedb' },
     { name: 'image-dir', type: String, defaultValue: path.join(__dirname, '..', '..', 'public', 'img', 'cards') },
     { name: 'no-images', type: Boolean, defaultValue: false }
 ];
@@ -36,8 +35,6 @@ function createImageSource(options) {
     switch(options['image-source']) {
         case 'none':
             return new NoImageSource();
-        case 'thronesdb':
-            return new ThronesDbImageSource();
         case 'cardgamedb':
             return new CardgameDbImageSource();
     }
