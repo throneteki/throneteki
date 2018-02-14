@@ -119,6 +119,31 @@ module.exports.init = function(server) {
             return next();
         }
 
+        let domain = req.body.email.substring(req.body.email.lastIndexOf('@') + 1);
+
+        try {
+            let response = await util.httpRequest(`http://check.block-disposable-email.com/easyapi/json/${config.emailBlockKey}/${domain}`);
+            let answer = JSON.parse(response);
+
+            if(answer.status !== 'success') {
+                res.send({ success: false, message: 'It was not possible to verify your email address.  Please try again later' });
+
+                return next();
+            }
+
+            if(answer.domain_status === 'block') {
+                res.send({ success: false, message: 'One time use email services are not permitted on this site.  Please use a real email address' });
+
+                return next();
+            }
+        } catch(err) {
+            logger.warn('Could not valid email address', domain, err);
+
+            res.send({ success: false, message: 'It was not possible to verify your email address.  Please try again later' });
+
+            return next();
+        }
+
         let passwordHash = await hashPassword(req.body.password, 10);
 
         let expiration = moment().add(7, 'days');
@@ -135,7 +160,8 @@ module.exports.init = function(server) {
             emailHash: crypto.createHash('md5').update(req.body.email).digest('hex'),
             verified: false,
             activiationToken: activiationToken,
-            activiationTokenExpiry: formattedExpiration
+            activiationTokenExpiry: formattedExpiration,
+            registerIp: req.get('x-real-ip')
         };
 
         user = await userService.addUser(newUser);
