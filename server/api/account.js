@@ -125,13 +125,15 @@ module.exports.init = function(server) {
             let response = await util.httpRequest(`http://check.block-disposable-email.com/easyapi/json/${config.emailBlockKey}/${domain}`);
             let answer = JSON.parse(response);
 
-            if(answer.status !== 'success') {
+            if(answer.request_status !== 'success') {
+                logger.warn('Failed to check email address', answer);
                 res.send({ success: false, message: 'It was not possible to verify your email address.  Please try again later' });
 
                 return next();
             }
 
             if(answer.domain_status === 'block') {
+                logger.warn('Blocking', domain, 'from registering the account', req.body.username);
                 res.send({ success: false, message: 'One time use email services are not permitted on this site.  Please use a real email address' });
 
                 return next();
