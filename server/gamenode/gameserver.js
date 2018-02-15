@@ -160,6 +160,7 @@ class GameServer {
             logger.info('closed finished game', game.id, 'due to inactivity');
             for(let player of Object.values(game.getPlayersAndSpectators())) {
                 if(player.socket) {
+                    player.socket.tIsClosing = true;
                     player.socket.disconnect();
                 }
             }
@@ -342,12 +343,14 @@ class GameServer {
 
         game.disconnect(socket.user.username);
 
-        if(game.isEmpty()) {
-            delete this.games[game.id];
+        if(!socket.tIsClosing) {
+            if(game.isEmpty()) {
+                delete this.games[game.id];
 
-            this.zmqSocket.send('GAMECLOSED', { game: game.id });
-        } else if(isSpectator) {
-            this.zmqSocket.send('PLAYERLEFT', { gameId: game.id, game: game.getSaveState(), player: socket.user.username, spectator: true });
+                this.zmqSocket.send('GAMECLOSED', { game: game.id });
+            } else if(isSpectator) {
+                this.zmqSocket.send('PLAYERLEFT', { gameId: game.id, game: game.getSaveState(), player: socket.user.username, spectator: true });
+            }
         }
 
         this.sendGameState(game);
