@@ -13,6 +13,7 @@ class PlayerPlots extends React.Component {
             <CardPile
                 cards={ this.props.schemePlots }
                 className='plot'
+                hiddenTopCard
                 disablePopup={ !this.props.isMe }
                 onCardClick={ this.props.onCardClick }
                 onDragDrop={ this.props.onDragDrop }
@@ -46,7 +47,7 @@ class PlayerPlots extends React.Component {
                 cards={ this.props.plotDeck }
                 className={ this.props.plotSelected ? 'plot plot-selected' : 'plot' }
                 closeOnClick={ this.props.isMe }
-                disableMouseOver={ !this.props.isMe }
+                hiddenTopCard
                 disablePopup={ !this.props.isMe }
                 onCardClick={ this.props.onCardClick }
                 onDragDrop={ this.props.onDragDrop }
