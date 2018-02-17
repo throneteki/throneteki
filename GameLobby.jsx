@@ -92,7 +92,7 @@ function mapStateToProps(state) {
         isAdmin: state.auth.isAdmin,
         games: state.lobby.games,
         newGame: state.games.newGame,
-        passwordGame: state.games.passwordGame,
+        passwordGame: state.lobby.passwordGame,
         socket: state.lobby.socket,
         username: state.auth.username
     };

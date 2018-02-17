@@ -29,6 +29,17 @@ export default function(state = defaultState, action) {
             });
         case 'LOBBY_MESSAGE_RECEIVED':
             return handleMessage(action, state);
+        case 'JOIN_PASSWORD_GAME':
+            return Object.assign({}, state, {
+                passwordGame: action.game,
+                passwordJoinType: action.joinType
+            });
+        case 'CANCEL_PASSWORD_JOIN':
+            return Object.assign({}, state, {
+                passwordGame: undefined,
+                passwordError: undefined,
+                passwordJoinType: undefined
+            });
         case 'GAME_SOCKET_CLOSED':
             return Object.assign({}, state, {
                 currentGame: undefined

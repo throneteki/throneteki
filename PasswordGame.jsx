@@ -48,7 +48,7 @@ class InnerPasswordGame extends React.Component {
                         <h3>Enter the password</h3>
                     </div>
                     <div className='game-password'>
-                        <input className='form-control' type='password' onChange={ this.onPasswordChange.bind(this) } value={ this.state.password }/>
+                        <input className='form-control' type='password' onChange={ this.onPasswordChange.bind(this) } value={ this.state.password } />
                     </div>
                     { this.props.passwordError ?
                         <div>
@@ -78,8 +78,8 @@ InnerPasswordGame.propTypes = {
 function mapStateToProps(state) {
     return {
         passwordError: state.lobby.passwordError,
-        passwordGame: state.games.passwordGame,
-        passwordJoinType: state.games.passwordJoinType,
+        passwordGame: state.lobby.passwordGame,
+        passwordJoinType: state.lobby.passwordJoinType,
         socket: state.lobby.socket
     };
 }
