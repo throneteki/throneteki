@@ -49,17 +49,6 @@ function games(state = {}, action) {
                 newGame: false,
                 socket: undefined
             });
-        case 'JOIN_PASSWORD_GAME':
-            return Object.assign({}, state, {
-                passwordGame: action.game,
-                passwordJoinType: action.joinType
-            });
-        case 'CANCEL_PASSWORD_JOIN':
-            return Object.assign({}, state, {
-                passwordGame: undefined,
-                passwordError: undefined,
-                passwordJoinType: undefined
-            });
         default:
             return state;
     }
