@@ -4,7 +4,7 @@ class SweetCersei extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && 'intrigue' && !this.controller.cannotGainGold
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue'
             },
             handler: () => {
                 this.modifyToken('gold', 1);
