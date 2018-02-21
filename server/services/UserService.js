@@ -7,7 +7,7 @@ class UserService {
     }
 
     getUserByUsername(username) {
-        return this.users.find({ username: {'$regex': new RegExp('^' + escapeRegex(username.toLowerCase()) + '$', 'i') }})
+        return this.users.find({ username: { '$regex': new RegExp('^' + escapeRegex(username.toLowerCase()) + '$', 'i') } })
             .then(users => {
                 return users[0];
             })
@@ -19,7 +19,7 @@ class UserService {
     }
 
     getUserByEmail(email) {
-        return this.users.find({ email: {'$regex': new RegExp('^' + escapeRegex(email.toLowerCase()) + '$', 'i') }})
+        return this.users.find({ email: { '$regex': new RegExp('^' + escapeRegex(email.toLowerCase()) + '$', 'i') } })
             .then(users => {
                 return users[0];
             })
@@ -55,11 +55,14 @@ class UserService {
     }
 
     update(user) {
+        console.info(user);
         var toSet = {
             email: user.email,
             settings: user.settings,
             promptedActionWindows: user.promptedActionWindows,
-            permissions: user.permissions
+            permissions: user.permissions,
+            verified: user.verified,
+            disabled: user.disabled
         };
 
         if(user.password && user.password !== '') {
@@ -74,9 +77,11 @@ class UserService {
     }
 
     updateBlockList(user) {
-        return this.users.update({ username: user.username }, { '$set': {
-            blockList: user.blockList
-        } }).catch(err => {
+        return this.users.update({ username: user.username }, {
+            '$set': {
+                blockList: user.blockList
+            }
+        }).catch(err => {
             logger.error(err);
 
             throw new Error('Error setting user details');

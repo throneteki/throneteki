@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import _ from 'underscore';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import Input from './FormComponents/Input.jsx';
-import Checkbox from './FormComponents/Checkbox.jsx';
+import AlertPanel from './SiteComponents/AlertPanel';
+import Input from './FormComponents/Input';
+import Checkbox from './FormComponents/Checkbox';
+import Panel from './SiteComponents/Panel';
 
 import * as actions from './actions';
 
@@ -20,6 +21,8 @@ class InnerUserAdmin extends React.Component {
 
         this.state = {
             permissions: this.props.currentUser ? (this.props.currentUser.permissions || this.defaultPermissions) : this.defaultPermissions,
+            disabled: this.props.currentUser ? this.props.currentUser.disabled : false,
+            verified: this.props.currentUser ? this.props.currentUser.verified : false,
             username: ''
         };
 
@@ -27,10 +30,17 @@ class InnerUserAdmin extends React.Component {
             { name: 'canEditNews', label: 'News Editor' },
             { name: 'canManageUsers', label: 'User Manager' }
         ];
+
+        this.onDisabledChanged = this.onDisabledChanged.bind(this);
+        this.onVerifiedChanged = this.onVerifiedChanged.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        this.setState({ permissions: props.currentUser ? (props.currentUser.permissions || this.defaultPermissions) : this.defaultPermissions });
+        this.setState({
+            permissions: props.currentUser ? (props.currentUser.permissions || this.defaultPermissions) : this.defaultPermissions,
+            disabled: this.props.currentUser ? this.props.currentUser.disabled : false,
+            verified: this.props.currentUser ? this.props.currentUser.verified : false
+        });
     }
 
     onUsernameChange(event) {
@@ -47,6 +57,8 @@ class InnerUserAdmin extends React.Component {
         event.preventDefault();
 
         this.props.currentUser.permissions = this.state.permissions;
+        this.props.currentUser.disabled = this.state.disabled;
+        this.props.currentUser.verified = this.state.verified;
 
         this.props.saveUser(this.props.currentUser);
     }
@@ -57,6 +69,14 @@ class InnerUserAdmin extends React.Component {
 
         newState.permissions[field] = event.target.checked;
         this.setState(newState);
+    }
+
+    onDisabledChanged(event) {
+        this.setState({ disabled: event.target.checked });
+    }
+
+    onVerifiedChanged(event) {
+        this.setState({ verified: event.target.checked });
     }
 
     render() {
@@ -78,24 +98,29 @@ class InnerUserAdmin extends React.Component {
 
         if(this.props.currentUser) {
             let permissions = _.map(this.permissions, (permission) => {
-                return (<Checkbox key={ permission.name } name={ 'permissions.' + permission.name } label={ permission.label } fieldClass='col-sm-offset-3 col-sm-4'
+                return (<Checkbox key={ permission.name } name={ 'permissions.' + permission.name } label={ permission.label } fieldClass='col-xs-4'
                     type='checkbox' onChange={ this.onPermissionToggle.bind(this, permission.name) } checked={ this.state.permissions[permission.name] } />);
             });
 
             renderedUser = (
                 <div>
-                    <h3>User details</h3>
-
                     <form className='form'>
-                        <dl>
+                        <dl className='dl-horizontal'>
                             <dt>Username:</dt><dd>{ this.props.currentUser.username }</dd>
                             <dt>Email:</dt><dd>{ this.props.currentUser.email }</dd>
                             <dt>Registered:</dt><dd>{ this.props.currentUser.registered }</dd>
                         </dl>
 
                         <h4>Permissions</h4>
-                        { permissions }
-                        <button type='button' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save</button>
+                        <div>
+                            { permissions }
+                            <Checkbox name={ 'disabled' } label='Disabled' fieldClass='col-xs-4' type='checkbox'
+                                onChange={ this.onDisabledChanged } checked={ this.state.disabled } />
+                            <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
+                                onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
+                        </div>
+                        <div className='col-xs-12' />
+                        <button type='button' className='btn btn-primary col-xs-1' onClick={ this.onSaveClick.bind(this) }>Save</button>
                     </form>
                 </div>
             );
@@ -107,15 +132,20 @@ class InnerUserAdmin extends React.Component {
             content = <AlertPanel type='error' message={ this.props.apiError } />;
         } else {
             content = (
-                <div>
+                <div className='col-sm-offset-2 col-sm-8'>
                     { notFoundMessage }
                     { successPanel }
-                    <form className='form'>
-                        <Input name='username' label={ 'Search for a user' } value={ this.state.username } onChange={ this.onUsernameChange.bind(this) } placeholder={ 'Enter username' } />
-                        <button type='submit' className='btn btn-primary' onClick={ this.onFindClick.bind(this) }>Find</button>
-                    </form>
-
-                    { renderedUser }
+                    <Panel title='User administration'>
+                        <form className='form'>
+                            <Input name='username' fieldClass='user-search' label={ 'Search for a user' } value={ this.state.username } onChange={ this.onUsernameChange.bind(this) } placeholder={ 'Enter username' } />
+                            <button type='submit' className='btn btn-primary' onClick={ this.onFindClick.bind(this) }>Find</button>
+                        </form>
+                    </Panel>
+                    { this.props.currentUser ?
+                        <Panel title={ `${this.props.currentUser.username} - User details` }>
+                            { renderedUser }
+                        </Panel>
+                        : null }
                 </div>);
         }
 
