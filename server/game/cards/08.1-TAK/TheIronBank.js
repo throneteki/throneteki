@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class TheIronBank extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 onIncomeCollected: event => event.player === this.controller
