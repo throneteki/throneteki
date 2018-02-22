@@ -7,7 +7,7 @@ class TheIronBank extends DrawCard {
                 onIncomeCollected: event => event.player === this.controller
             },
             handler: () => {
-                var interest = this.tokens['gold'];
+                let interest = this.tokens['gold'];
                 this.modifyToken('gold', interest);
                 this.game.addMessage('{0} uses {1} to place {2} gold from the treasury on {1}', this.controller, this, interest);
             }
