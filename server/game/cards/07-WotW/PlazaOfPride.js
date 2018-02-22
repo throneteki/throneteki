@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class PlazaOfPride extends DrawCard {
-
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',
@@ -9,27 +8,18 @@ class PlazaOfPride extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.discardFromHand()
             ],
+            target: {
+                cardCondition: (card, context) =>
+                    card.location === 'play area' && card.getType() === 'character' && card.kneeled &&
+                    (!context.costs.discardFromHand || card.getCost() <= context.costs.discardFromHand.getCost() + 3)
+            },
             handler: context => {
-                this.game.promptForSelect(this.controller, {
-                    source: this,
-                    cardCondition: card =>
-                        card.location === 'play area'
-                        && card.getType() === 'character'
-                        && card.kneeled
-                        && card.getCost() <= context.costs.discardFromHand.getCost() + 3,
-                    onSelect: (player, card) => this.onCardSelected(player, card, context.costs.discardFromHand)
-                });
+                context.target.controller.standCard(context.target);
+                this.game.addMessage('{0} kneels {1} and discards {2} to stand {3}',
+                    this.controller, this, context.costs.discardFromHand, context.target);
             }
         });
     }
-
-    onCardSelected(player, card, discardedCard) {
-        player.standCard(card);
-        this.game.addMessage('{0} kneels {1} and discards {2} to stand {3}', this.controller, this, discardedCard, card);
-
-        return true;
-    }
-
 }
 
 PlazaOfPride.code = '07036';
