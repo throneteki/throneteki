@@ -150,6 +150,10 @@ class Server {
                         return done(null, false, { message: 'Invalid username/password' });
                     }
 
+                    if(user.disabled) {
+                        return done(null, false, { message: 'Invalid username/password' });
+                    }
+
                     let userObj = {
                         username: user.username,
                         email: user.email,

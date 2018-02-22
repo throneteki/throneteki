@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'underscore';
+import moment from 'moment';
 
 import AlertPanel from './SiteComponents/AlertPanel';
 import Input from './FormComponents/Input';
@@ -38,8 +39,8 @@ class InnerUserAdmin extends React.Component {
     componentWillReceiveProps(props) {
         this.setState({
             permissions: props.currentUser ? (props.currentUser.permissions || this.defaultPermissions) : this.defaultPermissions,
-            disabled: this.props.currentUser ? this.props.currentUser.disabled : false,
-            verified: this.props.currentUser ? this.props.currentUser.verified : false
+            disabled: props.currentUser ? props.currentUser.disabled : false,
+            verified: props.currentUser ? props.currentUser.verified : false
         });
     }
 
@@ -105,22 +106,24 @@ class InnerUserAdmin extends React.Component {
             renderedUser = (
                 <div>
                     <form className='form'>
-                        <dl className='dl-horizontal'>
-                            <dt>Username:</dt><dd>{ this.props.currentUser.username }</dd>
-                            <dt>Email:</dt><dd>{ this.props.currentUser.email }</dd>
-                            <dt>Registered:</dt><dd>{ this.props.currentUser.registered }</dd>
-                        </dl>
+                        <Panel title={ `${this.props.currentUser.username} - User details` }>
+                            <dl className='dl-horizontal'>
+                                <dt>Username:</dt><dd>{ this.props.currentUser.username }</dd>
+                                <dt>Email:</dt><dd>{ this.props.currentUser.email }</dd>
+                                <dt>Registered:</dt><dd>{ moment(this.props.currentUser.registered).format('YYYY-MM-DD HH:MM') }</dd>
+                            </dl>
+                        </Panel>
 
-                        <h4>Permissions</h4>
-                        <div>
-                            { permissions }
-                            <Checkbox name={ 'disabled' } label='Disabled' fieldClass='col-xs-4' type='checkbox'
-                                onChange={ this.onDisabledChanged } checked={ this.state.disabled } />
-                            <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
-                                onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
-                        </div>
-                        <div className='col-xs-12' />
-                        <button type='button' className='btn btn-primary col-xs-1' onClick={ this.onSaveClick.bind(this) }>Save</button>
+                        <Panel title='Permissions'>
+                            <div>
+                                { permissions }
+                                <Checkbox name={ 'disabled' } label='Disabled' fieldClass='col-xs-4' type='checkbox'
+                                    onChange={ this.onDisabledChanged } checked={ this.state.disabled } />
+                                <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
+                                    onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
+                            </div>
+                        </Panel>
+                        <button type='button' className='btn btn-primary col-xs-2' onClick={ this.onSaveClick.bind(this) }>Save</button>
                     </form>
                 </div>
             );
@@ -141,11 +144,7 @@ class InnerUserAdmin extends React.Component {
                             <button type='submit' className='btn btn-primary' onClick={ this.onFindClick.bind(this) }>Find</button>
                         </form>
                     </Panel>
-                    { this.props.currentUser ?
-                        <Panel title={ `${this.props.currentUser.username} - User details` }>
-                            { renderedUser }
-                        </Panel>
-                        : null }
+                    { renderedUser }
                 </div>);
         }
 

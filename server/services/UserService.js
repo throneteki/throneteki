@@ -55,7 +55,6 @@ class UserService {
     }
 
     update(user) {
-        console.info(user);
         var toSet = {
             email: user.email,
             settings: user.settings,
