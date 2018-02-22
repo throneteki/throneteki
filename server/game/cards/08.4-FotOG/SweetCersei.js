@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class SweetCersei extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue'
@@ -14,6 +14,6 @@ class SweetCersei extends DrawCard {
     }
 }
 
-SweetCersei.code = '08070'; 
+SweetCersei.code = '08070';
 
 module.exports = SweetCersei;
