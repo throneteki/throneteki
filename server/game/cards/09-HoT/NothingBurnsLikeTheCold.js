@@ -62,7 +62,7 @@ class NothingBurnsLikeTheCold extends PlotCard {
     }
 
     hasValidLocations(player) {
-        return this.game.anyCardsInPlay(card => card.controller === player && card.getType() === 'location' && !card.isLimited());
+        return this.game.anyCardsInPlay(card => card.controller === player && card.getType() === 'location' && !card.isLimited() && card.canBeDiscarded());
     }
 
     onSelectLocation(player, attachment, location) {
