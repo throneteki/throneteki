@@ -19,7 +19,7 @@ module.exports.init = function(server) {
         userService.getUserByUsername(req.params.username)
             .then(user => {
                 if(!user) {
-                    res.status(404).send({ message: 'Not found'});
+                    res.status(404).send({ message: 'Not found' });
 
                     return Promise.reject('User not found');
                 }
@@ -45,10 +45,12 @@ module.exports.init = function(server) {
         userService.getUserByUsername(req.params.username)
             .then(user => {
                 if(!user) {
-                    return res.status(404).send({ message: 'Not found'});
+                    return res.status(404).send({ message: 'Not found' });
                 }
 
                 user.permissions = userToSet.permissions;
+                user.verified = userToSet.verified;
+                user.disabled = userToSet.disabled;
 
                 return userService.update(user);
             })

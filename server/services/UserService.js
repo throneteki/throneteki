@@ -4,10 +4,11 @@ const logger = require('../log.js');
 class UserService {
     constructor(db) {
         this.users = db.get('users');
+        this.sessions = db.get('sessions');
     }
 
     getUserByUsername(username) {
-        return this.users.find({ username: {'$regex': new RegExp('^' + escapeRegex(username.toLowerCase()) + '$', 'i') }})
+        return this.users.find({ username: { '$regex': new RegExp('^' + escapeRegex(username.toLowerCase()) + '$', 'i') } })
             .then(users => {
                 return users[0];
             })
@@ -19,7 +20,7 @@ class UserService {
     }
 
     getUserByEmail(email) {
-        return this.users.find({ email: {'$regex': new RegExp('^' + escapeRegex(email.toLowerCase()) + '$', 'i') }})
+        return this.users.find({ email: { '$regex': new RegExp('^' + escapeRegex(email.toLowerCase()) + '$', 'i') } })
             .then(users => {
                 return users[0];
             })
@@ -59,7 +60,9 @@ class UserService {
             email: user.email,
             settings: user.settings,
             promptedActionWindows: user.promptedActionWindows,
-            permissions: user.permissions
+            permissions: user.permissions,
+            verified: user.verified,
+            disabled: user.disabled
         };
 
         if(user.password && user.password !== '') {
@@ -74,9 +77,11 @@ class UserService {
     }
 
     updateBlockList(user) {
-        return this.users.update({ username: user.username }, { '$set': {
-            blockList: user.blockList
-        } }).catch(err => {
+        return this.users.update({ username: user.username }, {
+            '$set': {
+                blockList: user.blockList
+            }
+        }).catch(err => {
             logger.error(err);
 
             throw new Error('Error setting user details');
@@ -117,6 +122,16 @@ class UserService {
 
                 throw new Error('Error activating user');
             });
+    }
+
+    clearUserSessions(username) {
+        return this.getUserByUsername(username).then(user => {
+            if(!user) {
+                return;
+            }
+
+            this.sessions.remove({ session: { '$regex': new RegExp('^.*' + escapeRegex(user._id.toString()) + '.*$', 'i') } });
+        });
     }
 }
 

@@ -11,6 +11,7 @@ const GameRouter = require('./gamerouter.js');
 const MessageService = require('./services/MessageService.js');
 const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
+const UserService = require('./services/UserService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 const Settings = require('./settings.js');
 
@@ -23,6 +24,7 @@ class Lobby {
         this.messageService = options.messageService || new MessageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
+        this.userService = options.userService || new UserService(options.db);
         this.router = options.router || new GameRouter(this.config);
 
         this.router.on('onGameClosed', this.onGameClosed.bind(this));
@@ -271,6 +273,7 @@ class Lobby {
         socket.registerEvent('selectdeck', this.onSelectDeck.bind(this));
         socket.registerEvent('connectfailed', this.onConnectFailed.bind(this));
         socket.registerEvent('removegame', this.onRemoveGame.bind(this));
+        socket.registerEvent('clearsessions', this.onClearSessions.bind(this));
 
         socket.on('authenticate', this.onAuthenticated.bind(this));
         socket.on('disconnect', this.onSocketDisconnected.bind(this));
@@ -586,6 +589,30 @@ class Lobby {
         }
 
         this.broadcastGameList();
+    }
+
+    onClearSessions(socket, username) {
+        this.userService.clearUserSessions(username).then(() => {
+            let game = this.findGameForUser(username);
+
+            if(game) {
+                logger.info('closed game', game.id, '(' + game.name + ') forcefully due to clear session on', username);
+
+                if(!game.started) {
+                    delete this.games[game.id];
+                } else {
+                    this.router.closeGame(game);
+                }
+            }
+
+            let socket = _.find(this.sockets, socket => {
+                return socket.user && socket.user.username === username;
+            });
+
+            if(socket) {
+                socket.disconnect();
+            }
+        });
     }
 
     onWorkerTimedOut(nodeName) {
