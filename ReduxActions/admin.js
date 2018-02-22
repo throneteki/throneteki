@@ -8,6 +8,18 @@ export function findUser(username) {
     };
 }
 
+export function clearUserSessions(username) {
+    return (dispatch, getState) => {
+        var socket = getState().lobby.socket;
+
+        if(!socket) {
+            return;
+        }
+
+        socket.emit('clearsessions', username);
+    };
+}
+
 export function saveUser(user) {
     return {
         types: ['SAVE_USER', 'USER_SAVED'],
