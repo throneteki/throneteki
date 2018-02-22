@@ -6,11 +6,10 @@ class TheReader extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.isUnopposed() &&
-                    _.any(challenge.getWinnerCards(), card => card.isFaction('greyjoy') && card.isUnique())
-                )
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isUnopposed() &&
+                    _.any(event.challenge.getWinnerCards(), card => card.isFaction('greyjoy') && card.isUnique())
             },
             limit: ability.limit.perPhase(1),
             choices: {

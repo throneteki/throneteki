@@ -4,8 +4,10 @@ class StreetOfTheSisters extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.challengeType === 'power' &&
-                                                 challenge.strengthDifference >= 5
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.challengeType === 'power' &&
+                    event.challenge.strengthDifference >= 5
             },
             cost: ability.costs.kneelFactionCard(),
             handler: () => {

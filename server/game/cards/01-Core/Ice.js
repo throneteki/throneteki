@@ -8,10 +8,10 @@ class Ice extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.challengeType === 'military' &&
-                    challenge.isParticipating(this.parent)
+                afterChallenge: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.challengeType === 'military' &&
+                    event.challenge.isParticipating(this.parent)
                 )
             },
             cost: ability.costs.sacrificeSelf(),

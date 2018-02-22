@@ -4,11 +4,11 @@ class KingRobbsHost extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.challengeType === 'military' &&
-                    challenge.winner === this.controller &&
-                    challenge.isParticipating(this) &&
-                    challenge.loser.faction.power >= 1)
+                afterChallenge: event =>
+                    event.challenge.challengeType === 'military' &&
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isParticipating(this) &&
+                    event.challenge.loser.faction.power >= 1
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {

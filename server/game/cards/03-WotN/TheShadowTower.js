@@ -4,7 +4,7 @@ class TheShadowTower extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.defendingPlayer === this.controller
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.defendingPlayer === this.controller
             },
             cost: ability.costs.kneelSelf(),
             target: {

@@ -6,11 +6,10 @@ class TheFrozenShore extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    this.getNumOfAttackingWildlings(challenge) > 0 &&
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
+                    this.getNumOfAttackingWildlings(event.challenge) > 0 &&
                     this.getNumOfWinterPlots() > 0
-                )
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {

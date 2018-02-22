@@ -4,10 +4,10 @@ class SupportOfThePeople extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.challengeType === 'power' &&
-                    challenge.winner === this.controller &&
-                    challenge.strengthDifference >= 5
+                afterChallenge: event => (
+                    event.challenge.challengeType === 'power' &&
+                    event.challenge.winner === this.controller &&
+                    event.challenge.strengthDifference >= 5
                 )
             },
             handler: () => {

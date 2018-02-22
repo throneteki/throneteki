@@ -4,7 +4,7 @@ class Jhiqui extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller
+                afterChallenge: event => event.challenge.winner === this.controller
             },
             cost: ability.costs.discardFromHand(),
             target: {

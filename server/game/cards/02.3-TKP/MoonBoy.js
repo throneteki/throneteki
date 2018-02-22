@@ -4,7 +4,7 @@ class MoonBoy extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.isParticipating(this)
             },
             handler: () => {
                 this.game.addMessage('{0} is forced to discard 1 card at random after losing a challenge in which {1} was participating', this.controller, this);

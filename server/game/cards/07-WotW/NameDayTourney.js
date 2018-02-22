@@ -4,10 +4,10 @@ class NameDayTourney extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
                     this.hasParticipatingKnight() &&
-                    this.hasSingleParticipatingChar())
+                    this.hasSingleParticipatingChar()
             },
             target: {
                 activePromptTitle: 'Select Lord or Lady',

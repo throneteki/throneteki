@@ -4,7 +4,7 @@ class TheRedViper extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this) && challenge.strengthDifference >= 5
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isAttacking(this) && event.challenge.strengthDifference >= 5
             },
             handler: () => {
                 var power = Math.trunc(this.game.currentChallenge.strengthDifference / 5);

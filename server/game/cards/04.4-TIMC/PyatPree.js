@@ -4,7 +4,7 @@ class PyatPree extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
             },
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {

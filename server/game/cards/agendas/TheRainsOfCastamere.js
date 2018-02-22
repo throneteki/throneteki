@@ -13,11 +13,11 @@ class TheRainsOfCastamere extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
+                afterChallenge: event => (
                     !this.owner.faction.kneeled &&
-                    challenge.challengeType === 'intrigue' &&
-                    challenge.winner === this.owner &&
-                    challenge.strengthDifference >= 5
+                    event.challenge.challengeType === 'intrigue' &&
+                    event.challenge.winner === this.owner &&
+                    event.challenge.strengthDifference >= 5
                 )
             },
             handler: this.trigger.bind(this)

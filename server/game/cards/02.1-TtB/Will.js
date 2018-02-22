@@ -4,7 +4,7 @@ class Will extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: ({challenge}) => this.controller === challenge.loser && challenge.isUnopposed()
+                afterChallenge: event => this.controller === event.challenge.loser && event.challenge.isUnopposed()
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Ranger') && card.controller === this.controller

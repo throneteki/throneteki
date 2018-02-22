@@ -4,7 +4,7 @@ class MaesterLomys extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.defendingPlayer === this.controller && challenge.challengeType === 'intrigue'
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.defendingPlayer === this.controller && event.challenge.challengeType === 'intrigue'
             },
             handler: () => {
                 this.game.currentChallenge.loser.discardAtRandom(1);

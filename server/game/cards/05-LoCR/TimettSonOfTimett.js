@@ -4,9 +4,7 @@ class TimettSonOfTimett extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.isAttacking(this))
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isAttacking(this)
             },
             target: {
                 activePromptTitle: 'Select character to kill',

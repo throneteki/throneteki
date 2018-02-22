@@ -4,10 +4,10 @@ class TyeneSand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.challengeType === 'intrigue' &&
-                    challenge.winner === this.controller &&
-                    challenge.isAttacking(this)
+                afterChallenge: event => (
+                    event.challenge.challengeType === 'intrigue' &&
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isAttacking(this)
                 )
             },
             target: {

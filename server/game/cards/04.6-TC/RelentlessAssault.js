@@ -4,10 +4,10 @@ class RelentlessAssault extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.attackingPlayer === this.controller &&
-                    challenge.strengthDifference >= 5
+                afterChallenge: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.attackingPlayer === this.controller &&
+                    event.challenge.strengthDifference >= 5
                 )
             },
             cost: ability.costs.kneelFactionCard(),

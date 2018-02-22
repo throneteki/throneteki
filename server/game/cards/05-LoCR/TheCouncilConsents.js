@@ -4,10 +4,10 @@ class TheCouncilConsents extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.challengeType === 'intrigue' &&
-                    challenge.strengthDifference >= 5 &&
-                    this.anySmallCouncilCharacterInPlay())
+                afterChallenge: event =>
+                    event.challenge.challengeType === 'intrigue' &&
+                    event.challenge.strengthDifference >= 5 &&
+                    this.anySmallCouncilCharacterInPlay()
             },
             handler: () => {
                 let smallCouncilChars = this.game.filterCardsInPlay(card => card.hasTrait('Small Council') && card.getType() === 'character');

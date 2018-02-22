@@ -19,8 +19,10 @@ class OlennasMachinations extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.challengeType === 'intrigue' &&
-                                                      challenge.strengthDifference >= 5
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.challengeType === 'intrigue' &&
+                    event.challenge.strengthDifference >= 5
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),

@@ -4,12 +4,11 @@ class HisViperEyes extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.defendingPlayer === this.controller &&
-                    challenge.loser === this.controller &&
-                    ['military', 'power'].includes(challenge.challengeType) &&
-                    challenge.winner.hand.size() >= 1
-                )
+                afterChallenge: event =>
+                    event.challenge.defendingPlayer === this.controller &&
+                    event.challenge.loser === this.controller &&
+                    ['military', 'power'].includes(event.challenge.challengeType) &&
+                    event.challenge.winner.hand.size() >= 1
             },
             handler: () => {
                 this.challengeWinner = this.game.currentChallenge.winner;
