@@ -4,6 +4,7 @@ const logger = require('../log.js');
 class UserService {
     constructor(db) {
         this.users = db.get('users');
+        this.sessions = db.get('sessions');
     }
 
     getUserByUsername(username) {
@@ -121,6 +122,16 @@ class UserService {
 
                 throw new Error('Error activating user');
             });
+    }
+
+    clearUserSessions(username) {
+        return this.getUserByUsername(username).then(user => {
+            if(!user) {
+                return;
+            }
+
+            this.sessions.remove({ session: { '$regex': new RegExp('^.*' + escapeRegex(user._id.toString()) + '.*$', 'i') } });
+        });
     }
 }
 

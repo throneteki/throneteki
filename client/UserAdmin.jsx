@@ -64,6 +64,12 @@ class InnerUserAdmin extends React.Component {
         this.props.saveUser(this.props.currentUser);
     }
 
+    onClearClick(event) {
+        event.preventDefault();
+
+        this.props.clearUserSessions(this.props.currentUser.username);
+    }
+
     onPermissionToggle(field, event) {
         var newState = {};
         newState.permissions = this.state.permissions;
@@ -121,6 +127,9 @@ class InnerUserAdmin extends React.Component {
                                     onChange={ this.onDisabledChanged } checked={ this.state.disabled } />
                                 <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
                                     onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
+
+                                <div className='col-xs-12' />
+                                <button type='button' className='btn btn-primary col-xs-3' onClick={ this.onClearClick.bind(this) }>Clear sessions</button>
                             </div>
                         </Panel>
                         <button type='button' className='btn btn-primary col-xs-2' onClick={ this.onSaveClick.bind(this) }>Save</button>
@@ -156,6 +165,7 @@ InnerUserAdmin.displayName = 'UserAdmin';
 InnerUserAdmin.propTypes = {
     apiError: PropTypes.string,
     apiStatus: PropTypes.number,
+    clearUserSessions: PropTypes.func,
     clearUserStatus: PropTypes.func,
     currentUser: PropTypes.object,
     findUser: PropTypes.func,
