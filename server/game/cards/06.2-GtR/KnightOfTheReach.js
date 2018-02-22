@@ -4,9 +4,9 @@ class KnightOfTheReach extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.isParticipating(this) &&
+                afterChallenge: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.isParticipating(this) &&
                     this.hasSingleParticipatingChar())
             },
             target: {

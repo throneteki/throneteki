@@ -4,7 +4,7 @@ class AttackFromTheMountains extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && this.hasAttackingClansman()
+                afterChallenge: event => event.challenge.winner === this.controller && this.hasAttackingClansman()
             },
             target: {
                 cardCondition: card => (

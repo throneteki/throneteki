@@ -8,7 +8,7 @@ class SmallCouncilChamber extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.challengeType === 'intrigue'
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue'
             },
             handler: () => {
                 this.game.addMessage('{0} gains 1 power on {1}', this.controller, this);

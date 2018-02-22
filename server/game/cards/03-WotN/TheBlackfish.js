@@ -10,11 +10,10 @@ class TheBlackfish extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    challenge.challengeType === 'military' &&
-                    challenge.isAttackerTheWinner()
-                )
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.challengeType === 'military' &&
+                    event.challenge.isAttackerTheWinner()
             },
             handler: () => {
                 this.controller.drawCardsToHand(1);

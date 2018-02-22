@@ -4,7 +4,7 @@ class AshaGreyjoy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => this.controller === challenge.winner && challenge.isParticipating(this) && challenge.isUnopposed()
+                afterChallenge: event => this.controller === event.challenge.winner && event.challenge.isParticipating(this) && event.challenge.isUnopposed()
             },
             handler: () => {
                 this.controller.standCard(this);

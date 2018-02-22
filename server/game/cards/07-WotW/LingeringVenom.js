@@ -4,7 +4,7 @@ class LingeringVenom extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.loser === this.controller
+                afterChallenge: event => event.challenge.loser === this.controller
             },
             handler: () => {
                 this.modifyToken('venom', 1);

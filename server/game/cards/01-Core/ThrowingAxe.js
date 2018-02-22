@@ -5,7 +5,7 @@ class ThrowingAxe extends DrawCard {
         this.attachmentRestriction({ trait: 'Ironborn' });
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller && challenge.isAttacking(this.parent)
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isAttacking(this.parent)
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.sacrificeSelf(),

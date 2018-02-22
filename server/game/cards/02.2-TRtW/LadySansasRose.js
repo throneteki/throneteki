@@ -4,10 +4,10 @@ class LadySansasRose extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
                     this.hasSingleParticipatingChar() &&
-                    this.hasParticipatingKnight())
+                    this.hasParticipatingKnight()
             },
             max: ability.limit.perChallenge(1),
             handler: (context) => {

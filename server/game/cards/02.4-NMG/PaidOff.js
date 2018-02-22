@@ -5,7 +5,10 @@ class PaidOff extends DrawCard {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.challengeType === 'intrigue' && !this.parent.kneeled && challenge.winner === this.controller
+                afterChallenge: event =>
+                    event.challenge.challengeType === 'intrigue' &&
+                    !this.parent.kneeled &&
+                    event.challenge.winner === this.controller
             },
             handler: () => {
                 this.parent.controller.kneelCard(this.parent);

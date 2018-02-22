@@ -4,9 +4,10 @@ class FreyHospitality extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.winner === this.controller &&
-                                                 challenge.number === 3 &&
-                                                 this.hasAttackingFrey()
+                afterChallenge: event =>
+                    event.challenge.winner === this.controller &&
+                    event.challenge.number === 3 &&
+                    this.hasAttackingFrey()
             },
             handler: () => {
                 let numTargets = this.game.currentChallenge.strengthDifference >= 20 ? 3 : 1;

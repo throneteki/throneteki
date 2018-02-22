@@ -4,7 +4,7 @@ class WhiteRaven extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: ({challenge}) => challenge.loser === this.controller && challenge.challengeType === 'power'
+                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.challengeType === 'power'
             },
             handler: () => {
                 this.game.addMessage('{0} is forced by {1} to sacrifice {1}', this.controller, this);

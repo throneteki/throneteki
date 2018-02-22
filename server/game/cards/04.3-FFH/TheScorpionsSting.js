@@ -4,8 +4,8 @@ class TheScorpionsSting extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.loser === this.controller &&
+                afterChallenge: event => (
+                    event.challenge.loser === this.controller &&
                     this.controller.getNumberOfUsedPlots() >= 1 &&
                     this.hasMartellCharacter())
             },

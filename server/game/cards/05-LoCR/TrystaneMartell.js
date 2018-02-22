@@ -4,7 +4,7 @@ class TrystaneMartell extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => this.controller === challenge.loser && challenge.isParticipating(this)
+                afterChallenge: event => this.controller === event.challenge.loser && event.challenge.isParticipating(this)
             },
             target: {
                 cardCondition: card => (

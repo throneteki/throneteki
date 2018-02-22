@@ -6,9 +6,9 @@ class Rhaegal extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: ({challenge}) => (
-                    challenge.winner === this.controller &&
-                    _.any(challenge.getWinnerCards(), card => card.hasTrait('Stormborn'))
+                afterChallenge: event => (
+                    event.challenge.winner === this.controller &&
+                    _.any(event.challenge.getWinnerCards(), card => card.hasTrait('Stormborn'))
                 )
             },
             limit: ability.limit.perPhase(1),

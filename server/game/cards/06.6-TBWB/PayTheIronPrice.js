@@ -19,7 +19,7 @@ class PayTheIronPrice extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                afterChallenge: ({challenge}) => this.controller === challenge.winner && challenge.isUnopposed()
+                afterChallenge: event => this.controller === event.challenge.winner && event.challenge.isUnopposed()
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
