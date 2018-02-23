@@ -25,7 +25,7 @@ class MaceTyrell extends DrawCard {
 
     putCardBack(player, card) {
         card.owner.moveCardToTopOfDeck(card);
-        this.game.addMessage('{0} places a card on top of their draw deck due to {1}', this.controller, this);
+        this.game.addMessage('{0} then places a card on top of their draw deck for {1}', this.controller, this);
 
         return true;
     }
