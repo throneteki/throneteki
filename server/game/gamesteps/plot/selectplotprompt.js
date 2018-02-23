@@ -2,6 +2,10 @@ const AllPlayerPrompt = require('../allplayerprompt.js');
 
 class SelectPlotPrompt extends AllPlayerPrompt {
     completionCondition(player) {
+        if(player.mustRevealPlot) {
+            player.selectedPlot = player.mustRevealPlot;
+        }
+
         return !!player.selectedPlot;
     }
 
@@ -14,7 +18,13 @@ class SelectPlotPrompt extends AllPlayerPrompt {
         };
     }
 
-    waitingPrompt() {
+    waitingPrompt(player) {
+        if(player.mustRevealPlot) {
+            return {
+                menuTitle: 'Waiting for opponent to select plot'
+            };
+        }
+
         return {
             menuTitle: 'Waiting for opponent to select plot',
             buttons: [
