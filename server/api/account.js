@@ -256,27 +256,7 @@ module.exports.init = function(server) {
             return next();
         }
 
-        passport.authenticate('local', (err, user) => {
-            if(err) {
-                return next(err);
-            }
-
-            if(!user) {
-                return res.status(401).send({ success: false, message: 'Invalid username or password' });
-            }
-
-            if(!user.verified) {
-                return res.send({ success: false, message: 'Your account is not verified, please click on the link we have emailed to you' });
-            }
-
-            req.logIn(user, err => {
-                if(err) {
-                    return next(err);
-                }
-
-                res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
-            });
-        })(req, res, next);
+        res.send({ success: true, token: jwt.sign({id: 'iidsdfsd'}, config.secret) });
     });
 
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
@@ -437,7 +417,8 @@ module.exports.init = function(server) {
             });
     });
 
-    server.get('/api/account/:username/blocklist', wrapAsync(async (req, res) => {
+    server.get('/api/account/:username/blocklist', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        console.info('foo');
         let user = await checkAuth(req, res);
 
         if(!user) {

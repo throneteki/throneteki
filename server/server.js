@@ -1,9 +1,6 @@
 const express = require('express');
 const app = express();
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
 const config = require('./config.js');
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
@@ -20,6 +17,8 @@ const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js')();
 const monk = require('monk');
 const _ = require('underscore');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 const UserService = require('./services/UserService.js');
 const version = require('../version.js');
@@ -46,22 +45,26 @@ class Server {
             app.use(Raven.errorHandler());
         }
 
-        app.use(session({
-            store: new MongoStore({ url: config.dbPath }),
-            saveUninitialized: false,
-            resave: false,
-            secret: config.secret,
-            cookie: { maxAge: config.cookieLifetime }
+        var opts = {};
+        opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+        opts.secretOrKey = config.secret;
+
+        console.info(opts);
+
+        passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
+            console.info(jwtPayload);
+            this.userService.getUserById(jwtPayload.sub).then(user => {
+                if(user) {
+                    return done(null, user);
+                }
+
+                return done(null, false);
+            }).catch(err => {
+                return done(err, false);
+            });
         }));
-
         app.use(passport.initialize());
-        app.use(passport.session());
 
-        passport.use(new localStrategy(this.verifyUser.bind(this)));
-        passport.serializeUser(this.serializeUser.bind(this));
-        passport.deserializeUser(this.deserializeUser.bind(this));
-
-        app.use(cookieParser());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -183,30 +186,6 @@ class Server {
         if(user) {
             done(null, user._id);
         }
-    }
-
-    deserializeUser(id, done) {
-        this.userService.getUserById(id)
-            .then(user => {
-                if(!user) {
-                    return done(new Error('user not found'));
-                }
-
-                let userObj = {
-                    username: user.username,
-                    email: user.email,
-                    emailHash: user.emailHash,
-                    _id: user._id,
-                    admin: user.admin,
-                    settings: user.settings,
-                    promptedActionWindows: user.promptedActionWindows,
-                    permissions: user.permissions,
-                    blockList: user.blockList,
-                    verified: user.verified
-                };
-
-                done(null, userObj);
-            });
     }
 }
 
