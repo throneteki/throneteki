@@ -4,7 +4,7 @@ const Effects = require('../../../server/game/effects.js');
 
 const PlayableLocation = require('../../../server/game/playablelocation.js');
 
-describe('Effects.canMarshalFrom', function() {
+describe('Effects.canMarshal', function() {
     beforeEach(function() {
         this.context = {};
 
@@ -14,7 +14,7 @@ describe('Effects.canMarshalFrom', function() {
 
         this.opponent = { opponent: 1 };
 
-        this.effect = Effects.canMarshalFrom(this.opponent, 'discard pile');
+        this.effect = Effects.canMarshal(card => card.controller === this.opponent && card.location === 'discard pile');
     });
 
     describe('apply()', function() {
