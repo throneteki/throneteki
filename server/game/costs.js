@@ -79,6 +79,11 @@ const Costs = {
      */
     killSelf: () => CostBuilders.kill.self(),
     /**
+     * Cost that requires killing a character that matches the passed condition
+     * predicate function.
+     */
+    kill: condition => CostBuilders.kill.select(condition),
+    /**
      * Cost that will put into play the card that initiated the ability.
      */
     putSelfIntoPlay: () => CostBuilders.putIntoPlay.self(),
