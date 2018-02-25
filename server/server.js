@@ -3,12 +3,9 @@ const app = express();
 const bodyParser = require('body-parser');
 const config = require('./config.js');
 const passport = require('passport');
-const localStrategy = require('passport-local').Strategy;
 const logger = require('./log.js');
-const bcrypt = require('bcrypt');
 const api = require('./api');
 const path = require('path');
-const jwt = require('jsonwebtoken');
 const http = require('http');
 const Raven = require('raven');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -16,7 +13,6 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js')();
 const monk = require('monk');
-const _ = require('underscore');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
@@ -49,10 +45,7 @@ class Server {
         opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
         opts.secretOrKey = config.secret;
 
-        console.info(opts);
-
         passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
-            console.info(jwtPayload);
             this.userService.getUserById(jwtPayload.id).then(user => {
                 if(user) {
                     return done(null, user);

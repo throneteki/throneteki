@@ -258,16 +258,16 @@ module.exports.init = function(server) {
             return next();
         }
 
-        let user = await userService.getUserByUsername(req.body.username)
+        let user = await userService.getUserByUsername(req.body.username);
         if(!user) {
             return res.send({ success: false, message: 'Invalid username/password' });
         }
 
         bcrypt.compare(req.body.password, user.password, function(err, valid) {
             if(err) {
-                logger.info(err.message);
+                logger.info(err);
 
-                return done(err);
+                return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
             }
 
             if(!valid) {
@@ -458,7 +458,6 @@ module.exports.init = function(server) {
     });
 
     server.get('/api/account/:username/blocklist', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
-        console.info('foo');
         let user = await checkAuth(req, res);
 
         if(!user) {
