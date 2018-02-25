@@ -13,6 +13,8 @@ export default function(state = {}, action) {
                 loggedIn: false
             });
         case 'ACCOUNT_LOGGEDIN':
+            localStorage.setItem('token', action.response.token);
+
             return Object.assign({}, state, {
                 loggedIn: true,
                 loggedInUser: action.response.user,

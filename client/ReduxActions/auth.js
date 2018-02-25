@@ -12,3 +12,10 @@ export function logout() {
         type: 'AUTH_LOGOUT'
     };
 }
+
+export function setAuthToken(token) {
+    return {
+        type: 'SET_AUTH_TOKEN',
+        token: token
+    };
+}

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'underscore';
 
 export function loadDecks() {
@@ -7,7 +6,7 @@ export function loadDecks() {
         shouldCallAPI: (state) => {
             return state.cards.singleDeck || !state.cards.decks;
         },
-        callAPI: () => $.ajax('/api/decks', { cache: false })
+        APIParams: { url: '/api/decks', cache: false }
     };
 }
 
@@ -21,7 +20,7 @@ export function loadDeck(deckId) {
 
             return ret;
         },
-        callAPI: () => $.ajax('/api/decks/' + deckId, { cache: false })
+        APIParams: { url: `/api/decks/${deckId}`, cache: false }
     };
 }
 
@@ -49,10 +48,10 @@ export function deleteDeck(deck) {
     return {
         types: ['DELETE_DECK', 'DECK_DELETED'],
         shouldCallAPI: () => true,
-        callAPI: () => $.ajax({
-            url: '/api/decks/' + deck._id,
+        APIParams: {
+            url: `/api/decks/${deck._id}`,
             type: 'DELETE'
-        })
+        }
     };
 }
 
@@ -71,11 +70,11 @@ export function saveDeck(deck) {
     return {
         types: ['SAVE_DECK', 'DECK_SAVED'],
         shouldCallAPI: () => true,
-        callAPI: () => $.ajax({
-            url: '/api/decks/' + (deck._id || ''),
+        APIParams: {
+            url: `/api/decks/${(deck._id || '')}`,
             type: deck._id ? 'PUT' : 'POST',
             data: { data: str }
-        })
+        }
     };
 }
 

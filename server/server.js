@@ -53,7 +53,7 @@ class Server {
 
         passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
             console.info(jwtPayload);
-            this.userService.getUserById(jwtPayload.sub).then(user => {
+            this.userService.getUserById(jwtPayload.id).then(user => {
                 if(user) {
                     return done(null, user);
                 }
@@ -100,15 +100,10 @@ class Server {
         }
 
         app.get('*', (req, res) => {
-            let token = undefined;
-
-            if(req.user) {
-                token = jwt.sign(req.user, config.secret);
-                req.user = _.omit(req.user, 'blockList');
-            }
-
-            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user),
-                token: token, vendorAssets: this.vendorAssets, assets: this.assets });
+            res.render('index', {
+                basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user),
+                vendorAssets: this.vendorAssets, assets: this.assets
+            });
         });
 
         // Define error middleware last
@@ -133,53 +128,6 @@ class Server {
 
             logger.info('==> ?? Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.', port, port);
         });
-    }
-
-    verifyUser(username, password, done) {
-        this.userService.getUserByUsername(username)
-            .then(user => {
-                if(!user) {
-                    return done(null, false, { message: 'Invalid username/password' });
-                }
-
-                bcrypt.compare(password, user.password, function(err, valid) {
-                    if(err) {
-                        logger.info(err.message);
-
-                        return done(err);
-                    }
-
-                    if(!valid) {
-                        return done(null, false, { message: 'Invalid username/password' });
-                    }
-
-                    if(user.disabled) {
-                        return done(null, false, { message: 'Invalid username/password' });
-                    }
-
-                    let userObj = {
-                        username: user.username,
-                        email: user.email,
-                        emailHash: user.emailHash,
-                        _id: user._id,
-                        admin: user.admin,
-                        settings: user.settings,
-                        promptedActionWindows: user.promptedActionWindows,
-                        permissions: user.permissions,
-                        blockList: user.blockList,
-                        verified: user.verified
-                    };
-
-                    userObj = Settings.getUserWithDefaultsSet(userObj);
-
-                    return done(null, userObj);
-                });
-            })
-            .catch(err => {
-                done(err);
-
-                logger.error(err);
-            });
     }
 
     serializeUser(user, done) {

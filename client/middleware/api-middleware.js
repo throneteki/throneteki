@@ -1,10 +1,13 @@
+import $ from 'jquery';
+
 export default function callAPIMiddleware({ dispatch, getState }) {
     return next => action => {
         const {
             types,
-            callAPI,
+            APIParams,
             shouldCallAPI = () => true,
-            payload = {}
+            payload = {},
+            skipAuth = false
         } = action;
 
         if(!types) {
@@ -13,10 +16,6 @@ export default function callAPIMiddleware({ dispatch, getState }) {
 
         if(!Array.isArray(types) || types.length !== 2 || !types.every(type => typeof type === 'string')) {
             throw new Error('Expected an array of two string types.');
-        }
-
-        if(typeof callAPI !== 'function') {
-            throw new Error('Expected callAPI to be a function.');
         }
 
         const [requestType, successType] = types;
@@ -34,7 +33,15 @@ export default function callAPIMiddleware({ dispatch, getState }) {
             request: requestType
         }));
 
-        return callAPI().then(
+        let apiParams = APIParams;
+        if(!skipAuth && apiParams) {
+            apiParams.headers = {
+                Authorization: `Bearer ${getState().auth.token}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        return $.ajax(apiParams.url, apiParams).then(
             response => {
                 if(!response.success) {
                     return dispatch(Object.assign({}, payload, {

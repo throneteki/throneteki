@@ -11,6 +11,8 @@ const UserService = require('../services/UserService.js');
 const _ = require('underscore');
 const { wrapAsync } = require('../util.js');
 const sendgrid = require('@sendgrid/mail');
+const Settings = require('../settings.js');
+
 
 let db = monk(config.dbPath);
 let userService = new UserService(db);
@@ -243,7 +245,7 @@ module.exports.init = function(server) {
         res.send({ success: true });
     });
 
-    server.post('/api/account/login', (req, res, next) => {
+    server.post('/api/account/login', wrapAsync(async (req, res, next) => {
         if(!req.body.username) {
             res.send({ success: false, message: 'Username must be specified' });
 
@@ -256,8 +258,46 @@ module.exports.init = function(server) {
             return next();
         }
 
-        res.send({ success: true, token: jwt.sign({id: 'iidsdfsd'}, config.secret) });
-    });
+        let user = await userService.getUserByUsername(req.body.username)
+        if(!user) {
+            return res.send({ success: false, message: 'Invalid username/password' });
+        }
+
+        bcrypt.compare(req.body.password, user.password, function(err, valid) {
+            if(err) {
+                logger.info(err.message);
+
+                return done(err);
+            }
+
+            if(!valid) {
+                return res.send({ success: false, message: 'Invalid username/password' });
+            }
+
+            if(user.disabled) {
+                return res.send({ success: false, message: 'Invalid username/password' });
+            }
+
+            let userObj = {
+                username: user.username,
+                email: user.email,
+                emailHash: user.emailHash,
+                _id: user._id,
+                admin: user.admin,
+                settings: user.settings,
+                promptedActionWindows: user.promptedActionWindows,
+                permissions: user.permissions,
+                blockList: user.blockList,
+                verified: user.verified
+            };
+
+            userObj = Settings.getUserWithDefaultsSet(userObj);
+            userObj.id = userObj._id;
+            delete userObj._id;
+
+            res.send({ success: true, user: userObj, token: jwt.sign(userObj, config.secret, { expiresIn: '5m' }) });
+        });
+    }));
 
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
         let resetUser;

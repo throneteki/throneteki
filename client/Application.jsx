@@ -54,6 +54,11 @@ class App extends React.Component {
     }
 
     componentWillMount() {
+        let token = localStorage.getItem('token');
+        if(token) {
+            this.props.setAuthToken(token);
+        }
+
         this.props.loadCards();
         this.props.loadPacks();
         this.props.loadFactions();
@@ -289,6 +294,7 @@ App.propTypes = {
     loggedIn: PropTypes.bool,
     navigate: PropTypes.func,
     path: PropTypes.string,
+    setAuthToken: PropTypes.func,
     setContextMenu: PropTypes.func,
     token: PropTypes.string,
     user: PropTypes.object,

@@ -29,6 +29,10 @@ export default function(state = {}, action) {
                 username: action.response.user.username,
                 token: action.response.token
             });
+        case 'SET_AUTH_TOKEN':
+            return Object.assign({}, state, {
+                token: action.token
+            });
     }
 
     return state;

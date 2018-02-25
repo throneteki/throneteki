@@ -1,9 +1,8 @@
-/*global user, authToken */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import configureStore from './configureStore';
-import { navigate, login } from './actions';
+import { navigate } from './actions';
 import 'bootstrap/dist/js/bootstrap';
 import ReduxToastr from 'react-redux-toastr';
 import { AppContainer } from 'react-hot-loader';
@@ -15,10 +14,6 @@ store.dispatch(navigate(window.location.pathname, window.location.search));
 window.onpopstate = function(e) {
     store.dispatch(navigate(e.target.location.pathname));
 };
-
-if(typeof user !== 'undefined') {
-    store.dispatch(login(user, authToken, user.admin));
-}
 
 const render = () => {
     const Application = require('./Application.jsx').default;
