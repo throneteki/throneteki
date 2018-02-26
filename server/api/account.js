@@ -309,12 +309,18 @@ module.exports.init = function(server) {
         userObj.id = userObj._id;
         delete userObj._id;
 
-        let refreshToken = await userService.addRefreshToken();
+        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+        let ip = req.get('x-real-ip');
+        if(!ip) {
+            ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        }
+
+        let refreshToken = await userService.addRefreshToken(user.username, authToken, ip);
         if(!refreshToken) {
             return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
         }
 
-        res.send({ success: true, user: userObj, token: jwt.sign(userObj, config.secret, { expiresIn: '5m' }), refreshToken: refreshToken });
+        res.send({ success: true, user: userObj, token: authToken, refreshToken: refreshToken });
     }));
 
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {

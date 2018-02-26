@@ -147,13 +147,13 @@ class UserService {
         let newId = monk.id();
 
         return this.users.update({ username: username }, {
-            '$push': {
+            '$push': { tokens: {
                 '_id': newId,
                 token: encodedToken,
                 exp: expiration.toDate(),
                 ip: ip,
                 lastUsed: new Date()
-            }
+            }}
         }).then(() => {
             return {
                 id: newId,
