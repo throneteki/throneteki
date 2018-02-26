@@ -1,5 +1,10 @@
+const monk = require('monk');
+const moment = require('moment');
+const crypto = require('crypto');
+
 const escapeRegex = require('../util.js').escapeRegex;
 const logger = require('../log.js');
+const config = require('../config.js');
 
 class UserService {
     constructor(db) {
@@ -131,6 +136,33 @@ class UserService {
             }
 
             this.sessions.remove({ session: { '$regex': new RegExp('^.*' + escapeRegex(user._id.toString()) + '.*$', 'i') } });
+        });
+    }
+
+    addRefreshToken(username, token, ip) {
+        let expiration = moment().add(1, 'months');
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+
+        let encodedToken = hmac.update(`REFRESH ${username} ${token}`).digest('hex');
+        let newId = monk.id();
+
+        return this.users.update({ username: username }, {
+            '$push': {
+                '_id': newId,
+                token: encodedToken,
+                exp: expiration.toDate(),
+                ip: ip,
+                lastUsed: new Date()
+            }
+        }).then(() => {
+            return {
+                id: newId,
+                token: encodedToken
+            };
+        }).catch(err => {
+            logger.error(err);
+
+            return undefined;
         });
     }
 }

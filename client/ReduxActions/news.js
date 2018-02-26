@@ -26,20 +26,18 @@ export function receiveNews(news) {
 }
 
 export function loadNews(options) {
+    let params = {};
+
+    if(options && options.limit) {
+        params.limit = options.limit;
+    }
+
     return {
         types: ['REQUEST_NEWS', 'RECEIVE_NEWS'],
         shouldCallAPI: (state) => {
             return _.size(state.news.news) === 0 || (options && !!options.forceLoad);
         },
-        callAPI: () => {
-            let params = {};
-
-            if(options && options.limit) {
-                params.limit = options.limit;
-            }
-
-            return $.ajax('/api/news/', { cache: false, data: params });
-        }
+        APIParams: { url: '/api/news/', cache: false, data: params }
     };
 }
 

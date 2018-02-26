@@ -33,6 +33,18 @@ function hashPassword(password, rounds) {
     });
 }
 
+function verifyPassword(password, dbPassword) {
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(password, dbPassword, function(err, valid) {
+            if(err) {
+                return reject(err);
+            }
+
+            return resolve(valid);
+        });
+    });
+}
+
 function sendEmail(address, subject, email) {
     const message = {
         to: address,
@@ -263,40 +275,46 @@ module.exports.init = function(server) {
             return res.send({ success: false, message: 'Invalid username/password' });
         }
 
-        bcrypt.compare(req.body.password, user.password, function(err, valid) {
-            if(err) {
-                logger.info(err);
+        if(user.disabled) {
+            return res.send({ success: false, message: 'Invalid username/password' });
+        }
 
-                return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
-            }
+        let isValidPassword;
+        try {
+            isValidPassword = await verifyPassword(req.body.password, user.password);
+        } catch(err) {
+            logger.error(err);
 
-            if(!valid) {
-                return res.send({ success: false, message: 'Invalid username/password' });
-            }
+            return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
+        }
 
-            if(user.disabled) {
-                return res.send({ success: false, message: 'Invalid username/password' });
-            }
+        if(!isValidPassword) {
+            return res.send({ success: false, message: 'Invalid username/password' });
+        }
 
-            let userObj = {
-                username: user.username,
-                email: user.email,
-                emailHash: user.emailHash,
-                _id: user._id,
-                admin: user.admin,
-                settings: user.settings,
-                promptedActionWindows: user.promptedActionWindows,
-                permissions: user.permissions,
-                blockList: user.blockList,
-                verified: user.verified
-            };
+        let userObj = {
+            username: user.username,
+            email: user.email,
+            emailHash: user.emailHash,
+            _id: user._id,
+            admin: user.admin,
+            settings: user.settings,
+            promptedActionWindows: user.promptedActionWindows,
+            permissions: user.permissions,
+            blockList: user.blockList,
+            verified: user.verified
+        };
 
-            userObj = Settings.getUserWithDefaultsSet(userObj);
-            userObj.id = userObj._id;
-            delete userObj._id;
+        userObj = Settings.getUserWithDefaultsSet(userObj);
+        userObj.id = userObj._id;
+        delete userObj._id;
 
-            res.send({ success: true, user: userObj, token: jwt.sign(userObj, config.secret, { expiresIn: '5m' }) });
-        });
+        let refreshToken = await userService.addRefreshToken();
+        if(!refreshToken) {
+            return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
+        }
+
+        res.send({ success: true, user: userObj, token: jwt.sign(userObj, config.secret, { expiresIn: '5m' }), refreshToken: refreshToken });
     }));
 
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
