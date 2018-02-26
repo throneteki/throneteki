@@ -1063,6 +1063,16 @@ const Effects = {
             }
         };
     },
+    mustRevealPlot: function(card) {
+        return {
+            apply: function(player) {
+                player.mustRevealPlot = card;
+            },
+            unapply: function(player) {
+                player.mustRevealPlot = undefined;
+            }
+        };
+    },
     skipPhase: function(name) {
         return {
             apply: function(game) {

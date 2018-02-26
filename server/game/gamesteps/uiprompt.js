@@ -20,7 +20,7 @@ class UiPrompt extends BaseStep {
             if(this.activeCondition(player)) {
                 player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt()));
             } else {
-                player.setPrompt(this.addDefaultCommandToButtons(this.waitingPrompt()));
+                player.setPrompt(this.addDefaultCommandToButtons(this.waitingPrompt(player)));
             }
         });
     }
