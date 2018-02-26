@@ -178,7 +178,7 @@ InnerNewGame.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        allowMelee: state.auth.user ? state.auth.user.permissions.allowMelee : false,
+        allowMelee: state.account.user ? state.account.user.permissions.allowMelee : false,
         socket: state.lobby.socket
     };
 }

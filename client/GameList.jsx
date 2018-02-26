@@ -143,7 +143,7 @@ function mapStateToProps(state) {
         currentGame: state.lobby.currentGame,
         isAdmin: state.auth.isAdmin,
         socket: state.lobby.socket,
-        username: state.auth.username
+        username: state.account.user ? state.account.user.username : undefined
     };
 }
 

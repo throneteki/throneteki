@@ -94,7 +94,7 @@ function mapStateToProps(state) {
         newGame: state.games.newGame,
         passwordGame: state.lobby.passwordGame,
         socket: state.lobby.socket,
-        username: state.auth.username
+        username: state.account.user ? state.account.user.username : undefined
     };
 }
 

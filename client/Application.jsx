@@ -55,8 +55,11 @@ class App extends React.Component {
 
     componentWillMount() {
         let token = localStorage.getItem('token');
-        if(token) {
-            this.props.setAuthToken(token);
+        let refreshToken = localStorage.getItem('refreshToken');
+        if(refreshToken) {
+            this.props.setAuthTokens(token, JSON.parse(refreshToken));
+
+            this.props.authenticate();
         }
 
         this.props.loadCards();
@@ -284,6 +287,7 @@ class App extends React.Component {
 
 App.displayName = 'Application';
 App.propTypes = {
+    authenticate: PropTypes.func,
     connectLobby: PropTypes.func,
     currentGame: PropTypes.object,
     dispatch: PropTypes.func,
@@ -294,7 +298,7 @@ App.propTypes = {
     loggedIn: PropTypes.bool,
     navigate: PropTypes.func,
     path: PropTypes.string,
-    setAuthToken: PropTypes.func,
+    setAuthTokens: PropTypes.func,
     setContextMenu: PropTypes.func,
     token: PropTypes.string,
     user: PropTypes.object,
@@ -306,10 +310,10 @@ function mapStateToProps(state) {
         currentGame: state.lobby.currentGame,
         games: state.lobby.games,
         path: state.navigation.path,
-        loggedIn: state.auth.loggedIn,
-        token: state.auth.token,
-        user: state.auth.user,
-        username: state.auth.username
+        loggedIn: state.account.loggedIn,
+        token: state.account.token,
+        user: state.account.user,
+        username: state.account.user ? state.account.user.username : undefined
     };
 }
 

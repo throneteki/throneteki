@@ -125,7 +125,7 @@ function mapStateToProps(state) {
         news: state.news.news,
         newsLoading: state.news.newsLoading,
         socket: state.lobby.socket,
-        username: state.auth.username,
+        username: state.account.user ? state.account.user.username : undefined,
         users: state.lobby.users
     };
 }

@@ -257,7 +257,7 @@ function mapStateToProps(state) {
         host: state.games.gameHost,
         loading: state.api.loading,
         socket: state.lobby.socket,
-        username: state.auth.username
+        username: state.account.user ? state.account.user.username : undefined
     };
 }
 

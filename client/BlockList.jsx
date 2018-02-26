@@ -146,8 +146,8 @@ function mapStateToProps(state) {
         blockListDeleted: state.user.blockListDeleted,
         loading: state.api.loading,
         socket: state.lobby.socket,
-        token: state.auth.token,
-        user: state.auth.user
+        token: state.account.token,
+        user: state.account.user
     };
 }
 

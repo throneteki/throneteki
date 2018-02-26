@@ -427,8 +427,8 @@ function mapStateToProps(state) {
         cardToZoom: state.cards.zoomCard,
         currentGame: state.lobby.currentGame,
         socket: state.lobby.socket,
-        user: state.auth.user,
-        username: state.auth.username
+        user: state.account.user,
+        username: state.account.user ? state.account.user.username : undefined
     };
 }
 

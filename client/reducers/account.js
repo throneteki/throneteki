@@ -14,10 +14,11 @@ export default function(state = {}, action) {
             });
         case 'ACCOUNT_LOGGEDIN':
             localStorage.setItem('token', action.response.token);
+            localStorage.setItem('refreshToken', JSON.stringify(action.response.refreshToken));
 
             return Object.assign({}, state, {
                 loggedIn: true,
-                loggedInUser: action.response.user,
+                user: action.response.user,
                 token: action.response.token
             });
         case 'RESETPASSWORD_ACCOUNT':
@@ -35,6 +36,11 @@ export default function(state = {}, action) {
         case 'ACCOUNT_ACTIVATED':
             return Object.assign({}, state, {
                 activated: true
+            });
+        case 'ACCOUNT_AUTH_VERIFIED':
+            return Object.assign({}, state, {
+                loggedIn: true,
+                user: action.response.user
             });
     }
 

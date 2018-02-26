@@ -257,6 +257,27 @@ module.exports.init = function(server) {
         res.send({ success: true });
     });
 
+    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function(req, res) {
+        let user = {
+            username: req.user.username,
+            email: req.user.email,
+            emailHash: req.user.emailHash,
+            _id: req.user._id,
+            admin: req.user.admin,
+            settings: req.user.settings,
+            promptedActionWindows: req.user.promptedActionWindows,
+            permissions: req.user.permissions,
+            blockList: req.user.blockList,
+            verified: req.user.verified
+        };
+
+        user = Settings.getUserWithDefaultsSet(user);
+        user.id = user._id;
+        delete user._id;
+
+        res.send({ success: true, user: user });
+    });
+
     server.post('/api/account/login', wrapAsync(async (req, res, next) => {
         if(!req.body.username) {
             res.send({ success: false, message: 'Username must be specified' });

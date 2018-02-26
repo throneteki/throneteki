@@ -63,3 +63,32 @@ export function activateAccount(details) {
         }
     };
 }
+
+export function setAuthTokens(token, refreshToken) {
+    return {
+        type: 'SET_AUTH_TOKENS',
+        token: token,
+        refreshToken: refreshToken
+    };
+}
+
+export function verifyAuthentication(token) {
+    return {
+        types: ['ACCOUNT_VERIFY_AUTH', 'ACCOUNT_AUTH_VERIFIED'],
+        shouldCallAPI: () => true,
+        APIParams: {
+            url: '/api/account/checkauth',
+            type: 'POST',
+            data: JSON.stringify({ token: token }),
+            contentType: 'application/json'
+        }
+    };
+}
+
+export function authenticate() {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        return dispatch(verifyAuthentication(state.auth.token));
+    };
+}

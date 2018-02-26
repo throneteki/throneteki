@@ -156,7 +156,7 @@ export function connectGameSocket(url, name) {
         });
 
         gameSocket.on('gamestate', game => {
-            dispatch(receiveGameState(game, state.auth.username));
+            dispatch(receiveGameState(game, state.account.user.username));
         });
 
         gameSocket.on('cleargamestate', () => {
