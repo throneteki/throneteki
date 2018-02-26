@@ -11,7 +11,10 @@ class NightGathers extends DrawCard {
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
                     targetController: 'current',
-                    effect: ability.effects.canMarshalFrom(context.opponent, 'discard pile')
+                    effect: ability.effects.canMarshal(card =>
+                        card.controller === context.opponent &&
+                        card.location === 'discard pile' &&
+                        card.getType() === 'character')
                 }));
 
             }

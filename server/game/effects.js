@@ -902,8 +902,8 @@ const Effects = {
             }
         };
     },
-    canMarshalFrom: function(p, location) {
-        let playableLocation = new PlayableLocation('marshal', card => card.controller === p && card.location === location);
+    canMarshal: function(predicate) {
+        let playableLocation = new PlayableLocation('marshal', predicate);
         return {
             apply: function(player) {
                 player.playableLocations.push(playableLocation);
