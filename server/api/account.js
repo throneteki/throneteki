@@ -127,9 +127,6 @@ module.exports.init = function(server) {
 
             if(answer.request_status !== 'success') {
                 logger.warn('Failed to check email address', answer);
-                res.send({ success: false, message: 'It was not possible to verify your email address.  Please try again later' });
-
-                return next();
             }
 
             if(answer.domain_status === 'block') {
@@ -140,10 +137,6 @@ module.exports.init = function(server) {
             }
         } catch(err) {
             logger.warn('Could not valid email address', domain, err);
-
-            res.send({ success: false, message: 'It was not possible to verify your email address.  Please try again later' });
-
-            return next();
         }
 
         let passwordHash = await hashPassword(req.body.password, 10);
