@@ -345,26 +345,72 @@ module.exports.init = function(server) {
     }));
 
     server.post('/api/account/token', wrapAsync(async (req, res, next) => {
-        if(!req.body.username) {
-            res.send({ success: false, message: 'Username must be specified' });
-
-            return next();
-        }
-
         if(!req.body.token) {
             res.send({ success: false, message: 'Refresh token must be specified' });
 
             return next();
         }
 
-        let user = await userService.getUserByUsername(req.body.username);
+        let token = JSON.parse(req.body.token);
+
+        let user = await userService.getUserByUsername(token.username);
         if(!user) {
-            res.send({ success: false, message: 'Invalid username or refresh token' });
+            res.send({ success: false, message: 'Invalid refresh token' });
 
             return next();
         }
 
+        if(user.username !== token.username) {
+            logger.error(`Username ${user.username} did not match token username ${token.username}`);
+            res.send({ success: false, message: 'Invalid refresh token' });
 
+            return next();
+        }
+
+        let refreshToken = user.tokens.find(t => {
+            return t._id.toString() === token.id;
+        });
+        if(!refreshToken) {
+            console.info('not found');
+            res.send({ success: false, message: 'Invalid refresh token' });
+
+            return next();
+        }
+
+        if(!userService.verifyRefreshToken(user.username, refreshToken)) {
+            console.info('didnt validate');
+            res.send({ success: false, message: 'Invalid refresh token' });
+
+            return next();
+        };
+
+        let userObj = {
+            username: user.username,
+            email: user.email,
+            emailHash: user.emailHash,
+            _id: user._id,
+            admin: user.admin,
+            settings: user.settings,
+            promptedActionWindows: user.promptedActionWindows,
+            permissions: user.permissions,
+            blockList: user.blockList,
+            verified: user.verified
+        };
+
+        userObj = Settings.getUserWithDefaultsSet(userObj);
+        userObj.id = userObj._id;
+        delete userObj._id;
+
+        let ip = req.get('x-real-ip');
+        if(!ip) {
+            ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        }
+
+        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+
+        await userService.updateRefreshTokenUsage(refreshToken.id, ip);
+
+        res.send({ success: true, user: userObj, token: authToken });
     }));
 
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {

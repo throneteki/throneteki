@@ -70,7 +70,9 @@ export default function callAPIMiddleware({ dispatch, getState }) {
 
                     $.ajax('/api/account/token', {
                         type: 'POST',
-                        data: { refreshToken: state.auth.refreshToken }
+                        data: {
+                            token: JSON.stringify(state.auth.refreshToken)
+                        }
                     });
                 }
 

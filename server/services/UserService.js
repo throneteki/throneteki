@@ -143,26 +143,53 @@ class UserService {
         let expiration = moment().add(1, 'months');
         let hmac = crypto.createHmac('sha512', config.hmacSecret);
 
-        let encodedToken = hmac.update(`REFRESH ${username} ${token}`).digest('hex');
         let newId = monk.id();
+        let encodedToken = hmac.update(`REFRESH ${username} ${newId}`).digest('hex');
 
         return this.users.update({ username: username }, {
-            '$push': { tokens: {
-                '_id': newId,
-                token: encodedToken,
-                exp: expiration.toDate(),
-                ip: ip,
-                lastUsed: new Date()
-            }}
+            '$push': {
+                tokens: {
+                    '_id': newId,
+                    token: encodedToken,
+                    exp: expiration.toDate(),
+                    ip: ip,
+                    lastUsed: new Date()
+                }
+            }
         }).then(() => {
             return {
                 id: newId,
+                username: username,
                 token: encodedToken
             };
         }).catch(err => {
             logger.error(err);
 
             return undefined;
+        });
+    }
+
+    verifyRefreshToken(username, refreshToken) {
+        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let encodedToken = hmac.update(`REFRESH ${username} ${refreshToken._id}`).digest('hex');
+
+        if(encodedToken !== refreshToken.token) {
+            return false;
+        }
+
+        let now = moment();
+        if(refreshToken.exp < now) {
+            return false;
+        }
+
+        return true;
+    }
+
+    updateRefreshTokenUsage(tokenId, ip) {
+        return this.users.update({ tokens: { '$elemMatch': { id: tokenId } } }, {
+            $set: { 'tokens.$.ip': ip, 'tokens.$.lastUsed': new Date() }
+        }).catch(err => {
+            logger.error(err);
         });
     }
 }
