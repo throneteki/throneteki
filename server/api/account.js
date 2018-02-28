@@ -344,6 +344,29 @@ module.exports.init = function(server) {
         res.send({ success: true, user: userObj, token: authToken, refreshToken: refreshToken });
     }));
 
+    server.post('/api/account/token', wrapAsync(async (req, res, next) => {
+        if(!req.body.username) {
+            res.send({ success: false, message: 'Username must be specified' });
+
+            return next();
+        }
+
+        if(!req.body.token) {
+            res.send({ success: false, message: 'Refresh token must be specified' });
+
+            return next();
+        }
+
+        let user = await userService.getUserByUsername(req.body.username);
+        if(!user) {
+            res.send({ success: false, message: 'Invalid username or refresh token' });
+
+            return next();
+        }
+
+
+    }));
+
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
         let resetUser;
 

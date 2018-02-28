@@ -65,6 +65,15 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                 return ret;
             },
             error => {
+                if(error.status === 401) {
+                    let state = getState();
+
+                    $.ajax('/api/account/token', {
+                        type: 'POST',
+                        data: { refreshToken: state.auth.refreshToken }
+                    });
+                }
+
                 dispatch(Object.assign({}, payload, {
                     status: error.status,
                     message: 'An error occured communicating with the server.  Please try again later.',
