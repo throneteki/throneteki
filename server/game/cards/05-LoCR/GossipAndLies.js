@@ -10,7 +10,7 @@ class GossipAndLies extends PlotCard {
     }
 
     isAttackingInFirstIntrigueChallenge() {
-        var currentChallenge = this.game.currentChallenge;
+        let currentChallenge = this.game.currentChallenge;
 
         return currentChallenge &&
                 currentChallenge.challengeType === 'intrigue' &&

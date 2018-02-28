@@ -13,7 +13,7 @@ class HeadsOnSpikes extends PlotCard {
 
                 otherPlayer.discardAtRandom(1, cards => {
                     var powerMessage = '';
-                    var card = cards[0];
+                    let card = cards[0];
 
                     if(card.getType() === 'character') {
                         powerMessage = ' and gain 2 power for their faction';

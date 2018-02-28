@@ -14,7 +14,7 @@ class LostRanger extends DrawCard {
     }
 
     hasNoOtherRanger() {
-        var rangers = this.controller.filterCardsInPlay(card => {
+        let rangers = this.controller.filterCardsInPlay(card => {
             return card !== this && card.hasTrait('Ranger') && card.getType() === 'character';
         });
 

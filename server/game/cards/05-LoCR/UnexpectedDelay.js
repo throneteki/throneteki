@@ -37,7 +37,7 @@ class UnexpectedDelay extends PlotCard {
 
     proceedToNextStep() {
         if(this.remainingPlayers.length > 0) {
-            var currentPlayer = this.remainingPlayers.shift();
+            let currentPlayer = this.remainingPlayers.shift();
             this.game.promptForSelect(currentPlayer, {
                 source: this,
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.power === 0 && card.attachments.size() === 0,

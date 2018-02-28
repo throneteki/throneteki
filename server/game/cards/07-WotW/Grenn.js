@@ -18,8 +18,8 @@ class Grenn extends DrawCard {
                     card.getType() === 'character')
             },
             handler: context => {
-                var otherPlayer = context.event.challenge.loser;
-                var power = otherPlayer.faction.power > 1 && context.target.kneeled === false ? 2 : 1;
+                let otherPlayer = context.event.challenge.loser;
+                let power = otherPlayer.faction.power > 1 && context.target.kneeled === false ? 2 : 1;
                 this.game.movePower(otherPlayer.faction, context.target, power);
 
                 this.game.addMessage('{0} uses {1} to move {2} power from {3}\'s faction to {4}',

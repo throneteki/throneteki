@@ -22,7 +22,7 @@ class TimettSonOfTimett extends DrawCard {
     }
 
     getNumberOfClansmen() {
-        var cards = this.controller.filterCardsInPlay(card => {
+        let cards = this.controller.filterCardsInPlay(card => {
             return card.hasTrait('Clansman') && card.getType() === 'character';
         });
 

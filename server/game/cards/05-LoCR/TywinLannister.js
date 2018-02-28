@@ -12,8 +12,8 @@ class TywinLannister extends DrawCard {
                 this.eventObj = context.event;
                 this.discardingPlayer = this.eventObj.player;
 
-                var top2Cards = this.discardingPlayer.drawDeck.first(2);
-                var buttons = _.map(top2Cards, card => {
+                let top2Cards = this.discardingPlayer.drawDeck.first(2);
+                let buttons = _.map(top2Cards, card => {
                     return { method: 'cardSelected', card: card };
                 });
 
@@ -29,8 +29,7 @@ class TywinLannister extends DrawCard {
     }
 
     cardSelected(player, cardId) {
-        var card = this.discardingPlayer.findCardByUuid(this.discardingPlayer.drawDeck, cardId);
-
+        let card = this.discardingPlayer.findCardByUuid(this.discardingPlayer.drawDeck, cardId);
         if(!card) {
             return false;
         }

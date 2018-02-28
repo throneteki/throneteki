@@ -11,9 +11,11 @@ class AClashOfKings extends PlotCard {
                 )
             },
             handler: () => {
-                var challenge = this.game.currentChallenge;
-                this.game.addMessage('{0} uses {1} to move 1 power from {2}\'s faction card to their own', challenge.winner, this, challenge.loser);
+                let challenge = this.game.currentChallenge;
                 this.game.movePower(challenge.loser.faction, challenge.winner.faction, 1);
+
+                this.game.addMessage('{0} uses {1} to move 1 power from {2}\'s faction card to their own',
+                    challenge.winner, this, challenge.loser);
             }
         });
     }

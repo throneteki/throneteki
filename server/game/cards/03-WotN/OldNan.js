@@ -47,23 +47,22 @@ class OldNan extends DrawCard {
     }
 
     traitSelected(player, trait) {
-        var plotCard = this.game.findAnyCardInAnyList(this.selectedCard);
-
+        let plotCard = this.game.findAnyCardInAnyList(this.selectedCard);
         if(!plotCard) {
             return false;
         }
 
-        var lowerTrait = trait.toLowerCase();
-
+        let lowerTrait = trait.toLowerCase();
         if(lowerTrait !== 'summer' && lowerTrait !== 'winter') {
             return false;
         }
 
-        this.game.addMessage('{0} uses {1} to add the {2} trait to {3}', player, this, trait, plotCard);
         this.untilEndOfRound(ability => ({
             match: plotCard,
             effect: ability.effects.addTrait(trait)
         }));
+
+        this.game.addMessage('{0} uses {1} to add the {2} trait to {3}', player, this, trait, plotCard);
 
         return true;
     }
