@@ -517,6 +517,29 @@ module.exports.init = function(server) {
             });
     });
 
+    server.get('/api/account/:username/sessions', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        let tokens = user.tokens || [];
+
+        res.send({
+            success: true,
+            tokens: tokens.sort((a, b) => {
+                return a.lastUsed < b.lastUsed;
+            }).map(t => {
+                return {
+                    id: t._id,
+                    ip: t.ip,
+                    lastUsed: t.lastUsed
+                };
+            })
+        });
+    }));
+
     server.get('/api/account/:username/blocklist', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
 
@@ -599,13 +622,13 @@ async function checkAuth(req, res) {
     }
 
     if(req.user.username !== req.params.username) {
-        res.status(403).send({ message: 'Unauthorized' });
+        res.status(401).send({ message: 'Unauthorized' });
 
         return null;
     }
 
     if(!user) {
-        res.status(404).send({ message: 'Not found' });
+        res.status(401).send({ message: 'Unauthorized' });
 
         return null;
     }

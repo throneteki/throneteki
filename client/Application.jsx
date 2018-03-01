@@ -6,26 +6,27 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import Login from './pages/Login';
-import Logout from './Logout.jsx';
+import Logout from './Logout';
 import Register from './pages/Register';
-import Lobby from './pages/Lobby.jsx';
-import Decks from './Decks.jsx';
-import AddDeck from './AddDeck.jsx';
-import EditDeck from './EditDeck.jsx';
-import NotFound from './NotFound.jsx';
-import NavBar from './NavBar.jsx';
-import GameLobby from './GameLobby.jsx';
-import GameBoard from './GameBoard.jsx';
-import HowToPlay from './HowToPlay.jsx';
-import About from './About.jsx';
-import ForgotPassword from './pages/ForgotPassword.jsx';
-import ResetPassword from './pages/ResetPassword.jsx';
-import Profile from './Profile.jsx';
-import NewsAdmin from './NewsAdmin.jsx';
-import Unauthorised from './Unauthorised.jsx';
-import UserAdmin from './UserAdmin.jsx';
-import BlockList from './BlockList.jsx';
-import Activation from './pages/Activation.jsx';
+import Lobby from './pages/Lobby';
+import Decks from './Decks';
+import AddDeck from './AddDeck';
+import EditDeck from './EditDeck';
+import NotFound from './NotFound';
+import NavBar from './NavBar';
+import GameLobby from './GameLobby';
+import GameBoard from './GameBoard';
+import HowToPlay from './HowToPlay';
+import About from './About';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import Profile from './Profile';
+import NewsAdmin from './NewsAdmin';
+import Unauthorised from './Unauthorised';
+import UserAdmin from './UserAdmin';
+import BlockList from './BlockList';
+import Security from './pages/Security';
+import Activation from './pages/Activation';
 
 import * as actions from './actions';
 
@@ -49,6 +50,7 @@ class App extends React.Component {
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
             '/profile': () => <Profile />,
             '/news': () => <NewsAdmin />,
+            '/security': () => <Security />,
             '/activation': () => params => <Activation id={ params.id } token={ params.token } />
         };
     }
@@ -106,6 +108,7 @@ class App extends React.Component {
                 {
                     name: this.props.user.username, childItems: [
                         { name: 'Profile', path: '/profile' },
+                        { name: 'Security', path: '/security' },
                         { name: 'Block List', path: '/blocklist' },
                         { name: 'Logout', path: '/logout' }
                     ], avatar: true, emailHash: this.props.user.emailHash, disableGravatar: this.props.user.settings.disableGravatar
@@ -248,6 +251,9 @@ class App extends React.Component {
                 break;
             case '/blocklist':
                 component = <BlockList />;
+                break;
+            case '/security':
+                component = <Security />;
                 break;
             case '/activation':
                 component = <Activation id={ idArg } token={ tokenArg } />;

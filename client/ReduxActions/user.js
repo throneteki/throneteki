@@ -6,6 +6,16 @@ export function refreshUser(user, token) {
     };
 }
 
+export function loadActiveSessions(user) {
+    return {
+        types: ['REQUEST_SESSIONS', 'RECEIVE_SESSIONS'],
+        shouldCallAPI: () => true,
+        APIParams: {
+            url: `/api/account/${user.username}/sessions`
+        }
+    };
+}
+
 export function loadBlockList(user) {
     return {
         types: ['REQUEST_BLOCKLIST', 'RECEIVE_BLOCKLIST'],

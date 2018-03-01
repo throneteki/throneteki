@@ -12,6 +12,10 @@ export default function(state = {}, action) {
             return Object.assign({}, state, {
                 blockList: action.response.blockList
             });
+        case 'RECEIVE_SESSIONS':
+            return Object.assign({}, state, {
+                sessions: action.response.tokens
+            });
         case 'BLOCKLIST_ADDED':
             var addedState = Object.assign({}, state, {
                 blockListAdded: true

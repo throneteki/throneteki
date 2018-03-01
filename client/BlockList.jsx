@@ -14,12 +14,17 @@ class InnerBlockList extends React.Component {
         super(props);
 
         this.state = {
-            username: ''
+            username: '',
+            detailsLoaded: false
         };
     }
 
-    componentDidMount() {
-        this.props.loadBlockList(this.props.user);
+    componentWillReceiveProps(props) {
+        if(!this.state.detailsLoaded && props.user) {
+            this.props.loadBlockList(props.user);
+
+            this.setState({ detailsLoaded: true });
+        }
     }
 
     onUsernameChange(event) {
