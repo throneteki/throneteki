@@ -11,11 +11,9 @@ const UserService = require('../services/UserService.js');
 const _ = require('underscore');
 const { wrapAsync } = require('../util.js');
 const sendgrid = require('@sendgrid/mail');
-const Settings = require('../settings.js');
-
 
 let db = monk(config.dbPath);
-let userService = new UserService(db);
+let userService = new UserService(db, config);
 
 if(config.emailKey) {
     sendgrid.setApiKey(config.emailKey);
@@ -258,22 +256,7 @@ module.exports.init = function(server) {
     });
 
     server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function(req, res) {
-        let user = {
-            username: req.user.username,
-            email: req.user.email,
-            emailHash: req.user.emailHash,
-            _id: req.user._id,
-            admin: req.user.admin,
-            settings: req.user.settings,
-            promptedActionWindows: req.user.promptedActionWindows,
-            permissions: req.user.permissions,
-            blockList: req.user.blockList,
-            verified: req.user.verified
-        };
-
-        user = Settings.getUserWithDefaultsSet(user);
-        user.id = user._id;
-        delete user._id;
+        let user = userService.sanitiseUserObject(req.user);
 
         res.send({ success: true, user: user });
     });
@@ -313,23 +296,7 @@ module.exports.init = function(server) {
             return res.send({ success: false, message: 'Invalid username/password' });
         }
 
-        let userObj = {
-            username: user.username,
-            email: user.email,
-            emailHash: user.emailHash,
-            _id: user._id,
-            admin: user.admin,
-            settings: user.settings,
-            promptedActionWindows: user.promptedActionWindows,
-            permissions: user.permissions,
-            blockList: user.blockList,
-            verified: user.verified
-        };
-
-        userObj = Settings.getUserWithDefaultsSet(userObj);
-        userObj.id = userObj._id;
-        delete userObj._id;
-
+        let userObj = userService.sanitiseUserObject(user);
         let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
         let ip = req.get('x-real-ip');
         if(!ip) {
@@ -371,35 +338,18 @@ module.exports.init = function(server) {
             return t._id.toString() === token.id;
         });
         if(!refreshToken) {
-            console.info('not found');
             res.send({ success: false, message: 'Invalid refresh token' });
 
             return next();
         }
 
         if(!userService.verifyRefreshToken(user.username, refreshToken)) {
-            console.info('didnt validate');
             res.send({ success: false, message: 'Invalid refresh token' });
 
             return next();
-        };
+        }
 
-        let userObj = {
-            username: user.username,
-            email: user.email,
-            emailHash: user.emailHash,
-            _id: user._id,
-            admin: user.admin,
-            settings: user.settings,
-            promptedActionWindows: user.promptedActionWindows,
-            permissions: user.permissions,
-            blockList: user.blockList,
-            verified: user.verified
-        };
-
-        userObj = Settings.getUserWithDefaultsSet(userObj);
-        userObj.id = userObj._id;
-        delete userObj._id;
+        let userObj = userService.sanitiseUserObject(user);
 
         let ip = req.get('x-real-ip');
         if(!ip) {

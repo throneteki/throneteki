@@ -4,12 +4,13 @@ const crypto = require('crypto');
 
 const escapeRegex = require('../util.js').escapeRegex;
 const logger = require('../log.js');
-const config = require('../config.js');
+const Settings = require('../settings.js');
 
 class UserService {
-    constructor(db) {
+    constructor(db, config) {
         this.users = db.get('users');
         this.sessions = db.get('sessions');
+        this.config = config;
     }
 
     getUserByUsername(username) {
@@ -141,7 +142,7 @@ class UserService {
 
     addRefreshToken(username, token, ip) {
         let expiration = moment().add(1, 'months');
-        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', this.config.hmacSecret);
 
         let newId = monk.id();
         let encodedToken = hmac.update(`REFRESH ${username} ${newId}`).digest('hex');
@@ -170,7 +171,7 @@ class UserService {
     }
 
     verifyRefreshToken(username, refreshToken) {
-        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', this.config.hmacSecret);
         let encodedToken = hmac.update(`REFRESH ${username} ${refreshToken._id}`).digest('hex');
 
         if(encodedToken !== refreshToken.token) {
@@ -191,6 +192,27 @@ class UserService {
         }).catch(err => {
             logger.error(err);
         });
+    }
+
+    sanitiseUserObject(userObj) {
+        let user = {
+            username: userObj.username,
+            email: userObj.email,
+            emailHash: userObj.emailHash,
+            _id: userObj._id,
+            admin: userObj.admin,
+            settings: userObj.settings,
+            promptedActionWindows: userObj.promptedActionWindows,
+            permissions: userObj.permissions,
+            blockList: userObj.blockList,
+            verified: userObj.verified
+        };
+
+        user = Settings.getUserWithDefaultsSet(user);
+        user.id = user._id;
+        delete user._id;
+
+        return user;
     }
 }
 
