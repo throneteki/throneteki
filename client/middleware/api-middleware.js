@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import {navigate, setAuthTokens} from '../actions';
 
 export default function callAPIMiddleware({ dispatch, getState }) {
     return next => action => {
@@ -73,7 +74,61 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                         data: {
                             token: JSON.stringify(state.auth.refreshToken)
                         }
+                    }).then(response => {
+                        if(response.status === 401) {
+                            dispatch(navigate('/login'));
+                        }
+
+                        if(response.success) {
+                            apiParams.headers = {
+                                Authorization: `Bearer ${response.token}`,
+                                'Content-Type': 'application/json'
+                            };
+
+                            dispatch(setAuthTokens(response.token, state.auth.refreshToken));
+                        }
+
+                        return $.ajax(apiParams.url, apiParams).then(
+                            response => {
+                                if(!response.success) {
+                                    return dispatch(Object.assign({}, payload, {
+                                        status: 200,
+                                        message: response.message,
+                                        type: 'API_FAILURE',
+                                        request: requestType
+                                    }));
+                                }
+
+                                let ret = dispatch(Object.assign({}, payload, {
+                                    response,
+                                    type: successType
+                                }));
+
+                                dispatch(Object.assign({}, payload, {
+                                    type: 'API_LOADED',
+                                    request: requestType
+                                }));
+
+                                return ret;
+                            },
+                            error => {
+                                dispatch(Object.assign({}, payload, {
+                                    status: error.status,
+                                    message: 'An error occured communicating with the server.  Please try again later.',
+                                    type: 'API_LOADED',
+                                    request: requestType
+                                }));
+
+                                dispatch(Object.assign({}, payload, {
+                                    status: error.status,
+                                    message: 'An error occured communicating with the server.  Please try again later.',
+                                    type: 'API_FAILURE',
+                                    request: requestType
+                                }));
+                            });
                     });
+
+                    return;
                 }
 
                 dispatch(Object.assign({}, payload, {

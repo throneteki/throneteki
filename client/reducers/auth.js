@@ -14,6 +14,11 @@ export default function(state = {}, action) {
                 token: action.response.token
             });
         case 'SET_AUTH_TOKENS':
+            localStorage.setItem('token', action.token);
+            if(action.refreshToken) {
+                localStorage.setItem('refreshToken', JSON.stringify(action.refreshToken));
+            }
+
             return Object.assign({}, state, {
                 token: action.token,
                 refreshToken: action.refreshToken

@@ -67,9 +67,7 @@ class App extends React.Component {
         this.props.loadFactions();
 
         $(document).ajaxError((event, xhr) => {
-            if(xhr.status === 401) {
-                this.props.navigate('/login');
-            } else if(xhr.status === 403) {
+            if(xhr.status === 403) {
                 this.props.navigate('/unauth');
             }
         });
