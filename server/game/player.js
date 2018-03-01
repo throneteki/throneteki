@@ -51,7 +51,8 @@ class Player extends Spectator {
         this.usedPlotsModifier = 0;
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
-        this.cannotGainGold = false;
+        this.gainedGold = 0;
+        this.maxGoldGain = undefined;
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
         this.triggerRestrictions = [];
@@ -200,10 +201,22 @@ class Player extends Spectator {
     }
 
     modifyGold(amount) {
-        this.gold += amount;
+        if(amount > 0) {
+            var goldGain;
+            if(this.maxGoldGain === undefined) {
+                goldGain = amount;
+            } else {
+                goldGain = Math.min(amount, this.maxGoldGain - this.gainedGold);
+            }
+            this.gold += goldGain;
+            this.gainedGold += goldGain;
 
-        if(this.gold < 0) {
-            this.gold = 0;
+        } else if(amount < 0) {
+            this.gold += amount;
+
+            if(this.gold < 0) {
+                this.gold = 0;
+            }
         }
     }
 
@@ -295,6 +308,10 @@ class Player extends Spectator {
 
     canInitiateChallenge(challengeType, opponent) {
         return this.challenges.canInitiate(challengeType, opponent);
+    }
+
+    canGainGold() {
+        return (this.maxGoldGain === undefined || this.gainedGold < this.maxGoldGain);
     }
 
     canSelectAsFirstPlayer(player) {
@@ -624,6 +641,7 @@ class Player extends Spectator {
             this.noTimer = false;
         }
 
+        this.gainedGold = 0;
         this.challenges.reset();
 
         this.drawPhaseCards = DrawPhaseCards;

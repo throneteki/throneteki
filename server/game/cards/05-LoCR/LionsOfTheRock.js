@@ -4,7 +4,7 @@ class LionsOfTheRock extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge' && !this.controller.cannotGainGold
+                onPhaseStarted: event => event.phase === 'challenge' && this.controller.canGainGold()
             },
             handler: () => {
                 this.game.addGold(this.controller, 3);

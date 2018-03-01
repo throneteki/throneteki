@@ -714,10 +714,20 @@ const Effects = {
     cannotGainGold: function() {
         return {
             apply: function(player) {
-                player.cannotGainGold = true;
+                player.maxGoldGain = 0;
             },
             unapply: function(player) {
-                player.cannotGainGold = false;
+                player.maxGoldGain = undefined;
+            }
+        };
+    },
+    setMaxGoldGain: function(max) {
+        return {
+            apply: function(player) {
+                player.maxGoldGain = max;
+            },
+            unapply: function(player) {
+                player.maxGoldGain = undefined;
             }
         };
     },

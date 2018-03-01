@@ -4,7 +4,7 @@ class InDoransName extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel faction card to gain gold',
-            condition: () => this.controller.getNumberOfUsedPlots() >= 1 && !this.controller.cannotGainGold,
+            condition: () => this.controller.getNumberOfUsedPlots() >= 1 && this.controller.canGainGold(),
             cost: ability.costs.kneelFactionCard(),
             handler: context => {
                 let gold = this.controller.getNumberOfUsedPlots();
