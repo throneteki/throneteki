@@ -477,13 +477,9 @@ module.exports.init = function(server) {
             });
     }
 
-    server.put('/api/account/:username', (req, res) => {
+    server.put('/api/account/:username', passport.authenticate('jwt', { session: false }), (req, res) => {
         let userToSet = JSON.parse(req.body.data);
         let existingUser;
-
-        if(!req.user) {
-            return res.status(401).send({ message: 'Unauthorized' });
-        }
 
         if(req.user.username !== req.params.username) {
             return res.status(403).send({ message: 'Unauthorized' });
@@ -559,7 +555,7 @@ module.exports.init = function(server) {
         ));
     }));
 
-    server.delete('/api/account/:username/blocklist/:entry', wrapAsync(async (req, res) => {
+    server.delete('/api/account/:username/blocklist/:entry', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
 
         if(!user) {

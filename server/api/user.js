@@ -1,4 +1,6 @@
 const monk = require('monk');
+const passport = require('passport');
+
 const UserService = require('../services/UserService.js');
 const logger = require('../log.js');
 const config = require('../config.js');
@@ -7,11 +9,7 @@ let db = monk(config.dbPath);
 let userService = new UserService(db);
 
 module.exports.init = function(server) {
-    server.get('/api/user/:username', function(req, res) {
-        if(!req.user) {
-            return res.status(401);
-        }
-
+    server.get('/api/user/:username', passport.authenticate('jwt', { session: false }), function(req, res) {
         if(!req.user.permissions || !req.user.permissions.canManageUsers) {
             return res.status(403);
         }
@@ -31,11 +29,7 @@ module.exports.init = function(server) {
             });
     });
 
-    server.put('/api/user/:username', function(req, res) {
-        if(!req.user) {
-            return res.status(401);
-        }
-
+    server.put('/api/user/:username', passport.authenticate('jwt', { session: false }), function(req, res) {
         if(!req.user.permissions || !req.user.permissions.canManageUsers) {
             return res.status(403);
         }
