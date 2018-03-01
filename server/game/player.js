@@ -615,6 +615,8 @@ class Player extends Spectator {
         this.challenges.reset();
 
         this.drawPhaseCards = DrawPhaseCards;
+        
+        this.limitedPlayed = 0;
     }
 
     flipPlotFaceup() {
@@ -653,8 +655,6 @@ class Player extends Spectator {
         this.game.addMessage('{0} collects {1} gold', this, this.getTotalIncome());
 
         this.game.raiseEvent('onIncomeCollected', { player: this });
-
-        this.limitedPlayed = 0;
     }
 
     hasUnmappedAttachments() {
