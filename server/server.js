@@ -13,8 +13,9 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js')();
 const monk = require('monk');
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
+const passportJwt = require('passport-jwt');
+const JwtStrategy = passportJwt.Strategy;
+const ExtractJwt = passportJwt.ExtractJwt;
 
 const UserService = require('./services/UserService.js');
 const version = require('../version.js');
