@@ -29,9 +29,9 @@ class HisViperEyes extends DrawCard {
     }
 
     cardSelected(player, cardId) {
-        var otherPlayer = this.challengeWinner;
+        let otherPlayer = this.challengeWinner;
 
-        var card = otherPlayer.findCardByUuid(otherPlayer.hand, cardId);
+        let card = otherPlayer.findCardByUuid(otherPlayer.hand, cardId);
         if(!card) {
             return false;
         }

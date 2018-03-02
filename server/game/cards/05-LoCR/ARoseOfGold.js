@@ -12,7 +12,7 @@ class ARoseOfGold extends DrawCard {
 
                 this.remainingCards = this.controller.searchDrawDeck(3);
 
-                var buttons = _.map(this.remainingCards, card => ({
+                let buttons = _.map(this.remainingCards, card => ({
                     method: 'selectCardForHand', card: card
                 }));
 
@@ -28,8 +28,7 @@ class ARoseOfGold extends DrawCard {
     }
 
     selectCardForHand(player, cardId) {
-        var card = _.find(this.remainingCards, card => card.uuid === cardId);
-
+        let card = _.find(this.remainingCards, card => card.uuid === cardId);
         if(!card) {
             return false;
         }
@@ -43,7 +42,7 @@ class ARoseOfGold extends DrawCard {
     }
 
     promptToPlaceNextCard() {
-        var buttons = _.map(this.remainingCards, card => ({
+        let buttons = _.map(this.remainingCards, card => ({
             method: 'selectCardForBottom', card: card
         }));
 
@@ -57,8 +56,7 @@ class ARoseOfGold extends DrawCard {
     }
 
     selectCardForBottom(player, cardId) {
-        var card = _.find(this.remainingCards, card => card.uuid === cardId);
-
+        let card = _.find(this.remainingCards, card => card.uuid === cardId);
         if(!card) {
             return false;
         }

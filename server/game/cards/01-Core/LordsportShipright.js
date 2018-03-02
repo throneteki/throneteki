@@ -19,7 +19,7 @@ class LordsportShipright extends DrawCard {
     }
 
     cardCondition(card) {
-        var cost = this.controller.firstPlayer ? 3 : 2;
+        let cost = this.controller.firstPlayer ? 3 : 2;
 
         return !card.kneeled && card.getType() === 'location' && card.getCost() <= cost;
     }

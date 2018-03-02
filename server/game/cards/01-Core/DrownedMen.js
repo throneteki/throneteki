@@ -9,7 +9,7 @@ class DrownedMen extends DrawCard {
     }
 
     calculateStrength() {
-        var cards = this.controller.filterCardsInPlay(card => {
+        let cards = this.controller.filterCardsInPlay(card => {
             return card.getType() === 'location' && card.hasTrait('Warship');
         });
 

@@ -33,7 +33,7 @@ class GreenbloodTrader extends DrawCard {
             return undefined;
         }
 
-        var card = player.findCardByUuid(player.drawDeck, cardId);
+        let card = player.findCardByUuid(player.drawDeck, cardId);
         if(!card) {
             return undefined;
         }
@@ -42,7 +42,7 @@ class GreenbloodTrader extends DrawCard {
     }
 
     cardSelected(player, cardId) {
-        var card = this.getCard(player, cardId);
+        let card = this.getCard(player, cardId);
         if(!card) {
             return false;
         }
@@ -57,12 +57,12 @@ class GreenbloodTrader extends DrawCard {
     }
 
     moveToBottom(player, cardId) {
-        var card = this.getCard(player, cardId);
+        let card = this.getCard(player, cardId);
         if(!card) {
             return false;
         }
 
-        var otherCard = _.find(this.top2Cards, c => {
+        let otherCard = _.find(this.top2Cards, c => {
             return c.uuid !== card.uuid;
         });
 

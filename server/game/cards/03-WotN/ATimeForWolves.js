@@ -26,7 +26,7 @@ class ATimeForWolves extends PlotCard {
 
         this.revealedCard = card;
 
-        var buttons = [
+        let buttons = [
             { text: 'Keep in hand', method: 'keepInHand' },
             { text: 'Put in play', method: 'putInPlay' }
         ];

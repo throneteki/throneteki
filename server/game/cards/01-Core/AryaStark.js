@@ -12,7 +12,7 @@ class AryaStark extends DrawCard {
                 onCardEntersPlay: event => event.card === this && event.card.canBeDuplicated()
             },
             handler: () => {
-                var dupe = this.controller.drawDeck.first();
+                let dupe = this.controller.drawDeck.first();
                 this.controller.removeCardFromPile(dupe);
 
                 this.addDuplicate(dupe);

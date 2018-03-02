@@ -8,8 +8,9 @@ class Confiscation extends PlotCard {
                 cardCondition: card => this.cardCondition(card)
             },
             handler: context => {
-                var attachment = context.target;
+                let attachment = context.target;
                 attachment.owner.discardCard(attachment);
+
                 this.game.addMessage('{0} uses {1} to discard {2}', context.player, this, attachment);
             }
         });

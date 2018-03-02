@@ -45,7 +45,7 @@ class RobbStark extends DrawCard {
     }
 
     numberOfLoyalChars () {
-        var cards = this.controller.filterCardsInPlay(card => {
+        let cards = this.controller.filterCardsInPlay(card => {
             return card.isLoyal() && card.getType() === 'character';
         });
 

@@ -8,7 +8,7 @@ class TheKingsPeace extends PlotCard {
                                                (event.challenge.challengeType === 'military' || event.challenge.challengeType === 'power')
             },
             handler: () => {
-                var otherPlayer = this.game.currentChallenge.attackingPlayer;
+                let otherPlayer = this.game.currentChallenge.attackingPlayer;
                 var buttons = [];
 
                 if(!otherPlayer.faction.kneeled) {
