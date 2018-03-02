@@ -212,15 +212,14 @@ class UserService {
 
     sanitiseUserObject(userObj) {
         let user = {
+            _id: userObj._id,
             username: userObj.username,
             email: userObj.email,
             emailHash: userObj.emailHash,
-            _id: userObj._id,
             admin: userObj.admin,
             settings: userObj.settings,
             promptedActionWindows: userObj.promptedActionWindows,
             permissions: userObj.permissions,
-            blockList: userObj.blockList,
             verified: userObj.verified
         };
 
