@@ -540,6 +540,31 @@ module.exports.init = function(server) {
         });
     }));
 
+    server.delete('/api/account/:username/sessions/:id', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        if(!req.params.username) {
+            return res.send({ success: false, message: 'Username is required' });
+        }
+
+        if(!req.params.id) {
+            return res.send({ success: false, message: 'Session Id is required' });
+        }
+
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        let session = await userService.getRefreshTokenById(req.params.username, req.params.id);
+        if(!session) {
+            return res.status(404).send({ message: 'Not found' });
+        }
+
+        await userService.removeRefreshToken(req.params.username, req.params.id);
+
+        res.send({ success: true, message: 'Session deleted successfully', tokenId: req.params.id });
+    }));
+
     server.get('/api/account/:username/blocklist', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
 
@@ -551,7 +576,7 @@ module.exports.init = function(server) {
         res.send({ success: true, blockList: blockList.sort() });
     }));
 
-    server.post('/api/account/:username/blocklist', wrapAsync(async (req, res) => {
+    server.post('/api/account/:username/blocklist', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
 
         if(!user) {

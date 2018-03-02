@@ -19,6 +19,14 @@ class InnerBlockList extends React.Component {
         };
     }
 
+    componentWillMount() {
+        if(this.props.user) {
+            this.props.loadBlockList(this.props.user);
+
+            this.setState({ detailsLoaded: true });
+        }
+    }
+
     componentWillReceiveProps(props) {
         if(!this.state.detailsLoaded && props.user) {
             this.props.loadBlockList(props.user);

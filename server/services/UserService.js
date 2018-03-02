@@ -187,9 +187,25 @@ class UserService {
     }
 
     updateRefreshTokenUsage(tokenId, ip) {
-        return this.users.update({ tokens: { '$elemMatch': { id: tokenId } } }, {
+        return this.users.update({ tokens: { '$elemMatch': { _id: tokenId } } }, {
             $set: { 'tokens.$.ip': ip, 'tokens.$.lastUsed': new Date() }
         }).catch(err => {
+            logger.error(err);
+        });
+    }
+
+    getRefreshTokenById(username, tokenId) {
+        return this.users.find({ username: username, tokens: { '$elemMatch': { _id: tokenId } } })
+            .then(users => {
+                return users[0];
+            })
+            .catch(err => {
+                logger.error(err);
+            });
+    }
+
+    removeRefreshToken(username, tokenId) {
+        return this.users.update({ username: username }, { '$pull': { tokens: { _id: tokenId }}}).catch(err => {
             logger.error(err);
         });
     }
