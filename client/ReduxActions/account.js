@@ -25,6 +25,39 @@ export function loginAccount(auth) {
     };
 }
 
+export function logoutAccount(tokenId) {
+    return {
+        types: ['LOGOUT_ACCOUNT', 'ACCOUNT_LOGGEDOUT'],
+        shouldCallAPI: () => true,
+        APIParams: {
+            url: '/api/account/logout',
+            type: 'POST',
+            data: JSON.stringify({ tokenId: tokenId }),
+            contentType: 'application/json'
+        }
+    };
+}
+
+export function logout() {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        if(!state.auth.refreshToken) {
+            return;
+        }
+
+        if(state.lobby.socket) {
+            state.lobby.socket.disconnect();
+        }
+
+        if(state.games.socket) {
+            state.game.socket.disconnect();
+        }
+
+        return dispatch(logoutAccount(state.auth.refreshToken.id));
+    };
+}
+
 export function forgotPassword(details) {
     return {
         types: ['FORGOTPASSWORD_ACCOUNT', 'ACCOUNT_FORGOTPASSWORD'],

@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import Login from './pages/Login';
-import Logout from './Logout';
+import Logout from './pages/Logout';
 import Register from './pages/Register';
 import Lobby from './pages/Lobby';
 import Decks from './Decks';

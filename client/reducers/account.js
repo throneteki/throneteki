@@ -21,6 +21,17 @@ export default function(state = {}, action) {
                 user: action.response.user,
                 token: action.response.token
             });
+        case 'ACCOUNT_LOGGEDOUT':
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+
+            return Object.assign({}, state, {
+                loggedIn: false,
+                loggedOut: true,
+                user: undefined,
+                token: undefined,
+                refreshToken: undefined
+            });
         case 'RESETPASSWORD_ACCOUNT':
             return Object.assign({}, state, {
                 passwordReset: false

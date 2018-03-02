@@ -13,6 +13,18 @@ export default function(state = {}, action) {
                 username: action.response.user.username,
                 token: action.response.token
             });
+        case 'ACCOUNT_LOGGEDIN':
+            localStorage.setItem('refreshToken', JSON.stringify(action.response.refreshToken));
+
+            return Object.assign({}, state, {
+                token: action.response.token,
+                refreshToken: action.response.refreshToken
+            });
+        case 'ACCOUNT_LOGGEDOUT':
+            return Object.assign({}, state, {
+                token: undefined,
+                refreshToken: undefined
+            });
         case 'SET_AUTH_TOKENS':
             localStorage.setItem('token', action.token);
             if(action.refreshToken) {

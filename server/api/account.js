@@ -249,11 +249,20 @@ module.exports.init = function(server) {
             });
     });
 
-    server.post('/api/account/logout', function(req, res) {
-        req.logout();
+    server.post('/api/account/logout', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        if(!req.body.tokenId) {
+            return res.send({ success: false, message: 'tokenId is required' });
+        }
+
+        let session = await userService.getRefreshTokenById(req.user.username, req.body.tokenId);
+        if(!session) {
+            return res.send({ success: false, message: 'Error occured logging out' });
+        }
+
+        await userService.removeRefreshToken(req.user.username, req.body.tokenId);
 
         res.send({ success: true });
-    });
+    }));
 
     server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function(req, res) {
         let user = userService.sanitiseUserObject(req.user);

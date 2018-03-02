@@ -75,10 +75,6 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                             token: JSON.stringify(state.auth.refreshToken)
                         }
                     }).then(response => {
-                        if(response.status === 401) {
-                            dispatch(navigate('/login'));
-                        }
-
                         if(response.success) {
                             apiParams.headers = {
                                 Authorization: `Bearer ${response.token}`,
@@ -86,6 +82,8 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                             };
 
                             dispatch(setAuthTokens(response.token, state.auth.refreshToken));
+                        } else {
+                            return dispatch(navigate('/login'));
                         }
 
                         return $.ajax(apiParams.url, apiParams).then(
@@ -112,6 +110,10 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                                 return ret;
                             },
                             error => {
+                                if(error.status === 401) {
+                                    return dispatch(navigate('/login'));
+                                }
+
                                 dispatch(Object.assign({}, payload, {
                                     status: error.status,
                                     message: 'An error occured communicating with the server.  Please try again later.',
