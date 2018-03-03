@@ -731,6 +731,16 @@ const Effects = {
             }
         };
     },
+    setMaxCardDraw: function(max) {
+        return {
+            apply: function(player) {
+                player.maxCardDraw = max;
+            },
+            unapply: function(player) {
+                player.maxCardDraw = undefined;
+            }
+        };
+    },
     cannotGainChallengeBonus: function() {
         return {
             apply: function(player) {
