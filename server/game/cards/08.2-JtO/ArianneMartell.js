@@ -4,6 +4,7 @@ class ArianneMartell extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Return character to hand',
+            phase: 'challenge',
             //TODO: This should ideally use the snapshot functionality instead
             condition: () => {
                 this.strengthWhenInitiated = this.getStrength();
