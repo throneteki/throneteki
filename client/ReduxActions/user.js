@@ -11,6 +11,7 @@ export function loadActiveSessions(user) {
         types: ['REQUEST_SESSIONS', 'RECEIVE_SESSIONS'],
         shouldCallAPI: () => true,
         APIParams: {
+            cache: false,
             url: `/api/account/${user.username}/sessions`
         }
     };
@@ -32,6 +33,7 @@ export function loadBlockList(user) {
         types: ['REQUEST_BLOCKLIST', 'RECEIVE_BLOCKLIST'],
         shouldCallAPI: () => true,
         APIParams: {
+            cache: false,
             url: `/api/account/${user.username}/blocklist`
         }
     };
