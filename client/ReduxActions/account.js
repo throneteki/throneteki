@@ -105,15 +105,13 @@ export function setAuthTokens(token, refreshToken) {
     };
 }
 
-export function verifyAuthentication(token) {
+export function verifyAuthentication() {
     return {
         types: ['ACCOUNT_VERIFY_AUTH', 'ACCOUNT_AUTH_VERIFIED'],
         shouldCallAPI: () => true,
         APIParams: {
             url: '/api/account/checkauth',
-            type: 'POST',
-            data: JSON.stringify({ token: token }),
-            contentType: 'application/json'
+            type: 'POST'
         }
     };
 }
