@@ -129,7 +129,7 @@ export function connectLobby() {
 
         socket.on('gamestate', game => {
             state = getState();
-            dispatch(lobbyMessageReceived('gamestate', game, state.account.user.username));
+            dispatch(lobbyMessageReceived('gamestate', game, state.account.user ? state.account.user.username : undefined));
         });
 
         socket.on('cleargamestate', () => {

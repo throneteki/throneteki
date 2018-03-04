@@ -11,7 +11,7 @@ import SelectDeckModal from './PendingGameComponents/SelectDeckModal.jsx';
 
 import * as actions from './actions';
 
-class InnerPendingGame extends React.Component {
+class PendingGame extends React.Component {
     constructor() {
         super();
 
@@ -39,9 +39,13 @@ class InnerPendingGame extends React.Component {
     }
 
     componentWillReceiveProps(props) {
+        if(!props.user) {
+            return;
+        }
+
         let players = _.size(props.currentGame.players);
 
-        if(this.state.playerCount === 1 && players === 2 && props.currentGame.owner === this.props.username) {
+        if(this.state.playerCount === 1 && players === 2 && props.currentGame.owner === this.props.user.username) {
             this.refs.notification.play();
         }
 
@@ -57,13 +61,17 @@ class InnerPendingGame extends React.Component {
     }
 
     isGameReady() {
+        if(!this.props.user) {
+            return false;
+        }
+
         if(!_.all(this.props.currentGame.players, player => {
             return !!player.deck.selected;
         })) {
             return false;
         }
 
-        return this.props.currentGame.owner === this.props.username;
+        return this.props.currentGame.owner === this.props.user.username;
     }
 
     onSelectDeckClick() {
@@ -185,6 +193,12 @@ class InnerPendingGame extends React.Component {
             return <div>Loading game in progress, please wait...</div>;
         }
 
+        if(!this.props.user) {
+            this.props.navigate('/');
+
+            return <div>You must be logged in to play, redirecting...</div>;
+        }
+
         return (
             <div>
                 <audio ref='notification'>
@@ -201,11 +215,11 @@ class InnerPendingGame extends React.Component {
                 <Panel title='Players'>
                     {
                         _.map(this.props.currentGame.players, player => {
-                            return this.getPlayerStatus(player, this.props.username);
+                            return this.getPlayerStatus(player, this.props.user.username);
                         })
                     }
                 </Panel>
-                <Panel title={ `Spectators(${ this.props.currentGame.spectators.length })` }>
+                <Panel title={ `Spectators(${this.props.currentGame.spectators.length})` }>
                     { _.map(this.props.currentGame.spectators, spectator => {
                         return <div key={ spectator.name }>{ spectator.name }</div>;
                     }) }
@@ -231,8 +245,8 @@ class InnerPendingGame extends React.Component {
     }
 }
 
-InnerPendingGame.displayName = 'PendingGame';
-InnerPendingGame.propTypes = {
+PendingGame.displayName = 'PendingGame';
+PendingGame.propTypes = {
     apiError: PropTypes.string,
     connecting: PropTypes.bool,
     currentGame: PropTypes.object,
@@ -241,10 +255,11 @@ InnerPendingGame.propTypes = {
     host: PropTypes.string,
     loadDecks: PropTypes.func,
     loading: PropTypes.bool,
+    navigate: PropTypes.func,
     sendSocketMessage: PropTypes.func,
     socket: PropTypes.object,
     startGame: PropTypes.func,
-    username: PropTypes.string,
+    user: PropTypes.object,
     zoomCard: PropTypes.func
 };
 
@@ -257,11 +272,8 @@ function mapStateToProps(state) {
         host: state.games.gameHost,
         loading: state.api.loading,
         socket: state.lobby.socket,
-        username: state.account.user ? state.account.user.username : undefined
+        user: state.account.user
     };
 }
 
-const PendingGame = connect(mapStateToProps, actions)(InnerPendingGame);
-
-export default PendingGame;
-
+export default connect(mapStateToProps, actions)(PendingGame);

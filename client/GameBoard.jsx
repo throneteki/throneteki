@@ -40,7 +40,7 @@ const placeholderPlayer = {
     user: null
 };
 
-export class InnerGameBoard extends React.Component {
+export class GameBoard extends React.Component {
     constructor() {
         super();
 
@@ -74,11 +74,11 @@ export class InnerGameBoard extends React.Component {
     }
 
     updateContextMenu(props) {
-        if(!props.currentGame) {
+        if(!props.currentGame || !props.user) {
             return;
         }
 
-        let thisPlayer = props.currentGame.players[props.username];
+        let thisPlayer = props.currentGame.players[props.user.username];
 
         if(thisPlayer) {
             this.setState({ spectating: false });
@@ -98,7 +98,7 @@ export class InnerGameBoard extends React.Component {
 
         if(props.currentGame && props.currentGame.started) {
             if(_.find(props.currentGame.players, p => {
-                return p.name === props.username;
+                return p.name === props.user.username;
             })) {
                 menuOptions.unshift({ text: 'Concede', onClick: this.onConcedeClick });
             }
@@ -132,7 +132,7 @@ export class InnerGameBoard extends React.Component {
     }
 
     isGameActive() {
-        if(!this.props.currentGame) {
+        if(!this.props.currentGame || !this.props.user) {
             return false;
         }
 
@@ -140,7 +140,7 @@ export class InnerGameBoard extends React.Component {
             return false;
         }
 
-        let thisPlayer = this.props.currentGame.players[this.props.username];
+        let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
             thisPlayer = _.toArray(this.props.currentGame.players)[0];
         }
@@ -274,7 +274,12 @@ export class InnerGameBoard extends React.Component {
             return <div>Waiting for server...</div>;
         }
 
-        let thisPlayer = this.props.currentGame.players[this.props.username];
+        if(!this.props.user) {
+            this.props.navigate('/');
+            return <div>You are not logged in, redirecting...</div>;
+        }
+
+        let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
             thisPlayer = _.toArray(this.props.currentGame.players)[0];
         }
@@ -407,18 +412,18 @@ export class InnerGameBoard extends React.Component {
     }
 }
 
-InnerGameBoard.displayName = 'GameBoard';
-InnerGameBoard.propTypes = {
+GameBoard.displayName = 'GameBoard';
+GameBoard.propTypes = {
     cardToZoom: PropTypes.object,
     clearZoom: PropTypes.func,
     closeGameSocket: PropTypes.func,
     currentGame: PropTypes.object,
     dispatch: PropTypes.func,
+    navigate: PropTypes.func,
     sendGameMessage: PropTypes.func,
     setContextMenu: PropTypes.func,
     socket: PropTypes.object,
     user: PropTypes.object,
-    username: PropTypes.string,
     zoomCard: PropTypes.func
 };
 
@@ -427,8 +432,7 @@ function mapStateToProps(state) {
         cardToZoom: state.cards.zoomCard,
         currentGame: state.lobby.currentGame,
         socket: state.lobby.socket,
-        user: state.account.user,
-        username: state.account.user ? state.account.user.username : undefined
+        user: state.account.user
     };
 }
 
@@ -439,6 +443,5 @@ function mapDispatchToProps(dispatch) {
     return boundActions;
 }
 
-const GameBoard = connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(InnerGameBoard);
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(GameBoard);
 
-export default GameBoard;

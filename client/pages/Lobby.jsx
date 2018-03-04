@@ -12,7 +12,7 @@ import LobbyChat from '../LobbyChat';
 
 import * as actions from '../actions';
 
-class InnerLobby extends React.Component {
+class Lobby extends React.Component {
     constructor() {
         super();
 
@@ -60,7 +60,7 @@ class InnerLobby extends React.Component {
     }
 
     render() {
-        let isLoggedIn = !!this.props.username;
+        let isLoggedIn = !!this.props.user;
         let placeholder = isLoggedIn ? 'Enter a message...' : 'You must be logged in to send lobby chat messages';
 
         return (
@@ -83,7 +83,7 @@ class InnerLobby extends React.Component {
                     </Panel>
                 </div>
                 <div className='col-sm-offset-1 col-sm-10 chat-container'>
-                    <Panel title={ `Lobby Chat (${ this.props.users.length } online)` }>
+                    <Panel title={ `Lobby Chat (${this.props.users.length} online)` }>
                         <div>
                             <LobbyChat messages={ this.props.messages } />
                         </div>
@@ -104,8 +104,8 @@ class InnerLobby extends React.Component {
     }
 }
 
-InnerLobby.displayName = 'Lobby';
-InnerLobby.propTypes = {
+Lobby.displayName = 'Lobby';
+Lobby.propTypes = {
     bannerNotice: PropTypes.string,
     fetchNews: PropTypes.func,
     loadNews: PropTypes.func,
@@ -113,7 +113,7 @@ InnerLobby.propTypes = {
     messages: PropTypes.array,
     news: PropTypes.array,
     socket: PropTypes.object,
-    username: PropTypes.string,
+    user: PropTypes.object,
     users: PropTypes.array
 };
 
@@ -125,11 +125,9 @@ function mapStateToProps(state) {
         news: state.news.news,
         newsLoading: state.news.newsLoading,
         socket: state.lobby.socket,
-        username: state.account.user ? state.account.user.username : undefined,
+        user: state.account.user,
         users: state.lobby.users
     };
 }
 
-const Lobby = connect(mapStateToProps, actions, null)(InnerLobby);
-
-export default Lobby;
+export default connect(mapStateToProps, actions, null)(Lobby);

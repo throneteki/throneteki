@@ -305,8 +305,7 @@ App.propTypes = {
     setAuthTokens: PropTypes.func,
     setContextMenu: PropTypes.func,
     token: PropTypes.string,
-    user: PropTypes.object,
-    username: PropTypes.string
+    user: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -316,8 +315,7 @@ function mapStateToProps(state) {
         path: state.navigation.path,
         loggedIn: state.account.loggedIn,
         token: state.account.token,
-        user: state.account.user,
-        username: state.account.user ? state.account.user.username : undefined
+        user: state.account.user
     };
 }
 
