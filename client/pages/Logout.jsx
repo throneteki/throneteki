@@ -44,7 +44,7 @@ function mapStateToProps(state) {
         apiLoading: state.api.LOGOUT_ACCOUNT ? state.api.LOGOUT_ACCOUNT.loading : undefined,
         apiMessage: state.api.LOGOUT_ACCOUNT ? state.api.LOGOUT_ACCOUNT.message : undefined,
         apiSuccess: state.api.LOGOUT_ACCOUNT ? state.api.LOGOUT_ACCOUNT.success : undefined,
-        loggedOut: state.account.loggedIn
+        loggedOut: state.account.loggedOut
     };
 }
 
