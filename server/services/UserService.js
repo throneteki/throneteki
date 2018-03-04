@@ -205,7 +205,7 @@ class UserService {
     }
 
     removeRefreshToken(username, tokenId) {
-        return this.users.update({ username: username }, { '$pull': { tokens: { _id: tokenId }}}).catch(err => {
+        return this.users.update({ username: username }, { '$pull': { tokens: { _id: tokenId } } }).catch(err => {
             logger.error(err);
         });
     }
@@ -224,8 +224,6 @@ class UserService {
         };
 
         user = Settings.getUserWithDefaultsSet(user);
-        user.id = user._id;
-        delete user._id;
 
         return user;
     }
