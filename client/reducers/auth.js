@@ -14,6 +14,7 @@ export default function(state = {}, action) {
                 token: action.response.token
             });
         case 'ACCOUNT_LOGGEDIN':
+            localStorage.setItem('token', action.response.token);
             localStorage.setItem('refreshToken', JSON.stringify(action.response.refreshToken));
 
             return Object.assign({}, state, {
@@ -21,6 +22,9 @@ export default function(state = {}, action) {
                 refreshToken: action.response.refreshToken
             });
         case 'ACCOUNT_LOGGEDOUT':
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+
             return Object.assign({}, state, {
                 token: undefined,
                 refreshToken: undefined

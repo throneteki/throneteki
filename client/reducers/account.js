@@ -13,24 +13,15 @@ export default function(state = {}, action) {
                 loggedIn: false
             });
         case 'ACCOUNT_LOGGEDIN':
-            localStorage.setItem('token', action.response.token);
-            localStorage.setItem('refreshToken', JSON.stringify(action.response.refreshToken));
-
             return Object.assign({}, state, {
                 loggedIn: true,
-                user: action.response.user,
-                token: action.response.token
+                user: action.response.user
             });
         case 'ACCOUNT_LOGGEDOUT':
-            localStorage.removeItem('token');
-            localStorage.removeItem('refreshToken');
-
             return Object.assign({}, state, {
                 loggedIn: false,
                 loggedOut: true,
-                user: undefined,
-                token: undefined,
-                refreshToken: undefined
+                user: undefined
             });
         case 'RESETPASSWORD_ACCOUNT':
             return Object.assign({}, state, {
