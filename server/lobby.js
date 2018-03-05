@@ -143,7 +143,7 @@ class Lobby {
         if(socket.handshake.query.token && socket.handshake.query.token !== 'undefined') {
             jwt.verify(socket.handshake.query.token, this.config.secret, function(err, user) {
                 if(err) {
-                    logger.info(err);
+                    logger.info(err.description, err);
                     return;
                 }
 

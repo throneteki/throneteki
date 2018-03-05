@@ -47,7 +47,7 @@ class Server {
         opts.secretOrKey = config.secret;
 
         passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
-            this.userService.getUserById(jwtPayload.id).then(user => {
+            this.userService.getUserById(jwtPayload._id).then(user => {
                 if(user) {
                     return done(null, user);
                 }
