@@ -203,23 +203,26 @@ class Player extends Spectator {
     }
 
     modifyGold(amount) {
+        var goldGain = amount;
+
         if(amount > 0) {
-            var goldGain;
-            if(this.maxGoldGain === undefined) {
-                goldGain = amount;
-            } else {
+            if(!this.canGainGold()) {
+                this.addMessage('{0} cannot gain gold', this);
+                return;
+            }
+
+            if(this.maxGoldGain !== undefined) {
                 goldGain = Math.min(amount, this.maxGoldGain - this.gainedGold);
             }
             this.gold += goldGain;
             this.gainedGold += goldGain;
 
         } else if(amount < 0) {
-            this.gold += amount;
-
-            if(this.gold < 0) {
-                this.gold = 0;
-            }
+            goldGain = Math.max(-this.gold, goldGain); // ensure this.gold >= 0
+            this.gold += goldGain;
         }
+
+        return goldGain;
     }
 
     modifyUsedPlots(value) {
@@ -690,13 +693,17 @@ class Player extends Spectator {
     }
 
     drawPhase() {
-        this.game.addMessage('{0} draws {1} cards for the draw phase', this, this.drawPhaseCards);
-        this.drawCardsToHand(this.drawPhaseCards);
+        if(this.canDraw()) {
+            this.game.addMessage('{0} draws {1} cards for the draw phase', this, this.drawPhaseCards);
+            this.drawCardsToHand(this.drawPhaseCards);
+        }
     }
 
     beginMarshal() {
-        this.game.addGold(this, this.getTotalIncome());
-        this.game.addMessage('{0} collects {1} gold', this, this.getTotalIncome());
+        if(this.canGainGold()) {
+            let gold = this.game.addGold(this, this.getTotalIncome());
+            this.game.addMessage('{0} collects {1} gold', this, gold);
+        }
 
         this.game.raiseEvent('onIncomeCollected', { player: this });
     }

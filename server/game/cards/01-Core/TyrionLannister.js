@@ -8,8 +8,8 @@ class TyrionLannister extends DrawCard {
             },
             limit: ability.limit.perRound(2),
             handler: () => {
-                this.game.addGold(this.controller, 2);
-                this.game.addMessage('{0} uses {1} to gain 2 gold', this.controller, this);
+                let gold = this.game.addGold(this.controller, 2);
+                this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
             }
         });
     }

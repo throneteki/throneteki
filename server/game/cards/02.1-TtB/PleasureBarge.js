@@ -16,12 +16,16 @@ class PleasureBarge extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'marshal' &&
-                                           !this.tracker.hasDrawnCardsThisPhase
+                onCardEntersPlay: event =>
+                    event.card === this &&
+                    event.playingType === 'marshal' &&
+                    this.controller.canDraw() &&
+                    !this.tracker.hasDrawnCardsThisPhase
             },
             handler: () => {
-                this.controller.drawCardsToHand(3);
-                this.game.addMessage('{0} uses {1} to draw 3 cards', this.controller, this);
+                let cards = this.controller.drawCardsToHand(3).length;
+                this.game.addMessage('{0} plays {1} to draw {2} {3}',
+                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }

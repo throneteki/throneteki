@@ -4,7 +4,7 @@ class TowerOfTheSun extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: () => true
+                onCardPlayed: () => this.controller.canGainGold()
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

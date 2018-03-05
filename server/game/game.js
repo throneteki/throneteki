@@ -398,7 +398,7 @@ class Game extends EventEmitter {
             this.addMessage('{0} cannot gain gold', player);
             return;
         }
-        player.modifyGold(gold);
+        return player.modifyGold(gold);
     }
 
     movePower(fromCard, toCard, power) {
