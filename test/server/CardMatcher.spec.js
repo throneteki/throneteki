@@ -2,7 +2,7 @@ const CardMatcher = require('../../server/game/CardMatcher.js');
 
 describe('CardMatcher', function() {
     beforeEach(function() {
-        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isUnique']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isUnique', 'isLoyal']);
     });
 
     describe('createAttachmentMatcher', function() {
