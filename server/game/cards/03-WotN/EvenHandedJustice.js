@@ -6,33 +6,14 @@ class EvenHandedJustice extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Kneel a character for each player',
-            // TODO: Rework for Melee
-            targets: {
-                yourCard: {
-                    activePromptTitle: 'Select a character of yours',
-                    cardCondition: card =>
-                        !card.kneeled
-                        && card.location === 'play area'
-                        && card.getType() === 'character'
-                        && card.controller === this.controller, // event controller
-                    gameAction: 'kneel'
-                },
-                opponentCard: {
-                    activePromptTitle: 'Select a character controlled by your opponent',
-                    cardCondition: card =>
-                        !card.kneeled
-                        && card.location === 'play area'
-                        && card.getType() === 'character'
-                        && card.controller !== this.controller, // not event controller
-                    gameAction: 'kneel'
-                }
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
+                mode: 'eachPlayer',
+                gameAction: 'kneel'
             },
             handler: context => {
-                let kneeledCards = [context.targets.yourCard, context.targets.opponentCard];
-
-                _.each(kneeledCards, card => card.controller.kneelCard(card));
-                this.game.addMessage('{0} uses {1} to kneel {2}',
-                    this.controller, this, kneeledCards);
+                _.each(context.target, card => card.controller.kneelCard(card));
+                this.game.addMessage('{0} plays {1} to kneel {2}', this.controller, this, context.target);
             }
         });
     }
