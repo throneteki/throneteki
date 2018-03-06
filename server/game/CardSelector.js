@@ -1,3 +1,4 @@
+const EachPlayerCardSelector = require('./CardSelectors/EachPlayerCardSelector');
 const ExactlyXCardSelector = require('./CardSelectors/ExactlyXCardSelector');
 const MaxStatCardSelector = require('./CardSelectors/MaxStatCardSelector');
 const OptionalCardSelector = require('./CardSelectors/OptionalCardSelector');
@@ -15,6 +16,7 @@ const defaultProperties = {
 };
 
 const ModeToSelector = {
+    eachPlayer: p => new EachPlayerCardSelector(p),
     exactly: p => new ExactlyXCardSelector(p.numCards, p),
     maxStat: p => new MaxStatCardSelector(p),
     optional: p => new OptionalCardSelector(p),

@@ -47,6 +47,7 @@ class SelectCardPrompt extends UiPrompt {
     constructor(game, choosingPlayer, properties) {
         super(game);
 
+        this.numPlayers = this.game.getNumberOfPlayers();
         this.choosingPlayer = choosingPlayer;
         if(properties.source && !properties.waitingPromptTitle) {
             properties.waitingPromptTitle = 'Waiting for opponent to use ' + properties.source.name;
@@ -122,7 +123,7 @@ class SelectCardPrompt extends UiPrompt {
             return false;
         }
 
-        if(this.selector.automaticFireOnSelect() && this.selector.hasReachedLimit(this.selectedCards)) {
+        if(this.selector.automaticFireOnSelect() && this.selector.hasReachedLimit(this.selectedCards, this.numPlayers)) {
             this.fireOnSelect();
         }
     }
@@ -134,14 +135,14 @@ class SelectCardPrompt extends UiPrompt {
         }
 
         return (
-            this.selector.canTarget(card, this.context) &&
+            this.selector.canTarget(card, this.context, this.selectedCards) &&
             this.selector.checkForSingleController(this.selectedCards, card) &&
             !this.selector.wouldExceedLimit(this.selectedCards, card)
         );
     }
 
     selectCard(card) {
-        if(this.selector.hasReachedLimit(this.selectedCards) && !this.selectedCards.includes(card)) {
+        if(this.selector.hasReachedLimit(this.selectedCards, this.numPlayers) && !this.selectedCards.includes(card)) {
             return false;
         }
 
@@ -180,7 +181,7 @@ class SelectCardPrompt extends UiPrompt {
             return;
         }
 
-        if(this.selector.hasEnoughSelected(this.selectedCards)) {
+        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers)) {
             this.fireOnSelect();
         } else if(this.selectedCards.length === 0) {
             this.properties.onCancel(player);
