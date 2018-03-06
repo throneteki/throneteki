@@ -32,7 +32,7 @@ class BaseCardSelector {
         return context.game.allCards.filter(card => this.canTarget(card, context));
     }
 
-    hasEnoughSelected(selectedCards) {
+    hasEnoughSelected(selectedCards, numPlayers) { // eslint-disable-line no-unused-vars
         return selectedCards.length > 0;
     }
 
@@ -52,7 +52,7 @@ class BaseCardSelector {
         return false;
     }
 
-    hasReachedLimit(selectedCards) { // eslint-disable-line no-unused-vars
+    hasReachedLimit(selectedCards, numPlayers) { // eslint-disable-line no-unused-vars
         return false;
     }
 
