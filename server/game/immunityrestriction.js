@@ -5,9 +5,9 @@ class ImmunityRestriction {
 
     isMatch(type, abilityContext) {
         return (
-            abilityContext.stage === 'effect' &&
-            abilityContext.card &&
-            this.cardCondition(abilityContext.card)
+            abilityContext.resolutionStage === 'effect' &&
+            abilityContext.source &&
+            this.cardCondition(abilityContext.source, abilityContext)
         );
     }
 }

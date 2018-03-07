@@ -32,7 +32,7 @@ class TheHouseWithTheRedDoor extends AgendaCard {
                 onCardLeftPlay: event => event.card === this.startLocation
             },
             match: card => card === this.startLocation,
-            effect: ability.effects.cannotBeDiscarded(context => context.stage === 'effect')
+            effect: ability.effects.cannotBeDiscarded(context => context.resolutionStage === 'effect')
         }));
     }
 

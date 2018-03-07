@@ -440,7 +440,7 @@ class BaseCard {
     }
 
     allowEffectFrom(sourceCard) {
-        let currentAbilityContext = { source: 'card', card: sourceCard, stage: 'effect' };
+        let currentAbilityContext = { source: sourceCard, resolutionStage: 'effect' };
         return !_.any(this.abilityRestrictions, restriction => restriction.isMatch('applyEffect', currentAbilityContext));
     }
 
