@@ -9,7 +9,8 @@ class CardMatcher {
             Matcher.containsValue(properties.location, card.location) &&
             Matcher.containsValue(properties.name, card.name) &&
             Matcher.anyValue(properties.trait, trait => card.hasTrait(trait)) &&
-            Matcher.containsValue(properties.unique, card.isUnique())
+            Matcher.containsValue(properties.unique, card.isUnique()) &&
+            Matcher.containsValue(properties.loyal, card.isLoyal())
         );
     }
 
