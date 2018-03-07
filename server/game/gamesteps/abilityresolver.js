@@ -14,12 +14,12 @@ class AbilityResolver extends BaseStep {
         this.pipeline.initialise([
             new SimpleStep(game, () => this.createSnapshot()),
             new SimpleStep(game, () => this.markActionAsTaken()),
-            new SimpleStep(game, () => this.game.pushAbilityContext('card', context.source, 'cost')),
+            new SimpleStep(game, () => this.game.pushAbilityContext(this.context)),
+            new SimpleStep(game, () => this.context.resolutionStage = 'cost'),
             new SimpleStep(game, () => this.resolveCosts()),
             new SimpleStep(game, () => this.waitForCostResolution()),
             new SimpleStep(game, () => this.payCosts()),
-            new SimpleStep(game, () => this.game.popAbilityContext()),
-            new SimpleStep(game, () => this.game.pushAbilityContext('card', context.source, 'effect')),
+            new SimpleStep(game, () => this.context.resolutionStage = 'effect'),
             new SimpleStep(game, () => this.chooseOpponents()),
             new SimpleStep(game, () => this.resolveTargets()),
             new SimpleStep(game, () => this.waitForTargetResolution()),
@@ -58,7 +58,7 @@ class AbilityResolver extends BaseStep {
             this.game.reportError(e);
 
             let currentAbilityContext = this.game.currentAbilityContext;
-            if(currentAbilityContext && currentAbilityContext.source === 'card' && currentAbilityContext.card === this.context.source) {
+            if(currentAbilityContext === this.context) {
                 this.game.popAbilityContext();
             }
 

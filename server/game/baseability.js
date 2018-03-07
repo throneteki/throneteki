@@ -60,7 +60,33 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canPayCosts(context) {
-        return _.all(this.cost, cost => cost.canPay(context));
+        return this.executeWithTemporaryContext(context, 'cost', () => _.all(this.cost, cost => cost.canPay(context)));
+    }
+
+    /**
+     * Executes the specified callback using the passed ability context and
+     * resolution stage. This allows functions to be executed with the proper
+     * ability context for immunity / cannot restrictions prior to the ability
+     * context being pushed on the game's stack during the full resolution of
+     * the ability.
+     *
+     * @param {AbilityContext} context
+     * @param {string} stage
+     * @param {Function} callback
+     * @returns {*}
+     * The return value of the callback function.
+     */
+    executeWithTemporaryContext(context, stage, callback) {
+        let originalResolutionStage = context.resolutionStage;
+
+        try {
+            context.game.pushAbilityContext(context);
+            context.resolutionStage = stage;
+            return callback();
+        } finally {
+            context.resolutionStage = originalResolutionStage;
+            context.game.popAbilityContext();
+        }
     }
 
     /**
@@ -147,7 +173,7 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canResolveTargets(context) {
-        return this.targets.every(target => target.canResolve(context));
+        return this.executeWithTemporaryContext(context, 'effect', () => this.targets.every(target => target.canResolve(context)));
     }
 
     /**

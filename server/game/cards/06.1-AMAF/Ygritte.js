@@ -4,7 +4,7 @@ class Ygritte extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.cannotBeKneeled(context => context.stage === 'effect')
+            effect: ability.effects.cannotBeKneeled(context => context.resolutionStage === 'effect')
         });
         this.persistentEffect({
             condition: () => this.controlsAnotherWildling(),
