@@ -286,7 +286,7 @@ describe('AbilityResolver', function() {
 
             describe('when the current ability context is for this ability', function() {
                 beforeEach(function() {
-                    this.game.currentAbilityContext = { source: 'card', card: this.context.source };
+                    this.game.currentAbilityContext = this.context;
                 });
 
                 it('should pop the current context', function() {
