@@ -515,6 +515,14 @@ class BaseCard {
         }
     }
 
+    get gold() {
+        return this.tokens['gold'] || 0;
+    }
+
+    modifyGold(amount) {
+        this.modifyToken('gold', amount);
+    }
+
     hasToken(type) {
         return !!this.tokens[type];
     }

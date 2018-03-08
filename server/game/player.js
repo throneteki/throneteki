@@ -195,6 +195,18 @@ class Player extends Spectator {
         return this.plotDiscard.size() + this.usedPlotsModifier;
     }
 
+    hasEnoughGold(gold) {
+        return this.gold >= gold;
+    }
+
+    modifyGold(amount) {
+        this.gold += amount;
+
+        if(this.gold < 0) {
+            this.gold = 0;
+        }
+    }
+
     modifyUsedPlots(value) {
         this.usedPlotsModifier += value;
         this.game.raiseEvent('onUsedPlotsModified', { player: this });

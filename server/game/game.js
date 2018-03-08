@@ -399,11 +399,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        player.gold += gold;
-
-        if(player.gold < 0) {
-            player.gold = 0;
-        }
+        player.modifyGold(gold);
     }
 
     movePower(fromCard, toCard, power) {
