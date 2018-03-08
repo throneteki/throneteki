@@ -39,7 +39,7 @@ class LyseniPirate extends DrawCard {
     }
 
     moveGoldFromGoldPool() {
-        this.game.transferGold(this.context.player, this.context.event.challenge.loser, 1);
+        this.game.transferGold({ from: this.context.event.challenge.loser, to: this.context.player, amount: 1 });
         this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own',
             this.context.player, this, this.context.event.challenge.loser);
         
@@ -59,8 +59,7 @@ class LyseniPirate extends DrawCard {
     }
 
     targetSelected(player, card) {
-        card.modifyToken('gold', -1);
-        this.game.addGold(this.context.player, 1);
+        this.game.transferGold({ from: card, to: this.context.player, amount: 1 });
         this.game.addMessage('{0} uses {1} to move 1 gold from {2} to their gold pool',
             this.context.player, this, card);
         

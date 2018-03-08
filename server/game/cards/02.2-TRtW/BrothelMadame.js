@@ -69,7 +69,7 @@ class BrothelMadame extends DrawCard {
             return false;
         }
 
-        this.game.transferGold(this.controller, player, 1);
+        this.game.transferGold({ from: player, to: this.controller, amount: 1 });
 
         this.game.addMessage('{0} uses {1} to make {2} pay 1 gold', this.controller, this, player);
 

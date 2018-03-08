@@ -41,8 +41,7 @@ class BestowPrompt extends BaseStep {
             return false;
         }
 
-        this.player.gold -= gold;
-        this.card.modifyToken('gold', gold);
+        this.game.transferGold({ from: player, to: this.card, amount: gold });
         this.game.addMessage('{0} bestows {1} gold on {2}', this.player, gold, this.card);
 
         return true;

@@ -344,9 +344,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to bestow',
             cardCondition: card => card.location === 'play area' && card.controller === player,
             onSelect: (p, card) => {
-                player.gold -= num;
-
-                card.modifyToken('gold', num);
+                this.game.transferGold({ from: player, to: card, amount: num });
                 this.game.addAlert('danger', '{0} uses the /bestow command to add {1} gold to {2}', p, num, card);
 
                 return true;

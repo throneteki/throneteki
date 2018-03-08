@@ -10,8 +10,7 @@ class MolesTown extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasToken('gold')
             },
             handler: context => {
-                this.modifyToken('gold', -1);
-                context.target.modifyToken('gold', 1);
+                this.game.transferGold({ from: this, to: context.target, amount: 1 });
                 this.game.addMessage('{0} kneels {1} to move 1 gold to {2}', context.player, this, context.target);
 
                 this.untilEndOfPhase(ability => ({

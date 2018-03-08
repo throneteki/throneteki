@@ -418,13 +418,26 @@ class Game extends EventEmitter {
         });
     }
 
-    transferGold(to, from, gold) {
-        var appliedGold = Math.min(from.gold, gold);
+    /**
+     * Transfers gold from one gold source to another. Both the source and the
+     * target for the transfer can be either a card or a player.
+     *
+     * @param {Object} transferParams
+     * @param {number} transferParams.amount
+     * The amount of gold being moved
+     * @param {(BaseCard|Player)} transferParams.from
+     * The source object from which gold is being moved
+     * @param {(BaseCard|Player)} transferParams.to
+     * The target object to which gold is being moved
+     */
+    transferGold(transferParams) {
+        let {from, to, amount} = transferParams;
+        let appliedGold = Math.min(from.gold, amount);
 
-        from.gold -= appliedGold;
-        to.gold += appliedGold;
+        from.modifyGold(-appliedGold);
+        to.modifyGold(appliedGold);
 
-        this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: gold });
+        this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });
     }
 
     /**
