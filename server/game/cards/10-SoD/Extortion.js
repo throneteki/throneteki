@@ -12,7 +12,7 @@ class Extortion extends DrawCard {
 
                 let loser = context.event.challenge.loser;
                 let returnGold = Math.min(loser.gold, 3);
-                this.game.addGold(loser, -returnGold);
+                this.game.returnGoldToTreasury({ player: loser, amount: returnGold });
 
                 this.game.addMessage('{0} plays {1} to gain 3 gold and return {2} gold from {3}\'s gold pool to the treasury',
                     context.player, this, returnGold, loser);

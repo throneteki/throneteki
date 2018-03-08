@@ -963,10 +963,6 @@ class Player extends Spectator {
         return cardStrength + this.gold;
     }
 
-    taxation() {
-        this.gold = 0;
-    }
-
     getTotalPower() {
         var power = this.cardsInPlay.reduce((memo, card) => {
             return memo + card.getPower();

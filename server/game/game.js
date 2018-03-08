@@ -427,6 +427,20 @@ class Game extends EventEmitter {
         this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: gold });
     }
 
+    /**
+     * Returns the specified amount of gold from a player to the treasury.
+     *
+     * @param {Object} params
+     * @param {Player} params.player The player whose gold pool will be deducted
+     * @param {number} params.amount The amount of gold being returned
+     */
+    returnGoldToTreasury(params) {
+        let {player, amount} = params;
+        let appliedAmount = Math.min(player.gold, amount);
+
+        player.modifyGold(-appliedAmount);
+    }
+
     checkWinCondition(player) {
         if(player.getTotalPower() >= 15) {
             this.recordWinner(player, 'power');
