@@ -2,8 +2,8 @@ const Costs = require('../../../server/game/costs.js');
 
 describe('Costs.payReduceableGoldCost', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage']);
-        this.playerSpy = jasmine.createSpyObj('player', ['getDuplicateInPlay', 'getReducedCost', 'markUsedReducers']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'spendGold']);
+        this.playerSpy = jasmine.createSpyObj('player', ['hasEnoughGold', 'getDuplicateInPlay', 'getReducedCost', 'markUsedReducers']);
         this.cardSpy = { card: 1 };
         this.context = {
             costs: {},
@@ -16,8 +16,13 @@ describe('Costs.payReduceableGoldCost', function() {
 
     describe('canPay()', function() {
         beforeEach(function() {
-            this.playerSpy.gold = 4;
+            this.playerSpy.hasEnoughGold.and.returnValue(true);
             this.playerSpy.getReducedCost.and.returnValue(4);
+        });
+
+        it('should check that the player can spend the amount of gold', function() {
+            this.cost.canPay(this.context);
+            expect(this.playerSpy.hasEnoughGold).toHaveBeenCalledWith(4, jasmine.objectContaining({ playingType: 'playing-type' }));
         });
 
         it('should return true when all criteria are met', function() {
@@ -40,7 +45,7 @@ describe('Costs.payReduceableGoldCost', function() {
                 });
 
                 it('should return true regardless of gold', function() {
-                    this.playerSpy.gold = 0;
+                    this.playerSpy.hasEnoughGold.and.returnValue(false);
                     expect(this.cost.canPay(this.context)).toBe(true);
                 });
             });
@@ -51,12 +56,12 @@ describe('Costs.payReduceableGoldCost', function() {
                 });
 
                 it('should return true if there is enough gold gold', function() {
-                    this.playerSpy.gold = 4;
+                    this.playerSpy.hasEnoughGold.and.returnValue(true);
                     expect(this.cost.canPay(this.context)).toBe(true);
                 });
 
                 it('should return false if there is not enough gold gold', function() {
-                    this.playerSpy.gold = 0;
+                    this.playerSpy.hasEnoughGold.and.returnValue(false);
                     expect(this.cost.canPay(this.context)).toBe(false);
                 });
             });
@@ -64,7 +69,7 @@ describe('Costs.payReduceableGoldCost', function() {
 
         describe('when there is not enough gold', function() {
             beforeEach(function() {
-                this.playerSpy.gold = 3;
+                this.playerSpy.hasEnoughGold.and.returnValue(false);
             });
 
             it('should return false', function() {
@@ -75,7 +80,7 @@ describe('Costs.payReduceableGoldCost', function() {
 
     describe('pay()', function() {
         beforeEach(function() {
-            this.playerSpy.gold = 4;
+            this.playerSpy.hasEnoughGold.and.returnValue(true);
             this.playerSpy.getReducedCost.and.returnValue(3);
         });
 
@@ -93,7 +98,7 @@ describe('Costs.payReduceableGoldCost', function() {
             });
 
             it('should spend the players gold', function() {
-                expect(this.playerSpy.gold).toBe(1);
+                expect(this.gameSpy.spendGold).toHaveBeenCalledWith(jasmine.objectContaining({ amount: 3, playingType: 'playing-type' }));
             });
 
             it('should mark any reducers as used', function() {
@@ -121,7 +126,7 @@ describe('Costs.payReduceableGoldCost', function() {
                 });
 
                 it('should not spend the players gold', function() {
-                    expect(this.playerSpy.gold).toBe(4);
+                    expect(this.gameSpy.spendGold).not.toHaveBeenCalled();
                 });
 
                 it('should not mark any reducers as used', function() {
@@ -144,7 +149,7 @@ describe('Costs.payReduceableGoldCost', function() {
                 });
 
                 it('should spend the players gold', function() {
-                    expect(this.playerSpy.gold).toBe(1);
+                    expect(this.gameSpy.spendGold).toHaveBeenCalledWith(jasmine.objectContaining({ amount: 3, playingType: 'ambush' }));
                 });
 
                 it('should mark any reducers as used', function() {

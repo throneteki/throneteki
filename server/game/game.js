@@ -419,6 +419,28 @@ class Game extends EventEmitter {
     }
 
     /**
+     * Spends a specified amount of gold for a player. "Spend" refers to any
+     * usage of gold that returns gold to the treasury as part of an ability
+     * cost, or gold that has been moved from a player's gold pool to a card.
+     *
+     * @param {Object} spendParams
+     * @param {number} spendParams.amount
+     * The amount of gold being spent
+     * @param {Player} spendParams.player
+     * The player whose gold is being spent
+     * @param {string} spendParams.playingType
+     * The type of usage for the gold (e.g. 'marshal', 'ambush', 'ability', etc)
+     * @param {Function} callback
+     * Optional callback that will be called after the gold has been spent
+     */
+    spendGold(spendParams, callback = () => true) {
+        let {player, amount} = spendParams;
+
+        player.modifyGold(-amount);
+        callback();
+    }
+
+    /**
      * Transfers gold from one gold source to another. Both the source and the
      * target for the transfer can be either a card or a player.
      *
@@ -433,6 +455,14 @@ class Game extends EventEmitter {
     transferGold(transferParams) {
         let {from, to, amount} = transferParams;
         let appliedGold = Math.min(from.gold, amount);
+
+        if(from.getGameElementType() === 'player') {
+            this.spendGold({ amount: appliedGold, player: from }, () => {
+                to.modifyGold(appliedGold);
+                this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });
+            });
+            return;
+        }
 
         from.modifyGold(-appliedGold);
         to.modifyGold(appliedGold);
