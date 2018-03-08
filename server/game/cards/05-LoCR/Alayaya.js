@@ -12,8 +12,7 @@ class Alayaya extends DrawCard {
             handler: context => {
                 let otherPlayer = context.event.challenge.loser;
 
-                this.game.addGold(otherPlayer, -1);
-                this.game.addGold(this.controller, 1);
+                this.game.transferGold({ from: otherPlayer, to: this.controller, amount: 1 });
                 this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own', this.controller, this, otherPlayer);
             }
         });

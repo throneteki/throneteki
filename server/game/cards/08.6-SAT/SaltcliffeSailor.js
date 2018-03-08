@@ -18,9 +18,7 @@ class SaltcliffeSailor extends DrawCard {
                     !card.isFaction('greyjoy')
             },
             handler: context => {
-                this.modifyToken('gold', -1);
-                context.target.modifyToken('gold', 1);
-
+                this.transferGold({ from: this, to: context.target, amount: 1 });
                 this.game.addMessage('{0} moves 1 gold from {1} to {2}', this.controller, this, context.target);
             }
         });

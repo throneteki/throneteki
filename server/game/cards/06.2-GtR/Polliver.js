@@ -12,8 +12,8 @@ class Polliver extends DrawCard {
             },
             handler: context => {
                 let otherPlayer = context.event.discardedCard.owner;
-                this.game.addGold(otherPlayer, -2);
-                this.game.addMessage('{0} uses {1} have {2} return 2 gold to the treasury', this.controller, this, otherPlayer);
+                this.game.returnGoldToTreasury({ player: otherPlayer, amount: 2 });
+                this.game.addMessage('{0} uses {1} to have {2} return 2 gold to the treasury', this.controller, this, otherPlayer);
             }
         });
     }

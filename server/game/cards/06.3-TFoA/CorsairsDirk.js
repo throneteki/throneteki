@@ -17,7 +17,7 @@ class CorsairsDirk extends DrawCard {
             },
             handler: context => {
                 let opponent = context.event.challenge.defendingPlayer;
-                this.game.transferGold(this.controller, opponent, 1);
+                this.game.transferGold({ from: opponent, to: this.controller, amount: 1 });
                 this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own',
                     this.controller, this, opponent);
             }

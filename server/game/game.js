@@ -399,11 +399,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        player.gold += gold;
-
-        if(player.gold < 0) {
-            player.gold = 0;
-        }
+        player.modifyGold(gold);
     }
 
     movePower(fromCard, toCard, power) {
@@ -422,13 +418,70 @@ class Game extends EventEmitter {
         });
     }
 
-    transferGold(to, from, gold) {
-        var appliedGold = Math.min(from.gold, gold);
+    /**
+     * Spends a specified amount of gold for a player. "Spend" refers to any
+     * usage of gold that returns gold to the treasury as part of an ability
+     * cost, or gold that has been moved from a player's gold pool to a card.
+     *
+     * @param {Object} spendParams
+     * @param {number} spendParams.amount
+     * The amount of gold being spent
+     * @param {Player} spendParams.player
+     * The player whose gold is being spent
+     * @param {string} spendParams.playingType
+     * The type of usage for the gold (e.g. 'marshal', 'ambush', 'ability', etc)
+     * @param {Function} callback
+     * Optional callback that will be called after the gold has been spent
+     */
+    spendGold(spendParams, callback = () => true) {
+        let {player, amount} = spendParams;
 
-        from.gold -= appliedGold;
-        to.gold += appliedGold;
+        player.modifyGold(-amount);
+        callback();
+    }
 
-        this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: gold });
+    /**
+     * Transfers gold from one gold source to another. Both the source and the
+     * target for the transfer can be either a card or a player.
+     *
+     * @param {Object} transferParams
+     * @param {number} transferParams.amount
+     * The amount of gold being moved
+     * @param {(BaseCard|Player)} transferParams.from
+     * The source object from which gold is being moved
+     * @param {(BaseCard|Player)} transferParams.to
+     * The target object to which gold is being moved
+     */
+    transferGold(transferParams) {
+        let {from, to, amount} = transferParams;
+        let appliedGold = Math.min(from.gold, amount);
+
+        if(from.getGameElementType() === 'player') {
+            this.spendGold({ amount: appliedGold, player: from }, () => {
+                to.modifyGold(appliedGold);
+                this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });
+            });
+            return;
+        }
+
+        from.modifyGold(-appliedGold);
+        to.modifyGold(appliedGold);
+
+        this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });
+    }
+
+    /**
+     * Returns the specified amount of gold from a player to the treasury.
+     *
+     * @param {Object} params
+     * @param {Player} params.player The player whose gold pool will be deducted
+     * @param {number} params.amount The amount of gold being returned
+     */
+    returnGoldToTreasury(params) {
+        let {player, amount} = params;
+        let appliedAmount = Math.min(player.gold, amount);
+
+        player.modifyGold(-appliedAmount);
     }
 
     checkWinCondition(player) {

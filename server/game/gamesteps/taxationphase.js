@@ -19,7 +19,7 @@ class TaxationPhase extends Phase {
     returnGold() {
         _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
             if(!player.doesNotReturnUnspentGold) {
-                player.taxation();
+                this.game.returnGoldToTreasury({ player: player, amount: player.gold });
             }
         });
     }

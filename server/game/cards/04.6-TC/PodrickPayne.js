@@ -20,7 +20,7 @@ class PodrickPayne extends DrawCard {
                 this.game.addMessage('{0} puts {1} into play and pays 2 gold to save {2}',
                     this.controller, this, context.target);
 
-                if(context.target.name === 'Tyrion Lannister' && this.controller.gold >= 2 &&
+                if(context.target.name === 'Tyrion Lannister' && this.controller.hasEnoughGold(2) &&
                    this.game.currentChallenge && this.game.currentChallenge.attackers.length >= 1) {
                     this.game.promptWithMenu(this.controller, this, {
                         activePrompt: {
@@ -44,7 +44,7 @@ class PodrickPayne extends DrawCard {
                                    this.game.currentChallenge.isAttacking(card),
             gameAction: 'kill',
             onSelect: (p, card) => {
-                this.game.addGold(this.controller, -2);
+                this.game.spendGold({ amount: 2, player: this.controller });
                 card.controller.killCharacter(card);
                 this.game.addMessage('{0} then uses {1} and pays 2 gold to kill {2}', this.controller, this, card);
 

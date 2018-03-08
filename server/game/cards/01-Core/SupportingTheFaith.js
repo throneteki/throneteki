@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class SupportingTheFaith extends PlotCard {
@@ -9,10 +7,10 @@ class SupportingTheFaith extends PlotCard {
                 onPhaseStarted: event => event.phase === 'challenge'
             },
             handler: () => {
-                _.each(this.game.getPlayers(), player => {
-                    player.gold = 0;
-                });
-                this.game.addMessage('{0} uses {1} to make both players return their gold to the treasury', this.controller, this);
+                for(let player of this.game.getPlayers()) {
+                    this.game.returnGoldToTreasury({ player: player, amount: player.gold });
+                }
+                this.game.addMessage('{0} uses {1} to make each player return their gold to the treasury', this.controller, this);
             }
         });
     }

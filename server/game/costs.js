@@ -224,7 +224,7 @@ const Costs = {
                     return true;
                 }
 
-                return context.player.gold >= context.source.getCost();
+                return context.player.hasEnoughGold(context.source.getCost());
             },
             pay: function(context) {
                 var hasDupe = context.player.getDuplicateInPlay(context.source);
@@ -232,7 +232,7 @@ const Costs = {
                     return;
                 }
 
-                context.player.gold -= context.source.getCost();
+                context.game.spendGold({ amount: context.source.getCost(), player: context.player });
             }
         };
     },
@@ -249,7 +249,8 @@ const Costs = {
                     return true;
                 }
 
-                return context.player.gold >= context.player.getReducedCost(playingType, context.source);
+                let reducedCost = context.player.getReducedCost(playingType, context.source);
+                return context.player.hasEnoughGold(reducedCost, { playingType: playingType });
             },
             pay: function(context) {
                 var hasDupe = context.player.getDuplicateInPlay(context.source);
@@ -258,7 +259,7 @@ const Costs = {
                     context.costs.gold = 0;
                 } else {
                     context.costs.gold = context.player.getReducedCost(playingType, context.source);
-                    context.player.gold -= context.costs.gold;
+                    context.game.spendGold({ amount: context.costs.gold, player: context.player, playingType: playingType });
                     context.player.markUsedReducers(playingType, context.source);
                 }
             }
@@ -270,10 +271,10 @@ const Costs = {
     payGold: function(amount) {
         return {
             canPay: function(context) {
-                return context.player.gold >= amount;
+                return context.player.hasEnoughGold(amount, { player: context.player, playingType: 'ability' });
             },
             pay: function(context) {
-                context.game.addGold(context.player, -amount);
+                context.game.spendGold({ amount: amount, player: context.player });
             }
         };
     },
@@ -289,9 +290,9 @@ const Costs = {
                 let opponentObj = opponentFunc && opponentFunc(context);
 
                 if(!opponentObj) {
-                    return context.player.gold >= minFunc(context) - reduction;
+                    return context.player.hasEnoughGold(minFunc(context) - reduction);
                 }
-                return opponentObj.gold >= minFunc(context) - reduction;
+                return opponentObj.hasEnoughGold(minFunc(context) - reduction);
             },
             resolve: function(context, result = { resolved: false }) {
                 let reduction = context.player.getCostReduction('play', context.source);
@@ -308,9 +309,9 @@ const Costs = {
             pay: function(context) {
                 let opponentObj = opponentFunc && opponentFunc(context);
                 if(!opponentObj) {
-                    context.game.addGold(context.player, -context.goldCost);
+                    context.game.spendGold({ player: context.player, amount: context.goldCost, playingType: 'play' });
                 } else {
-                    context.game.addGold(opponentObj, -context.goldCost);
+                    context.game.spendGold({ player: opponentObj, amount: context.goldCost, playingType: 'play' });
                 }
                 context.player.markUsedReducers('play', context.source);
             }
