@@ -5,6 +5,7 @@ const _ = require('underscore');
 describe('BaseAbility', function () {
     beforeEach(function () {
         this.properties = {};
+        this.gameSpy = jasmine.createSpyObj('game', ['popAbilityContext', 'pushAbilityContext']);
     });
 
     describe('constructor', function() {
@@ -92,7 +93,7 @@ describe('BaseAbility', function () {
             this.cost2 = jasmine.createSpyObj('cost1', ['canPay']);
             this.ability = new BaseAbility(this.properties);
             this.ability.cost = [this.cost1, this.cost2];
-            this.context = { context: 1 };
+            this.context = { context: 1, game: this.gameSpy };
         });
 
         describe('when all costs can be paid', function() {
@@ -200,8 +201,8 @@ describe('BaseAbility', function () {
             this.card2 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
             this.card2.allowGameAction.and.returnValue(true);
             this.card2.getType.and.returnValue('location');
-            let game = { allCards: _([this.card1, this.card2]) };
-            this.context = { game: game };
+            this.gameSpy.allCards = _([this.card1, this.card2]);
+            this.context = { game: this.gameSpy };
         });
 
         describe('when there is a non-draw card', function() {

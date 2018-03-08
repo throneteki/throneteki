@@ -2,7 +2,7 @@ const CardAction = require('../../../server/game/cardaction.js');
 
 describe('CardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'raiseEvent', 'resolveAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'removeListener', 'raiseEvent', 'resolveAbility']);
         this.gameSpy.currentPhase = 'marshal';
 
         this.playerSpy = jasmine.createSpyObj('player', ['canTrigger']);

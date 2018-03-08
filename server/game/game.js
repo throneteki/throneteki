@@ -56,7 +56,7 @@ class Game extends EventEmitter {
         this.createdAt = new Date();
         this.savedGameId = details.savedGameId;
         this.gameType = details.gameType;
-        this.abilityCardStack = [];
+        this.abilityContextStack = [];
         this.abilityWindowStack = [];
         this.password = details.password;
         this.cancelPromptUsed = false;
@@ -82,7 +82,7 @@ class Game extends EventEmitter {
 
         this.router = options.router;
 
-        this.pushAbilityContext('framework', null, 'framework');
+        this.pushAbilityContext({ resolutionStage: 'framework' });
     }
 
     reportError(e) {
@@ -700,15 +700,15 @@ class Game extends EventEmitter {
     }
 
     get currentAbilityContext() {
-        return _.last(this.abilityCardStack);
+        return _.last(this.abilityContextStack);
     }
 
-    pushAbilityContext(source, card, stage) {
-        this.abilityCardStack.push({ source: source, card: card, stage: stage });
+    pushAbilityContext(context) {
+        this.abilityContextStack.push(context);
     }
 
     popAbilityContext() {
-        this.abilityCardStack.pop();
+        this.abilityContextStack.pop();
     }
 
     resolveAbility(ability, context) {

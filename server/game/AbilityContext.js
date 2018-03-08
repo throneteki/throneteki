@@ -9,6 +9,7 @@ class AbilityContext {
         this.costs = {};
         this.costValues = {};
         this.targets = new ResolvedTargets();
+        this.resolutionStage = 'effect';
     }
 
     addCost(name, value) {
