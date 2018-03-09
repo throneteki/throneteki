@@ -40,6 +40,7 @@ class DrawCard extends BaseCard {
             }
         }
 
+        this.revealWhenHiddenTo = undefined;
         this.power = 0;
         this.burnValue = 0;
         this.strengthModifier = 0;
@@ -472,7 +473,19 @@ class DrawCard extends BaseCard {
         this.saved = false;
     }
 
+    showFacedownTargetTo(player) {
+        this.revealWhenHiddenTo = player.name;
+    }
+
+    hideFacedownTarget() {
+        this.revealWhenHiddenTo = undefined;
+    }
+
     getSummary(activePlayer, hideWhenFaceup) {
+        if(this.revealWhenHiddenTo === activePlayer.name) {
+            hideWhenFaceup = false;
+        }
+
         let baseSummary = super.getSummary(activePlayer, hideWhenFaceup);
 
         return _.extend(baseSummary, {

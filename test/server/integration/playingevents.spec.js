@@ -16,6 +16,7 @@ describe('playing events', function() {
 
             this.knight = this.player2.findCardByName('Hedge Knight', 'hand');
             this.plan = this.player2.findCardByName('The Prince\'s Plan', 'hand');
+            this.event = this.player2.findCardByName('The Hand\'s Judgment', 'hand');
 
             this.player1.clickCard('Melisandre', 'hand');
             this.player2.clickCard(this.knight);
@@ -37,7 +38,7 @@ describe('playing events', function() {
                 this.player2.clickPrompt('Pass');
 
                 // Discard Hand's Judgment from the opponent's hand
-                this.player1.clickPrompt('The Hand\'s Judgment');
+                this.player1.clickCard(this.event);
             });
 
             it('should count as having played the event', function() {

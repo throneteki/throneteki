@@ -17,12 +17,16 @@ class BaseCardSelector {
      * the game action checked for immunity purposes on potential target cards.
      * @param {boolean} properties.singleController
      * indicates that all cards selected must belong to the same controller.
+     * @param {boolean} properties.revealTargets
+     * indicates that all selectable facedown cards are flipped faceup for
+     * the selecting player.
      */
     constructor(properties) {
         this.cardCondition = properties.cardCondition;
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;
+        this.revealTargets = properties.revealTargets;
 
         if(!Array.isArray(properties.cardType)) {
             this.cardType = [properties.cardType];
@@ -41,14 +45,6 @@ class BaseCardSelector {
             this.cardCondition(card, context) &&
             card.allowGameAction(this.gameAction)
         );
-    }
-
-    checkForSingleController(selectedCards, card) {
-        if(!this.singleController || _.isEmpty(selectedCards)) {
-            return true;
-        }
-
-        return card.controller === selectedCards[0].controller;
     }
 
     /**
@@ -133,6 +129,33 @@ class BaseCardSelector {
      */
     formatSelectParam(cards) {
         return cards;
+    }
+
+    /**
+     * Returns whether the specified card can be targeted if the singleController
+     * flag is set.
+     * @param {BaseCard[]} selectedcards
+     * @param {BaseCard} card
+     * @returns {boolean}
+     */
+    checkForSingleController(selectedCards, card) {
+        if(!this.singleController || _.isEmpty(selectedCards)) {
+            return true;
+        }
+
+        return card.controller === selectedCards[0].controller;
+    }
+
+    /**
+     * Flips the specified (facedown) card faceup to the selecting player if the
+     * revealTargets flag is set.
+     * @param {BaseCard} card 
+     * @param {Player} player 
+     */
+    showFacedownTargetTo(card, player) {
+        if(this.revealTargets) {
+            card.showFacedownTargetTo(player);
+        }
     }
 }
 
