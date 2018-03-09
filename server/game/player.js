@@ -216,10 +216,6 @@ class Player extends Spectator {
         return validSources.reduce((sum, source) => sum + source.gold, 0);
     }
 
-    hasEnoughGold(gold, options = {}) {
-        return this.getSpendableGold(options) >= gold;
-    }
-
     modifyGold(amount) {
         this.gold += amount;
 

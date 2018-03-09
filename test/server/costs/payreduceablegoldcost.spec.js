@@ -3,7 +3,7 @@ const Costs = require('../../../server/game/costs.js');
 describe('Costs.payReduceableGoldCost', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'spendGold']);
-        this.playerSpy = jasmine.createSpyObj('player', ['hasEnoughGold', 'getDuplicateInPlay', 'getReducedCost', 'markUsedReducers']);
+        this.playerSpy = jasmine.createSpyObj('player', ['getDuplicateInPlay', 'getReducedCost', 'getSpendableGold', 'markUsedReducers']);
         this.cardSpy = { card: 1 };
         this.context = {
             costs: {},
@@ -16,13 +16,13 @@ describe('Costs.payReduceableGoldCost', function() {
 
     describe('canPay()', function() {
         beforeEach(function() {
-            this.playerSpy.hasEnoughGold.and.returnValue(true);
+            this.playerSpy.getSpendableGold.and.returnValue(6);
             this.playerSpy.getReducedCost.and.returnValue(4);
         });
 
         it('should check that the player can spend the amount of gold', function() {
             this.cost.canPay(this.context);
-            expect(this.playerSpy.hasEnoughGold).toHaveBeenCalledWith(4, jasmine.objectContaining({ playingType: 'playing-type' }));
+            expect(this.playerSpy.getSpendableGold).toHaveBeenCalledWith(jasmine.objectContaining({ playingType: 'playing-type' }));
         });
 
         it('should return true when all criteria are met', function() {
@@ -45,7 +45,7 @@ describe('Costs.payReduceableGoldCost', function() {
                 });
 
                 it('should return true regardless of gold', function() {
-                    this.playerSpy.hasEnoughGold.and.returnValue(false);
+                    this.playerSpy.getSpendableGold.and.returnValue(0);
                     expect(this.cost.canPay(this.context)).toBe(true);
                 });
             });
@@ -56,12 +56,12 @@ describe('Costs.payReduceableGoldCost', function() {
                 });
 
                 it('should return true if there is enough gold gold', function() {
-                    this.playerSpy.hasEnoughGold.and.returnValue(true);
+                    this.playerSpy.getSpendableGold.and.returnValue(6);
                     expect(this.cost.canPay(this.context)).toBe(true);
                 });
 
                 it('should return false if there is not enough gold gold', function() {
-                    this.playerSpy.hasEnoughGold.and.returnValue(false);
+                    this.playerSpy.getSpendableGold.and.returnValue(3);
                     expect(this.cost.canPay(this.context)).toBe(false);
                 });
             });
@@ -69,7 +69,7 @@ describe('Costs.payReduceableGoldCost', function() {
 
         describe('when there is not enough gold', function() {
             beforeEach(function() {
-                this.playerSpy.hasEnoughGold.and.returnValue(false);
+                this.playerSpy.getSpendableGold.and.returnValue(3);
             });
 
             it('should return false', function() {
@@ -80,7 +80,7 @@ describe('Costs.payReduceableGoldCost', function() {
 
     describe('pay()', function() {
         beforeEach(function() {
-            this.playerSpy.hasEnoughGold.and.returnValue(true);
+            this.playerSpy.getSpendableGold.and.returnValue(6);
             this.playerSpy.getReducedCost.and.returnValue(3);
         });
 
