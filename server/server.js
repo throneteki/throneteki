@@ -109,7 +109,7 @@ class Server {
         });
 
         // Define error middleware last
-        app.use(function(err, req, res, next) { // eslint-disable-line no-unused-vars
+        app.use(function(err, req, res) {
             if(!res.headersSent) {
                 res.status(500).send({ success: false });
             }

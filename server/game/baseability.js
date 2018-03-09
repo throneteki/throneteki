@@ -199,7 +199,8 @@ class BaseAbility {
      * should override this method to implement their behavior; by default it
      * does nothing.
      */
-    executeHandler(context) { // eslint-disable-line no-unused-vars
+    executeHandler() {
+        throw new Error('Abstract method executeHandler must be overridden');
     }
 
     isAction() {
