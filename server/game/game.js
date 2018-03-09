@@ -459,6 +459,7 @@ class Game extends EventEmitter {
 
         if(from.getGameElementType() === 'player') {
             let activePlayer = transferParams.activePlayer || this.currentAbilityContext && this.currentAbilityContext.player;
+            appliedGold = Math.min(from.getSpendableGold({ player: from, activePlayer: activePlayer }), amount);
             this.spendGold({ amount: appliedGold, player: from, activePlayer: activePlayer }, () => {
                 to.modifyGold(appliedGold);
                 this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });

@@ -5,9 +5,7 @@ class SweetCersei extends DrawCard {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'challenge',
             match: this,
-            effect: ability.effects.canSpendGold((amount, spendParams) => {
-                return spendParams.activePlayer === this.controller ? amount : 0;
-            })
+            effect: ability.effects.canSpendGold(spendParams => spendParams.activePlayer === this.controller)
         });
         this.reaction({
             when: {

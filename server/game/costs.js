@@ -297,7 +297,7 @@ const Costs = {
             resolve: function(context, result = { resolved: false }) {
                 let reduction = context.player.getCostReduction('play', context.source);
                 let opponentObj = opponentFunc && opponentFunc(context);
-                let gold = opponentObj ? opponentObj.gold : context.player.gold;
+                let gold = opponentObj ? opponentObj.getSpendableGold({ playingType: 'play' }) : context.player.getSpendableGold({ playingType: 'play' });
                 let max = _.min([maxFunc(context), gold + reduction]);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context, reduction));

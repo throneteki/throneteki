@@ -87,7 +87,9 @@ describe('The Iron Bank', function() {
                 });
 
                 it('should allow gold to be bestowed', function() {
-                    this.player1.clickCard('Stone Crows', 'hand');
+                    let stoneCrows = this.player1.findCardByName('Stone Crows', 'hand');
+
+                    this.player1.clickCard(stoneCrows);
                     // No gold from Iron Bank to marshal Stone Crows
                     this.player1.clickPrompt('0');
                     // Bestow 2 gold on Stone Crows
@@ -95,8 +97,28 @@ describe('The Iron Bank', function() {
                     // Choose the amount to use from the Iron Bank
                     this.player1.clickPrompt('2');
 
+                    expect(stoneCrows.gold).toBe(2);
                     expect(this.ironBank.gold).toBe(8); // 10 - 2 from Bestow
                     expect(this.player1Object.gold).toBe(2); // 5 - 3 from marshal
+                });
+
+                it('should allow gold to be bestowed solely from Iron Bank', function() {
+                    let stoneCrows = this.player1.findCardByName('Stone Crows', 'hand');
+
+                    this.player1Object.gold = 3;
+
+                    this.player1.clickCard(stoneCrows);
+                    // No gold from Iron Bank to marshal Stone Crows
+                    this.player1.clickPrompt('0');
+                    // Bestow 2 gold on Stone Crows
+                    this.player1.clickPrompt('2');
+
+                    // Automatically spend from Iron Bank without prompting
+                    expect(this.player1).not.toHavePromptButton('2');
+
+                    expect(stoneCrows.gold).toBe(2);
+                    expect(this.ironBank.gold).toBe(8); // 10 - 2 from Bestow
+                    expect(this.player1Object.gold).toBe(0); // 3 - 3 from marshal
                 });
 
                 it('should allow gold to be moved', function() {

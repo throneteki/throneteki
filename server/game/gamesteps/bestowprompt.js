@@ -11,7 +11,7 @@ class BestowPrompt extends BaseStep {
     }
 
     continue() {
-        let limit = Math.min(this.player.gold, this.card.bestowMax);
+        let limit = Math.min(this.player.getSpendableGold({ activePlayer: this.player }), this.card.bestowMax);
         let range = _.range(1, limit + 1).reverse();
 
         if(limit === 0) {
@@ -37,11 +37,11 @@ class BestowPrompt extends BaseStep {
             return true;
         }
 
-        if(gold > this.player.gold) {
+        if(gold > this.player.getSpendableGold({ activePlayer: this.player })) {
             return false;
         }
 
-        this.game.transferGold({ from: player, to: this.card, amount: gold });
+        this.game.transferGold({ from: player, to: this.card, amount: gold, activePlayer: this.player });
         this.game.addMessage('{0} bestows {1} gold on {2}', this.player, gold, this.card);
 
         return true;
