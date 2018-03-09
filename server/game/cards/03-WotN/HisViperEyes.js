@@ -8,37 +8,25 @@ class HisViperEyes extends DrawCard {
                     event.challenge.defendingPlayer === this.controller &&
                     event.challenge.loser === this.controller &&
                     ['military', 'power'].includes(event.challenge.challengeType) &&
-                    event.challenge.winner.hand.size() >= 1
+                    !event.challenge.winner.hand.isEmpty()
             },
-            handler: () => {
-                this.challengeWinner = this.game.currentChallenge.winner;
-
-                let buttons = this.challengeWinner.hand.map(card => {
-                    return { method: 'cardSelected', card: card };
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a card',
-                        buttons: buttons
-                    },
-                    source: this
+            handler: context => {
+                this.game.addMessage('{0} plays {1} to look at {2}\'s hand', context.player, this, context.event.challenge.winner);
+                this.game.promptForSelect(context.player, {
+                    activePromptTitle: 'Select a card',
+                    source: this,
+                    revealTargets: true,
+                    cardCondition: card => card.location === 'hand' && card.controller === context.event.challenge.winner,
+                    onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }
         });
     }
 
-    cardSelected(player, cardId) {
-        let otherPlayer = this.challengeWinner;
-
-        let card = otherPlayer.findCardByUuid(otherPlayer.hand, cardId);
-        if(!card) {
-            return false;
-        }
-
+    onCardSelected(player, card) {
+        let otherPlayer = card.controller;
         otherPlayer.discardCard(card);
-
-        this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand', player, this, card, otherPlayer);
+        this.game.addMessage('{0} then uses {1} to discard {2} from {3}\'s hand', player, this, card, otherPlayer);
 
         return true;
     }
