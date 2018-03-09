@@ -17,6 +17,6 @@ class Turncloak extends DrawCard {
     }
 }
 
-Turncloak.code = '10034';
+Turncloak.code = '10032';
 
 module.exports = Turncloak;

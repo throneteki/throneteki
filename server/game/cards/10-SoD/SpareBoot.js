@@ -28,6 +28,6 @@ class SpareBoot extends DrawCard {
     }
 }
 
-SpareBoot.code = '10033';
+SpareBoot.code = '10031';
 
 module.exports = SpareBoot;
