@@ -11,9 +11,10 @@ class InsidiousScheme extends DrawCard {
             },
             handler: context => {
                 let opponent = context.event.challenge.loser;
-                let cards = opponent.hand.size() === 0 ? 4 : 2;
-                this.controller.drawCardsToHand(cards);
-                this.game.addMessage('{0} plays {1} to draw {2} cards', this.controller, this, cards);
+                var cards = opponent.hand.size() === 0 ? 4 : 2;
+                cards = this.controller.drawCardsToHand(cards).length;
+                this.game.addMessage('{0} plays {1} to draw {2} {3}',
+                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }

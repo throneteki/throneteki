@@ -4,13 +4,15 @@ class FuneralPyre extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => event.cardStateWhenKilled.hasTrait('Lord') || event.cardStateWhenKilled.hasTrait('Lady')
+                onCharacterKilled: event =>
+                    (event.cardStateWhenKilled.hasTrait('Lord') || event.cardStateWhenKilled.hasTrait('Lady')) &&
+                    this.controller.canDraw()
             },
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
-                this.controller.drawCardsToHand(3);
-                this.game.addMessage('{0} uses {1} to draw 3 cards',
-                    this.controller, this);
+                let cards = this.controller.drawCardsToHand(3).length;
+                this.game.addMessage('{0} uses {1} to draw {2} {3}',
+                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }

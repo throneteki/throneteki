@@ -9,8 +9,10 @@ class SerDavosSeaworth extends DrawCard {
             },
             choices: {
                 'Draw 1 card': () => {
-                    this.controller.drawCardsToHand(1);
-                    this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
+                    if(this.controller.canDraw()) {
+                        this.controller.drawCardsToHand(1);
+                        this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
+                    }
                 },
                 'Gain 1 gold': () => {
                     this.game.addGold(this.controller, 1);

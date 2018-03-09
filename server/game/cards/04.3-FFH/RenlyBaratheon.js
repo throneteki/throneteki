@@ -12,7 +12,10 @@ class RenlyBaratheon extends DrawCard {
 
         this.reaction({
             when: {
-                onInsight: event => event.source.controller === this.controller && event.card.isLoyal()
+                onInsight: event =>
+                    event.source.controller === this.controller &&
+                    event.card.isLoyal() &&
+                    this.controller.canDraw()
             },
             cost: ability.costs.revealSpecific(context => context.event.card),
             handler: context => {

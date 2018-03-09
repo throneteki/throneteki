@@ -12,8 +12,10 @@ class RangersCache extends PlotCard {
                     this.game.addMessage('{0} uses {1} to gain 3 gold', this.controller, this);
                 },
                 'Draw 2 cards': () => {
-                    this.controller.drawCardsToHand(2);
-                    this.game.addMessage('{0} uses {1} to draw 2 card', this.controller, this);
+                    if(this.controller.canDraw()) {
+                        this.controller.drawCardsToHand(2);
+                        this.game.addMessage('{0} uses {1} to draw 2 card', this.controller, this);
+                    }
                 }
             }
         });

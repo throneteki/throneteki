@@ -19,7 +19,7 @@ class TheRedKeep extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                let cards = this.controller.drawCardsToHand(2);
+                let cards = this.controller.drawCardsToHand(2).length;
                 this.game.addMessage('{0} kneels {1} to draw {2} {3}',
                     this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }

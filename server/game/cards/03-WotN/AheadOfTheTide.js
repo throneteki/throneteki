@@ -13,12 +13,10 @@ class AheadOfTheTide extends DrawCard {
                     effect: ability.effects.modifyInitiative(3)
                 }));
                 this.game.once('onInitiativeDetermined', event => {
-                    if(event.winner !== this.controller) {
-                        return;
+                    if(event.winner === this.controller && this.controller.canDraw()) {
+                        this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
+                        this.controller.drawCardsToHand(1);
                     }
-
-                    this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
-                    this.controller.drawCardsToHand(1);
                 });
             }
         });

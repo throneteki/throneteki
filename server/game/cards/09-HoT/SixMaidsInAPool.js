@@ -4,10 +4,11 @@ class SixMaidsInAPool extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Draw cards',
+            condition: () => this.controller.canDraw(),
             handler: () => {
-                let cards = this.controller.getNumberOfCardsInPlay(card => card.hasTrait('Lady') && card.getType() === 'character');
-                this.controller.drawCardsToHand(cards);
-                this.game.addMessage('{0} plays {1} to draw {2} cards', this.controller, this, cards);
+                var cards = this.controller.getNumberOfCardsInPlay(card => card.hasTrait('Lady') && card.getType() === 'character');
+                cards = this.controller.drawCardsToHand(cards).length;
+                this.game.addMessage('{0} plays {1} to draw {2} {3}', this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }

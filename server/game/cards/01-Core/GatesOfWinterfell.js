@@ -10,7 +10,7 @@ class GatesOfWinterfell extends DrawCard {
                 let topCard = this.controller.drawDeck.first();
                 let message = '{0} kneels {1} to reveal {2} as the top card of their deck';
 
-                if(topCard.isFaction('stark')) {
+                if(topCard.isFaction('stark') && this.controller.canDraw()) {
                     this.controller.drawCardsToHand(1);
                     message += ' and draw it';
                 }

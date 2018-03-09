@@ -22,7 +22,7 @@ class TheDornishmansWife extends DrawCard {
                     bonusMessage.push('gain 1 power for their faction');
                 }
 
-                if(this.opponentControlsMoreCharacters(context.opponent)) {
+                if(this.opponentControlsMoreCharacters(context.opponent) && this.controller.canDraw()) {
                     this.controller.drawCardsToHand(1);
                     bonusMessage.push('draw 1 card');
                 }

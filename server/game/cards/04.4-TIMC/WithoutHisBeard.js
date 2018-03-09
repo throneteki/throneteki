@@ -33,9 +33,9 @@ class WithoutHisBeard extends DrawCard {
     numSelected(player, num) {
         let opponent = this.losingOpponent;
         opponent.discardAtRandom(num);
-        opponent.drawCardsToHand(2);
-        this.game.addMessage('{0} plays {1} to have {2} discard {3} cards at random, then draw 2 cards',
-            player, this, opponent, num);
+        let cards = opponent.drawCardsToHand(2).length;
+        this.game.addMessage('{0} plays {1} to have {2} discard {3} cards at random, then draw {4} cards',
+            player, this, opponent, num, cards);
 
         return true;
     }

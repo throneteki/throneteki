@@ -31,7 +31,7 @@ class Oldtown extends DrawCard {
         let topCard = this.controller.drawDeck.first();
         let message = '{0} then reveals {1} as the top card of their deck';
 
-        if(topCard.getType() === cardType) {
+        if(topCard.getType() === cardType && this.controller.canDraw()) {
             this.controller.drawCardsToHand(1);
             this.game.addPower(this.controller, 1);
             message += ', draws it and gains 1 power for their faction';

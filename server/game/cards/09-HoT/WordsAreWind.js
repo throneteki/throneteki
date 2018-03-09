@@ -34,8 +34,9 @@ class WordsAreWind extends DrawCard {
     }
 
     draw() {
-        this.context.player.drawCardsToHand(2);
-        this.game.addMessage('{0} chooses to have {1} draw 2 cards for {2}', this.context.event.player, this.context.player, this);
+        let cards = this.context.player.drawCardsToHand(2).length;
+        this.game.addMessage('{0} chooses to have {1} draw {2} {3} for {4}',
+            this.context.event.player, this.context.player, cards, cards > 1 ? 's' : '', this);
         return true;
     }
 }

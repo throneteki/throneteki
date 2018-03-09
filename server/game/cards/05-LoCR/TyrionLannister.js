@@ -10,9 +10,11 @@ class TyrionLannister extends DrawCard {
             limit: ability.limit.perPhase(2),
             choices: {
                 'Draw 2 cards': context => {
-                    this.controller.drawCardsToHand(2);
-                    this.game.addMessage('{0} uses {1} to return {2} to their hand to draw 2 cards',
-                        this.controller, this, context.costs.returnToHand);
+                    if(this.controller.canDraw()) {
+                        this.controller.drawCardsToHand(2);
+                        this.game.addMessage('{0} uses {1} to return {2} to their hand to draw 2 cards',
+                            this.controller, this, context.costs.returnToHand);
+                    }
                 },
                 'Gain 3 gold': context => {
                     this.game.addGold(this.controller, 3);

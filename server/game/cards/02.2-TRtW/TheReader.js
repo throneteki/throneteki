@@ -14,8 +14,10 @@ class TheReader extends DrawCard {
             limit: ability.limit.perPhase(1),
             choices: {
                 'Draw 1 card': () => {
-                    this.controller.drawCardsToHand(1);
-                    this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
+                    if(this.controller.canDraw()) {
+                        this.controller.drawCardsToHand(1);
+                        this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
+                    }
                 },
                 'Discard 3 cards': () => {
                     this.game.addMessage('{0} uses {1} to discard the top 3 cards from each opponent\'s deck', this.controller, this);

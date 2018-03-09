@@ -8,7 +8,10 @@ class EastwatchByTheSea extends DrawCard {
 
         this.reaction({
             when: {
-                onPhaseStarted: event => event.phase === 'dominance' && this.hasHigherReserveThanOpponent()
+                onPhaseStarted: event =>
+                    event.phase === 'dominance' &&
+                    this.hasHigherReserveThanOpponent() &&
+                    this.controller.canDraw()
             },
             handler: () => {
                 this.controller.drawCardsToHand(1);

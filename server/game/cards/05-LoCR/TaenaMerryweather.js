@@ -4,7 +4,10 @@ class TaenaMerryweather extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPlayed: event => event.card.getType() === 'event' && event.card.controller === this.controller
+                onCardPlayed: event =>
+                    event.card.getType() === 'event' &&
+                    event.card.controller === this.controller &&
+                    this.controller.canDraw()
             },
             cost: ability.costs.discardFromHand(),
             handler: context => {
