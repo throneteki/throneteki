@@ -38,8 +38,12 @@ class PlayerHand extends React.Component {
         }
     }
 
-    disableMouseOver() {
+    disableMouseOver(revealWhenHiddenTo) {
         if(this.props.spectating && this.props.showHand) {
+            return false;
+        }
+
+        if(revealWhenHiddenTo === this.props.username) {
             return false;
         }
 
@@ -65,7 +69,7 @@ class PlayerHand extends React.Component {
                 };
             }
 
-            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ this.disableMouseOver() } source='hand'
+            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ this.disableMouseOver(card.revealWhenHiddenTo) } source='hand'
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
                 onClick={ this.props.onCardClick }
@@ -131,7 +135,8 @@ PlayerHand.propTypes = {
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
     showHand: PropTypes.bool,
-    spectating: PropTypes.bool
+    spectating: PropTypes.bool,
+    username: PropTypes.string
 };
 
 export default PlayerHand;

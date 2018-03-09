@@ -153,6 +153,7 @@ class PlayerRow extends React.Component {
                 <PlayerHand
                     cards={ this.props.hand }
                     isMe={ this.props.isMe }
+                    username={ this.props.username }
                     onCardClick={ this.props.onCardClick }
                     onDragDrop={ this.props.onDragDrop }
                     onMouseOut={ this.props.onMouseOut }
@@ -208,7 +209,8 @@ PlayerRow.propTypes = {
     showDrawDeck: PropTypes.bool,
     showHand: PropTypes.bool,
     spectating: PropTypes.bool,
-    title: PropTypes.object
+    title: PropTypes.object,
+    username: PropTypes.string
 };
 
 export default PlayerRow;

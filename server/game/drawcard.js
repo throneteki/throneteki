@@ -507,6 +507,7 @@ class DrawCard extends BaseCard {
             inDanger: this.inDanger,
             kneeled: this.kneeled,
             power: this.power,
+            revealWhenHiddenTo: this.revealWhenHiddenTo,
             saved: this.saved,
             strength: this.getStrength(),
             stealth: this.stealth
