@@ -51,15 +51,20 @@ class PlayerHand extends React.Component {
     }
 
     getCards(needsSquish) {
+        let cards = this.props.cards;
         let cardIndex = 0;
-        let handLength = this.props.cards ? this.props.cards.length : 0;
+        let handLength = cards ? cards.length : 0;
         let cardWidth = this.getCardWidth();
 
         let requiredWidth = handLength * cardWidth;
         let overflow = requiredWidth - (cardWidth * 5);
         let offset = overflow / (handLength - 1);
 
-        let hand = _.map(this.props.cards, card => {
+        if(!this.props.isMe) {
+            cards = _.sortBy(this.props.cards, card => card.revealWhenHiddenTo);
+        }
+
+        let hand = _.map(cards, card => {
             let left = (cardWidth - offset) * cardIndex++;
 
             let style = {};
