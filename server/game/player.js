@@ -52,9 +52,9 @@ class Player extends Spectator {
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.gainedGold = 0;
-        this.maxGoldGain = undefined;
+        this.maxGoldGain = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
         this.drawnCards = 0;
-        this.maxCardDraw = undefined;
+        this.maxCardDraw = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
         this.triggerRestrictions = [];
@@ -211,8 +211,8 @@ class Player extends Spectator {
                 return;
             }
 
-            if(this.maxGoldGain !== undefined) {
-                goldGain = Math.min(amount, this.maxGoldGain - this.gainedGold);
+            if(this.maxGoldGain.getMax() !== undefined) {
+                goldGain = Math.min(amount, this.maxGoldGain.getMax() - this.gainedGold);
             }
             this.gold += goldGain;
             this.gainedGold += goldGain;
@@ -234,8 +234,8 @@ class Player extends Spectator {
         if(numCards > this.drawDeck.size()) {
             numCards = this.drawDeck.size();
         }
-        if(this.maxCardDraw !== undefined) {
-            numCards = Math.min(numCards, this.maxCardDraw - this.drawnCards);
+        if(this.maxCardDraw.getMax() !== undefined) {
+            numCards = Math.min(numCards, this.maxCardDraw.getMax() - this.drawnCards);
         }
         if(numCards < 0) {
             numCards = 0;
@@ -323,11 +323,11 @@ class Player extends Spectator {
     }
 
     canGainGold() {
-        return (this.maxGoldGain === undefined || this.gainedGold < this.maxGoldGain);
+        return (this.maxGoldGain.getMax() === undefined || this.gainedGold < this.maxGoldGain.getMax());
     }
 
     canDraw() {
-        return (this.maxCardDraw === undefined || this.drawnCards < this.maxCardDraw);
+        return (this.maxCardDraw.getMax() === undefined || this.drawnCards < this.maxCardDraw.getMax());
     }
 
     canSelectAsFirstPlayer(player) {
