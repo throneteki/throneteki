@@ -4,14 +4,15 @@ class CrossroadsSellsword extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: event => (
+                onCharacterKilled: event =>
                     event.card === this &&
                     this.controller === event.card.controller &&
-                    this.game.currentPhase === 'challenge')
+                    this.game.currentPhase === 'challenge' &&
+                    this.controller.canGainGold()
             },
             handler: () => {
-                this.game.addGold(this.controller, 2);
-                this.game.addMessage('{0} uses {1} to gain 2 gold', this.controller, this);
+                let gold = this.game.addGold(this.controller, 2);
+                this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
             }
         });
     }

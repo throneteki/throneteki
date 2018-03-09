@@ -4,12 +4,16 @@ class CerseisWheelhouse extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onFirstPlayerDetermined: event => this.controller === event.player
+                onFirstPlayerDetermined: event =>
+                    this.controller === event.player &&
+                    (this.controller.canGainGold() || this.controller.canDraw())
             },
             choices: {
                 'Gain 1 gold': () => {
-                    this.game.addGold(this.controller, 1);
-                    this.game.addMessage('{0} uses {1} to gain 1 gold', this.controller, this);
+                    if(this.controller.canGainGold()) {
+                        this.game.addGold(this.controller, 1);
+                        this.game.addMessage('{0} uses {1} to gain 1 gold', this.controller, this);
+                    }
                 },
                 'Draw 1 card': () => {
                     if(this.controller.canDraw()) {

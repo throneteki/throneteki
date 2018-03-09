@@ -7,9 +7,9 @@ class IronIslandsMarket extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let gold = this.opponentDiscardPileHas8() ? 2 : 1;
+                var gold = this.opponentDiscardPileHas8() ? 2 : 1;
+                gold = this.game.addGold(context.player, gold);
 
-                this.game.addGold(context.player, gold);
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
         });

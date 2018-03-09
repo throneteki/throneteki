@@ -16,10 +16,11 @@ class NorthernEncampment extends DrawCard {
         this.action({
             title: 'Gain 2 gold',
             phase: 'marshal',
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                this.game.addGold(context.player, 2);
-                this.game.addMessage('{0} kneels {1} to gain 2 gold', context.player, this);
+                let gold = this.game.addGold(context.player, 2);
+                this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
         });
     }

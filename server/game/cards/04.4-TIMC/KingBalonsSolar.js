@@ -4,7 +4,7 @@ class KingBalonsSolar extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onInitiativeDetermined: event => event.winner === this.controller
+                onInitiativeDetermined: event => event.winner === this.controller && this.controller.canGainGold()
             },
             handler: context => {
                 this.game.addGold(context.player, 1);

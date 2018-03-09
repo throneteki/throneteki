@@ -7,8 +7,8 @@ class TheBountyOfHighgarden extends DrawCard {
             condition: () => this.controller.canGainGold(),
             cannotBeCanceled: true,
             handler: context => {
-                this.game.addGold(context.player, 5);
-                this.game.addMessage('{0} plays {1} to gain 5 gold', context.player, this);
+                let gold = this.game.addGold(context.player, 5);
+                this.game.addMessage('{0} plays {1} to gain {2} gold', context.player, this, gold);
             }
         });
     }

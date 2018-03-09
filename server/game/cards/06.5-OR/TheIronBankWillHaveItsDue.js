@@ -11,8 +11,8 @@ class TheIronBankWillHaveItsDue extends DrawCard {
             ],
             handler: context => {
                 let returnedCard = context.costs.returnToHand;
-                let gold = returnedCard.getPrintedCost();
-                this.game.addGold(this.controller, gold);
+                var gold = returnedCard.getPrintedCost();
+                gold = this.game.addGold(this.controller, gold);
 
                 this.untilEndOfRound(ability => ({
                     targetType: 'player',

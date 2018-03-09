@@ -5,6 +5,7 @@ class TheNewGift extends DrawCard {
         this.action({
             title: 'Gain 1 gold',
             phase: 'marshal',
+            condition: () => this.controller.canGainGold(),
             limit: ability.limit.perPhase(2),
             cost: ability.costs.kneel(card => card.hasTrait('Steward') && card.getType() === 'character'),
             handler: context => {

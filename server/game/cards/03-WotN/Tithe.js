@@ -4,11 +4,12 @@ class Tithe extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel character to gain 2 gold',
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneel(card => card.isFaction('neutral') && card.getType() === 'character'),
             handler: context => {
-                this.game.addGold(this.controller, 2);
-                this.game.addMessage('{0} uses {1} to kneel {2} to gain 2 gold',
-                    this.controller, this, context.costs.kneel);
+                let gold = this.game.addGold(this.controller, 2);
+                this.game.addMessage('{0} uses {1} to kneel {2} to gain {3} gold',
+                    this.controller, this, context.costs.kneel, gold);
             }
         });
     }

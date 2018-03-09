@@ -10,7 +10,8 @@ class Plunder extends DrawCard {
             handler: context => {
                 var gold = this.getGold(context.opponent);
                 gold = this.game.addGold(this.controller, gold);
-                this.game.addMessage('{0} uses {1} and kneels their faction card to choose {2} and gain {3} gold', this.controller, this, context.opponent, gold);
+                this.game.addMessage('{0} uses {1} and kneels their faction card to choose {2} and gain {3} gold',
+                    this.controller, this, context.opponent, gold);
             }
         });
     }

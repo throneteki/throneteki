@@ -12,9 +12,9 @@ class TheDornishmansWife extends DrawCard {
             handler: context => {
                 let bonusMessage = [];
 
-                if(this.opponentHasMorePower(context.opponent)) {
-                    this.game.addGold(this.controller, 2);
-                    bonusMessage.push('gain 2 gold');
+                if(this.opponentHasMorePower(context.opponent) && this.controller.canGainGold()) {
+                    let gold = this.game.addGold(this.controller, 2);
+                    bonusMessage.push('gain {1} gold', gold);
                 }
 
                 if(this.opponentHasMoreCardsInHand(context.opponent)) {

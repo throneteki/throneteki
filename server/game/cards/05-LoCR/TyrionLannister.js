@@ -17,9 +17,11 @@ class TyrionLannister extends DrawCard {
                     }
                 },
                 'Gain 3 gold': context => {
-                    this.game.addGold(this.controller, 3);
-                    this.game.addMessage('{0} uses {1} to return {2} to their hand to gain 3 gold',
-                        this.controller, this, context.costs.returnToHand);
+                    if(this.controller.canGainGold()) {
+                        let gold = this.game.addGold(this.controller, 3);
+                        this.game.addMessage('{0} uses {1} to return {2} to their hand to gain {3} gold',
+                            this.controller, this, context.costs.returnToHand, gold);
+                    }
                 },
                 'Raise claim by 1': context => {
                     this.untilEndOfChallenge(ability => ({
