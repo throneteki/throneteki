@@ -43,7 +43,7 @@ module.exports.init = function(server) {
             return res.status(401).send({ message: 'Unauthorized' });
         }
 
-        let data = Object.assign({ id: req.params.id }, JSON.parse(req.body.data));
+        let data = Object.assign({ id: req.params.id }, req.body.deck);
 
         deckService.update(data);
 
@@ -51,7 +51,7 @@ module.exports.init = function(server) {
     }));
 
     server.post('/api/decks', passport.authenticate('jwt', { session: false }), wrapAsync(async function(req, res) {
-        let deck = Object.assign(JSON.parse(req.body.data), { username: req.user.username });
+        let deck = Object.assign(req.body.deck, { username: req.user.username });
         await deckService.create(deck);
         res.send({ success: true });
     }));
