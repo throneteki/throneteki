@@ -57,14 +57,16 @@ export function deleteDeck(deck) {
 
 export function saveDeck(deck) {
     let str = JSON.stringify({
-        deckName: deck.name,
-        faction: { name: deck.faction.name, value: deck.faction.value },
-        agenda: deck.agenda ? { code: deck.agenda.code } : null,
-        plotCards: formatCards(deck.plotCards),
-        drawCards: formatCards(deck.drawCards),
-        bannerCards: _.map(deck.bannerCards, card => {
-            return { code: card.code };
-        })
+        deck: {
+            deckName: deck.name,
+            faction: { name: deck.faction.name, value: deck.faction.value },
+            agenda: deck.agenda ? { code: deck.agenda.code } : null,
+            plotCards: formatCards(deck.plotCards),
+            drawCards: formatCards(deck.drawCards),
+            bannerCards: _.map(deck.bannerCards, card => {
+                return { code: card.code };
+            })
+        }
     });
 
     return {
@@ -73,7 +75,7 @@ export function saveDeck(deck) {
         APIParams: {
             url: `/api/decks/${(deck._id || '')}`,
             type: deck._id ? 'PUT' : 'POST',
-            data: { data: str }
+            data: str
         }
     };
 }
