@@ -143,7 +143,7 @@ class Lobby {
         if(socket.handshake.query.token && socket.handshake.query.token !== 'undefined') {
             jwt.verify(socket.handshake.query.token, this.config.secret, function(err, user) {
                 if(err) {
-                    logger.info(err);
+                    socket.emit('authfailed');
                     return;
                 }
 
@@ -418,7 +418,17 @@ class Lobby {
 
         this.broadcastGameList();
 
-        this.io.to(game.id).emit('handoff', { address: gameNode.address, port: gameNode.port, protocol: game.node.protocol, name: game.node.identity });
+        let userObj = this.userService.sanitiseUserObject(socket.user);
+
+        let authToken = jwt.sign(userObj, this.config.secret, { expiresIn: '5m' });
+
+        this.io.to(game.id).emit('handoff', {
+            address: gameNode.address,
+            port: gameNode.port,
+            protocol: game.node.protocol,
+            name: game.node.identity,
+            authToken: authToken
+        });
     }
 
     onWatchGame(socket, gameId, password) {

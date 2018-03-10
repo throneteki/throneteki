@@ -11,7 +11,7 @@ import Panel from './SiteComponents/Panel';
 
 import * as actions from './actions';
 
-class InnerGameLobby extends React.Component {
+class GameLobby extends React.Component {
     constructor() {
         super();
 
@@ -27,7 +27,7 @@ class InnerGameLobby extends React.Component {
             this.props.setContextMenu([]);
         }
 
-        if(props.username) {
+        if(props.user) {
             this.setState({ errorMessage: undefined });
         }
     }
@@ -35,7 +35,7 @@ class InnerGameLobby extends React.Component {
     onNewGameClick(event) {
         event.preventDefault();
 
-        if(!this.props.username) {
+        if(!this.props.user) {
             this.setState({ errorMessage: 'Please login before trying to start a new game' });
 
             return;
@@ -65,15 +65,15 @@ class InnerGameLobby extends React.Component {
                     </Panel>
                 </div>
                 <div className='col-sm-5'>
-                    { (!this.props.currentGame && this.props.newGame) ? <NewGame defaultGameName={ this.props.username + '\'s game' } /> : null }
+                    { (!this.props.currentGame && this.props.newGame && this.props.user) ? <NewGame defaultGameName={ this.props.user.username + '\'s game' } /> : null }
                     { rightside }
                 </div>
             </div>);
     }
 }
 
-InnerGameLobby.displayName = 'GameLobby';
-InnerGameLobby.propTypes = {
+GameLobby.displayName = 'GameLobby';
+GameLobby.propTypes = {
     bannerNotice: PropTypes.string,
     currentGame: PropTypes.object,
     games: PropTypes.array,
@@ -82,7 +82,7 @@ InnerGameLobby.propTypes = {
     passwordGame: PropTypes.object,
     setContextMenu: PropTypes.func,
     startNewGame: PropTypes.func,
-    username: PropTypes.string
+    user: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -94,11 +94,9 @@ function mapStateToProps(state) {
         newGame: state.games.newGame,
         passwordGame: state.lobby.passwordGame,
         socket: state.lobby.socket,
-        username: state.auth.username
+        user: state.account.user
     };
 }
 
-const GameLobby = connect(mapStateToProps, actions)(InnerGameLobby);
-
-export default GameLobby;
+export default connect(mapStateToProps, actions)(GameLobby);
 

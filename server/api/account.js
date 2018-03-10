@@ -13,7 +13,7 @@ const { wrapAsync } = require('../util.js');
 const sendgrid = require('@sendgrid/mail');
 
 let db = monk(config.dbPath);
-let userService = new UserService(db);
+let userService = new UserService(db, config);
 
 if(config.emailKey) {
     sendgrid.setApiKey(config.emailKey);
@@ -27,6 +27,18 @@ function hashPassword(password, rounds) {
             }
 
             return resolve(hash);
+        });
+    });
+}
+
+function verifyPassword(password, dbPassword) {
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(password, dbPassword, function(err, valid) {
+            if(err) {
+                return reject(err);
+            }
+
+            return resolve(valid);
         });
     });
 }
@@ -230,13 +242,28 @@ module.exports.init = function(server) {
             });
     });
 
-    server.post('/api/account/logout', function(req, res) {
-        req.logout();
+    server.post('/api/account/logout', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        if(!req.body.tokenId) {
+            return res.send({ success: false, message: 'tokenId is required' });
+        }
+
+        let session = await userService.getRefreshTokenById(req.user.username, req.body.tokenId);
+        if(!session) {
+            return res.send({ success: false, message: 'Error occured logging out' });
+        }
+
+        await userService.removeRefreshToken(req.user.username, req.body.tokenId);
 
         res.send({ success: true });
+    }));
+
+    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function(req, res) {
+        let user = userService.sanitiseUserObject(req.user);
+
+        res.send({ success: true, user: user });
     });
 
-    server.post('/api/account/login', (req, res, next) => {
+    server.post('/api/account/login', wrapAsync(async (req, res, next) => {
         if(!req.body.username) {
             res.send({ success: false, message: 'Username must be specified' });
 
@@ -249,28 +276,94 @@ module.exports.init = function(server) {
             return next();
         }
 
-        passport.authenticate('local', (err, user) => {
-            if(err) {
-                return next(err);
-            }
+        let user = await userService.getUserByUsername(req.body.username);
+        if(!user) {
+            return res.send({ success: false, message: 'Invalid username/password' });
+        }
 
-            if(!user) {
-                return res.status(401).send({ success: false, message: 'Invalid username or password' });
-            }
+        if(user.disabled) {
+            return res.send({ success: false, message: 'Invalid username/password' });
+        }
 
-            if(!user.verified) {
-                return res.send({ success: false, message: 'Your account is not verified, please click on the link we have emailed to you' });
-            }
+        let isValidPassword;
+        try {
+            isValidPassword = await verifyPassword(req.body.password, user.password);
+        } catch(err) {
+            logger.error(err);
 
-            req.logIn(user, err => {
-                if(err) {
-                    return next(err);
-                }
+            return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
+        }
 
-                res.send({ success: true, user: req.user, token: jwt.sign(req.user, config.secret) });
-            });
-        })(req, res, next);
-    });
+        if(!isValidPassword) {
+            return res.send({ success: false, message: 'Invalid username/password' });
+        }
+
+        let userObj = userService.sanitiseUserObject(user);
+        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+        let ip = req.get('x-real-ip');
+        if(!ip) {
+            ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        }
+
+        let refreshToken = await userService.addRefreshToken(user.username, authToken, ip);
+        if(!refreshToken) {
+            return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
+        }
+
+        res.send({ success: true, user: userObj, token: authToken, refreshToken: refreshToken });
+    }));
+
+    server.post('/api/account/token', wrapAsync(async (req, res, next) => {
+        if(!req.body.token) {
+            res.send({ success: false, message: 'Refresh token must be specified' });
+
+            return next();
+        }
+
+        let token = JSON.parse(req.body.token);
+
+        let user = await userService.getUserByUsername(token.username);
+        if(!user) {
+            res.send({ success: false, message: 'Invalid refresh token' });
+
+            return next();
+        }
+
+        if(user.username !== token.username) {
+            logger.error(`Username ${user.username} did not match token username ${token.username}`);
+            res.send({ success: false, message: 'Invalid refresh token' });
+
+            return next();
+        }
+
+        let refreshToken = user.tokens.find(t => {
+            return t._id.toString() === token.id;
+        });
+        if(!refreshToken) {
+            res.send({ success: false, message: 'Invalid refresh token' });
+
+            return next();
+        }
+
+        if(!userService.verifyRefreshToken(user.username, refreshToken)) {
+            res.send({ success: false, message: 'Invalid refresh token' });
+
+            return next();
+        }
+
+        let userObj = userService.sanitiseUserObject(user);
+
+        let ip = req.get('x-real-ip');
+        if(!ip) {
+            ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        }
+
+        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+
+        await userService.updateRefreshTokenUsage(refreshToken.id, ip);
+
+        res.send({ success: true, user: userObj, token: authToken });
+    }));
 
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
         let resetUser;
@@ -386,13 +479,9 @@ module.exports.init = function(server) {
             });
     }
 
-    server.put('/api/account/:username', (req, res) => {
+    server.put('/api/account/:username', passport.authenticate('jwt', { session: false }), (req, res) => {
         let userToSet = JSON.parse(req.body.data);
         let existingUser;
-
-        if(!req.user) {
-            return res.status(401).send({ message: 'Unauthorized' });
-        }
 
         if(req.user.username !== req.params.username) {
             return res.status(403).send({ message: 'Unauthorized' });
@@ -430,7 +519,55 @@ module.exports.init = function(server) {
             });
     });
 
-    server.get('/api/account/:username/blocklist', wrapAsync(async (req, res) => {
+    server.get('/api/account/:username/sessions', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        let tokens = user.tokens || [];
+
+        res.send({
+            success: true,
+            tokens: tokens.sort((a, b) => {
+                return a.lastUsed < b.lastUsed;
+            }).map(t => {
+                return {
+                    id: t._id,
+                    ip: t.ip,
+                    lastUsed: t.lastUsed
+                };
+            })
+        });
+    }));
+
+    server.delete('/api/account/:username/sessions/:id', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        if(!req.params.username) {
+            return res.send({ success: false, message: 'Username is required' });
+        }
+
+        if(!req.params.id) {
+            return res.send({ success: false, message: 'Session Id is required' });
+        }
+
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        let session = await userService.getRefreshTokenById(req.params.username, req.params.id);
+        if(!session) {
+            return res.status(404).send({ message: 'Not found' });
+        }
+
+        await userService.removeRefreshToken(req.params.username, req.params.id);
+
+        res.send({ success: true, message: 'Session deleted successfully', tokenId: req.params.id });
+    }));
+
+    server.get('/api/account/:username/blocklist', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
 
         if(!user) {
@@ -441,7 +578,7 @@ module.exports.init = function(server) {
         res.send({ success: true, blockList: blockList.sort() });
     }));
 
-    server.post('/api/account/:username/blocklist', wrapAsync(async (req, res) => {
+    server.post('/api/account/:username/blocklist', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
 
         if(!user) {
@@ -468,7 +605,7 @@ module.exports.init = function(server) {
         ));
     }));
 
-    server.delete('/api/account/:username/blocklist/:entry', wrapAsync(async (req, res) => {
+    server.delete('/api/account/:username/blocklist/:entry', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
 
         if(!user) {
@@ -512,13 +649,13 @@ async function checkAuth(req, res) {
     }
 
     if(req.user.username !== req.params.username) {
-        res.status(403).send({ message: 'Unauthorized' });
+        res.status(401).send({ message: 'Unauthorized' });
 
         return null;
     }
 
     if(!user) {
-        res.status(404).send({ message: 'Not found' });
+        res.status(401).send({ message: 'Unauthorized' });
 
         return null;
     }

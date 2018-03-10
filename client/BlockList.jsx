@@ -14,12 +14,25 @@ class InnerBlockList extends React.Component {
         super(props);
 
         this.state = {
-            username: ''
+            username: '',
+            detailsLoaded: false
         };
     }
 
-    componentDidMount() {
-        this.props.loadBlockList(this.props.user);
+    componentWillMount() {
+        if(this.props.user) {
+            this.props.loadBlockList(this.props.user);
+
+            this.setState({ detailsLoaded: true });
+        }
+    }
+
+    componentWillReceiveProps(props) {
+        if(!this.state.detailsLoaded && props.user) {
+            this.props.loadBlockList(props.user);
+
+            this.setState({ detailsLoaded: true });
+        }
     }
 
     onUsernameChange(event) {
@@ -146,8 +159,8 @@ function mapStateToProps(state) {
         blockListDeleted: state.user.blockListDeleted,
         loading: state.api.loading,
         socket: state.lobby.socket,
-        token: state.auth.token,
-        user: state.auth.user
+        token: state.account.token,
+        user: state.account.user
     };
 }
 

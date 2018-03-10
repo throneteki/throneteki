@@ -6,26 +6,27 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import Login from './pages/Login';
-import Logout from './Logout.jsx';
+import Logout from './pages/Logout';
 import Register from './pages/Register';
-import Lobby from './pages/Lobby.jsx';
-import Decks from './Decks.jsx';
-import AddDeck from './AddDeck.jsx';
-import EditDeck from './EditDeck.jsx';
-import NotFound from './NotFound.jsx';
-import NavBar from './NavBar.jsx';
-import GameLobby from './GameLobby.jsx';
-import GameBoard from './GameBoard.jsx';
-import HowToPlay from './HowToPlay.jsx';
-import About from './About.jsx';
-import ForgotPassword from './pages/ForgotPassword.jsx';
-import ResetPassword from './pages/ResetPassword.jsx';
-import Profile from './Profile.jsx';
-import NewsAdmin from './NewsAdmin.jsx';
-import Unauthorised from './Unauthorised.jsx';
-import UserAdmin from './UserAdmin.jsx';
-import BlockList from './BlockList.jsx';
-import Activation from './pages/Activation.jsx';
+import Lobby from './pages/Lobby';
+import Decks from './Decks';
+import AddDeck from './AddDeck';
+import EditDeck from './EditDeck';
+import NotFound from './NotFound';
+import NavBar from './NavBar';
+import GameLobby from './GameLobby';
+import GameBoard from './GameBoard';
+import HowToPlay from './HowToPlay';
+import About from './About';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import Profile from './Profile';
+import NewsAdmin from './NewsAdmin';
+import Unauthorised from './Unauthorised';
+import UserAdmin from './UserAdmin';
+import BlockList from './BlockList';
+import Security from './pages/Security';
+import Activation from './pages/Activation';
 
 import * as actions from './actions';
 
@@ -49,19 +50,26 @@ class App extends React.Component {
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
             '/profile': () => <Profile />,
             '/news': () => <NewsAdmin />,
+            '/security': () => <Security />,
             '/activation': () => params => <Activation id={ params.id } token={ params.token } />
         };
     }
 
     componentWillMount() {
+        let token = localStorage.getItem('token');
+        let refreshToken = localStorage.getItem('refreshToken');
+        if(refreshToken) {
+            this.props.setAuthTokens(token, JSON.parse(refreshToken));
+
+            this.props.authenticate();
+        }
+
         this.props.loadCards();
         this.props.loadPacks();
         this.props.loadFactions();
 
         $(document).ajaxError((event, xhr) => {
-            if(xhr.status === 401) {
-                this.props.navigate('/login');
-            } else if(xhr.status === 403) {
+            if(xhr.status === 403) {
                 this.props.navigate('/unauth');
             }
         });
@@ -100,6 +108,7 @@ class App extends React.Component {
                 {
                     name: this.props.user.username, childItems: [
                         { name: 'Profile', path: '/profile' },
+                        { name: 'Security', path: '/security' },
                         { name: 'Block List', path: '/blocklist' },
                         { name: 'Logout', path: '/logout' }
                     ], avatar: true, emailHash: this.props.user.emailHash, disableGravatar: this.props.user.settings.disableGravatar
@@ -243,6 +252,9 @@ class App extends React.Component {
             case '/blocklist':
                 component = <BlockList />;
                 break;
+            case '/security':
+                component = <Security />;
+                break;
             case '/activation':
                 component = <Activation id={ idArg } token={ tokenArg } />;
                 break;
@@ -279,6 +291,7 @@ class App extends React.Component {
 
 App.displayName = 'Application';
 App.propTypes = {
+    authenticate: PropTypes.func,
     connectLobby: PropTypes.func,
     currentGame: PropTypes.object,
     dispatch: PropTypes.func,
@@ -289,10 +302,10 @@ App.propTypes = {
     loggedIn: PropTypes.bool,
     navigate: PropTypes.func,
     path: PropTypes.string,
+    setAuthTokens: PropTypes.func,
     setContextMenu: PropTypes.func,
     token: PropTypes.string,
-    user: PropTypes.object,
-    username: PropTypes.string
+    user: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -300,10 +313,9 @@ function mapStateToProps(state) {
         currentGame: state.lobby.currentGame,
         games: state.lobby.games,
         path: state.navigation.path,
-        loggedIn: state.auth.loggedIn,
-        token: state.auth.token,
-        user: state.auth.user,
-        username: state.auth.username
+        loggedIn: state.account.loggedIn,
+        token: state.account.token,
+        user: state.account.user
     };
 }
 

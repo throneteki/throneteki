@@ -15,8 +15,13 @@ export default function(state = {}, action) {
         case 'ACCOUNT_LOGGEDIN':
             return Object.assign({}, state, {
                 loggedIn: true,
-                loggedInUser: action.response.user,
-                token: action.response.token
+                user: action.response.user
+            });
+        case 'ACCOUNT_LOGGEDOUT':
+            return Object.assign({}, state, {
+                loggedIn: false,
+                loggedOut: true,
+                user: undefined
             });
         case 'RESETPASSWORD_ACCOUNT':
             return Object.assign({}, state, {
@@ -33,6 +38,11 @@ export default function(state = {}, action) {
         case 'ACCOUNT_ACTIVATED':
             return Object.assign({}, state, {
                 activated: true
+            });
+        case 'ACCOUNT_AUTH_VERIFIED':
+            return Object.assign({}, state, {
+                loggedIn: true,
+                user: action.response.user
             });
     }
 

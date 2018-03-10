@@ -1,4 +1,3 @@
-export * from './ReduxActions/auth';
 export * from './ReduxActions/cards';
 export * from './ReduxActions/game';
 export * from './ReduxActions/lobby';

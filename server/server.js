@@ -1,17 +1,11 @@
 const express = require('express');
 const app = express();
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
 const config = require('./config.js');
 const passport = require('passport');
-const localStrategy = require('passport-local').Strategy;
 const logger = require('./log.js');
-const bcrypt = require('bcrypt');
 const api = require('./api');
 const path = require('path');
-const jwt = require('jsonwebtoken');
 const http = require('http');
 const Raven = require('raven');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -19,7 +13,9 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js')();
 const monk = require('monk');
-const _ = require('underscore');
+const passportJwt = require('passport-jwt');
+const JwtStrategy = passportJwt.Strategy;
+const ExtractJwt = passportJwt.ExtractJwt;
 
 const UserService = require('./services/UserService.js');
 const version = require('../version.js');
@@ -46,22 +42,23 @@ class Server {
             app.use(Raven.errorHandler());
         }
 
-        app.use(session({
-            store: new MongoStore({ url: config.dbPath }),
-            saveUninitialized: false,
-            resave: false,
-            secret: config.secret,
-            cookie: { maxAge: config.cookieLifetime }
+        var opts = {};
+        opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+        opts.secretOrKey = config.secret;
+
+        passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
+            this.userService.getUserById(jwtPayload._id).then(user => {
+                if(user) {
+                    return done(null, user);
+                }
+
+                return done(null, false);
+            }).catch(err => {
+                return done(err, false);
+            });
         }));
-
         app.use(passport.initialize());
-        app.use(passport.session());
 
-        passport.use(new localStrategy(this.verifyUser.bind(this)));
-        passport.serializeUser(this.serializeUser.bind(this));
-        passport.deserializeUser(this.deserializeUser.bind(this));
-
-        app.use(cookieParser());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -97,15 +94,10 @@ class Server {
         }
 
         app.get('*', (req, res) => {
-            let token = undefined;
-
-            if(req.user) {
-                token = jwt.sign(req.user, config.secret);
-                req.user = _.omit(req.user, 'blockList');
-            }
-
-            res.render('index', { basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user),
-                token: token, vendorAssets: this.vendorAssets, assets: this.assets });
+            res.render('index', {
+                basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user),
+                vendorAssets: this.vendorAssets, assets: this.assets
+            });
         });
 
         // Define error middleware last
@@ -132,81 +124,10 @@ class Server {
         });
     }
 
-    verifyUser(username, password, done) {
-        this.userService.getUserByUsername(username)
-            .then(user => {
-                if(!user) {
-                    return done(null, false, { message: 'Invalid username/password' });
-                }
-
-                bcrypt.compare(password, user.password, function(err, valid) {
-                    if(err) {
-                        logger.info(err.message);
-
-                        return done(err);
-                    }
-
-                    if(!valid) {
-                        return done(null, false, { message: 'Invalid username/password' });
-                    }
-
-                    if(user.disabled) {
-                        return done(null, false, { message: 'Invalid username/password' });
-                    }
-
-                    let userObj = {
-                        username: user.username,
-                        email: user.email,
-                        emailHash: user.emailHash,
-                        _id: user._id,
-                        admin: user.admin,
-                        settings: user.settings,
-                        promptedActionWindows: user.promptedActionWindows,
-                        permissions: user.permissions,
-                        blockList: user.blockList,
-                        verified: user.verified
-                    };
-
-                    userObj = Settings.getUserWithDefaultsSet(userObj);
-
-                    return done(null, userObj);
-                });
-            })
-            .catch(err => {
-                done(err);
-
-                logger.error(err);
-            });
-    }
-
     serializeUser(user, done) {
         if(user) {
             done(null, user._id);
         }
-    }
-
-    deserializeUser(id, done) {
-        this.userService.getUserById(id)
-            .then(user => {
-                if(!user) {
-                    return done(new Error('user not found'));
-                }
-
-                let userObj = {
-                    username: user.username,
-                    email: user.email,
-                    emailHash: user.emailHash,
-                    _id: user._id,
-                    admin: user.admin,
-                    settings: user.settings,
-                    promptedActionWindows: user.promptedActionWindows,
-                    permissions: user.permissions,
-                    blockList: user.blockList,
-                    verified: user.verified
-                };
-
-                done(null, userObj);
-            });
     }
 }
 
