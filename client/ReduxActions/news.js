@@ -50,7 +50,7 @@ export function addNews(newsText) {
         APIParams: {
             url: '/api/news',
             type: 'POST',
-            data: { text: newsText }
+            data: JSON.stringify({ text: newsText })
         }
     };
 }
