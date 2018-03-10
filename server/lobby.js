@@ -14,7 +14,6 @@ const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 const Settings = require('./settings.js');
-const config = require('./config.js');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -421,7 +420,7 @@ class Lobby {
 
         let userObj = this.userService.sanitiseUserObject(socket.user);
 
-        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+        let authToken = jwt.sign(userObj, this.config.secret, { expiresIn: '5m' });
 
         this.io.to(game.id).emit('handoff', {
             address: gameNode.address,
