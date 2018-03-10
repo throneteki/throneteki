@@ -1,3 +1,5 @@
+import { connectLobby } from './socket';
+
 export function registerAccount(user) {
     return {
         types: ['REGISTER_ACCOUNT', 'ACCOUNT_REGISTERED'],
@@ -47,7 +49,10 @@ export function logout() {
         }
 
         if(state.lobby.socket) {
+            state.lobby.socket.closing = true;
             state.lobby.socket.disconnect();
+
+            dispatch(connectLobby());
         }
 
         if(state.games.socket) {

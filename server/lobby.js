@@ -301,7 +301,7 @@ class Lobby {
 
         var game = this.findGameForUser(socket.user.username);
         if(game && game.started) {
-            socket.send('handoff', { address: game.node.address, port: game.node.port, protocol: game.node.protocol, name: game.node.identity });
+            this.sendHandoff(socket, game.node);
         }
     }
 
@@ -418,15 +418,27 @@ class Lobby {
 
         this.broadcastGameList();
 
-        let userObj = this.userService.sanitiseUserObject(socket.user);
+        _.each(game.getPlayersAndSpectators(), player => {
+            let socket = this.sockets[player.id];
 
+            if(!socket || !socket.user) {
+                logger.error(`Wanted to handoff to ${player.name}, but couldn't find a socket`);
+                return;
+            }
+
+            this.sendHandoff(socket, gameNode);
+        });
+    }
+
+    sendHandoff(socket, gameNode) {
+        let userObj = this.userService.sanitiseUserObject(socket.user);
         let authToken = jwt.sign(userObj, this.config.secret, { expiresIn: '5m' });
 
-        this.io.to(game.id).emit('handoff', {
+        socket.send('handoff', {
             address: gameNode.address,
             port: gameNode.port,
-            protocol: game.node.protocol,
-            name: game.node.identity,
+            protocol: gameNode.protocol,
+            name: gameNode.identity,
             authToken: authToken
         });
     }
@@ -453,7 +465,7 @@ class Lobby {
 
             if(game.started) {
                 this.router.addSpectator(game, socket.user);
-                socket.send('handoff', { address: game.node.address, port: game.node.port, protocol: game.node.protocol, name: game.node.identity });
+                this.sendHandoff(socket, game.node);
             } else {
                 this.sendGameState(game);
             }

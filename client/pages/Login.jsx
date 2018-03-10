@@ -70,7 +70,7 @@ function mapStateToProps(state) {
             state.api.LOGIN_ACCOUNT.status === 401 ? 'Invalid username or password.  Please check and try again' : state.api.LOGIN_ACCOUNT.message : undefined,
         apiSuccess: state.api.LOGIN_ACCOUNT ? state.api.LOGIN_ACCOUNT.success : undefined,
         loggedIn: state.account.loggedIn,
-        loggedInToken: state.account.token,
+        loggedInToken: state.auth.token,
         loggedInUser: state.account.loggedInUser,
         socket: state.lobby.socket
     };
