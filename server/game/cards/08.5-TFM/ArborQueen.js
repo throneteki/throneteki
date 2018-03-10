@@ -31,7 +31,7 @@ class ArborQueen extends DrawCard {
                     effect: ability.effects.modifyStrength(2)
                 }));
 
-                this.game.addMessage('{0} uses {1} to give +1 STR to {2} {3}',
+                this.game.addMessage('{0} kneels {1} to give +2 STR to {2} and {3}',
                     context.player, this, context.targets.first, context.targets.second);
             }
         });
