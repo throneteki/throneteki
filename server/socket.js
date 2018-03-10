@@ -58,12 +58,12 @@ class Socket extends EventEmitter {
     onAuthenticate(token) {
         jwt.verify(token, this.config.secret, (err, user) => {
             if(err) {
-                logger.info(err);
                 return;
             }
 
             this.socket.request.user = user;
             this.user = user;
+
             this.emit('authenticate', this, user);
         });
     }

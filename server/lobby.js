@@ -14,6 +14,7 @@ const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 const Settings = require('./settings.js');
+const config = require('./config.js');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -143,7 +144,7 @@ class Lobby {
         if(socket.handshake.query.token && socket.handshake.query.token !== 'undefined') {
             jwt.verify(socket.handshake.query.token, this.config.secret, function(err, user) {
                 if(err) {
-                    logger.info(err.description, err);
+                    socket.emit('authfailed');
                     return;
                 }
 
@@ -418,7 +419,17 @@ class Lobby {
 
         this.broadcastGameList();
 
-        this.io.to(game.id).emit('handoff', { address: gameNode.address, port: gameNode.port, protocol: game.node.protocol, name: game.node.identity });
+        let userObj = this.userService.sanitiseUserObject(socket.user);
+
+        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+
+        this.io.to(game.id).emit('handoff', {
+            address: gameNode.address,
+            port: gameNode.port,
+            protocol: game.node.protocol,
+            name: game.node.identity,
+            authToken: authToken
+        });
     }
 
     onWatchGame(socket, gameId, password) {
