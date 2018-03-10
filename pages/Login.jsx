@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import Link from '../Link.jsx';
 import AlertPanel from '../SiteComponents/AlertPanel';
@@ -18,8 +18,6 @@ class Login extends React.Component {
 
     componentWillReceiveProps(props) {
         if(props.loggedIn) {
-            this.props.login(props.loggedInUser, props.loggedInToken);
-
             if(this.props.socket) {
                 this.props.socket.emit('authenticate', props.loggedInToken);
             }

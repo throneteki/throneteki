@@ -71,6 +71,16 @@ export function lobbyMessageReceived(message, ...args) {
     };
 }
 
+export function authenticateSocket() {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        if(state.socket && state.auth.token) {
+            state.socket.emit('authenticate', state.auth.token);
+        }
+    };
+}
+
 export function connectLobby() {
     return (dispatch, getState) => {
         let state = getState();
@@ -129,7 +139,7 @@ export function connectLobby() {
 
         socket.on('gamestate', game => {
             state = getState();
-            dispatch(lobbyMessageReceived('gamestate', game, state.auth.username));
+            dispatch(lobbyMessageReceived('gamestate', game, state.account.user ? state.account.user.username : undefined));
         });
 
         socket.on('cleargamestate', () => {
@@ -139,6 +149,7 @@ export function connectLobby() {
         socket.on('handoff', server => {
             let url = '//' + server.address;
             let standardPorts = [80, 443];
+            let state = getState();
 
             if(server.port && !standardPorts.some(p => p === server.port)) {
                 url += ':' + server.port;
@@ -148,7 +159,13 @@ export function connectLobby() {
                 dispatch(actions.closeGameSocket());
             }
 
+            dispatch(actions.setAuthTokens(server.authToken, state.auth.refreshToken));
+
             dispatch(actions.connectGameSocket(url, server.name));
+        });
+
+        socket.on('authfailed', () => {
+            dispatch(actions.authenticate());
         });
     };
 }

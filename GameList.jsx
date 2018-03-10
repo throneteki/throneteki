@@ -7,7 +7,7 @@ import _ from 'underscore';
 import Avatar from './Avatar.jsx';
 import * as actions from './actions';
 
-class InnerGameList extends React.Component {
+class GameList extends React.Component {
     constructor() {
         super();
 
@@ -17,7 +17,7 @@ class InnerGameList extends React.Component {
     joinGame(event, game) {
         event.preventDefault();
 
-        if(!this.props.username) {
+        if(!this.props.user) {
             toastr.error('Please login before trying to join a game');
             return;
         }
@@ -36,7 +36,7 @@ class InnerGameList extends React.Component {
     watchGame(event, game) {
         event.preventDefault();
 
-        if(!this.props.username) {
+        if(!this.props.user) {
             toastr.error('Please login before trying to watch a game');
             return;
         }
@@ -127,15 +127,15 @@ class InnerGameList extends React.Component {
     }
 }
 
-InnerGameList.displayName = 'GameList';
-InnerGameList.propTypes = {
+GameList.displayName = 'GameList';
+GameList.propTypes = {
     currentGame: PropTypes.object,
     games: PropTypes.array,
     isAdmin: PropTypes.bool,
     joinPasswordGame: PropTypes.func,
     showNodes: PropTypes.bool,
     socket: PropTypes.object,
-    username: PropTypes.string
+    user: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -143,11 +143,8 @@ function mapStateToProps(state) {
         currentGame: state.lobby.currentGame,
         isAdmin: state.auth.isAdmin,
         socket: state.lobby.socket,
-        username: state.auth.username
+        user: state.account.user
     };
 }
 
-const GameList = connect(mapStateToProps, actions)(InnerGameList);
-
-export default GameList;
-
+export default connect(mapStateToProps, actions)(GameList);

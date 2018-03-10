@@ -12,6 +12,23 @@ export default function(state = {}, action) {
             return Object.assign({}, state, {
                 blockList: action.response.blockList
             });
+        case 'RECEIVE_SESSIONS':
+            return Object.assign({}, state, {
+                sessions: action.response.tokens
+            });
+        case 'REMOVE_SESSION':
+            return Object.assign({}, state, {
+                sessionRemoved: false
+            });
+        case 'SESSION_REMOVED':
+            var sessions = _.reject(state.sessions, t => {
+                return t.id === action.response.tokenId;
+            });
+
+            return Object.assign({}, state, {
+                sessionRemoved: true,
+                sessions: sessions
+            });
         case 'BLOCKLIST_ADDED':
             var addedState = Object.assign({}, state, {
                 blockListAdded: true
@@ -33,6 +50,10 @@ export default function(state = {}, action) {
             return Object.assign({}, state, {
                 blockListAdded: false,
                 blockListDeleted: false
+            });
+        case 'CLEAR_SESSION_STATUS':
+            return Object.assign({}, state, {
+                sessionRemoved: false
             });
     }
 

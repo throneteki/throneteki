@@ -353,7 +353,7 @@ InnerProfile.propTypes = {
 function mapStateToProps(state) {
     return {
         socket: state.lobby.socket,
-        user: state.auth.user
+        user: state.account.user
     };
 }
 

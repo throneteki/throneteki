@@ -1,10 +1,9 @@
-/*global user, authToken */
 import React from 'react';
 import { render } from 'react-dom';
 import Application from './Application.jsx';
 import { Provider } from 'react-redux';
 import configureStore from './configureStore';
-import { navigate, login } from './actions';
+import { navigate } from './actions';
 import 'bootstrap/dist/js/bootstrap';
 import ReduxToastr from 'react-redux-toastr';
 import Raven from 'raven-js';
@@ -65,10 +64,6 @@ store.dispatch(navigate(window.location.pathname, window.location.search));
 window.onpopstate = function(e) {
     store.dispatch(navigate(e.target.location.pathname));
 };
-
-if(typeof user !== 'undefined') {
-    store.dispatch(login(user, authToken, user.admin));
-}
 
 render(
     <Provider store={ store }>
