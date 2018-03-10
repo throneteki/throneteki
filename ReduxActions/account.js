@@ -51,7 +51,7 @@ export function logout() {
         }
 
         if(state.games.socket) {
-            state.game.socket.disconnect();
+            state.games.socket.disconnect();
         }
 
         return dispatch(logoutAccount(state.auth.refreshToken.id));
