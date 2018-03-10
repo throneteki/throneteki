@@ -203,26 +203,14 @@ class Player extends Spectator {
     }
 
     modifyGold(amount) {
-        var goldGain = amount;
+        this.gold += amount;
 
-        if(amount > 0) {
-            if(!this.canGainGold()) {
-                this.addMessage('{0} cannot gain gold', this);
-                return;
-            }
-
-            if(this.maxGoldGain.getMax() !== undefined) {
-                goldGain = Math.min(amount, this.maxGoldGain.getMax() - this.gainedGold);
-            }
-            this.gold += goldGain;
-            this.gainedGold += goldGain;
-
-        } else if(amount < 0) {
-            goldGain = Math.max(-this.gold, goldGain); // ensure this.gold >= 0
-            this.gold += goldGain;
+        if(this.gold < 0) {
+            amount += -this.gold;
+            this.gold = 0;
         }
 
-        return goldGain;
+        return amount;
     }
 
     modifyUsedPlots(value) {
