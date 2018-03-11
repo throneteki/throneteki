@@ -224,7 +224,7 @@ const Costs = {
                     return true;
                 }
 
-                return context.player.hasEnoughGold(context.source.getCost());
+                return context.player.getSpendableGold() >= context.source.getCost();
             },
             pay: function(context) {
                 var hasDupe = context.player.getDuplicateInPlay(context.source);
@@ -250,7 +250,7 @@ const Costs = {
                 }
 
                 let reducedCost = context.player.getReducedCost(playingType, context.source);
-                return context.player.hasEnoughGold(reducedCost, { playingType: playingType });
+                return context.player.getSpendableGold({ playingType: playingType }) >= reducedCost;
             },
             pay: function(context) {
                 var hasDupe = context.player.getDuplicateInPlay(context.source);
@@ -271,7 +271,7 @@ const Costs = {
     payGold: function(amount) {
         return {
             canPay: function(context) {
-                return context.player.hasEnoughGold(amount, { player: context.player, playingType: 'ability' });
+                return context.player.getSpendableGold({ player: context.player, playingType: 'ability' }) >= amount;
             },
             pay: function(context) {
                 context.game.spendGold({ amount: amount, player: context.player });
@@ -290,14 +290,14 @@ const Costs = {
                 let opponentObj = opponentFunc && opponentFunc(context);
 
                 if(!opponentObj) {
-                    return context.player.hasEnoughGold(minFunc(context) - reduction);
+                    return context.player.getSpendableGold() >= (minFunc(context) - reduction);
                 }
-                return opponentObj.hasEnoughGold(minFunc(context) - reduction);
+                return opponentObj.getSpendableGold() >= (minFunc(context) - reduction);
             },
             resolve: function(context, result = { resolved: false }) {
                 let reduction = context.player.getCostReduction('play', context.source);
                 let opponentObj = opponentFunc && opponentFunc(context);
-                let gold = opponentObj ? opponentObj.gold : context.player.gold;
+                let gold = opponentObj ? opponentObj.getSpendableGold({ playingType: 'play' }) : context.player.getSpendableGold({ playingType: 'play' });
                 let max = _.min([maxFunc(context), gold + reduction]);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context, reduction));

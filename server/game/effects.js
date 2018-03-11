@@ -6,6 +6,7 @@ const PlayableLocation = require('./playablelocation.js');
 const CannotRestriction = require('./cannotrestriction.js');
 const ChallengeRestriction = require('./ChallengeRestriction.js');
 const ImmunityRestriction = require('./immunityrestriction.js');
+const GoldSource = require('./GoldSource.js');
 
 function cannotEffect(type) {
     return function(predicate) {
@@ -782,6 +783,21 @@ const Effects = {
             },
             unapply: function(player) {
                 player.removeChallengeRestriction(restriction);
+            }
+        };
+    },
+    canSpendGold: function(allowSpendingFunc) {
+        return {
+            apply: function(card, context) {
+                let goldSource = new GoldSource(card, allowSpendingFunc);
+                context.canSpendGold = context.canSpendGold || {};
+                context.canSpendGold[card.uuid] = goldSource;
+                card.controller.addGoldSource(goldSource);
+            },
+            unapply: function(card, context) {
+                let goldSource = context.canSpendGold[card.uuid];
+                card.controller.removeGoldSource(goldSource);
+                delete context.canSpendGold[card.uuid];
             }
         };
     },

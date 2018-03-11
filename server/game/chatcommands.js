@@ -335,7 +335,7 @@ class ChatCommands {
     bestow(player, args) {
         var num = this.getNumberOrDefault(args[1], 1);
 
-        if(player.gold < num) {
+        if(player.getSpendableGold({ activePlayer: player }) < num) {
             return false;
         }
 

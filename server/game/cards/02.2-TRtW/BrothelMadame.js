@@ -33,7 +33,7 @@ class BrothelMadame extends DrawCard {
                     effect: ability.effects.cannotInitiateChallengeType('military', opponent => opponent === this.controller)
                 }));
 
-                if(context.opponent.gold >= 1) {
+                if(context.opponent.getSpendableGold({ activePlayer: context.opponent }) >= 1) {
                     this.game.promptWithMenu(context.opponent, this, {
                         activePrompt: {
                             menuTitle: 'Pay 1 gold to initiate military challenges this phase?',
@@ -65,11 +65,11 @@ class BrothelMadame extends DrawCard {
     }
 
     payOneGold(player) {
-        if(player.gold < 1) {
+        if(player.getSpendableGold({ activePlayer: player }) < 1) {
             return false;
         }
 
-        this.game.transferGold({ from: player, to: this.controller, amount: 1 });
+        this.game.transferGold({ from: player, to: this.controller, amount: 1, activePlayer: player });
 
         this.game.addMessage('{0} uses {1} to make {2} pay 1 gold', this.controller, this, player);
 

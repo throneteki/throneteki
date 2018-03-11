@@ -11,6 +11,7 @@ const PlayableLocation = require('./playablelocation.js');
 const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./MinMaxProperty.js');
+const GoldSource = require('./GoldSource.js');
 
 const logger = require('../log.js');
 
@@ -64,6 +65,7 @@ class Player extends Spectator {
         this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
+        this.goldSources = [new GoldSource(this)];
 
         this.promptState = new PlayerPromptState();
     }
@@ -195,8 +197,23 @@ class Player extends Spectator {
         return this.plotDiscard.size() + this.usedPlotsModifier;
     }
 
-    hasEnoughGold(gold) {
-        return this.gold >= gold;
+    addGoldSource(source) {
+        this.goldSources.unshift(source);
+    }
+
+    removeGoldSource(source) {
+        this.goldSources = this.goldSources.filter(s => s !== source);
+    }
+
+    getSpendableGoldSources(spendParams) {
+        let activePlayer = spendParams.activePlayer || this.game.currentAbilityContext && this.game.currentAbilityContext.player || this;
+        let defaultedSpendParams = Object.assign({ activePlayer: activePlayer, playingType: 'ability' }, spendParams);
+        return this.goldSources.filter(source => source.allowSpendingFor(defaultedSpendParams));
+    }
+
+    getSpendableGold(spendParams = {}) {
+        let validSources = this.getSpendableGoldSources(spendParams);
+        return validSources.reduce((sum, source) => sum + source.gold, 0);
     }
 
     modifyGold(amount) {

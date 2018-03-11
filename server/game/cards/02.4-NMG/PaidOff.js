@@ -15,7 +15,7 @@ class PaidOff extends DrawCard {
                 this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, this.parent);
 
                 let player = this.parent.controller;
-                if(player.gold < 1) {
+                if(player.getSpendableGold({ activePlayer: player }) < 1) {
                     this.cancel(player);
                     return false;
                 }
@@ -35,7 +35,7 @@ class PaidOff extends DrawCard {
     }
 
     stand(player) {
-        if(player.gold < 1) {
+        if(player.getSpendableGold({ activePlayer: player }) < 1) {
             return false;
         }
 

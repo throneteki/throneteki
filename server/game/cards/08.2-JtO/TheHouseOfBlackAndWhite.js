@@ -19,15 +19,15 @@ class TheHouseOfBlackAndWhite extends DrawCard {
                 this.game.killCharacter(context.target);
                 this.game.addMessage('{0} kneels and discards {1} gold from {2} to kill {3}',
                     context.player, context.xValue, this, context.target);
-                
-                if(context.player.gold > 0) {
-                    let range = _.range(1, context.player.gold + 1).reverse();
-            
+
+                if(context.player.getSpendableGold() > 0) {
+                    let range = _.range(1, context.player.getSpendableGold() + 1).reverse();
+
                     let buttons = _.map(range, gold => {
                         return { text: gold.toString(), method: 'moveGold', arg: gold };
                     });
                     buttons.push({ text: 'Done', method: 'moveGold', arg: 0 });
-            
+
                     this.game.promptWithMenu(context.player, this, {
                         activePrompt: {
                             menuTitle: 'Select gold amount to move to ' + this.name,

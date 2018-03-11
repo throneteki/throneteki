@@ -11,7 +11,7 @@ class StannissCavalry extends DrawCard {
 
         this.action({
             title: 'Move gold to ' + this.name,
-            condition: () => this.controller.gold >= 1,
+            condition: () => this.controller.getSpendableGold() >= 1,
             phase: 'standing',
             limit: ability.limit.perPhase(2),
             handler: context => {

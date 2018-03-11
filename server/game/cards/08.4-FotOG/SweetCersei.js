@@ -1,7 +1,12 @@
 const DrawCard = require('../../drawcard.js');
 
 class SweetCersei extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => this.game.currentPhase === 'challenge',
+            match: this,
+            effect: ability.effects.canSpendGold(spendParams => spendParams.activePlayer === this.controller)
+        });
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue'

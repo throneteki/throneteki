@@ -15,7 +15,7 @@ class TheThingsIDoForLove extends DrawCard {
             ],
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' &&
-                                                  (context.xValue ? (card.getCost() <= context.xValue) : (card.getCost() <= this.controller.gold))
+                                                  (context.xValue ? (card.getCost() <= context.xValue) : (card.getCost() <= this.controller.getSpendableGold()))
             },
             handler: context => {
                 context.target.controller.returnCardToHand(context.target);

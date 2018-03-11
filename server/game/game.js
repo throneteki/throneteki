@@ -33,6 +33,7 @@ const TitlePool = require('./TitlePool.js');
 const Event = require('./event.js');
 const AtomicEvent = require('./AtomicEvent.js');
 const GroupedCardEvent = require('./GroupedCardEvent.js');
+const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -434,10 +435,10 @@ class Game extends EventEmitter {
      * Optional callback that will be called after the gold has been spent
      */
     spendGold(spendParams, callback = () => true) {
-        let {player, amount} = spendParams;
+        let activePlayer = spendParams.activePlayer || this.currentAbilityContext && this.currentAbilityContext.player;
+        spendParams = Object.assign({ playingType: 'ability', activePlayer: activePlayer }, spendParams);
 
-        player.modifyGold(-amount);
-        callback();
+        this.queueStep(new ChooseGoldSourceAmounts(this, spendParams, callback));
     }
 
     /**
@@ -457,7 +458,9 @@ class Game extends EventEmitter {
         let appliedGold = Math.min(from.gold, amount);
 
         if(from.getGameElementType() === 'player') {
-            this.spendGold({ amount: appliedGold, player: from }, () => {
+            let activePlayer = transferParams.activePlayer || this.currentAbilityContext && this.currentAbilityContext.player;
+            appliedGold = Math.min(from.getSpendableGold({ player: from, activePlayer: activePlayer }), amount);
+            this.spendGold({ amount: appliedGold, player: from, activePlayer: activePlayer }, () => {
                 to.modifyGold(appliedGold);
                 this.raiseEvent('onGoldTransferred', { source: from, target: to, amount: appliedGold });
             });
