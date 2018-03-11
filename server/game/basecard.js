@@ -9,6 +9,7 @@ const CardInterrupt = require('./cardinterrupt.js');
 const CardReaction = require('./cardreaction.js');
 const CustomPlayAction = require('./customplayaction.js');
 const EventRegistrar = require('./eventregistrar.js');
+const ReferenceCountedSetProperty = require('./ReferenceCountedSetProperty.js');
 
 const ValidKeywords = [
     'ambush',
@@ -46,9 +47,9 @@ class BaseCard {
         this.name = cardData.name;
         this.facedown = false;
         this.blankCount = 0;
+        this.traits = new ReferenceCountedSetProperty();
 
         this.tokens = {};
-        this.traits = {};
         this.plotModifierValues = {
             gold: 0,
             initiative: 0,
@@ -295,7 +296,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        return !!this.traits[trait.toLowerCase()];
+        return this.traits.contains(trait);
     }
 
     isFaction(faction) {
@@ -460,23 +461,13 @@ class BaseCard {
     }
 
     addTrait(trait) {
-        let lowerCaseTrait = trait.toLowerCase();
-
-        if(!lowerCaseTrait || lowerCaseTrait === '') {
-            return;
-        }
-
-        if(!this.traits[lowerCaseTrait]) {
-            this.traits[lowerCaseTrait] = 1;
-        } else {
-            this.traits[lowerCaseTrait]++;
-        }
+        this.traits.add(trait);
 
         this.markAsDirty();
     }
 
     getTraits() {
-        return _.keys(_.omit(this.traits, trait => trait < 1));
+        return this.traits.getValues();
     }
 
     addFaction(faction) {
@@ -498,7 +489,7 @@ class BaseCard {
     }
 
     removeTrait(trait) {
-        this.traits[trait.toLowerCase()]--;
+        this.traits.remove(trait);
         this.markAsDirty();
     }
 

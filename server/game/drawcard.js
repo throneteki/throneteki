@@ -89,7 +89,7 @@ class DrawCard extends BaseCard {
         clone.strengthMultiplier = this.strengthMultiplier;
         clone.strengthSet = this.strengthSet;
         clone.tokens = Object.assign({}, this.tokens);
-        clone.traits = Object.assign({}, this.traits);
+        clone.traits = this.traits.clone();
         return clone;
     }
 
