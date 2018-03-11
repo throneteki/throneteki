@@ -7,19 +7,20 @@ class ReferenceCountedSetProperty {
 
     add(value) {
         let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts[lowerCaseValue];
-        this.referenceCounts[lowerCaseValue] = (currentCount || 0) + 1;
+        let currentCount = this.referenceCounts[lowerCaseValue] || 0;
+        this.referenceCounts[lowerCaseValue] = currentCount + 1;
     }
 
     remove(value) {
         let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts[lowerCaseValue];
-        this.referenceCounts[lowerCaseValue] = (currentCount || 0) - 1;
+        let currentCount = this.referenceCounts[lowerCaseValue] || 0;
+        this.referenceCounts[lowerCaseValue] = currentCount - 1;
     }
 
     contains(value) {
         let lowerCaseValue = value.toLowerCase();
-        return !!this.referenceCounts[lowerCaseValue];
+        let currentCount = this.referenceCounts[lowerCaseValue] || 0;
+        return currentCount > 0;
     }
 
     getValues() {

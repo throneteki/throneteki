@@ -47,6 +47,7 @@ class BaseCard {
         this.name = cardData.name;
         this.facedown = false;
         this.blankCount = 0;
+        this.keywords = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
 
         this.tokens = {};
@@ -80,7 +81,6 @@ class BaseCard {
         var firstLine = text.split('\n')[0];
         var potentialKeywords = _.map(firstLine.split('.'), k => k.toLowerCase().trim());
 
-        this.keywords = {};
         this.printedKeywords = [];
         this.allowedAttachmentTrait = 'any';
 
@@ -283,8 +283,7 @@ class BaseCard {
     }
 
     hasKeyword(keyword) {
-        var keywordCount = this.keywords[keyword.toLowerCase()] || 0;
-        return keywordCount > 0;
+        return this.keywords.contains(keyword);
     }
 
     hasPrintedKeyword(keyword) {
@@ -455,9 +454,7 @@ class BaseCard {
     }
 
     addKeyword(keyword) {
-        var lowerCaseKeyword = keyword.toLowerCase();
-        this.keywords[lowerCaseKeyword] = this.keywords[lowerCaseKeyword] || 0;
-        this.keywords[lowerCaseKeyword]++;
+        this.keywords.add(keyword);
     }
 
     addTrait(trait) {
@@ -483,9 +480,7 @@ class BaseCard {
     }
 
     removeKeyword(keyword) {
-        var lowerCaseKeyword = keyword.toLowerCase();
-        this.keywords[lowerCaseKeyword] = this.keywords[lowerCaseKeyword] || 0;
-        this.keywords[lowerCaseKeyword]--;
+        this.keywords.remove(keyword);
     }
 
     removeTrait(trait) {
