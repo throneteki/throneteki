@@ -244,7 +244,7 @@ class Player extends Spectator {
             this.game.playerDecked(this);
         }
 
-        return (cards.length > 1) ? cards : cards[0];
+        return cards;
     }
 
     searchDrawDeck(limit, predicate) {
