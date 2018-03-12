@@ -16,6 +16,7 @@ class BalonGreyjoy extends DrawCard {
 
         this.action({
             title: 'Give loyal characters +1 STR',
+            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneel(card => card.isFaction('greyjoy') && card.getType() === 'location'),
             limit: ability.limit.perChallenge(1),
             handler: context => {
