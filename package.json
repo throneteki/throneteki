@@ -63,7 +63,7 @@
     "react": "^15.6.2",
     "react-async-script": "^0.9.1",
     "react-bootstrap-slider": "^2.0.1",
-    "react-bootstrap-typeahead": "^2.3.0",
+    "react-bootstrap-typeahead": "^2.5.1",
     "react-dom": "^15.6.2",
     "react-google-recaptcha": "^0.9.7",
     "react-redux": "^4.4.8",
