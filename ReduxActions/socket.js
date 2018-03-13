@@ -75,8 +75,8 @@ export function authenticateSocket() {
     return (dispatch, getState) => {
         let state = getState();
 
-        if(state.socket && state.auth.token) {
-            state.socket.emit('authenticate', state.auth.token);
+        if(state.lobby.socket && state.auth.token) {
+            state.lobby.socket.emit('authenticate', state.auth.token);
         }
     };
 }

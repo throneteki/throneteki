@@ -1,4 +1,4 @@
-import { connectLobby } from './socket';
+import { connectLobby, authenticateSocket } from './socket';
 
 export function registerAccount(user) {
     return {
@@ -125,6 +125,8 @@ export function authenticate() {
     return (dispatch, getState) => {
         let state = getState();
 
-        return dispatch(verifyAuthentication(state.auth.token));
+        dispatch(verifyAuthentication(state.auth.token));
+
+        return dispatch(authenticateSocket());
     };
 }
