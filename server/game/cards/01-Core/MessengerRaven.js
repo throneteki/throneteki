@@ -5,6 +5,7 @@ class MessengerRaven extends DrawCard {
         this.action({
             title: 'Draw 1 card',
             phase: 'dominance',
+            condition: () => this.controller.canDraw(),
             cost: ability.costs.returnSelfToHand(),
             handler: context => {
                 context.player.drawCardsToHand(1);

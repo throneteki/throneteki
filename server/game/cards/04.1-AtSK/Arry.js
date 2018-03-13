@@ -6,6 +6,7 @@ class Arry extends DrawCard {
         this.action({
             title: 'Draw 1 card',
             cost: ability.costs.returnSelfToHand(),
+            condition: () => this.controller.canDraw(),
             handler: context => {
                 context.player.drawCardsToHand(1);
 

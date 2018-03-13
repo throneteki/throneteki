@@ -9,6 +9,7 @@ class TheGoldroad extends DrawCard {
         this.action({
             title: 'Gain 1 gold',
             phase: 'challenge',
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 this.game.addGold(context.player, 1);

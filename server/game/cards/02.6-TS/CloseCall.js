@@ -22,7 +22,7 @@ class CloseCall extends PlotCard {
 
         this.game.addMessage('{0} uses {1} to move {2} to their discard pile', player, this, card);
 
-        if(!this.game.anyPlotHasTrait('Winter')) {
+        if(!this.game.anyPlotHasTrait('Winter') && player.canDraw()) {
             player.drawCardsToHand(1);
             this.game.addMessage('{0} uses {1} to draw 1 card', player, this);
         }

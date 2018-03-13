@@ -8,13 +8,13 @@ class BeggarKing extends DrawCard {
         });
         this.reaction({
             when: {
-                onPlotsRevealed: event => this.opponentRevealedLowerIncome(event.plots)
+                onPlotsRevealed: event => this.opponentRevealedLowerIncome(event.plots) && this.controller.canGainGold()
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                let gold = !this.opponentHasKing() ? 2 : 1;
+                var gold = !this.opponentHasKing() ? 2 : 1;
+                gold = this.game.addGold(this.controller, gold);
 
-                this.game.addGold(this.controller, gold);
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
             }
         });

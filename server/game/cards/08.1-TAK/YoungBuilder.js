@@ -4,8 +4,11 @@ class YoungBuilder extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card.isFaction('thenightswatch') && ['location', 'attachment'].includes(event.card.getType()) &&
-                                           event.card.controller === this.controller
+                onCardEntersPlay: event =>
+                    event.card.isFaction('thenightswatch') &&
+                    ['location', 'attachment'].includes(event.card.getType()) &&
+                    event.card.controller === this.controller &&
+                    this.controller.canDraw()
             },
             cost: ability.costs.discardGold(),
             handler: context => {

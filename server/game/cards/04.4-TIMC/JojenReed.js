@@ -28,7 +28,9 @@ class JojenReed extends DrawCard {
 
     draw() {
         for(let player of this.game.getPlayers()) {
-            player.drawCardsToHand(1);
+            if(player.canDraw()) {
+                player.drawCardsToHand(1);
+            }
         }
 
         this.game.addMessage('{0} uses {1} to have revealed cards drawn', this.controller, this);

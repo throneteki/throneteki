@@ -4,13 +4,14 @@ class Plunder extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain gold',
-            condition: () => !this.controller.cannotGainGold,
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelFactionCard(),
             chooseOpponent: opponent => this.getGold(opponent) >= 1,
             handler: context => {
-                let gold = this.getGold(context.opponent);
-                this.game.addGold(this.controller, gold);
-                this.game.addMessage('{0} uses {1} and kneels their faction card to choose {2} and gain {3} gold', this.controller, this, context.opponent, gold);
+                var gold = this.getGold(context.opponent);
+                gold = this.game.addGold(this.controller, gold);
+                this.game.addMessage('{0} uses {1} and kneels their faction card to choose {2} and gain {3} gold',
+                    this.controller, this, context.opponent, gold);
             }
         });
     }

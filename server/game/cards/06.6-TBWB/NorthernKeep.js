@@ -5,10 +5,12 @@ class NorthernKeep extends DrawCard {
         this.action({
             title: 'Gain gold',
             phase: 'marshal',
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let gold = this.moreWinterThanSummerPlotsRevealed() ? 2 : 1;
-                this.game.addGold(context.player, gold);
+                var gold = this.moreWinterThanSummerPlotsRevealed() ? 2 : 1;
+                gold = this.game.addGold(context.player, gold);
+
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
         });

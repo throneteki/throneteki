@@ -5,6 +5,7 @@ class CerseisInformer extends DrawCard {
         this.action({
             title: 'Draw card',
             limit: ability.limit.perRound(1),
+            condition: () => this.controller.canDraw(),
             cost: ability.costs.moveTokenFromSelf('gold', 1, card => this.destinationCondition(card)),
             handler: context => {
                 context.player.drawCardsToHand(1);

@@ -6,6 +6,7 @@ class ChatayasBrothel extends DrawCard {
             title: 'Gain gold',
             phase: 'marshal',
             limit: ability.limit.perPhase(2),
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneel(card => card.hasIcon('intrigue')),
             handler: context => {
                 this.game.addGold(context.player, 1);

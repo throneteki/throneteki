@@ -5,6 +5,7 @@ class ArborVineyard extends DrawCard {
         this.action({
             title: 'Gain gold',
             phase: 'marshal',
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let gold = this.moreSummerThanWinterPlotsRevealed() ? 2 : 1;

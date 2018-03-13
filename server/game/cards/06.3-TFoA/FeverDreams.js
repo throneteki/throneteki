@@ -5,12 +5,13 @@ class FeverDreams extends DrawCard {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
-                onCardKneeled: event => event.card === this.parent
+                onCardKneeled: event => event.card === this.parent && this.controller.carDraw()
             },
             cost: ability.costs.discardGold(),
             handler: () => {
-                this.controller.drawCardsToHand(2);
-                this.game.addMessage('{0} discards a gold from {1} to draw 2 cards', this.controller, this);
+                let cards = this.controller.drawCardsToHand(2).length;
+                this.game.addMessage('{0} discards a gold from {1} to draw {2} {3}',
+                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }

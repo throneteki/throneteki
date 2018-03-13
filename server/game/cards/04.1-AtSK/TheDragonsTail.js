@@ -8,8 +8,12 @@ class TheDragonsTail extends DrawCard {
             handler: context => {
                 let opponent = context.opponent;
 
-                this.controller.drawCardsToHand(2);
-                opponent.drawCardsToHand(2);
+                if(this.controller.canDraw()) {
+                    this.controller.drawCardsToHand(2);
+                }
+                if(opponent.canDraw()) {
+                    opponent.drawCardsToHand(2);
+                }
 
                 this.game.addMessage('{0} uses {1} to make both themself and {2} draw 2 cards',
                     this.controller, this, opponent);

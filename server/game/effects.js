@@ -715,10 +715,30 @@ const Effects = {
     cannotGainGold: function() {
         return {
             apply: function(player) {
-                player.cannotGainGold = true;
+                player.maxGoldGain.setMax(0);
             },
             unapply: function(player) {
-                player.cannotGainGold = false;
+                player.maxGoldGain.removeMax(0);
+            }
+        };
+    },
+    setMaxGoldGain: function(max) {
+        return {
+            apply: function(player) {
+                player.maxGoldGain.setMax(max);
+            },
+            unapply: function(player) {
+                player.maxGoldGain.removeMax(max);
+            }
+        };
+    },
+    setMaxCardDraw: function(max) {
+        return {
+            apply: function(player) {
+                player.maxCardDraw.setMax(max);
+            },
+            unapply: function(player) {
+                player.maxCardDraw.removeMax(max);
             }
         };
     },

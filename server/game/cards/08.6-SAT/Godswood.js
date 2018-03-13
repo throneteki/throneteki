@@ -5,13 +5,16 @@ class Godswood extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event =>
-                    event.challenge.winner === this.controller && this.moreWinterThanSummerPlotsRevealed()
+                    event.challenge.winner === this.controller &&
+                    this.moreWinterThanSummerPlotsRevealed() &&
+                    this.controller.canDraw()
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                let numCards = this.controller.activePlot.getClaim();
-                this.controller.drawCardsToHand(numCards);
-                this.game.addMessage('{0} kneels {1} to draw {2} cards', this.controller, this, numCards);
+                var cards = this.controller.activePlot.getClaim();
+                cards = this.controller.drawCardsToHand(cards).length;
+                this.game.addMessage('{0} kneels {1} to draw {2} {3}',
+                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }

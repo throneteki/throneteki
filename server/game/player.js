@@ -52,7 +52,10 @@ class Player extends Spectator {
         this.usedPlotsModifier = 0;
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
-        this.cannotGainGold = false;
+        this.gainedGold = 0;
+        this.maxGoldGain = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
+        this.drawnCards = 0;
+        this.maxCardDraw = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
         this.triggerRestrictions = [];
@@ -220,8 +223,11 @@ class Player extends Spectator {
         this.gold += amount;
 
         if(this.gold < 0) {
+            amount += -this.gold;
             this.gold = 0;
         }
+
+        return amount;
     }
 
     modifyUsedPlots(value) {
@@ -233,12 +239,19 @@ class Player extends Spectator {
         if(numCards > this.drawDeck.size()) {
             numCards = this.drawDeck.size();
         }
+        if(this.maxCardDraw.getMax() !== undefined) {
+            numCards = Math.min(numCards, this.maxCardDraw.getMax() - this.drawnCards);
+        }
+        if(numCards < 0) {
+            numCards = 0;
+        }
 
         let cards = this.drawDeck.first(numCards);
 
         _.each(cards, card => {
             this.moveCard(card, 'hand');
         });
+        this.drawnCards += numCards;
 
         if(this.game.currentPhase !== 'setup') {
             this.game.raiseEvent('onCardsDrawn', { cards: cards, player: this });
@@ -248,7 +261,7 @@ class Player extends Spectator {
             this.game.playerDecked(this);
         }
 
-        return (cards.length > 1) ? cards : cards[0];
+        return cards;
     }
 
     searchDrawDeck(limit, predicate) {
@@ -312,6 +325,14 @@ class Player extends Spectator {
 
     canInitiateChallenge(challengeType, opponent) {
         return this.challenges.canInitiate(challengeType, opponent);
+    }
+
+    canGainGold() {
+        return (this.maxGoldGain.getMax() === undefined || this.gainedGold < this.maxGoldGain.getMax());
+    }
+
+    canDraw() {
+        return (this.maxCardDraw.getMax() === undefined || this.drawnCards < this.maxCardDraw.getMax());
     }
 
     canSelectAsFirstPlayer(player) {
@@ -641,6 +662,8 @@ class Player extends Spectator {
             this.noTimer = false;
         }
 
+        this.gainedGold = 0;
+        this.drawnCards = 0;
         this.challenges.reset();
 
         this.drawPhaseCards = DrawPhaseCards;
@@ -675,13 +698,17 @@ class Player extends Spectator {
     }
 
     drawPhase() {
-        this.game.addMessage('{0} draws {1} cards for the draw phase', this, this.drawPhaseCards);
-        this.drawCardsToHand(this.drawPhaseCards);
+        if(this.canDraw()) {
+            this.game.addMessage('{0} draws {1} cards for the draw phase', this, this.drawPhaseCards);
+            this.drawCardsToHand(this.drawPhaseCards);
+        }
     }
 
     beginMarshal() {
-        this.game.addGold(this, this.getTotalIncome());
-        this.game.addMessage('{0} collects {1} gold', this, this.getTotalIncome());
+        if(this.canGainGold()) {
+            let gold = this.game.addGold(this, this.getTotalIncome());
+            this.game.addMessage('{0} collects {1} gold', this, gold);
+        }
 
         this.game.raiseEvent('onIncomeCollected', { player: this });
     }

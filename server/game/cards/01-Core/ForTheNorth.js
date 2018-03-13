@@ -26,7 +26,7 @@ class ForTheNorth extends DrawCard {
             return;
         }
 
-        if(event.challenge.winner === this.controller) {
+        if(event.challenge.winner === this.controller && this.controller.canDraw()) {
             this.controller.drawCardsToHand(1);
 
             this.game.addMessage('{0} draws 1 card because of {1}', this.controller, this);

@@ -4,7 +4,7 @@ class OldForestHunter extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard a card to gain 1 gold',
-            condition: () => !this.controller.cannotGainGold,
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perPhase(1),
             handler: context => {

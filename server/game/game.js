@@ -394,13 +394,21 @@ class Game extends EventEmitter {
         this.checkWinCondition(player);
     }
 
-    addGold(player, gold) {
-        if(gold > 0 && player.cannotGainGold) {
+    addGold(player, amount) {
+        if(amount <= 0) { // negative should never happen; nothing to do for 0
+            return 0;
+        }
+        if(!player.canGainGold()) {
             this.addMessage('{0} cannot gain gold', player);
-            return;
+            return 0;
         }
 
-        player.modifyGold(gold);
+        if(player.maxGoldGain.getMax() !== undefined) {
+            amount = Math.min(amount, player.maxGoldGain.getMax() - player.gainedGold);
+        }
+        player.gainedGold += amount;
+
+        return player.modifyGold(amount);
     }
 
     movePower(fromCard, toCard, power) {

@@ -6,8 +6,12 @@ class HollowHill extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.playingType === 'marshal' && event.card.getType() === 'character' &&
-                                           event.card.controller === this.controller && this.doesNotMatchAnotherControlledFaction(event.card)
+                onCardEntersPlay: event =>
+                    event.playingType === 'marshal' &&
+                    event.card.getType() === 'character' &&
+                    event.card.controller === this.controller &&
+                    this.doesNotMatchAnotherControlledFaction(event.card) &&
+                    this.controller.canDraw()
             },
             handler: () => {
                 this.controller.drawCardsToHand(1);

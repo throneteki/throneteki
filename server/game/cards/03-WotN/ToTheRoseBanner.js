@@ -14,7 +14,8 @@ class ToTheRoseBanner extends DrawCard {
             },
             handler: context => {
                 let gold = context.target.getStrength();
-                this.game.addGold(this.controller, gold);
+                gold = this.game.addGold(this.controller, gold);
+
                 context.player.sacrificeCard(context.target);
                 this.game.addMessage('{0} uses {1} to gain {2} gold then sacrifice {3}',
                     context.player, this, gold, context.target);

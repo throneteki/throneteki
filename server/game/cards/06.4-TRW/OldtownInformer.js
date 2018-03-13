@@ -4,7 +4,10 @@ class OldtownInformer extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: () => this.game.currentPhase === 'challenge' && this.tokens['gold'] >= 1
+                onCardEntersPlay: () =>
+                    this.game.currentPhase === 'challenge' &&
+                    this.tokens['gold'] >= 1 &&
+                    this.controller.canDraw()
             },
             handler: () => {
                 this.controller.drawCardsToHand(this.tokens['gold']);

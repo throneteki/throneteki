@@ -4,16 +4,22 @@ class RangersCache extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPhaseEnded: event => event.phase === 'taxation'
+                onPhaseEnded: event =>
+                    event.phase === 'taxation' &&
+                    (this.controller.canGainGold() || this.controller.canDraw())
             },
             choices: {
                 'Gain 3 gold': () => {
-                    this.game.addGold(this.controller, 3);
-                    this.game.addMessage('{0} uses {1} to gain 3 gold', this.controller, this);
+                    if(this.controller.canGainGold()) {
+                        let gold = this.game.addGold(this.controller, 3);
+                        this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
+                    }
                 },
                 'Draw 2 cards': () => {
-                    this.controller.drawCardsToHand(2);
-                    this.game.addMessage('{0} uses {1} to draw 2 card', this.controller, this);
+                    if(this.controller.canDraw()) {
+                        let cards = this.controller.drawCardsToHand(2).length;
+                        this.game.addMessage('{0} uses {1} to draw {2} card', this.controller, this, cards);
+                    }
                 }
             }
         });

@@ -4,13 +4,13 @@ class StarfallCavalry extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this
+                onCardEntersPlay: event => event.card === this && this.controller.canDraw()
             },
             handler: () => {
-                let numCards = this.controller.getNumberOfUsedPlots() >= 3 ? 3 : 1;
-                this.controller.drawCardsToHand(numCards);
+                var cards = this.controller.getNumberOfUsedPlots() >= 3 ? 3 : 1;
+                cards = this.controller.drawCardsToHand(cards).length;
 
-                this.game.addMessage('{0} uses {1} to draw {2} card{3}', this.controller, this, numCards, numCards > 1 ? 's' : '');
+                this.game.addMessage('{0} uses {1} to draw {2} card{3}', this.controller, this, cards, cards > 1 ? 's' : '');
             }
         });
     }

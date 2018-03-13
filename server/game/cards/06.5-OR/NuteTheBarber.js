@@ -14,8 +14,10 @@ class NuteTheBarber extends DrawCard {
             handler: context => {
                 context.target.owner.moveCard(context.target, 'hand');
                 this.game.addMessage('{0} uses {1} to return {2} to {3}\'s hand', this.controller, this, context.target, context.target.owner);
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} then draws 1 card', this.controller);
+                if(this.controller.canDraw()) {
+                    this.controller.drawCardsToHand(1);
+                    this.game.addMessage('{0} then draws 1 card', this.controller);
+                }
             }
         });
     }

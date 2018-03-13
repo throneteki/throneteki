@@ -4,7 +4,7 @@ class TobhoMottsArmory extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onDominanceDetermined: event => this.controller === event.winner
+                onDominanceDetermined: event => this.controller === event.winner && this.controller.canDraw()
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {

@@ -4,8 +4,9 @@ class CountingCoppers extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                this.controller.drawCardsToHand(3);
-                this.game.addMessage('{0} uses {1} to draw 3 cards to hand', this.controller, this);
+                let cards = this.controller.drawCardsToHand(3).length;
+                this.game.addMessage('{0} uses {1} to draw {2} {3} to hand',
+                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }

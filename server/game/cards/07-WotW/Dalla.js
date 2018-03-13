@@ -4,7 +4,11 @@ class Dalla extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card.controller === this.controller && event.card.hasTrait('Wildling') && event.card.getType() === 'character'
+                onCardEntersPlay: event =>
+                    event.card.controller === this.controller &&
+                    event.card.hasTrait('Wildling') &&
+                    event.card.getType() === 'character' &&
+                    this.controller.canDraw()
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

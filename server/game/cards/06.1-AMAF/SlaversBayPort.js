@@ -5,11 +5,12 @@ class SlaversBayPort extends DrawCard {
         this.action({
             title: 'Gain gold',
             phase: 'marshal',
+            condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let gold = this.opponentDeadPileHas4() ? 2 : 1;
+                var gold = this.opponentDeadPileHas4() ? 2 : 1;
+                gold = this.game.addGold(context.player, gold);
 
-                this.game.addGold(context.player, gold);
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', context.player, this, gold);
             }
         });

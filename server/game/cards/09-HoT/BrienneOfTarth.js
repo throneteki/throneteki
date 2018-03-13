@@ -41,9 +41,12 @@ class BrienneOfTarth extends DrawCard {
 
         if(strength >= 15) {
             this.controller.standCard(this);
-            this.controller.drawCardsToHand(1);
             bonusMessages.push('stand {1}');
-            bonusMessages.push('draw 1 card');
+
+            if(this.controller.canDraw()) {
+                this.controller.drawCardsToHand(1);
+                bonusMessages.push('draw 1 card');
+            }
         }
 
         this.game.addMessage('{0} uses {1} to ' + bonusMessages.join(', '), this.controller, this, otherCharacter);
