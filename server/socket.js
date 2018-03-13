@@ -2,6 +2,7 @@ const logger = require('./log.js');
 const EventEmitter = require('events');
 const jwt = require('jsonwebtoken');
 const Raven = require('raven');
+const UserService = require('./services/UserService');
 
 class Socket extends EventEmitter {
     constructor(socket, options = {}) {
@@ -10,6 +11,7 @@ class Socket extends EventEmitter {
         this.socket = socket;
         this.user = socket.request.user;
         this.config = options.config;
+        this.userService = options.userService || new UserService(options.db);
 
         socket.on('error', this.onError.bind(this));
         socket.on('authenticate', this.onAuthenticate.bind(this));
@@ -61,10 +63,16 @@ class Socket extends EventEmitter {
                 return;
             }
 
-            this.socket.request.user = user;
-            this.user = user;
+            this.userService.getUserById(user._id).then(dbUser => {
+                delete dbUser.password;
 
-            this.emit('authenticate', this, user);
+                this.socket.request.user = dbUser;
+                this.user = dbUser;
+
+                this.emit('authenticate', this, user);
+            }).catch(err => {
+                logger.error(err);
+            });
         });
     }
 

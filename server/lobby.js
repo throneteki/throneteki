@@ -13,7 +13,6 @@ const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
-const Settings = require('./settings.js');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -137,26 +136,41 @@ class Lobby {
         return userList;
     }
 
-    handshake(socket, next) {
+    handshake(ioSocket, next) {
         var versionInfo = undefined;
 
-        if(socket.handshake.query.token && socket.handshake.query.token !== 'undefined') {
-            jwt.verify(socket.handshake.query.token, this.config.secret, function(err, user) {
+        if(ioSocket.handshake.query.token && ioSocket.handshake.query.token !== 'undefined') {
+            jwt.verify(ioSocket.handshake.query.token, this.config.secret, (err, user) => {
                 if(err) {
-                    socket.emit('authfailed');
+                    ioSocket.emit('authfailed');
                     return;
                 }
 
-                socket.request.user = user;
+                this.userService.getUserById(user._id).then(dbUser => {
+                    var socket = this.sockets[ioSocket.id];
+                    if(!socket) {
+                        logger.error('Tried to authenticate socket but could not find it', dbUser.username);
+                        return;
+                    }
+
+                    delete dbUser.password;
+
+                    ioSocket.request.user = dbUser;
+                    socket.user = dbUser;
+
+                    this.onAuthenticated(socket, dbUser);
+                }).catch(err => {
+                    logger.error(err);
+                });
             });
         }
 
-        if(socket.handshake.query.version) {
-            versionInfo = moment(socket.handshake.query.version);
+        if(ioSocket.handshake.query.version) {
+            versionInfo = moment(ioSocket.handshake.query.version);
         }
 
         if(!versionInfo || versionInfo < version) {
-            socket.emit('banner', 'Your client version is out of date, please refresh or clear your cache to get the latest version');
+            ioSocket.emit('banner', 'Your client version is out of date, please refresh or clear your cache to get the latest version');
         }
 
         next();
@@ -259,9 +273,26 @@ class Lobby {
         }
     }
 
+    sendFilteredMessages(socket) {
+        this.messageService.getLastMessages().then(messages => {
+            let messagesToSend = this.filterMessages(messages, socket);
+            socket.send('lobbymessages', messagesToSend.reverse());
+        });
+    }
+
+    filterMessages(messages, socket) {
+        if(!socket.user) {
+            return messages;
+        }
+
+        return messages.filter(message => {
+            return !_.contains(socket.user.blockList, message.user.username.toLowerCase());
+        });
+    }
+
     // Events
     onConnection(ioSocket) {
-        var socket = new Socket(ioSocket, { config: this.config });
+        var socket = new Socket(ioSocket, { userService: this.userService, config: this.config });
 
         socket.registerEvent('lobbychat', this.onLobbyChat.bind(this));
         socket.registerEvent('newgame', this.onNewGame.bind(this));
@@ -281,7 +312,7 @@ class Lobby {
         this.sockets[ioSocket.id] = socket;
 
         if(socket.user) {
-            this.users[socket.user.username] = Settings.getUserWithDefaultsSet(socket.user);
+            this.users[socket.user.username] = this.userService.sanitiseUserObject(socket.user);
 
             this.broadcastUserList();
         }
@@ -289,9 +320,7 @@ class Lobby {
         // Force user list send for the newly connected socket, bypassing the throttle
         this.sendUserListFilteredWithBlockList(socket, this.getUserList());
 
-        this.messageService.getLastMessages().then(messages => {
-            socket.send('lobbymessages', messages.reverse());
-        });
+        this.sendFilteredMessages(socket);
 
         this.broadcastGameList(socket);
 
@@ -306,10 +335,11 @@ class Lobby {
     }
 
     onAuthenticated(socket, user) {
-        let userWithDefaults = Settings.getUserWithDefaultsSet(user);
-        this.users[user.username] = userWithDefaults;
+        this.users[user.username] = this.userService.sanitiseUserObject(user);
 
         this.broadcastUserList();
+
+        this.sendFilteredMessages(socket);
     }
 
     onSocketDisconnected(socket, reason) {
