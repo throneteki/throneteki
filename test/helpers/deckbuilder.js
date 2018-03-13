@@ -67,7 +67,7 @@ class DeckBuilder {
         }
 
         if(cardsByName.length > 1) {
-            var matchingLabels = _.map(cardsByName, card => `${card.name} (${card.pack_code})`).join('\n');
+            var matchingLabels = _.map(cardsByName, card => `${card.name} (${card.packCode})`).join('\n');
             throw new Error(`Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`);
         }
 

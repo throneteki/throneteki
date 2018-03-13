@@ -308,7 +308,7 @@ class InnerDeckEditor extends React.Component {
             label: name + ' (Custom)',
             loyal: false,
             name: name,
-            pack_code: 'Custom',
+            packCode: 'Custom',
             plotStats: {
                 claim: 0,
                 income: 0,

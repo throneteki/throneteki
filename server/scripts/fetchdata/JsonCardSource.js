@@ -19,7 +19,7 @@ class JsonCardSource {
             });
 
             if(cardsByName.length > 1) {
-                card.label = card.name + ' (' + card.pack_code + ')';
+                card.label = card.name + ' (' + card.packCode + ')';
             } else {
                 card.label = card.name;
             }

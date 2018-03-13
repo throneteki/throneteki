@@ -17,7 +17,7 @@ function hasTrait(card, trait) {
 
 function isCardInReleasedPack(packs, card) {
     let pack = _.find(packs, pack => {
-        return card.pack_code === pack.code;
+        return card.packCode === pack.code;
     });
 
     if(!pack) {
@@ -314,7 +314,7 @@ class DeckValidator {
     }
 
     isDraftCard(card) {
-        return card && card.pack_code === 'VDS';
+        return card && card.packCode === 'VDS';
     }
 }
 
