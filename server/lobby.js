@@ -13,6 +13,7 @@ const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
+const Settings = require('./settings.js');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -379,8 +380,9 @@ class Lobby {
             return;
         }
 
-        let game = new PendingGame(socket.user, gameDetails);
-        game.newGame(socket.id, socket.user, gameDetails.password, (err, message) => {
+        let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+        let game = new PendingGame(defaultUser, gameDetails);
+        game.newGame(socket.id, defaultUser, gameDetails.password, (err, message) => {
             if(err) {
                 logger.info('game failed to create', err, message);
 
@@ -406,7 +408,8 @@ class Lobby {
             return;
         }
 
-        game.join(socket.id, socket.user, password, (err, message) => {
+        let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+        game.join(socket.id, defaultUser, password, (err, message) => {
             if(err) {
                 socket.send('passworderror', message);
 
@@ -484,7 +487,8 @@ class Lobby {
             return;
         }
 
-        game.watch(socket.id, socket.user, password, (err, message) => {
+        let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+        game.watch(socket.id, defaultUser, password, (err, message) => {
             if(err) {
                 socket.send('passworderror', message);
 
@@ -494,7 +498,8 @@ class Lobby {
             socket.joinChannel(game.id);
 
             if(game.started) {
-                this.router.addSpectator(game, socket.user);
+                let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+                this.router.addSpectator(game, defaultUser);
                 this.sendHandoff(socket, game.node);
             } else {
                 this.sendGameState(game);
