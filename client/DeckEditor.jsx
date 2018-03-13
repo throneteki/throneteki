@@ -55,7 +55,7 @@ class InnerDeckEditor extends React.Component {
 
     formatCardListItem(card) {
         if(card.card.custom) {
-            let typeCode = card.card.type_code;
+            let typeCode = card.card.type;
             let typeName = typeCode[0].toUpperCase() + typeCode.slice(1);
             return card.count + ' Custom ' + typeName + ' - ' + card.card.name;
         }
@@ -296,26 +296,30 @@ class InnerDeckEditor extends React.Component {
         let name = match[2];
 
         return {
-            claim: 0,
             code: 'custom_' + type,
             cost: 0,
             custom: true,
-            faction_code: 'neutral',
-            income: 0,
-            initiative: 0,
-            is_intrigue: true,
-            is_loyal: false,
-            is_military: true,
-            is_power: true,
-            is_unique: name.includes('*'),
+            faction: 'neutral',
+            icons: {
+                military: true,
+                intrigue: true,
+                power: true
+            },
             label: name + ' (Custom)',
+            loyal: false,
             name: name,
             pack_code: 'Custom',
-            reserve: 0,
+            plotStats: {
+                claim: 0,
+                income: 0,
+                initiative: 0,
+                reserve: 0
+            },
             strength: 0,
             text: 'Custom',
-            traits: '',
-            type_code: type
+            traits: [],
+            type: type,
+            unique: name.includes('*')
         };
     }
 
@@ -326,7 +330,7 @@ class InnerDeckEditor extends React.Component {
 
         let list;
 
-        if(card.type_code === 'plot') {
+        if(card.type === 'plot') {
             list = plots;
         } else {
             list = draw;

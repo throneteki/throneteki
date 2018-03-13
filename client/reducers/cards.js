@@ -50,7 +50,7 @@ export default function(state = {}, action) {
             var agendas = {};
 
             _.each(action.response.cards, card => {
-                if(card.type_code === 'agenda') {
+                if(card.type === 'agenda') {
                     agendas[card.code] = card;
                 }
             });

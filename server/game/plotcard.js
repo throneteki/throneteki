@@ -24,12 +24,8 @@ class PlotCard extends BaseCard {
         this.abilities.reactions.push(reaction);
     }
 
-    hasRevealEffect() {
-        return this.cardData.text && this.cardData.text.indexOf('When Revealed:') !== -1;
-    }
-
     getInitiative() {
-        var baseValue = this.canProvidePlotModifier['initiative'] ? this.cardData.initiative : 0;
+        var baseValue = this.canProvidePlotModifier['initiative'] ? this.cardData.plotStats.initiative : 0;
         return baseValue + this.initiativeModifier;
     }
 
@@ -40,16 +36,16 @@ class PlotCard extends BaseCard {
     }
 
     getPrintedIncome() {
-        return this.cardData.income;
+        return this.cardData.plotStats.income;
     }
 
     getReserve() {
-        var baseValue = this.canProvidePlotModifier['reserve'] ? this.cardData.reserve : 0;
+        var baseValue = this.canProvidePlotModifier['reserve'] ? this.cardData.plotStats.reserve : 0;
         return baseValue + this.reserveModifier;
     }
 
     getPrintedClaim() {
-        return this.cardData.claim || 0;
+        return this.cardData.plotStats.claim || 0;
     }
 
     getClaim() {

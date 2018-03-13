@@ -12,7 +12,7 @@ function getDeckCount(deck) {
 }
 
 function hasTrait(card, trait) {
-    return card.traits && card.traits.toLowerCase().indexOf(trait.toLowerCase() + '.') !== -1;
+    return card.traits.some(t => t.toLowerCase() === trait.toLowerCase());
 }
 
 function isCardInReleasedPack(packs, card) {
@@ -24,7 +24,7 @@ function isCardInReleasedPack(packs, card) {
         return false;
     }
 
-    let releaseDate = pack.available || pack.date_release;
+    let releaseDate = pack.releaseDate;
 
     if(!releaseDate) {
         return false;
@@ -38,11 +38,11 @@ function isCardInReleasedPack(packs, card) {
 
 function rulesForBanner(faction, factionName) {
     return {
-        mayInclude: card => card.faction_code === faction && !card.is_loyal && card.type_code !== 'plot',
+        mayInclude: card => card.faction === faction && !card.loyal && card.type !== 'plot',
         rules: [
             {
                 message: 'Must contain 12 or more ' + factionName + ' cards',
-                condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.faction_code === faction)) >= 12
+                condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.faction === faction)) >= 12
             }
         ]
     };
@@ -84,13 +84,13 @@ const agendaRules = {
         rules: [
             {
                 message: 'You cannot include more than 15 neutral cards in a deck with Fealty',
-                condition: deck => getDeckCount(_.filter(deck.drawCards, cardQuantity => cardQuantity.card.faction_code === 'neutral')) <= 15
+                condition: deck => getDeckCount(_.filter(deck.drawCards, cardQuantity => cardQuantity.card.faction === 'neutral')) <= 15
             }
         ]
     },
     // Kings of Summer
     '04037': {
-        cannotInclude: card => card.type_code === 'plot' && hasTrait(card, 'Winter'),
+        cannotInclude: card => card.type === 'plot' && hasTrait(card, 'Winter'),
         rules: [
             {
                 message: 'Kings of Summer cannot include Winter plot cards',
@@ -100,7 +100,7 @@ const agendaRules = {
     },
     // Kings of Winter
     '04038': {
-        cannotInclude: card => card.type_code === 'plot' && hasTrait(card, 'Summer'),
+        cannotInclude: card => card.type === 'plot' && hasTrait(card, 'Summer'),
         rules: [
             {
                 message: 'Kings of Winter cannot include Summer plot cards',
@@ -133,21 +133,21 @@ const agendaRules = {
     },
     // The Brotherhood Without Banners
     '06119': {
-        cannotInclude: card => card.type_code === 'character' && card.is_loyal,
+        cannotInclude: card => card.type === 'character' && card.loyal,
         rules: [
             {
                 message: 'The Brotherhood Without Banners cannot include loyal characters',
-                condition: deck => !_.any(deck.drawCards, cardQuantity => cardQuantity.card.type_code === 'character' && cardQuantity.card.is_loyal)
+                condition: deck => !_.any(deck.drawCards, cardQuantity => cardQuantity.card.type === 'character' && cardQuantity.card.loyal)
             }
         ]
     },
     // The Conclave
     '09045': {
-        mayInclude: card => card.type_code === 'character' && hasTrait(card, 'Maester') && !card.is_loyal,
+        mayInclude: card => card.type === 'character' && hasTrait(card, 'Maester') && !card.loyal,
         rules: [
             {
                 message: 'Must contain 12 or more Maester characters',
-                condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.type_code === 'character' && hasTrait(cardQuantity.card, 'Maester'))) >= 12
+                condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.type === 'character' && hasTrait(cardQuantity.card, 'Maester'))) >= 12
             }
         ]
     },
@@ -164,8 +164,8 @@ const agendaRules = {
             {
                 message: 'Cannot include cards from more than 1 outside faction',
                 condition: deck => {
-                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction_code !== deck.faction.value && cardQuantity.card.faction_code !== 'neutral');
-                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction_code);
+                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
+                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction);
                     return _.size(factions) <= 1;
                 }
             }
@@ -173,7 +173,7 @@ const agendaRules = {
     }),
     // Protectors of the Realm
     '00002': rulesForDraft({
-        mayInclude: card => card.type_code === 'character' && (hasTrait(card, 'Knight') || hasTrait(card, 'Army'))
+        mayInclude: card => card.type === 'character' && (hasTrait(card, 'Knight') || hasTrait(card, 'Army'))
     }),
     // Treaty
     '00003': rulesForDraft({
@@ -182,8 +182,8 @@ const agendaRules = {
             {
                 message: 'Cannot include cards from more than 2 outside factions',
                 condition: deck => {
-                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction_code !== deck.faction.value && cardQuantity.card.faction_code !== 'neutral');
-                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction_code);
+                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
+                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction);
                     return _.size(factions) <= 2;
                 }
             }
@@ -191,7 +191,7 @@ const agendaRules = {
     }),
     // Uniting the Seven Kingdoms
     '00004': rulesForDraft({
-        mayInclude: card => card.type_code !== 'plot'
+        mayInclude: card => card.type !== 'plot'
     })
 };
 
@@ -227,7 +227,7 @@ class DeckValidator {
         let cardCountByName = {};
 
         _.each(allCards, cardQuantity => {
-            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, type: cardQuantity.card.type_code, limit: cardQuantity.card.deck_limit, count: 0 };
+            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, type: cardQuantity.card.type, limit: cardQuantity.card.deckLimit, count: 0 };
             cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
 
             if(!rules.mayInclude(cardQuantity.card) || rules.cannotInclude(cardQuantity.card)) {
@@ -288,7 +288,7 @@ class DeckValidator {
 
     getFactionRules(faction) {
         return {
-            mayInclude: card => card.faction_code === faction || card.faction_code === 'neutral'
+            mayInclude: card => card.faction === faction || card.faction === 'neutral'
         };
     }
 

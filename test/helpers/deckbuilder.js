@@ -42,7 +42,7 @@ class DeckBuilder {
         });
 
         var agenda;
-        var agendaCount = _.find(cardCounts, cardCount => cardCount.card.type_code === 'agenda');
+        var agendaCount = _.find(cardCounts, cardCount => cardCount.card.type === 'agenda');
         if(agendaCount) {
             agenda = agendaCount.card;
         }
@@ -50,8 +50,8 @@ class DeckBuilder {
         return {
             faction: { value: faction },
             agenda: agenda,
-            drawCards: _.filter(cardCounts, cardCount => ['character', 'location', 'attachment', 'event'].includes(cardCount.card.type_code)),
-            plotCards: _.filter(cardCounts, cardCount => cardCount.card.type_code === 'plot')
+            drawCards: _.filter(cardCounts, cardCount => ['character', 'location', 'attachment', 'event'].includes(cardCount.card.type)),
+            plotCards: _.filter(cardCounts, cardCount => cardCount.card.type === 'plot')
         };
     }
 

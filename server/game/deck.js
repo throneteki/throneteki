@@ -17,7 +17,7 @@ class Deck {
         };
 
         this.eachRepeatedCard(this.data.drawCards, cardData => {
-            if(['attachment', 'character', 'event', 'location'].includes(cardData.type_code)) {
+            if(['attachment', 'character', 'event', 'location'].includes(cardData.type)) {
                 var drawCard = this.createCard(DrawCard, player, cardData);
                 drawCard.location = 'draw deck';
                 result.drawCards.push(drawCard);
@@ -25,7 +25,7 @@ class Deck {
         });
 
         this.eachRepeatedCard(this.data.plotCards, cardData => {
-            if(cardData.type_code === 'plot') {
+            if(cardData.type === 'plot') {
                 var plotCard = this.createCard(PlotCard, player, cardData);
                 plotCard.location = 'plot deck';
                 result.plotCards.push(plotCard);
@@ -35,11 +35,11 @@ class Deck {
         if(this.data.faction) {
             result.faction = new DrawCard(player, _.extend({
                 code: this.data.faction.value,
-                type_code: 'faction',
-                faction_code: this.data.faction.value
+                type: 'faction',
+                faction: this.data.faction.value
             }, this.data.faction));
         } else {
-            result.faction = new DrawCard(player, { type_code: 'faction' });
+            result.faction = new DrawCard(player, { type: 'faction' });
         }
 
         result.faction.moveTo('faction');

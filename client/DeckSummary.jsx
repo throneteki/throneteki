@@ -17,7 +17,7 @@ class DeckSummary extends React.Component {
     }
 
     hasTrait(card, trait) {
-        return card.traits && card.traits.toLowerCase().indexOf(trait.toLowerCase() + '.') !== -1;
+        return card.traits.some(t => t.toLowerCase() === trait.toLowerCase());
     }
 
     onCardMouseOver(event) {
@@ -49,7 +49,7 @@ class DeckSummary extends React.Component {
         let combinedCards = _.union(this.props.deck.plotCards, this.props.deck.drawCards);
 
         _.each(combinedCards, (card) => {
-            let typeCode = card.card.type_code;
+            let typeCode = card.card.type;
             let type = typeCode[0].toUpperCase() + typeCode.slice(1);
 
             if(this.props.deck.agenda && this.props.deck.agenda.code === '05045') {

@@ -11,7 +11,7 @@ const titleCardData = createTitleCardLookup(coreCardData);
 
 function createTitleCardLookup(cards) {
     return cards
-        .filter(card => card.type_code === 'title')
+        .filter(card => card.type === 'title')
         .reduce((cardIndex, card) => {
             cardIndex[card.code] = card;
             return cardIndex;
