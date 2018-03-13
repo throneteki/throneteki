@@ -55,7 +55,9 @@ class InnerDeckEditor extends React.Component {
 
     formatCardListItem(card) {
         if(card.card.custom) {
-            return card.count + ' Custom ' + card.card.type_name + ' - ' + card.card.name;
+            let typeCode = card.card.type_code;
+            let typeName = typeCode[0].toUpperCase() + typeCode.slice(1);
+            return card.count + ' Custom ' + typeName + ' - ' + card.card.name;
         }
 
         return card.count + ' ' + card.card.label;
@@ -313,8 +315,7 @@ class InnerDeckEditor extends React.Component {
             strength: 0,
             text: 'Custom',
             traits: '',
-            type_code: type,
-            type_name: match[1]
+            type_code: type
         };
     }
 

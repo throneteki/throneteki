@@ -49,7 +49,8 @@ class DeckSummary extends React.Component {
         let combinedCards = _.union(this.props.deck.plotCards, this.props.deck.drawCards);
 
         _.each(combinedCards, (card) => {
-            let type = card.card.type_name;
+            let typeCode = card.card.type_code;
+            let type = typeCode[0].toUpperCase() + typeCode.slice(1);
 
             if(this.props.deck.agenda && this.props.deck.agenda.code === '05045') {
                 if(this.hasTrait(card.card, 'scheme')) {
