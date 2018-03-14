@@ -26,7 +26,7 @@ export function saveUser(user) {
             url: `/api/user/${user.username}`,
             cache: false,
             type: 'PUT',
-            data: { data: JSON.stringify(user) }
+            data: JSON.stringify({ user: user })
         }
     };
 }

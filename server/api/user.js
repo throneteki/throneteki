@@ -34,7 +34,7 @@ module.exports.init = function(server) {
             return res.status(403);
         }
 
-        let userToSet = JSON.parse(req.body.data);
+        let userToSet = req.body.user;
 
         userService.getUserByUsername(req.params.username)
             .then(user => {
@@ -42,7 +42,10 @@ module.exports.init = function(server) {
                     return res.status(404).send({ message: 'Not found' });
                 }
 
-                user.permissions = userToSet.permissions;
+                if(req.user.permissions.canManagePermissions) {
+                    user.permissions = userToSet.permissions;
+                }
+
                 user.verified = userToSet.verified;
                 user.disabled = userToSet.disabled;
 

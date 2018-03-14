@@ -216,7 +216,6 @@ class UserService {
             username: userObj.username,
             email: userObj.email,
             emailHash: userObj.emailHash,
-            admin: userObj.admin,
             settings: userObj.settings,
             promptedActionWindows: userObj.promptedActionWindows,
             permissions: userObj.permissions,

@@ -610,7 +610,7 @@ class Lobby {
     }
 
     onRemoveGame(socket, gameId) {
-        if(!socket.user.admin) {
+        if(!socket.user.permissions.canManageGames) {
             return;
         }
 
