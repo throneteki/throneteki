@@ -17,7 +17,9 @@ class InnerUserAdmin extends React.Component {
 
         this.defaultPermissions = {
             canEditNews: false,
-            canManageUsers: false
+            canManageUsers: false,
+            canManagePermissions: false,
+            canManageGames: false
         };
 
         this.state = {
@@ -29,7 +31,9 @@ class InnerUserAdmin extends React.Component {
 
         this.permissions = [
             { name: 'canEditNews', label: 'News Editor' },
-            { name: 'canManageUsers', label: 'User Manager' }
+            { name: 'canManageUsers', label: 'User Manager' },
+            { name: 'canManagePermissions', label: 'Permissions Manager' },
+            { name: 'canManageGames', label: 'Games Manager' }
         ];
 
         this.onDisabledChanged = this.onDisabledChanged.bind(this);
@@ -118,20 +122,21 @@ class InnerUserAdmin extends React.Component {
                                 <dt>Email:</dt><dd>{ this.props.currentUser.email }</dd>
                                 <dt>Registered:</dt><dd>{ moment(this.props.currentUser.registered).format('YYYY-MM-DD HH:MM') }</dd>
                             </dl>
-                        </Panel>
 
-                        <Panel title='Permissions'>
-                            <div>
-                                { permissions }
-                                <Checkbox name={ 'disabled' } label='Disabled' fieldClass='col-xs-4' type='checkbox'
-                                    onChange={ this.onDisabledChanged } checked={ this.state.disabled } />
-                                <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
-                                    onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
-
-                                <div className='col-xs-12' />
-                                <button type='button' className='btn btn-primary col-xs-3' onClick={ this.onClearClick.bind(this) }>Clear sessions</button>
-                            </div>
+                            <Checkbox name={ 'disabled' } label='Disabled' fieldClass='col-xs-4' type='checkbox'
+                                onChange={ this.onDisabledChanged } checked={ this.state.disabled } />
+                            <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
+                                onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
                         </Panel>
+                        { this.props.user && this.props.user.permissions.canManagePermissions ?
+                            <Panel title='Permissions'>
+                                <div>
+                                    { permissions }
+                                </div>
+                            </Panel> : null }
+                        <div className='col-xs-12' />
+                        <button type='button' className='btn btn-primary col-xs-3' onClick={ this.onClearClick.bind(this) }>Clear sessions</button>
+                        <div className='col-xs-12' />
                         <button type='button' className='btn btn-primary col-xs-2' onClick={ this.onSaveClick.bind(this) }>Save</button>
                     </form>
                 </div>
@@ -171,6 +176,7 @@ InnerUserAdmin.propTypes = {
     findUser: PropTypes.func,
     loading: PropTypes.bool,
     saveUser: PropTypes.func,
+    user: PropTypes.object,
     userSaved: PropTypes.bool
 };
 
@@ -180,6 +186,7 @@ function mapStateToProps(state) {
         apiStatus: state.api.status,
         currentUser: state.admin.currentUser,
         loading: state.api.loading,
+        user: state.account.user,
         userSaved: state.admin.userSaved
     };
 }

@@ -101,11 +101,13 @@ class GameList extends React.Component {
 
             gameTitle += game.name;
 
+            var isAdmin = this.props.user && this.props.user.permissions.canManageGames;
+
             return (
-                <div key={ game.id } className={ 'game-row' + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
+                <div key={ game.id } className={ 'game-row' + (game.node && isAdmin ? ' ' + game.node : '') }>
                     <span className='col-xs-12 game-title'>
-                        { this.props.isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
-                        <b>{ gameTitle }</b> { game.showHand ? <img src='/img/ShowHandIcon.png' className='show-hand-icon'/> : null }
+                        { isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
+                        <b>{ gameTitle }</b> { game.showHand ? <img src='/img/ShowHandIcon.png' className='show-hand-icon' /> : null }
                     </span>
                     <div>{ gameRow }</div>
                     <div className='col-xs-3 game-row-buttons pull-right'>
@@ -131,7 +133,6 @@ GameList.displayName = 'GameList';
 GameList.propTypes = {
     currentGame: PropTypes.object,
     games: PropTypes.array,
-    isAdmin: PropTypes.bool,
     joinPasswordGame: PropTypes.func,
     showNodes: PropTypes.bool,
     socket: PropTypes.object,
@@ -141,7 +142,6 @@ GameList.propTypes = {
 function mapStateToProps(state) {
     return {
         currentGame: state.lobby.currentGame,
-        isAdmin: state.auth.isAdmin,
         socket: state.lobby.socket,
         user: state.account.user
     };

@@ -77,7 +77,6 @@ GameLobby.propTypes = {
     bannerNotice: PropTypes.string,
     currentGame: PropTypes.object,
     games: PropTypes.array,
-    isAdmin: PropTypes.bool,
     newGame: PropTypes.bool,
     passwordGame: PropTypes.object,
     setContextMenu: PropTypes.func,
@@ -89,7 +88,6 @@ function mapStateToProps(state) {
     return {
         bannerNotice: state.lobby.notice,
         currentGame: state.lobby.currentGame,
-        isAdmin: state.auth.isAdmin,
         games: state.lobby.games,
         newGame: state.games.newGame,
         passwordGame: state.lobby.passwordGame,
