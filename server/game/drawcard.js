@@ -152,7 +152,7 @@ class DrawCard extends BaseCard {
     }
 
     getPrintedCost() {
-        return this.cardData.cost || 0;
+        return this.getPrintedNumberFor(this.cardData.cost);
     }
 
     getCost() {
@@ -202,7 +202,7 @@ class DrawCard extends BaseCard {
     }
 
     getPrintedStrength() {
-        return (this.cardData.strength || 0);
+        return this.getPrintedNumberFor(this.cardData.strength);
     }
 
     getStrength() {

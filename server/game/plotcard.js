@@ -25,8 +25,12 @@ class PlotCard extends BaseCard {
     }
 
     getInitiative() {
-        var baseValue = this.canProvidePlotModifier['initiative'] ? this.cardData.plotStats.initiative : 0;
+        var baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
         return baseValue + this.initiativeModifier;
+    }
+
+    getPrintedInitiative() {
+        return this.getPrintedNumberFor(this.cardData.plotStats.initiative);
     }
 
     getIncome() {
@@ -36,16 +40,20 @@ class PlotCard extends BaseCard {
     }
 
     getPrintedIncome() {
-        return this.cardData.plotStats.income;
+        return this.getPrintedNumberFor(this.cardData.plotStats.income);
     }
 
     getReserve() {
-        var baseValue = this.canProvidePlotModifier['reserve'] ? this.cardData.plotStats.reserve : 0;
+        var baseValue = this.canProvidePlotModifier['reserve'] ? this.getPrintedReserve() : 0;
         return baseValue + this.reserveModifier;
     }
 
+    getPrintedReserve() {
+        return this.getPrintedNumberFor(this.cardData.plotStats.reserve);
+    }
+
     getPrintedClaim() {
-        return this.cardData.plotStats.claim || 0;
+        return this.getPrintedNumberFor(this.cardData.plotStats.claim);
     }
 
     getClaim() {

@@ -277,6 +277,10 @@ class BaseCard {
         action.execute(player, arg);
     }
 
+    getPrintedNumberFor(value) {
+        return (value === 'X' ? 0 : value) || 0;
+    }
+
     hasKeyword(keyword) {
         var keywordCount = this.keywords[keyword.toLowerCase()] || 0;
         return keywordCount > 0;
