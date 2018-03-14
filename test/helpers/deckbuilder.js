@@ -4,7 +4,7 @@ const _ = require('underscore');
 
 const {matchCardByNameAndPack} = require('./cardutil.js');
 
-const PathToSubModulePacks = path.join(__dirname, '../../thronesdb-json-data/pack');
+const PathToSubModulePacks = path.join(__dirname, '../../throneteki-json-data/packs');
 
 class DeckBuilder {
     constructor() {
@@ -17,9 +17,10 @@ class DeckBuilder {
         var jsonPacks = fs.readdirSync(directory).filter(file => file.endsWith('.json'));
 
         _.each(jsonPacks, file => {
-            var cardsInPack = require(path.join(PathToSubModulePacks, file));
+            var pack = require(path.join(directory, file));
 
-            _.each(cardsInPack, card => {
+            _.each(pack.cards, card => {
+                card.packCode = pack.code;
                 cards[card.code] = card;
             });
         });
