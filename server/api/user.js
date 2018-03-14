@@ -34,7 +34,7 @@ module.exports.init = function(server) {
             return res.status(403);
         }
 
-        let userToSet = req.body.user;
+        let userToSet = req.body.userToChange;
 
         userService.getUserByUsername(req.params.username)
             .then(user => {
