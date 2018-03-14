@@ -1,11 +1,3 @@
-export function refreshUser(user, token) {
-    return {
-        type: 'REFRESH_USER',
-        user: user,
-        token: token
-    };
-}
-
 export function loadActiveSessions(user) {
     return {
         types: ['REQUEST_SESSIONS', 'RECEIVE_SESSIONS'],
@@ -71,5 +63,23 @@ export function clearBlockListStatus() {
 export function clearSessionStatus() {
     return {
         type: 'CLEAR_SESSION_STATUS'
+    };
+}
+
+export function saveProfile(username, details) {
+    return {
+        types: ['SAVE_PROFILE', 'PROFILE_SAVED'],
+        shouldCallAPI: () => true,
+        APIParams: {
+            url: `/api/account/${username}`,
+            type: 'PUT',
+            data: JSON.stringify({ data: details })
+        }
+    };
+}
+
+export function clearProfileStatus() {
+    return {
+        type: 'CLEAR_PROFILE_STATUS'
     };
 }

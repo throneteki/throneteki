@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'underscore';
-import $ from 'jquery';
 import { connect } from 'react-redux';
 
 import AlertPanel from './SiteComponents/AlertPanel';
@@ -12,27 +11,14 @@ import Slider from 'react-bootstrap-slider';
 
 import * as actions from './actions';
 
-class InnerProfile extends React.Component {
+class Profile extends React.Component {
     constructor(props) {
         super(props);
 
-        if(!this.props.user) {
-            return;
-        }
-
         this.state = {
-            disableGravatar: this.props.user.settings.disableGravatar,
-            email: this.props.user.email,
-            loading: false,
             newPassword: '',
             newPasswordAgain: '',
-            promptedActionWindows: this.props.user.promptedActionWindows,
-            validation: {},
-            windowTimer: this.props.user.settings.windowTimer,
-            keywordSettings: this.props.user.settings.keywordSettings,
-            timerSettings: this.props.user.settings.timerSettings,
-            selectedBackground: this.props.user.settings.background,
-            selectedCardSize: this.props.user.settings.cardSize
+            validation: {}
         };
 
         this.windows = [
@@ -45,6 +31,21 @@ class InnerProfile extends React.Component {
             { name: 'standing', label: 'Standing phase', style: 'col-sm-4' },
             { name: 'taxation', label: 'Taxation phase', style: 'col-sm-4' }
         ];
+
+        if(!this.props.user) {
+            return;
+        }
+
+        this.state = Object.assign({}, this.state, {
+            disableGravatar: this.props.user.settings.disableGravatar,
+            email: this.props.user.email,
+            promptedActionWindows: this.props.user.promptedActionWindows,
+            windowTimer: this.props.user.settings.windowTimer,
+            keywordSettings: this.props.user.settings.keywordSettings,
+            timerSettings: this.props.user.settings.timerSettings,
+            selectedBackground: this.props.user.settings.background,
+            selectedCardSize: this.props.user.settings.cardSize
+        });
     }
 
     componentWillReceiveProps(props) {
@@ -55,8 +56,21 @@ class InnerProfile extends React.Component {
         this.setState({
             email: props.user.email,
             disableGravatar: props.user.settings.disableGravatar,
-            promptedActionWindows: props.user.promptedActionWindows
+            promptedActionWindows: props.user.promptedActionWindows,
+            windowTimer: props.user.settings.windowTimer,
+            timerSettings: props.user.settings.timerSettings,
+            keywordSettings: props.user.settings.keywordSettings,
+            selectedBackground: props.user.settings.background,
+            selectedCardSize: props.user.settings.cardSize
         });
+
+        if(props.profileSaved) {
+            this.setState({ successMessage: 'Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.' });
+
+            setTimeout(() => {
+                this.setState({ successMessage: undefined });
+            }, 5000);
+        }
     }
 
     onChange(field, event) {
@@ -105,40 +119,19 @@ class InnerProfile extends React.Component {
             return;
         }
 
-        this.setState({ loading: true });
-
-        $.ajax('/api/account/' + this.props.user.username,
-            {
-                method: 'PUT',
-                data: {
-                    data: JSON.stringify({
-                        email: this.state.email,
-                        password: this.state.newPassword,
-                        promptedActionWindows: this.state.promptedActionWindows,
-                        settings: {
-                            disableGravatar: this.state.disableGravatar,
-                            windowTimer: this.state.windowTimer,
-                            keywordSettings: this.state.keywordSettings,
-                            timerSettings: this.state.timerSettings,
-                            background: this.state.selectedBackground,
-                            cardSize: this.state.selectedCardSize
-                        }
-                    })
-                }
-            })
-            .done((data) => {
-                if(data.success) {
-                    this.setState({ successMessage: 'Profile saved successfully.  Please note settings changed here will only apply at the start of your next game' });
-
-                    this.props.socket.emit('authenticate', data.token);
-                    this.props.refreshUser(data.user, data.token);
-                } else {
-                    this.setState({ errorMessage: data.message });
-                }
-            })
-            .always(() => {
-                this.setState({ loading: false });
-            });
+        this.props.saveProfile(this.props.user.username, {
+            email: this.state.email,
+            password: this.state.newPassword,
+            promptedActionWindows: this.state.promptedActionWindows,
+            settings: {
+                disableGravatar: this.state.disableGravatar,
+                windowTimer: this.state.windowTimer,
+                keywordSettings: this.state.keywordSettings,
+                timerSettings: this.state.timerSettings,
+                background: this.state.selectedBackground,
+                cardSize: this.state.selectedCardSize
+            }
+        });
     }
 
     verifyPassword(isSubmitting) {
@@ -219,11 +212,21 @@ class InnerProfile extends React.Component {
                 checked={ this.state.promptedActionWindows[window.name] } />);
         });
 
+        let successBar;
+        if(this.props.profileSaved) {
+            setTimeout(() => {
+                this.props.clearProfileStatus();
+            }, 5000);
+            successBar = <AlertPanel type='success' message='Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.' />;
+        }
+
+        let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+
         return (
             <div className='col-sm-8 col-sm-offset-2 profile full-height'>
                 <div className='about-container'>
-                    { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
-                    { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
+                    { errorBar }
+                    { successBar }
                     <form className='form form-horizontal'>
                         <Panel title='Profile'>
                             <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
@@ -335,7 +338,9 @@ class InnerProfile extends React.Component {
                             </Panel>
                         </div>
                         <div className='col-sm-offset-10 col-sm-2'>
-                            <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
+                            <button className='btn btn-primary' type='button' disabled={ this.props.apiLoading } onClick={ this.onSaveClick.bind(this) }>
+                                Save{ this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -343,20 +348,28 @@ class InnerProfile extends React.Component {
     }
 }
 
-InnerProfile.displayName = 'Profile';
-InnerProfile.propTypes = {
+Profile.displayName = 'Profile';
+Profile.propTypes = {
+    apiLoading: PropTypes.bool,
+    apiMessage: PropTypes.string,
+    apiSuccess: PropTypes.bool,
+    clearProfileStatus: PropTypes.func,
+    profileSaved: PropTypes.bool,
     refreshUser: PropTypes.func,
+    saveProfile: PropTypes.func,
     socket: PropTypes.object,
     user: PropTypes.object
 };
 
 function mapStateToProps(state) {
     return {
+        apiLoading: state.api.SAVE_PROFILE ? state.api.SAVE_PROFILE.loading : undefined,
+        apiMessage: state.api.SAVE_PROFILE ? state.api.SAVE_PROFILE.message : undefined,
+        apiSuccess: state.api.SAVE_PROFILE ? state.api.SAVE_PROFILE.success : undefined,
+        profileSaved: state.user.profileSaved,
         socket: state.lobby.socket,
         user: state.account.user
     };
 }
 
-const Profile = connect(mapStateToProps, actions)(InnerProfile);
-
-export default Profile;
+export default connect(mapStateToProps, actions)(Profile);

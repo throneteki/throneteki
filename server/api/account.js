@@ -480,7 +480,7 @@ module.exports.init = function(server) {
     }
 
     server.put('/api/account/:username', passport.authenticate('jwt', { session: false }), (req, res) => {
-        let userToSet = JSON.parse(req.body.data);
+        let userToSet = req.body.data;
         let existingUser;
 
         if(req.user.username !== req.params.username) {
