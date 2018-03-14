@@ -336,6 +336,15 @@ class Lobby {
     }
 
     onAuthenticated(socket, user) {
+        this.userService.getUserById(user._id).then(dbUser => {
+            delete dbUser.password;
+
+            socket.socket.request.user = dbUser;
+            socket.user = dbUser;
+        }).catch(err => {
+            logger.error(err);
+        });
+
         this.users[user.username] = this.userService.sanitiseUserObject(user);
 
         this.broadcastUserList();
