@@ -2,12 +2,6 @@ import _ from 'underscore';
 
 export default function(state = {}, action) {
     switch(action.type) {
-        case 'REFRESH_USER':
-            return Object.assign({}, state, {
-                user: action.user,
-                username: action.user.username,
-                token: action.token
-            });
         case 'RECEIVE_BLOCKLIST':
             return Object.assign({}, state, {
                 blockList: action.response.blockList
@@ -54,6 +48,18 @@ export default function(state = {}, action) {
         case 'CLEAR_SESSION_STATUS':
             return Object.assign({}, state, {
                 sessionRemoved: false
+            });
+        case 'SAVE_PROFILE':
+            return Object.assign({}, state, {
+                profileSaved: false
+            });
+        case 'PROFILE_SAVED':
+            return Object.assign({}, state, {
+                profileSaved: true
+            });
+        case 'CLEAR_PROFILE_STATUS':
+            return Object.assign({}, state, {
+                profileSaved: false
             });
     }
 

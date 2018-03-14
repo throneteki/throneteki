@@ -44,6 +44,10 @@ export default function(state = defaultState, action) {
             return Object.assign({}, state, {
                 currentGame: undefined
             });
+        case 'PROFILE_SAVED':
+            if(state.socket) {
+                state.socket.emit('authenticate', action.response.token);
+            }
     }
 
     return state;
