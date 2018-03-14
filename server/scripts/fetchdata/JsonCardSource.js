@@ -3,18 +3,37 @@ const fs = require('fs');
 const _ = require('underscore');
 
 class JsonCardSource {
-    getCards() {
-        let files = fs.readdirSync('thronesdb-json-data/pack');
-        let totalCards = [];
+    constructor() {
+        let data = this.loadPackFiles();
+        this.packs = data.packs;
+        this.cards = data.cards;
+    }
 
-        _.each(files, file => {
-            let cards = JSON.parse(fs.readFileSync('thronesdb-json-data/pack/' + file));
+    loadPackFiles() {
+        let packs = [];
+        let cards = [];
+        let files = fs.readdirSync('throneteki-json-data/packs');
+        for(let file of files) {
+            let pack = JSON.parse(fs.readFileSync('throneteki-json-data/packs/' + file));
+            for(let card of pack.cards) {
+                card.packCode = pack.code;
+            }
 
-            totalCards = totalCards.concat(cards);
-        });
+            packs.push({ cgdbId: pack.cgdbId, code: pack.code, name: pack.name, releaseDate: pack.releaseDate });
+            cards = cards.concat(pack.cards);
+        }
 
-        _.each(totalCards, card => {
-            let cardsByName = _.filter(totalCards, filterCard => {
+        this.addLabelToCards(cards);
+
+        return {
+            cards: cards,
+            packs: packs
+        };
+    }
+
+    addLabelToCards(cards) {
+        for(let card of cards) {
+            let cardsByName = _.filter(cards, filterCard => {
                 return filterCard.name === card.name;
             });
 
@@ -23,12 +42,15 @@ class JsonCardSource {
             } else {
                 card.label = card.name;
             }
-        });
-        return totalCards;
+        }
+    }
+
+    getCards() {
+        return this.cards;
     }
 
     getPacks() {
-        return JSON.parse(fs.readFileSync('thronesdb-json-data/packs.json'));
+        return this.packs;
     }
 }
 

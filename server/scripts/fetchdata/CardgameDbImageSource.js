@@ -5,7 +5,12 @@ const request = require('request');
 
 class CardgameDbImageSource {
     constructor() {
-        this.packs = JSON.parse(fs.readFileSync('thronesdb-json-data/packs.json'));
+        this.packs = this.loadPacks();
+    }
+
+    loadPacks() {
+        let files = fs.readdirSync('throneteki-json-data/packs');
+        return files.map(file => JSON.parse(fs.readFileSync('throneteki-json-data/packs/' + file)));
     }
 
     fetchImage(card, imagePath) {
@@ -15,7 +20,7 @@ class CardgameDbImageSource {
             return;
         }
 
-        let cgdbId = pack.cgdb_id.toString().padStart(2, '0');
+        let cgdbId = pack.cgdbId.toString().padStart(2, '0');
         let url = `http://lcg-cdn.fantasyflightgames.com/got2nd/GT${cgdbId}_${card.position}.jpg`;
 
         request({ url: url, encoding: null }, function(err, response, body) {

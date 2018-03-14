@@ -7,10 +7,9 @@ const CardImport = require('./fetchdata/CardImport.js');
 const CardgameDbImageSource = require('./fetchdata/CardgameDbImageSource.js');
 const JsonCardSource = require('./fetchdata/JsonCardSource.js');
 const NoImageSource = require('./fetchdata/NoImageSource.js');
-const ThronesDbApiCardSource = require('./fetchdata/ThronesDbApiCardSource.js');
 
 const optionsDefinition = [
-    { name: 'card-source', type: String, defaultValue: 'thronesdb' },
+    { name: 'card-source', type: String, defaultValue: 'json' },
     { name: 'image-source', type: String, defaultValue: 'cardgamedb' },
     { name: 'image-dir', type: String, defaultValue: path.join(__dirname, '..', '..', 'public', 'img', 'cards') },
     { name: 'no-images', type: Boolean, defaultValue: false }
@@ -18,8 +17,6 @@ const optionsDefinition = [
 
 function createDataSource(options) {
     switch(options['card-source']) {
-        case 'thronesdb':
-            return new ThronesDbApiCardSource();
         case 'json':
             return new JsonCardSource();
     }
