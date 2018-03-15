@@ -341,15 +341,20 @@ class Lobby {
 
             socket.socket.request.user = dbUser;
             socket.user = dbUser;
+
+            this.users[user.username] = this.userService.sanitiseUserObject(user);
+
+            this.broadcastUserList();
+
+            this.sendFilteredMessages(socket);
+
+            var game = this.findGameForUser(user.username);
+            if(game && game.started) {
+                this.sendHandoff(socket, game.node);
+            }
         }).catch(err => {
             logger.error(err);
         });
-
-        this.users[user.username] = this.userService.sanitiseUserObject(user);
-
-        this.broadcastUserList();
-
-        this.sendFilteredMessages(socket);
     }
 
     onSocketDisconnected(socket, reason) {
