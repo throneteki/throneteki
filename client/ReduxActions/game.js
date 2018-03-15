@@ -1,5 +1,4 @@
 import io from 'socket.io-client';
-import { toastr } from 'react-redux-toastr';
 
 export function receiveGames(games) {
     return {
@@ -70,43 +69,31 @@ export function gameSocketConnected(socket) {
     };
 }
 
-export function gameSocketConnectError(err) {
-    toastr.error('Connect Error', 'There was an error connecting to the game server: ' + err.message + '(' + err.description + ')');
-
+export function gameSocketConnectError() {
     return {
         type: 'GAME_SOCKET_CONNECT_ERROR'
     };
 }
 
-export function gameSocketDisconnected(socketClosing) {
-    if(!socketClosing) {
-        toastr.error('Connection lost', 'You have been disconnected from the game server');
-    }
-
+export function gameSocketDisconnected() {
     return {
         type: 'GAME_SOCKET_DISCONNECTED'
     };
 }
 
-export function gameSocketReconnecting(attemptNumber) {
-    toastr.info('Reconnecting', 'Attempt number ' + attemptNumber + ' to reconnect..');
-
+export function gameSocketReconnecting() {
     return {
         type: 'GAME_SOCKET_RECONNECTING'
     };
 }
 
 export function gameSocketReconnected() {
-    toastr.success('Reconnected', 'The reconnection has been successful');
-
     return {
         type: 'GAME_SOCKET_RECONNECTED'
     };
 }
 
 export function gameSocketConnectFailed() {
-    toastr.error('Reconnect failed', 'Given up trying to connect to the server');
-
     return {
         type: 'GAME_SOCKET_CONNECT_FAILED'
     };

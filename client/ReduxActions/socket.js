@@ -1,5 +1,4 @@
 import io from 'socket.io-client';
-import { toastr } from 'react-redux-toastr';
 
 import version from '../../version.js';
 import * as actions from '../actions';
@@ -48,18 +47,14 @@ export function lobbyConnected(socket) {
 }
 
 export function lobbyDisconnected() {
-    toastr.error('Connection lost', 'You have been disconnected from the lobby server, attempting reconnect..');
-
     return {
         type: 'LOBBY_DISCONNECTED'
     };
 }
 
-export function lobbyReconnected() {
-    toastr.success('Reconnected', 'The reconnection to the lobby has been successful');
-
+export function lobbyReconnecting() {
     return {
-        type: 'LOBBY_RECONNECTED'
+        type: 'LOBBY_RECONNECTING'
     };
 }
 
@@ -106,7 +101,7 @@ export function connectLobby() {
         });
 
         socket.on('reconnect', () => {
-            dispatch(lobbyReconnected());
+            dispatch(lobbyReconnecting());
         });
 
         socket.on('games', games => {

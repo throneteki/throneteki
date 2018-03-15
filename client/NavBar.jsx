@@ -74,6 +74,47 @@ class InnerNavBar extends React.Component {
             );
         });
 
+        let className = 'glyphicon glyphicon-signal';
+        let toolTip = 'Lobby is';
+
+        if(this.props.lobbySocketConnected) {
+            className += ' text-success';
+            toolTip += ' connected';
+        } else if(this.props.lobbySocketConnecting) {
+            className += ' text-primary';
+            toolTip += ' connecting';
+        } else {
+            className += ' text-danger';
+            toolTip += ' disconnected';
+        }
+
+        let lobbyStatus = (
+            <li>
+                <span className={ className } title={ toolTip } />
+            </li>);
+
+        className = 'glyphicon glyphicon-signal';
+        toolTip = 'Game server is';
+        if(this.props.currentGame) {
+            if(this.props.gameConnected) {
+                className += ' text-success';
+                toolTip += ' connected';
+            } else if(this.props.gameConnecting) {
+                className += ' text-primary';
+                toolTip += ' connecting';
+            } else {
+                className += ' text-danger';
+                toolTip += ' disconnected';
+            }
+        } else {
+            toolTip += ' not needed at this time';
+        }
+
+        let gameStatus = (
+            <li>
+                <span className={ className } title={ toolTip } />
+            </li>);
+
         return (
             <nav className='navbar navbar-inverse navbar-fixed-top'>
                 <div className='container'>
@@ -93,6 +134,8 @@ class InnerNavBar extends React.Component {
                         <ul className='nav navbar-nav navbar-right'>
                             { contextMenu }
                             { numGames }
+                            { lobbyStatus }
+                            { gameStatus }
                             { rightMenuToRender }
                         </ul>
                     </div>
@@ -104,8 +147,13 @@ class InnerNavBar extends React.Component {
 InnerNavBar.displayName = 'Decks';
 InnerNavBar.propTypes = {
     context: PropTypes.array,
+    currentGame: PropTypes.object,
     currentPath: PropTypes.string,
+    gameConnected: PropTypes.bool,
+    gameConnecting: PropTypes.bool,
     leftMenu: PropTypes.array,
+    lobbySocketConnected: PropTypes.bool,
+    lobbySocketConnecting: PropTypes.bool,
     numGames: PropTypes.number,
     rightMenu: PropTypes.array,
     title: PropTypes.string
@@ -113,7 +161,12 @@ InnerNavBar.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        context: state.navigation.context
+        context: state.navigation.context,
+        currentGame: state.lobby.currentGame,
+        gameConnected: state.games.connected,
+        gameConnecting: state.games.connecting,
+        lobbySocketConnected: state.lobby.connected,
+        lobbySocketConnecting: state.lobby.connecting
     };
 }
 
