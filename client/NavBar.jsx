@@ -8,7 +8,7 @@ import Avatar from './Avatar.jsx';
 
 import * as actions from './actions';
 
-class InnerNavBar extends React.Component {
+class NavBar extends React.Component {
     constructor(props) {
         super(props);
 
@@ -28,7 +28,6 @@ class InnerNavBar extends React.Component {
     }
 
     renderMenuItem(menuItem) {
-
         if(menuItem.childItems) {
             let className = 'dropdown';
 
@@ -144,8 +143,8 @@ class InnerNavBar extends React.Component {
     }
 }
 
-InnerNavBar.displayName = 'Decks';
-InnerNavBar.propTypes = {
+NavBar.displayName = 'NavBar';
+NavBar.propTypes = {
     context: PropTypes.array,
     currentGame: PropTypes.object,
     currentPath: PropTypes.string,
@@ -170,7 +169,5 @@ function mapStateToProps(state) {
     };
 }
 
-const NavBar = connect(mapStateToProps, actions)(InnerNavBar);
-
-export default NavBar;
+export default connect(mapStateToProps, actions)(NavBar);
 
