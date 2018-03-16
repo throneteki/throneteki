@@ -2,16 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
 import { connect } from 'react-redux';
-import toRegex from 'path-to-regexp';
-import queryString from 'query-string';
 
 import NavBar from './NavBar';
-import NotFound from './NotFound';
-import Unauthorised from './Unauthorised';
-import routes from './routes';
+import Router from './Router';
 import * as actions from './actions';
 
 class Application extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.router = new Router();
+    }
+
     componentWillMount() {
         let token = localStorage.getItem('token');
         let refreshToken = localStorage.getItem('refreshToken');
@@ -40,57 +42,10 @@ class Application extends React.Component {
         }
     }
 
-    matchUri(path, uri) {
-        const keys = [];
-        const pattern = toRegex(path, keys);
-        const match = pattern.exec(uri);
-
-        if(!match) {
-            return undefined;
-        }
-
-        let params = {};
-
-        for(let i = 1; i < match.length; i++) {
-            params[keys[i - 1].name] = match[i] !== undefined ? match[i] : undefined;
-        }
-
-        let parsedString = queryString.parse(location.search);
-
-        params = Object.assign(params, parsedString);
-
-        return params;
-    }
-
-    resolvePath(routes, context) {
-        for(const route of routes) {
-            const uri = context.error ? '/error' : context.pathname;
-            const params = this.matchUri(route.path, uri);
-
-            if(!params) {
-                continue;
-            }
-
-            const result = route.action({ ...context, params });
-
-            if(!result) {
-                continue;
-            }
-
-            if(route.permission && (!context.user || !context.user.permissions[route.permission])) {
-                return <Unauthorised />;
-            }
-
-            return result;
-        }
-
-        return <NotFound />;
-    }
-
     render() {
         let gameBoardVisible = this.props.currentGame && this.props.currentGame.started;
 
-        let component = this.resolvePath(routes, {
+        let component = this.router.resolvePath({
             pathname: this.props.path,
             user: this.props.user,
             currentGame: this.props.currentGame
