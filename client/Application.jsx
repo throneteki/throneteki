@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 import toRegex from 'path-to-regexp';
 import queryString from 'query-string';
@@ -10,16 +9,9 @@ import NavBar from './NavBar';
 import NotFound from './NotFound';
 import Unauthorised from './Unauthorised';
 import routes from './routes';
-
 import * as actions from './actions';
 
 class Application extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.paths = routes;
-    }
-
     componentWillMount() {
         let token = localStorage.getItem('token');
         let refreshToken = localStorage.getItem('refreshToken');
@@ -96,56 +88,6 @@ class Application extends React.Component {
     }
 
     render() {
-        let rightMenu;
-
-        if(!this.props.user) {
-            rightMenu = [
-                { name: 'Login', path: '/login' },
-                { name: 'Register', path: '/register' }
-            ];
-        } else {
-            rightMenu = [
-                {
-                    name: this.props.user.username, childItems: [
-                        { name: 'Profile', path: '/profile' },
-                        { name: 'Security', path: '/security' },
-                        { name: 'Block List', path: '/blocklist' },
-                        { name: 'Logout', path: '/logout' }
-                    ], avatar: true, emailHash: this.props.user.emailHash, disableGravatar: this.props.user.settings.disableGravatar
-                }
-            ];
-        }
-
-        let leftMenu = [
-            { name: 'Decks', path: '/decks' },
-            { name: 'Play', path: '/play' },
-            {
-                name: 'Help', childItems: [
-                    { name: 'How To Play', path: '/how-to-play' },
-                    { name: 'About', path: '/about' }
-                ]
-            }
-        ];
-
-        let adminMenuItems = [];
-        let permissions = {};
-
-        if(this.props.user && this.props.user.permissions) {
-            permissions = this.props.user.permissions;
-
-            if(permissions.canEditNews) {
-                adminMenuItems.push({ name: 'News', path: '/news' });
-            }
-
-            if(permissions.canManageUsers) {
-                adminMenuItems.push({ name: 'Users', path: '/users' });
-            }
-        }
-
-        if(_.size(adminMenuItems) > 0) {
-            leftMenu.push({ name: 'Admin', childItems: adminMenuItems });
-        }
-
         let gameBoardVisible = this.props.currentGame && this.props.currentGame.started;
 
         let component = this.resolvePath(routes, {
@@ -170,7 +112,7 @@ class Application extends React.Component {
         }
 
         return (<div className={ backgroundClass }>
-            <NavBar leftMenu={ leftMenu } rightMenu={ rightMenu } title='The Iron Throne' currentPath={ this.props.path } numGames={ this.props.games.length } />
+            <NavBar title='The Iron Throne' />
             <div className='wrapper'>
                 <div className='container content'>
                     { component }
@@ -185,12 +127,9 @@ Application.propTypes = {
     authenticate: PropTypes.func,
     connectLobby: PropTypes.func,
     currentGame: PropTypes.object,
-    dispatch: PropTypes.func,
-    games: PropTypes.array,
     loadCards: PropTypes.func,
     loadFactions: PropTypes.func,
     loadPacks: PropTypes.func,
-    loggedIn: PropTypes.bool,
     navigate: PropTypes.func,
     path: PropTypes.string,
     setAuthTokens: PropTypes.func,
@@ -202,9 +141,7 @@ Application.propTypes = {
 function mapStateToProps(state) {
     return {
         currentGame: state.lobby.currentGame,
-        games: state.lobby.games,
         path: state.navigation.path,
-        loggedIn: state.account.loggedIn,
         token: state.account.token,
         user: state.account.user
     };

@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 
 import Link from './Link.jsx';
 import Avatar from './Avatar.jsx';
-
 import * as actions from './actions';
+import menus from './menus';
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -17,7 +17,7 @@ class NavBar extends React.Component {
 
     onMenuItemMouseOver(menuItem) {
         this.setState({
-            showPopup : menuItem
+            showPopup: menuItem
         });
     }
 
@@ -28,39 +28,71 @@ class NavBar extends React.Component {
     }
 
     renderMenuItem(menuItem) {
+        let active = menuItem.path === this.props.path ? 'active' : '';
+        let title = this.props.user ? menuItem.title.replace('%CURRENTUSER%', this.props.user.username) : menuItem.title;
+
+        if(menuItem.showOnlyWhenLoggedOut && this.props.user) {
+            return null;
+        }
+
+        if(menuItem.showOnlyWhenLoggedIn && !this.props.user) {
+            return null;
+        }
+
+        if(menuItem.permission && (!this.props.user || !this.props.user.permissions[menuItem.permission])) {
+            return null;
+        }
+
         if(menuItem.childItems) {
             let className = 'dropdown';
 
             if(_.any(menuItem.childItems, item => {
-                return item.path === this.props.currentPath;
+                return item.path === this.props.path;
             })) {
                 className += ' active';
             }
 
-            let childItems = _.map(menuItem.childItems, item => {
-                return <li key={ item.name }><Link href={ item.path }>{ item.name }</Link></li>;
-            });
+            var childItems = menuItem.childItems.reduce((items, item) => {
+                if(item.permission && (!this.props.user || !this.props.user.permissions[item.permission])) {
+                    return;
+                }
+
+                return items.concat(<li key={ item.title }><Link href={ item.path }>{ item.title }</Link></li>);
+            }, []);
+
+            if(childItems.length === 0) {
+                return null;
+            }
 
             return (
-                <li key={ menuItem.name } className={ className }>
-                    <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>{ menuItem.avatar ? <Avatar emailHash={ menuItem.emailHash } forceDefault={ menuItem.disableGravatar } /> : null }{ menuItem.name }<span className='caret' /></a>
+                <li key={ menuItem.title } className={ className }>
+                    <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
+                        { menuItem.showProfilePicture && this.props.user ?
+                            <Avatar emailHash={ this.props.user.emailHash } forceDefault={ this.props.user.settings.disableGravatar } /> :
+                            null }
+                        { title }<span className='caret' />
+                    </a>
                     <ul className='dropdown-menu'>
                         { childItems }
                     </ul>
                 </li>);
-
         }
 
-        let active = menuItem.path === this.props.currentPath ? 'active' : '';
-
-        return <li key={ menuItem.name } className={ active }><Link href={ menuItem.path }>{ menuItem.name }</Link></li>;
+        return <li key={ menuItem.title } className={ active }><Link href={ menuItem.path }>{ title }</Link></li>;
     }
 
     render() {
-        let leftMenuToRender = _.map(this.props.leftMenu, this.renderMenuItem.bind(this));
-        let rightMenuToRender = _.map(this.props.rightMenu, this.renderMenuItem.bind(this));
+        let leftMenu = menus.filter(menu => {
+            return menu.position === 'left';
+        });
+        let rightMenu = menus.filter(menu => {
+            return menu.position === 'right';
+        });
 
-        let numGames = !_.isUndefined(this.props.numGames) ? <li><span>{ this.props.numGames + ' Games' }</span></li> : null;
+        let leftMenuToRender = leftMenu.map(this.renderMenuItem.bind(this));
+        let rightMenuToRender = rightMenu.map(this.renderMenuItem.bind(this));
+
+        let numGames = !_.isUndefined(this.props.games.length) ? <li><span>{ `${this.props.games.length} Games` }</span></li> : null;
 
         let contextMenu = _.map(this.props.context, menuItem => {
             return (
@@ -147,15 +179,14 @@ NavBar.displayName = 'NavBar';
 NavBar.propTypes = {
     context: PropTypes.array,
     currentGame: PropTypes.object,
-    currentPath: PropTypes.string,
     gameConnected: PropTypes.bool,
     gameConnecting: PropTypes.bool,
-    leftMenu: PropTypes.array,
+    games: PropTypes.array,
     lobbySocketConnected: PropTypes.bool,
     lobbySocketConnecting: PropTypes.bool,
-    numGames: PropTypes.number,
-    rightMenu: PropTypes.array,
-    title: PropTypes.string
+    path: PropTypes.string,
+    title: PropTypes.string,
+    user: PropTypes.object
 };
 
 function mapStateToProps(state) {
@@ -164,8 +195,11 @@ function mapStateToProps(state) {
         currentGame: state.lobby.currentGame,
         gameConnected: state.games.connected,
         gameConnecting: state.games.connecting,
+        games: state.lobby.games,
         lobbySocketConnected: state.lobby.connected,
-        lobbySocketConnecting: state.lobby.connecting
+        lobbySocketConnecting: state.lobby.connecting,
+        path: state.navigation.path,
+        user: state.account.user
     };
 }
 
