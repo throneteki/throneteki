@@ -6,7 +6,8 @@ class ADragonIsNoSlave extends DrawCard {
             title: 'Give -2 STR',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.size() === 0
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.size() === 0,
+                gameAction: 'decreaseStrength'
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({

@@ -10,7 +10,8 @@ class Astapor extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.isParticipating(card))
+                    this.game.currentChallenge.isParticipating(card)),
+                gameAction: 'decreaseStrength'
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
