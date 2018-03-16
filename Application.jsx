@@ -30,17 +30,15 @@ import Activation from './pages/Activation';
 
 import * as actions from './actions';
 
-class App extends React.Component {
+class Application extends React.Component {
     constructor(props) {
         super(props);
-
-        let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
         this.paths = {
             '/': () => <Lobby />,
             '/login': () => <Login />,
             '/register': () => <Register />,
-            '/decks': () => <Decks { ...boundActionCreators } />,
+            '/decks': () => <Decks />,
             '/decks/add': () => <AddDeck />,
             '/decks/edit': params => <EditDeck deckId={ params.deckId } />,
             '/play': () => (this.props.currentGame && this.props.currentGame.started) ? <GameBoard /> : <GameLobby />,
@@ -182,8 +180,6 @@ class App extends React.Component {
             tokenArg = this.getUrlParameter('token');
         }
 
-        let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
-
         switch(path) {
             case '/':
                 component = <Lobby />;
@@ -198,7 +194,7 @@ class App extends React.Component {
                 component = <Register />;
                 break;
             case '/decks':
-                component = <Decks { ...boundActionCreators } />;
+                component = <Decks />;
                 break;
             case '/decks/add':
                 component = <AddDeck />;
@@ -289,8 +285,8 @@ class App extends React.Component {
     }
 }
 
-App.displayName = 'Application';
-App.propTypes = {
+Application.displayName = 'Application';
+Application.propTypes = {
     authenticate: PropTypes.func,
     connectLobby: PropTypes.func,
     currentGame: PropTypes.object,
@@ -319,13 +315,5 @@ function mapStateToProps(state) {
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    let boundActions = bindActionCreators(actions, dispatch);
-    boundActions.dispatch = dispatch;
 
-    return boundActions;
-}
-
-const Application = connect(mapStateToProps, mapDispatchToProps)(App);
-
-export default Application;
+export default connect(mapStateToProps, actions)(Application);
