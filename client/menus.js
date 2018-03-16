@@ -10,7 +10,7 @@ const menus = [
         ]
     },
     {
-        title: '%CURRENTUSER%',
+        title: 'Placeholder',
         childItems: [
             { title: 'Profile', path: '/profile' },
             { title: 'Security', path: '/security' },

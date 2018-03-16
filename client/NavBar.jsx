@@ -29,7 +29,6 @@ class NavBar extends React.Component {
 
     renderMenuItem(menuItem) {
         let active = menuItem.path === this.props.path ? 'active' : '';
-        let title = this.props.user ? menuItem.title.replace('%CURRENTUSER%', this.props.user.username) : menuItem.title;
 
         if(menuItem.showOnlyWhenLoggedOut && this.props.user) {
             return null;
@@ -70,7 +69,7 @@ class NavBar extends React.Component {
                         { menuItem.showProfilePicture && this.props.user ?
                             <Avatar emailHash={ this.props.user.emailHash } forceDefault={ this.props.user.settings.disableGravatar } /> :
                             null }
-                        { title }<span className='caret' />
+                        { menuItem.showProfilePicture && this.props.user ? this.props.user.username : menuItem.title }<span className='caret' />
                     </a>
                     <ul className='dropdown-menu'>
                         { childItems }
@@ -78,7 +77,7 @@ class NavBar extends React.Component {
                 </li>);
         }
 
-        return <li key={ menuItem.title } className={ active }><Link href={ menuItem.path }>{ title }</Link></li>;
+        return <li key={ menuItem.title } className={ active }><Link href={ menuItem.path }>{ menuItem.title }</Link></li>;
     }
 
     render() {
