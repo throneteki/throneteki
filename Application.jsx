@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
 import _ from 'underscore';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import Login from './pages/Login';
