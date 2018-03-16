@@ -1,6 +1,10 @@
 function navigate(state, newPath, search) {
-    window.history.pushState({}, '', newPath + (search || ''));
-    return { path: newPath, search: search };
+    try {
+        window.history.pushState({}, '', newPath + (search || ''));
+        return { path: newPath, search: search };
+    } catch(err) {
+        return {};
+    }
 }
 
 export default function(state = {}, action) {

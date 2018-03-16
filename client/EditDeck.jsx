@@ -9,7 +9,7 @@ import Panel from './SiteComponents/Panel';
 
 import * as actions from './actions';
 
-class InnerEditDeck extends React.Component {
+class EditDeck extends React.Component {
     constructor() {
         super();
 
@@ -20,8 +20,6 @@ class InnerEditDeck extends React.Component {
         if(this.props.deckId) {
             return this.props.loadDeck(this.props.deckId);
         } else if(this.props.deck) {
-            this.props.setUrl('/decks/edit/' + this.props.deck._id);
-
             return this.props.loadDeck(this.props.deck._id);
         }
     }
@@ -67,8 +65,8 @@ class InnerEditDeck extends React.Component {
     }
 }
 
-InnerEditDeck.displayName = 'InnerEditDeck';
-InnerEditDeck.propTypes = {
+EditDeck.displayName = 'EditDeck';
+EditDeck.propTypes = {
     agendas: PropTypes.object,
     apiLoading: PropTypes.bool,
     apiMessage: PropTypes.string,
@@ -103,6 +101,4 @@ function mapStateToProps(state) {
     };
 }
 
-const EditDeck = connect(mapStateToProps, actions)(InnerEditDeck);
-
-export default EditDeck;
+export default connect(mapStateToProps, actions)(EditDeck);

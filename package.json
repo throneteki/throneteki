@@ -31,6 +31,7 @@
   "homepage": "https://github.com/cryogen/throneteki#readme",
   "dependencies": {
     "@sendgrid/mail": "^6.2.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^0.8.7",
     "bootstrap": "^3.3.7",
@@ -56,8 +57,10 @@
     "nodemailer": "^4.1.1",
     "passport": "^0.3.2",
     "passport-jwt": "^3.0.1",
+    "path-to-regexp": "^2.2.0",
     "pmx": "^1.5.4",
     "prop-types": "^15.6.0",
+    "query-string": "^6.0.0",
     "raven": "^1.2.1",
     "raven-js": "^3.18.1",
     "react": "^15.6.2",
