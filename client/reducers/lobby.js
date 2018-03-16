@@ -22,10 +22,10 @@ export default function(state = defaultState, action) {
                 connecting: false,
                 connected: false
             });
-        case 'LOBBY_RECONNECTED':
+        case 'LOBBY_RECONNECING':
             return Object.assign({}, state, {
-                connected: true,
-                connecting: false
+                connected: false,
+                connecting: true
             });
         case 'LOBBY_MESSAGE_RECEIVED':
             return handleMessage(action, state);
