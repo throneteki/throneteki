@@ -37,7 +37,7 @@ class InnerDecks extends React.Component {
     onEditClick(event) {
         event.preventDefault();
 
-        this.props.navigate('/decks/edit');
+        this.props.navigate(`/decks/edit/${this.props.selectedDeck._id}`);
     }
 
     onConfirmDeleteClick(event) {

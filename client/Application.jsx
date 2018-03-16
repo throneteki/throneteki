@@ -3,29 +3,13 @@ import PropTypes from 'prop-types';
 import $ from 'jquery';
 import _ from 'underscore';
 import { connect } from 'react-redux';
+import toRegex from 'path-to-regexp';
+import queryString from 'query-string';
 
-import Login from './pages/Login';
-import Logout from './pages/Logout';
-import Register from './pages/Register';
-import Lobby from './pages/Lobby';
-import Decks from './Decks';
-import AddDeck from './AddDeck';
-import EditDeck from './EditDeck';
-import NotFound from './NotFound';
 import NavBar from './NavBar';
-import GameLobby from './GameLobby';
-import GameBoard from './GameBoard';
-import HowToPlay from './HowToPlay';
-import About from './About';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Profile from './Profile';
-import NewsAdmin from './NewsAdmin';
+import NotFound from './NotFound';
 import Unauthorised from './Unauthorised';
-import UserAdmin from './UserAdmin';
-import BlockList from './BlockList';
-import Security from './pages/Security';
-import Activation from './pages/Activation';
+import routes from './routes';
 
 import * as actions from './actions';
 
@@ -33,23 +17,7 @@ class Application extends React.Component {
     constructor(props) {
         super(props);
 
-        this.paths = {
-            '/': () => <Lobby />,
-            '/login': () => <Login />,
-            '/register': () => <Register />,
-            '/decks': () => <Decks />,
-            '/decks/add': () => <AddDeck />,
-            '/decks/edit': params => <EditDeck deckId={ params.deckId } />,
-            '/play': () => (this.props.currentGame && this.props.currentGame.started) ? <GameBoard /> : <GameLobby />,
-            '/how-to-play': () => <HowToPlay />,
-            '/about': () => <About />,
-            '/forgot': () => <ForgotPassword />,
-            '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
-            '/profile': () => <Profile />,
-            '/news': () => <NewsAdmin />,
-            '/security': () => <Security />,
-            '/activation': () => params => <Activation id={ params.id } token={ params.token } />
-        };
+        this.paths = routes;
     }
 
     componentWillMount() {
@@ -80,16 +48,51 @@ class Application extends React.Component {
         }
     }
 
-    getUrlParameter(name) {
-        name = name.replace(/[[]/, '\\[').replace(/[\]]/, '\\]');
-        let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        let results = regex.exec(location.search);
+    matchUri(path, uri) {
+        const keys = [];
+        const pattern = toRegex(path, keys);
+        const match = pattern.exec(uri);
 
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        if(!match) {
+            return undefined;
+        }
+
+        let params = {};
+
+        for(let i = 1; i < match.length; i++) {
+            params[keys[i - 1].name] = match[i] !== undefined ? match[i] : undefined;
+        }
+
+        let parsedString = queryString.parse(location.search);
+
+        params = Object.assign(params, parsedString);
+
+        return params;
     }
 
-    isNumeric(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
+    resolvePath(routes, context) {
+        for(const route of routes) {
+            const uri = context.error ? '/error' : context.pathname;
+            const params = this.matchUri(route.path, uri);
+
+            if(!params) {
+                continue;
+            }
+
+            const result = route.action({ ...context, params });
+
+            if(!result) {
+                continue;
+            }
+
+            if(route.permission && (!context.user || !context.user.permissions[route.permission])) {
+                return <Unauthorised />;
+            }
+
+            return result;
+        }
+
+        return <NotFound />;
     }
 
     render() {
@@ -143,120 +146,13 @@ class Application extends React.Component {
             leftMenu.push({ name: 'Admin', childItems: adminMenuItems });
         }
 
-        let component = {};
+        let gameBoardVisible = this.props.currentGame && this.props.currentGame.started;
 
-        let path = this.props.path;
-        let argIndex = path.lastIndexOf('/');
-        let arg;
-
-        let page = this.paths[path];
-        if(!page) {
-            if(argIndex !== -1 && argIndex !== 0) {
-                arg = path.substring(argIndex + 1);
-                path = path.substring(0, argIndex);
-            }
-
-            let page = this.paths[path];
-            if(!page) {
-                page = this.paths[this.props.path];
-                arg = undefined;
-            }
-        }
-
-        let idArg;
-        let tokenArg;
-        let index;
-        let gameBoardVisible = false;
-
-        index = path.indexOf('/reset-password');
-        if(index !== -1) {
-            idArg = this.getUrlParameter('id');
-            tokenArg = this.getUrlParameter('token');
-        }
-        index = path.indexOf('/activation');
-        if(index !== -1) {
-            idArg = this.getUrlParameter('id');
-            tokenArg = this.getUrlParameter('token');
-        }
-
-        switch(path) {
-            case '/':
-                component = <Lobby />;
-                break;
-            case '/login':
-                component = <Login />;
-                break;
-            case '/logout':
-                component = <Logout />;
-                break;
-            case '/register':
-                component = <Register />;
-                break;
-            case '/decks':
-                component = <Decks />;
-                break;
-            case '/decks/add':
-                component = <AddDeck />;
-                break;
-            case '/decks/edit':
-                component = <EditDeck deckId={ arg } />;
-                break;
-            case '/play':
-                if(this.props.currentGame && this.props.currentGame.started) {
-                    component = <GameBoard />;
-                    gameBoardVisible = true;
-                } else {
-                    component = <GameLobby />;
-                }
-
-                break;
-            case '/how-to-play':
-                component = <HowToPlay />;
-                break;
-            case '/about':
-                component = <About />;
-                break;
-            case '/forgot':
-                component = <ForgotPassword />;
-                break;
-            case '/reset-password':
-                component = <ResetPassword id={ idArg } token={ tokenArg } />;
-                break;
-            case '/profile':
-                component = <Profile />;
-                break;
-            case '/news':
-                if(!permissions.canEditNews) {
-                    component = <Unauthorised />;
-                } else {
-                    component = <NewsAdmin />;
-                }
-
-                break;
-            case '/unauth':
-                component = <Unauthorised />;
-                break;
-            case '/users':
-                if(!permissions.canManageUsers) {
-                    component = <Unauthorised />;
-                } else {
-                    component = <UserAdmin />;
-                }
-
-                break;
-            case '/blocklist':
-                component = <BlockList />;
-                break;
-            case '/security':
-                component = <Security />;
-                break;
-            case '/activation':
-                component = <Activation id={ idArg } token={ tokenArg } />;
-                break;
-            default:
-                component = <NotFound />;
-                break;
-        }
+        let component = this.resolvePath(routes, {
+            pathname: this.props.path,
+            user: this.props.user,
+            currentGame: this.props.currentGame
+        });
 
         let backgroundClass = 'bg';
         if(gameBoardVisible && this.props.user) {
