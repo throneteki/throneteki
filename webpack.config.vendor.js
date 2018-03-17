@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 var AssetsPlugin = require('assets-webpack-plugin');
 var assetsPluginInstance = new AssetsPlugin({ filename: 'vendor-assets.json' });
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const BUILD_DIR = path.resolve(__dirname, 'public');
 
@@ -53,6 +54,7 @@ module.exports = (env) => {
         },
         plugins: [
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
+            new UglifyJSPlugin({ sourceMap: true, uglifyOptions: { ecma: 8 }}),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
             assetsPluginInstance
         ]
