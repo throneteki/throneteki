@@ -54,9 +54,12 @@ module.exports = (env) => {
         },
         plugins: [
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
-            new UglifyJSPlugin({ sourceMap: true, uglifyOptions: { ecma: 8 }}),
+            new UglifyJSPlugin({ sourceMap: true, uglifyOptions: { ecma: 8 } }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
-            assetsPluginInstance
+            assetsPluginInstance,
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || isDevBuild ? 'development' : 'production')
+            })
         ]
     };
 
