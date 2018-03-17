@@ -5,7 +5,7 @@ class FeverDreams extends DrawCard {
         this.attachmentRestriction({ controller: 'opponent' });
         this.reaction({
             when: {
-                onCardKneeled: event => event.card === this.parent && this.controller.carDraw()
+                onCardKneeled: event => event.card === this.parent && this.controller.canDraw()
             },
             cost: ability.costs.discardGold(),
             handler: () => {
