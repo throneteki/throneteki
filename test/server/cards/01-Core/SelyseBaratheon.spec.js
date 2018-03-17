@@ -7,7 +7,7 @@ describe('Selyse Baratheon (Core)', function() {
             ]);
             const deck2 = this.buildDeck('martell', [
                 'Sneak Attack',
-                'Nymeria Sand'
+                'Nymeria Sand (TRtW)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
