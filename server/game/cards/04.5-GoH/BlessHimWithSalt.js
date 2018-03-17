@@ -30,7 +30,7 @@ class BlessHimWithSalt extends DrawCard {
             return;
         }
 
-        if(event.challenge.winner === this.controller && this.player.canDraw()) {
+        if(event.challenge.winner === this.controller && this.controller.canDraw()) {
             this.controller.drawCardsToHand(1);
 
             this.game.addMessage('{0} uses {1} to draw 1 card',
