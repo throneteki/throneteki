@@ -40,7 +40,9 @@ module.exports = (env) => {
                 'moment',
                 'prop-types',
                 'socket.io-client',
-                'underscore'
+                'underscore',
+                'query-string',
+                'path-to-regexp'
             ]
         },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
