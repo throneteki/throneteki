@@ -232,7 +232,7 @@ class ChatCommands {
                 if(_.isNumber(card.strengthSet)) {
                     card.strengthSet = num;
                 } else {
-                    card.strengthModifier = num - card.cardData.strength;
+                    card.strengthModifier = num - card.getPrintedStrength();
                 }
                 this.game.addAlert('danger', '{0} uses the /strength command to set the strength of {1} to {2}', p, card, num);
                 return true;

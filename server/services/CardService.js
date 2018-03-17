@@ -25,7 +25,7 @@ class CardService {
 
                 _.each(result, card => {
                     if(options && options.shortForm) {
-                        cards[card.code] = _.pick(card, 'code', 'name', 'label', 'type_code', 'type_name', 'is_loyal', 'faction_code', 'deck_limit', 'pack_code', 'traits');
+                        cards[card.code] = _.pick(card, 'code', 'name', 'label', 'type', 'loyal', 'faction', 'deckLimit', 'packCode', 'traits');
                     } else {
                         cards[card.code] = card;
                     }
@@ -38,7 +38,7 @@ class CardService {
     }
 
     getTitleCards() {
-        return this.cards.find({ type_code: 'title' })
+        return this.cards.find({ type: 'title' })
             .then(cards => {
                 return cards.reduce((memo, card) => {
                     memo[card.code] = card;

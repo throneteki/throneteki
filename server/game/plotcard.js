@@ -24,13 +24,13 @@ class PlotCard extends BaseCard {
         this.abilities.reactions.push(reaction);
     }
 
-    hasRevealEffect() {
-        return this.cardData.text && this.cardData.text.indexOf('When Revealed:') !== -1;
+    getInitiative() {
+        var baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
+        return baseValue + this.initiativeModifier;
     }
 
-    getInitiative() {
-        var baseValue = this.canProvidePlotModifier['initiative'] ? this.cardData.initiative : 0;
-        return baseValue + this.initiativeModifier;
+    getPrintedInitiative() {
+        return this.getPrintedNumberFor(this.cardData.plotStats.initiative);
     }
 
     getIncome() {
@@ -40,16 +40,20 @@ class PlotCard extends BaseCard {
     }
 
     getPrintedIncome() {
-        return this.cardData.income;
+        return this.getPrintedNumberFor(this.cardData.plotStats.income);
     }
 
     getReserve() {
-        var baseValue = this.canProvidePlotModifier['reserve'] ? this.cardData.reserve : 0;
+        var baseValue = this.canProvidePlotModifier['reserve'] ? this.getPrintedReserve() : 0;
         return baseValue + this.reserveModifier;
     }
 
+    getPrintedReserve() {
+        return this.getPrintedNumberFor(this.cardData.plotStats.reserve);
+    }
+
     getPrintedClaim() {
-        return this.cardData.claim || 0;
+        return this.getPrintedNumberFor(this.cardData.plotStats.claim);
     }
 
     getClaim() {

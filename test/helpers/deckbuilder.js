@@ -4,7 +4,7 @@ const _ = require('underscore');
 
 const {matchCardByNameAndPack} = require('./cardutil.js');
 
-const PathToSubModulePacks = path.join(__dirname, '../../thronesdb-json-data/pack');
+const PathToSubModulePacks = path.join(__dirname, '../../throneteki-json-data/packs');
 
 class DeckBuilder {
     constructor() {
@@ -17,9 +17,10 @@ class DeckBuilder {
         var jsonPacks = fs.readdirSync(directory).filter(file => file.endsWith('.json'));
 
         _.each(jsonPacks, file => {
-            var cardsInPack = require(path.join(PathToSubModulePacks, file));
+            var pack = require(path.join(directory, file));
 
-            _.each(cardsInPack, card => {
+            _.each(pack.cards, card => {
+                card.packCode = pack.code;
                 cards[card.code] = card;
             });
         });
@@ -42,7 +43,7 @@ class DeckBuilder {
         });
 
         var agenda;
-        var agendaCount = _.find(cardCounts, cardCount => cardCount.card.type_code === 'agenda');
+        var agendaCount = _.find(cardCounts, cardCount => cardCount.card.type === 'agenda');
         if(agendaCount) {
             agenda = agendaCount.card;
         }
@@ -50,8 +51,8 @@ class DeckBuilder {
         return {
             faction: { value: faction },
             agenda: agenda,
-            drawCards: _.filter(cardCounts, cardCount => ['character', 'location', 'attachment', 'event'].includes(cardCount.card.type_code)),
-            plotCards: _.filter(cardCounts, cardCount => cardCount.card.type_code === 'plot')
+            drawCards: _.filter(cardCounts, cardCount => ['character', 'location', 'attachment', 'event'].includes(cardCount.card.type)),
+            plotCards: _.filter(cardCounts, cardCount => cardCount.card.type === 'plot')
         };
     }
 
@@ -67,7 +68,7 @@ class DeckBuilder {
         }
 
         if(cardsByName.length > 1) {
-            var matchingLabels = _.map(cardsByName, card => `${card.name} (${card.pack_code})`).join('\n');
+            var matchingLabels = _.map(cardsByName, card => `${card.name} (${card.packCode})`).join('\n');
             throw new Error(`Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`);
         }
 

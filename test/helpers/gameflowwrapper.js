@@ -6,12 +6,12 @@ const Game = require('../../server/game/game.js');
 const PlayerInteractionWrapper = require('./playerinteractionwrapper.js');
 const Settings = require('../../server/settings.js');
 
-const coreCardData = require('../../thronesdb-json-data/pack/Core.json');
-const titleCardData = createTitleCardLookup(coreCardData);
+const corePack = require('../../throneteki-json-data/packs/Core.json');
+const titleCardData = createTitleCardLookup(corePack.cards);
 
 function createTitleCardLookup(cards) {
     return cards
-        .filter(card => card.type_code === 'title')
+        .filter(card => card.type === 'title')
         .reduce((cardIndex, card) => {
             cardIndex[card.code] = card;
             return cardIndex;

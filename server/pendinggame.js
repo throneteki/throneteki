@@ -59,7 +59,7 @@ class PendingGame {
         player.faction = {};
         player.faction.cardData = faction;
         player.faction.cardData.code = faction.value;
-        player.faction.cardData.type_code = 'faction';
+        player.faction.cardData.type = 'faction';
         player.faction.cardData.strength = 0;
     }
 

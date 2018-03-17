@@ -26,16 +26,18 @@ class DrawCard extends BaseCard {
             power: 0
         };
 
-        if(cardData.is_military) {
-            this.icons.military++;
-        }
+        if(cardData.icons) {
+            if(cardData.icons.military) {
+                this.icons.military++;
+            }
 
-        if(cardData.is_intrigue) {
-            this.icons.intrigue++;
-        }
+            if(cardData.icons.intrigue) {
+                this.icons.intrigue++;
+            }
 
-        if(cardData.is_power) {
-            this.icons.power++;
+            if(cardData.icons.power) {
+                this.icons.power++;
+            }
         }
 
         this.power = 0;
@@ -150,7 +152,7 @@ class DrawCard extends BaseCard {
     }
 
     getPrintedCost() {
-        return this.cardData.cost || 0;
+        return this.getPrintedNumberFor(this.cardData.cost);
     }
 
     getCost() {
@@ -200,7 +202,7 @@ class DrawCard extends BaseCard {
     }
 
     getPrintedStrength() {
-        return (this.cardData.strength || 0);
+        return this.getPrintedNumberFor(this.cardData.strength);
     }
 
     getStrength() {
@@ -238,17 +240,21 @@ class DrawCard extends BaseCard {
     }
 
     getIconsAdded() {
+        if(!this.cardData.icons) {
+            return [];
+        }
+
         var icons = [];
 
-        if(this.hasIcon('military') && !this.cardData.is_military) {
+        if(this.hasIcon('military') && !this.cardData.icons.military) {
             icons.push('military');
         }
 
-        if(this.hasIcon('intrigue') && !this.cardData.is_intrigue) {
+        if(this.hasIcon('intrigue') && !this.cardData.icons.intrigue) {
             icons.push('intrigue');
         }
 
-        if(this.hasIcon('power') && !this.cardData.is_power) {
+        if(this.hasIcon('power') && !this.cardData.icons.power) {
             icons.push('power');
         }
 
@@ -256,17 +262,21 @@ class DrawCard extends BaseCard {
     }
 
     getIconsRemoved() {
+        if(!this.cardData.icons) {
+            return [];
+        }
+
         var icons = [];
 
-        if(!this.hasIcon('military') && this.cardData.is_military) {
+        if(!this.hasIcon('military') && this.cardData.icons.military) {
             icons.push('military');
         }
 
-        if(!this.hasIcon('intrigue') && this.cardData.is_intrigue) {
+        if(!this.hasIcon('intrigue') && this.cardData.icons.intrigue) {
             icons.push('intrigue');
         }
 
-        if(!this.hasIcon('power') && this.cardData.is_power) {
+        if(!this.hasIcon('power') && this.cardData.icons.power) {
             icons.push('power');
         }
 

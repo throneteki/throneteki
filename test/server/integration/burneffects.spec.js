@@ -82,7 +82,7 @@ describe('burn effects', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('martell', [
                     'A Noble Cause', 'A Song of Summer',
-                    'Quentyn Martell'
+                    'Quentyn Martell (WotN)'
                 ]);
                 const deck2 = this.buildDeck('targaryen', [
                     'A Noble Cause', 'Blood of the Dragon',

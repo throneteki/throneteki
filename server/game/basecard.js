@@ -48,6 +48,7 @@ class BaseCard {
         this.blankCount = 0;
 
         this.tokens = {};
+        this.traits = {};
         this.plotModifierValues = {
             gold: 0,
             initiative: 0,
@@ -64,12 +65,14 @@ class BaseCard {
 
         this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
         this.parseKeywords(cardData.text || '');
-        this.parseTraits(cardData.traits || '');
+        for(let trait of cardData.traits || []) {
+            this.addTrait(trait);
+        }
         this.setupCardAbilities(AbilityDsl);
 
         this.factions = {};
         this.cardTypeSet = undefined;
-        this.addFaction(cardData.faction_code);
+        this.addFaction(cardData.faction);
     }
 
     parseKeywords(text) {
@@ -109,14 +112,6 @@ class BaseCard {
                 effect: AbilityDsl.effects.addMultipleKeywords(this.printedKeywords)
             });
         }
-    }
-
-    parseTraits(traits) {
-        this.traits = {};
-
-        var firstLine = traits.split('\n')[0];
-
-        _.each(firstLine.split('.'), trait => this.addTrait(trait.toLowerCase().trim()));
     }
 
     registerEvents(events) {
@@ -282,6 +277,10 @@ class BaseCard {
         action.execute(player, arg);
     }
 
+    getPrintedNumberFor(value) {
+        return (value === 'X' ? 0 : value) || 0;
+    }
+
     hasKeyword(keyword) {
         var keywordCount = this.keywords[keyword.toLowerCase()] || 0;
         return keywordCount > 0;
@@ -324,7 +323,7 @@ class BaseCard {
     }
 
     isLoyal() {
-        return this.cardData.is_loyal;
+        return this.cardData.loyal;
     }
 
     applyAnyLocationPersistentEffects() {
@@ -402,7 +401,7 @@ class BaseCard {
     }
 
     isUnique() {
-        return this.cardData.is_unique;
+        return this.cardData.unique;
     }
 
     isBlank() {
@@ -418,11 +417,11 @@ class BaseCard {
     }
 
     getPrintedType() {
-        return this.cardData.type_code;
+        return this.cardData.type;
     }
 
     getPrintedFaction() {
-        return this.cardData.faction_code;
+        return this.cardData.faction;
     }
 
     setBlank() {

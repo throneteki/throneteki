@@ -540,7 +540,7 @@ class Game extends EventEmitter {
                 return;
             }
 
-            target = player.activePlot.cardData;
+            target = player.activePlot.cardData.plotStats;
         }
 
         // Ensure that manually setting reserve isn't limited by any min reserve effects
