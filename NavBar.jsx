@@ -53,7 +53,7 @@ class NavBar extends React.Component {
 
             var childItems = menuItem.childItems.reduce((items, item) => {
                 if(item.permission && (!this.props.user || !this.props.user.permissions[item.permission])) {
-                    return;
+                    return items;
                 }
 
                 return items.concat(<li key={ item.title }><Link href={ item.path }>{ item.title }</Link></li>);
