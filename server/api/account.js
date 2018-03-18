@@ -320,7 +320,7 @@ module.exports.init = function(server) {
             return next();
         }
 
-        let token = JSON.parse(req.body.token);
+        let token = req.body.token;
 
         let user = await userService.getUserByUsername(token.username);
         if(!user) {

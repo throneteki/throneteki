@@ -53,7 +53,7 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                 let authResponse = await $.ajax('/api/account/token', {
                     type: 'POST',
                     data: {
-                        token: JSON.stringify(state.auth.refreshToken)
+                        token: state.auth.refreshToken
                     }
                 });
 
