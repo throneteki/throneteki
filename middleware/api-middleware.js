@@ -51,10 +51,9 @@ export default function callAPIMiddleware({ dispatch, getState }) {
             if(error.status === 401) {
                 let state = getState();
                 let authResponse = await $.ajax('/api/account/token', {
+                    contentType: 'application/json',
                     type: 'POST',
-                    data: {
-                        token: JSON.stringify(state.auth.refreshToken)
-                    }
+                    data: JSON.stringify({ token: state.auth.refreshToken })
                 });
 
                 if(!authResponse.success) {
