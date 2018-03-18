@@ -5,7 +5,7 @@ class NymeriasGuard extends DrawCard {
         this.action({
             title: 'Put Nymeria\'s Guard into play',
             location: 'hand',
-            phase: 'challenges',
+            phase: 'challenge',
             condition: () => this.controller.canPutIntoPlay(this),
             cost: [
                 ability.costs.payGold(4),

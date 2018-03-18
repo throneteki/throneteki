@@ -9,7 +9,7 @@ class MaesterKedry extends DrawCard {
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
                     targetController: 'current',
-                    effect: ability.effects.reduceNextPlayedCardCost(2, card => card.getType() === 'event')
+                    effect: ability.effects.reduceNextPlayedCardCost(2)
                 }));
 
                 this.game.addMessage('{0} kneels {1} to reduce the cost of the next event they play this phase by 2',
