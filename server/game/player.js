@@ -667,7 +667,7 @@ class Player extends Spectator {
         this.challenges.reset();
 
         this.drawPhaseCards = DrawPhaseCards;
-        
+
         this.limitedPlayed = 0;
     }
 
@@ -1313,7 +1313,7 @@ class Player extends Spectator {
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
-            user: _.omit(this.user, ['password', 'email'])
+            user: _.pick(this.user, ['username', 'emailHash'])
         };
 
         if(this.showDeck) {

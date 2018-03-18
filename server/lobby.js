@@ -13,7 +13,6 @@ const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
-const Settings = require('./settings.js');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -394,7 +393,7 @@ class Lobby {
             return;
         }
 
-        let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+        let defaultUser = this.userService.sanitiseUserObject(socket.user);
         let game = new PendingGame(defaultUser, gameDetails);
         game.newGame(socket.id, defaultUser, gameDetails.password, (err, message) => {
             if(err) {
@@ -422,7 +421,7 @@ class Lobby {
             return;
         }
 
-        let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+        let defaultUser = this.userService.sanitiseUserObject(socket.user);
         game.join(socket.id, defaultUser, password, (err, message) => {
             if(err) {
                 socket.send('passworderror', message);
@@ -501,7 +500,7 @@ class Lobby {
             return;
         }
 
-        let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+        let defaultUser = this.userService.sanitiseUserObject(socket.user);
         game.watch(socket.id, defaultUser, password, (err, message) => {
             if(err) {
                 socket.send('passworderror', message);
@@ -512,7 +511,7 @@ class Lobby {
             socket.joinChannel(game.id);
 
             if(game.started) {
-                let defaultUser = Settings.getUserWithDefaultsSet(socket.user);
+                let defaultUser = this.userService.sanitiseUserObject(socket.user);
                 this.router.addSpectator(game, defaultUser);
                 this.sendHandoff(socket, game.node);
             } else {
