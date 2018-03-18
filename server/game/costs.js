@@ -114,6 +114,11 @@ const Costs = {
      */
     standParent: () => CostBuilders.stand.parent(),
     /**
+     * Cost that requires standing a card that matches the passed condition
+     * predicate function.
+     */
+    stand: condition => CostBuilders.stand.select(condition),
+    /**
      * Cost that will remove the parent card the current card is attached to from the challenge.
      */
     removeParentFromChallenge: () => CostBuilders.removeFromChallenge.parent(),
