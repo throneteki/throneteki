@@ -442,6 +442,10 @@ class DrawCard extends BaseCard {
         return !this.isStealth() && this.allowGameAction('bypassByStealth');
     }
 
+    canBeKneeled() {
+        return this.allowGameAction('kneel');
+    }
+
     canBeKilled() {
         return this.allowGameAction('kill');
     }
