@@ -14,7 +14,10 @@ describe('lobby', function() {
         this.cardService.getTitleCards.and.returnValue(Promise.resolve([]));
         this.cardService.getAllCards.and.returnValue(Promise.resolve([]));
 
-        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: {}, cardService: this.cardService, deckService: {}, userService: {}, router: this.routerSpy, config: {} });
+        this.userService = jasmine.createSpyObj('userService', ['sanitiseUserObject']);
+        this.userService.sanitiseUserObject.and.callFake(user => user);
+
+        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: {}, cardService: this.cardService, deckService: {}, userService: this.userService, router: this.routerSpy, config: {} });
         this.lobby.sockets[this.socketSpy.id] = this.socketSpy;
     });
 
