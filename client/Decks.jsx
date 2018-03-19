@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'underscore';
 import { connect } from 'react-redux';
 
+import ConfirmedButton from './FormComponents/ConfirmedButton';
 import AlertPanel from './SiteComponents/AlertPanel';
 import Panel from './SiteComponents/Panel';
 import DeckSummary from './DeckSummary';
@@ -15,23 +16,15 @@ class InnerDecks extends React.Component {
     constructor() {
         super();
 
-        this.onDeleteClick = this.onDeleteClick.bind(this);
-        this.onConfirmDeleteClick = this.onConfirmDeleteClick.bind(this);
+        this.onDeleteDeck = this.onDeleteDeck.bind(this);
 
         this.state = {
-            decks: [],
-            showDelete: false
+            decks: []
         };
     }
 
     componentWillMount() {
         this.props.loadDecks();
-    }
-
-    onDeleteClick(event) {
-        event.preventDefault();
-
-        this.setState({ showDelete: !this.state.showDelete });
     }
 
     onEditClick(event) {
@@ -40,12 +33,8 @@ class InnerDecks extends React.Component {
         this.props.navigate(`/decks/edit/${this.props.selectedDeck._id}`);
     }
 
-    onConfirmDeleteClick(event) {
-        event.preventDefault();
-
+    onDeleteDeck() {
         this.props.deleteDeck(this.props.selectedDeck);
-
-        this.setState({ showDelete: false });
     }
 
     render() {
@@ -74,10 +63,7 @@ class InnerDecks extends React.Component {
                 <Panel title={ this.props.selectedDeck.name }>
                     <div className='btn-group col-xs-12'>
                         <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
-                        <button className='btn btn-primary' onClick={ this.onDeleteClick }>Delete</button>
-                        { this.state.showDelete ?
-                            <button className='btn btn-danger' onClick={ this.onConfirmDeleteClick }>Delete</button> :
-                            null }
+                        <ConfirmedButton onClick={ this.onDeleteDeck }>Delete</ConfirmedButton>
                     </div>
                     <DeckSummary deck={ this.props.selectedDeck } cards={ this.props.cards } />
                 </Panel>
