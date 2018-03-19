@@ -46,7 +46,7 @@ class CardAction extends BaseAbility {
         this.card = card;
         this.title = properties.title;
         this.max = properties.max;
-        this.phase = properties.phase || 'any';
+        this.phase = this.buildPhase(properties);
         this.anyPlayer = properties.anyPlayer || false;
         this.condition = properties.condition;
         this.clickToActivate = !!properties.clickToActivate;
@@ -63,6 +63,18 @@ class CardAction extends BaseAbility {
         if(this.max) {
             this.card.owner.registerAbilityMax(this.card.name, this.max);
         }
+    }
+
+    buildPhase(properties) {
+        if(!properties.phase) {
+            return 'any';
+        }
+
+        if(!['any', 'plot', 'draw', 'marshal', 'challenge', 'dominance', 'standing', 'taxation'].includes(properties.phase)) {
+            throw new Error(`'${properties.phase}' is not a valid 'phase' property`);
+        }
+
+        return properties.phase;
     }
 
     buildHandler(card, properties) {
