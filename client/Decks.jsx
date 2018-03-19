@@ -16,10 +16,6 @@ class InnerDecks extends React.Component {
 
         this.onEditDeck = this.onEditDeck.bind(this);
         this.onDeleteDeck = this.onDeleteDeck.bind(this);
-
-        this.state = {
-            decks: []
-        };
     }
 
     componentWillMount() {
