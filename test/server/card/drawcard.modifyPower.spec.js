@@ -37,5 +37,30 @@ describe('DrawCard', function () {
                 expect(this.gameSpy.raiseEvent).not.toHaveBeenCalled();
             });
         });
+
+        describe('when a card cannot gain power', function() {
+            beforeEach(function() {
+                this.gameSpy.applyGameAction.and.callFake((action, card, fn) => {
+                    if(action === 'gainPower') {
+                        return;
+                    }
+
+                    fn(card);
+                });
+            });
+
+            it('should not gain power', function() {
+                this.card.modifyPower(2);
+
+                expect(this.card.power).toBe(0);
+            });
+
+            it('should still lose power', function() {
+                this.card.power = 2;
+                this.card.modifyPower(-1);
+
+                expect(this.card.power).toBe(1);
+            });
+        });
     });
 });
