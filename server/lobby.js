@@ -394,7 +394,7 @@ class Lobby {
         }
 
         let defaultUser = this.userService.sanitiseUserObject(socket.user);
-        let game = new PendingGame(defaultUser, gameDetails);
+        let game = new PendingGame(socket.user, gameDetails);
         game.newGame(socket.id, defaultUser, gameDetails.password, (err, message) => {
             if(err) {
                 logger.info('game failed to create', err, message);
