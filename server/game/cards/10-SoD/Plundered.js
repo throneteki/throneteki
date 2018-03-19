@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Plundered extends DrawCard {
     setupCardAbilities() {
-        this.attachmentRestriction(card => card.getType() === 'location' && card.controller !== this.controller);
+        this.attachmentRestriction({ type: 'location', controller: 'opponent' });
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.loser === this.parent.controller &&
