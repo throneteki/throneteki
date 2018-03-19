@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import _ from 'underscore';
 import { connect } from 'react-redux';
 
-import ConfirmedButton from './FormComponents/ConfirmedButton';
 import AlertPanel from './SiteComponents/AlertPanel';
 import Panel from './SiteComponents/Panel';
-import DeckSummary from './DeckSummary';
 import Link from './Link';
 import DeckRow from './DeckRow';
+import ViewDeck from './ViewDeck';
 
 import * as actions from './actions';
 
@@ -16,6 +15,7 @@ class InnerDecks extends React.Component {
     constructor() {
         super();
 
+        this.onEditDeck = this.onEditDeck.bind(this);
         this.onDeleteDeck = this.onDeleteDeck.bind(this);
 
         this.state = {
@@ -27,7 +27,7 @@ class InnerDecks extends React.Component {
         this.props.loadDecks();
     }
 
-    onEditClick(event) {
+    onEditDeck(event) {
         event.preventDefault();
 
         this.props.navigate(`/decks/edit/${this.props.selectedDeck._id}`);
@@ -55,20 +55,6 @@ class InnerDecks extends React.Component {
                 { decks }
             </div>
         );
-
-        var deckInfo = null;
-
-        if(this.props.selectedDeck) {
-            deckInfo = (<div className='col-sm-7'>
-                <Panel title={ this.props.selectedDeck.name }>
-                    <div className='btn-group col-xs-12'>
-                        <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
-                        <ConfirmedButton onClick={ this.onDeleteDeck }>Delete</ConfirmedButton>
-                    </div>
-                    <DeckSummary deck={ this.props.selectedDeck } cards={ this.props.cards } />
-                </Panel>
-            </div>);
-        }
 
         let content = null;
 
@@ -99,7 +85,9 @@ class InnerDecks extends React.Component {
                             <div className='deck-list'>{ !this.props.decks || this.props.decks.length === 0 ? 'You have no decks, try adding one.' : deckList }</div>
                         </Panel>
                     </div>
-                    { deckInfo }
+                    { this.props.selectedDeck &&
+                        <ViewDeck deck={ this.props.selectedDeck } cards={ this.props.cards } onEditClick={ this.onEditDeck } onDeleteClick={ this.onDeleteClick } />
+                    }
                 </div>);
         }
 
