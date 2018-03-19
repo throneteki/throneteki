@@ -14,22 +14,20 @@ class InnerDecks extends React.Component {
     constructor() {
         super();
 
-        this.onEditDeck = this.onEditDeck.bind(this);
-        this.onDeleteDeck = this.onDeleteDeck.bind(this);
+        this.handleEditDeck = this.handleEditDeck.bind(this);
+        this.handleDeleteDeck = this.handleDeleteDeck.bind(this);
     }
 
     componentWillMount() {
         this.props.loadDecks();
     }
 
-    onEditDeck(event) {
-        event.preventDefault();
-
-        this.props.navigate(`/decks/edit/${this.props.selectedDeck._id}`);
+    handleEditDeck(deck) {
+        this.props.navigate(`/decks/edit/${deck._id}`);
     }
 
-    onDeleteDeck() {
-        this.props.deleteDeck(this.props.selectedDeck);
+    handleDeleteDeck(deck) {
+        this.props.deleteDeck(deck);
     }
 
     render() {
@@ -63,7 +61,7 @@ class InnerDecks extends React.Component {
                         </Panel>
                     </div>
                     { this.props.selectedDeck &&
-                        <ViewDeck deck={ this.props.selectedDeck } cards={ this.props.cards } onEditClick={ this.onEditDeck } onDeleteClick={ this.onDeleteClick } />
+                        <ViewDeck deck={ this.props.selectedDeck } cards={ this.props.cards } onEditDeck={ this.handleEditDeck } onDeleteDeck={ this.handleDeleteDeck } />
                     }
                 </div>);
         }
