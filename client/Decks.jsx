@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 
 import AlertPanel from './SiteComponents/AlertPanel';
 import Panel from './SiteComponents/Panel';
 import Link from './Link';
-import DeckRow from './DeckRow';
+import DeckList from './DeckList';
 import ViewDeck from './ViewDeck';
 
 import * as actions from './actions';
@@ -38,24 +37,6 @@ class InnerDecks extends React.Component {
     }
 
     render() {
-        var index = 0;
-
-        var decks = _.map(this.props.decks, deck => {
-            var row = (<DeckRow key={ deck.name + index.toString() } deck={ deck }
-                onClick={ () => this.props.selectDeck(deck) }
-                active={ this.props.selectedDeck && deck._id === this.props.selectedDeck._id } />);
-
-            index++;
-
-            return row;
-        });
-
-        var deckList = (
-            <div>
-                { decks }
-            </div>
-        );
-
         let content = null;
 
         let successPanel = null;
@@ -82,7 +63,7 @@ class InnerDecks extends React.Component {
                     <div className='col-sm-5 full-height'>
                         <Panel title='Your decks'>
                             <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
-                            <div className='deck-list'>{ !this.props.decks || this.props.decks.length === 0 ? 'You have no decks, try adding one.' : deckList }</div>
+                            <DeckList className='deck-list' activeDeck={ this.props.selectedDeck } decks={ this.props.decks } onSelectDeck={ this.props.selectDeck } />
                         </Panel>
                     </div>
                     { this.props.selectedDeck &&
