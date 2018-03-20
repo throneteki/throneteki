@@ -60,7 +60,7 @@ class InnerDecks extends React.Component {
                             <DeckList className='deck-list' activeDeck={ this.props.selectedDeck } decks={ this.props.decks } onSelectDeck={ this.props.selectDeck } />
                         </Panel>
                     </div>
-                    { this.props.selectedDeck &&
+                    { !!this.props.selectedDeck &&
                         <ViewDeck deck={ this.props.selectedDeck } cards={ this.props.cards } onEditDeck={ this.handleEditDeck } onDeleteDeck={ this.handleDeleteDeck } />
                     }
                 </div>);
