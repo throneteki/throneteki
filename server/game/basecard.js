@@ -446,10 +446,12 @@ class BaseCard {
 
     addAbilityRestriction(restriction) {
         this.abilityRestrictions.push(restriction);
+        this.markAsDirty();
     }
 
     removeAbilityRestriction(restriction) {
         this.abilityRestrictions = _.reject(this.abilityRestrictions, r => r === restriction);
+        this.markAsDirty();
     }
 
     addKeyword(keyword) {
