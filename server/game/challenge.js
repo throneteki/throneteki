@@ -81,6 +81,7 @@ class Challenge {
     markAsParticipating(cards) {
         _.each(cards, card => {
             card.inChallenge = true;
+            card.markAsDirty();
         });
     }
 
