@@ -10,7 +10,9 @@ class DeckRow extends React.Component {
     }
 
     handleDeckClick() {
-        this.props.onSelect(this.props.deck);
+        if(this.props.onSelect) {
+            this.props.onSelect(this.props.deck);
+        }
     }
 
     render() {
@@ -29,7 +31,7 @@ class DeckRow extends React.Component {
 DeckRow.displayName = 'DeckRow';
 DeckRow.propTypes = {
     active: PropTypes.bool,
-    deck: PropTypes.object,
+    deck: PropTypes.object.isRequired,
     onSelect: PropTypes.func
 };
 

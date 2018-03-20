@@ -41,9 +41,9 @@ class ViewDeck extends React.Component {
 
 ViewDeck.propTypes = {
     cards: PropTypes.object,
-    deck: PropTypes.object,
-    onDeleteDeck: PropTypes.func,
-    onEditDeck: PropTypes.func
+    deck: PropTypes.object.isRequired,
+    onDeleteDeck: PropTypes.func.isRequired,
+    onEditDeck: PropTypes.func.isRequired
 };
 
 export default ViewDeck;
