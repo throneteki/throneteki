@@ -1,24 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 import AlertPanel from '../SiteComponents/AlertPanel.jsx';
-import DeckRow from '../DeckRow.jsx';
+import DeckList from '../DeckList.jsx';
 import Modal from '../SiteComponents/Modal.jsx';
 
 class SelectDeckModal extends React.Component {
-    selectDeck(index) {
-        this.props.onDeckSelected(this.props.decks[index]);
-    }
-
-    renderDeckRow(deck, index) {
-        return (
-            <DeckRow
-                deck={ deck }
-                key={ deck.name + index.toString() }
-                onClick={ this.selectDeck.bind(this, index) } />);
-    }
-
     render() {
         let decks = null;
 
@@ -27,14 +14,12 @@ class SelectDeckModal extends React.Component {
         } else if(this.props.apiError) {
             decks = <AlertPanel type='error' message={ this.props.apiError } />;
         } else {
-            decks = _.size(this.props.decks) > 0 ? _.map(this.props.decks, (deck, index) => this.renderDeckRow(deck, index)) : <div>You have no decks, please add one</div>;
+            decks = <DeckList className='deck-list-popup' decks={ this.props.decks } onSelectDeck={ this.props.onDeckSelected } />;
         }
 
         return (
             <Modal id={ this.props.id } className='deck-popup' title='Select Deck'>
-                <div className='deck-list-popup'>
-                    { decks }
-                </div>
+                { decks }
             </Modal>);
     }
 }

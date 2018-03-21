@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 
 import AlertPanel from './SiteComponents/AlertPanel';
 import Panel from './SiteComponents/Panel';
-import DeckSummary from './DeckSummary';
 import Link from './Link';
-import DeckRow from './DeckRow';
+import DeckList from './DeckList';
+import ViewDeck from './ViewDeck';
 
 import * as actions from './actions';
 
@@ -15,75 +14,23 @@ class InnerDecks extends React.Component {
     constructor() {
         super();
 
-        this.onDeleteClick = this.onDeleteClick.bind(this);
-        this.onConfirmDeleteClick = this.onConfirmDeleteClick.bind(this);
-
-        this.state = {
-            decks: [],
-            showDelete: false
-        };
+        this.handleEditDeck = this.handleEditDeck.bind(this);
+        this.handleDeleteDeck = this.handleDeleteDeck.bind(this);
     }
 
     componentWillMount() {
         this.props.loadDecks();
     }
 
-    onDeleteClick(event) {
-        event.preventDefault();
-
-        this.setState({ showDelete: !this.state.showDelete });
+    handleEditDeck(deck) {
+        this.props.navigate(`/decks/edit/${deck._id}`);
     }
 
-    onEditClick(event) {
-        event.preventDefault();
-
-        this.props.navigate(`/decks/edit/${this.props.selectedDeck._id}`);
-    }
-
-    onConfirmDeleteClick(event) {
-        event.preventDefault();
-
-        this.props.deleteDeck(this.props.selectedDeck);
-
-        this.setState({ showDelete: false });
+    handleDeleteDeck(deck) {
+        this.props.deleteDeck(deck);
     }
 
     render() {
-        var index = 0;
-
-        var decks = _.map(this.props.decks, deck => {
-            var row = (<DeckRow key={ deck.name + index.toString() } deck={ deck }
-                onClick={ () => this.props.selectDeck(deck) }
-                active={ this.props.selectedDeck && deck._id === this.props.selectedDeck._id } />);
-
-            index++;
-
-            return row;
-        });
-
-        var deckList = (
-            <div>
-                { decks }
-            </div>
-        );
-
-        var deckInfo = null;
-
-        if(this.props.selectedDeck) {
-            deckInfo = (<div className='col-sm-7'>
-                <Panel title={ this.props.selectedDeck.name }>
-                    <div className='btn-group col-xs-12'>
-                        <button className='btn btn-primary' onClick={ this.onEditClick.bind(this) }>Edit</button>
-                        <button className='btn btn-primary' onClick={ this.onDeleteClick }>Delete</button>
-                        { this.state.showDelete ?
-                            <button className='btn btn-danger' onClick={ this.onConfirmDeleteClick }>Delete</button> :
-                            null }
-                    </div>
-                    <DeckSummary deck={ this.props.selectedDeck } cards={ this.props.cards } />
-                </Panel>
-            </div>);
-        }
-
         let content = null;
 
         let successPanel = null;
@@ -110,10 +57,12 @@ class InnerDecks extends React.Component {
                     <div className='col-sm-5 full-height'>
                         <Panel title='Your decks'>
                             <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
-                            <div className='deck-list'>{ !this.props.decks || this.props.decks.length === 0 ? 'You have no decks, try adding one.' : deckList }</div>
+                            <DeckList className='deck-list' activeDeck={ this.props.selectedDeck } decks={ this.props.decks } onSelectDeck={ this.props.selectDeck } />
                         </Panel>
                     </div>
-                    { deckInfo }
+                    { !!this.props.selectedDeck &&
+                        <ViewDeck deck={ this.props.selectedDeck } cards={ this.props.cards } onEditDeck={ this.handleEditDeck } onDeleteDeck={ this.handleDeleteDeck } />
+                    }
                 </div>);
         }
 
