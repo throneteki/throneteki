@@ -308,7 +308,8 @@ class DrawCard extends BaseCard {
     }
 
     modifyPower(power) {
-        this.game.applyGameAction('gainPower', this, card => {
+        let action = power < 0 ? 'discardPower' : 'gainPower';
+        this.game.applyGameAction(action, this, card => {
             let oldPower = card.power;
 
             card.power += power;
