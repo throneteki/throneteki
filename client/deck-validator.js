@@ -264,22 +264,11 @@ class DeckValidator {
             errors.push('You cannot include Draft cards in a normal deck');
         }
 
-        let status = 'Valid';
-
-        if(errors.length !== 0) {
-            status = 'Invalid';
-        } else if(unreleasedCards.length !== 0 || !restrictedResult.validForJoust) {
-            status = 'Casual play only';
-        }
-
         return {
-            status: status,
-            statusBreakdown: {
-                basicRules: errors.length === 0,
-                faqJoustRules: restrictedResult.validForJoust,
-                faqVersion: restrictedResult.version,
-                noUnreleasedCards: unreleasedCards.length === 0
-            },
+            basicRules: errors.length === 0,
+            faqJoustRules: restrictedResult.validForJoust,
+            faqVersion: restrictedResult.version,
+            noUnreleasedCards: unreleasedCards.length === 0,
             plotCount: plotCount,
             drawCount: drawCount,
             extendedStatus: errors.concat(unreleasedCards).concat(restrictedResult.errors)
@@ -329,7 +318,13 @@ class DeckValidator {
     }
 }
 
-module.exports = function validateDeck(deck, packs) {
+module.exports = function validateDeck(deck, packs, options = { includeExtendedStatus: true }) {
     let validator = new DeckValidator(packs);
-    return validator.validateDeck(deck);
+    let result = validator.validateDeck(deck);
+
+    if(!options.includeExtendedStatus) {
+        return _.omit(result, 'extendedStatus');
+    }
+
+    return result;
 };

@@ -14,7 +14,7 @@ function selectDeck(state, deck) {
 function processDecks(decks, state) {
     _.each(decks, deck => {
         if(!state.cards || !deck.faction) {
-            deck.validation = {};
+            deck.status = {};
             return;
         }
 
@@ -30,7 +30,7 @@ function processDecks(decks, state) {
         deck.plotCards = processCardCounts(deck.plotCards, state.cards);
         deck.drawCards = processCardCounts(deck.drawCards, state.cards);
 
-        deck.validation = validateDeck(deck, state.packs);
+        deck.status = validateDeck(deck, state.packs);
     });
 }
 
