@@ -190,4 +190,46 @@ describe('The Lord of the Crossing', function() {
             });
         });
     });
+
+    integration(function() {
+        describe('vs Jon Snow (Core)', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('thenightswatch', [
+                    'The Lord of the Crossing',
+                    'A Noble Cause',
+                    'Jon Snow (Core)', 'Steward at the Wall'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.jon = this.player1.findCardByName('Jon Snow', 'hand');
+                this.steward = this.player1.findCardByName('Steward at the Wall', 'hand');
+
+                this.player1.clickCard(this.jon);
+                this.player1.clickCard(this.steward);
+
+                this.completeSetup();
+            });
+
+            describe('when Jon Snow becomes an attacker through his ability', function() {
+                beforeEach(function() {
+                    this.player1.selectPlot('A Noble Cause');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    this.completeMarshalPhase();
+
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.steward);
+                    this.player1.clickPrompt('Done');
+                });
+
+                it('should reduce Jon Snow\'s strength', function() {
+                    expect(this.jon.getStrength()).toBe(3);
+                });
+            });
+        });
+    });
 });

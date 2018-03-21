@@ -847,6 +847,7 @@ class Game extends EventEmitter {
      * checks, such as state dependent effects, attachment validity, and others.
      */
     postEventCalculations() {
+        this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();
     }

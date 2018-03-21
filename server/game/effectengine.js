@@ -6,7 +6,7 @@ class EffectEngine {
     constructor(game) {
         this.game = game;
         this.events = new EventRegistrar(game, this);
-        this.events.register(['onCardMoved', 'onCardTraitChanged', 'onCardFactionChanged', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
+        this.events.register(['onCardMoved', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
         this.effects = [];
         this.customDurationEvents = [];
         this.effectsBeingRecalculated = [];
@@ -36,6 +36,21 @@ class EffectEngine {
         const validLocations = ['active plot', 'being played', 'dead pile', 'discard pile', 'draw deck', 'hand', 'play area', 'duplicate'];
         let validTargets = this.game.allCards.filter(card => validLocations.includes(card.location));
         return validTargets.concat(this.game.getPlayers()).concat([this.game]);
+    }
+
+    recalculateDirtyTargets() {
+        let dirtyCards = this.game.allCards.filter(card => card.isDirty);
+
+        if(dirtyCards.length === 0) {
+            return;
+        }
+
+        this.game.queueSimpleStep(() => {
+            for(let card of dirtyCards) {
+                this.recalculateTargetingChange(card);
+                card.clearDirty();
+            }
+        });
     }
 
     reapplyStateDependentEffects() {
@@ -87,14 +102,6 @@ class EffectEngine {
         // Reapply all relevant persistent effects given the card's new
         // controller.
         this.addTargetForPersistentEffects(card, 'play area');
-    }
-
-    onCardTraitChanged(event) {
-        this.recalculateTargetingChange(event.card);
-    }
-
-    onCardFactionChanged(event) {
-        this.recalculateTargetingChange(event.card);
     }
 
     recalculateTargetingChange(card) {

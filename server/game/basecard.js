@@ -445,10 +445,12 @@ class BaseCard {
 
     addAbilityRestriction(restriction) {
         this.abilityRestrictions.push(restriction);
+        this.markAsDirty();
     }
 
     removeAbilityRestriction(restriction) {
         this.abilityRestrictions = _.reject(this.abilityRestrictions, r => r === restriction);
+        this.markAsDirty();
     }
 
     addKeyword(keyword) {
@@ -470,7 +472,7 @@ class BaseCard {
             this.traits[lowerCaseTrait]++;
         }
 
-        this.game.raiseEvent('onCardTraitChanged', { card: this });
+        this.markAsDirty();
     }
 
     getTraits() {
@@ -486,7 +488,7 @@ class BaseCard {
         this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
         this.factions[lowerCaseFaction]++;
 
-        this.game.raiseEvent('onCardFactionChanged', { card: this });
+        this.markAsDirty();
     }
 
     removeKeyword(keyword) {
@@ -497,12 +499,12 @@ class BaseCard {
 
     removeTrait(trait) {
         this.traits[trait.toLowerCase()]--;
-        this.game.raiseEvent('onCardTraitChanged', { card: this });
+        this.markAsDirty();
     }
 
     removeFaction(faction) {
         this.factions[faction.toLowerCase()]--;
-        this.game.raiseEvent('onCardFactionChanged', { card: this });
+        this.markAsDirty();
     }
 
     clearBlank() {
@@ -540,6 +542,14 @@ class BaseCard {
         if(this.tokens[type] === 0) {
             delete this.tokens[type];
         }
+    }
+
+    markAsDirty() {
+        this.isDirty = true;
+    }
+
+    clearDirty() {
+        this.isDirty = false;
     }
 
     onClick(player) {
