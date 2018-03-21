@@ -1,6 +1,8 @@
 const _ = require('underscore');
 const moment = require('moment');
 
+const RestrictedList = require('./RestrictedList');
+
 function getDeckCount(deck) {
     let count = 0;
 
@@ -198,6 +200,7 @@ const agendaRules = {
 class DeckValidator {
     constructor(packs) {
         this.packs = packs;
+        this.restrictedList = new RestrictedList();
     }
 
     validateDeck(deck) {
@@ -254,24 +257,32 @@ class DeckValidator {
             }
         });
 
-        let isValid = errors.length === 0;
-        let containsDraftCards = this.isDraftCard(deck.agenda) || _.any(allCards, cardQuantity => this.isDraftCard(cardQuantity.card));
+        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card));
+        let includesDraftCards = this.isDraftCard(deck.agenda) || _.any(allCards, cardQuantity => this.isDraftCard(cardQuantity.card));
+
+        if(includesDraftCards) {
+            errors.push('You cannot include Draft cards in a normal deck');
+        }
+
         let status = 'Valid';
 
-        if(!isValid) {
+        if(errors.length !== 0) {
             status = 'Invalid';
-        } else if(containsDraftCards) {
-            status = 'Draft Cards';
-        } else if(unreleasedCards.length !== 0) {
-            status = 'Unreleased Cards';
+        } else if(unreleasedCards.length !== 0 || !restrictedResult.validForJoust) {
+            status = 'Casual play only';
         }
 
         return {
             status: status,
+            statusBreakdown: {
+                basicRules: errors.length === 0,
+                faqJoustRules: restrictedResult.validForJoust,
+                faqVersion: restrictedResult.version,
+                noUnreleasedCards: unreleasedCards.length === 0
+            },
             plotCount: plotCount,
             drawCount: drawCount,
-            extendedStatus: errors.concat(unreleasedCards),
-            isValid: isValid
+            extendedStatus: errors.concat(unreleasedCards).concat(restrictedResult.errors)
         };
     }
 
