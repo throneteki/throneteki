@@ -1,6 +1,8 @@
 const _ = require('underscore');
 const moment = require('moment');
 
+const RestrictedList = require('./RestrictedList');
+
 function getDeckCount(deck) {
     let count = 0;
 
@@ -196,8 +198,9 @@ const agendaRules = {
 };
 
 class DeckValidator {
-    constructor(packs) {
+    constructor(packs, restrictedListRules) {
         this.packs = packs;
+        this.restrictedList = new RestrictedList(restrictedListRules);
     }
 
     validateDeck(deck) {
@@ -254,24 +257,21 @@ class DeckValidator {
             }
         });
 
-        let isValid = errors.length === 0;
-        let containsDraftCards = this.isDraftCard(deck.agenda) || _.any(allCards, cardQuantity => this.isDraftCard(cardQuantity.card));
-        let status = 'Valid';
+        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card));
+        let includesDraftCards = this.isDraftCard(deck.agenda) || _.any(allCards, cardQuantity => this.isDraftCard(cardQuantity.card));
 
-        if(!isValid) {
-            status = 'Invalid';
-        } else if(containsDraftCards) {
-            status = 'Draft Cards';
-        } else if(unreleasedCards.length !== 0) {
-            status = 'Unreleased Cards';
+        if(includesDraftCards) {
+            errors.push('You cannot include Draft cards in a normal deck');
         }
 
         return {
-            status: status,
+            basicRules: errors.length === 0,
+            faqJoustRules: restrictedResult.validForJoust,
+            faqVersion: restrictedResult.version,
+            noUnreleasedCards: unreleasedCards.length === 0,
             plotCount: plotCount,
             drawCount: drawCount,
-            extendedStatus: errors.concat(unreleasedCards),
-            isValid: isValid
+            extendedStatus: errors.concat(unreleasedCards).concat(restrictedResult.errors)
         };
     }
 
@@ -318,7 +318,15 @@ class DeckValidator {
     }
 }
 
-module.exports = function validateDeck(deck, packs) {
-    let validator = new DeckValidator(packs);
-    return validator.validateDeck(deck);
+module.exports = function validateDeck(deck, options) {
+    options = Object.assign({ includeExtendedStatus: true }, options);
+
+    let validator = new DeckValidator(options.packs, options.restrictedList);
+    let result = validator.validateDeck(deck);
+
+    if(!options.includeExtendedStatus) {
+        return _.omit(result, 'extendedStatus');
+    }
+
+    return result;
 };

@@ -77,7 +77,7 @@ class InnerDeckEditor extends React.Component {
             bannerCards: deck.bannerCards,
             faction: deck.faction,
             agenda: deck.agenda,
-            validation: deck.validation
+            status: deck.status
         };
     }
 

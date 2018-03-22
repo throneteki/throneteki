@@ -14,7 +14,7 @@ function selectDeck(state, deck) {
 function processDecks(decks, state) {
     _.each(decks, deck => {
         if(!state.cards || !deck.faction) {
-            deck.validation = {};
+            deck.status = {};
             return;
         }
 
@@ -30,7 +30,7 @@ function processDecks(decks, state) {
         deck.plotCards = processCardCounts(deck.plotCards, state.cards);
         deck.drawCards = processCardCounts(deck.drawCards, state.cards);
 
-        deck.validation = validateDeck(deck, state.packs);
+        deck.status = validateDeck(deck, { packs: state.packs, restrictedList: state.restrictedList });
     });
 }
 
@@ -82,6 +82,10 @@ export default function(state = {}, action) {
 
             return Object.assign({}, state, {
                 factions: factions
+            });
+        case 'RECEIVE_RESTRICTED_LIST':
+            return Object.assign({}, state, {
+                restrictedList: action.response.restrictedList
             });
         case 'ZOOM_CARD':
             return Object.assign({}, state, {

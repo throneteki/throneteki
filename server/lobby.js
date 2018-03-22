@@ -573,9 +573,9 @@ class Lobby {
             return;
         }
 
-        Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId)])
+        Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId), this.cardService.getRestrictedList()])
             .then(results => {
-                let [cards, packs, deck] = results;
+                let [cards, packs, deck, restrictedList] = results;
 
                 _.each(deck.plotCards, plot => {
                     plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
@@ -589,8 +589,7 @@ class Lobby {
                     deck.agenda = cards[deck.agenda.code];
                 }
 
-                let validation = validateDeck(deck, packs);
-                deck.status = validation.status;
+                deck.status = validateDeck(deck, { packs: packs, restrictedList: restrictedList, includeExtendedStatus: false });
 
                 game.selectDeck(socket.user.username, deck);
 
