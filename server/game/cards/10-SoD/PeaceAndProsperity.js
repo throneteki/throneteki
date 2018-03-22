@@ -6,9 +6,9 @@ class PeaceAndProsperity extends PlotCard {
             targetType: 'player',
             targetController: 'current',
             effect: [
-                ability.effects.reduceNextMarshalledCardCost(3, card => card.getType() === 'character'),
-                ability.effects.reduceNextMarshalledCardCost(2, card => card.getType() === 'location'),
-                ability.effects.reduceNextMarshalledCardCost(1, card => card.getType() === 'attachment')
+                ability.effects.reduceFirstMarshalledCardCostEachRound(3, card => card.getType() === 'character'),
+                ability.effects.reduceFirstMarshalledCardCostEachRound(2, card => card.getType() === 'location'),
+                ability.effects.reduceFirstMarshalledCardCostEachRound(1, card => card.getType() === 'attachment')
             ]
         });
     }
