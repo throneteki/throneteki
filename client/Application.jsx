@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import $ from 'jquery';
 import { connect } from 'react-redux';
 
+import ErrorBoundary from './SiteComponents/ErrorBoundary';
 import NavBar from './NavBar';
 import Router from './Router';
 import * as actions from './actions';
@@ -71,7 +72,9 @@ class Application extends React.Component {
             <NavBar title='The Iron Throne' />
             <div className='wrapper'>
                 <div className='container content'>
-                    { component }
+                    <ErrorBoundary navigate={ this.props.navigate } errorPath={ this.props.path } message={ 'We\'re sorry - something\'s gone wrong.' }>
+                        { component }
+                    </ErrorBoundary>
                 </div>
             </div>
         </div>);
