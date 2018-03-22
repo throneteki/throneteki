@@ -5,7 +5,7 @@ class ANobleCause extends PlotCard {
         this.persistentEffect({
             targetType: 'player',
             targetController: 'current',
-            effect: ability.effects.reduceNextMarshalledCardCost(2, card => card.hasTrait('Lord') || card.hasTrait('Lady'))
+            effect: ability.effects.reduceFirstMarshalledCardCostEachRound(2, card => card.hasTrait('Lord') || card.hasTrait('Lady'))
         });
     }
 }
