@@ -4,7 +4,8 @@ class OldtownScholar extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardsDrawn: event => event.player !== this.controller && this.controller.canDraw()
+                onCardsDrawn: event => event.player !== this.controller && this.controller.canDraw() &&
+                                       this.game.currentPhase !== 'draw'
             },
             cost: ability.costs.kneelSelf(),
             handler: context => {
