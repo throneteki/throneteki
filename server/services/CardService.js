@@ -1,4 +1,6 @@
 const _ = require('underscore');
+const fs = require('fs');
+const path = require('path');
 
 const logger = require('../log.js');
 
@@ -51,6 +53,10 @@ class CardService {
         return this.packs.find({}).catch(err => {
             logger.info(err);
         });
+    }
+
+    getRestrictedList() {
+        return JSON.parse(fs.readFileSync(path.join(__dirname, '../../throneteki-json-data/restricted-list.json')));
     }
 }
 

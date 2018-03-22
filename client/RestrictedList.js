@@ -1,30 +1,10 @@
 const moment = require('moment');
 
-const rules = [
-    {
-        version: '1.1',
-        date: '2016-10-10',
-        joustCards: []
-    },
-    {
-        version: '1.2',
-        date: '2017-10-12',
-        joustCards: []
-    },
-    {
-        version: '1.3',
-        date: '2018-03-26',
-        joustCards: [
-            '01045', // The Hand's Judgment
-            '05010', // Taena Merryweather
-            '06040', // The Annals of Castle Black
-            '06100', // Wheels Within Wheels
-            '06103' //  Highgarden Minstrel
-        ]
-    }
-];
-
 class RestrictedList {
+    constructor(rules) {
+        this.rules = rules;
+    }
+
     validate(cards) {
         let currentRules = this.getCurrentRules();
         let joustCardsOnList = cards.filter(card => currentRules.joustCards.includes(card.code));
@@ -46,7 +26,7 @@ class RestrictedList {
 
     getCurrentRules() {
         let now = moment();
-        return rules.reduce((max, list) => {
+        return this.rules.reduce((max, list) => {
             let effectiveDate = moment(list.date, 'YYYY-MM-DD');
             if(effectiveDate <= now && effectiveDate > moment(max.date, 'YYYY-MM-DD')) {
                 return list;

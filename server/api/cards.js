@@ -39,4 +39,8 @@ module.exports.init = function(server) {
         ];
         res.send({ success: true, factions: factions });
     });
+
+    server.get('/api/restricted-list', function(req, res) {
+        res.send({ success: true, restrictedList: cardService.getRestrictedList() });
+    });
 };

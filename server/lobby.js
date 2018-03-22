@@ -589,7 +589,7 @@ class Lobby {
                     deck.agenda = cards[deck.agenda.code];
                 }
 
-                deck.status = validateDeck(deck, packs, { includeExtendedStatus: false });
+                deck.status = validateDeck(deck, { packs: packs, restrictedList: this.cardService.getRestrictedList(), includeExtendedStatus: false });
 
                 game.selectDeck(socket.user.username, deck);
 

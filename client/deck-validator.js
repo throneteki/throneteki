@@ -198,9 +198,9 @@ const agendaRules = {
 };
 
 class DeckValidator {
-    constructor(packs) {
+    constructor(packs, restrictedListRules) {
         this.packs = packs;
-        this.restrictedList = new RestrictedList();
+        this.restrictedList = new RestrictedList(restrictedListRules);
     }
 
     validateDeck(deck) {
@@ -318,8 +318,10 @@ class DeckValidator {
     }
 }
 
-module.exports = function validateDeck(deck, packs, options = { includeExtendedStatus: true }) {
-    let validator = new DeckValidator(packs);
+module.exports = function validateDeck(deck, options) {
+    options = Object.assign({ includeExtendedStatus: true }, options);
+
+    let validator = new DeckValidator(options.packs, options.restrictedList);
     let result = validator.validateDeck(deck);
 
     if(!options.includeExtendedStatus) {

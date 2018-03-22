@@ -27,3 +27,13 @@ export function loadFactions() {
         APIParams: { url: '/api/factions', cache: false }
     };
 }
+
+export function loadRestrictedList() {
+    return {
+        types: ['REQUEST_RESTRICTED_LIST', 'RECEIVE_RESTRICTED_LIST'],
+        shouldCallAPI: (state) => {
+            return !state.cards.restrictedList;
+        },
+        APIParams: { url: '/api/restricted-list', cache: false }
+    };
+}

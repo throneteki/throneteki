@@ -30,7 +30,7 @@ function processDecks(decks, state) {
         deck.plotCards = processCardCounts(deck.plotCards, state.cards);
         deck.drawCards = processCardCounts(deck.drawCards, state.cards);
 
-        deck.status = validateDeck(deck, state.packs);
+        deck.status = validateDeck(deck, { packs: state.packs, restrictedList: state.restrictedList });
     });
 }
 
@@ -82,6 +82,10 @@ export default function(state = {}, action) {
 
             return Object.assign({}, state, {
                 factions: factions
+            });
+        case 'RECEIVE_RESTRICTED_LIST':
+            return Object.assign({}, state, {
+                restrictedList: action.response.restrictedList
             });
         case 'ZOOM_CARD':
             return Object.assign({}, state, {
