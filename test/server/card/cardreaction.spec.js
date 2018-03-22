@@ -26,31 +26,31 @@ describe('CardReaction', function () {
         describe('location', function() {
             it('should default to play area', function() {
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
-                expect(this.action.location).toBe('play area');
+                expect(this.action.location).toContain('play area');
             });
 
             it('should default to agenda for cards with type agenda', function() {
                 this.cardSpy.getType.and.returnValue('agenda');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
-                expect(this.action.location).toBe('agenda');
+                expect(this.action.location).toContain('agenda');
             });
 
             it('should default to active plot for cards with type plot', function() {
                 this.cardSpy.getType.and.returnValue('plot');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
-                expect(this.action.location).toBe('active plot');
+                expect(this.action.location).toContain('active plot');
             });
 
             it('should default to hand for cards with type event', function() {
                 this.cardSpy.getType.and.returnValue('event');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
-                expect(this.action.location).toBe('hand');
+                expect(this.action.location).toContain('hand');
             });
 
             it('should use the location sent via properties', function() {
                 this.properties.location = 'foo';
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
-                expect(this.action.location).toBe('foo');
+                expect(this.action.location).toContain('foo');
             });
         });
 
