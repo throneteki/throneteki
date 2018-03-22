@@ -10,7 +10,6 @@ class DeckStatus extends React.Component {
         let statusName;
         let className = 'deck-status';
 
-
         if(this.props.className) {
             className += ' ' + this.props.className;
         }
