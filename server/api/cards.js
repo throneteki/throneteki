@@ -40,7 +40,13 @@ module.exports.init = function(server) {
         res.send({ success: true, factions: factions });
     });
 
-    server.get('/api/restricted-list', function(req, res) {
-        res.send({ success: true, restrictedList: cardService.getRestrictedList() });
+    server.get('/api/restricted-list', function(req, res, next) {
+        cardService.getRestrictedList()
+            .then(restrictedList => {
+                res.send({ success: true, restrictedList: restrictedList });
+            })
+            .catch(err => {
+                next(err);
+            });
     });
 };

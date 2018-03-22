@@ -56,7 +56,15 @@ class CardService {
     }
 
     getRestrictedList() {
-        return JSON.parse(fs.readFileSync(path.join(__dirname, '../../throneteki-json-data/restricted-list.json')));
+        return new Promise((resolve, reject) => {
+            fs.readFile(path.join(__dirname, '../../throneteki-json-data/restricted-list.json'), (err, data) => {
+                if(err) {
+                    return reject(err);
+                }
+
+                resolve(JSON.parse(data));
+            });
+        });
     }
 }
 
