@@ -326,6 +326,7 @@ export class GameBoard extends React.Component {
                                 onMouseOver={ this.onMouseOver }
                                 onMouseOut={ this.onMouseOut }
                                 outOfGamePile={ otherPlayer.cardPiles.outOfGamePile }
+                                username={ this.props.user.username }
                                 showHand={ this.props.currentGame.showHand }
                                 spectating={ this.state.spectating }
                                 title={ otherPlayer.title }

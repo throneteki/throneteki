@@ -26,6 +26,7 @@ class PlayerPromptState {
     }
 
     clearSelectableCards() {
+        _.each(this.selectableCards, card => card.hideFacedownTarget());
         this.selectableCards = [];
     }
 

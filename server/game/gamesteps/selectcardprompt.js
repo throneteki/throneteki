@@ -87,6 +87,7 @@ class SelectCardPrompt extends UiPrompt {
         let selectableCards = this.game.allCards.filter(card => {
             return this.checkCardCondition(card);
         });
+        _.each(selectableCards, card => this.selector.showFacedownTargetTo(card, this.choosingPlayer));
         this.choosingPlayer.setSelectableCards(selectableCards);
     }
 

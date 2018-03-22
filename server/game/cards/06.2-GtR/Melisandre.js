@@ -6,31 +6,21 @@ class Melisandre extends DrawCard {
             when: {
                 onDominanceDetermined: event => this.controller === event.winner
             },
-            chooseOpponent: opponent => opponent.hand.size() >= 1,
+            chooseOpponent: opponent => !opponent.hand.isEmpty(),
             handler: context => {
-                let otherPlayer = context.opponent;
-                let buttons = otherPlayer.hand.map(card => {
-                    return { method: 'cardSelected', card: card };
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a card',
-                        buttons: buttons
-                    },
-                    source: this
+                this.game.addMessage('{0} uses {1} to look at {2}\'s hand', context.player, this, context.opponent);
+                this.game.promptForSelect(context.player, {
+                    activePromptTitle: 'Select a card',
+                    source: this,
+                    revealTargets: true,
+                    cardCondition: card => card.location === 'hand' && card.controller === context.opponent,
+                    onSelect: (player, card) => this.onCardSelected(player, card)
                 });
             }
         });
     }
 
-    cardSelected(player, cardId) {
-        let card = this.game.findAnyCardInAnyList(cardId);
-
-        if(!card) {
-            return false;
-        }
-
+    onCardSelected(player, card) {
         let otherPlayer = card.controller;
 
         otherPlayer.discardCards([card], true, () => {
@@ -41,7 +31,7 @@ class Melisandre extends DrawCard {
                 otherPlayer.moveCard(card, 'dead pile');
             }
 
-            this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}',
+            this.game.addMessage('{0} then uses {1} to discard {2} from {3}\'s hand{4}',
                 player, this, card, otherPlayer, charMessage);
         });
 

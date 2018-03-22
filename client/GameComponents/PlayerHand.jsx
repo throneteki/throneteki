@@ -38,8 +38,12 @@ class PlayerHand extends React.Component {
         }
     }
 
-    disableMouseOver() {
+    disableMouseOver(revealWhenHiddenTo) {
         if(this.props.spectating && this.props.showHand) {
+            return false;
+        }
+
+        if(revealWhenHiddenTo === this.props.username) {
             return false;
         }
 
@@ -47,15 +51,20 @@ class PlayerHand extends React.Component {
     }
 
     getCards(needsSquish) {
+        let cards = this.props.cards;
         let cardIndex = 0;
-        let handLength = this.props.cards ? this.props.cards.length : 0;
+        let handLength = cards ? cards.length : 0;
         let cardWidth = this.getCardWidth();
 
         let requiredWidth = handLength * cardWidth;
         let overflow = requiredWidth - (cardWidth * 5);
         let offset = overflow / (handLength - 1);
 
-        let hand = _.map(this.props.cards, card => {
+        if(!this.props.isMe) {
+            cards = _.sortBy(this.props.cards, card => card.revealWhenHiddenTo);
+        }
+
+        let hand = _.map(cards, card => {
             let left = (cardWidth - offset) * cardIndex++;
 
             let style = {};
@@ -65,7 +74,7 @@ class PlayerHand extends React.Component {
                 };
             }
 
-            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ this.disableMouseOver() } source='hand'
+            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ this.disableMouseOver(card.revealWhenHiddenTo) } source='hand'
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
                 onClick={ this.props.onCardClick }
@@ -131,7 +140,8 @@ PlayerHand.propTypes = {
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
     showHand: PropTypes.bool,
-    spectating: PropTypes.bool
+    spectating: PropTypes.bool,
+    username: PropTypes.string
 };
 
 export default PlayerHand;
