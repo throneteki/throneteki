@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'underscore';
 
-import StatusPopOver from './StatusPopOver.jsx';
+import DeckStatus from './DeckStatus';
 
 class DeckSummary extends React.Component {
     constructor() {
@@ -103,13 +103,10 @@ class DeckSummary extends React.Component {
                         <div className='info-row row' ref='agenda'><span>Agenda:</span> { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='pull-right card-link' onMouseOver={ this.onCardMouseOver }
                             onMouseOut={ this.onCardMouseOut }>{ this.props.deck.agenda.label }</span> : <span>None</span> }</div>
                         { (this.props.deck.agenda && this.props.deck.agenda.label === 'Alliance') ? banners : null }
-                        <div className='info-row row' ref='drawCount'><span>Draw deck:</span><span className='pull-right'>{ this.props.deck.validation.drawCount } cards</span></div>
-                        <div className='info-row row' ref='plotCount'><span>Plot deck:</span><span className='pull-right'>{ this.props.deck.validation.plotCount } cards</span></div>
+                        <div className='info-row row' ref='drawCount'><span>Draw deck:</span><span className='pull-right'>{ this.props.deck.status.drawCount } cards</span></div>
+                        <div className='info-row row' ref='plotCount'><span>Plot deck:</span><span className='pull-right'>{ this.props.deck.status.plotCount } cards</span></div>
                         <div className='info-row row'><span>Validity:</span>
-                            <span className={ this.props.deck.validation.status === 'Valid' ? 'pull-right deck-status valid' : 'pull-right deck-status invalid' }>
-                                <StatusPopOver status={ this.props.deck.validation.status } list={ this.props.deck.validation.extendedStatus }
-                                    show={ this.props.deck.validation.status !== 'Valid' } />
-                            </span>
+                            <DeckStatus className='pull-right' status={ this.props.deck.status } />
                         </div>
                     </div>
                     <div className='col-xs-2 col-sm-3 no-x-padding'>{ this.props.deck.agenda && this.props.deck.agenda.code ? <img className='img-responsive' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /> : null }</div>

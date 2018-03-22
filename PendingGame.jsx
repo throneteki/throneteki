@@ -8,6 +8,7 @@ import Panel from './SiteComponents/Panel';
 import Messages from './GameComponents/Messages.jsx';
 import Avatar from './Avatar.jsx';
 import SelectDeckModal from './PendingGameComponents/SelectDeckModal.jsx';
+import DeckStatus from './DeckStatus';
 
 import * as actions from './actions';
 
@@ -98,16 +99,7 @@ class PendingGame extends React.Component {
                 deck = <span className='deck-selection'>Deck Selected</span>;
             }
 
-            let statusClass = 'deck-status';
-            if(player.deck.status === 'Valid') {
-                statusClass += ' valid';
-            } else if(player.deck.status === 'Invalid') {
-                statusClass += ' invalid';
-            } else if(player.deck.status === 'Unreleased Cards') {
-                statusClass += ' unreleased';
-            }
-
-            status = <span className={ statusClass }>{ player.deck.status }</span>;
+            status = <DeckStatus status={ player.deck.status } />;
         } else if(player && playerIsMe) {
             selectLink = <span className='card-link' onClick={ this.onSelectDeckClick }>Select deck...</span>;
         }
