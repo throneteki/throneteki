@@ -16,7 +16,7 @@ class ErrorBoundary extends React.Component {
 
     componentWillReceiveProps(props) {
         if(props.errorPath !== this.state.errorPath) {
-            this.setState({ error: null });
+            this.setState({ error: null, errorPath: props.errorPath });
         }
     }
 
