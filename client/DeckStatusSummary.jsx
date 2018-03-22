@@ -15,8 +15,7 @@ class DeckStatusSummary extends React.Component {
                 { items.map((item, index) => (
                     <li className={ item.value ? 'valid' : 'invalid' } key={ index }>
                         <span className={ item.value ? 'glyphicon glyphicon-ok' : 'glyphicon glyphicon-remove' } />
-                        { ' ' }
-                        { item.title }
+                        { ` ${item.title}` }
                     </li>
                 )) }
             </ul>);
