@@ -25,22 +25,26 @@ describe('TriggeredAbilityWindow', function() {
         this.setupWindowChoices = () => {
             function createCard(properties) {
                 let cardSpy = jasmine.createSpyObj('card', ['getSummary']);
+                cardSpy.location = 'play area';
                 _.extend(cardSpy, properties);
                 return cardSpy;
             }
 
             this.abilityCard1 = createCard({ card: 1, name: 'The Card', controller: this.player1Spy });
             this.ability1Spy = jasmine.createSpyObj('ability', ['hasMax', 'meetsRequirements']);
+            this.ability1Spy.location = ['play area'];
             this.ability1Spy.meetsRequirements.and.returnValue(true);
             this.context1 = { context: 1 };
 
             this.abilityCard2 = createCard({ card: 2, name: 'The Card 2', controller: this.player1Spy });
             this.ability2Spy = jasmine.createSpyObj('ability', ['hasMax', 'meetsRequirements']);
+            this.ability2Spy.location = ['play area'];
             this.ability2Spy.meetsRequirements.and.returnValue(true);
             this.context2 = { context: 2 };
 
             this.abilityCard3 = createCard({ card: 3, name: 'Their Card', controller: this.player2Spy });
             this.ability3Spy = jasmine.createSpyObj('ability', ['hasMax', 'meetsRequirements']);
+            this.ability3Spy.location = ['play area'];
             this.ability3Spy.meetsRequirements.and.returnValue(true);
             this.context3 = { context: 3 };
 
@@ -62,6 +66,7 @@ describe('TriggeredAbilityWindow', function() {
             this.abilitySpy.createContext.and.returnValue(this.context);
             this.abilitySpy.getChoices.and.returnValue([{ text: 'Choice 1', choice: 'choice1' }, { text: 'Choice 2', choice: 'choice2' }]);
             this.abilitySpy.card = this.abilityCard;
+            this.abilitySpy.location = ['play area'];
         });
 
         describe('when a normal ability is registered', function() {

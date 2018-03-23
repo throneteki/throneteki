@@ -19,7 +19,7 @@ class Deck {
         this.eachRepeatedCard(this.data.drawCards, cardData => {
             if(['attachment', 'character', 'event', 'location'].includes(cardData.type)) {
                 var drawCard = this.createCard(DrawCard, player, cardData);
-                drawCard.location = 'draw deck';
+                drawCard.moveTo('draw deck');
                 result.drawCards.push(drawCard);
             }
         });
@@ -27,7 +27,7 @@ class Deck {
         this.eachRepeatedCard(this.data.plotCards, cardData => {
             if(cardData.type === 'plot') {
                 var plotCard = this.createCard(PlotCard, player, cardData);
-                plotCard.location = 'plot deck';
+                plotCard.moveTo('plot deck');
                 result.plotCards.push(plotCard);
             }
         });

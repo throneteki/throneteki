@@ -8,19 +8,13 @@ class TriggeredAbility extends BaseAbility {
     constructor(game, card, eventType, properties) {
         super(properties);
 
-        const DefaultLocationForType = {
-            event: 'hand',
-            agenda: 'agenda',
-            plot: 'active plot'
-        };
-
         this.game = game;
         this.card = card;
         this.max = properties.max;
         this.when = properties.when;
         this.playerFunc = properties.player || (() => this.card.controller);
         this.eventType = eventType;
-        this.location = properties.location || DefaultLocationForType[card.getType()] || 'play area';
+        this.location = this.buildLocation(card, properties.location);
 
         if(card.getType() === 'event' && !properties.ignoreEventCosts) {
             this.cost.push(Costs.playEvent());
@@ -29,6 +23,22 @@ class TriggeredAbility extends BaseAbility {
         if(this.max) {
             this.card.owner.registerAbilityMax(this.card.name, this.max);
         }
+    }
+
+    buildLocation(card, location) {
+        const DefaultLocationForType = {
+            event: 'hand',
+            agenda: 'agenda',
+            plot: 'active plot'
+        };
+
+        let defaultedLocation = location || DefaultLocationForType[card.getType()] || 'play area';
+
+        if(!Array.isArray(defaultedLocation)) {
+            return [defaultedLocation];
+        }
+
+        return defaultedLocation;
     }
 
     eventHandler(event) {
@@ -84,7 +94,7 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if(!isPlayableEventAbility && this.card.location !== this.location) {
+        if(!isPlayableEventAbility && !this.location.includes(this.card.location)) {
             return false;
         }
 
@@ -104,11 +114,11 @@ class TriggeredAbility extends BaseAbility {
             return ['discard pile', 'hand'].includes(location);
         }
 
-        return this.location === location;
+        return this.location.includes(location);
     }
 
     isPlayableEventAbility() {
-        return this.card.getPrintedType() === 'event' && this.location === 'hand';
+        return this.card.getPrintedType() === 'event' && this.location.includes('hand');
     }
 
     hasMax() {
