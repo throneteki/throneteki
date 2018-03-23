@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Application from './Application.jsx';
+import Application from './Application';
 import { Provider } from 'react-redux';
 import configureStore from './configureStore';
 import { navigate } from './actions';
@@ -9,7 +9,7 @@ import ReduxToastr from 'react-redux-toastr';
 import Raven from 'raven-js';
 
 import version from '../version.js';
-import ErrorBoundary from './SiteComponents/ErrorBoundary';
+import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const ravenOptions = {
     ignoreErrors: [

@@ -25,7 +25,6 @@ describe('Shield of Lannisport', function() {
             this.player1.clickCard(this.tyrion);
         });
 
-
         it('should grant +2 STR and renown', function() {
             expect(this.tyrion.getStrength()).toBe(6);
             expect(this.tyrion.hasKeyword('Renown')).toBe(true);

@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import Link from '../Link.jsx';
-import AlertPanel from '../SiteComponents/AlertPanel';
-import Panel from '../SiteComponents/Panel';
-import Form from '../FormComponents/Form';
-
+import Link from '../Components/Site/Link';
+import AlertPanel from '../Components/Site/AlertPanel';
+import Panel from '../Components/Site/Panel';
+import Form from '../Components/Form/Form';
 import * as actions from '../actions';
 
 class Login extends React.Component {

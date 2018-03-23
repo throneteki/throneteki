@@ -23,7 +23,6 @@ describe('Retaliation', function() {
             });
         });
 
-
         describe('when the player loses initiative', function() {
             beforeEach(function() {
                 this.player1.selectPlot('Retaliation');

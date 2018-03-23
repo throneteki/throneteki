@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import News from '../SiteComponents/News';
-import AlertPanel from '../SiteComponents/AlertPanel';
-import Panel from '../SiteComponents/Panel';
-import Typeahead from '../FormComponents/Typeahead';
-import SideBar from '../SideBar';
-import UserList from '../UserList';
-import LobbyChat from '../LobbyChat';
+import News from '../Components/News/News';
+import AlertPanel from '../Components/Site/AlertPanel';
+import Panel from '../Components/Site/Panel';
+import Typeahead from '../Components/Form/Typeahead';
+import SideBar from '../Components/Lobby/SideBar';
+import UserList from '../Components/Lobby/UserList';
+import LobbyChat from '../Components/Lobby/LobbyChat';
 
 import * as actions from '../actions';
 

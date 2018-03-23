@@ -15,7 +15,6 @@ describe('Marriage Pact', function() {
             this.pact = this.player1.findCardByName('Marriage Pact', 'hand');
             this.opponentCharacter = this.player2.findCardByName('Hedge Knight', 'hand');
 
-
             this.player1.clickCard(this.character);
             this.player2.clickCard(this.opponentCharacter);
             this.completeSetup();

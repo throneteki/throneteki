@@ -80,7 +80,9 @@
       2
     ],
     "no-multiple-empty-lines": [
-      2
+      2, {
+        "max": 1
+      }
     ],
     "eol-last": [
       2

@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import AlertPanel from '../SiteComponents/AlertPanel';
-import Panel from '../SiteComponents/Panel';
-import Form from '../FormComponents/Form';
+import AlertPanel from '../Components/Site/AlertPanel';
+import Panel from '../Components/Site/Panel';
+import Form from '../Components/Form/Form';
 
 import * as actions from '../actions';
 

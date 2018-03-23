@@ -123,7 +123,6 @@ describe('Varys\'s Riddle', function() {
             });
         });
 
-
         describe('when played against something that reacts to plots being revealed', function() {
             beforeEach(function() {
                 const deck2 = this.buildDeck('stark', [

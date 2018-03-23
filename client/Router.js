@@ -3,8 +3,8 @@ import toRegex from 'path-to-regexp';
 import queryString from 'query-string';
 
 import routes from './routes';
-import NotFound from './NotFound';
-import Unauthorised from './Unauthorised';
+import NotFound from './pages/NotFound';
+import Unauthorised from './pages/Unauthorised';
 
 class Router {
     constructor() {

@@ -19,7 +19,6 @@ describe('High Septon', function() {
             this.sevenCharacter = this.player1.findCardByName('House Tully Septon', 'hand');
             this.nonSevenCharacter = this.player1.findCardByName('Winterfell Steward', 'hand');
 
-
             this.player1.clickCard(this.septon);
             this.player1.clickCard(this.sevenCharacter);
             this.player2.clickCard('Mirri Maz Duur');
