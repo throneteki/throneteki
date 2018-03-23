@@ -153,7 +153,7 @@ class BaseCardSelector {
      * @param {Player} player 
      */
     showFacedownTargetTo(card, player) {
-        if(this.revealTargets) {
+        if(this.revealTargets && card.getType() !== 'plot') {
             card.showFacedownTargetTo(player);
         }
     }

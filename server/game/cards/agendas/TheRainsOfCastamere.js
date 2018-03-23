@@ -13,35 +13,51 @@ class TheRainsOfCastamere extends AgendaCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => (
-                    !this.owner.faction.kneeled &&
-                    event.challenge.challengeType === 'intrigue' &&
-                    event.challenge.winner === this.owner &&
-                    event.challenge.strengthDifference >= 5
-                )
+                afterChallenge: event => event.challenge.challengeType === 'intrigue' &&
+                                         event.challenge.winner === this.owner &&
+                                         event.challenge.strengthDifference >= 5
             },
-            handler: this.trigger.bind(this)
+            cost: ability.costs.kneelFactionCard(),
+            target: {
+                type: 'select',
+                activePromptTitle: 'Select a plot',
+                cardCondition: card => card.controller === this.controller && card.location === 'scheme plots',
+                cardType: 'plot'
+            },
+            handler: context => this.trigger(context)
         });
 
         this.action({
             title: 'Manually trigger',
             cost: ability.costs.kneelFactionCard(),
-            handler: this.trigger.bind(this)
+            target: {
+                type: 'select',
+                activePromptTitle: 'Select a plot',
+                cardCondition: card => card.controller === this.controller && card.location === 'scheme plots',
+                cardType: 'plot'
+            },
+            handler: context => this.trigger(context)
         });
     }
 
-    trigger() {
-        this.game.promptWithMenu(this.owner, this, {
-            activePrompt: {
-                menuTitle: 'Trigger Scheme plot?',
-                buttons: this.menuButtons()
-            },
-            source: this
-        });        
+    trigger(context) {
+        this.game.addMessage('{0} uses {1} and kneels their faction card to reveal {2}',
+            context.player, this, context.target);
+
+        context.player.selectedPlot = context.target;
+        context.player.removeActivePlot();
+        context.player.flipPlotFaceup();
+        this.game.queueStep(new RevealPlots(this.game, [context.target]));
     }
 
     onDecksPrepared() {
         this.separateSchemePlots();
+    }
+
+    onPlotDiscarded(event) {
+        if(event.card.controller === this.controller && event.card.hasTrait('Scheme')) {
+            this.owner.moveCard(event.card, 'out of game');
+        }
     }
 
     onPlotsRecycled(event) {
@@ -57,46 +73,6 @@ class TheRainsOfCastamere extends AgendaCard {
         for(let scheme of schemes) {
             this.owner.moveCard(scheme, 'scheme plots');
         }
-    }
-
-    onPlotDiscarded(event) {
-        if(event.card.controller === this.controller && event.card.hasTrait('Scheme')) {
-            this.owner.moveCard(event.card, 'out of game');
-        }
-    }
-
-    menuButtons() {
-        let buttons = this.owner.schemePlots.map(scheme => {
-            return { method: 'revealScheme', card: scheme };
-        });
-
-        buttons.push({ text: 'Done', method: 'cancelScheme' });
-        return buttons;
-    }
-
-    revealScheme(player, schemeId) {
-        let scheme = this.owner.schemePlots.find(card => card.uuid === schemeId);
-
-        if(!scheme) {
-            return false;
-        }
-
-        this.game.addMessage('{0} uses {1} to reveal {2}', player, this, scheme);
-
-        this.schemes = _.reject(this.schemes, card => card === scheme);
-
-        player.selectedPlot = scheme;
-        player.removeActivePlot();
-        player.flipPlotFaceup();
-        this.game.queueStep(new RevealPlots(this.game, [scheme]));
-
-        player.kneelCard(player.faction);
-
-        return true;
-    }
-
-    cancelScheme() {
-        return true;
     }
 }
 

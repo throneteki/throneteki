@@ -13,6 +13,7 @@ class PlayerPlots extends React.Component {
             <CardPile
                 cards={ this.props.schemePlots }
                 className='plot'
+                closeOnClick={ this.props.isMe }
                 hiddenTopCard
                 disablePopup={ !this.props.isMe }
                 onCardClick={ this.props.onCardClick }

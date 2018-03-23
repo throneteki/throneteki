@@ -130,16 +130,6 @@ describe('The Rains of Castamere', function() {
             });
         });
 
-        describe('when the player faction card is already knelt', function() {
-            beforeEach(function() {
-                this.player.faction.kneeled = true;
-            });
-
-            it('should not trigger', function() {
-                expect(this.reaction.when.afterChallenge(this.event)).toBe(false);
-            });
-        });
-
         describe('when all triggering criteria are met', function() {
             it('should trigger', function() {
                 expect(this.reaction.when.afterChallenge(this.event)).toBe(true);
@@ -153,31 +143,10 @@ describe('The Rains of Castamere', function() {
         });
     });
 
-    describe('revealScheme()', function() {
+    describe('trigger()', function() {
         beforeEach(function() {
             this.player.schemePlots = _([this.scheme1, this.scheme2]);
-        });
-
-        describe('when the argument is not one of the schemes', function() {
-            beforeEach(function() {
-                this.result = this.agenda.revealScheme(this.player, 'notfound');
-            });
-
-            it('should not flip a plot', function() {
-                expect(this.player.flipPlotFaceup).not.toHaveBeenCalled();
-            });
-
-            it('should not reveal a plot', function() {
-                expect(this.gameSpy.queueStep).not.toHaveBeenCalledWith(jasmine.any(RevealPlots));
-            });
-
-            it('should return false', function() {
-                expect(this.result).toBe(false);
-            });
-
-            it('should not kneel the player faction card', function() {
-                expect(this.player.faction.kneeled).toBeFalsy();
-            });
+            this.context = { player: this.player, target: this.scheme1 };
         });
 
         describe('when the argument is a scheme', function() {
@@ -185,7 +154,7 @@ describe('The Rains of Castamere', function() {
                 beforeEach(function() {
                     this.player.activePlot = undefined;
 
-                    this.result = this.agenda.revealScheme(this.player, this.scheme1.uuid);
+                    this.result = this.agenda.trigger(this.context);
                 });
 
                 it('should remove the revealed scheme from the choices list', function() {
@@ -198,14 +167,6 @@ describe('The Rains of Castamere', function() {
 
                 it('should reveal the plot', function() {
                     expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(RevealPlots));
-                });
-
-                it('should return true', function() {
-                    expect(this.result).toBe(true);
-                });
-
-                it('should kneel the player faction card', function() {
-                    expect(this.player.kneelCard).toHaveBeenCalledWith(this.player.faction);
                 });
             });
 
@@ -213,7 +174,7 @@ describe('The Rains of Castamere', function() {
                 beforeEach(function() {
                     this.player.activePlot = this.plot1;
 
-                    this.result = this.agenda.revealScheme(this.player, this.scheme1.uuid);
+                    this.result = this.agenda.trigger(this.context);
                 });
 
                 it('should remove the revealed scheme from the choices list', function() {
@@ -227,21 +188,13 @@ describe('The Rains of Castamere', function() {
                 it('should reveal the plot', function() {
                     expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(RevealPlots));
                 });
-
-                it('should return true', function() {
-                    expect(this.result).toBe(true);
-                });
-
-                it('should kneel the player faction card', function() {
-                    expect(this.player.kneelCard).toHaveBeenCalledWith(this.player.faction);
-                });
             });
 
             describe('when the active plot is a scheme', function() {
                 beforeEach(function() {
                     this.player.activePlot = this.scheme2;
 
-                    this.result = this.agenda.revealScheme(this.player, this.scheme1.uuid);
+                    this.result = this.agenda.trigger(this.context);
                 });
 
                 it('should remove the current plot from play', function() {
@@ -258,14 +211,6 @@ describe('The Rains of Castamere', function() {
 
                 it('should reveal the plot', function() {
                     expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(RevealPlots));
-                });
-
-                it('should return true', function() {
-                    expect(this.result).toBe(true);
-                });
-
-                it('should kneel the player faction card', function() {
-                    expect(this.player.kneelCard).toHaveBeenCalledWith(this.player.faction);
                 });
             });
         });
@@ -301,24 +246,25 @@ describe('The Rains of Castamere', function() {
             this.skipActionWindow();
 
             this.wardens = this.player1.findCardByName('Wardens of the West');
+            this.wedding = this.player1.findCardByName('The Red Wedding');
 
             this.player1.clickPrompt('"The Rains of Castamere"');
         });
 
         it('should allow a scheme to be played', function() {
-            this.player1.clickPrompt('Wardens of the West');
+            this.player1.clickCard(this.wardens);
 
             expect(this.player1Object.activePlot).toBe(this.wardens);
         });
 
         it('should allow reactions in the current reaction window to trigger', function() {
-            this.player1.clickPrompt('Wardens of the West');
+            this.player1.clickCard(this.wardens);
 
             expect(this.player1).toHavePromptButton('Wardens of the West');
         });
 
         it('should not allow interrupts in the current window to trigger since the current window is for reactions only', function() {
-            this.player1.clickPrompt('The Red Wedding');
+            this.player1.clickCard(this.wedding);
 
             expect(this.player1).not.toHavePromptButton('The Red Wedding');
         });
