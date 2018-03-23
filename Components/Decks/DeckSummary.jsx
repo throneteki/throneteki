@@ -86,7 +86,7 @@ class DeckSummary extends React.Component {
     }
 
     render() {
-        if(!this.props.deck) {
+        if(!this.props.deck || !this.props.cards) {
             return <div>Waiting for selected deck...</div>;
         }
 
