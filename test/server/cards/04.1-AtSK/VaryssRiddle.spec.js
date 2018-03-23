@@ -78,6 +78,8 @@ describe('Varys\'s Riddle', function() {
 
                     this.completeSetup();
 
+                    this.powerBehindTheThrone = this.player2.findCardByName('Power Behind the Throne');
+
                     this.player1.selectPlot('Varys\'s Riddle');
                     this.player2.selectPlot('Calm Over Westeros');
                     this.selectFirstPlayer(this.player2);
@@ -110,7 +112,7 @@ describe('Varys\'s Riddle', function() {
                     beforeEach(function() {
                         this.unopposedChallenge(this.player2, 'Intrigue', 'Ser Jaime Lannister');
                         this.player2.clickPrompt('"The Rains of Castamere"');
-                        this.player2.clickPrompt('Power Behind the Throne');
+                        this.player2.clickCard(this.powerBehindTheThrone);
                         this.player2.clickPrompt('Apply Claim');
                     });
 
