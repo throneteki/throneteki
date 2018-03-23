@@ -47,7 +47,13 @@ class PendingGame extends React.Component {
         let players = _.size(props.currentGame.players);
 
         if(this.state.playerCount === 1 && players === 2 && props.currentGame.owner === this.props.user.username) {
-            this.refs.notification.play();
+            let promise = this.refs.notification.play();
+
+            if(promise !== undefined) {
+                promise.catch(() => {
+                }).then(() => {
+                });
+            }
         }
 
         if(props.connecting) {
