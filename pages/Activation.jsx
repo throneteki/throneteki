@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
-import AlertPanel from '../SiteComponents/AlertPanel';
+import AlertPanel from '../Components/Site/AlertPanel';
 
 import * as actions from '../actions';
 

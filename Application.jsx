@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import $ from 'jquery';
 import { connect } from 'react-redux';
 
-import ErrorBoundary from './SiteComponents/ErrorBoundary';
-import NavBar from './NavBar';
+import ErrorBoundary from './Components/Site/ErrorBoundary';
+import NavBar from './Components/Site/NavBar';
 import Router from './Router';
 import * as actions from './actions';
 
@@ -106,6 +106,5 @@ function mapStateToProps(state) {
         user: state.account.user
     };
 }
-
 
 export default connect(mapStateToProps, actions)(Application);

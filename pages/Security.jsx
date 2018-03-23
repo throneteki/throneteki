@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { toastr } from 'react-redux-toastr';
 
-import AlertPanel from '../SiteComponents/AlertPanel';
-import Panel from '../SiteComponents/Panel';
+import AlertPanel from '../Components/Site/AlertPanel';
+import Panel from '../Components/Site/Panel';
 import * as actions from '../actions';
 
 class Security extends React.Component {
