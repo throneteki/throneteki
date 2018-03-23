@@ -15,7 +15,6 @@ describe('Risen from the Sea', function() {
             this.startGame();
             this.keepStartingHands();
 
-
             this.character = this.player1.findCardByName('Theon Greyjoy', 'hand');
             this.noAttachmentCharacter = this.player1.findCardByName('Drowned Men', 'hand');
             this.event = this.player1.findCardByName('Risen from the Sea', 'hand');

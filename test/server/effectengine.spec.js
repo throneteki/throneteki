@@ -364,7 +364,6 @@ describe('EffectEngine', function () {
             });
         });
 
-
         describe('when an effect has a non-untilEndOfChallenge duration', function() {
             beforeEach(function() {
                 this.effectSpy.duration = 'persistent';
@@ -400,7 +399,6 @@ describe('EffectEngine', function () {
                 expect(this.engine.effects).not.toContain(this.effectSpy);
             });
         });
-
 
         describe('when an effect has a non-untilEndOfPhase duration', function() {
             beforeEach(function() {
@@ -438,7 +436,6 @@ describe('EffectEngine', function () {
             });
         });
 
-
         describe('when an effect has a non-atEndOfPhase duration', function() {
             beforeEach(function() {
                 this.effectSpy.duration = 'persistent';
@@ -474,7 +471,6 @@ describe('EffectEngine', function () {
                 expect(this.engine.effects).not.toContain(this.effectSpy);
             });
         });
-
 
         describe('when an effect has a non-untilEndOfRound duration', function() {
             beforeEach(function() {

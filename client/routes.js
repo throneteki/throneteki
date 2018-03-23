@@ -5,21 +5,21 @@ import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Register from './pages/Register';
 import Lobby from './pages/Lobby';
-import Decks from './Decks';
-import AddDeck from './AddDeck';
-import EditDeck from './EditDeck';
-import GameLobby from './GameLobby';
-import GameBoard from './GameBoard';
-import HowToPlay from './HowToPlay';
-import About from './About';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import Profile from './Profile';
-import NewsAdmin from './NewsAdmin';
-import UserAdmin from './UserAdmin';
-import BlockList from './BlockList';
+import Decks from './pages/Decks';
+import HowToPlay from './pages/HowToPlay';
+import About from './pages/About';
 import Security from './pages/Security';
 import Activation from './pages/Activation';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import UserAdmin from './pages/UserAdmin';
+import Profile from './pages/Profile';
+import NewsAdmin from './pages/NewsAdmin';
+import AddDeck from './Components/Decks/AddDeck';
+import EditDeck from './Components/Decks/EditDeck';
+import GameLobby from './Components/Games/GameLobby';
+import GameBoard from './Components/GameBoard/GameBoard';
+import BlockList from './pages/BlockList';
 
 const routes = [
     { path: '/', action: () => <Lobby /> },

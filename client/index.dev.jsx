@@ -16,7 +16,7 @@ window.onpopstate = function(e) {
 };
 
 const render = () => {
-    const Application = require('./Application.jsx').default;
+    const Application = require('./Application').default;
     ReactDOM.render(<AppContainer>
         <Provider store={ store }>
             <div className='body'>
@@ -34,7 +34,7 @@ const render = () => {
 };
 
 if(module.hot) {
-    module.hot.accept('./Application.jsx', () => {
+    module.hot.accept('./Application', () => {
         setTimeout(render);
     });
 }

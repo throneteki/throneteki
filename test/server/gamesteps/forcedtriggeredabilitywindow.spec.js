@@ -60,7 +60,6 @@ describe('ForcedTriggeredAbilityWindow', function() {
             this.abilitySpy.createContext.and.returnValue(this.context);
             this.abilitySpy.card = this.abilityCard;
 
-
             this.window.registerAbility(this.abilitySpy);
         });
 

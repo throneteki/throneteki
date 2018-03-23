@@ -36,7 +36,6 @@ class AtomicEvent {
         }
     }
 
-
     replaceHandler(handler) {
         if(this.childEvents.length !== 0) {
             this.childEvents[0].replaceHandler(handler);

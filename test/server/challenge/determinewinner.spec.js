@@ -37,7 +37,6 @@ describe('Challenge', function() {
             });
         });
 
-
         describe('when the attacker and defender have equal strength', function() {
             beforeEach(function() {
                 spyOn(this.attackerCard, 'getStrength').and.returnValue(5);

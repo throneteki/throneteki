@@ -20,7 +20,6 @@ describe('setup phase', function() {
                 this.player1.clickCard(this.ned1);
                 this.player1.clickCard(this.arya);
 
-
                 expect(this.roseroad.location).toBe('play area');
                 expect(this.ned1.location).toBe('play area');
                 expect(this.arya.location).toBe('hand');

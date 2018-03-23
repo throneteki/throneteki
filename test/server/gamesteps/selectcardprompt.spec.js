@@ -18,7 +18,6 @@ describe('the SelectCardPrompt', function() {
         this.otherPlayer = jasmine.createSpyObj('player2', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards']);
         this.card = createCardSpy({ controller: this.player });
 
-
         this.player.cardsInPlay.push(this.card);
 
         this.previousCard = createCardSpy({ selected: true, controller: this.player });

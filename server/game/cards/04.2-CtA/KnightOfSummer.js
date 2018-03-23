@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const _ = require('underscore');
 
-
 class KnightOfSummer extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
