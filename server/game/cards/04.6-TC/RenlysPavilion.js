@@ -8,7 +8,8 @@ class RenlysPavilion extends DrawCard {
             targets: {
                 toLower: {
                     activePromptTitle: 'Select a character to get -1 STR',
-                    cardCondition: card => this.cardCondition(card)
+                    cardCondition: card => this.cardCondition(card),
+                    gameAction: 'decreaseStrength'
                 },
                 toRaise: {
                     activePromptTitle: 'Select a character to get +1 STR',

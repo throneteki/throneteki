@@ -14,7 +14,8 @@ class WeirwoodBow extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.isDefending(card))
+                    this.game.currentChallenge.isDefending(card)),
+                gameAction: 'decreaseStrength'
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
