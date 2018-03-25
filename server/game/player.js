@@ -702,13 +702,6 @@ class Player extends Spectator {
         }
     }
 
-    drawPhase() {
-        if(this.canDraw()) {
-            this.game.addMessage('{0} draws {1} cards', this, this.drawPhaseCards);
-            this.drawCardsToHand(this.drawPhaseCards);
-        }
-    }
-
     beginMarshal() {
         if(this.canGainGold()) {
             let gold = this.game.addGold(this, this.getTotalIncome());
