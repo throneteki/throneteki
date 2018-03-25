@@ -86,21 +86,9 @@ class Player extends Spectator {
         return playFromHand.concat(playFromShadows);
     }
 
-    isCardUuidInList(list, card) {
-        return list.some(c => {
-            return c.uuid === card.uuid;
-        });
-    }
-
     isCardNameInList(list, card) {
         return list.some(c => {
             return c.name === card.name;
-        });
-    }
-
-    areCardsSelected() {
-        return this.cardsInPlay.some(card => {
-            return card.selected;
         });
     }
 
@@ -112,10 +100,6 @@ class Player extends Spectator {
 
     findCardByName(list, name) {
         return this.findCard(list, card => card.name === name);
-    }
-
-    findCardInPlayByUuid(uuid) {
-        return this.findCard(this.cardsInPlay, card => card.uuid === uuid);
     }
 
     findCard(cardList, predicate) {

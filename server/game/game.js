@@ -177,15 +177,6 @@ class Game extends EventEmitter {
         return this.getPlayers().filter(p => p !== player);
     }
 
-    findAnyCardInPlayByUuid(cardId) {
-        return _.reduce(this.getPlayers(), (card, player) => {
-            if(card) {
-                return card;
-            }
-            return player.findCardInPlayByUuid(cardId);
-        }, null);
-    }
-
     findAnyCardInAnyList(cardId) {
         return this.allCards.find(card => card.uuid === cardId);
     }
