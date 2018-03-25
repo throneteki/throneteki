@@ -702,15 +702,6 @@ class Player extends Spectator {
         }
     }
 
-    beginMarshal() {
-        if(this.canGainGold()) {
-            let gold = this.game.addGold(this, this.getTotalIncome());
-            this.game.addMessage('{0} collects {1} gold', this, gold);
-        }
-
-        this.game.raiseEvent('onIncomeCollected', { player: this });
-    }
-
     hasUnmappedAttachments() {
         return this.cardsInPlay.some(card => {
             return card.getType() === 'attachment';
