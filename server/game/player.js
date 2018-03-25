@@ -86,18 +86,6 @@ class Player extends Spectator {
         return playFromHand.concat(playFromShadows);
     }
 
-    isCardNameInList(list, card) {
-        return list.some(c => {
-            return c.name === card.name;
-        });
-    }
-
-    removeCardByUuid(list, uuid) {
-        return list.filter(card => {
-            return card.uuid !== uuid;
-        });
-    }
-
     findCardByName(list, name) {
         return this.findCard(list, card => card.name === name);
     }
@@ -525,7 +513,7 @@ class Player extends Spectator {
     }
 
     isCharacterDead(card) {
-        return card.getType() === 'character' && card.isUnique() && this.isCardNameInList(this.deadPile, card);
+        return card.getType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
     }
 
     playCard(card) {
@@ -1160,8 +1148,7 @@ class Player extends Spectator {
         var originalPile = this.getSourceList(originalLocation);
 
         if(originalPile) {
-            originalPile = this.removeCardByUuid(originalPile, card.uuid);
-            this.updateSourceList(originalLocation, originalPile);
+            this.updateSourceList(originalLocation, originalPile.filter(c => c.uuid !== card.uuid));
         }
     }
 
