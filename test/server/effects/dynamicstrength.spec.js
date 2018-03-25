@@ -5,6 +5,8 @@ const Effects = require('../../../server/game/effects.js');
 describe('Effects.dynamicStrength', function() {
     beforeEach(function() {
         this.context = {};
+        this.context.game = jasmine.createSpyObj('game', ['applyGameAction']);
+        this.context.game.applyGameAction.and.callFake((action, card, callback) => callback(card));
         this.calculateMethod = jasmine.createSpy('calculateMethod');
 
         this.card1 = jasmine.createSpyObj('card1', ['modifyStrength']);

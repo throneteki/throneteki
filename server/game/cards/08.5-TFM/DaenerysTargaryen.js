@@ -14,7 +14,15 @@ class DaenerysTargaryen extends DrawCard {
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
-            effect: ability.effects.killByStrength(-1)
+            handler: context => {
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.killByStrength(-1)
+                }));
+
+                this.game.addMessage('{0} uses {1} to give {2} -1 STR until the end of the phase',
+                    context.player, this, context.target);
+            }
         });
     }
 }
