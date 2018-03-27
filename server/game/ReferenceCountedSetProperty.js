@@ -27,6 +27,11 @@ class ReferenceCountedSetProperty {
         return _.keys(_.omit(this.referenceCounts, trait => trait < 1));
     }
 
+    size() {
+        let values = this.getValues();
+        return values.length;
+    }
+
     clone() {
         let clonedSet = new ReferenceCountedSetProperty();
         clonedSet.referenceCounts = _.clone(this.referenceCounts);

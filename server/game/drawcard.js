@@ -5,6 +5,7 @@ const CardMatcher = require('./CardMatcher.js');
 const SetupCardAction = require('./setupcardaction.js');
 const MarshalCardAction = require('./marshalcardaction.js');
 const AmbushCardAction = require('./ambushcardaction.js');
+const ReferenceCountedSetProperty = require('./ReferenceCountedSetProperty');
 
 const StandardPlayActions = [
     new SetupCardAction(),
@@ -20,24 +21,10 @@ class DrawCard extends BaseCard {
 
         this.dupes = _([]);
         this.attachments = _([]);
-        this.icons = {
-            military: 0,
-            intrigue: 0,
-            power: 0
-        };
+        this.icons = new ReferenceCountedSetProperty();
 
-        if(cardData.icons) {
-            if(cardData.icons.military) {
-                this.icons.military++;
-            }
-
-            if(cardData.icons.intrigue) {
-                this.icons.intrigue++;
-            }
-
-            if(cardData.icons.power) {
-                this.icons.power++;
-            }
+        for(let icon of this.getPrintedIcons()) {
+            this.icons.add(icon);
         }
 
         this.revealWhenHiddenTo = undefined;
@@ -80,7 +67,7 @@ class DrawCard extends BaseCard {
         clone.controller = this.controller;
         clone.dupes = _(this.dupes.map(dupe => dupe.createSnapshot()));
         clone.factions = Object.assign({}, this.factions);
-        clone.icons = Object.assign({}, this.icons);
+        clone.icons = this.icons.clone();
         clone.keywords = this.keywords.clone();
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;
@@ -149,7 +136,7 @@ class DrawCard extends BaseCard {
     }
 
     hasIcon(icon) {
-        return this.icons[icon.toLowerCase()] > 0;
+        return this.icons.contains(icon);
     }
 
     getPrintedCost() {
@@ -237,75 +224,35 @@ class DrawCard extends BaseCard {
     }
 
     getIcons() {
-        return _.filter(Icons, icon => this.hasIcon(icon));
+        return this.icons.getValues();
+    }
+
+    getPrintedIcons() {
+        if(!this.cardData.icons) {
+            return [];
+        }
+
+        return Icons.filter(icon => !!this.cardData.icons[icon]);
     }
 
     getIconsAdded() {
-        if(!this.cardData.icons) {
-            return [];
-        }
-
-        var icons = [];
-
-        if(this.hasIcon('military') && !this.cardData.icons.military) {
-            icons.push('military');
-        }
-
-        if(this.hasIcon('intrigue') && !this.cardData.icons.intrigue) {
-            icons.push('intrigue');
-        }
-
-        if(this.hasIcon('power') && !this.cardData.icons.power) {
-            icons.push('power');
-        }
-
-        return icons;
+        return _.difference(this.getIcons(), this.getPrintedIcons());
     }
 
     getIconsRemoved() {
-        if(!this.cardData.icons) {
-            return [];
-        }
-
-        var icons = [];
-
-        if(!this.hasIcon('military') && this.cardData.icons.military) {
-            icons.push('military');
-        }
-
-        if(!this.hasIcon('intrigue') && this.cardData.icons.intrigue) {
-            icons.push('intrigue');
-        }
-
-        if(!this.hasIcon('power') && this.cardData.icons.power) {
-            icons.push('power');
-        }
-
-        return icons;
+        return _.difference(this.getPrintedIcons(), this.getIcons());
     }
 
     getNumberOfIcons() {
-        let count = 0;
-
-        if(this.hasIcon('military')) {
-            count += 1;
-        }
-        if(this.hasIcon('intrigue')) {
-            count += 1;
-        }
-        if(this.hasIcon('power')) {
-            count += 1;
-        }
-
-        return count;
+        return this.icons.size();
     }
 
     addIcon(icon) {
-        this.icons[icon.toLowerCase()]++;
+        this.icons.add(icon);
     }
 
     removeIcon(icon) {
-        this.icons[icon.toLowerCase()]--;
+        this.icons.remove(icon);
     }
 
     modifyPower(power) {
