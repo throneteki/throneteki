@@ -5,7 +5,7 @@ const CardMatcher = require('./CardMatcher.js');
 const SetupCardAction = require('./setupcardaction.js');
 const MarshalCardAction = require('./marshalcardaction.js');
 const AmbushCardAction = require('./ambushcardaction.js');
-const ReferenceCountedSetProperty = require('./ReferenceCountedSetProperty');
+const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
 const StandardPlayActions = [
     new SetupCardAction(),

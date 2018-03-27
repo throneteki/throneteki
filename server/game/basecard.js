@@ -9,7 +9,7 @@ const CardInterrupt = require('./cardinterrupt.js');
 const CardReaction = require('./cardreaction.js');
 const CustomPlayAction = require('./customplayaction.js');
 const EventRegistrar = require('./eventregistrar.js');
-const ReferenceCountedSetProperty = require('./ReferenceCountedSetProperty.js');
+const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
 const ValidKeywords = [
     'ambush',
