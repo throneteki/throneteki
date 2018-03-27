@@ -147,12 +147,19 @@ const Effects = {
         };
     },
     modifyStrength: function(value) {
+        let gameAction = value < 0 ? 'decreaseStrength' : 'increaseStrength';
         return {
-            apply: function(card) {
-                card.modifyStrength(value, true);
+            apply: function(card, context) {
+                context.game.applyGameAction(gameAction, card, card => {
+                    card.modifyStrength(value, true);
+                });
             },
-            unapply: function(card) {
-                card.modifyStrength(-value, false);
+            unapply: function(card, context) {
+                // use same game action of apply: if they were immune to apply,
+                // we shouldn't compensate either
+                context.game.applyGameAction(gameAction, card, card => {
+                    card.modifyStrength(-value, false);
+                });
             },
             order: value >= 0 ? 0 : 1000
         };
@@ -312,17 +319,31 @@ const Effects = {
             apply: function(card, context) {
                 context.dynamicStrength = context.dynamicStrength || {};
                 context.dynamicStrength[card.uuid] = calculate(card, context) || 0;
-                card.modifyStrength(context.dynamicStrength[card.uuid], true);
+                let value = context.dynamicStrength[card.uuid];
+                let gameAction = value < 0 ? 'decreaseStrength' : 'increaseStrength';
+                context.game.applyGameAction(gameAction, card, card => {
+                    card.modifyStrength(value, true);
+                });
             },
             reapply: function(card, context) {
                 let currentStrength = context.dynamicStrength[card.uuid];
                 let newStrength = calculate(card, context) || 0;
                 context.dynamicStrength[card.uuid] = newStrength;
-                card.modifyStrength(newStrength - currentStrength, true);
+                let value = newStrength - currentStrength;
+                let gameAction = newStrength < 0 ? 'decreaseStrength' : 'increaseStrength';
+                context.game.applyGameAction(gameAction, card, card => {
+                    card.modifyStrength(value, true);
+                });
             },
             unapply: function(card, context) {
-                card.modifyStrength(-context.dynamicStrength[card.uuid], false);
-                delete context.dynamicStrength[card.uuid];
+                let value = context.dynamicStrength[card.uuid];
+                let gameAction = value < 0 ? 'decreaseStrength' : 'increaseStrength';
+                // use same game action of apply: if they were immune to apply,
+                // we shouldn't compensate either
+                context.game.applyGameAction(gameAction, card, card => {
+                    card.modifyStrength(-value, false);
+                    delete context.dynamicStrength[card.uuid];
+                });
             },
             isStateDependent: true
         };
@@ -711,6 +732,8 @@ const Effects = {
     cannotBeKilled: cannotEffect('kill'),
     cannotBeSaved: cannotEffect('save'),
     cannotBeReturnedToHand: cannotEffect('returnToHand'),
+    cannotIncreaseStrength: cannotEffect('increaseStrength'),
+    cannotDecreaseStrength: cannotEffect('decreaseStrength'),
     cannotGainPower: cannotEffect('gainPower'),
     cannotGainGold: function() {
         return {

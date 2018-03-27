@@ -6,7 +6,8 @@ class ObsidianArrows extends DrawCard {
             title: 'Give defending character -3 STR',
             limit: ability.limit.perChallenge(1),
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this.parent),
-            cost: ability.costs.moveTokenFromSelf('gold', 1, card => this.game.currentChallenge.isDefending(card)),
+            cost: ability.costs.moveTokenFromSelf('gold', 1, card =>
+                this.game.currentChallenge.isDefending(card) && card.allowGameAction('decreaseStrength')),
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
                     match: context.costs.moveTokenFromSelf,

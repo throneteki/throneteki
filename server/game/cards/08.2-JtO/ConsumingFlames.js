@@ -7,8 +7,10 @@ class ConsumingFlames extends DrawCard {
             condition: () => this.game.currentChallenge,
             cost: ability.costs.discardFromHand(card => card !== this && card.isFaction('targaryen')),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       this.game.currentChallenge.isParticipating(card)
+                cardCondition: card =>
+                    card.location === 'play area' &&
+                    card.getType() === 'character' &&
+                    this.game.currentChallenge.isParticipating(card)
             },
             handler: context => {
                 this.game.addMessage('{0} plays {1} and discards {2} from their hand to give {3} -3 STR until the end of the phase',
