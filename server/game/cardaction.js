@@ -130,7 +130,7 @@ class CardAction extends BaseAbility {
             return false;
         }
 
-        return this.canPayCosts(context) && this.canResolveTargets(context);
+        return this.canResolveOpponents(context) && this.canPayCosts(context) && this.canResolveTargets(context);
     }
 
     execute(player, arg) {
