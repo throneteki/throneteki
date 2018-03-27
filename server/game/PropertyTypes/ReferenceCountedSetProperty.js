@@ -24,7 +24,7 @@ class ReferenceCountedSetProperty {
     }
 
     getValues() {
-        return _.keys(_.omit(this.referenceCounts, trait => trait < 1));
+        return _.keys(_.omit(this.referenceCounts, count => count < 1));
     }
 
     size() {
