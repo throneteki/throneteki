@@ -1,40 +1,53 @@
-const _ = require('underscore');
-
 class ReferenceCountedSetProperty {
     constructor() {
-        this.referenceCounts = {};
+        this.referenceCounts = new Map();
     }
 
     add(value) {
         let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts[lowerCaseValue] || 0;
-        this.referenceCounts[lowerCaseValue] = currentCount + 1;
+        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
+        this.referenceCounts.set(lowerCaseValue, currentCount + 1);
     }
 
     remove(value) {
         let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts[lowerCaseValue] || 0;
-        this.referenceCounts[lowerCaseValue] = currentCount - 1;
+        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
+        this.referenceCounts.set(lowerCaseValue, currentCount - 1);
     }
 
     contains(value) {
         let lowerCaseValue = value.toLowerCase();
-        let currentCount = this.referenceCounts[lowerCaseValue] || 0;
+        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
         return currentCount > 0;
     }
 
     getValues() {
-        return _.keys(_.omit(this.referenceCounts, count => count < 1));
+        let values = [];
+
+        for(let [value, count] of this.referenceCounts) {
+            if(count > 0) {
+                values.push(value);
+            }
+        }
+
+        return values;
     }
 
     size() {
-        let values = this.getValues();
-        return values.length;
+        let size = 0;
+
+        for(let count of this.referenceCounts.values()) {
+            if(count > 0) {
+                size += 1;
+            }
+        }
+
+        return size;
     }
 
     clone() {
         let clonedSet = new ReferenceCountedSetProperty();
-        clonedSet.referenceCounts = _.clone(this.referenceCounts);
+        clonedSet.referenceCounts = new Map(this.referenceCounts);
         return clonedSet;
     }
 }
