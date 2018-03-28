@@ -10,7 +10,7 @@ const ChallengeTracker = require('./challengetracker.js');
 const PlayableLocation = require('./playablelocation.js');
 const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
-const MinMaxProperty = require('./MinMaxProperty.js');
+const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
 const GoldSource = require('./GoldSource.js');
 
 const logger = require('../log.js');
