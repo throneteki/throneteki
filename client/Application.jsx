@@ -74,7 +74,7 @@ class Application extends React.Component {
             <div className='wrapper'>
                 <div className='container content'>
                     <ErrorBoundary navigate={ this.props.navigate } errorPath={ this.props.path } message={ 'We\'re sorry - something\'s gone wrong.' }>
-                        <CSSTransitionGroup transitionName='pages' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
+                        <CSSTransitionGroup transitionName='pages' transitionEnterTimeout={ 600 } transitionLeaveTimeout={ 600 }>
                             { component }
                         </CSSTransitionGroup>
                     </ErrorBoundary>
