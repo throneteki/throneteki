@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import _ from 'underscore';
 import $ from 'jquery';
 
@@ -100,21 +101,16 @@ class PlayerHand extends React.Component {
     }
 
     render() {
-        let className = 'panel hand';
-
-        if(this.props.cardSize !== 'normal') {
-            className += ' ' + this.props.cardSize;
-        }
-
         let cardWidth = this.getCardWidth();
 
         let needsSquish = this.props.cards && this.props.cards.length * cardWidth > (cardWidth * 5);
 
-        if(needsSquish) {
-            className += ' squish';
-        }
-
         let cards = this.getCards(needsSquish);
+
+        let className = classNames('panel', 'hand', {
+            [this.props.cardSize]: this.props.cardSize !== 'normal',
+            'squish': needsSquish
+        });
 
         return (
             <div className={ className }

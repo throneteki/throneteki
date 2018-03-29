@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import CardPile from './CardPile';
 
@@ -70,10 +71,9 @@ class PlayerPlots extends React.Component {
     }
 
     render() {
-        let className = 'plot-group';
-        if(this.props.direction === 'default') {
-            className += ' our-side';
-        }
+        let className = classNames('plot-group', {
+            'our-side': this.props.direction === 'default'
+        });
 
         return (
             <div className={ className }>

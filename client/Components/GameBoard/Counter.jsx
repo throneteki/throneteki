@@ -1,18 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 class Counter extends React.Component {
     render() {
-        var className = 'counter ' + this.props.name;
+        let className = classNames('counter', this.props.name, {
+            'cancel': this.props.cancel,
+            'fade-out': this.props.fade
+        });
 
-        if(this.props.cancel) {
-            className += ' cancel';
-        }
-
-        if(this.props.fade) {
-            className += ' fade-out';
-        }
-        
         return (<div key={ this.props.name } className={ className }>
             { this.props.shortName ? <span>{ this.props.shortName }</span> : null }
             <span>{ this.props.value }</span>

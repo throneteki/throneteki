@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 class Avatar extends React.Component {
     render() {
-        var className = 'gravatar';
-
-        if(this.props.float) {
-            className += ' pull-left';
-        }
+        let className = classNames('gravatar', {
+            'pull-left': this.props.float
+        });
 
         return (<img className={ className } src={ 'https://www.gravatar.com/avatar/' + this.props.emailHash + '?d=identicon&s=24' + (this.props.forceDefault ? '&f=y' : '') } />);
     }
