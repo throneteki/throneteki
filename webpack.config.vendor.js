@@ -42,7 +42,8 @@ module.exports = (env) => {
                 'socket.io-client',
                 'underscore',
                 'query-string',
-                'path-to-regexp'
+                'path-to-regexp',
+                'classnames'
             ]
         },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
