@@ -72,6 +72,7 @@
     "react-google-recaptcha": "^0.9.7",
     "react-redux": "^4.4.8",
     "react-redux-toastr": "^7.1.5",
+    "react-transition-group": "^1.2.1",
     "redux": "^3.7.2",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^6.0.6",
