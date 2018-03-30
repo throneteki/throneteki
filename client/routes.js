@@ -22,24 +22,24 @@ import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 
 const routes = [
-    { path: '/', action: () => <Lobby /> },
-    { path: '/about', action: () => <About /> },
-    { path: '/activation', action: context => <Activation id={ context.params.id } token={ context.params.token } /> },
-    { path: '/blocklist', action: () => <BlockList /> },
-    { path: '/decks', action: () => <Decks /> },
-    { path: '/decks/add', action: () => <AddDeck /> },
-    { path: '/decks/edit/:id([a-f\\d]{24})', action: context => <EditDeck deckId={ context.params.id } /> },
-    { path: '/forgot', action: () => <ForgotPassword /> },
-    { path: '/how-to-play', action: () => <HowToPlay /> },
-    { path: '/login', action: () => <Login /> },
-    { path: '/logout', action: () => <Logout /> },
-    { path: '/news', action: () => <NewsAdmin />, permission: 'canEditNews' },
-    { path: '/play', action: context => (context.currentGame && context.currentGame.started) ? <GameBoard /> : <GameLobby /> },
-    { path: '/profile', action: () => <Profile /> },
-    { path: '/register', action: () => <Register /> },
-    { path: '/reset-password', action: context => <ResetPassword id={ context.params.id } token={ context.params.token } /> },
-    { path: '/security', action: () => <Security /> },
-    { path: '/users', action: () => <UserAdmin />, permission: 'canManageUsers' }
+    { path: '/', action: () => <Lobby key='lobby' /> },
+    { path: '/about', action: () => <About key='about' /> },
+    { path: '/activation', action: context => <Activation key='activation' id={ context.params.id } token={ context.params.token } /> },
+    { path: '/blocklist', action: () => <BlockList key='blocklist'/> },
+    { path: '/decks', action: () => <Decks key='decks'/> },
+    { path: '/decks/add', action: () => <AddDeck key='adddecks'/> },
+    { path: '/decks/edit/:id([a-f\\d]{24})', action: context => <EditDeck key='editdeck' deckId={ context.params.id } /> },
+    { path: '/forgot', action: () => <ForgotPassword key='forgotpassword'/> },
+    { path: '/how-to-play', action: () => <HowToPlay key='howtoplay'/> },
+    { path: '/login', action: () => <Login key='login'/> },
+    { path: '/logout', action: () => <Logout key='logout'/> },
+    { path: '/news', action: () => <NewsAdmin key='newsadmin' />, permission: 'canEditNews' },
+    { path: '/play', action: context => (context.currentGame && context.currentGame.started) ? <GameBoard key='gameboard'/> : <GameLobby key='gamelobby' /> },
+    { path: '/profile', action: () => <Profile key='profile' /> },
+    { path: '/register', action: () => <Register key='register'/> },
+    { path: '/reset-password', action: context => <ResetPassword key='resetpassword' id={ context.params.id } token={ context.params.token } /> },
+    { path: '/security', action: () => <Security key='security' /> },
+    { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' }
 ];
 
 export default routes;
