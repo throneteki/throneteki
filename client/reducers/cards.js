@@ -30,7 +30,11 @@ function processDecks(decks, state) {
         deck.plotCards = processCardCounts(deck.plotCards, state.cards);
         deck.drawCards = processCardCounts(deck.drawCards, state.cards);
 
-        deck.status = validateDeck(deck, { packs: state.packs, restrictedList: state.restrictedList });
+        if(!state.restrictedList) {
+            deck.status = {};
+        } else {
+            deck.status = validateDeck(deck, { packs: state.packs, restrictedList: state.restrictedList });
+        }
     });
 }
 
@@ -84,9 +88,14 @@ export default function(state = {}, action) {
                 factions: factions
             });
         case 'RECEIVE_RESTRICTED_LIST':
-            return Object.assign({}, state, {
+            newState = Object.assign({}, state, {
                 restrictedList: action.response.restrictedList
             });
+
+            // In case the restricted list is received after the decks, updated the decks now
+            processDecks(newState.decks, newState);
+
+            return newState;
         case 'ZOOM_CARD':
             return Object.assign({}, state, {
                 zoomCard: action.card
