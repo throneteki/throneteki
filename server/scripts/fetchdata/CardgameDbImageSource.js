@@ -20,6 +20,11 @@ class CardgameDbImageSource {
             return;
         }
 
+        if(!pack.cgdbId) {
+            console.log(`Could not fetch image for ${card.name} (${card.packCode}), as no images are hosted for ${pack.name}`);
+            return;
+        }
+
         let cgdbId = pack.cgdbId.toString().padStart(2, '0');
         let cardNumber = parseInt(card.code.substring(2), 10);
         let url = `http://lcg-cdn.fantasyflightgames.com/got2nd/GT${cgdbId}_${cardNumber}.jpg`;
