@@ -672,6 +672,10 @@ class Player extends Spectator {
     }
 
     flipPlotFaceup() {
+        if(!this.selectedPlot) {
+            return;
+        }
+
         this.selectedPlot.flipFaceup();
         this.moveCard(this.selectedPlot, 'active plot');
         this.selectedPlot = undefined;

@@ -16,7 +16,7 @@ class PlotPhase extends Phase {
             new SelectPlotPrompt(game),
             new SimpleStep(game, () => this.removeActivePlots()),
             new SimpleStep(game, () => this.flipPlotsFaceup()),
-            () => new RevealPlots(game, _.map(this.game.getPlayers(), player => player.activePlot)),
+            () => new RevealPlots(game, this.getActivePlots()),
             new SimpleStep(game, () => this.recyclePlots()),
             () => new ChooseTitlePrompt(game, game.titlePool),
             new ActionWindow(this.game, 'After plots revealed', 'plot')
@@ -59,6 +59,10 @@ class PlotPhase extends Phase {
         _.each(this.game.getPlayers(), player => {
             player.recyclePlots();
         });
+    }
+
+    getActivePlots() {
+        return this.game.getPlayers().filter(player => !!player.activePlot).map(player => player.activePlot);
     }
 }
 
