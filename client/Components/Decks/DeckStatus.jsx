@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import DeckStatusSummary from './DeckStatusSummary';
 import StatusPopOver from './StatusPopOver';
@@ -8,21 +9,18 @@ class DeckStatus extends React.Component {
     render() {
         let { status } = this.props;
         let statusName;
-        let className = 'deck-status';
-
-        if(this.props.className) {
-            className += ' ' + this.props.className;
-        }
+        let className = classNames('deck-status', this.props.className, {
+            'invalid': !status.basicRules,
+            'casual-play': status.basicRules && (!status.faqJoustRules || !status.noUnreleasedCards),
+            'valid': status.basicRules && status.faqJoustRules && status.noUnreleasedCards
+        });
 
         if(!status.basicRules) {
             statusName = 'Invalid';
-            className += ' invalid';
         } else if(!status.faqJoustRules || !status.noUnreleasedCards) {
             statusName = 'Casual play only';
-            className += ' casual-play';
         } else {
             statusName = 'Valid';
-            className += ' valid';
         }
 
         return (

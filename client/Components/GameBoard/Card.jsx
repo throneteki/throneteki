@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import _ from 'underscore';
 import $ from 'jquery';
 import 'jquery-migrate';
@@ -174,7 +175,7 @@ class Card extends React.Component {
         var index = 1;
         var attachments = _.map(this.props.card.attachments, attachment => {
             var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment }
-                className={ 'attachment attachment-' + index } wrapped={ false }
+                className={ classNames('attachment', `attachment-${index}`) } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment) }
                 onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
                 onClick={ this.props.onClick }
@@ -205,7 +206,7 @@ class Card extends React.Component {
 
         var index = 1;
         var dupes = _.map(facedownDupes, dupe => {
-            var returnedDupe = (<Card key={ dupe.uuid } className={ 'card-dupe card-dupe-' + index }
+            var returnedDupe = (<Card key={ dupe.uuid } className={ classNames('card-dupe', `card-dupe-${index}`) }
                 source={ this.props.source } card={ dupe } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe) }
                 onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
@@ -256,60 +257,21 @@ class Card extends React.Component {
     }
 
     getCard() {
-        var cardClass = 'card';
-        var imageClass = 'card-image';
-
         if(!this.props.card) {
             return <div />;
         }
 
-        if(this.props.size !== 'normal') {
-            cardClass += ' ' + this.props.size;
-            imageClass += ' ' + this.props.size;
-        }
-
-        if(this.props.card.code && this.props.card.code.startsWith('custom')) {
-            cardClass += ' custom-card';
-        }
-
-        cardClass += ' card-type-' + this.props.card.type;
-
-        if(this.props.orientation === 'kneeled' || this.props.card.kneeled || this.props.orientation === 'horizontal' && this.props.card.type !== 'plot') {
-            cardClass += ' horizontal';
-            imageClass += ' vertical kneeled';
-        } else if(this.props.orientation === 'horizontal') {
-            cardClass += ' horizontal';
-            imageClass += ' horizontal';
-        } else {
-            cardClass += ' vertical';
-            imageClass += ' vertical';
-        }
-
-        if(this.props.card.unselectable) {
-            cardClass += ' unselectable';
-        }
-
-        if(this.props.card.selected) {
-            cardClass += ' selected';
-        } else if(this.props.card.selectable) {
-            cardClass += ' selectable';
-        } else if(this.props.card.inDanger) {
-            cardClass += ' in-danger';
-        } else if(this.props.card.saved) {
-            cardClass += ' saved';
-        } else if(this.props.card.inChallenge) {
-            cardClass += ' challenge';
-        } else if(this.props.card.stealth) {
-            cardClass += ' stealth';
-        } else if(this.props.card.controlled) {
-            cardClass += ' controlled';
-        } else if(this.props.card.new) {
-            cardClass += ' new';
-        }
-
-        if(this.props.className) {
-            cardClass += ' ' + this.props.className;
-        }
+        let cardClass = classNames('card', `card-type-${this.props.card.type}`, this.props.className, this.sizeClass, this.statusClass, {
+            'custom-card': this.props.card.code && this.props.card.code.startsWith('custom'),
+            'horizontal': this.props.orientation !== 'vertical' || this.props.card.kneeled,
+            'vertical': this.props.orientation === 'vertical' && !this.props.card.kneeled,
+            'unselectable': this.props.card.unselectable
+        });
+        let imageClass = classNames('card-image', this.sizeClass, {
+            'horizontal': this.props.card.type === 'plot',
+            'vertical': this.props.card.type !== 'plot',
+            'kneeled': this.props.orientation === 'kneeled' || this.props.card.kneeled || this.props.orientation === 'horizontal' && this.props.card.type !== 'plot'
+        });
 
         return (
             <div className='card-frame' ref='cardFrame'
@@ -331,6 +293,36 @@ class Card extends React.Component {
                 </div>
                 { this.showMenu() ? <CardMenu menu={ this.props.card.menu } onMenuItemClick={ this.onMenuItemClick } /> : null }
             </div>);
+    }
+
+    get sizeClass() {
+        return {
+            [this.props.size]: this.props.size !== 'normal'
+        };
+    }
+
+    get statusClass() {
+        if(!this.props.card) {
+            return;
+        }
+
+        if(this.props.card.selected) {
+            return 'selected';
+        } else if(this.props.card.selectable) {
+            return 'selectable';
+        } else if(this.props.card.inDanger) {
+            return 'in-danger';
+        } else if(this.props.card.saved) {
+            return 'saved';
+        } else if(this.props.card.inChallenge) {
+            return 'challenge';
+        } else if(this.props.card.stealth) {
+            return 'stealth';
+        } else if(this.props.card.controlled) {
+            return 'controlled';
+        } else if(this.props.card.new) {
+            return 'new';
+        }
     }
 
     render() {

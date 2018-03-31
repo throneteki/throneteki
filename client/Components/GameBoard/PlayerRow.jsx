@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import CardPile from './CardPile';
 import PlayerHand from './PlayerHand';
@@ -77,7 +78,10 @@ class PlayerRow extends React.Component {
 
     getAgenda() {
         if(!this.props.agenda || this.props.agenda.code === '') {
-            return <div className={ `agenda ${this.props.cardSize === 'medium' ? '' : this.props.cardSize} card-pile vertical panel` } />;
+            let className = classNames('agenda', 'card-pile', 'vertical', 'panel', {
+                [this.props.cardSize]: this.props.cardSize !== 'normal'
+            });
+            return <div className={ className } />;
         }
 
         let cards = [];

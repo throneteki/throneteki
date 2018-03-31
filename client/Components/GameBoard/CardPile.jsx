@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import _ from 'underscore';
 import $ from 'jquery';
 
@@ -139,19 +140,14 @@ class CardPile extends React.Component {
             return null;
         }
 
-        let popupClass = 'panel';
-        let arrowClass = 'arrow lg';
-
-        if(this.props.popupLocation === 'top') {
-            popupClass += ' our-side';
-            arrowClass += ' down';
-        } else {
-            arrowClass += ' up';
-        }
-
-        if(this.props.orientation === 'horizontal') {
-            arrowClass = 'arrow lg left';
-        }
+        let popupClass = classNames('panel',{
+            'our-side': this.props.popupLocation === 'top'
+        });
+        let arrowClass = classNames('arrow', 'lg', {
+            'down': this.props.popupLocation === 'top' && this.props.orientation !== 'horizontal',
+            'up': this.props.popupLocation !== 'top' && this.props.orientation !== 'horizontal',
+            'left': this.props.orientation === 'horizontal'
+        });
 
         let linkIndex = 0;
 
@@ -193,10 +189,11 @@ class CardPile extends React.Component {
     }
 
     render() {
-        let className = 'panel card-pile ' + this.props.className;
-        if(this.props.size !== 'normal') {
-            className += ' ' + this.props.size;
-        }
+        let className = classNames('panel', 'card-pile', this.props.className, {
+            [this.props.size]: this.props.size !== 'normal',
+            'horizontal': this.props.orientation === 'horizontal' || this.props.orientation === 'kneeled',
+            'vertical': this.props.orientation === 'vertical'
+        });
 
         let cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
         let headerText = this.props.title ? this.props.title + ' (' + (cardCount) + ')' : '';
@@ -205,12 +202,6 @@ class CardPile extends React.Component {
 
         if(this.props.hiddenTopCard && !this.props.topCard) {
             topCard = { facedown: true };
-        }
-
-        if(this.props.orientation === 'horizontal' || this.props.orientation === 'kneeled') {
-            className += ' horizontal';
-        } else {
-            className += ' vertical';
         }
 
         return (
