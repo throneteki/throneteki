@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import _ from 'underscore';
 
 import Card from './Card';
@@ -70,10 +71,9 @@ class PlayerBoard extends React.Component {
     render() {
         let rows = this.getCardRows();
 
-        let className = 'player-board';
-        if(this.props.rowDirection === 'default') {
-            className += ' our-side';
-        }
+        let className = classNames('player-board', {
+            'our-side': this.props.rowDirection === 'default'
+        });
 
         let dragEvents = {};
         if(this.props.onDragDrop) {

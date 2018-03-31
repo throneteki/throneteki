@@ -8,17 +8,35 @@ import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import Input from '../Components/Form/Input';
 import Checkbox from '../Components/Form/Checkbox';
+import CardSizeOption from '../Components/Profile/CardSizeOption';
+import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
 import * as actions from '../actions';
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
 
+        this.handleSelectBackground = this.handleSelectBackground.bind(this);
+        this.handleSelectCardSize = this.handleSelectCardSize.bind(this);
+
         this.state = {
             newPassword: '',
             newPasswordAgain: '',
             validation: {}
         };
+
+        this.backgrounds = [
+            { name: 'none', label: 'None', imageUrl: 'img/blank.png' },
+            { name: 'BG1', label: 'Standard', imageUrl: 'img/background.png' },
+            { name: 'BG2', label: 'Winter', imageUrl: 'img/background3.png' }
+        ];
+
+        this.cardSizes = [
+            { name: 'small', label: 'Small' },
+            { name: 'normal', label: 'Normal' },
+            { name: 'large', label: 'Large' },
+            { name: 'x-large', label: 'Extra-Large' }
+        ];
 
         this.windows = [
             { name: 'plot', label: 'Plots revealed', style: 'col-sm-4' },
@@ -187,11 +205,11 @@ class Profile extends React.Component {
         this.setState({ windowTimer: value });
     }
 
-    onBackgroundClick(background) {
+    handleSelectBackground(background) {
         this.setState({ selectedBackground: background });
     }
 
-    onCardClick(size) {
+    handleSelectCardSize(size) {
         this.setState({ selectedCardSize: size });
     }
 
@@ -282,21 +300,17 @@ class Profile extends React.Component {
                         <div>
                             <Panel title='Game Board Background'>
                                 <div className='row'>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('none') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'none' ? ' selected' : '') }
-                                            src='img/blank.png' />
-                                        <span className='bg-label'>None</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('BG1') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'BG1' ? ' selected' : '') }
-                                            src='/img/background.png' />
-                                        <span className='bg-label'>Standard</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('BG2') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'BG2' ? ' selected' : '') }
-                                            src='img/background3.png' />
-                                        <span className='bg-label'>Winter</span>
-                                    </div>
+                                    {
+                                        this.backgrounds.map(background => (
+                                            <GameBackgroundOption
+                                                imageUrl={ background.imageUrl }
+                                                key={ background.name }
+                                                label={ background.label }
+                                                name={ background.name }
+                                                onSelect={ this.handleSelectBackground }
+                                                selected={ this.state.selectedBackground === background.name } />
+                                        ))
+                                    }
                                 </div>
                             </Panel>
                         </div>
@@ -304,34 +318,16 @@ class Profile extends React.Component {
                             <Panel title='Card Image Size'>
                                 <div className='row'>
                                     <div className='col-xs-12'>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('small') }>
-                                            <div className={ 'card small vertical' + (this.state.selectedCardSize === 'small' ? ' selected' : '') }>
-                                                <img className='card small vertical'
-                                                    src='img/cards/cardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Small</span>
-                                        </div>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('normal') }>
-                                            <div className={ 'card vertical' + (this.state.selectedCardSize === 'normal' ? ' selected' : '') }>
-                                                <img className='card vertical'
-                                                    src='img/cards/cardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Normal</span>
-                                        </div>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('large') }>
-                                            <div className={ 'card vertical large' + (this.state.selectedCardSize === 'large' ? ' selected' : '') } >
-                                                <img className='card-image large vertical'
-                                                    src='/img/cards/cardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Large</span>
-                                        </div>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('x-large') }>
-                                            <div className={ 'card vertical x-large' + (this.state.selectedCardSize === 'x-large' ? ' selected' : '') }>
-                                                <img className='card-image x-large vertical'
-                                                    src='img/cards/cardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Extra-Large</span>
-                                        </div>
+                                        {
+                                            this.cardSizes.map(cardSize => (
+                                                <CardSizeOption
+                                                    key={ cardSize.name }
+                                                    label={ cardSize.label }
+                                                    name={ cardSize.name }
+                                                    onSelect={ this.handleSelectCardSize }
+                                                    selected={ this.state.selectedCardSize === cardSize.name } />
+                                            ))
+                                        }
                                     </div>
                                 </div>
                             </Panel>

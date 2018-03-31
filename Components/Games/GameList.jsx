@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import _ from 'underscore';
@@ -61,6 +62,7 @@ class GameList extends React.Component {
 
             _.each(game.players, player => {
                 let playerElement = null;
+                let factionIconClass = classNames('hidden-xs', 'col-xs-1', 'game-icon', `icon-${player.faction}`);
 
                 if(firstPlayer) {
                     gameRow.push(
@@ -71,12 +73,12 @@ class GameList extends React.Component {
                             <span className='player-name col-sm-8'>{ player.name }</span>
                         </span>);
                     gameRow.push();
-                    gameRow.push(<span key={ player.emailHash + player.faction } className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
+                    gameRow.push(<span key={ player.emailHash + player.faction } className={ factionIconClass } />);
 
                     firstPlayer = false;
                 } else {
                     gameRow.push(<span key={ 'vs' + game.id } className='col-xs-1 game-row-vs text-center'><b> vs </b></span>);
-                    gameRow.push(<span key={ player.emailHash + player.faction } className={ 'hidden-xs col-xs-1 game-icon icon-' + player.faction } />);
+                    gameRow.push(<span key={ player.emailHash + player.faction } className={ factionIconClass } />);
                     gameRow.push(
                         <span key={ player.emailHash } className='col-xs-4 col-sm-3 game-row-avatar'>
                             <span className='player-name col-sm-8'>{ player.name }</span>
@@ -102,9 +104,12 @@ class GameList extends React.Component {
             gameTitle += game.name;
 
             var isAdmin = this.props.user && this.props.user.permissions.canManageGames;
+            let rowClass = classNames('game-row', {
+                [game.node]: game.node && isAdmin
+            });
 
             return (
-                <div key={ game.id } className={ 'game-row' + (game.node && isAdmin ? ' ' + game.node : '') }>
+                <div key={ game.id } className={ rowClass }>
                     <span className='col-xs-12 game-title'>
                         { isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
                         <b>{ gameTitle }</b> { game.showHand ? <img src='/img/ShowHandIcon.png' className='show-hand-icon' /> : null }

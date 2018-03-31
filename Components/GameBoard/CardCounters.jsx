@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import _ from 'underscore';
 
 import Counter from './Counter';
@@ -10,7 +11,9 @@ class CardCounters extends React.Component {
             return null;
         }
 
-        let countersClass = 'counters ignore-mouse-events';
+        let countersClass = classNames('counters', 'ignore-mouse-events', {
+            'many-counters': _.size(this.props.counters) > 3
+        });
 
         let counterDivs = _.map(this.props.counters, (counter, key) => {
             return (<Counter key={ key }
@@ -20,10 +23,6 @@ class CardCounters extends React.Component {
                 cancel={ counter.cancel }
                 shortName={ counter.shortName } />);
         });
-
-        if(_.size(this.props.counters) > 3) {
-            countersClass += ' many-counters';
-        }
 
         return (
             <div className={ countersClass }>
