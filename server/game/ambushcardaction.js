@@ -16,10 +16,6 @@ class AmbushCardAction extends BaseAbility {
         return true;
     }
 
-    isCardAbility() {
-        return false;
-    }
-
     meetsRequirements(context) {
         return (
             context.game.currentPhase === 'challenge' &&

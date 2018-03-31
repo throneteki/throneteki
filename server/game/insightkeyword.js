@@ -10,10 +10,6 @@ class InsightKeyword extends BaseAbility {
         return context.challenge.winner.canDraw();
     }
 
-    isCardAbility() {
-        return false;
-    }
-
     executeHandler(context) {
         let {game, challenge, source} = context;
         let drawn = (challenge.winner.drawCardsToHand(1))[0];

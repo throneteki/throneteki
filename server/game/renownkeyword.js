@@ -10,10 +10,6 @@ class RenownKeyword extends BaseAbility {
         return true;
     }
 
-    isCardAbility() {
-        return false;
-    }
-
     executeHandler(context) {
         let {game, challenge, source} = context;
 

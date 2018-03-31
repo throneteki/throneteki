@@ -10,10 +10,6 @@ class IntimidateKeyword extends BaseAbility {
         return context.challenge.isAttackerTheWinner();
     }
 
-    isCardAbility() {
-        return false;
-    }
-
     executeHandler(context) {
         let {game, challenge, source} = context;
         let strength = challenge.strengthDifference;

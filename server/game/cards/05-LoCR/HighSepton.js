@@ -6,7 +6,7 @@ class HighSepton extends DrawCard {
             limit: ability.limit.perPhase(1),
             when: {
                 onTargetsChosen: event => (
-                    event.ability.isCardAbility() &&
+                    event.ability.isTriggeredAbility() &&
                     event.targets.hasSingleTarget() &&
                     event.targets.anySelection(selection => (
                         selection.choosingPlayer !== this.controller &&
