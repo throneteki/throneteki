@@ -11,7 +11,7 @@ class KeywordWindow extends BaseStep {
         super(game);
         this.challenge = challenge;
         this.winnerCardsWithContext = _.map(challenge.getWinnerCards(), card => {
-            return { card: card, context: new AbilityContext({ game: this.game, challenge: this.challenge, source: card }) };
+            return { card: card, context: new AbilityContext({ player: this.challenge.winner, game: this.game, challenge: this.challenge, source: card }) };
         });
         this.firstPlayer = game.getFirstPlayer();
         this.remainingKeywords = challengeKeywords;

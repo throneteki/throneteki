@@ -54,7 +54,7 @@ describe('intimidate', function() {
             });
 
             it('should prompt to kneel characters', function() {
-                expect(this.player1).toHavePrompt('Choose and kneel a character with 3 strength or less');
+                expect(this.player1).toHavePrompt('Select a character to intimidate');
             });
 
             it('should allow a character with strengt up to the winning strength difference to be knelt', function() {
@@ -90,7 +90,7 @@ describe('intimidate', function() {
             });
 
             it('should prompt only once', function() {
-                expect(this.player1).toHavePrompt('Choose and kneel a character with 10 strength or less');
+                expect(this.player1).toHavePrompt('Select a character to intimidate');
 
                 this.player1.clickCard(this.gendry);
                 expect(this.gendry.kneeled).toBe(true);
