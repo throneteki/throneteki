@@ -121,6 +121,14 @@ class TriggeredAbility extends BaseAbility {
         return this.card.getPrintedType() === 'event' && this.location.includes('hand');
     }
 
+    incrementLimit() {
+        if(!this.location.includes(this.card.location)) {
+            return;
+        }
+
+        super.incrementLimit();
+    }
+
     hasMax() {
         return !!this.max;
     }
