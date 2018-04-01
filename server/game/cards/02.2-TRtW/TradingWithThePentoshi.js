@@ -3,6 +3,7 @@ const PlotCard = require('../../plotcard.js');
 class TradingWithThePentoshi extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            cannotBeCanceled: true,
             handler: () => {
                 for(let opponent of this.game.getOpponents(this.controller)) {
                     this.game.addGold(opponent, 3);
