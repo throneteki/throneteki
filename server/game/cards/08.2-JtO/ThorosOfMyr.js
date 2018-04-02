@@ -5,20 +5,22 @@ class ThorosOfMyr extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => event.allowSave
+                onCharacterKilled: event => (
+                    event.allowSave &&
+                    event.card !== this &&
+                    !event.card.isLoyal() &&
+                    event.card.controller === this.controller &&
+                    event.card.canBeSaved()
+                )
             },
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.discardPowerFromSelf(1)
             ],
-            target: {
-                cardCondition: (card, context) => context.event.cards.includes(card) && card !== this && !card.isLoyal() &&
-                                                  card.controller === this.controller && card.canBeSaved()
-            },
             handler: context => {
-                context.event.saveCard(context.target);
+                context.event.saveCard();
                 this.game.addMessage('{0} kneels and discards 1 power from {1} to save {2}',
-                    context.player, this, context.target);
+                    context.player, this, context.event.card);
             }
         });
     }

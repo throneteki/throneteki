@@ -6,21 +6,18 @@ class PodrickPayne extends DrawCard {
             canCancel: true,
             location: 'hand',
             when: {
-                onCharactersKilled: () => this.game.claim.isApplying && this.game.claim.type === 'military'
-            },
-            target: {
-                cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && card.controller === this.controller
+                onCharacterKilled: event => this.game.claim.isApplying && this.game.claim.type === 'military' && event.allowSave && event.card.canBeSaved() && event.card.controller === this.controller
             },
             cost: [
                 ability.costs.payGold(2),
                 ability.costs.putSelfIntoPlay()
             ],
             handler: context => {
-                context.event.saveCard(context.target);
+                context.event.saveCard();
                 this.game.addMessage('{0} puts {1} into play and pays 2 gold to save {2}',
-                    this.controller, this, context.target);
+                    this.controller, this, context.event.card);
 
-                if(context.target.name === 'Tyrion Lannister' && this.controller.getSpendableGold() >= 2 &&
+                if(context.event.card.name === 'Tyrion Lannister' && this.controller.getSpendableGold() >= 2 &&
                    this.game.currentChallenge && this.game.currentChallenge.attackers.length >= 1) {
                     this.game.promptWithMenu(this.controller, this, {
                         activePrompt: {

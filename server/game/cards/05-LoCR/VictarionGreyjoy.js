@@ -5,11 +5,11 @@ class VictarionGreyjoy extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => event.allowSave && event.cards.includes(this) && this.canBeSaved()
+                onCharacterKilled: event => event.allowSave && event.card === this && this.canBeSaved()
             },
             cost: ability.costs.discardPowerFromSelf(2),
             handler: context => {
-                context.event.saveCard(this);
+                context.event.saveCard();
                 this.game.addMessage('{0} uses {1} to save {2}', this.controller, this, this);
             }
         });

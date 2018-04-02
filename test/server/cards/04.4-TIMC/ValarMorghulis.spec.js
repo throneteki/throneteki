@@ -27,8 +27,8 @@ describe('Valar Morghulis', function() {
                 this.player1.clickCard(this.marg2);
                 this.player1.clickCard(this.rickon);
 
-                this.player2.clickCard(this.samwell);
                 this.player2.clickCard(this.aemon);
+                this.player2.clickCard(this.samwell);
 
                 this.completeSetup();
 

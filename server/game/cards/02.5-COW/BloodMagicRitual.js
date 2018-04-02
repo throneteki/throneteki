@@ -5,21 +5,18 @@ class BloodMagicRitual extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => event.allowSave
+                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && !event.card.hasTrait('Army')
             },
             location: 'hand',
-            target: {
-                cardCondition: (card, context) => context.event.cards.includes(card) && card.canBeSaved() && !card.hasTrait('Army')
-            },
             handler: context => {
-                context.event.saveCard(context.target);
+                context.event.saveCard();
 
-                if(this.controller.canAttach(this, context.target)) {
-                    this.controller.attach(this.controller, this, context.target, 'play');
+                if(this.controller.canAttach(this, context.event.card)) {
+                    this.controller.attach(this.controller, this, context.event.card, 'play');
                     this.setCardType('attachment');
                 }
 
-                this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.target);
+                this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.event.card);
             }
         });
 

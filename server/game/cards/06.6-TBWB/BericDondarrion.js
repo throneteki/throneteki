@@ -21,11 +21,11 @@ class BericDondarrion extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => event.allowSave && event.cards.includes(this) && this.canBeSaved()
+                onCharacterKilled: event => event.allowSave && event.card === this && this.canBeSaved()
             },
             cost: ability.costs.discardTokenFromSelf('kiss'),
             handler: context => {
-                context.event.saveCard(this);
+                context.event.saveCard();
                 this.game.addMessage('{0} discards a kiss token to save {1}', this.controller, this);
             }
         });
