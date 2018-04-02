@@ -2,19 +2,14 @@ const BaseAbility = require('./baseability.js');
 
 class IntimidateKeyword extends BaseAbility {
     constructor() {
-        super({});
-        this.title = 'Intimidate';
-        this.targets = super.buildTargets(this.getTargetProperty());
-    }
-
-    getTargetProperty() {
-        return {
+        super({
             target: {
                 activePromptTitle: 'Select a character to intimidate',
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
             }
-        };
+        });
+        this.title = 'Intimidate';
     }
 
     meetsRequirements(context) {
