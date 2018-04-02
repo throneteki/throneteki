@@ -5,6 +5,8 @@ import _ from 'underscore';
 import $ from 'jquery';
 import { toastr } from 'react-redux-toastr';
 import { bindActionCreators } from 'redux';
+import { DragDropContext } from 'react-dnd';
+import { default as TouchBackend } from 'react-dnd-touch-backend';
 
 import PlayerStats from './PlayerStats';
 import PlayerRow from './PlayerRow';
@@ -14,6 +16,7 @@ import PlayerBoard from './PlayerBoard';
 import GameChat from './GameChat';
 import PlayerPlots from './PlayerPlots';
 import GameConfigurationModal from './GameConfigurationModal';
+import Droppable from './Droppable';
 import * as actions from '../../actions';
 
 const placeholderPlayer = {
@@ -211,7 +214,6 @@ export class GameBoard extends React.Component {
             onCardClick: this.onCardClick,
             onCardMouseOut: this.onMouseOut,
             onCardMouseOver: this.onMouseOver,
-            onDragDrop: this.onDragDrop,
             onMenuItemClick: this.onMenuItemClick
         };
         return (<div className='plots-pane'>
@@ -347,23 +349,26 @@ export class GameBoard extends React.Component {
                                 </div>
                             </div>
                             <div className='play-area'>
-                                <PlayerBoard
-                                    cardsInPlay={ otherPlayer.cardPiles.cardsInPlay }
-                                    onCardClick={ this.onCardClick }
-                                    onMenuItemClick={ this.onMenuItemClick }
-                                    onMouseOut={ this.onMouseOut }
-                                    onMouseOver={ this.onMouseOver }
-                                    rowDirection='reverse'
-                                    user={ this.props.user } />
-                                <PlayerBoard
-                                    cardsInPlay={ thisPlayer.cardPiles.cardsInPlay }
-                                    onCardClick={ this.onCardClick }
-                                    onDragDrop={ this.onDragDrop }
-                                    onMenuItemClick={ this.onMenuItemClick }
-                                    onMouseOut={ this.onMouseOut }
-                                    onMouseOver={ this.onMouseOver }
-                                    rowDirection='default'
-                                    user={ this.props.user } />
+                                <Droppable onDragDrop={ this.onDragDrop } source='play area'>
+                                    <PlayerBoard
+                                        cardsInPlay={ otherPlayer.cardPiles.cardsInPlay }
+                                        onCardClick={ this.onCardClick }
+                                        onMenuItemClick={ this.onMenuItemClick }
+                                        onMouseOut={ this.onMouseOut }
+                                        onMouseOver={ this.onMouseOver }
+                                        rowDirection='reverse'
+                                        user={ this.props.user } />
+                                </Droppable>
+                                <Droppable onDragDrop={ this.onDragDrop } source='play area'>
+                                    <PlayerBoard
+                                        cardsInPlay={ thisPlayer.cardPiles.cardsInPlay }
+                                        onCardClick={ this.onCardClick }
+                                        onMenuItemClick={ this.onMenuItemClick }
+                                        onMouseOut={ this.onMouseOut }
+                                        onMouseOver={ this.onMouseOver }
+                                        rowDirection='default'
+                                        user={ this.props.user } />
+                                </Droppable>
                             </div>
                         </div>
                         <div className='player-home-row our-side'>
@@ -408,7 +413,7 @@ export class GameBoard extends React.Component {
                     <PlayerStats { ...boundActionCreators } stats={ thisPlayer.stats } showControls={ !this.state.spectating } user={ thisPlayer.user }
                         firstPlayer={ thisPlayer.firstPlayer } onSettingsClick={ this.onSettingsClick.bind(this) } />
                 </div>
-            </div>);
+            </div >);
     }
 }
 
@@ -443,5 +448,6 @@ function mapDispatchToProps(dispatch) {
     return boundActions;
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(GameBoard);
+const draggable = DragDropContext(TouchBackend({ enableMouseEvents: true }))(GameBoard);
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(draggable);
 

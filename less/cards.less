@@ -457,3 +457,46 @@
 .card-small {
   max-width: 30px;
 }
+
+.drag-preview {
+  pointer-events: none;
+  position: fixed;
+
+  opacity: 0.5;
+  z-index: 9999;
+}
+
+.relative {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  padding: inherit;
+  margin: inherit;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 9999;
+  opacity: 0.5;
+
+  pointer-events: none;
+  
+  &.drop-ok {
+    background-color: @brand-success
+  }
+  
+  &.can-drop {
+    background-color: @brand-warning
+  }
+
+  &.no-drop {
+    background-color: @brand-danger
+  }
+}
+
+.drop-target {
+  display: inline-block;
+  position: relative;
+}

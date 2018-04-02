@@ -2,12 +2,30 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'underscore';
-import $ from 'jquery';
 import 'jquery-migrate';
-import 'jquery-nearest';
+import { DragSource } from 'react-dnd';
 
 import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
+import { ItemTypes } from '../../constants';
+
+const cardSource = {
+    beginDrag(props) {
+        return {
+            card: props.card,
+            source: props.source
+        };
+    }
+};
+
+function collect(connect, monitor) {
+    return {
+        connectDragPreview: connect.dragPreview(),
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging(),
+        dragOffset: monitor.getSourceClientOffset()
+    };
+}
 
 class Card extends React.Component {
     constructor() {
@@ -45,66 +63,6 @@ class Card extends React.Component {
         if(this.props.onMouseOut) {
             this.props.onMouseOut();
         }
-    }
-
-    onCardDragStart(event, card, source) {
-        var dragData = { card: card, source: source };
-
-        event.dataTransfer.setData('Text', JSON.stringify(dragData));
-    }
-
-    onTouchMove(event) {
-        event.preventDefault();
-        var touch = event.targetTouches[0];
-
-        event.currentTarget.style.left = touch.pageX - 32 + 'px';
-        event.currentTarget.style.top = touch.pageY - 42 + 'px';
-        event.currentTarget.style.position = 'fixed';
-    }
-
-    getReactComponentFromDOMNode(dom) {
-        for(var key in dom) {
-            if(key.indexOf('__reactInternalInstance$') === 0) {
-                var compInternals = dom[key]._currentElement;
-                var compWrapper = compInternals._owner;
-                var comp = compWrapper._instance;
-                return comp;
-            }
-        }
-
-        return null;
-    }
-
-    onTouchStart(event) {
-        this.setState({ touchStart: $(event.currentTarget).position() });
-    }
-
-    onTouchEnd(event) {
-        var target = $(event.currentTarget);
-        var nearestPile = target.nearest('.card-pile, .hand, .player-board');
-
-        var pilePosition = nearestPile.position();
-        var cardPosition = target.position();
-
-        if(cardPosition.left + target.width() > pilePosition.left - 10 && cardPosition.left < pilePosition.left + nearestPile.width() + 10) {
-            var dropTarget = '';
-
-            if(_.includes(nearestPile.attr('class'), 'hand')) {
-                dropTarget = 'hand';
-            } else if(_.includes(nearestPile.attr('class'), 'player-board')) {
-                dropTarget = 'play area';
-            } else {
-                var component = this.getReactComponentFromDOMNode(nearestPile[0]);
-                dropTarget = component.props.source;
-            }
-
-            if(dropTarget && this.props.onDragDrop) {
-                this.props.onDragDrop(this.props.card, this.props.source, dropTarget);
-            }
-        }
-
-        target.css({ left: this.state.touchStart.left + 'px', top: this.state.touchStart.top + 'px' });
-        event.currentTarget.style.position = 'initial';
     }
 
     isAllowedMenuSource() {
@@ -180,7 +138,6 @@ class Card extends React.Component {
                 onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
                 onClick={ this.props.onClick }
                 onMenuItemClick={ this.props.onMenuItemClick }
-                onDragStart={ ev => this.onCardDragStart(ev, attachment, this.props.source) }
                 size={ this.props.size } />);
 
             index += 1;
@@ -256,6 +213,29 @@ class Card extends React.Component {
         return this.props.card.facedown || !this.props.card.code;
     }
 
+    getDragFrame(image) {
+        if(!this.props.isDragging) {
+            return null;
+        }
+
+        let style = {};
+
+        if(this.props.dragOffset && this.props.isDragging) {
+            let x = this.props.dragOffset.x;
+            let y = this.props.dragOffset.y;
+
+            style = {
+                left: x,
+                top: y
+            };
+        }
+
+        return (
+            <div className='drag-preview' style={ style }>
+                { image }
+            </div>);
+    }
+
     getCard() {
         if(!this.props.card) {
             return <div />;
@@ -265,7 +245,8 @@ class Card extends React.Component {
             'custom-card': this.props.card.code && this.props.card.code.startsWith('custom'),
             'horizontal': this.props.orientation !== 'vertical' || this.props.card.kneeled,
             'vertical': this.props.orientation === 'vertical' && !this.props.card.kneeled,
-            'unselectable': this.props.card.unselectable
+            'unselectable': this.props.card.unselectable,
+            'dragging': this.props.isDragging
         });
         let imageClass = classNames('card-image', this.sizeClass, {
             'horizontal': this.props.card.type === 'plot',
@@ -273,26 +254,26 @@ class Card extends React.Component {
             'kneeled': this.props.orientation === 'kneeled' || this.props.card.kneeled || this.props.orientation === 'horizontal' && this.props.card.type !== 'plot'
         });
 
-        return (
-            <div className='card-frame' ref='cardFrame'
-                onTouchMove={ ev => this.onTouchMove(ev) }
-                onTouchEnd={ ev => this.onTouchEnd(ev) }
-                onTouchStart={ ev => this.onTouchStart(ev) }>
+        let image = <img className={ imageClass } src={ '/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg') } />;
+
+        let content = this.props.connectDragSource(
+            <div className='card-frame'>
+                { this.getDragFrame(image) }
                 { this.getCardOrder() }
                 <div className={ cardClass }
                     onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card) }
                     onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
-                    onClick={ ev => this.onClick(ev, this.props.card) }
-                    onDragStart={ ev => this.onCardDragStart(ev, this.props.card, this.props.source) }
-                    draggable>
+                    onClick={ ev => this.onClick(ev, this.props.card) }>
                     <div>
                         <span className='card-name'>{ this.props.card.name }</span>
-                        <img className={ imageClass } src={ '/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg') } />
+                        { image }
                     </div>
                     { this.showCounters() ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
                 </div>
                 { this.showMenu() ? <CardMenu menu={ this.props.card.menu } onMenuItemClick={ this.onMenuItemClick } /> : null }
             </div>);
+
+        return this.props.connectDragPreview(content);
     }
 
     get sizeClass() {
@@ -327,7 +308,7 @@ class Card extends React.Component {
 
     render() {
         if(this.props.wrapped) {
-            return (
+            return this.props.connectDragSource(
                 <div className='card-wrapper' style={ this.props.style }>
                     { this.getCard() }
                     { this.getDupes() }
@@ -369,9 +350,12 @@ Card.propTypes = {
         unselectable: PropTypes.bool
     }).isRequired,
     className: PropTypes.string,
+    connectDragPreview: PropTypes.func,
+    connectDragSource: PropTypes.func,
     disableMouseOver: PropTypes.bool,
+    dragOffset: PropTypes.object,
+    isDragging: PropTypes.bool,
     onClick: PropTypes.func,
-    onDragDrop: PropTypes.func,
     onMenuItemClick: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
@@ -387,4 +371,4 @@ Card.defaultProps = {
     wrapped: true
 };
 
-export default Card;
+export default DragSource(ItemTypes.CARD, cardSource, collect)(Card);

@@ -69,6 +69,8 @@
     "react-async-script": "^0.9.1",
     "react-bootstrap-slider": "^2.0.1",
     "react-bootstrap-typeahead": "^2.5.1",
+    "react-dnd": "^2.6.0",
+    "react-dnd-touch-backend": "^0.3.21",
     "react-dom": "^16.2.0",
     "react-google-recaptcha": "^0.9.7",
     "react-redux": "^4.4.8",
