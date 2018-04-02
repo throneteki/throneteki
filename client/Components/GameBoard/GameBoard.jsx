@@ -214,6 +214,7 @@ export class GameBoard extends React.Component {
             onCardClick: this.onCardClick,
             onCardMouseOut: this.onMouseOut,
             onCardMouseOver: this.onMouseOver,
+            onDragDrop: this.onDragDrop,
             onMenuItemClick: this.onMenuItemClick
         };
         return (<div className='plots-pane'>
