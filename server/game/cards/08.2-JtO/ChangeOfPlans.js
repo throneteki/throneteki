@@ -7,6 +7,7 @@ class ChangeOfPlans extends DrawCard {
                 afterChallenge: event => event.challenge.loser === this.controller && this.controller.getNumberOfUsedPlots() < 5
             },
             target: {
+                type: 'select',
                 activePromptTitle: 'Select a plot',
                 cardCondition: card => ['plot deck', 'scheme plots'].includes(card.location) && card.controller === this.controller,
                 cardType: 'plot'

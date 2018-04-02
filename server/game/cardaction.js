@@ -159,6 +159,10 @@ class CardAction extends BaseAbility {
         return true;
     }
 
+    isTriggeredAbility() {
+        return true;
+    }
+
     isClickToActivate() {
         return this.clickToActivate;
     }

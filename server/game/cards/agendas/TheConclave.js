@@ -15,6 +15,7 @@ class TheConclave extends AgendaCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingMaester(event.challenge)
             },
             target: {
+                type: 'select',
                 activePromptTitle: 'Choose Conclave card to swap with top of deck',
                 cardCondition: card => card.location === 'conclave'
             },

@@ -7,6 +7,7 @@ const PlotCard = require('../../plotcard.js');
 class AtPrinceDoransBehest extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            cannotBeCanceled: true,
             target: {
                 activePromptTitle: 'Select a plot',
                 cardCondition: card => card.controller === this.controller && this.getPlotSourceForPhase(card),

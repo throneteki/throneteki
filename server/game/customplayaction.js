@@ -15,6 +15,12 @@ class CustomPlayAction extends BaseAbility {
     executeHandler(context) {
         this.handler(context);
     }
+
+    //This classification might need to be reviewed in the future, but with Lady-in-Waiting being the
+    //only card making use of this functionality currently, it fits.
+    isCardAbility() {
+        return false;
+    }
 }
 
 module.exports = CustomPlayAction;

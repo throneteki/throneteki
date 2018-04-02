@@ -5,22 +5,14 @@ class Treachery extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: event => {
-                    if((event.source.getType() !== 'character' && event.source.getType() !== 'location' && event.source.getType() !== 'attachment') ||
-                            event.player === this.controller) {
-                        return false;
-                    }
-
-                    if(!this.controller.anyCardsInPlay(card => card.isUnique() && card.isFaction('lannister') && card.getType() === 'character')) {
-                        return false;
-                    }
-
-                    return true;
-                }
+                //Restrict triggering on own triggered abilities to forced triggered abilities
+                onCardAbilityInitiated: event => this.controller.anyCardsInPlay(card => card.isUnique() && card.isFaction('lannister') && card.getType() === 'character') &&
+                                                 event.ability.isTriggeredAbility() &&
+                                                 ['character', 'location', 'attachment'].includes(event.source.getType()) &&
+                                                 (event.ability.isForcedAbility() || event.source.controller !== this.controller)
             },
             handler: context => {
                 context.event.cancel();
-
                 this.game.addMessage('{0} plays {1} to cancel {2}', this.controller, this, context.event.source);
             }
         });

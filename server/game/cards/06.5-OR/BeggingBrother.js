@@ -6,7 +6,8 @@ class BeggingBrother extends DrawCard {
             canCancel: true,
             when: {
                 //Restrict triggering on own character abilities to forced triggered abilities
-                onCardAbilityInitiated: event => event.source.getType() === 'character' && (event.isForced || event.source.controller !== this.controller)
+                onCardAbilityInitiated: event => event.source.getType() === 'character' && event.ability.isTriggeredAbility() &&
+                                                 (event.ability.isForcedAbility() || event.source.controller !== this.controller)
             },
             cost: ability.costs.discardGold(),
             handler: context => {

@@ -215,6 +215,10 @@ class BaseAbility {
         return true;
     }
 
+    isTriggeredAbility() {
+        return false;
+    }
+
     isForcedAbility() {
         return false;
     }

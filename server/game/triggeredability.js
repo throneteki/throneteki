@@ -25,6 +25,10 @@ class TriggeredAbility extends BaseAbility {
         }
     }
 
+    isTriggeredAbility() {
+        return true;
+    }
+
     buildLocation(card, location) {
         const DefaultLocationForType = {
             event: 'hand',
@@ -60,7 +64,7 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if(event.cannotBeCanceled && this.eventType === 'cancelinterrupt') {
+        if(event.ability && !!event.ability.cannotBeCanceled && this.eventType === 'cancelinterrupt') {
             return;
         }
 
