@@ -10,7 +10,7 @@ class SecretSchemes extends DrawCard {
                 var cards = this.controller.getNumberOfUsedPlots();
                 cards = this.controller.drawCardsToHand(cards).length;
                 this.game.addMessage('{0} plays {1} and kneels their faction card to draw {2} {3}',
-                    this.controller, this, cards, cards, cards > 1 ? 'cards' : 'card');
+                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }
         });
     }
