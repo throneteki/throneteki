@@ -4,31 +4,8 @@ import classNames from 'classnames';
 import _ from 'underscore';
 
 import Card from './Card';
-import { tryParseJSON } from '../../util';
 
 class PlayerBoard extends React.Component {
-    onDragOver(event) {
-        event.preventDefault();
-    }
-
-    onDragDropEvent(event, target) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        let card = event.dataTransfer.getData('Text');
-        if(!card) {
-            return;
-        }
-
-        let dragData = tryParseJSON(card);
-
-        if(!dragData) {
-            return;
-        }
-
-        this.props.onDragDrop(dragData.card, dragData.source, target);
-    }
-
     getCardRows() {
         let sortedCards = _.sortBy(this.props.cardsInPlay, card => card.type);
 
@@ -59,7 +36,6 @@ class PlayerBoard extends React.Component {
                 card={ card }
                 disableMouseOver={ card.facedown && !card.code }
                 onClick={ this.props.onCardClick }
-                onDragDrop={ this.props.onDragDrop }
                 onMenuItemClick={ this.props.onMenuItemClick }
                 onMouseOut={ this.props.onMouseOut }
                 onMouseOver={ this.props.onMouseOver }
@@ -75,14 +51,8 @@ class PlayerBoard extends React.Component {
             'our-side': this.props.rowDirection === 'default'
         });
 
-        let dragEvents = {};
-        if(this.props.onDragDrop) {
-            dragEvents.onDragOver = this.onDragOver;
-            dragEvents.onDrop = event => this.onDragDropEvent(event, 'play area');
-        }
-
         return (
-            <div className={ className } { ...dragEvents } >
+            <div className={ className } >
                 { this.renderRows(rows) }
             </div>);
     }
@@ -92,7 +62,6 @@ PlayerBoard.displayName = 'PlayerBoard';
 PlayerBoard.propTypes = {
     cardsInPlay: PropTypes.array,
     onCardClick: PropTypes.func,
-    onDragDrop: PropTypes.func,
     onMenuItemClick: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,

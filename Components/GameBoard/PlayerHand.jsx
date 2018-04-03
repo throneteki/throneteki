@@ -2,43 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'underscore';
-import $ from 'jquery';
 
 import Card from './Card';
-import { tryParseJSON } from '../../util';
 
 class PlayerHand extends React.Component {
-    onDragOver(event) {
-        $(event.target).addClass('highlight-panel');
-        event.preventDefault();
-    }
-
-    onDragLeave(event) {
-        $(event.target).removeClass('highlight-panel');
-    }
-
-    onDragDrop(event, target) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        $(event.target).removeClass('highlight-panel');
-
-        let card = event.dataTransfer.getData('Text');
-
-        if(!card) {
-            return;
-        }
-
-        let dragData = tryParseJSON(card);
-        if(!dragData) {
-            return;
-        }
-
-        if(this.props.onDragDrop) {
-            this.props.onDragDrop(dragData.card, dragData.source, target);
-        }
-    }
-
     disableMouseOver(revealWhenHiddenTo) {
         if(this.props.spectating && this.props.showHand) {
             return false;
@@ -79,7 +46,6 @@ class PlayerHand extends React.Component {
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
                 onClick={ this.props.onCardClick }
-                onDragDrop={ this.props.onDragDrop }
                 size={ this.props.cardSize } />);
         });
 
@@ -113,10 +79,7 @@ class PlayerHand extends React.Component {
         });
 
         return (
-            <div className={ className }
-                onDragLeave={ this.onDragLeave }
-                onDragOver={ this.onDragOver }
-                onDrop={ event => this.onDragDrop(event, 'hand') }>
+            <div className={ className }>
                 <div className='panel-header'>
                     { 'Hand (' + cards.length + ')' }
                 </div>
@@ -132,7 +95,6 @@ PlayerHand.propTypes = {
     cards: PropTypes.array,
     isMe: PropTypes.bool,
     onCardClick: PropTypes.func,
-    onDragDrop: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
     showHand: PropTypes.bool,

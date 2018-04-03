@@ -2,17 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import _ from 'underscore';
-import $ from 'jquery';
 
 import Card from './Card';
-import { tryParseJSON } from '../../util.js';
+import Droppable from './Droppable';
 
 class CardPile extends React.Component {
     constructor() {
         super();
 
         this.onCollectionClick = this.onCollectionClick.bind(this);
-        this.onDragDrop = this.onDragDrop.bind(this);
         this.onTopCardClick = this.onTopCardClick.bind(this);
 
         this.state = {
@@ -76,39 +74,6 @@ class CardPile extends React.Component {
         this.setState({ showPopup: !this.state.showPopup });
     }
 
-    onDragOver(event) {
-        $(event.target).addClass('highlight-panel');
-
-        event.preventDefault();
-    }
-
-    onDragLeave(event) {
-        $(event.target).removeClass('highlight-panel');
-    }
-
-    onDragDrop(event, target) {
-        event.stopPropagation();
-        event.preventDefault();
-
-        $(event.target).removeClass('highlight-panel');
-
-        let card = event.dataTransfer.getData('Text');
-
-        if(!card) {
-            return;
-        }
-
-        let dragData = tryParseJSON(card);
-
-        if(!dragData) {
-            return;
-        }
-
-        if(this.props.onDragDrop) {
-            this.props.onDragDrop(dragData.card, dragData.source, target);
-        }
-    }
-
     onCardClick(card) {
         if(this.props.closeOnClick) {
             this.setState({ showPopup: false });
@@ -131,7 +96,6 @@ class CardPile extends React.Component {
                 onMouseOut={ this.props.onMouseOut }
                 onTouchMove={ this.props.onTouchMove }
                 onClick={ this.onCardClick.bind(this, card) }
-                onDragDrop={ this.props.onDragDrop }
                 orientation={ this.props.orientation === 'kneeled' ? 'vertical' : this.props.orientation }
                 size={ this.props.size } />);
         });
@@ -140,7 +104,7 @@ class CardPile extends React.Component {
             return null;
         }
 
-        let popupClass = classNames('panel',{
+        let popupClass = classNames('panel', {
             'our-side': this.props.popupLocation === 'top'
         });
         let arrowClass = classNames('arrow', 'lg', {
@@ -163,13 +127,15 @@ class CardPile extends React.Component {
                         <a className='close-button glyphicon glyphicon-remove' onClick={ this.onCloseClick.bind(this) } />
                     </span>
                 </div>
-                <div className={ popupClass } onClick={ event => event.stopPropagation() }>
-                    { popupMenu }
-                    <div className='inner'>
-                        { cardList }
+                <Droppable onDragDrop={ this.props.onDragDrop } source={ this.props.source }>
+                    <div className={ popupClass } onClick={ event => event.stopPropagation() }>
+                        { popupMenu }
+                        <div className='inner'>
+                            { cardList }
+                        </div>
+                        <div className={ arrowClass } />
                     </div>
-                    <div className={ arrowClass } />
-                </div>
+                </Droppable>
             </div>);
 
         return popup;
@@ -205,8 +171,7 @@ class CardPile extends React.Component {
         }
 
         return (
-            <div className={ className } onDragLeave={ this.onDragLeave } onDragOver={ this.onDragOver } onDrop={ event => this.onDragDrop(event, this.props.source) }
-                onClick={ this.onCollectionClick }>
+            <div className={ className } onClick={ this.onCollectionClick }>
                 <div className='panel-header'>
                     { headerText }
                 </div>
@@ -216,7 +181,6 @@ class CardPile extends React.Component {
                     disableMouseOver={ this.props.hiddenTopCard }
                     onClick={ this.onTopCardClick }
                     onMenuItemClick={ this.props.onMenuItemClick }
-                    onDragDrop={ this.props.onDragDrop }
                     orientation={ cardOrientation }
                     size={ this.props.size } /> : <div className='card-placeholder' /> }
                 { this.state.showMenu ? this.getMenu() : null }
@@ -248,7 +212,7 @@ CardPile.propTypes = {
     size: PropTypes.string,
     source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
         'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional',
-        'scheme plots']).isRequired,
+        'scheme plots', 'conclave']).isRequired,
     title: PropTypes.string,
     topCard: PropTypes.object
 };
