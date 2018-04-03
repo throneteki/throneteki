@@ -436,12 +436,11 @@ class DrawCard extends BaseCard {
 
         let baseSummary = super.getSummary(activePlayer, hideWhenFaceup);
 
-        return _.extend(baseSummary, {
+        let publicSummary = {
             attached: !!this.parent,
             attachments: this.attachments.map(attachment => {
                 return attachment.getSummary(activePlayer, hideWhenFaceup);
             }),
-            baseStrength: this.getPrintedStrength(),
             dupes: this.dupes.map(dupe => {
                 if(dupe.dupes.size() !== 0) {
                     throw new Error('A dupe should not have dupes! ' + dupe.name);
@@ -449,13 +448,21 @@ class DrawCard extends BaseCard {
 
                 return dupe.getSummary(activePlayer, hideWhenFaceup);
             }),
+            kneeled: this.kneeled,
+            power: this.power,
+            revealWhenHiddenTo: this.revealWhenHiddenTo
+        };
+
+        if(baseSummary.facedown) {
+            return Object.assign(baseSummary, publicSummary);
+        }
+
+        return Object.assign(baseSummary, publicSummary, {
+            baseStrength: this.getPrintedStrength(),
             iconsAdded: this.getIconsAdded(),
             iconsRemoved: this.getIconsRemoved(),
             inChallenge: this.inChallenge,
             inDanger: this.inDanger,
-            kneeled: this.kneeled,
-            power: this.power,
-            revealWhenHiddenTo: this.revealWhenHiddenTo,
             saved: this.saved,
             strength: this.getStrength(),
             stealth: this.stealth
