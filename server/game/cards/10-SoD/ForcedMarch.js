@@ -6,6 +6,7 @@ class ForcedMarch extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
+                this.initiatedPostThen = false;
                 this.initiate();
             }
         });
@@ -51,7 +52,7 @@ class ForcedMarch extends PlotCard {
             card.controller.kneelCard(card);
         }
 
-        if(this.hasStandingMilIcon(this.controller) && !_.isEmpty(this.filterForOpponents())) {
+        if(this.hasStandingMilIcon(this.controller) && !_.isEmpty(this.filterForOpponents()) && !this.initiatedPostThen) {
             this.game.promptForSelect(this.controller, {
                 source: this,
                 gameAction: 'kneel',
@@ -66,6 +67,7 @@ class ForcedMarch extends PlotCard {
         player.kneelCard(card);
         this.game.addMessage('{0} then kneels {1} to initiate the effect of {2} again', player, card, this);
         this.initiate();
+        this.initiatedPostThen = true;
         return true;
     }
 
