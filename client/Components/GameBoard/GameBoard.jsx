@@ -350,16 +350,14 @@ export class GameBoard extends React.Component {
                                 </div>
                             </div>
                             <div className='play-area'>
-                                <Droppable onDragDrop={ this.onDragDrop } source='play area'>
-                                    <PlayerBoard
-                                        cardsInPlay={ otherPlayer.cardPiles.cardsInPlay }
-                                        onCardClick={ this.onCardClick }
-                                        onMenuItemClick={ this.onMenuItemClick }
-                                        onMouseOut={ this.onMouseOut }
-                                        onMouseOver={ this.onMouseOver }
-                                        rowDirection='reverse'
-                                        user={ this.props.user } />
-                                </Droppable>
+                                <PlayerBoard
+                                    cardsInPlay={ otherPlayer.cardPiles.cardsInPlay }
+                                    onCardClick={ this.onCardClick }
+                                    onMenuItemClick={ this.onMenuItemClick }
+                                    onMouseOut={ this.onMouseOut }
+                                    onMouseOver={ this.onMouseOver }
+                                    rowDirection='reverse'
+                                    user={ this.props.user } />
                                 <Droppable onDragDrop={ this.onDragDrop } source='play area'>
                                     <PlayerBoard
                                         cardsInPlay={ thisPlayer.cardPiles.cardsInPlay }

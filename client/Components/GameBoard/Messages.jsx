@@ -53,29 +53,29 @@ class Messages extends React.Component {
                 switch(fragment.type) {
                     case 'endofround':
                         return (
-                            <div className='seperator'>
+                            <div className='seperator' key={ index++ }>
                                 <hr />
                                 { message }
                                 <hr />
                             </div>
                         );
                     case 'success':
-                        return (<div className='alert alert-success'>
+                        return (<div className='alert alert-success' key={ index++ }>
                             <span className='glyphicon glyphicon-ok-sign' />&nbsp;
                             { message }
                         </div>);
                     case 'info':
-                        return (<div className='alert alert-info'>
+                        return (<div className='alert alert-info' key={ index++ }>
                             <span className='glyphicon glyphicon-info-sign' />&nbsp;
                             { message }
                         </div>);
                     case 'danger':
-                        return (<div className='alert alert-danger'>
+                        return (<div className='alert alert-danger' key={ index++ }>
                             <span className='glyphicon glyphicon-exclamation-sign' />&nbsp;
                             { message }
                         </div>);
                     case 'warning':
-                        return (<div className='alert alert-warning'>
+                        return (<div className='alert alert-warning' key={ index++ }>
                             <span className='glyphicon glyphicon-warning-sign' />&nbsp;
                             { message }
                         </div>);

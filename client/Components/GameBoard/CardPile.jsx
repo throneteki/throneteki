@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import _ from 'underscore';
 
 import Card from './Card';
+import Droppable from './Droppable';
 
 class CardPile extends React.Component {
     constructor() {
@@ -126,13 +127,15 @@ class CardPile extends React.Component {
                         <a className='close-button glyphicon glyphicon-remove' onClick={ this.onCloseClick.bind(this) } />
                     </span>
                 </div>
-                <div className={ popupClass } onClick={ event => event.stopPropagation() }>
-                    { popupMenu }
-                    <div className='inner'>
-                        { cardList }
+                <Droppable onDragDrop={ this.props.onDragDrop } source={ this.props.source }>
+                    <div className={ popupClass } onClick={ event => event.stopPropagation() }>
+                        { popupMenu }
+                        <div className='inner'>
+                            { cardList }
+                        </div>
+                        <div className={ arrowClass } />
                     </div>
-                    <div className={ arrowClass } />
-                </div>
+                </Droppable>
             </div>);
 
         return popup;
@@ -198,6 +201,7 @@ CardPile.propTypes = {
     menu: PropTypes.array,
     onCardClick: PropTypes.func,
     onCloseClick: PropTypes.func,
+    onDragDrop: PropTypes.func,
     onMenuItemClick: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
@@ -208,7 +212,7 @@ CardPile.propTypes = {
     size: PropTypes.string,
     source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
         'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional',
-        'scheme plots']).isRequired,
+        'scheme plots', 'conclave']).isRequired,
     title: PropTypes.string,
     topCard: PropTypes.object
 };

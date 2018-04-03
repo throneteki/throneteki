@@ -105,7 +105,7 @@
   &.small {
     &.vertical {
       height: @card-sm-height;
-      width: @card-sm-width;      
+      width: @card-sm-width;
     }
 
     &.horizontal {
@@ -117,7 +117,7 @@
   &.large {
     &.vertical {
       height: @card-lg-height;
-      width: @card-lg-width;      
+      width: @card-lg-width;
     }
 
     &.horizontal {
@@ -134,7 +134,7 @@
   &.x-large {
     &.vertical {
       height: @card-xl-height;
-      width: @card-xl-width;      
+      width: @card-xl-width;
     }
 
     &.horizontal {
@@ -230,7 +230,7 @@
   margin-top: @attachment-offset - @card-height;
 
   &.small {
-    margin-top: @attachment-offset - @card-sm-height;    
+    margin-top: @attachment-offset - @card-sm-height;
   }
 
   &.large {
@@ -472,21 +472,19 @@
 
 .overlay {
   position: absolute;
-  padding: inherit;
-  margin: inherit;
   top: 0;
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 9999;
+  z-index: @layer-top;
   opacity: 0.5;
 
   pointer-events: none;
-  
+
   &.drop-ok {
     background-color: @brand-success
   }
-  
+
   &.can-drop {
     background-color: @brand-warning
   }
