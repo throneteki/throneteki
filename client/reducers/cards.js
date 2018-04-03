@@ -18,7 +18,10 @@ function processDecks(decks, state) {
             return;
         }
 
-        deck.faction = state.factions[deck.faction.value];
+        if(state.factions) {
+            deck.faction = state.factions[deck.faction.value];
+        }
+
         if(deck.agenda) {
             deck.agenda = state.agendas[deck.agenda.code];
         }
@@ -84,9 +87,14 @@ export default function(state = {}, action) {
                 factions[faction.value] = faction;
             });
 
-            return Object.assign({}, state, {
+            newState = Object.assign({}, state, {
                 factions: factions
             });
+
+            // In case the factions are received after the decks, updated the decks now
+            processDecks(newState.decks, newState);
+
+            return newState;
         case 'RECEIVE_RESTRICTED_LIST':
             newState = Object.assign({}, state, {
                 restrictedList: action.response.restrictedList
