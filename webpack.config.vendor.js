@@ -34,7 +34,6 @@ module.exports = (env) => {
                 'redux-thunk',
                 'jquery',
                 'jquery-migrate',
-                'jquery-nearest',
                 'jquery-validation',
                 'jquery-validation-unobtrusive',
                 'moment',
@@ -43,7 +42,10 @@ module.exports = (env) => {
                 'underscore',
                 'query-string',
                 'path-to-regexp',
-                'classnames'
+                'classnames',
+                'react-dnd',
+                'react-dnd-touch-backend',
+                'react-transition-group'
             ]
         },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
