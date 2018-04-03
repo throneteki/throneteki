@@ -1,16 +1,18 @@
-const logger = require('../log.js');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const config = require('../config.js');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const util = require('../util.js');
 const moment = require('moment');
 const monk = require('monk');
-const UserService = require('../services/UserService.js');
 const _ = require('underscore');
-const { wrapAsync } = require('../util.js');
 const sendgrid = require('@sendgrid/mail');
+
+const logger = require('../log');
+const config = require('../config');
+const util = require('../util');
+const { wrapAsync } = require('../util');
+const UserService = require('../services/UserService');
+const User = require('../models/User');
 
 let db = monk(config.dbPath);
 let userService = new UserService(db, config);
@@ -258,7 +260,7 @@ module.exports.init = function(server) {
     }));
 
     server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function(req, res) {
-        let user = userService.sanitiseUserObject(req.user);
+        let user = new User(req.user).getWireSafeDetails();
 
         res.send({ success: true, user: user });
     });
@@ -298,7 +300,7 @@ module.exports.init = function(server) {
             return res.send({ success: false, message: 'Invalid username/password' });
         }
 
-        let userObj = userService.sanitiseUserObject(user);
+        let userObj = user.getWireSafeDetails();
         let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
         let ip = req.get('x-real-ip');
         if(!ip) {
@@ -351,7 +353,7 @@ module.exports.init = function(server) {
             return next();
         }
 
-        let userObj = userService.sanitiseUserObject(user);
+        let userObj = user.getWireSafeDetails();
 
         let ip = req.get('x-real-ip');
         if(!ip) {
@@ -417,7 +419,6 @@ module.exports.init = function(server) {
     }));
 
     server.post('/api/account/password-reset', wrapAsync(async (req, res) => {
-        let emailUser;
         let resetToken;
 
         let response = await util.httpRequest(`https://www.google.com/recaptcha/api/siteverify?secret=${config.captchaKey}&response=${req.body.captcha}`);
@@ -441,16 +442,15 @@ module.exports.init = function(server) {
         let hmac = crypto.createHmac('sha512', config.hmacSecret);
 
         resetToken = hmac.update(`RESET ${user.username} ${formattedExpiration}`).digest('hex');
-        emailUser = user;
 
         await userService.setResetToken(user, resetToken, formattedExpiration);
-        let url = `https://theironthrone.net/reset-password?id=${emailUser._id}&token=${resetToken}`;
+        let url = `https://theironthrone.net/reset-password?id=${user._id}&token=${resetToken}`;
         let emailText = 'Hi,\n\nSomeone, hopefully you, has requested their password on The Iron Throne (https://theironthrone.net) to be reset.  If this was you, click this link ' + url + ' to complete the process.\n\n' +
             'If you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
             'Kind regards,\n\n' +
             'The Iron Throne team';
 
-        await sendEmail(emailUser.email, 'The Iron Throne - Password reset', emailText);
+        await sendEmail(user.email, 'The Iron Throne - Password reset', emailText);
     }));
 
     function updateUserData(user) {

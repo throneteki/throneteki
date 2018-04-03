@@ -101,12 +101,14 @@ class Server {
         });
 
         // Define error middleware last
-        app.use(function(err, req, res) {
-            if(!res.headersSent) {
-                res.status(500).send({ success: false });
+        app.use(function(err, req, res, next) {
+            logger.error(err);
+
+            if(!res.headersSent && req.xhr) {
+                return res.status(500).send({ success: false });
             }
 
-            logger.error(err);
+            next(err);
         });
 
         return this.server;

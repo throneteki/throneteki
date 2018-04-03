@@ -3,12 +3,14 @@ const EventEmitter = require('events');
 const jwt = require('jsonwebtoken');
 const Raven = require('raven');
 
+const User = require('./models/User');
+
 class Socket extends EventEmitter {
     constructor(socket, options = {}) {
         super();
 
         this.socket = socket;
-        this.user = socket.request.user;
+        this.user = socket.request.user && new User(socket.request.user);
         this.config = options.config;
 
         socket.on('error', this.onError.bind(this));
@@ -60,6 +62,8 @@ class Socket extends EventEmitter {
             if(err) {
                 return;
             }
+
+            this.socket.request.user = user;
 
             this.emit('authenticate', this, user);
         });

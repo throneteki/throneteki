@@ -300,7 +300,7 @@ class PendingGame {
                 left: player.left,
                 name: player.name,
                 owner: player.owner,
-                settings: player.user ? player.user.settings : {}
+                settings: player.user.settings
             };
         });
 
