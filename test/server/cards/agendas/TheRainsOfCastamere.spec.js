@@ -34,23 +34,6 @@ describe('The Rains of Castamere', function() {
         this.agenda = new TheRainsOfCastamere(this.player, {});
     });
 
-    describe('onDecksPrepared()', function() {
-        beforeEach(function() {
-            this.player.plotDeck = _([this.plot1, this.scheme1, this.plot2, this.scheme2]);
-
-            this.agenda.onDecksPrepared();
-        });
-
-        it('should remove the schemes from the players plot deck', function() {
-            expect(this.player.plotDeck.toArray()).toEqual([this.plot1, this.plot2]);
-        });
-
-        it('should move the schemes to the scheme plot pile', function() {
-            expect(this.player.moveCard).toHaveBeenCalledWith(this.scheme1, 'scheme plots');
-            expect(this.player.moveCard).toHaveBeenCalledWith(this.scheme2, 'scheme plots');
-        });
-    });
-
     describe('onPlotDiscarded()', function() {
         beforeEach(function() {
             this.plotSpy = jasmine.createSpyObj('plot', ['hasTrait']);

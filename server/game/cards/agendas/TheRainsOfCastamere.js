@@ -2,6 +2,12 @@ const AgendaCard = require('../../agendacard');
 const RevealPlots = require('../../gamesteps/revealplots');
 
 class TheRainsOfCastamere extends AgendaCard {
+    constructor(owner, cardData) {
+        super(owner, cardData);
+
+        this.registerEvents(['onPlotDiscarded']);
+    }
+
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -49,6 +55,12 @@ class TheRainsOfCastamere extends AgendaCard {
         context.player.removeActivePlot();
         context.player.flipPlotFaceup();
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
+    }
+
+    onPlotDiscarded(event) {
+        if(event.card.controller === this.controller && event.card.hasTrait('Scheme')) {
+            this.owner.moveCard(event.card, 'out of game');
+        }
     }
 }
 
