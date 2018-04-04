@@ -148,6 +148,7 @@ class CardPile extends React.Component {
             'up': this.props.popupLocation !== 'top' && this.props.orientation !== 'horizontal',
             'left': this.props.orientation === 'horizontal'
         });
+        let innerClass = classNames('inner', this.props.size);
 
         let linkIndex = 0;
 
@@ -166,7 +167,7 @@ class CardPile extends React.Component {
                 <Droppable onDragDrop={ this.props.onDragDrop } source={ this.props.source }>
                     <div className={ popupClass } onClick={ event => event.stopPropagation() }>
                         { popupMenu }
-                        <div className='inner'>
+                        <div className={ innerClass }>
                             { cardList }
                         </div>
                         <div className={ arrowClass } />
