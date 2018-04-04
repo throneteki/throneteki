@@ -9,7 +9,7 @@ class ChangeOfPlans extends DrawCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => ['plot deck', 'scheme plots'].includes(card.location) && card.controller === this.controller,
+                cardCondition: card => card.location === 'plot deck' && card.controller === this.controller,
                 cardType: 'plot'
             },
             handler: context => {

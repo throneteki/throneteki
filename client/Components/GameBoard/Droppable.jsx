@@ -48,18 +48,15 @@ const validTargets = {
     ],
     'plot deck': [
         'revealed plots',
-        'scheme plots',
         'out of game'
     ],
     'revealed plots': [
         'plot deck',
-        'scheme plots',
         'out of game'
     ],
     'out of game': [
         'plot deck',
         'revealed plots',
-        'scheme plots',
         'draw deck',
         'play area',
         'discard pile',

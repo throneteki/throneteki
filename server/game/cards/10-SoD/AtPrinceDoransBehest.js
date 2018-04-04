@@ -15,7 +15,7 @@ class AtPrinceDoransBehest extends PlotCard {
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to reveal {2}', context.player, this, context.target);
-        
+
                 context.player.selectedPlot = context.target;
                 context.player.removeActivePlot();
                 context.player.flipPlotFaceup();
@@ -25,7 +25,8 @@ class AtPrinceDoransBehest extends PlotCard {
     }
 
     getPlotSourceForPhase(card) {
-        return (this.game.currentPhase !== 'plot') ? 
+        /// XXX needs to be updated to use cannot select schemes flag
+        return (this.game.currentPhase !== 'plot') ?
             ['plot deck', 'scheme plots'].includes(card.location) :
             card.location === 'plot deck';
     }

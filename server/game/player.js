@@ -33,7 +33,6 @@ class Player extends Spectator {
         this.outOfGamePile = _([]);
 
         // Agenda specific piles
-        this.schemePlots = _([]);
         this.conclavePile = _([]);
 
         this.faction = new DrawCard(this, {});
@@ -69,6 +68,7 @@ class Player extends Spectator {
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
         this.goldSources = [new GoldSource(this)];
+        this.groupedPiles = {};
 
         this.promptState = new PlayerPromptState();
     }
@@ -788,7 +788,6 @@ class Player extends Spectator {
             'plot deck': PlotCardTypes,
             'revealed plots': PlotCardTypes,
             // Agenda specific piles
-            'scheme plots': PlotCardTypes,
             'conclave': DrawDeckCardTypes
         };
 
@@ -824,8 +823,6 @@ class Player extends Spectator {
             case 'out of game':
                 return this.outOfGamePile;
             // Agenda specific piles
-            case 'scheme plots':
-                return this.schemePlots;
             case 'conclave':
                 return this.conclavePile;
         }
@@ -861,9 +858,6 @@ class Player extends Spectator {
                 this.outOfGamePile = targetList;
                 break;
             // Agenda specific piles
-            case 'scheme plots':
-                this.schemePlots = targetList;
-                break;
             case 'conclave':
                 this.conclavePile = targetList;
         }
@@ -1287,6 +1281,24 @@ class Player extends Spectator {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
         let fullDiscardPile = this.discardPile.toArray().concat(this.beingPlayed.toArray());
+
+        let plots = [];
+
+        if(this.groupedPiles['plot deck']) {
+            for(const plot of this.plotDeck.value()) {
+                let plotSummary = plot.getSummary(activePlayer, true);
+                if(plot.hasTrait('scheme')) {
+                    plotSummary.group = 'Scheme';
+                } else {
+                    plotSummary.group = 'Plot';
+                }
+
+                plots.push(plotSummary);
+            }
+        } else {
+            plots = this.getSummaryForCardList(this.plotDeck, activePlayer, true);
+        }
+
         let state = {
             activePlot: this.activePlot ? this.activePlot.getSummary(activePlayer) : undefined,
             agenda: this.agenda ? this.agenda.getSummary(activePlayer) : undefined,
@@ -1298,9 +1310,8 @@ class Player extends Spectator {
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
                 hand: this.getSummaryForCardList(this.hand, activePlayer, !this.showHandtoSpectators(activePlayer)),
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
-                plotDeck: this.getSummaryForCardList(this.plotDeck, activePlayer, true),
-                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
-                schemePlots: this.getSummaryForCardList(this.schemePlots, activePlayer, true)
+                plotDeck: plots,
+                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer)
             },
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),

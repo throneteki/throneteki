@@ -1141,6 +1141,26 @@ const Effects = {
                 game.skipPhase[name] = false;
             }
         };
+    },
+    cannotSelectSchemes: function() {
+        return {
+            apply: function(player) {
+                player.cannotSelectSchemes = true;
+            },
+            unapply: function(player) {
+                player.cannotSelectSchemes = false;
+            }
+        };
+    },
+    groupCardPile: function(pile) {
+        return {
+            apply: function(player) {
+                player.groupedPiles[pile] = true;
+            },
+            unapply: function(player) {
+                player.groupedPiles[pile] = false;
+            }
+        };
     }
 };
 

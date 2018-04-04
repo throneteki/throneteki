@@ -9,6 +9,10 @@
   justify-content: space-between;
   flex-direction: column;
 
+  &.select-cursor {
+    cursor: url(/img/crosshairs.cur), default;
+  }
+
   .panel {
     position: relative;
     margin: 5px;
@@ -141,10 +145,6 @@
   .panel-title {
     margin: 5px 5px;
   }
-}
-
-.select-cursor {
-  cursor: url(/img/crosshairs.cur), default;
 }
 
 .prompt-area {
@@ -395,7 +395,7 @@
     top: -75px;
 
     .inner {
-      columns: 2;
+      columns: 3;
       min-height: 128px;
 
       .card-wrapper {
@@ -629,7 +629,7 @@ span.down-arrow {
   .drop-target {
     flex: 1;
   }
-  
+
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -799,4 +799,10 @@ span.down-arrow {
     margin-top: 10px;
     margin-bottom: 10px;
   }
+}
+
+.group-title {
+  background-color: @brand-primary;
+  text-align: center;
+  color: white;
 }

@@ -19,6 +19,17 @@ class CardPile extends React.Component {
         };
     }
 
+    componentWillReceiveProps(props) {
+        let hasNewSelectableCard = props.cards && props.cards.some(card => card.selectable);
+        let didHaveSelectableCard = this.props.cards && this.props.cards.some(card => card.selectable);
+
+        if(!didHaveSelectableCard && hasNewSelectableCard) {
+            this.setState({ showPopup: true });
+        } else if(didHaveSelectableCard && !hasNewSelectableCard) {
+            this.setState({ showPopup: false });
+        }
+    }
+
     onCollectionClick(event) {
         event.preventDefault();
 
@@ -84,11 +95,14 @@ class CardPile extends React.Component {
         }
     }
 
-    getPopup() {
-        let popup = null;
+    getCardList(cards) {
         let cardIndex = 0;
 
-        let cardList = _.map(this.props.cards, card => {
+        if(!cards) {
+            return null;
+        }
+
+        let cardList = cards.map(card => {
             let cardKey = card.uuid || cardIndex++;
             return (<Card key={ cardKey } card={ card } source={ this.props.source }
                 disableMouseOver={ this.props.disableMouseOver }
@@ -99,6 +113,28 @@ class CardPile extends React.Component {
                 orientation={ this.props.orientation === 'kneeled' ? 'vertical' : this.props.orientation }
                 size={ this.props.size } />);
         });
+
+        return cardList;
+    }
+
+    getPopup() {
+        let popup = null;
+
+        let cardList = [];
+
+        if(this.props.cards && this.props.cards.some(card => card.group)) {
+            let cardGroup = _.groupBy(this.props.cards, card => card.group);
+            for(const [type, cards] of Object.entries(cardGroup)) {
+                cardList.push(
+                    <div key={ type }>
+                        <div className='group-title'>{ `${type} (${cards.length})` }</div>
+                        { this.getCardList(cards) }
+                    </div>
+                );
+            }
+        } else {
+            cardList = this.getCardList(this.props.cards);
+        }
 
         if(this.props.disablePopup || !this.state.showPopup) {
             return null;
@@ -211,8 +247,7 @@ CardPile.propTypes = {
     popupMenu: PropTypes.array,
     size: PropTypes.string,
     source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
-        'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional',
-        'scheme plots', 'conclave']).isRequired,
+        'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional', 'conclave']).isRequired,
     title: PropTypes.string,
     topCard: PropTypes.object
 };

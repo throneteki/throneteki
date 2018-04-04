@@ -14,7 +14,8 @@ class SelectPlotPrompt extends AllPlayerPrompt {
             menuTitle: 'Select a plot',
             buttons: [
                 { arg: 'plotselected', text: 'Done' }
-            ]
+            ],
+            selectCard: true
         };
     }
 
@@ -50,8 +51,29 @@ class SelectPlotPrompt extends AllPlayerPrompt {
         }
 
         player.selectedPlot = plot;
+        player.clearSelectableCards();
 
         this.game.addMessage('{0} has selected a plot', player);
+    }
+
+    highlightSelectableCards(player) {
+        let selectableCards = this.game.allCards.filter(card => card.getType() === 'plot' &&
+                                                                card.location === 'plot deck' &&
+                                                                card.controller === player &&
+                                                                (player.cannotSelectSchemes && !card.hasTrait('scheme')));
+
+        player.selectCard = true;
+        player.setSelectableCards(selectableCards);
+    }
+
+    continue() {
+        for(let player of this.game.getPlayers()) {
+            if(!this.completionCondition(player)) {
+                this.highlightSelectableCards(player);
+            }
+        }
+
+        return super.continue();
     }
 }
 
