@@ -109,7 +109,9 @@ class PlayerRow extends React.Component {
 
         disablePopup = disablePopup || !cards || cards.length === 0;
 
-        let pile = (<CardPile className='agenda'
+        let pileClass = classNames('agenda', `agenda-${this.props.agenda.code}`);
+
+        let pile = (<CardPile className={ pileClass }
             cards={ cards }
             disablePopup={ disablePopup }
             onCardClick={ this.props.onCardClick }

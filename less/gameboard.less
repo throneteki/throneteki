@@ -529,16 +529,25 @@
     top: 95px;
     left: 0;
 
-    .inner {
-      .calculate-tiled-card-prop(max-height, 1, height);
-      .calculate-tiled-card-prop(min-width, 2, width);
-    }
-
     .arrow {
       bottom: initial;
       top: -60px;
       left: 10px;
     }
+  }
+}
+
+// Alliance agenda
+.agenda-06018 {
+  .inner {
+    .calculate-tiled-card-prop(width, 2, width);
+  }
+}
+
+// Conclave agenda
+.agenda-09045 {
+  .inner {
+    .calculate-tiled-card-prop(width, 7, width);
   }
 }
 
