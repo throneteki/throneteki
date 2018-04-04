@@ -6,18 +6,18 @@ describe('lobby', function() {
         this.socketSpy = jasmine.createSpyObj('socket', ['joinChannel', 'send']);
         this.ioSpy = jasmine.createSpyObj('io', ['set', 'use', 'on', 'emit']);
         this.routerSpy = jasmine.createSpyObj('router', ['on']);
+        this.userSpy = jasmine.createSpyObj('User', ['getDetails']);
+        this.userSpy.username = 'test';
+        this.userSpy.getDetails.and.returnValue({ username: 'test' });
 
-        this.socketSpy.user = { username: 'test'};
+        this.socketSpy.user = this.userSpy;
         this.socketSpy.id = 'socket1';
 
         this.cardService = jasmine.createSpyObj('cardService', ['getTitleCards', 'getAllCards']);
         this.cardService.getTitleCards.and.returnValue(Promise.resolve([]));
         this.cardService.getAllCards.and.returnValue(Promise.resolve([]));
 
-        this.userService = jasmine.createSpyObj('userService', ['sanitiseUserObject']);
-        this.userService.sanitiseUserObject.and.callFake(user => user);
-
-        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: {}, cardService: this.cardService, deckService: {}, userService: this.userService, router: this.routerSpy, config: {} });
+        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: {}, cardService: this.cardService, deckService: {}, userService: {}, router: this.routerSpy, config: {} });
         this.lobby.sockets[this.socketSpy.id] = this.socketSpy;
     });
 
