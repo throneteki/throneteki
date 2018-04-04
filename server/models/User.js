@@ -79,9 +79,10 @@ class User {
     }
 
     getDetails() {
-        let user = this.userData;
+        let user = Object.assign({}, this.userData);
 
         delete user.password;
+        delete user.tokens;
 
         user = Settings.getUserWithDefaultsSet(user);
 

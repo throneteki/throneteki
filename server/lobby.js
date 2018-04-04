@@ -688,7 +688,9 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
-            let syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
+            let ownerUser = game.players[game.owner];
+
+            let syncGame = new PendingGame(ownerUser.user, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
@@ -703,7 +705,8 @@ class Lobby {
                     emailHash: player.emailHash,
                     owner: game.owner === player.name,
                     faction: { cardData: { code: player.faction } },
-                    agenda: { cardData: { code: player.agenda } }
+                    agenda: { cardData: { code: player.agenda } },
+                    user: player.user
                 };
             });
 
@@ -711,7 +714,8 @@ class Lobby {
                 syncGame.spectators[player.name] = {
                     id: player.id,
                     name: player.name,
-                    emailHash: player.emailHash
+                    emailHash: player.emailHash,
+                    user: player.user
                 };
             });
 

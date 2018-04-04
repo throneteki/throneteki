@@ -230,19 +230,14 @@ module.exports.init = function(server) {
         res.send({ success: true });
     }));
 
-    server.post('/api/account/check-username', function(req, res) {
-        userService.getUserByUsername(req.body.username)
-            .then(user => {
-                if(user) {
-                    return res.send({ success: true, message: 'An account with that name already exists, please choose another' });
-                }
+    server.post('/api/account/check-username', wrapAsync(async (req, res) => {
+        let user = await userService.getUserByUsername(req.body.username);
+        if(user) {
+            return res.send({ success: true, message: 'An account with that name already exists, please choose another' });
+        }
 
-                return res.send({ success: true });
-            })
-            .catch(() => {
-                return res.send({ success: false, message: 'Error occured looking up username' });
-            });
-    });
+        return res.send({ success: true });
+    }));
 
     server.post('/api/account/logout', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         if(!req.body.tokenId) {
@@ -453,70 +448,32 @@ module.exports.init = function(server) {
         await sendEmail(user.email, 'The Iron Throne - Password reset', emailText);
     }));
 
-    function updateUserData(user) {
-        return {
-            user: {
-                username: user.username,
-                email: user.email,
-                emailHash: user.emailHash,
-                _id: user._id,
-                settings: user.settings,
-                promptedActionWindows: user.promptedActionWindows,
-                permissions: user.permissions || {}
-            },
-            token: jwt.sign(user, config.secret)
-        };
-    }
-
-    function updateUser(res, user) {
-        return userService.update(user)
-            .then(() => {
-                res.send(Object.assign({ success: true }, updateUserData(user)));
-            })
-            .catch(() => {
-                return res.send({ success: false, message: 'An error occured updating your user profile' });
-            });
-    }
-
-    server.put('/api/account/:username', passport.authenticate('jwt', { session: false }), (req, res) => {
+    server.put('/api/account/:username', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let userToSet = req.body.data;
-        let existingUser;
 
         if(req.user.username !== req.params.username) {
             return res.status(403).send({ message: 'Unauthorized' });
         }
 
-        userService.getUserByUsername(req.params.username)
-            .then(user => {
-                if(!user) {
-                    return res.status(404).send({ message: 'Not found' });
-                }
+        let user = await userService.getUserByUsername(req.params.username).getDetails();
+        if(!user) {
+            return res.status(404).send({ message: 'Not found' });
+        }
 
-                user.email = userToSet.email;
-                user.settings = userToSet.settings;
-                user.promptedActionWindows = userToSet.promptedActionWindows;
+        user.email = userToSet.email;
+        user.settings = userToSet.settings;
+        user.promptedActionWindows = userToSet.promptedActionWindows;
 
-                existingUser = user;
+        if(userToSet.password && userToSet.password !== '') {
+            user.password = await hashPassword(userToSet.password, 10);
+        }
 
-                if(userToSet.password && userToSet.password !== '') {
-                    return hashPassword(userToSet.password, 10);
-                }
+        await userService.update(user);
 
-                return updateUser(res, user);
-            })
-            .then(passwordHash => {
-                if(!passwordHash) {
-                    return;
-                }
+        let updatedUser = await userService.getUserById(user._id);
 
-                existingUser.password = passwordHash;
-
-                return updateUser(res, existingUser);
-            })
-            .catch(() => {
-                return res.send({ success: false, message: 'An error occured updating your user profile' });
-            });
-    });
+        res.send(Object.assign({ success: true }, updatedUser.getWireSafeDetails()));
+    }));
 
     server.get('/api/account/:username/sessions', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         let user = await checkAuth(req, res);
@@ -588,19 +545,22 @@ module.exports.init = function(server) {
             user.blockList = [];
         }
 
-        if(_.find(user.blockList, user => {
-            return user === req.body.username.toLowerCase();
+        let lowerCaseUser = req.body.username.toLowerCase();
+
+        if(user.blockList.find(user => {
+            return user === lowerCaseUser;
         })) {
             return res.send({ success: false, message: 'Entry already on block list' });
         }
 
-        user.blockList.push(req.body.username.toLowerCase());
+        user.blockList.push(lowerCaseUser);
 
         await userService.updateBlockList(user);
+        let updatedUser = await userService.getUserById(user._id);
 
         res.send(Object.assign(
-            { success: true, message: 'Block list entry added successfully', username: req.body.username.toLowerCase() },
-            updateUserData(user)
+            { success: true, message: 'Block list entry added successfully', username: lowerCaseUser },
+            updatedUser.getWireSafeDetails()
         ));
     }));
 
@@ -619,21 +579,24 @@ module.exports.init = function(server) {
             user.blockList = [];
         }
 
-        if(!_.find(user.blockList, user => {
-            return user === req.params.entry.toLowerCase();
+        let lowerCaseUser = req.body.entry.toLowerCase();
+
+        if(!user.blockList.find(user => {
+            return user === lowerCaseUser;
         })) {
             return res.status(404).send({ message: 'Not found' });
         }
 
         user.blockList = _.reject(user.blockList, user => {
-            return user === req.params.entry.toLowerCase();
+            return user === lowerCaseUser;
         });
 
         await userService.updateBlockList(user);
+        let updatedUser = await userService.getUserById(user._id);
 
         res.send(Object.assign(
-            { success: true, message: 'Block list entry removed successfully', username: req.params.entry.toLowerCase() },
-            updateUserData(user)
+            { success: true, message: 'Block list entry removed successfully', username: lowerCaseUser },
+            updatedUser.getWireSafeDetails()
         ));
     }));
 };

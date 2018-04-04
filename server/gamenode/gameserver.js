@@ -206,7 +206,6 @@ class GameServer {
         if(socket.handshake.query.token && socket.handshake.query.token !== 'undefined') {
             jwt.verify(socket.handshake.query.token, config.secret, function(err, user) {
                 if(err) {
-                    logger.info(err);
                     return;
                 }
 
@@ -246,7 +245,7 @@ class GameServer {
 
     onGameSync(callback) {
         var gameSummaries = _.map(this.games, game => {
-            var retGame = game.getSummary();
+            var retGame = game.getSummary(undefined, { fullData: true });
             retGame.password = game.password;
 
             return retGame;

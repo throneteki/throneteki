@@ -78,6 +78,11 @@ class PendingGame {
     }
 
     addPlayer(id, user) {
+        if(!user) {
+            logger.error('Tried to add a player to a game that did not have a user object');
+            return;
+        }
+
         this.players[user.username] = {
             id: id,
             name: user.username,

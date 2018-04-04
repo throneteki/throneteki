@@ -1100,7 +1100,7 @@ class Game extends EventEmitter {
         return this.getSummary(activePlayerName);
     }
 
-    getSummary(activePlayerName) {
+    getSummary(activePlayerName, options = {}) {
         var playerSummaries = {};
 
         _.each(this.getPlayers(), player => {
@@ -1126,7 +1126,8 @@ class Game extends EventEmitter {
                 lobbyId: player.lobbyId,
                 left: player.left,
                 name: player.name,
-                owner: player.owner
+                owner: player.owner,
+                user: options.fullData && player.user
             };
         });
 
