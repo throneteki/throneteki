@@ -10,7 +10,7 @@ class AtPrinceDoransBehest extends PlotCard {
             cannotBeCanceled: true,
             target: {
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => card.controller === this.controller && this.getPlotSourceForPhase(card),
+                cardCondition: card => card.controller === this.controller && this.checkPlotForPhase(card),
                 cardType: 'plot'
             },
             handler: context => {
@@ -24,11 +24,10 @@ class AtPrinceDoransBehest extends PlotCard {
         });
     }
 
-    getPlotSourceForPhase(card) {
-        /// XXX needs to be updated to use cannot select schemes flag
+    checkPlotForPhase(card) {
         return (this.game.currentPhase !== 'plot') ?
-            ['plot deck', 'scheme plots'].includes(card.location) :
-            card.location === 'plot deck';
+            card.location === 'plot deck' :
+            card.location === 'plot deck' && !card.hasTrait('scheme');
     }
 }
 
