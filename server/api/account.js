@@ -296,6 +296,7 @@ module.exports.init = function(server) {
         }
 
         let userObj = user.getWireSafeDetails();
+
         let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
         let ip = req.get('x-real-ip');
         if(!ip) {
@@ -455,10 +456,12 @@ module.exports.init = function(server) {
             return res.status(403).send({ message: 'Unauthorized' });
         }
 
-        let user = await userService.getUserByUsername(req.params.username).getDetails();
+        let user = await userService.getUserByUsername(req.params.username);
         if(!user) {
             return res.status(404).send({ message: 'Not found' });
         }
+
+        user = user.getDetails();
 
         user.email = userToSet.email;
         user.settings = userToSet.settings;
@@ -471,8 +474,14 @@ module.exports.init = function(server) {
         await userService.update(user);
 
         let updatedUser = await userService.getUserById(user._id);
+        let safeUser = updatedUser.getWireSafeDetails();
+        let authToken;
 
-        res.send(Object.assign({ success: true }, updatedUser.getWireSafeDetails()));
+        if(!safeUser.disabled) {
+            authToken = jwt.sign(safeUser, config.secret, { expiresIn: '5m' });
+        }
+
+        res.send(Object.assign({ success: true }, { user: updatedUser.getWireSafeDetails(), token: authToken }));
     }));
 
     server.get('/api/account/:username/sessions', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {

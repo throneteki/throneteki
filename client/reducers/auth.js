@@ -2,8 +2,6 @@ export default function(state = {}, action) {
     switch(action.type) {
         case 'PROFILE_SAVED':
             return Object.assign({}, state, {
-                user: action.response.user,
-                username: action.response.user.username,
                 token: action.response.token
             });
         case 'BLOCKLIST_ADDED':

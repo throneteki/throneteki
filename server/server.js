@@ -19,7 +19,6 @@ const ExtractJwt = passportJwt.ExtractJwt;
 
 const UserService = require('./services/UserService.js');
 const version = require('../version.js');
-const Settings = require('./settings.js');
 
 class Server {
     constructor(isDeveloping) {
@@ -49,7 +48,7 @@ class Server {
         passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
             this.userService.getUserById(jwtPayload._id).then(user => {
                 if(user) {
-                    return done(null, user);
+                    return done(null, user.getWireSafeDetails());
                 }
 
                 return done(null, false);
@@ -95,7 +94,7 @@ class Server {
 
         app.get('*', (req, res) => {
             res.render('index', {
-                basedir: path.join(__dirname, '..', 'views'), user: Settings.getUserWithDefaultsSet(req.user),
+                basedir: path.join(__dirname, '..', 'views'),
                 vendorAssets: this.vendorAssets, assets: this.assets
             });
         });
