@@ -4,7 +4,7 @@ const crypto = require('crypto');
 
 const escapeRegex = require('../util').escapeRegex;
 const logger = require('../log');
-const User = require('../models/user');
+const User = require('../models/User');
 
 class UserService {
     constructor(db, config) {
