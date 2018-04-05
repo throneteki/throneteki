@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import _ from 'underscore';
 
 import Card from './Card';
+import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
 
 class CardPile extends React.Component {
@@ -95,45 +96,32 @@ class CardPile extends React.Component {
         }
     }
 
-    getCardList(cards) {
-        let cardIndex = 0;
-
-        if(!cards) {
-            return null;
-        }
-
-        let cardList = cards.map(card => {
-            let cardKey = card.uuid || cardIndex++;
-            return (<Card key={ cardKey } card={ card } source={ this.props.source }
-                disableMouseOver={ this.props.disableMouseOver }
-                onMouseOver={ this.props.onMouseOver }
-                onMouseOut={ this.props.onMouseOut }
-                onTouchMove={ this.props.onTouchMove }
-                onClick={ this.onCardClick.bind(this, card) }
-                orientation={ this.props.orientation === 'kneeled' ? 'vertical' : this.props.orientation }
-                size={ this.props.size } />);
-        });
-
-        return cardList;
-    }
-
     getPopup() {
         let popup = null;
 
         let cardList = [];
 
+        let listProps = {
+            disableMouseOver: this.props.disableMouseOver,
+            onCardClick: this.onCardClick.bind(this),
+            onCardMouseOut: this.props.onMouseOut,
+            onCardMouseOver: this.props.onMouseOver,
+            onTouchMove: this.props.onTouchMove,
+            orientation: this.props.orientation,
+            size: this.props.size,
+            source: this.props.source
+        };
+
         if(this.props.cards && this.props.cards.some(card => card.group)) {
             let cardGroup = _.groupBy(this.props.cards, card => card.group);
             for(const [type, cards] of Object.entries(cardGroup)) {
                 cardList.push(
-                    <div key={ type }>
-                        <div className='group-title'>{ `${type} (${cards.length})` }</div>
-                        { this.getCardList(cards) }
-                    </div>
+                    <CardTiledList cards={ cards } key={ type } title={ type } { ...listProps } />
                 );
             }
         } else {
-            cardList = this.getCardList(this.props.cards);
+            cardList = (
+                <CardTiledList cards={ this.props.cards } { ...listProps } />);
         }
 
         if(this.props.disablePopup || !this.state.showPopup) {
@@ -148,6 +136,7 @@ class CardPile extends React.Component {
             'up': this.props.popupLocation !== 'top' && this.props.orientation !== 'horizontal',
             'left': this.props.orientation === 'horizontal'
         });
+        let innerClass = classNames('inner', this.props.size);
 
         let linkIndex = 0;
 
@@ -166,7 +155,7 @@ class CardPile extends React.Component {
                 <Droppable onDragDrop={ this.props.onDragDrop } source={ this.props.source }>
                     <div className={ popupClass } onClick={ event => event.stopPropagation() }>
                         { popupMenu }
-                        <div className='inner'>
+                        <div className={ innerClass }>
                             { cardList }
                         </div>
                         <div className={ arrowClass } />
