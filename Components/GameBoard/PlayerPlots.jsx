@@ -6,38 +6,6 @@ import CardPile from './CardPile';
 import Droppable from './Droppable';
 
 class PlayerPlots extends React.Component {
-    renderSchemePile() {
-        if(!this.props.agenda || this.props.agenda.code !== '05045') {
-            return;
-        }
-
-        let schemePlots = (<CardPile
-            cards={ this.props.schemePlots }
-            className='plot'
-            closeOnClick={ this.props.isMe }
-            hiddenTopCard
-            onDragDrop={ this.props.onDragDrop }
-            disablePopup={ !this.props.isMe }
-            onCardClick={ this.props.onCardClick }
-            onMenuItemClick={ this.props.onMenuItemClick }
-            onMouseOut={ this.props.onCardMouseOut }
-            onMouseOver={ this.props.onCardMouseOver }
-            orientation='horizontal'
-            source='scheme plots'
-            title='Schemes'
-            topCard={ { facedown: true, kneeled: true } }
-            size={ this.props.cardSize } />);
-
-        if(this.props.isMe) {
-            return (<Droppable onDragDrop={ this.props.onDragDrop } source='scheme plots'>
-                { schemePlots }
-            </Droppable>);
-
-        }
-
-        return schemePlots;
-    }
-
     renderPlotPiles() {
         let revealedPlots = (<CardPile
             key='activeplot'
@@ -79,8 +47,7 @@ class PlayerPlots extends React.Component {
             this.props.isMe ?
                 <Droppable key='plotdeck' onDragDrop={ this.props.onDragDrop } source='plot deck'>
                     { plotDeck }
-                </Droppable> : plotDeck,
-            this.renderSchemePile()
+                </Droppable> : plotDeck
         ];
 
         if(this.props.direction === 'reverse') {
@@ -116,8 +83,7 @@ PlayerPlots.propTypes = {
     onMenuItemClick: PropTypes.func,
     plotDeck: PropTypes.array,
     plotDiscard: PropTypes.array,
-    plotSelected: PropTypes.bool,
-    schemePlots: PropTypes.array
+    plotSelected: PropTypes.bool
 };
 
 export default PlayerPlots;

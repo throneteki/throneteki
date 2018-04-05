@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import _ from 'underscore';
 
 import Card from './Card';
+import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
 
 class CardPile extends React.Component {
@@ -17,6 +18,17 @@ class CardPile extends React.Component {
             showPopup: false,
             showMenu: false
         };
+    }
+
+    componentWillReceiveProps(props) {
+        let hasNewSelectableCard = props.cards && props.cards.some(card => card.selectable);
+        let didHaveSelectableCard = this.props.cards && this.props.cards.some(card => card.selectable);
+
+        if(!didHaveSelectableCard && hasNewSelectableCard) {
+            this.setState({ showPopup: true });
+        } else if(didHaveSelectableCard && !hasNewSelectableCard) {
+            this.setState({ showPopup: false });
+        }
     }
 
     onCollectionClick(event) {
@@ -86,19 +98,31 @@ class CardPile extends React.Component {
 
     getPopup() {
         let popup = null;
-        let cardIndex = 0;
 
-        let cardList = _.map(this.props.cards, card => {
-            let cardKey = card.uuid || cardIndex++;
-            return (<Card key={ cardKey } card={ card } source={ this.props.source }
-                disableMouseOver={ this.props.disableMouseOver }
-                onMouseOver={ this.props.onMouseOver }
-                onMouseOut={ this.props.onMouseOut }
-                onTouchMove={ this.props.onTouchMove }
-                onClick={ this.onCardClick.bind(this, card) }
-                orientation={ this.props.orientation === 'kneeled' ? 'vertical' : this.props.orientation }
-                size={ this.props.size } />);
-        });
+        let cardList = [];
+
+        let listProps = {
+            disableMouseOver: this.props.disableMouseOver,
+            onCardClick: this.onCardClick.bind(this),
+            onCardMouseOut: this.props.onMouseOut,
+            onCardMouseOver: this.props.onMouseOver,
+            onTouchMove: this.props.onTouchMove,
+            orientation: this.props.orientation,
+            size: this.props.size,
+            source: this.props.source
+        };
+
+        if(this.props.cards && this.props.cards.some(card => card.group)) {
+            let cardGroup = _.groupBy(this.props.cards, card => card.group);
+            for(const [type, cards] of Object.entries(cardGroup)) {
+                cardList.push(
+                    <CardTiledList cards={ cards } key={ type } title={ type } { ...listProps } />
+                );
+            }
+        } else {
+            cardList = (
+                <CardTiledList cards={ this.props.cards } { ...listProps } />);
+        }
 
         if(this.props.disablePopup || !this.state.showPopup) {
             return null;
@@ -112,6 +136,7 @@ class CardPile extends React.Component {
             'up': this.props.popupLocation !== 'top' && this.props.orientation !== 'horizontal',
             'left': this.props.orientation === 'horizontal'
         });
+        let innerClass = classNames('inner', this.props.size);
 
         let linkIndex = 0;
 
@@ -130,7 +155,7 @@ class CardPile extends React.Component {
                 <Droppable onDragDrop={ this.props.onDragDrop } source={ this.props.source }>
                     <div className={ popupClass } onClick={ event => event.stopPropagation() }>
                         { popupMenu }
-                        <div className='inner'>
+                        <div className={ innerClass }>
                             { cardList }
                         </div>
                         <div className={ arrowClass } />
@@ -211,8 +236,7 @@ CardPile.propTypes = {
     popupMenu: PropTypes.array,
     size: PropTypes.string,
     source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck',
-        'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional',
-        'scheme plots', 'conclave']).isRequired,
+        'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction', 'additional', 'conclave']).isRequired,
     title: PropTypes.string,
     topCard: PropTypes.object
 };

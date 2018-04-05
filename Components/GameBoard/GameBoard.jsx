@@ -7,6 +7,7 @@ import { toastr } from 'react-redux-toastr';
 import { bindActionCreators } from 'redux';
 import { DragDropContext } from 'react-dnd';
 import { default as TouchBackend } from 'react-dnd-touch-backend';
+import classNames from 'classnames';
 
 import PlayerStats from './PlayerStats';
 import PlayerRow from './PlayerRow';
@@ -86,12 +87,6 @@ export class GameBoard extends React.Component {
             this.setState({ spectating: false });
         } else {
             this.setState({ spectating: true });
-        }
-
-        if(thisPlayer && thisPlayer.selectCard) {
-            $('body').addClass('select-cursor');
-        } else {
-            $('body').removeClass('select-cursor');
         }
 
         let menuOptions = [
@@ -226,8 +221,7 @@ export class GameBoard extends React.Component {
                 isMe={ false }
                 plotDeck={ otherPlayer.cardPiles.plotDeck }
                 plotDiscard={ otherPlayer.cardPiles.plotDiscard }
-                plotSelected={ otherPlayer.plotSelected }
-                schemePlots={ otherPlayer.cardPiles.schemePlots } />
+                plotSelected={ otherPlayer.plotSelected } />
             <PlayerPlots
                 { ...commonProps }
                 activePlot={ thisPlayer.activePlot }
@@ -236,8 +230,7 @@ export class GameBoard extends React.Component {
                 isMe
                 plotDeck={ thisPlayer.cardPiles.plotDeck }
                 plotDiscard={ thisPlayer.cardPiles.plotDiscard }
-                plotSelected={ thisPlayer.plotSelected }
-                schemePlots={ thisPlayer.cardPiles.schemePlots } />
+                plotSelected={ thisPlayer.plotSelected } />
         </div>);
     }
 
@@ -296,8 +289,12 @@ export class GameBoard extends React.Component {
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 
+        let boardClass = classNames('game-board', {
+            'select-cursor': thisPlayer && thisPlayer.selectCard
+        });
+
         return (
-            <div className='game-board'>
+            <div className={ boardClass }>
                 <GameConfigurationModal
                     id='settings-modal'
                     keywordSettings={ thisPlayer.keywordSettings }
