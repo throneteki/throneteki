@@ -9,7 +9,6 @@ class ChallengePhase extends Phase {
         super(game, 'challenge');
         this.initialise([
             new SimpleStep(this.game, () => this.beginPhase()),
-            new ActionWindow(this.game, 'Before challenge', 'challengeBegin'),
             new SimpleStep(this.game, () => this.promptForChallenge())
         ]);
     }
@@ -22,6 +21,8 @@ class ChallengePhase extends Phase {
         if(this.remainingPlayers.length === 0) {
             return true;
         }
+
+        this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
 
         var currentPlayer = this.remainingPlayers[0];
         this.game.promptWithMenu(currentPlayer, this, {
