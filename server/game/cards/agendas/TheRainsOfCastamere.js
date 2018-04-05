@@ -12,8 +12,8 @@ class TheRainsOfCastamere extends AgendaCard {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'intrigue' &&
-                                         event.challenge.winner === this.owner &&
-                                         event.challenge.strengthDifference >= 5
+                    event.challenge.winner === this.owner &&
+                    event.challenge.strengthDifference >= 5
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
@@ -38,13 +38,11 @@ class TheRainsOfCastamere extends AgendaCard {
         });
 
         this.persistentEffect({
-            targetType: 'player',
-            targetController: 'current',
             condition: () => this.game.currentPhase === 'plot',
-            effect: [
-                ability.effects.cannotRevealPlot(plot => plot.hasTrait('Scheme')),
-                ability.effects.groupCardPile('plot deck')
-            ]
+            match: card => card.getType() === 'plot' && card.hasTrait('Scheme'),
+            targetController: 'current',
+            targetLocation: 'plot deck',
+            effect: ability.effects.notConsideredToBeInPlotDeck()
         });
     }
 

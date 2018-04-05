@@ -12,7 +12,8 @@ class TheCrowIsATricksyBird extends DrawCard {
                 this.game.addMessage('{0} plays {1} and kneels their faction card to look at {2}\'s plot deck',
                     context.player, this, context.opponent);
 
-                let buttons = context.opponent.plotDeck.map(card => {
+                let validPlots = context.opponent.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
+                let buttons = validPlots.map(card => {
                     return { method: 'cardSelected', card: card };
                 });
 
@@ -40,7 +41,7 @@ class TheCrowIsATricksyBird extends DrawCard {
             },
             targetType: player,
             match: this.context.opponent,
-            effect: ability.effects.cannotRevealPlot(plot => plot !== card)
+            effect: ability.effects.mustRevealPlot(card)
         }));
 
         //TODO Melee: The choice should not be revealed to anyone other than the chosen opponent,

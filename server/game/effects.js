@@ -1132,23 +1132,23 @@ const Effects = {
             }
         };
     },
-    cannotRevealPlot: function(restriction = () => true) {
+    notConsideredToBeInPlotDeck: function() {
         return {
-            apply: function(player) {
-                player.plotRevealRestrictions.push(restriction);
+            apply: function(card) {
+                card.notConsideredToBeInPlotDeck = true;
             },
-            unapply: function(player) {
-                player.plotRevealRestrictions = _.reject(player.plotRevealRestrictions, r => r === restriction);
+            unapply: function(card) {
+                card.notConsideredToBeInPlotDeck = false;
             }
         };
     },
-    groupCardPile: function(pile) {
+    mustRevealPlot: function(card) {
         return {
             apply: function(player) {
-                player.groupedPiles[pile] = true;
+                player.mustRevealPlot = card;
             },
             unapply: function(player) {
-                player.groupedPiles[pile] = false;
+                player.mustRevealPlot = undefined;
             }
         };
     }

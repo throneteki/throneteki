@@ -683,7 +683,8 @@ class Player extends Spectator {
     }
 
     recyclePlots() {
-        if(this.plotDeck.isEmpty() || (this.groupedPiles['plot deck'] && this.plotDeck.all(plot => plot.hasTrait('Scheme')))) {
+        const plots = this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
+        if(plots.length === 0) {
             this.plotDiscard.each(plot => {
                 this.moveCard(plot, 'plot deck');
             });
@@ -1289,7 +1290,8 @@ class Player extends Spectator {
 
         let plots = [];
 
-        if(this.groupedPiles['plot deck']) {
+        // Rains
+        if(this.agenda && this.agenda.code === '05045') {
             for(const plot of this.plotDeck.value()) {
                 let plotSummary = plot.getSummary(activePlayer, true);
                 if(plot.hasTrait('scheme')) {

@@ -10,7 +10,7 @@ class AtPrinceDoransBehest extends PlotCard {
             cannotBeCanceled: true,
             target: {
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => card.controller === this.controller,
+                cardCondition: card => card.controller === this.controller && !card.notConsideredToBeInPlotDeck,
                 cardType: 'plot'
             },
             handler: context => {

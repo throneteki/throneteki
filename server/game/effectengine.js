@@ -33,7 +33,7 @@ class EffectEngine {
     }
 
     getTargets() {
-        const validLocations = ['active plot', 'being played', 'dead pile', 'discard pile', 'draw deck', 'hand', 'play area', 'duplicate'];
+        const validLocations = ['active plot', 'being played', 'dead pile', 'discard pile', 'draw deck', 'hand', 'play area', 'duplicate', 'plot deck'];
         let validTargets = this.game.allCards.filter(card => validLocations.includes(card.location));
         return validTargets.concat(this.game.getPlayers()).concat([this.game]);
     }
@@ -132,7 +132,7 @@ class EffectEngine {
     }
 
     onCardBlankToggled(event) {
-        let {card, isBlank} = event;
+        let { card, isBlank } = event;
         let targets = this.getTargets();
         let matchingEffects = _.filter(this.effects, effect => effect.duration === 'persistent' && effect.source === card);
         _.each(matchingEffects, effect => {
