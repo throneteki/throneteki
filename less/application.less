@@ -204,3 +204,40 @@ ul.htp-sub-list {
 .user-search {
   width: 200px;
 }
+
+.sidebar-enter.collapsed {
+  width: 200px;
+}
+
+.sidebar-enter.expanded {
+  width: 40px;
+}
+
+.sidebar-enter.sidebar-enter-active.collapsed {
+  width: 40px;
+  transition: width 500ms ease-in-out;
+}
+
+.sidebar-enter.sidebar-enter-active.expanded {
+  width: 200px;
+  transition: width 500ms ease-in-out;
+  //z-index: @layer-top;
+}
+
+.sidebar-leave.collapsed {
+  width: 40px;
+}
+
+.sidebar-leave.expanded {
+  width: 200px;
+}
+
+.sidebar-leave.sidebar-leave-active.collapsed {
+  width: 40px;
+  transition: width 500ms ease-in-out;
+}
+
+.sidebar-leave.sidebar-leave-active.expanded {
+  width: 40px;
+  transition: width 500ms ease-in-out;
+}

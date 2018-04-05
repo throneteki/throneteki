@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { CSSTransitionGroup } from 'react-transition-group';
 
 class SideBar extends React.Component {
     constructor(props) {
@@ -17,25 +18,26 @@ class SideBar extends React.Component {
     }
 
     render() {
-        if(this.state.expanded) {
-            return (
-                <div className='sidebar expanded'>
-                    <div>
-                        <a href='#' className='btn pull-right' onClick={ this.onBurgerClick }>
-                            <span className='glyphicon glyphicon-remove' />
-                        </a>
-                        { this.props.children }
-                    </div>
-                </div>);
-        }
+        let component = this.state.expanded ? (
+            <div className='sidebar expanded' key='sidebar-expanded'>
+                <div>
+                    <a href='#' className='btn pull-right' onClick={ this.onBurgerClick }>
+                        <span className='glyphicon glyphicon-remove' />
+                    </a>
+                    { this.props.children }
+                </div>
+            </div>) :
+            (<div className='sidebar collapsed' key='sidebar'>
+                <div>
+                    <a href='#' className='btn' onClick={ this.onBurgerClick }>
+                        <span className='glyphicon glyphicon-menu-hamburger' />
+                    </a>
+                </div>
+            </div>);
 
-        return (<div className={ 'sidebar' }>
-            <div>
-                <a href='#' className='btn' onClick={ this.onBurgerClick }>
-                    <span className='glyphicon glyphicon-menu-hamburger' />
-                </a>
-            </div>
-        </div>);
+        return (<CSSTransitionGroup transitionName='sidebar' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
+            { component }
+        </CSSTransitionGroup>);
     }
 }
 
