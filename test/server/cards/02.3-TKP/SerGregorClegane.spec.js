@@ -17,10 +17,8 @@ describe('Ser Gregor Clegane', function() {
             this.player2.clickCard('Hedge Knight', 'hand');
             this.player2.clickCard('Shireen Baratheon', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
-            
+
             this.completeMarshalPhase();
 
             this.shireen = this.player2.findCardByName('Shireen Baratheon', 'play area');

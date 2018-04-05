@@ -24,8 +24,6 @@ describe('Fear Cuts Deeper Than Swords', function() {
 
             this.completeSetup();
 
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('Filthy Accusations');
             this.selectFirstPlayer(this.player2);
         });
 
@@ -43,7 +41,7 @@ describe('Fear Cuts Deeper Than Swords', function() {
                 beforeEach(function() {
                     this.player1.clickPrompt('Fear Cuts Deeper Than Swords');
                 });
-    
+
                 it('should cancel the plot when revealed', function() {
                     expect(this.knight.kneeled).toBe(false);
                 });
@@ -70,7 +68,7 @@ describe('Fear Cuts Deeper Than Swords', function() {
                 beforeEach(function() {
                     this.player1.clickPrompt('Fear Cuts Deeper Than Swords');
                 });
-    
+
                 it('should cancel the intimidate keyword', function() {
                     expect(this.knight.kneeled).toBe(false);
                 });

@@ -17,8 +17,6 @@ describe('Dolorous Edd', function() {
             this.player2.clickCard('Grand Maester Pycelle', 'hand');
             this.player2.clickCard('Ser Jaime Lannister', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player2);
 
             this.completeMarshalPhase();

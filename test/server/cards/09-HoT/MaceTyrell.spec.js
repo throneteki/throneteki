@@ -24,7 +24,6 @@ describe('Mace Tyrell', function() {
 
         describe('when removing a character from the game', function() {
             beforeEach(function() {
-                this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 
@@ -49,7 +48,6 @@ describe('Mace Tyrell', function() {
 
         describe('when a removed character is placed in the dead pile', function() {
             beforeEach(function() {
-                this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 
@@ -78,7 +76,6 @@ describe('Mace Tyrell', function() {
             // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/36886-mace-tyrell/
 
             beforeEach(function() {
-                this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('Barring the Gates');
                 this.selectFirstPlayer(this.player1);
 

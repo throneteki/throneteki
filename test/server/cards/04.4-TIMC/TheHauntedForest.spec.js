@@ -18,8 +18,6 @@ describe('The Haunted Forest', function() {
             this.player2.clickCard('Maester Aemon', 'hand');
             this.completeSetup();
 
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player2);
 
             this.completeMarshalPhase();

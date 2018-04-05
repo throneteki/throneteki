@@ -21,8 +21,6 @@ describe('trait change', function() {
                     this.player1.clickCard(this.character);
                     this.completeSetup();
 
-                    this.player1.selectPlot('A Tourney for the King');
-                    this.player2.selectPlot('A Tourney for the King');
                     this.selectFirstPlayer(this.player1);
 
                     this.player1.clickCard(this.knighted);
@@ -52,8 +50,6 @@ describe('trait change', function() {
 
                     expect(this.character.hasTrait('Knight')).toBe(true);
 
-                    this.player1.selectPlot('A Tourney for the King');
-                    this.player2.selectPlot('A Tourney for the King');
                     this.selectFirstPlayer(this.player1);
 
                     this.completeMarshalPhase();

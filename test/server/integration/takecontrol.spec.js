@@ -44,7 +44,6 @@ describe('take control', function() {
 
                     // Select plots for round 2
                     this.player1.selectPlot('Valar Morghulis');
-                    this.player2.selectPlot('Confiscation');
 
                     this.selectFirstPlayer(this.player1);
                 });
@@ -99,7 +98,6 @@ describe('take control', function() {
 
                     // Select plots for round 2
                     this.player1.selectPlot('A Noble Cause');
-                    this.player2.selectPlot('Confiscation');
                     this.selectFirstPlayer(this.player1);
 
                     // Remove the Ward via Confiscation
@@ -177,8 +175,6 @@ describe('take control', function() {
                 this.player2.clickPrompt('Done');
 
                 // Round 2
-                this.player1.selectPlot('Sneak Attack');
-                this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player1);
             });
 
@@ -219,9 +215,6 @@ describe('take control', function() {
                 this.player2.clickCard(this.steward);
 
                 this.completeSetup();
-
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
             });
 
             describe('when it comes into play under control', function() {
@@ -339,9 +332,6 @@ describe('take control', function() {
                 this.mines = this.player2.findCardByName('Iron Mines', 'hand');
 
                 this.completeSetup();
-
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
 
                 this.selectFirstPlayer(this.player1);
                 this.selectPlotOrder(this.player1);
@@ -486,8 +476,6 @@ describe('take control', function() {
                     this.player1.clickCard(this.ourCharacter);
                     this.completeSetup();
 
-                    this.player1.selectPlot('Trading with the Pentoshi');
-                    this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
 
                     expect(this.ourCharacter.location).toBe('play area');
@@ -516,8 +504,6 @@ describe('take control', function() {
                     this.player1.dragCard(this.ourCharacter, 'dead pile');
                     this.completeSetup();
 
-                    this.player1.selectPlot('Trading with the Pentoshi');
-                    this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
                 });
 
@@ -544,8 +530,6 @@ describe('take control', function() {
                     this.player2.clickCard(this.theirCharacter);
                     this.completeSetup();
 
-                    this.player1.selectPlot('Trading with the Pentoshi');
-                    this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
 
                     this.player1.clickCard('Ward');
@@ -574,8 +558,6 @@ describe('take control', function() {
                     this.player2.clickCard(this.theirCharacter);
                     this.completeSetup();
 
-                    this.player1.selectPlot('Trading with the Pentoshi');
-                    this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
                 });
 
@@ -603,8 +585,6 @@ describe('take control', function() {
                     this.player2.dragCard(this.theirCharacter, 'dead pile');
                     this.completeSetup();
 
-                    this.player1.selectPlot('Trading with the Pentoshi');
-                    this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
                 });
 
@@ -666,8 +646,6 @@ describe('take control', function() {
 
                 this.completeChallengesPhase();
 
-                this.player1.selectPlot('A Game of Thrones');
-                this.player2.selectPlot('A Game of Thrones');
                 this.selectFirstPlayer(this.player1);
 
                 // Remarshal the character
@@ -708,8 +686,6 @@ describe('take control', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('Snowed Under');
-                this.player2.selectPlot('A Storm of Swords');
                 this.selectFirstPlayer(this.player1);
 
                 // Drag these to discard to be available for Night Gathers

@@ -16,8 +16,6 @@ describe('Ygritte', function() {
             this.player1.clickCard(this.brothel);
             this.completeSetup();
 
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             this.player1.clickPrompt('Done');

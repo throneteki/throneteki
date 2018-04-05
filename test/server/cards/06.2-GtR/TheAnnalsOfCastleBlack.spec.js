@@ -93,9 +93,6 @@ describe('The Annals of Castle Black', function() {
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
 
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
-
                 expect(this.player1).not.toHavePromptButton('Ahead of the Tide');
             });
         });

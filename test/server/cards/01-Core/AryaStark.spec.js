@@ -10,8 +10,7 @@ describe('Arya Stark (Core)', function() {
             this.startGame();
             this.keepStartingHands();
             this.completeSetup();
-            this.player1.selectPlot('Trading with the Pentoshi');
-            this.player2.selectPlot('Trading with the Pentoshi');
+
             this.selectFirstPlayer(this.player1);
             this.selectPlotOrder(this.player1);
 

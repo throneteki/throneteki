@@ -21,8 +21,6 @@ describe('Chella Daughter of Cheyk', function() {
             this.player2.clickCard(this.chud);
             this.completeSetup();
 
-            this.player1.selectPlot('A Clash of Kings');
-            this.player2.selectPlot('A Clash of Kings');
             this.selectFirstPlayer(this.player1);
 
             this.completeMarshalPhase();

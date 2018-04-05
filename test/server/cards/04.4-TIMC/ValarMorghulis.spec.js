@@ -34,9 +34,6 @@ describe('Valar Morghulis', function() {
 
                 this.player1Object.moveCard(this.eddard, 'draw deck');
 
-                this.player1.selectPlot('Valar Morghulis');
-                this.player2.selectPlot('A Noble Cause');
-
                 this.selectFirstPlayer(this.player1);
             });
 

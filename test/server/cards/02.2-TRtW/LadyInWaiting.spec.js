@@ -17,8 +17,6 @@ describe('Lady-in-Waiting', function() {
             this.player2.clickCard('Cersei Lannister', 'hand');
 
             this.completeSetup();
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
             this.selectFirstPlayer(this.player1);
 
             this.ladyInWaiting = this.player1.findCardByName('Lady-in-Waiting');

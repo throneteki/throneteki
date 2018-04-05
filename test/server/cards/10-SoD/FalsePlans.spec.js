@@ -26,7 +26,6 @@ describe('False Plans', function() {
 
         describe('when False Plans is discarded normally', function() {
             beforeEach(function() {
-                this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('Heads on Spikes');
                 this.selectFirstPlayer(this.player1);
             });
@@ -40,7 +39,6 @@ describe('False Plans', function() {
 
         describe('when False Plans is discarded by intrigue claim', function() {
             beforeEach(function() {
-                this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player2);
 
@@ -63,7 +61,6 @@ describe('False Plans', function() {
 
         describe('vs Vengeance for Elia', function() {
             beforeEach(function() {
-                this.player1.selectPlot('A Noble Cause');
                 this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 

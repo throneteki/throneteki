@@ -17,8 +17,6 @@ describe('Wildling Bandit', function() {
             this.player1.clickCard(this.bandit);
             this.completeSetup();
 
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Time of Plenty');
             this.selectFirstPlayer(this.player1);
 
             this.completeMarshalPhase();

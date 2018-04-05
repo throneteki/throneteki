@@ -18,8 +18,6 @@ describe('Maester Aemon (WotW)', function() {
 
             this.completeSetup();
 
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player2);
 
             this.completeMarshalPhase();

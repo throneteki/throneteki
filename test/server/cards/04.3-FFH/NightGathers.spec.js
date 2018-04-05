@@ -14,8 +14,6 @@ describe('Night Gathers...', function() {
             this.player2.selectDeck(deck2);
             this.startGame();
             this.skipSetupPhase();
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             this.steward = this.player1.findCardByName('Steward at the Wall');

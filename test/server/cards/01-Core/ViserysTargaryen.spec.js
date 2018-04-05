@@ -17,12 +17,10 @@ describe('Viserys Targaryen', function() {
             this.player1.clickCard('Viserys Targaryen (Core)', 'hand');
             this.player2.clickCard('Tumblestone Knight', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('A Feast for Crows');
             this.selectFirstPlayer(this.player2);
 
             this.viserys = this.player1.findCardByName('Viserys Targaryen (Core)', 'play area');
-            
+
             this.player2.clickCard('Lady');
             this.player2.clickCard('Tumblestone Knight');
 

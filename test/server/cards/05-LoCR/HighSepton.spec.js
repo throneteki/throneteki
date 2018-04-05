@@ -24,10 +24,6 @@ describe('High Septon', function() {
             this.player2.clickCard('Mirri Maz Duur');
 
             this.completeSetup();
-
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
-
         });
 
         describe('vs a single target ability', function() {

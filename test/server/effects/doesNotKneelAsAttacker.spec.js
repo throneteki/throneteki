@@ -14,8 +14,6 @@ describe('doesNotKneelAsAttacker', function() {
             this.player1.clickCard(this.character);
 
             this.completeSetup();
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
             this.selectFirstPlayer(this.player1);
             this.completeMarshalPhase();
         });

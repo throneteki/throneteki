@@ -16,8 +16,6 @@ describe('effects', function() {
                 this.player1.clickCard(this.jhogo);
                 this.completeSetup();
 
-                this.player1.selectPlot('Sneak Attack');
-                this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player1);
 
                 this.completeMarshalPhase();
@@ -159,9 +157,6 @@ describe('effects', function() {
                 beforeEach(function() {
                     this.completeMarshalPhase();
                     this.completeChallengesPhase();
-
-                    this.player2.selectPlot('Famine');
-                    this.player1.selectPlot('Sneak Attack');
 
                     this.selectFirstPlayer(this.player2);
                     this.player2.clickCard('Winterfell Steward', 'hand');

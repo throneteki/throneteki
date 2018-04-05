@@ -19,8 +19,6 @@ describe('Marriage Pact', function() {
             this.player2.clickCard(this.opponentCharacter);
             this.completeSetup();
 
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
             this.selectFirstPlayer(this.player1);
 
             // Attach Marriage Pact

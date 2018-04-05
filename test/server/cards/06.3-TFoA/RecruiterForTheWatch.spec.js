@@ -18,8 +18,6 @@ describe('Recruiter for the Watch', function() {
             this.player2.clickCard(this.character);
             this.completeSetup();
 
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             this.player1.clickMenu(this.recruiter, 'Take control of character');

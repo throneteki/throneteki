@@ -15,8 +15,6 @@ describe('Euron Crow\'s Eye', function() {
             this.keepStartingHands();
             this.player1.clickCard('Euron Crow\'s Eye', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             this.ourArbor = this.player1.findCardByName('The Arbor', 'hand');

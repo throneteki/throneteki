@@ -18,8 +18,6 @@ describe('Bran Stark (Core)', function() {
             this.player1.clickCard('Bran Stark', 'hand');
             this.player2.clickCard('Melisandre (Core)', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('A Feast for Crows');
             this.selectFirstPlayer(this.player2);
 
             this.bran = this.player1.findCardByName('Bran Stark', 'play area');
@@ -41,14 +39,14 @@ describe('Bran Stark (Core)', function() {
 
             it('should sacrifice bran', function() {
                 this.player1.clickPrompt('Bran Stark');
-                
+
                 expect(this.bran.location).toBe('discard pile');
             });
 
             it('should still discard the event', function() {
                 this.player1.clickPrompt('Bran Stark');
-                
-                expect(this.seenInFlames.location).toBe('discard pile');                
+
+                expect(this.seenInFlames.location).toBe('discard pile');
             });
         });
     });

@@ -25,8 +25,6 @@ describe('nested ability sequences', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player1);
 
                 // Resolve plot order
@@ -139,8 +137,6 @@ describe('nested ability sequences', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('A Song of Summer');
-                this.player2.selectPlot('A Song of Summer');
                 this.selectFirstPlayer(this.player1);
 
                 // Move the event to draw so that it can be drawn via The Blackfish.

@@ -16,8 +16,6 @@ describe('attachments', function() {
                 this.player1.clickCard(this.character);
                 this.completeSetup();
 
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player2);
 
                 this.player2.clickCard('Milk of the Poppy', 'hand');
@@ -96,8 +94,6 @@ describe('attachments', function() {
 
                 expect(this.character.isFaction('thenightswatch'));
 
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 
                 this.player1.clickCard(this.attachment);
@@ -142,8 +138,6 @@ describe('attachments', function() {
                 this.player1.clickCard(this.nonTerminalAttachment);
                 this.player1.clickCard(this.character);
 
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player2);
 
                 // Attach the terminal attachment

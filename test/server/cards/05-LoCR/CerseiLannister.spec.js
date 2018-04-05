@@ -24,7 +24,6 @@ describe('Cersei Lannister (LoCR)', function() {
                     this.cersei = this.player1.findCardByName('Cersei Lannister');
 
                     this.player1.selectPlot('A Clash of Kings');
-                    this.player2.selectPlot('Sneak Attack');
                     this.selectFirstPlayer(this.player1);
 
                     this.completeMarshalPhase();
@@ -45,7 +44,6 @@ describe('Cersei Lannister (LoCR)', function() {
                     this.cersei = this.player1.findCardByName('Cersei Lannister');
 
                     this.player1.selectPlot('Sneak Attack');
-                    this.player2.selectPlot('Sneak Attack');
                     this.selectFirstPlayer(this.player1);
 
                     this.completeMarshalPhase();
@@ -67,7 +65,6 @@ describe('Cersei Lannister (LoCR)', function() {
                     this.cersei = this.player1.findCardByName('Cersei Lannister');
 
                     this.player1.selectPlot('Heads on Spikes');
-                    this.player2.selectPlot('Sneak Attack');
                     this.selectFirstPlayer(this.player1);
                 });
 

@@ -20,8 +20,6 @@ describe('burn effects', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('Blood of the Dragon');
-                this.player2.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player2);
 
                 this.player2.clickCard(this.wall);
@@ -58,8 +56,6 @@ describe('burn effects', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('Blood of the Dragon');
-                this.player2.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player2);
 
                 // Move character to dead pile to give Silent Sisters +1 STR.
