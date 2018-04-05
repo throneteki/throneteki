@@ -14,8 +14,6 @@ describe('challenges phase', function() {
                 this.player2.clickCard('Joffrey Baratheon', 'hand');
                 this.completeSetup();
 
-                this.player1.selectPlot('Sneak Attack');
-                this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player1);
 
                 this.completeMarshalPhase();
@@ -53,12 +51,10 @@ describe('challenges phase', function() {
                 this.player2.clickCard('The Shadow Tower', 'hand');
                 this.completeSetup();
 
-                this.player1.selectPlot('Sneak Attack');
-                this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player1);
 
                 this.completeMarshalPhase();
-                
+
                 this.player1.clickPrompt('Intrigue');
                 this.player1.clickCard('Steward at the Wall', 'play area');
                 this.player1.clickPrompt('Done');
@@ -103,8 +99,6 @@ describe('challenges phase', function() {
                 this.player2.clickCard(this.merchant);
                 this.completeSetup();
 
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player1);
                 this.selectPlotOrder(this.player1);
 
@@ -179,8 +173,6 @@ describe('challenges phase', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('Sneak Attack');
-                this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player2);
 
                 // Put the remaining card back in draw deck for insight

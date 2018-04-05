@@ -17,8 +17,6 @@ describe('Catelyn Stark', function() {
             this.player1.clickCard('Catelyn Stark (Core)', 'hand');
             this.player2.clickCard('Tyrion Lannister (Core)', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             this.player1.clickCard('Septa Mordane', 'hand');

@@ -14,8 +14,6 @@ describe('The Hand\'s Judgment', function() {
 
             this.character = this.player1.findCardByName('Ser Jaime Lannister', 'hand');
 
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
             this.selectFirstPlayer(this.player1);
 
             this.completeMarshalPhase();

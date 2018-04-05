@@ -16,8 +16,6 @@ describe('Brothel Madame', function() {
             this.player2.clickCard(this.character);
             this.completeSetup();
 
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
             this.selectFirstPlayer(this.player1);
         });
 

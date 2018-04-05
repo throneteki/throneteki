@@ -92,8 +92,6 @@ describe('marshal phase', function() {
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.skipSetupPhase();
-                this.player1.selectPlot('Sneak Attack');
-                this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player1);
 
                 this.roseroad = this.player1.findCardByName('The Roseroad');
@@ -124,8 +122,6 @@ describe('marshal phase', function() {
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.skipSetupPhase();
-                this.player1.selectPlot('Sneak Attack');
-                this.player2.selectPlot('Sneak Attack');
                 this.selectFirstPlayer(this.player1);
 
                 this.character = this.player1.findCardByName('Dragonstone Faithful');
@@ -175,8 +171,6 @@ describe('marshal phase', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player1);
                 this.selectPlotOrder(this.player1);
 

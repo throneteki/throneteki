@@ -21,7 +21,6 @@ describe('Daenerys Targaryen (TFM)', function() {
 
             this.completeSetup();
 
-            this.player1.selectPlot('Trading with the Pentoshi');
             this.selectFirstPlayer(this.player1);
 
             this.completeMarshalPhase();
@@ -70,7 +69,7 @@ describe('Daenerys Targaryen (TFM)', function() {
                 describe('and when it reaches 0', function() {
                     beforeEach(function() {
                         this.player1.clickCard(this.noSlave2);
-                        this.player1.clickCard(this.dany);                    
+                        this.player1.clickCard(this.dany);
                     });
 
                     it('should kill her', function() {

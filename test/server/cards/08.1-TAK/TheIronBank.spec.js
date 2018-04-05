@@ -23,9 +23,6 @@ describe('The Iron Bank', function() {
             this.completeSetup();
 
             this.ironBank.modifyToken('gold', 10);
-
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('A Noble Cause');
         });
 
         describe('when the player collects income', function() {

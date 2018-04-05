@@ -10,8 +10,6 @@ describe('pillage', function() {
             this.startGame();
             this.skipSetupPhase();
 
-            this.player1.selectPlot('Trading with the Pentoshi');
-            this.player2.selectPlot('Trading with the Pentoshi');
             this.selectFirstPlayer(this.player1);
 
             // Resolve plot order

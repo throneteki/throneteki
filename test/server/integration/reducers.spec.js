@@ -17,8 +17,6 @@ describe('reducer cards', function() {
             this.player1.clickCard(this.grove);
             this.completeSetup();
 
-            this.player1.selectPlot('Power Behind the Throne');
-            this.player2.selectPlot('Power Behind the Throne');
             this.selectFirstPlayer(this.player1);
 
             // Resolve plot order

@@ -215,8 +215,6 @@ describe('The Lord of the Crossing', function() {
 
             describe('when Jon Snow becomes an attacker through his ability', function() {
                 beforeEach(function() {
-                    this.player1.selectPlot('A Noble Cause');
-                    this.player2.selectPlot('A Noble Cause');
                     this.selectFirstPlayer(this.player1);
 
                     this.completeMarshalPhase();

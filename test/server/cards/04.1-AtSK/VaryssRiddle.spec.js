@@ -25,8 +25,6 @@ describe('Varys\'s Riddle', function() {
 
             it('should not crash', function() {
                 expect(() => {
-                    this.player1.selectPlot('Varys\'s Riddle');
-                    this.player2.selectPlot('Wildfire Assault');
                     this.selectFirstPlayer(this.player1);
                     this.selectPlotOrder(this.player1);
                 }).not.toThrow();
@@ -46,8 +44,6 @@ describe('Varys\'s Riddle', function() {
 
                 this.varysRiddle = this.player1.findCardByName('Varys\'s Riddle');
 
-                this.player1.selectPlot('Varys\'s Riddle');
-                this.player2.selectPlot('Wraiths in Their Midst');
                 this.selectFirstPlayer(this.player1);
             });
 
@@ -80,8 +76,6 @@ describe('Varys\'s Riddle', function() {
 
                     this.powerBehindTheThrone = this.player2.findCardByName('Power Behind the Throne');
 
-                    this.player1.selectPlot('Varys\'s Riddle');
-                    this.player2.selectPlot('Calm Over Westeros');
                     this.selectFirstPlayer(this.player2);
 
                     this.selectPlotOrder(this.player1);
@@ -135,9 +129,6 @@ describe('Varys\'s Riddle', function() {
                 this.keepStartingHands();
                 this.player2.clickCard('Old Nan', 'hand');
                 this.completeSetup();
-
-                this.player1.selectPlot('Varys\'s Riddle');
-                this.player2.selectPlot('Trading with the Pentoshi');
 
                 expect(this.player2).toHavePromptButton('Old Nan');
                 this.player2.clickPrompt('Pass');

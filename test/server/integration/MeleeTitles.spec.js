@@ -14,9 +14,6 @@ describe('melee titles', function() {
 
                 this.completeSetup();
 
-                this.player1.selectPlot('Trading with the Pentoshi');
-                this.player2.selectPlot('Trading with the Pentoshi');
-                this.player3.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player2);
 
                 // Resolve plot order

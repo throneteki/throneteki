@@ -16,8 +16,6 @@ describe('Power Behind the Throne', function() {
             this.player1.clickCard(this.cersei);
             this.completeSetup();
 
-            this.player1.selectPlot('Power Behind the Throne');
-            this.player2.selectPlot('Power Behind the Throne');
             this.selectFirstPlayer(this.player1);
 
             // Resolve plot order

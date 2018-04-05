@@ -24,8 +24,6 @@ describe('The King in the North', function() {
 
             this.completeSetup();
 
-            this.player1.selectPlot('The King in the North');
-            this.player2.selectPlot('The King in the North');
             this.selectFirstPlayer(this.player1);
         });
 

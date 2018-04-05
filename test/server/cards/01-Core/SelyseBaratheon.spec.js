@@ -16,8 +16,6 @@ describe('Selyse Baratheon (Core)', function() {
             this.player1.clickCard('Selyse Baratheon', 'hand');
             this.player2.clickCard('Nymeria Sand', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             this.completeMarshalPhase();

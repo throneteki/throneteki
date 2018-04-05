@@ -22,8 +22,6 @@ describe('Barring the Gates', function() {
 
             this.completeSetup();
 
-            this.player1.selectPlot('Barring the Gates');
-            this.player2.selectPlot('A Noble Cause');
             this.selectFirstPlayer(this.player2);
         });
 

@@ -18,8 +18,6 @@ describe('Jaqen H\'ghar', function() {
             this.player2.clickCard(this.arya);
             this.completeSetup();
 
-            this.player1.selectPlot('Trading with the Pentoshi');
-            this.player2.selectPlot('Trading with the Pentoshi');
             this.selectFirstPlayer(this.player1);
             this.selectPlotOrder(this.player1);
 

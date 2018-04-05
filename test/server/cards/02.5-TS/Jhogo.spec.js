@@ -21,8 +21,6 @@ describe('Jhogo', function() {
             this.player1.clickCard(this.jhogo);
             this.completeSetup();
 
-            this.player1.selectPlot('Marching Orders');
-            this.player2.selectPlot('Marching Orders');
             this.selectFirstPlayer(this.player1);
 
             this.player1.clickCard(this.aggo);

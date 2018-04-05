@@ -33,7 +33,6 @@ describe('Craster', function() {
                 this.player2.clickCard(this.opponentCharacter);
                 this.completeSetup();
                 this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('Valar Morghulis');
                 this.selectFirstPlayer(this.player1);
 
                 this.player2.clickPrompt('Benjen Stark');
@@ -84,7 +83,6 @@ describe('Craster', function() {
                 this.player1Object.moveCard(this.craster, 'draw deck');
 
                 this.player1.selectPlot('Called Into Service');
-                this.player2.selectPlot('Valar Morghulis');
                 this.selectFirstPlayer(this.player1);
                 // Resolve Valar before Called Into Service.
                 this.selectPlotOrder(this.player2);

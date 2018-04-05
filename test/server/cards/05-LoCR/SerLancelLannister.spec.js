@@ -15,8 +15,6 @@ describe('Ser Lancel Lannister', function() {
             this.player1.clickCard(this.lancel);
             this.completeSetup();
 
-            this.player1.selectPlot('Trading with the Pentoshi');
-            this.player2.selectPlot('Trading with the Pentoshi');
             this.selectFirstPlayer(this.player1);
             this.selectPlotOrder(this.player1);
         });

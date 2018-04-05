@@ -10,8 +10,6 @@ describe('House Florent Knight', function() {
             this.startGame();
             this.keepStartingHands();
             this.completeSetup();
-            this.player1.selectPlot('Trading with the Pentoshi');
-            this.player2.selectPlot('Trading with the Pentoshi');
 
             this.florentKnight = this.player2.findCardByName('House Florent Knight', 'hand');
         });

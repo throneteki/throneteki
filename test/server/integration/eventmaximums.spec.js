@@ -48,8 +48,6 @@ describe('event maximums', function() {
 
                 this.completeChallengesPhase();
 
-                this.player1.selectPlot('A Game of Thrones');
-                this.player2.selectPlot('A Game of Thrones');
                 this.selectFirstPlayer(this.player2);
             });
 

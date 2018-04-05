@@ -16,8 +16,6 @@ describe('Benjen Stark', function() {
             this.player1.clickCard('Benjen Stark', 'hand');
             this.player2.clickCard('Summer', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('A Feast for Crows');
-            this.player2.selectPlot('A Feast for Crows');
             this.selectFirstPlayer(this.player2);
 
             this.benjen = this.player1.findCardByName('Benjen Stark', 'play area');

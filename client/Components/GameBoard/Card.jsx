@@ -362,7 +362,7 @@ InnerCard.propTypes = {
     orientation: PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
     size: PropTypes.string,
     source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction',
-        'additional', 'scheme plots', 'conclave']).isRequired,
+        'additional', 'conclave']).isRequired,
     style: PropTypes.object,
     wrapped: PropTypes.bool
 };

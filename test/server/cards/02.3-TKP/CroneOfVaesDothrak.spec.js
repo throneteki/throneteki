@@ -17,8 +17,6 @@ describe('Crone of Vaes Dothrak', function() {
             this.player1.clickCard('Braided Warrior', 'hand');
             this.player1.clickCard('Black Wind\'s Crew', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('A Noble Cause');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
         });
 

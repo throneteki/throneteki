@@ -26,7 +26,6 @@ describe('Randyll Tarly', function() {
                 this.player1.clickCard(this.randyll);
 
                 this.player1.selectPlot('A Feast for Crows');
-                this.player2.selectPlot('A Feast for Crows');
                 this.selectFirstPlayer(this.player1);
 
                 let margaery = this.player1.findCardByName('Margaery Tyrell', 'hand');
@@ -54,7 +53,6 @@ describe('Randyll Tarly', function() {
                 this.player1.clickCard(this.randyll);
 
                 this.player1.selectPlot('A Song of Summer');
-                this.player2.selectPlot('A Feast for Crows');
 
                 // A Song of Summer takes effect immediately
                 this.player1.clickPrompt('Randyll Tarly');
@@ -69,7 +67,6 @@ describe('Randyll Tarly', function() {
         describe('when strength is decreased', function() {
             beforeEach(function() {
                 this.player1.selectPlot('A Feast for Crows');
-                this.player2.selectPlot('A Feast for Crows');
                 this.selectFirstPlayer(this.player1);
 
                 this.completeMarshalPhase();

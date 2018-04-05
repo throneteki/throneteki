@@ -84,8 +84,6 @@ describe('WraithsInTheirMidst', function() {
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
 
-                this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Feast for Crows');
                 this.selectFirstPlayer(this.player2);
 
                 this.completeMarshalPhase();

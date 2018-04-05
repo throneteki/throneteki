@@ -19,8 +19,6 @@ describe('The Tickler', function() {
             this.player1.clickCard('The Tickler', 'hand');
             this.player2.clickCard('The Roseroad', 'hand');
             this.completeSetup();
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             // Move remaining cards back to draw deck.

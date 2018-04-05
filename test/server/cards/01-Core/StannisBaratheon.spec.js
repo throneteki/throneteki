@@ -26,8 +26,6 @@ describe('Stannis Baratheon', function() {
             this.player1.clickCard(this.attachment);
             this.player1.clickCard(this.character1);
 
-            this.player1.selectPlot('Trading with the Pentoshi');
-            this.player2.selectPlot('Trading with the Pentoshi');
             this.selectFirstPlayer(this.player1);
             this.selectPlotOrder(this.player1);
 

@@ -80,7 +80,7 @@ describe('Player', function() {
     describe('recyclePlots()', function() {
         describe('when there are no plots left', function() {
             beforeEach(function() {
-                this.player.activePlot = this.selectedPlot;
+                this.player.activePlot = this.selectedPlotSpy;
                 this.player.plotDeck = _([]);
                 this.player.plotDiscard = _([this.anotherPlotSpy]);
                 this.anotherPlotSpy.location = 'revealed plots';
@@ -102,7 +102,7 @@ describe('Player', function() {
 
         describe('when there are plots left', function() {
             beforeEach(function() {
-                this.player.plotDeck = _([this.selectedPlot]);
+                this.player.plotDeck = _([this.selectedPlotSpy]);
                 this.player.plotDiscard = _([this.anotherPlotSpy]);
                 this.anotherPlotSpy.location = 'revealed plots';
 

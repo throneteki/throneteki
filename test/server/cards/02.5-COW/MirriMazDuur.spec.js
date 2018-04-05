@@ -22,8 +22,6 @@ describe('Mirri Maz Duur', function() {
             this.player2.clickCard(this.character);
             this.completeSetup();
 
-            this.player1.selectPlot('Marching Orders');
-            this.player2.selectPlot('Marching Orders');
             this.selectFirstPlayer(this.player1);
 
             this.player1.clickCard(this.hound);

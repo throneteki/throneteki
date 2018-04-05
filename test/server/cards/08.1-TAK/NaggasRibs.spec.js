@@ -28,7 +28,6 @@ describe('Nagga\'s Ribs', function() {
         describe('when a character is discarded', function() {
             beforeEach(function() {
                 this.player1.selectPlot('Marched to the Wall');
-                this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 
                 this.player1.clickCard('Theon Greyjoy', 'play area');
@@ -47,7 +46,6 @@ describe('Nagga\'s Ribs', function() {
                 this.player2.togglePromptedActionWindow('dominance', true);
 
                 this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 
                 this.player1.clickCard(this.character2);
@@ -71,7 +69,6 @@ describe('Nagga\'s Ribs', function() {
                 this.player2.togglePromptedActionWindow('dominance', true);
 
                 this.player1.selectPlot('A Noble Cause');
-                this.player2.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 
                 this.completeMarshalPhase();

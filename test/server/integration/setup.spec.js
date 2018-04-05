@@ -158,8 +158,6 @@ describe('setup phase', function() {
 
                 it('should properly calculate the effects of the attachment', function() {
                     // Get into an intrigue challenge to check the strength boost.
-                    this.player1.selectPlot('Sneak Attack');
-                    this.player2.selectPlot('Sneak Attack');
                     this.selectFirstPlayer(this.player1);
 
                     this.completeMarshalPhase();
@@ -169,10 +167,6 @@ describe('setup phase', function() {
                     this.player1.clickPrompt('Done');
 
                     expect(this.refugee.getStrength()).toBe(3);
-                });
-
-                it('should continue to the plot phase', function() {
-                    expect(this.player1).toHavePrompt('Select a plot');
                 });
             });
         });
@@ -212,8 +206,6 @@ describe('setup phase', function() {
 
             it('should not double trigger reactions', function() {
                 this.completeSetup();
-                this.player1.selectPlot(this.sneakAttack);
-                this.player2.selectPlot(this.opponentSneakAttack);
                 this.selectFirstPlayer(this.player1);
 
                 this.completeMarshalPhase();

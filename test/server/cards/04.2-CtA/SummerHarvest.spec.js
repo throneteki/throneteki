@@ -18,7 +18,6 @@ describe('SummerHarvest', function() {
 
         describe('when played against a normal plot', function() {
             beforeEach(function() {
-                this.player1.selectPlot(this.summerHarvest);
                 this.player2.selectPlot(this.nobleCause);
 
                 this.selectFirstPlayer(this.player1);
@@ -36,9 +35,6 @@ describe('SummerHarvest', function() {
                     // Move Summer Harvest back to the plot deck so it's eligible to be picked again.
                     this.summerHarvest.controller.moveCard(this.summerHarvest, 'plot deck');
 
-                    this.player1.selectPlot(this.summerHarvest);
-                    this.player2.selectPlot(this.nobleCause);
-
                     this.selectFirstPlayer(this.player1);
                 });
 
@@ -50,7 +46,6 @@ describe('SummerHarvest', function() {
 
         describe('when played against Varys\'s Riddle', function() {
             beforeEach(function() {
-                this.player1.selectPlot(this.summerHarvest);
                 this.player2.selectPlot(this.varysRiddle);
 
                 this.selectFirstPlayer(this.player1);

@@ -11,8 +11,6 @@ describe('Fealty', function() {
             this.startGame();
             this.skipSetupPhase();
 
-            this.player1.selectPlot('Sneak Attack');
-            this.player2.selectPlot('Sneak Attack');
             this.selectFirstPlayer(this.player1);
 
             this.balon = this.player1.findCardByName('Balon Greyjoy (Core)', 'hand');

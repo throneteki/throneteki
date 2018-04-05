@@ -9,6 +9,10 @@
   justify-content: space-between;
   flex-direction: column;
 
+  &.select-cursor {
+    cursor: url(/img/crosshairs.cur), default;
+  }
+
   .panel {
     position: relative;
     margin: 5px;
@@ -141,10 +145,6 @@
   .panel-title {
     margin: 5px 5px;
   }
-}
-
-.select-cursor {
-  cursor: url(/img/crosshairs.cur), default;
 }
 
 .prompt-area {
@@ -296,10 +296,63 @@
   }
 }
 
-.inner {
-  .card-wrapper {
-    margin: 5px 5px 0 0;
+/**
+ * Generates the specified property based on the calculation of:
+ * property: numCards * (cardSize + cardSpacing) + additionalOffset
+ *
+ * for the various different card sizes. Example, mixing in
+ * .calculate-tiled-card-prop(min-height, 2, height, 3px) will generate CSS for:
+ * min-height: 2 * (@card-height + 5px) + 3px
+ * &.small {
+ *   min-height: 2 * (@card-sm-height + 5px) + 3px
+ * }
+ * ... etc ...
+ */
+ .calculate-tiled-card-prop(@property, @numCards, @cardMeasurement, @additionalOffset: 0px) {
+  @cardMeasurementNm: "card-@{cardMeasurement}";
+  @cardMeasurementSm: "card-sm-@{cardMeasurement}";
+  @cardMeasurementLg: "card-lg-@{cardMeasurement}";
+  @cardMeasurementXl: "card-xl-@{cardMeasurement}";
+
+
+  @{property}: @numCards * (@@cardMeasurementNm + 5px) + @additionalOffset;
+
+  &.small {
+    @{property}: @numCards * (@@cardMeasurementSm + 5px) + @additionalOffset;
   }
+
+  &.large {
+    @{property}: @numCards * (@@cardMeasurementLg + 5px) + @additionalOffset;
+  };
+
+  &.x-large {
+    @{property}: @numCards * (@@cardMeasurementXl + 5px) + @additionalOffset;
+  };
+}
+
+.inner {
+  .calculate-tiled-card-prop(max-height, 4, height);
+  overflow-y: auto;
+}
+
+.card-list {
+  .card-wrapper {
+    margin: 0 5px 5px 0;
+  }
+}
+
+.card-list-title {
+  background-color: @brand-primary;
+  color: white;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.card-list-cards {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .our-side {
@@ -373,8 +426,8 @@
     left: 20px;
 
     .inner {
-      min-width: @card-height * 2 + (2 * 5px);
-      min-height: @card-width * 2 + (2 * 5px);
+      .calculate-tiled-card-prop(min-height, 2, width);
+      .calculate-tiled-card-prop(min-width, 2, height, @scrollbar-width);
     }
 
     .arrow {
@@ -395,12 +448,8 @@
     top: -75px;
 
     .inner {
-      columns: 2;
-      min-height: 128px;
-
-      .card-wrapper {
-        margin: 5px 0 0 0;
-      }
+      .calculate-tiled-card-prop(min-height, 1, width);
+      .calculate-tiled-card-prop(width, 4, height);
     }
 
     .arrow {
@@ -419,10 +468,8 @@
     top: 95px;
 
     .inner {
-      min-height: @card-height;
-      width: @card-width * 5 + (5 * 5px) + @scrollbar-width;
-      max-height: @card-height * 4 + (4 * 5px);
-      overflow-y: auto;
+      .calculate-tiled-card-prop(min-height, 1, height);
+      .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
     }
 
     .arrow {
@@ -440,10 +487,8 @@
     left: 0;
 
     .inner {
-      min-height: @card-height;
-      width: @card-width * 5 + (5 * 5px) + @scrollbar-width;
-      max-height: @card-height * 4 + (4 * 5px);
-      overflow-y: auto;
+      .calculate-tiled-card-prop(min-height, 1, height);
+      .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
     }
 
     .arrow {
@@ -467,11 +512,8 @@
     bottom: 95px;
 
     .inner {
-      width: @card-width * 7 + (7 * 5px) + @scrollbar-width;
-      min-height: @card-height;
-      max-height: @card-height * 4 + (4 * 5px);
-
-      overflow-y: auto;
+      .calculate-tiled-card-prop(min-height, 1, height);
+      .calculate-tiled-card-prop(width, 7, width, @scrollbar-width);
     }
   }
 
@@ -487,17 +529,25 @@
     top: 95px;
     left: 0;
 
-    .inner {
-      min-width: @card-width * 2 + (2 * 5px);
-      max-height: @card-height + 10px;
-      display: flex;
-    }
-
     .arrow {
       bottom: initial;
       top: -60px;
       left: 10px;
     }
+  }
+}
+
+// Alliance agenda
+.agenda-06018 {
+  .inner {
+    .calculate-tiled-card-prop(width, 2, width);
+  }
+}
+
+// Conclave agenda
+.agenda-09045 {
+  .inner {
+    .calculate-tiled-card-prop(width, 7, width);
   }
 }
 
@@ -629,7 +679,7 @@ span.down-arrow {
   .drop-target {
     flex: 1;
   }
-  
+
   display: flex;
   flex: 1;
   flex-direction: column;

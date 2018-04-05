@@ -1122,16 +1122,6 @@ const Effects = {
             }
         };
     },
-    mustRevealPlot: function(card) {
-        return {
-            apply: function(player) {
-                player.mustRevealPlot = card;
-            },
-            unapply: function(player) {
-                player.mustRevealPlot = undefined;
-            }
-        };
-    },
     skipPhase: function(name) {
         return {
             apply: function(game) {
@@ -1139,6 +1129,26 @@ const Effects = {
             },
             unapply: function(game) {
                 game.skipPhase[name] = false;
+            }
+        };
+    },
+    notConsideredToBeInPlotDeck: function() {
+        return {
+            apply: function(card) {
+                card.notConsideredToBeInPlotDeck = true;
+            },
+            unapply: function(card) {
+                card.notConsideredToBeInPlotDeck = false;
+            }
+        };
+    },
+    mustRevealPlot: function(card) {
+        return {
+            apply: function(player) {
+                player.mustRevealPlot = card;
+            },
+            unapply: function(player) {
+                player.mustRevealPlot = undefined;
             }
         };
     }
