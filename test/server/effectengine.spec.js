@@ -2,8 +2,8 @@ const _ = require('underscore');
 
 const EffectEngine = require('../../server/game/effectengine.js');
 
-describe('EffectEngine', function () {
-    beforeEach(function () {
+describe('EffectEngine', function() {
+    beforeEach(function() {
         this.playAreaCard = { location: 'play area' };
         this.handCard = { location: 'hand' };
         this.discardedCard = { location: 'discard pile' };
@@ -61,10 +61,6 @@ describe('EffectEngine', function () {
         beforeEach(function() {
             this.player = {};
             this.gameSpy.getPlayers.and.returnValue([this.player]);
-        });
-
-        it('should not include cards in the plot deck', function() {
-            expect(this.engine.getTargets()).not.toContain(this.plotCard);
         });
 
         it('should not include cards in the revealed plots pile', function() {
@@ -163,7 +159,7 @@ describe('EffectEngine', function () {
             });
         });
 
-        describe('when leaving play', function () {
+        describe('when leaving play', function() {
             beforeEach(function() {
                 this.cardLeavingPlay = { location: 'play area' };
             });
