@@ -27,7 +27,7 @@ function collect(connect, monitor) {
     };
 }
 
-class Card extends React.Component {
+class InnerCard extends React.Component {
     constructor() {
         super();
 
@@ -308,7 +308,7 @@ class Card extends React.Component {
 
     render() {
         if(this.props.wrapped) {
-            return this.props.connectDragSource(
+            return (
                 <div className='card-wrapper' style={ this.props.style }>
                     { this.getCard() }
                     { this.getDupes() }
@@ -320,8 +320,8 @@ class Card extends React.Component {
     }
 }
 
-Card.displayName = 'Card';
-Card.propTypes = {
+InnerCard.displayName = 'Card';
+InnerCard.propTypes = {
     card: PropTypes.shape({
         attached: PropTypes.bool,
         attachments: PropTypes.array,
@@ -366,9 +366,12 @@ Card.propTypes = {
     style: PropTypes.object,
     wrapped: PropTypes.bool
 };
-Card.defaultProps = {
+InnerCard.defaultProps = {
     orientation: 'vertical',
     wrapped: true
 };
 
-export default DragSource(ItemTypes.CARD, cardSource, collect)(Card);
+const Card = DragSource(ItemTypes.CARD, cardSource, collect)(InnerCard);
+
+export default Card;
+
