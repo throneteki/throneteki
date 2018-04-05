@@ -690,6 +690,11 @@ class Lobby {
         _.each(games, game => {
             let owner = game.players[game.owner];
 
+            if(!owner) {
+                logger.error('Got a game where the owner wasn\'t a player', game.owner);
+                return;
+            }
+
             let syncGame = new PendingGame(owner.user, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
