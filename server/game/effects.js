@@ -1122,16 +1122,6 @@ const Effects = {
             }
         };
     },
-    mustRevealPlot: function(card) {
-        return {
-            apply: function(player) {
-                player.mustRevealPlot = card;
-            },
-            unapply: function(player) {
-                player.mustRevealPlot = undefined;
-            }
-        };
-    },
     skipPhase: function(name) {
         return {
             apply: function(game) {
@@ -1142,13 +1132,13 @@ const Effects = {
             }
         };
     },
-    cannotSelectSchemes: function() {
+    cannotRevealPlot: function(restriction = () => true) {
         return {
             apply: function(player) {
-                player.cannotSelectSchemes = true;
+                player.plotRevealRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.cannotSelectSchemes = false;
+                player.plotRevealRestrictions = _.reject(player.plotRevealRestrictions, r => r === restriction);
             }
         };
     },

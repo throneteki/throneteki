@@ -10,7 +10,7 @@ class AtPrinceDoransBehest extends PlotCard {
             cannotBeCanceled: true,
             target: {
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => card.controller === this.controller && this.checkPlotForPhase(card),
+                cardCondition: card => card.controller === this.controller,
                 cardType: 'plot'
             },
             handler: context => {
@@ -22,12 +22,6 @@ class AtPrinceDoransBehest extends PlotCard {
                 this.game.queueStep(new RevealPlots(this.game, [context.target]));
             }
         });
-    }
-
-    checkPlotForPhase(card) {
-        return (this.game.currentPhase !== 'plot') ?
-            card.location === 'plot deck' :
-            card.location === 'plot deck' && !card.hasTrait('scheme');
     }
 }
 

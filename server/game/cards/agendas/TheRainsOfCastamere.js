@@ -40,8 +40,9 @@ class TheRainsOfCastamere extends AgendaCard {
         this.persistentEffect({
             targetType: 'player',
             targetController: 'current',
+            condition: () => this.game.currentPhase === 'plot',
             effect: [
-                ability.effects.cannotSelectSchemes(),
+                ability.effects.cannotRevealPlot(plot => plot.hasTrait('Scheme')),
                 ability.effects.groupCardPile('plot deck')
             ]
         });

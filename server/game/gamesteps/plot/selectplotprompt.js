@@ -2,8 +2,9 @@ const AllPlayerPrompt = require('../allplayerprompt.js');
 
 class SelectPlotPrompt extends AllPlayerPrompt {
     completionCondition(player) {
-        if(player.mustRevealPlot) {
-            player.selectedPlot = player.mustRevealPlot;
+        let selectableCards = player.getSelectableCards();
+        if(selectableCards.length === 1) {
+            player.selectedPlot = selectableCards[0];
         }
 
         return !!player.selectedPlot;
@@ -60,7 +61,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
         let selectableCards = this.game.allCards.filter(card => card.getType() === 'plot' &&
                                                                 card.location === 'plot deck' &&
                                                                 card.controller === player &&
-                                                                (player.cannotSelectSchemes && !card.hasTrait('scheme')));
+                                                                !player.plotRevealRestrictions.some(restriction => restriction(card)));
 
         player.selectCard = true;
         player.setSelectableCards(selectableCards);

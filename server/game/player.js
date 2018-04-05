@@ -62,6 +62,7 @@ class Player extends Spectator {
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
         this.mustChooseAsClaim = [];
+        this.plotRevealRestrictions = [];
         this.mustRevealPlot = undefined;
         this.promptedActionWindows = user.promptedActionWindows;
         this.timerSettings = user.settings.timerSettings || {};
@@ -682,7 +683,7 @@ class Player extends Spectator {
     }
 
     recyclePlots() {
-        if(this.plotDeck.isEmpty()) {
+        if(this.plotDeck.isEmpty() || (this.groupedPiles['plot deck'] && this.plotDeck.all(plot => plot.hasTrait('Scheme')))) {
             this.plotDiscard.each(plot => {
                 this.moveCard(plot, 'plot deck');
             });
@@ -1228,6 +1229,10 @@ class Player extends Spectator {
 
     clearSelectedCards() {
         this.promptState.clearSelectedCards();
+    }
+
+    getSelectableCards() {
+        return this.promptState.selectableCards;
     }
 
     setSelectableCards(cards) {
