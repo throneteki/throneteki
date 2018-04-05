@@ -688,9 +688,9 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
-            let ownerUser = game.players[game.owner];
+            let owner = game.players[game.owner];
 
-            let syncGame = new PendingGame(ownerUser.user, { spectators: game.allowSpectators, name: game.name });
+            let syncGame = new PendingGame(owner.user, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
