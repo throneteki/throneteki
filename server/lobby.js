@@ -121,12 +121,8 @@ class Lobby {
     }
 
     getUserList() {
-        let userList = _.map(this.users, function(user) {
-            return {
-                name: user.username,
-                emailHash: user.emailHash,
-                noAvatar: user.settings.disableGravatar
-            };
+        let userList = Object.values(this.users).map(user => {
+            return user.getShortSummary();
         });
 
         userList = _.sortBy(userList, user => {
@@ -153,12 +149,10 @@ class Lobby {
                         return;
                     }
 
-                    delete dbUser.password;
-
-                    ioSocket.request.user = dbUser;
+                    ioSocket.request.user = dbUser.getWireSafeDetails();
                     socket.user = dbUser;
 
-                    this.onAuthenticated(socket, dbUser);
+                    this.doPostAuth(socket);
                 }).catch(err => {
                     logger.error(err);
                 });
@@ -292,7 +286,7 @@ class Lobby {
 
     // Events
     onConnection(ioSocket) {
-        var socket = new Socket(ioSocket, { userService: this.userService, config: this.config });
+        var socket = new Socket(ioSocket, { config: this.config });
 
         socket.registerEvent('lobbychat', this.onLobbyChat.bind(this));
         socket.registerEvent('newgame', this.onNewGame.bind(this));
@@ -312,16 +306,14 @@ class Lobby {
         this.sockets[ioSocket.id] = socket;
 
         if(socket.user) {
-            this.users[socket.user.username] = this.userService.sanitiseUserObject(socket.user);
+            this.users[socket.user.username] = socket.user;
 
             this.broadcastUserList();
         }
 
         // Force user list send for the newly connected socket, bypassing the throttle
         this.sendUserListFilteredWithBlockList(socket, this.getUserList());
-
         this.sendFilteredMessages(socket);
-
         this.broadcastGameList(socket);
 
         if(!socket.user) {
@@ -334,23 +326,30 @@ class Lobby {
         }
     }
 
+    doPostAuth(socket) {
+        let user = socket.user;
+
+        if(!user) {
+            return;
+        }
+
+        this.broadcastUserList();
+        this.sendFilteredMessages(socket);
+        // Force user list send for the newly autnenticated socket, bypassing the throttle
+        this.sendUserListFilteredWithBlockList(socket, this.getUserList());
+
+        var game = this.findGameForUser(user.username);
+        if(game && game.started) {
+            this.sendHandoff(socket, game.node);
+        }
+    }
+
     onAuthenticated(socket, user) {
         this.userService.getUserById(user._id).then(dbUser => {
-            delete dbUser.password;
-
-            socket.socket.request.user = dbUser;
+            this.users[dbUser.username] = dbUser;
             socket.user = dbUser;
 
-            this.users[user.username] = this.userService.sanitiseUserObject(user);
-
-            this.broadcastUserList();
-
-            this.sendFilteredMessages(socket);
-
-            var game = this.findGameForUser(user.username);
-            if(game && game.started) {
-                this.sendHandoff(socket, game.node);
-            }
+            this.doPostAuth(socket);
         }).catch(err => {
             logger.error(err);
         });
@@ -393,9 +392,8 @@ class Lobby {
             return;
         }
 
-        let defaultUser = this.userService.sanitiseUserObject(socket.user);
-        let game = new PendingGame(socket.user, gameDetails);
-        game.newGame(socket.id, defaultUser, gameDetails.password, (err, message) => {
+        let game = new PendingGame(socket.user.getDetails(), gameDetails);
+        game.newGame(socket.id, socket.user.getDetails(), gameDetails.password, (err, message) => {
             if(err) {
                 logger.info('game failed to create', err, message);
 
@@ -421,8 +419,7 @@ class Lobby {
             return;
         }
 
-        let defaultUser = this.userService.sanitiseUserObject(socket.user);
-        game.join(socket.id, defaultUser, password, (err, message) => {
+        game.join(socket.id, socket.user.getDetails(), password, (err, message) => {
             if(err) {
                 socket.send('passworderror', message);
 
@@ -477,8 +474,7 @@ class Lobby {
     }
 
     sendHandoff(socket, gameNode) {
-        let userObj = this.userService.sanitiseUserObject(socket.user);
-        let authToken = jwt.sign(userObj, this.config.secret, { expiresIn: '5m' });
+        let authToken = jwt.sign(socket.user.getWireSafeDetails(), this.config.secret, { expiresIn: '5m' });
 
         socket.send('handoff', {
             address: gameNode.address,
@@ -500,8 +496,7 @@ class Lobby {
             return;
         }
 
-        let defaultUser = this.userService.sanitiseUserObject(socket.user);
-        game.watch(socket.id, defaultUser, password, (err, message) => {
+        game.watch(socket.id, socket.user.getDetails(), password, (err, message) => {
             if(err) {
                 socket.send('passworderror', message);
 
@@ -511,8 +506,7 @@ class Lobby {
             socket.joinChannel(game.id);
 
             if(game.started) {
-                let defaultUser = this.userService.sanitiseUserObject(socket.user);
-                this.router.addSpectator(game, defaultUser);
+                this.router.addSpectator(game, socket.user.getDetails());
                 this.sendHandoff(socket, game.node);
             } else {
                 this.sendGameState(game);
@@ -694,7 +688,14 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
-            let syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
+            let owner = game.players[game.owner];
+
+            if(!owner) {
+                logger.error('Got a game where the owner wasn\'t a player', game.owner);
+                return;
+            }
+
+            let syncGame = new PendingGame(owner.user, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
@@ -709,7 +710,8 @@ class Lobby {
                     emailHash: player.emailHash,
                     owner: game.owner === player.name,
                     faction: { cardData: { code: player.faction } },
-                    agenda: { cardData: { code: player.agenda } }
+                    agenda: { cardData: { code: player.agenda } },
+                    user: player.user
                 };
             });
 
@@ -717,7 +719,8 @@ class Lobby {
                 syncGame.spectators[player.name] = {
                     id: player.id,
                     name: player.name,
-                    emailHash: player.emailHash
+                    emailHash: player.emailHash,
+                    user: player.user
                 };
             });
 

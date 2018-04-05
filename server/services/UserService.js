@@ -2,9 +2,9 @@ const monk = require('monk');
 const moment = require('moment');
 const crypto = require('crypto');
 
-const escapeRegex = require('../util.js').escapeRegex;
-const logger = require('../log.js');
-const Settings = require('../settings.js');
+const escapeRegex = require('../util').escapeRegex;
+const logger = require('../log');
+const User = require('../models/User');
 
 class UserService {
     constructor(db, config) {
@@ -16,7 +16,7 @@ class UserService {
     getUserByUsername(username) {
         return this.users.find({ username: { '$regex': new RegExp('^' + escapeRegex(username.toLowerCase()) + '$', 'i') } })
             .then(users => {
-                return users[0];
+                return users[0] && new User(users[0]);
             })
             .catch(err => {
                 logger.error('Error fetching users', err);
@@ -28,7 +28,7 @@ class UserService {
     getUserByEmail(email) {
         return this.users.find({ email: { '$regex': new RegExp('^' + escapeRegex(email.toLowerCase()) + '$', 'i') } })
             .then(users => {
-                return users[0];
+                return users[0] && new User(users[0]);
             })
             .catch(err => {
                 logger.error('Error fetching users', err);
@@ -40,7 +40,7 @@ class UserService {
     getUserById(id) {
         return this.users.find({ _id: id })
             .then(users => {
-                return users[0];
+                return users[0] && new User(users[0]);
             })
             .catch(err => {
                 logger.error('Error fetching users', err);
@@ -208,23 +208,6 @@ class UserService {
         return this.users.update({ username: username }, { '$pull': { tokens: { _id: tokenId } } }).catch(err => {
             logger.error(err);
         });
-    }
-
-    sanitiseUserObject(userObj) {
-        let user = {
-            _id: userObj._id,
-            username: userObj.username,
-            email: userObj.email,
-            emailHash: userObj.emailHash,
-            settings: userObj.settings,
-            promptedActionWindows: userObj.promptedActionWindows,
-            permissions: userObj.permissions,
-            verified: userObj.verified
-        };
-
-        user = Settings.getUserWithDefaultsSet(user);
-
-        return user;
     }
 }
 

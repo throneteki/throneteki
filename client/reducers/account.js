@@ -44,6 +44,10 @@ export default function(state = {}, action) {
                 loggedIn: true,
                 user: action.response.user
             });
+        case 'PROFILE_SAVED':
+            return Object.assign({}, state, {
+                user: action.response.user
+            });
     }
 
     return state;
