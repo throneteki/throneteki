@@ -52,20 +52,36 @@ class Profile extends React.Component {
         if(!this.props.user) {
             return;
         }
+    }
 
-        this.state = Object.assign({}, this.state, {
-            disableGravatar: this.props.user.settings.disableGravatar,
-            email: this.props.user.email,
-            promptedActionWindows: this.props.user.promptedActionWindows,
-            windowTimer: this.props.user.settings.windowTimer,
-            keywordSettings: this.props.user.settings.keywordSettings,
-            timerSettings: this.props.user.settings.timerSettings,
-            selectedBackground: this.props.user.settings.background,
-            selectedCardSize: this.props.user.settings.cardSize
-        });
+    componentDidMount() {
+        this.updateProfile(this.props);
     }
 
     componentWillReceiveProps(props) {
+        if(!props.user) {
+            return;
+        }
+
+        // If we haven't previously got any user details, then the api probably just returned now, so set the initial user details
+        if(!this.state.promptedActionWindows) {
+            this.updateProfile(props);
+        }
+
+        if(props.profileSaved) {
+            this.setState({
+                successMessage: 'Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.'
+            });
+
+            this.updateProfile(props);
+
+            setTimeout(() => {
+                this.setState({ successMessage: undefined });
+            }, 5000);
+        }
+    }
+
+    updateProfile(props) {
         if(!props.user) {
             return;
         }
@@ -78,16 +94,7 @@ class Profile extends React.Component {
             timerSettings: props.user.settings.timerSettings,
             keywordSettings: props.user.settings.keywordSettings,
             selectedBackground: props.user.settings.background,
-            selectedCardSize: props.user.settings.cardSize
-        });
-
-        if(props.profileSaved) {
-            this.setState({ successMessage: 'Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.' });
-
-            setTimeout(() => {
-                this.setState({ successMessage: undefined });
-            }, 5000);
-        }
+            selectedCardSize: props.user.settings.cardSize});
     }
 
     onChange(field, event) {
@@ -128,6 +135,8 @@ class Profile extends React.Component {
 
         this.verifyEmail();
         this.verifyPassword(true);
+
+        document.getElementsByClassName('wrapper')[0].scrollTop = 0;
 
         if(_.any(this.state.validation, function(message) {
             return message && message !== '';
