@@ -150,13 +150,14 @@ export function connectLobby() {
                 url += ':' + server.port;
             }
 
-            if(state.games.socket) {
-                dispatch(actions.closeGameSocket());
-            }
-
             dispatch(actions.setAuthTokens(server.authToken, state.auth.refreshToken));
 
-            dispatch(actions.connectGameSocket(url, server.name));
+            if(state.games.socket && state.lobby.currentGame.id !== server.gameId) {
+                dispatch(actions.closeGameSocket());
+                dispatch(actions.connectGameSocket(url, server.name));
+            } else if(!state.games.socket) {
+                dispatch(actions.connectGameSocket(url, server.name));
+            }
         });
 
         socket.on('authfailed', () => {
