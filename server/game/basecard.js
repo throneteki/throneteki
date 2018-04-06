@@ -372,7 +372,6 @@ class BaseCard {
         _.each(this.abilities.reactions, reaction => {
             if(reaction.isEventListeningLocation(targetLocation) && !reaction.isEventListeningLocation(originalLocation)) {
                 reaction.registerEvents();
-                this.game.registerAbility(reaction);
             } else if(reaction.isEventListeningLocation(originalLocation) && !reaction.isEventListeningLocation(targetLocation)) {
                 reaction.unregisterEvents();
             }

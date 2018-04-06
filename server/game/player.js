@@ -1289,6 +1289,15 @@ class Player extends Spectator {
         return this.game.isSpectator(player) && this.game.showHand;
     }
 
+    disableTimerForRound() {
+        this.noTimer = true;
+        this.resetTimerAtEndOfRound = true;
+    }
+
+    isTimerEnabled() {
+        return !this.noTimer && this.user.settings.windowTimer !== 0;
+    }
+
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};

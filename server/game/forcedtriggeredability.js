@@ -32,6 +32,10 @@ class ForcedTriggeredAbility extends TriggeredAbility {
         return true;
     }
 
+    getChoices() {
+        return [{ text: 'default', choice: 'default' }];
+    }
+
     executeHandler(context) {
         this.handler(context);
     }

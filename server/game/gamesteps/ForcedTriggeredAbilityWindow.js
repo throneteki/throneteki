@@ -1,45 +1,31 @@
-const _ = require('underscore');
-const uuid = require('uuid');
-
-const BaseAbilityWindow = require('./baseabilitywindow.js');
-const TriggeredAbilityWindowTitles = require('./triggeredabilitywindowtitles.js');
+const BaseAbilityWindow = require('./BaseAbilityWindow');
+const TriggeredAbilityWindowTitles = require('./TriggeredAbilityWindowTitles');
 
 class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
-    registerAbility(ability, event) {
-        let context = ability.createContext(event);
-        let player = ability.card.controller;
-        this.abilityChoices.push({
-            id: uuid.v1(),
-            player: player,
-            ability: ability,
-            card: ability.card,
-            context: context
-        });
-    }
-
     continue() {
-        this.abilityChoices = _.filter(this.abilityChoices, abilityChoice => abilityChoice.ability.meetsRequirements(abilityChoice.context));
+        this.gatherChoices();
+
+        if(this.abilityChoices.length === 1) {
+            let abilityChoice = this.abilityChoices[0];
+            this.resolveAbility(abilityChoice.ability, abilityChoice.context);
+            return true;
+        }
 
         if(this.abilityChoices.length > 1) {
             this.promptPlayer();
             return false;
         }
 
-        _.each(this.abilityChoices, abilityChoice => {
-            this.game.resolveAbility(abilityChoice.ability, abilityChoice.context);
-        });
-
         return true;
     }
 
     promptPlayer() {
-        let buttons = _.chain(this.abilityChoices)
+        let buttons = this.abilityChoices
             .map(abilityChoice => {
                 let title = abilityChoice.player.name + ' - ' + abilityChoice.card.name;
                 return { text: title, method: 'chooseAbility', arg: abilityChoice.id, card: abilityChoice.card };
             })
-            .sortBy('text')
-            .value();
+            .sort((a, b) => a.text > b.text ? 1 : -1);
 
         this.game.promptWithMenu(this.game.getFirstPlayer(), this, {
             activePrompt: {
@@ -51,7 +37,7 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     chooseAbility(player, id) {
-        let choice = _.find(this.abilityChoices, ability => ability.id === id);
+        let choice = this.abilityChoices.find(ability => ability.id === id);
 
         if(!choice) {
             return false;
@@ -61,8 +47,7 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
                 player, choice.player.name, choice.card);
         }
 
-        this.game.resolveAbility(choice.ability, choice.context);
-        this.abilityChoices = _.reject(this.abilityChoices, ability => ability.card === choice.card);
+        this.resolveAbility(choice.ability, choice.context);
 
         return true;
     }

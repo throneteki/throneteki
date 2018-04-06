@@ -26,8 +26,8 @@ const IconPrompt = require('./gamesteps/iconprompt.js');
 const SelectCardPrompt = require('./gamesteps/selectcardprompt.js');
 const EventWindow = require('./gamesteps/eventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
-const ForcedTriggeredAbilityWindow = require('./gamesteps/forcedtriggeredabilitywindow.js');
-const TriggeredAbilityWindow = require('./gamesteps/triggeredabilitywindow.js');
+const ForcedTriggeredAbilityWindow = require('./gamesteps/ForcedTriggeredAbilityWindow.js');
+const TriggeredAbilityWindow = require('./gamesteps/TriggeredAbilityWindow.js');
 const KillCharacters = require('./gamesteps/killcharacters.js');
 const TitlePool = require('./TitlePool.js');
 const Event = require('./event.js');
@@ -781,7 +781,6 @@ class Game extends EventEmitter {
         let windowClass = ['forcedreaction', 'forcedinterrupt', 'whenrevealed'].includes(properties.abilityType) ? ForcedTriggeredAbilityWindow : TriggeredAbilityWindow;
         let window = new windowClass(this, { abilityType: properties.abilityType, event: properties.event });
         this.abilityWindowStack.push(window);
-        window.emitEvents();
         this.queueStep(window);
         this.queueSimpleStep(() => this.abilityWindowStack.pop());
     }
@@ -794,11 +793,7 @@ class Game extends EventEmitter {
         }
 
         let window = this.abilityWindowStack[windowIndex];
-        if(event) {
-            window.registerAbility(ability, event);
-        } else {
-            window.registerAbilityForEachEvent(ability);
-        }
+        window.registerAbility(ability, event);
     }
 
     raiseEvent(eventName, params, handler) {
