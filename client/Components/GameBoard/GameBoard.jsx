@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { DragDropContext } from 'react-dnd';
 import { default as TouchBackend } from 'react-dnd-touch-backend';
 import classNames from 'classnames';
+import { CSSTransitionGroup } from 'react-transition-group';
 
 import PlayerStats from './PlayerStats';
 import PlayerRow from './PlayerRow';
@@ -58,13 +59,18 @@ export class GameBoard extends React.Component {
         this.onShuffleClick = this.onShuffleClick.bind(this);
         this.onMenuItemClick = this.onMenuItemClick.bind(this);
         this.sendChatMessage = this.sendChatMessage.bind(this);
+        this.onSettingsClick = this.onSettingsClick.bind(this);
+        this.onMessagesClick = this.onMessagesClick.bind(this);
 
         this.state = {
             cardToZoom: undefined,
             showDrawDeck: false,
             spectating: true,
             showActionWindowsMenu: false,
-            showCardMenu: {}
+            showCardMenu: {},
+            showMessages: true,
+            lastMessageCount: 0,
+            newMessages: 0
         };
     }
 
@@ -74,6 +80,15 @@ export class GameBoard extends React.Component {
 
     componentWillReceiveProps(props) {
         this.updateContextMenu(props);
+
+        let lastMessageCount = this.state.lastMessageCount;
+        let currentMessageCount = props.currentGame.messages.length;
+
+        if(this.state.showMessages) {
+            this.setState({ lastMessageCount: currentMessageCount, newMessages: 0 });
+        } else {
+            this.setState({ newMessages: currentMessageCount - lastMessageCount });
+        }
     }
 
     updateContextMenu(props) {
@@ -264,6 +279,21 @@ export class GameBoard extends React.Component {
         $('#settings-modal').modal('show');
     }
 
+    onMessagesClick() {
+        const showState = !this.state.showMessages;
+
+        let newState = {
+            showMessages: showState
+        };
+
+        if(showState) {
+            newState.newMessages = 0;
+            newState.lastMessageCount = this.props.currentGame.messages.length;
+        }
+
+        this.setState(newState);
+    }
+
     render() {
         if(!this.props.currentGame) {
             return <div>Waiting for server...</div>;
@@ -398,16 +428,19 @@ export class GameBoard extends React.Component {
                         <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
                             orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
                             show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
-                        <GameChat
-                            messages={ this.props.currentGame.messages }
-                            onCardMouseOut={ this.onMouseOut }
-                            onCardMouseOver={ this.onMouseOver }
-                            onSendChat={ this.sendChatMessage } />
+                        <CSSTransitionGroup transitionName='gamechat' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
+                            { this.state.showMessages && <GameChat key='gamechat'
+                                messages={ this.props.currentGame.messages }
+                                onCardMouseOut={ this.onMouseOut }
+                                onCardMouseOver={ this.onMouseOver }
+                                onSendChat={ this.sendChatMessage } /> }
+                        </CSSTransitionGroup>
                     </div>
                 </div>
                 <div className='player-stats-row'>
                     <PlayerStats { ...boundActionCreators } stats={ thisPlayer.stats } showControls={ !this.state.spectating } user={ thisPlayer.user }
-                        firstPlayer={ thisPlayer.firstPlayer } onSettingsClick={ this.onSettingsClick.bind(this) } />
+                        firstPlayer={ thisPlayer.firstPlayer } onSettingsClick={ this.onSettingsClick } showMessages
+                        onMessagesClick={ this.onMessagesClick } numMessages={ this.state.newMessages } />
                 </div>
             </div >);
     }
