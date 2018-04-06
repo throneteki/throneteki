@@ -72,6 +72,7 @@ class User {
 
     getShortSummary() {
         return {
+            username: this.username,
             name: this.username,
             emailHash: this.emailHash,
             noAvatar: this.disableGravatar
