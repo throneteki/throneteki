@@ -152,7 +152,7 @@ export function connectLobby() {
 
             dispatch(actions.setAuthTokens(server.authToken, state.auth.refreshToken));
 
-            if(state.games.socket && state.lobby.currentGame.id !== server.gameId) {
+            if(state.games.socket && state.lobby.currentGame && state.lobby.currentGame.id !== server.gameId) {
                 dispatch(actions.closeGameSocket());
                 dispatch(actions.connectGameSocket(url, server.name));
             } else if(!state.games.socket) {
