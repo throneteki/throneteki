@@ -322,7 +322,7 @@ class Lobby {
 
         var game = this.findGameForUser(socket.user.username);
         if(game && game.started) {
-            this.sendHandoff(socket, game.node);
+            this.sendHandoff(socket, game.node, game.id);
         }
     }
 
@@ -340,7 +340,7 @@ class Lobby {
 
         var game = this.findGameForUser(user.username);
         if(game && game.started) {
-            this.sendHandoff(socket, game.node);
+            this.sendHandoff(socket, game.node, game.id);
         }
     }
 
@@ -469,11 +469,11 @@ class Lobby {
                 return;
             }
 
-            this.sendHandoff(socket, gameNode);
+            this.sendHandoff(socket, gameNode, game.id);
         });
     }
 
-    sendHandoff(socket, gameNode) {
+    sendHandoff(socket, gameNode, gameId) {
         let authToken = jwt.sign(socket.user.getWireSafeDetails(), this.config.secret, { expiresIn: '5m' });
 
         socket.send('handoff', {
@@ -481,7 +481,8 @@ class Lobby {
             port: gameNode.port,
             protocol: gameNode.protocol,
             name: gameNode.identity,
-            authToken: authToken
+            authToken: authToken,
+            gameId: gameId
         });
     }
 
@@ -507,7 +508,7 @@ class Lobby {
 
             if(game.started) {
                 this.router.addSpectator(game, socket.user.getDetails());
-                this.sendHandoff(socket, game.node);
+                this.sendHandoff(socket, game.node, game.id);
             } else {
                 this.sendGameState(game);
             }
