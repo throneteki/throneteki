@@ -678,6 +678,11 @@ span.down-arrow {
 .play-area, .player-board {
   .drop-target {
     flex: 1;
+    display: flex;
+
+    .player-board.our-side > div:first-child {
+      margin-top: auto;
+    }
   }
 
   display: flex;
@@ -687,10 +692,6 @@ span.down-arrow {
 
 .player-board {
   margin: 10px;
-}
-
-.player-board.our-side > div:first-child {
-  margin-top: auto;
 }
 
 .player-home-row {
