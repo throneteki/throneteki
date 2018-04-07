@@ -107,7 +107,6 @@ class CardPile extends React.Component {
             onCardMouseOut: this.props.onMouseOut,
             onCardMouseOver: this.props.onMouseOver,
             onTouchMove: this.props.onTouchMove,
-            orientation: this.props.orientation,
             size: this.props.size,
             source: this.props.source
         };
