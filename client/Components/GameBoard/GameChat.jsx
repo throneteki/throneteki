@@ -64,7 +64,7 @@ class GameChat extends React.Component {
                 <div className='messages panel' ref='messagePanel' onScroll={ this.onScroll }>
                     <Messages messages={ this.props.messages } onCardMouseOver={ this.props.onCardMouseOver } onCardMouseOut={ this.props.onCardMouseOut } />
                 </div>
-                <form>
+                <form className='form chat-form'>
                     <input className='form-control' placeholder='Chat...' onKeyPress={ this.onKeyPress } onChange={ this.onChange }
                         value={ this.state.message } />
                 </form>

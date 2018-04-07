@@ -17,20 +17,12 @@
     position: relative;
     margin: 5px;
     border: 1px solid rgba(71, 58, 56, 0.65);
-    overflow: visible;
     border-radius: 0 0 5px 5px;
-    top: -5px;
   }
 
   .menu {
     position: absolute;
     margin-left: 10px;
-  }
-
-  .messages {
-    overflow: auto;
-    font-size: 12px;
-    overflow-y: auto;
   }
 
   .panel-title {
@@ -781,6 +773,8 @@ span.down-arrow {
   flex-direction: column;
   width: 100%;
   max-width: 350px;
+  align-items: flex-end;
+  overflow: hidden;
 }
 
 .game-status {
@@ -842,32 +836,26 @@ span.down-arrow {
   }
 }
 
-.chat-status {
-  position: absolute;
-  right: 10px;
-}
-
-.chat-badge {
-  margin-left: -5px;
-  margin-top: 5px;
-
-  z-index: @layer-top;
-}
-
 .gamechat-enter {
-  top: 0px;
+  top: 1500px;
 }
 
 .gamechat-enter.gamechat-enter-active {
-  height: 0px;
-  transition: height 500ms ease-in-out;
+  position: absolute;
+  top: 0; 
+  right: 0;
+  width: 100%;
+  transition: top 500ms ease-in-out;
 }
 
 .gamechat-leave {
-  height: 0px;
+  top: 0px;
 }
 
 .gamechat-leave.gamechat-leave-active {
-  height: 100%;
-  transition: height 500ms ease-in-out;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  top: 1500px;
+  transition: top 500ms ease-in-out;
 }

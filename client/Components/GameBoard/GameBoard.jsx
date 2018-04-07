@@ -428,13 +428,15 @@ export class GameBoard extends React.Component {
                         <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
                             orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
                             show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
-                        <CSSTransitionGroup transitionName='gamechat' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
-                            { this.state.showMessages && <GameChat key='gamechat'
-                                messages={ this.props.currentGame.messages }
-                                onCardMouseOut={ this.onMouseOut }
-                                onCardMouseOver={ this.onMouseOver }
-                                onSendChat={ this.sendChatMessage } /> }
-                        </CSSTransitionGroup>
+                        <div className='gamechat'>
+                            <CSSTransitionGroup transitionName='gamechat' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
+                                { this.state.showMessages && <GameChat key='gamechat'
+                                    messages={ this.props.currentGame.messages }
+                                    onCardMouseOut={ this.onMouseOut }
+                                    onCardMouseOver={ this.onMouseOver }
+                                    onSendChat={ this.sendChatMessage } /> }
+                            </CSSTransitionGroup>
+                        </div>
                     </div>
                 </div>
                 <div className='player-stats-row'>

@@ -168,7 +168,7 @@ class PlayerRow extends React.Component {
             isMe={ this.props.isMe }
             username={ this.props.username }
             onCardClick={ this.props.onCardClick }
-            //  onMouseOut={ this.props.onMouseOut }
+            onMouseOut={ this.props.onMouseOut }
             onMouseOver={ this.props.onMouseOver }
             showHand={ this.props.showHand }
             spectating={ this.props.spectating }
