@@ -251,7 +251,7 @@ class InnerCard extends React.Component {
         let imageClass = classNames('card-image', this.sizeClass, {
             'horizontal': this.props.card.type === 'plot',
             'vertical': this.props.card.type !== 'plot',
-            'kneeled': this.props.orientation === 'kneeled' || this.props.card.kneeled || this.props.orientation === 'horizontal' && this.props.card.type !== 'plot'
+            'kneeled': this.props.card.type !== 'plot' && (this.props.orientation === 'kneeled' || this.props.card.kneeled || this.props.orientation === 'horizontal')
         });
 
         let image = <img className={ imageClass } src={ '/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg') } />;
