@@ -67,6 +67,15 @@ export class PlayerStats extends React.Component {
                 { this.props.showControls ? <div className='state'>
                     <button className='btn btn-transparent' onClick={ this.onSettingsClick.bind(this) }><span className='glyphicon glyphicon-cog' />Settings</button>
                 </div> : null }
+
+                { this.props.showMessages &&
+                    <div className='chat-status' onClick={ this.props.onMessagesClick }>
+                        <button className='btn btn-transparent'>
+                            <span className='chat-icon' />
+                            <span className='chat-badge badge progress-bar-danger'>{ this.props.numMessages || null }</span>
+                        </button>
+                    </div>
+                }
             </div>
         );
     }
@@ -75,10 +84,13 @@ export class PlayerStats extends React.Component {
 PlayerStats.displayName = 'PlayerStats';
 PlayerStats.propTypes = {
     firstPlayer: PropTypes.bool,
+    numMessages: PropTypes.number,
+    onMessagesClick: PropTypes.func,
     onSettingsClick: PropTypes.func,
     playerName: PropTypes.string,
     sendGameMessage: PropTypes.func,
     showControls: PropTypes.bool,
+    showMessages: PropTypes.bool,
     stats: PropTypes.object,
     user: PropTypes.object
 };

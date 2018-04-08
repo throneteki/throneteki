@@ -10,7 +10,7 @@ class CardZoom extends React.Component {
                 { this.props.show ?
                     <div className='card-zoomed shadow'>
                         <span className='card-name'>{ this.props.cardName }</span>
-                        <img src={ this.props.imageUrl } />
+                        <img className='image-large img-responsive' src={ this.props.imageUrl } />
                     </div>
                     : null }
             </div>);
