@@ -488,6 +488,16 @@ const Effects = {
             }
         };
     },
+    removeTrait: function(trait) {
+        return {
+            apply: function(card) {
+                card.removeTrait(trait);
+            },
+            unapply: function(card) {
+                card.addTrait(trait);
+            }
+        };
+    },
     addFaction: function(faction) {
         return {
             apply: function(card) {
@@ -495,6 +505,16 @@ const Effects = {
             },
             unapply: function(card) {
                 card.removeFaction(faction);
+            }
+        };
+    },
+    removeFaction: function(faction) {
+        return {
+            apply: function(card) {
+                card.removeFaction(faction);
+            },
+            unapply: function(card) {
+                card.addFaction(faction);
             }
         };
     },
