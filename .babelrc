@@ -1,4 +1,12 @@
 {
-  "presets": ["react", "env"],
-  "plugins": [ "istanbul", "react-hot-loader/babel", "transform-object-assign", "transform-object-rest-spread" ]
+  "presets": [
+    "react",
+    "env"
+  ],
+  "plugins": [
+    "istanbul",
+    "react-hot-loader/babel",
+    "transform-object-assign",
+    "transform-object-rest-spread"
+  ]
 }

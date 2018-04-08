@@ -6,6 +6,8 @@ import { navigate } from './actions';
 import 'bootstrap/dist/js/bootstrap';
 import ReduxToastr from 'react-redux-toastr';
 import { AppContainer } from 'react-hot-loader';
+import { DragDropContext } from 'react-dnd';
+import { default as TouchBackend } from 'react-dnd-touch-backend';
 
 const store = configureStore();
 
@@ -15,9 +17,11 @@ window.onpopstate = function(e) {
     store.dispatch(navigate(e.target.location.pathname));
 };
 
+const DnDContainer = DragDropContext(TouchBackend({ enableMouseEvents: true }))(AppContainer);
+
 const render = () => {
     const Application = require('./Application').default;
-    ReactDOM.render(<AppContainer>
+    ReactDOM.render(<DnDContainer>
         <Provider store={ store }>
             <div className='body'>
                 <ReduxToastr
@@ -30,7 +34,7 @@ const render = () => {
                 <Application />
             </div>
         </Provider>
-    </AppContainer>, document.getElementById('component'));
+    </DnDContainer>, document.getElementById('component'));
 };
 
 if(module.hot) {

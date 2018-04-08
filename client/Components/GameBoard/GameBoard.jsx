@@ -5,8 +5,6 @@ import _ from 'underscore';
 import $ from 'jquery';
 import { toastr } from 'react-redux-toastr';
 import { bindActionCreators } from 'redux';
-import { DragDropContext } from 'react-dnd';
-import { default as TouchBackend } from 'react-dnd-touch-backend';
 import classNames from 'classnames';
 
 import PlayerStats from './PlayerStats';
@@ -444,6 +442,5 @@ function mapDispatchToProps(dispatch) {
     return boundActions;
 }
 
-const draggable = DragDropContext(TouchBackend({ enableMouseEvents: true }))(GameBoard);
-export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(draggable);
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(GameBoard);
 

@@ -1,3 +1,4 @@
 export const ItemTypes = {
-    CARD: 'card'
+    CARD: 'card',
+    PANEL: 'panel'
 };

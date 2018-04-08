@@ -267,35 +267,6 @@
   }
 }
 
-.arrow {
-  content: '';
-  display: block;
-  width: 0;
-  height: 0;
-  position: absolute;
-  border: 8px solid transparent;
-
-  &.left {
-    border-right-color: black;
-  }
-
-  &.right {
-    border-left-color: black;
-  }
-
-  &.up {
-    border-bottom-color: black;
-  }
-
-  &.down {
-    border-top-color: black;
-  }
-
-  &.lg {
-    border-width: 12px;
-  }
-}
-
 /**
  * Generates the specified property based on the calculation of:
  * property: numCards * (cardSize + cardSpacing) + additionalOffset
@@ -355,84 +326,13 @@
   justify-content: flex-start;
 }
 
-.our-side {
-  .plot {
-    .popup {
-      bottom: -2px;
-      top: initial;
-
-      .arrow {
-        bottom: 15px;
-        top: initial;
-      }
-    }
-  }
-
-  .discard {
-    .popup {
-      bottom: 95px;
-      top: initial;
-
-      .arrow {
-        bottom: -30px;
-        top: initial;
-      }
-    }
-  }
-
-  .dead {
-    .popup {
-      bottom: 75px;
-      top: initial;
-
-      .arrow {
-        bottom: -30px;
-        top: initial;
-      }
-    }
-  }
-
-  .agenda {
-    .popup {
-      bottom: 95px;
-      top: initial;
-
-      .arrow {
-        bottom: -30px;
-        top: initial;
-      }
-    }
-  }
-
-  .additional-cards {
-    .popup {
-      bottom: 75px;
-      left: initial;
-      top: initial;
-
-      .arrow {
-        bottom: -30px;
-        top: initial;
-      }
-    }
-  }
-}
-
 .additional-cards {
   .popup {
     position: absolute;
-    bottom: initial;
-    top: 75px;
-    left: 20px;
 
     .inner {
       .calculate-tiled-card-prop(min-height, 2, width);
       .calculate-tiled-card-prop(min-width, 2, height, @scrollbar-width);
-    }
-
-    .arrow {
-      left: 0;
-      top: -60px;
     }
   }
 }
@@ -444,18 +344,10 @@
     position: absolute;
     min-height: 92px;
     min-width: 168px;
-    left: 90px;
-    top: -75px;
 
     .inner {
       .calculate-tiled-card-prop(min-height, 1, width);
       .calculate-tiled-card-prop(width, 4, height);
-    }
-
-    .arrow {
-      left: -25px;
-      top: 55px;
-      bottom: initial;
     }
   }
 }
@@ -464,18 +356,10 @@
   .popup {
     position: absolute;
     min-height: 146px;
-    bottom: initial;
-    top: 95px;
 
     .inner {
       .calculate-tiled-card-prop(min-height, 1, height);
       .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
-    }
-
-    .arrow {
-      bottom: initial;
-      top: -63px;
-      left: 10px;
     }
   }
 }
@@ -483,18 +367,10 @@
 .dead {
   .popup {
     position: absolute;
-    top: 75px;
-    left: 0;
 
     .inner {
       .calculate-tiled-card-prop(min-height, 1, height);
       .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
-    }
-
-    .arrow {
-      bottom: initial;
-      top: -63px;
-      left: 10px;
     }
   }
 }
@@ -508,32 +384,17 @@
 .draw {
   .popup {
     position: absolute;
-    left: 0;
-    bottom: 95px;
 
     .inner {
       .calculate-tiled-card-prop(min-height, 1, height);
       .calculate-tiled-card-prop(width, 7, width, @scrollbar-width);
     }
   }
-
-  .arrow {
-    bottom: -30px;
-    left: 10px;
-  }
 }
 
 .agenda {
   .popup {
     position: absolute;
-    top: 95px;
-    left: 0;
-
-    .arrow {
-      bottom: initial;
-      top: -60px;
-      left: 10px;
-    }
   }
 }
 
