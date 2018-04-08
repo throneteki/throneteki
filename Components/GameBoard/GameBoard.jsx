@@ -80,7 +80,7 @@ export class GameBoard extends React.Component {
         this.updateContextMenu(props);
 
         let lastMessageCount = this.state.lastMessageCount;
-        let currentMessageCount = props.currentGame.messages.length;
+        let currentMessageCount = props.currentGame ? props.currentGame.messages.length : 0;
 
         if(this.state.showMessages) {
             this.setState({ lastMessageCount: currentMessageCount, newMessages: 0 });
