@@ -7,6 +7,8 @@ import { navigate } from './actions';
 import 'bootstrap/dist/js/bootstrap';
 import ReduxToastr from 'react-redux-toastr';
 import Raven from 'raven-js';
+import { DragDropContext } from 'react-dnd';
+import { default as TouchBackend } from 'react-dnd-touch-backend';
 
 import version from '../version.js';
 import ErrorBoundary from './Components/Site/ErrorBoundary';
@@ -67,6 +69,8 @@ window.onpopstate = function(e) {
     store.dispatch(navigate(e.target.location.pathname));
 };
 
+const DnDContainer = DragDropContext(TouchBackend({ enableMouseEvents: true }))(Application);
+
 render(
     <Provider store={ store }>
         <div className='body'>
@@ -78,7 +82,7 @@ render(
                 transitionIn='fadeIn'
                 transitionOut='fadeOut' />
             <ErrorBoundary message={ 'We\'re sorry, a critical error has occured in the client and we\'re unable to show you anything.  Please try refreshing your browser after filling out a report.' }>
-                <Application />
+                <DnDContainer />
             </ErrorBoundary>
         </div>
     </Provider>, document.getElementById('component'));
