@@ -6,18 +6,20 @@ import _ from 'underscore';
 import Card from './Card';
 import CardTiledList from './CardTiledList';
 import Droppable from './Droppable';
+import MovablePanel from './MovablePanel';
 
 class CardPile extends React.Component {
-    constructor() {
-        super();
-
-        this.onCollectionClick = this.onCollectionClick.bind(this);
-        this.onTopCardClick = this.onTopCardClick.bind(this);
+    constructor(props) {
+        super(props);
 
         this.state = {
             showPopup: false,
             showMenu: false
         };
+
+        this.onCollectionClick = this.onCollectionClick.bind(this);
+        this.onTopCardClick = this.onTopCardClick.bind(this);
+        this.onCloseClick = this.onCloseClick.bind(this);
     }
 
     componentWillReceiveProps(props) {
@@ -98,7 +100,6 @@ class CardPile extends React.Component {
 
     getPopup() {
         let popup = null;
-
         let cardList = [];
 
         let listProps = {
@@ -130,13 +131,8 @@ class CardPile extends React.Component {
         let popupClass = classNames('panel', {
             'our-side': this.props.popupLocation === 'top'
         });
-        let arrowClass = classNames('arrow', 'lg', {
-            'down': this.props.popupLocation === 'top' && this.props.orientation !== 'horizontal',
-            'up': this.props.popupLocation !== 'top' && this.props.orientation !== 'horizontal',
-            'left': this.props.orientation === 'horizontal'
-        });
-        let innerClass = classNames('inner', this.props.size);
 
+        let innerClass = classNames('inner', this.props.size);
         let linkIndex = 0;
 
         let popupMenu = this.props.popupMenu ? (<div>{ _.map(this.props.popupMenu, menuItem => {
@@ -144,23 +140,17 @@ class CardPile extends React.Component {
         }) }</div>) : null;
 
         popup = (
-            <div className='popup'>
-                <div className='panel-title' onClick={ event => event.stopPropagation() }>
-                    <span className='text-center'>{ this.props.title }</span>
-                    <span className='pull-right'>
-                        <a className='close-button glyphicon glyphicon-remove' onClick={ this.onCloseClick.bind(this) } />
-                    </span>
-                </div>
+            <MovablePanel title={ this.props.title } name={ this.props.source } onCloseClick={ this.onCloseClick } side={ this.props.popupLocation }>
                 <Droppable onDragDrop={ this.props.onDragDrop } source={ this.props.source }>
                     <div className={ popupClass } onClick={ event => event.stopPropagation() }>
                         { popupMenu }
                         <div className={ innerClass }>
                             { cardList }
                         </div>
-                        <div className={ arrowClass } />
                     </div>
                 </Droppable>
-            </div>);
+            </MovablePanel>
+        );
 
         return popup;
     }
@@ -240,6 +230,7 @@ CardPile.propTypes = {
     topCard: PropTypes.object
 };
 CardPile.defaultProps = {
+    popupLocation: 'bottom',
     orientation: 'vertical'
 };
 
