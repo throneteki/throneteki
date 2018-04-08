@@ -19,6 +19,7 @@ class PlayerPlots extends React.Component {
             orientation='horizontal'
             size={ this.props.cardSize }
             source='revealed plots'
+            popupLocation={ this.props.isMe ? 'bottom' : 'top' }
             title='Used Plots'
             topCard={ this.props.activePlot } />);
 
@@ -36,6 +37,7 @@ class PlayerPlots extends React.Component {
             orientation='horizontal'
             source='plot deck'
             title='Plots'
+            popupLocation={ this.props.isMe ? 'bottom' : 'top' }
             topCard={ { facedown: true, kneeled: true } }
             size={ this.props.cardSize } />);
 
