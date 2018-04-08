@@ -22,7 +22,10 @@ class Profile extends React.Component {
         this.state = {
             newPassword: '',
             newPasswordAgain: '',
-            validation: {}
+            validation: {},
+            promptedActionWindows: {},
+            timerSettings: {},
+            keywordSettings: {}
         };
 
         this.backgrounds = [
@@ -94,7 +97,8 @@ class Profile extends React.Component {
             timerSettings: props.user.settings.timerSettings,
             keywordSettings: props.user.settings.keywordSettings,
             selectedBackground: props.user.settings.background,
-            selectedCardSize: props.user.settings.cardSize});
+            selectedCardSize: props.user.settings.cardSize
+        });
     }
 
     onChange(field, event) {
