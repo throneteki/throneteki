@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DragSource } from 'react-dnd';
+import $ from 'jquery';
 
 import { ItemTypes } from '../../constants';
 import PopupDefaults from './PopupDefaults';
@@ -47,12 +48,24 @@ class MovablePanel extends React.Component {
 
     componentWillReceiveProps(props) {
         if(props.isDragging) {
+            let style = {
+                position: 'fixed',
+                left: Math.max(props.dragOffset.x, 0),
+                top: Math.max(props.dragOffset.y, 50)
+            };
+
+            const popup = $(this.refs.popup);
+
+            if(style.left + popup.width() > window.innerWidth) {
+                style.left = window.innerWidth - popup.width();
+            }
+
+            if(style.top + popup.height() > window.innerHeight) {
+                style.top = window.innerHeight - popup.height();
+            }
+
             this.setState({
-                position: {
-                    position: 'fixed',
-                    left: props.dragOffset.x,
-                    top: props.dragOffset.y
-                }
+                position: style
             });
         }
     }
@@ -60,7 +73,7 @@ class MovablePanel extends React.Component {
     render() {
         let style = this.state.position;
 
-        let content = (<div className='popup' style={ style }>
+        let content = (<div ref='popup' className='popup' style={ style }>
             {
                 this.props.connectDragSource(
                     <div className='panel-title' onClick={ event => event.stopPropagation() }>
