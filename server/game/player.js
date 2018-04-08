@@ -750,6 +750,16 @@ class Player extends Spectator {
         let originalLocation = attachment.location;
 
         attachment.owner.removeCardFromPile(attachment);
+
+        let dupeCard = this.getDuplicateInPlay(attachment);
+        if(dupeCard && dupeCard.controller === attachment.controller) {
+            dupeCard.addDuplicate(attachment);
+            if(originalLocation !== 'play area') {
+                this.game.raiseEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
+            }
+            return;
+        }
+
         attachment.moveTo('play area', card);
         attachment.controller = controller;
         card.attachments.push(attachment);
