@@ -7,6 +7,7 @@ import { CSSTransitionGroup } from 'react-transition-group';
 import ErrorBoundary from './Components/Site/ErrorBoundary';
 import NavBar from './Components/Site/NavBar';
 import Router from './Router';
+import {tryParseJSON} from './util';
 import * as actions from './actions';
 
 class Application extends React.Component {
@@ -20,9 +21,11 @@ class Application extends React.Component {
         let token = localStorage.getItem('token');
         let refreshToken = localStorage.getItem('refreshToken');
         if(refreshToken) {
-            this.props.setAuthTokens(token, JSON.parse(refreshToken));
-
-            this.props.authenticate();
+            const parsedToken = tryParseJSON(refreshToken);
+            if(parsedToken) {
+                this.props.setAuthTokens(token, parsedToken);
+                this.props.authenticate();
+            }
         }
 
         this.props.loadCards();
