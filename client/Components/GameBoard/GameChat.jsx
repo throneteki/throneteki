@@ -18,6 +18,12 @@ class GameChat extends React.Component {
         };
     }
 
+    componentDidMount() {
+        if(this.state.canScroll) {
+            $(this.refs.messagePanel).scrollTop(999999);
+        }
+    }
+
     componentDidUpdate() {
         if(this.state.canScroll) {
             $(this.refs.messagePanel).scrollTop(999999);

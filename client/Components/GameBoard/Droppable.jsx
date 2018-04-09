@@ -82,7 +82,9 @@ const dropTarget = {
     drop(props, monitor) {
         let item = monitor.getItem();
 
-        props.onDragDrop(item.card, item.source, props.source);
+        if(props.onDragDrop) {
+            props.onDragDrop(item.card, item.source, props.source);
+        }
     }
 };
 

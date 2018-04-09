@@ -49,7 +49,7 @@ class GameLobby extends React.Component {
 
         if(this.props.passwordGame) {
             rightside = <PasswordGame />;
-        } else if(this.props.currentGame) {
+        } else if(this.props.currentGame && !this.props.currentGame.started) {
             rightside = <PendingGame />;
         }
 

@@ -567,10 +567,7 @@ module.exports.init = function(server) {
         await userService.updateBlockList(user);
         let updatedUser = await userService.getUserById(user._id);
 
-        res.send(Object.assign(
-            { success: true, message: 'Block list entry added successfully', username: lowerCaseUser },
-            updatedUser.getWireSafeDetails()
-        ));
+        res.send({ success: true, message: 'Block list entry added successfully', username: lowerCaseUser, user: updatedUser.getWireSafeDetails() });
     }));
 
     server.delete('/api/account/:username/blocklist/:entry', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
@@ -580,6 +577,8 @@ module.exports.init = function(server) {
             return;
         }
 
+        user = user.getDetails();
+
         if(!req.params.entry) {
             return res.send({ success: false, message: 'Parameter "entry" is required' });
         }
@@ -588,7 +587,7 @@ module.exports.init = function(server) {
             user.blockList = [];
         }
 
-        let lowerCaseUser = req.body.entry.toLowerCase();
+        let lowerCaseUser = req.params.entry.toLowerCase();
 
         if(!user.blockList.find(user => {
             return user === lowerCaseUser;
@@ -603,10 +602,7 @@ module.exports.init = function(server) {
         await userService.updateBlockList(user);
         let updatedUser = await userService.getUserById(user._id);
 
-        res.send(Object.assign(
-            { success: true, message: 'Block list entry removed successfully', username: lowerCaseUser },
-            updatedUser.getWireSafeDetails()
-        ));
+        res.send({ success: true, message: 'Block list entry removed successfully', username: lowerCaseUser, user: updatedUser.getWireSafeDetails() });
     }));
 };
 
