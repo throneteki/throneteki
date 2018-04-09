@@ -9,18 +9,24 @@ import Panel from '../Site/Panel';
 import * as actions from '../../actions';
 
 class EditDeck extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
+        this.state = {
+        };
 
         this.onEditDeck = this.onEditDeck.bind(this);
+        this.onDeckUpdated = this.onDeckUpdated.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         if(this.props.deckId) {
             return this.props.loadDeck(this.props.deckId);
-        } else if(this.props.deck) {
-            return this.props.loadDeck(this.props.deck._id);
         }
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState({ deck: props.deck });
     }
 
     componentWillUpdate(props) {
@@ -33,6 +39,10 @@ class EditDeck extends React.Component {
 
     onEditDeck(deck) {
         this.props.saveDeck(deck);
+    }
+
+    onDeckUpdated(deck) {
+        this.setState({ deck: deck });
     }
 
     render() {
@@ -49,12 +59,12 @@ class EditDeck extends React.Component {
                 <div>
                     <div className='col-sm-6'>
                         <Panel title='Deck Editor'>
-                            <DeckEditor onDeckSave={ this.onEditDeck } />
+                            <DeckEditor onDeckSave={ this.onEditDeck } deck={ this.state.deck } onDeckUpdated={ this.onDeckUpdated } />
                         </Panel>
                     </div>
                     <div className='col-sm-6'>
                         <Panel title={ this.props.deck.name }>
-                            <DeckSummary cards={ this.props.cards } deck={ this.props.deck } />
+                            <DeckSummary cards={ this.props.cards } deck={ this.state.deck } />
                         </Panel>
                     </div>
                 </div>);
