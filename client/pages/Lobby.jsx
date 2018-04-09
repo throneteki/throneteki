@@ -76,11 +76,6 @@ class Lobby extends React.Component {
                 { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
                     <AlertPanel message={ this.props.bannerNotice } type='error' />
                 </div> : null }
-                <div className='col-sm-offset-1 col-sm-10 announcement'>
-                    <AlertPanel type='success'>
-                        &nbsp;Registration for the Champions of Westeros Online League Winter Season is open until April 8.  See <a href='https://championsofwesteros.blogspot.com/' target='_blank'>here</a> for details
-                    </AlertPanel>
-                </div>
                 <div className='col-sm-offset-1 col-sm-10'>
                     <Panel title='Latest site news'>
                         { this.props.loading ? <div>News loading...</div> : null }
