@@ -18,23 +18,26 @@ class Application extends React.Component {
         this.router = new Router();
 
         this.state = {
-            cannotLoad: false
         };
     }
 
     componentWillMount() {
-        try {
-            let token = localStorage.getItem('token');
-            let refreshToken = localStorage.getItem('refreshToken');
-            if(refreshToken) {
-                const parsedToken = tryParseJSON(refreshToken);
-                if(parsedToken) {
-                    this.props.setAuthTokens(token, parsedToken);
-                    this.props.authenticate();
+        if(!localStorage) {
+            this.setState({ incompatibleBrowser: true });
+        } else {
+            try {
+                let token = localStorage.getItem('token');
+                let refreshToken = localStorage.getItem('refreshToken');
+                if(refreshToken) {
+                    const parsedToken = tryParseJSON(refreshToken);
+                    if(parsedToken) {
+                        this.props.setAuthTokens(token, parsedToken);
+                        this.props.authenticate();
+                    }
                 }
+            } catch(error) {
+                this.setState({ cannotLoad: true });
             }
-        } catch(error) {
-            this.setState({ cannotLoad: true });
         }
 
         this.props.loadCards();
@@ -66,7 +69,9 @@ class Application extends React.Component {
             currentGame: this.props.currentGame
         });
 
-        if(this.state.cannotLoad) {
+        if(this.state.incompatibleBrowser) {
+            component = <AlertPanel type='error' message='Your browser does not provide the required functionality for this site to work.  Please upgrade your browser.  The site works best with a recet version of Chrome, Safari or Firefox' />;
+        } else if(this.state.cannotLoad) {
             component = <AlertPanel type='error' message='This site requires the ability to store cookies and local site data to function.  Please enable these features to use the site.' />;
         }
 
