@@ -7,6 +7,8 @@ import { CSSTransitionGroup } from 'react-transition-group';
 import ErrorBoundary from './Components/Site/ErrorBoundary';
 import NavBar from './Components/Site/NavBar';
 import Router from './Router';
+import {tryParseJSON} from './util';
+import AlertPanel from './Components/Site/AlertPanel';
 import * as actions from './actions';
 
 class Application extends React.Component {
@@ -14,15 +16,28 @@ class Application extends React.Component {
         super(props);
 
         this.router = new Router();
+
+        this.state = {
+        };
     }
 
     componentWillMount() {
-        let token = localStorage.getItem('token');
-        let refreshToken = localStorage.getItem('refreshToken');
-        if(refreshToken) {
-            this.props.setAuthTokens(token, JSON.parse(refreshToken));
-
-            this.props.authenticate();
+        if(!localStorage) {
+            this.setState({ incompatibleBrowser: true });
+        } else {
+            try {
+                let token = localStorage.getItem('token');
+                let refreshToken = localStorage.getItem('refreshToken');
+                if(refreshToken) {
+                    const parsedToken = tryParseJSON(refreshToken);
+                    if(parsedToken) {
+                        this.props.setAuthTokens(token, parsedToken);
+                        this.props.authenticate();
+                    }
+                }
+            } catch(error) {
+                this.setState({ cannotLoad: true });
+            }
         }
 
         this.props.loadCards();
@@ -53,6 +68,12 @@ class Application extends React.Component {
             user: this.props.user,
             currentGame: this.props.currentGame
         });
+
+        if(this.state.incompatibleBrowser) {
+            component = <AlertPanel type='error' message='Your browser does not provide the required functionality for this site to work.  Please upgrade your browser.  The site works best with a recet version of Chrome, Safari or Firefox' />;
+        } else if(this.state.cannotLoad) {
+            component = <AlertPanel type='error' message='This site requires the ability to store cookies and local site data to function.  Please enable these features to use the site.' />;
+        }
 
         let backgroundClass = 'bg';
         if(gameBoardVisible && this.props.user) {

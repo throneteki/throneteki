@@ -68,9 +68,7 @@ class PlayerHand extends React.Component {
 
     render() {
         let cardWidth = this.getCardWidth();
-
         let needsSquish = this.props.cards && this.props.cards.length * cardWidth > (cardWidth * 5);
-
         let cards = this.getCards(needsSquish);
 
         let className = classNames('panel', 'hand', {
