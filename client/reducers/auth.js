@@ -8,8 +8,7 @@ export default function(state = {}, action) {
         case 'BLOCKLIST_DELETED':
             return Object.assign({}, state, {
                 user: action.response.user,
-                username: action.response.user.username,
-                token: action.response.token
+                username: action.response.user.username
             });
         case 'ACCOUNT_LOGGEDIN':
             localStorage.setItem('token', action.response.token);

@@ -97,18 +97,16 @@ class BlockList extends React.Component {
             </table>
         );
 
-        if(this.props.loading) {
+        let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+
+        if(this.props.apiLoading) {
             content = <div>Loading block list from the server...</div>;
-        } else if(this.props.apiError) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
         } else {
             content = (
                 <div className='col-sm-8 col-sm-offset-2 full-height'>
                     <div className='about-container'>
                         { successPanel }
-
-                        { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
-                        { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
+                        { errorBar }
 
                         <form className='form form-horizontal'>
                             <Panel title='Block list'>
@@ -137,7 +135,9 @@ class BlockList extends React.Component {
 BlockList.displayName = 'BlockList';
 BlockList.propTypes = {
     addBlockListEntry: PropTypes.func,
-    apiError: PropTypes.string,
+    apiLoading: PropTypes.bool,
+    apiMessage: PropTypes.string,
+    apiSuccess: PropTypes.bool,
     blockList: PropTypes.array,
     blockListAdded: PropTypes.bool,
     blockListDeleted: PropTypes.bool,
@@ -152,11 +152,12 @@ BlockList.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        apiError: state.api.message,
+        apiLoading: state.api.ADD_BLOCKLIST ? state.api.ADD_BLOCKLIST.loading : undefined,
+        apiMessage: state.api.ADD_BLOCKLIST ? state.api.ADD_BLOCKLIST.message : undefined,
+        apiSuccess: state.api.ADD_BLOCKLIST ? state.api.ADD_BLOCKLIST.success : undefined,
         blockList: state.user.blockList,
         blockListAdded: state.user.blockListAdded,
         blockListDeleted: state.user.blockListDeleted,
-        loading: state.api.loading,
         socket: state.lobby.socket,
         token: state.account.token,
         user: state.account.user
