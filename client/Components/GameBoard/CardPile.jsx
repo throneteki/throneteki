@@ -113,10 +113,11 @@ class CardPile extends React.Component {
         };
 
         if(this.props.cards && this.props.cards.some(card => card.group)) {
-            let cardGroup = _.groupBy(this.props.cards, card => card.group);
-            for(const [type, cards] of Object.entries(cardGroup)) {
+            const cardGroup = _.groupBy(this.props.cards, card => card.group);
+            const sortedKeys = Object.keys(cardGroup).sort();
+            for(const key of sortedKeys) {
                 cardList.push(
-                    <CardTiledList cards={ cards } key={ type } title={ type } { ...listProps } />
+                    <CardTiledList cards={ cardGroup[key] } key={ key } title={ key } { ...listProps } />
                 );
             }
         } else {
