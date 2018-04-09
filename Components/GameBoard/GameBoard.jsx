@@ -357,6 +357,7 @@ export class GameBoard extends React.Component {
                                 showHand={ this.props.currentGame.showHand }
                                 spectating={ this.state.spectating }
                                 title={ otherPlayer.title }
+                                side='top'
                                 cardSize={ this.props.user.settings.cardSize } />
                         </div>
                         <div className='board-inner'>
@@ -419,7 +420,8 @@ export class GameBoard extends React.Component {
                                 spectating={ this.state.spectating }
                                 title={ thisPlayer.title }
                                 onMenuItemClick={ this.onMenuItemClick }
-                                cardSize={ this.props.user.settings.cardSize } />
+                                cardSize={ this.props.user.settings.cardSize }
+                                side='bottom' />
                         </div>
                     </div>
                     <div className='right-side'>
