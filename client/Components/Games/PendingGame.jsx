@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import $ from 'jquery';
-import _ from 'underscore';
 
 import Panel from '../Site/Panel';
 import Messages from '../GameBoard/Messages';
@@ -32,6 +31,8 @@ class PendingGame extends React.Component {
             decksLoading: true,
             waiting: false
         };
+
+        this.notification = undefined;
     }
 
     componentDidMount() {
@@ -43,9 +44,9 @@ class PendingGame extends React.Component {
             return;
         }
 
-        let players = _.size(props.currentGame.players);
+        let players = this.getNumberOfPlayers(props);
 
-        if(this.state.playerCount === 1 && players === 2 && props.currentGame.owner === this.props.user.username) {
+        if(this.notification && this.state.playerCount === 1 && players === 2 && props.currentGame.owner === this.props.user.username) {
             let promise = this.refs.notification.play();
 
             if(promise !== undefined) {
@@ -71,7 +72,7 @@ class PendingGame extends React.Component {
             return false;
         }
 
-        if(!_.all(this.props.currentGame.players, player => {
+        if(!Object.values(this.props.currentGame.players).every(player => {
             return !!player.deck.selected;
         })) {
             return false;
@@ -88,6 +89,10 @@ class PendingGame extends React.Component {
         $('#decks-modal').modal('hide');
 
         this.props.socket.emit('selectdeck', this.props.currentGame.id, deck);
+    }
+
+    getNumberOfPlayers(props) {
+        return Object.values(props.currentGame.players).length;
     }
 
     getPlayerStatus(player, username) {
@@ -124,11 +129,11 @@ class PendingGame extends React.Component {
             return 'Waiting for lobby server...';
         }
 
-        if(_.size(this.props.currentGame.players) < 2) {
+        if(this.getNumberOfPlayers(this.props) < 2) {
             return 'Waiting for players...';
         }
 
-        if(!_.all(this.props.currentGame.players, player => {
+        if(!Object.values(this.props.currentGame.players).every(player => {
             return !!player.deck.selected;
         })) {
             return 'Waiting for players to select decks';
@@ -198,7 +203,7 @@ class PendingGame extends React.Component {
 
         return (
             <div>
-                <audio ref='notification'>
+                <audio ref={ ref => this.notification = ref }>
                     <source src='/sound/charge.mp3' type='audio/mpeg' />
                     <source src='/sound/charge.ogg' type='audio/ogg' />
                 </audio>
@@ -211,13 +216,13 @@ class PendingGame extends React.Component {
                 </Panel>
                 <Panel title='Players'>
                     {
-                        _.map(this.props.currentGame.players, player => {
+                        Object.values(this.props.currentGame.players).map(player => {
                             return this.getPlayerStatus(player, this.props.user.username);
                         })
                     }
                 </Panel>
                 <Panel title={ `Spectators(${this.props.currentGame.spectators.length})` }>
-                    { _.map(this.props.currentGame.spectators, spectator => {
+                    { this.props.currentGame.spectators.map(spectator => {
                         return <div key={ spectator.name }>{ spectator.name }</div>;
                     }) }
                 </Panel>
