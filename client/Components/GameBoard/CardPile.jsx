@@ -129,7 +129,7 @@ class CardPile extends React.Component {
         }
 
         let popupClass = classNames('panel', {
-            'our-side': this.props.popupLocation === 'top'
+            'our-side': this.props.popupLocation === 'bottom'
         });
 
         let innerClass = classNames('inner', this.props.size);
