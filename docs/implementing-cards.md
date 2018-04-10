@@ -14,12 +14,6 @@ Cards are organized under the `/server/game/cards` directory by grouping them by
 /server/game/cards/02.2-TRtW/UnswornApprentice.js
 ```
 
-Because there are so few agenda cards and they generally do special things, they should be grouped together under the agendas sub-directory instead of with their pack.
-
-```
-/server/game/cards/agendas/TheHouseWithTheRedDoor.js
-```
-
 #### 2. Create a class for the card and export it.
 
 Character, location, event and attachment cards should be derived from the `DrawCard` class.

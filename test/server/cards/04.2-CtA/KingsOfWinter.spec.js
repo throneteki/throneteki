@@ -1,4 +1,4 @@
-const KingsOfWinter = require('../../../../server/game/cards/agendas/KingsOfWinter.js');
+const KingsOfWinter = require('../../../../server/game/cards/04.2-CtA/KingsOfWinter.js');
 
 describe('Kings Of Winter', function() {
     beforeEach(function() {
