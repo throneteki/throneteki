@@ -3,6 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class TarleTheThriceDrowned extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
+            targetType: 'player',
+            targetController: 'current',
             effect: ability.effects.canMarshal(card =>
                 card.controller === this.controller &&
                 card.location === 'dead pile' &&
