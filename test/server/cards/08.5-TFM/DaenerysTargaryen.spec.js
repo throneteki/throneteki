@@ -2,7 +2,7 @@ describe('Daenerys Targaryen (TFM)', function() {
     integration({ numOfPlayers: 1 }, function() {
         beforeEach(function() {
             const deck = this.buildDeck('targaryen', [
-                'Trading with the Pentoshi',
+                'Trading with the Pentoshi', 'Blood of the Dragon',
                 'Daenerys Targaryen (TFM)', 'Waking the Dragon', 'Winterfell Steward',
                 'Nightmares', 'A Dragon Is No Slave', 'A Dragon Is No Slave'
             ]);
@@ -20,14 +20,26 @@ describe('Daenerys Targaryen (TFM)', function() {
             this.player1.clickCard(this.steward);
 
             this.completeSetup();
+        });
 
-            this.selectFirstPlayer(this.player1);
+        describe('when a constant effect burns Daenerys Targaryen (TFM)', function() {
+            beforeEach(function() {
+                this.player1.selectPlot('Blood of the Dragon');
+                this.selectFirstPlayer(this.player1);
+            });
 
-            this.completeMarshalPhase();
+            it('should not lower her strength', function() {
+                expect(this.dany.getStrength()).toBe(3);
+            });
         });
 
         describe('when you burn a STR 1 chud', function() {
             beforeEach(function() {
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.selectFirstPlayer(this.player1);
+    
+                this.completeMarshalPhase();
+
                 this.player1.clickCard(this.waking);
                 this.player1.clickCard(this.dany);
 
@@ -40,8 +52,13 @@ describe('Daenerys Targaryen (TFM)', function() {
             });
         });
 
-        describe('when you burn Daenerys Targaryen (TFM)', function() {
+        describe('when a triggered ability burns Daenerys Targaryen (TFM)', function() {
             beforeEach(function() {
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.selectFirstPlayer(this.player1);
+    
+                this.completeMarshalPhase();
+
                 this.player1.clickCard(this.waking);
                 this.player1.clickCard(this.dany);
 
