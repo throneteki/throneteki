@@ -37,7 +37,7 @@ describe('Daenerys Targaryen (TFM)', function() {
             beforeEach(function() {
                 this.player1.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player1);
-    
+
                 this.completeMarshalPhase();
 
                 this.player1.clickCard(this.waking);
@@ -56,7 +56,7 @@ describe('Daenerys Targaryen (TFM)', function() {
             beforeEach(function() {
                 this.player1.selectPlot('Trading with the Pentoshi');
                 this.selectFirstPlayer(this.player1);
-    
+
                 this.completeMarshalPhase();
 
                 this.player1.clickCard(this.waking);

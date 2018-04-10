@@ -126,6 +126,7 @@ const Effects = {
     modifyStrength: function(value) {
         let gameAction = value < 0 ? 'decreaseStrength' : 'increaseStrength';
         return {
+            gameAction: gameAction,
             apply: function(card, context) {
                 context.game.applyGameAction(gameAction, card, card => {
                     card.modifyStrength(value, true);

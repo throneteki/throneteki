@@ -4,8 +4,7 @@ class DaenerysTargaryen extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            //TODO: framework shouldn't be needed here but works until immunity is reworked
-            effect: ability.effects.cannotDecreaseStrength(context => ['framework', 'effect'].includes(context.resolutionStage))
+            effect: ability.effects.cannotDecreaseStrength(context => context.resolutionStage === 'effect')
         });
         this.reaction({
             when: {

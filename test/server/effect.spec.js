@@ -3,8 +3,8 @@ const _ = require('underscore');
 const Effect = require('../../server/game/effect.js');
 
 function createTarget(properties = {}) {
-    let card = jasmine.createSpyObj('card', ['allowEffectFrom', 'getGameElementType']);
-    card.allowEffectFrom.and.returnValue(true);
+    let card = jasmine.createSpyObj('card', ['allowGameAction', 'getGameElementType']);
+    card.allowGameAction.and.returnValue(true);
     card.getGameElementType.and.returnValue('card');
     _.extend(card, properties);
     return card;
@@ -141,7 +141,7 @@ describe('Effect', function() {
 
             describe('when the source cannot apply an effect to the target', function() {
                 beforeEach(function() {
-                    this.matchingCard.allowEffectFrom.and.returnValue(false);
+                    this.matchingCard.allowGameAction.and.returnValue(false);
                 });
 
                 it('should reject the target', function() {

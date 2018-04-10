@@ -48,6 +48,7 @@ class Effect {
         this.targetType = properties.targetType || 'card';
         this.targetLocation = properties.targetLocation || 'play area';
         this.effect = this.buildEffect(properties.effect);
+        this.gameAction = this.effect.gameAction || 'applyEffect';
         this.targets = [];
         this.context = { game: game, source: source };
         this.active = !source.facedown;
@@ -101,7 +102,7 @@ class Effect {
                 return false;
             }
 
-            if(!target.allowEffectFrom(this.source)) {
+            if(!target.allowGameAction(this.gameAction, { source: this.source, resolutionStage: 'effect' })) {
                 return false;
             }
         }
