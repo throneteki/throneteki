@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class BayOfSeals extends DrawCard {
+class TheBayOfSeals extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand character',
@@ -20,6 +20,6 @@ class BayOfSeals extends DrawCard {
     }
 }
 
-BayOfSeals.code = '08086';
+TheBayOfSeals.code = '08086';
 
-module.exports = BayOfSeals;
+module.exports = TheBayOfSeals;
