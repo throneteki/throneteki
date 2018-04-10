@@ -9,19 +9,6 @@ const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
 
 const Costs = {
     /**
-     * Cost that aggregates a list of other costs.
-     */
-    all: function(...costs) {
-        return {
-            canPay: function(context) {
-                return _.all(costs, cost => cost.canPay(context));
-            },
-            pay: function(context) {
-                _.each(costs, cost => cost.pay(context));
-            }
-        };
-    },
-    /**
      * Cost that allows the player to choose between multiple costs. The
      * `choices` object should have string keys representing the button text
      * that will be used to prompt the player, with the values being the cost
@@ -159,12 +146,12 @@ const Costs = {
      * and place it in discard.
      */
     playEvent: function() {
-        return Costs.all(
+        return [
             Costs.payReduceableGoldCost('play'),
             Costs.expendEvent(),
             Costs.playLimited(),
             Costs.playMax()
-        );
+        ];
     },
     /**
      * Cost that will discard a gold from the card. Used mainly by cards
