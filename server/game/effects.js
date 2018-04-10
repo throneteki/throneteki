@@ -23,29 +23,6 @@ function cannotEffect(type) {
 }
 
 const Effects = {
-    all: function(effects) {
-        let stateDependentEffects = _.filter(effects, effect => effect.isStateDependent);
-        return {
-            apply: function(card, context) {
-                _.each(effects, effect => effect.apply(card, context));
-            },
-            reapply: function(card, context) {
-                _.each(stateDependentEffects, effect => {
-                    if(effect.reapply) {
-                        effect.reapply(card, context);
-                    } else {
-                        effect.unapply(card, context);
-                        effect.apply(card, context);
-                    }
-                });
-            },
-            unapply: function(card, context) {
-                _.each(effects, effect => effect.unapply(card, context));
-            },
-            isStateDependent: (stateDependentEffects.length !== 0),
-            order: _.max(_.pluck(effects, 'order'))
-        };
-    },
     setSetupGold: function(value) {
         return {
             apply: function(player) {
@@ -527,10 +504,10 @@ const Effects = {
         }
     },
     killByStrength: function(value) {
-        return Effects.all([
+        return [
             Effects.burn,
             Effects.modifyStrength(value)
-        ]);
+        ];
     },
     blank: {
         apply: function(card) {
