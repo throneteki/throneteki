@@ -17,6 +17,10 @@ class EditDeck extends React.Component {
 
         this.onEditDeck = this.onEditDeck.bind(this);
         this.onDeckUpdated = this.onDeckUpdated.bind(this);
+
+        if(props.deck) {
+            this.state.deck = props.deck;
+        }
     }
 
     componentDidMount() {
