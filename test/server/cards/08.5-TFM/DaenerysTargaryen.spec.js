@@ -96,4 +96,66 @@ describe('Daenerys Targaryen (TFM)', function() {
             });
         });
     });
+
+    integration({ numOfPlayers: 1 }, function() {
+        describe('vs Lord of the Crossing', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'The Lord of the Crossing',
+                    'Trading with the Pentoshi',
+                    'Daenerys Targaryen (TFM)', 'Viserion', 'Viserys Targaryen (Core)'
+                ]);
+                this.player1.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
+                this.player1.clickCard(this.dany);
+                this.player1.clickCard('Viserion', 'hand');
+                this.player1.clickCard('Viserys Targaryen', 'hand');
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+            });
+
+            describe('during the first challenge', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.dany);
+                    this.player1.clickPrompt('Done');
+                });
+
+                it('should not reduce her strength', function() {
+                    expect(this.dany.getStrength()).toBe(3);
+                });
+            });
+
+            describe('during the third challenge', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Military');
+                    this.player1.clickCard('Viserion');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.skipActionWindow();
+
+                    this.player1.clickPrompt('Power');
+                    this.player1.clickCard('Viserys Targaryen');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.skipActionWindow();
+
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.dany);
+                    this.player1.clickPrompt('Done');
+                });
+
+                it('should increase her strength', function() {
+                    expect(this.dany.getStrength()).toBe(5);
+                });
+            });
+        });
+    });
 });
