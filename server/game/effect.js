@@ -1,7 +1,5 @@
 const _ = require('underscore');
 
-const Effects = require('./effects.js');
-
 const PlayAreaLocations = ['play area', 'active plot'];
 
 /**
@@ -31,9 +29,7 @@ const PlayAreaLocations = ['play area', 'active plot'];
  * targetLocation   - string that determines the location of cards that can be
  *                    applied by the effect. Can be 'play area' (default) or
  *                    'hand'.
- * effect           - object representing the effect to be applied. If passed an
- *                    array instead of an object, it will apply / unapply all of
- *                    the sub objects in the array instead.
+ * effect           - object representing the effect to be applied.
  * effect.apply     - function that takes a card and a context object and modifies
  *                    the card to apply the effect.
  * effect.unapply   - function that takes a card and a context object and modifies
@@ -52,6 +48,7 @@ class Effect {
         this.targetType = properties.targetType || 'card';
         this.targetLocation = properties.targetLocation || 'play area';
         this.effect = this.buildEffect(properties.effect);
+        this.gameAction = this.effect.gameAction || 'genericEffect';
         this.targets = [];
         this.context = { game: game, source: source };
         this.active = !source.facedown;
@@ -59,9 +56,18 @@ class Effect {
         this.isStateDependent = this.isConditional || this.effect.isStateDependent;
     }
 
+    static flattenProperties(properties) {
+        if(Array.isArray(properties.effect)) {
+            let effects = _.flatten(properties.effect);
+            return effects.map(effect => Object.assign({}, properties, { effect: effect }));
+        }
+
+        return [properties];
+    }
+
     buildEffect(effect) {
         if(_.isArray(effect)) {
-            return Effects.all(effect);
+            throw new '`effect` cannot be an array';
         }
 
         return effect;
@@ -96,7 +102,7 @@ class Effect {
                 return false;
             }
 
-            if(!target.allowEffectFrom(this.source)) {
+            if(!target.allowGameAction(this.gameAction, { source: this.source, resolutionStage: 'effect' })) {
                 return false;
             }
         }

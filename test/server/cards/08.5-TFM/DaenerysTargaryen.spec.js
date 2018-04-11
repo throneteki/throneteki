@@ -2,7 +2,7 @@ describe('Daenerys Targaryen (TFM)', function() {
     integration({ numOfPlayers: 1 }, function() {
         beforeEach(function() {
             const deck = this.buildDeck('targaryen', [
-                'Trading with the Pentoshi',
+                'Trading with the Pentoshi', 'Blood of the Dragon',
                 'Daenerys Targaryen (TFM)', 'Waking the Dragon', 'Winterfell Steward',
                 'Nightmares', 'A Dragon Is No Slave', 'A Dragon Is No Slave'
             ]);
@@ -20,14 +20,26 @@ describe('Daenerys Targaryen (TFM)', function() {
             this.player1.clickCard(this.steward);
 
             this.completeSetup();
+        });
 
-            this.selectFirstPlayer(this.player1);
+        describe('when a constant effect burns Daenerys Targaryen (TFM)', function() {
+            beforeEach(function() {
+                this.player1.selectPlot('Blood of the Dragon');
+                this.selectFirstPlayer(this.player1);
+            });
 
-            this.completeMarshalPhase();
+            it('should not lower her strength', function() {
+                expect(this.dany.getStrength()).toBe(3);
+            });
         });
 
         describe('when you burn a STR 1 chud', function() {
             beforeEach(function() {
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
                 this.player1.clickCard(this.waking);
                 this.player1.clickCard(this.dany);
 
@@ -40,8 +52,13 @@ describe('Daenerys Targaryen (TFM)', function() {
             });
         });
 
-        describe('when you burn Daenerys Targaryen (TFM)', function() {
+        describe('when a triggered ability burns Daenerys Targaryen (TFM)', function() {
             beforeEach(function() {
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
                 this.player1.clickCard(this.waking);
                 this.player1.clickCard(this.dany);
 
@@ -76,6 +93,103 @@ describe('Daenerys Targaryen (TFM)', function() {
                         expect(this.dany.location).toBe('dead pile');
                     });
                 });
+            });
+        });
+    });
+
+    integration({ numOfPlayers: 1 }, function() {
+        describe('vs Lord of the Crossing', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'The Lord of the Crossing',
+                    'Trading with the Pentoshi',
+                    'Daenerys Targaryen (TFM)', 'Viserion', 'Viserys Targaryen (Core)'
+                ]);
+                this.player1.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
+                this.player1.clickCard(this.dany);
+                this.player1.clickCard('Viserion', 'hand');
+                this.player1.clickCard('Viserys Targaryen', 'hand');
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+            });
+
+            describe('during the first challenge', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.dany);
+                    this.player1.clickPrompt('Done');
+                });
+
+                it('should not reduce her strength', function() {
+                    expect(this.dany.getStrength()).toBe(3);
+                });
+            });
+
+            describe('during the third challenge', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Military');
+                    this.player1.clickCard('Viserion');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.skipActionWindow();
+
+                    this.player1.clickPrompt('Power');
+                    this.player1.clickCard('Viserys Targaryen');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.skipActionWindow();
+
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.dany);
+                    this.player1.clickPrompt('Done');
+                });
+
+                it('should increase her strength', function() {
+                    expect(this.dany.getStrength()).toBe(5);
+                });
+            });
+        });
+    });
+
+    integration({ numOfPlayers: 1 }, function() {
+        describe('vs Strangler', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'Trading with the Pentoshi',
+                    'Daenerys Targaryen (TFM)', 'Strangler'
+                ]);
+                this.player1.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
+                let strangler = this.player1.findCardByName('Strangler', 'hand');
+                this.player1.clickCard(this.dany);
+                this.player1.clickCard(strangler);
+
+                this.completeSetup();
+                this.player1.clickCard(strangler);
+                this.player1.clickCard(this.dany);
+
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
+                this.player1.clickPrompt('Intrigue');
+                this.player1.clickCard(this.dany);
+                this.player1.clickPrompt('Done');
+            });
+
+            it('should set her strength to 1', function() {
+                expect(this.dany.getStrength()).toBe(1);
             });
         });
     });

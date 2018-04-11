@@ -433,14 +433,9 @@ class BaseCard {
         }
     }
 
-    allowGameAction(actionType) {
-        let currentAbilityContext = this.game.currentAbilityContext;
+    allowGameAction(actionType, context) {
+        let currentAbilityContext = context || this.game.currentAbilityContext;
         return !_.any(this.abilityRestrictions, restriction => restriction.isMatch(actionType, currentAbilityContext));
-    }
-
-    allowEffectFrom(sourceCard) {
-        let currentAbilityContext = { source: sourceCard, resolutionStage: 'effect' };
-        return !_.any(this.abilityRestrictions, restriction => restriction.isMatch('applyEffect', currentAbilityContext));
     }
 
     addAbilityRestriction(restriction) {

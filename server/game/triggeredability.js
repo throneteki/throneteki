@@ -17,7 +17,7 @@ class TriggeredAbility extends BaseAbility {
         this.location = this.buildLocation(card, properties.location);
 
         if(card.getType() === 'event' && !properties.ignoreEventCosts) {
-            this.cost.push(Costs.playEvent());
+            this.cost = this.cost.concat(Costs.playEvent());
         }
 
         if(this.max) {

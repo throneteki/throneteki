@@ -107,8 +107,8 @@ describe('CardAction', function () {
                     this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 });
 
-                it('should add the play event cost', function() {
-                    expect(this.action.cost.length).toBe(2);
+                it('should add the play event costs', function() {
+                    expect(this.action.cost.length).toBe(5);
                 });
             });
         });

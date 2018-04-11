@@ -57,7 +57,7 @@ class CardAction extends BaseAbility {
         this.handler = this.buildHandler(card, properties);
 
         if(card.getType() === 'event') {
-            this.cost.push(Costs.playEvent());
+            this.cost = this.cost.concat(Costs.playEvent());
         }
 
         if(this.max) {
