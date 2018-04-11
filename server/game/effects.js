@@ -292,13 +292,13 @@ const Effects = {
             }
         };
     },
-    dynamicStrength: function(calculate) {
+    dynamicStrength: function(calculate, gameAction = 'increaseStrength') {
         return {
+            gameAction: gameAction,
             apply: function(card, context) {
                 context.dynamicStrength = context.dynamicStrength || {};
                 context.dynamicStrength[card.uuid] = calculate(card, context) || 0;
                 let value = context.dynamicStrength[card.uuid];
-                let gameAction = value < 0 ? 'decreaseStrength' : 'increaseStrength';
                 context.game.applyGameAction(gameAction, card, card => {
                     card.modifyStrength(value, true);
                 });
@@ -308,14 +308,12 @@ const Effects = {
                 let newStrength = calculate(card, context) || 0;
                 context.dynamicStrength[card.uuid] = newStrength;
                 let value = newStrength - currentStrength;
-                let gameAction = newStrength < 0 ? 'decreaseStrength' : 'increaseStrength';
                 context.game.applyGameAction(gameAction, card, card => {
                     card.modifyStrength(value, true);
                 });
             },
             unapply: function(card, context) {
                 let value = context.dynamicStrength[card.uuid];
-                let gameAction = value < 0 ? 'decreaseStrength' : 'increaseStrength';
                 // use same game action of apply: if they were immune to apply,
                 // we shouldn't compensate either
                 context.game.applyGameAction(gameAction, card, card => {
@@ -325,6 +323,10 @@ const Effects = {
             },
             isStateDependent: true
         };
+    },
+    dynamicDecreaseStrength: function(calculate) {
+        let negatedCalculate = (card, context) => -(calculate(card, context) || 0);
+        return Effects.dynamicStrength(negatedCalculate, 'decreaseStrength');
     },
     doesNotContributeStrength: function() {
         return {

@@ -4,7 +4,7 @@ class SansaStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: card => card === this,
-            effect: ability.effects.dynamicStrength(() => this.calculateStrength())
+            effect: ability.effects.dynamicDecreaseStrength(() => this.calculateStrength())
         });
         this.persistentEffect({
             condition: () => this.getStrength() === 0,
@@ -16,7 +16,7 @@ class SansaStark extends DrawCard {
     calculateStrength() {
         return this.controller.deadPile.reduce((count, card) => {
             if(card.isFaction('stark')) {
-                return count - 1;
+                return count + 1;
             }
 
             return count;
