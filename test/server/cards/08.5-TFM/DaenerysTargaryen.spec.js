@@ -158,4 +158,39 @@ describe('Daenerys Targaryen (TFM)', function() {
             });
         });
     });
+
+    integration({ numOfPlayers: 1 }, function() {
+        describe('vs Strangler', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'Trading with the Pentoshi',
+                    'Daenerys Targaryen (TFM)', 'Strangler'
+                ]);
+                this.player1.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
+                let strangler = this.player1.findCardByName('Strangler', 'hand');
+                this.player1.clickCard(this.dany);
+                this.player1.clickCard(strangler);
+
+                this.completeSetup();
+                this.player1.clickCard(strangler);
+                this.player1.clickCard(this.dany);
+
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
+                this.player1.clickPrompt('Intrigue');
+                this.player1.clickCard(this.dany);
+                this.player1.clickPrompt('Done');
+            });
+
+            it('should set her strength to 1', function() {
+                expect(this.dany.getStrength()).toBe(1);
+            });
+        });
+    });
 });
