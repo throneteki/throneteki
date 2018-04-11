@@ -13,7 +13,8 @@ class KnightOfTheReach extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.hasTrait('Lady') &&
-                    card.getType() === 'character')
+                    card.getType() === 'character'),
+                gameAction: 'gainPower'
             },
             handler: context => {
                 context.target.modifyPower(1);

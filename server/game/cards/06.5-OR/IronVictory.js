@@ -8,7 +8,9 @@ class IronVictory extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardSaved: event => event.card.isFaction('greyjoy') && event.card.getType() === 'character'
+                onCardSaved: event => event.card.isFaction('greyjoy') &&
+                    event.card.getType() === 'character' &&
+                    event.card.allowGameAction('gainPower')
             },
             limit: ability.limit.perPhase(2),
             handler: context => {

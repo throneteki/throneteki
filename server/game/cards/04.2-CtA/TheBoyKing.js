@@ -8,7 +8,7 @@ class TheBoyKing extends DrawCard {
         });
         this.reaction({
             when: {
-                onCharacterKilled: event => event.card.getPrintedCost() <= 3
+                onCharacterKilled: event => event.card.getPrintedCost() <= 3 && this.parent.allowGameAction('gainPower')
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {

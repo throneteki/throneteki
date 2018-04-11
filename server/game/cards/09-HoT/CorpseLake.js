@@ -5,9 +5,10 @@ class CorpseLake extends DrawCard {
         this.reaction({
             when: {
                 onCardDiscarded: event =>
-                    event.originalLocation === 'draw deck'
-                    && event.card.getType() === 'character'
-                    && event.card.controller !== this.controller
+                    event.originalLocation === 'draw deck' &&
+                    event.card.getType() === 'character' &&
+                    event.card.controller !== this.controller &&
+                    this.allowGameAction('gainPower')
             },
             limit: ability.limit.perRound(3),
             handler: () => {

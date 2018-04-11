@@ -23,6 +23,7 @@ class ConsolidationOfPower extends DrawCard {
                     cardCondition: card => {
                         return _.contains(this.cards, card);
                     },
+                    gameAction: 'gainPower',
                     onSelect: (player, card) => this.onPowerSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
                 });

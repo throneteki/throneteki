@@ -5,7 +5,7 @@ class BlackcrownKnights extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'power' &&
-                                         event.challenge.isParticipating(this)
+                    event.challenge.isParticipating(this) && this.allowGameAction('gainPower')
             },
             cost: ability.costs.discardFromHand(),
             handler: context => {

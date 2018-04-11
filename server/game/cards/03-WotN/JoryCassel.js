@@ -16,7 +16,8 @@ class JoryCassel extends DrawCard {
                     card.controller === this.controller &&
                     card.isUnique() &&
                     card.isFaction('stark')
-                )
+                ),
+                gameAction: 'gainPower'
             },
             handler: context => {
                 let message = '{0} uses {1} to save {2}';

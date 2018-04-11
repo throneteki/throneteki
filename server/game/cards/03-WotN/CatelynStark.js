@@ -22,6 +22,7 @@ class CatelynStark extends DrawCard {
     starkCharacterSacrificedOrKilled(card) {
         return (
             this.controller === card.controller &&
+            this.allowGameAction('gainPower') &&
             card.isFaction('stark') &&
             card.getType() === 'character'
         );

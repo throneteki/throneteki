@@ -14,6 +14,7 @@ class RitualOfRhllor extends DrawCard {
                 this.game.promptForSelect(this.controller, {
                     mode: 'exactly',
                     numCards: xValue,
+                    gameAction: 'gainPower',
                     activePromptTitle: 'Select ' + (xValue === 1 ? 'a' : xValue) + ' character' + (xValue === 1 ? '' : 's'),
                     source: this,
                     cardCondition: card => card.location === 'play area' && !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',

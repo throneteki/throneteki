@@ -13,7 +13,8 @@ class Rakharo extends DrawCard {
                 onCharacterKilled: () =>
                     this.game.currentChallenge &&
                     this.game.currentChallenge.attackingPlayer === this.controller &&
-                    this.game.claim.isApplying
+                    this.game.claim.isApplying &&
+                    this.allowGameAction('gainPower')
             },
             handler: () => {
                 this.modifyPower(1);

@@ -9,10 +9,11 @@ class Jhiqui extends DrawCard {
             cost: ability.costs.discardFromHand(),
             target: {
                 type: 'select',
+                gameAction: 'gainPower',
                 cardCondition: card =>
                     card.location === 'play area' && card.getType() === 'character'
-                        && this.game.currentChallenge.isParticipating(card)
-                        && (card.hasTrait('Lord') || card.hasTrait('Lady'))
+                    && this.game.currentChallenge.isParticipating(card)
+                    && (card.hasTrait('Lord') || card.hasTrait('Lady'))
             },
             handler: context => {
                 context.target.modifyPower(1);

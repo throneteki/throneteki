@@ -7,7 +7,8 @@ class TheHoneywine extends DrawCard {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
                     event.challenge.attackingPlayer === this.controller &&
-                    event.challenge.strengthDifference >= 5)
+                    event.challenge.strengthDifference >= 5 &&
+                    this.allowGameAction('gainPower'))
             },
             handler: () => {
                 this.modifyPower(1);

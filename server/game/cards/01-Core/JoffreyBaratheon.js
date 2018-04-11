@@ -6,7 +6,8 @@ class JoffreyBaratheon extends DrawCard {
             when: {
                 onCharacterKilled: event => (
                     event.card.getType() === 'character' &&
-                    (event.cardStateWhenKilled.hasTrait('Lord') || event.cardStateWhenKilled.hasTrait('Lady'))
+                    (event.cardStateWhenKilled.hasTrait('Lord') || event.cardStateWhenKilled.hasTrait('Lady')) &&
+                    this.allowGameAction('gainPower')
                 )
             },
             limit: ability.limit.perRound(3),

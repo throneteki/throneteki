@@ -20,6 +20,7 @@ class DaringRescue extends DrawCard {
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a character to gain power',
                     source: this,
+                    gameAction: 'gainPower',
                     cardCondition: card => (
                         card.location === 'play area' &&
                         card.hasTrait('Knight') &&

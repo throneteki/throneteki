@@ -15,7 +15,8 @@ class DrownedDisciple extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.hasTrait('Drowned God') &&
-                    card.getType() === 'character')
+                    card.getType() === 'character'),
+                gameAction: 'gainPower'
             },
             handler: context => {
                 context.target.modifyPower(1);
