@@ -429,7 +429,7 @@ export class GameBoard extends React.Component {
                             orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
                             show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
                         <div className='gamechat'>
-                            <CSSTransitionGroup transitionName='gamechat' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
+                            <CSSTransitionGroup className='chatwrapper' transitionName='gamechat' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
                                 { this.state.showMessages && <GameChat key='gamechat'
                                     messages={ this.props.currentGame.messages }
                                     onCardMouseOut={ this.onMouseOut }
