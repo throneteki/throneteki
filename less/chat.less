@@ -4,6 +4,8 @@
   margin: 0;
   font-size: 12px;
   overflow-y: auto;
+  flex: 1;
+  display: flex;
 }
 
 .lobby-chat {
@@ -42,6 +44,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex: 1;
 
   .messages {
     padding: 5px;
@@ -97,11 +100,19 @@
   right: 15px;
 }
 
+.chatwrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .gamechat {
   overflow-y: hidden;
   position: relative;
   width: 100%;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-form {
