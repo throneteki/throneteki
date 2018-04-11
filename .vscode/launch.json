@@ -42,32 +42,25 @@
             "outDir": null
         },
         {
-            "name": "Attach",
             "type": "node",
             "request": "attach",
-            "port": 5858,
-            "address": "localhost",
-            "restart": false,
-            "sourceMaps": false,
-            "outDir": null,
-            "localRoot": "${workspaceRoot}",
-            "remoteRoot": null
+            "name": "Attach",
+            "port": 9229
         },
         {
-            "name": "Attach to Process",
             "type": "node",
             "request": "attach",
-            "processId": "${command.PickProcess}",
-            "port": 5858,
-            "sourceMaps": false,
-            "outDir": null
+            "name": "Attach by Process ID",
+            "processId": "${command:PickProcess}"
         },
         {
             "name": "Debug Tests",
             "type": "node",
             "request": "launch",
             "program": "${workspaceRoot}/node_modules/jasmine/bin/jasmine.js",
-            "env": { "JASMINE_CONFIG_PATH": "./jasmine.json" },
+            "env": {
+                "JASMINE_CONFIG_PATH": "./jasmine.json"
+            },
             "cwd": "${workspaceRoot}"
         }
     ]

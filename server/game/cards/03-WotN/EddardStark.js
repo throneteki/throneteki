@@ -8,6 +8,7 @@ class EddardStark extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select character to gain power',
+                gameAction: 'gainPower',
                 cardCondition: card => this.cardCondition(this.game.currentChallenge, card)
             },
             handler: context => {

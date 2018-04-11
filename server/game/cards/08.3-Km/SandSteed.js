@@ -5,7 +5,10 @@ class SandSteed extends DrawCard {
         this.attachmentRestriction(card => card.getType() === 'character' && card.attachments.every(attachment => attachment === this || attachment.name !== 'Sand Steed')),
         this.reaction({
             when: {
-                onCardPlaced: event => event.card.hasTrait('Summer') && event.location === 'revealed plots' && event.player === this.controller
+                onCardPlaced: event => event.card.hasTrait('Summer') &&
+                        event.location === 'revealed plots' &&
+                        event.player === this.controller &&
+                        this.parent.allowGameAction('gainPower')
             },
             handler: context => {
                 this.parent.modifyPower(1);

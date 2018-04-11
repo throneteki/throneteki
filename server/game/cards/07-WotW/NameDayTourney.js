@@ -15,7 +15,8 @@ class NameDayTourney extends PlotCard {
                     card.location === 'play area' &&
                     card.controller === this.controller &&
                     (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
-                    card.getType() === 'character')
+                    card.getType() === 'character'),
+                gameAction: 'gainPower'
             },
             handler: context => {
                 context.target.modifyPower(1);
@@ -28,8 +29,8 @@ class NameDayTourney extends PlotCard {
     hasParticipatingKnight() {
         let cards = this.controller.filterCardsInPlay(card => {
             return (this.game.currentChallenge.isParticipating(card) &&
-                    card.hasTrait('Knight') &&
-                    card.getType() === 'character');
+                card.hasTrait('Knight') &&
+                card.getType() === 'character');
         });
 
         return cards.length >= 1;

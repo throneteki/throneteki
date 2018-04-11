@@ -6,7 +6,7 @@ class SerRobarRoyce extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Summer'))
+                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Summer')) && this.allowGameAction('gainPower')
             },
             limit: ability.limit.perPhase(1),
             handler: () => {

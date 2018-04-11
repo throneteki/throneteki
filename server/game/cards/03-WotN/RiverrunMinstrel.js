@@ -7,7 +7,8 @@ class RiverrunMinstrel extends DrawCard {
                 onCardEntersPlay: event => event.card === this
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.hasTrait('House Tully') && card.getType() === 'character'
+                cardCondition: card => card.location === 'play area' && card.hasTrait('House Tully') && card.getType() === 'character',
+                gameAction: 'gainPower'
             },
             handler: context => {
                 context.target.modifyPower(1);

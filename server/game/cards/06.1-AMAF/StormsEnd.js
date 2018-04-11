@@ -13,7 +13,8 @@ class StormsEnd extends DrawCard {
                 activePromptTitle: 'Select 2 characters',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character',
                 numCards: 2,
-                multiSelect: true
+                multiSelect: true,
+                gameAction: 'gainPower'
             },
             handler: context => {
                 _.each(context.target, card => card.modifyPower(1));

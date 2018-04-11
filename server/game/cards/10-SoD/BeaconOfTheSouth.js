@@ -6,8 +6,9 @@ class BeaconOfTheSouth extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller &&
-                                         event.challenge.strengthDifference >= 5 &&
-                                         event.challenge.isAttacking(this.parent)
+                    event.challenge.strengthDifference >= 5 &&
+                    event.challenge.isAttacking(this.parent) &&
+                    this.parent.allowGameAction('gainPower')
             },
             handler: context => {
                 this.parent.modifyPower(1);

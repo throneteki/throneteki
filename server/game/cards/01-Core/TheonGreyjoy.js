@@ -4,7 +4,10 @@ class TheonGreyjoy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this) && event.challenge.isUnopposed()
+                afterChallenge: event => event.challenge.winner === this.controller &&
+                    event.challenge.isParticipating(this) &&
+                    event.challenge.isUnopposed() &&
+                    this.allowGameAction('gainPower')
             },
             handler: () => {
                 this.modifyPower(1);

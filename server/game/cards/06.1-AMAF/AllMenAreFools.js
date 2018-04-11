@@ -26,7 +26,9 @@ class AllMenAreFools extends DrawCard {
     }
 
     hasLady() {
-        return this.controller.anyCardsInPlay(card => card.hasTrait('Lady') && card.getType() === 'character');
+        return this.controller.anyCardsInPlay(card => card.hasTrait('Lady') &&
+            card.getType() === 'character' &&
+            card.allowGameAction('gainPower'));
     }
 }
 

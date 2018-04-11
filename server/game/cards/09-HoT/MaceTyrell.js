@@ -5,7 +5,7 @@ class MaceTyrell extends DrawCard {
         this.reaction({
             when: {
                 onCardEntersPlay: event => event.card.isFaction('tyrell') && event.card.getType() === 'character' &&
-                                           event.card.controller === this.controller
+                    event.card.controller === this.controller && this.allowGameAction('gainPower')
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.payGold(1),
@@ -20,7 +20,7 @@ class MaceTyrell extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
-                                       card !== this && card.isFaction('tyrell') && card.getType() === 'character'
+                    card !== this && card.isFaction('tyrell') && card.getType() === 'character'
             },
             handler: context => {
                 this.lastingEffect(ability => ({

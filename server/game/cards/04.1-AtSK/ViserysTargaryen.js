@@ -11,7 +11,7 @@ class ViserysTargaryen extends DrawCard {
 
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'dominance' && this.opponentHasNoKing()
+                onPhaseEnded: event => event.phase === 'dominance' && this.opponentHasNoKing() && this.allowGameAction('gainPower')
             },
             handler: () => {
                 this.modifyPower(1);

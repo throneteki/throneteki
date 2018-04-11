@@ -9,7 +9,8 @@ class Kingsmoot extends DrawCard {
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
-                                           card.isUnique() && card.isFaction('greyjoy') && card.getType() === 'character'
+                    card.isUnique() && card.isFaction('greyjoy') && card.getType() === 'character',
+                gameAction: 'gainPower'
             },
             handler: context => {
                 let amount = context.player.getNumberOfCardsInPlay(card => card.isUnique() && card.isFaction('greyjoy') && card.getType() === 'character');
