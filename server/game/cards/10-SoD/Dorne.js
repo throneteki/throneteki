@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Dorne extends DrawCard {
@@ -15,8 +13,8 @@ class Dorne extends DrawCard {
             handler: () => {
                 this.top2Cards = this.controller.drawDeck.first(2);
 
-                let buttons = _.map(this.top2Cards, card => {
-                    return { method: 'cardSelected', card: card };
+                let buttons = this.top2Cards.map(card => {
+                    return { method: 'cardSelected', card: card, mapCard: true };
                 });
 
                 this.game.promptWithMenu(this.controller, this, {
@@ -30,8 +28,7 @@ class Dorne extends DrawCard {
         });
     }
 
-    cardSelected(player, cardId) {
-        let card = player.findCardByUuid(player.drawDeck, cardId);
+    cardSelected(player, card) {
         player.moveCard(card, 'hand');
         player.moveFromTopToBottomOfDrawDeck(1);
 

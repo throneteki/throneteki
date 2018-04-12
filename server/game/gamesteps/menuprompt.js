@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const UiPrompt = require('./uiprompt.js');
 
 /**
@@ -18,9 +17,11 @@ class MenuPrompt extends UiPrompt {
         super(game);
         this.player = player;
         this.context = context;
+
         if(properties.source && !properties.waitingPromptTitle) {
             properties.waitingPromptTitle = 'Waiting for opponent to use ' + properties.source.name;
         }
+
         this.properties = properties;
     }
 
@@ -30,7 +31,8 @@ class MenuPrompt extends UiPrompt {
 
     activePrompt() {
         let promptTitle = this.properties.promptTitle || (this.properties.source ? this.properties.source.name : undefined);
-        return _.extend({ promptTitle: promptTitle }, this.properties.activePrompt);
+
+        return Object.assign({ promptTitle: promptTitle }, this.properties.activePrompt);
     }
 
     waitingPrompt() {
@@ -42,19 +44,25 @@ class MenuPrompt extends UiPrompt {
             return false;
         }
 
-        if(!this.context[method] || !this.hasMethodButton(method)) {
+        const methodButton = this.getMethodButton(method);
+        if(!this.context[method] || !methodButton) {
             return false;
         }
 
-        if(this.context[method](player, arg, method)) {
+        let contextArg = arg;
+        if(methodButton.card && methodButton.mapCard) {
+            contextArg = methodButton.card;
+        }
+
+        if(this.context[method](player, contextArg, method)) {
             this.complete();
         }
 
         return true;
     }
 
-    hasMethodButton(method) {
-        return _.any(this.properties.activePrompt.buttons, button => button.method === method);
+    getMethodButton(method) {
+        return this.properties.activePrompt.buttons.find(button => button.method === method);
     }
 }
 

@@ -14,7 +14,7 @@ class TheCrowIsATricksyBird extends DrawCard {
 
                 let validPlots = context.opponent.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
                 let buttons = validPlots.map(card => {
-                    return { method: 'cardSelected', card: card };
+                    return { method: 'cardSelected', card: card, mapCard: true };
                 });
 
                 this.game.promptWithMenu(context.player, this, {
@@ -28,13 +28,7 @@ class TheCrowIsATricksyBird extends DrawCard {
         });
     }
 
-    cardSelected(player, cardId) {
-        let card = this.context.opponent.findCardByUuid(this.context.opponent.plotDeck, cardId);
-
-        if(!card) {
-            return false;
-        }
-
+    cardSelected(player, card) {
         this.lastingEffect(ability => ({
             until: {
                 onCardEntersPlay: event => event.card.getType() === 'plot' && event.card.controller === this.context.opponent
