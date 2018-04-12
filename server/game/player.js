@@ -102,10 +102,6 @@ class Player extends Spectator {
         return this.findCard(list, card => card.name === name);
     }
 
-    findCardByUuid(list, uuid) {
-        return this.findCard(list, card => card.uuid === uuid);
-    }
-
     findCardInPlayByUuid(uuid) {
         return this.findCard(this.cardsInPlay, card => card.uuid === uuid);
     }

@@ -233,13 +233,7 @@ class Game extends EventEmitter {
         this.effectEngine.addSimultaneous(effects);
     }
 
-    selectPlot(player, plotId) {
-        var plot = player.findCardByUuid(player.plotDeck, plotId);
-
-        if(!plot) {
-            return;
-        }
-
+    selectPlot(player, plot) {
         player.plotDeck.each(p => {
             p.selected = false;
         });
@@ -265,7 +259,7 @@ class Game extends EventEmitter {
         }
 
         if(card.location === 'plot deck') {
-            this.selectPlot(player, cardId);
+            this.selectPlot(player, card);
             return;
         }
 
@@ -466,7 +460,7 @@ class Game extends EventEmitter {
      * The target object to which gold is being moved
      */
     transferGold(transferParams) {
-        let {from, to, amount} = transferParams;
+        let { from, to, amount } = transferParams;
         let appliedGold = Math.min(from.gold, amount);
 
         if(from.getGameElementType() === 'player') {
@@ -493,7 +487,7 @@ class Game extends EventEmitter {
      * @param {number} params.amount The amount of gold being returned
      */
     returnGoldToTreasury(params) {
-        let {player, amount} = params;
+        let { player, amount } = params;
         let appliedAmount = Math.min(player.gold, amount);
 
         player.modifyGold(-appliedAmount);
