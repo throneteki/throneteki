@@ -67,8 +67,8 @@ class DeckSearchPrompt extends UiPrompt {
     }
 
     buttons() {
-        let uniqueCardsByTitle = _.uniq(this.searchCards(), card => card.cardData.label);
-        let buttons = _.map(uniqueCardsByTitle, card => {
+        this.uniqueCardsByTitle = _.uniq(this.searchCards(), card => card.cardData.label);
+        let buttons = this.uniqueCardsByTitle.map(card => {
             return { text: card.cardData.label, card: card };
         });
         buttons.push({ text: 'Done', arg: 'done' });
@@ -101,8 +101,7 @@ class DeckSearchPrompt extends UiPrompt {
             return;
         }
 
-        let card = player.findCardByUuid(player.drawDeck, arg);
-
+        let card = this.uniqueCardsByTitle.find(card => card.uuid === arg);
         if(!card) {
             return false;
         }

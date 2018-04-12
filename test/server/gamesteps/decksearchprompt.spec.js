@@ -11,7 +11,7 @@ describe('DeckSearchPrompt', function() {
     beforeEach(function() {
         this.game = jasmine.createSpyObj('game', ['addMessage', 'getPlayers']);
 
-        this.player = jasmine.createSpyObj('player1', ['cancelPrompt', 'setPrompt', 'findCardByUuid', 'searchDrawDeck', 'shuffleDrawDeck']);
+        this.player = jasmine.createSpyObj('player1', ['cancelPrompt', 'setPrompt', 'searchDrawDeck', 'shuffleDrawDeck']);
         this.player.drawDeck = _([]);
         this.otherPlayer = jasmine.createSpyObj('player2', ['setPrompt', 'cancelPrompt']);
 
@@ -78,7 +78,7 @@ describe('DeckSearchPrompt', function() {
         describe('onMenuCommand()', function() {
             beforeEach(function() {
                 this.card = { uuid: '1111' };
-                this.player.findCardByUuid.and.returnValue(this.card);
+                this.prompt.uniqueCardsByTitle = [this.card];
             });
 
             describe('when receiving input from the opponent', function() {
@@ -124,7 +124,7 @@ describe('DeckSearchPrompt', function() {
 
             describe('when choosing a card not in the deck', function() {
                 beforeEach(function() {
-                    this.player.findCardByUuid.and.returnValue(undefined);
+                    this.prompt.uniqueCardsByTitle = [];
                     this.result = this.prompt.onMenuCommand(this.player, '2222');
                 });
 
