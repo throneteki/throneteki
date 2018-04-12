@@ -74,4 +74,37 @@ describe('Heads on Spikes', function() {
             });
         });
     });
+
+    integration(function() {
+        describe('vs Missandei', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('lannister', [
+                    'Heads on Spikes'
+                ]);
+                const deck2 = this.buildDeck('targaryen', [
+                    'Sneak Attack',
+                    'Missandei'
+                ]);
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.missandei = this.player2.findCardByName('Missandei', 'hand');
+
+                this.completeSetup();
+                this.selectFirstPlayer(this.player1);
+
+                this.player2.clickPrompt('Missandei');
+            });
+
+            it('should not move Missandei from play to the dead pile', function() {
+                expect(this.missandei.location).toBe('play area');
+            });
+
+            it('should still gain 2 power for the player', function() {
+                expect(this.player1Object.getTotalPower()).toBe(2);
+            });
+        });
+    });
 });
