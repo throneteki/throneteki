@@ -18,8 +18,7 @@
                 "NODE_ENV": "development"
             },
             "console": "internalConsole",
-            "sourceMaps": false,
-            "outDir": null
+            "sourceMaps": false
         },
         {
             "name": "Launch (Game Server)",
@@ -38,8 +37,7 @@
                 "NODE_ENV": "development"
             },
             "console": "internalConsole",
-            "sourceMaps": false,
-            "outDir": null
+            "sourceMaps": false
         },
         {
             "type": "node",
@@ -52,6 +50,20 @@
             "request": "attach",
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome",
+            "url": "http://localhost:4000",
+            "webRoot": "${workspaceFolder}"
         },
         {
             "name": "Debug Tests",
