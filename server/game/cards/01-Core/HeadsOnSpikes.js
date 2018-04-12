@@ -17,7 +17,10 @@ class HeadsOnSpikes extends PlotCard {
 
                     if(card.getType() === 'character') {
                         powerMessage = ' and gain 2 power for their faction';
-                        otherPlayer.moveCard(card, 'dead pile');
+
+                        if(card.location === 'discard pile') {
+                            otherPlayer.moveCard(card, 'dead pile');
+                        }
 
                         this.game.addPower(this.controller, 2);
                     }
