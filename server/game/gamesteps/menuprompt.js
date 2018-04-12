@@ -44,7 +44,7 @@ class MenuPrompt extends UiPrompt {
             return false;
         }
 
-        const methodButton = this.getMethodButton(method);
+        const methodButton = this.getButton(method, arg);
         if(!this.context[method] || !methodButton) {
             return false;
         }
@@ -61,8 +61,8 @@ class MenuPrompt extends UiPrompt {
         return true;
     }
 
-    getMethodButton(method) {
-        return this.properties.activePrompt.buttons.find(button => button.method === method);
+    getButton(method, arg) {
+        return this.properties.activePrompt.buttons.find(button => button.method === method && (!button.mapCard || button.card.uuid === arg));
     }
 }
 
