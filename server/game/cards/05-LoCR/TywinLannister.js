@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TywinLannister extends DrawCard {
@@ -13,8 +11,8 @@ class TywinLannister extends DrawCard {
                 this.discardingPlayer = this.eventObj.player;
 
                 let top2Cards = this.discardingPlayer.drawDeck.first(2);
-                let buttons = _.map(top2Cards, card => {
-                    return { method: 'cardSelected', card: card };
+                let buttons = top2Cards.map(card => {
+                    return { method: 'cardSelected', card: card, mapCard: true };
                 });
 
                 this.game.promptWithMenu(this.controller, this, {
@@ -28,12 +26,7 @@ class TywinLannister extends DrawCard {
         });
     }
 
-    cardSelected(player, cardId) {
-        let card = this.discardingPlayer.findCardByUuid(this.discardingPlayer.drawDeck, cardId);
-        if(!card) {
-            return false;
-        }
-
+    cardSelected(player, card) {
         this.eventObj.replaceCards([card]);
         this.game.addMessage('{0} uses {1} to choose {2} to be discarded for {3}', this.controller, this, card, this.discardingPlayer);
 

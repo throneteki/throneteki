@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class GreenbloodTrader extends DrawCard {
@@ -9,10 +7,10 @@ class GreenbloodTrader extends DrawCard {
                 onCardEntersPlay: event => event.card === this
             },
             handler: () => {
-                this.top2Cards = this.controller.drawDeck.first(2);
+                this.top2Cards = this.controller.drawDeck.first(Math.min(2, this.controller.drawDeck.size()));
 
-                var buttons = _.map(this.top2Cards, card => {
-                    return { method: 'cardSelected', card: card };
+                var buttons = this.top2Cards.map(card => {
+                    return { method: 'cardSelected', card: card, mapCard: true };
                 });
 
                 buttons.push({ text: 'Continue', method: 'continueWithoutSelecting' });
@@ -28,27 +26,8 @@ class GreenbloodTrader extends DrawCard {
         });
     }
 
-    getCard(player, cardId) {
-        if(this.isBlank() || this.controller !== player) {
-            return undefined;
-        }
-
-        let card = player.findCardByUuid(player.drawDeck, cardId);
-        if(!card) {
-            return undefined;
-        }
-
-        return card;
-    }
-
-    cardSelected(player, cardId) {
-        let card = this.getCard(player, cardId);
-        if(!card) {
-            return false;
-        }
-
+    cardSelected(player, card) {
         player.moveCard(card, 'hand');
-
         player.moveFromTopToBottomOfDrawDeck(1);
 
         this.game.addMessage('{0} uses {1} to draw 2 cards, keep 1 and place the other on the bottom of their deck', player, this);
@@ -56,17 +35,15 @@ class GreenbloodTrader extends DrawCard {
         return true;
     }
 
-    moveToBottom(player, cardId) {
-        let card = this.getCard(player, cardId);
-        if(!card) {
-            return false;
-        }
-
-        let otherCard = _.find(this.top2Cards, c => {
+    moveToBottom(player, card) {
+        let otherCard = this.top2Cards.find(c => {
             return c.uuid !== card.uuid;
         });
 
-        player.moveCard(otherCard, 'draw deck', { bottom: true });
+        if(otherCard) {
+            player.moveCard(otherCard, 'draw deck', { bottom: true });
+        }
+
         player.moveCard(card, 'draw deck', { bottom: true });
 
         this.game.addMessage('{0} uses {1} to draw 2 cards, and place them on the bottom of their deck', player, this);
@@ -75,8 +52,12 @@ class GreenbloodTrader extends DrawCard {
     }
 
     continueWithoutSelecting(player) {
-        var buttons = _.map(this.top2Cards, card => {
-            return { method: 'moveToBottom', card: card };
+        if(this.top2Cards.length === 1) {
+            return this.moveToBottom(player, this.top2Cards[0]);
+        }
+
+        var buttons = this.top2Cards.map(card => {
+            return { method: 'moveToBottom', card: card, mapCard: true };
         });
 
         buttons.push({ text: 'Cancel', method: 'cancel' });
@@ -93,11 +74,8 @@ class GreenbloodTrader extends DrawCard {
     }
 
     cancel(player) {
-        if(this.isBlank() || this.controller !== player) {
-            return false;
-        }
+        this.game.addAlert('danger', '{0} does not complete the resolution of {1}', player, this);
 
-        this.game.addMessage('{0} declines to trigger {1}', player, this);
         return true;
     }
 }
