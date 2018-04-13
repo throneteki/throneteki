@@ -4,7 +4,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  top: 50px;
+  top: 40px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -156,7 +156,7 @@
   &.panel {
     margin: 0;
     border-radius: 0;
-    padding: 10px 0 10px 5px;
+    padding: 5px;
     position: initial;
   }
 
@@ -522,33 +522,37 @@ span.down-arrow {
   display: flex;
 }
 
+.play-area {
+  overflow-x: auto;
+}
+
 .play-area, .player-board {
   .drop-target {
     flex: 1;
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
-    .player-board.our-side > div:first-child {
-      margin-top: auto;
-    }
+    margin: 10px;
   }
 
   display: flex;
   flex: 1;
   flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
 }
 
 .player-board {
   margin: 10px;
+
+  &.our-side {
+    margin: 0;
+  }
 }
 
 .player-home-row {
   display: flex;
-  margin-top: 5px;
-
-  &.our-side {
-    margin-top: 0;
-    margin-bottom: 5px;
-  }
 }
 
 .player-home-row-container {
@@ -605,6 +609,7 @@ span.down-arrow {
 .card-row, .hand {
   display: flex;
   justify-content: flex-start;
+  min-height: 0;
 }
 
 .card-row .card.horizontal {
@@ -634,7 +639,7 @@ span.down-arrow {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 350px;
+  max-width: 275px;
   align-items: flex-end;
   overflow: hidden;
 }
@@ -651,11 +656,15 @@ span.down-arrow {
   display: flex;
   flex-direction: column;
   flex: 1;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .board-inner {
   flex: 1;
   display: flex;
+  min-height: 0;
+  overflow-x: hidden;
 }
 
 .close-button {
