@@ -16,7 +16,19 @@ class PlayerBoard extends React.Component {
 
         let rows = _.values(_.groupBy(sortedCards, card => card.type));
         for(let i = rows.length; i < 2; i++) {
-            rows.push([]);
+            if(sortedCards.some(card => card.type === 'location')) {
+                if(this.props.rowDirection === 'reverse') {
+                    rows.push([]);
+                } else {
+                    rows.unshift([]);
+                }
+            } else {
+                if(this.props.rowDirection === 'reverse') {
+                    rows.unshift([]);
+                } else {
+                    rows.push([]);
+                }
+            }
         }
 
         return rows;

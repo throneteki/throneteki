@@ -146,7 +146,7 @@ class NavBar extends React.Component {
             </li>);
 
         return (
-            <nav className='navbar navbar-inverse navbar-fixed-top'>
+            <nav className='navbar navbar-inverse navbar-fixed-top navbar-sm'>
                 <div className='container'>
                     <div className='navbar-header'>
                         <button className='navbar-toggle collapsed' type='button' data-toggle='collapse' data-target='#navbar' aria-expanded='false' aria-controls='navbar'>

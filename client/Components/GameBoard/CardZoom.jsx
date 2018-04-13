@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 class CardZoom extends React.Component {
     render() {
-        let zoomClass = this.props.orientation === 'vertical' ? 'card-large' : 'card-large-horizontal';
+        const zoomClass = classNames('card-large', {
+            vertical: this.props.orientation === 'vertical',
+            horizontal: this.props.orientation === 'horizontal'
+        });
 
         return (
             <div className={ zoomClass }>
