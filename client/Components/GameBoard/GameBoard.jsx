@@ -424,10 +424,10 @@ export class GameBoard extends React.Component {
                                 side='bottom' />
                         </div>
                     </div>
+                    <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
+                        orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
+                        show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
                     <div className='right-side'>
-                        <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
-                            orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
-                            show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
                         <div className='gamechat'>
                             <CSSTransitionGroup className='chatwrapper' transitionName='gamechat' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
                                 { this.state.showMessages && <GameChat key='gamechat'
