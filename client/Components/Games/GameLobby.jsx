@@ -89,7 +89,7 @@ function mapStateToProps(state) {
         bannerNotice: state.lobby.notice,
         currentGame: state.lobby.currentGame,
         games: state.lobby.games,
-        newGame: state.games.newGame,
+        newGame: state.lobby.newGame,
         passwordGame: state.lobby.passwordGame,
         socket: state.lobby.socket,
         user: state.account.user
