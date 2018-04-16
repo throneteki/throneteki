@@ -42,12 +42,22 @@ export default function(state = defaultState, action) {
             });
         case 'GAME_SOCKET_CLOSED':
             return Object.assign({}, state, {
-                currentGame: undefined
+                currentGame: undefined,
+                newGame: false
             });
         case 'PROFILE_SAVED':
             if(state.socket) {
                 state.socket.emit('authenticate', action.response.token);
             }
+            break;
+        case 'START_NEWGAME':
+            return Object.assign({}, state, {
+                newGame: true
+            });
+        case 'CANCEL_NEWGAME':
+            return Object.assign({}, state, {
+                newGame: false
+            });
     }
 
     return state;
