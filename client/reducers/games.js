@@ -1,13 +1,5 @@
 function games(state = {}, action) {
     switch(action.type) {
-        case 'START_NEWGAME':
-            return Object.assign({}, state, {
-                newGame: true
-            });
-        case 'CANCEL_NEWGAME':
-            return Object.assign({}, state, {
-                newGame: false
-            });
         case 'GAME_SOCKET_CONNECTED':
             return Object.assign({}, state, {
                 socket: action.socket,
@@ -46,9 +38,14 @@ function games(state = {}, action) {
                 connected: false,
                 connecting: false,
                 gameHost: undefined,
-                newGame: false,
                 socket: undefined
             });
+        case 'HANDOFF_RECEIVED':
+            var newState = Object.assign({}, state, {
+                gameId: action.details.gameId
+            });
+
+            return newState;
         default:
             return state;
     }
