@@ -974,6 +974,12 @@ class Player extends Spectator {
         });
     }
 
+    removeCardFromGame(card, allowSave = true) {
+        this.game.applyGameAction('removeFromGame', card, card => {
+            this.moveCard(card, 'out of game', { allowSave: allowSave });
+        });
+    }
+
     moveCardToTopOfDeck(card, allowSave = true) {
         this.game.applyGameAction('moveToTopOfDeck', card, card => {
             this.moveCard(card, 'draw deck', { allowSave: allowSave });
