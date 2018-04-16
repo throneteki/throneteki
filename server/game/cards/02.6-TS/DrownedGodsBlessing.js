@@ -1,11 +1,15 @@
 const DrawCard = require('../../drawcard.js');
 
 class DrownedGodsBlessing extends DrawCard {
-    // TODO: Cannot be chosen as the only target of opponent events
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'greyjoy' });
         this.whileAttached({
-            effect: ability.effects.addTrait('Drowned God')
+            effect: [
+                ability.effects.addTrait('Drowned God'),
+                ability.effects.cannotTarget(context => {
+                    return context.selectedCards.length === 0 && context.source.getType() === 'event';
+                })
+            ]
         });
         this.plotModifiers({
             initiative: 1
