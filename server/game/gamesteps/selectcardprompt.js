@@ -150,8 +150,19 @@ class SelectCardPrompt extends UiPrompt {
         if(!this.selectedCards.includes(card)) {
             this.selectedCards.push(card);
         } else {
-            this.selectedCards = _.reject(this.selectedCards, c => c === card);
+            this.selectedCards = this.selectedCards.filter(selectedCard => selectedCard !== card);
+
+            // If unselecting this card makes other cards no longer selectable, then they need to be de-selected
+            for(const remainingCard of this.selectedCards) {
+                if(!this.selector.canTarget(remainingCard, this.context, this.selectedCards) ||
+                !this.selector.checkForSingleController(this.selectedCards, remainingCard) ||
+                this.selector.wouldExceedLimit(this.selectedCards, remainingCard)) {
+                    // toggle it to unselected
+                    this.selectCard(remainingCard);
+                }
+            }
         }
+
         this.choosingPlayer.setSelectedCards(this.selectedCards);
 
         if(this.properties.onCardToggle) {

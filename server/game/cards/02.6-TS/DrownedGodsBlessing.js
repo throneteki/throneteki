@@ -7,7 +7,7 @@ class DrownedGodsBlessing extends DrawCard {
             effect: [
                 ability.effects.addTrait('Drowned God'),
                 ability.effects.cannotTarget(context => {
-                    return context.selectedCards.length === 0 && context.source.getType() === 'event';
+                    return context.selectedCards.every(card => card === this.parent) && context.source.getType() === 'event';
                 })
             ]
         });
