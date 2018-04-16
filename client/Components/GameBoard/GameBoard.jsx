@@ -364,6 +364,7 @@ export class GameBoard extends React.Component {
                             <div className='prompt-area'>
                                 <div className='inset-pane'>
                                     <ActivePlayerPrompt title={ thisPlayer.menuTitle }
+                                        cards={ this.props.cards }
                                         buttons={ thisPlayer.buttons }
                                         controls={ thisPlayer.controls }
                                         promptTitle={ thisPlayer.promptTitle }
@@ -451,6 +452,7 @@ export class GameBoard extends React.Component {
 GameBoard.displayName = 'GameBoard';
 GameBoard.propTypes = {
     cardToZoom: PropTypes.object,
+    cards: PropTypes.object,
     clearZoom: PropTypes.func,
     closeGameSocket: PropTypes.func,
     currentGame: PropTypes.object,
@@ -466,6 +468,7 @@ GameBoard.propTypes = {
 function mapStateToProps(state) {
     return {
         cardToZoom: state.cards.zoomCard,
+        cards: state.cards.cards,
         currentGame: state.lobby.currentGame,
         socket: state.lobby.socket,
         user: state.account.user
