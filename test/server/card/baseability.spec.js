@@ -241,7 +241,7 @@ describe('BaseAbility', function () {
 
     describe('resolveTargets()', function() {
         beforeEach(function() {
-            this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect']);
+            this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect', 'addAlert']);
             this.gameSpy.allCards = _([]);
             this.player = { player: 1 };
             this.source = { source: 1 };
