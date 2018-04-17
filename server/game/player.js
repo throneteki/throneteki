@@ -28,7 +28,7 @@ class Player extends Spectator {
         this.plotDiscard = [];
         this.hand = [];
         this.cardsInPlay = [];
-        this.deadPile = _([]);
+        this.deadPile = [];
         this.discardPile = _([]);
         this.outOfGamePile = _([]);
 

@@ -105,7 +105,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.deadPile.size()).toBe(0);
+                    expect(this.player.deadPile.length).toBe(0);
                 });
             });
 
@@ -118,7 +118,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.deadPile.size()).toBe(0);
+                    expect(this.player.deadPile.length).toBe(0);
                 });
             });
 
@@ -131,7 +131,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.deadPile.size()).toBe(0);
+                    expect(this.player.deadPile.length).toBe(0);
                 });
             });
 
@@ -144,7 +144,7 @@ describe('Player', () => {
 
                 it('should return true and put the character in the dead pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.deadPile.size()).toBe(1);
+                    expect(this.player.deadPile.length).toBe(1);
                 });
             });
         });

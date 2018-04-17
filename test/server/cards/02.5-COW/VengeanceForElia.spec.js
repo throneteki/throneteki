@@ -36,7 +36,7 @@ describe('Vengeance for Elia', function() {
             it('should force the attacker to kill a character', function() {
                 this.player1.clickCard('Tywin Lannister', 'play area');
 
-                expect(this.player1Object.deadPile.size()).toBe(1);
+                expect(this.player1Object.deadPile.length).toBe(1);
             });
         });
 

@@ -19,7 +19,7 @@ class OldWyk extends DrawCard {
                 if(card.location === 'play area') {
                     this.game.currentChallenge.addAttacker(card);
                     this.game.addMessage('{0} kneels {1} to put {2} into play from their dead pile knelt as an attacker',
-                        this.controller, this, card); 
+                        this.controller, this, card);
                     this.game.once('afterChallenge', event => this.resolveAfterChallenge(event.challenge, card));
                 }
             }
@@ -45,7 +45,7 @@ class OldWyk extends DrawCard {
     }
 
     anyDrownedGodInDeadPile() {
-        return this.controller.deadPile.any(card => card.hasTrait('Drowned God') && this.controller.canPutIntoPlay(card));
+        return this.controller.deadPile.some(card => card.hasTrait('Drowned God') && this.controller.canPutIntoPlay(card));
     }
 }
 
