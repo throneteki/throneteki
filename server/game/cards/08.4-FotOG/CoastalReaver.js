@@ -6,7 +6,7 @@ class CoastalReaver extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            chooseOpponent: opponent => opponent.hand.size() > 0,
+            chooseOpponent: opponent => opponent.hand.length > 0,
             handler: context => {
                 this.game.addMessage('{0} uses {1} to choose {2}', context.player, this, context.opponent);
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'underscore';
 
 import AbilityTargeting from './AbilityTargeting';
+import CardNameLookup from './CardNameLookup';
 
 class ActivePlayerPrompt extends React.Component {
     constructor() {
@@ -153,8 +154,14 @@ class ActivePlayerPrompt extends React.Component {
         return buttons;
     }
 
+    onCardNameSelected(command, method, cardName) {
+        if(this.props.onButtonClick) {
+            this.props.onButtonClick(command, cardName, method);
+        }
+    }
+
     getControls() {
-        return _.map(this.props.controls, control => {
+        return this.props.controls.map(control => {
             switch(control.type) {
                 case 'targeting':
                     return (
@@ -163,6 +170,8 @@ class ActivePlayerPrompt extends React.Component {
                             onMouseOver={ this.props.onMouseOver }
                             source={ control.source }
                             targets={ control.targets } />);
+                case 'card-name':
+                    return <CardNameLookup cards={ this.props.cards } onCardSelected={ this.onCardNameSelected.bind(this, control.command, control.method) } />;
             }
         });
     }
@@ -206,6 +215,7 @@ class ActivePlayerPrompt extends React.Component {
 ActivePlayerPrompt.displayName = 'ActivePlayerPrompt';
 ActivePlayerPrompt.propTypes = {
     buttons: PropTypes.array,
+    cards: PropTypes.object,
     controls: PropTypes.array,
     onButtonClick: PropTypes.func,
     onMouseOut: PropTypes.func,

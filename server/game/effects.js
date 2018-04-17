@@ -634,11 +634,13 @@ const Effects = {
     removeFromGame: function() {
         return {
             apply: function(card) {
-                card.owner.moveCard(card, 'out of game');
+                card.owner.removeCardFromGame(card);
             },
             unapply: function(card, context) {
-                card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
-                context.game.addMessage('{0} is put into play because of {1}', card, context.source);
+                if(card.location === 'out of game') {
+                    card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
+                    context.game.addMessage('{0} is put into play because of {1}', card, context.source);
+                }
             }
         };
     },
@@ -730,6 +732,7 @@ const Effects = {
             }
         };
     },
+    cannotTarget: cannotEffect('target'),
     setMaxGoldGain: function(max) {
         return {
             apply: function(player) {

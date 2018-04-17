@@ -8,7 +8,7 @@ class AtNightTheyHowl extends DrawCard {
             target: {
                 mode: 'unlimited',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.kneeled &&
-                                       (card.hasTrait('Direwolf') || card.attachments.any(attachment => attachment.hasTrait('Direwolf')))
+                                       (card.hasTrait('Direwolf') || card.attachments.some(attachment => attachment.hasTrait('Direwolf')))
             },
             handler: context => {
                 for(let card of context.target) {

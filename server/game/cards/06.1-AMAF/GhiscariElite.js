@@ -6,7 +6,7 @@ class GhiscariElite extends DrawCard {
             when: {
                 onCardKneeled: event => (
                     event.card === this &&
-                    this.controller.discardPile.any(c => this.eventOrAttachmentInDiscard(c))
+                    this.controller.discardPile.some(c => this.eventOrAttachmentInDiscard(c))
                 )
             },
             target: {

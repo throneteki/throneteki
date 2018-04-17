@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 
 describe('Player', () => {
@@ -17,8 +16,8 @@ describe('Player', () => {
             this.cardSpy = jasmine.createSpyObj('card', ['getType', 'leavesPlay', 'moveTo']);
             this.cardSpy.controller = this.cardSpy.owner = this.player;
             this.cardSpy.getType.and.returnValue('character');
-            this.cardSpy.attachments = _([]);
-            this.cardSpy.dupes = _([]);
+            this.cardSpy.attachments = [];
+            this.cardSpy.dupes = [];
         });
 
         describe('when no card is pased', function() {
@@ -105,7 +104,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.deadPile.size()).toBe(0);
+                    expect(this.player.deadPile.length).toBe(0);
                 });
             });
 
@@ -118,7 +117,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.deadPile.size()).toBe(0);
+                    expect(this.player.deadPile.length).toBe(0);
                 });
             });
 
@@ -131,7 +130,7 @@ describe('Player', () => {
 
                 it('should return false and not update the game state', function() {
                     expect(this.dropSucceeded).toBe(false);
-                    expect(this.player.deadPile.size()).toBe(0);
+                    expect(this.player.deadPile.length).toBe(0);
                 });
             });
 
@@ -144,7 +143,7 @@ describe('Player', () => {
 
                 it('should return true and put the character in the dead pile', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.deadPile.size()).toBe(1);
+                    expect(this.player.deadPile.length).toBe(1);
                 });
             });
         });
@@ -222,7 +221,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 
@@ -234,7 +233,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 
@@ -246,7 +245,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 
@@ -258,7 +257,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 
@@ -277,7 +276,7 @@ describe('Player', () => {
 
                 it('should put the cards in the draw deck in the correct order', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.first(2)).toEqual([this.cardSpy2, this.cardSpy]);
+                    expect(this.player.drawDeck.slice(0, 2)).toEqual([this.cardSpy2, this.cardSpy]);
                 });
             });
         });

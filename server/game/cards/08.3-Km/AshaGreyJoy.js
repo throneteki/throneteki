@@ -4,10 +4,10 @@ class AshaGreyjoy extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => event.source === this && event.challenge.loser.discardPile.size() >= 1
+                onPillage: event => event.source === this && event.challenge.loser.discardPile.length >= 1
             },
             handler: context => {
-                let amount = context.event.challenge.loser.discardPile.size();
+                let amount = context.event.challenge.loser.discardPile.length;
 
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: amount,

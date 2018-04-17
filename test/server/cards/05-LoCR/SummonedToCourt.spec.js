@@ -73,9 +73,9 @@ describe('Summoned to Court', function() {
 
         describe('when one player does not have any cards', function() {
             beforeEach(function() {
-                this.player2Object.hand.each(card => {
+                for(const card of this.player2Object.hand) {
                     this.player2Object.moveCard(card, 'discard pile');
-                });
+                }
 
                 this.player1.selectPlot('Summoned to Court');
                 this.player2.selectPlot('A Noble Cause');
@@ -96,12 +96,13 @@ describe('Summoned to Court', function() {
 
         describe('when neither player has cards', function() {
             beforeEach(function() {
-                this.player1Object.hand.each(card => {
+                for(const card of this.player1Object.hand) {
                     this.player1Object.moveCard(card, 'discard pile');
-                });
-                this.player2Object.hand.each(card => {
+                }
+
+                for(const card of this.player2Object.hand) {
                     this.player2Object.moveCard(card, 'discard pile');
-                });
+                }
 
                 this.player1.selectPlot('Summoned to Court');
                 this.player2.selectPlot('A Noble Cause');

@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 const DrawCard = require('../../../server/game/drawcard.js');
 
@@ -12,7 +11,7 @@ describe('Player', function() {
             this.dupeCard = new DrawCard(this.player, { code: '1', name: 'Test' });
             this.dupeCard.location = 'play area';
 
-            this.game.allCards = _([this.dupeCard]);
+            this.game.allCards = [this.dupeCard];
 
             this.cardSpy = jasmine.createSpyObj('card', ['isUnique']);
 

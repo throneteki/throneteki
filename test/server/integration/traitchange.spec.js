@@ -13,7 +13,6 @@ describe('trait change', function() {
 
                 this.character = this.player1.findCardByName('Arianne Martell (Core)', 'hand');
                 this.knighted = this.player1.findCardByName('Knighted', 'hand');
-
             });
 
             describe('when gaining a trait after the effect has come into play', function() {

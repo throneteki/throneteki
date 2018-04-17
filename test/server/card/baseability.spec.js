@@ -1,7 +1,5 @@
 const BaseAbility = require('../../../server/game/baseability.js');
 
-const _ = require('underscore');
-
 describe('BaseAbility', function () {
     beforeEach(function () {
         this.properties = {};
@@ -201,7 +199,7 @@ describe('BaseAbility', function () {
             this.card2 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
             this.card2.allowGameAction.and.returnValue(true);
             this.card2.getType.and.returnValue('location');
-            this.gameSpy.allCards = _([this.card1, this.card2]);
+            this.gameSpy.allCards = [this.card1, this.card2];
             this.context = { game: this.gameSpy };
         });
 
@@ -241,8 +239,8 @@ describe('BaseAbility', function () {
 
     describe('resolveTargets()', function() {
         beforeEach(function() {
-            this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect']);
-            this.gameSpy.allCards = _([]);
+            this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect', 'addAlert']);
+            this.gameSpy.allCards = [];
             this.player = { player: 1 };
             this.source = { source: 1 };
 

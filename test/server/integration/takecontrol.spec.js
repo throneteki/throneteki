@@ -23,7 +23,7 @@ describe('take control', function() {
                 this.player2.clickCard(this.dupe);
 
                 this.completeSetup();
-                expect(this.paxter.dupes.size()).toBe(1);
+                expect(this.paxter.dupes.length).toBe(1);
 
                 this.player1.selectPlot('Sneak Attack');
                 this.player2.selectPlot('Sneak Attack');
@@ -247,7 +247,7 @@ describe('take control', function() {
                     this.player1.clickPrompt('Euron Crow\'s Eye');
                     this.player1.clickCard(this.wall);
 
-                    expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.wall.uuid);
+                    expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.wall.uuid);
                     expect(this.wall.controller.name).toBe(this.player1Object.name);
                     expect(this.wall.location).toBe('play area');
                 });
@@ -281,7 +281,7 @@ describe('take control', function() {
                     this.player1.clickMenu(this.seaBitch, 'Take control of location');
                     this.player1.clickCard(this.wall);
 
-                    expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.wall.uuid);
+                    expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.wall.uuid);
                     expect(this.wall.controller.name).toBe(this.player1Object.name);
                     expect(this.wall.location).toBe('play area');
                 });
@@ -306,7 +306,7 @@ describe('take control', function() {
                     this.player1.clickCard('Ward', 'hand');
                     this.player1.clickCard(this.steward);
 
-                    expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.steward.uuid);
+                    expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.steward.uuid);
                     expect(this.steward.controller.name).toBe(this.player1Object.name);
                     expect(this.steward.location).toBe('play area');
                 });

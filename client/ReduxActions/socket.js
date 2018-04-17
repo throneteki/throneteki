@@ -76,6 +76,35 @@ export function authenticateSocket() {
     };
 }
 
+export function handoff(details) {
+    return {
+        type: 'HANDOFF_RECEIVED',
+        details: details
+    };
+}
+
+export function handoffReceived(details) {
+    return (dispatch, getState) => {
+        let url = '//' + details.address;
+        let standardPorts = [80, 443];
+        let state = getState();
+
+        dispatch(handoff(details));
+
+        if(details.port && !standardPorts.some(p => p === details.port)) {
+            url += ':' + details.port;
+        }
+
+        dispatch(actions.setAuthTokens(details.authToken, state.auth.refreshToken));
+
+        if(state.games.socket && state.games.gameId !== details.gameId) {
+            dispatch(actions.closeGameSocket());
+        }
+
+        dispatch(actions.connectGameSocket(url, details.name));
+    };
+}
+
 export function connectLobby() {
     return (dispatch, getState) => {
         let state = getState();
@@ -141,23 +170,8 @@ export function connectLobby() {
             dispatch(lobbyMessageReceived('cleargamestate'));
         });
 
-        socket.on('handoff', server => {
-            let url = '//' + server.address;
-            let standardPorts = [80, 443];
-            let state = getState();
-
-            if(server.port && !standardPorts.some(p => p === server.port)) {
-                url += ':' + server.port;
-            }
-
-            dispatch(actions.setAuthTokens(server.authToken, state.auth.refreshToken));
-
-            if(state.games.socket && state.lobby.currentGame && state.lobby.currentGame.id !== server.gameId) {
-                dispatch(actions.closeGameSocket());
-                dispatch(actions.connectGameSocket(url, server.name));
-            } else if(!state.games.socket) {
-                dispatch(actions.connectGameSocket(url, server.name));
-            }
+        socket.on('handoff', handoff => {
+            dispatch(handoffReceived(handoff));
         });
 
         socket.on('authfailed', () => {

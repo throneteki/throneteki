@@ -22,18 +22,18 @@ class Player extends Spectator {
     constructor(id, user, owner, game) {
         super(id, user);
 
-        this.beingPlayed = _([]);
-        this.drawDeck = _([]);
-        this.plotDeck = _([]);
-        this.plotDiscard = _([]);
-        this.hand = _([]);
-        this.cardsInPlay = _([]);
-        this.deadPile = _([]);
-        this.discardPile = _([]);
-        this.outOfGamePile = _([]);
+        this.beingPlayed = [];
+        this.drawDeck = [];
+        this.plotDeck = [];
+        this.plotDiscard = [];
+        this.hand = [];
+        this.cardsInPlay = [];
+        this.deadPile = [];
+        this.discardPile = [];
+        this.outOfGamePile = [];
 
         // Agenda specific piles
-        this.conclavePile = _([]);
+        this.conclavePile = [];
 
         this.faction = new DrawCard(this, {});
 
@@ -75,27 +75,27 @@ class Player extends Spectator {
     }
 
     isCardUuidInList(list, card) {
-        return list.any(c => {
+        return list.some(c => {
             return c.uuid === card.uuid;
         });
     }
 
     isCardNameInList(list, card) {
-        return list.any(c => {
+        return list.some(c => {
             return c.name === card.name;
         });
     }
 
     areCardsSelected() {
-        return this.cardsInPlay.any(card => {
+        return this.cardsInPlay.some(card => {
             return card.selected;
         });
     }
 
     removeCardByUuid(list, uuid) {
-        return _(list.reject(card => {
-            return card.uuid === uuid;
-        }));
+        return list.filter(card => {
+            return card.uuid !== uuid;
+        });
     }
 
     findCardByName(list, name) {
@@ -122,7 +122,7 @@ class Player extends Spectator {
 
         var cardsToReturn = [];
 
-        cardList.each(card => {
+        for(let card of cardList) {
             if(predicate(card)) {
                 cardsToReturn.push(card);
             }
@@ -130,15 +130,13 @@ class Player extends Spectator {
             if(card.attachments) {
                 cardsToReturn = cardsToReturn.concat(card.attachments.filter(predicate));
             }
-
-            return cardsToReturn;
-        });
+        }
 
         return cardsToReturn;
     }
 
     anyCardsInPlay(predicate) {
-        return this.game.allCards.any(card => card.controller === this && card.location === 'play area' && predicate(card));
+        return this.game.allCards.some(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
     filterCardsInPlay(predicate) {
@@ -194,7 +192,7 @@ class Player extends Spectator {
     }
 
     getNumberOfUsedPlots() {
-        return this.plotDiscard.size() + this.usedPlotsModifier;
+        return this.plotDiscard.length + this.usedPlotsModifier;
     }
 
     addGoldSource(source) {
@@ -233,44 +231,47 @@ class Player extends Spectator {
     }
 
     drawCardsToHand(numCards) {
-        if(numCards > this.drawDeck.size()) {
-            numCards = this.drawDeck.size();
+        if(numCards > this.drawDeck.length) {
+            numCards = this.drawDeck.length;
         }
+
         if(this.maxCardDraw.getMax() !== undefined) {
             numCards = Math.min(numCards, this.maxCardDraw.getMax() - this.drawnCards);
         }
+
         if(numCards < 0) {
             numCards = 0;
         }
 
-        let cards = this.drawDeck.first(numCards);
+        let cards = this.drawDeck.slice(0, numCards);
 
-        _.each(cards, card => {
+        for(const card of cards) {
             this.moveCard(card, 'hand');
-        });
+        }
+
         this.drawnCards += numCards;
 
         if(this.game.currentPhase !== 'setup') {
             this.game.raiseEvent('onCardsDrawn', { cards: cards, player: this });
         }
 
-        if(this.drawDeck.size() === 0) {
+        if(this.drawDeck.length === 0) {
             this.game.playerDecked(this);
         }
 
         return cards;
     }
 
-    searchDrawDeck(limit, predicate) {
-        var cards = this.drawDeck;
+    searchDrawDeck(limit, predicate = () => true) {
+        let cards = this.drawDeck;
 
         if(_.isFunction(limit)) {
             predicate = limit;
         } else {
             if(limit > 0) {
-                cards = _(this.drawDeck.first(limit));
+                cards = this.drawDeck.slice(0, limit);
             } else {
-                cards = _(this.drawDeck.last(-limit));
+                cards = this.drawDeck.slice(limit);
             }
         }
 
@@ -278,16 +279,16 @@ class Player extends Spectator {
     }
 
     shuffleDrawDeck() {
-        this.drawDeck = _(this.drawDeck.shuffle());
+        this.drawDeck = _.shuffle(this.drawDeck);
     }
 
     discardFromDraw(number, callback = () => true) {
-        number = Math.min(number, this.drawDeck.size());
+        number = Math.min(number, this.drawDeck.length);
 
-        var cards = this.drawDeck.first(number);
+        var cards = this.drawDeck.slice(0, number);
         this.discardCards(cards, false, discarded => {
             callback(discarded);
-            if(this.drawDeck.size() === 0) {
+            if(this.drawDeck.length === 0) {
                 this.game.playerDecked(this);
             }
         });
@@ -295,20 +296,20 @@ class Player extends Spectator {
 
     moveFromTopToBottomOfDrawDeck(number) {
         while(number > 0) {
-            this.moveCard(this.drawDeck.first(), 'draw deck', { bottom: true });
+            this.moveCard(this.drawDeck[0], 'draw deck', { bottom: true });
 
             number--;
         }
     }
 
     discardAtRandom(number, callback = () => true) {
-        var toDiscard = Math.min(number, this.hand.size());
+        var toDiscard = Math.min(number, this.hand.length);
         var cards = [];
 
         while(cards.length < toDiscard) {
-            var cardIndex = _.random(0, this.hand.size() - 1);
+            var cardIndex = _.random(0, this.hand.length - 1);
 
-            var card = this.hand.value()[cardIndex];
+            var card = this.hand[cardIndex];
             if(!cards.includes(card)) {
                 cards.push(card);
             }
@@ -361,26 +362,26 @@ class Player extends Spectator {
     }
 
     resetCardPile(pile) {
-        pile.each(card => {
+        for(const card of pile) {
             if(pile !== this.cardsInPlay || !this.cardsInPlayBeforeSetup.includes(card)) {
                 card.moveTo('draw deck');
                 this.drawDeck.push(card);
             }
-        });
+        }
     }
 
     resetDrawDeck() {
         this.resetCardPile(this.hand);
-        this.hand = _([]);
+        this.hand = [];
 
         this.resetCardPile(this.cardsInPlay);
-        this.cardsInPlay = _(this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card)));
+        this.cardsInPlay = this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card));
 
         this.resetCardPile(this.discardPile);
-        this.discardPile = _([]);
+        this.discardPile = [];
 
         this.resetCardPile(this.deadPile);
-        this.deadPile = _([]);
+        this.deadPile = [];
     }
 
     initDrawDeck() {
@@ -395,11 +396,11 @@ class Player extends Spectator {
     prepareDecks() {
         var deck = new Deck(this.deck);
         var preparedDeck = deck.prepare(this);
-        this.plotDeck = _(preparedDeck.plotCards);
+        this.plotDeck = preparedDeck.plotCards;
         this.agenda = preparedDeck.agenda;
         this.faction = preparedDeck.faction;
-        this.drawDeck = _(preparedDeck.drawCards);
-        this.bannerCards = _(preparedDeck.bannerCards);
+        this.drawDeck = preparedDeck.drawCards;
+        this.bannerCards = preparedDeck.bannerCards;
         this.preparedDeck = preparedDeck;
     }
 
@@ -622,29 +623,28 @@ class Player extends Spectator {
     }
 
     setupDone() {
-        if(this.hand.size() < StartingHandSize) {
-            this.drawCardsToHand(StartingHandSize - this.hand.size());
+        if(this.hand.length < StartingHandSize) {
+            this.drawCardsToHand(StartingHandSize - this.hand.length);
         }
 
-        var processedCards = _([]);
+        let processedCards = [];
 
-        this.cardsInPlay.each(card => {
+        for(const card of this.cardsInPlay) {
             card.facedown = false;
 
             if(!card.isUnique()) {
                 processedCards.push(card);
-                return;
+                continue;
             }
 
-            var duplicate = this.findCardByName(processedCards, card.name);
+            let duplicate = this.findCardByName(processedCards, card.name);
 
             if(duplicate) {
                 duplicate.addDuplicate(card);
             } else {
                 processedCards.push(card);
             }
-
-        });
+        }
 
         this.cardsInPlay = processedCards;
         this.gold = 0;
@@ -681,9 +681,9 @@ class Player extends Spectator {
     recyclePlots() {
         const plots = this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
         if(plots.length === 0) {
-            this.plotDiscard.each(plot => {
+            for(const plot of this.plotDiscard) {
                 this.moveCard(plot, 'plot deck');
-            });
+            }
 
             this.game.raiseEvent('onPlotsRecycled', { player: this });
         }
@@ -716,7 +716,7 @@ class Player extends Spectator {
     }
 
     hasUnmappedAttachments() {
-        return this.cardsInPlay.any(card => {
+        return this.cardsInPlay.some(card => {
             return card.getType() === 'attachment';
         });
     }
@@ -823,7 +823,7 @@ class Player extends Spectator {
             case 'play area':
                 return this.cardsInPlay;
             case 'active plot':
-                return _([]);
+                return [];
             case 'plot deck':
                 return this.plotDeck;
             case 'revealed plots':
@@ -913,9 +913,9 @@ class Player extends Spectator {
     }
 
     beginChallenge() {
-        this.cardsInPlay.each(card => {
+        for(const card of this.cardsInPlay) {
             card.resetForChallenge();
-        });
+        }
     }
 
     trackChallenge(challenge) {
@@ -927,9 +927,9 @@ class Player extends Spectator {
     }
 
     resetForChallenge() {
-        this.cardsInPlay.each(card => {
+        for(const card of this.cardsInPlay) {
             card.resetForChallenge();
-        });
+        }
     }
 
     sacrificeCard(card) {
@@ -971,6 +971,12 @@ class Player extends Spectator {
     returnCardToHand(card, allowSave = true) {
         this.game.applyGameAction('returnToHand', card, card => {
             this.moveCard(card, 'hand', { allowSave: allowSave });
+        });
+    }
+
+    removeCardFromGame(card, allowSave = true) {
+        this.game.applyGameAction('removeFromGame', card, card => {
+            this.moveCard(card, 'out of game', { allowSave: allowSave });
         });
     }
 
@@ -1089,17 +1095,17 @@ class Player extends Spectator {
 
         let targetPile = this.getSourceList(targetLocation);
 
-        if(!targetPile || targetPile.contains(card)) {
+        if(!targetPile || targetPile.includes(card)) {
             return;
         }
 
         if(card.location === 'play area') {
-            card.attachments.each(attachment => {
+            for(const attachment of card.attachments) {
                 this.removeAttachment(attachment, false);
-            });
+            }
 
-            if(!card.dupes.isEmpty()) {
-                this.discardCards(card.dupes.toArray(), false);
+            if(card.dupes.length !== 0) {
+                this.discardCards(card.dupes, false);
             }
         }
 
@@ -1211,7 +1217,7 @@ class Player extends Spectator {
     }
 
     isBelowReserve() {
-        return this.hand.size() <= this.getTotalReserve();
+        return this.hand.length <= this.getTotalReserve();
     }
 
     isRival(opponent) {
@@ -1301,13 +1307,13 @@ class Player extends Spectator {
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
-        let fullDiscardPile = this.discardPile.toArray().concat(this.beingPlayed.toArray());
+        let fullDiscardPile = this.discardPile.concat(this.beingPlayed);
 
         let plots = [];
 
         // Rains
         if(this.agenda && this.agenda.code === '05045') {
-            for(const plot of this.plotDeck.value()) {
+            for(const plot of this.plotDeck) {
                 let plotSummary = plot.getSummary(activePlayer, true);
                 if(plot.hasTrait('scheme')) {
                     plotSummary.group = 'Scheme';
@@ -1341,9 +1347,9 @@ class Player extends Spectator {
             id: this.id,
             keywordSettings: this.keywordSettings,
             left: this.left,
-            numDrawCards: this.drawDeck.size(),
+            numDrawCards: this.drawDeck.length,
             name: this.name,
-            numPlotCards: this.plotDeck.size(),
+            numPlotCards: this.plotDeck.length,
             phase: this.phase,
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,

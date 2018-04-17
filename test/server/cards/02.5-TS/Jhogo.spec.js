@@ -30,7 +30,7 @@ describe('Jhogo', function() {
             this.player2.dragCard(this.chud1, 'dead pile');
             this.player2.dragCard(this.chud2, 'dead pile');
 
-            expect(this.player2Object.deadPile.size()).toBe(2);
+            expect(this.player2Object.deadPile.length).toBe(2);
         });
 
         describe('when attacking', function() {

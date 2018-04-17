@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class AryaStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.dupes.size() >= 1,
+            condition: () => this.dupes.length >= 1,
             match: this,
             effect: ability.effects.addIcon('military')
         });
@@ -12,7 +12,7 @@ class AryaStark extends DrawCard {
                 onCardEntersPlay: event => event.card === this && event.card.canBeDuplicated()
             },
             handler: () => {
-                let dupe = this.controller.drawDeck.first();
+                let dupe = this.controller.drawDeck[0];
 
                 if(!dupe) {
                     return true;

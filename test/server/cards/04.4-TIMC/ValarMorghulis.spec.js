@@ -106,7 +106,7 @@ describe('Valar Morghulis', function() {
                 this.player2.clickCard(this.deadKnight);
                 this.player2.clickPrompt('Done');
 
-                expect(this.player2Object.deadPile.pluck('name')).toEqual(['Hedge Knight', 'Arya Stark', 'House Maester']);
+                expect(this.player2Object.deadPile.map(card => card.name)).toEqual(['Hedge Knight', 'Arya Stark', 'House Maester']);
             });
         });
     });

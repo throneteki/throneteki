@@ -18,7 +18,7 @@ class Loot extends DrawCard {
     }
 
     getLoserDeckSize(challenge) {
-        return challenge.loser.drawDeck.size();
+        return challenge.loser.drawDeck.length;
     }
 }
 

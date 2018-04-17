@@ -10,7 +10,7 @@ class TywinLannister extends DrawCard {
                 this.eventObj = context.event;
                 this.discardingPlayer = this.eventObj.player;
 
-                let top2Cards = this.discardingPlayer.drawDeck.first(2);
+                let top2Cards = this.discardingPlayer.drawDeck.slice(0, 2);
                 let buttons = top2Cards.map(card => {
                     return { method: 'cardSelected', card: card, mapCard: true };
                 });

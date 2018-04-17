@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class MerchantPrince extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.attachments.size() >= 1,
+            condition: () => this.attachments.length >= 1,
             match: this,
             effect: [
                 ability.effects.modifyStrength(1),

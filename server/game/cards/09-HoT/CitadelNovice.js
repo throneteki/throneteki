@@ -8,7 +8,7 @@ class CitadelNovice extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             handler: () => {
-                let topCard = this.controller.drawDeck.first();
+                let topCard = this.controller.drawDeck[0];
                 let message = '{0} uses {1} to reveal {2} as the top card of their deck';
 
                 if(this.controller.canDraw() &&

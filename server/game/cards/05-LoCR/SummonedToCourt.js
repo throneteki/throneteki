@@ -19,7 +19,7 @@ class SummonedToCourt extends PlotCard {
     promptNextPlayerForChoice() {
         while(this.remainingPlayers.length !== 0) {
             let currentPlayer = this.remainingPlayers.shift();
-            if(!currentPlayer.hand.isEmpty()) {
+            if(currentPlayer.hand.length !== 0) {
                 this.promptPlayerForChoice(currentPlayer);
                 return;
             }

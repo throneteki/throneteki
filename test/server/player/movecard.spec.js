@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 const DrawCard = require('../../../server/game/drawcard.js');
 
@@ -145,25 +144,25 @@ describe('Player', function() {
 
         describe('when the target location is the draw deck', function() {
             beforeEach(function() {
-                this.player.drawDeck = _([{}, {}, {}]);
+                this.player.drawDeck = [{}, {}, {}];
             });
 
             it('should add the card to the top of the deck', function() {
                 this.player.moveCard(this.card, 'draw deck');
-                expect(this.player.drawDeck.first()).toBe(this.card);
+                expect(this.player.drawDeck[0]).toBe(this.card);
             });
 
             it('should add the card to the bottom of the deck when the option is passed', function() {
                 this.player.moveCard(this.card, 'draw deck', { bottom: true });
-                expect(this.player.drawDeck.last()).toBe(this.card);
+                expect(this.player.drawDeck.slice(-1)[0]).toBe(this.card);
             });
 
             it('should be able to move a card from top to bottom of the deck', function() {
-                this.player.drawDeck = _([this.card, {}, {}, {}]);
+                this.player.drawDeck = [this.card, {}, {}, {}];
                 this.card.location = 'draw deck';
                 this.player.moveCard(this.card, 'draw deck', { bottom: true });
-                expect(this.player.drawDeck.size()).toBe(4);
-                expect(this.player.drawDeck.last()).toBe(this.card);
+                expect(this.player.drawDeck.length).toBe(4);
+                expect(this.player.drawDeck.slice(-1)[0]).toBe(this.card);
             });
         });
 
@@ -175,14 +174,14 @@ describe('Player', function() {
             beforeEach(function() {
                 // Put into play with the wrong location.
                 this.card.location = 'discard pile';
-                this.player.cardsInPlay = _([this.card]);
+                this.player.cardsInPlay = [this.card];
 
                 this.player.moveCard(this.card, 'play area');
             });
 
             it('should not duplicate the card', function() {
-                expect(this.player.cardsInPlay.size()).toBe(1);
-                expect(this.player.cardsInPlay.toArray()).toEqual([this.card]);
+                expect(this.player.cardsInPlay.length).toBe(1);
+                expect(this.player.cardsInPlay).toEqual([this.card]);
             });
         });
 

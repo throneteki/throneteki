@@ -19,11 +19,11 @@ describe('Heads on Spikes', function() {
         describe('when a character gets discarded', function() {
             beforeEach(function() {
                 // Move non-characters back to draw
-                this.player2Object.hand.each(card => {
+                for(const card of this.player2Object.hand) {
                     if(card.getType() !== 'character') {
                         this.player2Object.moveCard(card, 'draw deck');
                     }
-                });
+                }
 
                 this.selectFirstPlayer(this.player1);
 
@@ -32,12 +32,12 @@ describe('Heads on Spikes', function() {
 
             it('should discard a card from the opponent hand', function() {
                 // 1 card discarded, 2 drawn from draw phase
-                expect(this.player2Object.hand.size()).toBe(3);
+                expect(this.player2Object.hand.length).toBe(3);
             });
 
             it('should move the opponent character into the dead pile', function() {
-                expect(this.player2Object.discardPile.size()).toBe(0);
-                expect(this.player2Object.deadPile.size()).toBe(1);
+                expect(this.player2Object.discardPile.length).toBe(0);
+                expect(this.player2Object.deadPile.length).toBe(1);
             });
 
             it('should gain 2 power for the current player', function() {
@@ -48,11 +48,11 @@ describe('Heads on Spikes', function() {
         describe('when a non-character gets discarded', function() {
             beforeEach(function() {
                 // Move characters back to draw
-                this.player2Object.hand.each(card => {
+                for(const card of this.player2Object.hand) {
                     if(card.getType() === 'character') {
                         this.player2Object.moveCard(card, 'draw deck');
                     }
-                });
+                }
 
                 this.selectFirstPlayer(this.player1);
 
@@ -61,12 +61,12 @@ describe('Heads on Spikes', function() {
 
             it('should discard a card from the opponent hand', function() {
                 // 1 card discarded, 2 drawn from draw phase
-                expect(this.player2Object.hand.size()).toBe(3);
+                expect(this.player2Object.hand.length).toBe(3);
             });
 
             it('should move the opponent character into the discard pile', function() {
-                expect(this.player2Object.discardPile.size()).toBe(1);
-                expect(this.player2Object.deadPile.size()).toBe(0);
+                expect(this.player2Object.discardPile.length).toBe(1);
+                expect(this.player2Object.deadPile.length).toBe(0);
             });
 
             it('should not gain power for the current player', function() {

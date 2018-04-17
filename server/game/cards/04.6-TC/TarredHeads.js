@@ -7,7 +7,7 @@ class TarredHeads extends DrawCard {
                 afterChallenge: event => (
                     event.challenge.challengeType === 'power' &&
                     event.challenge.winner === this.controller &&
-                    event.challenge.loser.hand.size() >= 1)
+                    event.challenge.loser.hand.length >= 1)
             },
             handler: context => {
                 let opponent = context.event.challenge.loser;

@@ -7,7 +7,7 @@ class MaegeMormont extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingMormont(event.challenge)
             },
             handler: context => {
-                let topCard = this.controller.drawDeck.first();
+                let topCard = this.controller.drawDeck[0];
                 let message = '{0} uses {1} to reveal {2} as the top card of their deck';
 
                 if(topCard.isFaction('stark') && this.controller.canDraw()) {

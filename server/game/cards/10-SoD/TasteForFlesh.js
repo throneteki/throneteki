@@ -19,8 +19,8 @@ class TasteForFlesh extends DrawCard {
     }
 
     isAttackingDirewolfOrHasAttachment(challenge) {
-        return this.controller.anyCardsInPlay(card => challenge.isAttacking(card) && 
-        (card.hasTrait('Direwolf') || card.attachments.any(attachment => attachment.hasTrait('Direwolf'))));
+        return this.controller.anyCardsInPlay(card => challenge.isAttacking(card) &&
+        (card.hasTrait('Direwolf') || card.attachments.some(attachment => attachment.hasTrait('Direwolf'))));
     }
 }
 

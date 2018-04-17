@@ -6,7 +6,7 @@ class QueensMen extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
-            chooseOpponent: opponent => !opponent.hand.isEmpty(),
+            chooseOpponent: opponent => opponent.hand.length !== 0,
             handler: context => {
                 this.game.addMessage('{0} uses {1} to look at {2}\'s hand', context.player, this, context.opponent);
                 this.game.promptForSelect(context.player, {

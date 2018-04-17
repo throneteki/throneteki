@@ -22,9 +22,9 @@ describe('pillage', function() {
             this.completeMarshalPhase();
 
             // Return cards to deck
-            this.player2Object.hand.each(card => {
+            for(const card of this.player2Object.hand) {
                 this.player2Object.moveCard(card, 'draw deck');
-            });
+            }
         });
 
         describe('when more than one pillage occurs', function() {
@@ -46,8 +46,8 @@ describe('pillage', function() {
             });
 
             it('should discard two cards', function() {
-                expect(this.player2Object.drawDeck.size()).toBe(0);
-                expect(this.player2Object.discardPile.size()).toBe(2);
+                expect(this.player2Object.drawDeck.length).toBe(0);
+                expect(this.player2Object.discardPile.length).toBe(2);
             });
         });
 

@@ -44,7 +44,7 @@ function rulesForBanner(faction, factionName) {
         rules: [
             {
                 message: 'Must contain 12 or more ' + factionName + ' cards',
-                condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.faction === faction)) >= 12
+                condition: deck => getDeckCount(deck.drawCards.filter(cardQuantity => cardQuantity.card.faction === faction)) >= 12
             }
         ]
     };
@@ -149,7 +149,7 @@ const agendaRules = {
         rules: [
             {
                 message: 'Must contain 12 or more Maester characters',
-                condition: deck => getDeckCount(_(deck.drawCards).filter(cardQuantity => cardQuantity.card.type === 'character' && hasTrait(cardQuantity.card, 'Maester'))) >= 12
+                condition: deck => getDeckCount(deck.drawCards.filter(cardQuantity => cardQuantity.card.type === 'character' && hasTrait(cardQuantity.card, 'Maester'))) >= 12
             }
         ]
     },
@@ -298,7 +298,7 @@ class DeckValidator {
         }
 
         let allAgendas = [deck.agenda].concat(deck.bannerCards || []);
-        return _.compact(_(allAgendas).map(agenda => agendaRules[agenda.code]));
+        return _.compact(allAgendas.map(agenda => agendaRules[agenda.code]));
     }
 
     combineValidationRules(validators) {

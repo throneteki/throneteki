@@ -6,7 +6,7 @@ class SeenInFlames extends DrawCard {
             title: 'Look at opponent\'s hand',
             phase: 'challenge',
             condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor') && card.getType() === 'character'),
-            chooseOpponent: opponent => !opponent.hand.isEmpty(),
+            chooseOpponent: opponent => opponent.hand.length !== 0,
             handler: context => {
                 this.game.addMessage('{0} plays {1} to look at {2}\'s hand', context.player, this, context.opponent);
                 this.game.promptForSelect(context.player, {

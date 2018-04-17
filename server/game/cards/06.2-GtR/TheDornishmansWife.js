@@ -38,7 +38,7 @@ class TheDornishmansWife extends DrawCard {
     }
 
     opponentHasMoreCardsInHand(opponent) {
-        return opponent.hand.size() > this.controller.hand.size();
+        return opponent.hand.length > this.controller.hand.length;
     }
 
     opponentControlsMoreCharacters(opponent) {

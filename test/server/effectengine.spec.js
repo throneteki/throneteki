@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const EffectEngine = require('../../server/game/effectengine.js');
 
 describe('EffectEngine', function() {
@@ -18,7 +16,7 @@ describe('EffectEngine', function() {
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'removeListener', 'getPlayers', 'queueSimpleStep']);
         this.gameSpy.getPlayers.and.returnValue([]);
         this.gameSpy.queueSimpleStep.and.callFake(func => func());
-        this.gameSpy.allCards = _([this.handCard, this.playAreaCard, this.discardedCard, this.drawCard, this.deadCard, this.activePlot, this.plotCard, this.revealedPlot, this.agendaCard, this.factionCard]);
+        this.gameSpy.allCards = [this.handCard, this.playAreaCard, this.discardedCard, this.drawCard, this.deadCard, this.activePlot, this.plotCard, this.revealedPlot, this.agendaCard, this.factionCard];
 
         this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
         this.effectSpy.isInActiveLocation.and.returnValue(true);

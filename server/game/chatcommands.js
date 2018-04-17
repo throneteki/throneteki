@@ -409,7 +409,7 @@ class ChatCommands {
 
     revealHand(player) {
         this.game.addAlert('danger',
-            '{0} uses the /reveal-hand command to reveal their hand as: {1}', player, player.hand.toArray());
+            '{0} uses the /reveal-hand command to reveal their hand as: {1}', player, player.hand);
     }
 
     getNumberOrDefault(string, defaultNumber) {

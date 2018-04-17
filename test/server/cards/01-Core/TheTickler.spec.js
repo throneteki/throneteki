@@ -22,9 +22,9 @@ describe('The Tickler', function() {
             this.selectFirstPlayer(this.player1);
 
             // Move remaining cards back to draw deck.
-            this.player2Object.hand.each(card => {
+            for(const card of this.player2Object.hand) {
                 this.player2Object.moveCard(card, 'draw deck');
-            });
+            }
 
             this.completeMarshalPhase();
             this.completeChallengesPhase();
@@ -35,14 +35,14 @@ describe('The Tickler', function() {
         });
 
         it('should discard the top card of the opponents deck', function() {
-            expect(this.player2Object.drawDeck.size()).toBe(0);
-            expect(this.player2Object.discardPile.size()).toBe(1);
+            expect(this.player2Object.drawDeck.length).toBe(0);
+            expect(this.player2Object.discardPile.length).toBe(1);
         });
 
         it('should allow the Tickler to discard a card of the same name in play', function() {
             this.player1.clickCard(this.roseroad);
 
-            expect(this.player2Object.discardPile.size()).toBe(2);
+            expect(this.player2Object.discardPile.length).toBe(2);
             expect(this.roseroad.location).toBe('discard pile');
         });
     });

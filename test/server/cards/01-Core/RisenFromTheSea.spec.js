@@ -69,7 +69,7 @@ describe('Risen from the Sea', function() {
             });
 
             it('should not attach the event to the character', function() {
-                expect(this.noAttachmentCharacter.attachments.size()).toBe(0);
+                expect(this.noAttachmentCharacter.attachments.length).toBe(0);
                 expect(this.event.location).toBe('discard pile');
             });
 

@@ -16,7 +16,7 @@ class FalseSpring extends PlotCard {
     proceedToNextStep() {
         if(this.remainingOpponents.length > 0) {
             let currentOpponent = this.remainingOpponents.shift();
-            let numToReveal = Math.min(currentOpponent.hand.size(), 3);
+            let numToReveal = Math.min(currentOpponent.hand.length, 3);
 
             this.game.promptForSelect(currentOpponent, {
                 activePromptTitle: `Select ${numToReveal} card(s)`,

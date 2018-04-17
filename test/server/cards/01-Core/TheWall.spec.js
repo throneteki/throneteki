@@ -19,8 +19,8 @@ describe('TheWall', function() {
 
                 this.completeSetup();
 
-                expect(this.wall1.dupes.size()).toBe(1);
-                expect(this.player1Object.cardsInPlay.size()).toBe(2);
+                expect(this.wall1.dupes.length).toBe(1);
+                expect(this.player1Object.cardsInPlay.length).toBe(2);
                 expect(this.character.getStrength()).toBe(2);
             });
         });

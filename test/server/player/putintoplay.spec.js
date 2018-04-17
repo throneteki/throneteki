@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const Player = require('../../../server/game/player.js');
 
 describe('Player', function() {
@@ -283,7 +281,7 @@ describe('Player', function() {
                 this.cardSpy.controller = this.opponent;
                 this.cardSpy.owner = this.opponent;
                 this.opponent.hand.push(this.cardSpy);
-                this.player.hand = _([]);
+                this.player.hand = [];
 
                 this.player.putIntoPlay(this.cardSpy, 'marshal');
             });
