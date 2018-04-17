@@ -408,11 +408,11 @@ class DeckEditor extends React.Component {
                             </div>
                         </div>
                     }
-                    <Typeahead label='Card' labelClass={ 'col-sm-3' } fieldClass='col-sm-4' labelKey={ 'label' } options={ Object.values(this.props.cards) }
+                    <Typeahead label='Card' labelClass={ 'col-sm-3 col-xs-2' } fieldClass='col-sm-4 col-xs-5' labelKey={ 'label' } options={ Object.values(this.props.cards) }
                         onChange={ this.addCardChange.bind(this) }>
-                        <Input name='numcards' type='text' label='Num' labelClass='col-sm-1' fieldClass='col-sm-2'
-                            value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) }>
-                            <div className='col-sm-1'>
+                        <Input name='numcards' type='text' label='Num' labelClass='col-xs-1 no-x-padding' fieldClass='col-xs-2'
+                            value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) } noGroup>
+                            <div className='col-xs-1 no-x-padding'>
                                 <button className='btn btn-primary' onClick={ this.onAddCard.bind(this) }>Add</button>
                             </div>
                         </Input>

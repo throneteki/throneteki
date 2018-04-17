@@ -8,9 +8,9 @@ class Input extends React.Component {
     }
 
     render() {
-        let label = this.props.label ? <label htmlFor={ this.props.name } className={ this.props.labelClass + ' control-label' }>{ this.props.label }</label> : null;
-        return (
-            <div className='form-group'>
+        const label = this.props.label ? <label htmlFor={ this.props.name } className={ this.props.labelClass + ' control-label' }>{ this.props.label }</label> : null;
+        const control = (
+            <div>
                 { label }
                 <div className={ this.props.fieldClass }>
                     <Typeahead ref='typeahead' options={ this.props.options } labelKey={ this.props.labelKey } emptyLabel={ this.props.emptyLabel }
@@ -22,6 +22,15 @@ class Input extends React.Component {
                 { this.props.children }
             </div>
         );
+
+        if(this.props.noGroup) {
+            return control;
+        }
+
+        return (
+            <div className='form-group'>
+                { control }
+            </div>);
     }
 }
 
@@ -38,6 +47,7 @@ Input.propTypes = {
     labelKey: PropTypes.string,
     minLength: PropTypes.number,
     name: PropTypes.string,
+    noGroup: PropTypes.bool,
     onChange: PropTypes.func,
     onInputChange: PropTypes.func,
     onKeyDown: PropTypes.func,
