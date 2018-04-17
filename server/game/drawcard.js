@@ -20,7 +20,7 @@ class DrawCard extends BaseCard {
         super(owner, cardData);
 
         this.dupes = [];
-        this.attachments = _([]);
+        this.attachments = [];
         this.icons = new ReferenceCountedSetProperty();
 
         for(let icon of this.getPrintedIcons()) {
@@ -62,7 +62,7 @@ class DrawCard extends BaseCard {
     createSnapshot() {
         let clone = new DrawCard(this.owner, this.cardData);
 
-        clone.attachments = _(this.attachments.map(attachment => attachment.createSnapshot()));
+        clone.attachments = this.attachments.map(attachment => attachment.createSnapshot());
         clone.blankCount = this.blankCount;
         clone.controller = this.controller;
         clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
@@ -337,7 +337,7 @@ class DrawCard extends BaseCard {
             return;
         }
 
-        this.attachments = _(this.attachments.reject(a => a === card));
+        this.attachments = this.attachments.filter(a => a !== card);
         this.dupes = this.dupes.filter(a => a !== card);
     }
 

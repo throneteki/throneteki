@@ -1102,9 +1102,9 @@ class Player extends Spectator {
         }
 
         if(card.location === 'play area') {
-            card.attachments.each(attachment => {
+            for(const attachment of card.attachments) {
                 this.removeAttachment(attachment, false);
-            });
+            }
 
             if(card.dupes.length !== 0) {
                 this.discardCards(card.dupes, false);

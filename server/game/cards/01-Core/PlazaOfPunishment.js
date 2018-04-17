@@ -8,7 +8,7 @@ class PlazaOfPunishment extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.size() === 0
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.length === 0
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({
