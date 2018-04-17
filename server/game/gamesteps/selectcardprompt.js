@@ -154,9 +154,7 @@ class SelectCardPrompt extends UiPrompt {
 
             // If unselecting this card makes other cards no longer selectable, then they need to be de-selected
             for(const remainingCard of this.selectedCards) {
-                if(!this.selector.canTarget(remainingCard, this.context, this.selectedCards) ||
-                !this.selector.checkForSingleController(this.selectedCards, remainingCard) ||
-                this.selector.wouldExceedLimit(this.selectedCards, remainingCard)) {
+                if(!this.selector.canTarget(remainingCard, this.context, this.selectedCards)) {
                     // toggle it to unselected
                     this.selectCard(remainingCard);
                 }
@@ -208,6 +206,7 @@ class SelectCardPrompt extends UiPrompt {
 
     clearSelection() {
         this.selectedCards = [];
+        this.context.selectedCards = [];
         this.choosingPlayer.clearSelectedCards();
         this.choosingPlayer.clearSelectableCards();
 

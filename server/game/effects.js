@@ -730,17 +730,7 @@ const Effects = {
             }
         };
     },
-    cannotTarget: function(predicate) {
-        let restriction = new CannotRestriction('target', predicate);
-        return {
-            apply: function(card) {
-                card.addAbilityRestriction(restriction);
-            },
-            unapply: function(card) {
-                card.removeAbilityRestriction(restriction);
-            }
-        };
-    },
+    cannotTarget: cannotEffect('target'),
     setMaxGoldGain: function(max) {
         return {
             apply: function(player) {
