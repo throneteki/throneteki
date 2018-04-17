@@ -62,7 +62,7 @@ class BaseCard {
             reserve: true
         };
         this.abilityRestrictions = [];
-        this.menu = _([]);
+        this.menu = [];
         this.events = new EventRegistrar(this.game, this);
 
         this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
@@ -389,12 +389,12 @@ class BaseCard {
     getMenu() {
         var menu = [];
 
-        if(this.menu.isEmpty()) {
+        if(this.menu.length === 0) {
             return undefined;
         }
 
         menu.push({ command: 'click', text: 'Select Card' });
-        menu = menu.concat(this.menu.value());
+        menu = menu.concat(this.menu);
 
         return menu;
     }

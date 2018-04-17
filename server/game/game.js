@@ -293,7 +293,7 @@ class Game extends EventEmitter {
     }
 
     cardHasMenuItem(card, menuItem) {
-        return card.menu && card.menu.any(m => {
+        return card.menu && card.menu.some(m => {
             return m.method === menuItem.method;
         });
     }
