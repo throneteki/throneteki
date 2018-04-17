@@ -1,9 +1,10 @@
 const CardReaction = require('../../../server/game/cardreaction.js');
 const Event = require('../../../server/game/event.js');
+const AbilityChoicePrompt = require('../../../server/game/gamesteps/AbilityChoicePrompt');
 
 describe('CardReaction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'removeListener', 'registerAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'queueStep', 'removeListener', 'registerAbility']);
         this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getType', 'isAnyBlank']);
         this.cardSpy.location = 'play area';
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
@@ -243,31 +244,12 @@ describe('CardReaction', function () {
                     },
                     handler: jasmine.createSpy('handler')
                 };
-                this.context.choice = 'default';
+                this.reaction = this.createReaction();
+                this.reaction.executeHandler(this.context);
             });
 
-            describe('when the choice is default', function () {
-                beforeEach(function() {
-                    this.reaction = this.createReaction();
-                    this.context.choice = 'default';
-                    this.reaction.executeHandler(this.context);
-                });
-
-                it('should call the handler', function() {
-                    expect(this.properties.handler).toHaveBeenCalled();
-                });
-            });
-
-            describe('when the choice is unconfigured', function() {
-                beforeEach(function() {
-                    this.reaction = this.createReaction();
-                    this.context.choice = 'Win the game';
-                    this.reaction.executeHandler(this.context);
-                });
-
-                it('should not call the handler', function() {
-                    expect(this.properties.handler).not.toHaveBeenCalled();
-                });
+            it('should call the handler', function() {
+                expect(this.properties.handler).toHaveBeenCalled();
             });
         });
 
@@ -283,35 +265,12 @@ describe('CardReaction', function () {
                         'Baz': jasmine.createSpy('handler3')
                     }
                 };
-                this.context.choice = 'Baz';
+                this.reaction = this.createReaction();
+                this.reaction.executeHandler(this.context);
             });
 
-            describe('when the choice is an existing choice', function () {
-                beforeEach(function() {
-                    this.reaction = this.createReaction();
-                    this.context.choice = 'Baz';
-                    this.reaction.executeHandler(this.context);
-                });
-
-                it('should call the appropriate handler', function() {
-                    expect(this.properties.choices['Foo']).not.toHaveBeenCalled();
-                    expect(this.properties.choices['Bar']).not.toHaveBeenCalled();
-                    expect(this.properties.choices['Baz']).toHaveBeenCalled();
-                });
-            });
-
-            describe('when the choice is unconfigured', function() {
-                beforeEach(function() {
-                    this.reaction = this.createReaction();
-                    this.context.choice = 'Win the game';
-                    this.reaction.executeHandler(this.context);
-                });
-
-                it('should not call any of the handler', function() {
-                    expect(this.properties.choices['Foo']).not.toHaveBeenCalled();
-                    expect(this.properties.choices['Bar']).not.toHaveBeenCalled();
-                    expect(this.properties.choices['Baz']).not.toHaveBeenCalled();
-                });
+            it('should call queue the ability choice prompt', function() {
+                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(AbilityChoicePrompt));
             });
         });
     });

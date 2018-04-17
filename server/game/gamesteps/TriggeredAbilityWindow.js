@@ -73,9 +73,10 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
     getAbilityButtonText(abilityChoice) {
         let title = abilityChoice.card.name;
+        let additionalTitle = abilityChoice.ability.getTitle(abilityChoice.context);
 
-        if(abilityChoice.text !== 'default') {
-            title += ' - ' + abilityChoice.text;
+        if(additionalTitle) {
+            title += ' - ' + additionalTitle;
         }
 
         if(!abilityChoice.ability.location.includes(abilityChoice.card.location)) {
@@ -122,7 +123,6 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             return false;
         }
 
-        choice.context.choice = choice.choice;
         this.resolveAbility(choice.ability, choice.context);
 
         // Always rotate player order without filtering, in case an ability is

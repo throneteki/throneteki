@@ -30,11 +30,10 @@ describe('TriggeredAbilityWindow', function() {
             return cardSpy;
         }
 
-        function createAbility(card, context, choices = [{ choice: 'default', text: 'default' }]) {
-            let ability = jasmine.createSpyObj('ability', ['createContext', 'getChoices', 'hasMax', 'meetsRequirements']);
+        function createAbility(card, context) {
+            let ability = jasmine.createSpyObj('ability', ['createContext', 'getTitle', 'hasMax', 'meetsRequirements']);
             ability.card = card;
             ability.createContext.and.returnValue(context);
-            ability.getChoices.and.returnValue(choices);
             ability.location = ['play area'];
             ability.meetsRequirements.and.returnValue(true);
             return ability;
@@ -42,10 +41,7 @@ describe('TriggeredAbilityWindow', function() {
 
         this.context1 = { context: 1, player: this.player1Spy, event: this.eventSpy };
         this.abilityCard1 = createCard({ card: 1, name: 'The Card', controller: this.player1Spy });
-        this.ability1Spy = createAbility(this.abilityCard1, this.context1, [
-            { choice: 'choice1', text: 'My Choice 1' },
-            { choice: 'choice2', text: 'My Choice 2' }
-        ]);
+        this.ability1Spy = createAbility(this.abilityCard1, this.context1);
 
         this.context2 = { context: 2, player: this.player1Spy, event: this.eventSpy };
         this.abilityCard2 = createCard({ card: 2, name: 'The Card 2', controller: this.player1Spy });
@@ -112,8 +108,7 @@ describe('TriggeredAbilityWindow', function() {
                         activePrompt: jasmine.objectContaining({
                             menuTitle: jasmine.any(String),
                             buttons: [
-                                jasmine.objectContaining({ text: 'The Card - My Choice 1', arg: jasmine.any(String), method: 'chooseAbility' }),
-                                jasmine.objectContaining({ text: 'The Card - My Choice 2', arg: jasmine.any(String), method: 'chooseAbility' }),
+                                jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseAbility' }),
                                 jasmine.objectContaining({ text: 'The Card 2', arg: jasmine.any(String), method: 'chooseAbility' }),
                                 jasmine.objectContaining({ text: 'Pass', method: 'pass' })
                             ]
@@ -128,7 +123,6 @@ describe('TriggeredAbilityWindow', function() {
 
             describe('and the ability has a maximum', function() {
                 beforeEach(function() {
-                    this.ability1Spy.getChoices.and.returnValue([{ choice: 'default', text: 'default' }]);
                     this.ability1Spy.hasMax.and.returnValue(true);
                     this.ability2Spy.hasMax.and.returnValue(true);
                 });
@@ -211,7 +205,7 @@ describe('TriggeredAbilityWindow', function() {
         describe('when the player select a choice they do not own', function() {
             beforeEach(function() {
                 // Choosing a player 2 ability
-                let choice = this.window.abilityChoices[3].id;
+                let choice = this.window.abilityChoices[2].id;
                 this.window.chooseAbility(this.player1Spy, choice);
             });
 
@@ -226,12 +220,8 @@ describe('TriggeredAbilityWindow', function() {
                 this.window.chooseAbility(this.player1Spy, choice);
             });
 
-            it('should update the ability context with the choice made', function() {
-                expect(this.context1.choice).toBe('choice2');
-            });
-
             it('should resolve the ability', function() {
-                expect(this.window.resolveAbility).toHaveBeenCalledWith(this.ability1Spy, this.context1);
+                expect(this.window.resolveAbility).toHaveBeenCalledWith(this.ability2Spy, this.context2);
             });
 
             it('should rotate the order of players to allow the next player pick next', function() {
