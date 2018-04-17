@@ -16,6 +16,7 @@ class DeckEditor extends React.Component {
         this.state = {
             bannerCards: [],
             cardList: '',
+            rookeryList: '',
             deckName: 'New Deck',
             drawCards: [],
             faction: props.factions && props.factions['baratheon'],
@@ -70,7 +71,8 @@ class DeckEditor extends React.Component {
             agenda: this.state.agenda,
             bannerCards: this.state.bannerCards,
             plotCards: this.state.plotCards,
-            drawCards: this.state.drawCards
+            drawCards: this.state.drawCards,
+            rookeryCards: this.state.rookeryCards
         };
 
         if(!this.props.restrictedList) {
@@ -193,6 +195,32 @@ class DeckEditor extends React.Component {
             this.addCard(cards, this.state.cardToAdd, parseInt(this.state.numberToAdd));
             this.setState({ cardList: cardList, drawCards: cards }, this.triggerDeckUpdated);
         }
+    }
+
+    onRookeryListChange(event) {
+        let split = event.target.value.split('\n');
+        let rookeryCards = [];
+
+        for(const line of split) {
+            let trimmedLine = line.trim();
+            let index = 2;
+
+            let num = parseInt(trimmedLine[0]);
+            if(isNaN(num)) {
+                continue;
+            }
+
+            if(line[1] === 'x') {
+                index++;
+            }
+
+            let card = this.lookupCard(trimmedLine, index);
+            if(card) {
+                this.addCard(rookeryCards, card, num);
+            }
+        }
+
+        this.setState({ rookeryList: event.target.value, rookeryCards: rookeryCards }, this.triggerDeckUpdated);
     }
 
     onCardListChange(event) {
@@ -419,6 +447,9 @@ class DeckEditor extends React.Component {
                     </Typeahead>
                     <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.cardList }
                         onChange={ this.onCardListChange.bind(this) } />
+                    <TextArea label='Rookery' labelClass='col-sm-3' fieldClass='col-sm-9' rows='4' value={ this.state.rookeryList }
+                        onChange={ this.onRookeryListChange.bind(this) } />
+
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
                             <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save</button>
