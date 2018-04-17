@@ -175,7 +175,7 @@ describe('Player', function() {
             beforeEach(function() {
                 // Put into play with the wrong location.
                 this.card.location = 'discard pile';
-                this.player.cardsInPlay = _([this.card]);
+                this.player.cardsInPlay = [this.card];
 
                 this.player.moveCard(this.card, 'play area');
             });

@@ -93,9 +93,9 @@ class Player extends Spectator {
     }
 
     removeCardByUuid(list, uuid) {
-        return _(list.reject(card => {
-            return card.uuid === uuid;
-        }));
+        return list.filter(card => {
+            return card.uuid !== uuid;
+        });
     }
 
     findCardByName(list, name) {
@@ -380,10 +380,10 @@ class Player extends Spectator {
         this.cardsInPlay = this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card));
 
         this.resetCardPile(this.discardPile);
-        this.discardPile = _([]);
+        this.discardPile = [];
 
         this.resetCardPile(this.deadPile);
-        this.deadPile = _([]);
+        this.deadPile = [];
     }
 
     initDrawDeck() {
@@ -398,11 +398,11 @@ class Player extends Spectator {
     prepareDecks() {
         var deck = new Deck(this.deck);
         var preparedDeck = deck.prepare(this);
-        this.plotDeck = _(preparedDeck.plotCards);
+        this.plotDeck = preparedDeck.plotCards;
         this.agenda = preparedDeck.agenda;
         this.faction = preparedDeck.faction;
         this.drawDeck = preparedDeck.drawCards;
-        this.bannerCards = _(preparedDeck.bannerCards);
+        this.bannerCards = preparedDeck.bannerCards;
         this.preparedDeck = preparedDeck;
     }
 
@@ -825,7 +825,7 @@ class Player extends Spectator {
             case 'play area':
                 return this.cardsInPlay;
             case 'active plot':
-                return _([]);
+                return [];
             case 'plot deck':
                 return this.plotDeck;
             case 'revealed plots':

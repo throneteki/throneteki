@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const TheRainsOfCastamere = require('../../../../server/game/cards/05-LoCR/TheRainsOfCastamere.js');
 const RevealPlots = require('../../../../server/game/gamesteps/revealplots.js');
 
@@ -128,7 +126,7 @@ describe('The Rains of Castamere', function() {
 
     describe('trigger()', function() {
         beforeEach(function() {
-            this.player.schemePlots = _([this.scheme1, this.scheme2]);
+            this.player.schemePlots = [this.scheme1, this.scheme2];
             this.context = { player: this.player, target: this.scheme1 };
         });
 

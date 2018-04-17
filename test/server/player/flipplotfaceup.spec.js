@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 
 describe('Player', function() {
@@ -20,7 +19,7 @@ describe('Player', function() {
         this.anotherPlotSpy.owner = this.player;
 
         this.player.selectedPlot = this.selectedPlotSpy;
-        this.player.plotDeck = _([this.selectedPlotSpy, this.anotherPlotSpy]);
+        this.player.plotDeck = [this.selectedPlotSpy, this.anotherPlotSpy];
     });
 
     describe('flipPlotFaceup()', function() {

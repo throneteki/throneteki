@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const SetupCardAction = require('../../server/game/setupcardaction');
 
 describe('SetupCardAction', function () {
@@ -19,7 +17,7 @@ describe('SetupCardAction', function () {
         beforeEach(function() {
             this.gameSpy.currentPhase = 'setup';
             this.playerSpy.readyToStart = true;
-            this.playerSpy.hand = _([this.cardSpy]);
+            this.playerSpy.hand = [this.cardSpy];
             this.cardSpy.getType.and.returnValue('character');
         });
 
@@ -41,7 +39,7 @@ describe('SetupCardAction', function () {
 
         describe('when the card is not in hand', function() {
             beforeEach(function() {
-                this.playerSpy.hand = _([]);
+                this.playerSpy.hand = [];
             });
 
             it('should return false', function() {

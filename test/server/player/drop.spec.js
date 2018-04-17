@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 
 describe('Player', () => {
@@ -17,8 +16,8 @@ describe('Player', () => {
             this.cardSpy = jasmine.createSpyObj('card', ['getType', 'leavesPlay', 'moveTo']);
             this.cardSpy.controller = this.cardSpy.owner = this.player;
             this.cardSpy.getType.and.returnValue('character');
-            this.cardSpy.attachments = _([]);
-            this.cardSpy.dupes = _([]);
+            this.cardSpy.attachments = [];
+            this.cardSpy.dupes = [];
         });
 
         describe('when no card is pased', function() {

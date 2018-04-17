@@ -1,7 +1,5 @@
 const AbilityTarget = require('../../server/game/AbilityTarget.js');
 
-const _ = require('underscore');
-
 describe('AbilityTarget', function () {
     beforeEach(function () {
         this.cardCondition = jasmine.createSpy('cardCondition');
@@ -20,7 +18,7 @@ describe('AbilityTarget', function () {
             this.card2 = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
             this.card2.allowGameAction.and.returnValue(true);
             this.card2.getType.and.returnValue('location');
-            let game = { allCards: _([this.card1, this.card2]) };
+            let game = { allCards: [this.card1, this.card2] };
             this.context = { game: game };
         });
 
@@ -61,7 +59,7 @@ describe('AbilityTarget', function () {
     describe('resolve()', function() {
         beforeEach(function() {
             this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect', 'addAlert']);
-            this.gameSpy.allCards = _([]);
+            this.gameSpy.allCards = [];
             this.player = { player: 1 };
             this.source = { source: 1 };
 
