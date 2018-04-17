@@ -41,7 +41,7 @@ class TheConclave extends AgendaCard {
             return;
         }
 
-        let top7Cards = this.controller.drawDeck.sliace(7);
+        let top7Cards = this.controller.drawDeck.slice(7);
         _.each(top7Cards, card => {
             this.controller.moveCard(card, 'conclave');
         });
