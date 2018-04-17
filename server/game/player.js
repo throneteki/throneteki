@@ -25,7 +25,7 @@ class Player extends Spectator {
         this.beingPlayed = [];
         this.drawDeck = [];
         this.plotDeck = [];
-        this.plotDiscard = _([]);
+        this.plotDiscard = [];
         this.hand = _([]);
         this.cardsInPlay = _([]);
         this.deadPile = _([]);
@@ -194,7 +194,7 @@ class Player extends Spectator {
     }
 
     getNumberOfUsedPlots() {
-        return this.plotDiscard.size() + this.usedPlotsModifier;
+        return this.plotDiscard.length + this.usedPlotsModifier;
     }
 
     addGoldSource(source) {
@@ -684,9 +684,9 @@ class Player extends Spectator {
     recyclePlots() {
         const plots = this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
         if(plots.length === 0) {
-            this.plotDiscard.each(plot => {
+            for(const plot of this.plotDiscard) {
                 this.moveCard(plot, 'plot deck');
-            });
+            }
 
             this.game.raiseEvent('onPlotsRecycled', { player: this });
         }

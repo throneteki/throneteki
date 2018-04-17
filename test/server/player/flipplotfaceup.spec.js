@@ -81,8 +81,8 @@ describe('Player', function() {
         describe('when there are no plots left', function() {
             beforeEach(function() {
                 this.player.activePlot = this.selectedPlotSpy;
-                this.player.plotDeck = _([]);
-                this.player.plotDiscard = _([this.anotherPlotSpy]);
+                this.player.plotDeck = [];
+                this.player.plotDiscard = [this.anotherPlotSpy];
                 this.anotherPlotSpy.location = 'revealed plots';
 
                 this.player.recyclePlots();
@@ -102,8 +102,8 @@ describe('Player', function() {
 
         describe('when there are plots left', function() {
             beforeEach(function() {
-                this.player.plotDeck = _([this.selectedPlotSpy]);
-                this.player.plotDiscard = _([this.anotherPlotSpy]);
+                this.player.plotDeck = [this.selectedPlotSpy];
+                this.player.plotDiscard = [this.anotherPlotSpy];
                 this.anotherPlotSpy.location = 'revealed plots';
 
                 this.player.recyclePlots();
