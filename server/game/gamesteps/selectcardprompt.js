@@ -206,7 +206,10 @@ class SelectCardPrompt extends UiPrompt {
 
     clearSelection() {
         this.selectedCards = [];
-        this.context.selectedCards = [];
+        if(this.context) {
+            this.context.selectedCards = [];
+        }
+
         this.choosingPlayer.clearSelectedCards();
         this.choosingPlayer.clearSelectableCards();
 
