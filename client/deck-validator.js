@@ -283,7 +283,22 @@ class DeckValidator {
         };
         let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
         let agendaRules = this.getAgendaRules(deck);
-        return this.combineValidationRules([standardRules, factionRules].concat(agendaRules));
+        let rookeryRules = this.getRookeryRules(deck);
+        return this.combineValidationRules([standardRules, factionRules, rookeryRules].concat(agendaRules));
+    }
+
+    getRookeryRules() {
+        return {
+            mayInclude: () => true,
+            rules: [
+                {
+                    message: 'More than 2 plot cards in rookery',
+                    condition: deck => {
+                        return deck.rookeryCards && deck.rookeryCards.filter(card => card.card.type === 'plot').length <= 2;
+                    }
+                }
+            ]
+        };
     }
 
     getFactionRules(faction) {
