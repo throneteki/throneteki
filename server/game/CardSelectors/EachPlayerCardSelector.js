@@ -8,7 +8,7 @@ class EachPlayerCardSelector extends BaseCardSelector {
     }
 
     canTarget(card, context, selectedCards) {
-        return super.canTarget(card, context) && !this.isPlayerSatisfied(card, selectedCards);
+        return super.canTarget(card, context, selectedCards) && !this.isPlayerSatisfied(card, selectedCards);
     }
 
     isPlayerSatisfied(card, selectedCards) {
@@ -17,7 +17,7 @@ class EachPlayerCardSelector extends BaseCardSelector {
     }
 
     defaultActivePromptTitle() {
-        return this.numCardsPerPlayer === 1 ? 'Select a character controlled by each player' : 
+        return this.numCardsPerPlayer === 1 ? 'Select a character controlled by each player' :
             `Select ${this.numCardsPerPlayer} characters controlled by each player`;
     }
 

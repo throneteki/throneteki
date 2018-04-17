@@ -8,8 +8,8 @@ class MaxStatCardSelector extends BaseCardSelector {
         this.maxStat = properties.maxStat;
     }
 
-    canTarget(card, context) {
-        return super.canTarget(card, context) && this.cardStat(card) <= this.maxStat();
+    canTarget(card, context, selectedCards) {
+        return super.canTarget(card, context, selectedCards) && this.cardStat(card) <= this.maxStat();
     }
 
     wouldExceedLimit(selectedCards, card) {

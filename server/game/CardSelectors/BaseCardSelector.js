@@ -37,12 +37,18 @@ class BaseCardSelector {
      * Returns whether the specified card can be targeted.
      * @param {BaseCard} card
      * @param {AbilityContext} context
+     * @param {Array} selectedCards
      * @returns {boolean}
      */
-    canTarget(card, context) {
+    canTarget(card, context, selectedCards) {
+        if(context) {
+            context.selectedCards = selectedCards || [];
+        }
+
         return (
             this.cardType.includes(card.getType()) &&
             this.cardCondition(card, context) &&
+            card.allowGameAction('target', context) &&
             card.allowGameAction(this.gameAction)
         );
     }
@@ -149,8 +155,8 @@ class BaseCardSelector {
     /**
      * Flips the specified (facedown) card faceup to the selecting player if the
      * revealTargets flag is set.
-     * @param {BaseCard} card 
-     * @param {Player} player 
+     * @param {BaseCard} card
+     * @param {Player} player
      */
     showFacedownTargetTo(card, player) {
         if(this.revealTargets && card.getType() !== 'plot') {

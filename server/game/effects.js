@@ -732,6 +732,7 @@ const Effects = {
             }
         };
     },
+    cannotTarget: cannotEffect('target'),
     setMaxGoldGain: function(max) {
         return {
             apply: function(player) {
