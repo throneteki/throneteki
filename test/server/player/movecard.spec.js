@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 const DrawCard = require('../../../server/game/drawcard.js');
 
@@ -155,7 +154,7 @@ describe('Player', function() {
 
             it('should add the card to the bottom of the deck when the option is passed', function() {
                 this.player.moveCard(this.card, 'draw deck', { bottom: true });
-                expect(this.player.drawDeck.last()).toBe(this.card);
+                expect(this.player.drawDeck.slice(-1)[0]).toBe(this.card);
             });
 
             it('should be able to move a card from top to bottom of the deck', function() {
@@ -163,7 +162,7 @@ describe('Player', function() {
                 this.card.location = 'draw deck';
                 this.player.moveCard(this.card, 'draw deck', { bottom: true });
                 expect(this.player.drawDeck.length).toBe(4);
-                expect(this.player.drawDeck.last()).toBe(this.card);
+                expect(this.player.drawDeck.slice(-1)[0]).toBe(this.card);
             });
         });
 

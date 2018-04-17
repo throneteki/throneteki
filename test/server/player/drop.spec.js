@@ -276,7 +276,7 @@ describe('Player', () => {
 
                 it('should put the cards in the draw deck in the correct order', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.first(2)).toEqual([this.cardSpy2, this.cardSpy]);
+                    expect(this.player.drawDeck.slice(0, 2)).toEqual([this.cardSpy2, this.cardSpy]);
                 });
             });
         });

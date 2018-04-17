@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const KeepOrMulliganPrompt = require('./setup/keepormulliganprompt.js');
@@ -22,32 +21,33 @@ class SetupPhase extends Phase {
 
     prepareDecks() {
         this.game.raiseEvent('onDecksPrepared');
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             if(player.agenda) {
                 player.agenda.applyPersistentEffects();
             }
-        });
-        for(const card of this.game.allCard) {
+        }
+
+        for(const card of this.game.allCards) {
             card.applyAnyLocationPersistentEffects();
         }
     }
 
     drawSetupHand() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.drawSetupHand();
-        });
+        }
     }
 
     startGame() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.startGame();
-        });
+        }
     }
 
     setupDone() {
-        _.each(this.game.getPlayers(), p => {
-            p.setupDone();
-        });
+        for(const player of this.game.getPlayers()) {
+            player.setupDone();
+        }
     }
 }
 

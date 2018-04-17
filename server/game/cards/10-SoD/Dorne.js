@@ -11,7 +11,7 @@ class Dorne extends DrawCard {
                 afterChallenge: event => event.challenge.loser === this.controller && this.controller.drawDeck.length >= 2
             },
             handler: () => {
-                this.top2Cards = this.controller.drawDeck.slice(2);
+                this.top2Cards = this.controller.drawDeck.slice(0, 2);
 
                 let buttons = this.top2Cards.map(card => {
                     return { method: 'cardSelected', card: card, mapCard: true };

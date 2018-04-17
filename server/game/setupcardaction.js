@@ -20,7 +20,7 @@ class SetupCardAction extends BaseAbility {
         return (
             context.player.readyToStart &&
             context.game.currentPhase === 'setup' &&
-            context.player.hand.contains(context.source) &&
+            context.player.hand.includes(context.source) &&
             context.source.getType() !== 'event'
         );
     }

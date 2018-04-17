@@ -36,7 +36,7 @@ class Treaty extends AgendaCard {
     onDecksPrepared() {
         let factionsInDecks = [];
 
-        for(const card of this.game.allCard) {
+        for(const card of this.game.allCards) {
             if(card.owner === this.owner && !factionsInDecks.includes(card.getPrintedFaction())) {
                 factionsInDecks.push(card.getPrintedFaction());
             }

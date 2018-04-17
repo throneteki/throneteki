@@ -75,13 +75,13 @@ class Player extends Spectator {
     }
 
     isCardUuidInList(list, card) {
-        return list.any(c => {
+        return list.some(c => {
             return c.uuid === card.uuid;
         });
     }
 
     isCardNameInList(list, card) {
-        return list.any(c => {
+        return list.some(c => {
             return c.name === card.name;
         });
     }
@@ -122,7 +122,7 @@ class Player extends Spectator {
 
         var cardsToReturn = [];
 
-        cardList.each(card => {
+        for(let card of cardList) {
             if(predicate(card)) {
                 cardsToReturn.push(card);
             }
@@ -130,9 +130,7 @@ class Player extends Spectator {
             if(card.attachments) {
                 cardsToReturn = cardsToReturn.concat(card.attachments.filter(predicate));
             }
-
-            return cardsToReturn;
-        });
+        }
 
         return cardsToReturn;
     }
@@ -245,7 +243,7 @@ class Player extends Spectator {
             numCards = 0;
         }
 
-        let cards = this.drawDeck.slice(numCards);
+        let cards = this.drawDeck.slice(0, numCards);
 
         for(const card of cards) {
             this.moveCard(card, 'hand');
@@ -264,16 +262,16 @@ class Player extends Spectator {
         return cards;
     }
 
-    searchDrawDeck(limit, predicate) {
+    searchDrawDeck(limit, predicate = () => true) {
         let cards = this.drawDeck;
 
         if(_.isFunction(limit)) {
             predicate = limit;
         } else {
             if(limit > 0) {
-                cards = this.drawDeck.slice(limit);
+                cards = this.drawDeck.slice(0, limit);
             } else {
-                cards = this.drawDeck.slice(-limit);
+                cards = this.drawDeck.slice(limit);
             }
         }
 
@@ -287,7 +285,7 @@ class Player extends Spectator {
     discardFromDraw(number, callback = () => true) {
         number = Math.min(number, this.drawDeck.length);
 
-        var cards = this.drawDeck.slice(number);
+        var cards = this.drawDeck.slice(0, number);
         this.discardCards(cards, false, discarded => {
             callback(discarded);
             if(this.drawDeck.length === 0) {
@@ -364,12 +362,12 @@ class Player extends Spectator {
     }
 
     resetCardPile(pile) {
-        pile.each(card => {
+        for(const card of pile) {
             if(pile !== this.cardsInPlay || !this.cardsInPlayBeforeSetup.includes(card)) {
                 card.moveTo('draw deck');
                 this.drawDeck.push(card);
             }
-        });
+        }
     }
 
     resetDrawDeck() {
@@ -636,7 +634,7 @@ class Player extends Spectator {
 
             if(!card.isUnique()) {
                 processedCards.push(card);
-                return;
+                continue;
             }
 
             let duplicate = this.findCardByName(processedCards, card.name);
@@ -1097,7 +1095,7 @@ class Player extends Spectator {
 
         let targetPile = this.getSourceList(targetLocation);
 
-        if(!targetPile || targetPile.contains(card)) {
+        if(!targetPile || targetPile.includes(card)) {
             return;
         }
 

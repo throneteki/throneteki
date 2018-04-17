@@ -8,7 +8,7 @@ class LordRenlysRide extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
-                let topDeadCharacter = this.controller.deadPile.last();
+                let topDeadCharacter = this.controller.deadPile.slice(-1)[0];
                 let strBoost = 0;
 
                 if(topDeadCharacter) {
