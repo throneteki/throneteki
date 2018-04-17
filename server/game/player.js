@@ -1106,8 +1106,8 @@ class Player extends Spectator {
                 this.removeAttachment(attachment, false);
             });
 
-            if(!card.dupes.isEmpty()) {
-                this.discardCards(card.dupes.toArray(), false);
+            if(card.dupes.length !== 0) {
+                this.discardCards(card.dupes, false);
             }
         }
 

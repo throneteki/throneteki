@@ -39,7 +39,7 @@ describe('marshal phase', function() {
 
                 this.player1.clickPrompt('Arya Stark');
 
-                expect(this.arya.dupes.size()).toBe(1);
+                expect(this.arya.dupes.length).toBe(1);
             });
 
             it('should allow reducers to reduce cost', function() {
@@ -185,7 +185,7 @@ describe('marshal phase', function() {
                 this.player1.clickCard(this.player1CrownDupe);
 
                 expect(this.player1).not.toHavePrompt('Select target for attachment');
-                expect(this.player1Crown.dupes.pluck('uuid')).toContain(this.player1CrownDupe.uuid);
+                expect(this.player1Crown.dupes.map(card => card.uuid)).toContain(this.player1CrownDupe.uuid);
             });
 
             describe('when the opponent tries to marshal the same attachment', function() {
@@ -196,7 +196,7 @@ describe('marshal phase', function() {
                 });
 
                 it('should not marshal it as a duplicate for player 1\'s attachment', function() {
-                    expect(this.player1Crown.dupes.pluck('uuid')).not.toContain(this.player2Crown.uuid);
+                    expect(this.player1Crown.dupes.map(card => card.uuid)).not.toContain(this.player2Crown.uuid);
                 });
 
                 it('should allow it to be marshalled as normal', function() {

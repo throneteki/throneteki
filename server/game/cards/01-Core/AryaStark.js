@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class AryaStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.dupes.size() >= 1,
+            condition: () => this.dupes.length >= 1,
             match: this,
             effect: ability.effects.addIcon('military')
         });

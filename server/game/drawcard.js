@@ -19,7 +19,7 @@ class DrawCard extends BaseCard {
     constructor(owner, cardData) {
         super(owner, cardData);
 
-        this.dupes = _([]);
+        this.dupes = [];
         this.attachments = _([]);
         this.icons = new ReferenceCountedSetProperty();
 
@@ -65,7 +65,7 @@ class DrawCard extends BaseCard {
         clone.attachments = _(this.attachments.map(attachment => attachment.createSnapshot()));
         clone.blankCount = this.blankCount;
         clone.controller = this.controller;
-        clone.dupes = _(this.dupes.map(dupe => dupe.createSnapshot()));
+        clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
         clone.factions = Object.assign({}, this.factions);
         clone.icons = this.icons.clone();
         clone.keywords = this.keywords.clone();
@@ -97,16 +97,16 @@ class DrawCard extends BaseCard {
         var firstDupe = undefined;
 
         if(!force) {
-            firstDupe = _.first(this.dupes.filter(dupe => {
+            firstDupe = this.dupes.filter(dupe => {
                 return dupe.owner === this.controller;
-            }));
+            })[0];
         } else {
-            firstDupe = this.dupes.first();
+            firstDupe = this.dupes[0]
         }
 
-        this.dupes = _(this.dupes.reject(dupe => {
-            return dupe === firstDupe;
-        }));
+        this.dupes = this.dupes.filter(dupe => {
+            return dupe !== firstDupe;
+        });
 
         return firstDupe;
     }
@@ -338,7 +338,7 @@ class DrawCard extends BaseCard {
         }
 
         this.attachments = _(this.attachments.reject(a => a === card));
-        this.dupes = _(this.dupes.reject(a => a === card));
+        this.dupes = this.dupes.filter(a => a !== card);
     }
 
     getPlayActions() {
@@ -442,7 +442,7 @@ class DrawCard extends BaseCard {
                 return attachment.getSummary(activePlayer, hideWhenFaceup);
             }),
             dupes: this.dupes.map(dupe => {
-                if(dupe.dupes.size() !== 0) {
+                if(dupe.dupes.length !== 0) {
                     throw new Error('A dupe should not have dupes! ' + dupe.name);
                 }
 

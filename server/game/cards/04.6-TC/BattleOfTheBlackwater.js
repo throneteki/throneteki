@@ -19,8 +19,8 @@ class BattleOfTheBlackwater extends PlotCard {
         // of the card is that you discard each duplicate you and your opponent
         // control, not discarding the dupes on cards you or the opponent
         // control. But for 2 player, discarding each dupe is fine.
-        let characters = player.filterCardsInPlay(card => card.dupes.size() > 0);
-        let dupes = characters.reduce((dupes, card) => dupes.concat(card.dupes.toArray()), []);
+        let characters = player.filterCardsInPlay(card => card.dupes.length > 0);
+        let dupes = characters.reduce((dupes, card) => dupes.concat(card.dupes, []);
         player.discardCards(dupes, false);
     }
 }

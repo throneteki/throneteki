@@ -56,11 +56,13 @@ class BaseCard {
             initiative: 0,
             reserve: 0
         };
+
         this.canProvidePlotModifier = {
             gold: true,
             initiative: true,
             reserve: true
         };
+
         this.abilityRestrictions = [];
         this.menu = [];
         this.events = new EventRegistrar(this.game, this);
@@ -70,6 +72,7 @@ class BaseCard {
         for(let trait of cardData.traits || []) {
             this.addTrait(trait);
         }
+
         this.setupCardAbilities(AbilityDsl);
 
         this.factions = {};
