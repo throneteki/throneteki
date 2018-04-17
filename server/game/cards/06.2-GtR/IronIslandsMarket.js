@@ -17,7 +17,7 @@ class IronIslandsMarket extends DrawCard {
 
     opponentDiscardPileHas8() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.discardPile.size() >= 8);
+        return opponents.some(opponent => opponent.discardPile.length >= 8);
     }
 }
 

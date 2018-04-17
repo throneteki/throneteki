@@ -39,7 +39,7 @@ describe('Crone of Vaes Dothrak', function() {
                     this.player1.clickPrompt('Crone of Vaes Dothrak');
                     this.player1.clickCard('Crone of Vaes Dothrak', 'play area');
 
-                    expect(this.player2Object.discardPile.size()).toBe(0);
+                    expect(this.player2Object.discardPile.length).toBe(0);
                     expect(this.player2Object.deadPile.length).toBe(1);
                 });
             });
@@ -60,7 +60,7 @@ describe('Crone of Vaes Dothrak', function() {
 
                 it('should move the opponent character into the discard pile', function() {
                     expect(this.player1).not.toHavePromptButton('Crone of Vaes Dothrak');
-                    expect(this.player2Object.discardPile.size()).toBe(1);
+                    expect(this.player2Object.discardPile.length).toBe(1);
                     expect(this.player2Object.deadPile.length).toBe(0);
                 });
             });
@@ -85,7 +85,7 @@ describe('Crone of Vaes Dothrak', function() {
                     this.player1.clickPrompt('Crone of Vaes Dothrak');
                     this.player1.clickCard('Braided Warrior', 'play area');
 
-                    expect(this.player2Object.discardPile.size()).toBe(0);
+                    expect(this.player2Object.discardPile.length).toBe(0);
                     expect(this.player2Object.deadPile.length).toBe(1);
                 });
             });
@@ -106,7 +106,7 @@ describe('Crone of Vaes Dothrak', function() {
 
                 it('should move the opponent character into the discard pile', function() {
                     expect(this.player1).not.toHavePromptButton('Crone of Vaes Dothrak');
-                    expect(this.player2Object.discardPile.size()).toBe(1);
+                    expect(this.player2Object.discardPile.length).toBe(1);
                     expect(this.player2Object.deadPile.length).toBe(0);
                 });
             });

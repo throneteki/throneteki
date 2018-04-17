@@ -36,7 +36,7 @@ describe('Heads on Spikes', function() {
             });
 
             it('should move the opponent character into the dead pile', function() {
-                expect(this.player2Object.discardPile.size()).toBe(0);
+                expect(this.player2Object.discardPile.length).toBe(0);
                 expect(this.player2Object.deadPile.length).toBe(1);
             });
 
@@ -65,7 +65,7 @@ describe('Heads on Spikes', function() {
             });
 
             it('should move the opponent character into the discard pile', function() {
-                expect(this.player2Object.discardPile.size()).toBe(1);
+                expect(this.player2Object.discardPile.length).toBe(1);
                 expect(this.player2Object.deadPile.length).toBe(0);
             });
 

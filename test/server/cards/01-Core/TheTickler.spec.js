@@ -36,13 +36,13 @@ describe('The Tickler', function() {
 
         it('should discard the top card of the opponents deck', function() {
             expect(this.player2Object.drawDeck.length).toBe(0);
-            expect(this.player2Object.discardPile.size()).toBe(1);
+            expect(this.player2Object.discardPile.length).toBe(1);
         });
 
         it('should allow the Tickler to discard a card of the same name in play', function() {
             this.player1.clickCard(this.roseroad);
 
-            expect(this.player2Object.discardPile.size()).toBe(2);
+            expect(this.player2Object.discardPile.length).toBe(2);
             expect(this.roseroad.location).toBe('discard pile');
         });
     });

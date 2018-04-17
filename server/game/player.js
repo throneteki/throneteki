@@ -29,11 +29,11 @@ class Player extends Spectator {
         this.hand = [];
         this.cardsInPlay = [];
         this.deadPile = [];
-        this.discardPile = _([]);
-        this.outOfGamePile = _([]);
+        this.discardPile = [];
+        this.outOfGamePile = [];
 
         // Agenda specific piles
-        this.conclavePile = _([]);
+        this.conclavePile = [];
 
         this.faction = new DrawCard(this, {});
 
@@ -1309,7 +1309,7 @@ class Player extends Spectator {
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
-        let fullDiscardPile = this.discardPile.toArray().concat(this.beingPlayed);
+        let fullDiscardPile = this.discardPile.concat(this.beingPlayed);
 
         let plots = [];
 

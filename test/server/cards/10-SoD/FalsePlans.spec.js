@@ -32,7 +32,7 @@ describe('False Plans', function() {
 
             it('should not activate', function() {
                 expect(this.player1Object.hand.length).toBe(0);
-                expect(this.player1Object.discardPile.size()).toBe(1);
+                expect(this.player1Object.discardPile.length).toBe(1);
                 expect(this.player1).not.toHavePromptButton('False Plans');
             });
         });
@@ -51,7 +51,7 @@ describe('False Plans', function() {
             });
 
             it('should discard 2 cards from the opponent', function() {
-                expect(this.player2Object.discardPile.size()).toBe(2);
+                expect(this.player2Object.discardPile.length).toBe(2);
             });
 
             it('should not cost anything', function() {
@@ -75,7 +75,7 @@ describe('False Plans', function() {
 
             it('should not prompt for False Plans', function() {
                 expect(this.player1).not.toHavePromptButton('False Plans');
-                expect(this.player1Object.discardPile.size()).toBe(1);
+                expect(this.player1Object.discardPile.length).toBe(1);
             });
         });
     });

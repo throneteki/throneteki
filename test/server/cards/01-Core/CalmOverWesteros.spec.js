@@ -59,7 +59,7 @@ describe('Calm Over Westeros', function() {
             });
 
             it('should apply that claim as normal', function() {
-                expect(this.player1Object.discardPile.size()).toBe(1);
+                expect(this.player1Object.discardPile.length).toBe(1);
             });
         });
     });

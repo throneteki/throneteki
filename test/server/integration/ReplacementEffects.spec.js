@@ -88,7 +88,7 @@ describe('replacement effects', function() {
             it('should replace the original effect', function() {
                 // Vengeance for Elia is in discard but no other card is discarded
                 expect(this.player2Object.hand.length).toBe(1);
-                expect(this.player2Object.discardPile.size()).toBe(1);
+                expect(this.player2Object.discardPile.length).toBe(1);
             });
 
             it('should not use the first replacement', function() {
@@ -99,7 +99,7 @@ describe('replacement effects', function() {
             it('should use the final replacement', function() {
                 // Vengeance for Elia discards 1 card from player 1.
                 expect(this.player1Object.hand.length).toBe(0);
-                expect(this.player1Object.discardPile.size()).toBe(1);
+                expect(this.player1Object.discardPile.length).toBe(1);
             });
         });
     });
