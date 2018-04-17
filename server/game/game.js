@@ -234,9 +234,9 @@ class Game extends EventEmitter {
     }
 
     selectPlot(player, plot) {
-        player.plotDeck.each(p => {
+        for(const p of player.plotDeck) {
             p.selected = false;
-        });
+        }
 
         plot.selected = true;
     }

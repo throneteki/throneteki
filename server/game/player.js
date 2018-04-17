@@ -24,7 +24,7 @@ class Player extends Spectator {
 
         this.beingPlayed = [];
         this.drawDeck = [];
-        this.plotDeck = _([]);
+        this.plotDeck = [];
         this.plotDiscard = _([]);
         this.hand = _([]);
         this.cardsInPlay = _([]);
@@ -1316,7 +1316,7 @@ class Player extends Spectator {
 
         // Rains
         if(this.agenda && this.agenda.code === '05045') {
-            for(const plot of this.plotDeck.value()) {
+            for(const plot of this.plotDeck) {
                 let plotSummary = plot.getSummary(activePlayer, true);
                 if(plot.hasTrait('scheme')) {
                     plotSummary.group = 'Scheme';
@@ -1352,7 +1352,7 @@ class Player extends Spectator {
             left: this.left,
             numDrawCards: this.drawDeck.length,
             name: this.name,
-            numPlotCards: this.plotDeck.size(),
+            numPlotCards: this.plotDeck.length,
             phase: this.phase,
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
