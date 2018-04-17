@@ -13,7 +13,7 @@ class SeptonCellador extends DrawCard {
                     return;
                 }
 
-                this.revealHandPrompt(context);
+                this.revealHand(context);
             }
         });
     }
@@ -42,24 +42,9 @@ class SeptonCellador extends DrawCard {
         return true;
     }
 
-    revealHandPrompt(context) {
-        let cards = [];
-        context.opponent.hand.each(card => cards.push(card));
-
+    revealHand(context) {
         this.game.addMessage('{0} kneels {1} to have {2} reveal {3} as their hand',
-            context.player, this, context.opponent, cards);
-
-        this.game.promptForSelect(context.player, {
-            activePromptTitle: 'Select a card or click done to stop looking',
-            source: this,
-            revealTargets: true,
-            cardCondition: card => card.location === 'hand' && card.controller === context.opponent,
-            onSelect: (player, card) => this.closePrompt(player, card)
-        });
-    }
-
-    closePrompt() {
-        return true;
+            context.player, this, context.opponent, context.opponent.hand);
     }
 }
 
