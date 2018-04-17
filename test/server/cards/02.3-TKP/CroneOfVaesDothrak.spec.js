@@ -24,11 +24,11 @@ describe('Crone of Vaes Dothrak', function() {
             describe('when a character gets discarded', function() {
                 beforeEach(function() {
                     // Move characters back to draw
-                    this.player2Object.hand.each(card => {
+                    for(const card of this.player2Object.hand) {
                         if(card.getType() === 'character') {
                             this.player2Object.moveCard(card, 'draw deck');
                         }
-                    });
+                    }
 
                     this.completeMarshalPhase();
                     this.unopposedChallenge(this.player1, 'Power', 'Black Wind\'s Crew');
@@ -47,11 +47,11 @@ describe('Crone of Vaes Dothrak', function() {
             describe('when a non-character gets discarded', function() {
                 beforeEach(function() {
                     // Move non-characters back to draw
-                    this.player2Object.hand.each(card => {
+                    for(const card of this.player2Object.hand) {
                         if(card.getType() !== 'character') {
                             this.player2Object.moveCard(card, 'draw deck');
                         }
-                    });
+                    }
 
                     this.completeMarshalPhase();
                     this.unopposedChallenge(this.player1, 'Power', 'Black Wind\'s Crew');
@@ -70,11 +70,11 @@ describe('Crone of Vaes Dothrak', function() {
             describe('when a character gets discarded', function() {
                 beforeEach(function() {
                     // Move non-characters back to draw
-                    this.player2Object.hand.each(card => {
+                    for(const card of this.player2Object.hand) {
                         if(card.getType() !== 'character') {
                             this.player2Object.moveCard(card, 'draw deck');
                         }
-                    });
+                    }
 
                     this.completeMarshalPhase();
                     this.unopposedChallenge(this.player1, 'Intrigue', 'Crone of Vaes Dothrak');
@@ -93,11 +93,11 @@ describe('Crone of Vaes Dothrak', function() {
             describe('when a non-character gets discarded', function() {
                 beforeEach(function() {
                     // Move characters back to draw
-                    this.player2Object.hand.each(card => {
+                    for(const card of this.player2Object.hand) {
                         if(card.getType() === 'character') {
                             this.player2Object.moveCard(card, 'draw deck');
                         }
-                    });
+                    }
 
                     this.completeMarshalPhase();
                     this.unopposedChallenge(this.player1, 'Intrigue', 'Crone of Vaes Dothrak');

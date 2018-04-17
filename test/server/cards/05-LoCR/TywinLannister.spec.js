@@ -21,8 +21,13 @@ describe('Tywin Lannister (LoCR)', function() {
             this.selectFirstPlayer(this.player1);
 
             // Move remaining cards back to draw deck so we have something to discard
-            this.player1Object.hand.each(card => this.player1Object.moveCard(card, 'draw deck'));
-            this.player2Object.hand.each(card => this.player2Object.moveCard(card, 'draw deck'));
+            for(const card of this.player1Object.hand) {
+                this.player1Object.moveCard(card, 'draw deck');
+            }
+
+            for(const card of this.player2Object.hand) {
+                this.player2Object.moveCard(card, 'draw deck');
+            }
         });
 
         describe('when a single card discard occurs', function() {

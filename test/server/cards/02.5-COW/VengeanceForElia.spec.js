@@ -49,7 +49,7 @@ describe('Vengeance for Elia', function() {
             });
 
             it('should force the attacker to discard from hand', function() {
-                expect(this.player1Object.hand.size()).toBe(0);
+                expect(this.player1Object.hand.length).toBe(0);
                 expect(this.player1Object.discardPile.size()).toBe(1);
             });
         });

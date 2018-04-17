@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 
 describe('the Player', () => {

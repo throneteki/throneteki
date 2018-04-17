@@ -22,9 +22,9 @@ describe('The Tickler', function() {
             this.selectFirstPlayer(this.player1);
 
             // Move remaining cards back to draw deck.
-            this.player2Object.hand.each(card => {
+            for(const card of this.player2Object.hand) {
                 this.player2Object.moveCard(card, 'draw deck');
-            });
+            }
 
             this.completeMarshalPhase();
             this.completeChallengesPhase();

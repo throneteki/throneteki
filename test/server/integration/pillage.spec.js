@@ -22,9 +22,9 @@ describe('pillage', function() {
             this.completeMarshalPhase();
 
             // Return cards to deck
-            this.player2Object.hand.each(card => {
+            for(const card of this.player2Object.hand) {
                 this.player2Object.moveCard(card, 'draw deck');
-            });
+            }
         });
 
         describe('when more than one pillage occurs', function() {

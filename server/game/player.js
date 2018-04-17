@@ -26,7 +26,7 @@ class Player extends Spectator {
         this.drawDeck = [];
         this.plotDeck = [];
         this.plotDiscard = [];
-        this.hand = _([]);
+        this.hand = [];
         this.cardsInPlay = _([]);
         this.deadPile = _([]);
         this.discardPile = _([]);
@@ -305,13 +305,13 @@ class Player extends Spectator {
     }
 
     discardAtRandom(number, callback = () => true) {
-        var toDiscard = Math.min(number, this.hand.size());
+        var toDiscard = Math.min(number, this.hand.length);
         var cards = [];
 
         while(cards.length < toDiscard) {
-            var cardIndex = _.random(0, this.hand.size() - 1);
+            var cardIndex = _.random(0, this.hand.length - 1);
 
-            var card = this.hand.value()[cardIndex];
+            var card = this.hand[cardIndex];
             if(!cards.includes(card)) {
                 cards.push(card);
             }
@@ -625,8 +625,8 @@ class Player extends Spectator {
     }
 
     setupDone() {
-        if(this.hand.size() < StartingHandSize) {
-            this.drawCardsToHand(StartingHandSize - this.hand.size());
+        if(this.hand.length < StartingHandSize) {
+            this.drawCardsToHand(StartingHandSize - this.hand.length);
         }
 
         var processedCards = _([]);
@@ -1220,7 +1220,7 @@ class Player extends Spectator {
     }
 
     isBelowReserve() {
-        return this.hand.size() <= this.getTotalReserve();
+        return this.hand.length <= this.getTotalReserve();
     }
 
     isRival(opponent) {

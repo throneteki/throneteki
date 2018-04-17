@@ -16,7 +16,7 @@ class GoldenTooth extends DrawCard {
 
     opponentHasEmptyHand() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.hand.size() === 0);
+        return opponents.some(opponent => opponent.hand.length === 0);
     }
 }
 

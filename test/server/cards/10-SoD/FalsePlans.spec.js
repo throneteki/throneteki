@@ -31,7 +31,7 @@ describe('False Plans', function() {
             });
 
             it('should not activate', function() {
-                expect(this.player1Object.hand.size()).toBe(0);
+                expect(this.player1Object.hand.length).toBe(0);
                 expect(this.player1Object.discardPile.size()).toBe(1);
                 expect(this.player1).not.toHavePromptButton('False Plans');
             });
