@@ -133,7 +133,7 @@ describe('Player', function() {
                 });
 
                 it('should not remove any cards from in play', function() {
-                    expect(this.player.cardsInPlay.size()).toBe(2);
+                    expect(this.player.cardsInPlay.length).toBe(2);
                 });
             });
         });

@@ -69,7 +69,7 @@ describe('marshal phase', function() {
                     this.player1.clickCard(this.ned2);
 
                     expect(this.player1Object.gold).toBe(3);
-                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.player1Object.cardsInPlay.length).toBe(1);
                     expect(this.ned1.dupes).toContain(this.ned2);
                 });
 
@@ -79,7 +79,7 @@ describe('marshal phase', function() {
                     this.player1.clickCard(this.wotnNed);
 
                     expect(this.player1Object.gold).toBe(3);
-                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.player1Object.cardsInPlay.length).toBe(1);
                     expect(this.ned1.dupes).toContain(this.wotnNed);
                 });
             });

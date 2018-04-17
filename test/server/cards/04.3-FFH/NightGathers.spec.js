@@ -35,8 +35,8 @@ describe('Night Gathers...', function() {
             this.player1.clickCard(this.goldCloaks);
             expect(this.goldCloaks.location).toBe('play area');
             expect(this.goldCloaks.controller).toBe(this.player1Object);
-            expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.goldCloaks.uuid);
-            expect(this.player2Object.discardPile.pluck('uuid')).not.toContain(this.goldCloaks.uuid);
+            expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.goldCloaks.uuid);
+            expect(this.player2Object.discardPile.map(card => card.uuid)).not.toContain(this.goldCloaks.uuid);
             expect(this.player1Object.gold).toBe(0);
         });
 
@@ -44,8 +44,8 @@ describe('Night Gathers...', function() {
             this.player1.clickCard(this.tyrion);
             expect(this.tyrion.location).toBe('play area');
             expect(this.tyrion.controller).toBe(this.player1Object);
-            expect(this.player1Object.cardsInPlay.pluck('uuid')).toContain(this.tyrion.uuid);
-            expect(this.player2Object.discardPile.pluck('uuid')).not.toContain(this.tyrion.uuid);
+            expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.tyrion.uuid);
+            expect(this.player2Object.discardPile.map(card => card.uuid)).not.toContain(this.tyrion.uuid);
             expect(this.player1Object.gold).toBe(1);
         });
     });

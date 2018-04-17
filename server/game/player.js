@@ -27,7 +27,7 @@ class Player extends Spectator {
         this.plotDeck = [];
         this.plotDiscard = [];
         this.hand = [];
-        this.cardsInPlay = _([]);
+        this.cardsInPlay = [];
         this.deadPile = _([]);
         this.discardPile = _([]);
         this.outOfGamePile = _([]);
@@ -87,7 +87,7 @@ class Player extends Spectator {
     }
 
     areCardsSelected() {
-        return this.cardsInPlay.any(card => {
+        return this.cardsInPlay.some(card => {
             return card.selected;
         });
     }
@@ -374,10 +374,10 @@ class Player extends Spectator {
 
     resetDrawDeck() {
         this.resetCardPile(this.hand);
-        this.hand = _([]);
+        this.hand = [];
 
         this.resetCardPile(this.cardsInPlay);
-        this.cardsInPlay = _(this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card)));
+        this.cardsInPlay = this.cardsInPlay.filter(card => this.cardsInPlayBeforeSetup.includes(card));
 
         this.resetCardPile(this.discardPile);
         this.discardPile = _([]);
@@ -629,9 +629,9 @@ class Player extends Spectator {
             this.drawCardsToHand(StartingHandSize - this.hand.length);
         }
 
-        var processedCards = _([]);
+        let processedCards = [];
 
-        this.cardsInPlay.each(card => {
+        for(const card of this.cardsInPlay) {
             card.facedown = false;
 
             if(!card.isUnique()) {
@@ -639,15 +639,14 @@ class Player extends Spectator {
                 return;
             }
 
-            var duplicate = this.findCardByName(processedCards, card.name);
+            let duplicate = this.findCardByName(processedCards, card.name);
 
             if(duplicate) {
                 duplicate.addDuplicate(card);
             } else {
                 processedCards.push(card);
             }
-
-        });
+        }
 
         this.cardsInPlay = processedCards;
         this.gold = 0;
@@ -719,7 +718,7 @@ class Player extends Spectator {
     }
 
     hasUnmappedAttachments() {
-        return this.cardsInPlay.any(card => {
+        return this.cardsInPlay.some(card => {
             return card.getType() === 'attachment';
         });
     }
@@ -916,9 +915,9 @@ class Player extends Spectator {
     }
 
     beginChallenge() {
-        this.cardsInPlay.each(card => {
+        for(const card of this.cardsInPlay) {
             card.resetForChallenge();
-        });
+        }
     }
 
     trackChallenge(challenge) {
@@ -930,9 +929,9 @@ class Player extends Spectator {
     }
 
     resetForChallenge() {
-        this.cardsInPlay.each(card => {
+        for(const card of this.cardsInPlay) {
             card.resetForChallenge();
-        });
+        }
     }
 
     sacrificeCard(card) {

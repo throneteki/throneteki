@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class HollowHill extends DrawCard {
@@ -29,16 +27,16 @@ class HollowHill extends DrawCard {
 
         let factionsInPlay = [];
 
-        this.controller.cardsInPlay.each(card => {
+        for(const card of this.controller.cardsInPlay) {
             if(card !== marshalledCard) {
                 let factions = card.getFactions();
-                _.each(factions, faction => {
+                for(const faction of factions) {
                     if(!factionsInPlay.includes(faction) && faction !== 'neutral') {
                         factionsInPlay.push(faction);
                     }
-                });
+                }
             }
-        });
+        }
 
         return !factionsInPlay.includes(marshalledFaction);
     }

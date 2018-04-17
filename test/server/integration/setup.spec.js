@@ -55,7 +55,7 @@ describe('setup phase', function() {
 
                     this.completeSetup();
 
-                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.player1Object.cardsInPlay.length).toBe(1);
                     expect(this.ned1.dupes).toContain(this.ned2);
                 });
 
@@ -66,7 +66,7 @@ describe('setup phase', function() {
 
                     this.completeSetup();
 
-                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.player1Object.cardsInPlay.length).toBe(1);
                     expect(this.ned1.dupes).toContain(this.wotnNed);
                 });
             });
@@ -193,7 +193,7 @@ describe('setup phase', function() {
                 this.completeSetup();
 
                 expect(this.wall1.dupes.size()).toBe(1);
-                expect(this.player1Object.cardsInPlay.size()).toBe(2);
+                expect(this.player1Object.cardsInPlay.length).toBe(2);
                 expect(this.character.getStrength()).toBe(2);
             });
 

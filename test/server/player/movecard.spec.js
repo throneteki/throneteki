@@ -181,8 +181,8 @@ describe('Player', function() {
             });
 
             it('should not duplicate the card', function() {
-                expect(this.player.cardsInPlay.size()).toBe(1);
-                expect(this.player.cardsInPlay.toArray()).toEqual([this.card]);
+                expect(this.player.cardsInPlay.length).toBe(1);
+                expect(this.player.cardsInPlay).toEqual([this.card]);
             });
         });
 
