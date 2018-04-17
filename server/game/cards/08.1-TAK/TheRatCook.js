@@ -14,7 +14,7 @@ class TheRatCook extends DrawCard {
                     match: context.target,
                     effect: [
                         ability.effects.takeControl(this.controller),
-                        ability.effects.blank
+                        ability.effects.blank()
                     ]
                 }));
 

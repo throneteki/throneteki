@@ -91,7 +91,7 @@ describe('the DrawCard', function() {
 
                 it('should not blank externally given keywords', function() {
                     this.card.addKeyword('Stealth');
-                    this.card.setBlank();
+                    this.card.setBlank(this.card);
                     // Resolve events in pipeline.
                     this.game.continue();
                     expect(this.card.hasKeyword('Intimidate')).toBe(false);

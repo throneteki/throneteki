@@ -1,15 +1,16 @@
 const uuid = require('uuid');
 const _ = require('underscore');
 
-const AbilityDsl = require('./abilitydsl.js');
-const CardAction = require('./cardaction.js');
-const CardForcedInterrupt = require('./cardforcedinterrupt.js');
-const CardForcedReaction = require('./cardforcedreaction.js');
-const CardInterrupt = require('./cardinterrupt.js');
-const CardReaction = require('./cardreaction.js');
-const CustomPlayAction = require('./customplayaction.js');
-const EventRegistrar = require('./eventregistrar.js');
+const AbilityDsl = require('./abilitydsl');
+const CardAction = require('./cardaction');
+const CardForcedInterrupt = require('./cardforcedinterrupt');
+const CardForcedReaction = require('./cardforcedreaction');
+const CardInterrupt = require('./cardinterrupt');
+const CardReaction = require('./cardreaction');
+const CustomPlayAction = require('./customplayaction');
+const EventRegistrar = require('./eventregistrar');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
+const BlankingProperty = require('./PropertyTypes/BlankingProperty');
 
 const ValidKeywords = [
     'ambush',
@@ -46,9 +47,9 @@ class BaseCard {
         this.code = cardData.code;
         this.name = cardData.name;
         this.facedown = false;
-        this.blankCount = 0;
         this.keywords = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
+        this.blanking = new BlankingProperty();
 
         this.tokens = {};
         this.plotModifierValues = {
@@ -298,7 +299,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        return this.traits.contains(trait);
+        return !this.isBlank(true) && this.traits.contains(trait);
     }
 
     isFaction(faction) {
@@ -407,7 +408,7 @@ class BaseCard {
     }
 
     isBlank() {
-        return this.blankCount > 0;
+        return this.blanking.isBlank();
     }
 
     setCardType(cardType) {
@@ -426,10 +427,11 @@ class BaseCard {
         return this.cardData.faction;
     }
 
-    setBlank() {
-        var before = this.isBlank();
-        this.blankCount++;
-        var after = this.isBlank();
+    setBlank(source, includingTraits = false) {
+        let before = this.isBlank(includingTraits);
+        this.blanking.addBlankingSource(source, includingTraits);
+        let after = this.isBlank(includingTraits);
+
         if(!before && after) {
             this.game.raiseEvent('onCardBlankToggled', { card: this, isBlank: after });
         }
@@ -490,10 +492,11 @@ class BaseCard {
         this.markAsDirty();
     }
 
-    clearBlank() {
-        var before = this.isBlank();
-        this.blankCount--;
-        var after = this.isBlank();
+    clearBlank(source, includingTraits = false) {
+        let before = this.isBlank(includingTraits);
+        this.blanking.removeBlankingSource(source);
+        let after = this.isBlank(includingTraits);
+
         if(before && !after) {
             this.game.raiseEvent('onCardBlankToggled', { card: this, isBlank: after });
         }

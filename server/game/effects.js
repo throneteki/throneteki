@@ -497,13 +497,15 @@ const Effects = {
             Effects.modifyStrength(value)
         ];
     },
-    blank: {
-        apply: function(card) {
-            card.setBlank();
-        },
-        unapply: function(card) {
-            card.clearBlank();
-        }
+    blank: function(includingTraits = false) {
+        return {
+            apply: function(card, context) {
+                card.setBlank(context.source, includingTraits);
+            },
+            unapply: function(card, context) {
+                card.clearBlank(context.source);
+            }
+        };
     },
     poison: {
         apply: function(card, context) {

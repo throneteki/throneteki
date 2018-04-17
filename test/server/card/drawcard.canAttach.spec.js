@@ -72,7 +72,7 @@ describe('DrawCard', function() {
 
             describe('but the target card is blank', function() {
                 beforeEach(function() {
-                    this.targetCard.setBlank();
+                    this.targetCard.setBlank(this.targetCard);
                 });
 
                 it('should return true', function() {
@@ -123,7 +123,7 @@ describe('DrawCard', function() {
 
                 describe('but the target card is blank', function() {
                     beforeEach(function() {
-                        this.targetCard.setBlank();
+                        this.targetCard.setBlank(this.targetCard);
                     });
 
                     it('should return true', function() {
