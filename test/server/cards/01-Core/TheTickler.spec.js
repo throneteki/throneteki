@@ -35,7 +35,7 @@ describe('The Tickler', function() {
         });
 
         it('should discard the top card of the opponents deck', function() {
-            expect(this.player2Object.drawDeck.size()).toBe(0);
+            expect(this.player2Object.drawDeck.length).toBe(0);
             expect(this.player2Object.discardPile.size()).toBe(1);
         });
 

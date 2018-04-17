@@ -222,7 +222,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 
@@ -234,7 +234,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 
@@ -246,7 +246,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 
@@ -258,7 +258,7 @@ describe('Player', () => {
 
                 it('should return true and put the card in the draw deck', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.drawDeck.size()).toBe(1);
+                    expect(this.player.drawDeck.length).toBe(1);
                 });
             });
 

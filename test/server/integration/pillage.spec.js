@@ -46,7 +46,7 @@ describe('pillage', function() {
             });
 
             it('should discard two cards', function() {
-                expect(this.player2Object.drawDeck.size()).toBe(0);
+                expect(this.player2Object.drawDeck.length).toBe(0);
                 expect(this.player2Object.discardPile.size()).toBe(2);
             });
         });

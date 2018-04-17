@@ -22,8 +22,8 @@ class Player extends Spectator {
     constructor(id, user, owner, game) {
         super(id, user);
 
-        this.beingPlayed = _([]);
-        this.drawDeck = _([]);
+        this.beingPlayed = [];
+        this.drawDeck = [];
         this.plotDeck = _([]);
         this.plotDiscard = _([]);
         this.hand = _([]);
@@ -233,28 +233,31 @@ class Player extends Spectator {
     }
 
     drawCardsToHand(numCards) {
-        if(numCards > this.drawDeck.size()) {
-            numCards = this.drawDeck.size();
+        if(numCards > this.drawDeck.length) {
+            numCards = this.drawDeck.length;
         }
+
         if(this.maxCardDraw.getMax() !== undefined) {
             numCards = Math.min(numCards, this.maxCardDraw.getMax() - this.drawnCards);
         }
+
         if(numCards < 0) {
             numCards = 0;
         }
 
-        let cards = this.drawDeck.first(numCards);
+        let cards = this.drawDeck.slice(numCards);
 
-        _.each(cards, card => {
+        for(const card of cards) {
             this.moveCard(card, 'hand');
-        });
+        }
+
         this.drawnCards += numCards;
 
         if(this.game.currentPhase !== 'setup') {
             this.game.raiseEvent('onCardsDrawn', { cards: cards, player: this });
         }
 
-        if(this.drawDeck.size() === 0) {
+        if(this.drawDeck.length === 0) {
             this.game.playerDecked(this);
         }
 
@@ -262,15 +265,15 @@ class Player extends Spectator {
     }
 
     searchDrawDeck(limit, predicate) {
-        var cards = this.drawDeck;
+        let cards = this.drawDeck;
 
         if(_.isFunction(limit)) {
             predicate = limit;
         } else {
             if(limit > 0) {
-                cards = _(this.drawDeck.first(limit));
+                cards = this.drawDeck.slice(limit);
             } else {
-                cards = _(this.drawDeck.last(-limit));
+                cards = this.drawDeck.slice(-limit);
             }
         }
 
@@ -278,16 +281,16 @@ class Player extends Spectator {
     }
 
     shuffleDrawDeck() {
-        this.drawDeck = _(this.drawDeck.shuffle());
+        this.drawDeck = _.shuffle(this.drawDeck);
     }
 
     discardFromDraw(number, callback = () => true) {
-        number = Math.min(number, this.drawDeck.size());
+        number = Math.min(number, this.drawDeck.length);
 
-        var cards = this.drawDeck.first(number);
+        var cards = this.drawDeck.slice(number);
         this.discardCards(cards, false, discarded => {
             callback(discarded);
-            if(this.drawDeck.size() === 0) {
+            if(this.drawDeck.length === 0) {
                 this.game.playerDecked(this);
             }
         });
@@ -295,7 +298,7 @@ class Player extends Spectator {
 
     moveFromTopToBottomOfDrawDeck(number) {
         while(number > 0) {
-            this.moveCard(this.drawDeck.first(), 'draw deck', { bottom: true });
+            this.moveCard(this.drawDeck[0], 'draw deck', { bottom: true });
 
             number--;
         }
@@ -398,7 +401,7 @@ class Player extends Spectator {
         this.plotDeck = _(preparedDeck.plotCards);
         this.agenda = preparedDeck.agenda;
         this.faction = preparedDeck.faction;
-        this.drawDeck = _(preparedDeck.drawCards);
+        this.drawDeck = preparedDeck.drawCards;
         this.bannerCards = _(preparedDeck.bannerCards);
         this.preparedDeck = preparedDeck;
     }
@@ -1307,7 +1310,7 @@ class Player extends Spectator {
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
-        let fullDiscardPile = this.discardPile.toArray().concat(this.beingPlayed.toArray());
+        let fullDiscardPile = this.discardPile.toArray().concat(this.beingPlayed);
 
         let plots = [];
 
@@ -1347,7 +1350,7 @@ class Player extends Spectator {
             id: this.id,
             keywordSettings: this.keywordSettings,
             left: this.left,
-            numDrawCards: this.drawDeck.size(),
+            numDrawCards: this.drawDeck.length,
             name: this.name,
             numPlotCards: this.plotDeck.size(),
             phase: this.phase,

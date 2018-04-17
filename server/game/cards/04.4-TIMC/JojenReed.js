@@ -8,7 +8,7 @@ class JojenReed extends DrawCard {
             },
             handler: () => {
                 for(let player of this.game.getPlayers()) {
-                    let card = player.drawDeck.first();
+                    let card = player.drawDeck[0];
                     this.game.addMessage('{0} uses {1} to reveal {2} from {3}\'s deck', this.controller, this, card, player);
                 }
 

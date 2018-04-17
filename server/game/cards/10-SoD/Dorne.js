@@ -8,7 +8,7 @@ class Dorne extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && this.controller.drawDeck.size() >= 2
+                afterChallenge: event => event.challenge.loser === this.controller && this.controller.drawDeck.length >= 2
             },
             handler: () => {
                 this.top2Cards = this.controller.drawDeck.first(2);

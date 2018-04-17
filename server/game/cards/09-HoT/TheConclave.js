@@ -20,7 +20,7 @@ class TheConclave extends AgendaCard {
                 cardCondition: card => card.location === 'conclave'
             },
             handler: context => {
-                let topCard = this.controller.drawDeck.first();
+                let topCard = this.controller.drawDeck[0];
                 this.controller.moveCard(context.target, 'draw deck');
                 this.controller.moveCard(topCard, 'conclave');
                 this.game.addMessage('{0} uses {1} to swap the top card of their deck with one under their agenda', this.controller, this);
@@ -41,7 +41,7 @@ class TheConclave extends AgendaCard {
             return;
         }
 
-        let top7Cards = this.controller.drawDeck.first(7);
+        let top7Cards = this.controller.drawDeck.sliace(7);
         _.each(top7Cards, card => {
             this.controller.moveCard(card, 'conclave');
         });

@@ -7,7 +7,7 @@ class GreenbloodTrader extends DrawCard {
                 onCardEntersPlay: event => event.card === this
             },
             handler: () => {
-                this.top2Cards = this.controller.drawDeck.first(Math.min(2, this.controller.drawDeck.size()));
+                this.top2Cards = this.controller.drawDeck.slice(Math.min(2, this.controller.drawDeck.length));
 
                 var buttons = this.top2Cards.map(card => {
                     return { method: 'cardSelected', card: card, mapCard: true };

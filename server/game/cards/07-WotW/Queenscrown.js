@@ -11,7 +11,7 @@ class Queenscrown extends DrawCard {
             handler: context => {
                 let opponent = context.opponent;
 
-                this.remainingCards = opponent.drawDeck.first(3);
+                this.remainingCards = opponent.drawDeck.slice(3);
                 this.game.addMessage('{0} kneels {1} to reveal {2} from the top of {3}\'s deck', this.controller, this, this.remainingCards, opponent);
 
                 let characters = _.filter(this.remainingCards, card => card.getType() === 'character');
