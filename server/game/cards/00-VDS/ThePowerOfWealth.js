@@ -20,11 +20,11 @@ class ThePowerOfWealth extends AgendaCard {
     onDecksPrepared() {
         let factionsInDecks = [];
 
-        this.game.allCards.each(card => {
+        for(const card of this.game.allCards) {
             if(card.owner === this.owner && !factionsInDecks.includes(card.getPrintedFaction())) {
                 factionsInDecks.push(card.getPrintedFaction());
             }
-        });
+        }
 
         let factionToAnnounce = _.filter(factionsInDecks, faction => faction !== this.controller.getFaction() && faction !== 'neutral');
         let message = '{0} names {1} as their {2} for {3}';
@@ -35,7 +35,7 @@ class ThePowerOfWealth extends AgendaCard {
 
         if(_.isEmpty(factionToAnnounce)) {
             //Don't print any message: allows the player to bluff any faction
-            return;            
+            return;
         }
 
         this.game.addMessage(message, this.controller, factionToAnnounce, factionToAnnounce.length > 1 ? 'factions' : 'faction', this);

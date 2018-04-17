@@ -8,7 +8,7 @@ class RaidingLongship extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       this.game.currentChallenge.isDefending(card) && card.attachments.size() === 0
+                                       this.game.currentChallenge.isDefending(card) && card.attachments.length === 0
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({

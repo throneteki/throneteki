@@ -11,7 +11,7 @@ class SerGregorClegane extends DrawCard {
                 discarded.controller.moveCard(discarded, 'dead pile');
                 this.game.addMessage('{0} uses {1} to place {2} in {3}\'s dead pile', this.controller, this, discarded, discarded.controller);
 
-                if(!this.game.allCards.any(card => this.cardCondition(discarded, card))) {
+                if(!this.game.allCards.some(card => this.cardCondition(discarded, card))) {
                     return;
                 }
 

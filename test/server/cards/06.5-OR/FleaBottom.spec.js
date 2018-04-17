@@ -47,7 +47,7 @@ describe('Flea Bottom', function() {
 
                 it('should return the character to the bottom of the deck', function() {
                     expect(this.character.location).toBe('draw deck');
-                    expect(this.player1Object.drawDeck.last()).toBe(this.character);
+                    expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.character);
                 });
             });
 
@@ -91,7 +91,7 @@ describe('Flea Bottom', function() {
 
                 it('should return the dupe to the bottom of the deck', function() {
                     expect(this.dupe.location).toBe('draw deck');
-                    expect(this.player1Object.drawDeck.last()).toBe(this.dupe);
+                    expect(this.player1Object.drawDeck.slice(-1)[0]).toBe(this.dupe);
                 });
             });
 

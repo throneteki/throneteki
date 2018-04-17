@@ -20,13 +20,13 @@ class Jhogo extends DrawCard {
 
     getNumberOfDeadDefendingCharacters() {
         var deadDefenders = [];
-        this.game.currentChallenge.defendingPlayer.deadPile.each(card => {
+        for(const card of this.game.currentChallenge.defendingPlayer.deadPile) {
             if(card.isUnique() && !deadDefenders.includes(card.name)) {
                 deadDefenders.push(card.name);
             } else if(!card.isUnique()) {
                 deadDefenders.push(card.name);
             }
-        });
+        }
 
         return deadDefenders.length;
     }

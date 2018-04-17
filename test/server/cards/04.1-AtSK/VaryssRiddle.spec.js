@@ -98,7 +98,7 @@ describe('Varys\'s Riddle', function() {
                     });
 
                     it('should reduce the claim', function() {
-                        expect(this.player1Object.discardPile.size()).toBe(0);
+                        expect(this.player1Object.discardPile.length).toBe(0);
                     });
                 });
 
@@ -111,7 +111,7 @@ describe('Varys\'s Riddle', function() {
                     });
 
                     it('should reduce the claim', function() {
-                        expect(this.player1Object.discardPile.size()).toBe(0);
+                        expect(this.player1Object.discardPile.length).toBe(0);
                     });
                 });
             });

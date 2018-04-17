@@ -56,13 +56,15 @@ class BaseCard {
             initiative: 0,
             reserve: 0
         };
+
         this.canProvidePlotModifier = {
             gold: true,
             initiative: true,
             reserve: true
         };
+
         this.abilityRestrictions = [];
-        this.menu = _([]);
+        this.menu = [];
         this.events = new EventRegistrar(this.game, this);
 
         this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
@@ -70,6 +72,7 @@ class BaseCard {
         for(let trait of cardData.traits || []) {
             this.addTrait(trait);
         }
+
         this.setupCardAbilities(AbilityDsl);
 
         this.factions = {};
@@ -389,12 +392,12 @@ class BaseCard {
     getMenu() {
         var menu = [];
 
-        if(this.menu.isEmpty()) {
+        if(this.menu.length === 0) {
             return undefined;
         }
 
         menu.push({ command: 'click', text: 'Select Card' });
-        menu = menu.concat(this.menu.value());
+        menu = menu.concat(this.menu);
 
         return menu;
     }

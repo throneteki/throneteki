@@ -1,16 +1,15 @@
-const _ = require('underscore');
 const Player = require('../../../server/game/player.js');
 
 describe('the Player', () => {
     var game = jasmine.createSpyObj('game', ['playerDecked', 'raiseEvent']);
 
     var player = new Player('1', {username: 'Player 1', settings: {}}, true, game);
-    var drawDeck = _([
+    var drawDeck = [
         { name: 'foo' },
         { name: 'bar' },
         { name: 'baz' },
         { name: 'ball' }
-    ]);
+    ];
 
     beforeEach(() => {
         player.deck = drawDeck;
@@ -25,7 +24,7 @@ describe('the Player', () => {
                 var cards = player.searchDrawDeck(() => {
                     return true;
                 });
-                expect(cards.length).toBe(drawDeck.size());
+                expect(cards.length).toBe(drawDeck.length);
             });
 
             it('should filter the results using the predicate', () => {

@@ -32,7 +32,7 @@ describe('setup phase', function() {
 
                 this.completeSetup();
 
-                expect(this.arya.dupes.size()).toBe(0);
+                expect(this.arya.dupes.length).toBe(0);
                 expect(this.player1).toHavePrompt('Select a plot');
             });
 
@@ -55,7 +55,7 @@ describe('setup phase', function() {
 
                     this.completeSetup();
 
-                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.player1Object.cardsInPlay.length).toBe(1);
                     expect(this.ned1.dupes).toContain(this.ned2);
                 });
 
@@ -66,7 +66,7 @@ describe('setup phase', function() {
 
                     this.completeSetup();
 
-                    expect(this.player1Object.cardsInPlay.size()).toBe(1);
+                    expect(this.player1Object.cardsInPlay.length).toBe(1);
                     expect(this.ned1.dupes).toContain(this.wotnNed);
                 });
             });
@@ -192,8 +192,8 @@ describe('setup phase', function() {
             it('should not count duplicates toward character strength', function() {
                 this.completeSetup();
 
-                expect(this.wall1.dupes.size()).toBe(1);
-                expect(this.player1Object.cardsInPlay.size()).toBe(2);
+                expect(this.wall1.dupes.length).toBe(1);
+                expect(this.player1Object.cardsInPlay.length).toBe(2);
                 expect(this.character.getStrength()).toBe(2);
             });
 

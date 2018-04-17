@@ -10,7 +10,7 @@ class RedKeepSpy extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.controller !== this.controller &&
-                    card.controller.hand.size() < this.controller.hand.size() &&
+                    card.controller.hand.length < this.controller.hand.length &&
                     card.getType() === 'character' &&
                     card.getCost() <= 3)
             },

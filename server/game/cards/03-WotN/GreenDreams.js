@@ -7,7 +7,7 @@ class GreenDreams extends DrawCard {
                 onCardKneeled: event => event.card === this.parent
             },
             handler: () => {
-                this.topCard = this.controller.drawDeck.first();
+                this.topCard = this.controller.drawDeck[0];
                 this.game.addMessage('{0} uses {1} to look at the top card of their deck', this.controller, this);
 
                 this.game.promptWithMenu(this.controller, this, {

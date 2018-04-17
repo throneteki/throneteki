@@ -4,7 +4,7 @@ class CalledIntoService extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                let topCard = this.controller.drawDeck.first();
+                let topCard = this.controller.drawDeck[0];
 
                 if(topCard.getType() === 'character') {
                     this.controller.putIntoPlay(topCard);

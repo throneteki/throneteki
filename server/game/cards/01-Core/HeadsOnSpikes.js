@@ -7,7 +7,7 @@ class HeadsOnSpikes extends PlotCard {
             handler: context => {
                 let otherPlayer = context.opponent;
 
-                if(otherPlayer.hand.size() === 0) {
+                if(otherPlayer.hand.length === 0) {
                     return true;
                 }
 

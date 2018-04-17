@@ -139,7 +139,7 @@ Some effects have a 'when', 'while' or 'if' clause within their text. These card
 ```javascript
 // While Arya Stark has a duplicate, she gains a military icon.
 this.persistentEffect({
-    condition: () => this.dupes.size() >= 1,
+    condition: () => this.dupes.length >= 1,
     match: this,
     effect: ability.effects.addIcon('military')
 });

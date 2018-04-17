@@ -28,7 +28,7 @@ class WinterfellKennelMaster extends DrawCard {
     }
 
     isDirewolfOrHasAttachment(card) {
-        return card.hasTrait('Direwolf') || card.attachments.any(attachment => attachment.hasTrait('Direwolf'));
+        return card.hasTrait('Direwolf') || card.attachments.some(attachment => attachment.hasTrait('Direwolf'));
     }
 }
 

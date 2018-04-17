@@ -37,8 +37,6 @@ describe('the DrawCard', function() {
     });
 
     describe('integration', function() {
-        const _ = require('underscore');
-
         const Game = require('../../../server/game/game.js');
         const Player = require('../../../server/game/player.js');
 
@@ -61,7 +59,7 @@ describe('the DrawCard', function() {
                 beforeEach(function() {
                     this.card = new DrawCard(this.player, { text: 'Each <i>Ranger</i> character you control cannot be bypassed by stealth.\n<b>Interrupt:</b> When Benjen Stark is killed, gain 2 power for your faction. Then, shuffle him back into your deck instead of placing him in your dead pile."' });
                     this.card.location = 'hand';
-                    this.player.hand = _([this.card]);
+                    this.player.hand = [this.card];
                     this.player.playCard(this.card, true);
                     // Resolve events in pipeline.
                     this.game.continue();
@@ -76,7 +74,7 @@ describe('the DrawCard', function() {
                 beforeEach(function() {
                     this.card = new DrawCard(this.player, { type: 'character', cost: 0, text: 'Intimidate. Renown. Notarealkeyword.\nRobert Baratheon gets +1 STR for each other kneeling character in play.' });
                     this.card.location = 'hand';
-                    this.player.hand = _([this.card]);
+                    this.player.hand = [this.card];
                     this.player.playCard(this.card, true);
                     // Resolve events in pipeline.
                     this.game.continue();

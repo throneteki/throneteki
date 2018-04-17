@@ -4,7 +4,7 @@ class NaggasRibs extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicDominanceStrength(() => 2 * this.controller.deadPile.size())
+            effect: ability.effects.dynamicDominanceStrength(() => 2 * this.controller.deadPile.length)
         });
 
         this.reaction({

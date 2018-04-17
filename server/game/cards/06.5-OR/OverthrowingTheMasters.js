@@ -8,7 +8,7 @@ class OverthrowingTheMasters extends DrawCard {
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
                                        this.game.currentChallenge.isDefending(card) &&
-                                       card.getStrength() <= this.game.currentChallenge.defendingPlayer.deadPile.size()
+                                       card.getStrength() <= this.game.currentChallenge.defendingPlayer.deadPile.length
             },
             handler: context => {
                 this.game.currentChallenge.removeFromChallenge(context.target);

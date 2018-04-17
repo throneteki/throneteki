@@ -7,7 +7,7 @@ class TheHound extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
             },
             handler: () => {
-                if(this.controller.hand.size() < 1) {
+                if(this.controller.hand.length < 1) {
                     this.returnToHand(this.controller);
                     return;
                 }

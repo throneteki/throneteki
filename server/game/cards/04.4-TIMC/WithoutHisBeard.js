@@ -41,7 +41,7 @@ class WithoutHisBeard extends DrawCard {
     }
 
     opponentHasCardsInHand(opponent) {
-        return opponent.hand.size() >= 1;
+        return opponent.hand.length >= 1;
     }
 }
 

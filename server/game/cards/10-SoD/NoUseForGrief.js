@@ -11,7 +11,7 @@ class NoUseForGrief extends DrawCard {
             title: 'Put Sand Snake into play',
             condition: () => this.tracker.isMartellCharacterKilledThisRound,
             handler: context => {
-                let costLimit = context.player.deadPile.any(card => card.name === 'The Red Viper') ? 6 : 3;
+                let costLimit = context.player.deadPile.some(card => card.name === 'The Red Viper') ? 6 : 3;
 
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',

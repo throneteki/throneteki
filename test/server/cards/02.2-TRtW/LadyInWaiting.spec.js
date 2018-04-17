@@ -60,7 +60,7 @@ describe('Lady-in-Waiting', function() {
 
                 it('should add it as a dupe', function() {
                     expect(this.ladyInWaiting.location).toBe('duplicate');
-                    expect(this.margaery.dupes.size()).toBe(1);
+                    expect(this.margaery.dupes.length).toBe(1);
                     expect(this.margaery.dupes).toContain(this.ladyInWaiting);
                 });
 

@@ -28,7 +28,7 @@ class Oldtown extends DrawCard {
     cardTypeSelected(player, cardType) {
         this.game.addMessage('{0} kneels {1} to name the {2} card type', this.controller, this, cardType);
 
-        let topCard = this.controller.drawDeck.first();
+        let topCard = this.controller.drawDeck[0];
         let message = '{0} then reveals {1} as the top card of their deck';
 
         if(topCard.getType() === cardType && this.controller.canDraw()) {

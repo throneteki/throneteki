@@ -17,7 +17,7 @@ class MyrcellaBaratheon extends DrawCard {
         }
 
         return challenge.attackingPlayer === this.controller &&
-               this.controller.hand.size() > challenge.defendingPlayer.hand.size();
+               this.controller.hand.length > challenge.defendingPlayer.hand.length;
     }
 }
 

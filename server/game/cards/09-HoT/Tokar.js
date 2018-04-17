@@ -5,12 +5,12 @@ class Tokar extends DrawCard {
         this.attachmentRestriction({ faction: 'targaryen' });
 
         this.whileAttached({
-            effect: ability.effects.dynamicStrength(() => this.parent.attachments.size())
+            effect: ability.effects.dynamicStrength(() => this.parent.attachments.length)
         });
 
         this.persistentEffect({
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent),
-            match: card => card.getType() === 'character' && card.attachments.size() === 0,
+            match: card => card.getType() === 'character' && card.attachments.length === 0,
             targetController: 'any',
             effect: ability.effects.cannotGainPower()
         });

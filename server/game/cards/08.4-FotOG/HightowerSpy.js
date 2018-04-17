@@ -10,7 +10,7 @@ class HightowerSpy extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
-                let topCard = this.controller.drawDeck.first();
+                let topCard = this.controller.drawDeck[0];
                 let increase = topCard.getCost();
 
                 this.untilEndOfPhase(ability => ({

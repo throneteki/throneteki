@@ -187,7 +187,7 @@ class Game extends EventEmitter {
     }
 
     anyCardsInPlay(predicate) {
-        return this.allCards.any(card => card.location === 'play area' && predicate(card));
+        return this.allCards.some(card => card.location === 'play area' && predicate(card));
     }
 
     filterCardsInPlay(predicate) {
@@ -234,9 +234,9 @@ class Game extends EventEmitter {
     }
 
     selectPlot(player, plot) {
-        player.plotDeck.each(p => {
+        for(const p of player.plotDeck) {
             p.selected = false;
-        });
+        }
 
         plot.selected = true;
     }
@@ -293,7 +293,7 @@ class Game extends EventEmitter {
     }
 
     cardHasMenuItem(card, menuItem) {
-        return card.menu && card.menu.any(m => {
+        return card.menu && card.menu.some(m => {
             return m.method === menuItem.method;
         });
     }
@@ -706,7 +706,7 @@ class Game extends EventEmitter {
             player.initialise();
         });
 
-        this.allCards = _(this.gatherAllCards());
+        this.allCards = this.gatherAllCards();
 
         this.pipeline.initialise([
             new SetupPhase(this),

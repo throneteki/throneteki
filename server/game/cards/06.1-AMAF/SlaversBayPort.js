@@ -18,7 +18,7 @@ class SlaversBayPort extends DrawCard {
 
     opponentDeadPileHas4() {
         let opponents = this.game.getOpponents(this.controller);
-        return opponents.some(opponent => opponent.deadPile.size() >= 4);
+        return opponents.some(opponent => opponent.deadPile.length >= 4);
     }
 }
 

@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const SelectPlotPrompt = require('./plot/selectplotprompt.js');
@@ -24,41 +23,41 @@ class PlotPhase extends Phase {
     }
 
     clearNewCards() {
-        this.game.allCards.each(card => {
+        for(const card of this.game.allCards) {
             card.new = false;
-        });
+        }
     }
 
     startPlotPhase() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.startPlotPhase();
-        });
+        }
     }
 
     announceForcedPlotSelection() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             if(player.mustRevealPlot) {
                 this.game.addMessage('{0} is forced to select a plot', player);
             }
-        });
+        }
     }
 
     removeActivePlots() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.removeActivePlot();
-        });
+        }
     }
 
     flipPlotsFaceup() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.flipPlotFaceup();
-        });
+        }
     }
 
     recyclePlots() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.recyclePlots();
-        });
+        }
     }
 
     getActivePlots() {

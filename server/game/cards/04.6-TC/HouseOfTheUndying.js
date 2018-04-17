@@ -8,7 +8,7 @@ class HouseOfTheUndying extends DrawCard {
             title: 'Take control of opponent\'s dead characters',
             phase: 'challenge',
             cost: ability.costs.removeSelfFromGame(),
-            chooseOpponent: opponent => opponent.deadPile.size() > 0,
+            chooseOpponent: opponent => opponent.deadPile.length > 0,
             handler: context => this.controlDeadCharacters(context.player, context.opponent)
         });
     }

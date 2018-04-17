@@ -82,7 +82,7 @@ class BaseCardSelector {
      * @returns {boolean}
      */
     hasEnoughTargets(context) {
-        return context.game.allCards.any(card => this.canTarget(card, context));
+        return context.game.allCards.some(card => this.canTarget(card, context));
     }
 
     /**

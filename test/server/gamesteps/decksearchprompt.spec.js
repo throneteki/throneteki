@@ -12,7 +12,7 @@ describe('DeckSearchPrompt', function() {
         this.game = jasmine.createSpyObj('game', ['addMessage', 'getPlayers']);
 
         this.player = jasmine.createSpyObj('player1', ['cancelPrompt', 'setPrompt', 'searchDrawDeck', 'shuffleDrawDeck']);
-        this.player.drawDeck = _([]);
+        this.player.drawDeck = [];
         this.otherPlayer = jasmine.createSpyObj('player2', ['setPrompt', 'cancelPrompt']);
 
         this.properties = {
