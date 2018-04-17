@@ -187,7 +187,7 @@ class Game extends EventEmitter {
     }
 
     anyCardsInPlay(predicate) {
-        return this.allCards.any(card => card.location === 'play area' && predicate(card));
+        return this.allCards.some(card => card.location === 'play area' && predicate(card));
     }
 
     filterCardsInPlay(predicate) {
@@ -706,7 +706,7 @@ class Game extends EventEmitter {
             player.initialise();
         });
 
-        this.allCards = _(this.gatherAllCards());
+        this.allCards = this.gatherAllCards();
 
         this.pipeline.initialise([
             new SetupPhase(this),

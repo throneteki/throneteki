@@ -24,9 +24,9 @@ class PlotPhase extends Phase {
     }
 
     clearNewCards() {
-        this.game.allCards.each(card => {
+        for(const card of this.game.allCard) {
             card.new = false;
-        });
+        }
     }
 
     startPlotPhase() {

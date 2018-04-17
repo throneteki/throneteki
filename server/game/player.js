@@ -138,7 +138,7 @@ class Player extends Spectator {
     }
 
     anyCardsInPlay(predicate) {
-        return this.game.allCards.any(card => card.controller === this && card.location === 'play area' && predicate(card));
+        return this.game.allCards.some(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
     filterCardsInPlay(predicate) {

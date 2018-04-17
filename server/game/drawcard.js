@@ -101,7 +101,7 @@ class DrawCard extends BaseCard {
                 return dupe.owner === this.controller;
             })[0];
         } else {
-            firstDupe = this.dupes[0]
+            firstDupe = this.dupes[0];
         }
 
         this.dupes = this.dupes.filter(dupe => {
