@@ -227,7 +227,7 @@ describe('The Rains of Castamere', function() {
             this.wardens = this.player1.findCardByName('Wardens of the West');
             this.wedding = this.player1.findCardByName('The Red Wedding');
 
-            this.player1.clickPrompt('"The Rains of Castamere"');
+            this.player1.triggerAbility('"The Rains of Castamere"');
         });
 
         it('should allow a scheme to be played', function() {
@@ -239,13 +239,13 @@ describe('The Rains of Castamere', function() {
         it('should allow reactions in the current reaction window to trigger', function() {
             this.player1.clickCard(this.wardens);
 
-            expect(this.player1).toHavePromptButton('Wardens of the West');
+            expect(this.player1).toAllowAbilityTrigger('Wardens of the West');
         });
 
         it('should not allow interrupts in the current window to trigger since the current window is for reactions only', function() {
             this.player1.clickCard(this.wedding);
 
-            expect(this.player1).not.toHavePromptButton('The Red Wedding');
+            expect(this.player1).not.toAllowAbilityTrigger('The Red Wedding');
         });
     });
 });

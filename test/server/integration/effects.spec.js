@@ -101,7 +101,7 @@ describe('effects', function() {
 
                 this.skipActionWindow();
 
-                this.player2.clickPrompt('Tyene Sand');
+                this.player2.triggerAbility('Tyene Sand');
                 this.player2.clickCard(this.character);
 
                 expect(this.character.tokens['poison']).toBeTruthy();
@@ -110,7 +110,7 @@ describe('effects', function() {
 
                 this.player2.clickPrompt('Done');
 
-                this.player1.clickPrompt('Winter Festival');
+                this.player1.triggerAbility('Winter Festival');
             });
 
             it('should apply when/until effects before at the end of phase effects', function() {

@@ -98,7 +98,7 @@ describe('faction change', function() {
             });
 
             it('should count as that affiliation having been killed', function() {
-                expect(this.player1).toHavePromptButton('Robb Stark');
+                expect(this.player1).toAllowAbilityTrigger('Robb Stark');
             });
         });
     });

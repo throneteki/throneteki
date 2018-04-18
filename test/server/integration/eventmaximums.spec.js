@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 describe('event maximums', function() {
     integration(function() {
         beforeEach(function() {
@@ -18,30 +16,24 @@ describe('event maximums', function() {
         });
 
         it('should not allow an event with a max to be prompted past the max', function() {
-            this.player1.clickPrompt('A Meager Contribution');
+            this.player1.triggerAbility('A Meager Contribution');
 
-            expect(this.player1).not.toHavePromptButton('A Meager Contribution');
-        });
-
-        it('should only show one copy of the event in the prompt', function() {
-            let prompt = this.player1.currentPrompt();
-            let copies = _.filter(prompt.buttons, button => button.text === 'A Meager Contribution');
-            expect(_.size(copies)).toBe(1);
+            expect(this.player1).not.toAllowAbilityTrigger('A Meager Contribution');
         });
 
         it('should allow other players to play the event even if it reaches a maximum with another player', function() {
-            this.player1.clickPrompt('A Meager Contribution');
+            this.player1.triggerAbility('A Meager Contribution');
 
             // Complete marshaling
             this.player2.clickPrompt('Done');
 
-            expect(this.player2).toHavePromptButton('A Meager Contribution');
+            expect(this.player2).toAllowAbilityTrigger('A Meager Contribution');
         });
 
         describe('when the maximum period has passed', function() {
             beforeEach(function() {
                 // Play the card Round 1
-                this.player1.clickPrompt('A Meager Contribution');
+                this.player1.triggerAbility('A Meager Contribution');
                 this.player2.clickPrompt('Done');
                 this.player2.clickPrompt('Pass');
                 this.player1.clickPrompt('Done');
@@ -52,7 +44,7 @@ describe('event maximums', function() {
             });
 
             it('should allow the card to be prompted again', function() {
-                expect(this.player1).toHavePromptButton('A Meager Contribution');
+                expect(this.player1).toAllowAbilityTrigger('A Meager Contribution');
             });
         });
     });

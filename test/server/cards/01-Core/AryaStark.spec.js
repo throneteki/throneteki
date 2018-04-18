@@ -26,7 +26,7 @@ describe('Arya Stark (Core)', function() {
 
             describe('when triggering her ability', function() {
                 beforeEach(function() {
-                    this.player1.clickPrompt('Arya Stark');
+                    this.player1.triggerAbility('Arya Stark');
                 });
 
                 it('should use the facedown top of deck card as a dupe', function() {
@@ -63,7 +63,7 @@ describe('Arya Stark (Core)', function() {
             });
 
             it('should not trigger her ability because she cannot be duped', function() {
-                expect(this.player2).not.toHavePromptButton('Arya Stark');
+                expect(this.player2).not.toAllowAbilityTrigger('Arya Stark');
             });
         });
     });

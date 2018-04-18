@@ -33,7 +33,7 @@ describe('Nagga\'s Ribs', function() {
                 this.player1.clickCard('Theon Greyjoy', 'play area');
                 this.player2.clickCard('Hedge Knight', 'play area');
 
-                this.player1.clickPrompt('Nagga\'s Ribs');
+                this.player1.triggerAbility('Nagga\'s Ribs');
             });
 
             it('should move the card to the dead pile', function() {
@@ -56,7 +56,7 @@ describe('Nagga\'s Ribs', function() {
                 this.player2.clickCard('Hedge Knight', 'play area');
                 this.player2.clickCard(this.character1);
 
-                this.player1.clickPrompt('Nagga\'s Ribs');
+                this.player1.triggerAbility('Nagga\'s Ribs');
             });
 
             it('should move the dupe to the dead pile', function() {
@@ -82,21 +82,21 @@ describe('Nagga\'s Ribs', function() {
             describe('when Now My Watch Begins is triggered first', function() {
                 beforeEach(function() {
                     this.player1.clickPrompt('Pass');
-                    this.player2.clickPrompt('Now My Watch Begins');
+                    this.player2.triggerAbility('Now My Watch Begins');
                 });
 
                 it('should not prompt for Nagga\'s Ribs', function() {
-                    expect(this.player1).not.toHavePromptButton('Nagga\'s Ribs');
+                    expect(this.player1).not.toAllowAbilityTrigger('Nagga\'s Ribs');
                 });
             });
 
             describe('when Now My Watch Begins is triggered first', function() {
                 beforeEach(function() {
-                    this.player1.clickPrompt('Nagga\'s Ribs');
+                    this.player1.triggerAbility('Nagga\'s Ribs');
                 });
 
                 it('should not prompt for Now My Watch Begins', function() {
-                    expect(this.player2).not.toHavePromptButton('Now My Watch Begins');
+                    expect(this.player2).not.toAllowAbilityTrigger('Now My Watch Begins');
                 });
             });
         });

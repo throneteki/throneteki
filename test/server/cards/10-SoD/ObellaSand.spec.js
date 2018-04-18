@@ -37,7 +37,7 @@ describe('Obella Sand', function() {
 
                 this.player1.clickCard(this.obella1);
 
-                this.player1.clickPrompt('Obella Sand');
+                this.player1.triggerAbility('Obella Sand');
             });
 
             it('should shuffle Obella back into the deck', function() {
@@ -56,7 +56,7 @@ describe('Obella Sand', function() {
                 this.player2.clickPrompt('Apply Claim');
 
                 // This should be a prompt for Obella2, who was in hand
-                this.player1.clickPrompt('Obella Sand');
+                this.player1.triggerAbility('Obella Sand');
             });
 
             it('should shuffle Obella back into the deck', function() {

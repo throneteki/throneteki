@@ -35,7 +35,7 @@ describe('Catelyn Stark', function() {
             });
 
             it('should not prevent opponents card abilities', function() {
-                expect(this.player2).toHavePromptButton('Tyrion Lannister');
+                expect(this.player2).toAllowAbilityTrigger('Tyrion Lannister');
             });
         });
 
@@ -48,7 +48,7 @@ describe('Catelyn Stark', function() {
             });
 
             it('should prevent opponents card abilities', function() {
-                expect(this.player2).not.toHavePromptButton('Tyrion Lannister');
+                expect(this.player2).not.toAllowAbilityTrigger('Tyrion Lannister');
             });
         });
     });

@@ -31,7 +31,7 @@ describe('end of phase timings / WUA', function() {
                 // Since Nightmares will not run out until after interrupts to
                 // "when the phase ends", the player should not be able to
                 // trigger Varys.
-                expect(this.player1).not.toHavePromptButton('Varys');
+                expect(this.player1).not.toAllowAbilityTrigger('Varys');
             });
         });
 
@@ -64,7 +64,7 @@ describe('end of phase timings / WUA', function() {
                 // Ambush Venomous Blade
                 this.player2.clickCard('Venomous Blade', 'hand');
                 this.player2.clickCard(this.character);
-                this.player2.clickPrompt('Venomous Blade');
+                this.player2.triggerAbility('Venomous Blade');
                 this.player2.clickCard(this.shireen);
 
                 expect(this.shireen.tokens.poison).toBe(1);
@@ -80,7 +80,7 @@ describe('end of phase timings / WUA', function() {
                 // Nightmares wears off before the kill from Venomous Blade, so
                 // Shireen should have an opportunity to kneel someone when she
                 // dies.
-                expect(this.player1).toHavePromptButton('Shireen Baratheon');
+                expect(this.player1).toAllowAbilityTrigger('Shireen Baratheon');
             });
         });
     });

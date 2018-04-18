@@ -43,7 +43,7 @@ describe('Daenerys Targaryen (TFM)', function() {
                 this.player1.clickCard(this.waking);
                 this.player1.clickCard(this.dany);
 
-                this.player1.clickPrompt('Daenerys Targaryen');
+                this.player1.triggerAbility('Daenerys Targaryen');
                 this.player1.clickCard(this.steward);
             });
 
@@ -62,7 +62,7 @@ describe('Daenerys Targaryen (TFM)', function() {
                 this.player1.clickCard(this.waking);
                 this.player1.clickCard(this.dany);
 
-                this.player1.clickPrompt('Daenerys Targaryen');
+                this.player1.triggerAbility('Daenerys Targaryen');
                 this.player1.clickCard(this.dany);
             });
 

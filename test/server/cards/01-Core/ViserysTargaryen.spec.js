@@ -38,7 +38,7 @@ describe('Viserys Targaryen', function() {
             });
 
             it('should allow the player to discard an attachment', function() {
-                this.player1.clickPrompt('Viserys Targaryen');
+                this.player1.triggerAbility('Viserys Targaryen');
                 this.player1.clickCard(this.lady);
 
                 expect(this.lady.parent).toBe(undefined);

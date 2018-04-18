@@ -28,7 +28,7 @@ describe('The Iron Bank', function() {
         describe('when the player collects income', function() {
             it('should double the gold on the Iron Bank', function() {
                 this.selectFirstPlayer(this.player1);
-                this.player1.clickPrompt('The Iron Bank');
+                this.player1.triggerAbility('The Iron Bank');
 
                 expect(this.ironBank.gold).toBe(20);
             });
@@ -37,7 +37,7 @@ describe('The Iron Bank', function() {
                 delete this.ironBank.tokens.gold;
                 this.selectFirstPlayer(this.player1);
 
-                expect(this.player1).not.toHavePromptButton('The Iron Bank');
+                expect(this.player1).not.toAllowAbilityTrigger('The Iron Bank');
             });
         });
 
@@ -50,7 +50,7 @@ describe('The Iron Bank', function() {
             });
 
             it('should not allow gold to be stolen from the card', function() {
-                this.player2.clickPrompt('A Meager Contribution');
+                this.player2.triggerAbility('A Meager Contribution');
                 // Pass on Hand's Judgment
                 this.player1.clickPrompt('Pass');
 
@@ -174,10 +174,10 @@ describe('The Iron Bank', function() {
                 this.player2.clickCard('Nightmares', 'hand');
                 this.player2.clickCard(cersei);
 
-                expect(this.player1).toHavePromptButton('The Hand\'s Judgment');
+                expect(this.player1).toAllowAbilityTrigger('The Hand\'s Judgment');
                 expect(cersei.isBlank()).toBe(false);
 
-                this.player1.clickPrompt('The Hand\'s Judgment');
+                this.player1.triggerAbility('The Hand\'s Judgment');
 
                 // Automatically take it off the Iron Bank without prompting
                 expect(this.player1).not.toHavePromptButton('1');

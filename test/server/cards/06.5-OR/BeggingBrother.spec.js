@@ -28,11 +28,11 @@ describe('Begging Brother', function() {
         describe('when you trigger a non-forced character ability', function() {
             beforeEach(function() {
                 this.player1.clickCard(this.tanda1);
-                this.player1.clickPrompt('Tanda Stokeworth');
+                this.player1.triggerAbility('Tanda Stokeworth');
             });
 
             it('should not prompt to trigger Begging Brother', function() {
-                expect(this.player1).not.toHavePromptButton('Begging Brother');
+                expect(this.player1).not.toAllowAbilityTrigger('Begging Brother');
             });
 
             it('should resolve as expected', function() {
@@ -47,12 +47,12 @@ describe('Begging Brother', function() {
             });
 
             it('should prompt to trigger Begging Brother', function() {
-                expect(this.player1).toHavePromptButton('Begging Brother');
+                expect(this.player1).toAllowAbilityTrigger('Begging Brother');
             });
 
             describe('and Begging Brother is used to cancel the ability', function() {
                 beforeEach(function() {
-                    this.player1.clickPrompt('Begging Brother');
+                    this.player1.triggerAbility('Begging Brother');
                 });
 
                 it('should discard a gold from Begging Brother to pay for the ability', function() {
@@ -69,16 +69,16 @@ describe('Begging Brother', function() {
             beforeEach(function() {
                 this.player1.clickPrompt('Done');
                 this.player2.clickCard(this.tanda2);
-                this.player2.clickPrompt('Tanda Stokeworth');
+                this.player2.triggerAbility('Tanda Stokeworth');
             });
 
             it('should prompt to trigger Begging Brother', function() {
-                expect(this.player1).toHavePromptButton('Begging Brother');
+                expect(this.player1).toAllowAbilityTrigger('Begging Brother');
             });
 
             describe('and Begging Brother is used to cancel the ability', function() {
                 beforeEach(function() {
-                    this.player1.clickPrompt('Begging Brother');
+                    this.player1.triggerAbility('Begging Brother');
                 });
 
                 it('should discard a gold from Begging Brother to pay for the ability', function() {

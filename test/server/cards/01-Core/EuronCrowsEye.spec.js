@@ -29,7 +29,7 @@ describe('Euron Crow\'s Eye', function() {
             });
 
             it('should not prompt', function() {
-                expect(this.player1).not.toHavePromptButton('Euron Crow\'s Eye');
+                expect(this.player1).not.toAllowAbilityTrigger('Euron Crow\'s Eye');
             });
         });
 
@@ -47,11 +47,11 @@ describe('Euron Crow\'s Eye', function() {
                 });
 
                 it('should prompt', function() {
-                    expect(this.player1).toHavePromptButton('Euron Crow\'s Eye');
+                    expect(this.player1).toAllowAbilityTrigger('Euron Crow\'s Eye');
                 });
 
                 it('should allow a location be put into play', function() {
-                    this.player1.clickPrompt('Euron Crow\'s Eye');
+                    this.player1.triggerAbility('Euron Crow\'s Eye');
                     this.player1.clickCard(this.theirArbor2);
 
                     expect(this.theirArbor2.location).toBe('play area');
@@ -69,7 +69,7 @@ describe('Euron Crow\'s Eye', function() {
                 });
 
                 it('should not prompt', function() {
-                    expect(this.player1).not.toHavePromptButton('Euron Crow\'s Eye');
+                    expect(this.player1).not.toAllowAbilityTrigger('Euron Crow\'s Eye');
                 });
             });
 
@@ -83,7 +83,7 @@ describe('Euron Crow\'s Eye', function() {
                 });
 
                 it('should not prompt', function() {
-                    expect(this.player1).not.toHavePromptButton('Euron Crow\'s Eye');
+                    expect(this.player1).not.toAllowAbilityTrigger('Euron Crow\'s Eye');
                 });
             });
         });

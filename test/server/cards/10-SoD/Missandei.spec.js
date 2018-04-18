@@ -32,7 +32,7 @@ describe('Missandei', function() {
                 this.unopposedChallenge(this.player2, 'Intrigue', this.opponentPillager);
                 this.player2.clickPrompt('Apply Claim');
 
-                this.player1.clickPrompt('Missandei');
+                this.player1.triggerAbility('Missandei');
             });
 
             it('should put her into play', function() {
@@ -51,7 +51,7 @@ describe('Missandei', function() {
                 this.player1.clickPrompt('Done');
 
                 // Pillage occurs, which would discard Missandei from deck
-                this.player1.clickPrompt('Missandei');
+                this.player1.triggerAbility('Missandei');
             });
 
             it('should put her into play', function() {

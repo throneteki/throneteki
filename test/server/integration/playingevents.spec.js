@@ -40,9 +40,9 @@ describe('playing events', function() {
             });
 
             it('should count as having played the event', function() {
-                expect(this.player1).toHavePromptButton('Melisandre');
+                expect(this.player1).toAllowAbilityTrigger('Melisandre');
 
-                this.player1.clickPrompt('Melisandre');
+                this.player1.triggerAbility('Melisandre');
                 this.player1.clickCard(this.knight);
 
                 expect(this.knight.kneeled).toBe(true);
@@ -52,7 +52,7 @@ describe('playing events', function() {
         describe('when cancelling the effects of an event', function() {
             beforeEach(function() {
                 this.player1.clickCard('Seen In Flames');
-                this.player2.clickPrompt('The Hand\'s Judgment');
+                this.player2.triggerAbility('The Hand\'s Judgment');
 
                 // Pass on Tower of the Sun
                 this.player2.clickPrompt('Pass');
@@ -61,13 +61,13 @@ describe('playing events', function() {
             it('should not prompt to cancel the event again', function() {
                 // The second copy of Hand's Judgment should not prompt for the
                 // already cancelled event.
-                expect(this.player2).not.toHavePromptButton('The Hand\'s Judgment');
+                expect(this.player2).not.toAllowAbilityTrigger('The Hand\'s Judgment');
             });
 
             it('should still count as having played the event', function() {
-                expect(this.player1).toHavePromptButton('Melisandre');
+                expect(this.player1).toAllowAbilityTrigger('Melisandre');
 
-                this.player1.clickPrompt('Melisandre');
+                this.player1.triggerAbility('Melisandre');
                 this.player1.clickCard(this.knight);
 
                 expect(this.knight.kneeled).toBe(true);
@@ -88,11 +88,11 @@ describe('playing events', function() {
 
                 this.skipActionWindow();
 
-                this.player2.clickPrompt('The Prince\'s Plan');
+                this.player2.triggerAbility('The Prince\'s Plan');
             });
 
             it('should not count as playing an event', function() {
-                expect(this.player2).not.toHavePromptButton('Tower of the Sun');
+                expect(this.player2).not.toAllowAbilityTrigger('Tower of the Sun');
             });
         });
 
@@ -104,7 +104,7 @@ describe('playing events', function() {
                 this.game.killCharacter(character, { allowSave: true });
                 this.game.continue();
 
-                this.player1.clickPrompt('Risen from the Sea');
+                this.player1.triggerAbility('Risen from the Sea');
                 this.player1.clickCard(character);
 
                 // Pass on Hand's Judgment to allow the save
@@ -112,7 +112,7 @@ describe('playing events', function() {
             });
 
             it('should count as playing an event', function() {
-                expect(this.player2).toHavePromptButton('Tower of the Sun');
+                expect(this.player2).toAllowAbilityTrigger('Tower of the Sun');
             });
         });
     });

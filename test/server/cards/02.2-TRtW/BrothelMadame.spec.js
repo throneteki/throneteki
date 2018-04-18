@@ -23,7 +23,7 @@ describe('Brothel Madame', function() {
             beforeEach(function() {
                 this.completeMarshalPhase();
 
-                this.player1.clickPrompt('Brothel Madame');
+                this.player1.triggerAbility('Brothel Madame');
                 this.player2.clickPrompt('No');
 
                 this.player1.clickPrompt('Done');
@@ -40,7 +40,7 @@ describe('Brothel Madame', function() {
             beforeEach(function() {
                 this.completeMarshalPhase();
 
-                this.player1.clickPrompt('Brothel Madame');
+                this.player1.triggerAbility('Brothel Madame');
                 this.player2.clickPrompt('Yes');
 
                 this.player1.clickPrompt('Done');
@@ -64,7 +64,7 @@ describe('Brothel Madame', function() {
                 this.player1.clickCard(this.character);
                 this.completeMarshalPhase();
 
-                this.player1.clickPrompt('Brothel Madame');
+                this.player1.triggerAbility('Brothel Madame');
                 this.player2.clickPrompt('No');
 
                 this.player1.clickPrompt('Intrigue');
@@ -73,7 +73,7 @@ describe('Brothel Madame', function() {
                 this.skipActionWindow();
                 this.player2.clickPrompt('Done');
                 this.skipActionWindow();
-                this.player1.clickPrompt('Paid Off');
+                this.player1.triggerAbility('Paid Off');
 
                 // Pay for Paid Off to re-stand the character
                 this.player2.clickPrompt('Yes');
@@ -98,11 +98,11 @@ describe('Brothel Madame', function() {
             describe('and the opponent pays for the first one', function() {
                 beforeEach(function() {
                     // First Madame
-                    this.player1.clickPrompt('Brothel Madame');
+                    this.player1.triggerAbility('Brothel Madame');
                     this.player2.clickPrompt('Yes');
 
                     // Second Madame
-                    this.player1.clickPrompt('Brothel Madame');
+                    this.player1.triggerAbility('Brothel Madame');
                 });
 
                 it('should not prompt the opponent to pay again', function() {
@@ -121,11 +121,11 @@ describe('Brothel Madame', function() {
             describe('and the opponent pays for the second one', function() {
                 beforeEach(function() {
                     // First Madame
-                    this.player1.clickPrompt('Brothel Madame');
+                    this.player1.triggerAbility('Brothel Madame');
                     this.player2.clickPrompt('No');
 
                     // Second Madame
-                    this.player1.clickPrompt('Brothel Madame');
+                    this.player1.triggerAbility('Brothel Madame');
                     this.player2.clickPrompt('Yes');
 
                     this.player1.clickPrompt('Done');

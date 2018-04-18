@@ -55,47 +55,47 @@ describe('nested ability sequences', function() {
             });
 
             it('should prompt with all available reactions', function() {
-                expect(this.player1).toHavePromptButton('Robb Stark');
-                expect(this.player1).toHavePromptButton('Arya Stark');
-                expect(this.player1).toHavePromptButton('Catelyn Stark');
+                expect(this.player1).toAllowAbilityTrigger('Robb Stark');
+                expect(this.player1).toAllowAbilityTrigger('Arya Stark');
+                expect(this.player1).toAllowAbilityTrigger('Catelyn Stark');
             });
 
             describe('when an ability triggers a new ability window', function() {
                 beforeEach(function() {
                     // Arya Stark sacrifices herself, prompt to trigger
-                    this.player1.clickPrompt('Arya Stark');
+                    this.player1.triggerAbility('Arya Stark');
                 });
 
                 it('should prompt again with eligible cards', function() {
-                    expect(this.player1).toHavePromptButton('Robb Stark');
-                    expect(this.player1).toHavePromptButton('Catelyn Stark');
-                    expect(this.player1).not.toHavePromptButton('Arya Stark');
+                    expect(this.player1).toAllowAbilityTrigger('Robb Stark');
+                    expect(this.player1).toAllowAbilityTrigger('Catelyn Stark');
+                    expect(this.player1).not.toAllowAbilityTrigger('Arya Stark');
                 });
 
                 it('should resolve the current trigger before continuing', function() {
-                    this.player1.clickPrompt('Catelyn Stark');
+                    this.player1.triggerAbility('Catelyn Stark');
 
                     expect(this.cat.power).toBe(1);
-                    expect(this.player1).toHavePromptButton('Robb Stark');
-                    expect(this.player1).not.toHavePromptButton('Catelyn Stark');
-                    expect(this.player1).not.toHavePromptButton('Arya Stark');
+                    expect(this.player1).toAllowAbilityTrigger('Robb Stark');
+                    expect(this.player1).not.toAllowAbilityTrigger('Catelyn Stark');
+                    expect(this.player1).not.toAllowAbilityTrigger('Arya Stark');
                 });
 
                 it('should continue with the previous reaction window once the current trigger is resolved', function() {
-                    this.player1.clickPrompt('Catelyn Stark');
+                    this.player1.triggerAbility('Catelyn Stark');
                     this.player1.clickPrompt('Pass');
 
                     expect(this.player1).toHavePrompt('Select a character');
                     this.player1.clickPrompt('Done');
 
-                    expect(this.player1).toHavePromptButton('Robb Stark');
-                    expect(this.player1).toHavePromptButton('Catelyn Stark');
-                    expect(this.player1).not.toHavePromptButton('Arya Stark');
+                    expect(this.player1).toAllowAbilityTrigger('Robb Stark');
+                    expect(this.player1).toAllowAbilityTrigger('Catelyn Stark');
+                    expect(this.player1).not.toAllowAbilityTrigger('Arya Stark');
                 });
 
                 it('should not allow abilities to trigger past their limit upon rewinding', function() {
                     // Gain power for Catelyn from Arya sacrifice (1)
-                    this.player1.clickPrompt('Catelyn Stark');
+                    this.player1.triggerAbility('Catelyn Stark');
                     this.player1.clickPrompt('Pass');
 
                     // Kill the other steward using Arya
@@ -103,18 +103,18 @@ describe('nested ability sequences', function() {
                     this.player1.clickCard(this.steward1);
 
                     // Gain power for Catelyn from Steward #2 kill (2)
-                    this.player1.clickPrompt('Catelyn Stark');
+                    this.player1.triggerAbility('Catelyn Stark');
                     this.player1.clickPrompt('Pass');
 
                     // Even though Catelyn original was able to trigger from the
                     // killing of Steward #1, she has reached her ability limit and
                     // is no longer eligible.
                     expect(this.cat.power).toBe(2);
-                    expect(this.player1).not.toHavePromptButton('Catelyn Stark');
+                    expect(this.player1).not.toAllowAbilityTrigger('Catelyn Stark');
 
                     // Robb Stark is still eligible though.
-                    expect(this.player1).toHavePromptButton('Robb Stark');
-                    expect(this.player1).not.toHavePromptButton('Arya Stark');
+                    expect(this.player1).toAllowAbilityTrigger('Robb Stark');
+                    expect(this.player1).not.toAllowAbilityTrigger('Arya Stark');
                 });
             });
         });
@@ -155,12 +155,12 @@ describe('nested ability sequences', function() {
                 this.skipActionWindow();
 
                 // Activate Blackfish to draw a card.
-                this.player1.clickPrompt('The Blackfish');
+                this.player1.triggerAbility('The Blackfish');
             });
 
             it('should prompt for the drawn card when eligible', function() {
                 expect(this.eventCard.location).toBe('hand');
-                expect(this.player1).toHavePromptButton('Put to the Torch');
+                expect(this.player1).toAllowAbilityTrigger('Put to the Torch');
             });
         });
     });

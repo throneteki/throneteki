@@ -83,7 +83,7 @@ describe('Lady-in-Waiting', function() {
             });
 
             it('should not allow it to be canceled', function() {
-                expect(this.player2).not.toHavePromptButton('Treachery');
+                expect(this.player2).not.toAllowAbilityTrigger('Treachery');
             });
         });
     });

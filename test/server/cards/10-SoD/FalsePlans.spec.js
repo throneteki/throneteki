@@ -33,7 +33,7 @@ describe('False Plans', function() {
             it('should not activate', function() {
                 expect(this.player1Object.hand.length).toBe(0);
                 expect(this.player1Object.discardPile.length).toBe(1);
-                expect(this.player1).not.toHavePromptButton('False Plans');
+                expect(this.player1).not.toAllowAbilityTrigger('False Plans');
             });
         });
 
@@ -47,7 +47,7 @@ describe('False Plans', function() {
                 this.unopposedChallenge(this.player2, 'Intrigue', 'House Dayne Knight');
                 this.player2.clickPrompt('Apply Claim');
 
-                this.player1.clickPrompt('False Plans');
+                this.player1.triggerAbility('False Plans');
             });
 
             it('should discard 2 cards from the opponent', function() {
@@ -70,11 +70,11 @@ describe('False Plans', function() {
                 this.player1.clickPrompt('Apply Claim');
 
                 // Redirect the intrigue claim
-                this.player2.clickPrompt('Vengeance for Elia');
+                this.player2.triggerAbility('Vengeance for Elia');
             });
 
             it('should not prompt for False Plans', function() {
-                expect(this.player1).not.toHavePromptButton('False Plans');
+                expect(this.player1).not.toAllowAbilityTrigger('False Plans');
                 expect(this.player1Object.discardPile.length).toBe(1);
             });
         });

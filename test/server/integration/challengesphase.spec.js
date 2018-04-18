@@ -30,7 +30,7 @@ describe('challenges phase', function() {
 
                 this.player1.clickCard(stealthTarget);
 
-                expect(this.player1).toHavePromptButton('Tyrion Lannister');
+                expect(this.player1).toAllowAbilityTrigger('Tyrion Lannister');
                 expect(stealthTarget.stealth).toBe(true);
             });
         });
@@ -69,7 +69,7 @@ describe('challenges phase', function() {
             });
 
             it('should not trigger any win reactions for the defender', function() {
-                expect(this.player2).not.toHavePromptButton('The Shadow Tower');
+                expect(this.player2).not.toAllowAbilityTrigger('The Shadow Tower');
             });
 
             it('should complete the challenge', function() {
@@ -122,29 +122,29 @@ describe('challenges phase', function() {
             it('should prompt for challenge initiated, attackers declared, and stealth simultaneously', function() {
                 this.initiateChallenge();
 
-                expect(this.player1).toHavePromptButton('Tyrion Lannister');
-                expect(this.player1).toHavePromptButton('Dornish Paramour');
-                expect(this.player1).toHavePromptButton('Marya Seaworth - Kneel Hedge Knight');
-                expect(this.player1).toHavePromptButton('Marya Seaworth - Kneel Lannisport Merchant');
+                expect(this.player1).toAllowAbilityTrigger('Tyrion Lannister');
+                expect(this.player1).toAllowAbilityTrigger('Dornish Paramour');
+                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Hedge Knight');
+                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Lannisport Merchant');
                 expect(this.player1.currentPrompt().buttons.length).toBe(5);
             });
 
             it('should reactions in the same window to generate gold needed to pay costs', function() {
                 this.player1Object.gold = 0;
                 this.initiateChallenge();
-                expect(this.player1).not.toHavePromptButton('Marya Seaworth - Kneel Hedge Knight');
-                expect(this.player1).not.toHavePromptButton('Marya Seaworth - Kneel Lannisport Merchant');
+                expect(this.player1).not.toAllowAbilityTrigger('Marya Seaworth - Kneel Hedge Knight');
+                expect(this.player1).not.toAllowAbilityTrigger('Marya Seaworth - Kneel Lannisport Merchant');
 
-                this.player1.clickPrompt('Tyrion Lannister');
+                this.player1.triggerAbility('Tyrion Lannister');
 
-                expect(this.player1).toHavePromptButton('Marya Seaworth - Kneel Hedge Knight');
-                expect(this.player1).toHavePromptButton('Marya Seaworth - Kneel Lannisport Merchant');
+                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Hedge Knight');
+                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Lannisport Merchant');
             });
 
             it('should allow multiple reactions from the same card to be triggered', function() {
                 this.initiateChallenge();
-                this.player1.clickPrompt('Marya Seaworth - Kneel Hedge Knight');
-                this.player1.clickPrompt('Marya Seaworth - Kneel Lannisport Merchant');
+                this.player1.triggerAbility('Marya Seaworth - Kneel Hedge Knight');
+                this.player1.triggerAbility('Marya Seaworth - Kneel Lannisport Merchant');
 
                 expect(this.knight.kneeled).toBe(true);
                 expect(this.merchant.kneeled).toBe(true);

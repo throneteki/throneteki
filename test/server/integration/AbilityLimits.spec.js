@@ -27,7 +27,7 @@ describe('ability limits', function() {
 
                 // Manually kill a character
                 this.player1.dragCard(this.character1, 'dead pile');
-                this.player1.clickPrompt('Robb Stark');
+                this.player1.triggerAbility('Robb Stark');
 
                 this.player1.clickCard('Robb Stark', 'play area');
             });
@@ -35,7 +35,7 @@ describe('ability limits', function() {
             it('should not allow the limit to be exceeded', function() {
                 this.player1.dragCard(this.character2, 'dead pile');
 
-                expect(this.player1).not.toHavePromptButton('Robb Stark');
+                expect(this.player1).not.toAllowAbilityTrigger('Robb Stark');
             });
         });
 
@@ -71,15 +71,15 @@ describe('ability limits', function() {
 
                 // Manually kill a character
                 this.player2.dragCard(this.character1, 'dead pile');
-                this.player2.clickPrompt('Robb Stark');
+                this.player2.triggerAbility('Robb Stark');
 
-                this.player1.clickPrompt('Treachery');
+                this.player1.triggerAbility('Treachery');
             });
 
             it('should not allow the ability to be triggered again', function() {
                 this.player2.dragCard(this.character2, 'dead pile');
 
-                expect(this.player2).not.toHavePromptButton('Robb Stark');
+                expect(this.player2).not.toAllowAbilityTrigger('Robb Stark');
             });
         });
     });

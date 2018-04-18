@@ -211,9 +211,9 @@ describe('setup phase', function() {
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
 
-                this.player1.clickPrompt('The Wall');
+                this.player1.triggerAbility('The Wall');
 
-                expect(this.player1).not.toHavePromptButton('The Wall');
+                expect(this.player1).not.toAllowAbilityTrigger('The Wall');
             });
         });
 

@@ -32,7 +32,7 @@ describe('replacement effects', function() {
 
                 // Choose Benjen for claim
                 this.player1.clickCard(this.benjen);
-                this.player1.clickPrompt('Benjen Stark');
+                this.player1.triggerAbility('Benjen Stark');
             });
 
             it('should replace the effect', function() {
@@ -41,7 +41,7 @@ describe('replacement effects', function() {
 
             it('should still be considered to have happened', function() {
                 // Chella should gain an ear token from Benjen dying
-                this.player2.clickPrompt('Chella Daughter of Cheyk');
+                this.player2.triggerAbility('Chella Daughter of Cheyk');
 
                 expect(this.chella.tokens.ear).toBe(1);
             });
@@ -78,11 +78,11 @@ describe('replacement effects', function() {
                 this.player1.clickPrompt('Apply Claim');
 
                 // Player 1 attempts to trigger Mirri to kill the character
-                this.player1.clickPrompt('Mirri Maz Duur');
+                this.player1.triggerAbility('Mirri Maz Duur');
                 this.player1.clickCard(this.character);
 
                 // Player 2 applies the claim back to the attacker
-                this.player2.clickPrompt('Vengeance for Elia');
+                this.player2.triggerAbility('Vengeance for Elia');
             });
 
             it('should replace the original effect', function() {

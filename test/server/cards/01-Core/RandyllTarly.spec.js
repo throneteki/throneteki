@@ -38,7 +38,7 @@ describe('Randyll Tarly', function() {
                 this.player1.clickMenu(margaery, 'Give character +3 STR');
                 this.player1.clickCard(this.randyll);
 
-                this.player1.clickPrompt('Randyll Tarly');
+                this.player1.triggerAbility('Randyll Tarly');
             });
 
             it('should stand Randyll', function() {
@@ -55,7 +55,7 @@ describe('Randyll Tarly', function() {
                 this.player1.selectPlot('A Song of Summer');
 
                 // A Song of Summer takes effect immediately
-                this.player1.clickPrompt('Randyll Tarly');
+                this.player1.triggerAbility('Randyll Tarly');
             });
 
             it('should stand Randyll', function() {
@@ -100,7 +100,7 @@ describe('Randyll Tarly', function() {
             });
 
             it('should not stand Randyll', function() {
-                expect(this.player1).not.toHavePromptButton('Randyll Tarly');
+                expect(this.player1).not.toAllowAbilityTrigger('Randyll Tarly');
                 expect(this.randyll.kneeled).toBe(true);
                 expect(this.randyll.getStrength()).toBe(1);
             });
@@ -110,7 +110,7 @@ describe('Randyll Tarly', function() {
                 this.player1.clickPrompt('Done');
                 this.player2.clickPrompt('Done');
 
-                expect(this.player1).not.toHavePromptButton('Randyll Tarly');
+                expect(this.player1).not.toAllowAbilityTrigger('Randyll Tarly');
                 expect(this.randyll.kneeled).toBe(true);
                 expect(this.randyll.getStrength()).toBe(5);
             });

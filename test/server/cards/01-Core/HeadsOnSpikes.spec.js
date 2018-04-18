@@ -95,7 +95,7 @@ describe('Heads on Spikes', function() {
                 this.completeSetup();
                 this.selectFirstPlayer(this.player1);
 
-                this.player2.clickPrompt('Missandei');
+                this.player2.triggerAbility('Missandei');
             });
 
             it('should not move Missandei from play to the dead pile', function() {

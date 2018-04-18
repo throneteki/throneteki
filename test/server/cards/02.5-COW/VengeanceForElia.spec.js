@@ -30,7 +30,7 @@ describe('Vengeance for Elia', function() {
                 this.unopposedChallenge(this.player1, 'Military', 'Tywin Lannister');
                 this.player1.clickPrompt('Apply Claim');
 
-                this.player2.clickPrompt('Vengeance for Elia');
+                this.player2.triggerAbility('Vengeance for Elia');
             });
 
             it('should force the attacker to kill a character', function() {
@@ -45,7 +45,7 @@ describe('Vengeance for Elia', function() {
                 this.unopposedChallenge(this.player1, 'Intrigue', 'Tywin Lannister');
                 this.player1.clickPrompt('Apply Claim');
 
-                this.player2.clickPrompt('Vengeance for Elia');
+                this.player2.triggerAbility('Vengeance for Elia');
             });
 
             it('should force the attacker to discard from hand', function() {
@@ -62,7 +62,7 @@ describe('Vengeance for Elia', function() {
                 this.unopposedChallenge(this.player1, 'Power', 'Tywin Lannister');
                 this.player1.clickPrompt('Apply Claim');
 
-                this.player2.clickPrompt('Vengeance for Elia');
+                this.player2.triggerAbility('Vengeance for Elia');
             });
 
             it('should force the attacker to transfer power from themself to themself', function() {

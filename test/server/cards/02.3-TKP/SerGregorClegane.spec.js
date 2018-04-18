@@ -50,7 +50,7 @@ describe('Ser Gregor Clegane', function() {
                 this.unopposedChallenge(this.player1, 'Military', 'Ser Gregor Clegane');
                 this.player1.clickPrompt('Apply Claim');
                 this.player2.clickCard('Hedge Knight', 'play area');
-                this.player1.clickPrompt('Ser Gregor Clegane');
+                this.player1.triggerAbility('Ser Gregor Clegane');
             });
 
             it('should put the character into the dead pile', function() {
@@ -77,7 +77,7 @@ describe('Ser Gregor Clegane', function() {
                 this.unopposedChallenge(this.player1, 'Military', 'Ser Gregor Clegane');
                 this.player1.clickPrompt('Apply Claim');
                 this.player2.clickCard('Hedge Knight', 'play area');
-                this.player1.clickPrompt('Ser Gregor Clegane');
+                this.player1.triggerAbility('Ser Gregor Clegane');
             });
 
             it('should put the character into the dead pile', function() {

@@ -45,7 +45,7 @@ describe('Mirri Maz Duur', function() {
             });
 
             it('should allow a character to be killed', function() {
-                this.player1.clickPrompt('Mirri Maz Duur');
+                this.player1.triggerAbility('Mirri Maz Duur');
                 this.player1.clickCard(this.character);
                 expect(this.character.location).toBe('dead pile');
             });
@@ -71,7 +71,7 @@ describe('Mirri Maz Duur', function() {
             });
 
             it('should consider Mirri to be attacking alone', function() {
-                expect(this.player1).toHavePromptButton('Mirri Maz Duur');
+                expect(this.player1).toAllowAbilityTrigger('Mirri Maz Duur');
             });
         });
     });

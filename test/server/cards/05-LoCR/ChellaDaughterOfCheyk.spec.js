@@ -33,7 +33,7 @@ describe('Chella Daughter of Cheyk', function() {
                 this.unopposedChallenge(this.player1, 'military', this.chella);
                 this.player1.clickPrompt('Apply Claim');
                 this.player2.clickCard(this.chud);
-                this.player1.clickPrompt('Chella Daughter of Cheyk');
+                this.player1.triggerAbility('Chella Daughter of Cheyk');
 
                 expect(this.chella.tokens.ear).toBe(3);
             });

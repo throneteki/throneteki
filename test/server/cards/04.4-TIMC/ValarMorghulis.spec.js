@@ -38,11 +38,11 @@ describe('Valar Morghulis', function() {
             });
 
             it('should prompt interrupts and reactions in the proper order', function() {
-                expect(this.player1).not.toHavePromptButton('Margaery Tyrell');
-                expect(this.player2).toHavePromptButton('Maester Aemon');
+                expect(this.player1).not.toAllowAbilityTrigger('Margaery Tyrell');
+                expect(this.player2).toAllowAbilityTrigger('Maester Aemon');
 
                 // Aemon saves Sam but dies
-                this.player2.clickPrompt('Maester Aemon');
+                this.player2.triggerAbility('Maester Aemon');
                 this.player2.clickCard('Samwell Tarly', 'play area');
                 expect(this.samwell.location).toBe('play area');
                 expect(this.aemon.location).toBe('dead pile');
@@ -52,7 +52,7 @@ describe('Valar Morghulis', function() {
                 expect(this.marg2.location).toBe('discard pile');
                 expect(this.rickon.location).toBe('dead pile');
 
-                expect(this.player1).toHavePromptButton('Margaery Tyrell');
+                expect(this.player1).toAllowAbilityTrigger('Margaery Tyrell');
             });
         });
 

@@ -35,7 +35,7 @@ describe('Craster', function() {
                 this.player1.selectPlot('A Noble Cause');
                 this.selectFirstPlayer(this.player1);
 
-                this.player2.clickPrompt('Benjen Stark');
+                this.player2.triggerAbility('Benjen Stark');
                 expect(this.benjen.location).toBe('draw deck');
             });
 

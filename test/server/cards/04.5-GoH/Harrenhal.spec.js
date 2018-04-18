@@ -26,7 +26,7 @@ describe('Harrenhal (GoH)', function() {
             });
 
             it('should prompt to kill the character', function() {
-                this.player1.clickPrompt('Harrenhal');
+                this.player1.triggerAbility('Harrenhal');
 
                 expect(this.harrenhal.location).toBe('discard pile');
                 expect(this.player1Object.faction.kneeled).toBe(true);
@@ -34,9 +34,9 @@ describe('Harrenhal (GoH)', function() {
             });
 
             it('should not prompt to trigger the ability of the character that was killed', function() {
-                this.player1.clickPrompt('Harrenhal');
+                this.player1.triggerAbility('Harrenhal');
 
-                expect(this.player2).not.toHavePromptButton('Littlefinger');
+                expect(this.player2).not.toAllowAbilityTrigger('Littlefinger');
             });
         });
     });

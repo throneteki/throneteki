@@ -26,7 +26,7 @@ describe('Jaqen H\'ghar', function() {
 
         describe('when Jaqen enters play', function() {
             it('should allow placement of Valar Morghulis tokens', function() {
-                this.player1.clickPrompt('Jaqen H\'ghar');
+                this.player1.triggerAbility('Jaqen H\'ghar');
                 this.player1.clickCard(this.tickler);
                 this.player1.clickPrompt('Done');
 
@@ -36,7 +36,7 @@ describe('Jaqen H\'ghar', function() {
 
         describe('when Jaqen leaves play', function() {
             beforeEach(function() {
-                this.player1.clickPrompt('Jaqen H\'ghar');
+                this.player1.triggerAbility('Jaqen H\'ghar');
                 this.player1.clickCard(this.tickler);
                 this.player1.clickPrompt('Done');
 
@@ -50,7 +50,7 @@ describe('Jaqen H\'ghar', function() {
 
         describe('when Jaqen wins a challenge while attacking alone', function() {
             beforeEach(function() {
-                this.player1.clickPrompt('Jaqen H\'ghar');
+                this.player1.triggerAbility('Jaqen H\'ghar');
                 this.player1.clickCard(this.tickler);
                 this.player1.clickPrompt('Done');
 
@@ -68,14 +68,14 @@ describe('Jaqen H\'ghar', function() {
             });
 
             it('should allow him to kill a character with a Valar Morghulis token', function() {
-                this.player1.clickPrompt('Jaqen H\'ghar');
+                this.player1.triggerAbility('Jaqen H\'ghar');
                 this.player1.clickCard(this.tickler);
 
                 expect(this.tickler.location).toBe('dead pile');
             });
 
             it('should not allow him to kill a character without a Valar Morghulis token', function() {
-                this.player1.clickPrompt('Jaqen H\'ghar');
+                this.player1.triggerAbility('Jaqen H\'ghar');
                 this.player1.clickCard(this.arya);
 
                 expect(this.arya.location).toBe('play area');

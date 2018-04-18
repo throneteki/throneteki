@@ -132,7 +132,7 @@ describe('burn effects', function() {
                     // 4 base = 4 remaining when Dracarys'ed
                     expect(this.quentyn.getStrength()).toBe(4);
 
-                    this.player1.clickPrompt('Quentyn Martell');
+                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
                 it('should not allow a 4 STR character to be killed', function() {
@@ -165,7 +165,7 @@ describe('burn effects', function() {
                     // 4 base + 1 Song of Summer - 1 Blood of Dragon = 4 remaining when Dracarys'ed
                     expect(this.quentyn.getStrength()).toBe(4);
 
-                    this.player1.clickPrompt('Quentyn Martell');
+                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
                 it('should not allow a 4 STR character to be killed', function() {
@@ -205,7 +205,7 @@ describe('burn effects', function() {
                     // 4 base + 1 Song of Summer - 2 Astapor = 3 remaining when Dracarys'ed
                     expect(this.quentyn.getStrength()).toBe(3);
 
-                    this.player1.clickPrompt('Quentyn Martell');
+                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
                 it('should not allow a 3 STR character to be killed', function() {
@@ -245,7 +245,7 @@ describe('burn effects', function() {
                     // 4 base + 1 Song of Summer - 4 Dracarys! = 1 remaining when Astapor'ed
                     expect(this.quentyn.getStrength()).toBe(1);
 
-                    this.player1.clickPrompt('Quentyn Martell');
+                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
                 it('should not allow a 1 STR character to be killed', function() {

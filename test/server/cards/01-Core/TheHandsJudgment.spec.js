@@ -27,12 +27,12 @@ describe('The Hand\'s Judgment', function() {
             });
 
             it('should prompt to play Judgment', function() {
-                expect(this.player2).toHavePromptButton('The Hand\'s Judgment');
+                expect(this.player2).toAllowAbilityTrigger('The Hand\'s Judgment');
             });
 
             describe('and Judgment is used to cancel the event', function() {
                 beforeEach(function() {
-                    this.player2.clickPrompt('The Hand\'s Judgment');
+                    this.player2.triggerAbility('The Hand\'s Judgment');
                     this.player1.clickPrompt('Pass');
                 });
 
@@ -48,8 +48,8 @@ describe('The Hand\'s Judgment', function() {
 
             describe('and Judgment is cancelled by Judgment', function() {
                 beforeEach(function() {
-                    this.player2.clickPrompt('The Hand\'s Judgment');
-                    this.player1.clickPrompt('The Hand\'s Judgment');
+                    this.player2.triggerAbility('The Hand\'s Judgment');
+                    this.player1.triggerAbility('The Hand\'s Judgment');
                 });
 
                 it('should allow the effects of the original event', function() {

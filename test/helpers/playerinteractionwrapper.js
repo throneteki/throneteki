@@ -131,6 +131,14 @@ class PlayerInteractionWrapper {
         this.game.continue();
     }
 
+    triggerAbility(cardName) {
+        if(this.game.abilityWindowStack.length === 0) {
+            throw new Error(`Couldn't trigger ability for ${this.name}. Not in an ability window. Current prompt is:\n${this.formatPrompt()}`);
+        }
+
+        this.clickPrompt(cardName);
+    }
+
     dragCard(card, targetLocation) {
         this.game.drop(this.player.name, card.uuid, card.location, targetLocation);
         this.game.continue();

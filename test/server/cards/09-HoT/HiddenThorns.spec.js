@@ -34,7 +34,7 @@ describe('Hidden Thorns', function() {
                 this.completeMarshalPhase();
 
                 this.unopposedChallenge(this.player1, 'Intrigue', this.character);
-                this.player1.clickPrompt('Hidden Thorns');
+                this.player1.triggerAbility('Hidden Thorns');
 
                 this.player2.clickCard(this.card1);
                 this.player2.clickCard(this.card2);
@@ -57,7 +57,7 @@ describe('Hidden Thorns', function() {
                 this.completeMarshalPhase();
 
                 this.unopposedChallenge(this.player1, 'Intrigue', this.character);
-                this.player1.clickPrompt('Hidden Thorns');
+                this.player1.triggerAbility('Hidden Thorns');
 
                 this.player2.clickCard(this.card1);
                 this.player2.clickCard(this.card2);

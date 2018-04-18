@@ -1,4 +1,4 @@
-describe('Hidden Thorns', function() {
+describe('Emissary of the Hightower', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('tyrell', [
@@ -32,7 +32,7 @@ describe('Hidden Thorns', function() {
 
                 // Ambush Emissary
                 this.player1.clickCard('Emissary of the Hightower', 'hand');
-                this.player1.clickPrompt('Emissary of the Hightower');
+                this.player1.triggerAbility('Emissary of the Hightower');
                 this.player1.clickCard(this.event);
 
                 // Play Growing Strong from discard
@@ -59,11 +59,11 @@ describe('Hidden Thorns', function() {
 
                 // Ambush Emissary
                 this.player1.clickCard('Emissary of the Hightower', 'hand');
-                this.player1.clickPrompt('Emissary of the Hightower');
+                this.player1.triggerAbility('Emissary of the Hightower');
                 this.player1.clickCard(this.hiddenThorns);
 
                 this.unopposedChallenge(this.player1, 'Intrigue', this.character);
-                this.player1.clickPrompt('Hidden Thorns (discard pile)');
+                this.player1.triggerAbility('Hidden Thorns (discard pile)');
 
                 this.player2.clickCard('Hedge Knight', 'hand');
                 this.player2.clickCard('Varys', 'hand');
