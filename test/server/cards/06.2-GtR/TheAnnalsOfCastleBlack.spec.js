@@ -78,11 +78,11 @@ describe('The Annals of Castle Black', function() {
             });
 
             it('should allow the event to trigger', function() {
-                expect(this.player1).toAllowAbilityTrigger('Ahead of the Tide (discard pile)');
+                expect(this.player1).toAllowAbilityTrigger('Ahead of the Tide');
             });
 
             it('should remove the event from the game if played', function() {
-                this.player1.triggerAbility('Ahead of the Tide (discard pile)');
+                this.player1.triggerAbility('Ahead of the Tide');
 
                 expect(this.interruptEventCard.location).toBe('out of game');
             });

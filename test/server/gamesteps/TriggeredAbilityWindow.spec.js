@@ -8,7 +8,7 @@ describe('TriggeredAbilityWindow', function() {
         this.player1Spy.noTimer = true;
         this.player2Spy.noTimer = true;
 
-        this.gameSpy = jasmine.createSpyObj('game', ['getPlayersInFirstPlayerOrder', 'promptWithMenu', 'resolveAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['getPlayersInFirstPlayerOrder', 'promptForSelect', 'resolveAbility']);
         this.gameSpy.getPlayersInFirstPlayerOrder.and.returnValue([this.player1Spy, this.player2Spy]);
 
         this.eventSpy = jasmine.createSpyObj('event', ['emitTo', 'getConcurrentEvents', 'getPrimaryEvent']);
@@ -66,7 +66,7 @@ describe('TriggeredAbilityWindow', function() {
             });
 
             it('should not prompt', function() {
-                expect(this.gameSpy.promptWithMenu).not.toHaveBeenCalled();
+                expect(this.gameSpy.promptForSelect).not.toHaveBeenCalled();
             });
 
             it('should complete the prompt', function() {
@@ -81,7 +81,7 @@ describe('TriggeredAbilityWindow', function() {
             });
 
             it('should not prompt', function() {
-                expect(this.gameSpy.promptWithMenu).not.toHaveBeenCalled();
+                expect(this.gameSpy.promptForSelect).not.toHaveBeenCalled();
             });
 
             it('should complete the prompt', function() {
@@ -104,82 +104,11 @@ describe('TriggeredAbilityWindow', function() {
                 });
 
                 it('should prompt the first player', function() {
-                    expect(this.gameSpy.promptWithMenu).toHaveBeenCalledWith(this.player1Spy, this.window, jasmine.objectContaining({
-                        activePrompt: jasmine.objectContaining({
-                            menuTitle: jasmine.any(String),
-                            buttons: [
-                                jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
-                                jasmine.objectContaining({ text: 'The Card 2', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
-                                jasmine.objectContaining({ text: 'Pass', method: 'pass' })
-                            ]
-                        })
-                    }));
+                    expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player1Spy, jasmine.any(Object));
                 });
 
                 it('should continue to prompt', function() {
                     expect(this.result).toBe(false);
-                });
-            });
-
-            describe('and the ability has a maximum', function() {
-                beforeEach(function() {
-                    this.ability1Spy.hasMax.and.returnValue(true);
-                    this.ability2Spy.hasMax.and.returnValue(true);
-                });
-
-                describe('and another ability from a card with that title has not been registered', function() {
-                    it('should display buttons as normal', function() {
-                        this.window.continue();
-                        expect(this.gameSpy.promptWithMenu).toHaveBeenCalledWith(this.player1Spy, this.window, jasmine.objectContaining({
-                            activePrompt: jasmine.objectContaining({
-                                menuTitle: jasmine.any(String),
-                                buttons: [
-                                    jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
-                                    jasmine.objectContaining({ text: 'The Card 2', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
-                                    jasmine.objectContaining({ text: 'Pass', method: 'pass' })
-                                ]
-                            })
-                        }));
-                    });
-                });
-
-                describe('and another ability from a card with that title has been registered', function() {
-                    beforeEach(function() {
-                        this.abilityCard2.name = 'The Card';
-                        this.window.continue();
-                    });
-
-                    it('should only display the first copy', function() {
-                        expect(this.gameSpy.promptWithMenu).toHaveBeenCalledWith(this.player1Spy, this.window, jasmine.objectContaining({
-                            activePrompt: jasmine.objectContaining({
-                                menuTitle: jasmine.any(String),
-                                buttons: [
-                                    jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
-                                    jasmine.objectContaining({ text: 'Pass', method: 'pass' })
-                                ]
-                            })
-                        }));
-                    });
-                });
-            });
-
-            describe('and all abilities for the current player are not eligible', function() {
-                beforeEach(function() {
-                    this.ability1Spy.meetsRequirements.and.returnValue(false);
-                    this.ability2Spy.meetsRequirements.and.returnValue(false);
-                    this.window.continue();
-                });
-
-                it('should prompt the next player', function() {
-                    expect(this.gameSpy.promptWithMenu).toHaveBeenCalledWith(this.player2Spy, this.window, jasmine.objectContaining({
-                        activePrompt: jasmine.objectContaining({
-                            menuTitle: jasmine.any(String),
-                            buttons: [
-                                jasmine.objectContaining({ text: 'Their Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
-                                jasmine.objectContaining({ text: 'Pass', method: 'pass' })
-                            ]
-                        })
-                    }));
                 });
             });
         });

@@ -112,6 +112,10 @@ class PlayerInteractionWrapper {
             card = this.findCardByName(card, location);
         }
 
+        if(card.location === 'draw deck') {
+            throw new Error(`Cannot click on ${card.name} because it is in the ${card.location}.`);
+        }
+
         this.game.cardClicked(this.player.name, card.uuid);
         this.game.continue();
     }
@@ -131,12 +135,34 @@ class PlayerInteractionWrapper {
         this.game.continue();
     }
 
-    triggerAbility(cardName) {
+    triggerAbility(cardOrCardName) {
         if(this.game.abilityWindowStack.length === 0) {
             throw new Error(`Couldn't trigger ability for ${this.name}. Not in an ability window. Current prompt is:\n${this.formatPrompt()}`);
         }
 
-        this.clickPrompt(cardName);
+        let selectableCards = this.player.getSelectableCards();
+        let card;
+        let cardName;
+
+        if(typeof cardOrCardName === 'string') {
+            card = selectableCards.find(c => c.name === cardOrCardName);
+            cardName = cardOrCardName;
+        } else {
+            card = cardOrCardName;
+            cardName = cardOrCardName.name;
+        }
+
+        if(!card || !selectableCards.includes(card)) {
+            throw new Error(`Couldn't trigger ability ${cardName} for ${this.name}. Current available abilities: ${selectableCards.map(c => c.name).join(', ')}`);
+        }
+
+        if(card.location === 'draw deck') {
+            // Abilities on cards that are still in the draw deck, e.g. Missandei,
+            // are presented as buttons instead.
+            this.clickPrompt(`${card.name} (${card.location})`);
+        } else {
+            this.clickCard(card);
+        }
     }
 
     dragCard(card, targetLocation) {

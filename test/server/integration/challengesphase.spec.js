@@ -125,7 +125,6 @@ describe('challenges phase', function() {
                 expect(this.player1).toAllowAbilityTrigger('Tyrion Lannister');
                 expect(this.player1).toAllowAbilityTrigger('Dornish Paramour');
                 expect(this.player1).toAllowAbilityTrigger('Marya Seaworth');
-                expect(this.player1.currentPrompt().buttons.length).toBe(4);
             });
 
             it('should reactions in the same window to generate gold needed to pay costs', function() {

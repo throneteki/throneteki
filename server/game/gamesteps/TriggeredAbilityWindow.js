@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const uuid = require('uuid');
 
 const BaseAbilityWindow = require('./BaseAbilityWindow');
@@ -34,36 +33,36 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     filterChoicelessPlayers(players) {
-        return players.filter(player => this.cancelTimer.isEnabled(player) || this.abilityChoices.some(abilityChoice => this.eligibleChoiceForPlayer(abilityChoice, player)));
-    }
-
-    eligibleChoiceForPlayer(abilityChoice, player) {
-        return abilityChoice.player === player && abilityChoice.ability.meetsRequirements(abilityChoice.context);
+        return players.filter(player => this.cancelTimer.isEnabled(player) || this.abilityChoices.some(abilityChoice => abilityChoice.player === player));
     }
 
     promptPlayer(player) {
-        this.game.promptWithMenu(player, this, {
-            activePrompt: {
-                menuTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvent()),
-                buttons: this.getButtons(player),
-                controls: this.getAdditionalPromptControls()
-            },
-            waitingPromptTitle: 'Waiting for opponents'
+        let cardsForPlayer = this.abilityChoices.filter(choice => choice.player === player).map(choice => choice.card);
+
+        let unclickableCards = cardsForPlayer.filter(card => card.location === 'draw deck');
+
+        this.game.promptForSelect(player, {
+            activePromptTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvent()),
+            cardCondition: card => cardsForPlayer.includes(card),
+            cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot'],
+            additionalButtons: this.getButtons(player, unclickableCards),
+            additionalControls: this.getAdditionalPromptControls(),
+            doneButtonText: 'Pass',
+            onSelect: (player, card) => this.chooseCardToTrigger(player, card),
+            onCancel: player => this.pass(player),
+            onMenuCommand: (player, cardId) => {
+                let card = cardsForPlayer.find(c => c.uuid === cardId);
+                this.chooseCardToTrigger(player, card);
+                return true;
+            }
         });
 
         this.forceWindowPerPlayer[player.name] = false;
     }
 
-    getButtons(player) {
-        let choicesForPlayer = this.getChoicesForPlayer(player);
-        let cardsWithChoices = [... new Set(choicesForPlayer.map(choice => choice.card))];
-        let buttons = cardsWithChoices.map(card => {
-            let text = card.name;
-            let choicesForCard = choicesForPlayer.filter(choice => choice.card === card);
-            if(choicesForCard.some(choice => !choice.ability.location.includes(card.location))) {
-                text += ` (${card.location})`;
-            }
-            return { text: text, method: 'chooseCardToTrigger', arg: card.uuid };
+    getButtons(player, unclickableCards) {
+        let buttons = unclickableCards.map(card => {
+            return { text: `${card.name} (${card.location})`, card: card, mapCard: true };
         });
 
         if(this.cancelTimer.isEnabled(player)) {
@@ -71,8 +70,6 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             buttons.push({ text: 'I need more time', timerCancel: true });
             buttons.push({ text: 'Don\'t ask again until end of round', timerCancel: true, method: 'pass', arg: 'pauseRound' });
         }
-
-        buttons.push({ text: 'Pass', method: 'pass' });
 
         return buttons;
     }
@@ -92,23 +89,8 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return controls;
     }
 
-    getChoicesForPlayer(player) {
-        let choices = this.abilityChoices.filter(abilityChoice => {
-            try {
-                return this.eligibleChoiceForPlayer(abilityChoice, player);
-            } catch(e) {
-                this.abilityChoices = this.abilityChoices.filter(a => a !== abilityChoice);
-                this.game.reportError(e);
-                return false;
-            }
-        });
-        // Cards that have a maximum should only display a single choice by
-        // title even if multiple copies are available to be triggered.
-        return _.uniq(choices, choice => choice.ability.hasMax() ? choice.card.name : choice);
-    }
-
-    chooseCardToTrigger(player, cardUuid) {
-        let choices = this.abilityChoices.filter(choice => choice.player === player && choice.card.uuid === cardUuid);
+    chooseCardToTrigger(player, card) {
+        let choices = this.abilityChoices.filter(choice => choice.player === player && choice.card === card);
 
         if(choices.length === 0) {
             return false;
@@ -119,7 +101,6 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             return true;
         }
 
-        let card = choices[0].card;
         let availableTargets = choices.map(choice => choice.context.event.card || choice.context.event.target);
 
         this.game.promptForSelect(player, {

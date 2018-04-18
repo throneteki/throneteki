@@ -63,7 +63,8 @@ describe('Emissary of the Hightower', function() {
                 this.player1.clickCard(this.hiddenThorns);
 
                 this.unopposedChallenge(this.player1, 'Intrigue', this.character);
-                this.player1.triggerAbility('Hidden Thorns (discard pile)');
+
+                this.player1.triggerAbility('Hidden Thorns');
 
                 this.player2.clickCard('Hedge Knight', 'hand');
                 this.player2.clickCard('Varys', 'hand');
