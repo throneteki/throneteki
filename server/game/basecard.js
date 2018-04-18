@@ -435,9 +435,9 @@ class BaseCard {
     }
 
     setBlank(type) {
-        let before = this.isFullBlank() || this.isBlankExcludingTraits();
+        let before = this.isAnyBlank();
         this.blanks.add(type);
-        let after = this.isFullBlank() || this.isBlankExcludingTraits();
+        let after = this.isAnyBlank();
 
         if(!before && after) {
             this.game.raiseEvent('onCardBlankToggled', { card: this, isBlank: after });
