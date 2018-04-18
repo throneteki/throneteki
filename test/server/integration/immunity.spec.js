@@ -28,7 +28,7 @@ describe('immunity', function() {
                 this.player2.clickCard('Nightmares', 'hand');
                 this.player2.clickCard(this.chamber);
 
-                expect(this.chamber.isBlank()).toBe(false);
+                expect(this.chamber.isAnyBlank()).toBe(false);
             });
 
             it('should not allow actions to be applied to it', function() {

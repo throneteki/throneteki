@@ -24,7 +24,7 @@ class BloodMagicRitual extends DrawCard {
         });
 
         this.whileAttached({
-            effect: ability.effects.blank()
+            effect: ability.effects.blankExcludingTraits
         });
 
         this.persistentEffect({

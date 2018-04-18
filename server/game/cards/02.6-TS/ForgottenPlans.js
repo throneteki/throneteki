@@ -6,7 +6,7 @@ class ForgottenPlans extends PlotCard {
             condition: () => this.game.currentPhase !== 'plot',
             match: card => card.getType() === 'plot' && !card.hasTrait('Scheme'),
             targetController: 'any',
-            effect: ability.effects.blank()
+            effect: ability.effects.blankExcludingTraits
         });
     }
 }

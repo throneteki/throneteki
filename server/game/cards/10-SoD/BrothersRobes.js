@@ -14,7 +14,7 @@ class BrothersRobes extends DrawCard {
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
-                    effect: ability.effects.blank()
+                    effect: ability.effects.blankExcludingTraits
                 }));
 
                 this.game.addMessage('{0} uses {1} to treat the text box of {2} as blank until the end of the phase',

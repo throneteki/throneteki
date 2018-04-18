@@ -10,7 +10,6 @@ const CardReaction = require('./cardreaction');
 const CustomPlayAction = require('./customplayaction');
 const EventRegistrar = require('./eventregistrar');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-const BlankingProperty = require('./PropertyTypes/BlankingProperty');
 
 const ValidKeywords = [
     'ambush',
@@ -49,7 +48,7 @@ class BaseCard {
         this.facedown = false;
         this.keywords = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
-        this.blanking = new BlankingProperty();
+        this.blanks = new ReferenceCountedSetProperty();
 
         this.tokens = {};
         this.plotModifierValues = {
@@ -299,7 +298,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        return !this.isBlank(true) && this.traits.contains(trait);
+        return !this.isFullBlank(true) && this.traits.contains(trait);
     }
 
     isFaction(faction) {
@@ -407,8 +406,16 @@ class BaseCard {
         return this.cardData.unique;
     }
 
-    isBlank() {
-        return this.blanking.isBlank();
+    isAnyBlank() {
+        return this.isFullBlank() || this.isBlankExcludingTraits();
+    }
+
+    isFullBlank() {
+        return this.blanks.contains('full');
+    }
+
+    isBlankExcludingTraits() {
+        return this.blanks.contains('excludingTraits');
     }
 
     setCardType(cardType) {
@@ -427,10 +434,10 @@ class BaseCard {
         return this.cardData.faction;
     }
 
-    setBlank(source, includingTraits = false) {
-        let before = this.isBlank(includingTraits);
-        this.blanking.addBlankingSource(source, includingTraits);
-        let after = this.isBlank(includingTraits);
+    setBlank(type) {
+        let before = this.isFullBlank() || this.isBlankExcludingTraits();
+        this.blanks.add(type);
+        let after = this.isFullBlank() || this.isBlankExcludingTraits();
 
         if(!before && after) {
             this.game.raiseEvent('onCardBlankToggled', { card: this, isBlank: after });
@@ -492,10 +499,10 @@ class BaseCard {
         this.markAsDirty();
     }
 
-    clearBlank(source, includingTraits = false) {
-        let before = this.isBlank(includingTraits);
-        this.blanking.removeBlankingSource(source);
-        let after = this.isBlank(includingTraits);
+    clearBlank(type) {
+        let before = this.isAnyBlank();
+        this.blanks.remove(type);
+        let after = this.isAnyBlank();
 
         if(before && !after) {
             this.game.raiseEvent('onCardBlankToggled', { card: this, isBlank: after });

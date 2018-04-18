@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class MilkOfThePoppy extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
-            effect: ability.effects.blank()
+            effect: ability.effects.blankExcludingTraits
         });
     }
 }

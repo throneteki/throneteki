@@ -11,7 +11,7 @@ describe('CardAction', function () {
         this.otherPlayerSpy = jasmine.createSpyObj('player', ['canTrigger']);
         this.otherPlayerSpy.canTrigger.and.returnValue(true);
 
-        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isBlank']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isAnyBlank']);
         this.handlerSpy = jasmine.createSpy('handler');
 
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
@@ -194,7 +194,7 @@ describe('CardAction', function () {
 
         describe('when the card is blank', function() {
             beforeEach(function() {
-                this.cardSpy.isBlank.and.returnValue(true);
+                this.cardSpy.isAnyBlank.and.returnValue(true);
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 this.action.execute(this.player, 'arg');
             });

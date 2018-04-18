@@ -497,15 +497,21 @@ const Effects = {
             Effects.modifyStrength(value)
         ];
     },
-    blank: function(includingTraits = false) {
-        return {
-            apply: function(card, context) {
-                card.setBlank(context.source, includingTraits);
-            },
-            unapply: function(card, context) {
-                card.clearBlank(context.source);
-            }
-        };
+    blankExcludingTraits: {
+        apply: function(card) {
+            card.setBlank('excludingTraits');
+        },
+        unapply: function(card) {
+            card.clearBlank('excludingTraits');
+        }
+    },
+    fullBlank: {
+        apply: function(card) {
+            card.setBlank('full');
+        },
+        unapply: function(card) {
+            card.clearBlank('full');
+        }
     },
     poison: {
         apply: function(card, context) {

@@ -6,7 +6,7 @@ class SamwellTarly extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this),
             match: card => card !== this && this.game.currentChallenge.isParticipating(card) && !card.hasTrait('Steward') && card.getType() === 'character',
             targetController: 'any',
-            effect: ability.effects.blank()
+            effect: ability.effects.blankExcludingTraits
         });
     }
 }

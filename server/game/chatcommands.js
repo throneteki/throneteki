@@ -106,7 +106,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to blank card',
             cardCondition: card => card.location === 'play area' && card.controller === player,
             onSelect: (p, card) => {
-                card.setBlank(card, true);
+                card.setBlank('full');
 
                 this.game.addAlert('danger', '{0} uses the /blank command to blank {1}', p, card);
                 return true;
@@ -120,7 +120,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to unblank card',
             cardCondition: card => card.location === 'play area' && card.controller === player,
             onSelect: (p, card) => {
-                card.clearBlank(card);
+                card.clearBlank('full');
 
                 this.game.addAlert('danger', '{0} uses the /unblank command to remove the blank condition from {1}', p, card);
                 return true;

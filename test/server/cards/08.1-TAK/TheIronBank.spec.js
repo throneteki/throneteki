@@ -78,7 +78,7 @@ describe('The Iron Bank', function() {
                     this.player1.clickPrompt('1');
                     this.player1.clickCard(this.opponentChar);
 
-                    expect(this.opponentChar.isBlank()).toBe(true);
+                    expect(this.opponentChar.isAnyBlank()).toBe(true);
                     expect(this.ironBank.gold).toBe(9);
                     expect(this.player1Object.gold).toBe(5);
                 });
@@ -163,7 +163,7 @@ describe('The Iron Bank', function() {
                 // Automatically take it off the Iron Bank without prompting
                 expect(this.player1).not.toHavePromptButton('1');
 
-                expect(this.opponentChar.isBlank()).toBe(true);
+                expect(this.opponentChar.isAnyBlank()).toBe(true);
                 expect(this.ironBank.gold).toBe(9);
                 expect(this.player1Object.gold).toBe(0);
             });
@@ -175,14 +175,14 @@ describe('The Iron Bank', function() {
                 this.player2.clickCard(cersei);
 
                 expect(this.player1).toAllowAbilityTrigger('The Hand\'s Judgment');
-                expect(cersei.isBlank()).toBe(false);
+                expect(cersei.isAnyBlank()).toBe(false);
 
                 this.player1.triggerAbility('The Hand\'s Judgment');
 
                 // Automatically take it off the Iron Bank without prompting
                 expect(this.player1).not.toHavePromptButton('1');
 
-                expect(cersei.isBlank()).toBe(false);
+                expect(cersei.isAnyBlank()).toBe(false);
                 expect(this.ironBank.gold).toBe(9);
                 expect(this.player1Object.gold).toBe(0);
             });

@@ -63,7 +63,7 @@ class DrawCard extends BaseCard {
         let clone = new DrawCard(this.owner, this.cardData);
 
         clone.attachments = this.attachments.map(attachment => attachment.createSnapshot());
-        clone.blankCount = this.blankCount;
+        clone.blanks = this.blanks.clone();
         clone.controller = this.controller;
         clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
         clone.factions = Object.assign({}, this.factions);
@@ -112,7 +112,7 @@ class DrawCard extends BaseCard {
     }
 
     isLimited() {
-        return this.hasKeyword('limited') || (!this.isBlank() && this.hasPrintedKeyword('limited'));
+        return this.hasKeyword('limited') || (!this.isAnyBlank() && this.hasPrintedKeyword('limited'));
     }
 
     isStealth() {
@@ -128,7 +128,7 @@ class DrawCard extends BaseCard {
     }
 
     isBestow() {
-        return !this.isBlank() && !_.isUndefined(this.bestowMax);
+        return !this.isAnyBlank() && !_.isUndefined(this.bestowMax);
     }
 
     isRenown() {
@@ -312,7 +312,7 @@ class DrawCard extends BaseCard {
      */
     allowAttachment(attachment) {
         return (
-            this.isBlank() ||
+            this.isAnyBlank() ||
             this.allowedAttachmentTrait === 'any' ||
             this.allowedAttachmentTrait !== 'none' && attachment.hasTrait(this.allowedAttachmentTrait)
         );
