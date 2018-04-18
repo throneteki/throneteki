@@ -6,9 +6,9 @@ const RestrictedList = require('./RestrictedList');
 function getDeckCount(deck) {
     let count = 0;
 
-    _.each(deck, function(card) {
-        count += card.count;
-    });
+    for(const cardEntry of deck) {
+        count += cardEntry.count;
+    }
 
     return count;
 }
@@ -18,7 +18,7 @@ function hasTrait(card, trait) {
 }
 
 function isCardInReleasedPack(packs, card) {
-    let pack = _.find(packs, pack => {
+    let pack = packs.find(pack => {
         return card.packCode === pack.code;
     });
 
@@ -229,10 +229,14 @@ class DeckValidator {
         let allCards = deck.plotCards.concat(deck.drawCards);
         let cardCountByName = {};
 
-        _.each(allCards, cardQuantity => {
+        for(let cardQuantity of allCards) {
             cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, type: cardQuantity.card.type, limit: cardQuantity.card.deckLimit, count: 0 };
             cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
+        }
 
+        allCards = allCards.concat(deck.rookeryCards || []);
+
+        for(let cardQuantity of allCards) {
             if(!rules.mayInclude(cardQuantity.card) || rules.cannotInclude(cardQuantity.card)) {
                 errors.push(cardQuantity.card.label + ' is not allowed by faction or agenda');
             }
@@ -240,7 +244,7 @@ class DeckValidator {
             if(!isCardInReleasedPack(this.packs, cardQuantity.card)) {
                 unreleasedCards.push(cardQuantity.card.label + ' is not yet released');
             }
-        });
+        }
 
         if(deck.agenda && !isCardInReleasedPack(this.packs, deck.agenda)) {
             unreleasedCards.push(deck.agenda.label + ' is not yet released');
@@ -294,7 +298,13 @@ class DeckValidator {
                 {
                     message: 'More than 2 plot cards in rookery',
                     condition: deck => {
-                        return deck.rookeryCards && deck.rookeryCards.filter(card => card.card.type === 'plot').length <= 2;
+                        return !deck.rookeryCards || deck.rookeryCards.filter(card => card.card.type === 'plot').length <= 2;
+                    }
+                },
+                {
+                    message: 'More than 10 draw cards in rookery',
+                    condition: deck => {
+                        return !deck.rookeryCards || deck.rookeryCards.filter(card => card.card.type !== 'plot').length <= 10;
                     }
                 }
             ]
