@@ -33,10 +33,13 @@ class DeckSummary extends React.Component {
 
     getBannersToRender() {
         let banners = [];
-        for(const card of this.props.deck.bannerCards) {
-            banners.push(<div className='pull-right' key={ card.code ? card.code : card }>
-                <span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span>
-            </div>);
+
+        if(this.props.deck.bannerCards) {
+            for(const card of this.props.deck.bannerCards) {
+                banners.push(<div className='pull-right' key={ card.code ? card.code : card }>
+                    <span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span>
+                </div>);
+            }
         }
 
         return <div className='info-row row'><span>Banners:</span>{ banners }</div>;

@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const moment = require('moment');
 
 const RestrictedList = require('./RestrictedList');
@@ -51,7 +50,7 @@ function rulesForBanner(faction, factionName) {
 }
 
 function rulesForDraft(properties) {
-    return _.extend({ requiredDraw: 40, requiredPlots: 5 }, properties);
+    return Object.assign({ requiredDraw: 40, requiredPlots: 5 }, properties);
 }
 
 /**
@@ -86,7 +85,7 @@ const agendaRules = {
         rules: [
             {
                 message: 'You cannot include more than 15 neutral cards in a deck with Fealty',
-                condition: deck => getDeckCount(_.filter(deck.drawCards, cardQuantity => cardQuantity.card.faction === 'neutral')) <= 15
+                condition: deck => getDeckCount(deck.drawCards.filter(cardEntry => cardEntry.card.faction === 'neutral')) <= 15
             }
         ]
     },
@@ -96,7 +95,7 @@ const agendaRules = {
         rules: [
             {
                 message: 'Kings of Summer cannot include Winter plot cards',
-                condition: deck => !_.any(deck.plotCards, cardQuantity => hasTrait(cardQuantity.card, 'Winter'))
+                condition: deck => !(deck.plotCards.some(cardQuantity => hasTrait(cardQuantity.card, 'Winter')))
             }
         ]
     },
@@ -106,7 +105,7 @@ const agendaRules = {
         rules: [
             {
                 message: 'Kings of Winter cannot include Summer plot cards',
-                condition: deck => !_.any(deck.plotCards, cardQuantity => hasTrait(cardQuantity.card, 'Summer'))
+                condition: deck => !(deck.plotCards.some(cardQuantity => hasTrait(cardQuantity.card, 'Summer')))
             }
         ]
     },
@@ -117,7 +116,7 @@ const agendaRules = {
             {
                 message: 'Rains of Castamere must contain exactly 5 different Scheme plots',
                 condition: deck => {
-                    let schemePlots = _.filter(deck.plotCards, cardQuantity => hasTrait(cardQuantity.card, 'Scheme'));
+                    let schemePlots = deck.plotCards.filter(cardQuantity => hasTrait(cardQuantity.card, 'Scheme'));
                     return schemePlots.length === 5 && getDeckCount(schemePlots) === 5;
                 }
             }
@@ -129,7 +128,7 @@ const agendaRules = {
         rules: [
             {
                 message: 'Alliance cannot have more than 2 Banner agendas',
-                condition: deck => _.size(deck.bannerCards) <= 2
+                condition: deck => deck.bannerCards.length <= 2
             }
         ]
     },
@@ -139,7 +138,7 @@ const agendaRules = {
         rules: [
             {
                 message: 'The Brotherhood Without Banners cannot include loyal characters',
-                condition: deck => !_.any(deck.drawCards, cardQuantity => cardQuantity.card.type === 'character' && cardQuantity.card.loyal)
+                condition: deck => !(deck.drawCards.some(cardQuantity => cardQuantity.card.type === 'character' && cardQuantity.card.loyal))
             }
         ]
     },
@@ -166,9 +165,9 @@ const agendaRules = {
             {
                 message: 'Cannot include cards from more than 1 outside faction',
                 condition: deck => {
-                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
-                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction);
-                    return _.size(factions) <= 1;
+                    let outOfFactionCards = deck.drawCards.concat(deck.plotCards).filter(cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
+                    let factions = outOfFactionCards.map(cardQuantity => cardQuantity.card.faction);
+                    return factions.length <= 1;
                 }
             }
         ]
@@ -184,9 +183,9 @@ const agendaRules = {
             {
                 message: 'Cannot include cards from more than 2 outside factions',
                 condition: deck => {
-                    let outOfFactionCards = _.filter(deck.drawCards.concat(deck.plotCards), cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
-                    let factions = _.map(outOfFactionCards, cardQuantity => cardQuantity.card.faction);
-                    return _.size(factions) <= 2;
+                    let outOfFactionCards = deck.drawCards.concat(deck.plotCards).filter(cardQuantity => cardQuantity.card.faction !== deck.faction.value && cardQuantity.card.faction !== 'neutral');
+                    let factions = outOfFactionCards.map(cardQuantity => cardQuantity.card.faction);
+                    return factions.length <= 2;
                 }
             }
         ]
@@ -220,11 +219,11 @@ class DeckValidator {
             errors.push('Too few draw cards');
         }
 
-        _.each(rules.rules, rule => {
+        for(const rule of rules.rules) {
             if(!rule.condition(deck)) {
                 errors.push(rule.message);
             }
-        });
+        }
 
         let allCards = deck.plotCards.concat(deck.drawCards);
         let cardCountByName = {};
@@ -236,7 +235,7 @@ class DeckValidator {
 
         allCards = allCards.concat(deck.rookeryCards || []);
 
-        for(let cardQuantity of allCards) {
+        for(const cardQuantity of allCards) {
             if(!rules.mayInclude(cardQuantity.card) || rules.cannotInclude(cardQuantity.card)) {
                 errors.push(cardQuantity.card.label + ' is not allowed by faction or agenda');
             }
@@ -250,19 +249,19 @@ class DeckValidator {
             unreleasedCards.push(deck.agenda.label + ' is not yet released');
         }
 
-        let doubledPlots = _.filter(cardCountByName, card => card.type === 'plot' && card.count === 2);
+        let doubledPlots = Object.values(cardCountByName).filter(card => card.type === 'plot' && card.count === 2);
         if(doubledPlots.length > rules.maxDoubledPlots) {
             errors.push('Maximum allowed number of doubled plots: ' + rules.maxDoubledPlots);
         }
 
-        _.each(cardCountByName, card => {
+        for(const card of Object.values(cardCountByName)) {
             if(card.count > card.limit) {
                 errors.push(card.name + ' has limit ' + card.limit);
             }
-        });
+        }
 
         let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card));
-        let includesDraftCards = this.isDraftCard(deck.agenda) || _.any(allCards, cardQuantity => this.isDraftCard(cardQuantity.card));
+        let includesDraftCards = this.isDraftCard(deck.agenda) || allCards.some(cardQuantity => this.isDraftCard(cardQuantity.card));
 
         if(includesDraftCards) {
             errors.push('You cannot include Draft cards in a normal deck');
@@ -285,9 +284,11 @@ class DeckValidator {
             requiredPlots: 7,
             maxDoubledPlots: 1
         };
+
         let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
         let agendaRules = this.getAgendaRules(deck);
         let rookeryRules = this.getRookeryRules(deck);
+
         return this.combineValidationRules([standardRules, factionRules, rookeryRules].concat(agendaRules));
     }
 
@@ -323,19 +324,20 @@ class DeckValidator {
         }
 
         let allAgendas = [deck.agenda].concat(deck.bannerCards || []);
-        return _.compact(allAgendas.map(agenda => agendaRules[agenda.code]));
+        return allAgendas.map(agenda => agendaRules[agenda.code]).filter(a => !!a);
     }
 
     combineValidationRules(validators) {
-        let mayIncludeFuncs = _.compact(_.pluck(validators, 'mayInclude'));
-        let cannotIncludeFuncs = _.compact(_.pluck(validators, 'cannotInclude'));
-        let combinedRules = _.reduce(validators, (rules, validator) => rules.concat(validator.rules || []), []);
+        let mayIncludeFuncs = validators.map(validator => validator.mayInclude).filter(v => !!v);
+        let cannotIncludeFuncs = validators.map(validator => validator.cannotInclude).filter(v => !!v);
+        let combinedRules = validators.reduce((rules, validator) => rules.concat(validator.rules || []), []);
         let combined = {
-            mayInclude: card => _.any(mayIncludeFuncs, func => func(card)),
-            cannotInclude: card => _.any(cannotIncludeFuncs, func => func(card)),
+            mayInclude: card => mayIncludeFuncs.some(func => func(card)),
+            cannotInclude: card => cannotIncludeFuncs.some(func => func(card)),
             rules: combinedRules
         };
-        return _.extend({}, ...validators, combined);
+
+        return Object.assign({}, ...validators, combined);
     }
 
     isDraftCard(card) {
@@ -350,7 +352,7 @@ module.exports = function validateDeck(deck, options) {
     let result = validator.validateDeck(deck);
 
     if(!options.includeExtendedStatus) {
-        return _.omit(result, 'extendedStatus');
+        delete result.extendedStatus;
     }
 
     return result;
