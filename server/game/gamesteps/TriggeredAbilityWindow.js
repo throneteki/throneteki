@@ -56,8 +56,14 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
     getButtons(player) {
         let choicesForPlayer = this.getChoicesForPlayer(player);
-        let buttons = choicesForPlayer.map(abilityChoice => {
-            return { text: this.getAbilityButtonText(abilityChoice), method: 'chooseAbility', arg: abilityChoice.id, card: abilityChoice.card };
+        let cardsWithChoices = [... new Set(choicesForPlayer.map(choice => choice.card))];
+        let buttons = cardsWithChoices.map(card => {
+            let text = card.name;
+            let choicesForCard = choicesForPlayer.filter(choice => choice.card === card);
+            if(choicesForCard.some(choice => !choice.ability.location.includes(card.location))) {
+                text += ` (${card.location})`;
+            }
+            return { text: text, method: 'chooseCardToTrigger', arg: card.uuid };
         });
 
         if(this.cancelTimer.isEnabled(player)) {
@@ -69,21 +75,6 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         buttons.push({ text: 'Pass', method: 'pass' });
 
         return buttons;
-    }
-
-    getAbilityButtonText(abilityChoice) {
-        let title = abilityChoice.card.name;
-        let additionalTitle = abilityChoice.ability.getTitle(abilityChoice.context);
-
-        if(additionalTitle) {
-            title += ' - ' + additionalTitle;
-        }
-
-        if(!abilityChoice.ability.location.includes(abilityChoice.card.location)) {
-            title += ' (' + abilityChoice.card.location + ')';
-        }
-
-        return title;
     }
 
     getAdditionalPromptControls() {
@@ -116,21 +107,47 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return _.uniq(choices, choice => choice.ability.hasMax() ? choice.card.name : choice);
     }
 
-    chooseAbility(player, id) {
-        let choice = this.abilityChoices.find(ability => ability.id === id);
+    chooseCardToTrigger(player, cardUuid) {
+        let choices = this.abilityChoices.filter(choice => choice.player === player && choice.card.uuid === cardUuid);
 
-        if(!choice || choice.player !== player) {
+        if(choices.length === 0) {
             return false;
         }
 
+        if(choices.length === 1) {
+            this.chooseAbility(choices[0]);
+            return true;
+        }
+
+        let card = choices[0].card;
+        let availableTargets = choices.map(choice => choice.context.event.card || choice.context.event.target);
+
+        this.game.promptForSelect(player, {
+            activePromptTitle: `Choose target for ${card.name}`,
+            cardCondition: card => availableTargets.includes(card),
+            onSelect: (player, selectedCard) => {
+                let choice = choices.find(choice => choice.context.event.card === selectedCard || choice.context.event.target === selectedCard);
+
+                if(!choice || choice.player !== player) {
+                    return false;
+                }
+
+                this.chooseAbility(choice);
+
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    chooseAbility(choice) {
         this.resolveAbility(choice.ability, choice.context);
 
         // Always rotate player order without filtering, in case an ability is
         // triggered that could then make another ability eligible after it is
         // resolved: e.g. Rains of Castamere into Wardens of the West
-        this.players = this.rotatedPlayerOrder(player);
-
-        return true;
+        this.players = this.rotatedPlayerOrder(choice.player);
     }
 
     pass(player, arg) {

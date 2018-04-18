@@ -40,15 +40,15 @@ describe('TriggeredAbilityWindow', function() {
         }
 
         this.context1 = { context: 1, player: this.player1Spy, event: this.eventSpy };
-        this.abilityCard1 = createCard({ card: 1, name: 'The Card', controller: this.player1Spy });
+        this.abilityCard1 = createCard({ uuid: '111', name: 'The Card', controller: this.player1Spy });
         this.ability1Spy = createAbility(this.abilityCard1, this.context1);
 
         this.context2 = { context: 2, player: this.player1Spy, event: this.eventSpy };
-        this.abilityCard2 = createCard({ card: 2, name: 'The Card 2', controller: this.player1Spy });
+        this.abilityCard2 = createCard({ uuid: '222', name: 'The Card 2', controller: this.player1Spy });
         this.ability2Spy = createAbility(this.abilityCard2, this.context2);
 
         this.context3 = { context: 3, player: this.player2Spy, event: this.eventSpy };
-        this.abilityCard3 = createCard({ card: 3, name: 'Their Card', controller: this.player2Spy });
+        this.abilityCard3 = createCard({ uuid: '333', name: 'Their Card', controller: this.player2Spy });
         this.ability3Spy = createAbility(this.abilityCard3, this.context3);
     });
 
@@ -108,8 +108,8 @@ describe('TriggeredAbilityWindow', function() {
                         activePrompt: jasmine.objectContaining({
                             menuTitle: jasmine.any(String),
                             buttons: [
-                                jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseAbility' }),
-                                jasmine.objectContaining({ text: 'The Card 2', arg: jasmine.any(String), method: 'chooseAbility' }),
+                                jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
+                                jasmine.objectContaining({ text: 'The Card 2', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
                                 jasmine.objectContaining({ text: 'Pass', method: 'pass' })
                             ]
                         })
@@ -134,8 +134,8 @@ describe('TriggeredAbilityWindow', function() {
                             activePrompt: jasmine.objectContaining({
                                 menuTitle: jasmine.any(String),
                                 buttons: [
-                                    jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseAbility' }),
-                                    jasmine.objectContaining({ text: 'The Card 2', arg: jasmine.any(String), method: 'chooseAbility' }),
+                                    jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
+                                    jasmine.objectContaining({ text: 'The Card 2', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
                                     jasmine.objectContaining({ text: 'Pass', method: 'pass' })
                                 ]
                             })
@@ -154,7 +154,7 @@ describe('TriggeredAbilityWindow', function() {
                             activePrompt: jasmine.objectContaining({
                                 menuTitle: jasmine.any(String),
                                 buttons: [
-                                    jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseAbility' }),
+                                    jasmine.objectContaining({ text: 'The Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
                                     jasmine.objectContaining({ text: 'Pass', method: 'pass' })
                                 ]
                             })
@@ -175,7 +175,7 @@ describe('TriggeredAbilityWindow', function() {
                         activePrompt: jasmine.objectContaining({
                             menuTitle: jasmine.any(String),
                             buttons: [
-                                jasmine.objectContaining({ text: 'Their Card', arg: jasmine.any(String), method: 'chooseAbility' }),
+                                jasmine.objectContaining({ text: 'Their Card', arg: jasmine.any(String), method: 'chooseCardToTrigger' }),
                                 jasmine.objectContaining({ text: 'Pass', method: 'pass' })
                             ]
                         })
@@ -205,8 +205,8 @@ describe('TriggeredAbilityWindow', function() {
         describe('when the player select a choice they do not own', function() {
             beforeEach(function() {
                 // Choosing a player 2 ability
-                let choice = this.window.abilityChoices[2].id;
-                this.window.chooseAbility(this.player1Spy, choice);
+                let choice = this.window.abilityChoices[2];
+                this.window.chooseAbility(choice);
             });
 
             it('should not resolve an ability', function() {
@@ -216,8 +216,8 @@ describe('TriggeredAbilityWindow', function() {
 
         describe('when the player selects a valid choice', function() {
             beforeEach(function() {
-                let choice = this.window.abilityChoices[1].id;
-                this.window.chooseAbility(this.player1Spy, choice);
+                let choice = this.window.abilityChoices[1];
+                this.window.chooseAbility(choice);
             });
 
             it('should resolve the ability', function() {

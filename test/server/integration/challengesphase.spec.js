@@ -124,27 +124,27 @@ describe('challenges phase', function() {
 
                 expect(this.player1).toAllowAbilityTrigger('Tyrion Lannister');
                 expect(this.player1).toAllowAbilityTrigger('Dornish Paramour');
-                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Hedge Knight');
-                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Lannisport Merchant');
-                expect(this.player1.currentPrompt().buttons.length).toBe(5);
+                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth');
+                expect(this.player1.currentPrompt().buttons.length).toBe(4);
             });
 
             it('should reactions in the same window to generate gold needed to pay costs', function() {
                 this.player1Object.gold = 0;
                 this.initiateChallenge();
-                expect(this.player1).not.toAllowAbilityTrigger('Marya Seaworth - Kneel Hedge Knight');
-                expect(this.player1).not.toAllowAbilityTrigger('Marya Seaworth - Kneel Lannisport Merchant');
+                expect(this.player1).not.toAllowAbilityTrigger('Marya Seaworth');
 
                 this.player1.triggerAbility('Tyrion Lannister');
 
-                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Hedge Knight');
-                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth - Kneel Lannisport Merchant');
+                expect(this.player1).toAllowAbilityTrigger('Marya Seaworth');
             });
 
             it('should allow multiple reactions from the same card to be triggered', function() {
                 this.initiateChallenge();
-                this.player1.triggerAbility('Marya Seaworth - Kneel Hedge Knight');
-                this.player1.triggerAbility('Marya Seaworth - Kneel Lannisport Merchant');
+
+                this.player1.triggerAbility('Marya Seaworth');
+                this.player1.clickCard(this.knight);
+                this.player1.triggerAbility('Marya Seaworth');
+                this.player1.clickCard(this.merchant);
 
                 expect(this.knight.kneeled).toBe(true);
                 expect(this.merchant.kneeled).toBe(true);
