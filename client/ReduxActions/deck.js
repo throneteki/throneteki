@@ -12,7 +12,7 @@ export function loadDeck(deckId) {
     return {
         types: ['REQUEST_DECK', 'RECEIVE_DECK'],
         shouldCallAPI: (state) => {
-            let ret = !state.cards.decks.some(deck => {
+            let ret = !state.cards.decks || !state.cards.decks.some(deck => {
                 return deck._id === deckId;
             });
 
@@ -64,7 +64,7 @@ export function saveDeck(deck) {
             bannerCards: deck.bannerCards.map(card => {
                 return { code: card.code };
             }),
-            rookeryCards: deck.rookeryCards || []
+            rookeryCards: deck.rookeryCards ? formatCards(deck.rookeryCards) : []
         }
     });
 

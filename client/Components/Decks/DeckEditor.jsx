@@ -39,8 +39,10 @@ class DeckEditor extends React.Component {
             this.state.faction = props.deck.faction;
             this.state.agenda = props.deck.agenda;
             this.state.status = props.deck.status;
+            this.state.rookeryCards = props.deck.rookeryCards || [];
 
             let cardList = '';
+            let rookeryList = '';
             for(const card of props.deck.drawCards) {
                 cardList += this.formatCardListItem(card) + '\n';
             }
@@ -50,6 +52,12 @@ class DeckEditor extends React.Component {
             }
 
             this.state.cardList = cardList;
+
+            for(const rookery of this.state.rookeryCards) {
+                rookeryList += this.formatCardListItem(rookery) + '\n';
+            }
+
+            this.state.rookeryList = rookeryList;
         }
     }
 

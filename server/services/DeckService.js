@@ -26,6 +26,7 @@ class DeckService {
             drawCards: deck.drawCards,
             faction: deck.faction,
             agenda: deck.agenda,
+            rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
         };
 
@@ -40,6 +41,7 @@ class DeckService {
             bannerCards: deck.bannerCards,
             faction: deck.faction,
             agenda: deck.agenda,
+            rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
         };
 

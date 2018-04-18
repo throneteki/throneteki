@@ -12,7 +12,11 @@ function selectDeck(state, deck) {
 }
 
 function processDecks(decks, state) {
-    _.each(decks, deck => {
+    if(!decks) {
+        return;
+    }
+
+    for(const deck of decks) {
         if(!state.cards || !deck.faction) {
             deck.status = {};
             return;
@@ -27,18 +31,19 @@ function processDecks(decks, state) {
         }
 
         if(deck.bannerCards) {
-            deck.bannerCards = _.map(deck.bannerCards, card => state.cards[card.code]);
+            deck.bannerCards = deck.bannerCards.map(card => state.cards[card.code]);
         }
 
         deck.plotCards = processCardCounts(deck.plotCards, state.cards);
         deck.drawCards = processCardCounts(deck.drawCards, state.cards);
+        deck.rookeryCards = processCardCounts(deck.rookeryCards || [], state.cards);
 
         if(!state.restrictedList) {
             deck.status = {};
         } else {
             deck.status = validateDeck(deck, { packs: state.packs, restrictedList: state.restrictedList });
         }
-    });
+    }
 }
 
 function processCardCounts(cardCounts, cardData) {
