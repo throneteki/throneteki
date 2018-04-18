@@ -197,6 +197,21 @@ class DeckEditor extends React.Component {
         }
     }
 
+    onAddRookeryCard(event) {
+        event.preventDefault();
+
+        if(!this.state.cardToAdd || !this.state.cardToAdd.label) {
+            return;
+        }
+
+        let rookeryList = this.state.rookeryList;
+        rookeryList += `${this.state.numberToAdd}  ${this.state.cardToAdd.label}\n`;
+
+        let cards = this.state.rookeryCards || [];
+        this.addCard(cards, this.state.cardToAdd, parseInt(this.state.numberToAdd));
+        this.setState({ rookeryList: rookeryList, rookeryCards: cards }, this.triggerDeckUpdated);
+    }
+
     onRookeryListChange(event) {
         let split = event.target.value.split('\n');
         let rookeryCards = [];
@@ -441,7 +456,15 @@ class DeckEditor extends React.Component {
                         <Input name='numcards' type='text' label='Num' labelClass='col-xs-1 no-x-padding' fieldClass='col-xs-2'
                             value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) } noGroup>
                             <div className='col-xs-1 no-x-padding'>
-                                <button className='btn btn-primary' onClick={ this.onAddCard.bind(this) }>Add</button>
+                                <div className='btn-group'>
+                                    <button className='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                        Add <span className='caret' />
+                                    </button>
+                                    <ul className='dropdown-menu'>
+                                        <li><a href='#' onClick={ this.onAddCard.bind(this) }>Add to deck</a></li>
+                                        <li><a href='#' onClick={ this.onAddRookeryCard.bind(this) }>Add to rookery</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </Input>
                     </Typeahead>

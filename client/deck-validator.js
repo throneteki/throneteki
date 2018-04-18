@@ -299,13 +299,13 @@ class DeckValidator {
                 {
                     message: 'More than 2 plot cards in rookery',
                     condition: deck => {
-                        return !deck.rookeryCards || deck.rookeryCards.filter(card => card.card.type === 'plot').length <= 2;
+                        return !deck.rookeryCards || getDeckCount(deck.rookeryCards.filter(card => card.card.type === 'plot')) <= 2;
                     }
                 },
                 {
                     message: 'More than 10 draw cards in rookery',
                     condition: deck => {
-                        return !deck.rookeryCards || deck.rookeryCards.filter(card => card.card.type !== 'plot').length <= 10;
+                        return !deck.rookeryCards || getDeckCount(deck.rookeryCards.filter(card => card.card.type !== 'plot')) <= 10;
                     }
                 }
             ]
@@ -332,7 +332,7 @@ class DeckValidator {
         let cannotIncludeFuncs = validators.map(validator => validator.cannotInclude).filter(v => !!v);
         let combinedRules = validators.reduce((rules, validator) => rules.concat(validator.rules || []), []);
         let combined = {
-            mayInclude: card => mayIncludeFuncs.some(func => func(card)),
+            mayInclude: card => mayIncludeFuncs.every(func => func(card)),
             cannotInclude: card => cannotIncludeFuncs.some(func => func(card)),
             rules: combinedRules
         };
