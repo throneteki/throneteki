@@ -233,6 +233,7 @@ class DeckValidator {
             cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
         }
 
+        // Only add rookery cards here as they don't count towards deck limits
         allCards = allCards.concat(deck.rookeryCards || []);
 
         for(const cardQuantity of allCards) {
