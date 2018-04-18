@@ -31,7 +31,7 @@ describe('Mace Tyrell', function() {
 
                 expect(this.character.location).toBe('play area');
 
-                this.player1.clickPrompt('Mace Tyrell');
+                this.player1.triggerAbility('Mace Tyrell');
 
                 this.player1.clickMenu(this.mace, 'Remove character from game');
                 this.player1.clickCard(this.character);
@@ -55,7 +55,7 @@ describe('Mace Tyrell', function() {
 
                 expect(this.character.location).toBe('play area');
 
-                this.player1.clickPrompt('Mace Tyrell');
+                this.player1.triggerAbility('Mace Tyrell');
 
                 this.player1.clickMenu(this.mace, 'Remove character from game');
                 this.player1.clickCard(this.character);
@@ -83,7 +83,7 @@ describe('Mace Tyrell', function() {
 
                 expect(this.character.location).toBe('play area');
 
-                this.player1.clickPrompt('Mace Tyrell');
+                this.player1.triggerAbility('Mace Tyrell');
 
                 this.player1.clickMenu(this.mace, 'Remove character from game');
                 this.player1.clickCard(this.character);

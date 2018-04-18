@@ -46,7 +46,7 @@ describe('The Red Keep', function() {
             it('should not keep the strength bonus if all characters removed from the challenge', function() {
                 this.player1.clickPrompt('Pass');
                 this.player2.clickCard('Areo Hotah', 'hand');
-                this.player2.clickPrompt('Areo Hotah');
+                this.player2.triggerAbility('Areo Hotah');
                 this.player2.clickCard(this.character);
 
                 expect(this.game.currentChallenge.attackerStrength).toBe(0);

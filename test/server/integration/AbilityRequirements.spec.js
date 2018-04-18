@@ -36,12 +36,12 @@ describe('ability requirements', function() {
                 this.skipActionWindow();
 
                 // Return the character to hand
-                this.player2.clickPrompt('Ghaston Grey');
+                this.player2.triggerAbility('Ghaston Grey');
                 this.player2.clickCard(this.character);
             });
 
             it('should prompt for the ability', function() {
-                expect(this.player2).toHavePromptButton('His Viper Eyes');
+                expect(this.player2).toAllowAbilityTrigger('His Viper Eyes');
             });
         });
     });

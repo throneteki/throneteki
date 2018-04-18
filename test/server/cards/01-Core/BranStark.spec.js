@@ -32,19 +32,19 @@ describe('Bran Stark (Core)', function() {
             });
 
             it('should cancel the event', function() {
-                this.player1.clickPrompt('Bran Stark');
+                this.player1.triggerAbility('Bran Stark');
 
-                expect(this.player2).toHavePromptButton('Melisandre');
+                expect(this.player2).toAllowAbilityTrigger('Melisandre');
             });
 
             it('should sacrifice bran', function() {
-                this.player1.clickPrompt('Bran Stark');
+                this.player1.triggerAbility('Bran Stark');
 
                 expect(this.bran.location).toBe('discard pile');
             });
 
             it('should still discard the event', function() {
-                this.player1.clickPrompt('Bran Stark');
+                this.player1.triggerAbility('Bran Stark');
 
                 expect(this.seenInFlames.location).toBe('discard pile');
             });

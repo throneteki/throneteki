@@ -105,7 +105,7 @@ describe('Varys\'s Riddle', function() {
                 describe('when Calm is replaced using Rains', function() {
                     beforeEach(function() {
                         this.unopposedChallenge(this.player2, 'Intrigue', 'Ser Jaime Lannister');
-                        this.player2.clickPrompt('"The Rains of Castamere"');
+                        this.player2.triggerAbility('"The Rains of Castamere"');
                         this.player2.clickCard(this.powerBehindTheThrone);
                         this.player2.clickPrompt('Apply Claim');
                     });
@@ -130,7 +130,7 @@ describe('Varys\'s Riddle', function() {
                 this.player2.clickCard('Old Nan', 'hand');
                 this.completeSetup();
 
-                expect(this.player2).toHavePromptButton('Old Nan');
+                expect(this.player2).toAllowAbilityTrigger('Old Nan');
                 this.player2.clickPrompt('Pass');
 
                 this.selectFirstPlayer(this.player1);
@@ -138,7 +138,7 @@ describe('Varys\'s Riddle', function() {
             });
 
             it('should not trigger plot reveal interrupts / reactions', function() {
-                expect(this.player2).not.toHavePromptButton('Old Nan');
+                expect(this.player2).not.toAllowAbilityTrigger('Old Nan');
             });
         });
     });

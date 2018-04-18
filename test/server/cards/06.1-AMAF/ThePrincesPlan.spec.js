@@ -39,11 +39,11 @@ describe('The Prince\'s Plan', function() {
             });
 
             it('should prompt to return the event back to hand', function() {
-                expect(this.player1).toHavePromptButton('The Prince\'s Plan');
+                expect(this.player1).toAllowAbilityTrigger('The Prince\'s Plan');
             });
 
             it('should allow the event to be returned to hand for 1 gold', function() {
-                this.player1.clickPrompt('The Prince\'s Plan');
+                this.player1.triggerAbility('The Prince\'s Plan');
 
                 expect(this.event.location).toBe('hand');
                 expect(this.player1Object.gold).toBe(4);

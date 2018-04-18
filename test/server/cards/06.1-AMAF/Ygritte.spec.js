@@ -23,7 +23,7 @@ describe('Ygritte', function() {
 
         it('should not be knelt by card effects', function() {
             this.player2.clickCard('Melisandre', 'hand');
-            this.player2.clickPrompt('Melisandre');
+            this.player2.triggerAbility('Melisandre');
 
             this.player2.clickCard(this.ygritte);
 

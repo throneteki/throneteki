@@ -37,7 +37,7 @@ describe('marshal phase', function() {
                 this.kingsroad.controller.moveCard(this.kingsroad, 'draw deck');
                 this.player1.clickCard(this.arya);
 
-                this.player1.clickPrompt('Arya Stark');
+                this.player1.triggerAbility('Arya Stark');
 
                 expect(this.arya.dupes.length).toBe(1);
             });

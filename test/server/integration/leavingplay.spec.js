@@ -82,13 +82,13 @@ describe('leaving play', function() {
             });
 
             it('should prompt to use the interrupt and not have the card leave play immediately', function() {
-                expect(this.player1).toHavePromptButton('Improved Fortifications');
+                expect(this.player1).toAllowAbilityTrigger('Improved Fortifications');
                 expect(this.location.location).toBe('play area');
                 expect(this.player1Object.cardsInPlay).toContain(this.location);
             });
 
             it('should stop the card from leaving play once the ability is triggered', function() {
-                this.player1.clickPrompt('Improved Fortifications');
+                this.player1.triggerAbility('Improved Fortifications');
                 expect(this.location.location).toBe('play area');
                 expect(this.player1Object.cardsInPlay).toContain(this.location);
                 expect(this.attachment.location).toBe('discard pile');
@@ -119,7 +119,7 @@ describe('leaving play', function() {
                 this.selectPlotOrder(this.player1);
 
                 this.player1.clickCard(this.character);
-                this.player1.clickPrompt('Melisandre');
+                this.player1.triggerAbility('Melisandre');
                 this.player1.clickCard(this.chud1);
 
                 this.player1.dragCard(this.character, 'hand');
@@ -127,7 +127,7 @@ describe('leaving play', function() {
             });
 
             it('should reset after leaving play', function() {
-                expect(this.player1).toHavePromptButton('Melisandre');
+                expect(this.player1).toAllowAbilityTrigger('Melisandre');
             });
         });
     });

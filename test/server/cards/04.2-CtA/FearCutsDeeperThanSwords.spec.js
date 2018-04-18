@@ -34,12 +34,12 @@ describe('Fear Cuts Deeper Than Swords', function() {
             });
 
             it('should prompt to trigger fear cuts', function() {
-                expect(this.player1).toHavePromptButton('Fear Cuts Deeper Than Swords');
+                expect(this.player1).toAllowAbilityTrigger('Fear Cuts Deeper Than Swords');
             });
 
             describe('and when fear cuts is used to cancel the ability', function() {
                 beforeEach(function() {
-                    this.player1.clickPrompt('Fear Cuts Deeper Than Swords');
+                    this.player1.triggerAbility('Fear Cuts Deeper Than Swords');
                 });
 
                 it('should cancel the plot when revealed', function() {
@@ -61,12 +61,12 @@ describe('Fear Cuts Deeper Than Swords', function() {
             });
 
             it('should prompt to trigger fear cuts', function() {
-                expect(this.player1).toHavePromptButton('Fear Cuts Deeper Than Swords');
+                expect(this.player1).toAllowAbilityTrigger('Fear Cuts Deeper Than Swords');
             });
 
             describe('and when fear cuts is used to cancel the ability', function() {
                 beforeEach(function() {
-                    this.player1.clickPrompt('Fear Cuts Deeper Than Swords');
+                    this.player1.triggerAbility('Fear Cuts Deeper Than Swords');
                 });
 
                 it('should cancel the intimidate keyword', function() {

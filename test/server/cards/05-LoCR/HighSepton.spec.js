@@ -36,12 +36,12 @@ describe('High Septon', function() {
                 this.player2.clickPrompt('Pass');
                 this.player2.clickPrompt('Apply Claim');
 
-                this.player2.clickPrompt('Mirri Maz Duur');
+                this.player2.triggerAbility('Mirri Maz Duur');
                 this.player2.clickCard(this.septon);
             });
 
             it('should allow it be redirected to a The Seven character', function() {
-                this.player1.clickPrompt('High Septon');
+                this.player1.triggerAbility('High Septon');
                 this.player1.clickCard(this.sevenCharacter);
 
                 expect(this.sevenCharacter.location).toBe('dead pile');
@@ -58,12 +58,12 @@ describe('High Septon', function() {
                 this.player1.clickPrompt('Done');
 
                 this.unopposedChallenge(this.player2, 'intrigue', 'Mirri Maz Duur');
-                this.player2.clickPrompt('Tears of Lys');
+                this.player2.triggerAbility('Tears of Lys');
                 this.player2.clickCard(this.nonSevenCharacter);
             });
 
             it('should not allow it be redirected', function() {
-                expect(this.player1).not.toHavePromptButton('High Septon');
+                expect(this.player1).not.toAllowAbilityTrigger('High Septon');
             });
         });
 
@@ -77,7 +77,7 @@ describe('High Septon', function() {
             });
 
             it('should not allow it be redirected', function() {
-                expect(this.player1).not.toHavePromptButton('High Septon');
+                expect(this.player1).not.toAllowAbilityTrigger('High Septon');
             });
         });
     });

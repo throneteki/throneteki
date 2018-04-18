@@ -31,7 +31,7 @@ describe('Maester Aemon (WotW)', function() {
 
         describe('when the challenge phase ends', function() {
             beforeEach(function() {
-                this.player1.clickPrompt('Maester Aemon');
+                this.player1.triggerAbility('Maester Aemon');
             });
 
             it('should prompt to apply claim for challenges not initiated against the player', function() {
@@ -53,7 +53,7 @@ describe('Maester Aemon (WotW)', function() {
 
             it('should not trigger cards that react to claim being applied for / during a challenge', function() {
                 this.player1.clickPrompt('Military');
-                expect(this.player1).not.toHavePromptButton('The Seastone Chair');
+                expect(this.player1).not.toAllowAbilityTrigger('The Seastone Chair');
             });
         });
     });

@@ -36,7 +36,7 @@ describe('Risen from the Sea', function() {
                 this.player2.clickPrompt('Apply Claim');
 
                 this.player1.clickCard(this.character);
-                this.player1.clickPrompt('Risen from the Sea');
+                this.player1.triggerAbility('Risen from the Sea');
                 this.player1.clickCard(this.character);
             });
 
@@ -60,7 +60,7 @@ describe('Risen from the Sea', function() {
                 this.player2.clickPrompt('Apply Claim');
 
                 this.player1.clickCard(this.noAttachmentCharacter);
-                this.player1.clickPrompt('Risen from the Sea');
+                this.player1.triggerAbility('Risen from the Sea');
                 this.player1.clickCard(this.noAttachmentCharacter);
             });
 
@@ -104,7 +104,7 @@ describe('Risen from the Sea', function() {
                 beforeEach(function() {
                     this.player2.clickCard(this.strongCharacter);
 
-                    this.player1.clickPrompt('Risen from the Sea');
+                    this.player1.triggerAbility('Risen from the Sea');
                     this.player1.clickCard(this.strongCharacter);
                 });
 
@@ -121,7 +121,7 @@ describe('Risen from the Sea', function() {
                 });
 
                 it('should not prompt to save the character', function() {
-                    expect(this.player1).not.toHavePromptButton('Risen from the Sea');
+                    expect(this.player1).not.toAllowAbilityTrigger('Risen from the Sea');
                 });
 
                 it('should kill the character', function() {
@@ -135,7 +135,7 @@ describe('Risen from the Sea', function() {
                 });
 
                 it('should not prompt to save the character', function() {
-                    expect(this.player1).not.toHavePromptButton('Risen from the Sea');
+                    expect(this.player1).not.toAllowAbilityTrigger('Risen from the Sea');
                 });
 
                 it('should kill the character', function() {

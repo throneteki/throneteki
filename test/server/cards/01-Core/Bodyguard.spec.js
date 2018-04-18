@@ -28,7 +28,7 @@ describe('Bodyguard', function() {
                 this.player2.selectPlot('Valar Morghulis');
                 this.selectFirstPlayer(this.player1);
 
-                this.player1.clickPrompt('Bodyguard');
+                this.player1.triggerAbility('Bodyguard');
             });
 
             it('should save the character', function() {
@@ -44,9 +44,9 @@ describe('Bodyguard', function() {
 
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
-                this.player2.clickPrompt('Varys');
+                this.player2.triggerAbility('Varys');
 
-                this.player1.clickPrompt('Bodyguard');
+                this.player1.triggerAbility('Bodyguard');
             });
 
             it('should save the character', function() {

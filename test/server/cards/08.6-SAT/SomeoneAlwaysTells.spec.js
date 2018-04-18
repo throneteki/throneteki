@@ -28,7 +28,7 @@ describe('Someone Always Tells', function() {
             });
 
             it('should not prompt to trigger someone always tells', function() {
-                expect(this.player1).not.toHavePromptButton('Someone Always Tells');
+                expect(this.player1).not.toAllowAbilityTrigger('Someone Always Tells');
             });
         });
 
@@ -39,14 +39,14 @@ describe('Someone Always Tells', function() {
             });
 
             it('should prompt to trigger someone always tells', function() {
-                expect(this.player1).toHavePromptButton('Someone Always Tells');
+                expect(this.player1).toAllowAbilityTrigger('Someone Always Tells');
             });
 
             describe('and when someone always tells is used to cancel', function() {
                 beforeEach(function() {
-                    this.player1.clickPrompt('Someone Always Tells');
+                    this.player1.triggerAbility('Someone Always Tells');
                 });
-    
+
                 it('should cancel the when revealed ability', function() {
                     expect(this.knight.location).toBe('play area');
                 });

@@ -26,7 +26,7 @@ describe('The Red Wedding', function() {
 
         it('should kill an opponent Lord/Lady when winning challenge', function() {
             this.unopposedChallenge(this.player1, 'Power', this.character);
-            this.player1.clickPrompt('The Red Wedding');
+            this.player1.triggerAbility('The Red Wedding');
             this.player1.clickCard(this.opponentCharacter);
 
             expect(this.opponentCharacter.location).toBe('dead pile');
@@ -36,7 +36,7 @@ describe('The Red Wedding', function() {
             this.player1.clickPrompt('Done');
 
             this.unopposedChallenge(this.player2, 'Power', this.opponentCharacter);
-            this.player2.clickPrompt('The Red Wedding');
+            this.player2.triggerAbility('The Red Wedding');
             this.player2.clickCard(this.character);
 
             expect(this.character.location).toBe('dead pile');

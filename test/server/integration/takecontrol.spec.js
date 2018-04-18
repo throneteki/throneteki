@@ -164,7 +164,7 @@ describe('take control', function() {
                 this.player1.clickPrompt('Apply Claim');
 
                 // Use Euron to take control of the opponent Kingsroad.
-                this.player1.clickPrompt('Euron Crow\'s Eye');
+                this.player1.triggerAbility('Euron Crow\'s Eye');
                 this.player1.clickCard(this.kingsroad);
 
                 expect(this.kingsroad.controller).toBe(this.player1Object);
@@ -244,7 +244,7 @@ describe('take control', function() {
                     this.player1.clickPrompt('Apply Claim');
 
                     // Use Euron to take control of the opponent Wall.
-                    this.player1.clickPrompt('Euron Crow\'s Eye');
+                    this.player1.triggerAbility('Euron Crow\'s Eye');
                     this.player1.clickCard(this.wall);
 
                     expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.wall.uuid);
@@ -357,7 +357,7 @@ describe('take control', function() {
                 this.player1.clickPrompt('Apply Claim');
 
                 // Use Euron to take control of the opponent Iron Mines.
-                this.player1.clickPrompt('Euron Crow\'s Eye');
+                this.player1.triggerAbility('Euron Crow\'s Eye');
                 this.player1.clickCard(this.mines);
             });
 
@@ -380,7 +380,7 @@ describe('take control', function() {
 
                 this.player1.clickCard(knight);
 
-                this.player1.clickPrompt('Iron Mines');
+                this.player1.triggerAbility('Iron Mines');
                 expect(this.player1).toHavePrompt('Select a character');
                 this.player1.clickCard(knight);
 
@@ -403,8 +403,8 @@ describe('take control', function() {
 
                 this.player2.clickCard('Hedge Knight', 'play area');
 
-                expect(this.player1).not.toHavePromptButton('Iron Mines');
-                expect(this.player2).not.toHavePromptButton('Iron Mines');
+                expect(this.player1).not.toAllowAbilityTrigger('Iron Mines');
+                expect(this.player2).not.toAllowAbilityTrigger('Iron Mines');
             });
         });
 
@@ -700,7 +700,7 @@ describe('take control', function() {
                 this.completeMarshalPhase();
                 this.completeChallengesPhase();
 
-                this.player1.clickPrompt('Varys');
+                this.player1.triggerAbility('Varys');
             });
 
             it('should place the character in the proper owner\'s pile', function() {
