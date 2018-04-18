@@ -298,7 +298,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        return !this.isFullBlank(true) && this.traits.contains(trait);
+        return !this.isFullBlank() && this.traits.contains(trait);
     }
 
     isFaction(faction) {
