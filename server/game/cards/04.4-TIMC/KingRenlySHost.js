@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class KingRenlySHost extends DrawCard {
@@ -18,7 +16,7 @@ class KingRenlySHost extends DrawCard {
     }
 
     anyPlotHasTrait(trait) {
-        return _.any(this.game.getPlayers(), player =>
+        return this.game.getPlayers().some(player =>
             player.activePlot
                      && player.activePlot.hasTrait(trait));
     }

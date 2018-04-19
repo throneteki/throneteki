@@ -103,7 +103,7 @@ class Challenge {
 
     anyParticipants(predicate) {
         let participants = this.attackers.concat(this.defenders);
-        return _.any(participants, predicate);
+        return participants.some(predicate);
     }
 
     hasSingleParticipant(player) {

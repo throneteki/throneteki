@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheSwordInTheDarkness extends DrawCard {
@@ -24,7 +22,7 @@ class TheSwordInTheDarkness extends DrawCard {
     }
 
     hasNightsWatchParticipant() {
-        return _.any(this.game.currentChallenge.defenders, card => card.getType() === 'character' && card.isFaction('thenightswatch'));
+        return this.game.currentChallenge.defenders.some(card => card.getType() === 'character' && card.isFaction('thenightswatch'));
     }
 }
 

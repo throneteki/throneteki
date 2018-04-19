@@ -161,7 +161,7 @@ export default function(state = {}, action) {
                 return deck;
             });
 
-            if(!_.any(newState.decks, deck => {
+            if(!newState.decks.some(deck => {
                 return deck._id === action.response.deck._id;
             })) {
                 newState.decks.push(action.response.deck);

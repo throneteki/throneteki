@@ -32,7 +32,7 @@ class ActivePlayerPrompt extends React.Component {
             return;
         }
 
-        if(_.any(newProps.buttons, button => {
+        if(newProps.buttons.some(button => {
             return button.timer;
         })) {
             if(newState.timerHandle) {

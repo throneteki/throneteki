@@ -203,7 +203,7 @@ class Game extends EventEmitter {
     }
 
     anyPlotHasTrait(trait) {
-        return _.any(this.getPlayers(), player =>
+        return this.getPlayers().some(player =>
             player.activePlot &&
             player.activePlot.hasTrait(trait));
     }

@@ -151,7 +151,7 @@ class BaseAbility {
             return true;
         }
 
-        return _.any(context.game.getPlayers(), player => {
+        return context.game.getPlayers().some(player => {
             return player !== context.player && this.canChooseOpponent(player);
         });
     }

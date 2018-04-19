@@ -8,9 +8,11 @@ describe('AbilityResolver', function() {
                 handler(params);
             }
         });
+
         this.game.reportError.and.callFake(error => {
             throw error;
         });
+
         this.ability = jasmine.createSpyObj('ability', ['incrementLimit', 'isAction', 'isCardAbility', 'isForcedAbility', 'isPlayableEventAbility', 'needsChooseOpponent', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
         this.ability.isCardAbility.and.returnValue(true);
         this.player = jasmine.createSpyObj('player', ['moveCard']);
@@ -27,6 +29,8 @@ describe('AbilityResolver', function() {
         describe('when the ability is an action', function() {
             beforeEach(function() {
                 this.ability.isAction.and.returnValue(true);
+                this.ability.resolveTargets.and.returnValue([]);
+                this.ability.resolveCosts.and.returnValue([]);
                 this.resolver.continue();
             });
 
@@ -38,6 +42,7 @@ describe('AbilityResolver', function() {
         describe('when all costs can be paid', function() {
             beforeEach(function() {
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
+                this.ability.resolveTargets.and.returnValue([]);
                 this.resolver.continue();
             });
 
@@ -57,6 +62,7 @@ describe('AbilityResolver', function() {
         describe('when the ability is a card ability', function() {
             beforeEach(function() {
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
+                this.ability.resolveTargets.and.returnValue([]);
                 this.ability.isPlayableEventAbility.and.returnValue(true);
                 this.ability.isCardAbility.and.returnValue(true);
                 this.resolver.continue();
@@ -70,6 +76,7 @@ describe('AbilityResolver', function() {
         describe('when the ability is not a card ability', function() {
             beforeEach(function() {
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
+                this.ability.resolveTargets.and.returnValue([]);
                 this.ability.isPlayableEventAbility.and.returnValue(true);
                 this.ability.isCardAbility.and.returnValue(false);
                 this.resolver.continue();
@@ -85,6 +92,7 @@ describe('AbilityResolver', function() {
                 this.source.eventPlacementLocation = 'event placement location';
                 this.source.location = 'being played';
                 this.ability.resolveCosts.and.returnValue([{ resolved: true, value: true }, { resolved: true, value: true }]);
+                this.ability.resolveTargets.and.returnValue([]);
                 this.ability.isPlayableEventAbility.and.returnValue(true);
             });
 
@@ -130,6 +138,7 @@ describe('AbilityResolver', function() {
             beforeEach(function() {
                 this.canPayResult = { resolved: false };
                 this.ability.resolveCosts.and.returnValue([this.canPayResult]);
+                this.ability.resolveTargets.and.returnValue([]);
                 this.resolver.continue();
             });
 
@@ -182,6 +191,7 @@ describe('AbilityResolver', function() {
             beforeEach(function() {
                 this.targetResult = { resolved: false, name: 'foo', value: null, targetingType: 'choose' };
                 this.ability.resolveTargets.and.returnValue([this.targetResult]);
+                this.ability.resolveCosts.and.returnValue([]);
                 this.resolver.continue();
             });
 

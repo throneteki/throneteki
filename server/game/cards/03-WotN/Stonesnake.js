@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 const keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
@@ -46,7 +44,7 @@ class Stonesnake extends DrawCard {
     }
 
     hasCopyableKeyword(card) {
-        return _.any(keywords, keyword => card.hasKeyword(keyword));
+        return keywords.some(keyword => card.hasKeyword(keyword));
     }
 }
 

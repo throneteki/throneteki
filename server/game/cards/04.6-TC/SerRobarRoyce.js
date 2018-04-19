@@ -1,12 +1,10 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class SerRobarRoyce extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Summer')) && this.allowGameAction('gainPower')
+                onPlotsRevealed: event => event.plots.some(plot => plot.hasTrait('Summer')) && this.allowGameAction('gainPower')
             },
             limit: ability.limit.perPhase(1),
             handler: () => {
@@ -17,7 +15,7 @@ class SerRobarRoyce extends DrawCard {
 
         this.forcedReaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Winter'))
+                onPlotsRevealed: event => event.plots.some(plot => plot.hasTrait('Winter'))
             },
             handler: () => {
                 this.controller.kneelCard(this),

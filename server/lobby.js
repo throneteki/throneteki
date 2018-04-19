@@ -178,7 +178,7 @@ class Lobby {
 
         return Object.values(this.gamesById).filter(game => {
             let userBlockedByOwner = game.isUserBlocked(user);
-            let userHasBlockedPlayer = _.any(game.players, player => _.contains(user.blockList, player.name.toLowerCase()));
+            let userHasBlockedPlayer = Object.values(game.playersByName).some(player => _.contains(user.blockList, player.name.toLowerCase()));
             return !userBlockedByOwner && !userHasBlockedPlayer;
         });
     }
@@ -441,7 +441,7 @@ class Lobby {
             return;
         }
 
-        if(_.any(game.getPlayers(), function(player) {
+        if(Object.values(game.getPlayers()).some(function(player) {
             return !player.deck;
         })) {
             return;

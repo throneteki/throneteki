@@ -1,12 +1,10 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class CaswellsKeep extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.controller === this.controller)
+                onPlotsRevealed: event => event.plots.some(plot => plot.controller === this.controller)
             },
             handler: () => {
                 let buttons = this.game.getPlayers().map(player => ({

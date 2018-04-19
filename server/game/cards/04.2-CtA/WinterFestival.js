@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class WinterFestival extends PlotCard {
@@ -11,7 +9,7 @@ class WinterFestival extends PlotCard {
                         return false;
                     }
 
-                    if(_.any(this.game.getPlayers(), player => {
+                    if(this.game.getPlayers().some(player => {
                         return player.activePlot.hasTrait('Summer');
                     })) {
                         return false;

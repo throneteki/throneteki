@@ -154,7 +154,7 @@ class Player extends Spectator {
     }
 
     isCardInPlayableLocation(card, playingType) {
-        return _.any(this.playableLocations, location => location.playingType === playingType && location.contains(card));
+        return this.playableLocations.some(location => location.playingType === playingType && location.contains(card));
     }
 
     getDuplicateInPlay(card) {
@@ -530,11 +530,11 @@ class Player extends Spectator {
     }
 
     canTrigger(card) {
-        return !_.any(this.triggerRestrictions, restriction => restriction(card));
+        return !this.triggerRestrictions.some(restriction => restriction(card));
     }
 
     canPlay(card, playingType = 'play') {
-        return !_.any(this.playCardRestrictions, restriction => restriction(card, playingType));
+        return !this.playCardRestrictions.some(restriction => restriction(card, playingType));
     }
 
     canPutIntoPlay(card, playingType = 'play', options = {}) {
@@ -558,7 +558,7 @@ class Player extends Spectator {
 
         if(owner === this) {
             let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this);
-            let opponentControlsOurCopy = _.any(this.game.getPlayers(), player => {
+            let opponentControlsOurCopy = this.game.getPlayers().some(player => {
                 return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card);
             });
 

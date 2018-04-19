@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const Player = require('../../../server/game/player.js');
 
 function addCardsToHand(hand, number) {
@@ -139,7 +137,7 @@ describe('Player', function() {
         });
 
         it('should turn all cards faceup', function() {
-            expect(_.any(this.player.cardsInPlay, card => {
+            expect(this.player.cardsInPlay.some(card => {
                 return card.facedown;
             })).toBe(false);
         });

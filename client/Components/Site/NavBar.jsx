@@ -45,7 +45,7 @@ class NavBar extends React.Component {
         if(menuItem.childItems) {
             let className = 'dropdown';
 
-            if(_.any(menuItem.childItems, item => {
+            if(menuItem.childItems.some(item => {
                 return item.path === this.props.path;
             })) {
                 className += ' active';

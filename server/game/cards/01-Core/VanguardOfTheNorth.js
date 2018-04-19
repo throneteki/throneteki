@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class VanguardOfTheNorth extends DrawCard {
@@ -8,7 +6,7 @@ class VanguardOfTheNorth extends DrawCard {
             condition: () => (
                 this.game.currentChallenge &&
                 this.game.currentChallenge.challengeType === 'military' &&
-                _.any(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('War'))
+                this.game.getPlayers().some(player => player.activePlot && player.activePlot.hasTrait('War'))
             ),
             match: this,
             effect: ability.effects.doesNotKneelAsAttacker()

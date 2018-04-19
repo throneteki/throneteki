@@ -42,7 +42,7 @@ var customMatchers = {
                 var buttons = actual.currentPrompt().buttons;
                 var result = {};
 
-                result.pass = _.any(buttons, button => util.equals(button.text, expected, customEqualityMatchers));
+                result.pass = buttons.some(button => util.equals(button.text, expected, customEqualityMatchers));
 
                 if(result.pass) {
                     result.message = `Expected ${actual.name} not to have prompt button "${expected}" but it did.`;
@@ -79,7 +79,7 @@ var customMatchers = {
                 var buttons = actual.currentPrompt().buttons;
                 var result = {};
 
-                result.pass = _.any(buttons, button => util.equals(button.text, expected, customEqualityMatchers));
+                result.pass = buttons.some(button => util.equals(button.text, expected, customEqualityMatchers));
 
                 if(result.pass) {
                     result.message = `Expected ${actual.name} not to have prompt button "${expected}" but it did.`;

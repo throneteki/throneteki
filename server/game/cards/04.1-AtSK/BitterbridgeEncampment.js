@@ -1,12 +1,10 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class BitterbridgeEncampment extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Summer')) && !this.kneeled
+                onPlotsRevealed: event => event.plots.some(plot => plot.hasTrait('Summer')) && !this.kneeled
             },
             handler: () => {
                 this.controller.kneelCard(this);

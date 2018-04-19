@@ -17,7 +17,7 @@ const fixBanners = async () => {
         console.info('loaded', decks.length, 'decks');
         for(let deck of decks) {
             if(deck.bannerCards) {
-                if(_.any(deck.bannerCards, card => {
+                if(deck.bannerCards.some(card => {
                     return !card.code;
                 })) {
                     console.info('found one', deck.name);

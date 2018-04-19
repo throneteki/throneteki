@@ -6,7 +6,7 @@ class ChooseCost {
     }
 
     canPay(context) {
-        return _.any(this.choices, cost => cost.canPay(context));
+        return this.choices.some(cost => cost.canPay(context));
     }
 
     resolve(context, result = { resolved: false }) {

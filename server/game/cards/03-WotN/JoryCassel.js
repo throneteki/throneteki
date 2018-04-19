@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class JoryCassel extends DrawCard {
@@ -26,7 +24,7 @@ class JoryCassel extends DrawCard {
                 context.event.saveCard(toKill);
                 this.controller.sacrificeCard(this);
 
-                if(_.any(this.game.getPlayers(), player => {
+                if(this.game.getPlayers().some(player => {
                     return player.activePlot.hasTrait('Winter');
                 })) {
                     toKill.modifyPower(1);

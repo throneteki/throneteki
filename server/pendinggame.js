@@ -263,7 +263,7 @@ class PendingGame {
 
     // interrogators
     isEmpty() {
-        return !_.any(this.getPlayersAndSpectators(), player => this.hasActivePlayer(player.name));
+        return !Object.values(this.getPlayersAndSpectators()).some(player => this.hasActivePlayer(player.name));
     }
 
     isOwner(playerName) {
