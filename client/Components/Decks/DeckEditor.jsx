@@ -344,6 +344,10 @@ class DeckEditor extends React.Component {
         });
 
         return Object.values(this.props.cards).find(card => {
+            if(this.props.agendas[card.code]) {
+                return undefined;
+            }
+
             if(pack) {
                 return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
             }
@@ -428,6 +432,7 @@ class DeckEditor extends React.Component {
         }
 
         let banners = this.getBannerList();
+        const cardsExcludingAgendas = Object.values(this.props.cards).filter(card => !this.props.agendas[card.code]);
 
         return (
             <div>
@@ -459,7 +464,7 @@ class DeckEditor extends React.Component {
                             </div>
                         </div>
                     }
-                    <Typeahead label='Card' labelClass={ 'col-sm-3 col-xs-2' } fieldClass='col-sm-4 col-xs-5' labelKey={ 'label' } options={ Object.values(this.props.cards) }
+                    <Typeahead label='Card' labelClass={ 'col-sm-3 col-xs-2' } fieldClass='col-sm-4 col-xs-5' labelKey={ 'label' } options={ cardsExcludingAgendas }
                         onChange={ this.addCardChange.bind(this) }>
                         <Input name='numcards' type='text' label='Num' labelClass='col-xs-1 no-x-padding' fieldClass='col-xs-2'
                             value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) } noGroup>

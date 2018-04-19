@@ -295,7 +295,6 @@ class DeckValidator {
 
     getRookeryRules() {
         return {
-            mayInclude: () => true,
             rules: [
                 {
                     message: 'More than 2 plot cards in rookery',
@@ -333,7 +332,7 @@ class DeckValidator {
         let cannotIncludeFuncs = validators.map(validator => validator.cannotInclude).filter(v => !!v);
         let combinedRules = validators.reduce((rules, validator) => rules.concat(validator.rules || []), []);
         let combined = {
-            mayInclude: card => mayIncludeFuncs.every(func => func(card)),
+            mayInclude: card => mayIncludeFuncs.some(func => func(card)),
             cannotInclude: card => cannotIncludeFuncs.some(func => func(card)),
             rules: combinedRules
         };
