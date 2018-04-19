@@ -43,7 +43,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
     }
 
     selectCharacter(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         if(!card) {
             return false;
         }
@@ -81,7 +81,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
     }
 
     selectCardForBottom(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         if(!card) {
             return false;
         }

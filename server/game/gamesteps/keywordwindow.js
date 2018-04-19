@@ -82,7 +82,7 @@ class KeywordWindow extends BaseStep {
                 activePromptTitle: 'Select ' + keyword + ' cards',
                 cardCondition: card => cards.includes(card),
                 onSelect: (player, selectedCards) => {
-                    let finalParticipants = _.map(selectedCards, card => _.find(participantsWithKeyword, participant => participant.card === card));
+                    let finalParticipants = _.map(selectedCards, card => participantsWithKeyword.find(participant => participant.card === card));
 
                     this.resolveAbility(ability, finalParticipants);
                     this.game.checkWinCondition(this.challenge.winner);
@@ -122,7 +122,7 @@ class KeywordWindow extends BaseStep {
             activePromptTitle: 'Select order for pillage',
             cardCondition: card => cards.includes(card),
             onSelect: (player, selectedCards) => {
-                let finalParticipants = _.map(selectedCards, card => _.find(participants, participant => participant.card === card));
+                let finalParticipants = _.map(selectedCards, card => participants.find(participant => participant.card === card));
 
                 this.resolveAbility(ability, finalParticipants);
 

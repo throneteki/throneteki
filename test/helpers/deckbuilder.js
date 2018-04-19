@@ -42,13 +42,13 @@ class DeckBuilder {
             }
         });
 
-        var agenda;
-        var agendaCount = _.find(cardCountsByCode, cardCount => cardCount.card.type === 'agenda');
+        const cardCountValues = Object.values(cardCountsByCode);
+
+        let agenda;
+        const agendaCount = cardCountValues.find(cardCount => cardCount.card.type === 'agenda');
         if(agendaCount) {
             agenda = agendaCount.card;
         }
-
-        const cardCountValues = Object.values(cardCountsByCode);
 
         return {
             faction: { value: faction },

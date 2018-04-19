@@ -152,7 +152,7 @@ class Game extends EventEmitter {
     }
 
     getFirstPlayer() {
-        return _.find(this.getPlayers(), p => {
+        return this.getPlayers().find(p => {
             return p.firstPlayer;
         });
     }
@@ -577,7 +577,7 @@ class Game extends EventEmitter {
                 return;
             }
 
-            let card = _.find(this.shortCardData, c => {
+            let card = this.shortCardData.find(c => {
                 return c.label.toLowerCase() === message.toLowerCase() || c.name.toLowerCase() === message.toLowerCase();
             });
 

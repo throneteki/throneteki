@@ -105,7 +105,7 @@ class Lobby {
 
     // Helpers
     findGameForUser(user) {
-        return _.find(this.gamesById, game => {
+        return Object.values(this.gamesById).find(game => {
             if(game.spectators[user]) {
                 return true;
             }
@@ -669,7 +669,7 @@ class Lobby {
                 }
             }
 
-            let socket = _.find(this.socketsById, socket => {
+            let socket = Object.values(this.socketsById).find(socket => {
                 return socket.user && socket.user.username === username;
             });
 
@@ -729,7 +729,7 @@ class Lobby {
         });
 
         _.each(this.gamesById, game => {
-            if(game.node && game.node.identity === nodeName && _.find(games, nodeGame => {
+            if(game.node && game.node.identity === nodeName && Object.values(games).find(nodeGame => {
                 return nodeGame.id === game.id;
             })) {
                 this.gamesById[game.id] = game;

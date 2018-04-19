@@ -58,7 +58,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
     }
 
     selectCard(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
 
         if(!card) {
             return false;

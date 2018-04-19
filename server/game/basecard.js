@@ -546,7 +546,7 @@ class BaseCard {
     }
 
     onClick(player) {
-        var action = _.find(this.abilities.actions, action => action.isClickToActivate());
+        var action = this.abilities.actions.find(action => action.isClickToActivate());
         if(action) {
             return action.execute(player) || action.deactivate(player);
         }

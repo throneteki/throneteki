@@ -107,7 +107,7 @@ export class GameBoard extends React.Component {
         ];
 
         if(props.currentGame && props.currentGame.started) {
-            if(_.find(props.currentGame.players, p => {
+            if(props.currentGame.players.find(p => {
                 return p.name === props.user.username;
             })) {
                 menuOptions.unshift({ text: 'Concede', onClick: this.onConcedeClick });
@@ -155,7 +155,7 @@ export class GameBoard extends React.Component {
             thisPlayer = Object.values(this.props.currentGame.players)[0];
         }
 
-        let otherPlayer = _.find(this.props.currentGame.players, player => {
+        let otherPlayer = this.props.currentGame.players.find(player => {
             return player.name !== thisPlayer.name;
         });
 
@@ -311,7 +311,7 @@ export class GameBoard extends React.Component {
             return <div>Waiting for game to have players or close...</div>;
         }
 
-        let otherPlayer = _.find(this.props.currentGame.players, player => {
+        let otherPlayer = this.props.currentGame.players.find(player => {
             return player.name !== thisPlayer.name;
         }) || placeholderPlayer;
 

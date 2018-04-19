@@ -39,7 +39,7 @@ class Queenscrown extends DrawCard {
     }
 
     placeCharacterInDiscard(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         card.controller.moveCard(card, 'discard pile');
         this.game.addMessage('{0} uses {1} to place {2} in {3}\'s discard pile', player, this, card, card.controller);
         this.remainingCards = _.reject(this.remainingCards, c => c === card);
@@ -74,7 +74,7 @@ class Queenscrown extends DrawCard {
     }
 
     placeCardOnBottom(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
 
         if(!card) {
             return false;

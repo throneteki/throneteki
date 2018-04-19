@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 class Select extends React.Component {
     onChange(event) {
-        let selectedValue = _.find(this.props.options, (option) => {
+        let selectedValue = this.props.options.find((option) => {
             return option[this.props.valueKey || 'value'] === event.target.value;
         });
 

@@ -51,8 +51,8 @@ class CaswellsKeep extends DrawCard {
     }
 
     selectCard(player, cardId) {
-        let card = _.find(this.topCards, c => c.uuid === cardId);
-        let otherCard = _.find(this.topCards, c => c.uuid !== cardId);
+        let card = this.topCards.find(c => c.uuid === cardId);
+        let otherCard = this.topCards.find(c => c.uuid !== cardId);
 
         if(!card) {
             return false;

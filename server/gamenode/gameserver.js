@@ -181,7 +181,7 @@ class GameServer {
     }
 
     findGameForUser(username) {
-        return _.find(this.gamesById, game => {
+        return this.gamesById.find(game => {
             var player = game.playersAndSpectatorsByName[username];
 
             if(!player || player.left) {

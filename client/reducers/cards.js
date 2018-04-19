@@ -167,7 +167,7 @@ export default function(state = {}, action) {
                 newState.decks.push(action.response.deck);
             }
 
-            var selected = _.find(newState.decks, deck => {
+            var selected = newState.decks.find(deck => {
                 return deck._id === action.response.deck._id;
             });
 
