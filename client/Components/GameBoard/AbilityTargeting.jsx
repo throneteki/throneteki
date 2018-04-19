@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 class AbilityTargeting extends React.Component {
     onMouseOver(event, card) {

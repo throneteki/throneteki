@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseStep = require('./basestep');
 
 class IconPrompt extends BaseStep {

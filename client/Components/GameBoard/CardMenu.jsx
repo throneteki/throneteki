@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 class CardMenu extends React.Component {
     onMenuItemClick(menuItem) {

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'underscore';
 import $ from 'jquery';
 import { toastr } from 'react-redux-toastr';
 import { bindActionCreators } from 'redux';

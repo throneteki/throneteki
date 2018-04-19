@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import _ from 'underscore';
 import moment from 'moment';
 
 import AlertPanel from '../Components/Site/AlertPanel';
