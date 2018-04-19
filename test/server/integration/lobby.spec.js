@@ -29,7 +29,7 @@ describe('lobby', function() {
 
             it('should create a new game with the player in it', function() {
                 expect(_.size(this.lobby.gamesById)).toBe(1);
-                var gamesArray = _.toArray(this.lobby.gamesById);
+                var gamesArray = Object.values(this.lobby.gamesById);
                 var player = gamesArray[0].playersByName['test'];
 
                 expect(player.name).toBe('test');

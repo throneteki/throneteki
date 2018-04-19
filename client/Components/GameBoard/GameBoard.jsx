@@ -152,7 +152,7 @@ export class GameBoard extends React.Component {
 
         let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
-            thisPlayer = _.toArray(this.props.currentGame.players)[0];
+            thisPlayer = Object.values(this.props.currentGame.players)[0];
         }
 
         let otherPlayer = _.find(this.props.currentGame.players, player => {
@@ -304,7 +304,7 @@ export class GameBoard extends React.Component {
 
         let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
-            thisPlayer = _.toArray(this.props.currentGame.players)[0];
+            thisPlayer = Object.values(this.props.currentGame.players)[0];
         }
 
         if(!thisPlayer) {
