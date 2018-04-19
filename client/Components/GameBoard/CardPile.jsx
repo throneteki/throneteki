@@ -77,7 +77,7 @@ class CardPile extends React.Component {
             return;
         }
 
-        if(this.props.disablePopup) {
+        if(this.props.disablePopup || this.isTopCardSelectable) {
             if(this.props.onCardClick) {
                 this.props.onCardClick(this.props.topCard);
             }
@@ -86,6 +86,14 @@ class CardPile extends React.Component {
         }
 
         this.setState({ showPopup: !this.state.showPopup });
+    }
+
+    get isTopCardSelectable() {
+        if(!this.props.topCard) {
+            return false;
+        }
+
+        return this.props.topCard.selectable && (!this.props.cards || this.props.cards.every(card => card.unselectable));
     }
 
     onCardClick(card) {
