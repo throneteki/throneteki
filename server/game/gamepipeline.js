@@ -108,8 +108,8 @@ class GamePipeline {
 
     getDebugInfo() {
         return {
-            pipeline: _.map(this.pipeline, step => this.getDebugInfoForStep(step)),
-            queue: _.map(this.queue, step => this.getDebugInfoForStep(step))
+            pipeline: this.pipeline.map(step => this.getDebugInfoForStep(step)),
+            queue: this.queue.map(step => this.getDebugInfoForStep(step))
         };
     }
 

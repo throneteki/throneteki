@@ -15,7 +15,7 @@ class WithoutHisBeard extends DrawCard {
                 this.losingOpponent = context.event.challenge.loser;
                 let nums = ['1', '2', '3'];
 
-                let buttons = _.map(nums, num => {
+                let buttons = nums.map(num => {
                     return { text: num, method: 'numSelected', arg: num };
                 });
 

@@ -66,7 +66,7 @@ class RevealPlots extends BaseStep {
 
     getInitiativeResult(sampleFunc = _.sample) {
         let result = { initiativeTied: false, powerTied: false, player: undefined };
-        let playerInitiatives = _.map(this.game.getPlayers(), player => {
+        let playerInitiatives = this.game.getPlayers().map(player => {
             return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower() };
         });
         let highestInitiative = _.max(_.pluck(playerInitiatives, 'initiative'));

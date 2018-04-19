@@ -10,7 +10,7 @@ class GameRouter extends EventEmitter {
     constructor(config) {
         super();
 
-        this.workers = {};
+        this.workersByName = {};
         this.gameService = new GameService(monk(config.dbPath));
 
         router.bind(config.mqUrl, err => {
@@ -46,13 +46,13 @@ class GameRouter extends EventEmitter {
     }
 
     getNextAvailableGameNode() {
-        if(_.isEmpty(this.workers)) {
+        if(_.isEmpty(this.workersByName)) {
             return undefined;
         }
 
         var returnedWorker = undefined;
 
-        _.each(this.workers, worker => {
+        _.each(this.workersByName, worker => {
             if(worker.numGames >= worker.maxGames || worker.disabled || worker.disconnected) {
                 return;
             }
@@ -66,13 +66,13 @@ class GameRouter extends EventEmitter {
     }
 
     getNodeStatus() {
-        return _.map(this.workers, worker => {
+        return Object.values(this.workersByName).map(worker => {
             return { name: worker.identity, numGames: worker.numGames, status: worker.disconnceted ? 'disconnected' : worker.disabled ? 'disabled' : 'active' };
         });
     }
 
     disableNode(nodeName) {
-        var worker = this.workers[nodeName];
+        var worker = this.workersByName[nodeName];
         if(!worker) {
             return false;
         }
@@ -83,7 +83,7 @@ class GameRouter extends EventEmitter {
     }
 
     enableNode(nodeName) {
-        var worker = this.workers[nodeName];
+        var worker = this.workersByName[nodeName];
         if(!worker) {
             return false;
         }
@@ -113,7 +113,7 @@ class GameRouter extends EventEmitter {
     onMessage(identity, msg) {
         var identityStr = identity.toString();
 
-        var worker = this.workers[identityStr];
+        var worker = this.workersByName[identityStr];
 
         var message = undefined;
 
@@ -132,12 +132,12 @@ class GameRouter extends EventEmitter {
         switch(message.command) {
             case 'HELLO':
                 this.emit('onWorkerStarted', identityStr);
-                if(this.workers[identityStr]) {
+                if(this.workersByName[identityStr]) {
                     logger.info(`Worker ${identityStr} was already known, presume reconnected`);
-                    this.workers[identityStr].disconnected = false;
+                    this.workersByName[identityStr].disconnected = false;
                 }
 
-                this.workers[identityStr] = {
+                this.workersByName[identityStr] = {
                     identity: identityStr,
                     maxGames: message.arg.maxGames,
                     numGames: 0,
@@ -145,7 +145,7 @@ class GameRouter extends EventEmitter {
                     port: message.arg.port,
                     protocol: message.arg.protocol
                 };
-                worker = this.workers[identityStr];
+                worker = this.workersByName[identityStr];
 
                 this.emit('onNodeReconnected', identityStr, message.arg.games);
 
@@ -196,10 +196,10 @@ class GameRouter extends EventEmitter {
         var currentTime = Date.now();
         const pingTimeout = 1 * 60 * 1000;
 
-        _.each(this.workers, worker => {
+        _.each(this.workersByName, worker => {
             if(worker.pingSent && currentTime - worker.pingSent > pingTimeout) {
                 logger.info('worker', worker.identity + ' timed out');
-                this.workers[worker.identity].disconnected = true;
+                this.workersByName[worker.identity].disconnected = true;
                 this.emit('onWorkerTimedOut', worker.identity);
             } else if(!worker.pingSent) {
                 if(currentTime - worker.lastMessage > pingTimeout) {

@@ -9,7 +9,7 @@ class PendingGame {
     constructor(owner, details) {
         this.owner = owner;
         this.playersByName = {};
-        this.spectators = {};
+        this.spectatorsByName = {};
         this.id = uuid.v1();
         this.name = details.name;
         this.allowSpectators = details.spectators;
@@ -22,7 +22,7 @@ class PendingGame {
 
     // Getters
     getPlayersAndSpectators() {
-        return Object.assign({}, this.playersByName, this.spectators);
+        return Object.assign({}, this.playersByName, this.spectatorsByName);
     }
 
     getPlayers() {
@@ -38,7 +38,7 @@ class PendingGame {
     }
 
     getSaveState() {
-        var players = _.map(this.getPlayers(), player => {
+        var players = Object.values(this.getPlayers()).map(player => {
             return {
                 agenda: player.agenda ? player.agenda.cardData.name : undefined,
                 faction: player.faction.cardData.name,
@@ -93,7 +93,7 @@ class PendingGame {
     }
 
     addSpectator(id, user) {
-        this.spectators[user.username] = {
+        this.spectatorsByName[user.username] = {
             id: id,
             name: user.username,
             user: user,
@@ -211,8 +211,8 @@ class PendingGame {
             }
         }
 
-        if(this.spectators[playerName]) {
-            delete this.spectators[playerName];
+        if(this.spectatorsByName[playerName]) {
+            delete this.spectatorsByName[playerName];
         }
     }
 
@@ -231,7 +231,7 @@ class PendingGame {
                 delete this.playersByName[playerName];
             }
         } else {
-            delete this.spectators[playerName];
+            delete this.spectatorsByName[playerName];
         }
     }
 
@@ -277,7 +277,7 @@ class PendingGame {
     }
 
     hasActivePlayer(playerName) {
-        return this.playersByName[playerName] && !this.playersByName[playerName].left && !this.playersByName[playerName].disconnected || this.spectators[playerName];
+        return this.playersByName[playerName] && !this.playersByName[playerName].left && !this.playersByName[playerName].disconnected || this.spectatorsByName[playerName];
     }
 
     // Summary
@@ -322,7 +322,7 @@ class PendingGame {
             players: playerSummaries,
             showHand: this.showHand,
             started: this.started,
-            spectators: _.map(this.spectators, spectator => {
+            spectators: Object.values(this.spectatorsByName).map(spectator => {
                 return {
                     id: spectator.id,
                     name: spectator.name,

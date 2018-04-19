@@ -38,7 +38,7 @@ class TaxationPhase extends Phase {
         this.game.raiseEvent('onRoundEnded');
 
         let players = this.game.getPlayers();
-        let playerStr = _.map(players, player => `${player.name}: ${player.getTotalPower()}`).join(', ');
+        let playerStr = players.map(player => `${player.name}: ${player.getTotalPower()}`).join(', ');
 
         this.game.round++;
 

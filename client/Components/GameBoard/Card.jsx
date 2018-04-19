@@ -131,7 +131,7 @@ class InnerCard extends React.Component {
         }
 
         var index = 1;
-        var attachments = _.map(this.props.card.attachments, attachment => {
+        var attachments = this.props.card.attachments.map(attachment => {
             var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment }
                 className={ classNames('attachment', `attachment-${index}`) } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment) }
@@ -162,7 +162,7 @@ class InnerCard extends React.Component {
         }
 
         var index = 1;
-        var dupes = _.map(facedownDupes, dupe => {
+        var dupes = facedownDupes.map(dupe => {
             var returnedDupe = (<Card key={ dupe.uuid } className={ classNames('card-dupe', `card-dupe-${index}`) }
                 source={ this.props.source } card={ dupe } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe) }

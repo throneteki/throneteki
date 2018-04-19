@@ -14,7 +14,7 @@ class SupportOfHarlaw extends DrawCard {
                 let buttons = [];
                 let keywords = ['Pillage', 'Renown', 'Stealth'];
 
-                _.map(keywords, keyword => {
+                keywords.map(keyword => {
                     buttons.push({ text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() });
                 });
 
@@ -35,7 +35,7 @@ class SupportOfHarlaw extends DrawCard {
             effect: ability.effects.addKeyword(keyword)
         }));
 
-        this.game.addMessage('{0} uses {1} and kneels {2} to have {3} gain {4} until the end of the phase', 
+        this.game.addMessage('{0} uses {1} and kneels {2} to have {3} gain {4} until the end of the phase',
             player, this, this.context.costs.kneel, this.parent, keyword);
 
         return true;

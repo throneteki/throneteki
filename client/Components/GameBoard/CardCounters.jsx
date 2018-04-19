@@ -15,7 +15,7 @@ class CardCounters extends React.Component {
             'many-counters': _.size(this.props.counters) > 3
         });
 
-        let counterDivs = _.map(this.props.counters, (counter, key) => {
+        let counterDivs = this.props.counters.map((counter, key) => {
             return (<Counter key={ key }
                 name={ counter.name }
                 value={ counter.count }

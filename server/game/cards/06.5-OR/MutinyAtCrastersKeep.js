@@ -22,7 +22,7 @@ class MutinyAtCrastersKeep extends DrawCard {
 
     getHighestCharacterCost() {
         let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character');
-        let costs = _.map(charactersInPlay, card => card.getCost());
+        let costs = charactersInPlay.map(card => card.getCost());
         return _.max(costs);
     }
 }

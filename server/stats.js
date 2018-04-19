@@ -30,7 +30,7 @@ gameService.getAllGames(args[0], args[1]).then(games => {
     let factionAgendas = {};
 
     _.each(games, game => {
-        if(_.size(game.players) !== 2) {
+        if(_.size(game.playersByName) !== 2) {
             rejected.singlePlayer++;
 
             return;
@@ -42,7 +42,7 @@ gameService.getAllGames(args[0], args[1]).then(games => {
             return;
         }
 
-        _.each(game.players, player => {
+        _.each(game.playersByName, player => {
             if(!players[player.name]) {
                 players[player.name] = { name: player.name, wins: 0, losses: 0 };
             }
@@ -75,7 +75,7 @@ gameService.getAllGames(args[0], args[1]).then(games => {
         return -player.wins;
     }).first(10).value();
 
-    let winRates = _.map(winners, player => {
+    let winRates = winners.map(player => {
         let games = player.wins + player.losses;
 
         return { name: player.name, wins: player.wins, losses: player.losses, winRate: Math.round(((player.wins / games) * 100)) };
@@ -89,7 +89,7 @@ gameService.getAllGames(args[0], args[1]).then(games => {
     //     return -faction.wins;
     // });
 
-    let factionWinRates = _.map(factions, faction => {
+    let factionWinRates = factions.map(faction => {
         let games = faction.wins + faction.losses;
 
         return { name: faction.name, wins: faction.wins, losses: faction.losses, winRate: Math.round(((faction.wins / games) * 100)) };
@@ -103,7 +103,7 @@ gameService.getAllGames(args[0], args[1]).then(games => {
         return -faction.wins;
     }).first(10).value();
 
-    let factionAgendaWinRates = _.map(factionAgendaWinners, faction => {
+    let factionAgendaWinRates = factionAgendaWinners.map(faction => {
         let games = faction.wins + faction.losses;
 
         return { name: faction.name, wins: faction.wins, losses: faction.losses, winRate: Math.round(((faction.wins / games) * 100)) };

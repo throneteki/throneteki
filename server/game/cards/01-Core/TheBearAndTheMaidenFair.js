@@ -7,7 +7,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
         this.action({
             title: 'Look at top 5 cards of a deck',
             handler: () => {
-                let buttons = _.map(this.game.getPlayers(), player => ({
+                let buttons = this.game.getPlayers().map(player => ({
                     text: player.name, arg: player.name, method: 'selectPlayer'
                 }));
 
@@ -40,7 +40,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
     }
 
     promptToPlaceNextCard() {
-        let buttons = _.map(this.remainingCards, card => ({
+        let buttons = this.remainingCards.map(card => ({
             method: 'selectCard', card: card
         }));
 

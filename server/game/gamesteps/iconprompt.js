@@ -14,7 +14,7 @@ class IconPrompt extends BaseStep {
     continue() {
         let icons = ['Military', 'Intrigue', 'Power'];
 
-        let buttons = _.map(icons, icon => {
+        let buttons = icons.map(icon => {
             return { text: icon, method: 'iconSelected', arg: icon.toLowerCase() };
         });
 

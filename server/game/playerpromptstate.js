@@ -35,7 +35,7 @@ class PlayerPromptState {
         this.selectOrder = prompt.selectOrder || false;
         this.menuTitle = prompt.menuTitle || '';
         this.promptTitle = prompt.promptTitle;
-        this.buttons = _.map(prompt.buttons || [], button => {
+        this.buttons = (prompt.buttons || []).map(button => {
             if(button.card) {
                 let card = button.card;
                 let properties = _.omit(button, 'card');

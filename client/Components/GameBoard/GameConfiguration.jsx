@@ -62,7 +62,7 @@ class GameConfiguration extends React.Component {
     }
 
     render() {
-        let windows = _.map(this.windows, window => {
+        let windows = this.windows.map(window => {
             return (<Checkbox key={ window.name }
                 noGroup
                 name={ 'promptedActionWindows.' + window.name }

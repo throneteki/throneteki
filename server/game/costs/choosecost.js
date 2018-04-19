@@ -30,7 +30,7 @@ class ChooseCost {
         context.game.promptWithMenu(context.player, this, {
             activePrompt: {
                 menuTitle: 'Choose cost to pay',
-                buttons: _.map(payableCosts, (cost, text) => {
+                buttons: payableCosts.map((cost, text) => {
                     return { text: text, arg: text, method: 'chooseCost' };
                 })
             },

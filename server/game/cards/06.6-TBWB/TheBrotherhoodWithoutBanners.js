@@ -18,7 +18,7 @@ class TheBrotherhoodWithoutBanners extends AgendaCard {
                 let buttons = [];
                 let keywords = ['Insight', 'Intimidate', 'Renown', 'Stealth'];
 
-                _.map(keywords, keyword => {
+                keywords.map(keyword => {
                     buttons.push({ text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() });
                 });
 
@@ -39,7 +39,7 @@ class TheBrotherhoodWithoutBanners extends AgendaCard {
             effect: ability.effects.addKeyword(keyword)
         }));
 
-        this.game.addMessage('{0} uses {1} and kneels their faction card to have {2} gain {3} until the end of the phase', 
+        this.game.addMessage('{0} uses {1} and kneels their faction card to have {2} gain {3} until the end of the phase',
             this.controller, this, this.target, keyword);
 
         return true;

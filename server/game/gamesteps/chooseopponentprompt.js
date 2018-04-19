@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 
 /**
@@ -27,7 +26,7 @@ class ChooseOpponentPrompt extends BaseStep {
             return;
         }
 
-        let buttons = _.map(otherPlayers, player => {
+        let buttons = otherPlayers.map(player => {
             return { text: player.name, arg: player.name, method: 'selectPlayer' };
         });
         buttons.push({ text: 'Cancel', method: 'cancel' });

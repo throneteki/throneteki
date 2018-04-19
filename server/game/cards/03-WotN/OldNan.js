@@ -10,7 +10,7 @@ class OldNan extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let buttons = _.map(context.event.plots, plot => {
+                let buttons = context.event.plots.map(plot => {
                     return { text: plot.name, method: 'plotSelected', arg: plot.uuid };
                 });
 

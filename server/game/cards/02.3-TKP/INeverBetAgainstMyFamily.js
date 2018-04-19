@@ -25,7 +25,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
     }
 
     promptToChooseCharacter() {
-        var buttons = _.map(this.uniqueCharacters, card => ({
+        var buttons = this.uniqueCharacters.map(card => ({
             method: 'selectCharacter', card: card
         }));
 
@@ -65,7 +65,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
             return true;
         }
 
-        let buttons = _.map(this.remainingCards, card => ({
+        let buttons = this.remainingCards.map(card => ({
             method: 'selectCardForBottom', card: card
         }));
 

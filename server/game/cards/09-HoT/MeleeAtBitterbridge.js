@@ -23,7 +23,7 @@ class MeleeAtBitterbridge extends DrawCard {
     }
 
     targetsSelected(player, cards, goldCost) {
-        let strengths = _.map(cards, card => card.getStrength());
+        let strengths = cards.map(card => card.getStrength());
         let highestStrength = _.max(strengths);
         let renownCharacters = cards.filter(card => card.getStrength() === highestStrength);
 

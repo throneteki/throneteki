@@ -231,7 +231,7 @@ class Profile extends React.Component {
             return <AlertPanel type='error' message='You must be logged in to update your profile' />;
         }
 
-        let windows = _.map(this.windows, window => {
+        let windows = this.windows.map(window => {
             return (<Checkbox key={ window.name }
                 noGroup
                 name={ 'promptedActionWindows.' + window.name }

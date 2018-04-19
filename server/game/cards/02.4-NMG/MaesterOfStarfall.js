@@ -16,7 +16,7 @@ class MaesterOfStarfall extends DrawCard {
 
                 this.selectedCard = context.target;
 
-                let buttons = _.map(keywords, keyword => {
+                let buttons = keywords.map(keyword => {
                     return { text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() };
                 });
 

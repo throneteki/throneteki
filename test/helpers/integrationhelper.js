@@ -47,7 +47,7 @@ var customMatchers = {
                 if(result.pass) {
                     result.message = `Expected ${actual.name} not to have prompt button "${expected}" but it did.`;
                 } else {
-                    var buttonText = _.map(buttons, button => '[' + button.text + ']').join('\n');
+                    var buttonText = buttons.map(button => '[' + button.text + ']').join('\n');
                     result.message = `Expected ${actual.name} to have prompt button "${expected}" but it had buttons:\n${buttonText}`;
                 }
 
@@ -84,7 +84,7 @@ var customMatchers = {
                 if(result.pass) {
                     result.message = `Expected ${actual.name} not to have prompt button "${expected}" but it did.`;
                 } else {
-                    var buttonText = _.map(buttons, button => '[' + button.text + ']').join('\n');
+                    var buttonText = buttons.map(button => '[' + button.text + ']').join('\n');
                     result.message = `Expected ${actual.name} to have prompt button "${expected}" but it had buttons:\n${buttonText}`;
                 }
 

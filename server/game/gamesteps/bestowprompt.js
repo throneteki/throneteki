@@ -18,7 +18,7 @@ class BestowPrompt extends BaseStep {
             return;
         }
 
-        let buttons = _.map(range, gold => {
+        let buttons = range.map(gold => {
             return { text: gold.toString(), method: 'bestow', arg: gold };
         });
         buttons.push({ text: 'Done', method: 'bestow', arg: 0 });

@@ -11,7 +11,7 @@ const Player = require('../../server/game/player.js');
 function formatObject(...keys) {
     return function() {
         let properties = _.pick(this, ...keys);
-        let formattedProperties = _.map(_.pairs(properties), ([key, value]) => key + ': ' + jasmine.pp(value));
+        let formattedProperties = _.pairs(properties).map(([key, value]) => key + ': ' + jasmine.pp(value));
         return this.constructor.name + '({ ' + formattedProperties.join(', ') + ' })';
     };
 }

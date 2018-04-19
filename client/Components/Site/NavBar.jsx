@@ -93,7 +93,7 @@ class NavBar extends React.Component {
 
         let numGames = !_.isUndefined(this.props.games.length) ? <li><span>{ `${this.props.games.length} Games` }</span></li> : null;
 
-        let contextMenu = _.map(this.props.context, menuItem => {
+        let contextMenu = this.props.context.map(menuItem => {
             return (
                 <li key={ menuItem.text }><a href='javascript:void(0)' onMouseOver={ this.onMenuItemMouseOver.bind(this, menuItem) }
                     onMouseOut={ this.onMenuItemMouseOut.bind(this) }

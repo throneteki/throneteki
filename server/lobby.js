@@ -65,8 +65,8 @@ class Lobby {
     }
 
     debugDump() {
-        var games = _.map(this.gamesById, game => {
-            var players = _.map(game.players, player => {
+        var games = Object.values(this.gamesById).map(game => {
+            var players = Object.values(game.playersByName).map(player => {
                 return {
                     name: player.name,
                     left: player.left,
@@ -75,7 +75,7 @@ class Lobby {
                 };
             });
 
-            var spectators = _.map(game.spectators, spectator => {
+            var spectators = game.spectatorsByName.map(spectator => {
                 return {
                     name: spectator.name,
                     id: spectator.id
@@ -106,7 +106,7 @@ class Lobby {
     // Helpers
     findGameForUser(user) {
         return Object.values(this.gamesById).find(game => {
-            if(game.spectators[user]) {
+            if(game.spectatorsByName[user]) {
                 return true;
             }
 
@@ -704,7 +704,7 @@ class Lobby {
             syncGame.gameType = game.gameType;
             syncGame.password = game.password;
 
-            _.each(game.players, player => {
+            _.each(game.playersByName, player => {
                 syncGame.playersByName[player.name] = {
                     id: player.id,
                     name: player.name,
@@ -716,8 +716,8 @@ class Lobby {
                 };
             });
 
-            _.each(game.spectators, player => {
-                syncGame.spectators[player.name] = {
+            _.each(game.spectatorsByName, player => {
+                syncGame.spectatorsByName[player.name] = {
                     id: player.id,
                     name: player.name,
                     emailHash: player.emailHash,

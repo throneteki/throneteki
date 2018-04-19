@@ -98,7 +98,7 @@ class BaseAbility {
      * @returns {Array} An array of cost resolution results.
      */
     resolveCosts(context) {
-        return _.map(this.cost, cost => {
+        return this.cost.map(cost => {
             if(cost.resolve) {
                 return cost.resolve(context);
             }

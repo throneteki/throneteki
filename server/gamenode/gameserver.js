@@ -72,8 +72,8 @@ class GameServer {
     }
 
     debugDump() {
-        var games = _.map(this.gamesById, game => {
-            var players = _.map(game.playersAndSpectators, player => {
+        var games = Object.values(this.gamesById).map(game => {
+            var players = Object.values(game.playersAndSpectators).map(player => {
                 return {
                     name: player.name,
                     left: player.left,
@@ -225,7 +225,7 @@ class GameServer {
         this.gamesById[pendingGame.id] = game;
 
         game.started = true;
-        _.each(pendingGame.players, player => {
+        _.each(pendingGame.playersByName, player => {
             game.selectDeck(player.name, player.deck);
         });
 
@@ -244,7 +244,7 @@ class GameServer {
     }
 
     onGameSync(callback) {
-        var gameSummaries = _.map(this.gamesById, game => {
+        var gameSummaries = Object.values(this.gamesById).map(game => {
             var retGame = game.getSummary(undefined, { fullData: true });
             retGame.password = game.password;
 

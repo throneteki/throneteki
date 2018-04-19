@@ -32,7 +32,7 @@ class PlayerHand extends React.Component {
             cards = _.sortBy(this.props.cards, card => card.revealWhenHiddenTo);
         }
 
-        let hand = _.map(cards, card => {
+        let hand = cards.map(card => {
             let left = (cardWidth - offset) * cardIndex++;
 
             let style = {};

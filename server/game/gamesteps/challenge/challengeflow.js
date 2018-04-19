@@ -97,15 +97,15 @@ class ChallengeFlow extends BaseStep {
             { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
         ];
 
-        let attackerEvents = _.map(this.challenge.attackers, card => {
+        let attackerEvents = this.challenge.attackers.map(card => {
             return { name: 'onDeclaredAsAttacker', params: { card: card } };
         });
 
-        let kneelEvents = _.map(this.attackersToKneel, card => {
+        let kneelEvents = this.attackersToKneel.map(card => {
             return { name: 'onCardKneeled', params: { player: this.challenge.attackingPlayer, card: card} };
         });
 
-        let stealthEvents = _.map(this.challenge.stealthData, stealth => {
+        let stealthEvents = this.challenge.stealthData.map(stealth => {
             return { name: 'onBypassedByStealth', params: { challenge: this.challenge, source: stealth.source, target: stealth.target } };
         });
 
@@ -226,11 +226,11 @@ class ChallengeFlow extends BaseStep {
             { name: 'onDefendersDeclared', params: { challenge: this.challenge } }
         ];
 
-        let defenderEvents = _.map(defenders, card => {
+        let defenderEvents = defenders.map(card => {
             return { name: 'onDeclaredAsDefender', params: { card: card } };
         });
 
-        let kneelEvents = _.map(defendersToKneel, card => {
+        let kneelEvents = defendersToKneel.map(card => {
             return { name: 'onCardKneeled', params: { player: this.challenge.defendingPlayer, card: card} };
         });
 

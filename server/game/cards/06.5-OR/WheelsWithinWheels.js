@@ -46,7 +46,7 @@ class WheelsWithinWheels extends PlotCard {
             return true;
         }
 
-        let buttons = _.map(this.cards, (card, i) => {
+        let buttons = this.cards.map((card, i) => {
             return { card: card, method: 'resolve', arg: i };
         });
 

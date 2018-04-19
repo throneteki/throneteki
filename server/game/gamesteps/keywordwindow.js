@@ -10,7 +10,7 @@ class KeywordWindow extends BaseStep {
     constructor(game, challenge) {
         super(game);
         this.challenge = challenge;
-        this.winnerCardsWithContext = _.map(challenge.getWinnerCards(), card => {
+        this.winnerCardsWithContext = challenge.getWinnerCards().map(card => {
             return { card: card, context: new AbilityContext({ player: this.challenge.winner, game: this.game, challenge: this.challenge, source: card }) };
         });
         this.firstPlayer = game.getFirstPlayer();
@@ -33,7 +33,7 @@ class KeywordWindow extends BaseStep {
     }
 
     promptForKeywordOrder() {
-        let buttons = _.map(this.remainingKeywords, keyword => {
+        let buttons = this.remainingKeywords.map(keyword => {
             return { text: GameKeywords[keyword].title, arg: keyword, method: 'chooseKeyword' };
         });
         this.game.promptWithMenu(this.firstPlayer, this, {
@@ -82,7 +82,7 @@ class KeywordWindow extends BaseStep {
                 activePromptTitle: 'Select ' + keyword + ' cards',
                 cardCondition: card => cards.includes(card),
                 onSelect: (player, selectedCards) => {
-                    let finalParticipants = _.map(selectedCards, card => participantsWithKeyword.find(participant => participant.card === card));
+                    let finalParticipants = selectedCards.map(card => participantsWithKeyword.find(participant => participant.card === card));
 
                     this.resolveAbility(ability, finalParticipants);
                     this.game.checkWinCondition(this.challenge.winner);
@@ -122,7 +122,7 @@ class KeywordWindow extends BaseStep {
             activePromptTitle: 'Select order for pillage',
             cardCondition: card => cards.includes(card),
             onSelect: (player, selectedCards) => {
-                let finalParticipants = _.map(selectedCards, card => participants.find(participant => participant.card === card));
+                let finalParticipants = selectedCards.map(card => participants.find(participant => participant.card === card));
 
                 this.resolveAbility(ability, finalParticipants);
 

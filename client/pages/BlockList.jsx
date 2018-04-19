@@ -74,7 +74,7 @@ class BlockList extends React.Component {
         }
 
         let content;
-        let blockList = _.map(this.props.blockList, user => {
+        let blockList = this.props.blockList.map(user => {
             return (
                 <tr key={ user }>
                     <td>{ user }</td>

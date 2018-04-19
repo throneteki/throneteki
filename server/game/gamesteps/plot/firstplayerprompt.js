@@ -16,7 +16,7 @@ class FirstPlayerPrompt extends UIPrompt {
     activePrompt() {
         return {
             menuTitle: 'Select first player',
-            buttons: _.map(this.getFirstPlayerChoices(), player => {
+            buttons: this.getFirstPlayerChoices().map(player => {
                 return { text: player.name, arg: player.name };
             })
         };

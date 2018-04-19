@@ -21,7 +21,7 @@ class LannisportTreasury extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let range = _.range(1, this.tokens['gold'] + 1).reverse();
-                let buttons = _.map(range, gold => {
+                let buttons = range.map(gold => {
                     return { text: gold, method: 'moveGold', arg: gold };
                 });
 

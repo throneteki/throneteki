@@ -31,11 +31,11 @@ class VaesDothrak extends DrawCard {
 
     hasPossibleLegalTarget() {
         let attachmentsInHand = this.controller.findCards(this.controller.hand, card => card.getType() === 'attachment');
-        let attachmentsInHandCosts = _.map(attachmentsInHand, card => card.getCost(true));
+        let attachmentsInHandCosts = attachmentsInHand.map(card => card.getCost(true));
         let attachmentsInHandHighestCost = _.max(attachmentsInHandCosts);
 
         let attachmentsInPlay = this.game.findAnyCardsInPlay(card => card.getType() === 'attachment');
-        let attachmentsInPlayCosts = _.map(attachmentsInPlay, card => card.getCost(true));
+        let attachmentsInPlayCosts = attachmentsInPlay.map(card => card.getCost(true));
         let attachmentsInPlayLowestCost = _.min(attachmentsInPlayCosts);
 
         return attachmentsInHandHighestCost >= attachmentsInPlayLowestCost;

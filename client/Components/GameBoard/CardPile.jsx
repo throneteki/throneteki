@@ -136,7 +136,7 @@ class CardPile extends React.Component {
         let innerClass = classNames('inner', this.props.size);
         let linkIndex = 0;
 
-        let popupMenu = this.props.popupMenu ? (<div>{ _.map(this.props.popupMenu, menuItem => {
+        let popupMenu = this.props.popupMenu ? (<div>{ this.props.popupMenu.map(menuItem => {
             return <a className='btn btn-default' key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{ menuItem.text }</a>;
         }) }</div>) : null;
 
@@ -159,7 +159,7 @@ class CardPile extends React.Component {
     getMenu() {
         let menuIndex = 0;
 
-        let menu = _.map(this.props.menu, item => {
+        let menu = this.props.menu.map(item => {
             return <div key={ (menuIndex++).toString() } onClick={ this.onMenuItemClick.bind(this, item) }>{ item.text }</div>;
         });
 

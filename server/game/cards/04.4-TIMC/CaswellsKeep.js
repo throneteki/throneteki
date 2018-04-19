@@ -9,7 +9,7 @@ class CaswellsKeep extends DrawCard {
                 onPlotsRevealed: event => _.any(event.plots, plot => plot.controller === this.controller)
             },
             handler: () => {
-                let buttons = _.map(this.game.getPlayers(), player => ({
+                let buttons = this.game.getPlayers().map(player => ({
                     text: player.name, arg: player.name, method: 'selectPlayer'
                 }));
 
@@ -35,7 +35,7 @@ class CaswellsKeep extends DrawCard {
 
         this.topCards = this.selectedPlayer.searchDrawDeck(2);
 
-        let buttons = _.map(this.topCards, card => ({
+        let buttons = this.topCards.map(card => ({
             method: 'selectCard', card: card
         }));
 

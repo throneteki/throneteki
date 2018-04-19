@@ -53,7 +53,7 @@ class GameChat {
 
         var messageFragments = format.split(/(\{\d+\})/);
 
-        return _.map(messageFragments, fragment => {
+        return messageFragments.map(fragment => {
             var argMatch = fragment.match(/\{(\d+)\}/);
             if(argMatch) {
                 var arg = args[argMatch[1]];
@@ -88,7 +88,7 @@ class GameChat {
         } else if(array.length === 2) {
             format = '{0} and {1}';
         } else {
-            var range = _.map(_.range(array.length - 1), i => '{' + i + '}');
+            var range = _.range(array.length - 1).map(i => '{' + i + '}');
             format = range.join(', ') + ', and {' + (array.length - 1) + '}';
         }
 

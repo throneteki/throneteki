@@ -108,7 +108,7 @@ class UserAdmin extends React.Component {
         let renderedUser = null;
 
         if(this.props.currentUser) {
-            let permissions = _.map(this.permissions, (permission) => {
+            let permissions = this.permissions.map((permission) => {
                 return (<Checkbox key={ permission.name } name={ 'permissions.' + permission.name } label={ permission.label } fieldClass='col-xs-4'
                     type='checkbox' onChange={ this.onPermissionToggle.bind(this, permission.name) } checked={ this.state.permissions[permission.name] } />);
             });

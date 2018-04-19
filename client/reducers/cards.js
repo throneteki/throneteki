@@ -153,7 +153,7 @@ export default function(state = {}, action) {
 
             processDecks([action.response.deck], state);
 
-            newState.decks = _.map(state.decks, deck => {
+            newState.decks = state.decks.map(deck => {
                 if(action.response.deck._id === deck.id) {
                     return deck;
                 }

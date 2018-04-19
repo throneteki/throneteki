@@ -47,7 +47,7 @@ class Player extends Spectator {
         this.challenges = new ChallengeTracker(this);
         this.minReserve = 0;
         this.costReducers = [];
-        this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
+        this.playableLocations = ['marshal', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
         this.usedPlotsModifier = 0;
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });

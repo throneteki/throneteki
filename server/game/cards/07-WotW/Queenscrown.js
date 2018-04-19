@@ -25,7 +25,7 @@ class Queenscrown extends DrawCard {
     }
 
     promptToDiscardCharacter(characters) {
-        let buttons = _.map(characters, card => {
+        let buttons = characters.map(card => {
             return { method: 'placeCharacterInDiscard', card: card };
         });
         buttons.push({ text: 'Done', method: 'promptToPlaceOnBottom' });
@@ -59,7 +59,7 @@ class Queenscrown extends DrawCard {
             return;
         }
 
-        let buttons = _.map(this.remainingCards, card => {
+        let buttons = this.remainingCards.map(card => {
             return { method: 'placeCardOnBottom', card: card };
         });
 

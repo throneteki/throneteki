@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const TriggeredAbility = require('./triggeredability.js');
 
 /**
@@ -59,7 +57,7 @@ class PromptedTriggeredAbility extends TriggeredAbility {
     }
 
     getChoices(context) {
-        return _.map(this.choices, (handler, title) => {
+        return Object.keys(this.choices).map(title => {
             var text = title === 'default' && this.title ? this.title(context) : title;
             return { text: text, choice: title };
         });

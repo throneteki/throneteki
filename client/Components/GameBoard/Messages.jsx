@@ -33,7 +33,7 @@ class Messages extends React.Component {
 
     getMessage() {
         var index = 0;
-        var messages = _.map(this.props.messages, message => {
+        var messages = this.props.messages.map(message => {
             return <div key={ 'message' + index++ } className='message'>{ this.formatMessageText(message.message) }</div>;
         });
 
@@ -42,7 +42,7 @@ class Messages extends React.Component {
 
     formatMessageText(message) {
         var index = 0;
-        return _.map(message, (fragment, key) => {
+        return message.map((fragment, key) => {
             if(_.isNull(fragment) || _.isUndefined(fragment)) {
                 return '';
             }

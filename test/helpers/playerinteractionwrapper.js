@@ -37,7 +37,7 @@ class PlayerInteractionWrapper {
             return 'no prompt active';
         }
 
-        return prompt.menuTitle + '\n' + _.map(prompt.buttons, button => '[ ' + button.text + ' ]').join('\n');
+        return prompt.menuTitle + '\n' + prompt.buttons.map(button => '[ ' + button.text + ' ]').join('\n');
     }
 
     findCardByName(name, location = 'any') {

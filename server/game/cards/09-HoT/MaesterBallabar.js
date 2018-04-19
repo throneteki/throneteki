@@ -21,7 +21,7 @@ class MaesterBallabar extends DrawCard {
 
     getLowestParticipatingStrength() {
         let participatingCharacters = this.game.currentChallenge.attackers.concat(this.game.currentChallenge.defenders);
-        let strengths = _.map(participatingCharacters, card => card.getStrength());
+        let strengths = participatingCharacters.map(card => card.getStrength());
         return _.min(strengths);
     }
 }

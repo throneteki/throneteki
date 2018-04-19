@@ -82,7 +82,7 @@ class BaseCard {
 
     parseKeywords(text) {
         var firstLine = text.split('\n')[0];
-        var potentialKeywords = _.map(firstLine.split('.'), k => k.toLowerCase().trim());
+        var potentialKeywords = firstLine.split('.').map(k => k.toLowerCase().trim());
 
         this.printedKeywords = [];
         this.allowedAttachmentTrait = 'any';

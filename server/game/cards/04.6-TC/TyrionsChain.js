@@ -15,7 +15,7 @@ class TyrionsChain extends DrawCard {
             handler: () => {
                 let warPlots = this.getRevealedWarPlots();
 
-                let buttons = _.map(warPlots, card => ({
+                let buttons = warPlots.map(card => ({
                     method: 'selectWarPlot', card: card
                 }));
 

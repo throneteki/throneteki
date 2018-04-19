@@ -76,7 +76,7 @@ function handleGameState(action, state) {
         return retState;
     }
 
-    if(currentState && currentState.spectators.some(spectator => {
+    if(currentState && currentState.spectatorsByName.some(spectator => {
         return spectator.name === username;
     })) {
         return retState;

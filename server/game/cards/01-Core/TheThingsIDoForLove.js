@@ -28,7 +28,7 @@ class TheThingsIDoForLove extends DrawCard {
     getMinimumCharCost() {
         let opponents = this.game.getOpponents(this.controller);
         let opponentCharacters = _.flatten(opponents.map(opponent => opponent.filterCardsInPlay(card => card.getType() === 'character')));
-        let charCosts = _.map(opponentCharacters, card => card.getCost());
+        let charCosts = opponentCharacters.map(card => card.getCost());
 
         return _.min(charCosts);
     }

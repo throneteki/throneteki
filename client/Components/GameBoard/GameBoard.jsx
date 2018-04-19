@@ -113,7 +113,7 @@ export class GameBoard extends React.Component {
                 menuOptions.unshift({ text: 'Concede', onClick: this.onConcedeClick });
             }
 
-            let spectators = _.map(props.currentGame.spectators, spectator => {
+            let spectators = props.currentGame.spectators.map(spectator => {
                 return <li key={ spectator.id }>{ spectator.name }</li>;
             });
 

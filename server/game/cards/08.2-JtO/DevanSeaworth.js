@@ -35,7 +35,7 @@ class DevanSeaworth extends DrawCard {
 
     getMinimumDiscardGoldAmount() {
         let deckLocations = this.controller.drawDeck.filter(card => card.getType() === 'location');
-        let deckCosts = _.map(deckLocations, card => card.getPrintedCost());
+        let deckCosts = deckLocations.map(card => card.getPrintedCost());
         let lowestCost = _.min(deckCosts);
 
         return _.max([lowestCost, 1]);

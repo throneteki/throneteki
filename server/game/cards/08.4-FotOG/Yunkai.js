@@ -21,7 +21,7 @@ class Yunkai extends DrawCard {
 
                 this.game.addMessage('{0} kneels and discards {1} gold from {2} to remove all characters with STR {1} or lower from the challenge',
                     context.player, context.xValue, this);
-                
+
                 this.game.once('afterChallenge', event => this.onChallengeWon(event.challenge));
             }
         });
@@ -50,7 +50,7 @@ class Yunkai extends DrawCard {
 
     getParticipatingStrengths() {
         let participatingCharacters = this.game.filterCardsInPlay(card => this.game.currentChallenge.isParticipating(card));
-        return _.map(participatingCharacters, card => card.getStrength());
+        return participatingCharacters.map(card => card.getStrength());
     }
 }
 

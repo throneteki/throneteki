@@ -56,7 +56,7 @@ class GameList extends React.Component {
     }
 
     render() {
-        let gameList = _.map(this.props.games, game => {
+        let gameList = this.props.games.map(game => {
             let firstPlayer = true;
             let gameRow = [];
 

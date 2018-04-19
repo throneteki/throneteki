@@ -16,7 +16,7 @@ class GameService {
     update(game) {
         let properties = {
             startedAt: game.startedAt,
-            players: game.players,
+            players: game.playersByName,
             winner: game.winner,
             winReason: game.winReason,
             finishedAt: game.finishedAt

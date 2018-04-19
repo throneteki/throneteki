@@ -73,7 +73,7 @@ class Game extends EventEmitter {
             this.playersAndSpectatorsByName[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
         });
 
-        _.each(details.spectators, spectator => {
+        _.each(details.spectatorsByName, spectator => {
             this.playersAndSpectatorsByName[spectator.user.username] = new Spectator(spectator.id, spectator.user);
         });
 
@@ -1039,7 +1039,7 @@ class Game extends EventEmitter {
     }
 
     getSaveState() {
-        var players = _.map(this.getPlayers(), player => {
+        var players = this.getPlayers().map(player => {
             return {
                 name: player.name,
                 faction: player.faction.name || player.faction.value,
@@ -1076,7 +1076,7 @@ class Game extends EventEmitter {
                 players: playerState,
                 messages: this.gameChat.messages,
                 showHand: this.showHand,
-                spectators: _.map(this.getSpectators(), spectator => {
+                spectators: Object.values(this.getSpectators()).map(spectator => {
                     return {
                         id: spectator.id,
                         name: spectator.name
@@ -1135,7 +1135,7 @@ class Game extends EventEmitter {
             showHand: this.showHand,
             started: this.started,
             startedAt: this.startedAt,
-            spectators: _.map(this.getSpectators(), spectator => {
+            spectators: Object.values(this.getSpectators()).map(spectator => {
                 return {
                     id: spectator.id,
                     lobbyId: spectator.lobbyId,

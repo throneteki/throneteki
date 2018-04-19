@@ -19,7 +19,7 @@ class XValuePrompt extends BaseStep {
 
         let range = _.range(this.min, this.max + 1).reverse();
 
-        let buttons = _.map(range, xValue => {
+        let buttons = range.map(xValue => {
             return { text: xValue.toString(), method: 'resolveCost', arg: xValue };
         });
 

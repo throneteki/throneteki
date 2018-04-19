@@ -33,7 +33,7 @@ class ChooseTitlePrompt extends BaseStep {
     }
 
     promptForTitle(player) {
-        let buttons = _.map(this.remainingTitles, title => {
+        let buttons = this.remainingTitles.map(title => {
             return { method: 'chooseTitle', card: title };
         });
         this.game.promptWithMenu(player, this, {
