@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 export function loadDecks() {
     return {
         types: ['REQUEST_DECKS', 'RECEIVE_DECKS'],
@@ -14,7 +12,7 @@ export function loadDeck(deckId) {
     return {
         types: ['REQUEST_DECK', 'RECEIVE_DECK'],
         shouldCallAPI: (state) => {
-            let ret = !_.any(state.cards.decks, deck => {
+            let ret = !state.cards.decks || !state.cards.decks.some(deck => {
                 return deck._id === deckId;
             });
 
@@ -63,9 +61,10 @@ export function saveDeck(deck) {
             agenda: deck.agenda ? { code: deck.agenda.code } : null,
             plotCards: formatCards(deck.plotCards),
             drawCards: formatCards(deck.drawCards),
-            bannerCards: _.map(deck.bannerCards, card => {
+            bannerCards: deck.bannerCards.map(card => {
                 return { code: card.code };
-            })
+            }),
+            rookeryCards: deck.rookeryCards ? formatCards(deck.rookeryCards) : []
         }
     });
 
@@ -87,7 +86,7 @@ export function clearDeckStatus() {
 }
 
 function formatCards(cards) {
-    return _.map(cards, card => {
+    return cards.map(card => {
         let cardData = card.card.custom ? card.card : { code: card.card.code };
         return { card: cardData, count: card.count };
     });

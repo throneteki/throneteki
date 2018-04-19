@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 import DeckStatus from './DeckStatus';
 
@@ -21,7 +20,7 @@ class DeckSummary extends React.Component {
     }
 
     onCardMouseOver(event) {
-        let cardToDisplay = _.filter(this.props.cards, card => {
+        let cardToDisplay = Object.values(this.props.cards).filter(card => {
             return event.target.innerText === card.label;
         });
 
@@ -34,11 +33,14 @@ class DeckSummary extends React.Component {
 
     getBannersToRender() {
         let banners = [];
-        _.each(this.props.deck.bannerCards, (card) => {
-            banners.push(<div className='pull-right' key={ card.code ? card.code : card }>
-                <span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span>
-            </div>);
-        });
+
+        if(this.props.deck.bannerCards) {
+            for(const card of this.props.deck.bannerCards) {
+                banners.push(<div className='pull-right' key={ card.code ? card.code : card }>
+                    <span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span>
+                </div>);
+            }
+        }
 
         return <div className='info-row row'><span>Banners:</span>{ banners }</div>;
     }
@@ -46,9 +48,9 @@ class DeckSummary extends React.Component {
     getCardsToRender() {
         let cardsToRender = [];
         let groupedCards = {};
-        let combinedCards = _.union(this.props.deck.plotCards, this.props.deck.drawCards);
+        let combinedCards = this.props.deck.plotCards.concat(this.props.deck.drawCards);
 
-        _.each(combinedCards, (card) => {
+        for(const card of combinedCards) {
             let typeCode = card.card.type;
             let type = typeCode[0].toUpperCase() + typeCode.slice(1);
 
@@ -63,24 +65,34 @@ class DeckSummary extends React.Component {
             } else {
                 groupedCards[type].push(card);
             }
-        });
+        }
 
-        _.each(groupedCards, (cardList, key) => {
+        if(this.props.deck.rookeryCards) {
+            for(const card of this.props.deck.rookeryCards) {
+                if(!groupedCards['Rookery']) {
+                    groupedCards['Rookery'] = [card];
+                } else {
+                    groupedCards['Rookery'].push(card);
+                }
+            }
+        }
+
+        for(const [key, cardList] of Object.entries(groupedCards)) {
             let cards = [];
             let count = 0;
             let index = 0;
 
-            _.each(cardList, card => {
+            for(const card of cardList) {
                 cards.push(<div key={ `${card.card.code}${index++}` }><span>{ card.count + 'x ' }</span><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.card.label }</span></div>);
                 count += parseInt(card.count);
-            });
+            }
 
             cardsToRender.push(
                 <div className='cards-no-break' key={ key }>
                     <div className='card-group-title'>{ key + ' (' + count.toString() + ')' }</div>
                     <div key={ key } className='card-group'>{ cards }</div>
                 </div>);
-        });
+        }
 
         return cardsToRender;
     }
