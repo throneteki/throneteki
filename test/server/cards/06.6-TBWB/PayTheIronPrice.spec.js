@@ -79,14 +79,14 @@ describe('Pay The Iron Price', function() {
                 this.player1.clickCard(this.milk);
                 this.player1.clickCard(this.opponentCharacter);
 
-                expect(this.opponentCharacter.isBlank()).toBe(true);
+                expect(this.opponentCharacter.isAnyBlank()).toBe(true);
 
                 this.player1Object.discardCard(this.milk);
                 this.game.continue();
             });
 
             it('should undo the effect', function() {
-                expect(this.opponentCharacter.isBlank()).toBe(false);
+                expect(this.opponentCharacter.isAnyBlank()).toBe(false);
             });
 
             it('should place the attachment back in the owners discard pile', function() {

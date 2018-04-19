@@ -20,7 +20,7 @@ function createPlayerTarget(properties = {}) {
 describe('Effect', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['']);
-        this.sourceSpy = jasmine.createSpyObj('source', ['getType', 'isBlank']);
+        this.sourceSpy = jasmine.createSpyObj('source', ['getType', 'isAnyBlank']);
         this.properties = {
             match: jasmine.createSpy('match'),
             duration: 'persistent',

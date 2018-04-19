@@ -168,7 +168,7 @@ To target all cards regardless of who controls them, set `targetController` to `
 this.persistentEffect({
     match: card => card.getType() === 'character',
     targetController: 'any',
-    effect: ability.effects.blank
+    effect: ability.effects.blankExcludingTraits
 });
 ```
 

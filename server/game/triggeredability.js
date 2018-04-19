@@ -86,7 +86,7 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if(this.card.isBlank()) {
+        if(this.card.isAnyBlank()) {
             return false;
         }
 

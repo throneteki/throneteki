@@ -46,11 +46,11 @@ describe('Arya\'s Gift', function() {
             });
 
             it('should apply effects to the new parent', function() {
-                expect(this.character2.isBlank()).toBe(true);
+                expect(this.character2.isAnyBlank()).toBe(true);
             });
 
             it('should unapply effects from the old parent', function() {
-                expect(this.character1.isBlank()).toBe(false);
+                expect(this.character1.isAnyBlank()).toBe(false);
             });
         });
     });

@@ -23,7 +23,7 @@ describe('attachments', function() {
             });
 
             it('should apply the attachment effect', function() {
-                expect(this.character.isBlank()).toBe(true);
+                expect(this.character.isAnyBlank()).toBe(true);
             });
         });
 

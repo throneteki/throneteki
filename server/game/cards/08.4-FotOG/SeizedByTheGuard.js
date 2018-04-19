@@ -4,7 +4,7 @@ class SeizedByTheGuard extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction(card => card.getType() === 'location' && !card.isLimited());
         this.whileAttached({
-            effect: ability.effects.blank
+            effect: ability.effects.blankExcludingTraits
         });
         this.forcedReaction({
             when: {

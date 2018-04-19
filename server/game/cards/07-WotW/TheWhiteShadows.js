@@ -14,7 +14,7 @@ class TheWhiteShadows extends PlotCard {
                 this.atEndOfPhase(ability => ({
                     match: context.event.card,
                     effect: [
-                        ability.effects.blank,
+                        ability.effects.fullBlank,
                         ability.effects.moveToDeadPileIfStillInPlay()
                     ]
                 }));
