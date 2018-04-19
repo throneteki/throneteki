@@ -16,6 +16,7 @@ class DeckEditor extends React.Component {
         this.state = {
             bannerCards: [],
             cardList: '',
+            rookeryList: '',
             deckName: 'New Deck',
             drawCards: [],
             faction: props.factions && props.factions['baratheon'],
@@ -38,8 +39,10 @@ class DeckEditor extends React.Component {
             this.state.faction = props.deck.faction;
             this.state.agenda = props.deck.agenda;
             this.state.status = props.deck.status;
+            this.state.rookeryCards = props.deck.rookeryCards || [];
 
             let cardList = '';
+            let rookeryList = '';
             for(const card of props.deck.drawCards) {
                 cardList += this.formatCardListItem(card) + '\n';
             }
@@ -49,6 +52,12 @@ class DeckEditor extends React.Component {
             }
 
             this.state.cardList = cardList;
+
+            for(const rookery of this.state.rookeryCards) {
+                rookeryList += this.formatCardListItem(rookery) + '\n';
+            }
+
+            this.state.rookeryList = rookeryList;
         }
     }
 
@@ -70,7 +79,8 @@ class DeckEditor extends React.Component {
             agenda: this.state.agenda,
             bannerCards: this.state.bannerCards,
             plotCards: this.state.plotCards,
-            drawCards: this.state.drawCards
+            drawCards: this.state.drawCards,
+            rookeryCards: this.state.rookeryCards
         };
 
         if(!this.props.restrictedList) {
@@ -195,6 +205,47 @@ class DeckEditor extends React.Component {
         }
     }
 
+    onAddRookeryCard(event) {
+        event.preventDefault();
+
+        if(!this.state.cardToAdd || !this.state.cardToAdd.label) {
+            return;
+        }
+
+        let rookeryList = this.state.rookeryList;
+        rookeryList += `${this.state.numberToAdd}  ${this.state.cardToAdd.label}\n`;
+
+        let cards = this.state.rookeryCards || [];
+        this.addCard(cards, this.state.cardToAdd, parseInt(this.state.numberToAdd));
+        this.setState({ rookeryList: rookeryList, rookeryCards: cards }, this.triggerDeckUpdated);
+    }
+
+    onRookeryListChange(event) {
+        let split = event.target.value.split('\n');
+        let rookeryCards = [];
+
+        for(const line of split) {
+            let trimmedLine = line.trim();
+            let index = 2;
+
+            let num = parseInt(trimmedLine[0]);
+            if(isNaN(num)) {
+                continue;
+            }
+
+            if(line[1] === 'x') {
+                index++;
+            }
+
+            let card = this.lookupCard(trimmedLine, index);
+            if(card) {
+                this.addCard(rookeryCards, card, num);
+            }
+        }
+
+        this.setState({ rookeryList: event.target.value, rookeryCards: rookeryCards }, this.triggerDeckUpdated);
+    }
+
     onCardListChange(event) {
         let split = event.target.value.split('\n');
         let { deckName, faction, agenda, bannerCards, plotCards, drawCards } = this.state;
@@ -293,6 +344,10 @@ class DeckEditor extends React.Component {
         });
 
         return Object.values(this.props.cards).find(card => {
+            if(this.props.agendas[card.code]) {
+                return undefined;
+            }
+
             if(pack) {
                 return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
             }
@@ -377,6 +432,7 @@ class DeckEditor extends React.Component {
         }
 
         let banners = this.getBannerList();
+        const cardsExcludingAgendas = Object.values(this.props.cards).filter(card => !this.props.agendas[card.code]);
 
         return (
             <div>
@@ -408,17 +464,28 @@ class DeckEditor extends React.Component {
                             </div>
                         </div>
                     }
-                    <Typeahead label='Card' labelClass={ 'col-sm-3' } fieldClass='col-sm-4' labelKey={ 'label' } options={ Object.values(this.props.cards) }
+                    <Typeahead label='Card' labelClass={ 'col-sm-3 col-xs-2' } fieldClass='col-sm-4 col-xs-5' labelKey={ 'label' } options={ cardsExcludingAgendas }
                         onChange={ this.addCardChange.bind(this) }>
-                        <Input name='numcards' type='text' label='Num' labelClass='col-sm-1' fieldClass='col-sm-2'
-                            value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) }>
-                            <div className='col-sm-1'>
-                                <button className='btn btn-primary' onClick={ this.onAddCard.bind(this) }>Add</button>
+                        <Input name='numcards' type='text' label='Num' labelClass='col-xs-1 no-x-padding' fieldClass='col-xs-2'
+                            value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) } noGroup>
+                            <div className='col-xs-1 no-x-padding'>
+                                <div className='btn-group'>
+                                    <button className='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                        Add <span className='caret' />
+                                    </button>
+                                    <ul className='dropdown-menu'>
+                                        <li><a href='#' onClick={ this.onAddCard.bind(this) }>Add to deck</a></li>
+                                        <li><a href='#' onClick={ this.onAddRookeryCard.bind(this) }>Add to rookery</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </Input>
                     </Typeahead>
                     <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.cardList }
                         onChange={ this.onCardListChange.bind(this) } />
+                    <TextArea label='Rookery' labelClass='col-sm-3' fieldClass='col-sm-9' rows='4' value={ this.state.rookeryList }
+                        onChange={ this.onRookeryListChange.bind(this) } />
+
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
                             <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save</button>
