@@ -63,6 +63,7 @@ class BaseCard {
             reserve: true
         };
 
+        this.eventsForRegistration = [];
         this.abilityRestrictions = [];
         this.menu = [];
         this.events = new EventRegistrar(this.game, this);
@@ -87,7 +88,7 @@ class BaseCard {
         this.printedKeywords = [];
         this.allowedAttachmentTrait = 'any';
 
-        _.each(potentialKeywords, keyword => {
+        for(const keyword of potentialKeywords) {
             if(_.contains(ValidKeywords, keyword)) {
                 this.printedKeywords.push(keyword);
             } else if(keyword.indexOf('no attachment') === 0) {
@@ -108,7 +109,7 @@ class BaseCard {
                     this.bestowMax = parseInt(match[1]);
                 }
             }
-        });
+        }
 
         if(this.printedKeywords.length > 0) {
             this.persistentEffect({
@@ -330,11 +331,11 @@ class BaseCard {
     }
 
     applyAnyLocationPersistentEffects() {
-        _.each(this.abilities.persistentEffects, effect => {
+        for(const effect of this.abilities.persistentEffects) {
             if(effect.location === 'any') {
                 this.game.addEffect(this, effect);
             }
-        });
+        }
     }
 
     getPersistentEffects() {
@@ -365,20 +366,21 @@ class BaseCard {
             this.events.unregisterAll();
         }
 
-        _.each(this.abilities.actions, action => {
+        for(const action of this.abilities.actions) {
             if(action.isEventListeningLocation(targetLocation) && !action.isEventListeningLocation(originalLocation)) {
                 action.registerEvents();
             } else if(action.isEventListeningLocation(originalLocation) && !action.isEventListeningLocation(targetLocation)) {
                 action.unregisterEvents();
             }
-        });
-        _.each(this.abilities.reactions, reaction => {
+        }
+
+        for(const reaction of this.abilities.reactions) {
             if(reaction.isEventListeningLocation(targetLocation) && !reaction.isEventListeningLocation(originalLocation)) {
                 reaction.registerEvents();
             } else if(reaction.isEventListeningLocation(originalLocation) && !reaction.isEventListeningLocation(targetLocation)) {
                 reaction.unregisterEvents();
             }
-        });
+        }
 
         if(targetLocation !== 'play area') {
             this.facedown = false;

@@ -15,9 +15,9 @@ class Yunkai extends DrawCard {
             handler: context => {
                 let participantsToRemove = this.game.filterCardsInPlay(card => this.game.currentChallenge.isParticipating(card) && card.getStrength() <= context.xValue);
 
-                _.each(participantsToRemove, card => {
+                for(const card of participantsToRemove) {
                     this.game.currentChallenge.removeFromChallenge(card);
-                });
+                }
 
                 this.game.addMessage('{0} kneels and discards {1} gold from {2} to remove all characters with STR {1} or lower from the challenge',
                     context.player, context.xValue, this);

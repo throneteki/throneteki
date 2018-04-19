@@ -136,9 +136,9 @@ class KeywordWindow extends BaseStep {
     }
 
     resolveAbility(ability, participants) {
-        _.each(participants, participant => {
+        for(const participant of participants) {
             this.game.resolveAbility(ability, participant.context);
-        });
+        }
     }
 }
 

@@ -16,13 +16,13 @@ class UiPrompt extends BaseStep {
     }
 
     setPrompt() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             if(this.activeCondition(player)) {
                 player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt()));
             } else {
                 player.setPrompt(this.addDefaultCommandToButtons(this.waitingPrompt(player)));
             }
-        });
+        }
     }
 
     activeCondition() {
@@ -35,9 +35,9 @@ class UiPrompt extends BaseStep {
     addDefaultCommandToButtons(original) {
         var prompt = _.clone(original);
         if(prompt.buttons) {
-            _.each(prompt.buttons, button => {
+            for(const button of prompt.buttons) {
                 button.command = button.command || 'menuButton';
-            });
+            }
         }
         return prompt;
     }
@@ -59,9 +59,9 @@ class UiPrompt extends BaseStep {
     }
 
     clearPrompts() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.cancelPrompt();
-        });
+        }
     }
 }
 

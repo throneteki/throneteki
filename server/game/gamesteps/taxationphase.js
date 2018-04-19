@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const DiscardToReservePrompt = require('./taxation/discardtoreserveprompt.js');
@@ -17,11 +16,11 @@ class TaxationPhase extends Phase {
     }
 
     returnGold() {
-        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+        for(const player of this.game.getPlayersInFirstPlayerOrder()) {
             if(!player.doesNotReturnUnspentGold) {
                 this.game.returnGoldToTreasury({ player: player, amount: player.gold });
             }
-        });
+        }
     }
 
     returnTitleCards() {
@@ -29,9 +28,9 @@ class TaxationPhase extends Phase {
             return;
         }
 
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             this.game.titlePool.returnToPool(player, player.title);
-        });
+        }
     }
 
     roundEnded() {

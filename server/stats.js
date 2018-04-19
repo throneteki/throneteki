@@ -29,7 +29,7 @@ gameService.getAllGames(args[0], args[1]).then(games => {
     let factions = {};
     let factionAgendas = {};
 
-    _.each(games, game => {
+    for(const game of games) {
         if(game.playersByName.length !== 2) {
             rejected.singlePlayer++;
 
@@ -42,7 +42,7 @@ gameService.getAllGames(args[0], args[1]).then(games => {
             return;
         }
 
-        _.each(game.playersByName, player => {
+        for(const player of game.playersByName) {
             if(!players[player.name]) {
                 players[player.name] = { name: player.name, wins: 0, losses: 0 };
             }
@@ -68,8 +68,8 @@ gameService.getAllGames(args[0], args[1]).then(games => {
                 factionStat.losses++;
                 factionAgendaStat.losses++;
             }
-        });
-    });
+        }
+    }
 
     let winners = _.chain(players).sortBy(player => {
         return -player.wins;
@@ -115,27 +115,27 @@ gameService.getAllGames(args[0], args[1]).then(games => {
 
     console.info('### Top 10\n\nName | Number of wins\n----|----------------');
 
-    _.each(winners, winner => {
+    for(const winner of winners) {
         console.info(winner.name, ' | ', winner.wins);
-    });
+    }
 
     console.info('### Top 10 by winrate\n\nName | Number of wins | Number of losses | Win Rate\n----|-------------|------------------|--------');
 
-    _.each(winRateStats, winner => {
+    for(const winner of winRateStats) {
         console.info(winner.name, ' | ', winner.wins, ' | ', winner.losses, ' | ', winner.winRate + '%');
-    });
+    }
 
     console.info('### Faction win rates\n\nFaction | Number of wins | Number of losses | Win Rate\n----|-------------|------------------|--------');
 
-    _.each(factionWinRateStats, winner => {
+    for(const winner of factionWinRateStats) {
         console.info(winner.name, ' | ', winner.wins, ' | ', winner.losses, ' | ', winner.winRate + '%');
-    });
+    }
 
     console.info('### Faction/Agenda combination win rates\n\nFaction/Agenda | Number of wins | Number of losses | Win Rate\n----|-------------|------------------|--------');
 
-    _.each(factionAgendaWinRateStats, winner => {
+    for(const winner of factionAgendaWinRateStats) {
         console.info(winner.name, ' | ', winner.wins, ' | ', winner.losses, ' | ', winner.winRate + '%');
-    });
+    }
 
     console.info(rejected);
 })

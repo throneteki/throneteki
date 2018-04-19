@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const _ = require('underscore');
 
 const {matchCardByNameAndPack} = require('./cardutil.js');
 
@@ -16,21 +15,21 @@ class DeckBuilder {
 
         var jsonPacks = fs.readdirSync(directory).filter(file => file.endsWith('.json'));
 
-        _.each(jsonPacks, file => {
+        for(const file of jsonPacks) {
             var pack = require(path.join(directory, file));
 
-            _.each(pack.cards, card => {
+            for(const card of pack.cards) {
                 card.packCode = pack.code;
                 cards[card.code] = card;
-            });
-        });
+            }
+        }
 
         return cards;
     }
 
     buildDeck(faction, cardLabels) {
         var cardCountsByCode = {};
-        _.each(cardLabels, label => {
+        for(const label of cardLabels) {
             var cardData = this.getCard(label);
             if(cardCountsByCode[cardData.code]) {
                 cardCountsByCode[cardData.code].count++;
@@ -40,7 +39,7 @@ class DeckBuilder {
                     card: cardData
                 };
             }
-        });
+        }
 
         const cardCountValues = Object.values(cardCountsByCode);
 

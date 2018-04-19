@@ -465,12 +465,12 @@ class Player extends Spectator {
 
     markUsedReducers(playingType, card) {
         let matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
-        _.each(matchingReducers, reducer => {
+        for(const reducer of matchingReducers) {
             reducer.markUsed();
             if(reducer.isExpired()) {
                 this.removeCostReducer(reducer);
             }
-        });
+        }
     }
 
     registerAbilityMax(cardName, limit) {

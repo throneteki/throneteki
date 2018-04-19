@@ -15,11 +15,11 @@ class Stonesnake extends DrawCard {
                 let target = context.event.target;
                 let buttons = [];
 
-                _.each(keywords, keyword => {
+                for(const keyword of keywords) {
                     if(target.hasKeyword(keyword)) {
                         buttons.push({ text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() });
                     }
-                });
+                }
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {

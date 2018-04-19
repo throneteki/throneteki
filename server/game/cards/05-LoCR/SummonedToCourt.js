@@ -48,9 +48,9 @@ class SummonedToCourt extends PlotCard {
     }
 
     revealPlayerChoices() {
-        _.each(this.playerChoices, choice => {
+        for(const choice of this.playerChoices) {
             this.game.addMessage('{0} reveals {1} as their choice for {2}', choice.player, choice.card, this);
-        });
+        }
     }
 
     getLowestCostChoices() {

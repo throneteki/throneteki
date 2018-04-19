@@ -285,7 +285,7 @@ class PendingGame {
         var playerSummaries = {};
         var playersInGame = Object.values(this.playersByName).filter(player => !player.left);
 
-        _.each(playersInGame, player => {
+        for(const player of playersInGame) {
             var deck = undefined;
 
             if(activePlayer === player.name && player.deck) {
@@ -307,7 +307,7 @@ class PendingGame {
                 owner: player.owner,
                 settings: player.user.settings
             };
-        });
+        }
 
         return {
             allowSpectators: this.allowSpectators,

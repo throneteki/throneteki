@@ -13,34 +13,37 @@ class StandingPhase extends Phase {
     }
 
     standCards() {
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             this.standCardsForPlayer(player);
-        });
+        }
     }
 
     standCardsForPlayer(player) {
         let kneelingCards = this.game.allCards.filter(card => card.location === 'play area' && card.kneeled && card.controller === player && card.allowGameAction('stand'));
         let restrictedSubset = [];
-        _.each(player.standPhaseRestrictions, restriction => {
+        for(const restriction of player.standPhaseRestrictions) {
             let restrictedCards = kneelingCards.filter(card => restriction.match(card));
             kneelingCards = _.difference(kneelingCards, restrictedCards);
             restrictedSubset.push({ max: restriction.max, cards: restrictedCards });
-        });
+        }
+
         // Automatically stand non-restricted cards
         let cardsToStand = { automatic: kneelingCards, selected: [] };
 
-        _.each(restrictedSubset, restriction => {
+        for(const restriction of restrictedSubset) {
             this.selectRestrictedCards(cardsToStand, player, restriction);
-        });
+        }
+
         this.game.queueSimpleStep(() => {
             this.selectOptionalCards(cardsToStand, player);
         });
+
         this.game.queueSimpleStep(() => {
             let finalCards = _.flatten(_.values(cardsToStand));
             player.faction.kneeled = false;
-            _.each(finalCards, card => {
+            for(const card of finalCards) {
                 player.standCard(card);
-            });
+            }
         });
     }
 

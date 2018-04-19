@@ -32,10 +32,10 @@ class BitterbridgeEncampment extends DrawCard {
     }
 
     doPutIntoPlay() {
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             let player = selection.player;
             player.putIntoPlay(selection.card);
-        });
+        }
     }
 
     proceedToNextStep() {

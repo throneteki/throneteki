@@ -28,10 +28,10 @@ class TheLongWinter extends PlotCard {
     }
 
     doPower() {
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             this.game.addMessage('{0} discards 1 power from {1}', selection.player, selection.cardFragment);
             selection.card.modifyPower(-1);
-        });
+        }
 
         this.selections = [];
     }

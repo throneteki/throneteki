@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class RamsaySnow extends DrawCard {
@@ -29,10 +27,10 @@ class RamsaySnow extends DrawCard {
     }
 
     doSacrifice() {
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             let player = selection.player;
             player.sacrificeCard(selection.card);
-        });
+        }
     }
 
     proceedToNextStep() {

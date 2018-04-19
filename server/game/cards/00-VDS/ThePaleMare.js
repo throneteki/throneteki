@@ -57,7 +57,7 @@ class ThePaleMare extends PlotCard {
     }
 
     doKill() {
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             let player = selection.player;
             let playerSpecificToKill = _.difference(player.filterCardsInPlay(card => card.getType() === 'character'), selection.cards);
             this.toKill = this.toKill.concat(playerSpecificToKill);
@@ -67,7 +67,7 @@ class ThePaleMare extends PlotCard {
             } else {
                 this.game.addMessage('{0} kills {1} for {2}', player, playerSpecificToKill, this);
             }
-        });
+        }
 
         this.game.killCharacters(this.toKill, { allowSave: false });
 

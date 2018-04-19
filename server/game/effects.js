@@ -358,15 +358,25 @@ const Effects = {
             apply: function(card, context) {
                 context.dynamicIcons = context.dynamicIcons || {};
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context) || 0;
-                _.each(context.dynamicIcons[card.uuid], icon => card.addIcon(icon));
+                for(const icon of context.dynamicIcons[card.uuid]) {
+                    card.addIcon(icon);
+                }
             },
             reapply: function(card, context) {
-                _.each(context.dynamicIcons[card.uuid], icon => card.removeIcon(icon));
+                for(const icon of context.dynamicIcons[card.uuid]) {
+                    card.removeIcon(icon);
+                }
+
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context);
-                _.each(context.dynamicIcons[card.uuid], icon => card.addIcon(icon));
+                for(const icon of context.dynamicIcons[card.uuid]) {
+                    card.addIcon(icon);
+                }
             },
             unapply: function(card, context) {
-                _.each(context.dynamicIcons[card.uuid], icon => card.removeIcon(icon));
+                for(const icon of context.dynamicIcons[card.uuid]) {
+                    card.removeIcon(icon);
+                }
+
                 delete context.dynamicIcons[card.uuid];
             },
             isStateDependent: true
@@ -397,15 +407,25 @@ const Effects = {
             apply: function(card, context) {
                 context.dynamicKeywords = context.dynamicKeywords || {};
                 context.dynamicKeywords[card.uuid] = keywordsFunc(card, context) || 0;
-                _.each(context.dynamicKeywords[card.uuid], keyword => card.addKeyword(keyword));
+                for(const keyword of context.dynamicKeywords[card.uuid]) {
+                    card.addKeyword(keyword);
+                }
             },
             reapply: function(card, context) {
-                _.each(context.dynamicKeywords[card.uuid], icon => card.removeKeyword(icon));
+                for(const icon of context.dynamicKeywords[card.uuid]) {
+                    card.removeKeyword(icon);
+                }
+
                 context.dynamicKeywords[card.uuid] = keywordsFunc(card, context);
-                _.each(context.dynamicKeywords[card.uuid], keyword => card.addKeyword(keyword));
+                for(const keyword of context.dynamicKeywords[card.uuid]) {
+                    card.addKeyword(keyword);
+                }
             },
             unapply: function(card, context) {
-                _.each(context.dynamicKeywords[card.uuid], keyword => card.removeKeyword(keyword));
+                for(const keyword of context.dynamicKeywords[card.uuid]) {
+                    card.removeKeyword(keyword);
+                }
+
                 delete context.dynamicKeywords[card.uuid];
             },
             isStateDependent: true
@@ -424,10 +444,14 @@ const Effects = {
     addMultipleKeywords: function(keywords) {
         return {
             apply: function(card) {
-                _.each(keywords, keyword => card.addKeyword(keyword));
+                for(const keyword of keywords) {
+                    card.addKeyword(keyword);
+                }
             },
             unapply: function(card) {
-                _.each(keywords, keyword => card.removeKeyword(keyword));
+                for(const keyword of keywords) {
+                    card.removeKeyword(keyword);
+                }
             }
         };
     },
@@ -1013,7 +1037,9 @@ const Effects = {
             },
             unapply: function(player, context) {
                 if(context.reducers.length > 0) {
-                    _.each(context.reducers, reducer => player.removeCostReducer(reducer));
+                    for(const reducer of context.reducers) {
+                        player.removeCostReducer(reducer);
+                    }
                 }
             }
         };
@@ -1032,7 +1058,9 @@ const Effects = {
             },
             unapply: function(player, context) {
                 if(context.reducers.length > 0) {
-                    _.each(context.reducers, reducer => player.removeCostReducer(reducer));
+                    for(const reducer of context.reducers) {
+                        player.removeCostReducer(reducer);
+                    }
                 }
             }
         };

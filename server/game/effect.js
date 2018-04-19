@@ -84,12 +84,12 @@ class Effect {
 
         let newTargets = _.difference(targets, this.targets);
 
-        _.each(newTargets, target => {
+        for(const target of newTargets) {
             if(this.isValidTarget(target)) {
                 this.targets.push(target);
                 this.effect.apply(target, this.context);
             }
-        });
+        }
     }
 
     isValidTarget(target) {
@@ -173,7 +173,10 @@ class Effect {
     }
 
     cancel() {
-        _.each(this.targets, target => this.effect.unapply(target, this.context));
+        for(const target of this.targets) {
+            this.effect.unapply(target, this.context);
+        }
+
         this.targets = [];
     }
 
@@ -192,16 +195,18 @@ class Effect {
 
             if(newCondition) {
                 let invalidTargets = this.targets.filter(target => !this.isValidTarget(target));
-                _.each(invalidTargets, target => {
+                for(const target of invalidTargets) {
                     this.removeTarget(target);
-                });
+                }
                 this.addTargets(newTargets);
             }
         }
 
         if(this.effect.isStateDependent) {
             let reapplyFunc = this.createReapplyFunc();
-            _.each(this.targets, target => reapplyFunc(target));
+            for(const target of this.targets) {
+                reapplyFunc(target);
+            }
         }
     }
 

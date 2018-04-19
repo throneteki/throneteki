@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const ActionWindow = require('./actionwindow.js');
@@ -17,7 +16,7 @@ class DominancePhase extends Phase {
         var lowestDominance = 0;
         var dominanceWinner = undefined;
 
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             var dominance = player.getDominance();
 
             lowestDominance = dominance;
@@ -33,7 +32,7 @@ class DominancePhase extends Phase {
             } else {
                 lowestDominance = dominance;
             }
-        });
+        }
 
         if(dominanceWinner) {
             this.game.addMessage('{0} wins dominance ({1} vs {2})', dominanceWinner, highestDominance, lowestDominance);

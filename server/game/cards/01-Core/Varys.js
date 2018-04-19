@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Varys extends DrawCard {
@@ -10,12 +8,12 @@ class Varys extends DrawCard {
             },
             cost: ability.costs.removeSelfFromGame(),
             handler: () => {
-                _.each(this.game.getPlayers(), player => {
+                for(const player of this.game.getPlayers()) {
                     let characters = player.filterCardsInPlay(card => card.getType() === 'character');
-                    _.each(characters, card => {
+                    for(const card of characters) {
                         player.discardCard(card);
-                    });
-                });
+                    }
+                }
 
                 this.game.addMessage('{0} removes {1} from the game to discard all characters',
                     this.controller, this);

@@ -3,7 +3,7 @@ const Game = require('../../../server/game/game.js');
 describe('Game', function() {
     beforeEach(function() {
         this.gameService = jasmine.createSpyObj('gameService', ['save']);
-        this.game = new Game({ owner: {} }, 'Test Game', { gameService: this.gameService });
+        this.game = new Game({ playersByName: {}, spectatorsByName: {}, owner: {} }, 'Test Game', { gameService: this.gameService });
 
         this.card1 = jasmine.createSpyObj('card', ['allowGameAction']);
         this.card2 = jasmine.createSpyObj('card', ['allowGameAction']);

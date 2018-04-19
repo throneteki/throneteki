@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseStep = require('./basestep.js');
 
 class KillCharacters extends BaseStep {
@@ -13,9 +11,9 @@ class KillCharacters extends BaseStep {
     continue() {
         let cardsInPlay = this.cards.filter(card => card.location === 'play area');
         this.game.applyGameAction('killed', cardsInPlay, killable => {
-            _.each(killable, card => {
+            for(const card of killable) {
                 card.markAsInDanger();
-            });
+            }
 
             this.game.raiseSimultaneousEvent(killable, {
                 eventName: 'onCharactersKilled',
@@ -30,9 +28,9 @@ class KillCharacters extends BaseStep {
                 postHandler: () => this.promptForDeadPileOrder()
             });
             this.game.queueSimpleStep(() => {
-                _.each(killable, card => {
+                for(const card of killable) {
                     card.clearDanger();
-                });
+                }
             });
         });
     }
@@ -40,9 +38,9 @@ class KillCharacters extends BaseStep {
     handleMultipleKills(event) {
         this.event = event;
 
-        _.each(event.cards, card => {
+        for(const card of event.cards) {
             this.automaticSave(card);
-        });
+        }
     }
 
     automaticSave(card) {
@@ -56,9 +54,9 @@ class KillCharacters extends BaseStep {
     }
 
     promptForDeadPileOrder() {
-        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+        for(const player of this.game.getPlayersInFirstPlayerOrder()) {
             this.promptPlayerForDeadPileOrder(player);
-        });
+        }
     }
 
     promptPlayerForDeadPileOrder(player) {

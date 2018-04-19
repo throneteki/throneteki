@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class EllariaSand extends DrawCard {
@@ -12,9 +10,9 @@ class EllariaSand extends DrawCard {
             handler: () => {
                 let bastards = this.controller.filterCardsInPlay(card => card.hasTrait('Bastard') && card.getType() === 'character');
 
-                _.each(bastards, card => {
+                for(const card of bastards) {
                     card.controller.standCard(card);
-                });
+                }
 
                 this.game.addMessage('{0} discards 1 gold from {1} to stand {2}', this.controller, this, bastards);
             }

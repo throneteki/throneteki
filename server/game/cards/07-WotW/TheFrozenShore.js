@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheFrozenShore extends DrawCard {
@@ -27,9 +25,10 @@ class TheFrozenShore extends DrawCard {
     }
 
     standWildlings(player, cards) {
-        _.each(cards, card => {
+        for(const card of cards) {
             player.standCard(card);
-        });
+        }
+
         this.game.addMessage('{0} uses {1} to stand {2}', player, this, cards);
         return true;
     }

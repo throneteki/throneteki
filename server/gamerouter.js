@@ -52,7 +52,7 @@ class GameRouter extends EventEmitter {
 
         var returnedWorker = undefined;
 
-        _.each(this.workersByName, worker => {
+        for(const worker of this.workersByName) {
             if(worker.numGames >= worker.maxGames || worker.disabled || worker.disconnected) {
                 return;
             }
@@ -60,7 +60,7 @@ class GameRouter extends EventEmitter {
             if(!returnedWorker || returnedWorker.numGames > worker.numGames) {
                 returnedWorker = worker;
             }
-        });
+        }
 
         return returnedWorker;
     }
@@ -196,7 +196,7 @@ class GameRouter extends EventEmitter {
         var currentTime = Date.now();
         const pingTimeout = 1 * 60 * 1000;
 
-        _.each(this.workersByName, worker => {
+        for(const worker of this.workersByName) {
             if(worker.pingSent && currentTime - worker.pingSent > pingTimeout) {
                 logger.info('worker', worker.identity + ' timed out');
                 this.workersByName[worker.identity].disconnected = true;
@@ -207,7 +207,7 @@ class GameRouter extends EventEmitter {
                     this.sendCommand(worker.identity, 'PING');
                 }
             }
-        });
+        }
     }
 }
 

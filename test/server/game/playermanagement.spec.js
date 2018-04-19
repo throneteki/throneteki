@@ -3,7 +3,7 @@ const Game = require('../../../server/game/game.js');
 describe('Game', function() {
     beforeEach(function() {
         this.gameRouter = jasmine.createSpyObj('gameRouter', ['playerLeft']);
-        this.game = new Game({ allowSpectators: true, owner: {} }, { router: this.gameRouter });
+        this.game = new Game({ playersByName: {}, spectatorsByName: {}, allowSpectators: true, owner: {} }, { router: this.gameRouter });
     });
 
     describe('join()', function() {

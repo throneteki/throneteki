@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Ashemark extends DrawCard {
@@ -13,12 +11,12 @@ class Ashemark extends DrawCard {
                 ability.costs.sacrificeSelf()
             ],
             handler: context => {
-                _.each(this.game.getPlayers(), player => {
+                for(const player of this.game.getPlayers()) {
                     let characters = player.filterCardsInPlay(card => card.getType() === 'character' && card.getPrintedCost() <= context.cardStateWhenInitiated.tokens.gold);
-                    _.each(characters, card => {
+                    for(const card of characters) {
                         card.owner.returnCardToHand(card);
-                    });
-                });
+                    }
+                }
 
                 this.game.addMessage('{0} kneels and sacrifices {1} to return each character with printed cost {2} or less to its owner\'s hand',
                     this.controller, this, context.cardStateWhenInitiated.tokens.gold);

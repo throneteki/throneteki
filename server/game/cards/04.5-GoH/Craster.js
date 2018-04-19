@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Craster extends DrawCard {
@@ -19,9 +17,10 @@ class Craster extends DrawCard {
             condition: () => this.tracker.anyKilled(),
             handler: () => {
                 let characters = this.tracker.killedThisPhase.filter(card => card.location === 'dead pile');
-                _.each(characters, character => {
+                for(const character of characters) {
                     character.owner.putIntoPlay(character);
-                });
+                }
+
                 this.game.addMessage('{0} sacrifices {1} to put into play each character killed this phase', this.controller, this);
             }
         });

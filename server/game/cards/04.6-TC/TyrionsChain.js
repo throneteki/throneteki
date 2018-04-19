@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const DrawCard = require('../../drawcard.js');
 
 class TyrionsChain extends DrawCard {
@@ -36,11 +35,12 @@ class TyrionsChain extends DrawCard {
 
     getRevealedWarPlots() {
         var revealedPlots = [];
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             if(player.activePlot && player.activePlot.hasTrait('War')) {
                 revealedPlots = revealedPlots.concat(player.activePlot);
             }
-        });
+        }
+
         return revealedPlots;
     }
 

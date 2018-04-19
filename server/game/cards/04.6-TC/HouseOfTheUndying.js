@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class HouseOfTheUndying extends DrawCard {
@@ -22,13 +20,13 @@ class HouseOfTheUndying extends DrawCard {
             return opponent.deadPile.filter(c => c.name === card.name).length === 1;
         });
 
-        _.each(eligibleCharacters, card => {
+        for(const card of eligibleCharacters) {
             currentController.putIntoPlay(card);
             this.atEndOfPhase(ability => ({
                 match: card,
                 effect: ability.effects.moveToDeadPileIfStillInPlay()
             }));
-        });
+        }
 
         this.game.addMessage('{0} removes {1} from the game to take control {2}',
             currentController, this, eligibleCharacters);

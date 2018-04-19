@@ -32,9 +32,9 @@ class ConsolidationOfPower extends DrawCard {
     }
 
     onPowerSelected(player, card) {
-        _.each(this.cards, card => {
+        for(const card of this.cards) {
             card.controller.kneelCard(card);
-        });
+        }
 
         card.modifyPower(1);
 

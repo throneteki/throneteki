@@ -66,9 +66,9 @@ class WheelsWithinWheels extends PlotCard {
         player.moveCard(cardToHand, 'hand');
         this.cards.splice(index, 1);
 
-        _.each(this.cards, card => {
+        for(const card of this.cards) {
             player.moveCard(card, 'discard pile');
-        });
+        }
 
         this.game.addMessage('{0} uses {1} to add {2} to their hand and place {3} in their discard pile',
             player, this, cardToHand, this.cards);

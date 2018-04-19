@@ -8,6 +8,7 @@ describe('EventRegistrar', function () {
             anotherMethod: function() {},
             finalMethod: function() {}
         };
+
         this.boundHandler = {};
         spyOn(this.context.method, 'bind').and.returnValue(this.boundHandler);
         this.events = new EventRegistrar(this.gameSpy, this.context);

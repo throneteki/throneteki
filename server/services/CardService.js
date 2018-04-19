@@ -25,13 +25,13 @@ class CardService {
             .then(result => {
                 let cards = {};
 
-                _.each(result, card => {
+                for(const card of result) {
                     if(options && options.shortForm) {
                         cards[card.code] = _.pick(card, 'code', 'name', 'label', 'type', 'loyal', 'faction', 'deckLimit', 'packCode', 'traits');
                     } else {
                         cards[card.code] = card;
                     }
-                });
+                }
 
                 return cards;
             }).catch(err => {

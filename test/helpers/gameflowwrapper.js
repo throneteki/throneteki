@@ -24,6 +24,7 @@ class GameFlowWrapper {
         gameRouter.handleError.and.callFake((game, error) => {
             throw error;
         });
+
         let details = {
             name: 'player1\'s game',
             id: 12345,
@@ -31,7 +32,8 @@ class GameFlowWrapper {
             saveGameId: 12345,
             isMelee: !!options.isMelee,
             noTitleSetAside: true,
-            players: this.generatePlayerDetails(options.numOfPlayers || (options.isMelee ? 3 : 2))
+            playersByName: this.generatePlayerDetails(options.numOfPlayers || (options.isMelee ? 3 : 2)),
+            spectatorsByName: []
         };
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
 
@@ -47,7 +49,9 @@ class GameFlowWrapper {
     eachPlayerInFirstPlayerOrder(handler) {
         var playersInOrder = _.sortBy(this.allPlayers, player => !player.firstPlayer);
 
-        _.each(playersInOrder, player => handler(player));
+        for(const player of playersInOrder) {
+            handler(player);
+        }
     }
 
     startGame() {
@@ -55,12 +59,16 @@ class GameFlowWrapper {
     }
 
     keepStartingHands() {
-        _.each(this.allPlayers, player => player.clickPrompt('Keep Hand'));
+        for(const player of this.allPlayers) {
+            player.clickPrompt('Keep Hand');
+        }
     }
 
     skipSetupPhase() {
         this.keepStartingHands();
-        _.each(this.allPlayers, player => player.clickPrompt('Done'));
+        for(const player of this.allPlayers) {
+            player.clickPrompt('Done');
+        }
     }
 
     guardCurrentPhase(phase) {
@@ -71,7 +79,9 @@ class GameFlowWrapper {
 
     completeSetup() {
         this.guardCurrentPhase('setup');
-        _.each(this.allPlayers, player => player.clickPrompt('Done'));
+        for(const player of this.allPlayers) {
+            player.clickPrompt('Done');
+        }
     }
 
     completeMarshalPhase() {

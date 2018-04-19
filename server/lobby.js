@@ -205,12 +205,12 @@ class Lobby {
     }
 
     broadcastGameList(socket) {
-        let sockets = socket ? [socket] : this.socketsById;
-        _.each(sockets, socket => {
+        let sockets = socket ? [socket] : Object.values(this.socketsById);
+        for(const socket of sockets) {
             let filteredGames = this.filterGameListWithBlockList(socket.user);
             let gameSummaries = this.mapGamesToGameSummaries(filteredGames);
             socket.send('games', gameSummaries);
-        });
+        }
     }
 
     broadcastUserList() {
@@ -224,9 +224,9 @@ class Lobby {
 
         let users = this.getUserList();
 
-        _.each(this.socketsById, socket => {
+        for(const socket of this.socketsById) {
             this.sendUserListFilteredWithBlockList(socket, users);
-        });
+        }
     }
 
     sendGameState(game) {
@@ -234,22 +234,22 @@ class Lobby {
             return;
         }
 
-        _.each(game.getPlayersAndSpectators(), player => {
+        for(const player of Object.values(game.getPlayersAndSpectators())) {
             if(!this.socketsById[player.id]) {
                 logger.info('Wanted to send to ', player.id, ' but have no socket');
                 return;
             }
 
             this.socketsById[player.id].send('gamestate', game.getSummary(player.name));
-        });
+        }
     }
 
     clearGamesForNode(nodeName) {
-        _.each(this.gamesById, game => {
+        for(const game of this.gamesById) {
             if(game.node && game.node.identity === nodeName) {
                 delete this.gamesById[game.id];
             }
-        });
+        }
 
         this.broadcastGameList();
     }
@@ -461,7 +461,7 @@ class Lobby {
 
         this.broadcastGameList();
 
-        _.each(game.getPlayersAndSpectators(), player => {
+        for(const player of game.getPlayersAndSpectators()) {
             let socket = this.socketsById[player.id];
 
             if(!socket || !socket.user) {
@@ -470,7 +470,7 @@ class Lobby {
             }
 
             this.sendHandoff(socket, gameNode, game.id);
-        });
+        }
     }
 
     sendHandoff(socket, gameNode, gameId) {
@@ -547,13 +547,13 @@ class Lobby {
     onLobbyChat(socket, message) {
         var chatMessage = { user: socket.user.getShortSummary(), message: message, time: new Date() };
 
-        _.each(this.socketsById, s => {
+        for(const s of this.socketsById) {
             if(s.user && _.contains(s.user.blockList, chatMessage.user.username.toLowerCase())) {
                 return;
             }
 
             s.send('lobbychat', chatMessage);
-        });
+        }
 
         this.messageService.addMessage(chatMessage);
     }
@@ -572,13 +572,13 @@ class Lobby {
             .then(results => {
                 let [cards, packs, deck, restrictedList] = results;
 
-                _.each(deck.plotCards, plot => {
+                for(const plot of deck.plotCards) {
                     plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
-                });
+                }
 
-                _.each(deck.drawCards, draw => {
+                for(const draw of deck.drawCards) {
                     draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
-                });
+                }
 
                 if(deck.agenda) {
                     deck.agenda = cards[deck.agenda.code];
@@ -688,7 +688,7 @@ class Lobby {
     }
 
     onNodeReconnected(nodeName, games) {
-        _.each(games, game => {
+        for(const game of games) {
             let owner = game.playersByName[game.owner];
 
             if(!owner) {
@@ -704,7 +704,7 @@ class Lobby {
             syncGame.gameType = game.gameType;
             syncGame.password = game.password;
 
-            _.each(game.playersByName, player => {
+            for(const player of game.playersByName) {
                 syncGame.playersByName[player.name] = {
                     id: player.id,
                     name: player.name,
@@ -714,21 +714,21 @@ class Lobby {
                     agenda: { cardData: { code: player.agenda } },
                     user: player.user
                 };
-            });
+            }
 
-            _.each(game.spectatorsByName, player => {
+            for(const player of game.spectatorsByName) {
                 syncGame.spectatorsByName[player.name] = {
                     id: player.id,
                     name: player.name,
                     emailHash: player.emailHash,
                     user: player.user
                 };
-            });
+            }
 
             this.gamesById[syncGame.id] = syncGame;
-        });
+        }
 
-        _.each(this.gamesById, game => {
+        for(const game of this.gamesById) {
             if(game.node && game.node.identity === nodeName && Object.values(games).find(nodeGame => {
                 return nodeGame.id === game.id;
             })) {
@@ -736,7 +736,7 @@ class Lobby {
             } else if(game.node && game.node.identity === nodeName) {
                 delete this.gamesById[game.id];
             }
-        });
+        }
 
         this.broadcastGameList();
     }

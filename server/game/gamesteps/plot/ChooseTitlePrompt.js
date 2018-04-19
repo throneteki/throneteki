@@ -26,10 +26,10 @@ class ChooseTitlePrompt extends BaseStep {
             return false;
         }
 
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             this.titlePool.chooseFromPool(selection.player, selection.title);
             this.game.addMessage('{0} selects {1}', selection.player, selection.title);
-        });
+        }
     }
 
     promptForTitle(player) {

@@ -111,9 +111,9 @@ class BaseAbility {
      * Pays all costs for the ability simultaneously.
      */
     payCosts(context) {
-        _.each(this.cost, cost => {
+        for(const cost of this.cost) {
             cost.pay(context);
-        });
+        }
     }
 
     /**
@@ -130,9 +130,9 @@ class BaseAbility {
      * Unpays each cost associated with the ability.
      */
     unpayCosts(context) {
-        _.each(this.cost, cost => {
+        for(const cost of this.cost) {
             cost.unpay(context);
-        });
+        }
     }
 
     /**

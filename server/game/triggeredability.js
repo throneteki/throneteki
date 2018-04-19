@@ -145,14 +145,14 @@ class TriggeredAbility extends BaseAbility {
         var eventNames = _.keys(this.when);
 
         this.events = [];
-        _.each(eventNames, eventName => {
+        for(const eventName of eventNames) {
             var event = {
                 name: eventName + ':' + this.eventType,
                 handler: event => this.eventHandler(event)
             };
             this.game.on(event.name, event.handler);
             this.events.push(event);
-        });
+        }
 
         if(this.limit) {
             this.limit.registerEvents(this.game);
@@ -161,12 +161,14 @@ class TriggeredAbility extends BaseAbility {
 
     unregisterEvents() {
         if(this.events) {
-            _.each(this.events, event => {
+            for(const event of this.events) {
                 this.game.removeListener(event.name, event.handler);
-            });
+            }
+
             if(this.limit) {
                 this.limit.unregisterEvents(this.game);
             }
+
             this.events = null;
         }
     }

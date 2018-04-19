@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
-import _ from 'underscore';
 
 import Avatar from '../Site/Avatar';
 import * as actions from '../../actions';
@@ -60,7 +59,7 @@ class GameList extends React.Component {
             let firstPlayer = true;
             let gameRow = [];
 
-            _.each(game.players, player => {
+            for(const player of game.players) {
                 let playerElement = null;
                 let factionIconClass = classNames('hidden-xs', 'col-xs-1', 'game-icon', `icon-${player.faction}`);
 
@@ -89,7 +88,7 @@ class GameList extends React.Component {
                 }
 
                 return playerElement;
-            });
+            }
 
             let gameTitle = '';
 

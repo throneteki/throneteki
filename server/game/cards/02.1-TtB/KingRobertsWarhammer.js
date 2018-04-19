@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class KingRobertsWarhammer extends DrawCard {
@@ -19,9 +17,9 @@ class KingRobertsWarhammer extends DrawCard {
                 gameAction: 'kneel'
             },
             handler: context => {
-                _.each(context.target, card => {
+                for(const card of context.target) {
                     card.controller.kneelCard(card);
-                });
+                }
 
                 this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, context.target);
                 // King Robert's Warhammer specifically has its sacrifice as a then-effect, not a cost

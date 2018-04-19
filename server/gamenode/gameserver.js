@@ -113,9 +113,9 @@ class GameServer {
             debugData.messages = game.messages;
             debugData.game.messages = undefined;
 
-            _.each(game.getPlayers(), player => {
+            for(const player of game.getPlayers()) {
                 debugData[player.name] = player.getState(player);
-            });
+            }
         }
 
         Raven.captureException(e, { extra: debugData });
@@ -193,13 +193,13 @@ class GameServer {
     }
 
     sendGameState(game) {
-        _.each(game.getPlayersAndSpectators(), player => {
+        for(const player of game.getPlayersAndSpectators()) {
             if(player.left || player.disconnected || !player.socket) {
                 return;
             }
 
             player.socket.send('gamestate', game.getState(player.name));
-        });
+        }
     }
 
     handshake(socket, next) {
@@ -225,9 +225,9 @@ class GameServer {
         this.gamesById[pendingGame.id] = game;
 
         game.started = true;
-        _.each(pendingGame.playersByName, player => {
+        for(const player of pendingGame.playersByName) {
             game.selectDeck(player.name, player.deck);
-        });
+        }
 
         game.initialise();
     }

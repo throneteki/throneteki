@@ -7,7 +7,7 @@ class GhostsOfHarrenhal extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+                for(const player of this.game.getPlayersInFirstPlayerOrder()) {
                     let deadCharacters = player.findCards(player.deadPile, card => card.getType() === 'character');
                     if(!_.isEmpty(deadCharacters)) {
                         let lastDeadCharacter = _.last(deadCharacters);
@@ -16,7 +16,7 @@ class GhostsOfHarrenhal extends PlotCard {
                         this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s dead pile',
                             this.controller, this, lastDeadCharacter, lastDeadCharacter.controller);
                     }
-                });
+                }
             }
         });
     }

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class CommonCause extends PlotCard {
@@ -14,14 +12,14 @@ class CommonCause extends PlotCard {
         let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character' && !card.isFaction('neutral'));
         let factionsInPlay = [];
 
-        _.each(charactersInPlay, card => {
+        for(const card of charactersInPlay) {
             let factions = card.getFactions();
-            _.each(factions, faction => {
+            for(const faction of factions) {
                 if(!factionsInPlay.includes(faction)) {
                     factionsInPlay.push(faction);
                 }
-            });
-        });
+            }
+        }
 
         return factionsInPlay.length;
     }

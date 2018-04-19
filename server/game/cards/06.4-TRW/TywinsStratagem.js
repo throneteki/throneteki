@@ -13,7 +13,10 @@ class TywinsStratagem extends DrawCard {
                 gameAction: 'returnToHand'
             },
             handler: context => {
-                _.each(context.target, card => card.owner.returnCardToHand(card));
+                for(const card of context.target) {
+                    card.owner.returnCardToHand(card);
+                }
+
                 this.game.addMessage('{0} plays {1} to return {2} to its owner\'s hands',
                     this.controller, this, context.target);
             }

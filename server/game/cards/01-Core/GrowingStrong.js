@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class GrowingStrong extends DrawCard {
@@ -13,12 +11,12 @@ class GrowingStrong extends DrawCard {
                 cardCondition: card => card.isFaction('tyrell') && card.getType() === 'character'
             },
             handler: context => {
-                _.each(context.target, card => {
+                for(const card of context.target) {
                     card.untilEndOfPhase(ability => ({
                         match: card,
                         effect: ability.effects.modifyStrength(2)
                     }));
-                });
+                }
                 this.game.addMessage('{0} plays {1} to give +2 STR to {2}', context.player, this, context.target);
             }
         });

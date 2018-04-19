@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class MarchedToTheWall extends PlotCard {
@@ -26,10 +24,10 @@ class MarchedToTheWall extends PlotCard {
     }
 
     doDiscard() {
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             let player = selection.player;
             player.discardCard(selection.card, false);
-        });
+        }
     }
 
     proceedToNextStep() {

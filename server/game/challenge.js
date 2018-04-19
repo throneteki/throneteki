@@ -79,10 +79,10 @@ class Challenge {
     }
 
     markAsParticipating(cards) {
-        _.each(cards, card => {
+        for(const card of cards) {
             card.inChallenge = true;
             card.markAsDirty();
-        });
+        }
     }
 
     isAttacking(card) {
@@ -262,8 +262,13 @@ class Challenge {
     }
 
     finish() {
-        _.each(this.attackers, card => card.inChallenge = false);
-        _.each(this.defenders, card => card.inChallenge = false);
+        for(const card of this.attackers) {
+            card.inChallenge = false;
+        }
+
+        for(const card of this.defenders) {
+            card.inChallenge = false;
+        }
     }
 
     cancelChallenge() {

@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const ActionWindow = require('./actionwindow.js');
@@ -13,9 +12,9 @@ class DrawPhase extends Phase {
     }
 
     draw() {
-        _.each(this.game.getPlayers(), p => {
+        for(const p of this.game.getPlayers()) {
             p.drawPhase();
-        });
+        }
     }
 }
 

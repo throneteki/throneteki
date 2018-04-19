@@ -57,13 +57,13 @@ class ValarDohaeris extends PlotCard {
     }
 
     promptPlayersForOrder() {
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             let player = selection.player;
             let playerSpecificToMove = _.difference(player.filterCardsInPlay(card => card.getType() === 'character' && card.allowGameAction('placeOnBottomOfDeck')), selection.cards);
             this.toMove = this.toMove.concat(playerSpecificToMove);
-        });
+        }
 
-        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+        for(const player of this.game.getPlayersInFirstPlayerOrder()) {
             let cardsOwnedByPlayer = this.toMove.filter(card => card.owner === player);
 
             if(cardsOwnedByPlayer.length >= 2) {
@@ -80,7 +80,7 @@ class ValarDohaeris extends PlotCard {
                     }
                 });
             }
-        });
+        }
 
         this.game.queueSimpleStep(() => {
             this.moveCardsToBottom();
@@ -88,13 +88,13 @@ class ValarDohaeris extends PlotCard {
     }
 
     moveCardsToBottom() {
-        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+        for(const player of this.game.getPlayersInFirstPlayerOrder()) {
             let cardsOwnedByPlayer = this.toMove.filter(card => card.owner === player);
 
             if(!_.isEmpty(cardsOwnedByPlayer)) {
-                _.each(cardsOwnedByPlayer, card => {
+                for(const card of cardsOwnedByPlayer) {
                     this.game.placeOnBottomOfDeck(card, { allowSave: false });
-                });
+                }
 
                 this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}',
                     player, cardsOwnedByPlayer, this);
@@ -102,7 +102,7 @@ class ValarDohaeris extends PlotCard {
                 this.game.addMessage('{0} does not have any characters moved to the bottom of their deck for {1}',
                     player, this);
             }
-        });
+        }
 
         this.selections = [];
         this.toMove = [];

@@ -32,7 +32,7 @@ class WildfireAssault extends PlotCard {
     doKill() {
         let characters = [];
 
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             let player = selection.player;
             let toKill = _.difference(player.filterCardsInPlay(card => card.getType() === 'character'), selection.cards);
 
@@ -43,7 +43,7 @@ class WildfireAssault extends PlotCard {
             } else {
                 this.game.addMessage('{0} kills {1} for {2}', player, toKill, this);
             }
-        });
+        }
 
         this.game.killCharacters(characters, { allowSave: false });
 

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class JonSnow extends DrawCard {
@@ -21,9 +19,9 @@ class JonSnow extends DrawCard {
                                                                                    card.getType() === 'character');
                 }
 
-                _.each(affectedCharacters, card => {
+                for(const card of affectedCharacters) {
                     card.controller.standCard(card);
-                });
+                }
 
                 this.game.addMessage('{0} uses {1} to stand {2}', this.controller, this, affectedCharacters);
             }

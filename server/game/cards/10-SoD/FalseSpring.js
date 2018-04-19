@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class FalseSpring extends PlotCard {
@@ -56,7 +54,10 @@ class FalseSpring extends PlotCard {
     }
 
     onToDiscardardSelected(player, cards) {
-        _.each(cards, card => card.controller.discardCard(card));
+        for(const card of cards) {
+            card.controller.discardCard(card);
+        }
+
         this.game.addMessage('{0} uses {1} to discard {2}', player, this, cards);
         return true;
     }

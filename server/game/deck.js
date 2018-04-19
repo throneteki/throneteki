@@ -60,11 +60,15 @@ class Deck {
     }
 
     eachRepeatedCard(cards, func) {
-        _.each(cards, cardEntry => {
+        if(!cards) {
+            return;
+        }
+
+        for(const cardEntry of cards) {
             for(var i = 0; i < cardEntry.count; i++) {
                 func(cardEntry.card);
             }
-        });
+        }
     }
 
     createCard(baseClass, player, cardData) {

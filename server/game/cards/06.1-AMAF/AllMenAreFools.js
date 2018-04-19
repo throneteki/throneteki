@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class AllMenAreFools extends DrawCard {
@@ -15,9 +13,9 @@ class AllMenAreFools extends DrawCard {
             handler: () => {
                 let ladies = this.controller.filterCardsInPlay(card => card.hasTrait('Lady') && card.getType() === 'character');
 
-                _.each(ladies, card => {
+                for(const card of ladies) {
                     card.modifyPower(1);
-                });
+                }
 
                 this.game.addMessage('{0} plays {1} to have {2} gain 1 power',
                     this.controller, this, ladies);

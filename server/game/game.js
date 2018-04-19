@@ -69,13 +69,13 @@ class Game extends EventEmitter {
         this.shortCardData = options.shortCardData || [];
         this.skipPhase = {};
 
-        _.each(details.players, player => {
+        for(const player of Object.values(details.playersByName)) {
             this.playersAndSpectatorsByName[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
-        });
+        }
 
-        _.each(details.spectatorsByName, spectator => {
+        for(const spectator of Object.values(details.spectatorsByName)) {
             this.playersAndSpectatorsByName[spectator.user.username] = new Spectator(spectator.id, spectator.user);
-        });
+        }
 
         this.setMaxListeners(0);
 
@@ -177,9 +177,9 @@ class Game extends EventEmitter {
     findAnyCardsInPlay(predicate) {
         var foundCards = [];
 
-        _.each(this.getPlayers(), player => {
+        for(const player of this.getPlayers()) {
             foundCards = foundCards.concat(player.findCards(player.cardsInPlay, predicate));
-        });
+        }
 
         return foundCards;
     }
@@ -692,17 +692,17 @@ class Game extends EventEmitter {
     initialise() {
         var players = {};
 
-        _.each(this.playersAndSpectatorsByName, player => {
+        for(const player of Object.values(this.playersAndSpectatorsByName)) {
             if(!player.left) {
                 players[player.name] = player;
             }
-        });
+        }
 
         this.playersAndSpectatorsByName = players;
 
-        _.each(this.getPlayers(), player => {
+        for(const player of this.getPlayers()) {
             player.initialise();
-        });
+        }
 
         this.allCards = this.gatherAllCards();
 
@@ -1064,9 +1064,9 @@ class Game extends EventEmitter {
         let playerState = {};
 
         if(this.started) {
-            _.each(this.getPlayers(), player => {
+            for(const player of this.getPlayers()) {
                 playerState[player.name] = player.getState(activePlayer);
-            });
+            }
 
             return {
                 id: this.id,
@@ -1094,7 +1094,7 @@ class Game extends EventEmitter {
     getSummary(activePlayerName, options = {}) {
         var playerSummaries = {};
 
-        _.each(this.getPlayers(), player => {
+        for(const player of this.getPlayers()) {
             var deck = undefined;
             if(player.left) {
                 return;
@@ -1120,7 +1120,7 @@ class Game extends EventEmitter {
                 owner: player.owner,
                 user: options.fullData && player.user
             };
-        });
+        }
 
         return {
             allowSpectators: this.allowSpectators,

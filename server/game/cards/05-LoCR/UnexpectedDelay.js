@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class UnexpectedDelay extends PlotCard {
@@ -30,9 +28,9 @@ class UnexpectedDelay extends PlotCard {
     }
 
     doReturn() {
-        _.each(this.selections, selection => {
+        for(const selection of this.selections) {
             selection.card.owner.returnCardToHand(selection.card);
-        });
+        }
     }
 
     proceedToNextStep() {

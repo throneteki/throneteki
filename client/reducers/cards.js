@@ -61,11 +61,11 @@ export default function(state = {}, action) {
         case 'RECEIVE_CARDS':
             var agendas = {};
 
-            _.each(action.response.cards, card => {
+            for(const card of action.response.cards) {
                 if(card.type === 'agenda') {
                     agendas[card.code] = card;
                 }
-            });
+            }
 
             var banners = Object.values(agendas).filter(card => {
                 return card.label.startsWith('Banner of the');
@@ -88,9 +88,9 @@ export default function(state = {}, action) {
         case 'RECEIVE_FACTIONS':
             var factions = {};
 
-            _.each(action.response.factions, faction => {
+            for(const faction of action.response.factions) {
                 factions[faction.value] = faction;
-            });
+            }
 
             newState = Object.assign({}, state, {
                 factions: factions

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class RobbStark extends DrawCard {
@@ -12,9 +10,9 @@ class RobbStark extends DrawCard {
             limit: ability.limit.perRound(1),
             handler: () => {
                 let characters = this.controller.filterCardsInPlay(card => card.getType() === 'character');
-                _.each(characters, card => {
+                for(const card of characters) {
                     card.controller.standCard(card);
-                });
+                }
 
                 this.game.addMessage('{0} uses {1} to stand each {2} character they control', this.controller, this, 'stark');
             }

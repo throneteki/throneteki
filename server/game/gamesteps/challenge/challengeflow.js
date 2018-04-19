@@ -73,14 +73,14 @@ class ChallengeFlow extends BaseStep {
         this.attackersToKneel = [];
         this.challenge.addAttackers(attackers);
 
-        _.each(attackers, card => {
+        for(const card of attackers) {
             if(!card.kneeled && !card.challengeOptions.doesNotKneelAs['attacker']) {
                 this.game.applyGameAction('kneel', card, card => {
                     card.kneeled = true;
                     this.attackersToKneel.push(card);
                 });
             }
-        });
+        }
 
         return true;
     }
@@ -213,14 +213,14 @@ class ChallengeFlow extends BaseStep {
         let defendersToKneel = [];
         this.challenge.addDefenders(defenders);
 
-        _.each(defenders, card => {
+        for(const card of defenders) {
             if(!card.kneeled && !card.challengeOptions.doesNotKneelAs['defender']) {
                 this.game.applyGameAction('kneel', card, card => {
                     card.kneeled = true;
                     defendersToKneel.push(card);
                 });
             }
-        });
+        }
 
         let events = [
             { name: 'onDefendersDeclared', params: { challenge: this.challenge } }

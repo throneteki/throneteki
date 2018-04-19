@@ -114,9 +114,9 @@ global.integration = function(options, definitions) {
                 this[player.name + 'Object'] = this.game.getPlayerByName(player.name);
             }
 
-            _.each(ProxiedGameFlowWrapperMethods, method => {
+            for(const method of ProxiedGameFlowWrapperMethods) {
                 this[method] = (...args) => this.flow[method].apply(this.flow, args);
-            });
+            }
 
             this.buildDeck = function(faction, cards) {
                 return deckBuilder.buildDeck(faction, cards);

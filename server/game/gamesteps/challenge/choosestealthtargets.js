@@ -41,13 +41,13 @@ class ChooseStealthTargets extends BaseStep {
         if(!_.isArray(targets)) {
             targets = [targets];
         }
-        _.each(targets, target => {
+        for(const target of targets) {
             if(!character.useStealthToBypass(target)) {
                 return false;
             }
 
             this.challenge.addStealthChoice(character, target);
-        });
+        }
 
         this.game.addMessage('{0} has chosen {1} as the stealth target for {2}', this.challenge.attackingPlayer, targets, character);
 

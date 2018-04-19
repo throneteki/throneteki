@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class JaqenHGhar extends DrawCard {
@@ -21,9 +19,9 @@ class JaqenHGhar extends DrawCard {
             },
             handler: context => {
                 this.selectedCards = context.target;
-                _.each(this.selectedCards, card => {
+                for(const card of this.selectedCards) {
                     card.modifyToken('valarmorghulis', 1);
-                });
+                }
 
                 this.game.addMessage('{0} uses {1} to add Valar Morghulis tokens to {2}',
                     this.controller, this, this.selectedCards);
@@ -57,9 +55,9 @@ class JaqenHGhar extends DrawCard {
             return;
         }
 
-        _.each(this.selectedCards, card => {
+        for(const card of this.selectedCards) {
             card.modifyToken('valarmorghulis', -1);
-        });
+        }
 
         this.selectedCards = null;
     }
