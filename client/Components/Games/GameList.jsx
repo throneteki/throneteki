@@ -116,7 +116,7 @@ class GameList extends React.Component {
                     </span>
                     <div>{ gameRow }</div>
                     <div className='col-xs-3 game-row-buttons pull-right'>
-                        { (this.props.currentGame || _.size(game.players) === 2 || game.started) ?
+                        { (this.props.currentGame || Object.values(game.players).length === 2 || game.started) ?
                             null :
                             <button className='btn btn-primary pull-right' onClick={ event => this.joinGame(event, game) }>Join</button>
                         }

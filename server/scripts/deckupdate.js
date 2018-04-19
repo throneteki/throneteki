@@ -1,6 +1,5 @@
 /*eslint no-console:0 */
 const monk = require('monk');
-const _ = require('underscore');
 
 let db = monk('mongodb://127.0.0.1:27017/throneteki');
 
@@ -15,7 +14,7 @@ const fixBanners = async () => {
 
     while(numberProcessed < count) {
         let decks = await dbDecks.find({}, { limit: chunkSize, skip: numberProcessed });
-        console.info('loaded', _.size(decks), 'decks');
+        console.info('loaded', decks.length, 'decks');
         for(let deck of decks) {
             if(deck.drawCards.some(card => card.card.text) || deck.plotCards.some(card => card.card.text) || (deck.agenda && deck.agenda.text) || deck.faction.name) {
                 numberFound++;
@@ -39,7 +38,7 @@ const fixBanners = async () => {
             }
         }
 
-        numberProcessed += _.size(decks);
+        numberProcessed += decks.length;
         console.info('processed', numberProcessed, 'decks');
     }
 

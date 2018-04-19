@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 import NewsItem from './NewsItem';
 
@@ -22,7 +21,7 @@ class News extends React.Component {
             return retNews;
         });
 
-        if(_.size(news) === 0) {
+        if(news.length === 0) {
             news = <div className='military-container'>There is no site news at the moment</div>;
         }
 

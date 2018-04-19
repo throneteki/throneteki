@@ -94,7 +94,7 @@ class GameServer {
 
         return {
             games: games,
-            gameCount: _.size(this.gamesById)
+            gameCount: this.gamesById.length
         };
     }
 
@@ -251,7 +251,7 @@ class GameServer {
             return retGame;
         });
 
-        logger.info('syncing', _.size(gameSummaries), ' games');
+        logger.info('syncing', gameSummaries.length, ' games');
 
         callback(gameSummaries);
     }

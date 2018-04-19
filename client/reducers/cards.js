@@ -139,7 +139,7 @@ export default function(state = {}, action) {
             });
 
             if(newState.selectedDeck && !newState.selectedDeck._id) {
-                if(_.size(newState.decks) > 0) {
+                if(newState.decks.length > 0) {
                     newState.selectedDeck = newState.decks[0];
                 }
             }

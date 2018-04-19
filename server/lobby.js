@@ -98,8 +98,8 @@ class Lobby {
         return {
             games: games,
             nodes: nodes,
-            socketCount: _.size(this.socketsById),
-            userCount: _.size(this.usersByUsername)
+            socketCount: this.socketsById.length,
+            userCount: this.usersByUsername.length
         };
     }
 

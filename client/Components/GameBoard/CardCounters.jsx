@@ -1,18 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import _ from 'underscore';
 
 import Counter from './Counter';
 
 class CardCounters extends React.Component {
     render() {
-        if(_.size(this.props.counters) === 0) {
+        if(this.props.counters.length === 0) {
             return null;
         }
 
         let countersClass = classNames('counters', 'ignore-mouse-events', {
-            'many-counters': _.size(this.props.counters) > 3
+            'many-counters': this.props.counters.length > 3
         });
 
         let counterDivs = this.props.counters.map((counter, key) => {

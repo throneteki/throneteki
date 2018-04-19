@@ -11,7 +11,7 @@ let gameService = new GameService(db);
 
 let args = process.argv.slice(2);
 
-if(_.size(args) < 2) {
+if(args.length < 2) {
     console.error('Must provide start and end date');
 
     db.close();
@@ -23,14 +23,14 @@ console.info('Running stats between', args[0], 'and', args[1]);
 gameService.getAllGames(args[0], args[1]).then(games => {
     let rejected = { singlePlayer: 0, noWinner: 0 };
 
-    console.info('' + _.size(games), 'total games');
+    console.info('' + games.length, 'total games');
 
     let players = {};
     let factions = {};
     let factionAgendas = {};
 
     _.each(games, game => {
-        if(_.size(game.playersByName) !== 2) {
+        if(game.playersByName.length !== 2) {
             rejected.singlePlayer++;
 
             return;

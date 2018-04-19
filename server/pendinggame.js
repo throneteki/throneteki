@@ -129,7 +129,7 @@ class PendingGame {
     }
 
     join(id, user, password, callback) {
-        if(_.size(this.playersByName) === 2 || this.started) {
+        if(this.playersByName.length === 2 || this.started) {
             return;
         }
 

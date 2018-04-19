@@ -1,5 +1,4 @@
 const Lobby = require('../../../server/lobby.js');
-const _ = require('underscore');
 
 describe('lobby', function() {
     beforeEach(function() {
@@ -28,7 +27,7 @@ describe('lobby', function() {
             });
 
             it('should create a new game with the player in it', function() {
-                expect(_.size(this.lobby.gamesById)).toBe(1);
+                expect(Object.values(this.lobby.gamesById).length).toBe(1);
                 var gamesArray = Object.values(this.lobby.gamesById);
                 var player = gamesArray[0].playersByName['test'];
 
@@ -43,7 +42,7 @@ describe('lobby', function() {
             });
 
             it('should only create 1 game', function() {
-                expect(_.size(this.lobby.gamesById)).toBe(1);
+                expect(Object.values(this.lobby.gamesById).length).toBe(1);
             });
         });
     });

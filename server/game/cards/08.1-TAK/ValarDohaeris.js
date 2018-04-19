@@ -66,11 +66,11 @@ class ValarDohaeris extends PlotCard {
         _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
             let cardsOwnedByPlayer = this.toMove.filter(card => card.owner === player);
 
-            if(_.size(cardsOwnedByPlayer) >= 2) {
+            if(cardsOwnedByPlayer.length >= 2) {
                 this.game.promptForSelect(player, {
                     ordered: true,
                     mode: 'exactly',
-                    numCards: _.size(cardsOwnedByPlayer),
+                    numCards: cardsOwnedByPlayer.length,
                     activePromptTitle: 'Select bottom deck order (last chosen ends up on bottom)',
                     cardCondition: card => cardsOwnedByPlayer.includes(card),
                     onSelect: (player, selectedCards) => {

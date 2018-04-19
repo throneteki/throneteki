@@ -35,11 +35,11 @@ class TheFrozenShore extends DrawCard {
     }
 
     getNumOfAttackingWildlings(challenge) {
-        return _.size(challenge.attackers.filter(card => card.hasTrait('Wildling')));
+        return challenge.attackers.filter(card => card.hasTrait('Wildling')).length;
     }
 
     getNumOfWinterPlots() {
-        return _.size(this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Winter')));
+        return this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Winter')).length;
     }
 }
 

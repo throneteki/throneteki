@@ -305,7 +305,7 @@ class BaseCard {
         let normalizedFaction = faction.toLowerCase();
 
         if(normalizedFaction === 'neutral') {
-            return !!this.factions[normalizedFaction] && _.size(this.factions) === 1;
+            return !!this.factions[normalizedFaction] && Object.values(this.factions).length === 1;
         }
 
         return !!this.factions[normalizedFaction];

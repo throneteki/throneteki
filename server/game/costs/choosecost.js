@@ -11,7 +11,7 @@ class ChooseCost {
 
     resolve(context, result = { resolved: false }) {
         let payableCosts = _.pick(this.choices, cost => cost.canPay(context));
-        let payableCostsSize = _.size(payableCosts);
+        let payableCostsSize = payableCosts.length;
 
         if(payableCostsSize === 0) {
             result.value = false;

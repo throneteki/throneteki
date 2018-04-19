@@ -91,7 +91,7 @@ class KeywordWindow extends BaseStep {
                 }
             });
         } else {
-            if(keyword === 'pillage' && _.size(participantsWithKeyword) > 1) {
+            if(keyword === 'pillage' && participantsWithKeyword.length > 1) {
                 this.promptForPillageOrder(ability, participantsWithKeyword);
             } else {
                 this.resolveAbility(ability, participantsWithKeyword);
@@ -118,7 +118,7 @@ class KeywordWindow extends BaseStep {
         this.game.promptForSelect(this.challenge.winner, {
             ordered: true,
             mode: 'exactly',
-            numCards: _.size(participants),
+            numCards: participants.length,
             activePromptTitle: 'Select order for pillage',
             cardCondition: card => cards.includes(card),
             onSelect: (player, selectedCards) => {

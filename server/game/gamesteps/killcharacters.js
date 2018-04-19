@@ -64,7 +64,7 @@ class KillCharacters extends BaseStep {
     promptPlayerForDeadPileOrder(player) {
         let cardsOwnedByPlayer = this.event.cards.filter(card => card.owner === player && card.location === 'play area');
 
-        if(_.size(cardsOwnedByPlayer) <= 1) {
+        if(cardsOwnedByPlayer.length <= 1) {
             this.moveCardsToDeadPile(cardsOwnedByPlayer);
             return;
         }
@@ -72,7 +72,7 @@ class KillCharacters extends BaseStep {
         this.game.promptForSelect(player, {
             ordered: true,
             mode: 'exactly',
-            numCards: _.size(cardsOwnedByPlayer),
+            numCards: cardsOwnedByPlayer.length,
             activePromptTitle: 'Select order to place cards in dead pile (top first)',
             cardCondition: card => cardsOwnedByPlayer.includes(card),
             onSelect: (player, selectedCards) => {
