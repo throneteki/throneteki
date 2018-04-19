@@ -41,9 +41,7 @@ class Game extends EventEmitter {
 
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
-        this.playersAndSpectators = {};
-        this.playerPlots = {};
-        this.playerCards = {};
+        this.playersAndSpectatorsByName = {};
         this.gameChat = new GameChat();
         this.chatCommands = new ChatCommands(this);
         this.pipeline = new GamePipeline();
@@ -72,11 +70,11 @@ class Game extends EventEmitter {
         this.skipPhase = {};
 
         _.each(details.players, player => {
-            this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
+            this.playersAndSpectatorsByName[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
         });
 
         _.each(details.spectators, spectator => {
-            this.playersAndSpectators[spectator.user.username] = new Spectator(spectator.id, spectator.user);
+            this.playersAndSpectatorsByName[spectator.user.username] = new Spectator(spectator.id, spectator.user);
         });
 
         this.setMaxListeners(0);
@@ -107,11 +105,11 @@ class Game extends EventEmitter {
     }
 
     hasActivePlayer(playerName) {
-        return this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
+        return this.playersAndSpectatorsByName[playerName] && !this.playersAndSpectatorsByName[playerName].left;
     }
 
     getPlayers() {
-        return Object.values(this.playersAndSpectators).filter(player => !this.isSpectator(player));
+        return Object.values(this.playersAndSpectatorsByName).filter(player => !this.isSpectator(player));
     }
 
     getNumberOfPlayers() {
@@ -119,7 +117,7 @@ class Game extends EventEmitter {
     }
 
     getPlayerByName(playerName) {
-        let player = this.playersAndSpectators[playerName];
+        let player = this.playersAndSpectatorsByName[playerName];
 
         if(!player || this.isSpectator(player)) {
             return;
@@ -146,11 +144,11 @@ class Game extends EventEmitter {
     }
 
     getPlayersAndSpectators() {
-        return this.playersAndSpectators;
+        return this.playersAndSpectatorsByName;
     }
 
     getSpectators() {
-        return _.pick(this.playersAndSpectators, player => this.isSpectator(player));
+        return _.pick(this.playersAndSpectatorsByName, player => this.isSpectator(player));
     }
 
     getFirstPlayer() {
@@ -567,7 +565,7 @@ class Game extends EventEmitter {
     }
 
     chat(playerName, message) {
-        var player = this.playersAndSpectators[playerName];
+        var player = this.playersAndSpectatorsByName[playerName];
         var args = message.split(' ');
 
         if(!player) {
@@ -694,13 +692,13 @@ class Game extends EventEmitter {
     initialise() {
         var players = {};
 
-        _.each(this.playersAndSpectators, player => {
+        _.each(this.playersAndSpectatorsByName, player => {
             if(!player.left) {
                 players[player.name] = player;
             }
         });
 
-        this.playersAndSpectators = players;
+        this.playersAndSpectatorsByName = players;
 
         _.each(this.getPlayers(), player => {
             player.initialise();
@@ -937,7 +935,7 @@ class Game extends EventEmitter {
             return false;
         }
 
-        this.playersAndSpectators[user.username] = new Spectator(socketId, user);
+        this.playersAndSpectatorsByName[user.username] = new Spectator(socketId, user);
         this.addAlert('info', '{0} has joined the game as a spectator', user.username);
 
         return true;
@@ -948,17 +946,17 @@ class Game extends EventEmitter {
             return false;
         }
 
-        this.playersAndSpectators[user.username] = new Player(socketId, user, this.owner === user.username, this);
+        this.playersAndSpectatorsByName[user.username] = new Player(socketId, user, this.owner === user.username, this);
 
         return true;
     }
 
     isEmpty() {
-        return _.all(this.playersAndSpectators, player => player.disconnected || player.left || player.id === 'TBA');
+        return _.all(this.playersAndSpectatorsByName, player => player.disconnected || player.left || player.id === 'TBA');
     }
 
     leave(playerName) {
-        var player = this.playersAndSpectators[playerName];
+        var player = this.playersAndSpectatorsByName[playerName];
 
         if(!player) {
             return;
@@ -967,7 +965,7 @@ class Game extends EventEmitter {
         this.addAlert('info', '{0} has left the game', player);
 
         if(this.isSpectator(player) || !this.started) {
-            delete this.playersAndSpectators[playerName];
+            delete this.playersAndSpectatorsByName[playerName];
         } else {
             player.left = true;
 
@@ -978,7 +976,7 @@ class Game extends EventEmitter {
     }
 
     disconnect(playerName) {
-        var player = this.playersAndSpectators[playerName];
+        var player = this.playersAndSpectatorsByName[playerName];
 
         if(!player) {
             return;
@@ -987,7 +985,7 @@ class Game extends EventEmitter {
         this.addAlert('warning', '{0} has disconnected', player);
 
         if(this.isSpectator(player)) {
-            delete this.playersAndSpectators[playerName];
+            delete this.playersAndSpectatorsByName[playerName];
         } else {
             player.disconnected = true;
         }
@@ -996,14 +994,14 @@ class Game extends EventEmitter {
     }
 
     failedConnect(playerName) {
-        var player = this.playersAndSpectators[playerName];
+        var player = this.playersAndSpectatorsByName[playerName];
 
         if(!player) {
             return;
         }
 
         if(this.isSpectator(player) || !this.started) {
-            delete this.playersAndSpectators[playerName];
+            delete this.playersAndSpectatorsByName[playerName];
         } else {
             this.addAlert('danger', '{0} has failed to connect to the game', player);
 
@@ -1062,7 +1060,7 @@ class Game extends EventEmitter {
     }
 
     getState(activePlayerName) {
-        let activePlayer = this.playersAndSpectators[activePlayerName] || new AnonymousSpectator();
+        let activePlayer = this.playersAndSpectatorsByName[activePlayerName] || new AnonymousSpectator();
         let playerState = {};
 
         if(this.started) {

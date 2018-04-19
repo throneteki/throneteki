@@ -47,7 +47,7 @@ describe('the DrawCard', function() {
             this.player = new Player(1, { username: 'foo', settings: {} }, false, this.game);
             this.player.noTimer = true;
 
-            this.game.playersAndSpectators['foo'] = this.player;
+            this.game.playersAndSpectatorsByName['foo'] = this.player;
             this.game.initialise();
 
             this.game.currentPhase = 'marshal';

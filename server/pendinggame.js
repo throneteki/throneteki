@@ -8,7 +8,7 @@ const GameChat = require('./game/gamechat.js');
 class PendingGame {
     constructor(owner, details) {
         this.owner = owner;
-        this.players = {};
+        this.playersByName = {};
         this.spectators = {};
         this.id = uuid.v1();
         this.name = details.name;
@@ -22,11 +22,11 @@ class PendingGame {
 
     // Getters
     getPlayersAndSpectators() {
-        return Object.assign({}, this.players, this.spectators);
+        return Object.assign({}, this.playersByName, this.spectators);
     }
 
     getPlayers() {
-        return this.players;
+        return this.playersByName;
     }
 
     getPlayerOrSpectator(playerName) {
@@ -34,7 +34,7 @@ class PendingGame {
     }
 
     getPlayerByName(playerName) {
-        return this.players[playerName];
+        return this.playersByName[playerName];
     }
 
     getSaveState() {
@@ -83,7 +83,7 @@ class PendingGame {
             return;
         }
 
-        this.players[user.username] = {
+        this.playersByName[user.username] = {
             id: id,
             name: user.username,
             user: user,
@@ -129,7 +129,7 @@ class PendingGame {
     }
 
     join(id, user, password, callback) {
-        if(_.size(this.players) === 2 || this.started) {
+        if(_.size(this.playersByName) === 2 || this.started) {
             return;
         }
 
@@ -203,11 +203,11 @@ class PendingGame {
             this.addMessage('{0} has left the game', playerName);
         }
 
-        if(this.players[playerName]) {
+        if(this.playersByName[playerName]) {
             if(this.started) {
-                this.players[playerName].left = true;
+                this.playersByName[playerName].left = true;
             } else {
-                delete this.players[playerName];
+                delete this.playersByName[playerName];
             }
         }
 
@@ -226,9 +226,9 @@ class PendingGame {
             this.addMessage('{0} has disconnected', playerName);
         }
 
-        if(this.players[playerName]) {
+        if(this.playersByName[playerName]) {
             if(!this.started) {
-                delete this.players[playerName];
+                delete this.playersByName[playerName];
             }
         } else {
             delete this.spectators[playerName];
@@ -267,7 +267,7 @@ class PendingGame {
     }
 
     isOwner(playerName) {
-        var player = this.players[playerName];
+        var player = this.playersByName[playerName];
 
         if(!player || !player.owner) {
             return false;
@@ -277,13 +277,13 @@ class PendingGame {
     }
 
     hasActivePlayer(playerName) {
-        return this.players[playerName] && !this.players[playerName].left && !this.players[playerName].disconnected || this.spectators[playerName];
+        return this.playersByName[playerName] && !this.playersByName[playerName].left && !this.playersByName[playerName].disconnected || this.spectators[playerName];
     }
 
     // Summary
     getSummary(activePlayer) {
         var playerSummaries = {};
-        var playersInGame = Object.values(this.players).filter(player => !player.left);
+        var playersInGame = Object.values(this.playersByName).filter(player => !player.left);
 
         _.each(playersInGame, player => {
             var deck = undefined;

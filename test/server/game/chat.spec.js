@@ -9,7 +9,7 @@ describe('Game', function() {
         this.player = jasmine.createSpyObj('player', ['']);
         this.player.name = 'Player 1';
 
-        this.game.playersAndSpectators[this.player.name] = this.player;
+        this.game.playersAndSpectatorsByName[this.player.name] = this.player;
 
         this.chatCommands = this.game.chatCommands;
         this.gameChat = this.game.gameChat;

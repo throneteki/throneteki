@@ -13,8 +13,8 @@ describe('Game', function() {
             });
 
             it('should add the player', function() {
-                expect(this.game.playersAndSpectators['foo']).toBeDefined();
-                expect(this.game.playersAndSpectators['foo'].id).toBe('1');
+                expect(this.game.playersAndSpectatorsByName['foo']).toBeDefined();
+                expect(this.game.playersAndSpectatorsByName['foo'].id).toBe('1');
             });
 
             it('should return true', function() {
@@ -29,7 +29,7 @@ describe('Game', function() {
             });
 
             it('should not add the player', function() {
-                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectatorsByName['foo']).toBeUndefined();
             });
 
             it('should return false', function() {
@@ -45,7 +45,7 @@ describe('Game', function() {
             });
 
             it('should not add the player', function() {
-                expect(this.game.playersAndSpectators['baz']).toBeUndefined();
+                expect(this.game.playersAndSpectatorsByName['baz']).toBeUndefined();
             });
 
             it('should return false', function() {
@@ -62,9 +62,9 @@ describe('Game', function() {
             });
 
             it('should add the spectator', function() {
-                expect(this.game.playersAndSpectators['foo']).toBeDefined();
-                expect(this.game.playersAndSpectators['foo'].id).toBe('1');
-                expect(this.game.playersAndSpectators['foo'].constructor.name).toBe('Spectator');
+                expect(this.game.playersAndSpectatorsByName['foo']).toBeDefined();
+                expect(this.game.playersAndSpectatorsByName['foo'].id).toBe('1');
+                expect(this.game.playersAndSpectatorsByName['foo'].constructor.name).toBe('Spectator');
             });
 
             it('should return true', function() {
@@ -79,7 +79,7 @@ describe('Game', function() {
             });
 
             it('should not add the spectator', function() {
-                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectatorsByName['foo']).toBeUndefined();
             });
 
             it('should return false', function() {
@@ -103,7 +103,7 @@ describe('Game', function() {
             describe('when the game has not started', function() {
                 it('should delete the player', function() {
                     this.game.leave('foo');
-                    expect(this.game.playersAndSpectators['foo']).toBeUndefined();
+                    expect(this.game.playersAndSpectatorsByName['foo']).toBeUndefined();
                 });
             });
 
@@ -120,7 +120,7 @@ describe('Game', function() {
 
                     it('should mark the player as left', function() {
                         this.game.leave('foo');
-                        expect(this.game.playersAndSpectators['foo'].left).toBe(true);
+                        expect(this.game.playersAndSpectatorsByName['foo'].left).toBe(true);
                     });
 
                     it('should set the finishedAt property', function() {
@@ -137,7 +137,7 @@ describe('Game', function() {
             });
 
             it('should delete the spectator', function() {
-                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectatorsByName['foo']).toBeUndefined();
             });
 
             it('should not notify the router', function() {
@@ -160,7 +160,7 @@ describe('Game', function() {
 
             it('should mark the player as disconnected', function() {
                 this.game.disconnect('foo');
-                expect(this.game.playersAndSpectators['foo'].disconnected).toBe(true);
+                expect(this.game.playersAndSpectatorsByName['foo'].disconnected).toBe(true);
             });
         });
 
@@ -171,7 +171,7 @@ describe('Game', function() {
             });
 
             it('should delete the spectator', function() {
-                expect(this.game.playersAndSpectators['foo']).toBeUndefined();
+                expect(this.game.playersAndSpectatorsByName['foo']).toBeUndefined();
             });
         });
     });
@@ -188,11 +188,11 @@ describe('Game', function() {
         });
 
         it('should set the new socket ID on the player', function() {
-            expect(this.game.playersAndSpectators['foo'].socket.id).toBe('2');
+            expect(this.game.playersAndSpectatorsByName['foo'].socket.id).toBe('2');
         });
 
         it('should mark the player as no longer disconnected', function() {
-            expect(this.game.playersAndSpectators['foo'].disconnected).toBe(false);
+            expect(this.game.playersAndSpectatorsByName['foo'].disconnected).toBe(false);
         });
     });
 

@@ -8,7 +8,7 @@ const PathToSubModulePacks = path.join(__dirname, '../../throneteki-json-data/pa
 
 class DeckBuilder {
     constructor() {
-        this.cards = this.loadCards(PathToSubModulePacks);
+        this.cardsByCode = this.loadCards(PathToSubModulePacks);
     }
 
     loadCards(directory) {
@@ -29,13 +29,13 @@ class DeckBuilder {
     }
 
     buildDeck(faction, cardLabels) {
-        var cardCounts = {};
+        var cardCountsByCode = {};
         _.each(cardLabels, label => {
             var cardData = this.getCard(label);
-            if(cardCounts[cardData.code]) {
-                cardCounts[cardData.code].count++;
+            if(cardCountsByCode[cardData.code]) {
+                cardCountsByCode[cardData.code].count++;
             } else {
-                cardCounts[cardData.code] = {
+                cardCountsByCode[cardData.code] = {
                     count: 1,
                     card: cardData
                 };
@@ -43,12 +43,12 @@ class DeckBuilder {
         });
 
         var agenda;
-        var agendaCount = _.find(cardCounts, cardCount => cardCount.card.type === 'agenda');
+        var agendaCount = _.find(cardCountsByCode, cardCount => cardCount.card.type === 'agenda');
         if(agendaCount) {
             agenda = agendaCount.card;
         }
 
-        const cardCountValues = Object.values(cardCounts);
+        const cardCountValues = Object.values(cardCountsByCode);
 
         return {
             faction: { value: faction },
@@ -59,11 +59,11 @@ class DeckBuilder {
     }
 
     getCard(codeOrLabelOrName) {
-        if(this.cards[codeOrLabelOrName]) {
-            return this.cards[codeOrLabelOrName];
+        if(this.cardsByCode[codeOrLabelOrName]) {
+            return this.cardsByCode[codeOrLabelOrName];
         }
 
-        var cardsByName = Object.values(this.cards).filter(matchCardByNameAndPack(codeOrLabelOrName));
+        var cardsByName = Object.values(this.cardsByCode).filter(matchCardByNameAndPack(codeOrLabelOrName));
 
         if(cardsByName.length === 0) {
             throw new Error(`Unable to find any card matching ${codeOrLabelOrName}`);

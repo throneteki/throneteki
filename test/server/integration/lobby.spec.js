@@ -18,7 +18,7 @@ describe('lobby', function() {
         this.cardService.getAllCards.and.returnValue(Promise.resolve([]));
 
         this.lobby = new Lobby({}, { io: this.ioSpy, messageService: {}, cardService: this.cardService, deckService: {}, userService: {}, router: this.routerSpy, config: {} });
-        this.lobby.sockets[this.socketSpy.id] = this.socketSpy;
+        this.lobby.socketsById[this.socketSpy.id] = this.socketSpy;
     });
 
     describe('onNewGame', function() {
@@ -28,9 +28,9 @@ describe('lobby', function() {
             });
 
             it('should create a new game with the player in it', function() {
-                expect(_.size(this.lobby.games)).toBe(1);
-                var gamesArray = _.toArray(this.lobby.games);
-                var player = gamesArray[0].players['test'];
+                expect(_.size(this.lobby.gamesById)).toBe(1);
+                var gamesArray = _.toArray(this.lobby.gamesById);
+                var player = gamesArray[0].playersByName['test'];
 
                 expect(player.name).toBe('test');
             });
@@ -43,7 +43,7 @@ describe('lobby', function() {
             });
 
             it('should only create 1 game', function() {
-                expect(_.size(this.lobby.games)).toBe(1);
+                expect(_.size(this.lobby.gamesById)).toBe(1);
             });
         });
     });

@@ -10,8 +10,8 @@ describe('Player', () => {
             spyOn(this.player, 'discardCard');
             spyOn(this.player, 'putIntoPlay');
 
-            this.gameSpy.playersAndSpectators = [];
-            this.gameSpy.playersAndSpectators[this.player.name] = this.player;
+            this.gameSpy.playersAndSpectatorsByName = [];
+            this.gameSpy.playersAndSpectatorsByName[this.player.name] = this.player;
 
             this.cardSpy = jasmine.createSpyObj('card', ['getType', 'leavesPlay', 'moveTo']);
             this.cardSpy.controller = this.cardSpy.owner = this.player;

@@ -14,8 +14,8 @@ describe('the DominancePhase', () => {
         player1 = new Player('1', { username: 'Player 1', settings: {} }, true, game);
         player2 = new Player('2', { username: 'Player 2', settings: {} }, false, game);
         player2.firstPlayer = true;
-        game.playersAndSpectators['Player 1'] = player1;
-        game.playersAndSpectators['Player 2'] = player2;
+        game.playersAndSpectatorsByName['Player 1'] = player1;
+        game.playersAndSpectatorsByName['Player 2'] = player2;
         phase = new DominancePhase(game);
         spyOn(game, 'addPower');
         spyOn(player1, 'getDominance');
