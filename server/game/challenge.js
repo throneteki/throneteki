@@ -159,7 +159,7 @@ class Challenge {
     }
 
     getStealthAttackers() {
-        return _.filter(this.attackers, card => card.needsStealthTarget());
+        return this.attackers.filter(card => card.needsStealthTarget());
     }
 
     determineWinner() {

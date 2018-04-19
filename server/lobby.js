@@ -176,7 +176,7 @@ class Lobby {
             return this.games;
         }
 
-        return _.filter(this.games, game => {
+        return Object.values(this.games).filter(game => {
             let userBlockedByOwner = game.isUserBlocked(user);
             let userHasBlockedPlayer = _.any(game.players, player => _.contains(user.blockList, player.name.toLowerCase()));
             return !userBlockedByOwner && !userHasBlockedPlayer;
@@ -256,7 +256,7 @@ class Lobby {
 
     clearStalePendingGames() {
         const timeout = 15 * 60 * 1000;
-        let staleGames = _.filter(this.games, game => !game.started && Date.now() - game.createdAt > timeout);
+        let staleGames = Object.values(this.games).filter(game => !game.started && Date.now() - game.createdAt > timeout);
         for(let game of staleGames) {
             logger.info('closed pending game', game.id, 'due to inactivity');
             delete this.games[game.id];

@@ -15,7 +15,7 @@ class ChooseOpponentPrompt extends BaseStep {
     }
 
     continue() {
-        let otherPlayers = _.filter(this.game.getPlayers(), player => player !== this.player && this.condition(player));
+        let otherPlayers = this.game.getPlayers().filter(player => player !== this.player && this.condition(player));
 
         if(otherPlayers.length === 0) {
             this.onCancel();

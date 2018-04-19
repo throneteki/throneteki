@@ -25,7 +25,7 @@ class FirstPlayerPrompt extends UIPrompt {
     getFirstPlayerChoices() {
         let opponents = _.reject(this.game.getPlayers(), player => player === this.player);
         let firstPlayerChoices = [this.player].concat(opponents);
-        return _.filter(firstPlayerChoices, player => this.player.canSelectAsFirstPlayer(player));
+        return firstPlayerChoices.filter(player => this.player.canSelectAsFirstPlayer(player));
     }
 
     onMenuCommand(player, playerName) {

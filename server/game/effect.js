@@ -191,7 +191,7 @@ class Effect {
             }
 
             if(newCondition) {
-                let invalidTargets = _.filter(this.targets, target => !this.isValidTarget(target));
+                let invalidTargets = this.targets.filter(target => !this.isValidTarget(target));
                 _.each(invalidTargets, target => {
                     this.removeTarget(target);
                 });

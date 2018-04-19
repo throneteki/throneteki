@@ -11,10 +11,10 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 
     continue() {
-        this.forcedClaim = _.filter(this.player.mustChooseAsClaim, card => card.controller === this.player && card.location === 'play area');
-        
+        this.forcedClaim = this.player.mustChooseAsClaim.filter(card => card.controller === this.player && card.location === 'play area');
+
         let claimToSelect = this.claim;
-        
+
         if(this.forcedClaim.length >= 1 && this.forcedClaim.length < this.claim) {
             claimToSelect = this.claim - this.forcedClaim.length;
             this.game.addMessage('{0} {1} automatically chosen for claim',

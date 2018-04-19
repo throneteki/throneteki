@@ -153,7 +153,7 @@ class InnerCard extends React.Component {
             return null;
         }
 
-        var facedownDupes = _.filter(this.props.card.dupes, card => {
+        var facedownDupes = this.props.card.dupes.filter(card => {
             return card.facedown;
         });
 

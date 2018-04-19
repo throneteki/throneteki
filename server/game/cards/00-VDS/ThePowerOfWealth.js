@@ -26,7 +26,7 @@ class ThePowerOfWealth extends AgendaCard {
             }
         }
 
-        let factionToAnnounce = _.filter(factionsInDecks, faction => faction !== this.controller.getFaction() && faction !== 'neutral');
+        let factionToAnnounce = factionsInDecks.filter(faction => faction !== this.controller.getFaction() && faction !== 'neutral');
         let message = '{0} names {1} as their {2} for {3}';
 
         if(factionToAnnounce.length > 1) {

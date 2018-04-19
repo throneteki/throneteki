@@ -12,8 +12,8 @@ class QuaitheOfTheShadow extends DrawCard {
                 )
             },
             handler: () => {
-                let attackers = _.filter(this.game.currentChallenge.attackers, card => card.getStrength() <= 2);
-                let defenders = _.filter(this.game.currentChallenge.defenders, card => card.getStrength() <= 2);
+                let attackers = this.game.currentChallenge.attackers.filter(card => card.getStrength() <= 2);
+                let defenders = this.game.currentChallenge.defenders.filter(card => card.getStrength() <= 2);
                 let participants = attackers.concat(defenders);
                 _.each(participants, card => {
                     this.game.currentChallenge.removeFromChallenge(card);

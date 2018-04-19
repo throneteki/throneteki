@@ -283,7 +283,7 @@ class PendingGame {
     // Summary
     getSummary(activePlayer) {
         var playerSummaries = {};
-        var playersInGame = _.filter(this.players, player => !player.left);
+        var playersInGame = Object.values(this.players).filter(player => !player.left);
 
         _.each(playersInGame, player => {
             var deck = undefined;

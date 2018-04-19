@@ -64,7 +64,7 @@ class ValarDohaeris extends PlotCard {
         });
 
         _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-            let cardsOwnedByPlayer = _.filter(this.toMove, card => card.owner === player);
+            let cardsOwnedByPlayer = this.toMove.filter(card => card.owner === player);
 
             if(_.size(cardsOwnedByPlayer) >= 2) {
                 this.game.promptForSelect(player, {
@@ -89,7 +89,7 @@ class ValarDohaeris extends PlotCard {
 
     moveCardsToBottom() {
         _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-            let cardsOwnedByPlayer = _.filter(this.toMove, card => card.owner === player);
+            let cardsOwnedByPlayer = this.toMove.filter(card => card.owner === player);
 
             if(!_.isEmpty(cardsOwnedByPlayer)) {
                 _.each(cardsOwnedByPlayer, card => {

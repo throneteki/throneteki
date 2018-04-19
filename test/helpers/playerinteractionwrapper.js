@@ -121,7 +121,7 @@ class PlayerInteractionWrapper {
             card = this.findCardByName(card);
         }
 
-        var items = _.filter(card.getMenu(), item => item.text === menuText);
+        var items = card.getMenu().filter(item => item.text === menuText);
 
         if(items.length === 0) {
             throw new Error(`Card ${card.name} does not have a menu item "${menuText}"`);

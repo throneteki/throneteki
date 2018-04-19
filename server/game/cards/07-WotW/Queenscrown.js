@@ -14,7 +14,7 @@ class Queenscrown extends DrawCard {
                 this.remainingCards = opponent.drawDeck.slice(0, 3);
                 this.game.addMessage('{0} kneels {1} to reveal {2} from the top of {3}\'s deck', this.controller, this, this.remainingCards, opponent);
 
-                let characters = _.filter(this.remainingCards, card => card.getType() === 'character');
+                let characters = this.remainingCards.filter(card => card.getType() === 'character');
                 if(characters.length > 0) {
                     this.promptToDiscardCharacter(characters);
                 } else {

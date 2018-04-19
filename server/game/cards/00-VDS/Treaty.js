@@ -42,7 +42,7 @@ class Treaty extends AgendaCard {
             }
         }
 
-        let factionsToAnnounce = _.filter(factionsInDecks, faction => faction !== this.controller.getFaction() && faction !== 'neutral');
+        let factionsToAnnounce = factionsInDecks.filter(faction => faction !== this.controller.getFaction() && faction !== 'neutral');
         let message = '{0} names {1} as their {2} for {3}';
 
         if(factionsToAnnounce.length > 2) {

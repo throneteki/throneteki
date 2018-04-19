@@ -54,9 +54,9 @@ class SummonedToCourt extends PlotCard {
     }
 
     getLowestCostChoices() {
-        let characterChoices = _.filter(this.playerChoices, choice => choice.card.getType() === 'character');
+        let characterChoices = this.playerChoices.filter(choice => choice.card.getType() === 'character');
         let minCost = _.min(_.pluck(characterChoices, 'cost'));
-        return _.filter(characterChoices, choice => choice.cost === minCost);
+        return characterChoices.filter(choice => choice.cost === minCost);
     }
 
     promptNextPlayerToPutIntoPlay() {

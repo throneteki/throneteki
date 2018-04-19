@@ -294,7 +294,7 @@ class BaseCard {
     }
 
     getPrintedKeywords() {
-        return _.filter(ValidKeywords, keyword => this.hasPrintedKeyword(keyword));
+        return ValidKeywords.filter(keyword => this.hasPrintedKeyword(keyword));
     }
 
     hasTrait(trait) {
@@ -316,7 +316,7 @@ class BaseCard {
     }
 
     getFactions() {
-        let factions = _.filter(ValidFactions, faction => this.isFaction(faction));
+        let factions = ValidFactions.filter(faction => this.isFaction(faction));
 
         if(_.isEmpty(factions)) {
             factions.push('neutral');

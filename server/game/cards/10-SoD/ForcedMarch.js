@@ -74,7 +74,7 @@ class ForcedMarch extends PlotCard {
     }
 
     filterForOpponents() {
-        return _.filter(this.game.getPlayers(), player => player !== this.controller &&
+        return this.game.getPlayers().filter(player => player !== this.controller &&
                                                           this.hasStandingMilIcon(player));
 
     }

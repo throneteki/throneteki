@@ -70,13 +70,13 @@ class RevealPlots extends BaseStep {
             return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower() };
         });
         let highestInitiative = _.max(_.pluck(playerInitiatives, 'initiative'));
-        let potentialWinners = _.filter(playerInitiatives, p => p.initiative === highestInitiative);
+        let potentialWinners = playerInitiatives.filter(p => p.initiative === highestInitiative);
 
         result.initiativeTied = potentialWinners.length > 1;
 
         if(result.initiativeTied) {
             let lowestPower = _.min(_.pluck(potentialWinners, 'power'));
-            potentialWinners = _.filter(potentialWinners, p => p.power === lowestPower);
+            potentialWinners = potentialWinners.filter(p => p.power === lowestPower);
         }
 
         result.powerTied = potentialWinners.length > 1;

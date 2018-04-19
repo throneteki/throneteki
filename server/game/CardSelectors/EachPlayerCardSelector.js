@@ -12,7 +12,7 @@ class EachPlayerCardSelector extends BaseCardSelector {
     }
 
     isPlayerSatisfied(card, selectedCards) {
-        let count = _.filter(selectedCards, selectedCard => selectedCard.controller === card.controller).length;
+        let count = selectedCards ? selectedCards.filter(selectedCard => selectedCard.controller === card.controller).length : 0;
         return count >= this.numCardsPerPlayer;
     }
 
@@ -27,8 +27,8 @@ class EachPlayerCardSelector extends BaseCardSelector {
 
     hasEnoughTargets(context) {
         return _.every(context.game.getPlayers(), player => {
-            let playerCards = context.game.allCards.filter(card => card.controller === player);
-            let matchingCards = _.filter(playerCards, card => super.canTarget(card, context));
+            let playerCards = Object.values(context.game.allCards).filter(card => card.controller === player);
+            let matchingCards = playerCards.filter(card => super.canTarget(card, context));
             return matchingCards.length >= this.numCardsPerPlayer;
         });
     }

@@ -48,11 +48,13 @@ class DeckBuilder {
             agenda = agendaCount.card;
         }
 
+        const cardCountValues = Object.values(cardCounts);
+
         return {
             faction: { value: faction },
             agenda: agenda,
-            drawCards: _.filter(cardCounts, cardCount => ['character', 'location', 'attachment', 'event'].includes(cardCount.card.type)),
-            plotCards: _.filter(cardCounts, cardCount => cardCount.card.type === 'plot')
+            drawCards: cardCountValues.filter(cardCount => ['character', 'location', 'attachment', 'event'].includes(cardCount.card.type)),
+            plotCards: cardCountValues.filter(cardCount => cardCount.card.type === 'plot')
         };
     }
 
@@ -61,7 +63,7 @@ class DeckBuilder {
             return this.cards[codeOrLabelOrName];
         }
 
-        var cardsByName = _.filter(this.cards, matchCardByNameAndPack(codeOrLabelOrName));
+        var cardsByName = Object.values(this.cards).filter(matchCardByNameAndPack(codeOrLabelOrName));
 
         if(cardsByName.length === 0) {
             throw new Error(`Unable to find any card matching ${codeOrLabelOrName}`);

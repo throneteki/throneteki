@@ -102,7 +102,7 @@ class KeywordWindow extends BaseStep {
     }
 
     getParticipantsForKeyword(keyword, ability) {
-        let participants = _.filter(this.winnerCardsWithContext, participant => {
+        let participants = this.winnerCardsWithContext.filter(participant => {
             return participant.card.hasKeyword(keyword) && ability.meetsRequirements(participant.context);
         });
 

@@ -22,7 +22,7 @@ class StandingPhase extends Phase {
         let kneelingCards = this.game.allCards.filter(card => card.location === 'play area' && card.kneeled && card.controller === player && card.allowGameAction('stand'));
         let restrictedSubset = [];
         _.each(player.standPhaseRestrictions, restriction => {
-            let restrictedCards = _.filter(kneelingCards, card => restriction.match(card));
+            let restrictedCards = kneelingCards.filter(card => restriction.match(card));
             kneelingCards = _.difference(kneelingCards, restrictedCards);
             restrictedSubset.push({ max: restriction.max, cards: restrictedCards });
         });
@@ -70,13 +70,13 @@ class StandingPhase extends Phase {
     }
 
     selectOptionalCards(cardsToStand, player) {
-        let optionalStandCards = _.filter(cardsToStand.automatic, card => card.optionalStandDuringStanding);
+        let optionalStandCards = cardsToStand.automatic.filter(card => card.optionalStandDuringStanding);
 
         if(optionalStandCards.length === 0) {
             return;
         }
 
-        cardsToStand.automatic = _.filter(cardsToStand.automatic, card => !card.optionalStandDuringStanding);
+        cardsToStand.automatic = cardsToStand.automatic.filter(card => !card.optionalStandDuringStanding);
 
         this.game.promptForSelect(player, {
             mode: 'unlimited',

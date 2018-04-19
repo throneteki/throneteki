@@ -452,7 +452,7 @@ class Player extends Spectator {
     }
 
     getCostReduction(playingType, card) {
-        let matchingReducers = _.filter(this.costReducers, reducer => reducer.canReduce(playingType, card));
+        let matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
         let reduction = _.reduce(matchingReducers, (memo, reducer) => reducer.getAmount(card) + memo, 0);
         return reduction;
     }
@@ -464,7 +464,7 @@ class Player extends Spectator {
     }
 
     markUsedReducers(playingType, card) {
-        var matchingReducers = _.filter(this.costReducers, reducer => reducer.canReduce(playingType, card));
+        let matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
         _.each(matchingReducers, reducer => {
             reducer.markUsed();
             if(reducer.isExpired()) {
@@ -514,7 +514,7 @@ class Player extends Spectator {
             player: this,
             source: card
         });
-        var playActions = _.filter(card.getPlayActions(), action => action.meetsRequirements(context) && action.canPayCosts(context) && action.canResolveTargets(context));
+        var playActions = card.getPlayActions().filter(action => action.meetsRequirements(context) && action.canPayCosts(context) && action.canResolveTargets(context));
 
         if(playActions.length === 0) {
             return false;

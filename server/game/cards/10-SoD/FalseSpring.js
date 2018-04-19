@@ -6,7 +6,7 @@ class FalseSpring extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                this.remainingOpponents = _.filter(this.game.getPlayers(), player => player !== this.controller);
+                this.remainingOpponents = this.game.getPlayers().filter(player => player !== this.controller);
                 this.selections = [];
                 this.proceedToNextStep();
             }

@@ -67,7 +67,7 @@ export default function(state = {}, action) {
                 }
             });
 
-            var banners = _.filter(agendas, card => {
+            var banners = Object.values(agendas).filter(card => {
                 return card.label.startsWith('Banner of the');
             });
 

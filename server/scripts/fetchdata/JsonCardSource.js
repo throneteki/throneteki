@@ -1,6 +1,5 @@
 /*eslint no-console:0 */
 const fs = require('fs');
-const _ = require('underscore');
 
 class JsonCardSource {
     constructor() {
@@ -33,7 +32,7 @@ class JsonCardSource {
 
     addLabelToCards(cards) {
         for(let card of cards) {
-            let cardsByName = _.filter(cards, filterCard => {
+            let cardsByName = cards.filter(filterCard => {
                 return filterCard.name === card.name;
             });
 
