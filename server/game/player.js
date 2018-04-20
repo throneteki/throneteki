@@ -1199,7 +1199,7 @@ class Player extends Spectator {
         }
 
         let totalReserve = Math.max(this.activePlot.getReserve(), this.minReserve);
-        if(_.isNaN(totalReserve) || _.isUndefined(totalReserve)) {
+        if(isNaN(totalReserve) || _.isUndefined(totalReserve)) {
             let payload = {
                 minReserve: this.minReserve,
                 baseReserve: this.activePlot.cardData.reserve,

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 import Slider from 'react-bootstrap-slider';
 
@@ -203,7 +202,7 @@ class Profile extends React.Component {
     onSlideStop(event) {
         let value = parseInt(event.target.value);
 
-        if(_.isNaN(value)) {
+        if(isNaN(value)) {
             return;
         }
 

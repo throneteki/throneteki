@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 import Checkbox from '../Form/Checkbox';
 import Panel from '../Site/Panel';
@@ -34,7 +33,7 @@ class GameConfiguration extends React.Component {
     onSlideStop(event) {
         let value = parseInt(event.target.value);
 
-        if(_.isNaN(value)) {
+        if(isNaN(value)) {
             return;
         }
 
