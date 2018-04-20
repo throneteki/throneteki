@@ -145,7 +145,7 @@ class Effect {
     }
 
     removeTarget(card) {
-        if(!_.contains(this.targets, card)) {
+        if(!this.targets.includes(card)) {
             return;
         }
 

@@ -89,7 +89,7 @@ class BaseCard {
         this.allowedAttachmentTrait = 'any';
 
         for(const keyword of potentialKeywords) {
-            if(_.contains(ValidKeywords, keyword)) {
+            if(ValidKeywords.includes(keyword)) {
                 this.printedKeywords.push(keyword);
             } else if(keyword.indexOf('no attachment') === 0) {
                 var match = keyword.match(/no attachments except <[bi]>(.*)<\/[bi]>/);

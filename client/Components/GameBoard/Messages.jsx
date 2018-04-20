@@ -101,7 +101,7 @@ class Messages extends React.Component {
                         </span>
                     </div>
                 );
-            } else if(_.contains(this.icons, fragment)) {
+            } else if(this.icons.includes(fragment)) {
                 return (
                     <span className={ 'icon-' + fragment } key={ index++ } />
                 );

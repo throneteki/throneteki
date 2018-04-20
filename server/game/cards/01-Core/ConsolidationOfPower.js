@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class ConsolidationOfPower extends DrawCard {
@@ -21,7 +19,7 @@ class ConsolidationOfPower extends DrawCard {
                     activePromptTitle: 'Select character to gain power',
                     source: this,
                     cardCondition: card => {
-                        return _.contains(this.cards, card);
+                        return this.cards.includes(card);
                     },
                     gameAction: 'gainPower',
                     onSelect: (player, card) => this.onPowerSelected(player, card),

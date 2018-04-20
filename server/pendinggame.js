@@ -1,5 +1,4 @@
 const uuid = require('uuid');
-const _ = require('underscore');
 const bcrypt = require('bcrypt');
 
 const logger = require('./log.js');
@@ -125,7 +124,7 @@ class PendingGame {
     }
 
     isUserBlocked(user) {
-        return _.contains(this.owner.blockList, user.username.toLowerCase());
+        return this.owner.blockList.includes(user.username.toLowerCase());
     }
 
     join(id, user, password, callback) {

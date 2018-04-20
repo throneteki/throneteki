@@ -7,7 +7,8 @@ describe('lobby', function() {
         this.routerSpy = jasmine.createSpyObj('router', ['on']);
         this.userSpy = jasmine.createSpyObj('User', ['getDetails']);
         this.userSpy.username = 'test';
-        this.userSpy.getDetails.and.returnValue({ username: 'test' });
+        this.userSpy.blockList = [];
+        this.userSpy.getDetails.and.returnValue({ username: 'test', blockList: [] });
 
         this.socketSpy.user = this.userSpy;
         this.socketSpy.id = 'socket1';

@@ -443,7 +443,7 @@ class ChatCommands {
 
         var lowerToken = token.toLowerCase();
 
-        return _.contains(this.tokens, lowerToken);
+        return this.tokens.includes(lowerToken);
     }
 }
 

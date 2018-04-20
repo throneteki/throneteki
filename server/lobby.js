@@ -178,7 +178,7 @@ class Lobby {
 
         return Object.values(this.gamesById).filter(game => {
             let userBlockedByOwner = game.isUserBlocked(user);
-            let userHasBlockedPlayer = Object.values(game.playersByName).some(player => _.contains(user.blockList, player.name.toLowerCase()));
+            let userHasBlockedPlayer = Object.values(game.playersByName).some(player => user.blockList.includes(player.name.toLowerCase()));
             return !userBlockedByOwner && !userHasBlockedPlayer;
         });
     }
@@ -197,7 +197,7 @@ class Lobby {
 
         if(socket.user) {
             filteredUsers = _.reject(userList, user => {
-                return _.contains(socket.user.blockList, user.name.toLowerCase());
+                return socket.user.blockList.includes(user.name.toLowerCase());
             });
         }
 
@@ -280,7 +280,7 @@ class Lobby {
         }
 
         return messages.filter(message => {
-            return !_.contains(socket.user.blockList, message.user.username.toLowerCase());
+            return !socket.user.blockList.includes(message.user.username.toLowerCase());
         });
     }
 
@@ -548,7 +548,7 @@ class Lobby {
         var chatMessage = { user: socket.user.getShortSummary(), message: message, time: new Date() };
 
         for(const s of this.socketsById) {
-            if(s.user && _.contains(s.user.blockList, chatMessage.user.username.toLowerCase())) {
+            if(s.user && s.user.blockList.includes(chatMessage.user.username.toLowerCase())) {
                 return;
             }
 
