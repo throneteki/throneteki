@@ -94,7 +94,7 @@ class GameServer {
 
         return {
             games: games,
-            gameCount: this.gamesById.length
+            gameCount: Object.values(this.gamesById).length
         };
     }
 
@@ -181,7 +181,7 @@ class GameServer {
     }
 
     findGameForUser(username) {
-        return this.gamesById.find(game => {
+        return Object.values(this.gamesById).find(game => {
             var player = game.playersAndSpectatorsByName[username];
 
             if(!player || player.left) {
