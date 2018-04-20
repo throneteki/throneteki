@@ -89,7 +89,7 @@ class PendingGame extends React.Component {
     selectDeck(deck) {
         $('#decks-modal').modal('hide');
 
-        this.props.socket.emit('selectdeck', this.props.currentGame.id, deck);
+        this.props.socket.emit('selectdeck', this.props.currentGame.id, deck._id);
     }
 
     getNumberOfPlayers(props) {
