@@ -46,6 +46,7 @@ npm install
 npm run build-vendor-dev
 mkdir server/logs
 node server/scripts/fetchdata.js
+node server/scripts/importstandalonedecks.js
 node .
 node server/gamenode
 ```

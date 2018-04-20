@@ -72,4 +72,14 @@ module.exports.init = function(server) {
         await deckService.delete(id);
         res.send({ success: true, message: 'Deck deleted successfully', deckId: id });
     }));
+
+    server.get('/api/standalone-decks', function(req, res, next) {
+        deckService.getStandaloneDecks()
+            .then(decks => {
+                res.send({ success: true, decks: decks });
+            })
+            .catch(err => {
+                next(err);
+            });
+    });
 };
