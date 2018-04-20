@@ -196,8 +196,8 @@ class Lobby {
         let filteredUsers = userList;
 
         if(socket.user) {
-            filteredUsers = _.reject(userList, user => {
-                return socket.user.blockList.includes(user.name.toLowerCase());
+            filteredUsers = userList.filter(user => {
+                return !socket.user.blockList.includes(user.name.toLowerCase());
             });
         }
 

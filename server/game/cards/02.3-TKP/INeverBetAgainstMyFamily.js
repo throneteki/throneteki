@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class INeverBetAgainstMyFamily extends DrawCard {
@@ -48,7 +46,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.putIntoPlay(card);
         this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, card);
         this.untilEndOfPhase(ability => ({
@@ -86,7 +84,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.moveCard(card, 'draw deck', { bottom: true });
 
         if(this.remainingCards.length > 0) {

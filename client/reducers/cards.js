@@ -225,8 +225,8 @@ export default function(state = {}, action) {
                 deckDeleted: true
             });
 
-            newState.decks = _.reject(newState.decks, deck => {
-                return deck._id === action.response.deckId;
+            newState.decks = newState.decks.filter(deck => {
+                return deck._id !== action.response.deckId;
             });
 
             newState.selectedDeck = _.first(newState.decks);

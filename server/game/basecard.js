@@ -457,7 +457,7 @@ class BaseCard {
     }
 
     removeAbilityRestriction(restriction) {
-        this.abilityRestrictions = _.reject(this.abilityRestrictions, r => r === restriction);
+        this.abilityRestrictions = this.abilityRestrictions.filter(r => r !== restriction);
         this.markAsDirty();
     }
 

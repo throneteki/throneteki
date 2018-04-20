@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const moment = require('moment');
 const monk = require('monk');
-const _ = require('underscore');
 const sendgrid = require('@sendgrid/mail');
 
 const logger = require('../log');
@@ -595,8 +594,8 @@ module.exports.init = function(server) {
             return res.status(404).send({ message: 'Not found' });
         }
 
-        user.blockList = _.reject(user.blockList, user => {
-            return user === lowerCaseUser;
+        user.blockList = user.blockList.filter(user => {
+            return user !== lowerCaseUser;
         });
 
         await userService.updateBlockList(user);

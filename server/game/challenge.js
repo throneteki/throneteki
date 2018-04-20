@@ -68,8 +68,8 @@ class Challenge {
             return;
         }
 
-        this.attackers = _.reject(this.attackers, c => c === card);
-        this.defenders = _.reject(this.defenders, c => c === card);
+        this.attackers = this.attackers.filter(c => c !== card);
+        this.defenders = this.defenders.filter(c => c !== card);
 
         card.inChallenge = false;
 

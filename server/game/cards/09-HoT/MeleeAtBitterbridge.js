@@ -33,7 +33,7 @@ class MeleeAtBitterbridge extends DrawCard {
             effect: ability.effects.addKeyword('renown')
         }));
 
-        let nonContributingCharacters = _.reject(cards, card => card.getStrength() === highestStrength);
+        let nonContributingCharacters = cards.filter(card => card.getStrength() !== highestStrength);
 
         this.untilEndOfChallenge(ability => ({
             match: card => nonContributingCharacters.includes(card),

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseStep = require('../basestep.js');
 
 class ChooseTitlePrompt extends BaseStep {
@@ -52,7 +50,7 @@ class ChooseTitlePrompt extends BaseStep {
             return false;
         }
 
-        this.remainingTitles = _.reject(this.remainingTitles, t => t === title);
+        this.remainingTitles = this.remainingTitles.filter(t => t !== title);
         this.selections.push({ player: player, title: title });
 
         return true;

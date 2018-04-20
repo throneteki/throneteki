@@ -1,6 +1,5 @@
 /*eslint no-console:0 */
 const monk = require('monk');
-const _ = require('underscore');
 
 let db = monk('mongodb://127.0.0.1:27017/throneteki');
 
@@ -21,8 +20,8 @@ const fixBanners = async () => {
                     return !card.code;
                 })) {
                     console.info('found one', deck.name);
-                    deck.bannerCards = _.reject(deck.bannerCards, card => {
-                        return !card.code;
+                    deck.bannerCards = deck.bannerCards.filter(card => {
+                        return !!card.code;
                     });
 
                     await dbDecks.update({ _id: deck._id }, {'$set': {

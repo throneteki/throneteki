@@ -54,7 +54,7 @@ class KeywordWindow extends BaseStep {
         }
 
         this.applyKeyword(keyword);
-        this.remainingKeywords = _.reject(this.remainingKeywords, k => k === keyword);
+        this.remainingKeywords = this.remainingKeywords.filter(k => k !== keyword);
         return true;
     }
 

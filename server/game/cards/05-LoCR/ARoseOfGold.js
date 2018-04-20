@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class ARoseOfGold extends DrawCard {
@@ -33,7 +31,7 @@ class ARoseOfGold extends DrawCard {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.moveCard(card, 'hand');
         this.game.addMessage('{0} added a card to their hand', this.controller);
         this.promptToPlaceNextCard();
@@ -61,7 +59,7 @@ class ARoseOfGold extends DrawCard {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.moveCard(card, 'draw deck', { bottom: true });
 
         if(this.remainingCards.length > 0) {

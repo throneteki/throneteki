@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Queenscrown extends DrawCard {
@@ -42,7 +40,7 @@ class Queenscrown extends DrawCard {
         let card = this.remainingCards.find(card => card.uuid === cardId);
         card.controller.moveCard(card, 'discard pile');
         this.game.addMessage('{0} uses {1} to place {2} in {3}\'s discard pile', player, this, card, card.controller);
-        this.remainingCards = _.reject(this.remainingCards, c => c === card);
+        this.remainingCards = this.remainingCards.filter(c => c !== card);
         this.promptToPlaceOnBottom();
         return true;
     }
@@ -81,7 +79,7 @@ class Queenscrown extends DrawCard {
         }
 
         card.controller.moveCard(card, 'draw deck', { bottom: true });
-        this.remainingCards = _.reject(this.remainingCards, c => c === card);
+        this.remainingCards = this.remainingCards.filter(c => c !== card);
         this.promptToPlaceOnBottom();
         return true;
     }

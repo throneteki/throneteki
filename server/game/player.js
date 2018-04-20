@@ -447,7 +447,7 @@ class Player extends Spectator {
     removeCostReducer(reducer) {
         if(this.costReducers.includes(reducer)) {
             reducer.unregisterEvents();
-            this.costReducers = _.reject(this.costReducers, r => r === reducer);
+            this.costReducers = this.costReducers.filter(r => r !== reducer);
         }
     }
 

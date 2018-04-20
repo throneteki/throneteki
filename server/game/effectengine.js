@@ -198,7 +198,7 @@ class EffectEngine {
             if(listener && listener(...args)) {
                 customDurationEffect.cancel();
                 this.unregisterCustomDurationEvents(customDurationEffect);
-                this.effects = _.reject(this.effects, effect => effect === customDurationEffect);
+                this.effects = this.effects.filter(effect => effect !== customDurationEffect);
             }
         };
     }

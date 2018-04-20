@@ -74,7 +74,7 @@ class ValarDohaeris extends PlotCard {
                     activePromptTitle: 'Select bottom deck order (last chosen ends up on bottom)',
                     cardCondition: card => cardsOwnedByPlayer.includes(card),
                     onSelect: (player, selectedCards) => {
-                        this.toMove = _.reject(this.toMove, card => card.owner === player).concat(selectedCards);
+                        this.toMove = this.toMove.filter(card => card.owner !== player).concat(selectedCards);
 
                         return true;
                     }

@@ -151,7 +151,7 @@ class Effect {
 
         this.effect.unapply(card, this.context);
 
-        this.targets = _.reject(this.targets, target => target === card);
+        this.targets = this.targets.filter(target => target !== card);
     }
 
     hasTarget(card) {

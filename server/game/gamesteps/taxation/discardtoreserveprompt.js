@@ -9,7 +9,7 @@ class DiscardToReservePrompt extends BaseStep {
     }
 
     continue() {
-        this.remainingPlayers = _.reject(this.remainingPlayers, player => player.isBelowReserve());
+        this.remainingPlayers = this.remainingPlayers.filter(player => !player.isBelowReserve());
 
         if(_.isEmpty(this.remainingPlayers)) {
             return true;

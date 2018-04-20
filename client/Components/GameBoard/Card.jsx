@@ -122,7 +122,7 @@ class InnerCard extends React.Component {
             counters = counters.concat(this.getCountersForCard(attachment));
         }
 
-        return _.reject(counters, counter => counter.count < 0);
+        return counters.filter(counter => counter.count >= 0);
     }
 
     getAttachments() {
