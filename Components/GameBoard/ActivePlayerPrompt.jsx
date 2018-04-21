@@ -161,6 +161,10 @@ class ActivePlayerPrompt extends React.Component {
     }
 
     getControls() {
+        if(!this.props.controls) {
+            return null;
+        }
+
         return this.props.controls.map(control => {
             switch(control.type) {
                 case 'targeting':
