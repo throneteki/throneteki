@@ -102,7 +102,7 @@ class ChallengeFlow extends BaseStep {
         });
 
         let kneelEvents = _.map(this.attackersToKneel, card => {
-            return { name: 'onCardKneeled', params: { player: this.challenge.attackingPlayer, card: card} };
+            return { name: 'onCardKneeled', params: { player: this.challenge.attackingPlayer, card: card } };
         });
 
         let stealthEvents = _.map(this.challenge.stealthData, stealth => {
@@ -231,7 +231,7 @@ class ChallengeFlow extends BaseStep {
         });
 
         let kneelEvents = _.map(defendersToKneel, card => {
-            return { name: 'onCardKneeled', params: { player: this.challenge.defendingPlayer, card: card} };
+            return { name: 'onCardKneeled', params: { player: this.challenge.defendingPlayer, card: card } };
         });
 
         this.game.raiseAtomicEvent(events.concat(defenderEvents).concat(kneelEvents));
@@ -326,7 +326,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     cancelClaim(player) {
-        this.game.addMessage('{0} continues without applying claim', player, this);
+        this.game.addAlert('danger', '{0} continues without applying claim', player, this);
 
         return true;
     }
