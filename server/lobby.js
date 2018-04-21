@@ -559,10 +559,6 @@ class Lobby {
     }
 
     onSelectDeck(socket, gameId, deckId) {
-        if(_.isObject(deckId)) {
-            deckId = deckId._id;
-        }
-
         var game = this.games[gameId];
         if(!game) {
             return;

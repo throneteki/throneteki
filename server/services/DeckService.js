@@ -13,8 +13,20 @@ class DeckService {
             });
     }
 
+    getByStandaloneId(id) {
+        return this.decks.findOne({ standaloneDeckId: id })
+            .catch(err => {
+                logger.error('Unable to fetch standalone deck', err);
+                throw new Error('Unable to fetch standalone deck ' + id);
+            });
+    }
+
     findByUserName(userName) {
         return this.decks.find({ username: userName }, { sort: { lastUpdated: -1 } });
+    }
+
+    getStandaloneDecks() {
+        return this.decks.find({ standaloneDeckId: { $exists: true } }, { sort: { lastUpdated: -1 } });
     }
 
     create(deck) {
@@ -28,6 +40,22 @@ class DeckService {
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
+        };
+
+        return this.decks.insert(properties);
+    }
+
+    createStandalone(deck) {
+        let properties = {
+            name: deck.name,
+            plotCards: deck.plotCards,
+            bannerCards: deck.bannerCards,
+            drawCards: deck.drawCards,
+            faction: deck.faction,
+            agenda: deck.agenda,
+            rookeryCards: deck.rookeryCards || [],
+            lastUpdated: deck.lastUpdated,
+            standaloneDeckId: deck.standaloneDeckId
         };
 
         return this.decks.insert(properties);

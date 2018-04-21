@@ -37,6 +37,7 @@ class PendingGame extends React.Component {
 
     componentDidMount() {
         this.props.loadDecks();
+        this.props.loadStandaloneDecks();
     }
 
     componentWillReceiveProps(props) {
@@ -88,7 +89,7 @@ class PendingGame extends React.Component {
     selectDeck(deck) {
         $('#decks-modal').modal('hide');
 
-        this.props.socket.emit('selectdeck', this.props.currentGame.id, deck);
+        this.props.socket.emit('selectdeck', this.props.currentGame.id, deck._id);
     }
 
     getNumberOfPlayers(props) {
@@ -242,7 +243,8 @@ class PendingGame extends React.Component {
                     decks={ this.props.decks }
                     id='decks-modal'
                     loading={ this.props.loading }
-                    onDeckSelected={ this.selectDeck.bind(this) } />
+                    onDeckSelected={ this.selectDeck.bind(this) }
+                    standaloneDecks={ this.props.standaloneDecks } />
             </div >);
     }
 }
@@ -256,10 +258,12 @@ PendingGame.propTypes = {
     gameSocketClose: PropTypes.func,
     host: PropTypes.string,
     loadDecks: PropTypes.func,
+    loadStandaloneDecks: PropTypes.func,
     loading: PropTypes.bool,
     navigate: PropTypes.func,
     sendSocketMessage: PropTypes.func,
     socket: PropTypes.object,
+    standaloneDecks: PropTypes.array,
     startGame: PropTypes.func,
     user: PropTypes.object,
     zoomCard: PropTypes.func
@@ -274,6 +278,7 @@ function mapStateToProps(state) {
         host: state.games.gameHost,
         loading: state.api.loading,
         socket: state.lobby.socket,
+        standaloneDecks: state.cards.standaloneDecks,
         user: state.account.user
     };
 }
