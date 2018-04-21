@@ -128,7 +128,7 @@ const agendaRules = {
         rules: [
             {
                 message: 'Alliance cannot have more than 2 Banner agendas',
-                condition: deck => deck.bannerCards.length <= 2
+                condition: deck => !deck.bannerCards || deck.bannerCards.length <= 2
             }
         ]
     },
