@@ -53,6 +53,10 @@ class User {
         return this.userData.password;
     }
 
+    get permissions() {
+        return this.userData.permissions || [];
+    }
+
     getWireSafeDetails() {
         let user = {
             _id: this.userData._id,
