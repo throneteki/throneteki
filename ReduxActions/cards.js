@@ -37,3 +37,13 @@ export function loadRestrictedList() {
         APIParams: { url: '/api/restricted-list', cache: false }
     };
 }
+
+export function loadStandaloneDecks() {
+    return {
+        types: ['REQUEST_STANDALONE_DECKS', 'RECEIVE_STANDALONE_DECKS'],
+        shouldCallAPI: (state) => {
+            return !state.cards.standaloneDecks;
+        },
+        APIParams: { url: '/api/standalone-decks', cache: false }
+    };
+}
