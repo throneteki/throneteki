@@ -6,7 +6,8 @@ class DrownedGodsBlessing extends DrawCard {
         this.whileAttached({
             effect: [
                 ability.effects.addTrait('Drowned God'),
-                ability.effects.cannotTarget(context => context.selectedCards.every(card => card === this.parent) &&
+                ability.effects.cannotTarget(context => (!context.selectedCards ||
+                    context.selectedCards.every(card => card === this.parent)) &&
                     context.source.getType() === 'event' &&
                     context.source.controller !== this.controller
                 )
