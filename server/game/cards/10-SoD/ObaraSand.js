@@ -9,7 +9,7 @@ class ObaraSand extends DrawCard {
             cost: ability.costs.returnToHand(card => card.hasTrait('Sand Snake') && card.getType() === 'character'),
             target: {
                 cardCondition: (card, context) => card.location === 'hand' && card.controller === context.player &&
-                                                  card.getType() === 'character' && context.player.canPutIntoPlay(card) &&
+                                                  card.getType() === 'character' && context.player.canPutIntoPlay(card) && card.isFaction('martell') &&
                                                   (!context.costs.returnToHand || card.getPrintedCost() < context.costs.returnToHand.getPrintedCost())
             },
             handler: context => {
