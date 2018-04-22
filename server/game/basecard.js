@@ -49,6 +49,7 @@ class BaseCard {
         this.keywords = new ReferenceCountedSetProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
+        this.losesAllAspects = new ReferenceCountedSetProperty();
 
         this.tokens = {};
         this.plotModifierValues = {
@@ -286,6 +287,10 @@ class BaseCard {
     }
 
     hasKeyword(keyword) {
+        if(this.losesAllAspects.contains('keywords')) {
+            return false;
+        }
+
         return this.keywords.contains(keyword);
     }
 
@@ -298,11 +303,19 @@ class BaseCard {
     }
 
     hasTrait(trait) {
+        if(this.losesAllAspects.contains('traits')) {
+            return false;
+        }
+
         return !this.isFullBlank() && this.traits.contains(trait);
     }
 
     isFaction(faction) {
         let normalizedFaction = faction.toLowerCase();
+
+        if(this.losesAllAspects.contains('factions')) {
+            return normalizedFaction === 'neutral';
+        }
 
         if(normalizedFaction === 'neutral') {
             return !!this.factions[normalizedFaction] && _.size(this.factions) === 1;
@@ -470,6 +483,10 @@ class BaseCard {
     }
 
     getTraits() {
+        if(this.losesAllAspects.contains('traits')) {
+            return [];
+        }
+
         return this.traits.getValues();
     }
 
