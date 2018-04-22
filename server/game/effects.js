@@ -22,6 +22,19 @@ function cannotEffect(type) {
     };
 }
 
+function losesAllAspectEffect(aspect) {
+    return function() {
+        return {
+            apply: function(card) {
+                card.losesAllAspects.add(aspect);
+            },
+            unapply: function(card) {
+                card.losesAllAspects.remove(aspect);
+            }
+        };
+    };
+}
+
 const Effects = {
     setSetupGold: function(value) {
         return {
@@ -431,18 +444,9 @@ const Effects = {
             }
         };
     },
-    removeAllKeywords: function() {
-        return [
-            this.removeKeyword('Ambush'),
-            this.removeKeyword('Insight'),
-            this.removeKeyword('Intimidate'),
-            this.removeKeyword('Pillage'),
-            this.removeKeyword('Renown'),
-            this.removeKeyword('Stealth'),
-            this.removeKeyword('Terminal'),
-            this.removeKeyword('Limited')
-        ];
-    },
+    losesAllFactions: losesAllAspectEffect('factions'),
+    losesAllKeywords: losesAllAspectEffect('keywords'),
+    losesAllTraits: losesAllAspectEffect('traits'),
     addTrait: function(trait) {
         return {
             apply: function(card) {

@@ -6,7 +6,7 @@ class SweetDonnelHill extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isDefending(this),
             match: (card) => this.game.currentChallenge.isAttacking(card) && card.getType() === 'character',
             targetController: 'any',
-            effect: ability.effects.removeAllKeywords()
+            effect: ability.effects.losesAllKeywords()
         });
     }
 }

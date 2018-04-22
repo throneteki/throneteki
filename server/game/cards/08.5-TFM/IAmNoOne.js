@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const _ = require('underscore');
 
 class IAmNoOne extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,17 +9,15 @@ class IAmNoOne extends DrawCard {
                                        card.getPrintedCost() <= 3 && card.controller === this.controller
             },
             handler: context => {
-                let effectArr = _.flatten([
-                    context.target.getFactions().map(faction => ability.effects.removeFaction(faction)),
-                    context.target.getTraits().map(trait => ability.effects.removeTrait(trait)),
-                    ability.effects.addKeyword('stealth'),
-                    ability.effects.addKeyword('insight'),
-                    ability.effects.doesNotKneelAsAttacker()
-                ]);
-
                 this.untilEndOfPhase(() => ({
                     match: context.target,
-                    effect: effectArr
+                    effect: [
+                        ability.effects.losesAllFactions(),
+                        ability.effects.losesAllTraits(),
+                        ability.effects.addKeyword('stealth'),
+                        ability.effects.addKeyword('insight'),
+                        ability.effects.doesNotKneelAsAttacker()
+                    ]
                 }));
 
                 this.game.addMessage('{0} plays {1} and chooses {2} as its target',
