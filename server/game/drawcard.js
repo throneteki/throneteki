@@ -171,22 +171,28 @@ class DrawCard extends BaseCard {
         }
 
         this.strengthModifier += amount;
-        this.game.raiseEvent('onCardStrengthChanged', {
-            card: this,
-            amount: amount,
-            applying: applying
-        });
+
+        if(!this.strengthSet) {
+            this.game.raiseEvent('onCardStrengthChanged', {
+                card: this,
+                amount: amount,
+                applying: applying
+            });
+        }
     }
 
     modifyStrengthMultiplier(amount, applying = true) {
         let strengthBefore = this.getStrength();
 
         this.strengthMultiplier *= amount;
-        this.game.raiseEvent('onCardStrengthChanged', {
-            card: this,
-            amount: this.getStrength() - strengthBefore,
-            applying: applying
-        });
+
+        if(!this.strengthSet) {
+            this.game.raiseEvent('onCardStrengthChanged', {
+                card: this,
+                amount: this.getStrength() - strengthBefore,
+                applying: applying
+            });
+        }
     }
 
     getPrintedStrength() {
