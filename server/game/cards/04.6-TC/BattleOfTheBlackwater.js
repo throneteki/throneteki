@@ -20,8 +20,13 @@ class BattleOfTheBlackwater extends PlotCard {
         // control, not discarding the dupes on cards you or the opponent
         // control. But for 2 player, discarding each dupe is fine.
         let characters = player.filterCardsInPlay(card => card.dupes.length > 0);
-        let dupes = characters.reduce((dupes, card) => dupes.concat(card.dupes, []));
-        player.discardCards(dupes, false);
+        if(characters.length > 0) {
+            let dupes = characters.reduce((dupes, card) => dupes.concat(card.dupes), []);
+
+            if(dupes.length > 0) {
+                player.discardCards(dupes, false);
+            }
+        }
     }
 }
 
