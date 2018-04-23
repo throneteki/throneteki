@@ -269,10 +269,6 @@ export class GameBoard extends React.Component {
         this.props.sendGameMessage('toggleKeywordSetting', option, value);
     }
 
-    onTimerExpired() {
-        this.props.sendGameMessage('menuButton', null, 'pass');
-    }
-
     onSettingsClick() {
         $('#settings-modal').modal('show');
     }
@@ -372,8 +368,11 @@ export class GameBoard extends React.Component {
                                         onMouseOver={ this.onMouseOver }
                                         onMouseOut={ this.onMouseOut }
                                         user={ this.props.user }
-                                        onTimerExpired={ this.onTimerExpired.bind(this) }
-                                        phase={ thisPlayer.phase } />
+                                        phase={ thisPlayer.phase }
+                                        timerLimit={ this.props.timerLimit }
+                                        timerStartTime={ this.props.timerStartTime }
+                                        startAbilityTimer={ this.props.startAbilityTimer }
+                                        stopAbilityTimer={ this.props.stopAbilityTimer } />
                                 </div>
                             </div>
                             <div className='play-area'>
@@ -461,6 +460,10 @@ GameBoard.propTypes = {
     sendGameMessage: PropTypes.func,
     setContextMenu: PropTypes.func,
     socket: PropTypes.object,
+    startAbilityTimer: PropTypes.func,
+    stopAbilityTimer: PropTypes.func,
+    timerLimit: PropTypes.number,
+    timerStartTime: PropTypes.instanceOf(Date),
     user: PropTypes.object,
     zoomCard: PropTypes.func
 };
@@ -471,6 +474,8 @@ function mapStateToProps(state) {
         cards: state.cards.cards,
         currentGame: state.lobby.currentGame,
         socket: state.lobby.socket,
+        timerLimit: state.prompt.timerLimit,
+        timerStartTime: state.prompt.timerStartTime,
         user: state.account.user
     };
 }
