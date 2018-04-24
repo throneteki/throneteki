@@ -195,6 +195,7 @@ export class GameBoard extends React.Component {
     }
 
     onCardClick(card) {
+        this.props.stopAbilityTimer();
         this.props.sendGameMessage('cardClicked', card.uuid);
     }
 
@@ -254,6 +255,7 @@ export class GameBoard extends React.Component {
     }
 
     onMenuItemClick(card, menuItem) {
+        this.props.stopAbilityTimer();
         this.props.sendGameMessage('menuItemClick', card.uuid, menuItem);
     }
 
