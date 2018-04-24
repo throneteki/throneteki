@@ -7,40 +7,6 @@ import AbilityTimer from './AbilityTimer';
 import CardNameLookup from './CardNameLookup';
 
 class ActivePlayerPrompt extends React.Component {
-    componentWillUpdate(newProps) {
-        if(_.difference(newProps.buttons, this.props.buttons).length === 0) {
-            return;
-        }
-
-        if(newProps.user.settings.windowTimer === 0) {
-            return;
-        }
-
-        if(_.any(newProps.buttons, button => {
-            return button.timer;
-        })) {
-            if(newProps.timerStartTime) {
-                return;
-            }
-
-            this.props.startAbilityTimer(newProps.user.settings.windowTimer);
-        }
-    }
-
-    buttonsAreEqual(oldButtons, newButtons) {
-        if(!oldButtons || !newButtons || oldButtons.length !== newButtons.length) {
-            return false;
-        }
-
-        for(let i = 0; i < oldButtons.length; ++i) {
-            if(!_.isEqual(oldButtons[i], newButtons[i])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     onButtonClick(event, command, arg, method) {
         event.preventDefault();
 
@@ -171,7 +137,6 @@ ActivePlayerPrompt.propTypes = {
     phase: PropTypes.string,
     promptTitle: PropTypes.string,
     socket: PropTypes.object,
-    startAbilityTimer: PropTypes.func,
     stopAbilityTimer: PropTypes.func,
     timerLimit: PropTypes.number,
     timerStartTime: PropTypes.instanceOf(Date),

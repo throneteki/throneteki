@@ -371,7 +371,6 @@ export class GameBoard extends React.Component {
                                         phase={ thisPlayer.phase }
                                         timerLimit={ this.props.timerLimit }
                                         timerStartTime={ this.props.timerStartTime }
-                                        startAbilityTimer={ this.props.startAbilityTimer }
                                         stopAbilityTimer={ this.props.stopAbilityTimer } />
                                 </div>
                             </div>
@@ -460,7 +459,6 @@ GameBoard.propTypes = {
     sendGameMessage: PropTypes.func,
     setContextMenu: PropTypes.func,
     socket: PropTypes.object,
-    startAbilityTimer: PropTypes.func,
     stopAbilityTimer: PropTypes.func,
     timerLimit: PropTypes.number,
     timerStartTime: PropTypes.instanceOf(Date),
