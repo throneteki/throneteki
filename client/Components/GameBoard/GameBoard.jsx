@@ -195,6 +195,7 @@ export class GameBoard extends React.Component {
     }
 
     onCardClick(card) {
+        this.props.stopAbilityTimer();
         this.props.sendGameMessage('cardClicked', card.uuid);
     }
 
@@ -254,6 +255,7 @@ export class GameBoard extends React.Component {
     }
 
     onMenuItemClick(card, menuItem) {
+        this.props.stopAbilityTimer();
         this.props.sendGameMessage('menuItemClick', card.uuid, menuItem);
     }
 
@@ -267,10 +269,6 @@ export class GameBoard extends React.Component {
 
     onKeywordSettingToggle(option, value) {
         this.props.sendGameMessage('toggleKeywordSetting', option, value);
-    }
-
-    onTimerExpired() {
-        this.props.sendGameMessage('menuButton', null, 'pass');
     }
 
     onSettingsClick() {
@@ -372,8 +370,10 @@ export class GameBoard extends React.Component {
                                         onMouseOver={ this.onMouseOver }
                                         onMouseOut={ this.onMouseOut }
                                         user={ this.props.user }
-                                        onTimerExpired={ this.onTimerExpired.bind(this) }
-                                        phase={ thisPlayer.phase } />
+                                        phase={ thisPlayer.phase }
+                                        timerLimit={ this.props.timerLimit }
+                                        timerStartTime={ this.props.timerStartTime }
+                                        stopAbilityTimer={ this.props.stopAbilityTimer } />
                                 </div>
                             </div>
                             <div className='play-area'>
@@ -461,6 +461,9 @@ GameBoard.propTypes = {
     sendGameMessage: PropTypes.func,
     setContextMenu: PropTypes.func,
     socket: PropTypes.object,
+    stopAbilityTimer: PropTypes.func,
+    timerLimit: PropTypes.number,
+    timerStartTime: PropTypes.instanceOf(Date),
     user: PropTypes.object,
     zoomCard: PropTypes.func
 };
@@ -471,6 +474,8 @@ function mapStateToProps(state) {
         cards: state.cards.cards,
         currentGame: state.lobby.currentGame,
         socket: state.lobby.socket,
+        timerLimit: state.prompt.timerLimit,
+        timerStartTime: state.prompt.timerStartTime,
         user: state.account.user
     };
 }
