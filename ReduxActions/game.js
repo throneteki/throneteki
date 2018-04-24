@@ -1,5 +1,7 @@
 import io from 'socket.io-client';
 
+import * as actions from '../actions';
+
 export function receiveGames(games) {
     return {
         type: 'RECEIVE_GAMES',
@@ -20,11 +22,31 @@ export function cancelNewGame() {
 }
 
 export function receiveGameState(game, username) {
-    return {
-        type: 'LOBBY_MESSAGE_RECEIVED',
-        message: 'gamestate',
-        args: [game, username]
+    return (dispatch, getState) => {
+        let state = getState();
+        let user = state.account.user;
+        let previousGameState = state.lobby.currentGame;
+
+        if(user && previousGameState) {
+            if(hasTimer(game, user.username) && !hasTimer(previousGameState, user.username) && user.settings.windowTimer !== 0) {
+                dispatch(actions.startAbilityTimer(user.settings.windowTimer));
+            } else if(!hasTimer(game, user.username) && hasTimer(previousGameState, user.username)) {
+                dispatch(actions.stopAbilityTimer());
+            }
+        }
+
+        dispatch({
+            type: 'LOBBY_MESSAGE_RECEIVED',
+            message: 'gamestate',
+            args: [game, username]
+        });
     };
+}
+
+function hasTimer(game, username) {
+    let player = game.players[username];
+    let buttons = player && player.buttons || [];
+    return buttons.some(button => button.timer);
 }
 
 export function clearGameState() {
