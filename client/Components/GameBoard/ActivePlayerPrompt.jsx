@@ -22,7 +22,7 @@ class ActivePlayerPrompt extends React.Component {
 
         this.props.stopAbilityTimer();
 
-        if(button.method) {
+        if(button.method || button.arg) {
             this.props.onButtonClick(button.command, button.arg, button.method);
         }
     }

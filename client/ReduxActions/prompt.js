@@ -1,11 +1,11 @@
 import { sendGameMessage } from './socket';
 
-export function startAbilityTimer(timeLimit) {
+export function startAbilityTimer(timeLimit, timerProps) {
     return dispatch => {
         let started = new Date();
 
         let handle = setTimeout(() => {
-            dispatch(expireAbilityTimer());
+            dispatch(expireAbilityTimer(timerProps));
         }, timeLimit * 1000);
 
         dispatch({
@@ -23,9 +23,9 @@ export function stopAbilityTimer() {
     };
 }
 
-export function expireAbilityTimer() {
+export function expireAbilityTimer(timerProps) {
     return dispatch => {
         dispatch(stopAbilityTimer());
-        dispatch(sendGameMessage('menuButton', null, 'pass'));
+        dispatch(sendGameMessage('menuButton', timerProps.arg, timerProps.method));
     };
 }

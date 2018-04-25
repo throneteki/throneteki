@@ -49,10 +49,18 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             additionalControls: this.getAdditionalPromptControls(),
             doneButtonText: 'Pass',
             onSelect: (player, card) => this.chooseCardToTrigger(player, card),
-            onCancel: player => this.pass(player),
-            onMenuCommand: (player, cardId) => {
-                let card = cardsForPlayer.find(c => c.uuid === cardId);
-                this.chooseCardToTrigger(player, card);
+            onCancel: () => this.pass(),
+            onMenuCommand: (player, arg) => {
+                if(arg === 'pass') {
+                    this.pass();
+                } else if(arg === 'passAndPauseForRound') {
+                    player.disableTimerForRound();
+                    this.pass();
+                } else {
+                    let card = cardsForPlayer.find(c => c.uuid === arg);
+                    this.chooseCardToTrigger(player, card);
+                }
+
                 return true;
             }
         });
@@ -66,9 +74,9 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         });
 
         if(this.cancelTimer.isEnabled(player)) {
-            buttons.push({ timer: true, method: 'pass', id: uuid.v1() });
+            buttons.push({ timer: true, arg: 'pass', id: uuid.v1() });
             buttons.push({ text: 'I need more time', timerCancel: true });
-            buttons.push({ text: 'Don\'t ask again until end of round', timerCancel: true, method: 'pass', arg: 'pauseRound' });
+            buttons.push({ text: 'Don\'t ask again until end of round', timerCancel: true, arg: 'passAndPauseForRound' });
         }
 
         return buttons;
@@ -131,11 +139,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         this.players = this.rotatedPlayerOrder(choice.player);
     }
 
-    pass(player, arg) {
-        if(arg === 'pauseRound') {
-            player.disableTimerForRound();
-        }
-
+    pass() {
         this.players.shift();
         return true;
     }
