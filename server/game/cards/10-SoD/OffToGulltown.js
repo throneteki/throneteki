@@ -4,6 +4,7 @@ class OffToGulltown extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Give icons to character',
+            phase: 'challenge',
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
