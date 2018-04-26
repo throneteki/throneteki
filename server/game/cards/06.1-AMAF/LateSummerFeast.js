@@ -4,7 +4,7 @@ class LateSummerFeast extends PlotCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.controller.canDraw()
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.loser.canDraw()
             },
             handler: context => {
                 let otherPlayer = context.event.challenge.loser;
