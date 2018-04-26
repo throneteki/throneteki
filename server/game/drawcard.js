@@ -414,6 +414,10 @@ class DrawCard extends BaseCard {
         return this.allowGameAction('save');
     }
 
+    canGainPower() {
+        return this.allowGameAction('gainPower');
+    }
+
     markAsInDanger() {
         this.inDanger = true;
     }
