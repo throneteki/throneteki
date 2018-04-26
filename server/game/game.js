@@ -840,6 +840,10 @@ class Game extends EventEmitter {
         this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
     }
 
+    resolveEvent(event) {
+        this.queueStep(new EventWindow(this, event, () => this.postEventCalculations()));
+    }
+
     /**
      * Function that executes after the handler for each Event has executed. In
      * terms of overall engine it is useful for things that require regular

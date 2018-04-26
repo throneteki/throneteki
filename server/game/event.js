@@ -7,6 +7,7 @@ class Event {
         this.handler = handler;
         this.postHandler = postHandler;
         this.childEvents = [];
+        this.attachedEvents = [];
 
         _.extend(this, params);
         this.params = [this].concat([params]);
@@ -70,6 +71,23 @@ class Event {
 
     getPrimaryEvent() {
         return this;
+    }
+
+    thenAttachEvent(event) {
+        this.attachedEvents.push(event);
+        this.addChildEvent(event);
+    }
+
+    clearAttachedEvents() {
+        this.attachedEvents = [];
+    }
+
+    toString() {
+        if(this.childEvents.length !== 0) {
+            return `${this.name} + children(${this.childEvents.map(e => e.toString()).join(', ')})`;
+        }
+
+        return this.name;
     }
 }
 

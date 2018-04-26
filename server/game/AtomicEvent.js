@@ -2,6 +2,7 @@ class AtomicEvent {
     constructor() {
         this.cancelled = false;
         this.childEvents = [];
+        this.attachedEvents = [];
     }
 
     addChildEvent(event) {
@@ -65,6 +66,10 @@ class AtomicEvent {
 
     getPrimaryEvent() {
         return this.childEvents[0];
+    }
+
+    toString() {
+        return `atomic(${this.childEvents.map(e => e.toString()).join(' + ')})`;
     }
 }
 
