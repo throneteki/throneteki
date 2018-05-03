@@ -23,8 +23,8 @@ class KingRobbsHost extends DrawCard {
 
     onCardSelected(p, card) {
         let loser = this.game.currentChallenge.loser;
+        let power = 0;
 
-        var power = 0;
         if(loser.faction.power >= 2) {
             power = this.game.anyPlotHasTrait('War') ? 2 : 1;
         } else {

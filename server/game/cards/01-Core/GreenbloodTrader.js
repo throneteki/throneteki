@@ -9,7 +9,7 @@ class GreenbloodTrader extends DrawCard {
             handler: () => {
                 this.top2Cards = this.controller.drawDeck.slice(0, Math.min(2, this.controller.drawDeck.length));
 
-                var buttons = this.top2Cards.map(card => {
+                let buttons = this.top2Cards.map(card => {
                     return { method: 'cardSelected', card: card, mapCard: true };
                 });
 
@@ -56,7 +56,7 @@ class GreenbloodTrader extends DrawCard {
             return this.moveToBottom(player, this.top2Cards[0]);
         }
 
-        var buttons = this.top2Cards.map(card => {
+        let buttons = this.top2Cards.map(card => {
             return { method: 'moveToBottom', card: card, mapCard: true };
         });
 

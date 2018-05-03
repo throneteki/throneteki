@@ -7,8 +7,9 @@ class GoldenTooth extends DrawCard {
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                var gold = this.opponentHasEmptyHand() ? 3 : 1;
+                let gold = this.opponentHasEmptyHand() ? 3 : 1;
                 gold = this.game.addGold(this.controller, gold);
+
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
             }
         });

@@ -8,7 +8,7 @@ class TradeRoutes extends PlotCard {
                 let playerLocations = context.player.getNumberOfCardsInPlay(card => card.getType() === 'location');
                 let opponentLocations = context.opponent.getNumberOfCardsInPlay(card => card.getType() === 'location');
 
-                var gold = playerLocations + opponentLocations;
+                let gold = playerLocations + opponentLocations;
                 gold = this.game.addGold(this.controller, gold);
 
                 this.game.addMessage('{0} uses {1} to choose {2} and gain {3} gold', context.player, this, context.opponent, gold);

@@ -11,8 +11,8 @@ class CalledIntoService extends PlotCard {
                     this.game.addMessage('{0} uses {1} to reveal {2} as the top card of their deck and put it into play',
                         this.controller, this, topCard);
                 } else if(this.controller.canDraw() || this.controller.canGainGold()) {
-                    var msg = '{0} uses {1} to reveal {2} as the top card of their deck';
-                    var gold;
+                    let msg = '{0} uses {1} to reveal {2} as the top card of their deck';
+                    let gold;
                     if(this.controller.canDraw()) {
                         this.controller.drawCardsToHand(1);
                         msg += ', draw it';
@@ -21,6 +21,7 @@ class CalledIntoService extends PlotCard {
                         gold = this.game.addGold(this.controller, 2);
                         msg += ', gain {3} gold';
                     }
+
                     this.game.addMessage(msg, this.controller, this, topCard, gold);
                 }
             }

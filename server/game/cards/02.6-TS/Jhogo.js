@@ -19,7 +19,7 @@ class Jhogo extends DrawCard {
     }
 
     getNumberOfDeadDefendingCharacters() {
-        var deadDefenders = [];
+        let deadDefenders = [];
         for(const card of this.game.currentChallenge.defendingPlayer.deadPile) {
             if(card.isUnique() && !deadDefenders.includes(card.name)) {
                 deadDefenders.push(card.name);

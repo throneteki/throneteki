@@ -7,8 +7,9 @@ class InDoransName extends DrawCard {
             condition: () => this.controller.getNumberOfUsedPlots() >= 1 && this.controller.canGainGold(),
             cost: ability.costs.kneelFactionCard(),
             handler: context => {
-                var gold = this.controller.getNumberOfUsedPlots();
+                let gold = this.controller.getNumberOfUsedPlots();
                 gold = this.game.addGold(this.controller, gold);
+
                 this.game.addMessage('{0} plays {1} and kneels their faction card to gain {2} gold', context.player, this, gold);
             }
         });
