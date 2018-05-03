@@ -35,7 +35,7 @@ class TyrionsChain extends DrawCard {
     }
 
     getRevealedWarPlots() {
-        var revealedPlots = [];
+        let revealedPlots = [];
         _.each(this.game.getPlayers(), player => {
             if(player.activePlot && player.activePlot.hasTrait('War')) {
                 revealedPlots = revealedPlots.concat(player.activePlot);

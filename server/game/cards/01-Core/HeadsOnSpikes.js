@@ -12,7 +12,7 @@ class HeadsOnSpikes extends PlotCard {
                 }
 
                 otherPlayer.discardAtRandom(1, cards => {
-                    var powerMessage = '';
+                    let powerMessage = '';
                     let card = cards[0];
 
                     if(card.getType() === 'character') {

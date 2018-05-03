@@ -10,8 +10,9 @@ class EastwatchCarpenter extends DrawCard {
                     this.controller.canGainGold()
             },
             handler: () => {
-                var gold = this.getGoldBonus();
+                let gold = this.getGoldBonus();
                 gold = this.game.addGold(this.controller, gold);
+
                 this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
             }
         });

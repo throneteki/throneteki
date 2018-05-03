@@ -11,8 +11,9 @@ class Godswood extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                var cards = this.controller.activePlot.getClaim();
+                let cards = this.controller.activePlot.getClaim();
                 cards = this.controller.drawCardsToHand(cards).length;
+
                 this.game.addMessage('{0} kneels {1} to draw {2} {3}',
                     this.controller, this, cards, cards > 1 ? 'cards' : 'card');
             }

@@ -9,7 +9,7 @@ class TheKingsPeace extends PlotCard {
             },
             handler: () => {
                 let otherPlayer = this.game.currentChallenge.attackingPlayer;
-                var buttons = [];
+                let buttons = [];
 
                 if(!otherPlayer.faction.kneeled) {
                     buttons.push({ text: 'Kneel faction card', method: 'kneel' });

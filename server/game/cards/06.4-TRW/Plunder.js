@@ -8,8 +8,9 @@ class Plunder extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             chooseOpponent: opponent => this.getGold(opponent) >= 1,
             handler: context => {
-                var gold = this.getGold(context.opponent);
+                let gold = this.getGold(context.opponent);
                 gold = this.game.addGold(this.controller, gold);
+
                 this.game.addMessage('{0} uses {1} and kneels their faction card to choose {2} and gain {3} gold',
                     this.controller, this, context.opponent, gold);
             }

@@ -15,7 +15,7 @@ class TheSkahazadhan extends DrawCard {
                 ability.costs.kneelSelf()
             ],
             handler: context => {
-                var gold = context.player.activePlot.hasTrait('Summer') ? 3 : 2;
+                let gold = context.player.activePlot.hasTrait('Summer') ? 3 : 2;
                 gold = this.game.addGold(context.player, gold);
 
                 this.game.addMessage('{0} kneels {1} and discards {2} to gain {3} gold',

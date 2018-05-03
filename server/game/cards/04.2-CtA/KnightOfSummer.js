@@ -14,8 +14,9 @@ class KnightOfSummer extends DrawCard {
     }
 
     moreSummerThanWinterPlots() {
-        var summerPlots = 0;
-        var winterPlots = 0;
+        let summerPlots = 0;
+        let winterPlots = 0;
+
         _.each(this.game.getPlayers(), player => {
             if(player.activePlot && player.activePlot.hasTrait('winter')) {
                 winterPlots++;
@@ -24,10 +25,8 @@ class KnightOfSummer extends DrawCard {
                 summerPlots++;
             }
         });
-        if(summerPlots > winterPlots) {
-            return true;
-        }
-        return false;
+
+        return summerPlots > winterPlots;
     }
 }
 KnightOfSummer.code = '04023';

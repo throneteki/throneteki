@@ -12,7 +12,7 @@ class LightOfTheLord extends DrawCard {
             },
             handler: () => {
                 this.controller.standCard(this.parent);
-                var msg = '{0} uses {1} to stand {2}';
+                let msg = '{0} uses {1} to stand {2}';
                 if(this.controller.canGainGold()) {
                     this.game.addGold(this.controller, 1);
                     msg += 'and gain 1 gold';

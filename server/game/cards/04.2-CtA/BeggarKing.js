@@ -12,7 +12,7 @@ class BeggarKing extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                var gold = !this.opponentHasKing() ? 2 : 1;
+                let gold = !this.opponentHasKing() ? 2 : 1;
                 gold = this.game.addGold(this.controller, gold);
 
                 this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
