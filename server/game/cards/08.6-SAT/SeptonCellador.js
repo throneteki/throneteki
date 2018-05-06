@@ -6,7 +6,7 @@ class SeptonCellador extends DrawCard {
             title: 'Opponent discards character',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            chooseOpponent: opponent => !opponent.hand.isEmpty(),
+            chooseOpponent: opponent => opponent.hand.length !== 0,
             handler: context => {
                 if(context.opponent.hand.any(card => card.getType() === 'character')) {
                     this.promptForCharacterDiscard(context);
