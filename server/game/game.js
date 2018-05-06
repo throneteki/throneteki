@@ -796,6 +796,12 @@ class Game extends EventEmitter {
         window.registerAbility(ability, event);
     }
 
+    clearAbilityResolution(ability) {
+        for(let window of this.abilityWindowStack) {
+            window.clearAbilityResolution(ability);
+        }
+    }
+
     raiseEvent(eventName, params, handler) {
         if(!handler) {
             handler = () => true;

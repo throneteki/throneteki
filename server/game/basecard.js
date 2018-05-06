@@ -390,6 +390,7 @@ class BaseCard {
                 reaction.registerEvents();
             } else if(reaction.isEventListeningLocation(originalLocation) && !reaction.isEventListeningLocation(targetLocation)) {
                 reaction.unregisterEvents();
+                this.game.clearAbilityResolution(reaction);
             }
         });
 

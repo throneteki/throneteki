@@ -59,6 +59,10 @@ class BaseAbilityWindow extends BaseStep {
     markAbilityAsResolved(ability, event) {
         this.resolvedAbilities.push({ ability: ability, event: event });
     }
+
+    clearAbilityResolution(ability) {
+        this.resolvedAbilities = this.resolvedAbilities.filter(resolvedAbility => resolvedAbility.ability !== ability);
+    }
 }
 
 module.exports = BaseAbilityWindow;
