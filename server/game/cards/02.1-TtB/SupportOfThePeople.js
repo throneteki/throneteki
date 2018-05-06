@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class SupportOfThePeople extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => (
@@ -18,7 +18,8 @@ class SupportOfThePeople extends DrawCard {
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
-            }
+            },
+            max: ability.limit.perChallenge(1)
         });
     }
 
