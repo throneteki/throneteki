@@ -1,44 +1,31 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class VaesDothrak extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPlotsRevealed: () => this.hasPossibleLegalTarget()
+                onPlotsRevealed: event => event.plots.some(plot => plot.controller === this.controller)
             },
-            cost: ability.costs.discardFromHand(card => card.getType() === 'attachment'),
+            cost: ability.costs.discardFromHand(card => card.getType() === 'attachment' && this.hasPossibleLegalTarget(card)),
+            target: {
+                activePromptTitle: 'Select an attachment',
+                cardCondition: (card, context) => !context.costs.discardFromHand || this.isValidTarget(card, context.costs.discardFromHand)
+            },
             handler: context => {
-                this.game.promptForSelect(this.controller, {
-                    activePromptTitle: 'Select an attachment',
-                    source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' &&
-                        card.getType() === 'attachment' &&
-                        card.getCost(true) <= context.costs.discardFromHand.getCost(true)),
-                    onSelect: (p, card) => {
-                        card.controller.discardCard(card);
-                        this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {3} from play',
-                            this.controller, this, context.costs.discardFromHand, card);
-
-                        return true;
-                    }
-                });
+                let card = context.target;
+                card.controller.discardCard(card);
+                this.game.addMessage('{0} uses {1} and discards {2} from their hand to discard {3} from play',
+                    this.controller, this, context.costs.discardFromHand, card);
             }
         });
     }
 
-    hasPossibleLegalTarget() {
-        let attachmentsInHand = this.controller.findCards(this.controller.hand, card => card.getType() === 'attachment');
-        let attachmentsInHandCosts = _.map(attachmentsInHand, card => card.getCost(true));
-        let attachmentsInHandHighestCost = _.max(attachmentsInHandCosts);
+    hasPossibleLegalTarget(inHandAttachment) {
+        return this.game.anyCardsInPlay(card => this.isValidTarget(card, inHandAttachment));
+    }
 
-        let attachmentsInPlay = this.game.findAnyCardsInPlay(card => card.getType() === 'attachment');
-        let attachmentsInPlayCosts = _.map(attachmentsInPlay, card => card.getCost(true));
-        let attachmentsInPlayLowestCost = _.min(attachmentsInPlayCosts);
-
-        return attachmentsInHandHighestCost >= attachmentsInPlayLowestCost;
+    isValidTarget(card, inHandAttachment) {
+        return card.location === 'play area' && card.getType() === 'attachment' && card.getPrintedCost() <= inHandAttachment.getPrintedCost();
     }
 }
 
