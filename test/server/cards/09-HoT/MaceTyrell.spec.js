@@ -3,7 +3,7 @@ describe('Mace Tyrell', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('tyrell', [
                 'A Noble Cause',
-                'Mace Tyrell', 'Left', 'Left'
+                'Mace Tyrell (HoT)', 'Left', 'Left'
             ]);
             const deck2 = this.buildDeck('stark', [
                 'A Noble Cause', 'Barring the Gates'
