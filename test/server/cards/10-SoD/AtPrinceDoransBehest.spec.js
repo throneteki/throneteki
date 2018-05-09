@@ -99,4 +99,72 @@ describe('At Prince Doran\'s Behest', function() {
             });
         });
     });
+
+    describe('vs Varys\'s Riddle', function() {
+        integration(function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('martell', [
+                    'At Prince Doran\'s Behest', 'Varys\'s Riddle', 'Valar Morghulis', 'Marched to the Wall'
+                ]);
+
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+                this.completeSetup();
+
+                this.player1.selectPlot('At Prince Doran\'s Behest');
+                this.player2.selectPlot('Varys\'s Riddle');
+                this.selectFirstPlayer(this.player2);
+            });
+
+            describe('after revealing a new plot via Riddle', function() {
+                beforeEach(function() {
+                    // Resolve Varys's Riddle first to copy Behest
+                    this.selectPlotOrder(this.player2);
+                    this.player2.clickCard('Valar Morghulis', 'plot deck');
+                });
+
+                it('should prompt first player for plot order', function() {
+                    expect(this.player2).toHavePrompt('Choose when revealed order');
+                    expect(this.player2).toHavePromptButton('player1 - At Prince Doran\'s Behest');
+                    expect(this.player2).toHavePromptButton('player2 - Valar Morghulis');
+                });
+            });
+
+            describe('repeated Behest vs Riddle', function() {
+                beforeEach(function() {
+                    // Resolve Varys's Riddle first to copy player 1's Behest
+                    this.selectPlotOrder(this.player2);
+
+                    // Reveal player 2's Behest
+                    this.player2.clickCard('At Prince Doran\'s Behest', 'plot deck');
+
+                    // Resolve player 1's Behest
+                    this.selectPlotOrder(this.player1);
+
+                    // Reveal player 1's Riddle
+                    this.player1.clickCard('Varys\'s Riddle', 'plot deck');
+
+                    // Resolve player 1's Riddle to copy player 2's Behest
+                    this.selectPlotOrder(this.player1);
+
+                    // Reveal a normal plot for player 1
+                    this.player1.clickCard('Valar Morghulis', 'plot deck');
+
+                    // Resolve player 2's Behest
+                    this.selectPlotOrder(this.player2);
+
+                    // Reveal a normal plot for player 2
+                    this.player2.clickCard('Valar Morghulis', 'plot deck');
+                });
+
+                it('should prompt first player for plot order', function() {
+                    expect(this.player2).toHavePrompt('Choose when revealed order');
+                    expect(this.player2).toHavePromptButton('player1 - Valar Morghulis');
+                    expect(this.player2).toHavePromptButton('player2 - Valar Morghulis');
+                });
+            });
+        });
+    });
 });

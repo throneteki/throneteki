@@ -26,22 +26,6 @@ describe('SummerHarvest', function() {
             it('should calculate the gold amount properly', function() {
                 expect(this.summerHarvest.getIncome()).toBe(7);
             });
-
-            describe('when playing it again after going through all plots', function() {
-                beforeEach(function() {
-                    this.completeMarshalPhase();
-                    this.completeChallengesPhase();
-
-                    // Move Summer Harvest back to the plot deck so it's eligible to be picked again.
-                    this.summerHarvest.controller.moveCard(this.summerHarvest, 'plot deck');
-
-                    this.selectFirstPlayer(this.player1);
-                });
-
-                it('should still properly calculate the gold amount properly', function() {
-                    expect(this.summerHarvest.getIncome()).toBe(7);
-                });
-            });
         });
 
         describe('when played against Varys\'s Riddle', function() {

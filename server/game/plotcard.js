@@ -24,6 +24,10 @@ class PlotCard extends BaseCard {
         this.abilities.reactions.push(reaction);
     }
 
+    getWhenRevealedAbility() {
+        return this.abilities.reactions.find(ability => ability instanceof CardWhenRevealed);
+    }
+
     getInitiative() {
         var baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
         return baseValue + this.initiativeModifier;

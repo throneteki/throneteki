@@ -3,10 +3,12 @@ const PlotCard = require('../../plotcard.js');
 class PullingTheStrings extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
+            handler: context => {
                 if(this.resolving) {
                     return;
                 }
+
+                this.context = context;
 
                 this.game.promptForSelect(this.controller, {
                     cardCondition: card => this.cardCondition(card),
@@ -24,15 +26,19 @@ class PullingTheStrings extends PlotCard {
     }
 
     onCardSelected(player, card) {
-        card.moveTo('active plot');
         this.resolving = true;
 
-        this.game.addMessage('{0} uses {1} to initiate the when resolved effect of {2}', player, this, card);
+        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', player, this, card);
         card.controller = player;
-        this.game.raiseEvent('onPlotWhenRevealed', { plot: card });
+
+        let whenRevealed = card.getWhenRevealedAbility();
+        if(whenRevealed) {
+            // Attach the current When Revealed event to the new context
+            let context = whenRevealed.createContext(this.context.event);
+            this.game.resolveAbility(whenRevealed, context);
+        }
         this.game.queueSimpleStep(() => {
             card.controller = card.owner;
-            card.moveTo('revealed plots');
 
             this.resolving = false;
         });
