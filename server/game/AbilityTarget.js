@@ -32,11 +32,8 @@ class AbilityTarget {
                 result.resolve(card);
                 return true;
             },
-            onCancel: (player) => {
+            onCancel: () => {
                 result.reject();
-
-                context.game.addAlert('danger', '{0} cancels the resolution of {1} (costs were still paid)', player, context.source);
-
                 return true;
             }
         };

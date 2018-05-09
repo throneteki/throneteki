@@ -2,7 +2,7 @@ const AbilityResolver = require('../../../server/game/gamesteps/abilityresolver.
 
 describe('AbilityResolver', function() {
     beforeEach(function() {
-        this.game = jasmine.createSpyObj('game', ['markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseEvent', 'reportError']);
+        this.game = jasmine.createSpyObj('game', ['addAlert', 'markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseEvent', 'reportError']);
         this.game.raiseEvent.and.callFake((name, params, handler) => {
             if(handler) {
                 handler(params);
@@ -13,6 +13,7 @@ describe('AbilityResolver', function() {
         });
         this.ability = jasmine.createSpyObj('ability', ['incrementLimit', 'isAction', 'isCardAbility', 'isForcedAbility', 'isPlayableEventAbility', 'needsChooseOpponent', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
         this.ability.isCardAbility.and.returnValue(true);
+        this.ability.resolveTargets.and.returnValue([]);
         this.player = jasmine.createSpyObj('player', ['moveCard']);
         this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);
         this.source.owner = this.player;
@@ -257,6 +258,10 @@ describe('AbilityResolver', function() {
 
                     it('should not execute the handler', function() {
                         expect(this.ability.executeHandler).not.toHaveBeenCalled();
+                    });
+
+                    it('should add an alert', function() {
+                        expect(this.game.addAlert).toHaveBeenCalled();
                     });
                 });
             });

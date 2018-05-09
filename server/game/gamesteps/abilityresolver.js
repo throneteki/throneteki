@@ -128,9 +128,14 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
-        this.cancelled = _.any(this.targetResults, result => result.resolved && !result.value);
+        let cancelledTargeting = this.targetResults.some(result => result.resolved && !result.value);
+        if(cancelledTargeting) {
+            this.cancelled = true;
+            this.game.addAlert('danger', '{0} cancels the resolution of {1} (costs were still paid)', this.context.player, this.context.source);
+            return;
+        }
 
-        if(!_.all(this.targetResults, result => result.resolved)) {
+        if(!this.targetResults.every(result => result.resolved)) {
             return false;
         }
 
