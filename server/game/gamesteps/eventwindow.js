@@ -67,7 +67,7 @@ class EventWindow extends BaseStep {
             return;
         }
 
-        if(this.event.name === 'onPlotsWhenRevealed') {
+        if(this.event.getConcurrentEvents().some(event => event.name === 'onPlotRevealed')) {
             this.openAbilityWindow('whenrevealed');
         }
     }

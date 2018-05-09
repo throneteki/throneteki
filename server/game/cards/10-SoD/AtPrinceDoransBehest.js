@@ -1,9 +1,6 @@
 const RevealPlots = require('../../gamesteps/revealplots.js');
 const PlotCard = require('../../plotcard.js');
 
-//TODO: This currently nests the resolution of the When Revealed of the fetched plot within the resolution
-//of this plot. Instead, if a new When Revealed is fetched, it should resolve simultaneously with any other
-//unresolved When Revealed abilities, allowing the first player to (again) choose the order.
 class AtPrinceDoransBehest extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
@@ -19,7 +16,7 @@ class AtPrinceDoransBehest extends PlotCard {
                 context.player.selectedPlot = context.target;
                 context.player.removeActivePlot();
                 context.player.flipPlotFaceup();
-                this.game.queueStep(new RevealPlots(this.game, [context.target]));
+                this.game.queueStep(new RevealPlots(this.game, [context.target], context.event));
             }
         });
     }

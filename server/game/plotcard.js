@@ -17,7 +17,7 @@ class PlotCard extends BaseCard {
     whenRevealed(properties) {
         let whenClause = {
             when: {
-                onPlotsWhenRevealed: event => event.plots.includes(this)
+                onPlotRevealed: event => event.plot === this
             }
         };
         let reaction = new CardWhenRevealed(this.game, this, _.extend(whenClause, properties));

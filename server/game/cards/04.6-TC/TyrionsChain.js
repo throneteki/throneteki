@@ -50,7 +50,7 @@ class TyrionsChain extends DrawCard {
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, warPlot);
         warPlot.controller = this.controller;
-        this.game.raiseEvent('onPlotsWhenRevealed', { plots: [warPlot] });
+        this.game.raiseEvent('onPlotWhenRevealed', { plot: warPlot });
         this.game.queueSimpleStep(() => {
             warPlot.controller = warPlot.owner;
             this.resolving = false;
