@@ -49,6 +49,27 @@ describe('High Septon', function() {
             });
         });
 
+        describe('when target resolution is cancelled', function() {
+            beforeEach(function() {
+                this.selectFirstPlayer(this.player2);
+
+                this.completeMarshalPhase();
+
+                this.unopposedChallenge(this.player2, 'intrigue', 'Mirri Maz Duur');
+                this.player2.clickPrompt('Pass');
+                this.player2.clickPrompt('Apply Claim');
+
+                this.player2.triggerAbility('Mirri Maz Duur');
+            });
+
+            it('should not crash', function() {
+                expect(() => {
+                    // Cancel targeting for Mirri
+                    this.player2.clickPrompt('Done');
+                }).not.toThrow();
+            });
+        });
+
         describe('vs a non-targeting ability', function() {
             beforeEach(function() {
                 this.selectFirstPlayer(this.player2);
