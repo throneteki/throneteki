@@ -18,7 +18,7 @@ class TheSevenPointedStar extends DrawCard {
                     targetType: 'player',
                     targetController: 'current',
                     match: player => player === currentController,
-                    effect: ability.effects.reduceNextMarshalledCardCost(2, card => card.getType() === 'character' && card.hasTrait('The Seven'))
+                    effect: ability.effects.reduceNextMarshalledCardCost(2, card => card.hasTrait('The Seven'))
                 }));
             }
         });
