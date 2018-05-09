@@ -8,7 +8,7 @@ class SeptonCellador extends DrawCard {
             cost: ability.costs.kneelSelf(),
             chooseOpponent: opponent => opponent.hand.length !== 0,
             handler: context => {
-                if(context.opponent.hand.any(card => card.getType() === 'character')) {
+                if(context.opponent.hand.some(card => card.getType() === 'character')) {
                     this.promptForCharacterDiscard(context);
                     return;
                 }
