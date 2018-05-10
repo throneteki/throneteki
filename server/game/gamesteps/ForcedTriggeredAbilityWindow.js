@@ -3,6 +3,11 @@ const TriggeredAbilityWindowTitles = require('./TriggeredAbilityWindowTitles');
 
 class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
     continue() {
+        if(this.hasAttachedEvents()) {
+            this.openWindowForAttachedEvents();
+            return false;
+        }
+
         this.gatherChoices();
 
         if(this.abilityChoices.length === 1) {

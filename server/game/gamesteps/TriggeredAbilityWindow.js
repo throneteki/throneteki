@@ -20,6 +20,11 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
     }
 
     continue() {
+        if(this.hasAttachedEvents()) {
+            this.openWindowForAttachedEvents();
+            return false;
+        }
+
         this.gatherChoices();
 
         this.players = this.filterChoicelessPlayers(this.players || this.game.getPlayersInFirstPlayerOrder());

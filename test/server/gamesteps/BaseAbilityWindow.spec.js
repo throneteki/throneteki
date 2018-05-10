@@ -2,9 +2,9 @@ const BaseAbilityWindow = require('../../../server/game/gamesteps/BaseAbilityWin
 
 describe('BaseAbilityWindow', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['resolveAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['queueStep', 'resolveAbility']);
 
-        this.eventSpy = jasmine.createSpyObj('event', ['emitTo', 'getConcurrentEvents']);
+        this.eventSpy = jasmine.createSpyObj('event', ['clearAttachedEvents', 'emitTo', 'getConcurrentEvents']);
         this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
 
         this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'getChoices', 'isTriggeredByEvent', 'meetsRequirements']);
@@ -153,6 +153,48 @@ describe('BaseAbilityWindow', function() {
 
         it('should mark the ability as resolved', function() {
             expect(this.window.hasResolvedAbility(this.abilitySpy, this.eventSpy));
+        });
+    });
+
+    describe('openWindowForAttachedEvents()', function() {
+        describe('when the event has no attached events', function() {
+            beforeEach(function() {
+                this.eventSpy.attachedEvents = [];
+                this.window.openWindowForAttachedEvents();
+            });
+
+            it('should not open an interrupt window', function() {
+                expect(this.gameSpy.queueStep).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('when the event has attached events', function() {
+            beforeEach(function() {
+                this.attachedEvent1 = { event: 1 };
+                this.attachedEvent2 = { event: 1 };
+                this.eventSpy.attachedEvents = [this.attachedEvent1, this.attachedEvent2];
+                this.window.openWindowForAttachedEvents();
+            });
+
+            it('should clear the attached events from the initial event', function() {
+                expect(this.eventSpy.clearAttachedEvents).toHaveBeenCalled();
+            });
+
+            it('should open an interrupt window', function() {
+                const InterruptWindow = require('../../../server/game/gamesteps/InterruptWindow');
+                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(InterruptWindow));
+            });
+
+            it('should create an event grouping the attached events', function() {
+                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.objectContaining({
+                    event: jasmine.objectContaining({
+                        childEvents: [
+                            this.attachedEvent1,
+                            this.attachedEvent2
+                        ]
+                    })
+                }));
+            });
         });
     });
 });

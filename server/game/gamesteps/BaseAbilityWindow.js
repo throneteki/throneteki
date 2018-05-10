@@ -1,6 +1,8 @@
 const uuid = require('uuid');
 
 const BaseStep = require('./basestep.js');
+const SimultaneousEvents = require('../SimultaneousEvents');
+const InterruptWindow = require('./InterruptWindow');
 
 class BaseAbilityWindow extends BaseStep {
     constructor(game, properties) {
@@ -62,6 +64,37 @@ class BaseAbilityWindow extends BaseStep {
 
     clearAbilityResolution(ability) {
         this.resolvedAbilities = this.resolvedAbilities.filter(resolvedAbility => resolvedAbility.ability !== ability);
+    }
+
+    hasAttachedEvents() {
+        if(this.event.cancelled) {
+            return false;
+        }
+
+        return this.event.getConcurrentEvents().some(event => event.attachedEvents.length !== 0);
+    }
+
+    openWindowForAttachedEvents() {
+        if(this.event.cancelled) {
+            return;
+        }
+
+        let attachedEvents = [];
+        for(let event of this.event.getConcurrentEvents()) {
+            attachedEvents = attachedEvents.concat(event.attachedEvents);
+            event.clearAttachedEvents();
+        }
+
+        if(attachedEvents.length === 0) {
+            return;
+        }
+
+        let groupedEvent = new SimultaneousEvents();
+        for(let attachedEvent of attachedEvents) {
+            groupedEvent.addChildEvent(attachedEvent);
+        }
+
+        this.game.queueStep(new InterruptWindow(this.game, groupedEvent, this.postHandlerFunc));
     }
 }
 

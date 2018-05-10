@@ -3,13 +3,15 @@ const PlotCard = require('../../plotcard.js');
 class VaryssRiddle extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
+            handler: context => {
                 let opponents = this.game.getOpponents(this.controller);
                 this.nonRiddlePlots = opponents.map(opponent => opponent.activePlot).filter(plot => !plot.hasTrait('Riddle'));
 
                 if(this.resolving || this.nonRiddlePlots.length === 0) {
                     return;
                 }
+
+                this.context = context;
 
                 if(this.nonRiddlePlots.length === 1) {
                     this.resolveWhenRevealed(this.nonRiddlePlots[0]);
@@ -44,7 +46,12 @@ class VaryssRiddle extends PlotCard {
         plot.controller = this.controller;
         this.resolving = true;
 
-        this.game.raiseEvent('onPlotsWhenRevealed', { plots: [plot] });
+        let whenRevealed = plot.getWhenRevealedAbility();
+        if(whenRevealed) {
+            // Attach the current When Revealed event to the new context
+            let context = whenRevealed.createContext(this.context.event);
+            this.game.resolveAbility(whenRevealed, context);
+        }
         this.game.queueSimpleStep(() => {
             this.resolving = false;
             plot.controller = plot.owner;

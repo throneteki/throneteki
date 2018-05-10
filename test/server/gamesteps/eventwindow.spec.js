@@ -3,7 +3,8 @@ const EventWindow = require('../../../server/game/gamesteps/eventwindow.js');
 describe('EventWindow', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['openAbilityWindow', 'saveWithDupe']);
-        this.eventSpy = jasmine.createSpyObj('event', ['allowAutomaticSave', 'cancel', 'emitTo', 'executeHandler', 'executePostHandler', 'getConcurrentEvents']);
+        this.eventSpy = jasmine.createSpyObj('event', ['allowAutomaticSave', 'cancel', 'clearAttachedEvents', 'emitTo', 'executeHandler', 'executePostHandler', 'getConcurrentEvents']);
+        this.eventSpy.attachedEvents = [];
         this.eventSpy.getConcurrentEvents.and.returnValue([]);
         this.eventWindow = new EventWindow(this.gameSpy, this.eventSpy);
     });
@@ -30,8 +31,9 @@ describe('EventWindow', function() {
 
         describe('when a concurrent event can be saved', function() {
             beforeEach(function() {
-                this.concurrentEventSpy = jasmine.createSpyObj('concurrentEvent', ['allowAutomaticSave', 'cancel']);
+                this.concurrentEventSpy = jasmine.createSpyObj('concurrentEvent', ['allowAutomaticSave', 'cancel', 'clearAttachedEvents']);
                 this.concurrentEventSpy.allowAutomaticSave.and.returnValue(true);
+                this.concurrentEventSpy.attachedEvents = [];
                 this.concurrentEventSpy.card = { card: 1 };
                 this.eventSpy.card = { card: 2 };
                 this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy, this.concurrentEventSpy]);

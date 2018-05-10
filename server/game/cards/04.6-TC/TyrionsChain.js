@@ -12,12 +12,14 @@ class TyrionsChain extends DrawCard {
                 )
             },
             max: ability.limit.perPhase(1),
-            handler: () => {
+            handler: context => {
                 let warPlots = this.getRevealedWarPlots();
 
                 let buttons = _.map(warPlots, card => ({
                     method: 'selectWarPlot', card: card
                 }));
+
+                this.context = context;
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
@@ -50,7 +52,13 @@ class TyrionsChain extends DrawCard {
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, warPlot);
         warPlot.controller = this.controller;
-        this.game.raiseEvent('onPlotsWhenRevealed', { plots: [warPlot] });
+
+        let whenRevealed = warPlot.getWhenRevealedAbility();
+        if(whenRevealed) {
+            // Attach the current When Revealed event to the new context
+            let context = whenRevealed.createContext(this.context.event);
+            this.game.resolveAbility(whenRevealed, context);
+        }
         this.game.queueSimpleStep(() => {
             warPlot.controller = warPlot.owner;
             this.resolving = false;

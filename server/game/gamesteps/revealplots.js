@@ -2,36 +2,52 @@ const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 const SimpleStep = require('./simplestep.js');
 const FirstPlayerPrompt = require('./plot/firstplayerprompt.js');
+const AtomicEvent = require('../AtomicEvent');
+const Event = require('../event');
 
 class RevealPlots extends BaseStep {
-    constructor(game, plots) {
+    constructor(game, plots, parentEvent = null) {
         super(game);
 
         this.plots = plots;
+        this.parentEvent = parentEvent;
     }
 
     continue() {
-        this.game.addSimultaneousEffects(this.getPlotEffects());
-
-        for(let plot of this.plots) {
-            this.game.raiseEvent('onCardEntersPlay', { card: plot, playingType: 'plot' });
+        let event = this.generateEvent(this.plots);
+        if(this.parentEvent) {
+            this.parentEvent.thenAttachEvent(event);
+        } else {
+            this.game.resolveEvent(event);
         }
+    }
 
-        let params = {
-            plots: this.plots
-        };
-        this.game.raiseEvent('onPlotsRevealed', params, () => {
+    generateEvent(plots) {
+        let event = new Event('onPlotsRevealed', { plots: plots }, () => {
+            this.game.addSimultaneousEffects(this.getPlotEffects(plots));
             if(this.needsFirstPlayerChoice()) {
                 this.game.raiseEvent('onCompareInitiative', {});
                 this.game.queueStep(new SimpleStep(this.game, () => this.determineInitiative()));
                 this.game.queueStep(() => new FirstPlayerPrompt(this.game, this.initiativeWinner));
             }
-            this.game.raiseEvent('onPlotsWhenRevealed', params);
         });
+
+        for(let plot of plots) {
+            event.addChildEvent(this.generateRevealEvent(plot));
+        }
+
+        return event;
     }
 
-    getPlotEffects() {
-        return this.plots
+    generateRevealEvent(plot) {
+        let event = new AtomicEvent();
+        event.addChildEvent(new Event('onPlotRevealed', { plot: plot }));
+        event.addChildEvent(new Event('onCardEntersPlay', { card: plot, playingType: 'plot' }));
+        return event;
+    }
+
+    getPlotEffects(plots) {
+        return plots
             .reduce((memo, plot) => {
                 let effectProperties = plot.getPersistentEffects();
                 let results = effectProperties.map(properties => ({ source: plot, properties: properties }));
