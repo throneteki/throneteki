@@ -6,6 +6,7 @@ class Godswood extends DrawCard {
             when: {
                 afterChallenge: event =>
                     event.challenge.winner === this.controller &&
+                    event.challenge.attackingPlayer === this.controller &&
                     this.moreWinterThanSummerPlotsRevealed() &&
                     this.controller.canDraw()
             },
