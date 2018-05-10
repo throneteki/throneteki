@@ -29,7 +29,8 @@ export function receiveGameState(game, username) {
 
         if(user && previousGameState) {
             if(hasTimer(game, user.username) && !hasTimer(previousGameState, user.username) && user.settings.windowTimer !== 0) {
-                dispatch(actions.startAbilityTimer(user.settings.windowTimer));
+                let timerProps = game.players[user.username].buttons.find(button => button.timer);
+                dispatch(actions.startAbilityTimer(user.settings.windowTimer, timerProps));
             } else if(!hasTimer(game, user.username) && hasTimer(previousGameState, user.username)) {
                 dispatch(actions.stopAbilityTimer());
             }
