@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const zmq = require('zmq');
 const config = require('./nodeconfig.js');
 const logger = require('../log.js');
+const { spawnSync } = require('child_process');
 
 class ZmqSocket extends EventEmitter {
     constructor(listenAddress, protocol) {
@@ -69,6 +70,10 @@ class ZmqSocket extends EventEmitter {
                 break;
             case 'CARDDATA':
                 this.emit('onCardData', message.arg);
+                break;
+            case 'RESTART':
+                logger.error('Got told to restart, executing pm2 restart..');
+                spawnSync('pm2', ['restart', this.socket.identity]);
                 break;
         }
     }

@@ -33,7 +33,8 @@ class UserAdmin extends React.Component {
             { name: 'canEditNews', label: 'News Editor' },
             { name: 'canManageUsers', label: 'User Manager' },
             { name: 'canManagePermissions', label: 'Permissions Manager' },
-            { name: 'canManageGames', label: 'Games Manager' }
+            { name: 'canManageGames', label: 'Games Manager' },
+            { name: 'canManageNodes', label: 'Node Manager' }
         ];
 
         this.onDisabledChanged = this.onDisabledChanged.bind(this);

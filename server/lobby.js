@@ -299,6 +299,9 @@ class Lobby {
         socket.registerEvent('connectfailed', this.onConnectFailed.bind(this));
         socket.registerEvent('removegame', this.onRemoveGame.bind(this));
         socket.registerEvent('clearsessions', this.onClearSessions.bind(this));
+        socket.registerEvent('getnodestatus', this.onGetNodeStatus.bind(this));
+        socket.registerEvent('togglenode', this.onToggleNode.bind(this));
+        socket.registerEvent('restartnode', this.onRestartNode.bind(this));
 
         socket.on('authenticate', this.onAuthenticated.bind(this));
         socket.on('disconnect', this.onSocketDisconnected.bind(this));
@@ -620,6 +623,34 @@ class Lobby {
         } else {
             this.router.closeGame(game);
         }
+    }
+
+    onGetNodeStatus(socket) {
+        if(!socket.user.permissions.canManageNodes) {
+            return;
+        }
+
+        socket.send('nodestatus', this.router.getNodeStatus());
+    }
+
+    onToggleNode(socket, node) {
+        if(!socket.user.permissions.canManageNodes) {
+            return;
+        }
+
+        this.router.toggleNode(node);
+
+        socket.send('nodestatus', this.router.getNodeStatus());
+    }
+
+    onRestartNode(socket, node) {
+        if(!socket.user.permissions.canManageNodes) {
+            return;
+        }
+
+        this.router.restartNode(node);
+
+        socket.send('nodestatus', this.router.getNodeStatus());
     }
 
     // router Events
