@@ -1,7 +1,6 @@
 const zmq = require('zmq');
 const router = zmq.socket('router');
 const logger = require('./log.js');
-const _ = require('underscore');
 const monk = require('monk');
 const EventEmitter = require('events');
 const GameService = require('./services/GameService.js');
@@ -46,13 +45,13 @@ class GameRouter extends EventEmitter {
     }
 
     getNextAvailableGameNode() {
-        if(_.isEmpty(this.workers)) {
+        if(Object.values(this.workers).length === 0) {
             return undefined;
         }
 
         var returnedWorker = undefined;
 
-        _.each(this.workers, worker => {
+        for(const worker of this.workers) {
             if(worker.numGames >= worker.maxGames || worker.disabled || worker.disconnected) {
                 return;
             }
@@ -60,19 +59,19 @@ class GameRouter extends EventEmitter {
             if(!returnedWorker || returnedWorker.numGames > worker.numGames) {
                 returnedWorker = worker;
             }
-        });
+        }
 
         return returnedWorker;
     }
 
     getNodeStatus() {
-        return _.map(this.workers, worker => {
+        return Object.values(this.workers).map(worker => {
             return { name: worker.identity, numGames: worker.numGames, status: worker.disconnceted ? 'disconnected' : worker.disabled ? 'disabled' : 'active' };
         });
     }
 
     disableNode(nodeName) {
-        var worker = this.workers[nodeName];
+        let worker = this.workers[nodeName];
         if(!worker) {
             return false;
         }
@@ -83,12 +82,34 @@ class GameRouter extends EventEmitter {
     }
 
     enableNode(nodeName) {
-        var worker = this.workers[nodeName];
+        let worker = this.workers[nodeName];
         if(!worker) {
             return false;
         }
 
         worker.disabled = false;
+
+        return true;
+    }
+
+    toggleNode(nodeName) {
+        let worker = this.workers[nodeName];
+        if(!worker) {
+            return false;
+        }
+
+        worker.disabled = !worker.disabled;
+
+        return true;
+    }
+
+    restartNode(nodeName) {
+        let worker = this.workers[nodeName];
+        if(!worker) {
+            return false;
+        }
+
+        this.sendCommand(nodeName, 'RESTART', {});
 
         return true;
     }
@@ -149,7 +170,7 @@ class GameRouter extends EventEmitter {
 
                 this.emit('onNodeReconnected', identityStr, message.arg.games);
 
-                worker.numGames = _.size(message.arg.games);
+                worker.numGames = message.arg.games.length;
 
                 break;
             case 'PONG':
@@ -196,7 +217,7 @@ class GameRouter extends EventEmitter {
         var currentTime = Date.now();
         const pingTimeout = 1 * 60 * 1000;
 
-        _.each(this.workers, worker => {
+        for(const worker of this.workers) {
             if(worker.pingSent && currentTime - worker.pingSent > pingTimeout) {
                 logger.info('worker', worker.identity + ' timed out');
                 this.workers[worker.identity].disconnected = true;
@@ -207,7 +228,7 @@ class GameRouter extends EventEmitter {
                     this.sendCommand(worker.identity, 'PING');
                 }
             }
-        });
+        }
     }
 }
 

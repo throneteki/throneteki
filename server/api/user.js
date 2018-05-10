@@ -22,7 +22,7 @@ module.exports.init = function(server) {
                     return Promise.reject('User not found');
                 }
 
-                res.send({ success: true, user: user });
+                res.send({ success: true, user: user.getDetails() });
             })
             .catch(err => {
                 logger.error(err);
@@ -37,7 +37,9 @@ module.exports.init = function(server) {
         let userToSet = req.body.userToChange;
 
         userService.getUserByUsername(req.params.username)
-            .then(user => {
+            .then(dbUser => {
+                let user = dbUser.getDetails();
+
                 if(!user) {
                     return res.status(404).send({ message: 'Not found' });
                 }

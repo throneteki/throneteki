@@ -16,6 +16,10 @@ export default function(state = {}, action) {
             return Object.assign({}, state, {
                 userSaved: false
             });
+        case 'NODE_STATUS_RECEIVED':
+            return Object.assign({}, state, {
+                nodeStatus: action.status
+            });
     }
 
     return state;
