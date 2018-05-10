@@ -76,16 +76,21 @@ var customMatchers = {
     toAllowAbilityTrigger: function(util, customEqualityMatchers) {
         return {
             compare: function(actual, expected) {
-                var buttons = actual.currentPrompt().buttons;
-                var result = {};
+                let result = {};
+                if(typeof expected !== 'string') {
+                    expected = expected.name;
+                }
 
-                result.pass = _.any(buttons, button => util.equals(button.text, expected, customEqualityMatchers));
+                let selectableCardNames = actual.player.getSelectableCards().map(card => card.name);
+                let isPromptingAbility = actual.game.abilityWindowStack.length !== 0;
+                let includesCard = selectableCardNames.some(cardName => util.equals(cardName, expected, customEqualityMatchers));
+
+                result.pass = isPromptingAbility && includesCard;
 
                 if(result.pass) {
-                    result.message = `Expected ${actual.name} not to have prompt button "${expected}" but it did.`;
+                    result.message = `Expected ${actual.name} not to be allowed to trigger ${expected} but it is.`;
                 } else {
-                    var buttonText = _.map(buttons, button => '[' + button.text + ']').join('\n');
-                    result.message = `Expected ${actual.name} to have prompt button "${expected}" but it had buttons:\n${buttonText}`;
+                    result.message = `Expected ${actual.name} to be allowed to trigger ${expected} but it isn't.`;
                 }
 
                 return result;

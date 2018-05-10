@@ -33,20 +33,13 @@ class BaseAbilityWindow extends BaseStep {
             return;
         }
 
-        let abilityGroupId = uuid.v1();
-
-        for(let choiceText of ability.getChoices(context)) {
-            this.abilityChoices.push({
-                id: uuid.v1(),
-                abilityGroupId: abilityGroupId,
-                player: context.player,
-                ability: ability,
-                card: ability.card,
-                text: choiceText.text,
-                choice: choiceText.choice,
-                context: context
-            });
-        }
+        this.abilityChoices.push({
+            id: uuid.v1(),
+            player: context.player,
+            ability: ability,
+            card: ability.card,
+            context: context
+        });
     }
 
     hasResolvedAbility(ability, event) {

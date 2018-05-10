@@ -1,6 +1,5 @@
-const _ = require('underscore');
-
 const TriggeredAbility = require('./triggeredability.js');
+const AbilityChoicePrompt = require('./gamesteps/AbilityChoicePrompt');
 
 /**
  * Represents a reaction ability provided by card text.
@@ -46,31 +45,35 @@ class PromptedTriggeredAbility extends TriggeredAbility {
         this.title = properties.title;
     }
 
+    getTitle(context) {
+        return this.title ? this.title(context) : null;
+    }
+
     createChoices(properties) {
-        var choices = {};
+        let choices = [];
 
         if(properties.choices) {
-            choices = properties.choices;
+            for(let [text, handler] of Object.entries(properties.choices)) {
+                choices.push({ text: text, handler: handler });
+            }
         } else {
-            choices = { 'default': properties.handler };
+            choices.push({ text: 'default', handler: properties.handler });
         }
 
         return choices;
     }
 
-    getChoices(context) {
-        return _.map(this.choices, (handler, title) => {
-            var text = title === 'default' && this.title ? this.title(context) : title;
-            return { text: text, choice: title };
-        });
-    }
-
     executeHandler(context) {
-        let handler = this.choices[context.choice];
-
-        if(handler) {
-            handler(context);
+        if(this.choices.length === 0) {
+            return;
         }
+
+        if(this.choices.length === 1) {
+            this.choices[0].handler(context);
+            return;
+        }
+
+        this.game.queueStep(new AbilityChoicePrompt(this.game, context, this.choices));
     }
 }
 

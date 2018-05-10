@@ -43,7 +43,6 @@ describe('Missandei', function() {
 
         describe('when Missandei is discarded from deck', function() {
             beforeEach(function() {
-                // this.player1.dragCard(this.missandei, 'draw deck');
                 this.unopposedChallenge(this.player2, 'Military', this.opponentPillager);
                 this.player2.clickPrompt('Apply Claim');
 

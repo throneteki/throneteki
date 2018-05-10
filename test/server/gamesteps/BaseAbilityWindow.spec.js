@@ -7,7 +7,7 @@ describe('BaseAbilityWindow', function() {
         this.eventSpy = jasmine.createSpyObj('event', ['clearAttachedEvents', 'emitTo', 'getConcurrentEvents']);
         this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
 
-        this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'getChoices', 'isTriggeredByEvent', 'meetsRequirements']);
+        this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'isTriggeredByEvent', 'meetsRequirements']);
 
         this.window = new BaseAbilityWindow(this.gameSpy, {
             event: this.eventSpy,
@@ -68,10 +68,6 @@ describe('BaseAbilityWindow', function() {
             this.context = { context: 1, player: this.player };
             this.abilitySpy.card = this.card;
             this.abilitySpy.createContext.and.returnValue(this.context);
-            this.abilitySpy.getChoices.and.returnValue([
-                { choice: 'choice1', text: 'Choice 1' },
-                { choice: 'choice2', text: 'Choice 2' }
-            ]);
             this.abilitySpy.meetsRequirements.and.returnValue(true);
         });
 
@@ -85,34 +81,13 @@ describe('BaseAbilityWindow', function() {
                 expect(this.abilitySpy.createContext).toHaveBeenCalledTimes(1);
             });
 
-            it('should register each choice', function() {
+            it('should register the ability', function() {
                 expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
                     ability: this.abilitySpy,
                     card: this.card,
-                    choice: 'choice1',
                     context: this.context,
-                    player: this.player,
-                    text: 'Choice 1'
+                    player: this.player
                 }));
-
-                expect(this.window.abilityChoices).toContain(jasmine.objectContaining({
-                    ability: this.abilitySpy,
-                    card: this.card,
-                    choice: 'choice2',
-                    context: this.context,
-                    player: this.player,
-                    text: 'Choice 2'
-                }));
-            });
-
-            it('should register each choice with a unique ID', function() {
-                let [choice1, choice2] = this.window.abilityChoices;
-                expect(choice1.id).not.toEqual(choice2.id);
-            });
-
-            it('should register each choice with the same group ID', function() {
-                let [choice1, choice2] = this.window.abilityChoices;
-                expect(choice1.abilityGroupId).toEqual(choice2.abilityGroupId);
             });
         });
 
