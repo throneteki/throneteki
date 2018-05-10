@@ -109,12 +109,12 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             return false;
         }
 
-        if(choices.length === 1) {
+        let availableTargets = choices.map(choice => choice.context.event.card || choice.context.event.target).filter(card => !!card);
+
+        if(choices.length === 1 || availableTargets.length <= 1) {
             this.chooseAbility(choices[0]);
             return true;
         }
-
-        let availableTargets = choices.map(choice => choice.context.event.card || choice.context.event.target);
 
         this.game.promptForSelect(player, {
             activePromptTitle: `Choose target for ${card.name}`,
