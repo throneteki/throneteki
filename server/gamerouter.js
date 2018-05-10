@@ -51,7 +51,7 @@ class GameRouter extends EventEmitter {
 
         var returnedWorker = undefined;
 
-        for(const worker of this.workers) {
+        for(const worker of Object.values(this.workers)) {
             if(worker.numGames >= worker.maxGames || worker.disabled || worker.disconnected) {
                 return;
             }
@@ -217,7 +217,7 @@ class GameRouter extends EventEmitter {
         var currentTime = Date.now();
         const pingTimeout = 1 * 60 * 1000;
 
-        for(const worker of this.workers) {
+        for(const worker of Object.values(this.workers)) {
             if(worker.pingSent && currentTime - worker.pingSent > pingTimeout) {
                 logger.info('worker', worker.identity + ' timed out');
                 this.workers[worker.identity].disconnected = true;
