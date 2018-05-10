@@ -48,6 +48,7 @@ class ToGoForwardYouMustGoBack extends DrawCard {
 
         this.game.addMessage('{0} uses {1} to shuffle their hand into their draw deck and draw {2} {3}',
             this.controller, this, cards, cards > 1 ? 'cards' : 'card');
+        return true;
     }
 
     cancel() {
