@@ -105,6 +105,13 @@ export function handoffReceived(details) {
     };
 }
 
+export function nodeStatusReceived(status) {
+    return {
+        type: 'NODE_STATUS_RECEIVED',
+        status: status
+    };
+}
+
 export function connectLobby() {
     return (dispatch, getState) => {
         let state = getState();
@@ -176,6 +183,10 @@ export function connectLobby() {
 
         socket.on('authfailed', () => {
             dispatch(actions.authenticate());
+        });
+
+        socket.on('nodestatus', status => {
+            dispatch(nodeStatusReceived(status));
         });
     };
 }
