@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-import version from '../../version.js';
+import version from '../version';
 import * as actions from '../actions';
 
 export function socketMessageSent(message) {

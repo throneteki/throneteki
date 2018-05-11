@@ -10,7 +10,7 @@ import Raven from 'raven-js';
 import { DragDropContext } from 'react-dnd';
 import { default as TouchBackend } from 'react-dnd-touch-backend';
 
-import version from '../version.js';
+import version from './version';
 import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const ravenOptions = {
