@@ -10,6 +10,7 @@ const defaultProperties = {
     numCards: 1,
     cardCondition: () => true,
     cardType: ['attachment', 'character', 'event', 'location'],
+    isCardEffect: true,
     gameAction: 'target',
     multiSelect: false,
     singleController: false,

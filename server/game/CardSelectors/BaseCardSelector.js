@@ -20,6 +20,9 @@ class BaseCardSelector {
      * @param {boolean} properties.revealTargets
      * indicates that all selectable facedown cards are flipped faceup for
      * the selecting player.
+     * @param {boolean} properties.isCardEffect
+     * indicates whether the selector is part of a card effect and thus should
+     * check for card immunity
      */
     constructor(properties) {
         this.cardCondition = properties.cardCondition;
@@ -27,6 +30,7 @@ class BaseCardSelector {
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;
         this.revealTargets = properties.revealTargets;
+        this.isCardEffect = properties.isCardEffect;
 
         if(!Array.isArray(properties.cardType)) {
             this.cardType = [properties.cardType];
@@ -48,9 +52,12 @@ class BaseCardSelector {
         return (
             this.cardType.includes(card.getType()) &&
             this.cardCondition(card, context) &&
-            card.allowGameAction('target', context) &&
-            card.allowGameAction(this.gameAction)
+            this.isAllowedForGameAction(card, context)
         );
+    }
+
+    isAllowedForGameAction(card, context) {
+        return !this.isCardEffect || card.allowGameAction('target', context) && card.allowGameAction(this.gameAction);
     }
 
     /**
