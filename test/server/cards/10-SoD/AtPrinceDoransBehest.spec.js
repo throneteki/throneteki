@@ -46,6 +46,22 @@ describe('At Prince Doran\'s Behest', function() {
             });
         });
 
+        describe('when resolution order does not need to be chosen', function() {
+            beforeEach(function() {
+                this.completeSetup();
+
+                this.player1.selectPlot('At Prince Doran\'s Behest');
+                this.player2.selectPlot('A Noble Cause');
+                this.selectFirstPlayer(this.player2);
+
+                this.player1.clickCard('Valar Morghulis', 'plot deck');
+            });
+
+            it('should automatically resolve the selected plot', function() {
+                expect(this.character.location).toBe('dead pile');
+            });
+        });
+
         describe('when interrupts are available for plot reveals', function() {
             beforeEach(function() {
                 this.player2.clickCard('Old Nan', 'hand');

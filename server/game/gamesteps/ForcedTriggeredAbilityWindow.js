@@ -13,7 +13,7 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
         if(this.abilityChoices.length === 1) {
             let abilityChoice = this.abilityChoices[0];
             this.resolveAbility(abilityChoice.ability, abilityChoice.context);
-            return true;
+            return false;
         }
 
         if(this.abilityChoices.length > 1) {
