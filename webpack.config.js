@@ -11,7 +11,10 @@ module.exports = (env) => {
     const sharedConfig = () => ({
         stats: { modules: false },
         resolve: {
-            extensions: ['.js', '.jsx']
+            extensions: ['.js', '.jsx'],
+            alias: {
+                'jquery.validation': 'jquery-validation/dist/jquery.validate.js'
+            }
         },
         output: {
             filename: isDevBuild ? '[name].js' : '[name]-[hash].js',
@@ -31,8 +34,11 @@ module.exports = (env) => {
     const clientBundleConfig = merge(sharedConfig(), {
         entry: { 'bundle': (isDevBuild ? [
             'react-hot-loader/patch',
-            'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000',
             'webpack/hot/only-dev-server'] : []).concat(['./index.jsx', './less/site.less', 'babel-polyfill']) },
+        devServer: {
+            contentBase: './public',
+            hot: true
+        },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
         module: {
             rules: isDevBuild ? [
@@ -59,17 +65,18 @@ module.exports = (env) => {
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
-            new webpack.DllReferencePlugin({
-                context: __dirname,
-                manifest: require('./public/vendor-manifest.json')
-            }),
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery'
             })
         ].concat(isDevBuild ? [
+            new webpack.NamedModulesPlugin(),
             new webpack.HotModuleReplacementPlugin()
         ] : [
+            new webpack.DllReferencePlugin({
+                context: __dirname,
+                manifest: require('./public/vendor-manifest.json')
+            }),
             new ExtractTextPlugin('site-[hash].css'),
             assetsPluginInstance
         ])
