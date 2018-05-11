@@ -48,6 +48,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
         this.game.promptForSelect(player, {
             activePromptTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvent()),
+            isCardEffect: false,
             cardCondition: card => cardsForPlayer.includes(card),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot'],
             additionalButtons: this.getButtons(player, unclickableCards),
@@ -118,6 +119,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
 
         this.game.promptForSelect(player, {
             activePromptTitle: `Choose target for ${card.name}`,
+            isCardEffect: false,
             cardCondition: card => availableTargets.includes(card),
             onSelect: (player, selectedCard) => {
                 let choice = choices.find(choice => choice.context.event.card === selectedCard || choice.context.event.target === selectedCard);
