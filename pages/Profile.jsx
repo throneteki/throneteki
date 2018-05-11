@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 import Slider from 'react-bootstrap-slider';
 
@@ -142,7 +141,7 @@ class Profile extends React.Component {
 
         document.getElementsByClassName('wrapper')[0].scrollTop = 0;
 
-        if(_.any(this.state.validation, function(message) {
+        if(this.state.validation.some(message => {
             return message && message !== '';
         })) {
             this.setState({ errorMessage: 'There was an error in one or more fields, please see below, correct the error and try again' });
@@ -203,7 +202,7 @@ class Profile extends React.Component {
     onSlideStop(event) {
         let value = parseInt(event.target.value);
 
-        if(_.isNaN(value)) {
+        if(isNaN(value)) {
             return;
         }
 
@@ -231,7 +230,7 @@ class Profile extends React.Component {
             return <AlertPanel type='error' message='You must be logged in to update your profile' />;
         }
 
-        let windows = _.map(this.windows, window => {
+        let windows = this.windows.map(window => {
             return (<Checkbox key={ window.name }
                 noGroup
                 name={ 'promptedActionWindows.' + window.name }

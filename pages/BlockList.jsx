@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'underscore';
 
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
@@ -74,7 +73,7 @@ class BlockList extends React.Component {
         }
 
         let content;
-        let blockList = _.map(this.props.blockList, user => {
+        let blockList = this.props.blockList.map(user => {
             return (
                 <tr key={ user }>
                     <td>{ user }</td>

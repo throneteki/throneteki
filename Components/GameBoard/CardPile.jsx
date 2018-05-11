@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import _ from 'underscore';
 
 import Card from './Card';
 import CardTiledList from './CardTiledList';
@@ -121,7 +120,11 @@ class CardPile extends React.Component {
         };
 
         if(this.props.cards && this.props.cards.some(card => card.group)) {
-            const cardGroup = _.groupBy(this.props.cards, card => card.group);
+            const cardGroup = this.props.cards.reduce((grouping, card) => {
+                (grouping[card.group] = grouping[card.group] || []).push(card);
+
+                return grouping;
+            }, {});
             const sortedKeys = Object.keys(cardGroup).sort();
             for(const key of sortedKeys) {
                 cardList.push(
@@ -144,7 +147,7 @@ class CardPile extends React.Component {
         let innerClass = classNames('inner', this.props.size);
         let linkIndex = 0;
 
-        let popupMenu = this.props.popupMenu ? (<div>{ _.map(this.props.popupMenu, menuItem => {
+        let popupMenu = this.props.popupMenu ? (<div>{ this.props.popupMenu.map(menuItem => {
             return <a className='btn btn-default' key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{ menuItem.text }</a>;
         }) }</div>) : null;
 
@@ -167,7 +170,7 @@ class CardPile extends React.Component {
     getMenu() {
         let menuIndex = 0;
 
-        let menu = _.map(this.props.menu, item => {
+        let menu = this.props.menu.map(item => {
             return <div key={ (menuIndex++).toString() } onClick={ this.onMenuItemClick.bind(this, item) }>{ item.text }</div>;
         });
 
@@ -186,7 +189,7 @@ class CardPile extends React.Component {
 
         let cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
         let headerText = this.props.title ? this.props.title + ' (' + (cardCount) + ')' : '';
-        let topCard = this.props.topCard || _.first(this.props.cards);
+        let topCard = this.props.topCard || this.props.cards ? this.props.cards[0] : null;
         let cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
 
         if(this.props.hiddenTopCard && !this.props.topCard) {

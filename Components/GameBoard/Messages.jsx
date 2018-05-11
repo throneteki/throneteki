@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'underscore';
 
 import Avatar from '../Site/Avatar';
 import * as actions from '../../actions';
@@ -33,7 +32,7 @@ class Messages extends React.Component {
 
     getMessage() {
         var index = 0;
-        var messages = _.map(this.props.messages, message => {
+        var messages = this.props.messages.map(message => {
             return <div key={ 'message' + index++ } className='message'>{ this.formatMessageText(message.message) }</div>;
         });
 
@@ -41,10 +40,15 @@ class Messages extends React.Component {
     }
 
     formatMessageText(message) {
-        var index = 0;
-        return _.map(message, (fragment, key) => {
-            if(_.isNull(fragment) || _.isUndefined(fragment)) {
-                return '';
+        let index = 0;
+
+        let messages = [];
+
+        for(const [key, fragment] of Object.entries(message)) {
+            if(fragment === null || fragment === undefined) {
+                messages.push('');
+
+                continue;
             }
 
             if(key === 'alert') {
@@ -52,39 +56,46 @@ class Messages extends React.Component {
 
                 switch(fragment.type) {
                     case 'endofround':
-                        return (
+                        messages.push(
                             <div className='seperator' key={ index++ }>
                                 <hr />
                                 { message }
                                 <hr />
                             </div>
                         );
+                        break;
                     case 'success':
-                        return (<div className='alert alert-success' key={ index++ }>
+                        messages.push(<div className='alert alert-success' key={ index++ }>
                             <span className='glyphicon glyphicon-ok-sign' />&nbsp;
                             { message }
                         </div>);
+                        break;
                     case 'info':
-                        return (<div className='alert alert-info' key={ index++ }>
+                        messages.push(<div className='alert alert-info' key={ index++ }>
                             <span className='glyphicon glyphicon-info-sign' />&nbsp;
                             { message }
                         </div>);
+                        break;
                     case 'danger':
-                        return (<div className='alert alert-danger' key={ index++ }>
+                        messages.push(<div className='alert alert-danger' key={ index++ }>
                             <span className='glyphicon glyphicon-exclamation-sign' />&nbsp;
                             { message }
                         </div>);
+                        break;
                     case 'warning':
-                        return (<div className='alert alert-warning' key={ index++ }>
+                        messages.push(<div className='alert alert-warning' key={ index++ }>
                             <span className='glyphicon glyphicon-warning-sign' />&nbsp;
                             { message }
                         </div>);
+                        break;
+                    default:
+                        messages.push(message);
+                        break;
                 }
-                return message;
             } else if(fragment.message) {
-                return this.formatMessageText(fragment.message);
+                messages.push(this.formatMessageText(fragment.message));
             } else if(fragment.code && fragment.label) {
-                return (
+                messages.push(
                     <span key={ index++ }
                         className='card-link'
                         onMouseOver={ this.props.onCardMouseOver.bind(this, fragment) }
@@ -93,7 +104,7 @@ class Messages extends React.Component {
                     </span>
                 );
             } else if(fragment.name) {
-                return (
+                messages.push(
                     <div key={ index++ }>
                         <Avatar emailHash={ fragment.emailHash } forceDefault={ fragment.noAvatar } float />
                         <span key={ index++ }>
@@ -101,14 +112,16 @@ class Messages extends React.Component {
                         </span>
                     </div>
                 );
-            } else if(_.contains(this.icons, fragment)) {
-                return (
+            } else if(this.icons.includes(fragment)) {
+                messages.push(
                     <span className={ 'icon-' + fragment } key={ index++ } />
                 );
+            } else {
+                messages.push(fragment);
             }
+        }
 
-            return fragment;
-        });
+        return messages;
     }
 
     render() {

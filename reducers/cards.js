@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import validateDeck from '../deck-validator.js';
 
 function selectDeck(state, deck) {
@@ -61,13 +60,13 @@ export default function(state = {}, action) {
         case 'RECEIVE_CARDS':
             var agendas = {};
 
-            _.each(action.response.cards, card => {
+            for(const card of Object.values(action.response.cards)) {
                 if(card.type === 'agenda') {
                     agendas[card.code] = card;
                 }
-            });
+            }
 
-            var banners = _.filter(agendas, card => {
+            var banners = Object.values(agendas).filter(card => {
                 return card.label.startsWith('Banner of the');
             });
 
@@ -88,9 +87,9 @@ export default function(state = {}, action) {
         case 'RECEIVE_FACTIONS':
             var factions = {};
 
-            _.each(action.response.factions, faction => {
+            for(const faction of action.response.factions) {
                 factions[faction.value] = faction;
-            });
+            }
 
             newState = Object.assign({}, state, {
                 factions: factions
@@ -147,7 +146,7 @@ export default function(state = {}, action) {
             });
 
             if(newState.selectedDeck && !newState.selectedDeck._id) {
-                if(_.size(newState.decks) > 0) {
+                if(newState.decks.length > 0) {
                     newState.selectedDeck = newState.decks[0];
                 }
             }
@@ -161,7 +160,7 @@ export default function(state = {}, action) {
 
             processDecks([action.response.deck], state);
 
-            newState.decks = _.map(state.decks, deck => {
+            newState.decks = state.decks.map(deck => {
                 if(action.response.deck._id === deck.id) {
                     return deck;
                 }
@@ -169,13 +168,13 @@ export default function(state = {}, action) {
                 return deck;
             });
 
-            if(!_.any(newState.decks, deck => {
+            if(!newState.decks.some(deck => {
                 return deck._id === action.response.deck._id;
             })) {
                 newState.decks.push(action.response.deck);
             }
 
-            var selected = _.find(newState.decks, deck => {
+            var selected = newState.decks.find(deck => {
                 return deck._id === action.response.deck._id;
             });
 
@@ -233,11 +232,11 @@ export default function(state = {}, action) {
                 deckDeleted: true
             });
 
-            newState.decks = _.reject(newState.decks, deck => {
-                return deck._id === action.response.deckId;
+            newState.decks = newState.decks.filter(deck => {
+                return deck._id !== action.response.deckId;
             });
 
-            newState.selectedDeck = _.first(newState.decks);
+            newState.selectedDeck = newState.decks[0];
 
             return newState;
         case 'CLEAR_DECK_STATUS':

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 class CardMenu extends React.Component {
     onMenuItemClick(menuItem) {
@@ -11,7 +10,7 @@ class CardMenu extends React.Component {
 
     render() {
         var menuIndex = 0;
-        var menuItems = _.map(this.props.menu, menuItem => {
+        var menuItems = this.props.menu.map(menuItem => {
             return <div key={ menuIndex++ } onClick={ this.onMenuItemClick.bind(this, menuItem) }>{ menuItem.text }</div>;
         });
 

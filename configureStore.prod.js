@@ -3,16 +3,21 @@ import thunkMiddleware from 'redux-thunk';
 import rootReducer from './reducers';
 import Raven from 'raven-js';
 import createRavenMiddleware from 'raven-for-redux';
-import _ from 'underscore';
 
 import callAPIMiddleware from './middleware/api-middleware.js';
 
 const enhancer = compose(
     applyMiddleware(thunkMiddleware, callAPIMiddleware, createRavenMiddleware(Raven, {
         stateTransformer: state => {
-            let ret = _.omit(state, 'auth');
+            let ret = Object.assign({}, state);
+            delete ret.auth;
 
-            ret.cards = _.omit(ret.cards, 'agendas', 'banners', 'cards', 'factions', 'packs');
+            delete ret.cards.agendas;
+            delete ret.cards.banners;
+            delete ret.cards.cards;
+            delete ret.cards.factions;
+            delete ret.cards.packs;
+
             return ret;
         }
     })));

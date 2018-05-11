@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 import AbilityTargeting from './AbilityTargeting';
 import AbilityTimer from './AbilityTimer';
@@ -44,9 +43,9 @@ class ActivePlayerPrompt extends React.Component {
 
         let buttons = [];
 
-        _.each(this.props.buttons, button => {
+        for(const button of this.props.buttons) {
             if(button.timer) {
-                return;
+                continue;
             }
 
             let clickCallback = button.timerCancel ? event => this.onCancelTimerClick(event, button) :
@@ -63,7 +62,7 @@ class ActivePlayerPrompt extends React.Component {
             buttonIndex++;
 
             buttons.push(option);
-        });
+        }
 
         return buttons;
     }

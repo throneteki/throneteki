@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import _ from 'underscore';
 
 export function fetchNews() {
     return dispatch => {
@@ -35,7 +34,7 @@ export function loadNews(options) {
     return {
         types: ['REQUEST_NEWS', 'RECEIVE_NEWS'],
         shouldCallAPI: (state) => {
-            return _.size(state.news.news) === 0 || (options && !!options.forceLoad);
+            return state.news.news.length === 0 || (options && !!options.forceLoad);
         },
         APIParams: { url: '/api/news/', cache: false, data: params }
     };

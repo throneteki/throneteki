@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 import { connect } from 'react-redux';
 
 import Link from './Link';
@@ -45,7 +44,7 @@ class NavBar extends React.Component {
         if(menuItem.childItems) {
             let className = 'dropdown';
 
-            if(_.any(menuItem.childItems, item => {
+            if(menuItem.childItems.some(item => {
                 return item.path === this.props.path;
             })) {
                 className += ' active';
@@ -91,9 +90,9 @@ class NavBar extends React.Component {
         let leftMenuToRender = leftMenu.map(this.renderMenuItem.bind(this));
         let rightMenuToRender = rightMenu.map(this.renderMenuItem.bind(this));
 
-        let numGames = !_.isUndefined(this.props.games.length) ? <li><span>{ `${this.props.games.length} Games` }</span></li> : null;
+        let numGames = this.props.games ? <li><span>{ `${this.props.games.length} Games` }</span></li> : null;
 
-        let contextMenu = _.map(this.props.context, menuItem => {
+        let contextMenu = this.props.context && this.props.context.map(menuItem => {
             return (
                 <li key={ menuItem.text }><a href='javascript:void(0)' onMouseOver={ this.onMenuItemMouseOver.bind(this, menuItem) }
                     onMouseOut={ this.onMenuItemMouseOut.bind(this) }

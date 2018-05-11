@@ -44,7 +44,6 @@ module.exports = (env) => {
                 'moment',
                 'prop-types',
                 'socket.io-client',
-                'underscore',
                 'query-string',
                 'path-to-regexp',
                 'classnames',

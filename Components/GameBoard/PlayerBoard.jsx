@@ -1,20 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import _ from 'underscore';
 
 import Card from './Card';
 
 class PlayerBoard extends React.Component {
     getCardRows() {
-        let sortedCards = _.sortBy(this.props.cardsInPlay, card => card.type);
+
+        let sortedCards = this.props.cardsInPlay.sort((a, b) => {
+            return a.type - b.type;
+        });
 
         if(this.props.rowDirection === 'reverse') {
             // we want locations on the bottom, other side wants locations on top
             sortedCards = sortedCards.reverse();
         }
 
-        let rows = _.values(_.groupBy(sortedCards, card => card.type));
+        let groupedCards = sortedCards.reduce((group, card) => {
+            (group[card.type] = group[card.type] || []).push(card);
+
+            return group;
+        }, {});
+
+        let rows = Object.values(groupedCards);
         for(let i = rows.length; i < 2; i++) {
             if(sortedCards.some(card => card.type === 'location')) {
                 if(this.props.rowDirection === 'reverse') {

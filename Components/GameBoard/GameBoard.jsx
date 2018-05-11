@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'underscore';
 import $ from 'jquery';
 import { toastr } from 'react-redux-toastr';
 import { bindActionCreators } from 'redux';
@@ -107,13 +106,11 @@ export class GameBoard extends React.Component {
         ];
 
         if(props.currentGame && props.currentGame.started) {
-            if(_.find(props.currentGame.players, p => {
-                return p.name === props.user.username;
-            })) {
+            if(props.currentGame.players[props.user.username]) {
                 menuOptions.unshift({ text: 'Concede', onClick: this.onConcedeClick });
             }
 
-            let spectators = _.map(props.currentGame.spectators, spectator => {
+            let spectators = props.currentGame.spectators.map(spectator => {
                 return <li key={ spectator.id }>{ spectator.name }</li>;
             });
 
@@ -152,10 +149,10 @@ export class GameBoard extends React.Component {
 
         let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
-            thisPlayer = _.toArray(this.props.currentGame.players)[0];
+            thisPlayer = Object.values(this.props.currentGame.players)[0];
         }
 
-        let otherPlayer = _.find(this.props.currentGame.players, player => {
+        let otherPlayer = Object.values(this.props.currentGame.players).find(player => {
             return player.name !== thisPlayer.name;
         });
 
@@ -302,14 +299,14 @@ export class GameBoard extends React.Component {
 
         let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
-            thisPlayer = _.toArray(this.props.currentGame.players)[0];
+            thisPlayer = Object.values(this.props.currentGame.players)[0];
         }
 
         if(!thisPlayer) {
             return <div>Waiting for game to have players or close...</div>;
         }
 
-        let otherPlayer = _.find(this.props.currentGame.players, player => {
+        let otherPlayer = Object.values(this.props.currentGame.players).find(player => {
             return player.name !== thisPlayer.name;
         }) || placeholderPlayer;
 

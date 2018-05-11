@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 class AbilityTargeting extends React.Component {
     onMouseOver(event, card) {
@@ -27,7 +26,7 @@ class AbilityTargeting extends React.Component {
     }
 
     render() {
-        let targetCards = _.map(this.props.targets, target => this.renderSimpleCard(target));
+        let targetCards = this.props.targets.map(target => this.renderSimpleCard(target));
         return (
             <div className='prompt-control-targeting'>
                 { this.renderSimpleCard(this.props.source) }

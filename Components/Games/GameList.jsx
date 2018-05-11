@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
-import _ from 'underscore';
 
 import Avatar from '../Site/Avatar';
 import * as actions from '../../actions';
@@ -56,11 +55,11 @@ class GameList extends React.Component {
     }
 
     render() {
-        let gameList = _.map(this.props.games, game => {
+        let gameList = this.props.games.map(game => {
             let firstPlayer = true;
             let gameRow = [];
 
-            _.each(game.players, player => {
+            for(const player of Object.values(game.players)) {
                 let playerElement = null;
                 let factionIconClass = classNames('hidden-xs', 'col-xs-1', 'game-icon', `icon-${player.faction}`);
 
@@ -89,7 +88,7 @@ class GameList extends React.Component {
                 }
 
                 return playerElement;
-            });
+            }
 
             let gameTitle = '';
 
@@ -116,7 +115,7 @@ class GameList extends React.Component {
                     </span>
                     <div>{ gameRow }</div>
                     <div className='col-xs-3 game-row-buttons pull-right'>
-                        { (this.props.currentGame || _.size(game.players) === 2 || game.started) ?
+                        { (this.props.currentGame || Object.values(game.players).length === 2 || game.started) ?
                             null :
                             <button className='btn btn-primary pull-right' onClick={ event => this.joinGame(event, game) }>Join</button>
                         }

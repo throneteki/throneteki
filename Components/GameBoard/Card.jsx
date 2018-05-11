@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import _ from 'underscore';
 import 'jquery-migrate';
 import { DragSource } from 'react-dnd';
 
@@ -79,7 +78,7 @@ class InnerCard extends React.Component {
         event.preventDefault();
         event.stopPropagation();
 
-        if(this.isAllowedMenuSource() && !_.isEmpty(this.props.card.menu)) {
+        if(this.isAllowedMenuSource() && this.props.card.menu && !this.props.card.menu.length === 0) {
             this.setState({ showMenu: !this.state.showMenu });
 
             return;
@@ -112,23 +111,23 @@ class InnerCard extends React.Component {
             counters.push({ name: 'dupe', count: card.dupes.length, fade: card.type === 'attachment', shortName: 'D' });
         }
 
-        _.each(card.iconsAdded, icon => {
+        for(const icon of card.iconsAdded) {
             counters.push({ name: icon, count: 0, cancel: false });
-        });
+        }
 
-        _.each(card.iconsRemoved, icon => {
+        for(const icon of card.iconsRemoved) {
             counters.push({ name: icon, count: 0, cancel: true });
-        });
+        }
 
-        _.each(card.tokens, (token, key) => {
+        for(const [key, token] of Object.entries(card.tokens)) {
             counters.push({ name: key, count: token, fade: card.type === 'attachment', shortName: this.shortNames[key] });
-        });
+        }
 
-        _.each(card.attachments, attachment => {
+        for(const attachment of card.attachments) {
             counters = counters.concat(this.getCountersForCard(attachment));
-        });
+        }
 
-        return _.reject(counters, counter => counter.count < 0);
+        return counters.filter(counter => counter.count >= 0);
     }
 
     getAttachments() {
@@ -137,7 +136,7 @@ class InnerCard extends React.Component {
         }
 
         var index = 1;
-        var attachments = _.map(this.props.card.attachments, attachment => {
+        var attachments = this.props.card.attachments.map(attachment => {
             var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment }
                 className={ classNames('attachment', `attachment-${index}`) } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment) }
@@ -159,7 +158,7 @@ class InnerCard extends React.Component {
             return null;
         }
 
-        var facedownDupes = _.filter(this.props.card.dupes, card => {
+        var facedownDupes = this.props.card.dupes.filter(card => {
             return card.facedown;
         });
 
@@ -168,7 +167,7 @@ class InnerCard extends React.Component {
         }
 
         var index = 1;
-        var dupes = _.map(facedownDupes, dupe => {
+        var dupes = facedownDupes.map(dupe => {
             var returnedDupe = (<Card key={ dupe.uuid } className={ classNames('card-dupe', `card-dupe-${index}`) }
                 source={ this.props.source } card={ dupe } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe) }

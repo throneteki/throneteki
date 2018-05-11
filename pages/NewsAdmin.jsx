@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import _ from 'underscore';
 import moment from 'moment';
 
 import AlertPanel from '../Components/Site/AlertPanel';
@@ -63,7 +62,7 @@ class NewsAdmin extends React.Component {
     render() {
         let content = null;
 
-        var renderedNews = _.map(this.props.news, newsItem => {
+        var renderedNews = this.props.news.map(newsItem => {
             return (<tr key={ newsItem._id }>
                 <td>{ moment(newsItem.datePublished).format('YYYY-MM-DD') }</td>
                 <td>{ newsItem.poster }</td>

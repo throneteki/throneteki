@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
 
 import NewsItem from './NewsItem';
 
@@ -11,9 +10,9 @@ class News extends React.Component {
             'intrigue',
             'power'
         ];
-        let iconIndex = 0;
 
-        let news = _.map(this.props.news, newsItem => {
+        let iconIndex = 0;
+        let news = this.props.news.map(newsItem => {
             let retNews = <NewsItem key={ newsItem.datePublished } icon={ icons[iconIndex++] } date={ newsItem.datePublished } text={ newsItem.text } />;
             if(iconIndex === 3) {
                 iconIndex = 0;
@@ -22,7 +21,7 @@ class News extends React.Component {
             return retNews;
         });
 
-        if(_.size(news) === 0) {
+        if(news.length === 0) {
             news = <div className='military-container'>There is no site news at the moment</div>;
         }
 
