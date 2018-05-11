@@ -53,7 +53,7 @@ class GameRouter extends EventEmitter {
 
         for(const worker of Object.values(this.workers)) {
             if(worker.numGames >= worker.maxGames || worker.disabled || worker.disconnected) {
-                return;
+                continue;
             }
 
             if(!returnedWorker || returnedWorker.numGames > worker.numGames) {
