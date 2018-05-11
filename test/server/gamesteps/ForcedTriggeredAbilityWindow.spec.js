@@ -84,8 +84,14 @@ describe('ForcedTriggeredAbilityWindow', function() {
                 expect(this.gameSpy.promptWithMenu).not.toHaveBeenCalled();
             });
 
-            it('should complete the prompt', function() {
-                expect(this.result).toBe(true);
+            it('should not complete the prompt', function() {
+                // The execution of the forced ability may raise additional
+                // abilities in the same window. Thus, the prompt should be kept
+                // open until there are 0 abilities left in the window.
+                // e.g. At Prince Doran's Behest could be the only 'When Revealed'
+                // ability, but itself could reveal another 'When Revealed'
+                // ability in the same window.
+                expect(this.result).toBe(false);
             });
         });
 
