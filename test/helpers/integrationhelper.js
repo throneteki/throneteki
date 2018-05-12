@@ -82,7 +82,7 @@ var customMatchers = {
                 }
 
                 let selectableCardNames = actual.player.getSelectableCards().map(card => card.name);
-                let isPromptingAbility = actual.game.abilityWindowStack.length !== 0;
+                let isPromptingAbility = actual.game.hasOpenInterruptOrReactionWindow();
                 let includesCard = selectableCardNames.some(cardName => util.equals(cardName, expected, customEqualityMatchers));
 
                 result.pass = isPromptingAbility && includesCard;

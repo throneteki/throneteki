@@ -756,7 +756,7 @@ class Game extends EventEmitter {
     markActionAsTaken(context) {
         if(this.currentActionWindow) {
             this.currentActionWindow.markActionAsTaken();
-        } else if(this.currentPhase !== 'marshal') {
+        } else if(this.currentPhase !== 'marshal' || this.hasOpenInterruptOrReactionWindow()) {
             this.addAlert('danger', '{0} uses {1} outside of an action window', context.player, context.source);
         }
     }
@@ -800,6 +800,10 @@ class Game extends EventEmitter {
         for(let window of this.abilityWindowStack) {
             window.clearAbilityResolution(ability);
         }
+    }
+
+    hasOpenInterruptOrReactionWindow() {
+        return this.abilityWindowStack.length !== 0;
     }
 
     raiseEvent(eventName, params, handler) {
