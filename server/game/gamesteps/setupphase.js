@@ -8,6 +8,7 @@ class SetupPhase extends Phase {
     constructor(game) {
         super(game, 'setup');
         this.initialise([
+            new SimpleStep(game, () => this.announceFactionAndAgenda()),
             new SimpleStep(game, () => this.prepareDecks()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
@@ -17,6 +18,12 @@ class SetupPhase extends Phase {
             new CheckAttachmentsPrompt(game),
             new SimpleStep(game, () => game.activatePersistentEffects())
         ]);
+    }
+
+    announceFactionAndAgenda() {
+        for(const player of this.game.getPlayers()) {
+            this.game.addMessage('{0} announces they are playing as {1} with {2}', player, player.faction, player.agenda || 'no agenda');
+        }
     }
 
     prepareDecks() {
