@@ -68,7 +68,9 @@ class Game extends EventEmitter {
         this.isMelee = !!details.isMelee;
         this.noTitleSetAside = !!details.noTitleSetAside;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
-        this.shortCardData = options.shortCardData || [];
+        this.cardData = options.cardData || [];
+        this.packData = options.packData || [];
+        this.restrictedListData = options.restrictedListData || [];
         this.skipPhase = {};
 
         _.each(details.players, player => {
@@ -579,7 +581,7 @@ class Game extends EventEmitter {
                 return;
             }
 
-            let card = _.find(this.shortCardData, c => {
+            let card = Object.values(this.cardData).find(c => {
                 return c.label.toLowerCase() === message.toLowerCase() || c.name.toLowerCase() === message.toLowerCase();
             });
 

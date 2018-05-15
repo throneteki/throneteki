@@ -39,14 +39,7 @@ class Lobby {
 
         this.lastUserBroadcast = moment();
 
-        this.loadCardData();
-
         setInterval(() => this.clearStalePendingGames(), 60 * 1000);
-    }
-
-    async loadCardData() {
-        this.titleCardData = await this.cardService.getTitleCards();
-        this.shortCardData = await this.cardService.getAllCards({ shortForm: true });
     }
 
     // External methods
@@ -701,7 +694,11 @@ class Lobby {
     }
 
     onWorkerStarted(nodeName) {
-        this.router.sendCommand(nodeName, 'CARDDATA', { titleCardData: this.titleCardData, shortCardData: this.shortCardData });
+        Promise.all([this.cardService.getAllCards(), this.cardService.getTitleCards(), this.cardService.getAllPacks(), this.cardService.getRestrictedList()])
+            .then(results => {
+                let [cards, titles, packs, restrictedList] = results;
+                this.router.sendCommand(nodeName, 'CARDDATA', { titleCardData: titles, cardData: cards, packData: packs, restrictedListData: restrictedList });
+            });
     }
 
     onNodeReconnected(nodeName, games) {
