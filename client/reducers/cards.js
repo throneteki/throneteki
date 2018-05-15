@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import validateDeck from '../deck-validator.js';
+import { validateDeck } from 'throneteki-deck-helper';
 
 function selectDeck(state, deck) {
     if(state.decks && state.decks.length !== 0) {
