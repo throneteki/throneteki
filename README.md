@@ -103,4 +103,4 @@ If you are making any game engine changes, these will not be accepted without un
 
 ### Build Status
 
-[![Travis Build](https://travis-ci.org/cryogen/throneteki.svg?branch=master)](https://travis-ci.org/cryogen/throneteki)
+[![Travis Build](https://travis-ci.com/throneteki/throneteki.svg?branch=master)](https://travis-ci.com/throneteki/throneteki)
