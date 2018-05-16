@@ -12,7 +12,7 @@ class HostOfTheRiverlands extends DrawCard {
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
             handler: context => {
-                this.game.addPower(context.event.card, 1);
+                context.event.card.modifyPower(1);
                 this.game.addMessage('{0} discards a gold from {1} to have {2} gain 1 power',
                     this.controller, this, context.event.card);
             }
