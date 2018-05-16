@@ -3,6 +3,7 @@ const Socket = require('./socket.js');
 const jwt = require('jsonwebtoken');
 const _ = require('underscore');
 const moment = require('moment');
+const { validateDeck } = require('throneteki-deck-helper');
 
 const logger = require('./log.js');
 const version = moment(require('../version.js'));
@@ -12,7 +13,6 @@ const MessageService = require('./services/MessageService.js');
 const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
-const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 
 class Lobby {
     constructor(server, options = {}) {
