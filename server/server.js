@@ -8,10 +8,6 @@ const api = require('./api');
 const path = require('path');
 const http = require('http');
 const Raven = require('raven');
-const webpackDevMiddleware = require('webpack-dev-middleware');
-const webpackHotMiddleware = require('webpack-hot-middleware');
-const webpack = require('webpack');
-const webpackConfig = require('../webpack.config.js')();
 const monk = require('monk');
 const passportJwt = require('passport-jwt');
 const JwtStrategy = passportJwt.Strategy;
@@ -28,9 +24,7 @@ class Server {
         this.server = http.Server(app);
 
         this.vendorAssets = require('../vendor-assets.json');
-        if(!this.isDeveloping) {
-            this.assets = require('../assets.json');
-        }
+        this.assets = require('../assets.json');
     }
 
     init() {
@@ -66,31 +60,6 @@ class Server {
         app.use(express.static(__dirname + '/../public'));
         app.set('view engine', 'pug');
         app.set('views', path.join(__dirname, '..', 'views'));
-
-        if(this.isDeveloping) {
-            const compiler = webpack(webpackConfig);
-            const middleware = webpackDevMiddleware(compiler, {
-                hot: true,
-                contentBase: 'client',
-                publicPath: webpackConfig.output.publicPath,
-                stats: {
-                    colors: true,
-                    hash: false,
-                    timings: true,
-                    chunks: false,
-                    chunkModules: false,
-                    modules: false
-                },
-                historyApiFallback: true
-            });
-
-            app.use(middleware);
-            app.use(webpackHotMiddleware(compiler, {
-                log: false,
-                path: '/__webpack_hmr',
-                heartbeat: 2000
-            }));
-        }
 
         app.get('*', (req, res) => {
             res.render('index', {

@@ -1,49 +1,36 @@
 # Throneteki
 
-Web based implementation of A Game Of Thrones LCG 2nd Edition
+Web based implementation of A Game of Thrones LCG 2nd Edition
 
-## FAQ
+## About
 
-### What is it?
+This is the one of the respositories for the code internally known as throneteki which is running on [theironthrone.net](https://theironthrone.net/) allowing people to play AGoT 2nd edition online using only their browser.
 
-This is the respository for the code internally known as throneteki which is running on [theironthrone.net](https://theironthrone.net/) allowing people to play AGoT 2nd edition online using only their browser
+Throneteki is split into multiple repositories to make the code more managable.  This repository is for the lobby server and game node server.
 
-### Does't this look a lot like Jinteki? The Android netrunner online experience?
+## Contributing
 
-Glad you noticed!  Yes, jinteki was a huge inspiration for this project, as the interface is clean and user friendly, so I've tried to make this similar in a lot of ways
+The code is written in node.js(server) and react.js(client).  Feel free to make suggestions, implement new cards, refactor bits of the code that are a bit clunky(there's a few of those atm), raise pull requests or submit bug reports
 
-### Can I contribute?
-
-Sure!  The code is written in node.js(server) and react.js(client).  Feel free to make suggestions, implement new cards, refactor bits of the code that are a bit clunky(there's a few of those atm), raise pull requests or submit bug reports
-
-If you are going to contribute code, try and follow the style of the existing code as much as possible and talk to me before engaging in any big refactors.  Also bear in mind there is an .eslintrc file in the project so try to follow those rules.
+If you are going to contribute code, try and follow the style of the existing code as much as possible and talk to me before engaging in any big refactors.  Also bear in mind there is an .eslintrc file in the project so try to follow those rules.  This linting will be enforced in the build checks and pull requests will not be merged if they fail checks.
 
 [Documentation for implementing cards](https://github.com/cryogen/throneteki/blob/master/docs/implementing-cards.md)
 
-The biggest help at the moment would be in terms of CSS, as that's a bit of a weakness of mine, feel free to pick up any of the issues tagged 'CSS' in the issue list.
-
-If you're not coding inclined, then just playing games on the site, and reporting bugs and issues that you find is a big help
-
-### X Y Z doesn't work
-That's not a question, but that still sucks, sorry :(  First, bear in mind the site is in its infancy so a lot of things aren't implemented yet, but you should be able to do most things with a bit of manual input.  If there's anything you can't do that you need to be able to do, let me know by raising an issue.
-
-See this document for features I have planned and a link to the currently implemented cards:  http://bit.ly/throneteki
-
-### How do I do X Y Z?
-
-Check out the [About page](https://theironthrone.net/about) of a Throneteki live deployment.
+## Issues
+If you encounter any issues on the site or while playing games, please raise an issue with as much detail as possible.
 
 ## Development
 
-The game uses mongodb as storage so you'll need that installed and running.
+The game uses [mongodb](https://www.mongodb.com/) as storage so you'll need that installed and running.
+
+If you are not actively developing the client, you will need the client script files in order to connect to your local server.  Please see the instructions in the client repository on how to do this.
 
 ```
-git clone https://github.com/cryogen/throneteki.git
+git clone https://github.com/throneteki/throneteki.git
 cd throneteki
 git submodule init
 git submodule update
 npm install
-npm run build-vendor-dev
 mkdir server/logs
 node server/scripts/fetchdata.js
 node server/scripts/importstandalonedecks.js
@@ -84,8 +71,6 @@ This will get you up and running in development mode.
 For production:
 
 ```
-npm run build-vendor
-npm run build
 NODE_ENV=production PORT=4000 node .
 ```
 
