@@ -30,13 +30,13 @@ module.exports = (env) => {
     });
 
     // Configuration for client-side bundle suitable for running in browsers
-    const clientBundleOutputDir = './public';
+    const clientBundleOutputDir = './dist';
     const clientBundleConfig = merge(sharedConfig(), {
         entry: { 'bundle': (isDevBuild ? [
             'react-hot-loader/patch',
             'webpack/hot/only-dev-server'] : []).concat(['./index.jsx', './less/site.less', 'babel-polyfill']) },
         devServer: {
-            contentBase: './public',
+            contentBase: './dist',
             hot: true
         },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
@@ -75,7 +75,7 @@ module.exports = (env) => {
         ] : [
             new webpack.DllReferencePlugin({
                 context: __dirname,
-                manifest: require('./public/vendor-manifest.json')
+                manifest: require('./dist/vendor-manifest.json')
             }),
             new ExtractTextPlugin('site-[hash].css'),
             assetsPluginInstance

@@ -4,7 +4,7 @@ const merge = require('webpack-merge');
 var AssetsPlugin = require('assets-webpack-plugin');
 var assetsPluginInstance = new AssetsPlugin({ filename: 'vendor-assets.json' });
 
-const BUILD_DIR = path.resolve(__dirname, 'public');
+const BUILD_DIR = path.resolve(__dirname, 'dist');
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
