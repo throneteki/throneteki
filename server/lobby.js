@@ -579,6 +579,10 @@ class Lobby {
                     draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
                 });
 
+                for(let cardQuantity of deck.rookeryCards) {
+                    cardQuantity.card = cardQuantity.card.custom ? cardQuantity.card : cards[cardQuantity.card.code];
+                }
+
                 if(deck.agenda) {
                     deck.agenda = cards[deck.agenda.code];
                 }
