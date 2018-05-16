@@ -16,6 +16,7 @@ class PendingGame {
         this.showHand = details.showHand;
         this.gameType = details.gameType;
         this.isMelee = details.isMelee;
+        this.useRookery = details.useRookery;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
     }

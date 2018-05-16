@@ -33,6 +33,7 @@ class Player extends Spectator {
         this.outOfGamePile = [];
 
         // Agenda specific piles
+        this.bannerCards = [];
         this.conclavePile = [];
 
         this.faction = new DrawCard(this, {});
