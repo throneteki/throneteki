@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { validateDeck } from 'throneteki-deck-helper';
 
 import Input from '../Form/Input';
 import Select from '../Form/Select';
 import Typeahead from '../Form/Typeahead';
 import TextArea from '../Form/TextArea';
-import validateDeck from '../../deck-validator';
 import * as actions from '../../actions';
 
 class DeckEditor extends React.Component {
