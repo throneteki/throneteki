@@ -553,6 +553,8 @@ class BaseCard {
         if(this.tokens[type] === 0) {
             delete this.tokens[type];
         }
+
+        this.markAsDirty();
     }
 
     markAsDirty() {
