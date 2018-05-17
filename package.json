@@ -7,7 +7,8 @@
     "lint": "eslint . --ext=js --ext=jsx",
     "build-vendor": "webpack -p --config webpack.config.vendor.js --env.prod",
     "build-vendor-dev": "webpack --config webpack.config.vendor.js",
-    "build": "webpack -p --config webpack.config.js --env.prod"
+    "build": "webpack -p --config webpack.config.js --env.prod",
+    "start": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -73,6 +74,7 @@
     "sass-loader": "^7.0.1",
     "socket.io-client": "^2.1.0",
     "style-loader": "^0.21.0",
+    "throneteki-deck-helper": "^1.0.0",
     "url-loader": "^1.0.1",
     "webpack": "^3.11.0",
     "webpack-dev-server": "^2.11.2",
@@ -80,7 +82,6 @@
     "webpack-merge": "^4.1.2"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "throneteki-deck-helper": "^1.0.0"
+    "bootstrap": "^3.3.7"
   }
 }

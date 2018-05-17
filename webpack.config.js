@@ -37,7 +37,8 @@ module.exports = (env) => {
             'webpack/hot/only-dev-server'] : []).concat(['./index.jsx', './less/site.less', 'babel-polyfill']) },
         devServer: {
             contentBase: './dist',
-            hot: true
+            hot: true,
+            host: process.env.HOST || 'localhost'
         },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
         module: {
