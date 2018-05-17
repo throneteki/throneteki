@@ -42,14 +42,6 @@ npm run lint
 
 from repository's root.
 
-All tests should also pass.  To run these manually do:
-
-```
-npm test
-```
-
-If you are making any game engine changes, these will not be accepted without unit tests to cover them.
-
 ### Build Status
 
 [![Travis Build](https://travis-ci.com/throneteki/throneteki-client.svg?branch=master)](https://travis-ci.com/throneteki/throneteki-client)
