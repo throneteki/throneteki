@@ -2,7 +2,7 @@ export function loadDecks() {
     return {
         types: ['REQUEST_DECKS', 'RECEIVE_DECKS'],
         shouldCallAPI: (state) => {
-            return state.cards.singleDeck || !state.cards.decks;
+            return state.cards.singleDeck || state.cards.decks.length === 0;
         },
         APIParams: { url: '/api/decks', cache: false }
     };
@@ -12,7 +12,7 @@ export function loadDeck(deckId) {
     return {
         types: ['REQUEST_DECK', 'RECEIVE_DECK'],
         shouldCallAPI: (state) => {
-            let ret = !state.cards.decks || !state.cards.decks.some(deck => {
+            let ret = state.cards.decks.length === 0 || !state.cards.decks.some(deck => {
                 return deck._id === deckId;
             });
 

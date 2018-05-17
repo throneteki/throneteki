@@ -1,7 +1,7 @@
 import { validateDeck } from 'throneteki-deck-helper';
 
 function selectDeck(state, deck) {
-    if(state.decks && state.decks.length !== 0) {
+    if(state.decks.length !== 0) {
         state.selectedDeck = deck;
     } else {
         delete state.selectedDeck;
@@ -146,7 +146,7 @@ export default function(state = { decks: [] }, action) {
             });
 
             if(newState.selectedDeck && !newState.selectedDeck._id) {
-                if(newState.decks.length > 0) {
+                if(newState.decks.length !== 0) {
                     newState.selectedDeck = newState.decks[0];
                 }
             }
