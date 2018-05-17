@@ -6,7 +6,7 @@ import Card from './Card';
 
 class PlayerBoard extends React.Component {
     getCardRows() {
-        let sortedCards = this.props.cardsInPlay.sort((a, b) => {
+        let sortedCards = [...this.props.cardsInPlay].sort((a, b) => {
             return b.type < a.type;
         });
 
