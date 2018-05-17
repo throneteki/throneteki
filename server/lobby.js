@@ -3,7 +3,7 @@ const Socket = require('./socket.js');
 const jwt = require('jsonwebtoken');
 const _ = require('underscore');
 const moment = require('moment');
-const { validateDeck } = require('throneteki-deck-helper');
+const { validateDeck, formatDeckAsFullCards } = require('throneteki-deck-helper');
 
 const logger = require('./log.js');
 const version = moment(require('../version.js'));
@@ -571,25 +571,11 @@ class Lobby {
             .then(results => {
                 let [cards, packs, deck, restrictedList] = results;
 
-                _.each(deck.plotCards, plot => {
-                    plot.card = plot.card.custom ? plot.card : cards[plot.card.code];
-                });
+                let formattedDeck = formatDeckAsFullCards(deck, { cards: cards });
 
-                _.each(deck.drawCards, draw => {
-                    draw.card = draw.card.custom ? draw.card : cards[draw.card.code];
-                });
+                formattedDeck.status = validateDeck(formattedDeck, { packs: packs, restrictedList: restrictedList, includeExtendedStatus: false });
 
-                for(let cardQuantity of deck.rookeryCards || []) {
-                    cardQuantity.card = cardQuantity.card.custom ? cardQuantity.card : cards[cardQuantity.card.code];
-                }
-
-                if(deck.agenda) {
-                    deck.agenda = cards[deck.agenda.code];
-                }
-
-                deck.status = validateDeck(deck, { packs: packs, restrictedList: restrictedList, includeExtendedStatus: false });
-
-                game.selectDeck(socket.user.username, deck);
+                game.selectDeck(socket.user.username, formattedDeck);
 
                 this.sendGameState(game);
             })
