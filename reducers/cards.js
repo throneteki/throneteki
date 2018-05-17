@@ -54,7 +54,7 @@ function processCardCounts(cardCounts, cardData) {
     return cardCountsWithData.filter(cardCount => !!cardCount.card);
 }
 
-export default function(state = {}, action) {
+export default function(state = { decks: [] }, action) {
     let newState;
     switch(action.type) {
         case 'RECEIVE_CARDS':
