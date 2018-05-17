@@ -170,7 +170,7 @@ export default function(state = { decks: [] }, action) {
         case 'DECK_SAVED':
             newState = Object.assign({}, state, {
                 deckSaved: true,
-                decks: undefined
+                decks: []
             });
 
             return newState;
