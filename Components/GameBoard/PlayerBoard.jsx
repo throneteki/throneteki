@@ -8,7 +8,7 @@ class PlayerBoard extends React.Component {
     getCardRows() {
 
         let sortedCards = this.props.cardsInPlay.sort((a, b) => {
-            return a.type - b.type;
+            return b.type - a.type;
         });
 
         if(this.props.rowDirection === 'reverse') {

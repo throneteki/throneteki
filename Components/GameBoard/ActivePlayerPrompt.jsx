@@ -43,6 +43,10 @@ class ActivePlayerPrompt extends React.Component {
 
         let buttons = [];
 
+        if(!this.props.buttons) {
+            return null;
+        }
+
         for(const button of this.props.buttons) {
             if(button.timer) {
                 continue;

@@ -60,7 +60,6 @@ class GameList extends React.Component {
             let gameRow = [];
 
             for(const player of Object.values(game.players)) {
-                let playerElement = null;
                 let factionIconClass = classNames('hidden-xs', 'col-xs-1', 'game-icon', `icon-${player.faction}`);
 
                 if(firstPlayer) {
@@ -86,8 +85,6 @@ class GameList extends React.Component {
                             </span>
                         </span>);
                 }
-
-                return playerElement;
             }
 
             let gameTitle = '';

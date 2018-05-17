@@ -111,19 +111,19 @@ class InnerCard extends React.Component {
             counters.push({ name: 'dupe', count: card.dupes.length, fade: card.type === 'attachment', shortName: 'D' });
         }
 
-        for(const icon of card.iconsAdded) {
+        for(const icon of card.iconsAdded || []) {
             counters.push({ name: icon, count: 0, cancel: false });
         }
 
-        for(const icon of card.iconsRemoved) {
+        for(const icon of card.iconsRemoved || []) {
             counters.push({ name: icon, count: 0, cancel: true });
         }
 
-        for(const [key, token] of Object.entries(card.tokens)) {
+        for(const [key, token] of Object.entries(card.tokens || {})) {
             counters.push({ name: key, count: token, fade: card.type === 'attachment', shortName: this.shortNames[key] });
         }
 
-        for(const attachment of card.attachments) {
+        for(const attachment of card.attachments || []) {
             counters = counters.concat(this.getCountersForCard(attachment));
         }
 

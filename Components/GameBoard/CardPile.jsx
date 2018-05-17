@@ -189,7 +189,7 @@ class CardPile extends React.Component {
 
         let cardCount = this.props.cardCount || (this.props.cards ? this.props.cards.length : '0');
         let headerText = this.props.title ? this.props.title + ' (' + (cardCount) + ')' : '';
-        let topCard = this.props.topCard || this.props.cards ? this.props.cards[0] : null;
+        let topCard = this.props.topCard || (this.props.cards ? this.props.cards[0] : null);
         let cardOrientation = this.props.orientation === 'horizontal' && topCard && topCard.facedown ? 'kneeled' : this.props.orientation;
 
         if(this.props.hiddenTopCard && !this.props.topCard) {
