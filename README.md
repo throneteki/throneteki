@@ -35,7 +35,7 @@ mkdir server/logs
 node server/scripts/fetchdata.js
 node server/scripts/importstandalonedecks.js
 node server/scripts/fetchclient.js
-node .
+NODE_ENV=production PORT=4000 node .
 node server/gamenode
 ```
 
