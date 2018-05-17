@@ -78,7 +78,7 @@ class InnerCard extends React.Component {
         event.preventDefault();
         event.stopPropagation();
 
-        if(this.isAllowedMenuSource() && this.props.card.menu && !this.props.card.menu.length === 0) {
+        if(this.isAllowedMenuSource() && this.props.card.menu && this.props.card.menu.length !== 0) {
             this.setState({ showMenu: !this.state.showMenu });
 
             return;
