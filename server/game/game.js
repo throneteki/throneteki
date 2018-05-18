@@ -39,6 +39,7 @@ class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
 
+        this.allCards = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
         this.playersAndSpectators = {};
@@ -708,8 +709,6 @@ class Game extends EventEmitter {
             player.initialise();
         });
 
-        this.allCards = this.gatherAllCards();
-
         this.pipeline.initialise([
             new SetupPhase(this),
             new SimpleStep(this, () => this.beginRound())
@@ -724,15 +723,15 @@ class Game extends EventEmitter {
     }
 
     gatherAllCards() {
-        let playerCards = _.reduce(this.getPlayers(), (cards, player) => {
+        let playerCards = this.getPlayers().reduce((cards, player) => {
             return cards.concat(player.preparedDeck.allCards);
         }, []);
 
         if(this.isMelee) {
-            return this.titlePool.cards.concat(playerCards);
+            this.allCards = this.titlePool.cards.concat(playerCards);
+        } else {
+            this.allCards = playerCards;
         }
-
-        return playerCards;
     }
 
     beginRound() {
