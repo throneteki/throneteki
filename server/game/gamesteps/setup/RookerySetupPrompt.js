@@ -40,7 +40,7 @@ class RookerySetupPrompt extends AllPlayerPrompt {
 
         player.deck = formattedDeck;
         if(!this.haveSameCards(player.deck, formattedDeck)) {
-            this.game.addMessage('danger', '{0} finishes modifying the deck using their rookery, but have cards that were not in their original deck', player);
+            this.game.addMessage('danger', '{0} finishes modifying the deck using their rookery, but the deck now has cards that were not in their original deck', player);
         } else if(currentStatus !== newStatus) {
             this.game.addAlert('info', '{0} finishes modifying their deck using their rookery, but the deck is now {1} instead of {2}', player, newStatus, currentStatus);
         } else {
