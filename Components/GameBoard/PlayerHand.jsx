@@ -28,7 +28,7 @@ class PlayerHand extends React.Component {
         let offset = overflow / (handLength - 1);
 
         if(!this.props.isMe) {
-            cards = this.props.cards.sort((a, b) => a.revealWhenHiddenTo - b.revealWhenHiddenTo);
+            cards = [...this.props.cards].sort((a, b) => a.revealWhenHiddenTo - b.revealWhenHiddenTo);
         }
 
         let hand = cards.map(card => {
