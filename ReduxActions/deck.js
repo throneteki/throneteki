@@ -1,3 +1,5 @@
+import { formatDeckAsShortCards } from 'throneteki-deck-helper';
+
 export function loadDecks() {
     return {
         types: ['REQUEST_DECKS', 'RECEIVE_DECKS'],
@@ -54,18 +56,11 @@ export function deleteDeck(deck) {
 }
 
 export function saveDeck(deck) {
+    let formattedDeck = formatDeckAsShortCards(deck);
+    formattedDeck.deckName = deck.name;
+
     let str = JSON.stringify({
-        deck: {
-            deckName: deck.name,
-            faction: { name: deck.faction.name, value: deck.faction.value },
-            agenda: deck.agenda ? { code: deck.agenda.code } : null,
-            plotCards: formatCards(deck.plotCards),
-            drawCards: formatCards(deck.drawCards),
-            bannerCards: deck.bannerCards.map(card => {
-                return { code: card.code };
-            }),
-            rookeryCards: deck.rookeryCards ? formatCards(deck.rookeryCards) : []
-        }
+        deck: formattedDeck
     });
 
     return {
@@ -83,11 +78,4 @@ export function clearDeckStatus() {
     return {
         type: 'CLEAR_DECK_STATUS'
     };
-}
-
-function formatCards(cards) {
-    return cards.map(card => {
-        let cardData = card.card.custom ? card.card : { code: card.card.code };
-        return { card: cardData, count: card.count };
-    });
 }

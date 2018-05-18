@@ -1,4 +1,4 @@
-import { validateDeck } from 'throneteki-deck-helper';
+import { validateDeck, formatDeckAsFullCards } from 'throneteki-deck-helper';
 
 function selectDeck(state, deck) {
     if(state.decks.length !== 0) {
@@ -15,43 +15,23 @@ function processDecks(decks, state) {
         return;
     }
 
-    for(const deck of decks) {
-        if(!state.cards || !deck.faction) {
-            deck.status = {};
-            return;
-        }
-
-        if(state.factions) {
-            deck.faction = state.factions[deck.faction.value];
-        }
-
-        if(deck.agenda) {
-            deck.agenda = state.agendas[deck.agenda.code];
-        }
-
-        if(deck.bannerCards) {
-            deck.bannerCards = deck.bannerCards.map(card => state.cards[card.code]);
-        }
-
-        deck.plotCards = processCardCounts(deck.plotCards, state.cards);
-        deck.drawCards = processCardCounts(deck.drawCards, state.cards);
-        deck.rookeryCards = processCardCounts(deck.rookeryCards || [], state.cards);
-
-        if(!state.restrictedList) {
-            deck.status = {};
-        } else {
-            deck.status = validateDeck(deck, { packs: state.packs, restrictedList: state.restrictedList });
-        }
-    }
+    return decks.map(deck => processDeck(deck, state));
 }
 
-function processCardCounts(cardCounts, cardData) {
-    let cardCountsWithData = cardCounts.map(cardCount => {
-        return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : cardData[cardCount.card.code] };
-    });
+function processDeck(deck, state) {
+    if(!state.cards || !deck || !deck.faction) {
+        return Object.assign({ status: {} }, deck);
+    }
 
-    // Filter out any cards that aren't available in the card data.
-    return cardCountsWithData.filter(cardCount => !!cardCount.card);
+    let formattedDeck = formatDeckAsFullCards(deck, state);
+
+    if(!state.restrictedList) {
+        formattedDeck.status = {};
+    } else {
+        formattedDeck.status = validateDeck(formattedDeck, { packs: state.packs, restrictedList: state.restrictedList });
+    }
+
+    return formattedDeck;
 }
 
 export default function(state = { decks: [] }, action) {
@@ -77,7 +57,7 @@ export default function(state = { decks: [] }, action) {
             });
 
             // In case the card list is received after the decks, updated the decks now
-            processDecks(newState.decks, newState);
+            newState.decks = processDecks(newState.decks, newState);
 
             return newState;
         case 'RECEIVE_PACKS':
@@ -96,7 +76,7 @@ export default function(state = { decks: [] }, action) {
             });
 
             // In case the factions are received after the decks, updated the decks now
-            processDecks(newState.decks, newState);
+            newState.decks = processDecks(newState.decks, newState);
 
             return newState;
         case 'RECEIVE_RESTRICTED_LIST':
@@ -105,17 +85,13 @@ export default function(state = { decks: [] }, action) {
             });
 
             // In case the restricted list is received after the decks, updated the decks now
-            processDecks(newState.decks, newState);
+            newState.decks = processDecks(newState.decks, newState);
 
             return newState;
         case 'RECEIVE_STANDALONE_DECKS':
-            newState = Object.assign({}, state, {
-                standaloneDecks: action.response.decks
+            return Object.assign({}, state, {
+                standaloneDecks: processDecks(action.response.decks, state)
             });
-
-            processDecks(newState.standaloneDecks, newState);
-
-            return newState;
         case 'ZOOM_CARD':
             return Object.assign({}, state, {
                 zoomCard: action.card
@@ -125,10 +101,9 @@ export default function(state = { decks: [] }, action) {
                 zoomCard: undefined
             });
         case 'RECEIVE_DECKS':
-            processDecks(action.response.decks, state);
             newState = Object.assign({}, state, {
                 singleDeck: false,
-                decks: action.response.decks
+                decks: processDecks(action.response.decks, state)
             });
 
             newState = selectDeck(newState, newState.decks[0]);
@@ -158,20 +133,8 @@ export default function(state = { decks: [] }, action) {
                 deckSaved: false
             });
 
-            processDecks([action.response.deck], state);
-
-            newState.decks = state.decks.map(deck => {
-                if(action.response.deck._id === deck.id) {
-                    return deck;
-                }
-
-                return deck;
-            });
-
-            if(!newState.decks.some(deck => {
-                return deck._id === action.response.deck._id;
-            })) {
-                newState.decks.push(action.response.deck);
+            if(!newState.decks.some(deck => deck._id === action.response.deck._id)) {
+                newState.decks.push(processDeck(action.response.deck, state));
             }
 
             var selected = newState.decks.find(deck => {
@@ -182,38 +145,22 @@ export default function(state = { decks: [] }, action) {
 
             return newState;
         case 'SELECT_DECK':
-            newState = Object.assign({}, state, {
-                selectedDeck: action.deck,
+            return Object.assign({}, state, {
+                selectedDeck: processDeck(action.deck, state),
                 deckSaved: false
             });
-
-            if(newState.selectedDeck) {
-                processDecks([newState.selectedDeck], state);
-            }
-
-            return newState;
         case 'ADD_DECK':
             var newDeck = { name: 'New Deck', drawCards: [], plotCards: [] };
 
-            newState = Object.assign({}, state, {
-                selectedDeck: newDeck,
+            return Object.assign({}, state, {
+                selectedDeck: processDeck(newDeck, state),
                 deckSaved: false
             });
-
-            processDecks([newState.selectedDeck], state);
-
-            return newState;
         case 'UPDATE_DECK':
-            newState = Object.assign({}, state, {
-                selectedDeck: action.deck,
+            return Object.assign({}, state, {
+                selectedDeck: processDeck(action.deck, state),
                 deckSaved: false
             });
-
-            if(newState.selectedDeck) {
-                processDecks([newState.selectedDeck], state);
-            }
-
-            return newState;
         case 'SAVE_DECK':
             newState = Object.assign({}, state, {
                 deckSaved: false
@@ -223,7 +170,7 @@ export default function(state = { decks: [] }, action) {
         case 'DECK_SAVED':
             newState = Object.assign({}, state, {
                 deckSaved: true,
-                decks: undefined
+                decks: []
             });
 
             return newState;
