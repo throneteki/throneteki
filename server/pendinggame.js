@@ -330,7 +330,8 @@ class PendingGame {
                     emailHash: spectator.emailHash,
                     settings: spectator.settings
                 };
-            })
+            }),
+            useRookery: this.useRookery
         };
     }
 }
