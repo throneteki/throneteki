@@ -141,7 +141,7 @@ class Profile extends React.Component {
 
         document.getElementsByClassName('wrapper')[0].scrollTop = 0;
 
-        if(this.state.validation.some(message => {
+        if(Object.values(this.state.validation).some(message => {
             return message && message !== '';
         })) {
             this.setState({ errorMessage: 'There was an error in one or more fields, please see below, correct the error and try again' });
