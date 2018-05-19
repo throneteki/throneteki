@@ -25,7 +25,16 @@ pipeline {
             steps {
                 sh 'npm test'
             }
-       }
+        }
+
+        stage('Deploy') {
+            when {
+                expression { params.DEPLOY == true }
+            }
+            steps {
+                sh 'scp -r . jenkins@ipng.org.uk:/var/lib/throneteki/'
+            }
+        }
     }
 
     post {
