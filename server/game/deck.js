@@ -10,6 +10,26 @@ class Deck {
         this.data = data;
     }
 
+    createFactionCard(player) {
+        if(this.data.faction) {
+            return new DrawCard(player, _.extend({
+                code: this.data.faction.value,
+                type: 'faction',
+                faction: this.data.faction.value
+            }, this.data.faction));
+        }
+
+        return new DrawCard(player, { type: 'faction' });
+    }
+
+    createAgendaCard(player) {
+        if(this.data.agenda) {
+            return this.createCard(AgendaCard, player, this.data.agenda);
+        }
+
+        return;
+    }
+
     prepare(player) {
         var result = {
             drawCards: [],
@@ -32,26 +52,15 @@ class Deck {
             }
         });
 
-        if(this.data.faction) {
-            result.faction = new DrawCard(player, _.extend({
-                code: this.data.faction.value,
-                type: 'faction',
-                faction: this.data.faction.value
-            }, this.data.faction));
-        } else {
-            result.faction = new DrawCard(player, { type: 'faction' });
-        }
-
+        result.faction = this.createFactionCard(player);
         result.faction.moveTo('faction');
 
         result.allCards = [result.faction].concat(result.drawCards).concat(result.plotCards);
 
-        if(this.data.agenda) {
-            result.agenda = this.createCard(AgendaCard, player, this.data.agenda);
+        result.agenda = this.createAgendaCard(player);
+        if(result.agenda) {
             result.agenda.moveTo('agenda');
             result.allCards.push(result.agenda);
-        } else {
-            result.agenda = undefined;
         }
 
         result.bannerCards = _.map(this.data.bannerCards, card => this.createCard(AgendaCard, player, card));

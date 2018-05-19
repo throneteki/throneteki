@@ -39,6 +39,7 @@ class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
 
+        this.allCards = [];
         this.attachmentValidityCheck = new AttachmentValidityCheck(this);
         this.effectEngine = new EffectEngine(this);
         this.playersAndSpectators = {};
@@ -51,6 +52,7 @@ class Game extends EventEmitter {
         this.name = details.name;
         this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
+        this.useRookery = details.useRookery;
         this.owner = details.owner.username;
         this.started = false;
         this.playStarted = false;
@@ -68,7 +70,9 @@ class Game extends EventEmitter {
         this.isMelee = !!details.isMelee;
         this.noTitleSetAside = !!details.noTitleSetAside;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
-        this.shortCardData = options.shortCardData || [];
+        this.cardData = options.cardData || [];
+        this.packData = options.packData || [];
+        this.restrictedListData = options.restrictedListData || [];
         this.skipPhase = {};
 
         _.each(details.players, player => {
@@ -579,7 +583,7 @@ class Game extends EventEmitter {
                 return;
             }
 
-            let card = _.find(this.shortCardData, c => {
+            let card = Object.values(this.cardData).find(c => {
                 return c.label.toLowerCase() === message.toLowerCase() || c.name.toLowerCase() === message.toLowerCase();
             });
 
@@ -706,8 +710,6 @@ class Game extends EventEmitter {
             player.initialise();
         });
 
-        this.allCards = this.gatherAllCards();
-
         this.pipeline.initialise([
             new SetupPhase(this),
             new SimpleStep(this, () => this.beginRound())
@@ -722,15 +724,15 @@ class Game extends EventEmitter {
     }
 
     gatherAllCards() {
-        let playerCards = _.reduce(this.getPlayers(), (cards, player) => {
+        let playerCards = this.getPlayers().reduce((cards, player) => {
             return cards.concat(player.preparedDeck.allCards);
         }, []);
 
         if(this.isMelee) {
-            return this.titlePool.cards.concat(playerCards);
+            this.allCards = this.titlePool.cards.concat(playerCards);
+        } else {
+            this.allCards = playerCards;
         }
-
-        return playerCards;
     }
 
     beginRound() {

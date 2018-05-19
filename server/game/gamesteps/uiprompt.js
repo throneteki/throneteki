@@ -18,7 +18,7 @@ class UiPrompt extends BaseStep {
     setPrompt() {
         _.each(this.game.getPlayers(), player => {
             if(this.activeCondition(player)) {
-                player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt()));
+                player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt(player)));
             } else {
                 player.setPrompt(this.addDefaultCommandToButtons(this.waitingPrompt(player)));
             }

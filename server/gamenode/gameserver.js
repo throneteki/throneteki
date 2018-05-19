@@ -221,7 +221,7 @@ class GameServer {
     }
 
     onStartGame(pendingGame) {
-        let game = new Game(pendingGame, { router: this, titleCardData: this.titleCardData, shortCardData: this.shortCardData });
+        let game = new Game(pendingGame, { router: this, titleCardData: this.titleCardData, cardData: this.cardData, packData: this.packData, restrictedListData: this.restrictedListData });
         this.games[pendingGame.id] = game;
 
         game.started = true;
@@ -285,7 +285,9 @@ class GameServer {
 
     onCardData(cardData) {
         this.titleCardData = cardData.titleCardData;
-        this.shortCardData = cardData.shortCardData;
+        this.cardData = cardData.cardData;
+        this.packData = cardData.packData;
+        this.restrictedListData = cardData.restrictedListData;
     }
 
     onConnection(ioSocket) {

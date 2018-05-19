@@ -33,6 +33,7 @@ class Player extends Spectator {
         this.outOfGamePile = [];
 
         // Agenda specific piles
+        this.bannerCards = [];
         this.conclavePile = [];
 
         this.faction = new DrawCard(this, {});
@@ -402,17 +403,24 @@ class Player extends Spectator {
         this.drawDeck = preparedDeck.drawCards;
         this.bannerCards = preparedDeck.bannerCards;
         this.preparedDeck = preparedDeck;
+
+        this.shuffleDrawDeck();
     }
 
     initialise() {
-        this.prepareDecks();
-        this.initDrawDeck();
+        this.createFactionAndAgenda();
 
         this.gold = 0;
         this.readyToStart = false;
         this.limitedPlayed = 0;
         this.maxLimited = 1;
         this.activePlot = undefined;
+    }
+
+    createFactionAndAgenda() {
+        let deck = new Deck(this.deck);
+        this.faction = deck.createFactionCard(this);
+        this.agenda = deck.createAgendaCard(this);
     }
 
     startGame() {

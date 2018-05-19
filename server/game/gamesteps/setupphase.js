@@ -3,12 +3,16 @@ const SimpleStep = require('./simplestep.js');
 const KeepOrMulliganPrompt = require('./setup/keepormulliganprompt.js');
 const SetupCardsPrompt = require('./setup/setupcardsprompt.js');
 const CheckAttachmentsPrompt = require('./setup/checkattachmentsprompt.js');
+const RookerySetupPrompt = require('./setup/RookerySetupPrompt');
 
 class SetupPhase extends Phase {
     constructor(game) {
         super(game, 'setup');
         this.initialise([
+            new SimpleStep(game, () => this.announceFactionAndAgenda()),
+            new SimpleStep(game, () => this.promptForRookery()),
             new SimpleStep(game, () => this.prepareDecks()),
+            new SimpleStep(game, () => this.turnOnEffects()),
             new SimpleStep(game, () => this.drawSetupHand()),
             new KeepOrMulliganPrompt(game),
             new SimpleStep(game, () => this.startGame()),
@@ -19,8 +23,28 @@ class SetupPhase extends Phase {
         ]);
     }
 
+    announceFactionAndAgenda() {
+        for(const player of this.game.getPlayers()) {
+            player.createFactionAndAgenda();
+            this.game.addMessage('{0} announces they are playing as {1} with {2}', player, player.faction, player.agenda || 'no agenda');
+        }
+    }
+
+    promptForRookery() {
+        if(this.game.useRookery) {
+            this.game.queueStep(new RookerySetupPrompt(this.game));
+        }
+    }
+
     prepareDecks() {
+        for(const player of this.game.getPlayers()) {
+            player.prepareDecks();
+        }
+        this.game.gatherAllCards();
         this.game.raiseEvent('onDecksPrepared');
+    }
+
+    turnOnEffects() {
         for(const player of this.game.getPlayers()) {
             if(player.agenda) {
                 player.agenda.applyPersistentEffects();
