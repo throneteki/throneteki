@@ -30,6 +30,7 @@ pipeline {
 
     post {
         failure {
+            echo 'It failed :('
                 // mail body: "project build error is here: ${env.BUILD_URL}" ,
                 // from: 'xxxx@yyyy.com',
                 // replyTo: 'yyyy@yyyy.com',
