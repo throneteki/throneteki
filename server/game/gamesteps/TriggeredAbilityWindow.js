@@ -97,6 +97,12 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                     source: event.source.getShortSummary(),
                     targets: event.targets.map(target => target.getShortSummary())
                 });
+            } else if(event.name === 'onTargetsChosen') {
+                controls.push({
+                    type: 'targeting',
+                    source: event.ability.card.getShortSummary(),
+                    targets: event.targets.getTargets().map(target => target.getShortSummary())
+                });
             }
         }
 

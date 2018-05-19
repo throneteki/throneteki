@@ -10,6 +10,7 @@ class HighSepton extends DrawCard {
                     event.targets.hasSingleTarget() &&
                     event.targets.anySelection(selection => (
                         selection.choosingPlayer !== this.controller &&
+                        selection.value.getType() === 'character' &&
                         selection.value.controller === this.controller
                     ))
                 )
@@ -29,6 +30,7 @@ class HighSepton extends DrawCard {
         return (
             selection.isEligible(card) &&
             card.controller === this.controller &&
+            card.getType() === 'character' &&
             card.hasTrait('The Seven')
         );
     }
