@@ -1,4 +1,8 @@
 node {
+    parameters {
+        booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Use this build for deployment.')
+    }
+
     currentBuild.result = "SUCCESS"
 
     try {
