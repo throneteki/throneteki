@@ -15,7 +15,7 @@ class TheGreatSeptOfBaelor extends DrawCard {
                     match: context.event.card,
                     effect: ability.effects.blankExcludingTraits
                 }));
-                this.game.addMessage('{0} kneels {1} and discards 1 gold from it to treat the text box of {2} as blank until the end of the phase',
+                this.game.addMessage('{0} kneels {1} and discards 1 gold from it to treat the text box of {2} as blank until the end of the round',
                     context.player, this, context.event.card);
             }
         });
