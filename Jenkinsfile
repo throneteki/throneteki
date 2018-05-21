@@ -35,6 +35,8 @@ pipeline {
                 sh 'ssh jenkins@theironthrone.net rm -rf /var/lib/throneteki-previous/*'
                 sh 'ssh jenkins@theironthrone.net mv /var/lib/throneteki/* /var/lib/throneteki-previous/'
                 sh 'scp -r index.js package.json version.js server views node_modules jenkins@theironthrone.net:/var/lib/throneteki/'
+                sh 'ssh jenkins@theironthrone.net cp /var/lib/throneteki-previous/server/config.js /var/lib/throneteki/server'
+                sh 'ssh jenkins@theironthrone.net mkdir /var/lib/throneteki/server/logs'
                 //sh 'ssh jenkins@theironthrone.net mv /var/lib/throneteki pm2 restart throneteki'
             }
         }
