@@ -18,9 +18,6 @@ pipeline {
                 sh 'node -v'
                 sh 'npm prune'
                 sh 'npm install'
-
-                echo "${env.GIT_AUTHOR_EMAIL}"
-                echo committerEmail
             }
         }
 
@@ -54,7 +51,7 @@ pipeline {
             from: 'jenkins@theironthrone.net',
             replyTo: 'noreply@theironthrone.net',
             subject: 'Throneteki build failed',
-            to: env.GIT_AUTHOR_EMAIL
+            to: committerEmail
         }
     }
 }
