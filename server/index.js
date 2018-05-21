@@ -9,7 +9,7 @@ function runServer() {
     var httpServer = server.init();
     var lobby = new Lobby(httpServer, { config: config, db: monk(config.dbPath) });
 
-    pmx.action('status', reply => {
+   pmx.action('status', reply => {
         var status = lobby.getStatus();
 
         reply(status);
