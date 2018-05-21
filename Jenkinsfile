@@ -5,6 +5,12 @@ pipeline {
         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Use this build for deployment.')
     }
 
+    environment {
+        committerEmail = sh (
+        script: 'git --no-pager show -s --format=\'%ae\'',
+        returnStdout: true).trim()
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -13,14 +19,8 @@ pipeline {
                 sh 'npm prune'
                 sh 'npm install'
 
-                            echo "${env.GIT_AUTHOR_EMAIL}"
-
-            committerEmail = sh (
-                script: 'git --no-pager show -s --format=\'%ae\'',
-                returnStdout: true
-            ).trim()
-            echo committerEmail
-
+                echo "${env.GIT_AUTHOR_EMAIL}"
+                echo committerEmail
             }
         }
 
@@ -50,13 +50,6 @@ pipeline {
 
     post {
         failure {
-            echo "${env.GIT_AUTHOR_EMAIL}"
-
-            committerEmail = sh (
-                script: 'git --no-pager show -s --format=\'%ae\'',
-                returnStdout: true
-            ).trim()
-            echo committerEmail
             mail body: "project build error is here: ${env.BUILD_URL}" ,
             from: 'jenkins@theironthrone.net',
             replyTo: 'noreply@theironthrone.net',
