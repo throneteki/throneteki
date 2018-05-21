@@ -37,7 +37,7 @@ pipeline {
                 sh 'ssh jenkins@theironthrone.net mkdir -p /var/lib/throneteki/public'
                 sh 'scp dist/*.js dist/*.map dist/*.css dist/*.ttf jenkins@theironthrone.net:/var/lib/throneteki/public'
                 sh 'scp -r assets/* jenkins@theironthrone.net:/var/lib/throneteki/public'
-                //sh 'ssh jenkins@theironthrone.net mv /var/lib/throneteki pm2 restart throneteki'
+                sh 'ssh jenkins@theironthrone.net pm2 restart lobby'
             }
         }
     }
