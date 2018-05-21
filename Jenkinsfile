@@ -6,8 +6,9 @@ pipeline {
     }
 
     environment {
-        committerEmail = sh (script: 'git --no-pager show -s --format=\'%ae\'', returnStdout: true).trim()
+        GIT_EMAIL = sh (script: 'git --no-pager show -s --format=\'%ae\'', returnStdout: true).trim()
         GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+        GIT_NAME=sh (script: 'git --no-pager show -s --format=\'%an\'', returnStdout: true).trim()
     }
 
     stages {
@@ -46,11 +47,11 @@ pipeline {
 
     post {
         failure {
-            mail body: "Hello ${env.CHANGE_AUTHOR},\n\nI'm sorry to report that the throneteki build is currently broken.  Please see details of the breakage here:\n\n${env.BUILD_URL}\n\nKind regards,\nThe Iron Throne Build Server",
+            mail body: "Hello ${GIT_NAME},\n\nI'm sorry to report that the throneteki build is currently broken.  Please see details of the breakage here:\n\n${env.BUILD_URL}\n\nKind regards,\nThe Iron Throne Build Server",
             from: 'The Iron Throne Build Server <jenkins@theironthrone.net>',
             replyTo: 'noreply@theironthrone.net',
             subject: "Throneteki build #${env.BUILD_NUMBER} failed (${env.BRANCH_NAME} - ${GIT_COMMIT_HASH})",
-            to: committerEmail
+            to: GIT_EMAIL
         }
     }
 }
