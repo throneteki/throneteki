@@ -22,8 +22,10 @@ pipeline {
         }
 
         stage('Build') {
-            sh 'npm run build-vendor'
-            sh 'npm run build'
+            steps {
+                sh 'npm run build-vendor'
+                sh 'npm run build'
+            }
         }
 
         stage('Deploy') {
