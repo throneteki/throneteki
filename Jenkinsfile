@@ -47,10 +47,10 @@ pipeline {
 
     post {
         failure {
-            mail body: "project build error is here: ${env.BUILD_URL}" ,
-            from: 'jenkins@theironthrone.net',
+            mail body: "Hello,\n\nI'm sorry to report that the throneteki build is currently broken.  Please see details of the breakage here:\n\n${env.BUILD_URL}\nKind regards,\nThe Iron Throne Build Server",
+            from: 'The Iron Throne Build Server <jenkins@theironthrone.net>',
             replyTo: 'noreply@theironthrone.net',
-            subject: 'Throneteki build failed',
+            subject: "Throneteki build ${env.BUILD_NUMBER} failed (${env.BRANCH_NAME} - ${env.CHANGE_ID})",
             to: committerEmail
         }
     }
