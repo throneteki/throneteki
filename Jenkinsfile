@@ -12,6 +12,15 @@ pipeline {
                 sh 'node -v'
                 sh 'npm prune'
                 sh 'npm install'
+
+                            echo "${env.GIT_AUTHOR_EMAIL}"
+
+            committerEmail = sh (
+                script: 'git --no-pager show -s --format=\'%ae\'',
+                returnStdout: true
+            ).trim()
+            echo committerEmail
+
             }
         }
 
@@ -32,7 +41,7 @@ pipeline {
                 expression { params.DEPLOY == true }
             }
             steps {
-                sh 'scp -r index.js package.json version.js server views node_modules jenkins@theironthrone.net:/var/lib/throneteki/'
+                sh 'scp -r index.js package.json version.js server views node_modules throneteki-json-data jenkins@theironthrone.net:/var/lib/throneteki/'
                 sh 'ssh jenkins@theironthrone.net mkdir -p /var/lib/throneteki/server/logs'
                 sh 'ssh jenkins@theironthrone.net pm2 restart lobby'
             }
@@ -41,12 +50,18 @@ pipeline {
 
     post {
         failure {
-            echo 'It failed :('
-                // mail body: "project build error is here: ${env.BUILD_URL}" ,
-                // from: 'xxxx@yyyy.com',
-                // replyTo: 'yyyy@yyyy.com',
-                // subject: 'project build failed',
-                // to: 'zzzz@yyyyy.com'
+            echo "${env.GIT_AUTHOR_EMAIL}"
+
+            committerEmail = sh (
+                script: 'git --no-pager show -s --format=\'%ae\'',
+                returnStdout: true
+            ).trim()
+            echo committerEmail
+            mail body: "project build error is here: ${env.BUILD_URL}" ,
+            from: 'jenkins@theironthrone.net',
+            replyTo: 'noreply@theironthrone.net',
+            subject: 'Throneteki build failed',
+            to: env.GIT_AUTHOR_EMAIL
         }
     }
 }
