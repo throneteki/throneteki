@@ -32,8 +32,8 @@ pipeline {
                 expression { params.DEPLOY == true }
             }
             steps {
-                sh 'ssh jenkins@theironthrone.net rm -rf /var/lib/throneteki-previous'
-                sh 'ssh jenkins@theironthrone.net mv /var/lib/throneteki /var/lib/throneteki-previous'
+                sh 'ssh jenkins@theironthrone.net rm -rf /var/lib/throneteki-previous/*'
+                sh 'ssh jenkins@theironthrone.net mv /var/lib/throneteki/* /var/lib/throneteki-previous/'
                 sh 'scp -r index.js package.json version.js server views node_modules jenkins@theironthrone.net:/var/lib/throneteki/'
                 //sh 'ssh jenkins@theironthrone.net mv /var/lib/throneteki pm2 restart throneteki'
             }
