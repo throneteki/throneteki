@@ -40,6 +40,7 @@ pipeline {
             steps {
                 sh 'scp -r index.js package.json version.js server views node_modules throneteki-json-data jenkins@theironthrone.net:/var/lib/throneteki/'
                 sh 'ssh jenkins@theironthrone.net mkdir -p /var/lib/throneteki/server/logs'
+                sh 'ssh jenkins@theironthrone.net cd /var/lib/throneteki && node server/scripts/fetchdata.js'
                 sh 'ssh jenkins@theironthrone.net pm2 restart lobby'
             }
         }
