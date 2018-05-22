@@ -36,9 +36,13 @@ module.exports = (env) => {
             'react-hot-loader/patch',
             'webpack/hot/only-dev-server'] : []).concat(['./index.jsx', './less/site.less', 'babel-polyfill']) },
         devServer: {
-            contentBase: './dist',
+            contentBase: './assets',
             hot: true,
-            host: process.env.HOST || 'localhost'
+            host: process.env.HOST || 'localhost',
+            proxy: [{
+                context: ['/**', '!/img/**', '!/fonts/**', '!/sound/**'],
+                target: 'http://localhost:4000'
+            }]
         },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
         module: {
