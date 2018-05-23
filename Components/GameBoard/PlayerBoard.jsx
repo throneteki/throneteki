@@ -15,13 +15,25 @@ class PlayerBoard extends React.Component {
         let rows = [];
         let locations = groupedCards['location'] || [];
         let characters = groupedCards['character'] || [];
+        let other = [];
+
+        for(let key of Object.keys(groupedCards).filter(k => !['location', 'character'].includes(k))) {
+            other = other.concat(groupedCards[key]);
+        }
 
         if(this.props.rowDirection === 'reverse') {
+            if(other.length > 0) {
+                rows.push(other);
+            }
+
             rows.push(locations);
             rows.push(characters);
         } else {
             rows.push(characters);
             rows.push(locations);
+            if(other.length > 0) {
+                rows.push(other);
+            }
         }
 
         return rows;
