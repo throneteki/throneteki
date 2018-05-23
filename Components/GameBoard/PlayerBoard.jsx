@@ -6,36 +6,22 @@ import Card from './Card';
 
 class PlayerBoard extends React.Component {
     getCardRows() {
-        let sortedCards = [...this.props.cardsInPlay].sort((a, b) => {
-            return b.type < a.type;
-        });
-
-        if(this.props.rowDirection === 'reverse') {
-            // we want locations on the bottom, other side wants locations on top
-            sortedCards = sortedCards.reverse();
-        }
-
-        let groupedCards = sortedCards.reduce((group, card) => {
+        let groupedCards = this.props.cardsInPlay.reduce((group, card) => {
             (group[card.type] = group[card.type] || []).push(card);
 
             return group;
         }, {});
 
-        let rows = Object.values(groupedCards);
-        for(let i = rows.length; i < 2; i++) {
-            if(sortedCards.some(card => card.type === 'location')) {
-                if(this.props.rowDirection === 'reverse') {
-                    rows.push([]);
-                } else {
-                    rows.unshift([]);
-                }
-            } else {
-                if(this.props.rowDirection === 'reverse') {
-                    rows.unshift([]);
-                } else {
-                    rows.push([]);
-                }
-            }
+        let rows = [];
+        let locations = groupedCards['location'] || [];
+        let characters = groupedCards['character'] || [];
+
+        if(this.props.rowDirection === 'reverse') {
+            rows.push(locations);
+            rows.push(characters);
+        } else {
+            rows.push(characters);
+            rows.push(locations);
         }
 
         return rows;

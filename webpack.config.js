@@ -41,7 +41,7 @@ module.exports = (env) => {
             host: process.env.HOST || 'localhost',
             proxy: [{
                 context: ['/**', '!/img/**', '!/fonts/**', '!/sound/**'],
-                target: 'http://localhost:4000'
+                target: `http://${process.env.HOST || 'localhost'}:4000`
             }]
         },
         devtool: isDevBuild ? 'inline-source-map' : 'source-map',
