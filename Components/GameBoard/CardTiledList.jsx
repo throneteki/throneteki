@@ -18,7 +18,7 @@ function CardTiledList(props) {
             source={ props.source } />);
     });
 
-    let title = props.title && props.cards ? `${props.title} (${props.cards.length})` : props.title;
+    let title = props.title && props.cards ? `${props.title} (${props.titleCount || props.cards.length})` : props.title;
 
     return (
         <div className='card-list'>
@@ -40,7 +40,8 @@ CardTiledList.propTypes = {
     onTouchMove: PropTypes.func,
     size: PropTypes.string,
     source: PropTypes.string,
-    title: PropTypes.string
+    title: PropTypes.string,
+    titleCount: PropTypes.number
 };
 
 export default CardTiledList;

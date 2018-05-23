@@ -16,6 +16,14 @@ export default function(state = {}, action) {
                 timerLimit: null,
                 timerHandle: null
             });
+        case 'OPEN_ROOKERY_PROMPT':
+            return Object.assign({}, state, {
+                rookeryDeck: action.deck
+            });
+        case 'CLOSE_ROOKERY_PROMPT':
+            return Object.assign({}, state, {
+                rookeryDeck: null
+            });
     }
 
     return state;

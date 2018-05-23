@@ -44,11 +44,13 @@ const validTargets = {
         'dead pile',
         'play area',
         'out of game',
-        'conclave'
+        'conclave',
+        'rookery'
     ],
     'plot deck': [
         'revealed plots',
-        'out of game'
+        'out of game',
+        'rookery'
     ],
     'revealed plots': [
         'plot deck',
@@ -70,6 +72,12 @@ const validTargets = {
         'discard pile',
         'dead pile',
         'out of game'
+    ],
+    'full deck': [
+        'rookery'
+    ],
+    'rookery': [
+        'full deck'
     ]
 };
 

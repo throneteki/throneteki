@@ -28,6 +28,7 @@ class About extends React.Component {
                     <p>Don't want to be distracted by beautiful art during your games? In-game backgrounds can be disabled from your <Link href='/profile'>Profile</Link>.</p>
                     <p>Card hand icon is by Henry Ryder from <a href='http://www.thenounproject.com' target='_blank'>the Noun Project</a>.</p>
                     <p>Chat icon made by <a href='https://www.flaticon.com/authors/iconnice' title='Iconnice'>Iconnice</a> from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a> is licensed by <a href='http://creativecommons.org/licenses/by/3.0/' title='Creative Commons BY 3.0' target='_blank'>CC 3.0 BY</a></p>
+                    <p>Raven icon by Bluetip Design from <a href='https://thenounproject.com/term/raven/683810/'>the Noun Project</a></p>
 
                     <h3>Can I help?</h3>
                     <p>Sure!  The project is all written in Javascript.  The server is node.js and the client is React.js.  The source code can be found in the&nbsp;

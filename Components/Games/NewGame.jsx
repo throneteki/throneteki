@@ -9,6 +9,7 @@ class NewGame extends React.Component {
     constructor() {
         super();
 
+        this.handleRookeryClick = this.handleRookeryClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
         this.onSubmitClick = this.onSubmitClick.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
@@ -21,12 +22,17 @@ class NewGame extends React.Component {
             showHand: false,
             selectedGameFormat: 'joust',
             selectedGameType: 'casual',
-            password: ''
+            password: '',
+            useRookery: false
         };
     }
 
     componentWillMount() {
         this.setState({ gameName: this.props.defaultGameName });
+    }
+
+    handleRookeryClick(event) {
+        this.setState({ useRookery: event.target.checked });
     }
 
     onCancelClick(event) {
@@ -60,7 +66,8 @@ class NewGame extends React.Component {
             showHand: this.state.showHand,
             gameType: this.state.selectedGameType,
             isMelee: this.state.selectedGameFormat === 'melee',
-            password: this.state.password
+            password: this.state.password,
+            useRookery: this.state.useRookery
         });
     }
 
@@ -124,6 +131,12 @@ class NewGame extends React.Component {
                                 <label>
                                     <input type='checkbox' onChange={ this.onShowHandClick } checked={ this.state.showHand } />
                                     Show hands to spectators
+                                </label>
+                            </div>
+                            <div className='checkbox col-sm-8'>
+                                <label>
+                                    <input type='checkbox' onChange={ this.handleRookeryClick } checked={ this.state.useRookery } />
+                                    Rookery format
                                 </label>
                             </div>
                         </div>

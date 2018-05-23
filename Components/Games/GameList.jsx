@@ -108,7 +108,9 @@ class GameList extends React.Component {
                 <div key={ game.id } className={ rowClass }>
                     <span className='col-xs-12 game-title'>
                         { isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
-                        <b>{ gameTitle }</b> { game.showHand ? <img src='/img/ShowHandIcon.png' className='show-hand-icon' /> : null }
+                        <b>{ gameTitle }</b>
+                        { game.useRookery ? <img src='/img/RavenIcon.png' className='game-list-icon' alt='Rookery format' /> : null }
+                        { game.showHand ? <img src='/img/ShowHandIcon.png' className='game-list-icon' alt='Show hands to spectators' /> : null }
                     </span>
                     <div>{ gameRow }</div>
                     <div className='col-xs-3 game-row-buttons pull-right'>

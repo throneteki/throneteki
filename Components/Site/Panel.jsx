@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 class Panel extends React.Component {
     render() {
         return (
-            <div className={ `panel panel-${this.props.type}` }>
+            <div className={ classNames('panel', `panel-${this.props.type}`, this.props.className) }>
                 <div className='panel-heading'>
                     { this.props.title }
                 </div>
@@ -18,6 +19,7 @@ class Panel extends React.Component {
 Panel.displayName = 'Panel';
 Panel.propTypes = {
     children: PropTypes.node,
+    className: PropTypes.string,
     title: PropTypes.string,
     type: PropTypes.oneOf(['danger', 'success', 'warning', 'info', 'default', 'primary'])
 };

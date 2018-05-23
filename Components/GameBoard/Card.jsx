@@ -39,6 +39,7 @@ class InnerCard extends React.Component {
         };
 
         this.shortNames = {
+            count: 'x',
             stand: 'T',
             poison: 'O',
             gold: 'G',
@@ -98,17 +99,18 @@ class InnerCard extends React.Component {
 
     getCountersForCard(card) {
         let counters = [];
+        let needsFade = card.type === 'attachment' && !['rookery', 'full deck'].includes(this.props.source);
 
         if(card.power) {
-            counters.push({ name: 'card-power', count: card.power, fade: card.type === 'attachment', shortName: 'P' });
+            counters.push({ name: 'card-power', count: card.power, fade: needsFade, shortName: 'P' });
         }
 
         if(card.baseStrength !== card.strength) {
-            counters.push({ name: 'strength', count: card.strength, fade: card.type === 'attachment', shortName: 'S' });
+            counters.push({ name: 'strength', count: card.strength, fade: needsFade, shortName: 'S' });
         }
 
         if(card.dupes && card.dupes.length > 0) {
-            counters.push({ name: 'dupe', count: card.dupes.length, fade: card.type === 'attachment', shortName: 'D' });
+            counters.push({ name: 'dupe', count: card.dupes.length, fade: needsFade, shortName: 'D' });
         }
 
         for(const icon of card.iconsAdded || []) {
@@ -120,7 +122,7 @@ class InnerCard extends React.Component {
         }
 
         for(const [key, token] of Object.entries(card.tokens || {})) {
-            counters.push({ name: key, count: token, fade: card.type === 'attachment', shortName: this.shortNames[key] });
+            counters.push({ name: key, count: token, fade: needsFade, shortName: this.shortNames[key] });
         }
 
         for(const attachment of card.attachments || []) {
@@ -131,7 +133,7 @@ class InnerCard extends React.Component {
     }
 
     getAttachments() {
-        if(this.props.source !== 'play area') {
+        if(!['rookery', 'full deck', 'play area'].includes(this.props.source)) {
             return null;
         }
 
@@ -203,6 +205,10 @@ class InnerCard extends React.Component {
     }
 
     showCounters() {
+        if(['rookery', 'full deck'].includes(this.props.source)) {
+            return true;
+        }
+
         if(this.props.source !== 'play area' && this.props.source !== 'faction' && this.props.source !== 'revealed plots') {
             return false;
         }
@@ -367,7 +373,7 @@ InnerCard.propTypes = {
     orientation: PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
     size: PropTypes.string,
     source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction',
-        'additional', 'conclave']).isRequired,
+        'additional', 'conclave', 'full deck', 'rookery']).isRequired,
     style: PropTypes.object,
     wrapped: PropTypes.bool
 };
