@@ -4,6 +4,7 @@ const cards = require('./cards');
 const DrawCard = require('./drawcard.js');
 const PlotCard = require('./plotcard.js');
 const AgendaCard = require('./agendacard.js');
+const Factions = require('./Factions');
 
 class Deck {
     constructor(data) {
@@ -12,11 +13,14 @@ class Deck {
 
     createFactionCard(player) {
         if(this.data.faction) {
-            return new DrawCard(player, _.extend({
+            let factionData = Factions.find(faction => faction.value === this.data.faction.value);
+            return new DrawCard(player, {
                 code: this.data.faction.value,
                 type: 'faction',
-                faction: this.data.faction.value
-            }, this.data.faction));
+                faction: this.data.faction.value,
+                name: factionData && factionData.name,
+                label: factionData && factionData.name
+            });
         }
 
         return new DrawCard(player, { type: 'faction' });
