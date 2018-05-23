@@ -28,7 +28,7 @@ class Server {
             this.assets = require('../assets.json');
         } else {
             this.vendorAssets = undefined;
-            this.assets = { bundle: { js: `${process.env.CLIENT_PATH || 'http://localhost:8080'}/bundle.js` } };
+            this.assets = { bundle: { js: '/bundle.js' } };
         }
     }
 
