@@ -722,7 +722,6 @@ class Lobby {
                 syncGame.players[player.name] = {
                     id: player.id,
                     name: player.name,
-                    emailHash: player.emailHash,
                     owner: game.owner === player.name,
                     faction: { cardData: { code: player.faction } },
                     agenda: { cardData: { code: player.agenda } },
@@ -734,7 +733,6 @@ class Lobby {
                 syncGame.spectators[player.name] = {
                     id: player.id,
                     name: player.name,
-                    emailHash: player.emailHash,
                     user: player.user
                 };
             });

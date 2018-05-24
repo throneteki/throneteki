@@ -1129,7 +1129,6 @@ class Game extends EventEmitter {
             playerSummaries[player.name] = {
                 agenda: player.agenda ? player.agenda.code : undefined,
                 deck: deck,
-                emailHash: player.emailHash,
                 faction: player.faction.code,
                 id: player.id,
                 lobbyId: player.lobbyId,

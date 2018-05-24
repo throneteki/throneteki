@@ -41,10 +41,6 @@ class User {
         return this.userData.tokenExpires;
     }
 
-    get disableGravatar() {
-        return this.userData.settings && this.userData.settings.disableGravatar;
-    }
-
     get blockList() {
         return this.userData.blockList || [];
     }
@@ -61,16 +57,20 @@ class User {
         return this.userData.email;
     }
 
+    get enableGravatar() {
+        return this.userData.enableGravatar;
+    }
+
     getWireSafeDetails() {
         let user = {
             _id: this.userData._id,
             username: this.userData.username,
             email: this.userData.email,
-            emailHash: this.userData.emailHash,
             settings: this.userData.settings,
             promptedActionWindows: this.userData.promptedActionWindows,
             permissions: this.userData.permissions,
-            verified: this.userData.verified
+            verified: this.userData.verified,
+            enableGravatar: this.userData.enableGravatar
         };
 
         user = Settings.getUserWithDefaultsSet(user);
@@ -81,9 +81,7 @@ class User {
     getShortSummary() {
         return {
             username: this.username,
-            name: this.username,
-            emailHash: this.emailHash,
-            noAvatar: this.disableGravatar
+            name: this.username
         };
     }
 
