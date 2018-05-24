@@ -167,5 +167,41 @@ describe('effects', function() {
                 });
             });
         });
+
+        describe('parent dependent "while attached" effects while being discarded', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'Confiscation', 'A Noble Cause',
+                    'Daenerys Targaryen (Core)', 'Tokar'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.attachment = this.player1.findCardByName('Tokar', 'hand');
+                this.character = this.player1.findCardByName('Daenerys Targaryen', 'hand');
+
+                this.player1.clickCard(this.attachment);
+                this.player1.clickCard(this.character);
+
+                this.completeSetup();
+
+                // Attach the Tokar
+                this.player1.clickCard(this.attachment);
+                this.player1.clickCard(this.character);
+
+                this.player1.selectPlot('Confiscation');
+                this.player2.selectPlot('A Noble Cause');
+                this.selectFirstPlayer(this.player1);
+            });
+
+            it('should not crash', function() {
+                expect(() => {
+                    // Discard Tokar due to Confiscation
+                    this.player1.clickCard(this.attachment);
+                }).not.toThrow();
+            });
+        });
     });
 });
