@@ -17,10 +17,6 @@ class User {
         return this.userData.username;
     }
 
-    get emailHash() {
-        return this.userData.emailHash;
-    }
-
     get tokens() {
         return this.userData.tokens;
     }

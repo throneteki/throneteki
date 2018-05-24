@@ -23,7 +23,7 @@ class GameChat {
             if(arg instanceof Spectator) {
                 argList.push(arg.name);
             } else if(arg && arg.name) {
-                argList.push({ name: arg.name });
+                argList.push({ name: arg.name, argType: 'player' });
             } else {
                 argList.push(arg);
             }
@@ -61,9 +61,9 @@ class GameChat {
                     if(_.isArray(arg)) {
                         return this.formatArray(arg);
                     } else if(arg instanceof BaseCard) {
-                        return { code: arg.code, label: arg.name, type: arg.getType() };
+                        return { code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' };
                     } else if(arg instanceof Spectator) {
-                        return { name: arg.user.username };
+                        return { name: arg.user.username, argType: 'player' };
                     }
 
                     return arg;

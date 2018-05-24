@@ -99,7 +99,7 @@ function validatePassword(password) {
     return undefined;
 }
 
-function writeFile (path, data, opts = 'utf8') {
+function writeFile(path, data, opts = 'utf8') {
     return new Promise((resolve, reject) => {
         fs.writeFile(path, data, opts, (err) => {
             if(err) {
@@ -181,15 +181,12 @@ module.exports.init = function(server) {
             registered: new Date(),
             username: req.body.username,
             email: req.body.email,
-            emailHash: req.body.enableGravatar ? crypto.createHash('md5').update(req.body.email).digest('hex') : DefaultEmailHash,
             enableGravatar: req.body.enableGravatar,
             verified: false,
             activiationToken: activiationToken,
             activiationTokenExpiry: formattedExpiration,
             registerIp: req.get('x-real-ip')
         };
-
-        await downloadAvatar(newUser);
 
         user = await userService.addUser(newUser);
         let url = `https://theironthrone.net/activation?id=${user._id}&token=${activiationToken}`;
@@ -201,6 +198,8 @@ module.exports.init = function(server) {
         await sendEmail(user.email, 'The Iron Throne - Account activation', emailText);
 
         res.send({ success: true });
+
+        await downloadAvatar(user);
     }));
 
     server.post('/api/account/activate', wrapAsync(async (req, res, next) => {
@@ -489,12 +488,6 @@ module.exports.init = function(server) {
             user.password = await hashPassword(userToSet.password, 10);
         }
 
-        if(userToSet.enableGravatar && !user.enableGravatar) {
-            user.emailHash = crypto.createHash('md5').update(user.email).digest('hex');
-        } else if(!userToSet.enableGravatar && user.enableGravatar) {
-            user.emailHash = DefaultEmailHash;
-        }
-
         user.enableGravatar = userToSet.enableGravatar;
 
         await downloadAvatar(user);
@@ -649,7 +642,8 @@ module.exports.init = function(server) {
 };
 
 async function downloadAvatar(user) {
-    let avatar = await util.httpRequest(`https://www.gravatar.com/avatar/${user.emailHash}?d=identicon&s=24`, { encoding: null });
+    let emailHash = user.enableGravatar ? crypto.createHash('md5').update(user.email).digest('hex') : DefaultEmailHash;
+    let avatar = await util.httpRequest(`https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=24`, { encoding: null });
     await writeFile(`public/img/avatar/${user.username}.png`, avatar, 'binary');
 }
 
