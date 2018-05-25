@@ -1364,7 +1364,7 @@ class Player extends Spectator {
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
-            user: _.pick(this.user, ['username', 'emailHash'])
+            user: _.pick(this.user, ['username'])
         };
 
         if(this.showDeck) {

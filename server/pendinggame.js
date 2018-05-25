@@ -88,7 +88,6 @@ class PendingGame {
             id: id,
             name: user.username,
             user: user,
-            emailHash: user.emailHash,
             owner: this.owner.username === user.username
         };
     }
@@ -97,8 +96,7 @@ class PendingGame {
         this.spectators[user.username] = {
             id: id,
             name: user.username,
-            user: user,
-            emailHash: user.emailHash
+            user: user
         };
     }
 
@@ -300,7 +298,6 @@ class PendingGame {
             playerSummaries[player.name] = {
                 agenda: this.started && player.agenda ? player.agenda.cardData.code : undefined,
                 deck: activePlayer ? deck : {},
-                emailHash: player.emailHash,
                 faction: this.started && player.faction ? player.faction.cardData.code : undefined,
                 id: player.id,
                 left: player.left,
@@ -327,7 +324,6 @@ class PendingGame {
                 return {
                     id: spectator.id,
                     name: spectator.name,
-                    emailHash: spectator.emailHash,
                     settings: spectator.settings
                 };
             }),

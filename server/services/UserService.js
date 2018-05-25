@@ -64,6 +64,7 @@ class UserService {
     update(user) {
         var toSet = {
             email: user.email,
+            enableGravatar: user.enableGravatar,
             settings: user.settings,
             promptedActionWindows: user.promptedActionWindows,
             permissions: user.permissions,
