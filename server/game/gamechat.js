@@ -22,8 +22,8 @@ class GameChat {
         args = _.reduce(args, (argList, arg) => {
             if(arg instanceof Spectator) {
                 argList.push(arg.name);
-            } else if(arg && arg.name) {
-                argList.push({ name: arg.name, argType: 'player' });
+            } else if(arg && arg.name && arg.argType === 'player') {
+                argList.push({ name: arg.name, argType: arg.argType });
             } else {
                 argList.push(arg);
             }
