@@ -10,6 +10,7 @@ import Checkbox from '../Components/Form/Checkbox';
 import CardSizeOption from '../Components/Profile/CardSizeOption';
 import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
 import * as actions from '../actions';
+import Avatar from '../Components/Site/Avatar';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -17,12 +18,12 @@ class Profile extends React.Component {
 
         this.handleSelectBackground = this.handleSelectBackground.bind(this);
         this.handleSelectCardSize = this.handleSelectCardSize.bind(this);
+        this.onUpdateAvatarClick = this.onUpdateAvatarClick.bind(this);
 
         this.state = {
             newPassword: '',
             newPasswordAgain: '',
             validation: {},
-            promptedActionWindows: {},
             timerSettings: {},
             keywordSettings: {}
         };
@@ -90,7 +91,7 @@ class Profile extends React.Component {
 
         this.setState({
             email: props.user.email,
-            disableGravatar: props.user.settings.disableGravatar,
+            enableGravatar: props.user.enableGravatar,
             promptedActionWindows: props.user.promptedActionWindows,
             windowTimer: props.user.settings.windowTimer,
             timerSettings: props.user.settings.timerSettings,
@@ -152,8 +153,8 @@ class Profile extends React.Component {
             email: this.state.email,
             password: this.state.newPassword,
             promptedActionWindows: this.state.promptedActionWindows,
+            enableGravatar: this.state.enableGravatar,
             settings: {
-                disableGravatar: this.state.disableGravatar,
                 windowTimer: this.state.windowTimer,
                 keywordSettings: this.state.keywordSettings,
                 timerSettings: this.state.timerSettings,
@@ -225,8 +226,14 @@ class Profile extends React.Component {
         this.setState({ selectedCardSize: size });
     }
 
+    onUpdateAvatarClick(event) {
+        event.preventDefault();
+
+        this.props.updateAvatar(this.props.user.username);
+    }
+
     render() {
-        if(!this.props.user) {
+        if(!this.props.user || !this.state.promptedActionWindows) {
             return <AlertPanel type='error' message='You must be logged in to update your profile' />;
         }
 
@@ -267,8 +274,11 @@ class Profile extends React.Component {
                             <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
                                 type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
                                 onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
-                            <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
-                                onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
+                            <span className='col-sm-3 text-center'><Avatar username={ this.props.user.username } /></span>
+                            <Checkbox name='enableGravatar' label='Enable Gravatar integration' fieldClass='col-sm-offset-1 col-sm-7'
+                                onChange={ e => this.setState({ enableGravatar: e.target.checked }) } checked={ this.state.enableGravatar } />
+                            <div className='col-sm-3 text-center'>Current profile picture</div>
+                            <button type='button' className='btn btn-default col-sm-offset-1 col-sm-2' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
                         </Panel>
                         <div>
                             <Panel title='Action window defaults'>
@@ -365,6 +375,7 @@ Profile.propTypes = {
     refreshUser: PropTypes.func,
     saveProfile: PropTypes.func,
     socket: PropTypes.object,
+    updateAvatar: PropTypes.func,
     user: PropTypes.object
 };
 

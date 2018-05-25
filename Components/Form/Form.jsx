@@ -3,6 +3,7 @@ import $ from 'jquery';
 import PropTypes from 'prop-types';
 
 import Input from './Input';
+import Checkbox from './Checkbox';
 
 import formFields from './formFields.json';
 
@@ -32,6 +33,13 @@ class Form extends React.Component {
         this.setState(newState);
     }
 
+    onCheckboxChange(field, event) {
+        var newState = {};
+
+        newState[field] = event.target.checked;
+        this.setState(newState);
+    }
+
     onSubmit(event) {
         event.preventDefault();
 
@@ -46,9 +54,15 @@ class Form extends React.Component {
 
     render() {
         const fieldsToRender = formFields[this.props.name].map(field => {
-            return (<Input key={ field.name } name={ field.name } label={ field.label } placeholder={ field.placeholder }
-                validationAttributes={ field.validationProperties } fieldClass={ field.fieldClass } labelClass={ field.labelClass }
-                type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
+            switch(field.inputType) {
+                case 'checkbox':
+                    return (<Checkbox key={ field.name } name={ field.name } label={ field.label } fieldClass={ field.fieldClass }
+                        onChange={ this.onCheckboxChange.bind(this, field.name) } checked={ this.state[field.name] } />);
+                default:
+                    return (<Input key={ field.name } name={ field.name } label={ field.label } placeholder={ field.placeholder }
+                        validationAttributes={ field.validationProperties } fieldClass={ field.fieldClass } labelClass={ field.labelClass }
+                        type={ field.inputType } onChange={ this.onChange.bind(this, field.name) } value={ this.state[field.name] } />);
+            }
         });
 
         return (<form className='form form-horizontal' onSubmit={ this.onSubmit }>

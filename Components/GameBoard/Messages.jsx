@@ -106,7 +106,7 @@ class Messages extends React.Component {
             } else if(fragment.name) {
                 messages.push(
                     <div key={ index++ }>
-                        <Avatar emailHash={ fragment.emailHash } forceDefault={ fragment.noAvatar } float />
+                        <Avatar username={ fragment.name } float />
                         <span key={ index++ }>
                             <b>{ fragment.name }</b>
                         </span>

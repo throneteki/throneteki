@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import Form from '../Components/Form/Form';
+import Link from '../Components/Site/Link';
+
 import * as actions from '../actions';
 
 export class Register extends React.Component {
@@ -14,7 +16,8 @@ export class Register extends React.Component {
         this.onRegister = this.onRegister.bind(this);
 
         this.state = {
-            successMessage: ''
+            successMessage: '',
+            enableGravatar: true
         };
     }
 
@@ -29,7 +32,11 @@ export class Register extends React.Component {
     }
 
     onRegister(state) {
-        this.props.registerAccount({ username: state.username, password: state.password, email: state.email });
+        this.props.registerAccount({ username: state.username, password: state.password, email: state.email, enableGravatar: state.enableGravatar });
+    }
+
+    onEnableGravatarChanged(event) {
+        this.setState({ enableGravatar: event.target.checked });
     }
 
     render() {
@@ -41,6 +48,8 @@ export class Register extends React.Component {
                 { errorBar }
                 { successBar }
                 <Panel title='Register an account'>
+                    <p>We require information from you in order to service your access to the site.  Please see the <Link href='/privacy'>privacy policy</Link> for details on why we need this information and what we do with it.  Please pay particular attention to the section on avatars.</p>
+
                     <Form name='register' apiLoading={ this.props.apiLoading } buttonText='Register' onSubmit={ this.onRegister } />
                 </Panel>
             </div>);

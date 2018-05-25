@@ -21,6 +21,7 @@ import GameLobby from './Components/Games/GameLobby';
 import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
+import Privacy from './pages/Privacy';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -41,7 +42,8 @@ const routes = [
     { path: '/reset-password', action: context => <ResetPassword key='resetpassword' id={ context.params.id } token={ context.params.token } /> },
     { path: '/security', action: () => <Security key='security' /> },
     { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' },
-    { path: '/nodes', action: () => <NodesAdmin key='nodesadmin' />, permission: 'canManageNodes' }
+    { path: '/nodes', action: () => <NodesAdmin key='nodesadmin' />, permission: 'canManageNodes' },
+    { path: '/privacy', action: () => <Privacy key='privacy' /> }
 ];
 
 export default routes;

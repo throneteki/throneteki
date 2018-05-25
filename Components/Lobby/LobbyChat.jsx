@@ -94,7 +94,7 @@ class LobbyChat extends React.Component {
 
             return (
                 <div key={ timestamp + firstMessage.user.username + (index++).toString() }>
-                    <Avatar emailHash={ firstMessage.user.emailHash } float />
+                    <Avatar username={ firstMessage.user.username } float />
                     <span className='username'>{ firstMessage.user.username }</span>
                     <span>{ timestamp }</span>
                     { renderedMessages }

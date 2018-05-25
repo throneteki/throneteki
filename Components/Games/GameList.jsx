@@ -64,24 +64,24 @@ class GameList extends React.Component {
 
                 if(firstPlayer) {
                     gameRow.push(
-                        <span key={ player.emailHash } className='col-xs-4 col-sm-3 game-row-avatar'>
+                        <span key={ player.name } className='col-xs-4 col-sm-3 game-row-avatar'>
                             <span className='hidden-xs col-sm-3 game-row-avatar'>
-                                <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
+                                <Avatar username={ player.name } />
                             </span>
                             <span className='player-name col-sm-8'>{ player.name }</span>
                         </span>);
                     gameRow.push();
-                    gameRow.push(<span key={ player.emailHash + player.faction } className={ factionIconClass } />);
+                    gameRow.push(<span key={ player.name + player.faction } className={ factionIconClass } />);
 
                     firstPlayer = false;
                 } else {
                     gameRow.push(<span key={ 'vs' + game.id } className='col-xs-1 game-row-vs text-center'><b> vs </b></span>);
-                    gameRow.push(<span key={ player.emailHash + player.faction } className={ factionIconClass } />);
+                    gameRow.push(<span key={ player.name + player.faction } className={ factionIconClass } />);
                     gameRow.push(
-                        <span key={ player.emailHash } className='col-xs-4 col-sm-3 game-row-avatar'>
+                        <span key={ player.name } className='col-xs-4 col-sm-3 game-row-avatar'>
                             <span className='player-name col-sm-8'>{ player.name }</span>
                             <span className='hidden-xs game-row-avatar pull-right col-sm-3'>
-                                <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
+                                <Avatar username={ player.name } />
                             </span>
                         </span>);
                 }

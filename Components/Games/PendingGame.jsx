@@ -117,7 +117,7 @@ class PendingGame extends React.Component {
 
         return (
             <div className='player-row' key={ player.name }>
-                <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } /><span>{ player.name }</span>{ deck } { status } { selectLink }
+                <Avatar username={ player.name } /><span>{ player.name }</span>{ deck } { status } { selectLink }
             </div>);
     }
 

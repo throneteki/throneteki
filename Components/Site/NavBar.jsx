@@ -66,7 +66,7 @@ class NavBar extends React.Component {
                 <li key={ menuItem.title } className={ className }>
                     <a href='#' className='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>
                         { menuItem.showProfilePicture && this.props.user ?
-                            <Avatar emailHash={ this.props.user.emailHash } forceDefault={ this.props.user.settings.disableGravatar } /> :
+                            <Avatar username={ this.props.user.username } /> :
                             null }
                         { menuItem.showProfilePicture && this.props.user ? this.props.user.username : menuItem.title }<span className='caret' />
                     </a>

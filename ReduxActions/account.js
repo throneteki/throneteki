@@ -7,7 +7,7 @@ export function registerAccount(user) {
         APIParams: {
             url: '/api/account/register',
             type: 'POST',
-            data: JSON.stringify({ username: user.username, password: user.password, email: user.email }),
+            data: JSON.stringify({ username: user.username, password: user.password, email: user.email, enableGravatar: user.enableGravatar }),
             contentType: 'application/json'
         }
     };
@@ -128,5 +128,16 @@ export function authenticate() {
         dispatch(verifyAuthentication(state.auth.token));
 
         return dispatch(authenticateSocket());
+    };
+}
+
+export function updateAvatar(user) {
+    return {
+        types: ['ACCOUNT_UPDATE_AVATAR', 'ACCOUNT_AVATAR_UPDATE'],
+        shouldCallAPI: () => true,
+        APIParams: {
+            url: `/api/account/${user}/updateavatar`,
+            type: 'POST'
+        }
     };
 }
