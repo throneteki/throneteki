@@ -6,7 +6,8 @@ const menus = [
     {
         title: 'Help', position: 'left', childItems: [
             { path: '/how-to-play', title: 'How To Play' },
-            { path: '/about', title: 'About' }
+            { path: '/about', title: 'About' },
+            { path: '/privacy', title: 'Privacy Policy' }
         ]
     },
     {
