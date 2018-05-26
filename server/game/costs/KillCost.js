@@ -4,7 +4,7 @@ class KillCost {
     }
 
     isEligible(card) {
-        return card.canBeKilled();
+        return card.location === 'play area' && card.canBeKilled();
     }
 
     pay(cards, context) {
