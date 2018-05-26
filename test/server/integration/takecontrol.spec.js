@@ -706,5 +706,47 @@ describe('take control', function() {
                 expect(this.player2Object.discardPile).toContain(this.character);
             });
         });
+
+        describe('competing take control', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('greyjoy', [
+                    'A Noble Cause',
+                    'Sea Bitch', 'Nagga\'s Ribs'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.location = this.player2.findCardByName('Nagga\'s Ribs', 'hand');
+
+                this.player1.clickCard('Sea Bitch', 'hand');
+                this.player2.clickCard('Sea Bitch', 'hand');
+                this.player2.clickCard(this.location);
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                // Steal the location
+                this.player1.clickMenu('Sea Bitch', 'Take control of location');
+                this.player1.clickCard(this.location);
+
+                expect(this.location).toBeControlledBy(this.player1);
+
+                // Steal it back
+                this.player2.clickMenu('Sea Bitch', 'Take control of location');
+                this.player2.clickCard(this.location);
+
+                expect(this.location).toBeControlledBy(this.player2);
+
+                // Finish phase, allow effects to expire
+                this.completeMarshalPhase();
+            });
+
+            it('should revert control properly', function() {
+                expect(this.location).toBeControlledBy(this.player2);
+            });
+        });
     });
 });

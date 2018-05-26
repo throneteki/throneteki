@@ -47,7 +47,7 @@ class TitlePool {
             return;
         }
 
-        card.controller = player;
+        card.takeControl(player, this);
         card.moveTo('title');
         card.applyPersistentEffects();
         player.title = card;
@@ -58,7 +58,7 @@ class TitlePool {
             return;
         }
 
-        card.controller = null;
+        card.revertControl(this);
         card.moveTo('title pool');
         player.title = null;
     }

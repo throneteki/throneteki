@@ -42,7 +42,6 @@ const LocationsWithEventHandling = ['play area', 'active plot', 'faction', 'agen
 class BaseCard {
     constructor(owner, cardData) {
         this.owner = owner;
-        this.controller = owner;
         this.game = this.owner.game;
         this.cardData = cardData;
 
@@ -54,6 +53,7 @@ class BaseCard {
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
         this.losesAllAspects = new ReferenceCountedSetProperty();
+        this.controllerStack = [];
 
         this.tokens = {};
         this.plotModifierValues = {
@@ -272,6 +272,35 @@ class BaseCard {
 
     translateXValue(value) {
         return value === '-' ? 0 : value;
+    }
+
+    get controller() {
+        if(this.controllerStack.length === 0) {
+            return this.owner;
+        }
+
+        return this.controllerStack[this.controllerStack.length - 1].controller;
+    }
+
+    takeControl(controller, source) {
+        if(!source && controller === this.owner) {
+            // On permanent take control by the original owner, revert all take
+            // control effects
+            this.controllerStack = [];
+            return;
+        }
+
+        let tracking = { controller: controller, source: source };
+        if(!source) {
+            // Clear all other take control effects for permanent control
+            this.controllerStack = [tracking];
+        } else {
+            this.controllerStack.push(tracking);
+        }
+    }
+
+    revertControl(source) {
+        this.controllerStack = this.controllerStack.filter(control => control.source !== source);
     }
 
     hasKeyword(keyword) {

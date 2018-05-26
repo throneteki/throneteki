@@ -43,7 +43,7 @@ class VaryssRiddle extends PlotCard {
 
     resolveWhenRevealed(plot) {
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, plot);
-        plot.controller = this.controller;
+        plot.takeControl(this.controller, this);
         this.resolving = true;
 
         let whenRevealed = plot.getWhenRevealedAbility();
@@ -54,7 +54,7 @@ class VaryssRiddle extends PlotCard {
         }
         this.game.queueSimpleStep(() => {
             this.resolving = false;
-            plot.controller = plot.owner;
+            plot.revertControl(this);
         });
     }
 }

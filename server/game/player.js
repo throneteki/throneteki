@@ -647,7 +647,7 @@ class Player extends Spectator {
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
-            card.controller = this;
+            card.takeControl(this);
             card.kneeled = playingType !== 'setup' && !!card.entersPlayKneeled || !!options.kneeled;
             card.wasAmbush = (playingType === 'ambush');
 
@@ -806,7 +806,7 @@ class Player extends Spectator {
         }
 
         attachment.moveTo('play area', card);
-        attachment.controller = controller;
+        attachment.takeControl(controller);
         card.attachments.push(attachment);
 
         this.game.queueSimpleStep(() => {
@@ -1150,7 +1150,7 @@ class Player extends Spectator {
     removeCardFromPile(card) {
         if(card.controller !== this) {
             card.controller.removeCardFromPile(card);
-            card.controller = card.owner;
+            card.takeControl(card.owner);
             return;
         }
 
