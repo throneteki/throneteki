@@ -31,6 +31,7 @@ class Player extends Spectator {
         this.deadPile = [];
         this.discardPile = [];
         this.outOfGamePile = [];
+        this.shadows = [];
 
         // Agenda specific piles
         this.bannerCards = [];
@@ -803,6 +804,7 @@ class Player extends Spectator {
             'play area': ['attachment', 'character', 'location'],
             'plot deck': PlotCardTypes,
             'revealed plots': PlotCardTypes,
+            'shadows': DrawDeckCardTypes,
             // Agenda specific piles
             'conclave': DrawDeckCardTypes
         };
@@ -838,6 +840,8 @@ class Player extends Spectator {
                 return this.plotDiscard;
             case 'out of game':
                 return this.outOfGamePile;
+            case 'shadows':
+                return this.shadows;
             // Agenda specific piles
             case 'conclave':
                 return this.conclavePile;
@@ -872,6 +876,9 @@ class Player extends Spectator {
                 break;
             case 'out of game':
                 this.outOfGamePile = targetList;
+                break;
+            case 'shadows':
+                this.shadows = targetList;
                 break;
             // Agenda specific piles
             case 'conclave':
@@ -1347,7 +1354,8 @@ class Player extends Spectator {
                 hand: this.getSummaryForCardList(this.hand, activePlayer, !this.showHandtoSpectators(activePlayer)),
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
                 plotDeck: plots,
-                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer)
+                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
+                shadows: this.getSummaryForCardList(this.shadows, activePlayer, true)
             },
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),
