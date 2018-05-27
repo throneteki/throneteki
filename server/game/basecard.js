@@ -108,6 +108,11 @@ class BaseCard {
                 if(match) {
                     this.bestowMax = parseInt(match[1]);
                 }
+            } else if(keyword.indexOf('shadow') === 0) {
+                match = keyword.match(/shadow \((.*)\)/);
+                if(match) {
+                    this.shadowCost = parseInt(match[1]);
+                }
             }
         });
 

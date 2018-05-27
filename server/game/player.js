@@ -17,6 +17,7 @@ const logger = require('../log.js');
 
 const StartingHandSize = 7;
 const DrawPhaseCards = 2;
+const MarshalIntoShadowsCost = 2;
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -467,9 +468,21 @@ class Player extends Spectator {
     }
 
     getReducedCost(playingType, card) {
-        let baseCost = playingType === 'ambush' ? card.getAmbushCost() : card.getCost();
+        let baseCost = this.getBaseCost(playingType, card);
         let reducedCost = baseCost - this.getCostReduction(playingType, card);
         return Math.max(reducedCost, card.getMinCost());
+    }
+
+    getBaseCost(playingType, card) {
+        if(playingType === 'marshalIntoShadows') {
+            return MarshalIntoShadowsCost;
+        }
+
+        if(playingType === 'ambush') {
+            return card.getAmbushCost();
+        }
+
+        return card.getCost();
     }
 
     markUsedReducers(playingType, card) {
@@ -629,6 +642,10 @@ class Player extends Spectator {
 
             this.game.raiseEvent('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
         }
+    }
+
+    putIntoShadows(card) {
+        this.moveCard(card, 'shadows');
     }
 
     setupDone() {

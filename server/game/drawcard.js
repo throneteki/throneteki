@@ -4,12 +4,14 @@ const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
 const SetupCardAction = require('./setupcardaction.js');
 const MarshalCardAction = require('./marshalcardaction.js');
+const MarshalIntoShadowsAction = require('./MarshalIntoShadowsAction');
 const AmbushCardAction = require('./ambushcardaction.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
 const StandardPlayActions = [
     new SetupCardAction(),
     new MarshalCardAction(),
+    new MarshalIntoShadowsAction(),
     new AmbushCardAction()
 ];
 
@@ -110,6 +112,10 @@ class DrawCard extends BaseCard {
         });
 
         return firstDupe;
+    }
+
+    isShadow() {
+        return this.shadowCost !== undefined;
     }
 
     isLimited() {
