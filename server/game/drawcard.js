@@ -6,6 +6,7 @@ const SetupCardAction = require('./setupcardaction.js');
 const SetupInShadowsAction = require('./SetupInShadowsAction');
 const MarshalCardAction = require('./marshalcardaction.js');
 const MarshalIntoShadowsAction = require('./MarshalIntoShadowsAction');
+const OutOfShadowsAction = require('./OutOfShadowsAction');
 const AmbushCardAction = require('./ambushcardaction.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
@@ -14,6 +15,7 @@ const StandardPlayActions = [
     new SetupInShadowsAction(),
     new MarshalCardAction(),
     new MarshalIntoShadowsAction(),
+    new OutOfShadowsAction(),
     new AmbushCardAction()
 ];
 
@@ -162,6 +164,10 @@ class DrawCard extends BaseCard {
 
     getAmbushCost() {
         return this.ambushCost;
+    }
+
+    getShadowCost() {
+        return this.shadowCost;
     }
 
     getPower() {

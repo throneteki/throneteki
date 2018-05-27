@@ -478,6 +478,10 @@ class Player extends Spectator {
             return MarshalIntoShadowsCost;
         }
 
+        if(playingType === 'outOfShadows') {
+            return card.getShadowCost();
+        }
+
         if(playingType === 'ambush') {
             return card.getAmbushCost();
         }
