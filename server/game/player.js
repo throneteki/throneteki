@@ -50,7 +50,7 @@ class Player extends Spectator {
         this.challenges = new ChallengeTracker(this);
         this.minReserve = 0;
         this.costReducers = [];
-        this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
+        this.playableLocations = this.createDefaultPlayableLocations();
         this.usedPlotsModifier = 0;
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
@@ -75,6 +75,12 @@ class Player extends Spectator {
         this.groupedPiles = {};
 
         this.promptState = new PlayerPromptState();
+    }
+
+    createDefaultPlayableLocations() {
+        let playFromHand = ['marshal', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
+        let playFromShadows = ['play'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'shadows'));
+        return playFromHand.concat(playFromShadows);
     }
 
     isCardUuidInList(list, card) {
@@ -478,7 +484,7 @@ class Player extends Spectator {
             return MarshalIntoShadowsCost;
         }
 
-        if(playingType === 'outOfShadows') {
+        if(playingType === 'outOfShadows' || playingType === 'play' && card.location === 'shadows') {
             return card.getShadowCost();
         }
 
