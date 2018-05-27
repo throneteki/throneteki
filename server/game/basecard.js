@@ -7,7 +7,7 @@ const CardForcedInterrupt = require('./cardforcedinterrupt');
 const CardForcedReaction = require('./cardforcedreaction');
 const CardInterrupt = require('./cardinterrupt');
 const CardReaction = require('./cardreaction');
-const CustomPlayAction = require('./customplayaction');
+const CustomPlayAction = require('./PlayActions/CustomPlayAction');
 const EventRegistrar = require('./eventregistrar');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 

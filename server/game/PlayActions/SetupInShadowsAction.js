@@ -1,5 +1,5 @@
-const BaseAbility = require('./baseability.js');
-const Costs = require('./costs.js');
+const BaseAbility = require('../baseability');
+const Costs = require('../costs');
 
 class SetupInShadowsAction extends BaseAbility {
     constructor() {

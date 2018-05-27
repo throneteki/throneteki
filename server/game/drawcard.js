@@ -2,22 +2,8 @@ const _ = require('underscore');
 
 const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
-const SetupCardAction = require('./setupcardaction.js');
-const SetupInShadowsAction = require('./SetupInShadowsAction');
-const MarshalCardAction = require('./marshalcardaction.js');
-const MarshalIntoShadowsAction = require('./MarshalIntoShadowsAction');
-const OutOfShadowsAction = require('./OutOfShadowsAction');
-const AmbushCardAction = require('./ambushcardaction.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-
-const StandardPlayActions = [
-    new SetupCardAction(),
-    new SetupInShadowsAction(),
-    new MarshalCardAction(),
-    new MarshalIntoShadowsAction(),
-    new OutOfShadowsAction(),
-    new AmbushCardAction()
-];
+const StandardPlayActions = require('./PlayActions/StandardActions');
 
 const Icons = ['military', 'intrigue', 'power'];
 
