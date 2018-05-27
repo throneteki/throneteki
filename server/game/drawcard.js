@@ -3,6 +3,7 @@ const _ = require('underscore');
 const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
 const SetupCardAction = require('./setupcardaction.js');
+const SetupInShadowsAction = require('./SetupInShadowsAction');
 const MarshalCardAction = require('./marshalcardaction.js');
 const MarshalIntoShadowsAction = require('./MarshalIntoShadowsAction');
 const AmbushCardAction = require('./ambushcardaction.js');
@@ -10,6 +11,7 @@ const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSet
 
 const StandardPlayActions = [
     new SetupCardAction(),
+    new SetupInShadowsAction(),
     new MarshalCardAction(),
     new MarshalIntoShadowsAction(),
     new AmbushCardAction()
