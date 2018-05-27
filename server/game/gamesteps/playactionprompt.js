@@ -21,7 +21,8 @@ class PlayActionPrompt extends BaseStep {
                 menuTitle: 'Play ' + this.context.source.name + ':',
                 buttons: buttons
             },
-            source: this.context.source
+            source: this.context.source,
+            hideSourceFromOpponents: true
         });
     }
 
