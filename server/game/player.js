@@ -1382,7 +1382,7 @@ class Player extends Spectator {
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
                 plotDeck: plots,
                 plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
-                shadows: this.getSummaryForCardList(this.shadows, activePlayer, true)
+                shadows: this.getSummaryForCardList(this.shadows, activePlayer, !this.showHandtoSpectators(activePlayer))
             },
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),
