@@ -1,27 +1,26 @@
-const MarshalCardAction = require('../../server/game/marshalcardaction.js');
+const AmbushCardAction = require('../../../server/game/PlayActions/AmbushCardAction');
 
-describe('MarshalCardAction', function () {
+describe('AmbushCardAction', function () {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'on', 'removeListener']);
         this.playerSpy = jasmine.createSpyObj('player', ['canPutIntoPlay', 'isCardInPlayableLocation', 'putIntoPlay']);
-        this.cardSpy = jasmine.createSpyObj('card', ['getType']);
-        this.cardSpy.controller = this.playerSpy;
-        this.cardSpy.owner = this.playerSpy;
+        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isAmbush']);
         this.context = {
             costs: {},
             game: this.gameSpy,
             player: this.playerSpy,
             source: this.cardSpy
         };
-        this.action = new MarshalCardAction();
+        this.action = new AmbushCardAction();
     });
 
     describe('meetsRequirements()', function() {
         beforeEach(function() {
-            this.gameSpy.currentPhase = 'marshal';
-            this.playerSpy.canPutIntoPlay.and.returnValue(true);
+            this.gameSpy.currentPhase = 'challenge';
             this.playerSpy.isCardInPlayableLocation.and.returnValue(true);
+            this.playerSpy.canPutIntoPlay.and.returnValue(true);
             this.cardSpy.getType.and.returnValue('character');
+            this.cardSpy.isAmbush.and.returnValue(true);
         });
 
         describe('when all conditions are met', function() {
@@ -30,9 +29,9 @@ describe('MarshalCardAction', function () {
             });
         });
 
-        describe('when the phase not marshal', function() {
+        describe('when the phase is not challenge', function() {
             beforeEach(function() {
-                this.gameSpy.currentPhase = 'dominance';
+                this.gameSpy.currentPhase = 'marshal';
             });
 
             it('should return false', function() {
@@ -40,7 +39,7 @@ describe('MarshalCardAction', function () {
             });
         });
 
-        describe('when the card is not in a valid marshal location', function() {
+        describe('when the card is not in a playable location', function() {
             beforeEach(function() {
                 this.playerSpy.isCardInPlayableLocation.and.returnValue(false);
             });
@@ -53,6 +52,16 @@ describe('MarshalCardAction', function () {
         describe('when the card is an event', function() {
             beforeEach(function() {
                 this.cardSpy.getType.and.returnValue('event');
+            });
+
+            it('should return false', function() {
+                expect(this.action.meetsRequirements(this.context)).toBe(false);
+            });
+        });
+
+        describe('when the card is not an ambushable card', function() {
+            beforeEach(function() {
+                this.cardSpy.isAmbush.and.returnValue(false);
             });
 
             it('should return false', function() {
@@ -77,7 +86,7 @@ describe('MarshalCardAction', function () {
         });
 
         it('should put the card into play', function() {
-            expect(this.playerSpy.putIntoPlay).toHaveBeenCalledWith(this.cardSpy, 'marshal');
+            expect(this.playerSpy.putIntoPlay).toHaveBeenCalledWith(this.cardSpy, 'ambush');
         });
     });
 });

@@ -1,4 +1,4 @@
-const BaseAbility = require('./baseability.js');
+const BaseAbility = require('../baseability');
 
 class CustomPlayAction extends BaseAbility {
     constructor(properties) {

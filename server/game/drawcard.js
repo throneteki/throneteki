@@ -2,16 +2,8 @@ const _ = require('underscore');
 
 const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
-const SetupCardAction = require('./setupcardaction.js');
-const MarshalCardAction = require('./marshalcardaction.js');
-const AmbushCardAction = require('./ambushcardaction.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-
-const StandardPlayActions = [
-    new SetupCardAction(),
-    new MarshalCardAction(),
-    new AmbushCardAction()
-];
+const StandardPlayActions = require('./PlayActions/StandardActions');
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -112,6 +104,10 @@ class DrawCard extends BaseCard {
         return firstDupe;
     }
 
+    isShadow() {
+        return this.shadowCost !== undefined;
+    }
+
     isLimited() {
         return this.hasKeyword('limited') || (!this.isAnyBlank() && this.hasPrintedKeyword('limited'));
     }
@@ -154,6 +150,10 @@ class DrawCard extends BaseCard {
 
     getAmbushCost() {
         return this.ambushCost;
+    }
+
+    getShadowCost() {
+        return this.shadowCost;
     }
 
     getPower() {

@@ -7,7 +7,7 @@ const CardForcedInterrupt = require('./cardforcedinterrupt');
 const CardForcedReaction = require('./cardforcedreaction');
 const CardInterrupt = require('./cardinterrupt');
 const CardReaction = require('./cardreaction');
-const CustomPlayAction = require('./customplayaction');
+const CustomPlayAction = require('./PlayActions/CustomPlayAction');
 const EventRegistrar = require('./eventregistrar');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
@@ -107,6 +107,11 @@ class BaseCard {
                 match = keyword.match(/bestow \((.*)\)/);
                 if(match) {
                     this.bestowMax = parseInt(match[1]);
+                }
+            } else if(keyword.indexOf('shadow') === 0) {
+                match = keyword.match(/shadow \((.*)\)/);
+                if(match) {
+                    this.shadowCost = parseInt(match[1]);
                 }
             }
         });

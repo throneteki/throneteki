@@ -17,6 +17,7 @@ const logger = require('../log.js');
 
 const StartingHandSize = 7;
 const DrawPhaseCards = 2;
+const MarshalIntoShadowsCost = 2;
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -31,6 +32,7 @@ class Player extends Spectator {
         this.deadPile = [];
         this.discardPile = [];
         this.outOfGamePile = [];
+        this.shadows = [];
 
         // Agenda specific piles
         this.bannerCards = [];
@@ -48,7 +50,7 @@ class Player extends Spectator {
         this.challenges = new ChallengeTracker(this);
         this.minReserve = 0;
         this.costReducers = [];
-        this.playableLocations = _.map(['marshal', 'play', 'ambush'], playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
+        this.playableLocations = this.createDefaultPlayableLocations();
         this.usedPlotsModifier = 0;
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
@@ -73,6 +75,12 @@ class Player extends Spectator {
         this.groupedPiles = {};
 
         this.promptState = new PlayerPromptState();
+    }
+
+    createDefaultPlayableLocations() {
+        let playFromHand = ['marshal', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
+        let playFromShadows = ['play'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'shadows'));
+        return playFromHand.concat(playFromShadows);
     }
 
     isCardUuidInList(list, card) {
@@ -466,9 +474,25 @@ class Player extends Spectator {
     }
 
     getReducedCost(playingType, card) {
-        let baseCost = playingType === 'ambush' ? card.getAmbushCost() : card.getCost();
+        let baseCost = this.getBaseCost(playingType, card);
         let reducedCost = baseCost - this.getCostReduction(playingType, card);
         return Math.max(reducedCost, card.getMinCost());
+    }
+
+    getBaseCost(playingType, card) {
+        if(playingType === 'marshalIntoShadows') {
+            return MarshalIntoShadowsCost;
+        }
+
+        if(playingType === 'outOfShadows' || playingType === 'play' && card.location === 'shadows') {
+            return card.getShadowCost();
+        }
+
+        if(playingType === 'ambush') {
+            return card.getAmbushCost();
+        }
+
+        return card.getCost();
     }
 
     markUsedReducers(playingType, card) {
@@ -628,6 +652,10 @@ class Player extends Spectator {
 
             this.game.raiseEvent('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
         }
+    }
+
+    putIntoShadows(card) {
+        this.moveCard(card, 'shadows');
     }
 
     setupDone() {
@@ -803,6 +831,7 @@ class Player extends Spectator {
             'play area': ['attachment', 'character', 'location'],
             'plot deck': PlotCardTypes,
             'revealed plots': PlotCardTypes,
+            'shadows': DrawDeckCardTypes,
             // Agenda specific piles
             'conclave': DrawDeckCardTypes
         };
@@ -838,6 +867,8 @@ class Player extends Spectator {
                 return this.plotDiscard;
             case 'out of game':
                 return this.outOfGamePile;
+            case 'shadows':
+                return this.shadows;
             // Agenda specific piles
             case 'conclave':
                 return this.conclavePile;
@@ -872,6 +903,9 @@ class Player extends Spectator {
                 break;
             case 'out of game':
                 this.outOfGamePile = targetList;
+                break;
+            case 'shadows':
+                this.shadows = targetList;
                 break;
             // Agenda specific piles
             case 'conclave':
@@ -1347,7 +1381,8 @@ class Player extends Spectator {
                 hand: this.getSummaryForCardList(this.hand, activePlayer, !this.showHandtoSpectators(activePlayer)),
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
                 plotDeck: plots,
-                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer)
+                plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
+                shadows: this.getSummaryForCardList(this.shadows, activePlayer, !this.showHandtoSpectators(activePlayer))
             },
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),

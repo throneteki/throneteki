@@ -11,6 +11,8 @@ const UiPrompt = require('./uiprompt.js');
  * waitingPromptTitle - the title to display for opponents.
  * source             - what is at the origin of the user prompt, usually a card;
  *                      used to provide a default waitingPromptTitle, if missing
+ * hideSourceFromOpponents - boolean that indicates whether an opponent should be
+ *                      able to see the card a player is using.
  */
 class MenuPrompt extends UiPrompt {
     constructor(game, player, context, properties) {
@@ -18,7 +20,7 @@ class MenuPrompt extends UiPrompt {
         this.player = player;
         this.context = context;
 
-        if(properties.source && !properties.waitingPromptTitle) {
+        if(properties.source && !properties.waitingPromptTitle && !properties.hideSourceFromOpponents) {
             properties.waitingPromptTitle = 'Waiting for opponent to use ' + properties.source.name;
         }
 

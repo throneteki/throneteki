@@ -1,4 +1,4 @@
-const SetupCardAction = require('../../server/game/setupcardaction');
+const SetupCardAction = require('../../../server/game/PlayActions/SetupCardAction');
 
 describe('SetupCardAction', function () {
     beforeEach(function() {
