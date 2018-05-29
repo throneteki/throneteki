@@ -142,6 +142,11 @@ const Costs = {
      */
     discardMultipleFromHand: (number, condition) => CostBuilders.discardFromHand.selectMultiple(number, condition),
     /**
+     * Cost that requires discarding a card from shadows matching the passed
+     * condition predicate function.
+     */
+    discardFromShadows: condition => CostBuilders.discardFromShadows.select(condition),
+    /**
      * Cost that will pay the reduceable gold cost associated with an event card
      * and place it in discard.
      */
