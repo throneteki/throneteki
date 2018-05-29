@@ -153,15 +153,28 @@ class PlayerRow extends React.Component {
         );
     }
 
+    renderDroppablePile(source, child) {
+        return this.props.isMe ? <Droppable onDragDrop={ this.props.onDragDrop } source={ source }>{ child }</Droppable> : child;
+    }
+
     render() {
-        var drawDeckMenu = this.props.isMe && !this.props.spectating ? [
+        let drawDeckMenu = this.props.isMe && !this.props.spectating ? [
             { text: 'Show', handler: this.onShowDeckClick, showPopup: true },
             { text: 'Shuffle', handler: this.onShuffleClick }
         ] : null;
 
-        var drawDeckPopupMenu = [
+        let drawDeckPopupMenu = [
             { text: 'Close and Shuffle', handler: this.onCloseAndShuffleClick }
         ];
+
+        let cardPileProps = {
+            onCardClick: this.props.onCardClick,
+            onDragDrop: this.props.onDragDrop,
+            onMouseOut: this.props.onMouseOut,
+            onMouseOver: this.props.onMouseOver,
+            popupLocation: this.props.side,
+            size: this.props.cardSize
+        };
 
         let hand = (<PlayerHand
             cards={ this.props.hand }
@@ -174,24 +187,19 @@ class PlayerRow extends React.Component {
             spectating={ this.props.spectating }
             cardSize={ this.props.cardSize } />);
         let drawDeck = (<CardPile className='draw' title='Draw' source='draw deck' cards={ this.props.drawDeck }
-            onDragDrop={ this.props.onDragDrop }
-            onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut }
-            onCardClick={ this.props.isMe && !this.props.spectating ? this.props.onCardClick : null }
-            popupLocation={ this.props.side }
             disablePopup={ this.props.spectating || !this.props.isMe }
             menu={ drawDeckMenu } hiddenTopCard cardCount={ this.props.numDrawCards } popupMenu={ drawDeckPopupMenu }
             onCloseClick={ this.onCloseClick.bind(this) }
-            size={ this.props.cardSize } />);
+            { ...cardPileProps } />);
         let discardPile = (<CardPile className='discard' title='Discard' source='discard pile' cards={ this.props.discardPile }
-            onDragDrop={ this.props.onDragDrop }
-            onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick }
-            popupLocation={ this.props.side }
-            size={ this.props.cardSize } />);
+            { ...cardPileProps } />);
         let deadPile = (<CardPile className='dead' title='Dead' source='dead pile' cards={ this.props.deadPile }
-            onDragDrop={ this.props.onDragDrop }
-            onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick }
-            popupLocation={ this.props.side }
-            orientation='kneeled' size={ this.props.cardSize } />);
+            orientation='kneeled'
+            { ...cardPileProps } />);
+        let shadows = (<CardPile className='shadows' title='Shadows' source='shadows' cards={ [...this.props.shadows].reverse() }
+            hiddenTopCard={ !(this.props.isMe || this.props.spectating && this.props.showHand) }
+            disablePopup={ !(this.props.isMe || this.props.spectating && this.props.showHand) }
+            { ...cardPileProps } />);
 
         return (
             <div className='player-home-row-container'>
@@ -201,10 +209,11 @@ class PlayerRow extends React.Component {
                     size={ this.props.cardSize } />
                 { this.getAgenda() }
                 { this.getTitleCard() }
-                { this.props.isMe ? <Droppable onDragDrop={ this.props.onDragDrop } source='hand' >{ hand }</Droppable> : hand }
-                { this.props.isMe ? <Droppable onDragDrop={ this.props.onDragDrop } source='draw deck'>{ drawDeck }</Droppable> : drawDeck }
-                { this.props.isMe ? <Droppable onDragDrop={ this.props.onDragDrop } source='discard pile'>{ discardPile }</Droppable> : discardPile }
-                { this.props.isMe ? <Droppable onDragDrop={ this.props.onDragDrop } source='dead pile'>{ deadPile }</Droppable> : deadPile }
+                { this.renderDroppablePile('hand', hand) }
+                { this.props.shadows.length !== 0 && this.renderDroppablePile('shadows', shadows) }
+                { this.renderDroppablePile('draw deck', drawDeck) }
+                { this.renderDroppablePile('discard pile', discardPile) }
+                { this.renderDroppablePile('dead pile', deadPile) }
 
                 { this.getOutOfGamePile() }
             </div>
@@ -236,6 +245,7 @@ PlayerRow.propTypes = {
     outOfGamePile: PropTypes.array,
     plotDeck: PropTypes.array,
     power: PropTypes.number,
+    shadows: PropTypes.array,
     showDrawDeck: PropTypes.bool,
     showHand: PropTypes.bool,
     side: PropTypes.oneOf(['top', 'bottom']),

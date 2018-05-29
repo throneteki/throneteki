@@ -338,6 +338,18 @@
   }
 }
 
+.shadows {
+  .popup {
+    position: absolute;
+    min-height: 146px;
+
+    .inner {
+      .calculate-tiled-card-prop(min-height, 1, height);
+      .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
+    }
+  }
+}
+
 .discard {
   .popup {
     position: absolute;

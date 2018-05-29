@@ -12,7 +12,8 @@ const validTargets = {
         'draw deck',
         'dead pile',
         'out of game',
-        'conclave'
+        'conclave',
+        'shadows'
     ],
     'play area': [
         'discard pile',
@@ -20,7 +21,8 @@ const validTargets = {
         'draw deck',
         'dead pile',
         'out of game',
-        'conclave'
+        'conclave',
+        'shadows'
     ],
     'discard pile': [
         'dead pile',
@@ -28,7 +30,8 @@ const validTargets = {
         'draw deck',
         'play area',
         'out of game',
-        'conclave'
+        'conclave',
+        'shadows'
     ],
     'dead pile': [
         'hand',
@@ -36,7 +39,8 @@ const validTargets = {
         'play area',
         'discard pile',
         'out of game',
-        'conclave'
+        'conclave',
+        'shadows'
     ],
     'draw deck': [
         'hand',
@@ -45,7 +49,8 @@ const validTargets = {
         'play area',
         'out of game',
         'conclave',
-        'rookery'
+        'rookery',
+        'shadows'
     ],
     'plot deck': [
         'revealed plots',
@@ -63,7 +68,8 @@ const validTargets = {
         'play area',
         'discard pile',
         'hand',
-        'dead pile'
+        'dead pile',
+        'shadows'
     ],
     'conclave': [
         'hand',
@@ -71,7 +77,16 @@ const validTargets = {
         'draw deck',
         'discard pile',
         'dead pile',
-        'out of game'
+        'out of game',
+        'shadows'
+    ],
+    'shadows': [
+        'dead pile',
+        'discard pile',
+        'draw deck',
+        'hand',
+        'out of game',
+        'play area'
     ],
     'full deck': [
         'rookery'

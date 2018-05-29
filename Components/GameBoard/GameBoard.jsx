@@ -31,7 +31,8 @@ const placeholderPlayer = {
         hand: [],
         outOfGamePile: [],
         plotDeck: [],
-        plotDiscard: []
+        plotDiscard: [],
+        shadows: []
     },
     faction: null,
     firstPlayer: false,
@@ -288,6 +289,12 @@ export class GameBoard extends React.Component {
         this.setState(newState);
     }
 
+    defaultPlayerInfo(source) {
+        let player = Object.assign({}, placeholderPlayer, source);
+        player.cardPiles = Object.assign({}, placeholderPlayer.cardPiles, player.cardPiles);
+        return player;
+    }
+
     renderBoard(thisPlayer, otherPlayer) {
         if(this.props.rookeryDeck) {
             return (
@@ -322,6 +329,7 @@ export class GameBoard extends React.Component {
                         onMouseOut={ this.onMouseOut }
                         outOfGamePile={ otherPlayer.cardPiles.outOfGamePile }
                         username={ this.props.user.username }
+                        shadows={ otherPlayer.cardPiles.shadows }
                         showHand={ this.props.currentGame.showHand }
                         spectating={ this.state.spectating }
                         title={ otherPlayer.title }
@@ -387,6 +395,7 @@ export class GameBoard extends React.Component {
                         onDragDrop={ this.onDragDrop }
                         discardPile={ thisPlayer.cardPiles.discardPile }
                         deadPile={ thisPlayer.cardPiles.deadPile }
+                        shadows={ thisPlayer.cardPiles.shadows }
                         showHand={ this.props.currentGame.showHand }
                         spectating={ this.state.spectating }
                         title={ thisPlayer.title }
@@ -419,7 +428,11 @@ export class GameBoard extends React.Component {
 
         let otherPlayer = Object.values(this.props.currentGame.players).find(player => {
             return player.name !== thisPlayer.name;
-        }) || placeholderPlayer;
+        });
+
+        // Default any missing information
+        thisPlayer = this.defaultPlayerInfo(thisPlayer);
+        otherPlayer = this.defaultPlayerInfo(otherPlayer);
 
         let boundActionCreators = bindActionCreators(actions, this.props.dispatch);
 

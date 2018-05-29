@@ -37,5 +37,11 @@ export default {
     },
     'conclave-bottom': {
         bottom: '95px'
+    },
+    'shadows-bottom': {
+        bottom: '95px'
+    },
+    'shadows-top': {
+        top: '95px'
     }
 };
