@@ -12,7 +12,8 @@ class RecruiterForTheWatch extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select character with printed cost 2 or less',
-                cardCondition: card => card.getType() === 'character' && card.controller !== this.controller && card.getPrintedCost() <= 2
+                cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
+                    card.controller !== this.controller && card.getPrintedCost() <= 2
             },
             handler: context => {
                 this.game.addMessage('{0} kneels {1} to take control of {2}', this.controller, this, context.target);
