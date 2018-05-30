@@ -12,7 +12,7 @@ class PlotPhase extends Phase {
             new SimpleStep(game, () => this.clearNewCards()),
             new SimpleStep(game, () => this.startPlotPhase()),
             new SimpleStep(game, () => this.announceForcedPlotSelection()),
-            new SelectPlotPrompt(game),
+            new SimpleStep(game, () => this.choosePlots()),
             new SimpleStep(game, () => this.removeActivePlots()),
             new SimpleStep(game, () => this.flipPlotsFaceup()),
             () => new RevealPlots(game, this.getActivePlots()),
@@ -40,6 +40,13 @@ class PlotPhase extends Phase {
                 this.game.addMessage('{0} is forced to select a plot', player);
             }
         }
+    }
+
+    choosePlots() {
+        let choosingPlayers = this.game.getPlayers().filter(player => !player.mustRevealPlot);
+        this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
+            this.game.queueStep(new SelectPlotPrompt(this.game));
+        });
     }
 
     removeActivePlots() {
