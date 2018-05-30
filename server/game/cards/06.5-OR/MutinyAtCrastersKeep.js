@@ -7,7 +7,8 @@ class MutinyAtCrastersKeep extends DrawCard {
         this.action({
             title: 'Discard character from play',
             phase: 'dominance',
-            cost: ability.costs.sacrifice(card => card.getCost() === this.getHighestCharacterCost()),
+            cost: ability.costs.sacrifice(card =>
+                card.getType() === 'character' && card.getCost() === this.getHighestCharacterCost()),
             target: {
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
                                        card.getType() === 'character'
