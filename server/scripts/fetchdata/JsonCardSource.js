@@ -1,20 +1,21 @@
 /*eslint no-console:0 */
 const fs = require('fs');
+const path = require('path');
 const _ = require('underscore');
 
 class JsonCardSource {
-    constructor() {
-        let data = this.loadPackFiles();
+    constructor(directory) {
+        let data = this.loadPackFiles(directory);
         this.packs = data.packs;
         this.cards = data.cards;
     }
 
-    loadPackFiles() {
+    loadPackFiles(directory) {
         let packs = [];
         let cards = [];
-        let files = fs.readdirSync('throneteki-json-data/packs');
+        let files = fs.readdirSync(path.join(directory, 'packs'));
         for(let file of files) {
-            let pack = JSON.parse(fs.readFileSync('throneteki-json-data/packs/' + file));
+            let pack = JSON.parse(fs.readFileSync(path.join(directory, 'packs', file)));
             for(let card of pack.cards) {
                 card.packCode = pack.code;
             }
