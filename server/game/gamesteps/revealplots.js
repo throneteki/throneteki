@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const sample = require('lodash.sample');
 const BaseStep = require('./basestep.js');
 const SimpleStep = require('./simplestep.js');
 const FirstPlayerPrompt = require('./plot/firstplayerprompt.js');
@@ -80,7 +81,7 @@ class RevealPlots extends BaseStep {
         this.game.raiseEvent('onInitiativeDetermined', { winner: initiativeWinner });
     }
 
-    getInitiativeResult(sampleFunc = _.sample) {
+    getInitiativeResult(sampleFunc = sample) {
         let result = { initiativeTied: false, powerTied: false, player: undefined };
         let playerInitiatives = _.map(this.game.getPlayers(), player => {
             return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower() };

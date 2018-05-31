@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const sample = require('lodash.sample');
 
 const DrawCard = require('../../drawcard');
 
@@ -15,7 +15,7 @@ class BeneathTheBridgeOfDream extends DrawCard {
                 }
                 // Delay picking the plot until the async recycle above resolves
                 this.game.queueSimpleStep(() => {
-                    let plot = _.sample(this.controller.plotDeck);
+                    let plot = sample(this.controller.plotDeck);
                     this.untilEndOfPhase(ability => ({
                         targetType: 'player',
                         targetController: 'current',
