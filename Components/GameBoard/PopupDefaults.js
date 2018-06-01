@@ -1,47 +1,46 @@
 export default {
     'plot deck-bottom': {
-        left: '90px',
-        bottom: '95px'
+        left: '100px',
+        bottom: '155px'
     },
     'revealed plots-bottom': {
-        left: '90px',
-        bottom: '25px'
+        left: '100px',
+        bottom: '230px'
     },
     'revealed plots-top': {
-        left: '95px',
-        top: '25px'
+        left: '100px',
+        top: '155px'
     },
     'draw deck-bottom': {
-        left: '0',
-        bottom: '95px'
+        bottom: '140px'
     },
     'discard pile-bottom': {
-        bottom: '95px'
+        bottom: '155px'
     },
     'discard pile-top': {
-        top: '95px'
+        top: '185px'
     },
     'dead pile-bottom': {
-        bottom: '75px'
+        bottom: '140px'
     },
     'dead pile-top': {
-        top: '75px'
+        top: '165px'
     },
     'out of game-top': {
-        top: '75px',
+        top: '155px',
         left: '20px'
     },
     'out of game-bottom': {
-        bottom: '75px',
+        bottom: '155px',
         right: '0'
     },
     'conclave-bottom': {
-        bottom: '95px'
+        bottom: '155px'
     },
     'shadows-bottom': {
-        bottom: '95px'
+        bottom: '155px'
     },
     'shadows-top': {
-        top: '95px'
+        top: '155px'
     }
 };

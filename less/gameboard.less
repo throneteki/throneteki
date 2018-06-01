@@ -111,6 +111,7 @@
 .popup {
   z-index: @layer-card-menu;
   background-color: rgba(0, 0, 0, 0.85);
+  position: fixed;
 
   a {
     display: inline-block;
@@ -314,8 +315,6 @@
 
 .additional-cards {
   .popup {
-    position: absolute;
-
     .inner {
       .calculate-tiled-card-prop(min-height, 2, width);
       .calculate-tiled-card-prop(min-width, 2, height, @scrollbar-width);
@@ -327,7 +326,6 @@
   margin: 5px;
 
   .popup {
-    position: absolute;
     min-height: 92px;
     min-width: 168px;
 
@@ -340,7 +338,6 @@
 
 .shadows {
   .popup {
-    position: absolute;
     min-height: 146px;
 
     .inner {
@@ -352,7 +349,6 @@
 
 .discard {
   .popup {
-    position: absolute;
     min-height: 146px;
 
     .inner {
@@ -364,8 +360,6 @@
 
 .dead {
   .popup {
-    position: absolute;
-
     .inner {
       .calculate-tiled-card-prop(min-height, 1, height);
       .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
@@ -381,18 +375,10 @@
 
 .draw {
   .popup {
-    position: absolute;
-
     .inner {
       .calculate-tiled-card-prop(min-height, 1, height);
       .calculate-tiled-card-prop(width, 7, width, @scrollbar-width);
     }
-  }
-}
-
-.agenda {
-  .popup {
-    position: absolute;
   }
 }
 
@@ -565,6 +551,8 @@ span.down-arrow {
 
 .player-home-row {
   display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .player-home-row-container {
@@ -725,7 +713,7 @@ span.down-arrow {
 
 .gamechat-enter.gamechat-enter-active {
   position: absolute;
-  top: 0; 
+  top: 0;
   right: 0;
   width: 100%;
   transition: top 500ms ease-in-out;

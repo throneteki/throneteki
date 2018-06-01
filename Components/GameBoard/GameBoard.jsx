@@ -5,7 +5,6 @@ import $ from 'jquery';
 import { toastr } from 'react-redux-toastr';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import { CSSTransitionGroup } from 'react-transition-group';
 
 import PlayerStats from './PlayerStats';
 import PlayerRow from './PlayerRow';
@@ -459,17 +458,16 @@ export class GameBoard extends React.Component {
                     <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
                         orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
                         show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
-                    <div className='right-side'>
+                    { this.state.showMessages && <div className='right-side'>
                         <div className='gamechat'>
-                            <CSSTransitionGroup className='chatwrapper' transitionName='gamechat' transitionEnterTimeout={ 500 } transitionLeaveTimeout={ 500 }>
-                                { this.state.showMessages && <GameChat key='gamechat'
-                                    messages={ this.props.currentGame.messages }
-                                    onCardMouseOut={ this.onMouseOut }
-                                    onCardMouseOver={ this.onMouseOver }
-                                    onSendChat={ this.sendChatMessage } /> }
-                            </CSSTransitionGroup>
+                            <GameChat key='gamechat'
+                                messages={ this.props.currentGame.messages }
+                                onCardMouseOut={ this.onMouseOut }
+                                onCardMouseOver={ this.onMouseOver }
+                                onSendChat={ this.sendChatMessage } />
                         </div>
                     </div>
+                    }
                 </div>
                 <div className='player-stats-row'>
                     <PlayerStats { ...boundActionCreators } stats={ thisPlayer.stats } showControls={ !this.state.spectating } user={ thisPlayer.user }
