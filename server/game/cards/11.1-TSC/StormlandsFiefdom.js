@@ -15,6 +15,10 @@ class StormlandsFiefdom extends DrawCard {
                     this.controller, this, context.target);
             }
         });
+
+        this.plotModifiers({
+            gold: 1
+        });
     }
 }
 
