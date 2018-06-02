@@ -44,5 +44,35 @@ describe('manual actions', function() {
                 expect(this.character.location).toBe('play area');
             });
         });
+
+        describe('when a character cannot be killed', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Hedge Knight', 'The Eyrie'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
+
+                this.player1.clickCard(this.character);
+                this.player1.clickCard('The Eyrie', 'hand');
+
+                this.completeSetup();
+
+                // Prevent the character from being killed
+                this.player1.triggerAbility('The Eyrie');
+                this.player1.clickCard(this.character);
+            });
+
+            it('should allow them to be dragged to the dead pile', function() {
+                this.player1.dragCard(this.character, 'dead pile');
+
+                expect(this.character.location).toBe('dead pile');
+            });
+        });
     });
 });

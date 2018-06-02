@@ -34,7 +34,7 @@ class KillCharacters extends BaseStep {
                     card.clearDanger();
                 });
             });
-        });
+        }, { force: this.options.force });
     }
 
     handleMultipleKills(event) {
@@ -48,7 +48,7 @@ class KillCharacters extends BaseStep {
     automaticSave(card) {
         if(card.location !== 'play area') {
             this.event.saveCard(card);
-        } else if(!card.canBeKilled()) {
+        } else if(!card.canBeKilled() && !this.options.force) {
             this.game.addMessage('{0} controlled by {1} cannot be killed',
                 card, card.controller);
             this.event.saveCard(card);

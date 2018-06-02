@@ -3,7 +3,7 @@ const Player = require('../../../server/game/player.js');
 describe('Player', () => {
     describe('drop()', function() {
         beforeEach(function() {
-            this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'playerDecked']);
+            this.gameSpy = jasmine.createSpyObj('game', ['killCharacter', 'raiseEvent', 'playerDecked']);
 
             this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
             this.player.initialise();
@@ -311,7 +311,7 @@ describe('Player', () => {
 
                 let result = this.player.drop(this.cardSpy, 'play area', 'dead pile');
                 expect(result).toBe(true);
-                expect(this.player.killCharacter).toHaveBeenCalledWith(this.cardSpy, false);
+                expect(this.gameSpy.killCharacter).toHaveBeenCalledWith(this.cardSpy, { allowSave: false, force: true });
             });
         });
     });

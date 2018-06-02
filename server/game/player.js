@@ -934,7 +934,7 @@ class Player extends Spectator {
             this.putIntoPlay(card, 'play', { force: true });
         } else {
             if(target === 'dead pile' && card.location === 'play area') {
-                this.killCharacter(card, false);
+                this.game.killCharacter(card, { allowSave: false, force: true });
                 return true;
             }
 

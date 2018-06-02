@@ -926,18 +926,14 @@ class Game extends EventEmitter {
         });
     }
 
-    applyGameAction(actionType, cards, func) {
-        let wasArray = _.isArray(cards);
+    applyGameAction(actionType, cards, func, options = {}) {
+        let wasArray = Array.isArray(cards);
         if(!wasArray) {
             cards = [cards];
         }
-        let [allowed, disallowed] = _.partition(cards, card => card.allowGameAction(actionType));
+        let allowed = options.force ? cards : cards.filter(card => card.allowGameAction(actionType));
 
-        if(!_.isEmpty(disallowed)) {
-            // TODO: add a cannot / immunity message.
-        }
-
-        if(_.isEmpty(allowed)) {
+        if(allowed.length === 0) {
             return;
         }
 
