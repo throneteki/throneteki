@@ -21,6 +21,7 @@ class ChatCommands {
             '/pillage': this.pillage,
             '/power': this.power,
             '/remove-faction': this.removeFaction,
+            '/remove-from-game': this.removeFromGame,
             '/remove-icon': this.removeIcon,
             '/remove-keyword': this.removeKeyword,
             '/remove-trait': this.removeTrait,
@@ -410,6 +411,20 @@ class ChatCommands {
     revealHand(player) {
         this.game.addAlert('danger',
             '{0} uses the /reveal-hand command to reveal their hand as: {1}', player, player.hand);
+    }
+
+    removeFromGame(player) {
+        this.game.promptForSelect(player, {
+            activePromptTitle: 'Select a card',
+            waitingPromptTitle: 'Waiting for opponent to remove a card from the game',
+            cardCondition: card => card.controller === player && card.owner === player && !['active plot', 'out of game'].includes(card.location),
+            cardType: ['attachment', 'character', 'event', 'location', 'plot'],
+            onSelect: (p, card) => {
+                player.moveCard(card, 'out of game');
+                this.game.addAlert('danger', '{0} uses the /remove-from-game command to remove {1} from the game', player, card);
+                return true;
+            }
+        });
     }
 
     getNumberOrDefault(string, defaultNumber) {
