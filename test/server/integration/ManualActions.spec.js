@@ -99,5 +99,50 @@ describe('manual actions', function() {
                 expect(this.card.location).toBe('discard pile');
             });
         });
+
+        describe('when a card cannot leave play', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Planky Town Trader', 'Hedge Knight'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+                this.completeSetup();
+
+                this.planky = this.player1.findCardByName('Planky Town Trader', 'hand');
+                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
+
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.clickCard(this.planky);
+                this.player1.clickPrompt('2');
+
+                // Trigger Planky Town Trader
+                this.player1.dragCard(this.planky, 'hand');
+                this.player1.triggerAbility(this.planky);
+                this.player1.clickCard(this.character);
+            });
+
+            it('should allow it to be dragged to hand', function() {
+                this.player1.dragCard(this.character, 'hand');
+
+                expect(this.character.location).toBe('hand');
+            });
+
+            it('should allow it to be dragged to discard pile', function() {
+                this.player1.dragCard(this.character, 'discard pile');
+
+                expect(this.character.location).toBe('discard pile');
+            });
+
+            it('should allow it to be dragged to dead pile', function() {
+                this.player1.dragCard(this.character, 'dead pile');
+
+                expect(this.character.location).toBe('dead pile');
+            });
+        });
     });
 });
