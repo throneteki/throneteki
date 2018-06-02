@@ -45,7 +45,7 @@ describe('Player', () => {
 
                 it('should return true and add the card to the play area', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy);
+                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy, 'play', jasmine.objectContaining({ force: true }));
                 });
             });
 
@@ -58,7 +58,7 @@ describe('Player', () => {
 
                 it('should return true and add the card to the play area', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy);
+                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy, 'play', jasmine.objectContaining({ force: true }));
                 });
             });
 
@@ -84,7 +84,7 @@ describe('Player', () => {
 
                 it('should return true and play the card', function() {
                     expect(this.dropSucceeded).toBe(true);
-                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy);
+                    expect(this.player.putIntoPlay).toHaveBeenCalledWith(this.cardSpy, 'play', jasmine.objectContaining({ force: true }));
                 });
             });
         });

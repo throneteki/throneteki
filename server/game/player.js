@@ -612,7 +612,7 @@ class Player extends Spectator {
     }
 
     putIntoPlay(card, playingType = 'play', options = {}) {
-        if(!this.canPutIntoPlay(card, playingType, options)) {
+        if(!options.force && !this.canPutIntoPlay(card, playingType, options)) {
             return;
         }
 
@@ -931,7 +931,7 @@ class Player extends Spectator {
         }
 
         if(target === 'play area') {
-            this.putIntoPlay(card);
+            this.putIntoPlay(card, 'play', { force: true });
         } else {
             if(target === 'dead pile' && card.location === 'play area') {
                 this.killCharacter(card, false);
