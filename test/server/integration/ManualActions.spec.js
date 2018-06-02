@@ -74,5 +74,30 @@ describe('manual actions', function() {
                 expect(this.character.location).toBe('dead pile');
             });
         });
+
+        describe('when a card cannot be discarded', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'The God\'s Eye'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.card = this.player1.findCardByName('The God\'s Eye', 'hand');
+
+                this.player1.clickCard(this.card);
+
+                this.completeSetup();
+            });
+
+            it('should allow it to be dragged to the discard pile', function() {
+                this.player1.dragCard(this.card, 'discard pile');
+
+                expect(this.card.location).toBe('discard pile');
+            });
+        });
     });
 });

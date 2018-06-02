@@ -939,7 +939,7 @@ class Player extends Spectator {
             }
 
             if(target === 'discard pile') {
-                this.discardCard(card, false);
+                this.discardCard(card, false, { force: true });
                 return true;
             }
 
@@ -983,11 +983,11 @@ class Player extends Spectator {
         });
     }
 
-    discardCard(card, allowSave = true) {
-        this.discardCards([card], allowSave);
+    discardCard(card, allowSave = true, options = {}) {
+        this.discardCards([card], allowSave, () => true, options);
     }
 
-    discardCards(cards, allowSave = true, callback = () => true) {
+    discardCards(cards, allowSave = true, callback = () => true, options = {}) {
         this.game.applyGameAction('discard', cards, cards => {
             var params = {
                 player: this,
@@ -1007,7 +1007,7 @@ class Player extends Spectator {
                     callback(event.cards);
                 }
             });
-        });
+        }, { force: options.force });
     }
 
     returnCardToHand(card, allowSave = true) {
