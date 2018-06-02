@@ -285,9 +285,9 @@ class Game extends EventEmitter {
         }
 
         if(card.kneeled) {
-            player.standCard(card);
+            player.standCard(card, { force: true });
         } else {
-            player.kneelCard(card);
+            player.kneelCard(card, { force: true });
         }
 
         let standStatus = card.kneeled ? 'kneels' : 'stands';

@@ -144,5 +144,34 @@ describe('manual actions', function() {
                 expect(this.character.location).toBe('dead pile');
             });
         });
+
+        describe('when a card cannot stand', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'Frozen Expanse',
+                    'Hedge Knight'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+                this.completeSetup();
+
+                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
+
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.clickCard(this.character);
+
+                // Manually kneel the character
+                this.player1.clickCard(this.character);
+            });
+
+            it('should allow it to be manually stood', function() {
+                this.player1.clickCard(this.character);
+
+                expect(this.character.kneeled).toBe(false);
+            });
+        });
     });
 });

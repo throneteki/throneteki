@@ -1174,7 +1174,7 @@ class Player extends Spectator {
         }
     }
 
-    kneelCard(card) {
+    kneelCard(card, options = {}) {
         if(card.kneeled) {
             return;
         }
@@ -1183,10 +1183,10 @@ class Player extends Spectator {
             card.kneeled = true;
 
             this.game.raiseEvent('onCardKneeled', { player: this, card: card });
-        });
+        }, { force: options.force });
     }
 
-    standCard(card) {
+    standCard(card, options = {}) {
         if(!card.kneeled) {
             return;
         }
@@ -1195,7 +1195,7 @@ class Player extends Spectator {
             card.kneeled = false;
 
             this.game.raiseEvent('onCardStood', { player: this, card: card });
-        });
+        }, { force: options.force });
     }
 
     removeCardFromPile(card) {
