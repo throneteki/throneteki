@@ -34,6 +34,8 @@ class DeckSearchPrompt extends UiPrompt {
         super(game);
 
         this.choosingPlayer = choosingPlayer;
+        this.isMultiSelect = properties.numToSelect !== undefined;
+        this.remainingCards = properties.numToSelect || 1;
         if(properties.source && !properties.waitingPromptTitle) {
             this.waitingPromptTitle = 'Waiting for opponent to use ' + properties.source.name;
         }
@@ -106,10 +108,17 @@ class DeckSearchPrompt extends UiPrompt {
             return false;
         }
 
-        if(this.properties.numToSelect !== undefined && this.properties.numToSelect > 1) {
-            this.properties.onSelect(player, card);
-            this.properties.numToSelect--;
-            this.properties.numCards--; // to avoid peaking into one *extra* card
+        if(this.isMultiSelect) {
+            if(this.remainingCards > 0) {
+                this.properties.onSelect(player, card);
+                this.remainingCards--;
+                this.properties.numCards--; // to avoid peaking into one *extra* card
+            }
+
+            if(this.remainingCards === 0) {
+                // Complete the search
+                this.cancelAndShuffle(player);
+            }
 
             return;
         }
