@@ -84,6 +84,7 @@ class HowToPlay extends React.Component {
                             <li>/move-bottom - Moves a card to the bottom of your draw deck.</li>
                             <li>/pillage - Discards the top card from your deck.</li>
                             <li>/power x - Sets the power of a card to x.</li>
+                            <li>/remove-from-game - Removes a card from the game.</li>
                             <li>/reveal-hand - Reveals your hand to the opponent.</li>
                             <li>/strength x - Sets the strength of a card to x.</li>
                             <li>/take-icon x - Takes an x icon from a character; where 'x' is as per '/give-icon'.</li>
