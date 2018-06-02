@@ -612,7 +612,7 @@ class Player extends Spectator {
     }
 
     putIntoPlay(card, playingType = 'play', options = {}) {
-        if(!this.canPutIntoPlay(card, playingType, options)) {
+        if(!options.force && !this.canPutIntoPlay(card, playingType, options)) {
             return;
         }
 
@@ -931,15 +931,15 @@ class Player extends Spectator {
         }
 
         if(target === 'play area') {
-            this.putIntoPlay(card);
+            this.putIntoPlay(card, 'play', { force: true });
         } else {
             if(target === 'dead pile' && card.location === 'play area') {
-                this.killCharacter(card, false);
+                this.game.killCharacter(card, { allowSave: false, force: true });
                 return true;
             }
 
             if(target === 'discard pile') {
-                this.discardCard(card, false);
+                this.discardCard(card, false, { force: true });
                 return true;
             }
 
@@ -983,11 +983,11 @@ class Player extends Spectator {
         });
     }
 
-    discardCard(card, allowSave = true) {
-        this.discardCards([card], allowSave);
+    discardCard(card, allowSave = true, options = {}) {
+        this.discardCards([card], allowSave, () => true, options);
     }
 
-    discardCards(cards, allowSave = true, callback = () => true) {
+    discardCards(cards, allowSave = true, callback = () => true, options = {}) {
         this.game.applyGameAction('discard', cards, cards => {
             var params = {
                 player: this,
@@ -1007,7 +1007,7 @@ class Player extends Spectator {
                     callback(event.cards);
                 }
             });
-        });
+        }, { force: options.force });
     }
 
     returnCardToHand(card, allowSave = true) {
@@ -1174,7 +1174,7 @@ class Player extends Spectator {
         }
     }
 
-    kneelCard(card) {
+    kneelCard(card, options = {}) {
         if(card.kneeled) {
             return;
         }
@@ -1183,10 +1183,10 @@ class Player extends Spectator {
             card.kneeled = true;
 
             this.game.raiseEvent('onCardKneeled', { player: this, card: card });
-        });
+        }, { force: options.force });
     }
 
-    standCard(card) {
+    standCard(card, options = {}) {
         if(!card.kneeled) {
             return;
         }
@@ -1195,7 +1195,7 @@ class Player extends Spectator {
             card.kneeled = false;
 
             this.game.raiseEvent('onCardStood', { player: this, card: card });
-        });
+        }, { force: options.force });
     }
 
     removeCardFromPile(card) {
