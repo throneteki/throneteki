@@ -14,7 +14,7 @@ The code is written in node.js(server) and react.js(client).  Feel free to make 
 
 If you are going to contribute code, try and follow the style of the existing code as much as possible and talk to me before engaging in any big refactors.  Also bear in mind there is an .eslintrc file in the project so try to follow those rules.  This linting will be enforced in the build checks and pull requests will not be merged if they fail checks.
 
-[Documentation for implementing cards](https://github.com/cryogen/throneteki/blob/master/docs/implementing-cards.md)
+[Documentation for implementing cards](https://github.com/throneteki/throneteki/blob/master/docs/implementing-cards.md)
 
 ## Issues
 If you encounter any issues on the site or while playing games, please raise an issue with as much detail as possible.
@@ -22,8 +22,6 @@ If you encounter any issues on the site or while playing games, please raise an 
 ## Development
 
 The game uses [mongodb](https://www.mongodb.com/) as storage so you'll need that installed and running.
-
-If you are not actively developing the client, you will need the client script files in order to connect to your local server.  Please see the instructions in the client repository on how to do this.
 
 ```
 git clone https://github.com/throneteki/throneteki.git
@@ -80,6 +78,8 @@ Then for each game node (typically one per CPU/core):
 ```
 PORT={port} SERVER={node-name} node server/gamenode
 ```
+
+If you wish to make any changes to the client code, you will need to checkout the [Client Repository](https://github.com/throneteki/throneteki-client)
 
 ### Coding Guidelines
 
