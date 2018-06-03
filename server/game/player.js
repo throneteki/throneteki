@@ -817,34 +817,6 @@ class Player extends Spectator {
         this.showDeck = true;
     }
 
-    isValidDropCombination(card, target) {
-        const PlotCardTypes = ['plot'];
-        const DrawDeckCardTypes = ['attachment', 'character', 'event', 'location'];
-        const AllowedTypesForPile = {
-            'active plot': PlotCardTypes,
-            'being played': ['event'],
-            'dead pile': ['character'],
-            'discard pile': DrawDeckCardTypes,
-            'draw deck': DrawDeckCardTypes,
-            'hand': DrawDeckCardTypes,
-            'out of game': DrawDeckCardTypes.concat(PlotCardTypes),
-            'play area': ['attachment', 'character', 'location'],
-            'plot deck': PlotCardTypes,
-            'revealed plots': PlotCardTypes,
-            'shadows': DrawDeckCardTypes,
-            // Agenda specific piles
-            'conclave': DrawDeckCardTypes
-        };
-
-        let allowedTypes = AllowedTypesForPile[target];
-
-        if(!allowedTypes) {
-            return false;
-        }
-
-        return allowedTypes.includes(card.getType());
-    }
-
     getSourceList(source) {
         switch(source) {
             case 'being played':
@@ -911,42 +883,6 @@ class Player extends Spectator {
             case 'conclave':
                 this.conclavePile = targetList;
         }
-    }
-
-    drop(card, source, target) {
-        if(!card) {
-            return false;
-        }
-
-        if(!this.isValidDropCombination(card, target)) {
-            return false;
-        }
-
-        if(source === target) {
-            return false;
-        }
-
-        if(card.controller !== this) {
-            return false;
-        }
-
-        if(target === 'play area') {
-            this.putIntoPlay(card, 'play', { force: true });
-        } else {
-            if(target === 'dead pile' && card.location === 'play area') {
-                this.game.killCharacter(card, { allowSave: false, force: true });
-                return true;
-            }
-
-            if(target === 'discard pile') {
-                this.discardCard(card, false, { force: true });
-                return true;
-            }
-
-            this.moveCard(card, target);
-        }
-
-        return true;
     }
 
     promptForAttachment(card, playingType) {
