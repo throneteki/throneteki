@@ -34,6 +34,7 @@ const Event = require('./event.js');
 const AtomicEvent = require('./AtomicEvent.js');
 const GroupedCardEvent = require('./GroupedCardEvent.js');
 const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js');
+const DropCommand = require('./ServerCommands/DropCommand');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -371,19 +372,8 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(player.drop(card, source, target)) {
-            var movedCard = 'a card';
-            if(!_.isEmpty(_.intersection(['dead pile', 'discard pile', 'out of game', 'play area'],
-                [source, target]))) {
-                // log the moved card only if it moved from/to a public place
-                if(this.currentPhase !== 'setup') {
-                    movedCard = card;
-                }
-            }
-
-            this.addAlert('danger', '{0} has moved {1} from their {2} to their {3}',
-                player, movedCard, source, target);
-        }
+        let command = new DropCommand(this, player, card, target);
+        command.execute();
     }
 
     addPower(player, power) {
