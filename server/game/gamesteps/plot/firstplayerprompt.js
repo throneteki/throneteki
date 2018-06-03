@@ -38,12 +38,8 @@ class FirstPlayerPrompt extends UIPrompt {
             return;
         }
 
-        _.each(this.game.getPlayers(), player => {
-            player.firstPlayer = firstPlayer === player;
-        });
-
+        this.game.setFirstPlayer(firstPlayer);
         this.game.addMessage('{0} has selected {1} to be the first player', player, firstPlayer);
-        this.game.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
 
         this.complete();
     }
