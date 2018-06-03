@@ -164,6 +164,13 @@ class Game extends EventEmitter {
         });
     }
 
+    setFirstPlayer(firstPlayer) {
+        for(let player of this.getPlayers()) {
+            player.firstPlayer = player === firstPlayer;
+        }
+        this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
+    }
+
     getOpponents(player) {
         return this.getPlayers().filter(p => p !== player);
     }
