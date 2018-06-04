@@ -69,6 +69,50 @@ describe('attachments', function() {
             });
         });
 
+        describe('when a location attachment is blanked', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Catelyn Stark (Core)', 'Brother\'s Robes', 'Winterfell Castle', 'Frozen Solid'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.character = this.player1.findCardByName('Catelyn Stark', 'hand');
+                this.robes = this.player1.findCardByName('Brother\'s Robes', 'hand');
+                this.location = this.player1.findCardByName('Winterfell Castle', 'hand');
+
+                this.player1.clickCard(this.character);
+                this.player1.clickCard(this.robes);
+                this.player1.clickCard(this.location);
+
+                this.locationAttachment = this.player2.findCardByName('Frozen Solid', 'hand');
+
+                this.completeSetup();
+
+                // Attach Robes to character
+                this.player1.clickCard(this.robes);
+                this.player1.clickCard(this.character);
+
+                this.selectFirstPlayer(this.player2);
+
+                // Attach Frozen Solid to the location
+                this.player2.clickCard(this.locationAttachment);
+                this.player2.clickCard(this.location);
+
+                // Force activation of the robes
+                this.player1.clickCard(this.character);
+                this.player1.triggerAbility(this.robes);
+                this.player1.clickCard(this.locationAttachment);
+            });
+
+            it('should discard the attachment', function() {
+                expect(this.locationAttachment.location).toBe('discard pile');
+            });
+        });
+
         describe('when an attachment is dependent on another that gets discarded', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
