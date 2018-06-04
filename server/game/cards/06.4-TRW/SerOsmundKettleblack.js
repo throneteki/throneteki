@@ -4,6 +4,7 @@ class SerOsmundKettleblack extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Put Knight into play',
+            limit: ability.limit.perPhase(1),
             phase: 'challenge',
             cost: ability.costs.discardGold(),
             target: {
