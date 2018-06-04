@@ -43,12 +43,6 @@ class DrawCard extends BaseCard {
         this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
-
-        // If setupCardAbilities did not set an attachment restriction, default
-        // to allowing attaching on any character.
-        if(this.getType() === 'attachment' && !this.attachmentRestrictions) {
-            this.attachmentRestriction({ type: 'character' });
-        }
     }
 
     createSnapshot() {
@@ -332,6 +326,10 @@ class DrawCard extends BaseCard {
     canAttach(player, card) {
         if(this.getType() !== 'attachment' || !card) {
             return false;
+        }
+
+        if(!this.attachmentRestrictions || this.isAnyBlank()) {
+            return card.getType() === 'character';
         }
 
         let context = { player: player };
