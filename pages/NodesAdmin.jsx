@@ -42,6 +42,7 @@ class NodeAdmin extends React.Component {
                     <td>{ node.name }</td>
                     <td>{ node.numGames }</td>
                     <td>{ node.status }</td>
+                    <td>{ node.version }</td>
                     <td>
                         <button type='button' className='btn btn-primary' onClick={ this.onToggleNodeClick.bind(this, node) }>{ node.status === 'active' ? 'Disable' : 'Enable' }</button>
                         <button type='button' className='btn btn-primary' onClick={ this.onRestartNodeClick.bind(this, node) }>Restart</button>
@@ -56,6 +57,7 @@ class NodeAdmin extends React.Component {
                         <th>Node Name</th>
                         <th>Num Games</th>
                         <th>Status</th>
+                        <th>Version</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
