@@ -5,11 +5,12 @@ const logger = require('../log.js');
 const { spawnSync } = require('child_process');
 
 class ZmqSocket extends EventEmitter {
-    constructor(listenAddress, protocol) {
+    constructor(listenAddress, protocol, version) {
         super();
 
         this.listenAddress = listenAddress;
         this.protocol = protocol;
+        this.version = version;
 
         this.socket = zmq.socket('dealer');
         this.socket.identity = process.env.SERVER || config.nodeIdentity;
@@ -36,6 +37,7 @@ class ZmqSocket extends EventEmitter {
     onGameSync(games) {
         this.send('HELLO', {
             maxGames: config.maxGames,
+            version: this.version,
             address: this.listenAddress,
             port: process.env.NODE_ENV === 'production' ? 80 : (process.env.PORT || config.socketioPort),
             protocol: this.protocol,

@@ -32,7 +32,7 @@ class GameServer {
 
         this.host = process.env.HOST || config.host;
 
-        this.zmqSocket = new ZmqSocket(this.host, this.protocol);
+        this.zmqSocket = new ZmqSocket(this.host, this.protocol, version);
         this.zmqSocket.on('onStartGame', this.onStartGame.bind(this));
         this.zmqSocket.on('onSpectator', this.onSpectator.bind(this));
         this.zmqSocket.on('onGameSync', this.onGameSync.bind(this));
