@@ -11,7 +11,7 @@ class HightowerSpy extends DrawCard {
             },
             handler: context => {
                 let topCard = this.controller.drawDeck[0];
-                let increase = topCard.getCost();
+                let increase = topCard.getPrintedCost();
 
                 this.untilEndOfPhase(ability => ({
                     match: context.target,

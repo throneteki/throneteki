@@ -15,7 +15,7 @@ class NoUseForGrief extends DrawCard {
 
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
-                    cardCondition: card => card.hasTrait('Sand Snake') && card.getType() === 'character' && card.getCost() <= costLimit,
+                    cardCondition: card => card.hasTrait('Sand Snake') && card.getType() === 'character' && card.getPrintedCost() <= costLimit,
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),
                     source: this

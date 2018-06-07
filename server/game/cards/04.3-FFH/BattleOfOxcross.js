@@ -10,7 +10,7 @@ class BattleOfOxcross extends PlotCard {
                 && this.game.currentChallenge.number <= 1,
             match: (card) =>
                 card.getType() === 'character'
-                && card.getCost() >= 4,
+                && card.getPrintedCost() >= 4,
             targetController: 'opponent',
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });

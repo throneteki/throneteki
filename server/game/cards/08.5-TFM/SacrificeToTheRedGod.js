@@ -13,7 +13,7 @@ class SacrificeToTheRedGod extends DrawCard {
                     cardCondition: card =>
                         card.getType() === 'character' &&
                         card.hasTrait('R\'hllor') &&
-                        card.getCost() <= context.costs.sacrifice.getCost(),
+                        card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost(),
                     onSelect: (player, card) => this.cardSelected(player, context.costs.sacrifice, card),
                     onCancel: player => this.doneSelecting(player, context.costs.sacrifice),
                     source: this

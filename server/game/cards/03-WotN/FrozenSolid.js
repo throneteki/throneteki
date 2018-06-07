@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class FrozenSolid extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(card => card.getType() === 'location' && !card.isLimited() && card.getCost() <= 3);
+        this.attachmentRestriction(card => card.getType() === 'location' && !card.isLimited() && card.getPrintedCost() <= 3);
         this.whileAttached({
             effect: ability.effects.blankExcludingTraits
         });

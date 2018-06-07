@@ -42,7 +42,7 @@ class SummonedToCourt extends PlotCard {
     }
 
     chooseCard(player, card) {
-        this.playerChoices.push({ player: player, card: card, cost: card.getCost() });
+        this.playerChoices.push({ player: player, card: card, cost: card.getPrintedCost() });
         this.promptNextPlayerForChoice();
         return true;
     }

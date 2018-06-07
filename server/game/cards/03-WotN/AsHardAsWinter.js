@@ -12,7 +12,7 @@ class AsHardAsWinter extends DrawCard {
                     card.location === 'hand' &&
                     card.getType() === 'character' &&
                     card.isFaction('stark') &&
-                    card.getCost() <= context.event.card.getCost() &&
+                    card.getPrintedCost() <= context.event.card.getPrintedCost() &&
                     this.controller.canPutIntoPlay(card)
                 )
             },

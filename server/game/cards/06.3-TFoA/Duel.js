@@ -23,7 +23,7 @@ class Duel extends PlotCard {
                         card.location === 'play area' &&
                         !card.hasTrait('Army') &&
                         card.getType() === 'character' &&
-                        card.getCost() >= 6),
+                        card.getPrintedCost() >= 6),
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
                 });
             }
@@ -65,7 +65,7 @@ class Duel extends PlotCard {
     }
 
     notEnoughTargets() {
-        let targets = this.game.findAnyCardsInPlay(card => !card.hasTrait('Army') && card.getType() === 'character' && card.getCost() >= 6);
+        let targets = this.game.findAnyCardsInPlay(card => !card.hasTrait('Army') && card.getType() === 'character' && card.getPrintedCost() >= 6);
         return targets.length <= 1;
     }
 }

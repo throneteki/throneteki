@@ -26,7 +26,7 @@ class SerGregorClegane extends DrawCard {
     }
 
     cardCondition(discarded, card) {
-        return card.location === 'play area' && card.getType() === 'character' && card.getCost() === discarded.getCost();
+        return card.location === 'play area' && card.getType() === 'character' && card.getPrintedCost() === discarded.getPrintedCost();
     }
 
     onCardSelected(player, card) {

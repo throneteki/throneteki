@@ -15,7 +15,7 @@ class DagmerCleftjaw extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'location' &&
-                    card.getCost() <= 3 &&
+                    card.getPrintedCost() <= 3 &&
                     !card.isLimited() &&
                     card.controller === this.game.currentChallenge.loser)
             },

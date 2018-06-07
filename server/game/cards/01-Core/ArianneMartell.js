@@ -7,7 +7,7 @@ class ArianneMartell extends DrawCard {
             limit: ability.limit.perPhase(1),
             target: {
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.getCost() <= 5 && card.getType() === 'character' && this.controller.canPutIntoPlay(card)
+                                       card.getPrintedCost() <= 5 && card.getType() === 'character' && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);

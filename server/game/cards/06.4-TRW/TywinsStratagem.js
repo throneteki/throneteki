@@ -8,7 +8,7 @@ class TywinsStratagem extends DrawCard {
             title: 'Return characters to hand',
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getCost() <= 2,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedCost() <= 2,
                 mode: 'eachPlayer',
                 gameAction: 'returnToHand'
             },

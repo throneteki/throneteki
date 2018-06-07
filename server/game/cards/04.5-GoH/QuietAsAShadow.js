@@ -5,7 +5,7 @@ class QuietAsAShadow extends DrawCard {
         this.action({
             title: 'Give character stealth',
             target: {
-                cardCondition: card => card.isUnique() && card.getType() === 'character' && card.getCost() <= 3 && card.location === 'play area'
+                cardCondition: card => card.isUnique() && card.getType() === 'character' && card.getPrintedCost() <= 3 && card.location === 'play area'
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({

@@ -15,7 +15,7 @@ class TheThingsIDoForLove extends DrawCard {
             ],
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' &&
-                                                  (context.xValue ? (card.getCost() <= context.xValue) : (card.getCost() <= this.controller.getSpendableGold()))
+                                                  (context.xValue ? (card.getPrintedCost() <= context.xValue) : (card.getPrintedCost() <= this.controller.getSpendableGold()))
             },
             handler: context => {
                 context.target.controller.returnCardToHand(context.target);
@@ -28,7 +28,7 @@ class TheThingsIDoForLove extends DrawCard {
     getMinimumCharCost() {
         let opponents = this.game.getOpponents(this.controller);
         let opponentCharacters = _.flatten(opponents.map(opponent => opponent.filterCardsInPlay(card => card.getType() === 'character')));
-        let charCosts = _.map(opponentCharacters, card => card.getCost());
+        let charCosts = _.map(opponentCharacters, card => card.getPrintedCost());
 
         return _.min(charCosts);
     }
