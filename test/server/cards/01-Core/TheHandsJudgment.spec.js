@@ -63,4 +63,35 @@ describe('The Hand\'s Judgment', function() {
             });
         });
     });
+
+    describe('vs - cost events', function() {
+        integration(function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('lannister', [
+                    'A Noble Cause',
+                    'Beneath the Bridge of Dream', 'The Hand\'s Judgment'
+                ]);
+
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.event = this.player2.findCardByName('Beneath the Bridge of Dream', 'hand');
+
+                this.player2.clickCard(this.event);
+
+                this.completeSetup();
+
+                this.player2.triggerAbility(this.event);
+            });
+
+            it('should allow cancel at 0 cost', function() {
+                // Because Beneath the Bridge of Dream triggers before plot
+                // reveals, each player has 0 gold, so just checking that Hand's
+                // Judgment can be triggered is sufficient.
+                expect(this.player1).toAllowAbilityTrigger('The Hand\'s Judgment');
+            });
+        });
+    });
 });

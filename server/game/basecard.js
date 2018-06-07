@@ -291,6 +291,10 @@ class BaseCard {
         return (value === 'X' ? 0 : value) || 0;
     }
 
+    translateXValue(value) {
+        return value === '-' ? 0 : value;
+    }
+
     hasKeyword(keyword) {
         if(this.losesAllAspects.contains('keywords')) {
             return false;
