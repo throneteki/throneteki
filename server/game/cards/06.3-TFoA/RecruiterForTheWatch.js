@@ -20,7 +20,7 @@ class RecruiterForTheWatch extends DrawCard {
                 this.lastingEffect(ability => ({
                     until: {
                         onCardStood: event => event.card === this,
-                        onCardLeftPlay: event => event.card === this
+                        onCardLeftPlay: event => event.card === this || event.card === context.target
                     },
                     match: context.target,
                     effect: ability.effects.takeControl(this.controller)

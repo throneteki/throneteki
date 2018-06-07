@@ -2,8 +2,8 @@ describe('Recruiter for the Watch', function() {
     integration(function() {
         beforeEach(function() {
             const deck = this.buildDeck('thenightswatch', [
-                'Sneak Attack',
-                'Recruiter for the Watch', 'Dragonstone Faithful', 'Nightmares'
+                'Trading with the Pentoshi',
+                'Recruiter for the Watch', 'Dragonstone Faithful', 'Nightmares', 'Yoren'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -19,6 +19,7 @@ describe('Recruiter for the Watch', function() {
             this.completeSetup();
 
             this.selectFirstPlayer(this.player1);
+            this.selectPlotOrder(this.player1);
 
             this.player1.clickMenu(this.recruiter, 'Take control of character');
             this.player1.clickCard(this.character);
@@ -65,6 +66,29 @@ describe('Recruiter for the Watch', function() {
 
             it('should not modify control of the character', function() {
                 expect(this.character.controller.name).toBe(this.player1Object.name);
+            });
+        });
+
+        describe('when the card leaves play and is taken control of again', function() {
+            beforeEach(function() {
+                // Manually discard the controlled character
+                this.player1.dragCard(this.character, 'discard pile');
+
+                // Take control of the character again
+                this.player1.clickCard('Yoren', 'hand');
+                this.player1.triggerAbility('Yoren');
+                this.player1.clickCard(this.character);
+
+                expect(this.character.location).toBe('play area');
+                expect(this.character).toBeControlledBy(this.player1);
+
+                // Stand the Recruiter to end its effect
+                this.player1.clickCard(this.recruiter);
+            });
+
+            it('should not return control', function() {
+                expect(this.character.location).toBe('play area');
+                expect(this.character).toBeControlledBy(this.player1);
             });
         });
     });
