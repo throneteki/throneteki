@@ -130,6 +130,10 @@ class DrawCard extends BaseCard {
         return this.icons.contains(icon);
     }
 
+    hasPrintedCost() {
+        return this.cardData.cost !== '-';
+    }
+
     getPrintedCost() {
         return this.getPrintedNumberFor(this.cardData.cost);
     }

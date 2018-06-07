@@ -17,7 +17,7 @@ class BoltonFlayer extends DrawCard {
     }
 
     lowestPrintedCost() {
-        let charactersInPlay = this.game.filterCardsInPlay(card => card.getType() === 'character');
+        let charactersInPlay = this.game.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost());
         let costs = charactersInPlay.map(card => card.getPrintedCost());
         return costs.reduce((lowest, cost) => Math.min(lowest, cost));
     }
