@@ -24,7 +24,8 @@ class DriftwoodCudgel extends DrawCard {
 
                 this.game.addMessage('{0} uses {1} to attach {1} to {2} and have it gain 1 power',
                     this.controller, this, context.target);
-            }
+            },
+            limit: ability.limit.perPhase(1)
         });
     }
 }
