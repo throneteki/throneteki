@@ -29,6 +29,7 @@
   "dependencies": {
     "@sendgrid/mail": "^6.2.0",
     "bcrypt": "^0.8.7",
+    "body-parser": "^1.18.2",
     "command-line-args": "^4.0.7",
     "cross-env": "^3.2.4",
     "express": "^4.15.5",
@@ -41,6 +42,7 @@
     "passport": "^0.3.2",
     "passport-jwt": "^4.0.0",
     "pmx": "^1.5.4",
+    "pug": "^2.0.0-rc.4",
     "raven": "^1.2.1",
     "socket.io": "^2.1.1",
     "throneteki-deck-helper": "^1.1.0",
@@ -51,9 +53,7 @@
     "zmq": "^2.15.3"
   },
   "devDependencies": {
-    "body-parser": "^1.18.2",
     "eslint": "^4.19.1",
-    "jasmine": "^2.8.0",
-    "pug": "^2.0.0-rc.4"
+    "jasmine": "^2.8.0"
   }
 }
