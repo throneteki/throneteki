@@ -13,13 +13,16 @@ const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSet
 
 const ValidKeywords = [
     'ambush',
+    'bestow',
     'insight',
     'intimidate',
+    'limited',
+    'no attachments',
     'pillage',
     'renown',
+    'shadow',
     'stealth',
-    'terminal',
-    'limited'
+    'terminal'
 ];
 
 const ValidFactions = [
@@ -82,33 +85,11 @@ class BaseCard {
     }
 
     parseKeywords(text) {
-        var firstLine = text.split('\n')[0];
-        var potentialKeywords = _.map(firstLine.split('.'), k => k.toLowerCase().trim());
-        let match = null;
+        let firstLine = text.split('\n')[0] || '';
+        let potentialKeywords = firstLine.split('.').map(k => k.toLowerCase().trim());
 
-        this.printedKeywords = [];
-
-        _.each(potentialKeywords, keyword => {
-            if(_.contains(ValidKeywords, keyword)) {
-                this.printedKeywords.push(keyword);
-            } else if(keyword.indexOf('no attachment') === 0) {
-                this.printedKeywords.push(keyword);
-            } else if(keyword.indexOf('ambush') === 0) {
-                match = keyword.match(/ambush \((.*)\)/);
-                if(match) {
-                    this.printedKeywords.push(keyword);
-                }
-            } else if(keyword.indexOf('bestow') === 0) {
-                match = keyword.match(/bestow \((.*)\)/);
-                if(match) {
-                    this.printedKeywords.push(keyword);
-                }
-            } else if(keyword.indexOf('shadow') === 0) {
-                match = keyword.match(/shadow \((.*)\)/);
-                if(match) {
-                    this.printedKeywords.push(keyword);
-                }
-            }
+        this.printedKeywords = potentialKeywords.filter(potentialKeyword => {
+            return ValidKeywords.some(keyword => potentialKeyword.indexOf(keyword) === 0);
         });
 
         if(this.printedKeywords.length > 0) {
