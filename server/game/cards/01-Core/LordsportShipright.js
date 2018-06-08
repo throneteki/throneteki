@@ -21,7 +21,7 @@ class LordsportShipright extends DrawCard {
     cardCondition(card) {
         let cost = this.controller.firstPlayer ? 3 : 2;
 
-        return !card.kneeled && card.getType() === 'location' && card.getCost() <= cost && card.location === 'play area';
+        return !card.kneeled && card.getType() === 'location' && card.getPrintedCost() <= cost && card.location === 'play area';
     }
 }
 

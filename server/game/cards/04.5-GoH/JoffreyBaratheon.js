@@ -13,7 +13,7 @@ class JoffreyBaratheon extends DrawCard {
             ],
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && !card.hasTrait('King') && card.getType() === 'character' &&
-                                                  card.getCost() < context.event.card.getCost(),
+                                                  card.getPrintedCost() < context.event.card.getPrintedCost(),
                 gameAction: 'kill'
             },
             handler: context => {

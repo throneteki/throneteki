@@ -5,7 +5,7 @@ class WexPyke extends DrawCard {
         this.persistentEffect({
             condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
             targetController: 'any',
-            match: card => card.getType() === 'character' && card.getCost() === this.tokens['gold'],
+            match: card => card.getType() === 'character' && card.getPrintedCost() === this.tokens['gold'],
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });
 

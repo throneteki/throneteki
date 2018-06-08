@@ -100,7 +100,7 @@ For more complicated restrictions or restrictions that can't be checked with the
 
 ```javascript
 // Ward - character with cost 4 or less
-this.attachmentRestriction(card => card.getType() === 'character' && card.getCost() <= 4);
+this.attachmentRestriction(card => card.getType() === 'character' && card.getPrintedCost() <= 4);
 ```
 
 ### Persistent effects

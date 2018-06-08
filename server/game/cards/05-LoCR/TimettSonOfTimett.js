@@ -11,7 +11,7 @@ class TimettSonOfTimett extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    card.getCost() <= this.getNumberOfClansmen()),
+                    card.getPrintedCost() <= this.getNumberOfClansmen()),
                 gameAction: 'kill'
             },
             handler: context => {

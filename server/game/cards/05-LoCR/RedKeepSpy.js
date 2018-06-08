@@ -12,7 +12,7 @@ class RedKeepSpy extends DrawCard {
                     card.controller !== this.controller &&
                     card.controller.hand.length < this.controller.hand.length &&
                     card.getType() === 'character' &&
-                    card.getCost() <= 3)
+                    card.getPrintedCost() <= 3)
             },
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);

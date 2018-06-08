@@ -17,7 +17,7 @@ class BreakerOfChains extends DrawCard {
                     card.location === 'hand'
                     && card.controller === this.controller
                     && card.getType() === 'character'
-                    && card.getCost() <= 2
+                    && card.getPrintedCost() <= 2
                     && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
@@ -28,7 +28,7 @@ class BreakerOfChains extends DrawCard {
     }
 
     getSTRBoost() {
-        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.getCost() <= 2);
+        return this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.getPrintedCost() <= 2);
     }
 }
 

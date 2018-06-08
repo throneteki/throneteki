@@ -7,7 +7,7 @@ class GuardingTheRealm extends DrawCard {
             phase: 'marshal',
             target: {
                 cardCondition: card => card.controller !== this.controller && card.location === 'discard pile' &&
-                                       card.getType() === 'character' && card.getCost() <= 3 && this.controller.canPutIntoPlay(card)
+                                       card.getType() === 'character' && card.getPrintedCost() <= 3 && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);

@@ -11,7 +11,7 @@ class PlazaOfPride extends DrawCard {
             target: {
                 cardCondition: (card, context) =>
                     card.location === 'play area' && card.getType() === 'character' && card.kneeled &&
-                    (!context.costs.discardFromHand || card.getCost() <= context.costs.discardFromHand.getCost() + 3)
+                    (!context.costs.discardFromHand || card.getPrintedCost() <= context.costs.discardFromHand.getPrintedCost() + 3)
             },
             handler: context => {
                 context.target.controller.standCard(context.target);

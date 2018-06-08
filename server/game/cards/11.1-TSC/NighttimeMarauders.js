@@ -12,7 +12,7 @@ class NighttimeMarauders extends DrawCard {
             },
             handler: context => {
                 let opponent = context.target.controller;
-                let cardsToDiscard = opponent.hand.filter(card => card.getPrintedCost() === context.target.getPrintedCost());
+                let cardsToDiscard = opponent.hand.filter(card => card.hasPrintedCost() && card.getPrintedCost() === context.target.getPrintedCost());
                 opponent.discardCards(cardsToDiscard, false);
                 this.game.addMessage('{0} uses {1} to choose {2} and have {3} reveal their hand: {4}', this.controller, this, context.target, opponent, opponent.hand);
                 this.game.addMessage('{0} discards {1}', opponent, cardsToDiscard);

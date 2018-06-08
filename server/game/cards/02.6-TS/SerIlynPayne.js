@@ -7,7 +7,7 @@ class SerIlynPayne extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getCost() <= 3,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedCost() <= 3,
                 gameAction: 'kill'
             },
             handler: context => {

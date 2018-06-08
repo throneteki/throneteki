@@ -7,7 +7,7 @@ class Yoren extends DrawCard {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
             target: {
-                cardCondition: card => card.location === 'discard pile' && card.getType() === 'character' && card.owner !== this.controller && card.getCost() <= 3 && this.controller.canPutIntoPlay(card)
+                cardCondition: card => card.location === 'discard pile' && card.getType() === 'character' && card.owner !== this.controller && card.getPrintedCost() <= 3 && this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 this.controller.putIntoPlay(context.target);

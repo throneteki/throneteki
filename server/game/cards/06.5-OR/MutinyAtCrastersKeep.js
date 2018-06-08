@@ -8,7 +8,7 @@ class MutinyAtCrastersKeep extends DrawCard {
             title: 'Discard character from play',
             phase: 'dominance',
             cost: ability.costs.sacrifice(card =>
-                card.getType() === 'character' && card.getCost() === this.getHighestCharacterCost()),
+                card.getType() === 'character' && card.getPrintedCost() === this.getHighestCharacterCost()),
             target: {
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
                                        card.getType() === 'character'
@@ -22,8 +22,8 @@ class MutinyAtCrastersKeep extends DrawCard {
     }
 
     getHighestCharacterCost() {
-        let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character');
-        let costs = _.map(charactersInPlay, card => card.getCost());
+        let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost());
+        let costs = _.map(charactersInPlay, card => card.getPrintedCost());
         return _.max(costs);
     }
 }

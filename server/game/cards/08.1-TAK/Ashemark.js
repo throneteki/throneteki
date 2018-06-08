@@ -14,7 +14,7 @@ class Ashemark extends DrawCard {
             ],
             handler: context => {
                 _.each(this.game.getPlayers(), player => {
-                    let characters = player.filterCardsInPlay(card => card.getType() === 'character' && card.getPrintedCost() <= context.cardStateWhenInitiated.tokens.gold);
+                    let characters = player.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost() && card.getPrintedCost() <= context.cardStateWhenInitiated.tokens.gold);
                     _.each(characters, card => {
                         card.owner.returnCardToHand(card);
                     });
