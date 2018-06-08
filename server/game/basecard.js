@@ -9,17 +9,21 @@ const CardInterrupt = require('./cardinterrupt');
 const CardReaction = require('./cardreaction');
 const CustomPlayAction = require('./PlayActions/CustomPlayAction');
 const EventRegistrar = require('./eventregistrar');
+const KeywordsProperty = require('./PropertyTypes/KeywordsProperty');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
 const ValidKeywords = [
     'ambush',
+    'bestow',
     'insight',
     'intimidate',
+    'limited',
+    'no attachments',
     'pillage',
     'renown',
+    'shadow',
     'stealth',
-    'terminal',
-    'limited'
+    'terminal'
 ];
 
 const ValidFactions = [
@@ -46,7 +50,7 @@ class BaseCard {
         this.code = cardData.code;
         this.name = cardData.name;
         this.facedown = false;
-        this.keywords = new ReferenceCountedSetProperty();
+        this.keywords = new KeywordsProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
         this.losesAllAspects = new ReferenceCountedSetProperty();
@@ -82,43 +86,18 @@ class BaseCard {
     }
 
     parseKeywords(text) {
-        var firstLine = text.split('\n')[0];
-        var potentialKeywords = _.map(firstLine.split('.'), k => k.toLowerCase().trim());
+        let firstLine = text.split('\n')[0] || '';
+        let potentialKeywords = firstLine.split('.').map(k => k.toLowerCase().trim());
 
-        this.printedKeywords = [];
-        this.allowedAttachmentTrait = 'any';
-
-        _.each(potentialKeywords, keyword => {
-            if(_.contains(ValidKeywords, keyword)) {
-                this.printedKeywords.push(keyword);
-            } else if(keyword.indexOf('no attachment') === 0) {
-                var match = keyword.match(/no attachments except <[bi]>(.*)<\/[bi]>/);
-                if(match) {
-                    this.allowedAttachmentTrait = match[1];
-                } else {
-                    this.allowedAttachmentTrait = 'none';
-                }
-            } else if(keyword.indexOf('ambush') === 0) {
-                match = keyword.match(/ambush \((.*)\)/);
-                if(match) {
-                    this.ambushCost = parseInt(match[1]);
-                }
-            } else if(keyword.indexOf('bestow') === 0) {
-                match = keyword.match(/bestow \((.*)\)/);
-                if(match) {
-                    this.bestowMax = parseInt(match[1]);
-                }
-            } else if(keyword.indexOf('shadow') === 0) {
-                match = keyword.match(/shadow \((.*)\)/);
-                if(match) {
-                    this.shadowCost = parseInt(match[1]);
-                }
-            }
+        this.printedKeywords = potentialKeywords.filter(potentialKeyword => {
+            return ValidKeywords.some(keyword => potentialKeyword.indexOf(keyword) === 0);
         });
 
         if(this.printedKeywords.length > 0) {
             this.persistentEffect({
                 match: this,
+                location: 'any',
+                targetLocation: 'any',
                 effect: AbilityDsl.effects.addMultipleKeywords(this.printedKeywords)
             });
         }
@@ -308,7 +287,7 @@ class BaseCard {
     }
 
     getPrintedKeywords() {
-        return _.filter(ValidKeywords, keyword => this.hasPrintedKeyword(keyword));
+        return this.printedKeywords;
     }
 
     hasTrait(trait) {

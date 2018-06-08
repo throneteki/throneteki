@@ -1,29 +1,33 @@
-const DrawCard = require('../../../server/game/drawcard.js');
+const DrawCard = require('../../../server/game/drawcard');
 
-describe('the DrawCard', () => {
-    var owner = {};
-    var card;
+describe('DrawCard', function() {
+    describe('getAmbushCost()', function() {
+        beforeEach(function() {
+            this.card = new DrawCard({}, {});
+        });
 
-    describe('the getAmbushCost() function', () => {
-        describe('when the card does not have ambush', () => {
-            beforeEach(() => {
-                card = new DrawCard(owner, { text: 'Each Wildling character in your hand gains ambush (X). X is that cards printed cost.' });
+        describe('when the card does not have ambush', function() {
+            it('should not have the ambush keyword', function() {
+                expect(this.card.isAmbush()).toBe(false);
             });
 
-            it('should have no ambush cost', () => {
-                expect(card.isAmbush()).toBe(false);
-                expect(card.getAmbushCost()).toBeUndefined();
+            it('should have no ambush cost', function() {
+                expect(this.card.getAmbushCost()).toBeUndefined();
             });
         });
 
-        describe('when the card has ambush', () => {
-            beforeEach(() => {
-                card = new DrawCard(owner, { text: '[thenightswatch] character only. Ambush (2).\r\nAttached character gets +1 STR and gains a [military] icon.' });
+        describe('when the card has ambush', function() {
+            beforeEach(function() {
+                this.card.addKeyword('Ambush (2)');
+                this.card.addKeyword('Ambush (3)');
             });
 
-            it('should parse the ambush cost', () => {
-                expect(card.isAmbush()).toBe(true);
-                expect(card.getAmbushCost()).toBe(2);
+            it('should have the ambush keyword', function() {
+                expect(this.card.isAmbush()).toBe(true);
+            });
+
+            it('should return the lowest cost', function() {
+                expect(this.card.getAmbushCost()).toBe(2);
             });
         });
     });

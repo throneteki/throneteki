@@ -99,7 +99,7 @@ class DrawCard extends BaseCard {
     }
 
     isShadow() {
-        return this.shadowCost !== undefined;
+        return this.keywords.getShadowCost() !== undefined;
     }
 
     isLimited() {
@@ -115,11 +115,11 @@ class DrawCard extends BaseCard {
     }
 
     isAmbush() {
-        return !_.isUndefined(this.ambushCost);
+        return this.keywords.getAmbushCost() !== undefined;
     }
 
     isBestow() {
-        return !this.isAnyBlank() && !_.isUndefined(this.bestowMax);
+        return this.keywords.getBestowMax() !== undefined;
     }
 
     isRenown() {
@@ -147,11 +147,15 @@ class DrawCard extends BaseCard {
     }
 
     getAmbushCost() {
-        return this.ambushCost;
+        return this.keywords.getAmbushCost();
+    }
+
+    getBestowMax() {
+        return this.keywords.getBestowMax();
     }
 
     getShadowCost() {
-        return this.shadowCost;
+        return this.keywords.getShadowCost();
     }
 
     getPower() {
@@ -316,11 +320,13 @@ class DrawCard extends BaseCard {
      * attach the passed attachment card.
      */
     allowAttachment(attachment) {
-        return (
-            this.isAnyBlank() ||
-            this.allowedAttachmentTrait === 'any' ||
-            this.allowedAttachmentTrait !== 'none' && attachment.hasTrait(this.allowedAttachmentTrait)
-        );
+        let requiredTraits = this.keywords.getRequiredAttachmentTraits();
+
+        if(requiredTraits.length === 0) {
+            return true;
+        }
+
+        return requiredTraits.every(trait => attachment.hasTrait(trait));
     }
 
     /**

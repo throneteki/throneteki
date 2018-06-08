@@ -127,14 +127,7 @@ const Effects = {
         };
     },
     restrictAttachmentsTo: function(trait) {
-        return {
-            apply: function(card) {
-                card.allowedAttachmentTrait = trait;
-            },
-            unapply: function(card) {
-                card.allowedAttachmentTrait = 'any';
-            }
-        };
+        return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
     modifyStrength: function(value) {
         return {
@@ -532,14 +525,13 @@ const Effects = {
     },
     gainAmbush: function(costModifier = 0) {
         return {
-            apply: function(card, context) {
-                context.gainAmbush = context.gainAmbush || {};
-                context.gainAmbush[card.uuid] = card.ambushCost;
-                card.ambushCost = card.cardData.cost + costModifier;
+            apply: function(card) {
+                let keyword = `Ambush (${card.getPrintedCost() + costModifier})`;
+                card.addKeyword(keyword);
             },
-            unapply: function(card, context) {
-                card.ambushCost = context.gainAmbush[card.uuid];
-                delete context.gainAmbush[card.uuid];
+            unapply: function(card) {
+                let keyword = `Ambush (${card.getPrintedCost() + costModifier})`;
+                card.removeKeyword(keyword);
             }
         };
     },
