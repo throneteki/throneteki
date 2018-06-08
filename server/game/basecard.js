@@ -101,7 +101,7 @@ class BaseCard {
             } else if(keyword.indexOf('ambush') === 0) {
                 match = keyword.match(/ambush \((.*)\)/);
                 if(match) {
-                    this.ambushCost = parseInt(match[1]);
+                    this.printedKeywords.push(keyword);
                 }
             } else if(keyword.indexOf('bestow') === 0) {
                 match = keyword.match(/bestow \((.*)\)/);
@@ -119,6 +119,8 @@ class BaseCard {
         if(this.printedKeywords.length > 0) {
             this.persistentEffect({
                 match: this,
+                location: 'any',
+                targetLocation: 'any',
                 effect: AbilityDsl.effects.addMultipleKeywords(this.printedKeywords)
             });
         }
@@ -299,12 +301,19 @@ class BaseCard {
         return this.keywords.contains(keyword);
     }
 
+    getKeywordValues(keywordName) {
+        let pattern = `${keywordName} \\((\\d+)\\)`;
+        let matches = this.keywords.getValues().map(keyword => keyword.match(pattern));
+
+        return matches.filter(match => !!match).map(match => parseInt(match[1]));
+    }
+
     hasPrintedKeyword(keyword) {
         return this.printedKeywords.includes(keyword.toLowerCase());
     }
 
     getPrintedKeywords() {
-        return _.filter(ValidKeywords, keyword => this.hasPrintedKeyword(keyword));
+        return this.printedKeywords;
     }
 
     hasTrait(trait) {

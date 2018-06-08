@@ -115,7 +115,7 @@ class DrawCard extends BaseCard {
     }
 
     isAmbush() {
-        return !_.isUndefined(this.ambushCost);
+        return this.getKeywordValues('ambush').length !== 0;
     }
 
     isBestow() {
@@ -143,7 +143,13 @@ class DrawCard extends BaseCard {
     }
 
     getAmbushCost() {
-        return this.ambushCost;
+        let values = this.getKeywordValues('ambush');
+
+        if(values.length === 0) {
+            return;
+        }
+
+        return values.reduce((min, value) => Math.min(min, value));
     }
 
     getShadowCost() {
