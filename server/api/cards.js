@@ -8,7 +8,7 @@ let cardService = new CardService(db);
 
 module.exports.init = function(server) {
     server.get('/api/cards', function(req, res, next) {
-        cardService.getAllCards({ shortForm: true })
+        cardService.getAllCards()
             .then(cards => {
                 res.send({ success: true, cards: cards });
             })

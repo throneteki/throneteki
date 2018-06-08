@@ -20,18 +20,14 @@ class CardService {
             .then(() => this.packs.insert(cards));
     }
 
-    getAllCards(options) {
+    getAllCards() {
         return this.cards.find({})
             .then(result => {
                 let cards = {};
 
-                _.each(result, card => {
-                    if(options && options.shortForm) {
-                        cards[card.code] = _.pick(card, 'code', 'name', 'label', 'type', 'loyal', 'faction', 'deckLimit', 'packCode', 'traits', 'text', 'cost', 'icons', 'strength', 'unique', 'plotStats');
-                    } else {
-                        cards[card.code] = card;
-                    }
-                });
+                for(let card of result) {
+                    cards[card.code] = card;
+                }
 
                 return cards;
             }).catch(err => {
