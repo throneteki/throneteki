@@ -119,7 +119,7 @@ class DrawCard extends BaseCard {
     }
 
     isBestow() {
-        return !this.isAnyBlank() && !_.isUndefined(this.bestowMax);
+        return !this.isAnyBlank() && this.getKeywordValues('bestow').length !== 0;
     }
 
     isRenown() {
@@ -150,6 +150,16 @@ class DrawCard extends BaseCard {
         }
 
         return values.reduce((min, value) => Math.min(min, value));
+    }
+
+    getBestowMax() {
+        let values = this.getKeywordValues('bestow');
+
+        if(values.length === 0) {
+            return;
+        }
+
+        return values.reduce((max, value) => Math.max(max, value));
     }
 
     getShadowCost() {

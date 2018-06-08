@@ -106,7 +106,7 @@ class BaseCard {
             } else if(keyword.indexOf('bestow') === 0) {
                 match = keyword.match(/bestow \((.*)\)/);
                 if(match) {
-                    this.bestowMax = parseInt(match[1]);
+                    this.printedKeywords.push(keyword);
                 }
             } else if(keyword.indexOf('shadow') === 0) {
                 match = keyword.match(/shadow \((.*)\)/);
