@@ -316,13 +316,13 @@ class DrawCard extends BaseCard {
      * attach the passed attachment card.
      */
     allowAttachment(attachment) {
-        let allowedTraits = this.keywords.getAllowedAttachmentTraits();
+        let requiredTraits = this.keywords.getRequiredAttachmentTraits();
 
-        if(allowedTraits.length === 0) {
+        if(requiredTraits.length === 0) {
             return true;
         }
 
-        return allowedTraits.some(trait => attachment.hasTrait(trait));
+        return requiredTraits.every(trait => attachment.hasTrait(trait));
     }
 
     /**

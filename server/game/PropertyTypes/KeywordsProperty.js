@@ -3,7 +3,7 @@ const ReferenceCountedSetProperty = require('./ReferenceCountedSetProperty');
 class KeywordsProperty {
     constructor() {
         this.data = new ReferenceCountedSetProperty();
-        this.allowedAttachmentTraits = [];
+        this.requiredAttachmentTraits = [];
         this.ambushCosts = [];
         this.bestowMaxes = [];
         this.shadowCosts = [];
@@ -38,8 +38,8 @@ class KeywordsProperty {
         return cloned;
     }
 
-    getAllowedAttachmentTraits() {
-        return this.allowedAttachmentTraits;
+    getRequiredAttachmentTraits() {
+        return this.requiredAttachmentTraits;
     }
 
     getAmbushCost() {
@@ -55,7 +55,7 @@ class KeywordsProperty {
     }
 
     recalculateValues() {
-        this.allowedAttachmentTraits = this.parseAttachmentTraits();
+        this.requiredAttachmentTraits = this.parseAttachmentTraits();
         this.ambushCosts = this.parseNumericValues('ambush');
         this.bestowMaxes = this.parseNumericValues('bestow');
         this.shadowCosts = this.parseNumericValues('shadow');
