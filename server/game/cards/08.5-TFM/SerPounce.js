@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class SerPounce extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(card => card.getType() === 'character' && card.isUnique() && card.getPrintedCost() <= 3);
+        this.attachmentRestriction({ unique: true, printedCostOrLower: 3 });
         this.whileAttached({
             effect: ability.effects.addIcon('intrigue')
         });

@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class SeizedByTheGuard extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(card => card.getType() === 'location' && !card.isLimited());
+        this.attachmentRestriction({ type: 'location', limited: false });
         this.whileAttached({
             effect: ability.effects.blankExcludingTraits
         });
