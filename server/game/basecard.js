@@ -9,6 +9,7 @@ const CardInterrupt = require('./cardinterrupt');
 const CardReaction = require('./cardreaction');
 const CustomPlayAction = require('./PlayActions/CustomPlayAction');
 const EventRegistrar = require('./eventregistrar');
+const KeywordsProperty = require('./PropertyTypes/KeywordsProperty');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
 const ValidKeywords = [
@@ -49,7 +50,7 @@ class BaseCard {
         this.code = cardData.code;
         this.name = cardData.name;
         this.facedown = false;
-        this.keywords = new ReferenceCountedSetProperty();
+        this.keywords = new KeywordsProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
         this.losesAllAspects = new ReferenceCountedSetProperty();
@@ -275,13 +276,6 @@ class BaseCard {
         }
 
         return this.keywords.contains(keyword);
-    }
-
-    getKeywordValues(keywordName) {
-        let pattern = `${keywordName} \\((\\d+)\\)`;
-        let matches = this.keywords.getValues().map(keyword => keyword.match(pattern));
-
-        return matches.filter(match => !!match).map(match => parseInt(match[1]));
     }
 
     hasPrintedKeyword(keyword) {

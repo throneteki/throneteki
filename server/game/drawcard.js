@@ -99,7 +99,7 @@ class DrawCard extends BaseCard {
     }
 
     isShadow() {
-        return this.getKeywordValues('shadow').length !== 0;
+        return this.keywords.getShadowCost() !== undefined;
     }
 
     isLimited() {
@@ -115,11 +115,11 @@ class DrawCard extends BaseCard {
     }
 
     isAmbush() {
-        return this.getKeywordValues('ambush').length !== 0;
+        return this.keywords.getAmbushCost() !== undefined;
     }
 
     isBestow() {
-        return !this.isAnyBlank() && this.getKeywordValues('bestow').length !== 0;
+        return this.keywords.getBestowMax() !== undefined;
     }
 
     isRenown() {
@@ -143,33 +143,15 @@ class DrawCard extends BaseCard {
     }
 
     getAmbushCost() {
-        let values = this.getKeywordValues('ambush');
-
-        if(values.length === 0) {
-            return;
-        }
-
-        return values.reduce((min, value) => Math.min(min, value));
+        return this.keywords.getAmbushCost();
     }
 
     getBestowMax() {
-        let values = this.getKeywordValues('bestow');
-
-        if(values.length === 0) {
-            return;
-        }
-
-        return values.reduce((max, value) => Math.max(max, value));
+        return this.keywords.getBestowMax();
     }
 
     getShadowCost() {
-        let values = this.getKeywordValues('shadow');
-
-        if(values.length === 0) {
-            return;
-        }
-
-        return values.reduce((min, value) => Math.min(min, value));
+        return this.keywords.getShadowCost();
     }
 
     getPower() {
@@ -329,22 +311,12 @@ class DrawCard extends BaseCard {
         });
     }
 
-    getAllowedAttachmentTraits() {
-        const pattern = /no attachments except <[bi]>(.*)<\/[bi]>/;
-        let values = this.keywords.getValues().filter(keyword => keyword.indexOf('no attachments') === 0);
-
-        return values.map(value => {
-            let match = value.match(pattern);
-            return match ? match[1] : 'none';
-        });
-    }
-
     /**
      * Checks 'no attachment' restrictions for this card when attempting to
      * attach the passed attachment card.
      */
     allowAttachment(attachment) {
-        let allowedTraits = this.getAllowedAttachmentTraits();
+        let allowedTraits = this.keywords.getAllowedAttachmentTraits();
 
         if(allowedTraits.length === 0) {
             return true;
