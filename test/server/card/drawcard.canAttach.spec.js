@@ -62,44 +62,21 @@ describe('DrawCard', function() {
     describe('allowAttachment()', function() {
         describe('when the target card does not allow attachments', function() {
             beforeEach(function() {
-                this.targetCard = new DrawCard(this.owner, { text: 'No attachments.' });
+                this.targetCard = new DrawCard(this.owner, {});
                 this.attachment = new DrawCard(this.owner, { type: 'attachment' });
+
+                this.targetCard.addKeyword('No attachments');
             });
 
             it('should return false', function() {
                 expect(this.targetCard.allowAttachment(this.attachment)).toBe(false);
             });
-
-            describe('but the target card is blank', function() {
-                beforeEach(function() {
-                    this.targetCard.setBlank('full');
-                });
-
-                it('should return true', function() {
-                    expect(this.targetCard.allowAttachment(this.attachment)).toBe(true);
-                });
-            });
         });
 
         describe('when the target card only allows certain kinds of attachments', function() {
             beforeEach(function() {
-                this.targetCard = new DrawCard(this.owner, { text: 'No attachments except <b>Weapon</b>.' });
-            });
-
-            describe('and the card text has the target in italics', function() {
-                beforeEach(function() {
-                    this.targetCard = new DrawCard(this.owner, { text: 'No attachments except <i>Weapon</i>.' });
-                });
-
-                describe('and the attachment has that trait', function() {
-                    beforeEach(function() {
-                        this.attachment = new DrawCard(this.owner, { type: 'attachment', traits: ['Condition', 'Weapon'] });
-                    });
-
-                    it('should return true', function() {
-                        expect(this.targetCard.allowAttachment(this.attachment)).toBe(true);
-                    });
-                });
+                this.targetCard = new DrawCard(this.owner, {});
+                this.targetCard.addKeyword('No attachments except <i>Weapon</i>');
             });
 
             describe('and the attachment has that trait', function() {
@@ -119,16 +96,6 @@ describe('DrawCard', function() {
 
                 it('should return false', function() {
                     expect(this.targetCard.allowAttachment(this.attachment)).toBe(false);
-                });
-
-                describe('but the target card is blank', function() {
-                    beforeEach(function() {
-                        this.targetCard.setBlank('full');
-                    });
-
-                    it('should return true', function() {
-                        expect(this.targetCard.allowAttachment(this.attachment)).toBe(true);
-                    });
                 });
             });
         });

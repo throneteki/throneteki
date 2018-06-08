@@ -329,16 +329,28 @@ class DrawCard extends BaseCard {
         });
     }
 
+    getAllowedAttachmentTraits() {
+        const pattern = /no attachments except <[bi]>(.*)<\/[bi]>/;
+        let values = this.keywords.getValues().filter(keyword => keyword.indexOf('no attachments') === 0);
+
+        return values.map(value => {
+            let match = value.match(pattern);
+            return match ? match[1] : 'none';
+        });
+    }
+
     /**
      * Checks 'no attachment' restrictions for this card when attempting to
      * attach the passed attachment card.
      */
     allowAttachment(attachment) {
-        return (
-            this.isAnyBlank() ||
-            this.allowedAttachmentTrait === 'any' ||
-            this.allowedAttachmentTrait !== 'none' && attachment.hasTrait(this.allowedAttachmentTrait)
-        );
+        let allowedTraits = this.getAllowedAttachmentTraits();
+
+        if(allowedTraits.length === 0) {
+            return true;
+        }
+
+        return allowedTraits.some(trait => attachment.hasTrait(trait));
     }
 
     /**

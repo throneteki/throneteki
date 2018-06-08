@@ -84,20 +84,15 @@ class BaseCard {
     parseKeywords(text) {
         var firstLine = text.split('\n')[0];
         var potentialKeywords = _.map(firstLine.split('.'), k => k.toLowerCase().trim());
+        let match = null;
 
         this.printedKeywords = [];
-        this.allowedAttachmentTrait = 'any';
 
         _.each(potentialKeywords, keyword => {
             if(_.contains(ValidKeywords, keyword)) {
                 this.printedKeywords.push(keyword);
             } else if(keyword.indexOf('no attachment') === 0) {
-                var match = keyword.match(/no attachments except <[bi]>(.*)<\/[bi]>/);
-                if(match) {
-                    this.allowedAttachmentTrait = match[1];
-                } else {
-                    this.allowedAttachmentTrait = 'none';
-                }
+                this.printedKeywords.push(keyword);
             } else if(keyword.indexOf('ambush') === 0) {
                 match = keyword.match(/ambush \((.*)\)/);
                 if(match) {

@@ -127,14 +127,7 @@ const Effects = {
         };
     },
     restrictAttachmentsTo: function(trait) {
-        return {
-            apply: function(card) {
-                card.allowedAttachmentTrait = trait;
-            },
-            unapply: function(card) {
-                card.allowedAttachmentTrait = 'any';
-            }
-        };
+        return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
     modifyStrength: function(value) {
         return {
