@@ -99,7 +99,7 @@ class DrawCard extends BaseCard {
     }
 
     isShadow() {
-        return this.shadowCost !== undefined;
+        return this.getKeywordValues('shadow').length !== 0;
     }
 
     isLimited() {
@@ -163,7 +163,13 @@ class DrawCard extends BaseCard {
     }
 
     getShadowCost() {
-        return this.shadowCost;
+        let values = this.getKeywordValues('shadow');
+
+        if(values.length === 0) {
+            return;
+        }
+
+        return values.reduce((min, value) => Math.min(min, value));
     }
 
     getPower() {

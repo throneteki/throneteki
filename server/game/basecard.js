@@ -111,7 +111,7 @@ class BaseCard {
             } else if(keyword.indexOf('shadow') === 0) {
                 match = keyword.match(/shadow \((.*)\)/);
                 if(match) {
-                    this.shadowCost = parseInt(match[1]);
+                    this.printedKeywords.push(keyword);
                 }
             }
         });
