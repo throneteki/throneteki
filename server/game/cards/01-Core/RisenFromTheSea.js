@@ -5,21 +5,18 @@ class RisenFromTheSea extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: () => true
+                onCharacterKilled: event => this.canSaveVsEvent(event)
             },
             location: 'hand',
-            target: {
-                cardCondition: (card, context) => this.cardCondition(card, context)
-            },
             handler: context => {
-                context.event.saveCard(context.target);
+                context.event.saveCard();
 
-                if(this.controller.canAttach(this, context.target)) {
-                    this.controller.attach(this.controller, this, context.target, 'play');
+                if(this.controller.canAttach(this, context.event.card)) {
+                    this.controller.attach(this.controller, this, context.event.card, 'play');
                     this.setCardType('attachment');
                 }
 
-                this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.target);
+                this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.event.card);
             }
         });
 
@@ -37,18 +34,20 @@ class RisenFromTheSea extends DrawCard {
         });
     }
 
-    cardCondition(card, context) {
-        if(!context.event.cards.includes(card) || !card.canBeSaved()) {
+    canSaveVsEvent(event) {
+        let card = event.card;
+
+        if(!card.canBeSaved()) {
             return false;
         }
 
-        let allowSave = context.event.allowSave || this.canSurviveBurn(card, context);
+        let allowSave = event.allowSave || event.isBurn && this.canSurviveBurn(card);
 
         return allowSave && card.isFaction('greyjoy') && card.controller === this.controller;
     }
 
-    canSurviveBurn(card, context) {
-        return context.event.isBurn && card.controller.canAttach(this, card) && card.getBoostedStrength(1 + card.burnValue) > 0;
+    canSurviveBurn(card) {
+        return card.controller.canAttach(this, card) && card.getBoostedStrength(1 + card.burnValue) > 0;
     }
 
     // Explicitly override since it has printed type 'event'.

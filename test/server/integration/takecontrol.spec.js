@@ -381,10 +381,9 @@ describe('take control', function() {
                 this.player1.clickCard(knight);
 
                 this.player1.triggerAbility('Iron Mines');
-                expect(this.player1).toHavePrompt('Select a character');
-                this.player1.clickCard(knight);
+                // Because there is only one character to save, the choice of
+                // character is implicit and not prompted.
 
-                expect(this.player1).not.toHavePrompt('Select character to save');
                 expect(knight.location).toBe('play area');
             });
 

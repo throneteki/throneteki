@@ -5,18 +5,20 @@ class StrongBelwas extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => event.allowSave
+                onCharacterKilled: event => (
+                    event.allowSave &&
+                    event.card.controller === this.controller &&
+                    event.card !== this &&
+                    event.card.isUnique() &&
+                    event.card.isFaction('targaryen') &&
+                    event.card.canBeSaved()
+                )
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
-            target: {
-                cardCondition: (card, context) => context.event.cards.includes(card) && card.controller === this.controller &&
-                                                  card !== this && card.isUnique() && card.isFaction('targaryen') &&
-                                                  card.canBeSaved()
-            },
             handler: context => {
-                context.event.saveCard(context.target);
-                this.game.addMessage('{0} discards 1 gold from {1} to save {2}', this.controller, this, context.target);
+                context.event.saveCard();
+                this.game.addMessage('{0} discards 1 gold from {1} to save {2}', this.controller, this, context.event.card);
             }
         });
     }

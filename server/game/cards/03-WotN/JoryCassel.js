@@ -5,28 +5,22 @@ class JoryCassel extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharactersKilled: event => event.allowSave
-            },
-            cost: ability.costs.sacrificeSelf(),
-            target: {
-                cardCondition: (card, context) => (
-                    card.location === 'play area' &&
-                    context.event.cards.includes(card) &&
-                    card.canBeSaved() &&
-                    card.controller === this.controller &&
-                    card.isUnique() &&
-                    card.isFaction('stark')
+                onCharacterKilled: event => (
+                    event.allowSave &&
+                    event.card.canBeSaved() &&
+                    event.card.controller === this.controller &&
+                    event.card.isUnique() &&
+                    event.card.isFaction('stark')
                 )
             },
+            cost: ability.costs.sacrificeSelf(),
             handler: context => {
-                let message = '{0} sacrifices {1} to save {2}';
-                let toKill = context.target;
+                let message = '{0} uses {1} to save {2}';
+                let toKill = context.event.card;
 
-                context.event.saveCard(toKill);
+                context.event.saveCard();
 
-                if(this.game.getPlayers().some(player => {
-                    return player.activePlot.hasTrait('Winter');
-                }) && toKill.canGainPower()) {
+                if(toKill.canGainPower() && this.game.anyPlotHasTrait('Winter')) {
                     toKill.modifyPower(1);
                     message += ' and have it gain 1 power';
                 }

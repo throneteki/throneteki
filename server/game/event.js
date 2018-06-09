@@ -31,6 +31,15 @@ class Event {
         return this.allowSave && this.automaticSaveWithDupe && !!this.card;
     }
 
+    saveCard() {
+        if(!this.card || this.cancelled) {
+            return;
+        }
+
+        this.card.game.saveCard(this.card);
+        this.cancel();
+    }
+
     cancel() {
         this.cancelled = true;
 
