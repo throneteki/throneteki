@@ -457,7 +457,8 @@ export class GameBoard extends React.Component {
                     { this.renderBoard(thisPlayer, otherPlayer) }
                     <CardZoom imageUrl={ this.props.cardToZoom ? '/img/cards/' + this.props.cardToZoom.code + '.png' : '' }
                         orientation={ this.props.cardToZoom ? this.props.cardToZoom.type === 'plot' ? 'horizontal' : 'vertical' : 'vertical' }
-                        show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null } />
+                        show={ !!this.props.cardToZoom } cardName={ this.props.cardToZoom ? this.props.cardToZoom.name : null }
+                        card={ this.props.cardToZoom ? this.props.cards[this.props.cardToZoom.code] : null } />
                     { this.state.showMessages && <div className='right-side'>
                         <div className='gamechat'>
                             <GameChat key='gamechat'
