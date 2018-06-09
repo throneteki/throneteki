@@ -1007,7 +1007,7 @@ class Game extends EventEmitter {
     failedConnect(playerName) {
         var player = this.playersAndSpectators[playerName];
 
-        if(!player) {
+        if(!player || player.connectionSucceeded) {
             return;
         }
 

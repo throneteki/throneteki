@@ -313,6 +313,7 @@ class GameServer {
 
         player.lobbyId = player.id;
         player.id = socket.id;
+        player.connectionSucceeded = true;
         if(player.disconnected) {
             logger.info('user \'%s\' reconnected to game', socket.user.username);
             game.reconnect(socket, player.name);
