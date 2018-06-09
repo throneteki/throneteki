@@ -206,10 +206,10 @@
       width: @card-width * 4;
       height: @card-height * 4;
     }
-  
+
     &.horizontal {
       width: @card-height * 4;
-      height: @card-width * 4;    
+      height: @card-width * 4;
     }
 }
 
@@ -223,6 +223,7 @@
   top: 0;
   left: 0;
   border-radius: 12px;
+  z-index: @layer-top;
 }
 
 .attachment {
@@ -500,4 +501,321 @@
 .drop-target {
   display: inline-block;
   position: relative;
+}
+
+.hover-card {
+  position: fixed;
+  top: 60px;
+  left: 10px;
+  z-index: @layer-top;
+  min-width: @card-width * 4;
+  min-height: @card-height * 4;
+
+  &.horizontal {
+    min-height: @card-width * 4;
+    min-width: @card-height * 4;
+  }
+}
+
+.card-cost {
+  background: url('/img/Gold.png') no-repeat;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+  background-size: cover;
+  color: white;
+  font-family: 'thronesdb';
+}
+
+.plot-income {
+  background-image: url('/img/Gold.png');
+  background-repeat: no-repeat;
+}
+
+.plot-initiative {
+  background-image: url('/img/Initiative.png');
+  background-repeat: no-repeat;
+}
+
+.plot-claim {
+  background-image: url('/img/Claim.png');
+  background-repeat: no-repeat;
+}
+
+.plot-stats {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  line-height: 35px;
+  font-size: 1.8em;
+  margin-left: 10px;
+}
+
+.plot-reserve {
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+  background-color: darkred;
+  position: absolute;
+  bottom: 20px;
+  right: 0;
+  text-align: center;
+  line-height: 40px;
+  font-size: 1.5em;
+}
+
+.card-cost-number {
+  font-size: 2em;
+}
+
+.card-alt {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 10px;
+  background-color: black;
+  opacity: 0.8;
+  z-index: @layer-bottom;
+}
+
+.card-top-row {
+  display: flex;
+}
+
+.card-text {
+  font-size: 0.8em;
+  font-family: 'thronesdb';
+  margin-left: 30px;
+  margin-right: 30px;
+  display: flex;
+  flex-direction: column;
+
+  .text-inner {
+    min-height: 80px;
+  }
+
+  .card-name {
+    line-height: initial;
+  }
+}
+
+.card-type {
+  line-height: initial;
+}
+
+.card-icons {
+  margin-left: 5px;
+  margin-top: 15px;
+
+  &.attachment {
+    min-height: 170px;
+  }
+
+  &.plot {
+    min-height: 90px;
+  }
+}
+
+.challenge-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+  text-align: center;
+  font-family: 'thronesdb';
+  font-size: 1.8em;
+  line-height: 35px;
+  color: white;
+  margin-top: 10px;
+
+  &.intrigue {
+    &:before {
+      content: "\e602";
+    }
+
+    background-color: @intrigue-icon-color;
+  }
+
+  &.power {
+    &:before {
+      content: "\e607";
+    }
+
+    background-color: @power-icon-color;
+  }
+
+  &.military {
+    &:before {
+      content: "\e605";
+    }
+
+    background-color: @military-icon-color;
+  }
+}
+
+.card-name-row {
+  display: flex;
+
+  &.vertical {
+    width: 50px;
+    height: 185px;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+    .card-name {
+      text-orientation: sideways;
+      writing-mode: vertical-lr;
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.card-strength {
+  background: url('/img/shield.png') no-repeat;
+  background-size: cover;
+  width: 30px;
+  height: 35px;
+  margin-left: 10px;
+  margin-top: 5px;
+  text-align: center;
+  line-height: 35px;
+  font-size: 1.8em;
+}
+
+.card-name {
+  font-size: 0.8em;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  text-transform: uppercase;
+  text-align: center;
+  flex: 1;
+  line-height: 65px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.card-unique {
+  font-family: thronesdb;
+
+  &:before {
+    content: "\e60b";
+  }
+}
+
+.card-faction {
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+  font-family: thronesdb;
+  font-size: 2.6em;
+  text-align: center;
+  line-height: 40px;
+  margin-right: 10px;
+  margin-top: 10px;
+
+  &.martell {
+    &:before {
+      content: "\e604";
+      color: @martell-foreground;
+    }
+
+    background-color: @martell-background;
+  }
+
+  &.tyrell {
+    &:before {
+      content: "\e60a";
+      color: @tyrell-foreground;
+    }
+
+    background-color: @tyrell-background;
+  }
+
+  &.thenightswatch {
+    font-size: 2em;
+
+    &:before {
+      content: "\e606";
+      color: @thenightswatch-foreground;
+    }
+
+    background-color: @thenightswatch-background;
+  }
+
+  &.lannister {
+    font-size: 2em;
+
+    &:before {
+      content: "\e603";
+      color: @lannister-foreground;
+    }
+
+    background-color: @lannister-background;
+  }
+
+  &.stark {
+
+    &:before {
+      content: "\e608";
+      color: @stark-foreground;
+    }
+
+    background-color: @stark-background;
+  }
+
+  &.baratheon {
+
+    &:before {
+      content: "\e600";
+      color: @baratheon-foreground;
+    }
+
+    background-color: @baratheon-background;
+  }
+
+  &.greyjoy {
+    font-size: 2em;
+
+    &:before {
+      content: "\e601";
+      color: @greyjoy-foreground;
+    }
+
+    background-color: @greyjoy-background;
+  }
+
+  &.targaryen {
+    font-size: 2em;
+
+    &:before {
+      content: "\e609";
+      color: @targaryen-foreground;
+    }
+
+    background-color: @targaryen-background;
+  }
+}
+
+.card-traits {
+  font-style: italic;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+
+  margin-top: -15px;
+  min-height: 20px;
+}
+
+.hover-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: @layer-top;
 }

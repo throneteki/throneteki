@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 import DeckStatus from './DeckStatus';
+import AltCard from '../GameBoard/AltCard';
 
 class DeckSummary extends React.Component {
     constructor() {
@@ -52,6 +54,10 @@ class DeckSummary extends React.Component {
 
         for(const card of combinedCards) {
             let typeCode = card.card.type;
+            if(!typeCode) {
+                continue;
+            }
+
             let type = typeCode[0].toUpperCase() + typeCode.slice(1);
 
             if(this.props.deck.agenda && this.props.deck.agenda.code === '05045') {
@@ -107,7 +113,11 @@ class DeckSummary extends React.Component {
 
         return (
             <div className='deck-summary col-xs-12'>
-                { this.state.cardToShow ? <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } /> : null }
+                { this.state.cardToShow ?
+                    <div className={ classNames('hover-card', { 'horizontal': this.state.cardToShow.type === 'plot'}) }>
+                        <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } />
+                        <AltCard card={ this.state.cardToShow } />
+                    </div> : null }
                 <div className='decklist'>
                     <div className='col-xs-2 col-sm-3 no-x-padding'>{ this.props.deck.faction ? <img className='img-responsive' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }</div>
                     <div className='col-xs-8 col-sm-6'>
