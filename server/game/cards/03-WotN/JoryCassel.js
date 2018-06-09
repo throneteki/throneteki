@@ -20,7 +20,7 @@ class JoryCassel extends DrawCard {
 
                 context.event.saveCard();
 
-                if(toKill.this.canGainPower && this.game.anyPlotHasTrait('Winter')) {
+                if(toKill.canGainPower() && this.game.anyPlotHasTrait('Winter')) {
                     toKill.modifyPower(1);
                     message += ' and have it gain 1 power';
                 }
