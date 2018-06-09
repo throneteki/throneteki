@@ -570,6 +570,10 @@ class Player extends Spectator {
     }
 
     canPutIntoPlay(card, playingType = 'play', options = {}) {
+        if(card.getType() === 'event') {
+            return false;
+        }
+
         if(!options.isEffectExpiration && !this.canPlay(card, playingType)) {
             return false;
         }
