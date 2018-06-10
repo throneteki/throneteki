@@ -17,6 +17,7 @@ const enhancer = compose(
             delete ret.cards.cards;
             delete ret.cards.factions;
             delete ret.cards.packs;
+            delete ret.account.user.email;
 
             return ret;
         }

@@ -26,9 +26,16 @@ class RookerySetup extends React.Component {
             if(cardQuantity.count > 1) {
                 card.tokens = { count: cardQuantity.count };
             }
-            card.attachments = new Array(cardQuantity.count - 1).fill(Object.assign({}, cardTemplate));
+
+            let attachmentCount = cardQuantity.count - 1;
+            if(attachmentCount < 0) {
+                attachmentCount = 0;
+            }
+
+            card.attachments = new Array(attachmentCount).fill(Object.assign({}, cardTemplate));
             return cards.concat([card]);
         }, []);
+
         results.sort((a, b) => a.name <= b.name ? -1 : 1);
         return results;
     }
@@ -104,15 +111,21 @@ class RookerySetup extends React.Component {
             { title: 'Attachments', type: 'attachment' },
             { title: 'Events', type: 'event' }
         ];
+
         let groupedCards = cardGroups.map(group => {
             let filteredCards = cards.filter(card => card.type === group.type);
             let cardCount = filteredCards.reduce((sum, card) => sum + (card.tokens ? card.tokens.count : 1), 0);
             return Object.assign({ cards: filteredCards, cardCount: cardCount }, group);
         });
+
         return groupedCards.filter(group => group.cards.length !== 0);
     }
 
     render() {
+        if(!this.props.cards) {
+            return <div>Waiting for cards to load...</div>;
+        }
+
         let deck = this.state.deck;
         let rookeryCards = this.createLinearCards(deck.rookeryCards);
         let deckCards = this.createLinearCards(deck.plotCards).concat(this.createLinearCards(deck.drawCards));
