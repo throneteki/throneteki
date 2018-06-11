@@ -10,7 +10,7 @@ class BoltonFlayer extends DrawCard {
                 cardCondition: card => card.getType() === 'character' && card.getPrintedCost() === this.lowestPrintedCost()
             },
             handler: context => {
-                this.game.killCharacter(context.target, false);
+                this.game.killCharacter(context.target, { allowSave: false });
                 this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, context.target);
             }
         });
