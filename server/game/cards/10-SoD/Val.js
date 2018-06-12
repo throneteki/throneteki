@@ -8,7 +8,8 @@ class Val extends DrawCard {
             },
             target: {
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller &&
-                                       card.getType() === 'character' && card.hasTrait('Wildling') && card.getPrintedCost() <= 4
+                                       card.getType() === 'character' && card.hasTrait('Wildling') && card.getPrintedCost() <= 4 &&
+                                       this.controller.canPutIntoPlay(card)
             },
             handler: context => {
                 context.player.putIntoPlay(context.target, 'play', { kneeled: true });
