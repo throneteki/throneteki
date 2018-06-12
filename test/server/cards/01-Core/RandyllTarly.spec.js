@@ -7,7 +7,7 @@ describe('Randyll Tarly', function() {
             ]);
             const deck2 = this.buildDeck('stark', [
                 'A Feast for Crows',
-                'Dracarys!', 'Rhaegal'
+                'Dracarys!', 'Rhaegal (Core)'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
