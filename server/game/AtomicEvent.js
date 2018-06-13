@@ -68,6 +68,11 @@ class AtomicEvent {
         return this.childEvents[0];
     }
 
+    thenExecute(func) {
+        this.childEvents[0].thenExecute(func);
+        return this;
+    }
+
     toString() {
         return `atomic(${this.childEvents.map(e => e.toString()).join(' + ')})`;
     }

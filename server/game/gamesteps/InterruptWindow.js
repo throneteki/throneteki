@@ -72,7 +72,6 @@ class InterruptWindow extends BaseStep {
         }
 
         this.event.executeHandler();
-        this.postHandlerFunc();
     }
 
     executePostHandler() {
@@ -81,6 +80,7 @@ class InterruptWindow extends BaseStep {
         }
 
         this.event.executePostHandler();
+        this.postHandlerFunc();
     }
 }
 
