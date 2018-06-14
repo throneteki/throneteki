@@ -10,7 +10,7 @@ class Event {
         this.attachedEvents = [];
 
         _.extend(this, params);
-        this.params = [this].concat([params]);
+        this.params = params;
     }
 
     addChildEvent(event) {

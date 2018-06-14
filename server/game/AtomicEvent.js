@@ -3,9 +3,13 @@ class AtomicEvent {
         this.cancelled = false;
         this.childEvents = [];
         this.attachedEvents = [];
+        this.params = {};
     }
 
     addChildEvent(event) {
+        this.params = Object.assign({}, event.params, this.params);
+        Object.assign(this, this.params);
+
         event.parent = this;
         this.childEvents.push(event);
     }
