@@ -73,6 +73,7 @@ class Player extends Spectator {
         this.keywordSettings = user.settings.keywordSettings;
         this.goldSources = [new GoldSource(this)];
         this.groupedPiles = {};
+        this.shuffleArray = _.shuffle;
 
         this.promptState = new PlayerPromptState();
     }
@@ -288,7 +289,7 @@ class Player extends Spectator {
     }
 
     shuffleDrawDeck() {
-        this.drawDeck = _.shuffle(this.drawDeck);
+        this.drawDeck = this.shuffleArray(this.drawDeck);
     }
 
     discardFromDraw(number, callback = () => true) {
