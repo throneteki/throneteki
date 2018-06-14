@@ -40,6 +40,7 @@ pipeline {
             }
             steps {
                 sh 'scp assets.json vendor-assets.json jenkins@theironthrone.net:/var/lib/throneteki/public'
+                sh 'scp assets.json vendor-assets.json jenkins@theironthrone.net:/var/lib/throneteki/'
                 sh 'ssh jenkins@theironthrone.net mkdir -p /var/lib/throneteki/public'
                 sh 'scp dist/*.js dist/*.map dist/*.css dist/*.ttf jenkins@theironthrone.net:/var/lib/throneteki/public'
                 sh 'scp -r assets/* jenkins@theironthrone.net:/var/lib/throneteki/public'
