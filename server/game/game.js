@@ -28,11 +28,13 @@ const EventWindow = require('./gamesteps/eventwindow.js');
 const AbilityResolver = require('./gamesteps/abilityresolver.js');
 const ForcedTriggeredAbilityWindow = require('./gamesteps/ForcedTriggeredAbilityWindow.js');
 const TriggeredAbilityWindow = require('./gamesteps/TriggeredAbilityWindow.js');
+const InterruptWindow = require('./gamesteps/InterruptWindow');
 const KillCharacters = require('./gamesteps/killcharacters.js');
 const TitlePool = require('./TitlePool.js');
 const Event = require('./event.js');
 const AtomicEvent = require('./AtomicEvent.js');
 const GroupedCardEvent = require('./GroupedCardEvent.js');
+const SimultaneousEvents = require('./SimultaneousEvents');
 const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js');
 const DropCommand = require('./ServerCommands/DropCommand');
 
@@ -782,6 +784,25 @@ class Game extends EventEmitter {
         this.abilityWindowStack.push(window);
         this.queueStep(window);
         this.queueSimpleStep(() => this.abilityWindowStack.pop());
+    }
+
+    openInterruptWindowForAttachedEvents(event) {
+        let attachedEvents = [];
+        for(let concurrentEvent of event.getConcurrentEvents()) {
+            attachedEvents = attachedEvents.concat(concurrentEvent.attachedEvents);
+            concurrentEvent.clearAttachedEvents();
+        }
+
+        if(attachedEvents.length === 0) {
+            return;
+        }
+
+        let groupedEvent = new SimultaneousEvents();
+        for(let attachedEvent of attachedEvents) {
+            groupedEvent.addChildEvent(attachedEvent);
+        }
+
+        this.queueStep(new InterruptWindow(this, groupedEvent, () => this.postEventCalculations()));
     }
 
     registerAbility(ability, event) {

@@ -86,7 +86,6 @@ class Event {
 
     thenAttachEvent(event) {
         this.attachedEvents.push(event);
-        this.addChildEvent(event);
     }
 
     thenExecute(func) {
@@ -95,6 +94,9 @@ class Event {
     }
 
     clearAttachedEvents() {
+        for(let event of this.attachedEvents) {
+            this.addChildEvent(event);
+        }
         this.attachedEvents = [];
     }
 

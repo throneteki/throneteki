@@ -14,6 +14,7 @@ class InterruptWindow extends BaseStep {
             new SimpleStep(game, () => this.openAbilityWindow('forcedinterrupt')),
             new SimpleStep(game, () => this.openAbilityWindow('interrupt')),
             new SimpleStep(game, () => this.executeHandler()),
+            new SimpleStep(game, () => this.openWindowForAttachedEvents()),
             new SimpleStep(game, () => this.executePostHandler())
         ]);
         this.postHandlerFunc = postHandlerFunc;
@@ -72,6 +73,14 @@ class InterruptWindow extends BaseStep {
         }
 
         this.event.executeHandler();
+    }
+
+    openWindowForAttachedEvents() {
+        if(this.event.cancelled) {
+            return;
+        }
+
+        this.game.openInterruptWindowForAttachedEvents(this.event);
     }
 
     executePostHandler() {
