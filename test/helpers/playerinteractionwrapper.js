@@ -182,6 +182,10 @@ class PlayerInteractionWrapper {
         let newSocket = { id: uuid.v1() };
         this.game.reconnect(newSocket, this.player.name);
     }
+
+    mockShuffle(func) {
+        this.player.shuffleArray = func;
+    }
 }
 
 module.exports = PlayerInteractionWrapper;
