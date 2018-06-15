@@ -20,8 +20,9 @@ class BalonGreyjoy extends DrawCard {
             cost: ability.costs.kneel(card => card.isFaction('greyjoy') && card.getType() === 'location'),
             limit: ability.limit.perChallenge(1),
             handler: context => {
+                let loyalChars = this.controller.filterCardsInPlay(card => card.isLoyal() && card.getType() === 'character');
                 this.untilEndOfChallenge(ability => ({
-                    match: card => card.isLoyal() && card.controller === this.controller && card.getType() === 'character',
+                    match: card => loyalChars.includes(card),
                     effect: ability.effects.modifyStrength(1)
                 }));
 

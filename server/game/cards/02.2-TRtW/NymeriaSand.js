@@ -12,13 +12,14 @@ class NymeriaSand extends DrawCard {
             },
             handler: context => {
                 this.game.promptForIcon(this.controller, this, icon => {
+                    let sandSnakes = this.controller.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Sand Snake'));
                     this.untilEndOfPhase(ability => ({
                         match: context.target,
                         effect: ability.effects.removeIcon(icon)
                     }));
 
                     this.untilEndOfPhase(ability => ({
-                        match: card => card.getType() === 'character' && card.hasTrait('Sand Snake'),
+                        match: card => sandSnakes.includes(card),
                         effect: ability.effects.addIcon(icon)
                     }));
 

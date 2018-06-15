@@ -9,8 +9,9 @@ class TheVipersRage extends DrawCard {
             },
             handler: () => {
                 let challenge = this.game.currentChallenge;
+                let cards = challenge.attackingPlayer.filterCardsInPlay(card => card.getType() === 'character');
                 this.untilEndOfPhase(ability => ({
-                    match: card => card.controller === challenge.attackingPlayer && card.getType() === 'character',
+                    match: card => cards.includes(card),
                     targetController: 'any',
                     effect: [
                         ability.effects.removeIcon('military'),
