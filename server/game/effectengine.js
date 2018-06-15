@@ -109,6 +109,7 @@ class EffectEngine {
             if(effect.duration === 'persistent' && effect.hasTarget(card) && !effect.isValidTarget(card)) {
                 effect.removeTarget(card);
             }
+            effect.addTargets([card]);
         });
 
         this.addTargetForPersistentEffects(card, 'play area');

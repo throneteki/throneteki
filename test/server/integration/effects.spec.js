@@ -203,5 +203,46 @@ describe('effects', function() {
                 }).not.toThrow();
             });
         });
+
+        describe('when losing immunity during a lasting effect', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'Trading with the Pentoshi',
+                    'Daenerys Targaryen (TFM)', 'Drogon (Core)', 'Nightmares', 'Dracarys!'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.dany = this.player1.findCardByName('Daenerys Targaryen (TFM)', 'hand');
+                this.dragon = this.player1.findCardByName('Drogon', 'hand');
+                this.player1.clickCard(this.dany);
+                this.player1.clickCard(this.dragon);
+
+                this.completeSetup();
+                this.selectFirstPlayer(this.player1);
+                this.selectPlotOrder(this.player1);
+                this.completeMarshalPhase();
+
+                this.player1.clickPrompt('Intrigue');
+                this.player1.clickCard(this.dany);
+                this.player1.clickPrompt('Done');
+
+                this.player1.clickCard('Dracarys!', 'hand');
+                this.player1.clickCard(this.dragon);
+                this.player1.clickCard(this.dany);
+            });
+
+            it('should apply the previously immune effect', function() {
+                // Blanking Dany should remove her immunity, and the -4 from
+                // Dracarys! then takes effect, instantly killing her.
+                // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39830-ruling-faq-21-cannot-be-variableed/
+                this.player1.clickCard('Nightmares', 'hand');
+                this.player1.clickCard(this.dany);
+
+                expect(this.dany.location).toBe('dead pile');
+            });
+        });
     });
 });

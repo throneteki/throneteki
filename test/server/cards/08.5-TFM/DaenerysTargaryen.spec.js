@@ -74,13 +74,11 @@ describe('Daenerys Targaryen (TFM)', function() {
                 beforeEach(function() {
                     this.player1.clickCard(this.nightmares);
                     this.player1.clickCard(this.dany);
-
-                    this.player1.clickCard(this.noSlave1);
-                    this.player1.clickCard(this.dany);
                 });
 
                 it('should lower her strength', function() {
-                    expect(this.dany.getStrength()).toBe(1);
+                    // The previous lasting effect from Dany's ability now applies.
+                    expect(this.dany.getStrength()).toBe(2);
                 });
 
                 describe('and when it reaches 0', function() {
