@@ -188,8 +188,9 @@ describe('Daenerys Targaryen (TFM)', function() {
                 this.player1.clickPrompt('Done');
             });
 
-            it('should set her strength to 1', function() {
-                expect(this.dany.getStrength()).toBe(1);
+            it('should not set her strength to 1', function() {
+                // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/39646-ruling-daenerys-targaryen-tfm-strangler/
+                expect(this.dany.getStrength()).toBe(3);
             });
         });
     });

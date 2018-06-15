@@ -102,7 +102,9 @@ class Effect {
                 return false;
             }
 
-            if(!target.allowGameAction(this.gameAction, { source: this.source, resolutionStage: 'effect' })) {
+            let gameAction = typeof this.gameAction === 'function' ? this.gameAction(target, this.context) : this.gameAction;
+
+            if(!target.allowGameAction(gameAction, { source: this.source, resolutionStage: 'effect' })) {
                 return false;
             }
         }
