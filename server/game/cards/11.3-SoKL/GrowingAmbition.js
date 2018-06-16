@@ -36,6 +36,7 @@ class GrowingAmbition extends DrawCard {
         }
 
         this.game.promptForSelect(context.opponent, {
+            mode: 'exactly',
             activePromptTitle: `Select ${context.xValue} card(s)`,
             cardCondition: card => card.controller === this.controller && card.location === 'discard pile',
             numCards: context.xValue,
