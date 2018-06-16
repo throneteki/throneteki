@@ -75,10 +75,10 @@ class KeywordsProperty {
     }
 
     parseNumericValues(keywordName) {
-        let pattern = `${keywordName} \\((\\d+)\\)`;
+        let pattern = `${keywordName} \\((\\w+)\\)`;
         let matches = this.data.getValues().map(keyword => keyword.match(pattern));
 
-        return matches.filter(match => !!match).map(match => parseInt(match[1]));
+        return matches.filter(match => !!match).map(match => isNaN(match[1]) ? 0 : parseInt(match[1]));
     }
 
     safeReduce(values, func) {
