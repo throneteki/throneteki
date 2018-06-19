@@ -30,9 +30,7 @@ describe('Brothel Madame', function() {
             });
 
             it('should not allow the opponent to initiate military challenges', function() {
-                this.player2.clickPrompt('Military');
-
-                expect(this.player2).toHavePromptButton('Military');
+                expect(this.player2).toHaveDisabledPromptButton('Military');
             });
         });
 

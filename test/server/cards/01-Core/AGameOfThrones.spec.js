@@ -27,17 +27,11 @@ describe('A Game Of Thrones', function() {
 
             describe('when the player has not won an intrigue challenge', function() {
                 it('should not allow military challenges to be declared', function() {
-                    this.player1.clickPrompt('Military');
-
-                    expect(this.player1).not.toHavePrompt('Select challenge attackers');
-                    expect(this.player1).toHavePromptButton('Military');
+                    expect(this.player1).toHaveDisabledPromptButton('Military');
                 });
 
                 it('should not allow power challenges to be declared', function() {
-                    this.player1.clickPrompt('Power');
-
-                    expect(this.player1).not.toHavePrompt('Select challenge attackers');
-                    expect(this.player1).toHavePromptButton('Power');
+                    expect(this.player1).toHaveDisabledPromptButton('Power');
                 });
             });
 
@@ -48,17 +42,11 @@ describe('A Game Of Thrones', function() {
                 });
 
                 it('should allow military challenges to be declared', function() {
-                    this.player1.clickPrompt('Military');
-
-                    expect(this.player1).toHavePrompt('Select challenge attackers');
-                    expect(this.player1).not.toHavePromptButton('Military');
+                    expect(this.player1).toHavePromptButton('Military');
                 });
 
                 it('should allow power challenges to be declared', function() {
-                    this.player1.clickPrompt('Power');
-
-                    expect(this.player1).toHavePrompt('Select challenge attackers');
-                    expect(this.player1).not.toHavePromptButton('Power');
+                    expect(this.player1).toHavePromptButton('Power');
                 });
             });
         });

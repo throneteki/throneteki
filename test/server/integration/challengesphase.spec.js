@@ -38,7 +38,7 @@ describe('challenges phase', function() {
         describe('when a side has higher strength but no participating characters', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('thenightswatch', [
-                    'Sneak Attack',
+                    'A Noble Cause',
                     'Steward at the Wall', 'The Haunted Forest', 'The Haunted Forest', 'The Shadow Tower'
                 ]);
                 this.player1.selectDeck(deck);
@@ -74,7 +74,7 @@ describe('challenges phase', function() {
 
             it('should complete the challenge', function() {
                 expect(this.player1).toHavePromptButton('Military');
-                expect(this.player1).toHavePromptButton('Intrigue');
+                expect(this.player1).toHaveDisabledPromptButton('Intrigue');
                 expect(this.player1).toHavePromptButton('Power');
             });
         });
