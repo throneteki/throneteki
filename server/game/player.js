@@ -64,6 +64,7 @@ class Player extends Spectator {
         this.playCardRestrictions = [];
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
+        this.multipleOpponentClaim = [];
         this.mustChooseAsClaim = [];
         this.plotRevealRestrictions = [];
         this.mustRevealPlot = undefined;
@@ -1217,6 +1218,10 @@ class Player extends Spectator {
         }
 
         return this.title.isSupporter(opponent.title);
+    }
+
+    allowMultipleOpponentClaim(claimType) {
+        return this.multipleOpponentClaim.includes(claimType);
     }
 
     setSelectedCards(cards) {

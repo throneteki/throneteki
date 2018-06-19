@@ -18,24 +18,10 @@ class ApplyClaim extends BaseStep {
             type: this.challenge.challengeType
         };
 
-        switch(this.challenge.challengeType) {
-            case 'military':
-                this.game.addMessage('{0} claim is applied.  {1} must kill {2} character{3}', this.challenge.challengeType, this.challenge.loser, this.challenge.claim,
-                    this.challenge.claim > 1 ? 's' : '');
-                this.game.queueStep(new FulfillMilitaryClaim(this.game, this.challenge.loser, this.challenge.claim));
-                break;
-            case 'intrigue':
-                this.game.addMessage('{0} claim is applied.  {1} must discard {2} card{3} at random', this.challenge.challengeType, this.challenge.loser, this.challenge.claim,
-                    this.challenge.claim > 1 ? 's' : '');
-                this.challenge.loser.discardAtRandom(this.challenge.claim);
-                break;
-            case 'power': {
-                let appliedPower = Math.min(this.challenge.loser.faction.power, this.challenge.claim);
-                this.game.addMessage('{0} {1} claim is applied.  {2} removes {3} power and {4} gains {3} power', this.challenge.claim, this.challenge.challengeType, this.challenge.loser, appliedPower,
-                    this.challenge.winner);
-                this.game.movePower(this.challenge.loser.faction, this.challenge.winner.faction, this.challenge.claim);
-                break;
-            }
+        let claimRecipients = this.challenge.claimRecipients || [this.challenge.loser];
+
+        for(let claimRecipient of claimRecipients) {
+            this.processClaimAgainstPlayer(claimRecipient);
         }
 
         this.game.queueSimpleStep(() => {
@@ -46,6 +32,28 @@ class ApplyClaim extends BaseStep {
         });
 
         return true;
+    }
+
+    processClaimAgainstPlayer(claimRecipient) {
+        switch(this.challenge.challengeType) {
+            case 'military':
+                this.game.addMessage('{0} claim is applied.  {1} must kill {2} character{3}', this.challenge.challengeType, claimRecipient, this.challenge.claim,
+                    this.challenge.claim > 1 ? 's' : '');
+                this.game.queueStep(new FulfillMilitaryClaim(this.game, claimRecipient, this.challenge.claim));
+                break;
+            case 'intrigue':
+                this.game.addMessage('{0} claim is applied.  {1} must discard {2} card{3} at random', this.challenge.challengeType, claimRecipient, this.challenge.claim,
+                    this.challenge.claim > 1 ? 's' : '');
+                claimRecipient.discardAtRandom(this.challenge.claim);
+                break;
+            case 'power': {
+                let appliedPower = Math.min(claimRecipient.faction.power, this.challenge.claim);
+                this.game.addMessage('{0} {1} claim is applied.  {2} removes {3} power and {4} gains {3} power', this.challenge.claim, this.challenge.challengeType, claimRecipient, appliedPower,
+                    this.challenge.winner);
+                this.game.movePower(claimRecipient.faction, this.challenge.winner.faction, this.challenge.claim);
+                break;
+            }
+        }
     }
 }
 

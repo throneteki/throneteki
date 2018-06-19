@@ -18,6 +18,7 @@ class Challenge {
         this.defenderStrength = 0;
         this.defenderStrengthModifier = 0;
         this.stealthData = [];
+        this.claimRecipients = [this.defendingPlayer];
         this.events = new EventRegistrar(game, this);
         this.registerEvents(['onCardLeftPlay']);
     }
@@ -233,6 +234,18 @@ class Challenge {
 
     getClaim() {
         return this.winner.getClaim();
+    }
+
+    allowMultipleOpponentClaim() {
+        return this.winner.allowMultipleOpponentClaim(this.challengeType);
+    }
+
+    addClaimRecipient(player) {
+        if(this.claimRecipients.includes(player)) {
+            return;
+        }
+
+        this.claimRecipients.push(player);
     }
 
     getWinnerCards() {

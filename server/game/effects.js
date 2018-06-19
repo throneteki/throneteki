@@ -1143,6 +1143,16 @@ const Effects = {
                 player.mustRevealPlot = undefined;
             }
         };
+    },
+    applyClaimToMultipleOpponents: function(claimType) {
+        return {
+            apply: function(player) {
+                player.multipleOpponentClaim.push(claimType);
+            },
+            unapply: function(player) {
+                player.multipleOpponentClaim = player.multipleOpponentClaim.filter(c => c === claimType);
+            }
+        };
     }
 };
 
