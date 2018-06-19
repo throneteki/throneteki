@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const ChallengeTypes = require('../../ChallengeTypes');
 
 class OlennasInformant extends DrawCard {
     setupCardAbilities() {
@@ -10,11 +11,7 @@ class OlennasInformant extends DrawCard {
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
                         menuTitle: 'Name a challenge type',
-                        buttons: [
-                            { text: 'Military', method: 'challengeSelected', arg: 'military' },
-                            { text: 'Intrigue', method: 'challengeSelected', arg: 'intrigue' },
-                            { text: 'Power', method: 'challengeSelected', arg: 'power' }
-                        ]
+                        buttons: ChallengeTypes.asButtons({ method: 'challengeSelected' })
                     },
                     source: this
                 });

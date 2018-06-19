@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const ChallengeTypes = require('../../ChallengeTypes');
 
 class UnbowedUnbentUnbroken extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,12 +14,9 @@ class UnbowedUnbentUnbroken extends DrawCard {
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
                         menuTitle: 'Select a challenge type',
-                        buttons: [
-                            { text: 'Military', method: 'trigger', arg: 'military' },
-                            { text: 'Intrigue', method: 'trigger', arg: 'intrigue' },
-                            { text: 'Power', method: 'trigger', arg: 'power' },
+                        buttons: ChallengeTypes.asButtons({ method: 'trigger' }).concat([
                             { text: 'Cancel', method: 'cancel' }
-                        ]
+                        ])
                     },
                     source: this
                 });

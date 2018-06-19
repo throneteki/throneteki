@@ -1,4 +1,5 @@
 const PlotCard = require('../../plotcard.js');
+const ChallengeTypes = require('../../ChallengeTypes');
 
 class CalmOverWesteros extends PlotCard {
     setupCardAbilities() {
@@ -7,11 +8,7 @@ class CalmOverWesteros extends PlotCard {
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
                         menuTitle: 'Select a challenge type',
-                        buttons: [
-                            { text: 'Military', method: 'setChallengeType', arg: 'military' },
-                            { text: 'Intrigue', method: 'setChallengeType', arg: 'intrigue' },
-                            { text: 'Power', method: 'setChallengeType', arg: 'power' }
-                        ]
+                        buttons: ChallengeTypes.asButtons({ method: 'setChallengeType' })
                     },
                     source: this
                 });

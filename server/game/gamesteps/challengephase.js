@@ -2,6 +2,7 @@ const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const Challenge = require('../challenge.js');
 const ChallengeFlow = require('./challenge/challengeflow.js');
+const ChallengeTypes = require('../ChallengeTypes');
 const ActionWindow = require('./actionwindow.js');
 
 class ChallengePhase extends Phase {
@@ -24,17 +25,11 @@ class ChallengePhase extends Phase {
 
         this.game.queueStep(new ActionWindow(this.game, 'Before challenge', 'challengeBegin'));
 
-        const ChallengeTypes = ['Military', 'Intrigue', 'Power'];
-
         let currentPlayer = this.remainingPlayers[0];
-        let buttons = ChallengeTypes.map(challengeType => {
-            return {
-                text: challengeType,
-                method: 'chooseChallengeType',
-                arg: challengeType.toLowerCase(),
-                disabled: () => !this.allowChallengeType(currentPlayer, challengeType.toLowerCase())
-            };
-        });
+        let buttons = ChallengeTypes.asButtons(challengeType => ({
+            method: 'chooseChallengeType',
+            disabled: () => !this.allowChallengeType(currentPlayer, challengeType)
+        }));
 
         this.game.promptWithMenu(currentPlayer, this, {
             activePrompt: {
