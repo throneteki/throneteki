@@ -120,7 +120,60 @@ describe('Master of Whispers', function() {
         });
 
         describe('vs Vengeance for Elia', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Ser Jaime Lannister (Core)', 'Hedge Knight', 'Hedge Knight'
+                ]);
+                const opponentDeck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Vengeance for Elia'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(opponentDeck);
+                this.player3.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
 
+                this.player1.clickCard('Ser Jaime Lannister', 'hand');
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.selectTitle('Master of Whispers');
+                this.player2.selectTitle('Master of Coin');
+                this.player3.selectTitle('Master of Laws');
+
+                this.completeMarshalPhase();
+
+                this.player1.clickPrompt('Intrigue');
+                this.player1.clickPrompt('player2');
+                this.player1.clickCard('Ser Jaime Lannister', 'play area');
+                this.player1.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                this.player2.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                // Apply claim against both opponents
+                this.player1.clickPrompt('Apply Claim');
+                this.player1.clickPrompt('player3');
+
+                // Trigger Vengeance for Elia
+                this.player2.triggerAbility('Vengeance for Elia');
+                this.player2.clickPrompt('player1');
+            });
+
+            it('should apply claim to the additional opponents chosen', function() {
+                expect(this.player3Object.discardPile.length).toBe(1);
+            });
+
+            it('should apply the normal effect for Vengeance for Elia', function() {
+                expect(this.player1Object.discardPile.length).toBe(1);
+            });
         });
 
         describe('vs other replacement effects', function() {
