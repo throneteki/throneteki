@@ -82,9 +82,18 @@ class PlayerPromptState {
             selectOrder: this.selectOrder,
             menuTitle: this.menuTitle,
             promptTitle: this.promptTitle,
-            buttons: this.buttons,
+            buttons: this.buttons.map(button => this.getButtonState(button)),
             controls: this.controls
         };
+    }
+
+    getButtonState(button) {
+        if(button.disabled) {
+            let disabled = typeof button.disabled === 'function' ? button.disabled() : button.disabled;
+            return Object.assign({}, button, { disabled: !!disabled });
+        }
+
+        return button;
     }
 }
 
