@@ -175,9 +175,5 @@ describe('Master of Whispers', function() {
                 expect(this.player1Object.discardPile.length).toBe(1);
             });
         });
-
-        describe('vs other replacement effects', function() {
-
-        });
     });
 });

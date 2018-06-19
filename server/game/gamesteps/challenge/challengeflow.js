@@ -300,7 +300,6 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.challenge.claim = this.challenge.getClaim();
         this.game.queueStep(new ClaimPrompt(this.game, this.challenge));
     }
 

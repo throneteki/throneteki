@@ -1,10 +1,12 @@
 const BaseStep = require('../basestep');
 const ApplyClaim = require('./applyclaim');
+const Claim = require('../../Claim');
 
 class ClaimPrompt extends BaseStep {
     constructor(game, challenge) {
         super(game);
         this.challenge = challenge;
+        this.claim = Claim.createFromChallenge(challenge);
     }
 
     continue() {
@@ -21,7 +23,7 @@ class ClaimPrompt extends BaseStep {
     }
 
     applyClaim() {
-        if(this.challenge.allowMultipleOpponentClaim()) {
+        if(this.claim.allowMultipleOpponentClaim()) {
             this.promptForAdditionalOpponents();
         } else {
             this.processClaim();
@@ -37,7 +39,7 @@ class ClaimPrompt extends BaseStep {
     }
 
     promptForAdditionalOpponents() {
-        let opponents = this.game.getOpponents(this.challenge.winner).filter(opponent => !this.challenge.claimRecipients.includes(opponent));
+        let opponents = this.game.getOpponents(this.claim.winner).filter(opponent => !this.claim.recipients.includes(opponent));
 
         if(opponents.length === 0) {
             this.processClaim();
@@ -66,7 +68,7 @@ class ClaimPrompt extends BaseStep {
             return false;
         }
 
-        this.challenge.addClaimRecipient(opponent);
+        this.claim.addRecipient(opponent);
 
         this.promptForAdditionalOpponents();
 
@@ -74,8 +76,8 @@ class ClaimPrompt extends BaseStep {
     }
 
     processClaim() {
-        this.game.raiseEvent('onClaimApplied', { player: this.challenge.winner, challenge: this.challenge }, () => {
-            this.game.queueStep(new ApplyClaim(this.game, this.challenge));
+        this.game.raiseEvent('onClaimApplied', { player: this.challenge.winner, challenge: this.challenge, claim: this.claim }, () => {
+            this.game.queueStep(new ApplyClaim(this.game, this.claim));
         });
 
         return true;

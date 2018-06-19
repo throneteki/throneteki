@@ -25,17 +25,12 @@ class NowItComesToWar extends PlotCard {
     }
 
     applyMilitaryClaim(player) {
-        let challenge = this.currentContext.event.challenge;
         this.game.addMessage('{0} chooses to apply {2} claim instead using {1}', player, this, 'military');
         this.currentContext.replaceHandler(() => {
-            let replacementChallenge = {
-                challengeType: 'military',
-                claim: challenge.claim,
-                loser: challenge.loser,
-                winner: challenge.winner
-            };
+            let replacementClaim = this.currentContext.event.claim.clone();
+            replacementClaim.challengeType = 'military';
 
-            this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
+            this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
         });
         return true;
     }
