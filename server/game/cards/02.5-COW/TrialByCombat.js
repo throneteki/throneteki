@@ -21,7 +21,8 @@ class TrialByCombat extends DrawCard {
                         challengeType: 'military',
                         claim: this.controller.getClaim(),
                         loser: opponent,
-                        winner: this.controller
+                        winner: this.controller,
+                        claimRecipients: context.event.challenge.claimRecipients
                     };
 
                     this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
