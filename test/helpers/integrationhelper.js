@@ -17,6 +17,13 @@ const ProxiedGameFlowWrapperMethods = [
 
 const deckBuilder = new DeckBuilder();
 
+function serializeButtons(buttons) {
+    return buttons.map(button => {
+        let text = button.disabled ? button.text + ' (Disabled)' : button.text;
+        return `[${text}]`;
+    }).join('\n');
+}
+
 var customMatchers = {
     toHavePrompt: function(util, customEqualityMatchers) {
         return {
@@ -39,16 +46,35 @@ var customMatchers = {
     toHavePromptButton: function(util, customEqualityMatchers) {
         return {
             compare: function(actual, expected) {
-                var buttons = actual.currentPrompt().buttons;
-                var result = {};
+                let buttons = actual.currentPrompt().buttons;
+                let buttonWithText = buttons.find(button => util.equals(button.text, expected, customEqualityMatchers));
+                let result = {};
 
-                result.pass = _.any(buttons, button => util.equals(button.text, expected, customEqualityMatchers));
+                result.pass = buttonWithText && !buttonWithText.disabled;
 
                 if(result.pass) {
                     result.message = `Expected ${actual.name} not to have prompt button "${expected}" but it did.`;
                 } else {
-                    var buttonText = _.map(buttons, button => '[' + button.text + ']').join('\n');
-                    result.message = `Expected ${actual.name} to have prompt button "${expected}" but it had buttons:\n${buttonText}`;
+                    result.message = `Expected ${actual.name} to have prompt button "${expected}" but it had buttons:\n${serializeButtons(buttons)}`;
+                }
+
+                return result;
+            }
+        };
+    },
+    toHaveDisabledPromptButton: function(util, customEqualityMatchers) {
+        return {
+            compare: function(actual, expected) {
+                let buttons = actual.currentPrompt().buttons;
+                let buttonWithText = buttons.find(button => util.equals(button.text, expected, customEqualityMatchers));
+                let result = {};
+
+                result.pass = buttonWithText && buttonWithText.disabled;
+
+                if(result.pass) {
+                    result.message = `Expected ${actual.name} not to have disabled prompt button "${expected}" but it did.`;
+                } else {
+                    result.message = `Expected ${actual.name} to have disabled prompt button "${expected}" but it had buttons:\n${serializeButtons(buttons)}`;
                 }
 
                 return result;

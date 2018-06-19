@@ -31,13 +31,18 @@ class PlayerInteractionWrapper {
     }
 
     formatPrompt() {
-        var prompt = this.currentPrompt();
+        let prompt = this.currentPrompt();
 
         if(!prompt) {
             return 'no prompt active';
         }
 
-        return prompt.menuTitle + '\n' + _.map(prompt.buttons, button => '[ ' + button.text + ' ]').join('\n');
+        let buttons = prompt.buttons.map(button => {
+            let text = button.disabled ? button.text + ' (Disabled)' : button.text;
+            return `[${text}]`;
+        });
+
+        return prompt.menuTitle + '\n' + buttons.join('\n');
     }
 
     findCardByName(name, location = 'any') {
@@ -97,10 +102,14 @@ class PlayerInteractionWrapper {
 
     clickPrompt(text) {
         let currentPrompt = this.player.currentPrompt();
-        let promptButton = _.find(currentPrompt.buttons, button => button.text.toLowerCase() === text.toLowerCase());
+        let promptButton = currentPrompt.buttons.find(button => button.text.toLowerCase() === text.toLowerCase());
 
         if(!promptButton) {
             throw new Error(`Couldn't click on "${text}" for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`);
+        }
+
+        if(promptButton.disabled) {
+            throw new Error(`Couldn't click on "${text}" for ${this.player.name} because it is disabled. Current prompt is:\n${this.formatPrompt()}`);
         }
 
         this.game.menuButton(this.player.name, promptButton.arg, promptButton.method);
