@@ -2,19 +2,27 @@ const PlotCard = require('../../plotcard.js');
 
 class ForTheWatch extends PlotCard {
     setupCardAbilities(ability) {
-        // TODO: This effect will need to be reworked for Melee, as it currently
-        // checks how many challenges the attacker has made, not how many have
-        // been initiated against the defending player.
         this.persistentEffect({
             condition: () => (
                 this.game.currentChallenge &&
                 this.game.currentChallenge.defendingPlayer === this.controller &&
-                this.game.currentChallenge.number <= 1
+                this.numOfChallengesInitiatedAgainst() <= 1
             ),
             targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.cannotWinChallenge()
         });
+    }
+
+    numOfChallengesInitiatedAgainst() {
+        let challenges = this.controller.getParticipatedChallenges();
+        return challenges.reduce((sum, challenge) => {
+            if(challenge.defendingPlayer === this.controller) {
+                return sum + 1;
+            }
+
+            return sum;
+        }, 0);
     }
 }
 
