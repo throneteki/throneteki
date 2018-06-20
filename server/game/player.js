@@ -352,8 +352,12 @@ class Player extends Spectator {
         return true;
     }
 
-    addChallenge(type, number) {
-        this.challenges.modifyMaxForType(type, number);
+    addAllowedChallenge(allowedChallenge) {
+        this.challenges.addAllowedChallenge(allowedChallenge);
+    }
+
+    removeAllowedChallenge(allowedChallenge) {
+        this.challenges.removeAllowedChallenge(allowedChallenge);
     }
 
     setMaxChallenge(number) {

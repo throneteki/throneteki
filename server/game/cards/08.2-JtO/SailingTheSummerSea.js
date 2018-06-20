@@ -5,7 +5,7 @@ class SailingTheSummerSea extends PlotCard {
         this.persistentEffect({
             targetType: 'player',
             effect: [
-                ability.effects.modifyChallengeTypeLimit('power', 1),
+                ability.effects.mayInitiateAdditionalChallenge('power'),
                 ability.effects.cannotInitiateChallengeType('military'),
                 ability.effects.cannotInitiateChallengeType('intrigue')
             ]

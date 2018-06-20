@@ -5,7 +5,7 @@ class CasterlyRock extends DrawCard {
         this.persistentEffect({
             targetType: 'player',
             targetController: 'current',
-            effect: ability.effects.modifyChallengeTypeLimit('intrigue', 1)
+            effect: ability.effects.mayInitiateAdditionalChallenge('intrigue')
         });
     }
 }

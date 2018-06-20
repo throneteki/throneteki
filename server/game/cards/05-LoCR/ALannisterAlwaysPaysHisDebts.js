@@ -12,8 +12,8 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
                     targetType: 'player',
                     targetController: 'current',
                     effect: [
-                        ability.effects.modifyChallengeTypeLimit('military', 1),
-                        ability.effects.modifyChallengeTypeLimit('intrigue', 1)
+                        ability.effects.mayInitiateAdditionalChallenge('military'),
+                        ability.effects.mayInitiateAdditionalChallenge('intrigue')
                     ]
                 }));
 

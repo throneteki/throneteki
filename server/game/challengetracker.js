@@ -1,5 +1,7 @@
 const _ = require('underscore');
 
+const AllowedChallenge = require('./AllowedChallenge');
+
 class ChallengeTracker {
     constructor(player) {
         this.player = player;
@@ -14,16 +16,28 @@ class ChallengeTracker {
                 max: 1
             }
         };
+        this.allowedChallenges = [];
         this.challenges = [];
         this.restrictions = [];
+
+        this.reset();
     }
 
     track(challenge) {
         this.challenges.push(challenge);
+        let index = this.allowedChallenges.findIndex(allowedChallenge => allowedChallenge.isMatch(challenge.challengeType, challenge.defendingPlayer));
+        if(index !== -1) {
+            this.allowedChallenges.splice(index, 1);
+        }
     }
 
     reset() {
         this.challenges = [];
+        this.allowedChallenges = [
+            new AllowedChallenge('military'),
+            new AllowedChallenge('intrigue'),
+            new AllowedChallenge('power')
+        ];
     }
 
     getChallenges() {
@@ -39,7 +53,7 @@ class ChallengeTracker {
             return false;
         }
 
-        return this.getPerformed(challengeType) < this.challengeTypes[challengeType].max;
+        return this.allowedChallenges.some(allowedChallenge => allowedChallenge.isMatch(challengeType, opponent));
     }
 
     getWon(challengeType) {
@@ -92,6 +106,17 @@ class ChallengeTracker {
 
     modifyMaxForType(challengeType, number) {
         this.challengeTypes[challengeType].max += number;
+    }
+
+    addAllowedChallenge(allowedChallenge) {
+        this.allowedChallenges.push(allowedChallenge);
+    }
+
+    removeAllowedChallenge(allowedChallenge) {
+        let index = this.allowedChallenges.findIndex(a => a === allowedChallenge);
+        if(index !== -1) {
+            this.allowedChallenges.splice(index, 1);
+        }
     }
 
     countChallenges(predicate) {

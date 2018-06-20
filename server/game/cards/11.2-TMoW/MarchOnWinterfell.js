@@ -11,7 +11,7 @@ class MarchOnWinterfell extends DrawCard {
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
                     targetController: 'current',
-                    effect: ability.effects.modifyChallengeTypeLimit('power', 1)
+                    effect: ability.effects.mayInitiateAdditionalChallenge('power')
                 }));
 
                 this.game.addMessage('{0} plays {1} to end this challenge with no winner or loser',

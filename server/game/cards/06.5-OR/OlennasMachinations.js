@@ -9,7 +9,7 @@ class OlennasMachinations extends DrawCard {
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
                     targetController: 'current',
-                    effect: ability.effects.modifyChallengeTypeLimit('power', 1)
+                    effect: ability.effects.mayInitiateAdditionalChallenge('power')
                 }));
                 this.game.addMessage('{0} plays {1} to be able to initiate an additional {2} challenge this phase',
                     this.controller, this, 'power');
