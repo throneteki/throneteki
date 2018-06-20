@@ -6,9 +6,7 @@ class BridgeOfSkulls extends DrawCard {
             when: {
                 onPhaseEnded: event => event.phase === 'challenge'
             },
-            // TODO: For Melee, this should check that they did not initiate a
-            // challenge specifically against you, not in general.
-            chooseOpponent: player => player.getNumberOfChallengesInitiatedByType('military') < 1,
+            chooseOpponent: player => !this.hasInitiatedMilitaryChallenge(player),
             handler: context => {
                 let opponent = context.opponent;
 
@@ -18,6 +16,16 @@ class BridgeOfSkulls extends DrawCard {
                     this.controller, this, opponent);
             }
         });
+    }
+
+    hasInitiatedMilitaryChallenge(opponent) {
+        let challenges = opponent.getParticipatedChallenges();
+
+        return challenges.some(challenge => (
+            challenge.challengeType === 'military' &&
+            challenge.attackingPlayer === opponent &&
+            challenge.defendingPlayer === this.controller
+        ));
     }
 }
 
