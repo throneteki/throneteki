@@ -47,7 +47,7 @@ class GameChat {
     }
 
     formatMessage(format, args) {
-        if(_.isNull(format) || _.isUndefined(format)) {
+        if(!format || typeof(format) !== 'string') {
             return '';
         }
 
