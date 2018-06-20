@@ -35,7 +35,7 @@ class TheScorpionsSting extends DrawCard {
     }
 
     hasMartellCharacter() {
-        return this.controller.anyCardsInPlay(card => card.isFaction('martell') && card.getType() === 'character');
+        return this.game.anyCardsInPlay(card => card.isFaction('martell') && card.getType() === 'character');
     }
 }
 
