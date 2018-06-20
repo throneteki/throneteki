@@ -34,7 +34,7 @@ class AbilityChoicePrompt extends BaseStep {
     }
 
     skipResolution() {
-        this.game.addAlert('{0} cancels the resolution of {1} (costs were still paid)', this.context.player, this.context.source);
+        this.game.addAlert('danger', '{0} cancels the resolution of {1} (costs were still paid)', this.context.player, this.context.source);
         return true;
     }
 }
