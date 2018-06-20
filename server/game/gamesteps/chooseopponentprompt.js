@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 
 /**
@@ -9,13 +8,14 @@ class ChooseOpponentPrompt extends BaseStep {
         super(game);
         this.player = player;
         this.condition = properties.condition || (() => true);
+        this.enabled = properties.enabled || (() => true);
         this.onSelect = properties.onSelect;
         this.onCancel = properties.onCancel || (() => true);
         this.source = properties.source;
     }
 
     continue() {
-        let otherPlayers = _.filter(this.game.getPlayers(), player => player !== this.player && this.condition(player));
+        let otherPlayers = this.game.getPlayers().filter(player => player !== this.player && this.condition(player));
 
         if(otherPlayers.length === 0) {
             this.onCancel();
@@ -27,8 +27,8 @@ class ChooseOpponentPrompt extends BaseStep {
             return;
         }
 
-        let buttons = _.map(otherPlayers, player => {
-            return { text: player.name, arg: player.name, method: 'selectPlayer' };
+        let buttons = otherPlayers.map(player => {
+            return { text: player.name, arg: player.name, method: 'selectPlayer', disabled: () => !this.enabled(player) };
         });
         buttons.push({ text: 'Cancel', method: 'cancel' });
         this.game.promptWithMenu(this.player, this, {
