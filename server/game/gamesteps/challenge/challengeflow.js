@@ -25,7 +25,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.announceDefenderStrength()),
             new ActionWindow(this.game, 'After defenders declared', 'defendersDeclared'),
             new SimpleStep(this.game, () => this.determineWinner()),
-            new SimpleStep(this.game, () => this.unopposedPower()),
+            new SimpleStep(this.game, () => this.challengeBonusPower()),
             new SimpleStep(this.game, () => this.beforeClaim()),
             () => new KeywordWindow(this.game, this.challenge)
         ]);
@@ -278,16 +278,22 @@ class ChallengeFlow extends BaseStep {
         this.game.raiseEvent('afterChallenge', { challenge: this.challenge });
     }
 
-    unopposedPower() {
+    challengeBonusPower() {
         if(this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner()) {
             if(this.challenge.winner.cannotGainChallengeBonus) {
                 this.game.addMessage('{0} won the challenge unopposed but cannot gain challenge bonuses', this.challenge.winner);
             } else {
                 this.game.raiseEvent('onUnopposedGain', { challenge: this.challenge }, () => {
-                    this.game.addMessage('{0} has gained 1 power from an unopposed challenge', this.challenge.winner);
+                    this.game.addMessage('{0} gains 1 power from an unopposed challenge', this.challenge.winner);
                     this.game.addPower(this.challenge.winner, 1);
                 });
             }
+        }
+
+        if(this.challenge.isRivalWin()) {
+            this.game.addMessage('{0} gains 1 power from winning against their rival {1}', this.challenge.winner, this.challenge.loser);
+            this.challenge.winner.markRivalBonusGained(this.challenge.loser);
+            this.game.addPower(this.challenge.winner, 1);
         }
     }
 

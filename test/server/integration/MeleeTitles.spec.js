@@ -40,5 +40,99 @@ describe('melee titles', function() {
                 expect(this.player1).not.toHavePromptButton('Master of Laws');
             });
         });
+
+        describe('rival bonuses', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Hedge Knight', 'Wildling Horde'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.player3.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.player1.clickCard('Hedge Knight', 'hand');
+                this.player1.clickCard('Wildling Horde', 'hand');
+                this.player2.clickCard('Hedge Knight', 'hand');
+                this.player2.clickCard('Wildling Horde', 'hand');
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.selectTitle('Hand of the King');
+                this.player2.selectTitle('Master of Coin');
+                this.player3.selectTitle('Master of Ships');
+
+                this.completeMarshalPhase();
+            });
+
+            describe('when the attacking player wins', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Military');
+                    this.player1.clickPrompt('player2');
+                    this.player1.clickCard('Wildling Horde', 'play area');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player2.clickCard('Hedge Knight', 'play area');
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+                });
+
+                it('should give the attacking player the bonus', function() {
+                    expect(this.player1Object.getTotalPower()).toBe(1);
+                });
+            });
+
+            describe('when the defending player wins', function() {
+                beforeEach(function() {
+                    this.player1.clickPrompt('Military');
+                    this.player1.clickPrompt('player2');
+                    this.player1.clickCard('Hedge Knight', 'play area');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player2.clickCard('Wildling Horde', 'play area');
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+                });
+
+                it('should give the defending player the bonus', function() {
+                    expect(this.player2Object.getTotalPower()).toBe(1);
+                });
+            });
+
+            describe('when winning against the same rival twice', function() {
+                beforeEach(function() {
+                    // Challenge 1
+                    this.player1.clickPrompt('Military');
+                    this.player1.clickPrompt('player2');
+                    this.player1.clickCard('Hedge Knight', 'play area');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player2.clickCard('Hedge Knight', 'play area');
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player1.clickPrompt('Apply Claim');
+                    this.player2.clickCard('Hedge Knight', 'play area');
+
+                    // Challenge 2
+                    this.player1.clickPrompt('Power');
+                    this.player1.clickPrompt('player2');
+                    this.player1.clickCard('Wildling Horde', 'play area');
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player2.clickCard('Wildling Horde', 'play area');
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player1.clickPrompt('Apply Claim');
+                });
+
+                it('should only give the bonus once per round per opponent', function() {
+                    expect(this.player1Object.getTotalPower()).toBe(1);
+                });
+            });
+        });
     });
 });
