@@ -74,6 +74,7 @@ class Player extends Spectator {
         this.keywordSettings = user.settings.keywordSettings;
         this.goldSources = [new GoldSource(this)];
         this.groupedPiles = {};
+        this.bonusesFromRivals = new Set();
         this.shuffleArray = _.shuffle;
 
         this.promptState = new PlayerPromptState();
@@ -712,6 +713,8 @@ class Player extends Spectator {
         this.drawPhaseCards = DrawPhaseCards;
 
         this.limitedPlayed = 0;
+
+        this.bonusesFromRivals.clear();
     }
 
     flipPlotFaceup() {
@@ -1222,6 +1225,14 @@ class Player extends Spectator {
         }
 
         return this.title.isSupporter(opponent.title);
+    }
+
+    canGainRivalBonus(opponent) {
+        return !this.cannotGainChallengeBonus && this.isRival(opponent) && !this.bonusesFromRivals.has(opponent);
+    }
+
+    markRivalBonusGained(opponent) {
+        this.bonusesFromRivals.add(opponent);
     }
 
     allowMultipleOpponentClaim(claimType) {

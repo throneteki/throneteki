@@ -231,6 +231,10 @@ class Challenge {
         return this.loserStrength <= 0 && this.winnerStrength > 0 && this.winner === this.attackingPlayer;
     }
 
+    isRivalWin() {
+        return this.winner && this.loser && this.winner.canGainRivalBonus(this.loser);
+    }
+
     getClaim() {
         return this.winner.getClaim();
     }
