@@ -143,6 +143,7 @@ const Effects = {
     },
     setStrength: function(value) {
         return {
+            gameAction: card => card.getType() === 'character' && card.getStrength() > value ? 'decreaseStrength' : 'increaseStrength',
             apply: function(card) {
                 card.strengthSet = value;
             },
