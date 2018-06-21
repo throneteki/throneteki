@@ -1,6 +1,5 @@
-const _ = require('underscore');
-
 const BaseStep = require('./basestep');
+const ChallengeTypes = require('../ChallengeTypes');
 
 class IconPrompt extends BaseStep {
     constructor(game, player, card, callback) {
@@ -12,16 +11,10 @@ class IconPrompt extends BaseStep {
     }
 
     continue() {
-        let icons = ['Military', 'Intrigue', 'Power'];
-
-        let buttons = _.map(icons, icon => {
-            return { text: icon, method: 'iconSelected', arg: icon.toLowerCase() };
-        });
-
         this.game.promptWithMenu(this.player, this, {
             activePrompt: {
                 menuTitle: 'Select an icon',
-                buttons: buttons
+                buttons: ChallengeTypes.asButtons({ method: 'iconSelected' })
             },
             source: this.card
         });
