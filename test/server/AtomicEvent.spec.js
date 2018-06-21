@@ -70,7 +70,8 @@ describe('AtomicEvent', function() {
 
     describe('addChildEvent', function() {
         beforeEach(function() {
-            this.event = new AtomicEvent('onEvent', { foo: 'bar' });
+            this.childEventSpy1.params = { prop1: 'foo', prop2: 'bar' };
+            this.event = new AtomicEvent();
             this.event.addChildEvent(this.childEventSpy1);
         });
 
@@ -80,6 +81,11 @@ describe('AtomicEvent', function() {
 
         it('should set the parent for the child', function() {
             expect(this.childEventSpy1.parent).toBe(this.event);
+        });
+
+        it('should extend any properties of the child onto the event', function() {
+            expect(this.event.prop1).toBe('foo');
+            expect(this.event.prop2).toBe('bar');
         });
     });
 

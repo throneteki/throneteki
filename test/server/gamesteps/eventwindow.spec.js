@@ -2,7 +2,7 @@ const EventWindow = require('../../../server/game/gamesteps/eventwindow.js');
 
 describe('EventWindow', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['openAbilityWindow', 'saveWithDupe']);
+        this.gameSpy = jasmine.createSpyObj('game', ['openAbilityWindow', 'openInterruptWindowForAttachedEvents', 'saveWithDupe']);
         this.eventSpy = jasmine.createSpyObj('event', ['allowAutomaticSave', 'cancel', 'clearAttachedEvents', 'emitTo', 'executeHandler', 'executePostHandler', 'getConcurrentEvents']);
         this.eventSpy.attachedEvents = [];
         this.eventSpy.getConcurrentEvents.and.returnValue([]);

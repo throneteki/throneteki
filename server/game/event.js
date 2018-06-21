@@ -5,12 +5,12 @@ class Event {
         this.name = name;
         this.cancelled = false;
         this.handler = handler;
-        this.postHandler = postHandler;
+        this.postHandlers = [postHandler];
         this.childEvents = [];
         this.attachedEvents = [];
 
         _.extend(this, params);
-        this.params = [this].concat([params]);
+        this.params = params;
     }
 
     addChildEvent(event) {
@@ -65,7 +65,9 @@ class Event {
     }
 
     executePostHandler() {
-        this.postHandler(this);
+        for(let postHandler of this.postHandlers) {
+            postHandler(this);
+        }
     }
 
     onChildCancelled(event) {
@@ -84,10 +86,17 @@ class Event {
 
     thenAttachEvent(event) {
         this.attachedEvents.push(event);
-        this.addChildEvent(event);
+    }
+
+    thenExecute(func) {
+        this.postHandlers.push(func);
+        return this;
     }
 
     clearAttachedEvents() {
+        for(let event of this.attachedEvents) {
+            this.addChildEvent(event);
+        }
         this.attachedEvents = [];
     }
 
