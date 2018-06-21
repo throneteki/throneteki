@@ -7,7 +7,9 @@ class TrialByCombat extends DrawCard {
             when: {
                 onClaimApplied: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.attackingPlayer === this.controller &&
+                    // While valid for anyone to play, typically only the attacking player
+                    // or other Melee players will want to trigger it.
+                    event.challenge.defendingPlayer !== this.controller &&
                     event.challenge.challengeType === 'intrigue'
                 )
             },
