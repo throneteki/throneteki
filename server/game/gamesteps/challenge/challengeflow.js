@@ -3,7 +3,7 @@ const BaseStep = require('../basestep.js');
 const GamePipeline = require('../../gamepipeline.js');
 const SimpleStep = require('../simplestep.js');
 const ChooseStealthTargets = require('./choosestealthtargets.js');
-const ApplyClaim = require('./applyclaim.js');
+const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
 const KeywordWindow = require('../keywordwindow.js');
 
@@ -300,35 +300,7 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.challenge.claim = this.challenge.getClaim();
-        this.game.promptWithMenu(this.challenge.winner, this, {
-            activePrompt: {
-                menuTitle: 'Perform before claim actions',
-                buttons: [
-                    { text: 'Apply Claim', method: 'applyClaim' },
-                    { text: 'Continue', method: 'cancelClaim' }
-                ]
-            },
-            waitingPromptTitle: 'Waiting for opponent to apply claim'
-        });
-    }
-
-    applyClaim(player) {
-        if(player !== this.challenge.winner) {
-            return false;
-        }
-
-        this.game.raiseEvent('onClaimApplied', { player: this.challenge.winner, challenge: this.challenge }, () => {
-            this.game.queueStep(new ApplyClaim(this.game, this.challenge));
-        });
-
-        return true;
-    }
-
-    cancelClaim(player) {
-        this.game.addAlert('danger', '{0} continues without applying claim', player, this);
-
-        return true;
+        this.game.queueStep(new ClaimPrompt(this.game, this.challenge));
     }
 
     isComplete() {

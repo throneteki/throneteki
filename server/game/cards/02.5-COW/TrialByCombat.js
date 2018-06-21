@@ -17,14 +17,10 @@ class TrialByCombat extends DrawCard {
                 this.game.addMessage('{0} uses {1} to have {2} apply {3} claim instead of {4} claim', this.controller, this, opponent, 'military', 'intrigue');
 
                 context.replaceHandler(() => {
-                    let replacementChallenge = {
-                        challengeType: 'military',
-                        claim: this.controller.getClaim(),
-                        loser: opponent,
-                        winner: this.controller
-                    };
+                    let replacementClaim = context.event.claim.clone();
+                    replacementClaim.challengeType = 'military';
 
-                    this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
+                    this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
                 });
             }
         });

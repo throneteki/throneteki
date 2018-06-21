@@ -1,5 +1,6 @@
 const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
 const DrawCard = require('../../drawcard.js');
+const Claim = require('../../Claim');
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
@@ -37,17 +38,16 @@ class MaesterAemon extends DrawCard {
     }
 
     satisfyClaim(player, claimType) {
-        let challenge = {
-            winner: player,
-            loser: this.chosenOpponent,
-            challengeType: claimType,
-            claim: player.getClaim()
-        };
+        let claim = new Claim();
+        claim.addRecipient(this.chosenOpponent);
+        claim.challengeType = claimType;
+        claim.value = player.getClaim();
+        claim.winner = player;
 
         this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim',
             player, this, this.chosenOpponent, claimType);
 
-        this.game.queueStep(new ApplyClaim(this.game, challenge));
+        this.game.queueStep(new ApplyClaim(this.game, claim));
 
         return true;
     }

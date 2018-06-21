@@ -16,14 +16,10 @@ class MyaStone extends DrawCard {
                     context.player, this, 'power', context.event.challenge.challengeType);
 
                 context.replaceHandler(() => {
-                    let replacementChallenge = {
-                        challengeType: 'power',
-                        claim: context.event.challenge.winner.getClaim(),
-                        loser: context.player,
-                        winner: context.event.challenge.winner
-                    };
+                    let replacementClaim = context.event.claim.clone();
+                    replacementClaim.challengeType = 'power';
 
-                    this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
+                    this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
                 });
             }
         });

@@ -14,14 +14,10 @@ class VengeanceForElia extends DrawCard {
                 this.game.addMessage('{0} uses {1} to apply claim to {2} instead', context.player, this, opponent);
 
                 context.replaceHandler(() => {
-                    let replacementChallenge = {
-                        challengeType: this.game.currentChallenge.challengeType,
-                        claim: this.game.currentChallenge.claim,
-                        loser: opponent,
-                        winner: this.game.currentChallenge.winner
-                    };
+                    let replacementClaim = context.event.claim.clone();
+                    replacementClaim.replaceRecipient(this.controller, opponent);
 
-                    this.game.queueStep(new ApplyClaim(this.game, replacementChallenge));
+                    this.game.queueStep(new ApplyClaim(this.game, replacementClaim));
                 });
             }
         });
