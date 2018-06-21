@@ -5,7 +5,7 @@ class KhalDrogo extends DrawCard {
         this.persistentEffect({
             targetType: 'player',
             targetController: 'current',
-            effect: ability.effects.modifyChallengeTypeLimit('military', 1)
+            effect: ability.effects.mayInitiateAdditionalChallenge('military')
         });
     }
 }

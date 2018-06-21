@@ -243,7 +243,7 @@ Certain cards provide bonuses or restrictions on the player itself instead of on
 this.persistentEffect({
     targetType: 'player',
     targetController: 'current',
-    effect: ability.effects.modifyChallengeTypeLimit('military', 1)
+    effect: ability.effects.mayInitiateAdditionalChallenge('military')
 });
 ```
 
@@ -268,7 +268,7 @@ To apply an effect to last until the end of the current phase, use `untilEndOfPh
 this.untilEndOfPhase(ability => ({
     targetType: 'player',
     targetController: 'current',
-    effect: ability.effects.modifyChallengeTypeLimit('power', 1)
+    effect: ability.effects.mayInitiateAdditionalChallenge('power')
 }));
 ```
 

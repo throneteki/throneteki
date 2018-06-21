@@ -16,7 +16,7 @@ class RelentlessAssault extends DrawCard {
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
                     targetController: 'current',
-                    effect: ability.effects.modifyChallengeTypeLimit(type, 1)
+                    effect: ability.effects.mayInitiateAdditionalChallenge(type)
                 }));
                 this.game.addMessage('{0} uses {1} to be able to initate an additional {2} challenge this phase', context.player, this, type);
             }

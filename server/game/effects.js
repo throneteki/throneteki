@@ -1,6 +1,7 @@
 const _ = require('underscore');
 
 const AbilityLimit = require('./abilitylimit.js');
+const AllowedChallenge = require('./AllowedChallenge');
 const CostReducer = require('./costreducer.js');
 const PlayableLocation = require('./playablelocation.js');
 const CannotRestriction = require('./cannotrestriction.js');
@@ -798,13 +799,14 @@ const Effects = {
             }
         };
     },
-    modifyChallengeTypeLimit: function(challengeType, value) {
+    mayInitiateAdditionalChallenge: function(challengeType, opponentFunc) {
+        let allowedChallenge = new AllowedChallenge(challengeType, opponentFunc);
         return {
             apply: function(player) {
-                player.addChallenge(challengeType, value);
+                player.addAllowedChallenge(allowedChallenge);
             },
             unapply: function(player) {
-                player.addChallenge(challengeType, -value);
+                player.removeAllowedChallenge(allowedChallenge);
             }
         };
     },

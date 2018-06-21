@@ -14,7 +14,7 @@ class BloodyArakh extends DrawCard {
 
                 this.untilEndOfPhase(ability => ({
                     targetType: 'player',
-                    effect: ability.effects.modifyChallengeTypeLimit('military', 1)
+                    effect: ability.effects.mayInitiateAdditionalChallenge('military')
                 }));
 
                 this.game.addMessage('{0} sacrifices {1} and can initiate an additional {2} challenge this phase',

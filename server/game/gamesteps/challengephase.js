@@ -61,6 +61,7 @@ class ChallengePhase extends Phase {
         }
 
         this.game.promptForOpponentChoice(attackingPlayer, {
+            enabled: opponent => attackingPlayer.canInitiateChallenge(challengeType, opponent),
             onSelect: opponent => {
                 this.initiateChallenge(attackingPlayer, opponent, challengeType);
             },

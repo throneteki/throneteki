@@ -23,7 +23,7 @@ class OlennasInformant extends DrawCard {
         this.untilEndOfPhase(ability => ({
             targetType: 'player',
             targetController: 'current',
-            effect: ability.effects.modifyChallengeTypeLimit(challenge, 1)
+            effect: ability.effects.mayInitiateAdditionalChallenge(challenge)
         }));
 
         this.game.addMessage('{0} uses {1} to be able to initiate an additional {2} challenge this phase', player, this, challenge);
