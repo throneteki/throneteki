@@ -9,7 +9,7 @@ const logger = require('./log.js');
 const version = moment(require('../version.js'));
 const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
-const MessageService = require('./services/MessageService.js');
+const ServiceFactory = require('./services/ServiceFactory');
 const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
@@ -20,7 +20,7 @@ class Lobby {
         this.users = {};
         this.games = {};
         this.config = options.config;
-        this.messageService = options.messageService || new MessageService(options.db);
+        this.messageService = options.messageService || ServiceFactory.messageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
         this.userService = options.userService || new UserService(options.db);
@@ -38,6 +38,10 @@ class Lobby {
         this.io.on('connection', this.onConnection.bind(this));
 
         this.lastUserBroadcast = moment();
+
+        this.messageService.on('messageDeleted', messageId => {
+            this.io.emit('removemessage', messageId);
+        });
 
         setInterval(() => this.clearStalePendingGames(), 60 * 1000);
     }
