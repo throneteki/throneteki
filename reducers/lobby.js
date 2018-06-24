@@ -29,6 +29,8 @@ export default function(state = defaultState, action) {
             });
         case 'LOBBY_MESSAGE_RECEIVED':
             return handleMessage(action, state);
+        case 'LOBBY_MESSAGE_DELETED':
+            return handleMessage(action, state);
         case 'JOIN_PASSWORD_GAME':
             return Object.assign({}, state, {
                 passwordGame: action.game,
@@ -144,6 +146,14 @@ function handleMessage(action, state) {
         case 'lobbymessages':
             newState = Object.assign({}, state, {
                 messages: action.args[0]
+            });
+
+            break;
+        case 'removemessage':
+            newState = Object.assign({}, state);
+
+            newState.messages = newState.messages.filter(message => {
+                return message._id !== action.args[0];
             });
 
             break;

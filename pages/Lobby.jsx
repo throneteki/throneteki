@@ -19,6 +19,7 @@ class Lobby extends React.Component {
         this.onChange = this.onChange.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.onSendClick = this.onSendClick.bind(this);
+        this.onRemoveMessageClick = this.onRemoveMessageClick.bind(this);
 
         this.state = {
             message: ''
@@ -59,6 +60,10 @@ class Lobby extends React.Component {
         this.setState({ message: value });
     }
 
+    onRemoveMessageClick(messageId) {
+        this.props.removeLobbyMessage(messageId);
+    }
+
     render() {
         let isLoggedIn = !!this.props.user;
         let placeholder = isLoggedIn ? 'Enter a message...' : 'You must be logged in to send lobby chat messages';
@@ -85,7 +90,9 @@ class Lobby extends React.Component {
                 <div className='col-sm-offset-1 col-sm-10 chat-container'>
                     <Panel title={ `Lobby Chat (${this.props.users.length} online)` }>
                         <div>
-                            <LobbyChat messages={ this.props.messages } />
+                            <LobbyChat messages={ this.props.messages }
+                                isModerator={ this.props.user && this.props.user.permissions.canModerateChat }
+                                onRemoveMessageClick={ this.onRemoveMessageClick } />
                         </div>
                     </Panel>
                     <form className='form form-hozitontal chat-box-container' onSubmit={ event => this.onSendClick(event) }>
@@ -112,6 +119,7 @@ Lobby.propTypes = {
     loading: PropTypes.bool,
     messages: PropTypes.array,
     news: PropTypes.array,
+    removeLobbyMessage: PropTypes.func,
     socket: PropTypes.object,
     user: PropTypes.object,
     users: PropTypes.array

@@ -188,5 +188,9 @@ export function connectLobby() {
         socket.on('nodestatus', status => {
             dispatch(nodeStatusReceived(status));
         });
+
+        socket.on('removemessage', messageId => {
+            dispatch(lobbyMessageReceived('removemessage', messageId));
+        });
     };
 }

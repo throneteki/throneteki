@@ -38,6 +38,14 @@ class LobbyChat extends React.Component {
         }, 500);
     }
 
+    onRemoveMessageClick(messageId, event) {
+        event.preventDefault();
+
+        if(this.props.onRemoveMessageClick) {
+            this.props.onRemoveMessageClick(messageId);
+        }
+    }
+
     getMessages() {
         const groupedMessages = {};
         let index = 0;
@@ -89,7 +97,13 @@ class LobbyChat extends React.Component {
                     return undefined;
                 }
 
-                return (<div key={ message.user.username + i++ } className='lobby-message'>{ message.message }</div>);
+                return (<div key={ message.user.username + i++ } className='lobby-message'>
+                    { message.message }
+                    { this.props.isModerator &&
+                        <a href='#' className='btn no-padding' onClick={ this.onRemoveMessageClick.bind(this, message._id) }>
+                            <span className='chat-delete glyphicon glyphicon-remove' />
+                        </a> }
+                </div>);
             });
 
             return (
@@ -112,7 +126,9 @@ class LobbyChat extends React.Component {
 
 LobbyChat.displayName = 'LobbyChat';
 LobbyChat.propTypes = {
-    messages: PropTypes.array
+    isModerator: PropTypes.bool,
+    messages: PropTypes.array,
+    onRemoveMessageClick: PropTypes.func
 };
 
 export default LobbyChat;
