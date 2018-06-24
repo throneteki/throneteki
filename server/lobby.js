@@ -666,7 +666,12 @@ class Lobby {
     }
 
     onClearSessions(socket, username) {
-        this.userService.clearUserSessions(username).then(() => {
+        this.userService.clearUserSessions(username).then(success => {
+            if(!success) {
+                logger.error(`Failed to clear sessions for user ${username}`, username);
+                return;
+            }
+
             let game = this.findGameForUser(username);
 
             if(game) {
