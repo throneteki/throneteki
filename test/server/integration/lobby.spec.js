@@ -17,7 +17,9 @@ describe('lobby', function() {
         this.cardService.getTitleCards.and.returnValue(Promise.resolve([]));
         this.cardService.getAllCards.and.returnValue(Promise.resolve([]));
 
-        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: {}, cardService: this.cardService, deckService: {}, userService: {}, router: this.routerSpy, config: {} });
+        this.messageService = jasmine.createSpyObj('messageService', ['on']);
+
+        this.lobby = new Lobby({}, { io: this.ioSpy, messageService: this.messageService, cardService: this.cardService, deckService: {}, userService: {}, router: this.routerSpy, config: {} });
         this.lobby.sockets[this.socketSpy.id] = this.socketSpy;
     });
 
