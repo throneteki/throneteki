@@ -132,12 +132,15 @@ class UserService {
     }
 
     clearUserSessions(username) {
-        return this.getUserByUsername(username).then(user => {
+        return new Promise(async (resolve, reject) => {
+            const user = this.getUserByUsername(username);
             if(!user) {
-                return;
+                return reject('User not found');
             }
 
-            this.sessions.remove({ session: { '$regex': new RegExp('^.*' + escapeRegex(user._id.toString()) + '.*$', 'i') } });
+            await this.users.update({ username: username }, { '$set': { tokens: [] } });
+
+            resolve(true);
         });
     }
 
