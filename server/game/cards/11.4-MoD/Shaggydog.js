@@ -40,7 +40,7 @@ class Shaggydog extends DrawCard {
         return true;
     }
 
-    onCancel(player) {
+    cancelSelection(player) {
         this.game.addAlert('danger', '{0} does not select a character to kill for {1}', player, this);
         return true;
     }
