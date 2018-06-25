@@ -36,6 +36,19 @@ function losesAllAspectEffect(aspect) {
     };
 }
 
+function challengeOptionEffect(key) {
+    return function() {
+        return {
+            apply: function(card) {
+                card.challengeOptions.add(key);
+            },
+            unapply: function(card) {
+                card.challengeOptions.remove(key);
+            }
+        };
+    };
+}
+
 const Effects = {
     setSetupGold: function(value) {
         return {
@@ -60,26 +73,8 @@ const Effects = {
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
-    doesNotKneelAsAttacker: function() {
-        return {
-            apply: function(card) {
-                card.challengeOptions.doesNotKneelAs.attacker = true;
-            },
-            unapply: function(card) {
-                card.challengeOptions.doesNotKneelAs.attacker = false;
-            }
-        };
-    },
-    doesNotKneelAsDefender: function() {
-        return {
-            apply: function(card) {
-                card.challengeOptions.doesNotKneelAs.defender = true;
-            },
-            unapply: function(card) {
-                card.challengeOptions.doesNotKneelAs.defender = false;
-            }
-        };
-    },
+    doesNotKneelAsAttacker: challengeOptionEffect('doesNotKneelAsAttacker'),
+    doesNotKneelAsDefender: challengeOptionEffect('doesNotKneelAsDefender'),
     consideredToBeAttacking: function() {
         return {
             apply: function(card, context) {
@@ -97,36 +92,9 @@ const Effects = {
             }
         };
     },
-    canBeDeclaredWithoutIcon: function() {
-        return {
-            apply: function(card) {
-                card.challengeOptions.canBeDeclaredWithoutIcon = true;
-            },
-            unapply: function(card) {
-                card.challengeOptions.canBeDeclaredWithoutIcon = false;
-            }
-        };
-    },
-    canBeDeclaredWhileKneeling: function() {
-        return {
-            apply: function(card) {
-                card.challengeOptions.canBeDeclaredWhileKneeling = true;
-            },
-            unapply: function(card) {
-                card.challengeOptions.canBeDeclaredWhileKneeling = false;
-            }
-        };
-    },
-    mustBeDeclaredAsDefender: function() {
-        return {
-            apply: function(card) {
-                card.challengeOptions.mustBeDeclaredAsDefender = true;
-            },
-            unapply: function(card) {
-                card.challengeOptions.mustBeDeclaredAsDefender = false;
-            }
-        };
-    },
+    canBeDeclaredWithoutIcon: challengeOptionEffect('canBeDeclaredWithoutIcon'),
+    canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
+    mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
@@ -321,16 +289,7 @@ const Effects = {
         let negatedCalculate = (card, context) => -(calculate(card, context) || 0);
         return Effects.dynamicStrength(negatedCalculate, 'decreaseStrength');
     },
-    doesNotContributeStrength: function() {
-        return {
-            apply: function(card) {
-                card.challengeOptions.doesNotContributeStrength = true;
-            },
-            unapply: function(card) {
-                card.challengeOptions.doesNotContributeStrength = false;
-            }
-        };
-    },
+    doesNotContributeStrength: challengeOptionEffect('doesNotContributeStrength'),
     doesNotReturnUnspentGold: function() {
         return {
             apply: function(player) {
