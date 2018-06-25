@@ -16,7 +16,11 @@ class ChallengeTracker {
                 max: 1
             }
         };
-        this.allowedChallenges = [];
+        this.allowedChallenges = [
+            new AllowedChallenge('military'),
+            new AllowedChallenge('intrigue'),
+            new AllowedChallenge('power')
+        ];
         this.challenges = [];
         this.restrictions = [];
 
@@ -32,19 +36,17 @@ class ChallengeTracker {
     }
 
     useAllowedChallenge(challenge) {
-        let index = this.allowedChallenges.findIndex(allowedChallenge => allowedChallenge.isMatch(challenge.challengeType, challenge.defendingPlayer));
-        if(index !== -1) {
-            this.allowedChallenges.splice(index, 1);
+        let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.isMatch(challenge.challengeType, challenge.defendingPlayer));
+        if(allowedChallenge) {
+            allowedChallenge.used = true;
         }
     }
 
     reset() {
         this.challenges = [];
-        this.allowedChallenges = [
-            new AllowedChallenge('military'),
-            new AllowedChallenge('intrigue'),
-            new AllowedChallenge('power')
-        ];
+        for(let allowedChallenge of this.allowedChallenges) {
+            allowedChallenge.used = false;
+        }
     }
 
     getChallenges() {
