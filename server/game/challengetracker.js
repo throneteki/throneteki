@@ -25,6 +25,13 @@ class ChallengeTracker {
 
     track(challenge) {
         this.challenges.push(challenge);
+
+        if(challenge.attackingPlayer === this.player) {
+            this.useAllowedChallenge(challenge);
+        }
+    }
+
+    useAllowedChallenge(challenge) {
         let index = this.allowedChallenges.findIndex(allowedChallenge => allowedChallenge.isMatch(challenge.challengeType, challenge.defendingPlayer));
         if(index !== -1) {
             this.allowedChallenges.splice(index, 1);
