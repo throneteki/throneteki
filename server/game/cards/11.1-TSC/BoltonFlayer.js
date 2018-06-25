@@ -7,7 +7,8 @@ class BoltonFlayer extends DrawCard {
                 onPhaseEnded: event => event.phase === 'challenge'
             },
             target: {
-                cardCondition: card => card.getType() === 'character' && card.getPrintedCost() === this.lowestPrintedCost()
+                cardCondition: card => card.getType() === 'character' && card.getPrintedCost() === this.lowestPrintedCost() &&
+                                       card.location === 'play area'
             },
             handler: context => {
                 this.game.killCharacter(context.target, { allowSave: false });
