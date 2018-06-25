@@ -261,5 +261,43 @@ describe('challenges phase', function() {
                 });
             });
         });
+
+        describe('disabling challenge buttons', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Winterfell Steward'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+                this.player1.clickCard('Winterfell Steward', 'hand');
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
+                // Initiate power challenge
+                this.player1.clickPrompt('Power');
+                this.player1.clickCard('Winterfell Steward', 'play area');
+                this.player1.clickPrompt('Done');
+                this.skipActionWindow();
+                this.player2.clickPrompt('Done');
+                this.skipActionWindow();
+                this.player1.clickPrompt('Apply Claim');
+            });
+
+            it('should disable the used challenge for the current player', function() {
+                expect(this.player1).toHaveDisabledPromptButton('Power');
+            });
+
+            it('should not disable the used challenge for the next player', function() {
+                this.player1.clickPrompt('Done');
+
+                expect(this.player2).toHavePromptButton('Power');
+            });
+        });
     });
 });
