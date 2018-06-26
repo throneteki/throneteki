@@ -11,7 +11,7 @@ class RickonStark extends DrawCard {
             handler: context => {
                 context.event.cancel();
 
-                this.game.addMessage('{0} sacrifices {1} to cancel {2}', this.controller, this, context.event.source);
+                this.game.addMessage('{0} sacrifices {1} to cancel {2}', context.player, this, context.event.source);
             }
         });
     }

@@ -22,7 +22,7 @@ class RooseBolton extends DrawCard {
             },
             handler: context => {
                 this.game.killCharacters(context.target);
-                this.game.addMessage('{0} sacrifices {1} to kill {2}', this.controller, this, context.target);
+                this.game.addMessage('{0} sacrifices {1} to kill {2}', context.player, this, context.target);
             }
         });
     }

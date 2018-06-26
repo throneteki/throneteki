@@ -21,7 +21,7 @@ class Ashemark extends DrawCard {
                 });
 
                 this.game.addMessage('{0} kneels and sacrifices {1} to return each character with printed cost {2} or less to its owner\'s hand',
-                    this.controller, this, context.cardStateWhenInitiated.tokens.gold);
+                    context.player, this, context.cardStateWhenInitiated.tokens.gold);
             }
         });
     }

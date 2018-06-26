@@ -10,7 +10,7 @@ class SpearsOfTheMerlingKing extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
                 this.game.addMessage('{0} sacrifices {1} to return {2} to their hand',
-                    this.controller, this, context.event.card);
+                    context.player, this, context.event.card);
                 context.replaceHandler(() => {
                     context.event.cardStateWhenKilled = context.event.card.createSnapshot();
                     this.controller.moveCard(context.event.card, 'hand');

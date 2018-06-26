@@ -17,7 +17,7 @@ class LionsTooth extends DrawCard {
                 cardCondition: card => card.getType() === 'character' && card.getPrintedCost() <= 3 && this.game.currentChallenge.isParticipating(card)
             },
             handler: context => {
-                this.game.addMessage('{0} sacrifices {1} to return {2} to its owner\'s hand', this.controller, this, context.target);
+                this.game.addMessage('{0} sacrifices {1} to return {2} to its owner\'s hand', context.player, this, context.target);
                 context.target.owner.returnCardToHand(context.target);
             }
         });

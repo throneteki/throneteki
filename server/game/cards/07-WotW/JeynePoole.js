@@ -7,9 +7,9 @@ class JeynePoole extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: card => (
+                cardCondition: (card, context) => (
                     card.location === 'discard pile' &&
-                    card.controller === this.controller &&
+                    card.controller === context.player &&
                     card.hasTrait('Lady') &&
                     card.getType() === 'character')
             },
