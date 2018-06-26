@@ -8,7 +8,7 @@ describe('leaving play', function() {
                 ]);
                 const deck2 = this.buildDeck('baratheon', [
                     'Trading with the Pentoshi',
-                    'Drogon', 'Dracarys!'
+                    'Drogon (Core)', 'Dracarys!'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);

@@ -4,7 +4,7 @@ describe('burn effects', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('baratheon', [
                     'Blood of the Dragon',
-                    'Drogon'
+                    'Drogon (Core)'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
@@ -40,7 +40,7 @@ describe('burn effects', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('baratheon', [
                     'Blood of the Dragon',
-                    'Drogon'
+                    'Drogon (Core)'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
@@ -82,7 +82,7 @@ describe('burn effects', function() {
                 ]);
                 const deck2 = this.buildDeck('targaryen', [
                     'A Noble Cause', 'Blood of the Dragon',
-                    'Drogon', 'Dracarys!', 'Astapor', 'Targaryen Loyalist', 'Braided Warrior', 'Viserion', 'Ser Lancel Lannister'
+                    'Drogon (Core)', 'Dracarys!', 'Astapor', 'Targaryen Loyalist', 'Braided Warrior', 'Viserion', 'Ser Lancel Lannister'
                 ]);
 
                 this.player1.selectDeck(deck1);
