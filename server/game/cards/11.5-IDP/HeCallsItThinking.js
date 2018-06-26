@@ -39,8 +39,10 @@ class HeCallsItThinking extends DrawCard {
     }
 
     prevent() {
+        let opponent = this.context.event.source.controller;
+        this.game.spendGold({ player: opponent, amount: 1 });
         this.game.addMessage('{0} plays {1} to try to cancel {2}, but {3} pays 1 gold to prevent the cancel',
-            this.context.player, this, this.context.event.source, this.context.event.source.controller);
+            this.context.player, this, this.context.event.source, opponent);
         return true;
     }
 }
