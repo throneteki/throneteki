@@ -748,5 +748,47 @@ describe('take control', function() {
                 expect(this.location).toBeControlledBy(this.player2);
             });
         });
+
+        describe('taking control of a card with power', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('greyjoy', [
+                    'A Noble Cause',
+                    // Add enough cards so that a winner isn't chosen by the players being decked
+                    'Small Council Chamber', 'Small Council Chamber', 'Small Council Chamber',
+                    'Small Council Chamber', 'Small Council Chamber', 'Small Council Chamber',
+                    'Sea Bitch', 'Sea Bitch', 'Sea Bitch',
+                    'Sea Bitch', 'Sea Bitch', 'Sea Bitch'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.seaBitch = this.player1.findCardByName('Sea Bitch', 'hand');
+                this.location = this.player2.findCardByName('Small Council Chamber', 'hand');
+
+                this.player1.clickCard(this.seaBitch);
+                this.player2.clickCard(this.location);
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                // Set power to 13
+                this.player1Object.faction.power = 13;
+
+                // Add 2 power to the location
+                this.location.power = 2;
+
+                // Steal the location
+                this.player1.clickMenu(this.seaBitch, 'Take control of location');
+                this.player1.clickCard(this.location);
+            });
+
+            it('should immediately win the game', function() {
+                expect(this.location).toBeControlledBy(this.player1);
+                expect(this.game.winner).toBe(this.player1Object);
+            });
+        });
     });
 });

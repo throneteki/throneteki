@@ -945,6 +945,7 @@ class Game extends EventEmitter {
             }
 
             this.raiseEvent('onCardTakenControl', { card: card });
+            this.checkWinCondition(player);
         });
     }
 
@@ -957,6 +958,7 @@ class Game extends EventEmitter {
         card.revertControl(source);
         card.controller.cardsInPlay.push(card);
         this.raiseEvent('onCardTakenControl', { card: card });
+        this.checkWinCondition(card.controller);
     }
 
     applyGameAction(actionType, cards, func, options = {}) {
