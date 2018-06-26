@@ -916,7 +916,7 @@ class Game extends EventEmitter {
         });
     }
 
-    takeControl(player, card) {
+    takeControl(player, card, source = null) {
         var oldController = card.controller;
         var newController = player;
 
@@ -934,7 +934,7 @@ class Game extends EventEmitter {
 
         this.applyGameAction('takeControl', card, card => {
             oldController.removeCardFromPile(card);
-            card.controller = newController;
+            card.takeControl(newController, source);
             newController.cardsInPlay.push(card);
 
             if(card.location !== 'play area') {
@@ -946,6 +946,17 @@ class Game extends EventEmitter {
 
             this.raiseEvent('onCardTakenControl', { card: card });
         });
+    }
+
+    revertControl(card, source) {
+        if(card.location !== 'play area') {
+            return;
+        }
+
+        card.controller.removeCardFromPile(card);
+        card.revertControl(source);
+        card.controller.cardsInPlay.push(card);
+        this.raiseEvent('onCardTakenControl', { card: card });
     }
 
     applyGameAction(actionType, cards, func, options = {}) {

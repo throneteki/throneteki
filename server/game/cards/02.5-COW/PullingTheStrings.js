@@ -29,7 +29,7 @@ class PullingTheStrings extends PlotCard {
         this.resolving = true;
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', player, this, card);
-        card.controller = player;
+        card.takeControl(player, this);
 
         let whenRevealed = card.getWhenRevealedAbility();
         if(whenRevealed) {
@@ -38,7 +38,7 @@ class PullingTheStrings extends PlotCard {
             this.game.resolveAbility(whenRevealed, context);
         }
         this.game.queueSimpleStep(() => {
-            card.controller = card.owner;
+            card.revertControl(this);
 
             this.resolving = false;
         });

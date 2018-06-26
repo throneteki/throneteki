@@ -644,14 +644,11 @@ const Effects = {
         return {
             apply: function(card, context) {
                 let finalController = typeof newController === 'function' ? newController() : newController;
-                context.takeControl = context.takeControl || {};
-                context.takeControl[card.uuid] = { originalController: card.controller };
-                context.game.takeControl(finalController, card);
+                context.game.takeControl(finalController, card, context.source);
                 context.game.addMessage('{0} uses {1} to take control of {2}', context.source.controller, context.source, card);
             },
             unapply: function(card, context) {
-                context.game.takeControl(context.takeControl[card.uuid].originalController, card);
-                delete context.takeControl[card.uuid];
+                context.game.revertControl(card, context.source);
             }
         };
     },
