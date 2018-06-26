@@ -9,7 +9,7 @@ class StinkingDrunk extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
-                this.game.addMessage('{0} sacrifices {1} to kneel {2}', this.controller, this, context.event.card);
+                this.game.addMessage('{0} sacrifices {1} to kneel {2}', context.player, this, context.event.card);
                 context.event.card.controller.kneelCard(context.event.card);
             }
         });

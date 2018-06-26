@@ -15,7 +15,7 @@ class ScorchingDeserts extends DrawCard {
             handler: context => {
                 this.game.currentChallenge.removeFromChallenge(context.event.card);
                 this.game.addMessage('{0} kneels and sacrifices {1} to remove {2} from the challenge',
-                    this.controller, this, context.event.card);
+                    context.player, this, context.event.card);
             }
         });
     }

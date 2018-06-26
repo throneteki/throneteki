@@ -19,7 +19,7 @@ class WinterfellCrypt extends DrawCard {
                     effect: ability.effects.shuffleIntoDeckIfStillInPlay()
                 }));
 
-                this.game.addMessage('{0} sacrifices {1} to choose {2}', this.controller, this, context.target);
+                this.game.addMessage('{0} sacrifices {1} to choose {2}', context.player, this, context.target);
             }
         });
     }

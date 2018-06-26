@@ -13,7 +13,7 @@ class Harrenhal extends DrawCard {
             handler: context => {
                 context.event.card.controller.killCharacter(context.event.card);
                 this.game.addMessage('{0} sacrifices {1} and kneels their faction card to kill {2}',
-                    this.controller, this, context.event.card);
+                    context.player, this, context.event.card);
             }
         });
     }

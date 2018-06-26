@@ -17,12 +17,12 @@ class Craster extends DrawCard {
             title: 'Sacrifice to resurrect',
             cost: ability.costs.sacrificeSelf(),
             condition: () => this.tracker.anyKilled(),
-            handler: () => {
+            handler: context => {
                 let characters = this.tracker.killedThisPhase.filter(card => card.location === 'dead pile');
                 _.each(characters, character => {
                     character.owner.putIntoPlay(character);
                 });
-                this.game.addMessage('{0} sacrifices {1} to put into play each character killed this phase', this.controller, this);
+                this.game.addMessage('{0} sacrifices {1} to put into play each character killed this phase', context.player, this);
             }
         });
     }

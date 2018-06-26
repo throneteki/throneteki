@@ -7,14 +7,14 @@ class DreadfortMaester extends DrawCard {
                 onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller && ['military', 'intrigue'].includes(event.challenge.challengeType)
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: () => {
+            handler: context => {
                 this.untilEndOfChallenge(ability => ({
-                    match: card => card === this.controller.activePlot,
+                    match: card => card === context.player.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
 
                 this.game.addMessage('{0} sacrifices {1} to raise the claim value on their revealed plot card by 1 until the end of the challenge',
-                    this.controller, this);
+                    context.player, this);
             }
         });
     }
