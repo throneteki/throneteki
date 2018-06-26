@@ -12,6 +12,7 @@ class DiscardToReservePrompt extends BaseStep {
         this.remainingPlayers = _.reject(this.remainingPlayers, player => player.isBelowReserve());
 
         if(_.isEmpty(this.remainingPlayers)) {
+            this.game.raiseEvent('onReserveChecked');
             return true;
         }
 
