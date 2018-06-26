@@ -32,14 +32,7 @@ class DrawCard extends BaseCard {
         this.inDanger = false;
         this.wasAmbush = false;
         this.saved = false;
-        this.challengeOptions = {
-            doesNotContributeStrength: false,
-            doesNotKneelAs: {
-                attacker: false,
-                defender: false
-            },
-            mustBeDeclaredAsDefender: false
-        };
+        this.challengeOptions = new ReferenceCountedSetProperty();
         this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
@@ -392,8 +385,8 @@ class DrawCard extends BaseCard {
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             !this.stealth &&
-            (!this.kneeled || this.challengeOptions.canBeDeclaredWhileKneeling) &&
-            (this.hasIcon(challengeType) || this.challengeOptions.canBeDeclaredWithoutIcon)
+            (!this.kneeled || this.challengeOptions.contains('canBeDeclaredWhileKneeling')) &&
+            (this.hasIcon(challengeType) || this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
         );
     }
 
