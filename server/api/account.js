@@ -299,6 +299,10 @@ module.exports.init = function(server) {
             return res.send({ success: false, message: 'Invalid username/password' });
         }
 
+        if(!user.verified) {
+            return res.send({ success: false, message: 'You must verifiy your account before trying to log in' });
+        }
+
         let isValidPassword;
         try {
             isValidPassword = await verifyPassword(req.body.password, user.password);
@@ -498,7 +502,7 @@ module.exports.init = function(server) {
         let safeUser = updatedUser.getWireSafeDetails();
         let authToken;
 
-        if(!safeUser.disabled) {
+        if(!safeUser.disabled && !safeUser.verified) {
             authToken = jwt.sign(safeUser, config.secret, { expiresIn: '5m' });
         }
 
