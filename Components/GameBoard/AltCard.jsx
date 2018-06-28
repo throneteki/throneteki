@@ -59,7 +59,7 @@ class AltCard extends React.Component {
                 </div>
                 <div className='card-text'>
                     <div className='card-traits'>{ this.props.card.traits.join('. ') }{ this.props.card.traits.length > 0 ? '.' : null }</div>
-                    <span class='text-inner' dangerouslySetInnerHTML={ {__html: cardText } }/> { /* eslint-disable-line */ }
+                    <span className='text-inner' dangerouslySetInnerHTML={ { __html: cardText } } /> { /* eslint-disable-line */ }
                     { ['attachment'].includes(this.props.card.type) && <div className='card-name'>{ this.props.card.unique ? <span className='card-unique' /> : null } { this.props.card.name }</div> }
                 </div>
                 { this.props.card.type === 'plot' && <div className='plot-reserve'>{ this.props.card.plotStats.reserve }</div> }
@@ -68,7 +68,7 @@ class AltCard extends React.Component {
     }
 }
 
-AltCard.displayName = 'CardText';
+AltCard.displayName = 'AltCard';
 AltCard.propTypes = {
     card: PropTypes.object
 };

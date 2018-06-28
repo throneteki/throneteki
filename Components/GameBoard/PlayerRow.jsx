@@ -198,7 +198,7 @@ class PlayerRow extends React.Component {
             { ...cardPileProps } />);
         let shadows = (<CardPile className='shadows' title='Shadows' source='shadows' cards={ [...this.props.shadows].reverse() }
             hiddenTopCard={ !(this.props.isMe || this.props.spectating && this.props.showHand) }
-            disablePopup={ !(this.props.isMe || this.props.spectating && this.props.showHand) }
+            disablePopup={ false }
             { ...cardPileProps } />);
 
         return (
