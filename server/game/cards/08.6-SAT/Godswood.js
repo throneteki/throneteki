@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class Godswood extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,8 +16,8 @@ class Godswood extends DrawCard {
                 let cards = this.controller.activePlot.getClaim();
                 cards = this.controller.drawCardsToHand(cards).length;
 
-                this.game.addMessage('{0} kneels {1} to draw {2} {3}',
-                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
+                this.game.addMessage('{0} kneels {1} to draw {2}',
+                    this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
     }

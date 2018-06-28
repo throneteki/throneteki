@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class StarfallCavalry extends DrawCard {
     setupCardAbilities() {
@@ -10,7 +11,7 @@ class StarfallCavalry extends DrawCard {
                 let cards = this.controller.getNumberOfUsedPlots() >= 3 ? 3 : 1;
                 cards = this.controller.drawCardsToHand(cards).length;
 
-                this.game.addMessage('{0} uses {1} to draw {2} card{3}', this.controller, this, cards, cards > 1 ? 's' : '');
+                this.game.addMessage('{0} uses {1} to draw {2}', this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
     }

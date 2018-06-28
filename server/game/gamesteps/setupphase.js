@@ -1,11 +1,10 @@
-const pluralize = require('pluralize');
-
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const KeepOrMulliganPrompt = require('./setup/keepormulliganprompt.js');
 const SetupCardsPrompt = require('./setup/setupcardsprompt.js');
 const CheckAttachmentsPrompt = require('./setup/checkattachmentsprompt.js');
 const RookerySetupPrompt = require('./setup/RookerySetupPrompt');
+const TextHelper = require('../TextHelper');
 
 class SetupPhase extends Phase {
     constructor(game) {
@@ -77,7 +76,7 @@ class SetupPhase extends Phase {
             let cards = [...player.cardsInPlay];
 
             if(cardsInShadow > 0) {
-                cards.push(`${pluralize('card', cardsInShadow, true)} into shadows`);
+                cards.push(`${TextHelper.count(cardsInShadow, 'card')} into shadows`);
             }
 
             if(cards.length === 0) {

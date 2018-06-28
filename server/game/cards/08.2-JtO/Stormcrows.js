@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class Stormcrows extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,7 +13,7 @@ class Stormcrows extends DrawCard {
                 this.game.promptForSelect(this.controller, {
                     mode: 'exactly',
                     numCards: xValue,
-                    activePromptTitle: 'Select ' + (xValue === 1 ? 'a' : xValue) + ' character' + (xValue === 1 ? '' : 's'),
+                    activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.getType() === 'character',
                     onSelect: (player, cards) => this.targetsSelected(player, cards, xValue)
@@ -30,7 +31,7 @@ class Stormcrows extends DrawCard {
 
         this.game.addMessage('{0} discards {1} gold from {2} to give -1 STR to {3} until the end of the phase',
             player, xValue, this, cards);
-        
+
         return true;
     }
 }

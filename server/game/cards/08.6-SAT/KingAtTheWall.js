@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class KingAtTheWall extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,8 +21,8 @@ class KingAtTheWall extends DrawCard {
                 let cards = this.numberOfOutOfFactionLocations();
                 cards = this.controller.drawCardsToHand(cards).length;
 
-                this.game.addMessage('{0} uses {1} to draw {2} {3}',
-                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
+                this.game.addMessage('{0} uses {1} to draw {2}',
+                    this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
     }

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class OldtownScholar extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,8 +12,8 @@ class OldtownScholar extends DrawCard {
             handler: context => {
                 let numToDraw = context.event.cards.length;
                 let drawn = context.player.drawCardsToHand(numToDraw);
-                this.game.addMessage('{0} kneels {1} to draw {2} card{3}',
-                    context.player, this, drawn.length, drawn.length > 1 ? 's' : '');
+                this.game.addMessage('{0} kneels {1} to draw {2}',
+                    context.player, this, TextHelper.count(drawn.length, 'card'));
 
             }
         });
