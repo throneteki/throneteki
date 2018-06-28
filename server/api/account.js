@@ -299,10 +299,6 @@ module.exports.init = function(server) {
             return res.send({ success: false, message: 'Invalid username/password' });
         }
 
-        if(!user.verified) {
-            return res.send({ success: false, message: 'You must verifiy your account before trying to log in' });
-        }
-
         let isValidPassword;
         try {
             isValidPassword = await verifyPassword(req.body.password, user.password);
@@ -314,6 +310,10 @@ module.exports.init = function(server) {
 
         if(!isValidPassword) {
             return res.send({ success: false, message: 'Invalid username/password' });
+        }
+
+        if(!user.verified) {
+            return res.send({ success: false, message: 'You must verifiy your account before trying to log in' });
         }
 
         let userObj = user.getWireSafeDetails();

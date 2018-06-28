@@ -57,6 +57,10 @@ class User {
         return this.userData.enableGravatar;
     }
 
+    get verified() {
+        return this.userData.verified;
+    }
+
     getWireSafeDetails() {
         let user = {
             _id: this.userData._id,
