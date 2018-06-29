@@ -45,3 +45,5 @@ from repository's root.
 ### Build Status
 
 [![Travis Build](https://travis-ci.com/throneteki/throneteki-client.svg?branch=master)](https://travis-ci.com/throneteki/throneteki-client)
+
+[<img src="https://i.imgur.com/nueXOvG.png" width="80" height="20">](https://browserstack.com)
