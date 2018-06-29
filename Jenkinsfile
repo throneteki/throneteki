@@ -3,12 +3,15 @@ pipeline {
 
     parameters {
         booleanParam(name: 'DEPLOY', defaultValue: false, description: 'Use this build for deployment.')
+        booleanParam(name: 'DEV_DEPLOY', defaultValue: false, description: 'Use this build for deployment to the development environment.')
     }
 
     environment {
         GIT_EMAIL = sh (script: 'git --no-pager show -s --format=\'%ae\'', returnStdout: true).trim()
         GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
         GIT_NAME=sh (script: 'git --no-pager show -s --format=\'%an\'', returnStdout: true).trim()
+        DEPLOY_PATH = '${DEPLOY_PATH}'
+        INSTANCE_NAME = 'lobby'
     }
 
     stages {
@@ -35,13 +38,20 @@ pipeline {
 
         stage('Deploy') {
             when {
-                expression { params.DEPLOY == true }
+                expression { params.DEPLOY == true || params.DEV_DEPLOY == true }
             }
             steps {
-                sh 'scp -r index.js package.json version.js server views node_modules throneteki-json-data jenkins@theironthrone.net:/var/lib/throneteki/'
-                sh 'ssh jenkins@theironthrone.net mkdir -p /var/lib/throneteki/server/logs'
-                sh 'ssh jenkins@theironthrone.net cd /var/lib/throneteki && node server/scripts/fetchdata.js'
-                sh 'ssh jenkins@theironthrone.net pm2 restart lobby'
+                script {
+                    if( params.DEV_DEPLOY == true ){
+                        DEPLOY_PATH='${DEPLOY_PATH}-dev'
+                        INSTANCE_NAME='lobby-dev'
+                    }
+                }
+
+                sh "scp -r index.js package.json version.js server views node_modules throneteki-json-data jenkins@theironthrone.net:${DEPLOY_PATH}/"
+                sh "ssh jenkins@theironthrone.net mkdir -p ${DEPLOY_PATH}/server/logs"
+                sh "ssh jenkins@theironthrone.net cd ${DEPLOY_PATH} && node server/scripts/fetchdata.js"
+                sh "ssh jenkins@theironthrone.net pm2 restart ${INSTANCE_NAME}"
             }
         }
     }
