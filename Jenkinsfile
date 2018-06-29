@@ -10,7 +10,7 @@ pipeline {
         GIT_EMAIL = sh (script: 'git --no-pager show -s --format=\'%ae\'', returnStdout: true).trim()
         GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
         GIT_NAME=sh (script: 'git --no-pager show -s --format=\'%an\'', returnStdout: true).trim()
-        DEPLOY_PATH = '${DEPLOY_PATH}'
+        DEPLOY_PATH = '/var/lib/throneteki'
         INSTANCE_NAME = 'lobby'
     }
 
@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     if( params.DEV_DEPLOY == true ){
-                        DEPLOY_PATH='${DEPLOY_PATH}-dev'
+                        DEPLOY_PATH="${DEPLOY_PATH}-dev"
                         INSTANCE_NAME='lobby-dev'
                     }
                 }
