@@ -207,6 +207,10 @@ class Player extends Spectator {
         return this.plotDiscard.length + this.usedPlotsModifier;
     }
 
+    getPlots() {
+        return this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
+    }
+
     addGoldSource(source) {
         this.goldSources.unshift(source);
     }

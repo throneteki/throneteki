@@ -15,7 +15,7 @@ class BeneathTheBridgeOfDream extends DrawCard {
                 }
                 // Delay picking the plot until the async recycle above resolves
                 this.game.queueSimpleStep(() => {
-                    let plot = sample(this.controller.plotDeck);
+                    let plot = sample(this.controller.getPlots());
                     this.untilEndOfPhase(ability => ({
                         targetType: 'player',
                         targetController: 'current',
