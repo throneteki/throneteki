@@ -24,7 +24,7 @@ if(config.emailKey) {
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
-        bcrypt.hash(password, rounds, function(err, hash) {
+        bcrypt.hash(password, rounds, function (err, hash) {
             if(err) {
                 return reject(err);
             }
@@ -36,7 +36,7 @@ function hashPassword(password, rounds) {
 
 function verifyPassword(password, dbPassword) {
     return new Promise((resolve, reject) => {
-        bcrypt.compare(password, dbPassword, function(err, valid) {
+        bcrypt.compare(password, dbPassword, function (err, valid) {
             if(err) {
                 return reject(err);
             }
@@ -80,7 +80,7 @@ function validateEmail(email) {
         return 'You must specify an email address';
     }
 
-    if(!email.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)) {
+    if(!email.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
         return 'Please enter a valid email address';
     }
 
@@ -113,7 +113,7 @@ function writeFile(path, data, opts = 'utf8') {
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
-module.exports.init = function(server) {
+module.exports.init = function (server) {
     server.post('/api/account/register', wrapAsync(async (req, res, next) => {
         let message = validateUserName(req.body.username);
         if(message) {
@@ -271,7 +271,7 @@ module.exports.init = function(server) {
         res.send({ success: true });
     }));
 
-    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function(req, res) {
+    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function (req, res) {
         let user = new User(req.user).getWireSafeDetails();
 
         res.send({ success: true, user: user });
