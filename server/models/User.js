@@ -21,12 +21,12 @@ class User {
         return this.userData.tokens;
     }
 
-    get activiationToken() {
-        return this.userData.activiationToken;
+    get activationToken() {
+        return this.userData.activationToken;
     }
 
-    get activiationTokenExpiry() {
-        return this.userData.activiationTokenExpiry;
+    get activationTokenExpiry() {
+        return this.userData.activationTokenExpiry;
     }
 
     get resetToken() {
