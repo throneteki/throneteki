@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class FeverDreams extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,8 +11,8 @@ class FeverDreams extends DrawCard {
             cost: ability.costs.discardGold(),
             handler: () => {
                 let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage('{0} discards a gold from {1} to draw {2} {3}',
-                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
+                this.game.addMessage('{0} discards a gold from {1} to draw {2}',
+                    this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
     }

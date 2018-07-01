@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class SecretSchemes extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,8 +11,8 @@ class SecretSchemes extends DrawCard {
                 let cards = this.controller.getNumberOfUsedPlots();
                 cards = this.controller.drawCardsToHand(cards).length;
 
-                this.game.addMessage('{0} plays {1} and kneels their faction card to draw {2} {3}',
-                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
+                this.game.addMessage('{0} plays {1} and kneels their faction card to draw {2}',
+                    this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
     }

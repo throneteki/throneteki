@@ -1,6 +1,7 @@
 const _ = require('underscore');
 
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class MeleeAtBitterbridge extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,7 +14,7 @@ class MeleeAtBitterbridge extends DrawCard {
                 this.game.promptForSelect(this.controller, {
                     mode: 'exactly',
                     numCards: xValue,
-                    activePromptTitle: 'Select ' + (xValue === 1 ? 'a' : xValue) + ' character' + (xValue === 1 ? '' : 's'),
+                    activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
                     cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card),
                     onSelect: (player, cards) => this.targetsSelected(player, cards, context.goldCost)

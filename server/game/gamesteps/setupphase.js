@@ -4,6 +4,7 @@ const KeepOrMulliganPrompt = require('./setup/keepormulliganprompt.js');
 const SetupCardsPrompt = require('./setup/setupcardsprompt.js');
 const CheckAttachmentsPrompt = require('./setup/checkattachmentsprompt.js');
 const RookerySetupPrompt = require('./setup/RookerySetupPrompt');
+const TextHelper = require('../TextHelper');
 
 class SetupPhase extends Phase {
     constructor(game) {
@@ -17,6 +18,7 @@ class SetupPhase extends Phase {
             new KeepOrMulliganPrompt(game),
             new SimpleStep(game, () => this.startGame()),
             new SetupCardsPrompt(game),
+            new SimpleStep(game, () => this.announceSetupCards()),
             new SimpleStep(game, () => this.setupDone()),
             new CheckAttachmentsPrompt(game),
             new SimpleStep(game, () => game.activatePersistentEffects())
@@ -65,6 +67,23 @@ class SetupPhase extends Phase {
     startGame() {
         for(const player of this.game.getPlayers()) {
             player.startGame();
+        }
+    }
+
+    announceSetupCards() {
+        for(const player of this.game.getPlayers()) {
+            let cardsInShadow = player.shadows.length;
+            let cards = [...player.cardsInPlay];
+
+            if(cardsInShadow > 0) {
+                cards.push(`${TextHelper.count(cardsInShadow, 'card')} into shadows`);
+            }
+
+            if(cards.length === 0) {
+                this.game.addMessage('{0} does not set up any cards', player);
+            } else {
+                this.game.addMessage('{0} sets up {1}', player, cards);
+            }
         }
     }
 

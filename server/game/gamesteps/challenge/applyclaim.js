@@ -1,5 +1,6 @@
 const BaseStep = require('../basestep.js');
 const FulfillMilitaryClaim = require('./fulfillmilitaryclaim.js');
+const TextHelper = require('../../TextHelper');
 
 class ApplyClaim extends BaseStep {
     constructor(game, claim) {
@@ -35,13 +36,11 @@ class ApplyClaim extends BaseStep {
     processClaimAgainstPlayer(claimRecipient) {
         switch(this.claim.challengeType) {
             case 'military':
-                this.game.addMessage('{0} claim is applied.  {1} must kill {2} character{3}', this.claim.challengeType, claimRecipient, this.claim.value,
-                    this.claim.value > 1 ? 's' : '');
+                this.game.addMessage('{0} claim is applied.  {1} must kill {2}', this.claim.challengeType, claimRecipient, TextHelper.count(this.claim.value, 'character'));
                 this.game.queueStep(new FulfillMilitaryClaim(this.game, claimRecipient, this.claim.value));
                 break;
             case 'intrigue':
-                this.game.addMessage('{0} claim is applied.  {1} must discard {2} card{3} at random', this.claim.challengeType, claimRecipient, this.claim.value,
-                    this.claim.value > 1 ? 's' : '');
+                this.game.addMessage('{0} claim is applied.  {1} must discard {2} at random', this.claim.challengeType, claimRecipient, TextHelper.count(this.claim.value, 'card'));
                 claimRecipient.discardAtRandom(this.claim.value);
                 break;
             case 'power': {

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class ThreeFingerHobb extends DrawCard {
     setupCardAbilities() {
@@ -8,8 +9,8 @@ class ThreeFingerHobb extends DrawCard {
             },
             handler: context => {
                 let numDrawn = context.player.drawCardsToHand(2).length;
-                this.game.addMessage('{0} uses {1} to draw {2} {3}',
-                    context.player, this, numDrawn, numDrawn > 1 ? 'cards' : 'card');
+                this.game.addMessage('{0} uses {1} to draw {2}',
+                    context.player, this, TextHelper.count(numDrawn, 'card'));
             }
         });
     }

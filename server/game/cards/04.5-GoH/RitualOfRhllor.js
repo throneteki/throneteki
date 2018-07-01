@@ -1,6 +1,7 @@
 const _ = require('underscore');
 
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class RitualOfRhllor extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,7 +16,7 @@ class RitualOfRhllor extends DrawCard {
                     mode: 'exactly',
                     numCards: xValue,
                     gameAction: 'gainPower',
-                    activePromptTitle: 'Select ' + (xValue === 1 ? 'a' : xValue) + ' character' + (xValue === 1 ? '' : 's'),
+                    activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
                     cardCondition: card => card.location === 'play area' && !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',
                     onSelect: (player, cards) => this.targetsSelected(player, cards, context.goldCost)

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class FuneralPyre extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,8 +12,8 @@ class FuneralPyre extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 let cards = this.controller.drawCardsToHand(3).length;
-                this.game.addMessage('{0} uses {1} to draw {2} {3}',
-                    this.controller, this, cards, cards > 1 ? 'cards' : 'card');
+                this.game.addMessage('{0} uses {1} to draw {2}',
+                    this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
     }

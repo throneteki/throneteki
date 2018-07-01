@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const TextHelper = require('./TextHelper');
 
 class ChatCommands {
     constructor(game) {
@@ -209,7 +210,7 @@ class ChatCommands {
     discard(player, args) {
         var num = this.getNumberOrDefault(args[1], 1);
 
-        this.game.addAlert('danger', '{0} uses the /discard command to discard {1} card{2} at random', player, num, num > 1 ? 's' : '');
+        this.game.addAlert('danger', '{0} uses the /discard command to discard {1} at random', player, TextHelper.count(num, 'card'));
 
         player.discardAtRandom(num);
     }

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class ToGoForwardYouMustGoBack extends DrawCard {
     setupCardAbilities() {
@@ -46,8 +47,8 @@ class ToGoForwardYouMustGoBack extends DrawCard {
         player.shuffleDrawDeck();
         let cards = player.drawCardsToHand(5).length;
 
-        this.game.addMessage('{0} uses {1} to shuffle their hand into their draw deck and draw {2} {3}',
-            this.controller, this, cards, cards > 1 ? 'cards' : 'card');
+        this.game.addMessage('{0} uses {1} to shuffle their hand into their draw deck and draw {2}',
+            this.controller, this, TextHelper.count(cards, 'card'));
         this.proceedToNextStep();
         return true;
     }

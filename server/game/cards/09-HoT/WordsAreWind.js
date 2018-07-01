@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const TextHelper = require('../../TextHelper');
 
 class WordsAreWind extends DrawCard {
     setupCardAbilities() {
@@ -35,8 +36,8 @@ class WordsAreWind extends DrawCard {
 
     draw() {
         let cards = this.context.player.drawCardsToHand(2).length;
-        this.game.addMessage('{0} chooses to have {1} draw {2} {3} for {4}',
-            this.context.event.player, this.context.player, cards, cards > 1 ? 's' : '', this);
+        this.game.addMessage('{0} chooses to have {1} draw {2} for {3}',
+            this.context.event.player, this.context.player, TextHelper.count(cards, 'card'), this);
         return true;
     }
 }
