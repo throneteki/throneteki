@@ -20,3 +20,27 @@ Feature: Account API - Activate endpoint
         And I set the 'id' to '123456789012345678901234'
         And I submit the API request to the 'account/activate' endpoint
         Then I should get a 'An error occured activating your account, check the url you have entered and try again.' failure response
+
+    Scenario: Unexpected activation
+        When I set the 'token' to 'sometoken'
+        And I set the id to an existing user not expecting validation
+        And I submit the API request to the 'account/activate' endpoint
+        Then I should get a 'An error occured activating your account, check the url you have entered and try again.' failure response
+
+# Scenario: Activating an expired token
+#     When I set the id to an existing user
+#     And I set the token to expired
+#     And I submit the API request to the 'account/activate' endpoint
+    #     Then I should get a 'The activation token you have provided has expired.' failure response
+
+    Scenario: Invalid token
+        When I set the id to an existing user
+        And I set the 'token' to 'invalidtoken'
+        And I submit the API request to the 'account/activate' endpoint
+        Then I should get a 'An error occured activating your account, check the url you have entered and try again.' failure response
+
+    Scenario: Valid token for valid user
+        When I set the id to an existing user
+        And I set the token to the correct token
+        And I submit the API request to the 'account/activate' endpoint
+        Then The user should be activated
