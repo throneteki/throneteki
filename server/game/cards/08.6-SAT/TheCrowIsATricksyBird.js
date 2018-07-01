@@ -12,7 +12,7 @@ class TheCrowIsATricksyBird extends DrawCard {
                 this.game.addMessage('{0} plays {1} and kneels their faction card to look at {2}\'s plot deck',
                     context.player, this, context.opponent);
 
-                let validPlots = context.opponent.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
+                let validPlots = context.opponent.getPlots();
                 let buttons = validPlots.map(card => {
                     return { method: 'cardSelected', card: card, mapCard: true };
                 });
