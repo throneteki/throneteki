@@ -174,7 +174,7 @@ module.exports.init = function (server) {
         let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
         let hmac = crypto.createHmac('sha512', config.hmacSecret);
 
-        let activiationToken = hmac.update(`ACTIVATE ${req.body.username} ${formattedExpiration}`).digest('hex');
+        let activationToken = hmac.update(`ACTIVATE ${req.body.username} ${formattedExpiration}`).digest('hex');
 
         let newUser = {
             password: passwordHash,
@@ -183,13 +183,13 @@ module.exports.init = function (server) {
             email: req.body.email,
             enableGravatar: req.body.enableGravatar,
             verified: false,
-            activiationToken: activiationToken,
-            activiationTokenExpiry: formattedExpiration,
+            activationToken: activationToken,
+            activationTokenExpiry: formattedExpiration,
             registerIp: req.get('x-real-ip')
         };
 
         user = await userService.addUser(newUser);
-        let url = `https://theironthrone.net/activation?id=${user._id}&token=${activiationToken}`;
+        let url = `https://theironthrone.net/activation?id=${user._id}&token=${activationToken}`;
         let emailText = `Hi,\n\nSomeone, hopefully you, has requested an account to be created on The Iron Throne (https://theironthrone.net).  If this was you, click this link ${url} to complete the process.\n\n` +
             'If you did not request this please disregard this email.\n' +
             'Kind regards,\n\n' +
@@ -218,7 +218,7 @@ module.exports.init = function (server) {
             return next();
         }
 
-        if(!user.activiationToken) {
+        if(!user.activationToken) {
             logger.error('Got unexpected activate request for user', user.username);
 
             res.send({ success: false, message: 'An error occured activating your account, check the url you have entered and try again.' });
@@ -227,7 +227,7 @@ module.exports.init = function (server) {
         }
 
         let now = moment();
-        if(user.activiationTokenExpiry < now) {
+        if(user.activationTokenExpiry < now) {
             res.send({ success: false, message: 'The activation token you have provided has expired.' });
 
             logger.error('Token expired', user.username);
@@ -236,7 +236,7 @@ module.exports.init = function (server) {
         }
 
         let hmac = crypto.createHmac('sha512', config.hmacSecret);
-        let resetToken = hmac.update('ACTIVATE ' + user.username + ' ' + user.activiationTokenExpiry).digest('hex');
+        let resetToken = hmac.update('ACTIVATE ' + user.username + ' ' + user.activationTokenExpiry).digest('hex');
 
         if(resetToken !== req.body.token) {
             logger.error('Invalid activation token', user.username, req.body.token);
