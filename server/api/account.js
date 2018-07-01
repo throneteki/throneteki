@@ -207,6 +207,10 @@ module.exports.init = function (server) {
             return res.send({ success: false, message: 'Invalid parameters' });
         }
 
+        if(!req.body.id.match(/^[a-f\d]{24}$/i)) {
+            return res.send({ success: false, message: 'Invalid parameters' });
+        }
+
         let user = await userService.getUserById(req.body.id);
         if(!user) {
             res.send({ success: false, message: 'An error occured activating your account, check the url you have entered and try again.' });
