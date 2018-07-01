@@ -178,13 +178,17 @@ class PlayerRow extends React.Component {
 
         let hand = (<PlayerHand
             cards={ this.props.hand }
+            className='hand'
             isMe={ this.props.isMe }
             username={ this.props.username }
+            maxCards={ 5 }
             onCardClick={ this.props.onCardClick }
             onMouseOut={ this.props.onMouseOut }
             onMouseOver={ this.props.onMouseOver }
             showHand={ this.props.showHand }
+            source='hand'
             spectating={ this.props.spectating }
+            title='Hand'
             cardSize={ this.props.cardSize } />);
         let drawDeck = (<CardPile className='draw' title='Draw' source='draw deck' cards={ this.props.drawDeck }
             disablePopup={ this.props.spectating || !this.props.isMe }
@@ -196,10 +200,20 @@ class PlayerRow extends React.Component {
         let deadPile = (<CardPile className='dead' title='Dead' source='dead pile' cards={ this.props.deadPile }
             orientation='kneeled'
             { ...cardPileProps } />);
-        let shadows = (<CardPile className='shadows' title='Shadows' source='shadows' cards={ [...this.props.shadows].reverse() }
-            hiddenTopCard={ !(this.props.isMe || this.props.spectating && this.props.showHand) }
-            disablePopup={ false }
-            { ...cardPileProps } />);
+        let shadows = (<PlayerHand
+            cards={ this.props.shadows }
+            cardSize={ this.props.cardSize }
+            className='shadows'
+            isMe={ this.props.isMe }
+            maxCards={ 2 }
+            onCardClick={ this.props.onCardClick }
+            onMouseOut={ this.props.onMouseOut }
+            onMouseOver={ this.props.onMouseOver }
+            showHand={ this.props.showHand }
+            source='shadows'
+            spectating={ this.props.spectating }
+            title='Shadows'
+            username={ this.props.username } />);
 
         return (
             <div className='player-home-row-container'>

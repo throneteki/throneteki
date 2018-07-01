@@ -265,7 +265,7 @@ class InnerCard extends React.Component {
             'kneeled': this.props.card.type !== 'plot' && (this.props.orientation === 'kneeled' || this.props.card.kneeled || this.props.orientation === 'horizontal')
         });
 
-        let image = <img className={ imageClass } src={ '/img/cards/' + (!this.isFacedown() ? (this.props.card.code + '.png') : 'cardback.jpg') } />;
+        let image = <img className={ imageClass } src={ this.imageUrl } />;
 
         let content = this.props.connectDragSource(
             <div className='card-frame'>
@@ -285,6 +285,18 @@ class InnerCard extends React.Component {
             </div>);
 
         return this.props.connectDragPreview(content);
+    }
+
+    get imageUrl() {
+        let image = 'cardback.jpg';
+
+        if(!this.isFacedown()) {
+            image = `${this.props.card.code}.png`;
+        } else if(this.props.source === 'shadows') {
+            image = 'cardback_shadow.png';
+        }
+
+        return '/img/cards/' + image;
     }
 
     get sizeClass() {

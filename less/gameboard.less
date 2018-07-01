@@ -336,17 +336,6 @@
   }
 }
 
-.shadows {
-  .popup {
-    min-height: 146px;
-
-    .inner {
-      .calculate-tiled-card-prop(min-height, 1, height);
-      .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
-    }
-  }
-}
-
 .discard {
   .popup {
     min-height: 146px;
@@ -364,12 +353,6 @@
       .calculate-tiled-card-prop(min-height, 1, height);
       .calculate-tiled-card-prop(width, 5, width, @scrollbar-width);
     }
-  }
-}
-
-.hand {
-  .card-wrapper {
-    margin: 0 5px 0 0;
   }
 }
 
@@ -563,50 +546,23 @@ span.down-arrow {
   display: flex;
 }
 
-.hand {
-  &.small {
-    height: @card-sm-height;
-    width: @card-sm-width * 5 + (5 * 5);
-
-    &.squish {
-      width: @card-sm-width * 5;
-    }
-  }
-
-  &.large {
-    height: @card-lg-height;
-    width: @card-lg-width * 5 + (5 * 5);
-
-    &.squish {
-      width: @card-lg-width * 5;
-    }
-  }
-
-  &.x-large {
-    height: @card-xl-height;
-    width: @card-xl-width * 5 + (5 * 5);
-
-    &.squish {
-      width: @card-xl-width * 5;
-    }
-  }
-
-  height: @card-height;
-  width: (@card-width * 5) + (5 * 5);
-
-  &.squish {
-    width: @card-width * 5;
-  }
-
-  padding: 0px;
+.squishable-card-panel {
+  display: flex;
+  justify-content: flex-start;
   margin: 0px 5px;
+  min-height: 0;
+  padding: 0px;
+
+  .card-wrapper {
+    margin: 0 5px 0 0;
+  }
 }
 
-.hand.squish .card-wrapper {
+.squishable-card-panel.squish .card-wrapper {
   position: absolute;
 }
 
-.card-row, .hand {
+.card-row {
   display: flex;
   justify-content: flex-start;
   min-height: 0;

@@ -18,13 +18,16 @@ class PlayerHand extends React.Component {
     }
 
     getCards(needsSquish) {
+        let overallDimensions = this.getOverallDimensions();
+        let dimensions = this.getCardDimensions();
+
         let cards = this.props.cards;
         let cardIndex = 0;
         let handLength = cards ? cards.length : 0;
-        let cardWidth = this.getCardWidth();
+        let cardWidth = dimensions.width;
 
         let requiredWidth = handLength * cardWidth;
-        let overflow = requiredWidth - (cardWidth * 5);
+        let overflow = requiredWidth - overallDimensions.width;
         let offset = overflow / (handLength - 1);
 
         if(!this.props.isMe) {
@@ -41,44 +44,69 @@ class PlayerHand extends React.Component {
                 };
             }
 
-            return (<Card key={ card.uuid } card={ card } style={ style } disableMouseOver={ this.disableMouseOver(card.revealWhenHiddenTo) } source='hand'
+            return (<Card key={ card.uuid }
+                card={ card }
+                disableMouseOver={ this.disableMouseOver(card.revealWhenHiddenTo) }
+                onClick={ this.props.onCardClick }
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
-                onClick={ this.props.onCardClick }
-                size={ this.props.cardSize } />);
+                size={ this.props.cardSize }
+                style={ style }
+                source={ this.props.source } />);
         });
 
         return hand;
     }
 
-    getCardWidth() {
+    getCardDimensions() {
+        let multiplier = this.getCardSizeMultiplier();
+        return {
+            width: 65 * multiplier,
+            height: 91 * multiplier
+        };
+    }
+
+    getCardSizeMultiplier() {
         switch(this.props.cardSize) {
             case 'small':
-                return 65 * 0.8;
+                return 0.8;
             case 'large':
-                return 65 * 1.4;
+                return 1.4;
             case 'x-large':
-                return 65 * 2;
-            case 'normal':
-            default:
-                return 65;
+                return 2;
         }
+
+        return 1;
+    }
+
+    getOverallDimensions() {
+        let cardDimensions = this.getCardDimensions();
+        return {
+            width: (cardDimensions.width + 5) * this.props.maxCards,
+            height: cardDimensions.height
+        };
     }
 
     render() {
-        let cardWidth = this.getCardWidth();
-        let needsSquish = this.props.cards && this.props.cards.length * cardWidth > (cardWidth * 5);
-        let cards = this.getCards(needsSquish);
+        let dimensions = this.getOverallDimensions();
+        let maxCards = this.props.maxCards;
+        let needsSquish = this.props.cards && this.props.cards.length > maxCards;
+        let cards = this.getCards(needsSquish, maxCards);
 
-        let className = classNames('panel', 'hand', {
+        let className = classNames('panel', 'squishable-card-panel', this.props.className, {
             [this.props.cardSize]: this.props.cardSize !== 'normal',
             'squish': needsSquish
         });
 
+        let style = {
+            width: dimensions.width + 'px',
+            height: dimensions.height + 'px'
+        };
+
         return (
-            <div className={ className }>
+            <div className={ className } style={ style }>
                 <div className='panel-header'>
-                    { 'Hand (' + cards.length + ')' }
+                    { `${this.props.title} (${cards.length})` }
                 </div>
                 { cards }
             </div>
@@ -90,12 +118,16 @@ PlayerHand.displayName = 'PlayerHand';
 PlayerHand.propTypes = {
     cardSize: PropTypes.string,
     cards: PropTypes.array,
+    className: PropTypes.string,
     isMe: PropTypes.bool,
+    maxCards: PropTypes.number,
     onCardClick: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
     showHand: PropTypes.bool,
+    source: PropTypes.string,
     spectating: PropTypes.bool,
+    title: PropTypes.string,
     username: PropTypes.string
 };
 
