@@ -46,7 +46,7 @@ Feature: Account API - Register endpoint
 
   Scenario: The username already exists
     When I set the 'username' to 'existinguser'
-    And I set the 'email' to 'vali.userd@example.com'
+    And I set the 'email' to 'valid.user@example.com'
     And I set the 'password' to 'validpassword'
     And I submit the API request to the 'account/register' endpoint
     Then I should get a 'An account with that name already exists, please choose another' failure response

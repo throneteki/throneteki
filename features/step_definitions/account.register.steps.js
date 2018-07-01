@@ -35,13 +35,16 @@ Then('I should get a {string} failure response', function (message) {
 Then('I should get a success message and an account is registered', async function () {
     assert.isTrue(this.result.success, 'the API call should succeed');
 
-    let users = db.get('users');
+    let dbUsers = db.get('users');
+    let users = await dbUsers.find({ username: this.requestBody.username });
 
-    console.info(this.requestBody.username);
+    assert.lengthOf(users, 1);
 
-    let user = await users.find({ username: this.requestBody.username });
+    let user = users[0];
 
-    console.info(user);
+    assert.equal(user.username, this.requestBody.username);
+    assert.equal(user.email, this.requestBody.email);
+    assert.isFalse(user.verified);
 
     db.close();
 });
