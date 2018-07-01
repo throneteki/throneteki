@@ -54,7 +54,7 @@ When('I set the id to an existing user not expecting validation', async function
     let user = await fetchUser(this.requestBody.username);
     assert.isNotNull(user);
 
-    await dbUsers.update({ username: this.requestBody.username }, { '$set': { activiationToken: undefined } });
+    await dbUsers.update({ username: this.requestBody.username }, { '$set': { activationToken: undefined } });
 
     this.requestBody = { token: this.requestBody.token, id: user._id };
     this.currentUser = user;
@@ -74,13 +74,13 @@ When('I set the id to an existing user', async function () {
 });
 
 When('I set the token to expired', async function () {
-    await dbUsers.update({ username: this.currentUser.username }, { '$set': { activiationTokenExpiry: moment(new Date()).add(-1, 'day') } });
+    await dbUsers.update({ username: this.currentUser.username }, { '$set': { activationTokenExpiry: moment(new Date()).add(-1, 'day') } });
 
-    this.requestBody.token = this.currentUser.activiationToken;
+    this.requestBody.token = this.currentUser.activationToken;
 });
 
 When('I set the token to the correct token', async function () {
-    this.requestBody.token = this.currentUser.activiationToken;
+    this.requestBody.token = this.currentUser.activationToken;
 });
 
 Then('I should get a {string} failure response', function (message) {
@@ -93,12 +93,15 @@ Then('I should get a success message and an account is registered', async functi
 
     let user = await fetchUser(this.requestBody.username);
 
+    db.close();
+
     assert.isNotNull(user);
     assert.equal(user.username, this.requestBody.username);
     assert.equal(user.email, this.requestBody.email);
     assert.isFalse(user.verified);
+    assert.isDefined(user.activationToken);
+    assert.isDefined(user.activationTokenExpiry);
 
-    db.close();
 });
 
 Then('The user should be activated', async function () {
@@ -106,12 +109,10 @@ Then('The user should be activated', async function () {
 
     let user = await fetchUser(this.currentUser.username);
 
-    console.info(user);
+    db.close();
 
     assert.isNotNull(user);
-    assert.isUndefined(user.activiationToken);
-    assert.isUndefined(user.activiationTokenExpiry);
+    assert.isUndefined(user.actviationToken);
+    assert.isUndefined(user.actviationTokenExpiry);
     assert.isTrue(user.verified);
-
-    db.close();
 });
