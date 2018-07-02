@@ -27,7 +27,7 @@
         "data-val": true,
         "data-val-required": "You must specify an email address",
         "data-val-regex": "Please enter a valid email address",
-        "data-val-regex-pattern": "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        "data-val-regex-pattern": "^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$"
       },
       "labelClass": "col-sm-4",
       "fieldClass": "col-sm-7"
