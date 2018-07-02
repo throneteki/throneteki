@@ -725,6 +725,17 @@ const Effects = {
             }
         };
     },
+    cannotWinGame: function() {
+        return {
+            apply: function(player) {
+                player.cannotWinGame = true;
+            },
+            unapply: function(player, context) {
+                player.cannotWinGame = false;
+                context.game.checkWinCondition(player);
+            }
+        };
+    },
     cannotTriggerCardAbilities: function(restriction = () => true) {
         return {
             apply: function(player) {
@@ -1014,6 +1025,9 @@ const Effects = {
     },
     reduceNextMarshalledPlayedOrAmbushedCardCost: function(amount, match) {
         return this.reduceNextCardCost(['marshal', 'play', 'ambush'], amount, match);
+    },
+    reduceNextMarshalledAmbushedOrOutOfShadowsCardCost: function(amount, match) {
+        return this.reduceNextCardCost(['marshal', 'ambush', 'outOfShadows'], amount, match);
     },
     reduceFirstCardCostEachRound: function(playingTypes, amount, match) {
         return this.reduceCost({

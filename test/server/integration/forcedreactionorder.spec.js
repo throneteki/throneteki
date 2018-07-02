@@ -7,7 +7,7 @@ describe('forced reaction order', function() {
             ]);
             const deck2 = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',
-                'The Wall', 'Will'
+                'The Wall (Core)', 'Will'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);

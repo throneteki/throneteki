@@ -497,7 +497,7 @@ class Game extends EventEmitter {
     }
 
     checkWinCondition(player) {
-        if(player.getTotalPower() >= 15) {
+        if(player.getTotalPower() >= 15 && !player.cannotWinGame) {
             this.recordWinner(player, 'power');
         }
     }

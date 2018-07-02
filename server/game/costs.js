@@ -132,6 +132,10 @@ const Costs = {
         };
     },
     /**
+     * Cost that requires discarding from hand the card that initiated the ability.
+     */
+    discardSelfFromHand: () => CostBuilders.discardFromHand.self(),
+    /**
      * Cost that requires discarding a card from hand matching the passed
      * condition predicate function.
      */

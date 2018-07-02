@@ -4,7 +4,7 @@ describe('faction change', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('thenightswatch', [
                     'Sneak Attack', 'Confiscation',
-                    'Hedge Knight', 'Sworn to the Watch', 'The Wall'
+                    'Hedge Knight', 'Sworn to the Watch', 'The Wall (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

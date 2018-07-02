@@ -173,7 +173,7 @@ describe('setup phase', function() {
 
         describe('when dupes are put out in the setup phase', function() {
             beforeEach(function() {
-                const deck = this.buildDeck('thenightswatch', ['Sneak Attack', 'The Wall', 'The Wall', 'Steward at the Wall']);
+                const deck = this.buildDeck('thenightswatch', ['Sneak Attack', 'The Wall (Core)', 'The Wall (Core)', 'Steward at the Wall']);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();

@@ -1,0 +1,18 @@
+const DrawCard = require('../../drawcard.js');
+
+class CunningSteward extends DrawCard {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer === this.controller,
+            match: this,
+            effect: [
+                ability.effects.addIcon('military'),
+                ability.effects.addIcon('power')
+            ]
+        });
+    }
+}
+
+CunningSteward.code = '11025';
+
+module.exports = CunningSteward;
