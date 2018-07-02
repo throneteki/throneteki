@@ -725,6 +725,17 @@ const Effects = {
             }
         };
     },
+    cannotWinGame: function() {
+        return {
+            apply: function(player) {
+                player.cannotWinGame = true;
+            },
+            unapply: function(player, context) {
+                player.cannotWinGame = false;
+                context.game.checkWinCondition(player);
+            }
+        };
+    },
     cannotTriggerCardAbilities: function(restriction = () => true) {
         return {
             apply: function(player) {

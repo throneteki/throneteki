@@ -60,6 +60,7 @@ class Player extends Spectator {
         this.maxCardDraw = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
         this.doesNotReturnUnspentGold = false;
         this.cannotGainChallengeBonus = false;
+        this.cannotWinGame = false;
         this.triggerRestrictions = [];
         this.playCardRestrictions = [];
         this.abilityMaxByTitle = {};
