@@ -47,7 +47,7 @@ export default function(state = { decks: [] }, action) {
             }
 
             var banners = Object.values(agendas).filter(card => {
-                return card.label.startsWith('Banner of the');
+                return card.traits.includes('Banner');
             });
 
             newState = Object.assign({}, state, {
