@@ -8,7 +8,7 @@ describe('burn effects', function() {
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
-                    'The Wall', 'Messenger Raven'
+                    'The Wall (Core)', 'Messenger Raven'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);

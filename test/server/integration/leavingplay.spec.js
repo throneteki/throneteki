@@ -51,7 +51,7 @@ describe('leaving play', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('thenightswatch', [
                     'A Game of Thrones', 'Political Disaster',
-                    'The Wall', 'Improved Fortifications'
+                    'The Wall (Core)', 'Improved Fortifications'
                 ]);
 
                 this.player1.selectDeck(deck);

@@ -199,7 +199,7 @@ describe('take control', function() {
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
-                    'Steward at the Wall', 'The Wall'
+                    'Steward at the Wall', 'The Wall (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
