@@ -65,7 +65,8 @@ const CostBuilders = {
     }),
     sacrifice: new CostBuilder(new SacrificeCost(), {
         select: 'Select card to sacrifice',
-        selectMultiple: number => `Select ${number} cards to sacrifice`
+        selectMultiple: number => `Select ${number} cards to sacrifice`,
+        selectAny: 'Select any number of cards to sacrifice'
     }),
     stand: new CostBuilder(new StandCost(), {
         select: 'Select card to stand',

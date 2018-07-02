@@ -62,6 +62,11 @@ const Costs = {
      */
     sacrifice: condition => CostBuilders.sacrifice.select(condition),
     /**
+     * Cost that requires sacrificing any number of cards that match the
+     * passed condition predicate function.
+     */
+    sacrificeAny: (condition) => CostBuilders.sacrifice.selectAny(condition),
+    /**
      * Cost that will kill the card that initiated the ability.
      */
     killSelf: () => CostBuilders.kill.self(),
