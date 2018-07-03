@@ -1126,6 +1126,25 @@ const Effects = {
                 player.multipleOpponentClaim = player.multipleOpponentClaim.filter(c => c === claimType);
             }
         };
+    },
+    removeCardsFromHand: function() {
+        let removedCards = [];
+        return {
+            apply: function(player) {
+                for(let card of player.hand) {
+                    player.removeCardFromPile(card);
+                    removedCards.push(card);
+                }
+            },
+            unapply: function(player) {
+                for(let card of player.hand) {
+                    player.moveCard(card, 'discard pile');
+                }
+                for(let card of removedCards) {
+                    player.moveCard(card, 'hand');
+                }
+            }
+        };
     }
 };
 
