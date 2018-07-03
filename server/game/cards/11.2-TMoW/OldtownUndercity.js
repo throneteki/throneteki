@@ -1,5 +1,4 @@
-const DrawCard = require('../../drawcard.js');
-const _ = require('underscore');
+const DrawCard = require('../../drawcard');
 
 class OldtownUndercity extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,7 +9,7 @@ class OldtownUndercity extends DrawCard {
             limit: ability.limit.perPhase(1),
             handler: context => {
                 this.remainingCards = context.player.searchDrawDeck(3);
-                let buttons = this.remainingCards.map(card => ({ method: 'selectCardForHand', card: card }));
+                let buttons = this.remainingCards.map(card => ({ method: 'selectCardForHand', card: card, mapCard: true }));
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
@@ -23,22 +22,16 @@ class OldtownUndercity extends DrawCard {
         });
     }
 
-    selectCardForHand(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
-
-        if(!card) {
-            return false;
-        }
-
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+    selectCardForHand(player, card) {
+        this.remainingCards = this.remainingCards.filter(c => c !== card);
         this.controller.moveCard(card, 'hand');
         this.promptCardForBottom();
         return true;
     }
 
     promptCardForBottom() {
-        let buttons = _.map(this.remainingCards, card => ({
-            method: 'selectCardForBottom', card: card
+        let buttons = this.remainingCards.map(card => ({
+            method: 'selectCardForBottom', card: card, mapCard: true
         }));
 
         this.game.promptWithMenu(this.controller, this, {
@@ -50,14 +43,8 @@ class OldtownUndercity extends DrawCard {
         });
     }
 
-    selectCardForBottom(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
-
-        if(!card) {
-            return false;
-        }
-
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+    selectCardForBottom(player, card) {
+        this.remainingCards = this.remainingCards.filter(c => c !== card);
         player.moveCard(card, 'draw deck', { bottom: true });
 
         let finalCard = this.remainingCards[0];
