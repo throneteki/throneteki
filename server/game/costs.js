@@ -51,7 +51,7 @@ const Costs = {
      * Cost that requires kneeling any number of cards that match the
      * passed condition predicate function.
      */
-    kneelAny: (condition) => CostBuilders.kneel.selectAny(condition),
+    kneelAny: (condition, zeroAllowed) => CostBuilders.kneel.selectAny(condition, zeroAllowed),
     /**
      * Cost that will sacrifice the card that initiated the ability.
      */
@@ -65,7 +65,7 @@ const Costs = {
      * Cost that requires sacrificing any number of cards that match the
      * passed condition predicate function.
      */
-    sacrificeAny: (condition) => CostBuilders.sacrifice.selectAny(condition),
+    sacrificeAny: (condition, zeroAllowed) => CostBuilders.sacrifice.selectAny(condition, zeroAllowed),
     /**
      * Cost that will kill the card that initiated the ability.
      */
