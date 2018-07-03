@@ -13,6 +13,7 @@ class DrawCard extends BaseCard {
 
         this.dupes = [];
         this.attachments = [];
+        this.childCards = [];
         this.icons = new ReferenceCountedSetProperty();
 
         for(let icon of this.getPrintedIcons()) {
@@ -43,6 +44,7 @@ class DrawCard extends BaseCard {
 
         clone.attachments = this.attachments.map(attachment => attachment.createSnapshot());
         clone.blanks = this.blanks.clone();
+        clone.childCards = this.childCards.map(card => card.createSnapshot());
         clone.controllerStack = [...this.controllerStack];
         clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
         clone.factions = Object.assign({}, this.factions);
@@ -340,6 +342,11 @@ class DrawCard extends BaseCard {
         return this.attachmentRestrictions.some(restriction => restriction(card, context));
     }
 
+    addChildCard(card, location) {
+        this.childCards.push(card);
+        card.moveTo(location, this);
+    }
+
     removeChildCard(card) {
         if(!card) {
             return;
@@ -347,6 +354,7 @@ class DrawCard extends BaseCard {
 
         this.attachments = this.attachments.filter(a => a !== card);
         this.dupes = this.dupes.filter(a => a !== card);
+        this.childCards = this.childCards.filter(a => a !== card);
     }
 
     getPlayActions() {
@@ -452,6 +460,9 @@ class DrawCard extends BaseCard {
             attached: !!this.parent,
             attachments: this.attachments.map(attachment => {
                 return attachment.getSummary(activePlayer, hideWhenFaceup);
+            }),
+            childCards: this.childCards.map(card => {
+                return card.getSummary(activePlayer, hideWhenFaceup);
             }),
             dupes: this.dupes.map(dupe => {
                 if(dupe.dupes.length !== 0) {

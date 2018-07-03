@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const TextHelper = require('../../TextHelper');
 
-//TODO Cards need to be placed facedown on/under Meereen and be visible to the controlling player
 class Meereen extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
