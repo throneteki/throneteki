@@ -4,7 +4,7 @@ class SteelRain extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Search deck for GJ locations',
-            cost: ability.costs.sacrificeAny(card => card.isFaction('greyjoy') && card.getType() === 'location'),
+            cost: ability.costs.sacrificeAny(card => card.isFaction('greyjoy') && card.getType() === 'location', false),
             handler: context => {
                 for(let costCard of context.costs.sacrifice) {
                     this.game.promptForDeckSearch(context.player, {

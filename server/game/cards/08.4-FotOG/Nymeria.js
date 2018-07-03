@@ -7,7 +7,7 @@ class Nymeria extends DrawCard {
             condition: () => this.isStarkCardParticipatingInChallenge(),
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.kneelAny(card => card.hasTrait('Direwolf') && card.getType() === 'character' && card !== this)
+                ability.costs.kneelAny(card => card.hasTrait('Direwolf') && card.getType() === 'character' && card !== this, true)
             ],
             handler: context => {
                 let direwolvesToAdd = context.getCostValuesFor('kneel');

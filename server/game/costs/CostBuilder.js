@@ -58,12 +58,13 @@ class CostBuilder {
     }
 
     /**
-     * Returns a cost that asks the player to select any number of cards (including 0) matching the passed condition.
+     * Returns a cost that asks the player to select any number of cards matching the passed condition.
      * @param {function} condition Function that takes a card and ability context and returns whether to allow the player to select it.
+     * @param {boolean} zeroAllowed Boolean denoting whether 0 is a valid amount of the cost to be paid.
      */
-    selectAny(condition = () => true) {
+    selectAny(condition = () => true, zeroAllowed = true) {
         return new SelectCardCost(this.action, {
-            mode: 'optional',
+            mode: zeroAllowed ? 'optional' : 'unlimited',
             activePromptTitle: this.titles.selectAny,
             cardCondition: condition
         });
