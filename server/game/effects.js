@@ -1127,6 +1127,7 @@ const Effects = {
             }
         };
     },
+    //Meereen only effect
     removeCardsFromHand: function() {
         let removedCards = [];
         return {
@@ -1136,13 +1137,15 @@ const Effects = {
                     removedCards.push(card);
                 }
             },
-            unapply: function(player) {
+            unapply: function(player, context) {
                 for(let card of player.hand) {
                     player.moveCard(card, 'discard pile');
                 }
                 for(let card of removedCards) {
                     player.moveCard(card, 'hand');
                 }
+                context.game.addMessage('{0} discards their hand and returns each card under {1} to their hand',
+                    player, context.source);
             }
         };
     }
