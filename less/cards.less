@@ -819,3 +819,22 @@
   height: 100%;
   z-index: @layer-top;
 }
+
+.underneath {
+  margin-left: 0;
+  margin-top: -@card-height / 2;
+  position: relative;
+  z-index: @layer-cards + 1;
+
+  &.small {
+    margin-top: -@card-sm-height / 2;
+  }
+
+  &.large {
+    margin-top: -@card-lg-height / 2;
+  }
+
+  &.x-large {
+    margin-top: -@card-xl-height / 2;
+  }
+}

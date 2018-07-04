@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import CardPile from './CardPile';
-import PlayerHand from './PlayerHand';
+import SquishableCardPanel from './SquishableCardPanel';
 import Droppable from './Droppable';
 
 class PlayerRow extends React.Component {
@@ -176,9 +176,9 @@ class PlayerRow extends React.Component {
             size: this.props.cardSize
         };
 
-        let hand = (<PlayerHand
+        let hand = (<SquishableCardPanel
             cards={ this.props.hand }
-            className='hand'
+            className='panel hand'
             isMe={ this.props.isMe }
             username={ this.props.username }
             maxCards={ 5 }
@@ -200,10 +200,10 @@ class PlayerRow extends React.Component {
         let deadPile = (<CardPile className='dead' title='Dead' source='dead pile' cards={ this.props.deadPile }
             orientation='kneeled'
             { ...cardPileProps } />);
-        let shadows = (<PlayerHand
+        let shadows = (<SquishableCardPanel
             cards={ this.props.shadows }
             cardSize={ this.props.cardSize }
-            className='shadows'
+            className='panel shadows'
             isMe={ this.props.isMe }
             maxCards={ 2 }
             onCardClick={ this.props.onCardClick }

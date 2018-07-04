@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import Card from './Card';
 
-class PlayerHand extends React.Component {
+class SquishableCardPanel extends React.Component {
     disableMouseOver(revealWhenHiddenTo) {
         if(this.props.spectating && this.props.showHand) {
             return false;
@@ -93,7 +93,7 @@ class PlayerHand extends React.Component {
         let needsSquish = this.props.cards && this.props.cards.length > maxCards;
         let cards = this.getCards(needsSquish, maxCards);
 
-        let className = classNames('panel', 'squishable-card-panel', this.props.className, {
+        let className = classNames('squishable-card-panel', this.props.className, {
             [this.props.cardSize]: this.props.cardSize !== 'normal',
             'squish': needsSquish
         });
@@ -105,17 +105,19 @@ class PlayerHand extends React.Component {
 
         return (
             <div className={ className } style={ style }>
-                <div className='panel-header'>
-                    { `${this.props.title} (${cards.length})` }
-                </div>
+                { this.props.title &&
+                    <div className='panel-header'>
+                        { `${this.props.title} (${cards.length})` }
+                    </div>
+                }
                 { cards }
             </div>
         );
     }
 }
 
-PlayerHand.displayName = 'PlayerHand';
-PlayerHand.propTypes = {
+SquishableCardPanel.displayName = 'SquishableCardPanel';
+SquishableCardPanel.propTypes = {
     cardSize: PropTypes.string,
     cards: PropTypes.array,
     className: PropTypes.string,
@@ -131,4 +133,4 @@ PlayerHand.propTypes = {
     username: PropTypes.string
 };
 
-export default PlayerHand;
+export default SquishableCardPanel;

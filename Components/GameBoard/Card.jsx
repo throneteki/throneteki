@@ -8,6 +8,8 @@ import CardMenu from './CardMenu';
 import CardCounters from './CardCounters';
 import { ItemTypes } from '../../constants';
 
+import SquishableCardPanel from './SquishableCardPanel';
+
 const cardSource = {
     beginDrag(props) {
         return {
@@ -184,6 +186,29 @@ class InnerCard extends React.Component {
         return dupes;
     }
 
+    renderUnderneathCards() {
+        // TODO: Right now it is assumed that all cards in the childCards array
+        // are being placed underneath the current card. In the future there may
+        // be other types of cards in this array and it should be filtered.
+        let underneathCards = this.props.card.childCards;
+        if(!underneathCards || underneathCards.length === 0) {
+            return;
+        }
+
+        let maxCards = 1 + (underneathCards.length - 1) / 6;
+
+        return (
+            <SquishableCardPanel
+                cardSize={ this.props.size }
+                cards={ underneathCards }
+                className='underneath'
+                maxCards={ maxCards }
+                onCardClick={ this.props.onClick }
+                onMouseOut={ this.props.onMouseOut }
+                onMouseOver={ this.props.onMouseOver }
+                source='underneath' />);
+    }
+
     getCardOrder() {
         if(!this.props.card.order) {
             return null;
@@ -336,6 +361,7 @@ class InnerCard extends React.Component {
                     { this.getCard() }
                     { this.getDupes() }
                     { this.getAttachments() }
+                    { this.renderUnderneathCards() }
                 </div>);
         }
 
@@ -349,6 +375,7 @@ InnerCard.propTypes = {
         attached: PropTypes.bool,
         attachments: PropTypes.array,
         baseStrength: PropTypes.number,
+        childCards: PropTypes.array,
         code: PropTypes.string,
         controlled: PropTypes.bool,
         dupes: PropTypes.array,
@@ -385,7 +412,7 @@ InnerCard.propTypes = {
     orientation: PropTypes.oneOf(['horizontal', 'kneeled', 'vertical']),
     size: PropTypes.string,
     source: PropTypes.oneOf(['hand', 'discard pile', 'play area', 'dead pile', 'draw deck', 'plot deck', 'revealed plots', 'selected plot', 'attachment', 'agenda', 'faction',
-        'additional', 'conclave', 'shadows', 'full deck', 'rookery']).isRequired,
+        'additional', 'conclave', 'shadows', 'full deck', 'rookery', 'underneath']).isRequired,
     style: PropTypes.object,
     wrapped: PropTypes.bool
 };
