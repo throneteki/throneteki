@@ -434,16 +434,6 @@ const Effects = {
             }
         };
     },
-    removeFaction: function(faction) {
-        return {
-            apply: function(card) {
-                card.removeFaction(faction);
-            },
-            unapply: function(card) {
-                card.addFaction(faction);
-            }
-        };
-    },
     burn: {
         apply: function(card) {
             card.isBurning = true;

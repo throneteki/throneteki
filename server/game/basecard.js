@@ -345,10 +345,10 @@ class BaseCard {
         }
 
         if(normalizedFaction === 'neutral') {
-            return this.factions.contains(normalizedFaction) && this.factions.size() === 1;
+            return ValidFactions.every(f => !this.factions.contains(f) || this.losesAspects.contains(`factions.${f}`));
         }
 
-        return this.factions.contains(normalizedFaction);
+        return this.factions.contains(normalizedFaction) && !this.losesAspects.contains(`factions.${normalizedFaction}`);
     }
 
     isOutOfFaction() {
