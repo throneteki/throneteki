@@ -34,6 +34,7 @@ class GameFlowWrapper {
             players: this.generatePlayerDetails(options.numOfPlayers || (options.isMelee ? 3 : 2))
         };
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
+        this.game.started = true;
 
         this.allPlayers = this.game.getPlayers().map(player => new PlayerInteractionWrapper(this.game, player));
     }
