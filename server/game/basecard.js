@@ -365,6 +365,17 @@ class BaseCard {
         return factions;
     }
 
+    getFactionStatus() {
+        let gainedFactions = ValidFactions.filter(faction => faction !== this.cardData.faction && this.isFaction(faction));
+        let diff = gainedFactions.map(faction => ({ faction: faction, status: 'gained' }));
+
+        if(!this.isFaction(this.cardData.faction) && this.cardData.faction !== 'neutral') {
+            return diff.concat({ faction: this.cardData.faction, status: 'lost' });
+        }
+
+        return diff;
+    }
+
     isLoyal() {
         return this.cardData.loyal;
     }
@@ -625,6 +636,7 @@ class BaseCard {
             code: this.cardData.code,
             controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
+            factionStatus: this.getFactionStatus(),
             menu: this.getMenu(),
             name: this.cardData.label,
             new: this.new,
