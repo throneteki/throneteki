@@ -23,14 +23,14 @@ function cannotEffect(type) {
     };
 }
 
-function losesAllAspectEffect(aspect) {
+function losesAspectEffect(aspect) {
     return function() {
         return {
             apply: function(card) {
-                card.losesAllAspects.add(aspect);
+                card.loseAspect(aspect);
             },
             unapply: function(card) {
-                card.losesAllAspects.remove(aspect);
+                card.restoreAspect(aspect);
             }
         };
     };
@@ -398,9 +398,12 @@ const Effects = {
             }
         };
     },
-    losesAllFactions: losesAllAspectEffect('factions'),
-    losesAllKeywords: losesAllAspectEffect('keywords'),
-    losesAllTraits: losesAllAspectEffect('traits'),
+    losesAllFactions: losesAspectEffect('factions'),
+    losesAllKeywords: losesAspectEffect('keywords'),
+    losesAllTraits: losesAspectEffect('traits'),
+    loseFaction: function(faction) {
+        return losesAspectEffect(`factions.${faction.toLowerCase()}`)();
+    },
     addTrait: function(trait) {
         return {
             apply: function(card) {

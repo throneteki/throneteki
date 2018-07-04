@@ -52,7 +52,7 @@ class BaseCard {
         this.keywords = new KeywordsProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
-        this.losesAllAspects = new ReferenceCountedSetProperty();
+        this.losesAspects = new ReferenceCountedSetProperty();
         this.controllerStack = [];
 
         this.tokens = {};
@@ -303,8 +303,18 @@ class BaseCard {
         this.controllerStack = this.controllerStack.filter(control => control.source !== source);
     }
 
+    loseAspect(aspect) {
+        this.losesAspects.add(aspect);
+        this.markAsDirty();
+    }
+
+    restoreAspect(aspect) {
+        this.losesAspects.remove(aspect);
+        this.markAsDirty();
+    }
+
     hasKeyword(keyword) {
-        if(this.losesAllAspects.contains('keywords')) {
+        if(this.losesAspects.contains('keywords')) {
             return false;
         }
 
@@ -320,7 +330,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        if(this.losesAllAspects.contains('traits')) {
+        if(this.losesAspects.contains('traits')) {
             return false;
         }
 
@@ -330,7 +340,7 @@ class BaseCard {
     isFaction(faction) {
         let normalizedFaction = faction.toLowerCase();
 
-        if(this.losesAllAspects.contains('factions')) {
+        if(this.losesAspects.contains('factions')) {
             return normalizedFaction === 'neutral';
         }
 
@@ -501,7 +511,7 @@ class BaseCard {
     }
 
     getTraits() {
-        if(this.losesAllAspects.contains('traits')) {
+        if(this.losesAspects.contains('traits')) {
             return [];
         }
 

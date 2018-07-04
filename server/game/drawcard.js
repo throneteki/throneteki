@@ -49,7 +49,7 @@ class DrawCard extends BaseCard {
         clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
         clone.factions = this.factions.clone();
         clone.icons = this.icons.clone();
-        clone.losesAllAspects = this.losesAllAspects.clone();
+        clone.losesAspects = this.losesAspects.clone();
         clone.keywords = this.keywords.clone();
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;
