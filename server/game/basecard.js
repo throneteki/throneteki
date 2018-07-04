@@ -52,7 +52,7 @@ class BaseCard {
         this.keywords = new KeywordsProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
-        this.losesAllAspects = new ReferenceCountedSetProperty();
+        this.losesAspects = new ReferenceCountedSetProperty();
         this.controllerStack = [];
 
         this.tokens = {};
@@ -80,7 +80,7 @@ class BaseCard {
 
         this.setupCardAbilities(AbilityDsl);
 
-        this.factions = {};
+        this.factions = new ReferenceCountedSetProperty();
         this.cardTypeSet = undefined;
         this.addFaction(cardData.faction);
     }
@@ -303,8 +303,18 @@ class BaseCard {
         this.controllerStack = this.controllerStack.filter(control => control.source !== source);
     }
 
+    loseAspect(aspect) {
+        this.losesAspects.add(aspect);
+        this.markAsDirty();
+    }
+
+    restoreAspect(aspect) {
+        this.losesAspects.remove(aspect);
+        this.markAsDirty();
+    }
+
     hasKeyword(keyword) {
-        if(this.losesAllAspects.contains('keywords')) {
+        if(this.losesAspects.contains('keywords')) {
             return false;
         }
 
@@ -320,7 +330,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        if(this.losesAllAspects.contains('traits')) {
+        if(this.losesAspects.contains('traits')) {
             return false;
         }
 
@@ -330,15 +340,15 @@ class BaseCard {
     isFaction(faction) {
         let normalizedFaction = faction.toLowerCase();
 
-        if(this.losesAllAspects.contains('factions')) {
+        if(this.losesAspects.contains('factions')) {
             return normalizedFaction === 'neutral';
         }
 
         if(normalizedFaction === 'neutral') {
-            return !!this.factions[normalizedFaction] && _.size(this.factions) === 1;
+            return ValidFactions.every(f => !this.factions.contains(f) || this.losesAspects.contains(`factions.${f}`));
         }
 
-        return !!this.factions[normalizedFaction];
+        return this.factions.contains(normalizedFaction) && !this.losesAspects.contains(`factions.${normalizedFaction}`);
     }
 
     isOutOfFaction() {
@@ -501,7 +511,7 @@ class BaseCard {
     }
 
     getTraits() {
-        if(this.losesAllAspects.contains('traits')) {
+        if(this.losesAspects.contains('traits')) {
             return [];
         }
 
@@ -514,8 +524,7 @@ class BaseCard {
         }
 
         let lowerCaseFaction = faction.toLowerCase();
-        this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
-        this.factions[lowerCaseFaction]++;
+        this.factions.add(lowerCaseFaction);
 
         this.markAsDirty();
     }
@@ -530,7 +539,7 @@ class BaseCard {
     }
 
     removeFaction(faction) {
-        this.factions[faction.toLowerCase()]--;
+        this.factions.remove(faction.toLowerCase());
         this.markAsDirty();
     }
 

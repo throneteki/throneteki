@@ -4,15 +4,14 @@ class TheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: card => card.getType() === 'character',
-            //TODO Needs to remove all instances of all non-NW faction affiliations
             effect: [
-                ability.effects.removeFaction('stark'),
-                ability.effects.removeFaction('lannister'),
-                ability.effects.removeFaction('tyrell'),
-                ability.effects.removeFaction('martell'),
-                ability.effects.removeFaction('targaryen'),
-                ability.effects.removeFaction('greyjoy'),
-                ability.effects.removeFaction('baratheon'),
+                ability.effects.loseFaction('stark'),
+                ability.effects.loseFaction('lannister'),
+                ability.effects.loseFaction('tyrell'),
+                ability.effects.loseFaction('martell'),
+                ability.effects.loseFaction('targaryen'),
+                ability.effects.loseFaction('greyjoy'),
+                ability.effects.loseFaction('baratheon'),
                 ability.effects.addFaction('thenightswatch')
             ]
         });

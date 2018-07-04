@@ -181,7 +181,7 @@ describe('BaseCard', function () {
 
     describe('isFaction()', function() {
         beforeEach(function() {
-            this.card.factions = {};
+            this.card.factions.clear();
             this.card.addFaction('stark');
         });
 
@@ -199,7 +199,7 @@ describe('BaseCard', function () {
 
         describe('when the card is neutral', function() {
             beforeEach(function() {
-                this.card.factions = {};
+                this.card.factions.clear();
                 this.card.addFaction('neutral');
             });
 
@@ -210,6 +210,37 @@ describe('BaseCard', function () {
             it('should return false if it gains a faction affiliation (e.g. Ward)', function() {
                 this.card.addFaction('stark');
                 expect(this.card.isFaction('neutral')).toBe(false);
+            });
+        });
+
+        describe('when the card loses all factions', function() {
+            beforeEach(function() {
+                this.card.loseAspect('factions');
+            });
+
+            it('should return true for neutral', function() {
+                expect(this.card.isFaction('neutral')).toBe(true);
+            });
+        });
+
+        describe('when the card loses a specific faction', function() {
+            beforeEach(function() {
+                this.card.addFaction('lannister');
+                this.card.loseAspect('factions.stark');
+            });
+
+            it('should return false for the faction lost', function() {
+                expect(this.card.isFaction('stark')).toBe(false);
+            });
+
+            it('should not lose any other faction', function() {
+                expect(this.card.isFaction('lannister')).toBe(true);
+            });
+
+            it('should read as neutral if it has lost all its specific factions', function() {
+                this.card.loseAspect('factions.lannister');
+
+                expect(this.card.isFaction('neutral')).toBe(true);
             });
         });
     });

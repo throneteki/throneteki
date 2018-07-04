@@ -33,6 +33,10 @@ class ReferenceCountedSetProperty {
         return values;
     }
 
+    clear() {
+        this.referenceCounts.clear();
+    }
+
     size() {
         let size = 0;
 
