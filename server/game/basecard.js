@@ -80,7 +80,7 @@ class BaseCard {
 
         this.setupCardAbilities(AbilityDsl);
 
-        this.factions = {};
+        this.factions = new ReferenceCountedSetProperty();
         this.cardTypeSet = undefined;
         this.addFaction(cardData.faction);
     }
@@ -335,10 +335,10 @@ class BaseCard {
         }
 
         if(normalizedFaction === 'neutral') {
-            return !!this.factions[normalizedFaction] && _.size(this.factions) === 1;
+            return this.factions.contains(normalizedFaction) && this.factions.size() === 1;
         }
 
-        return !!this.factions[normalizedFaction];
+        return this.factions.contains(normalizedFaction);
     }
 
     isOutOfFaction() {
@@ -514,8 +514,7 @@ class BaseCard {
         }
 
         let lowerCaseFaction = faction.toLowerCase();
-        this.factions[lowerCaseFaction] = this.factions[lowerCaseFaction] || 0;
-        this.factions[lowerCaseFaction]++;
+        this.factions.add(lowerCaseFaction);
 
         this.markAsDirty();
     }
@@ -530,7 +529,7 @@ class BaseCard {
     }
 
     removeFaction(faction) {
-        this.factions[faction.toLowerCase()]--;
+        this.factions.remove(faction.toLowerCase());
         this.markAsDirty();
     }
 

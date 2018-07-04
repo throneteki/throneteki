@@ -181,7 +181,7 @@ describe('BaseCard', function () {
 
     describe('isFaction()', function() {
         beforeEach(function() {
-            this.card.factions = {};
+            this.card.factions.clear();
             this.card.addFaction('stark');
         });
 
@@ -199,7 +199,7 @@ describe('BaseCard', function () {
 
         describe('when the card is neutral', function() {
             beforeEach(function() {
-                this.card.factions = {};
+                this.card.factions.clear();
                 this.card.addFaction('neutral');
             });
 
