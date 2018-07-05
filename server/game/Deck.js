@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const cards = require('./cards');
 const DrawCard = require('./drawcard.js');
 const PlotCard = require('./plotcard.js');
@@ -35,12 +33,12 @@ class Deck {
     }
 
     prepare(player) {
-        var result = {
+        let result = {
             drawCards: [],
             plotCards: []
         };
 
-        this.eachRepeatedCard(this.data.drawCards, cardData => {
+        this.eachRepeatedCard(this.data.drawCards || [], cardData => {
             if(['attachment', 'character', 'event', 'location'].includes(cardData.type)) {
                 var drawCard = this.createCard(DrawCard, player, cardData);
                 drawCard.moveTo('draw deck');
@@ -48,7 +46,7 @@ class Deck {
             }
         });
 
-        this.eachRepeatedCard(this.data.plotCards, cardData => {
+        this.eachRepeatedCard(this.data.plotCards || [], cardData => {
             if(cardData.type === 'plot') {
                 var plotCard = this.createCard(PlotCard, player, cardData);
                 plotCard.moveTo('plot deck');
@@ -67,21 +65,26 @@ class Deck {
             result.allCards.push(result.agenda);
         }
 
-        result.bannerCards = _.map(this.data.bannerCards, card => this.createCard(AgendaCard, player, card));
+        result.bannerCards = (this.data.bannerCards || []).map(card => this.createCard(AgendaCard, player, card));
+
+        for(let card of result.bannerCards) {
+            card.moveTo('agenda');
+            result.allCards.push(card);
+        }
 
         return result;
     }
 
     eachRepeatedCard(cards, func) {
-        _.each(cards, cardEntry => {
+        for(let cardEntry of cards) {
             for(var i = 0; i < cardEntry.count; i++) {
                 func(cardEntry.card);
             }
-        });
+        }
     }
 
     createCard(baseClass, player, cardData) {
-        var cardClass = cards[cardData.code] || baseClass;
+        let cardClass = cards[cardData.code] || baseClass;
         return new cardClass(player, cardData);
     }
 }
