@@ -4,7 +4,7 @@ class Rhaegal extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCharacterKilled: () => !this.game.claim.isApplying && event.card.controller !== this.controller
+                onCharacterKilled: event => !this.game.claim.isApplying && event.card.controller !== this.controller
             },
             handler: context => {
                 context.player.standCard(this);
