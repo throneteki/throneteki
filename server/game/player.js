@@ -2,7 +2,7 @@ const _ = require('underscore');
 
 const Spectator = require('./spectator.js');
 const DrawCard = require('./drawcard.js');
-const Deck = require('./deck.js');
+const Deck = require('./Deck');
 const AbilityContext = require('./AbilityContext.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 const BestowPrompt = require('./gamesteps/bestowprompt.js');

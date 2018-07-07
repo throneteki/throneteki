@@ -5,7 +5,7 @@ const _ = require('underscore');
 
 require('./objectformatters.js');
 
-const DeckBuilder = require('./deckbuilder.js');
+const DeckBuilder = require('./DeckBuilder');
 const GameFlowWrapper = require('./gameflowwrapper.js');
 
 const ProxiedGameFlowWrapperMethods = [
