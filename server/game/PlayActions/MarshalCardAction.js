@@ -17,7 +17,7 @@ class MarshalCardAction extends BaseAbility {
     }
 
     meetsRequirements(context) {
-        var {game, player, source} = context;
+        var { game, player, source } = context;
 
         return (
             game.currentPhase === 'marshal' &&
@@ -31,7 +31,7 @@ class MarshalCardAction extends BaseAbility {
         if(context.costs.isDupe) {
             context.game.addMessage('{0} duplicates {1} for free', context.player, context.source);
         } else {
-            context.game.addMessage('{0} marshals {1} costing {2}', context.player, context.source, context.costs.gold);
+            context.game.addMessage('{0} marshals {1} costing {2} gold', context.player, context.source, context.costs.gold);
         }
         context.player.putIntoPlay(context.source, 'marshal');
     }

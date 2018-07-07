@@ -16,7 +16,7 @@ class MarshalIntoShadowsAction extends BaseAbility {
     }
 
     meetsRequirements(context) {
-        let {game, player, source} = context;
+        let { game, player, source } = context;
 
         return (
             game.currentPhase === 'marshal' &&
@@ -26,7 +26,7 @@ class MarshalIntoShadowsAction extends BaseAbility {
     }
 
     executeHandler(context) {
-        context.game.addMessage('{0} marshals a card into shadows costing {1}', context.player, context.costs.gold);
+        context.game.addMessage('{0} marshals a card into shadows costing {1} gold', context.player, context.costs.gold);
         context.player.putIntoShadows(context.source);
     }
 
