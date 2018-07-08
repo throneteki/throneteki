@@ -34,13 +34,13 @@ export default {
         bottom: '155px',
         right: '0'
     },
+    'agenda-bottom': {
+        bottom: '155px'
+    },
+    'agenda-top': {
+        top: '185px'
+    },
     'conclave-bottom': {
         bottom: '155px'
-    },
-    'shadows-bottom': {
-        bottom: '155px'
-    },
-    'shadows-top': {
-        top: '155px'
     }
 };
