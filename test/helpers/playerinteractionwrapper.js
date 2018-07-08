@@ -2,6 +2,7 @@ const _ = require('underscore');
 const uuid = require('uuid');
 
 const { matchCardByNameAndPack } = require('./cardutil.js');
+const { detectBinary } = require('../../server/util');
 
 class PlayerInteractionWrapper {
     constructor(game, player) {
@@ -114,6 +115,7 @@ class PlayerInteractionWrapper {
 
         this.game.menuButton(this.player.name, promptButton.arg, promptButton.method);
         this.game.continue();
+        this.checkUnserializableGameState();
     }
 
     clickCard(card, location = 'any') {
@@ -127,6 +129,7 @@ class PlayerInteractionWrapper {
 
         this.game.cardClicked(this.player.name, card.uuid);
         this.game.continue();
+        this.checkUnserializableGameState();
     }
 
     clickMenu(card, menuText) {
@@ -142,6 +145,7 @@ class PlayerInteractionWrapper {
 
         this.game.menuItemClick(this.player.name, card.uuid, items[0]);
         this.game.continue();
+        this.checkUnserializableGameState();
     }
 
     triggerAbility(cardOrCardName) {
@@ -177,6 +181,7 @@ class PlayerInteractionWrapper {
     dragCard(card, targetLocation) {
         this.game.drop(this.player.name, card.uuid, card.location, targetLocation);
         this.game.continue();
+        this.checkUnserializableGameState();
     }
 
     togglePromptedActionWindow(window, value) {
@@ -194,6 +199,15 @@ class PlayerInteractionWrapper {
 
     mockShuffle(func) {
         this.player.shuffleArray = func;
+    }
+
+    checkUnserializableGameState() {
+        let state = this.game.getState(this.player.name);
+        let results = detectBinary(state);
+
+        if(results.length !== 0) {
+            throw new Error('Unable to serialize game state back to client:\n' + JSON.stringify(results));
+        }
     }
 }
 
