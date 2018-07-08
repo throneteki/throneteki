@@ -8,7 +8,7 @@ describe('DrawCard', function () {
     }
 
     beforeEach(function () {
-        this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1' };
+        this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1', faction: 'neutral' };
         this.card = new DrawCard({}, this.testCard);
         this.activePlayer = createPlayerSpy('player1');
         this.card.owner = this.activePlayer;
