@@ -87,7 +87,7 @@ class GameChat {
         } else if(array.length === 2) {
             format = '{0} and {1}';
         } else {
-            let range = [...Array(array.length).keys()].map(i => '{' + i + '}');
+            let range = [...Array(array.length - 1).keys()].map(i => '{' + i + '}');
             format = range.join(', ') + ', and {' + (array.length - 1) + '}';
         }
 
