@@ -11,119 +11,148 @@
 
   vertical-align: middle;
 
+  margin-top: -5px;
   max-width: 24px;
   max-height: 24px;
 }
 
-.icon-military {
+.thronesicon {
   font-family: 'thronesdb';
-  min-width: 21px;
-  text-align: center;
+}
+
+.thronesicon-military {
+  color: @military-icon-color;
 
   &:before {
     content: "\e605";
-    color: @military-icon-color;
+  }
+
+  &.with-background {
+    background-color: @military-icon-color;
+    color: white;
   }
 }
 
-.icon-intrigue {
-  font-family: 'thronesdb';
-  min-width: 21px;
-  text-align: center;
+.thronesicon-intrigue {
+  color: @intrigue-icon-color;
 
   &:before {
     content: "\e602";
-    color: @intrigue-icon-color;
+  }
+
+  &.with-background {
+    background-color: @intrigue-icon-color;
+    color: white;
   }
 }
 
-.icon-power {
-  font-family: 'thronesdb';
-  min-width: 21px;
-  text-align: center;
+.thronesicon-power {
+  color: @power-icon-color;
 
   &:before {
     content: "\e607";
-    color: @power-icon-color;
+  }
+
+  &.with-background {
+    background-color: @power-icon-color;
+    color: white;
   }
 }
 
-.icon-baratheon {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-baratheon {
+  color: @baratheon-background;
 
   &:before {
     content: "\e600";
+  }
+
+  &.with-background {
+    background-color: @baratheon-background;
     color: @baratheon-foreground;
   }
 }
 
-.icon-greyjoy {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-greyjoy {
+  color: @greyjoy-foreground;
 
   &:before {
     content: "\e601";
-    color: @greyjoy-foreground;
+  }
+
+  &.with-background {
+    background-color: @greyjoy-background;
   }
 }
 
-.icon-lannister {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-lannister {
+  color: @lannister-foreground;
 
   &:before {
     content: "\e603";
-    color: @lannister-foreground;
+  }
+
+  &.with-background {
+    background-color: @lannister-background;
   }
 }
 
-.icon-martell {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-martell {
+  color: @martell-foreground;
 
   &:before {
     content: "\e604";
-    color: @martell-foreground;
+  }
+
+  &.with-background {
+    background-color: @martell-background;
   }
 }
 
-.icon-thenightswatch {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-thenightswatch {
+  color: @thenightswatch-background;
 
   &:before {
     content: "\e606";
-    color: @thenightswatch-background;
+  }
+
+  &.with-background {
+    background-color: @thenightswatch-background;
+    color: @thenightswatch-foreground;
   }
 }
 
-.icon-stark {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-stark {
+  color: @stark-foreground;
 
   &:before {
     content: "\e608";
-    color: @stark-foreground;
+  }
+
+  &.with-background {
+    background-color: @stark-background;
   }
 }
 
-.icon-targaryen {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-targaryen {
+  color: @targaryen-foreground;
 
   &:before {
     content: "\e609";
-    color: @targaryen-foreground;
+  }
+
+  &.with-background {
+    background-color: @targaryen-background;
   }
 }
 
-.icon-tyrell {
-  font-family: 'thronesdb';
-  margin-top: -5px;
+.thronesicon-tyrell {
+  color: @tyrell-foreground;
 
   &:before {
     content: "\e60a";
-    color: @tyrell-foreground;
+  }
+
+  &.with-background {
+    background-color: @tyrell-background;
   }
 }

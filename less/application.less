@@ -54,23 +54,18 @@
   border-radius: 4px;
 }
 
-.military-container {
-  color: @brand-primary;
-  font-weight: bolder;
-
-  .icon-military {
-    float: left;
-  }
-}
-
-.intrigue-container, .power-container {
+.news-item {
   color: @brand-secondary;
-  .icon-power {
-    float: left;
+
+  &:first-child {
+    color: @brand-primary;
+    font-weight: bolder;
   }
 
-  .icon-intrigue {
+  .thronesicon {
     float: left;
+    min-width: 21px;
+    text-align: center;
   }
 }
 

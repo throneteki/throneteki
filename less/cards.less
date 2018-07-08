@@ -281,6 +281,7 @@
 }
 
 .counters {
+  color: white;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -320,52 +321,6 @@
   margin: 2px;
   text-shadow: 1px 1px 2px #000;
   border-radius: 4px;
-  color: white;
-
-  &.intrigue {
-    span {
-      display: none;
-    }
-
-    font-family: 'thronesdb';
-
-    &:before {
-      content: "\e602";
-      color: @intrigue-icon-color;
-    }
-
-    background-color: rgba(0, 0, 0, 0.85);
-  }
-
-  &.military {
-    span {
-      display: none;
-    }
-
-    font-family: 'thronesdb';
-
-    &:before {
-      content: "\e605";
-      color: @military-icon-color;
-    }
-
-    background-color: rgba(0, 0, 0, 0.85);
-  }
-
-  &.power {
-    span {
-      display: none;
-    }
-
-    font-family: 'thronesdb';
-
-    &:before {
-      content: "\e607";
-      color: @power-icon-color;
-    }
-
-    background-color: rgba(0, 0, 0, 0.85);
-  }
 
   &.fade-out {
     opacity: 0.4;
@@ -384,6 +339,14 @@
       top: 50%;
     }
   }
+}
+
+.challenge-icon-token {
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.faction-token {
+  background-color: rgba(0, 0, 0, 0.85);
 }
 
 .dupe {
@@ -629,35 +592,10 @@
   height: 40px;
   border-radius: 25px;
   text-align: center;
-  font-family: 'thronesdb';
   font-size: 1.8em;
   line-height: 35px;
   color: white;
   margin-top: 10px;
-
-  &.intrigue {
-    &:before {
-      content: "\e602";
-    }
-
-    background-color: @intrigue-icon-color;
-  }
-
-  &.power {
-    &:before {
-      content: "\e607";
-    }
-
-    background-color: @power-icon-color;
-  }
-
-  &.military {
-    &:before {
-      content: "\e605";
-    }
-
-    background-color: @military-icon-color;
-  }
 }
 
 .card-name-row {
@@ -713,93 +651,19 @@
   width: 40px;
   height: 40px;
   border-radius: 25px;
-  font-family: thronesdb;
   font-size: 2.6em;
   text-align: center;
   line-height: 40px;
   margin-right: 10px;
   margin-top: 10px;
 
-  &.martell {
-    &:before {
-      content: "\e604";
-      color: @martell-foreground;
-    }
-
-    background-color: @martell-background;
-  }
-
-  &.tyrell {
-    &:before {
-      content: "\e60a";
-      color: @tyrell-foreground;
-    }
-
-    background-color: @tyrell-background;
-  }
-
-  &.thenightswatch {
+  // Reduce the font size slightly for specific factions so that the larger icon
+  // glyphs will fit
+  &.thronesicon-greyjoy,
+  &.thronesicon-lannister,
+  &.thronesicon-targaryen,
+  &.thronesicon-thenightswatch {
     font-size: 2em;
-
-    &:before {
-      content: "\e606";
-      color: @thenightswatch-foreground;
-    }
-
-    background-color: @thenightswatch-background;
-  }
-
-  &.lannister {
-    font-size: 2em;
-
-    &:before {
-      content: "\e603";
-      color: @lannister-foreground;
-    }
-
-    background-color: @lannister-background;
-  }
-
-  &.stark {
-
-    &:before {
-      content: "\e608";
-      color: @stark-foreground;
-    }
-
-    background-color: @stark-background;
-  }
-
-  &.baratheon {
-
-    &:before {
-      content: "\e600";
-      color: @baratheon-foreground;
-    }
-
-    background-color: @baratheon-background;
-  }
-
-  &.greyjoy {
-    font-size: 2em;
-
-    &:before {
-      content: "\e601";
-      color: @greyjoy-foreground;
-    }
-
-    background-color: @greyjoy-background;
-  }
-
-  &.targaryen {
-    font-size: 2em;
-
-    &:before {
-      content: "\e609";
-      color: @targaryen-foreground;
-    }
-
-    background-color: @targaryen-background;
   }
 }
 

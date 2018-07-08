@@ -9,6 +9,10 @@ class Counter extends React.Component {
             'fade-out': this.props.fade
         });
 
+        if(this.props.icon) {
+            return <div key={ this.props.icon } className={ classNames(className, 'thronesicon', `thronesicon-${this.props.icon}`) } />;
+        }
+
         return (<div key={ this.props.name } className={ className }>
             { this.props.shortName ? <span>{ this.props.shortName }</span> : null }
             <span>{ this.props.value }</span>
@@ -20,6 +24,7 @@ Counter.displayName = 'Counter';
 Counter.propTypes = {
     cancel: PropTypes.bool,
     fade: PropTypes.bool,
+    icon: PropTypes.string,
     name: PropTypes.string.isRequired,
     shortName: PropTypes.string,
     value: PropTypes.number

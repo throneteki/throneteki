@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Avatar from '../Site/Avatar';
+import { ThronesIcons } from '../../constants';
 import * as actions from '../../actions';
 
 class Messages extends React.Component {
@@ -12,20 +13,6 @@ class Messages extends React.Component {
         this.state = {
             message: ''
         };
-
-        this.icons = [
-            'military',
-            'power',
-            'intrigue',
-            'stark',
-            'baratheon',
-            'tyrell',
-            'martell',
-            'lannister',
-            'thenightswatch',
-            'targaryen',
-            'greyjoy'
-        ];
 
         this.formatMessageText = this.formatMessageText.bind(this);
     }
@@ -112,9 +99,9 @@ class Messages extends React.Component {
                         </span>
                     </div>
                 );
-            } else if(this.icons.includes(fragment)) {
+            } else if(ThronesIcons.includes(fragment)) {
                 messages.push(
-                    <span className={ 'icon-' + fragment } key={ index++ } />
+                    <span className={ `thronesicon thronesicon-${fragment}` } key={ index++ } />
                 );
             } else {
                 messages.push(fragment);
