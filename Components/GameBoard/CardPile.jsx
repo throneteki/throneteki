@@ -77,7 +77,7 @@ class CardPile extends React.Component {
         }
 
         if(this.props.disablePopup || this.isTopCardSelectable) {
-            if(this.props.onCardClick) {
+            if(this.props.onCardClick && this.props.topCard) {
                 this.props.onCardClick(this.props.topCard);
             }
 

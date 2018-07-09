@@ -14,14 +14,37 @@ class Messages extends React.Component {
             message: ''
         };
 
+        this.tokens = {
+            card: { className: 'icon-card', imageSrc: '/img/cards/cardback.jpg' },
+            cards: { className: 'icon-card', imageSrc: '/img/cards/cardback.jpg' },
+            gold: { className: 'icon-gold', imageSrc: '/img/Gold.png' }
+        };
+
         this.formatMessageText = this.formatMessageText.bind(this);
     }
 
     getMessage() {
-        var index = 0;
-        var messages = this.props.messages.map(message => {
+        let index = 0;
+        let messages = this.props.messages.map(message => {
             return <div key={ 'message' + index++ } className='message'>{ this.formatMessageText(message.message) }</div>;
         });
+
+        return messages;
+    }
+
+    processKeywords(message) {
+        let messages = [];
+        let i = 0;
+
+        for(let token of message.split(' ')) {
+            if(this.tokens[token]) {
+                let tokenEntry = this.tokens[token];
+                messages.push(<img key={ `${token}-${i++}` } className={ tokenEntry.className } src={ tokenEntry.imageSrc } />);
+                messages.push(' ');
+            } else {
+                messages.push(token + ' ');
+            }
+        }
 
         return messages;
     }
@@ -43,11 +66,13 @@ class Messages extends React.Component {
 
                 switch(fragment.type) {
                     case 'endofround':
+                    case 'phasestart':
+                    case 'startofround':
                         messages.push(
-                            <div className='seperator' key={ index++ }>
-                                <hr />
+                            <div className={ 'bold seperator ' + fragment.type } key={ index++ }>
+                                <hr className={ fragment.type } />
                                 { message }
-                                <hr />
+                                { fragment.type === 'phasestart' && <hr /> }
                             </div>
                         );
                         break;
@@ -90,21 +115,24 @@ class Messages extends React.Component {
                         { fragment.label }
                     </span>
                 );
-            } else if(fragment.name) {
+            } else if(fragment.name && fragment.argType === 'player') {
                 messages.push(
-                    <div key={ index++ }>
+                    <div key={ index++ } className='message-chat'>
                         <Avatar username={ fragment.name } float />
                         <span key={ index++ }>
                             <b>{ fragment.name }</b>
                         </span>
                     </div>
                 );
+            } else if(fragment.argType === 'nonAvatarPlayer') {
+                messages.push(<span className='bold'>{ fragment.name }</span>);
             } else if(ThronesIcons.includes(fragment)) {
                 messages.push(
                     <span className={ `thronesicon thronesicon-${fragment}` } key={ index++ } />
                 );
             } else {
-                messages.push(fragment);
+                let messageFragment = this.processKeywords(fragment.toString());
+                messages.push(messageFragment);
             }
         }
 
