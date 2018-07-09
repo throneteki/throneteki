@@ -27,9 +27,9 @@ class OutOfShadowsAction extends BaseAbility {
 
     executeHandler(context) {
         if(context.costs.isDupe) {
-            context.game.addMessage('{0} duplicates {1} costing {2}', context.player, context.source, context.costs.gold);
+            context.game.addMessage('{0} duplicates {1} costing {2} gold', context.player, context.source, context.costs.gold);
         } else {
-            context.game.addMessage('{0} brings {1} out of shadows costing {2}', context.player, context.source, context.costs.gold);
+            context.game.addMessage('{0} brings {1} out of shadows costing {2} gold', context.player, context.source, context.costs.gold);
         }
         context.player.putIntoPlay(context.source, 'outOfShadows');
     }

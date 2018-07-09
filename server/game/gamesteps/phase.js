@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
@@ -42,18 +41,21 @@ class Phase extends BaseStep {
 
     startPhase() {
         this.game.currentPhase = this.name;
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.phase = this.name;
-        });
+        }
+
         this.game.raiseEvent('onPhaseStarted', { phase: this.name });
+        this.game.addAlert('phasestart', '{0} phase', this.name);
     }
 
     endPhase() {
         this.game.raiseEvent('onPhaseEnded', { phase: this.name });
         this.game.currentPhase = '';
-        _.each(this.game.getPlayers(), player => {
+        for(const player of this.game.getPlayers()) {
             player.phase = '';
-        });
+        }
+
         this.game.raiseEvent('onAtEndOfPhase');
     }
 }

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseCard = require('./basecard.js');
 const Spectator = require('./spectator.js');
 
@@ -9,29 +7,25 @@ class GameChat {
     }
 
     addChatMessage(message) {
-        var args = Array.from(arguments).slice(1);
-        var formattedMessage = this.formatMessage(message, args);
+        let args = Array.from(arguments).slice(1);
+        let formattedMessage = this.formatMessage(message, args);
 
         this.messages.push({ date: new Date(), message: formattedMessage });
     }
 
     getFormattedMessage(message) {
-        var args = Array.from(arguments).slice(1);
-        var argList = [];
-
-        args = _.reduce(args, (argList, arg) => {
+        let args = Array.from(arguments).slice(1);
+        let argList = args.map(arg => {
             if(arg instanceof Spectator) {
-                argList.push(arg.name);
+                return { name: arg.name, argType: 'nonAvatarPlayer' };
             } else if(arg && arg.name && arg.argType === 'player') {
-                argList.push({ name: arg.name, argType: arg.argType });
-            } else {
-                argList.push(arg);
+                return { name: arg.name, argType: arg.argType };
             }
 
-            return argList;
-        }, argList);
+            return arg;
+        });
 
-        return this.formatMessage(message, args);
+        return this.formatMessage(message, argList);
     }
 
     addMessage(message, ...args) {
@@ -47,33 +41,38 @@ class GameChat {
     }
 
     formatMessage(format, args) {
-        if(!format || typeof(format) !== 'string') {
+        if(!format || typeof (format) !== 'string') {
             return '';
         }
 
-        var messageFragments = format.split(/(\{\d+\})/);
+        let messageFragments = format.split(/(\{\d+\})/);
+        let returnedFraments = [];
 
-        return _.map(messageFragments, fragment => {
-            var argMatch = fragment.match(/\{(\d+)\}/);
+        for(const fragment of messageFragments) {
+            let argMatch = fragment.match(/\{(\d+)\}/);
             if(argMatch) {
-                var arg = args[argMatch[1]];
-                if(!_.isUndefined(arg) && !_.isNull(arg)) {
-                    if(_.isArray(arg)) {
-                        return this.formatArray(arg);
+                let arg = args[argMatch[1]];
+                if(arg || arg === 0) {
+                    if(Array.isArray(arg)) {
+                        returnedFraments.push(this.formatArray(arg));
                     } else if(arg instanceof BaseCard) {
-                        return { code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' };
+                        returnedFraments.push({ code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' });
                     } else if(arg instanceof Spectator) {
-                        return { name: arg.user.username, argType: 'player' };
+                        returnedFraments.push({ name: arg.user.username, argType: 'player' });
+                    } else {
+                        returnedFraments.push(arg);
                     }
-
-                    return arg;
                 }
 
-                return '';
+                continue;
             }
 
-            return fragment;
-        });
+            if(fragment) {
+                returnedFraments.push(fragment);
+            }
+        }
+
+        return returnedFraments;
     }
 
     formatArray(array) {
@@ -81,14 +80,14 @@ class GameChat {
             return '';
         }
 
-        var format;
+        let format;
 
         if(array.length === 1) {
             format = '{0}';
         } else if(array.length === 2) {
             format = '{0} and {1}';
         } else {
-            var range = _.map(_.range(array.length - 1), i => '{' + i + '}');
+            let range = [...Array(array.length - 1).keys()].map(i => '{' + i + '}');
             format = range.join(', ') + ', and {' + (array.length - 1) + '}';
         }
 
