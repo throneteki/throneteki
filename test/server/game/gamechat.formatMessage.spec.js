@@ -94,7 +94,7 @@ describe('GameChat', function () {
                         ];
                     });
 
-                    fit('should return a sub-message with separators', function () {
+                    it('should return a sub-message with separators', function () {
                         var message = this.chat.formatMessage('Hello {0} world {1}', this.args);
                         expect(message[3]).toEqual({ message: ['bar', ', ', 'baz', ', and ', 'ball'] });
                     });
