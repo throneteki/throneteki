@@ -4,7 +4,7 @@ describe('end of phase timings / WUA', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('baratheon', [
                     'A Game of Thrones',
-                    'Varys', 'Nightmares'
+                    'Varys (Core)', 'Nightmares'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

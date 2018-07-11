@@ -668,7 +668,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Snowed Under',
-                    'Night Gathers...', 'Varys'
+                    'Night Gathers...', 'Varys (Core)'
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
                     'A Storm of Swords',
