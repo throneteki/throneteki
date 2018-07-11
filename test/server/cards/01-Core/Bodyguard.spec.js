@@ -3,7 +3,7 @@ describe('Bodyguard', function() {
         beforeEach(function() {
             const deck = this.buildDeck('stark', [
                 'A Noble Cause', 'Valar Morghulis',
-                'Catelyn Stark (Core)', 'Varys', 'Bodyguard'
+                'Catelyn Stark (Core)', 'Varys (Core)', 'Bodyguard'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);

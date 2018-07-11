@@ -7,7 +7,7 @@ describe('Hidden Thorns', function() {
             ]);
             const deck2 = this.buildDeck('stark', [
                 'A Noble Cause',
-                'Hedge Knight', 'Varys'
+                'Hedge Knight', 'Varys (Core)'
             ]);
 
             this.player1.selectDeck(deck1);
