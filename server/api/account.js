@@ -252,44 +252,27 @@ module.exports.init = function (server) {
     }));
 
     server.post('/api/account/check-username', wrapAsync(async (req, res) => {
+        if(!req.body.username) {
+            return res.send({ success: false, message: 'You must specify a username' });
+        }
+
         let user = await userService.getUserByUsername(req.body.username);
         if(user) {
-            return res.send({ success: true, message: 'An account with that name already exists, please choose another' });
+            return res.send({ success: false, message: 'An account with that name already exists, please choose another' });
         }
 
         return res.send({ success: true });
     }));
 
-    server.post('/api/account/logout', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
-        if(!req.body.tokenId) {
-            return res.send({ success: false, message: 'tokenId is required' });
-        }
-
-        let session = await userService.getRefreshTokenById(req.user.username, req.body.tokenId);
-        if(!session) {
-            return res.send({ success: false, message: 'Error occured logging out' });
-        }
-
-        await userService.removeRefreshToken(req.user.username, req.body.tokenId);
-
-        res.send({ success: true });
-    }));
-
-    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function (req, res) {
-        let user = new User(req.user).getWireSafeDetails();
-
-        res.send({ success: true, user: user });
-    });
-
     server.post('/api/account/login', wrapAsync(async (req, res, next) => {
         if(!req.body.username) {
-            res.send({ success: false, message: 'Username must be specified' });
+            res.send({ success: false, message: 'You must specify a username' });
 
             return next();
         }
 
         if(!req.body.password) {
-            res.send({ success: false, message: 'Password must be specified' });
+            res.send({ success: false, message: 'You must specify a password' });
 
             return next();
         }
@@ -309,7 +292,7 @@ module.exports.init = function (server) {
         } catch(err) {
             logger.error(err);
 
-            return res.send({ success: false, message: 'There was an error validating your login details.  Please try again later' });
+            return res.send({ success: false, message: 'Invalid username/password' });
         }
 
         if(!isValidPassword) {
@@ -335,6 +318,12 @@ module.exports.init = function (server) {
 
         res.send({ success: true, user: userObj, token: authToken, refreshToken: refreshToken });
     }));
+
+    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function (req, res) {
+        let user = new User(req.user).getWireSafeDetails();
+
+        res.send({ success: true, user: user });
+    });
 
     server.post('/api/account/token', wrapAsync(async (req, res, next) => {
         if(!req.body.token) {
@@ -386,6 +375,21 @@ module.exports.init = function (server) {
         await userService.updateRefreshTokenUsage(refreshToken.id, ip);
 
         res.send({ success: true, user: userObj, token: authToken });
+    }));
+
+    server.post('/api/account/logout', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        if(!req.body.tokenId) {
+            return res.send({ success: false, message: 'tokenId is required' });
+        }
+
+        let session = await userService.getRefreshTokenById(req.user.username, req.body.tokenId);
+        if(!session) {
+            return res.send({ success: false, message: 'Error occured logging out' });
+        }
+
+        await userService.removeRefreshToken(req.user.username, req.body.tokenId);
+
+        res.send({ success: true });
     }));
 
     server.post('/api/account/password-reset-finish', wrapAsync(async (req, res, next) => {
