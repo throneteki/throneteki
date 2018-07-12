@@ -17,7 +17,8 @@ class TradingWithQohor extends AgendaCard {
             handler: context => {
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
-                    cardType: 'attachment',
+                    cardCondition: card => card.getType() === 'attachment' && card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost() &&
+                                           card.name !== context.costs.sacrifice.name,
                     onSelect: (player, card) => this.cardSelected(player, card, context.costs.sacrifice),
                     onCancel: player => this.doneSelecting(player, context.costs.sacrifice),
                     source: this
