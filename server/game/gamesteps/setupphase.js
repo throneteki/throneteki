@@ -47,14 +47,12 @@ class SetupPhase extends Phase {
     }
 
     turnOnEffects() {
-        for(const player of this.game.getPlayers()) {
-            if(player.agenda) {
-                player.agenda.applyPersistentEffects();
-            }
-        }
-
         for(const card of this.game.allCards) {
             card.applyAnyLocationPersistentEffects();
+
+            if(card.getType() === 'agenda') {
+                card.applyPersistentEffects();
+            }
         }
     }
 
