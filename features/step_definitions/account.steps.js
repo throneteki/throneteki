@@ -92,6 +92,10 @@ When('I set the username to an existing user', async function () {
     this.requestBody.username = user.username;
 });
 
+When('I uppercase the username', function () {
+    this.requestBody.username = this.requestBody.username.toUpperCase();
+});
+
 When('I set the password to the last registered password', function () {
     this.requestBody.password = this.lastUsedPassword;
 });
