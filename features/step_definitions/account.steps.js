@@ -34,7 +34,7 @@ Given('I setup an API request', async function () {
 });
 
 When('I submit the API request to the {string} endpoint', async function (endpoint) {
-    this.result = await request.postToEndpoint(endpoint, this.requestBody);
+    this.result = await request.postToEndpoint(endpoint, this.requestBody, this.requestAuthToken);
 });
 
 When('I set the {string} to {string}', function (field, value) {
@@ -50,7 +50,7 @@ When('I set the id to an existing user not expecting validation', async function
     setValidDetails(this.requestBody);
 
     let result = await request.postToEndpoint('/account/register', this.requestBody);
-    assert.isTrue(result.success);
+    assert.isTrue(result.body.success);
 
     let user = await fetchUser(this.requestBody.username);
     assert.isNotNull(user);
@@ -65,7 +65,7 @@ When('I set the id to an existing user', async function () {
     setValidDetails(this.requestBody);
 
     let result = await request.postToEndpoint('/account/register', this.requestBody);
-    assert.isTrue(result.success);
+    assert.isTrue(result.body.success);
 
     let user = await fetchUser(this.requestBody.username);
     assert.isNotNull(user);
@@ -104,13 +104,23 @@ When('I manually disable the account', async function () {
     await dbUsers.update({ username: this.requestBody.username }, { $set: { disabled: true } });
 });
 
+When('I set the bearer token to {string}', function (token) {
+    this.requestAuthToken = token;
+});
+
+When('I use the currently active token', function () {
+    this.requestAuthToken = this.result.body.token;
+});
+
 Then('I should get a {string} failure response', function (message) {
-    assert.isFalse(this.result.success, 'the API call should not succeed');
-    assert.equal(this.result.message, message);
+    assert.equal(this.result.response.statusCode, 200);
+
+    assert.isFalse(this.result.body.success, 'the API call should not succeed');
+    assert.equal(this.result.body.message, message);
 });
 
 Then('I should get a success message and an account is registered', async function () {
-    assert.isTrue(this.result.success, 'the API call should succeed');
+    assert.isTrue(this.result.body.success, 'the API call should succeed');
 
     let user = await fetchUser(this.requestBody.username);
 
@@ -125,7 +135,7 @@ Then('I should get a success message and an account is registered', async functi
 });
 
 Then('The user should be activated', async function () {
-    assert.isTrue(this.result.success, 'the API call should succeed');
+    assert.isTrue(this.result.body.success, 'the API call should succeed');
 
     let user = await fetchUser(this.currentUser.username);
 
@@ -138,13 +148,26 @@ Then('The user should be activated', async function () {
 });
 
 Then('I should get a success response', function () {
-    assert.isTrue(this.result.success, 'the API call should succeed');
+    assert.isTrue(this.result.body.success, 'the API call should succeed');
 });
 
 Then('I should get a successful login response', function () {
-    assert.isTrue(this.result.success, 'the API call should succeed');
+    let result = this.result.body;
 
-    assert.equal(this.requestBody.username, this.result.user.username);
-    assert.equal(this.requestBody.username, this.result.refreshToken.username);
-    assert.isUndefined(this.result.user.password);
+    assert.isTrue(result.success, 'the API call should succeed');
+
+    assert.equal(this.requestBody.username, result.user.username);
+    assert.equal(this.requestBody.username, result.refreshToken.username);
+    assert.isUndefined(result.user.password);
+});
+
+Then('I should get an unauthorised response', function () {
+    assert.equal(this.result.response.statusCode, 401);
+});
+
+Then('I should get a successful auth response', function () {
+    let result = this.result.body;
+
+    assert.isTrue(result.success, 'the API call should succeed');
+    assert.equal(this.requestBody.username, result.user.username);
 });

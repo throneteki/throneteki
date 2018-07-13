@@ -42,7 +42,7 @@ Feature: Account API - login endpoint
     Scenario: Valid username and password and verified should return success
         When I set valid account details
         And I submit the API request to the 'account/register' endpoint
-        And I set the password to the last registered password
         And I manually verify the account
+        And I set the password to the last registered password
         And I submit the API request to the 'account/login' endpoint
         Then I should get a successful login response
