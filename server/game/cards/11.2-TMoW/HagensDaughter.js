@@ -5,7 +5,7 @@ class HagensDaughter extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card === this && this.canBeSaved()
+                onCharacterKilled: event => (event.allowSave || event.isBurn) && event.card === this && this.canBeSaved()
             },
             handler: context => {
                 context.event.saveCard();
