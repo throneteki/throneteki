@@ -50,6 +50,7 @@ class Effect {
         this.effect = this.buildEffect(properties.effect);
         this.gameAction = this.effect.gameAction || 'genericEffect';
         this.targets = [];
+        this.appliedTargets = new Set();
         this.context = { game: game, source: source };
         this.active = !source.facedown;
         this.isConditional = !!properties.condition || this.targetType === 'player' && _.isFunction(properties.match);
@@ -82,14 +83,15 @@ class Effect {
             return;
         }
 
-        let newTargets = _.difference(targets, this.targets);
+        let newTargets = targets.filter(target => !this.targets.includes(target) && this.isValidTarget(target));
 
-        _.each(newTargets, target => {
-            if(this.isValidTarget(target)) {
-                this.targets.push(target);
-                this.effect.apply(target, this.context);
-            }
-        });
+        this.targets = this.targets.concat(newTargets);
+
+        let applicableTargets = newTargets.filter(target => this.canApplyEffect(target));
+
+        for(let target of applicableTargets) {
+            this.applyTo(target);
+        }
     }
 
     isValidTarget(target) {
@@ -99,12 +101,6 @@ class Effect {
             }
 
             if(!['any', 'play area'].includes(this.targetLocation) && target.location !== this.targetLocation) {
-                return false;
-            }
-
-            let gameAction = typeof this.gameAction === 'function' ? this.gameAction(target, this.context) : this.gameAction;
-
-            if(!target.allowGameAction(gameAction, { source: this.source, resolutionStage: 'effect' })) {
                 return false;
             }
         }
@@ -147,13 +143,15 @@ class Effect {
     }
 
     removeTarget(card) {
-        if(!_.contains(this.targets, card)) {
+        if(!this.targets.includes(card)) {
             return;
         }
 
-        this.effect.unapply(card, this.context);
+        if(this.appliedTargets.has(card)) {
+            this.unapplyFrom(card);
+        }
 
-        this.targets = _.reject(this.targets, target => target === card);
+        this.targets = this.targets.filter(target => target !== card);
     }
 
     hasTarget(card) {
@@ -175,51 +173,89 @@ class Effect {
     }
 
     cancel() {
-        _.each(this.targets, target => this.effect.unapply(target, this.context));
+        this.unapplyAll();
         this.targets = [];
     }
 
     reapply(newTargets) {
-        if(!this.active) {
+        if(!this.active || !this.condition()) {
+            this.cancel();
             return;
         }
 
-        if(this.isConditional) {
-            let newCondition = this.condition();
+        let invalidTargets = this.targets.filter(target => !this.isValidTarget(target));
+        for(let target of invalidTargets) {
+            this.removeTarget(target);
+        }
 
-            if(!newCondition) {
-                this.cancel();
-                return;
-            }
+        this.updateImmunityStatus();
 
-            if(newCondition) {
-                let invalidTargets = _.filter(this.targets, target => !this.isValidTarget(target));
-                _.each(invalidTargets, target => {
-                    this.removeTarget(target);
-                });
-                this.addTargets(newTargets);
-            }
+        if(this.duration === 'persistent' || this.isConditional) {
+            this.addTargets(newTargets);
         }
 
         if(this.effect.isStateDependent) {
-            let reapplyFunc = this.createReapplyFunc();
-            _.each(this.targets, target => reapplyFunc(target));
+            for(let target of this.appliedTargets) {
+                this.reapplyTo(target);
+            }
         }
     }
 
-    createReapplyFunc() {
-        if(this.effect.reapply) {
-            return target => this.effect.reapply(target, this.context);
+    updateImmunityStatus() {
+        let needsUnapply = [...this.appliedTargets].filter(target => !this.canApplyEffect(target));
+        let shouldBeApplied = this.targets.filter(target => this.canApplyEffect(target));
+        let needsApply = shouldBeApplied.filter(target => !this.appliedTargets.has(target));
+
+        for(let target of needsApply) {
+            this.applyTo(target);
         }
 
-        return target => {
-            this.effect.unapply(target, this.context);
-            this.effect.apply(target, this.context);
-        };
+        if(this.duration === 'persistent') {
+            for(let target of needsUnapply) {
+                this.unapplyFrom(target);
+            }
+        }
+    }
+
+    canApplyEffect(target) {
+        if(target.getGameElementType() !== 'card') {
+            return true;
+        }
+
+        let gameAction = typeof this.gameAction === 'function' ? this.gameAction(target, this.context) : this.gameAction;
+
+        return target.allowGameAction(gameAction, { source: this.source, resolutionStage: 'effect' });
     }
 
     get order() {
         return this.effect.order || 0;
+    }
+
+    applyTo(target) {
+        this.effect.apply(target, this.context);
+        this.appliedTargets.add(target);
+    }
+
+    reapplyTo(target) {
+        if(this.effect.reapply) {
+            this.effect.reapply(target, this.context);
+            return;
+        }
+
+        this.effect.unapply(target, this.context);
+        this.effect.apply(target, this.context);
+    }
+
+    unapplyFrom(target) {
+        this.effect.unapply(target, this.context);
+        this.appliedTargets.delete(target);
+    }
+
+    unapplyAll() {
+        for(let target of this.appliedTargets) {
+            this.effect.unapply(target, this.context);
+        }
+        this.appliedTargets.clear();
     }
 }
 

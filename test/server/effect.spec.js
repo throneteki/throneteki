@@ -23,7 +23,7 @@ describe('Effect', function() {
         this.sourceSpy = jasmine.createSpyObj('source', ['getType', 'isAnyBlank']);
         this.properties = {
             match: jasmine.createSpy('match'),
-            duration: 'persistent',
+            duration: 'untilEndOfPhase',
             effect: {
                 apply: jasmine.createSpy('apply'),
                 unapply: jasmine.createSpy('unapply')
@@ -144,9 +144,9 @@ describe('Effect', function() {
                     this.matchingCard.allowGameAction.and.returnValue(false);
                 });
 
-                it('should reject the target', function() {
+                it('should not add the target to the applied target list', function() {
                     this.effect.addTargets([this.matchingCard]);
-                    expect(this.effect.targets).not.toContain(this.matchingCard);
+                    expect(this.effect.appliedTargets).not.toContain(this.matchingCard);
                 });
             });
 
@@ -428,7 +428,9 @@ describe('Effect', function() {
         describe('when the effect is active', function() {
             beforeEach(function() {
                 this.effect.active = true;
-                this.effect.targets = [this.target];
+                this.effect.addTargets([this.target]);
+
+                this.properties.effect.apply.calls.reset();
             });
 
             describe('and is set to inactive', function() {
@@ -522,8 +524,8 @@ describe('Effect', function() {
 
     describe('cancel()', function() {
         beforeEach(function() {
-            this.target = {};
-            this.effect.targets = [this.target];
+            this.target = createTarget({ target: 1, location: 'play area' });
+            this.effect.addTargets([this.target]);
             this.effect.cancel();
         });
 
@@ -540,8 +542,10 @@ describe('Effect', function() {
         beforeEach(function() {
             this.target = createTarget({ target: 1, location: 'play area' });
             this.newTarget = createTarget({ target: 2, location: 'play area' });
-            this.effect.targets = [this.target];
+            this.effect.addTargets([this.target]);
             this.newTargets = [this.target, this.newTarget];
+
+            this.properties.effect.apply.calls.reset();
         });
 
         describe('when the effect is neither state dependent nor conditional', function() {
@@ -557,8 +561,8 @@ describe('Effect', function() {
                     this.effect.reapply(this.newTargets);
                 });
 
-                it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                it('should unapply the effect from existing targets', function() {
+                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                 });
 
                 it('should not apply the effect for new or existing targets', function() {
@@ -596,8 +600,8 @@ describe('Effect', function() {
                     this.effect.reapply(this.newTargets);
                 });
 
-                it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                it('should unapply the effect from existing targets', function() {
+                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                 });
 
                 it('should not apply the effect for new or existing targets', function() {
@@ -666,8 +670,8 @@ describe('Effect', function() {
                     this.effect.reapply(this.newTargets);
                 });
 
-                it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                it('should unapply the effect from existing targets', function() {
+                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                 });
 
                 it('should not apply the effect from existing targets', function() {

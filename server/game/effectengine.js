@@ -105,14 +105,9 @@ class EffectEngine {
     }
 
     recalculateTargetingChange(card) {
-        _.each(this.effects, effect => {
-            if(effect.duration === 'persistent' && effect.hasTarget(card) && !effect.isValidTarget(card)) {
-                effect.removeTarget(card);
-            }
-            effect.addTargets([card]);
-        });
-
-        this.addTargetForPersistentEffects(card, 'play area');
+        for(let effect of this.effects) {
+            effect.reapply([card]);
+        }
     }
 
     addTargetForPersistentEffects(card, targetLocation) {

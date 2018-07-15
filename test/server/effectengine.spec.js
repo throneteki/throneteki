@@ -18,7 +18,7 @@ describe('EffectEngine', function() {
         this.gameSpy.queueSimpleStep.and.callFake(func => func());
         this.gameSpy.allCards = [this.handCard, this.playAreaCard, this.discardedCard, this.drawCard, this.deadCard, this.activePlot, this.plotCard, this.revealedPlot, this.agendaCard, this.factionCard];
 
-        this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
+        this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive', 'updateImmunityStatus']);
         this.effectSpy.isInActiveLocation.and.returnValue(true);
         this.effectSpy.targetLocation = 'play area';
 
