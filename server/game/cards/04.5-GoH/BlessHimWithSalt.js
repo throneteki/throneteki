@@ -4,11 +4,11 @@ class BlessHimWithSalt extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Give +3 STR to character',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'power',
+            condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
             target: {
                 activePromptTitle: 'Select character',
                 cardCondition: card =>
-                    this.game.currentChallenge.isParticipating(card)
+                    card.isParticipating()
                     && (card.hasTrait('Drowned God') || card.hasTrait('Ironborn'))
             },
             handler: context => {

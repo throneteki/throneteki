@@ -7,7 +7,7 @@ class SerPounce extends DrawCard {
             effect: ability.effects.addIcon('intrigue')
         });
         this.whileAttached({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'intrigue',
+            condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
             effect: ability.effects.doesNotKneelAsAttacker()
         });
     }

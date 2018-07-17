@@ -4,7 +4,7 @@ class MaegeMormont extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingMormont(event.challenge)
+                afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingMormont()
             },
             handler: context => {
                 let topCard = this.controller.drawDeck[0];
@@ -20,8 +20,8 @@ class MaegeMormont extends DrawCard {
         });
     }
 
-    hasParticipatingMormont(challenge) {
-        return this.controller.anyCardsInPlay(card => challenge.isParticipating(card) && card.hasTrait('House Mormont'));
+    hasParticipatingMormont() {
+        return this.controller.anyCardsInPlay(card => card.isParticipating() && card.hasTrait('House Mormont'));
     }
 }
 

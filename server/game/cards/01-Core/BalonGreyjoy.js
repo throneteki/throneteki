@@ -3,9 +3,9 @@ const DrawCard = require('../../drawcard.js');
 class BalonGreyjoy extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
+            condition: () => this.isAttacking(),
             match: card => (
-                this.game.currentChallenge.isDefending(card) &&
+                card.isDefending() &&
                 card.getType() === 'character' &&
                 card.getStrength() < this.getStrength()
             ),

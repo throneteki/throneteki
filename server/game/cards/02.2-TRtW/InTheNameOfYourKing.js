@@ -4,7 +4,7 @@ class InTheNameOfYourKing extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'End challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military' && this.game.currentChallenge.defendingPlayer === this.controller,
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military', defendingPlayer: this.controller }),
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 this.game.currentChallenge.cancelChallenge();

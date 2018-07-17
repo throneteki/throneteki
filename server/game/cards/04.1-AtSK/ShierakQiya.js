@@ -11,7 +11,7 @@ class ShierakQiya extends DrawCard {
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card),
+                cardCondition: card => card.location === 'play area' && card.isParticipating(),
                 gameAction: 'stand'
             },
             handler: (context) => {

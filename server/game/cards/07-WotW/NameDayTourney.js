@@ -28,7 +28,7 @@ class NameDayTourney extends PlotCard {
 
     hasParticipatingKnight() {
         let cards = this.controller.filterCardsInPlay(card => {
-            return (this.game.currentChallenge.isParticipating(card) &&
+            return (card.isParticipating() &&
                 card.hasTrait('Knight') &&
                 card.getType() === 'character');
         });

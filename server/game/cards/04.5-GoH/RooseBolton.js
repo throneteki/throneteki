@@ -5,7 +5,7 @@ class RooseBolton extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => {
-                    if(event.challenge.winner === this.controller && event.challenge.isAttacking(this)) {
+                    if(event.challenge.winner === this.controller && this.isAttacking()) {
                         this.strengthAtInitiation = this.getStrength();
                         return true;
                     }

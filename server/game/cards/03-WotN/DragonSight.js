@@ -4,12 +4,11 @@ class DragonSight extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Reduce non-Dragon characters STR by 1',
-            condition: () => this.game.currentChallenge,
             handler: () => {
                 let participatingChars = this.game.filterCardsInPlay(card => (
                     card.getType() === 'character' &&
                     !card.hasTrait('Dragon') &&
-                    this.game.currentChallenge.isParticipating(card)
+                    card.isParticipating()
                 ));
 
                 this.game.addMessage('{0} uses {1} to give each non-Dragon participating character -1 STR until the end of the challenge', this.controller, this);

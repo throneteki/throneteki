@@ -7,7 +7,7 @@ class TheValyrian extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer.gold >= 1,
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isAttacking(card)
+                cardCondition: card => card.location === 'play area' && card.isAttacking()
             },
             handler: context => {
                 let strBoost = this.game.currentChallenge.defendingPlayer.gold;

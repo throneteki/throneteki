@@ -4,10 +4,7 @@ class DagmerCleftjaw extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onClaimApplied: event => (
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this) &&
-                    event.challenge.attackers.length === 1)
+                onClaimApplied: event => event.challenge.isMatch({ winner: this.controller, attackingAlone: this })
             },
             target: {
                 activePromptTitle: 'Select a location',

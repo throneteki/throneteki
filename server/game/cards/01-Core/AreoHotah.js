@@ -6,12 +6,12 @@ class AreoHotah extends DrawCard {
             when: {
                 onCardEntersPlay: event => (
                     event.card === this &&
-                    this.game.currentChallenge &&
+                    this.game.isDuringChallenge() &&
                     this.game.currentPhase === 'challenge'
                 )
             },
             target: {
-                cardCondition: card => card.getType() === 'character' && this.game.currentChallenge.isParticipating(card)
+                cardCondition: card => card.getType() === 'character' && card.isParticipating()
             },
             handler: context => {
                 this.game.currentChallenge.removeFromChallenge(context.target);

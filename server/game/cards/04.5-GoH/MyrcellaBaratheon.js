@@ -6,8 +6,7 @@ class MyrcellaBaratheon extends DrawCard {
         this.persistentEffect({
             condition: () => (
                 this.areNoKingsInPlay() &&
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'power'),
+                this.game.isDuringChallenge({ challengeType: 'power' })),
             match: this,
             effect: ability.effects.doesNotKneelAsDefender()
         });

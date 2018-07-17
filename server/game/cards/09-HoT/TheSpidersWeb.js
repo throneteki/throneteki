@@ -15,10 +15,7 @@ class TheSpidersWeb extends PlotCard {
                     effect: ability.effects.mayInitiateAdditionalChallenge('intrigue')
                 }));
                 this.untilEndOfPhase(ability =>({
-                    condition: () => (
-                        this.game.currentChallenge &&
-                        this.game.currentChallenge.challengeType === 'intrigue'
-                    ),
+                    condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
                     match: card => card === this.controller.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));

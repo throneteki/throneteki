@@ -12,7 +12,7 @@ class TheConclave extends AgendaCard {
     setupCardAbilities() {
         this.reaction({
             when : {
-                afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingMaester(event.challenge)
+                afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingMaester()
             },
             target: {
                 type: 'select',
@@ -28,11 +28,11 @@ class TheConclave extends AgendaCard {
         });
     }
 
-    hasParticipatingMaester(challenge) {
+    hasParticipatingMaester() {
         return this.controller.anyCardsInPlay(card => (
             card.hasTrait('Maester') &&
             card.getType() === 'character' &&
-            challenge.isParticipating(card)
+            card.isParticipating()
         ));
     }
 

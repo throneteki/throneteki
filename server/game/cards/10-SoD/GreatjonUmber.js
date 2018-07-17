@@ -6,7 +6,7 @@ class GreatjonUmber extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'military' &&
                                          event.challenge.winner === this.controller &&
-                                         event.challenge.isAttacking(this) &&
+                                         this.isAttacking() &&
                                          this.controller.getNumberOfUsedPlots() < 3
             },
             handler: context => {

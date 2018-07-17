@@ -4,7 +4,7 @@ class MaesterCaleotte extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.loser === this.controller && this.isParticipating()
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'

@@ -4,10 +4,7 @@ class TheKnightOfFlowers extends DrawCard {
 
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.currentChallenge
-                && this.game.currentChallenge.isAttacking(this)
-                && this.game.currentChallenge.attackers.length === 1,
+            condition: () => this.game.isDuringChallenge({ attackingAlone: this }),
             targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.setDefenderMaximum(1)

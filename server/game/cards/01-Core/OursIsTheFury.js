@@ -4,7 +4,7 @@ class OursIsTheFury extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Add knelt Baratheon as defender',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer === this.controller,
+            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
             target: {
                 cardCondition: card => card.location === 'play area' && card.kneeled && card.controller === this.controller &&
                                        card.isFaction('baratheon') && card.canParticipateInChallenge()
@@ -12,7 +12,7 @@ class OursIsTheFury extends DrawCard {
             handler: context => {
                 this.selectedCard = context.target;
 
-                if(!this.game.currentChallenge.isDefending(this.selectedCard)) {
+                if(!this.selectedCard.isDefending()) {
                     this.game.currentChallenge.addDefender(context.target);
                 }
 

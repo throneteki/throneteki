@@ -4,12 +4,12 @@ class GreyWorm extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -3 STR',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
+            condition: () => this.isAttacking(),
             target: {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.isDefending(card))
+                    card.isDefending())
             },
             limit: ability.limit.perChallenge(1),
             handler: context => {

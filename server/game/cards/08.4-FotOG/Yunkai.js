@@ -13,7 +13,7 @@ class Yunkai extends DrawCard {
                 ability.costs.discardXGold(() => this.getLowestParticipatingStr(), () => this.getHighestParticipatingStr())
             ],
             handler: context => {
-                let participantsToRemove = this.game.filterCardsInPlay(card => this.game.currentChallenge.isParticipating(card) && card.getStrength() <= context.xValue);
+                let participantsToRemove = this.game.filterCardsInPlay(card => card.isParticipating() && card.getStrength() <= context.xValue);
 
                 _.each(participantsToRemove, card => {
                     this.game.currentChallenge.removeFromChallenge(card);
@@ -21,7 +21,7 @@ class Yunkai extends DrawCard {
 
                 this.game.addMessage('{0} kneels and discards {1} gold from {2} to remove all characters with STR {1} or lower from the challenge',
                     context.player, context.xValue, this);
-                
+
                 this.game.once('afterChallenge', event => this.onChallengeWon(event.challenge));
             }
         });
@@ -49,7 +49,7 @@ class Yunkai extends DrawCard {
     }
 
     getParticipatingStrengths() {
-        let participatingCharacters = this.game.filterCardsInPlay(card => this.game.currentChallenge.isParticipating(card));
+        let participatingCharacters = this.game.filterCardsInPlay(card => card.isParticipating());
         return _.map(participatingCharacters, card => card.getStrength());
     }
 }

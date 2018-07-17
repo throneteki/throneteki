@@ -6,13 +6,13 @@ class Shaggydog extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isAttacking(this.parent) &&
-                                         this.game.anyCardsInPlay(card => event.challenge.isDefending(card))
+                                         this.game.anyCardsInPlay(card => card.isDefending())
             },
             handler: context => {
                 let loser = context.event.challenge.loser;
                 this.game.addMessage('{0} uses {1} to have {2} choose and kill a defending character', context.player, this, loser);
                 this.game.promptForSelect(loser, {
-                    cardCondition: card => this.game.currentChallenge.isDefending(card),
+                    cardCondition: card => card.isDefending(),
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card),
                     onCancel: player => this.cancelSelection(player)

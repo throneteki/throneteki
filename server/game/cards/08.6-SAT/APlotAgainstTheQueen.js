@@ -8,7 +8,7 @@ class APlotAgainstTheQueen extends DrawCard {
             },
             cost: ability.costs.returnToHand(card => card.getType() === 'character' && card.power > 0),
             target: {
-                cardCondition: card => this.game.currentChallenge.isParticipating(card) && card.power > 0
+                cardCondition: card => card.isParticipating() && card.power > 0
             },
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);

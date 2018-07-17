@@ -7,7 +7,7 @@ class QuaitheOfTheShadow extends DrawCard {
             when: {
                 onCardEntersPlay: event => (
                     event.card === this &&
-                    this.game.currentChallenge &&
+                    this.game.isDuringChallenge() &&
                     this.game.currentPhase === 'challenge'
                 )
             },

@@ -5,7 +5,7 @@ class Heartsbane extends DrawCard {
         this.attachmentRestriction({ faction: 'tyrell' });
         this.action({
             title: 'Give attached character +3 STR',
-            condition: () => this.parent && this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent),
+            condition: () => this.parent && this.parent.isParticipating(),
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.untilEndOfChallenge(ability => ({

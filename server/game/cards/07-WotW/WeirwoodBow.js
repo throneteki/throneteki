@@ -9,12 +9,11 @@ class WeirwoodBow extends DrawCard {
         this.action({
             title: 'Give defending character -2 STR',
             cost: ability.costs.kneelSelf(),
-            condition: () => this.game.currentChallenge,
             target: {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.isDefending(card)),
+                    card.isDefending()),
                 gameAction: 'decreaseStrength'
             },
             handler: context => {

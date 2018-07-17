@@ -13,7 +13,7 @@ class LadySansasRose extends DrawCard {
             handler: (context) => {
                 let power = this.hasLadyCharacter() ? 3 : 1;
                 let participatingCard = this.controller.filterCardsInPlay(card => {
-                    return (this.game.currentChallenge.isParticipating(card) &&
+                    return (card.isParticipating() &&
                     card.hasTrait('Knight') &&
                     card.getType() === 'character');
                 });
@@ -32,7 +32,7 @@ class LadySansasRose extends DrawCard {
 
     hasParticipatingKnight() {
         let cards = this.controller.filterCardsInPlay(card => {
-            return (this.game.currentChallenge.isParticipating(card) &&
+            return (card.isParticipating() &&
                     card.hasTrait('Knight') &&
                     card.getType() === 'character');
         });

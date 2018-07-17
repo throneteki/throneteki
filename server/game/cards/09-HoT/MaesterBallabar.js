@@ -9,7 +9,7 @@ class MaesterBallabar extends DrawCard {
             condition: () => this.game.currentChallenge && this.game.currentChallenge.anyParticipants(card => card.controller === this.controller),
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => this.game.currentChallenge.isParticipating(card) && card.getStrength() === this.getLowestParticipatingStrength()
+                cardCondition: card => card.isParticipating() && card.getStrength() === this.getLowestParticipatingStrength()
             },
             handler: context => {
                 context.target.controller.standCard(context.target);

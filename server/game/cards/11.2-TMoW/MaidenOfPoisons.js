@@ -4,12 +4,12 @@ class MaidenOfPoisons extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.loser === this.controller && this.isParticipating()
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       this.game.currentChallenge.isParticipating(card) && card.getNumberOfIcons() < 2
+                                       card.isParticipating() && card.getNumberOfIcons() < 2
             },
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);

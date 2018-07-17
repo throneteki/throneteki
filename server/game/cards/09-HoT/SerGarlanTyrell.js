@@ -20,7 +20,7 @@ class SerGarlanTyrell extends DrawCard {
     }
 
     hasParticipatingKnight() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isParticipating(card) &&
+        return this.controller.anyCardsInPlay(card => card.isParticipating() &&
                                                       card.hasTrait('Knight') &&
                                                       card.getType() === 'character');
     }

@@ -7,7 +7,7 @@ class QhorinHalfhand extends DrawCard {
                 afterChallenge: event => (
                     event.challenge.challengeType === 'military' &&
                     event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this)
+                    this.isParticipating()
                 )
             },
             target: {

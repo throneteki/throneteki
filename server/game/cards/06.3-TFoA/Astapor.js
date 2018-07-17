@@ -4,13 +4,12 @@ class Astapor extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character -STR',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.isParticipating(card)),
+                    card.isParticipating()),
                 gameAction: 'decreaseStrength'
             },
             handler: context => {

@@ -5,12 +5,12 @@ class MareInHeat extends DrawCard {
         this.attachmentRestriction({ trait: 'Knight' });
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent) &&
-                             this.hasSingleParticipatingChar(),
+            condition: () => this.game.isDuringChallenge({ attackingAlone: this.parent }) ||
+                             this.game.isDuringChallenge({ defendingAlone: this.parent }),
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       this.game.currentChallenge.isParticipating(card) &&
+                                       card.isParticipating() &&
                                        card.getStrength() > this.parent.getStrength()
             },
             handler: context => {
@@ -18,13 +18,6 @@ class MareInHeat extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to remove {2} from the challenge', this.controller, this, context.target);
             }
         });
-    }
-
-    hasSingleParticipatingChar() {
-        if(this.game.currentChallenge.attackingPlayer === this.controller) {
-            return this.game.currentChallenge.attackers.length === 1;
-        }
-        return this.game.currentChallenge.defenders.length === 1;
     }
 }
 

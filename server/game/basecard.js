@@ -470,6 +470,18 @@ class BaseCard {
         return this.blanks.contains('excludingTraits');
     }
 
+    isAttacking() {
+        return this.game.currentChallenge && this.game.currentChallenge.isAttacking(this);
+    }
+
+    isDefending() {
+        return this.game.currentChallenge && this.game.currentChallenge.isDefending(this);
+    }
+
+    isParticipating() {
+        return this.game.currentChallenge && this.game.currentChallenge.isParticipating(this);
+    }
+
     setCardType(cardType) {
         this.cardTypeSet = cardType;
     }

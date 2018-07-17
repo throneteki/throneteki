@@ -7,7 +7,7 @@ class RattleshirtsRaiders extends DrawCard {
                 afterChallenge: event => (
                     event.challenge.attackingPlayer === this.controller &&
                     event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this)
+                    this.isAttacking()
                 )
             },
             target: {

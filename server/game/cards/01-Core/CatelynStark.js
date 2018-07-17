@@ -3,9 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class CatelynStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => {
-                return this.game.currentChallenge && this.game.currentChallenge.isParticipating(this);
-            },
+            condition: () => this.isParticipating(),
             targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.cannotTriggerCardAbilities()

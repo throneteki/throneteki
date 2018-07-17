@@ -10,9 +10,7 @@ class BearIslandHost extends DrawCard {
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    condition: () => (
-                        this.game.currentChallenge &&
-                        this.game.currentChallenge.challengeType === 'military'),
+                    condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
                     match: context.target,
                     effect: ability.effects.doesNotKneelAsAttacker()
                 }));

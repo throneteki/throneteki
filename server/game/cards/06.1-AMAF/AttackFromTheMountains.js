@@ -24,7 +24,7 @@ class AttackFromTheMountains extends DrawCard {
     }
 
     hasAttackingClansman() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
+        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
                                                       card.hasTrait('Clansman') &&
                                                       card.getType() === 'character');
     }

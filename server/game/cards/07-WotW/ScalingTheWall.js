@@ -19,7 +19,7 @@ class ScalingTheWall extends DrawCard {
     }
 
     hasAttackingWildling() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) && card.hasTrait('Wildling') && card.getType() === 'character');
+        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Wildling') && card.getType() === 'character');
     }
 }
 

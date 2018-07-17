@@ -3,8 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class DaenerysTargaryen extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => !this.kneeled && this.game.currentChallenge,
-            match: card => this.game.currentChallenge.isParticipating(card) && card.getType() === 'character',
+            condition: () => !this.kneeled,
+            match: card => card.isParticipating() && card.getType() === 'character',
             targetController: 'opponent',
             effect: ability.effects.modifyStrength(-1)
         });

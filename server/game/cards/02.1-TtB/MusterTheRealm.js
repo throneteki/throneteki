@@ -3,14 +3,14 @@ const PlotCard = require('../../plotcard.js');
 class MusterTheRealm extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.hasAttackingArmy(),
+            condition: () => this.hasAttackingArmy(),
             match: this,
             effect: ability.effects.modifyClaim(1)
         });
     }
 
     hasAttackingArmy() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) && card.hasTrait('Army'));
+        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Army'));
     }
 }
 

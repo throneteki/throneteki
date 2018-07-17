@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class SerDenysMallister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isDefending(this),
+            condition: () => this.isDefending(),
             match: this,
             effect: ability.effects.addKeyword('Renown')
         });

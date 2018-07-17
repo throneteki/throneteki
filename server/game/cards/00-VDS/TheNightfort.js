@@ -4,12 +4,12 @@ class TheNightfort extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.attackers.length >= 1,
+            condition: () => this.game.isDuringChallenge({ match: challenge => challenge.attackers.length >= 1 }),
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       this.game.currentChallenge.isDefending(card) && card.isFaction('thenightswatch')
+                                       card.isDefending() && card.isFaction('thenightswatch')
             },
             handler: context => {
                 let strBoost = this.game.currentChallenge.attackers.length;

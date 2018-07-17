@@ -4,10 +4,10 @@ class TheKrakensGrasp extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Remove character\'s strength',
-            condition: () => this.controller.firstPlayer && this.game.currentChallenge,
+            condition: () => this.controller.firstPlayer,
             phase: 'challenge',
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && this.game.currentChallenge.isDefending(card) && card.getStrength() <= 5
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isDefending() && card.getStrength() <= 5
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({

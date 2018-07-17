@@ -4,7 +4,7 @@ class OldBearMormont extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
             target: {
                 cardCondition: (card, context) => (

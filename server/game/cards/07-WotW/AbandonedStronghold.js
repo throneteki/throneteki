@@ -4,13 +4,12 @@ class AbandonedStronghold extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.isDefending(card))
+                    card.isDefending())
             },
             handler: context => {
                 let strBoost = this.getNumberOfBuilders();

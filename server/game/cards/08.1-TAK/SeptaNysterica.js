@@ -4,11 +4,10 @@ class SeptaNysterica extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       this.game.currentChallenge.isAttacking(card) && card.getStrength() <= 4
+                                       card.isAttacking() && card.getStrength() <= 4
             },
             handler: context => {
                 context.target.controller.standCard(context.target);

@@ -10,10 +10,9 @@ class RangersBow extends DrawCard {
 
         this.action({
             title: 'Give defending character +2 STR',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.isFaction('thenightswatch') && card.getType() === 'character' && this.game.currentChallenge.isDefending(card)
+                cardCondition: card => card.isFaction('thenightswatch') && card.getType() === 'character' && card.isDefending()
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({

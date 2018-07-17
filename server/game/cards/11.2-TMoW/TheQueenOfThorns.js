@@ -4,7 +4,7 @@ class TheQueenOfThorns extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
             target: {
                 activePromptTitle: 'Select a card',

@@ -16,7 +16,7 @@ class MeleeAtBitterbridge extends DrawCard {
                     numCards: xValue,
                     activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
-                    cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card),
+                    cardCondition: card => card.location === 'play area' && card.isParticipating(),
                     onSelect: (player, cards) => this.targetsSelected(player, cards, context.goldCost)
                 });
             }

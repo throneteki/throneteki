@@ -10,7 +10,7 @@ class ThrowingAxe extends DrawCard {
             limit: ability.limit.perPhase(1),
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isDefending(card),
+                cardCondition: card => card.location === 'play area' && card.isDefending(),
                 gameAction: 'kill'
             },
             handler: context => {

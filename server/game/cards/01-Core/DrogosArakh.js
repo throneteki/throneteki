@@ -8,8 +8,7 @@ class DrogosArakh extends DrawCard {
         });
         this.whileAttached({
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'military' &&
+                this.game.isDuringChallenge({ challengeType: 'military' }) &&
                 this.controller.getNumberOfChallengesInitiatedByType('military') === 0
             ),
             match: card => card.name === 'Khal Drogo',

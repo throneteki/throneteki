@@ -4,7 +4,7 @@ class BrienneOfTarth extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
             handler: () => {
                 if(this.getStrength() >= 10 && this.controller.anyCardsInPlay(card => card !== this && card.getType() === 'character')) {

@@ -24,9 +24,8 @@ class CalmOverWesteros extends PlotCard {
             until: {
                 onCardEntersPlay: event => event.card.getType() === 'plot' && event.card.controller === player
             },
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === challengeType &&
-                             this.game.currentChallenge.defendingPlayer === player,
-            match: card => card === this.game.currentChallenge.attackingPlayer.activePlot,
+            condition: () => this.game.isDuringChallenge({ challengeType: challengeType, defendingPlayer: player }),
+            match: card => this.game.currentChallenge && card === this.game.currentChallenge.attackingPlayer.activePlot,
             targetController: 'any',
             effect: ability.effects.modifyClaim(-1)
         }));

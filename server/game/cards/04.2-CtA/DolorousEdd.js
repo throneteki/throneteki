@@ -6,9 +6,7 @@ class DolorousEdd extends DrawCard {
             title: 'Add as a defender',
             location: 'hand',
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'intrigue' &&
-                this.game.currentChallenge.defendingPlayer === this.controller &&
+                this.game.isDuringChallenge({ challengeType: 'intrigue', defendingPlayer: this.controller }) &&
                 this.controller.canPutIntoPlay(this)
             ),
             cost: ability.costs.kneelFactionCard(),

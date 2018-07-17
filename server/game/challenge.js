@@ -2,6 +2,7 @@ const _ = require('underscore');
 const Player = require('./player.js');
 const EventRegistrar = require('./eventregistrar.js');
 const Settings = require('../settings.js');
+const ChallengeMatcher = require('./ChallengeMatcher');
 
 class Challenge {
     constructor(game, properties) {
@@ -276,6 +277,10 @@ class Challenge {
         this.resetCards();
 
         this.game.addMessage('{0}\'s {1} challenge is cancelled', this.attackingPlayer, this.challengeType);
+    }
+
+    isMatch(matchers) {
+        return ChallengeMatcher.isMatch(this, matchers);
     }
 }
 

@@ -4,13 +4,12 @@ class CatapultOnTheWall extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill attacking character',
-            condition: () => this.game.currentChallenge,
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.kneelParent()
             ],
             target: {
-                cardCondition: card => this.game.currentChallenge.isAttacking(card) && card.getStrength() <= 4
+                cardCondition: card => card.isAttacking() && card.getStrength() <= 4
             },
             handler: context => {
                 this.game.killCharacter(context.target);

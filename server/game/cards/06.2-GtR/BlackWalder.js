@@ -3,10 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class BlackWalder extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.attackingPlayer === this.controller &&
-                this.game.currentChallenge.number === 3),
+            condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 3 }),
             match: this,
             effect: [
                 ability.effects.addKeyword('Renown'),

@@ -4,7 +4,7 @@ class WinterfellCastle extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.hasParticipatingUniqueStarks(),
-            match: card => this.isUniqueStark(card) && this.game.currentChallenge.isParticipating(card),
+            match: card => this.isUniqueStark(card) && card.isParticipating(),
             effect: ability.effects.modifyStrength(2)
         });
     }

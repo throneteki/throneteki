@@ -10,13 +10,12 @@ class QueenOfTheSevenKingdoms extends DrawCard {
 
         this.action({
             title: 'Stand and remove character from challenge',
-            condition: () => this.game.currentChallenge,
             cost: [
                 ability.costs.standParent(),
                 ability.costs.removeParentFromChallenge()
             ],
             target: {
-                cardCondition: card => this.game.currentChallenge.isParticipating(card)
+                cardCondition: card => card.isParticipating()
             },
             handler: context => {
                 context.target.controller.standCard(context.target);

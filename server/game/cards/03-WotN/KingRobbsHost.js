@@ -7,14 +7,14 @@ class KingRobbsHost extends DrawCard {
                 afterChallenge: event =>
                     event.challenge.challengeType === 'military' &&
                     event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this) &&
+                    this.isParticipating() &&
                     event.challenge.loser.faction.power >= 1
             },
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Choose an attacking character',
                     source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && this.game.currentChallenge.isAttacking(card),
+                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isAttacking(),
                     onSelect: (p, card) => this.onCardSelected(p, card)
                 });
             }

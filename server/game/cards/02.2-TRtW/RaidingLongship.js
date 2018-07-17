@@ -4,11 +4,11 @@ class RaidingLongship extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character\'s STR from challenge',
-            condition: () => this.game.currentChallenge && this.controller.firstPlayer,
+            condition: () => this.controller.firstPlayer,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       this.game.currentChallenge.isDefending(card) && card.attachments.length === 0
+                                       card.isDefending() && card.attachments.length === 0
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({

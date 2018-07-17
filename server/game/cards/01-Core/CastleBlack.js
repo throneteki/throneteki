@@ -4,11 +4,11 @@ class CastleBlack extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand and give defending character +2 STR',
-            condition: () => this.game.currentChallenge,
+            condition: () => this.game.isDuringChallenge(),
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.isFaction('thenightswatch') && this.game.currentChallenge.isDefending(card)
+                                       card.isFaction('thenightswatch') && card.isDefending()
             },
             handler: context => {
                 context.target.controller.standCard(context.target);

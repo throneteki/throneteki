@@ -3,14 +3,14 @@ const DrawCard = require('../../drawcard.js');
 class MargaeryTyrell extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
+            condition: () => this.isAttacking(),
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.game.currentChallenge.defenders.length)
+            effect: ability.effects.dynamicStrength(() => this.getDefendingCharacters())
         });
 
         this.reaction({
             when: {
-                onAttackersDeclared: event => event.challenge.isAttacking(this)
+                onDeclaredAsAttacker: event => event.card === this
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
@@ -24,6 +24,14 @@ class MargaeryTyrell extends DrawCard {
                     this.controller, this, context.target);
             }
         });
+    }
+
+    getDefendingCharacters() {
+        if(!this.game.isDuringChallenge()) {
+            return 0;
+        }
+
+        return this.game.currentChallenge.defenders.length;
     }
 }
 

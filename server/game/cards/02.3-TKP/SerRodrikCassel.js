@@ -4,9 +4,8 @@ class SerRodrikCassel extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'military' &&
-                this.game.currentChallenge.isAttacking(this)
+                this.isAttacking() &&
+                this.game.isDuringChallenge({ challengeType: 'military' })
             ),
             match: card => card.isUnique() && card.isFaction('stark'),
             effect: ability.effects.addKeyword('Insight')

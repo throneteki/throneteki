@@ -4,11 +4,10 @@ class IronFleetScout extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give character +STR',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       this.game.currentChallenge.isParticipating(card) && card.isFaction('greyjoy')
+                                       card.isParticipating() && card.isFaction('greyjoy')
             },
             handler: context => {
                 let strBoost = this.controller.firstPlayer ? 2 : 1;

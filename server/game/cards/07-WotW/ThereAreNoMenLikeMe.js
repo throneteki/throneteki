@@ -10,10 +10,7 @@ class ThereAreNoMenLikeMe extends DrawCard {
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
-                    condition: () => (
-                        this.game.currentChallenge &&
-                        this.game.currentChallenge.challengeType === 'military'
-                    ),
+                    condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
                     effect: [
                         ability.effects.doesNotKneelAsAttacker(),
                         ability.effects.doesNotKneelAsDefender()

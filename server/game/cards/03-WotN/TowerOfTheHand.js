@@ -26,7 +26,7 @@ class TowerOfTheHand extends DrawCard {
     isParticipatingLannister(card) {
         return card.getType() === 'character' &&
                card.isFaction('lannister') &&
-               this.game.currentChallenge.isParticipating(card);
+               card.isParticipating();
     }
 }
 

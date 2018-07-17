@@ -6,8 +6,6 @@ class MoonBrothers extends DrawCard {
             title: 'Add as an attacker',
             location: 'hand',
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.attackingPlayer === this.controller &&
                 this.hasAttackingClansman() &&
                 this.controller.canPutIntoPlay(this)
             ),
@@ -23,7 +21,7 @@ class MoonBrothers extends DrawCard {
 
     hasAttackingClansman() {
         let cards = this.controller.filterCardsInPlay(card => {
-            return card.hasTrait('Clansman') && card.getType() === 'character' && this.game.currentChallenge.isAttacking(card);
+            return card.hasTrait('Clansman') && card.getType() === 'character' && card.isAttacking();
         });
 
         return cards.length > 0;

@@ -7,7 +7,7 @@ class TyeneSand extends DrawCard {
                 afterChallenge: event => (
                     event.challenge.challengeType === 'intrigue' &&
                     event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this)
+                    this.isAttacking()
                 )
             },
             target: {

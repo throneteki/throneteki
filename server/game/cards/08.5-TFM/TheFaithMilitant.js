@@ -24,7 +24,7 @@ class TheFaithMilitant extends AgendaCard {
                     card.controller === this.controller &&
                     card.getType() === 'character' &&
                     card.hasTrait('The Seven') &&
-                    this.game.currentChallenge.isParticipating(card)
+                    card.isParticipating()
             },
             handler: context => {
                 let otherPlayer = context.event.challenge.loser;

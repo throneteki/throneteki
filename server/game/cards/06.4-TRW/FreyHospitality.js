@@ -35,7 +35,7 @@ class FreyHospitality extends DrawCard {
     }
 
     hasAttackingFrey() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
+        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
                                                       card.hasTrait('House Frey') &&
                                                       card.getType() === 'character');
     }

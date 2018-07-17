@@ -4,10 +4,9 @@ class LastHearth extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Increase character STR',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.getType() === 'character' && card.isFaction('stark') && this.game.currentChallenge.isParticipating(card)
+                cardCondition: card => card.getType() === 'character' && card.isFaction('stark') && card.isParticipating()
             },
             handler: context => {
                 let strengthBonus = this.controller.getNumberOfUsedPlots() < 3 ? 3 : 2;

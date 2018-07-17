@@ -4,13 +4,13 @@ class SouthronMessenger extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && this.game.currentChallenge
+                onCardEntersPlay: event => event.card === this && this.game.isDuringChallenge()
             },
             target: {
                 activePromptTitle: 'Select participating character',
                 cardCondition: card => (
                     card.getType() === 'character' &&
-                    this.game.currentChallenge.isParticipating(card) &&
+                    card.isParticipating() &&
                     card.getNumberOfIcons() <= 1)
             },
             handler: context => {

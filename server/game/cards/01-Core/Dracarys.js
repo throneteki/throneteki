@@ -4,10 +4,10 @@ class Dracarys extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reduce character STR by 4',
-            condition: () => this.game.currentChallenge,
+            condition: () => this.game.isDuringChallenge(),
             cost: ability.costs.kneel(card => card.name === 'Daenerys Targaryen' || card.hasTrait('Dragon')),
             target: {
-                cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card)
+                cardCondition: card => card.location === 'play area' && card.isParticipating()
             },
             handler: context => {
                 this.game.addMessage('{0} plays {1} to kneel {2} and give {3} -4 STR until the end of the phase', context.player, this, context.costs.kneel, context.target);

@@ -8,7 +8,7 @@ class Jhogo extends DrawCard {
             effect: ability.effects.addKeyword('stealth')
         });
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
+            condition: () => this.isAttacking(),
             match: this,
             effect: ability.effects.dynamicStrength(() => this.getNumberOfDeadDefendingCharacters())
         });
@@ -19,16 +19,11 @@ class Jhogo extends DrawCard {
     }
 
     getNumberOfDeadDefendingCharacters() {
-        let deadDefenders = [];
-        for(const card of this.game.currentChallenge.defendingPlayer.deadPile) {
-            if(card.isUnique() && !deadDefenders.includes(card.name)) {
-                deadDefenders.push(card.name);
-            } else if(!card.isUnique()) {
-                deadDefenders.push(card.name);
-            }
+        if(!this.game.isDuringChallenge()) {
+            return 0;
         }
 
-        return deadDefenders.length;
+        return this.game.currentChallenge.defendingPlayer.deadPile.length;
     }
 }
 

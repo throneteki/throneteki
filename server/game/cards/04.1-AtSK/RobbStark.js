@@ -3,10 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class RobbStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'military'
-            ),
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             match: this,
             effect: ability.effects.dynamicStrength(() => this.numberOfLoyalChars())
         });
@@ -29,9 +26,8 @@ class RobbStark extends DrawCard {
 
     isParticipatingInMilitaryChallenge() {
         return (
-            this.game.currentChallenge &&
-            this.game.currentChallenge.challengeType === 'military' &&
-            this.game.currentChallenge.isParticipating(this)
+            this.game.isDuringChallenge({ challengeType: 'military' }) &&
+            this.isParticipating()
         );
     }
 
@@ -40,7 +36,7 @@ class RobbStark extends DrawCard {
             card.location === 'play area' &&
             card.getType() === 'character' &&
             !card.hasTrait('King') &&
-            this.game.currentChallenge.isParticipating(card)
+            card.isParticipating()
         );
     }
 

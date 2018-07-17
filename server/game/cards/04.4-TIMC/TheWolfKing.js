@@ -7,10 +7,7 @@ class TheWolfKing extends DrawCard {
             effect: ability.effects.addTrait('King')
         });
         this.whileAttached({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'military'
-            ),
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             effect: ability.effects.doesNotKneelAsAttacker()
         });
     }
