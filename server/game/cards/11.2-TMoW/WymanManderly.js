@@ -16,8 +16,7 @@ class WymanManderly extends DrawCard {
         });
         this.reaction({
             when: {
-                onSacrificed: event => event.card.controller === this.controller && event.card.getType() === 'character' &&
-                                       this.canChangeGameState(),
+                onSacrificed: event => this.isCharacterYouControlled(event.cardStateWhenSacrificed) && this.canChangeGameState(),
                 onCharactersKilled: event => event.snapshots.some(card => card.controller === this.controller) &&
                                              this.canChangeGameState()
             },
@@ -38,6 +37,10 @@ class WymanManderly extends DrawCard {
                 this.game.addMessage('{0} uses {1} to ' + bonusMessages.join(' and '), context.player, this);
             }
         });
+    }
+
+    isCharacterYouControlled(cardState) {
+        return cardState.controller === this.controller && cardState.getType() === 'character';
     }
 
     canChangeGameState() {
