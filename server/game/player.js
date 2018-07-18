@@ -273,10 +273,6 @@ class Player extends Spectator {
             this.game.raiseEvent('onCardsDrawn', { cards: cards, player: this });
         }
 
-        if(this.drawDeck.length === 0) {
-            this.game.playerDecked(this);
-        }
-
         return cards;
     }
 
@@ -306,9 +302,6 @@ class Player extends Spectator {
         var cards = this.drawDeck.slice(0, number);
         this.discardCards(cards, false, discarded => {
             callback(discarded);
-            if(this.drawDeck.length === 0) {
-                this.game.playerDecked(this);
-            }
         });
     }
 
@@ -357,6 +350,10 @@ class Player extends Spectator {
         }
 
         return true;
+    }
+
+    canWinGame() {
+        return !this.cannotWinGame;
     }
 
     addAllowedChallenge(allowedChallenge) {

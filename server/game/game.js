@@ -501,19 +501,50 @@ class Game extends EventEmitter {
     }
 
     checkWinCondition(player) {
-        if(player.getTotalPower() >= 15 && !player.cannotWinGame) {
+        if(player.getTotalPower() >= 15 && player.canWinGame()) {
             this.recordWinner(player, 'power');
         }
     }
 
-    playerDecked(player) {
-        this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
-        player.lost = true;
-
-        let remainingPlayers = this.getPlayers().filter(player => !player.lost);
-        if(remainingPlayers.length === 1) {
-            this.recordWinner(remainingPlayers[0], 'decked');
+    checkPlayerElimination() {
+        if(this.currentPhase === 'setup') {
+            return;
         }
+
+        let players = this.getPlayers();
+        let deckedPlayers = players.filter(player => player.drawDeck.length === 0 && !player.lost);
+
+        // TODO: When all remaining players are decked simultaneously, first
+        // player chooses the winner.
+        for(let player of deckedPlayers) {
+            this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
+            player.lost = true;
+        }
+
+        let remainingPlayers = players.filter(player => !player.lost);
+
+        if(remainingPlayers.length === 1) {
+            let lastPlayer = remainingPlayers[0];
+
+            if(lastPlayer.canWinGame()) {
+                this.recordWinner(lastPlayer, 'decked');
+            } else {
+                this.recordDraw(lastPlayer);
+            }
+        }
+    }
+
+    recordDraw(lastPlayer) {
+        if(this.winner) {
+            return;
+        }
+
+        this.addAlert('info', 'The game ends in a draw because {0} cannot win the game', lastPlayer);
+        this.winner = { name: 'DRAW' };
+        this.finishedAt = new Date();
+        this.winReason = 'draw';
+
+        this.router.gameWon(this, this.winReason, this.winner);
     }
 
     recordWinner(winner, reason) {
@@ -881,6 +912,7 @@ class Game extends EventEmitter {
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();
+        this.checkPlayerElimination();
     }
 
     isPhaseSkipped(name) {
