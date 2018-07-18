@@ -6,7 +6,7 @@ class GennaFrey extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller &&
                                          event.challenge.number === 3 &&
-                                         event.challenge.isAttacking(this)
+                                         this.isAttacking()
             },
             handler: context => {
                 let numCards = this.hasOtherAttackingFrey() ? 2 : 1;
@@ -19,7 +19,7 @@ class GennaFrey extends DrawCard {
     }
 
     hasOtherAttackingFrey() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
+        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
                                                       card.hasTrait('House Frey') &&
                                                       card.getType() === 'character' &&
                                                       card !== this);

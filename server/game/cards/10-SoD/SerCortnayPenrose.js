@@ -6,7 +6,7 @@ class SerCortnayPenrose extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'power' &&
                                          event.challenge.winner === this.controller &&
-                                         event.challenge.isParticipating(this)
+                                         this.isParticipating()
             },
             handler: context => {
                 context.player.standCard(this);

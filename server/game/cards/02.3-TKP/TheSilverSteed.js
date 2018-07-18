@@ -8,9 +8,8 @@ class TheSilverSteed extends DrawCard {
         );
         this.whileAttached({
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'power' &&
-                this.game.currentChallenge.isParticipating(this.parent)
+                this.game.isDuringChallenge({ challengeType: 'power' }) &&
+                this.parent.isParticipating()
             ),
             effect: ability.effects.addKeyword('Renown')
         });

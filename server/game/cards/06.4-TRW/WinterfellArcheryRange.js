@@ -4,10 +4,10 @@ class WinterfellArcheryRange extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => this.game.currentChallenge.isParticipating(card) && card.getType() === 'character' &&
+                cardCondition: card => card.isParticipating() && card.getType() === 'character' &&
                                        card.getStrength() <= 3
             },
             handler: context => {

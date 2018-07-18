@@ -7,7 +7,7 @@ class SecretPact extends DrawCard {
             effect: ability.effects.addKeyword('Renown')
         });
         this.whileAttached({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer === this.controller,
+            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
             effect: ability.effects.cannotBeDeclaredAsAttacker()
         });
     }

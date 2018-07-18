@@ -18,7 +18,7 @@ class TheFrozenShore extends DrawCard {
                     numCards: numWinterPlots,
                     multiSelect: true,
                     activePromptTitle: 'Select up to ' + numWinterPlots + ' Wildlings to stand',
-                    cardCondition: card => this.game.currentChallenge.isAttacking(card) && card.hasTrait('Wildling'),
+                    cardCondition: card => card.isAttacking() && card.hasTrait('Wildling'),
                     onSelect: (player, cards) => this.standWildlings(player, cards),
                     source: this
                 });

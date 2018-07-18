@@ -9,7 +9,7 @@ class TraitorToTheCrown extends DrawCard {
         });
 
         this.whileAttached({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'power',
+            condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
             effect: ability.effects.doesNotContributeStrength()
         });
     }

@@ -3,8 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class JoustingKnight extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this) &&
-                             !this.game.currentChallenge.hasSingleParticipant(this.controller),
+            condition: () => !this.game.isDuringChallenge({ attackingAlone: this }) &&
+                             !this.game.isDuringChallenge({ defendingAlone: this }),
             match: this,
             effect: ability.effects.doesNotContributeStrength()
         });

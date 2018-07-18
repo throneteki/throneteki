@@ -10,18 +10,18 @@ class TheLordOfTheCrossing extends AgendaCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttackingDuringChallengeNumber(1),
-            match: card => this.game.currentChallenge.isAttacking(card),
+            match: card => card.isAttacking(),
             effect: ability.effects.modifyStrength(-1)
         });
         this.persistentEffect({
             condition: () => this.isAttackingDuringChallengeNumber(3),
-            match: card => this.game.currentChallenge.isAttacking(card),
+            match: card => card.isAttacking(),
             effect: ability.effects.modifyStrength(2)
         });
     }
 
     isAttackingDuringChallengeNumber(challengeNumber) {
-        return this.game.currentChallenge && this.game.currentChallenge.attackingPlayer === this.controller && this.game.currentChallenge.number === challengeNumber;
+        return this.game.isDuringChallenge({ attackingPlayer: this.controller, number: challengeNumber });
     }
 
     afterChallenge(event) {

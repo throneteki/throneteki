@@ -5,7 +5,7 @@ class TheWatcherOnTheWalls extends DrawCard {
         this.action({
             title: 'Kneel 2 Rangers to kill attackers',
             phase: 'challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             cost: ability.costs.kneelMultiple(2, card => card.getType() === 'character' && card.hasTrait('Ranger')),
             handler: () => {
                 this.game.killCharacters(this.game.currentChallenge.attackers);

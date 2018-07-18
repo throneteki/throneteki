@@ -6,8 +6,7 @@ class VanguardOfTheNorth extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'military' &&
+                this.game.isDuringChallenge({ challengeType: 'military' }) &&
                 _.any(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('War'))
             ),
             match: this,

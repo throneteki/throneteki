@@ -5,10 +5,10 @@ class SerHyleHunt extends DrawCard {
         this.action({
             title: 'Remove character from challenge',
             limit: ability.limit.perChallenge(1),
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this),
+            condition: () => this.isParticipating(),
             cost: ability.costs.payGold(1),
             target: {
-                cardCondition: card => this.game.currentChallenge.isParticipating(card) && card.getStrength() < this.getStrength()
+                cardCondition: card => card.isParticipating() && card.getStrength() < this.getStrength()
             },
             handler: context => {
                 context.target.controller.standCard(context.target);

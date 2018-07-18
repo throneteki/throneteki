@@ -3,10 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class CerseiLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'intrigue'
-            ),
+            condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
             match: this,
             effect: ability.effects.doesNotKneelAsAttacker()
         });

@@ -6,7 +6,7 @@ class ThereIsMyClaim extends DrawCard {
             title: 'Raise claim value by 1',
             max: ability.limit.perChallenge(1),
             phase: 'challenge',
-            condition: () => this.game.currentChallenge,
+            condition: () => this.game.isDuringChallenge(),
             cost: ability.costs.revealCards(4, card => card.getType() === 'character' && card.isFaction('tyrell')),
             handler: () => {
                 this.untilEndOfChallenge(ability => ({

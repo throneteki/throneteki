@@ -4,8 +4,8 @@ class WarriorsSons extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardPlayed: event => event.player !== this.controller && this.game.currentChallenge &&
-                                       this.game.currentChallenge.isParticipating(this) && event.player.faction.power > 0
+                onCardPlayed: event => event.player !== this.controller &&
+                                       this.isParticipating() && event.player.faction.power > 0
             },
             handler: context => {
                 this.game.movePower(context.event.player.faction, this, 1);

@@ -4,7 +4,7 @@ class SerAxellFlorent extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
             cost: ability.costs.discardGold(),
             target: {

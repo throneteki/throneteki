@@ -36,7 +36,7 @@ class ADragonIsNoSlave extends DrawCard {
 
     hasParticipatingDragonOrDany() {
         let cards = this.controller.filterCardsInPlay(card => {
-            return (this.game.currentChallenge.isParticipating(card) &&
+            return (card.isParticipating() &&
                     (card.hasTrait('Dragon') || card.name === 'Daenerys Targaryen') &&
                     card.getType() === 'character');
         });

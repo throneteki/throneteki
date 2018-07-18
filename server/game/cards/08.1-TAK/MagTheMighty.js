@@ -4,7 +4,7 @@ class MagTheMighty extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.getType() === 'character'

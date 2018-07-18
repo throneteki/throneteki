@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class Strangler extends DrawCard {
     setupCardAbilities(ability) {
         this.whileAttached({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent),
+            condition: () => this.parent.isParticipating(),
             effect: ability.effects.setStrength(1)
         });
     }

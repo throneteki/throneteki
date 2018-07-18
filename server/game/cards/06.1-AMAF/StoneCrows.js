@@ -6,7 +6,7 @@ class StoneCrows extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this) &&
+                    this.isAttacking() &&
                     event.challenge.defenders.length >= 1)
             },
             cost: ability.costs.discardGold(),
@@ -14,7 +14,7 @@ class StoneCrows extends DrawCard {
                 let otherPlayer = context.event.challenge.loser;
                 this.game.promptForSelect(otherPlayer, {
                     cardCondition: card => (
-                        this.game.currentChallenge.isDefending(card) &&
+                        card.isDefending() &&
                         card.getType() === 'character'),
                     activePromptTitle: 'Select character to kill',
                     source: this,

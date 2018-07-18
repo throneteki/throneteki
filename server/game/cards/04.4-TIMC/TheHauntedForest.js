@@ -5,8 +5,7 @@ class TheHauntedForest extends DrawCard {
         this.persistentEffect({
             condition: () => (
                 !this.kneeled &&
-                this.game.currentChallenge &&
-                this.game.currentChallenge.defendingPlayer === this.controller
+                this.game.isDuringChallenge({ defendingPlayer: this.controller })
             ),
             targetType: 'player',
             targetController: 'current',

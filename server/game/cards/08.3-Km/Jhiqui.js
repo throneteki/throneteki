@@ -12,7 +12,7 @@ class Jhiqui extends DrawCard {
                 gameAction: 'gainPower',
                 cardCondition: card =>
                     card.location === 'play area' && card.getType() === 'character'
-                    && this.game.currentChallenge.isParticipating(card)
+                    && card.isParticipating()
                     && (card.hasTrait('Lord') || card.hasTrait('Lady'))
             },
             handler: context => {

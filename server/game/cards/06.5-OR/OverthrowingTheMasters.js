@@ -4,10 +4,10 @@ class OverthrowingTheMasters extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.attackingPlayer === this.controller,
+            condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller }),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       this.game.currentChallenge.isDefending(card) &&
+                                       card.isDefending() &&
                                        card.getStrength() <= this.game.currentChallenge.defendingPlayer.deadPile.length
             },
             handler: context => {

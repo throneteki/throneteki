@@ -4,9 +4,7 @@ class TheTwins extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.attackingPlayer === this.controller &&
-                this.game.currentChallenge.number === 3 &&
+                this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 3 }) &&
                 this.hasAttackingFrey()),
             match: card => card === this.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
@@ -14,7 +12,7 @@ class TheTwins extends DrawCard {
     }
 
     hasAttackingFrey() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isAttacking(card) &&
+        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
                                                       card.hasTrait('House Frey') &&
                                                       card.getType() === 'character');
     }

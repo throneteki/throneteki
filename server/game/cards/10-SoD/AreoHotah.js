@@ -11,7 +11,7 @@ class AreoHotah extends DrawCard {
 
         this.reaction({
             when: {
-                afterChallenge: event => this.controller === event.challenge.winner && event.challenge.isDefending(this)
+                afterChallenge: event => this.controller === event.challenge.winner && this.isDefending()
             },
             cost: ability.costs.returnSelfToHand(),
             handler: context => {

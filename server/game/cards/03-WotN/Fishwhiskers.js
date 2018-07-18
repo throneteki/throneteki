@@ -3,10 +3,10 @@ const DrawCard = require('../../drawcard.js');
 class Fishwhiskers extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this) &&
+            condition: () => this.isAttacking() &&
                              this.hasMoreWinterThanSummerPlots(),
             targetController: 'any',
-            match: card => this.game.currentChallenge.isDefending(card) && card.getType() === 'character',
+            match: card => card.isDefending() && card.getType() === 'character',
             effect: ability.effects.doesNotContributeStrength()
         });
     }

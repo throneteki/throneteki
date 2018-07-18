@@ -3,10 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class StannisBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'power'),
-            match: (card) => this.game.currentChallenge.isParticipating(card) && !card.hasTrait('King'),
+            condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
+            match: (card) => card.isParticipating() && !card.hasTrait('King'),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         });

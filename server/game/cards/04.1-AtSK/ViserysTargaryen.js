@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class ViserysTargaryen extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
+            condition: () => this.isAttacking(),
             targetController: 'any',
             match: card => card.hasTrait('King') && card.getType() === 'character',
             effect: ability.effects.mustBeDeclaredAsDefender()

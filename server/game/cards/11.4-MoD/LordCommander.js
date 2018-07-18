@@ -15,7 +15,7 @@ class LordCommander extends DrawCard {
     }
 
     hasParticipatingNWCharacter() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isParticipating(card) && card.isFaction('thenightswatch'));
+        return this.controller.anyCardsInPlay(card => card.isParticipating() && card.isFaction('thenightswatch'));
     }
 }
 

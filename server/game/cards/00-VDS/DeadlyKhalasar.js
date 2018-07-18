@@ -4,12 +4,12 @@ class DeadlyKhalasar extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Give character +STR and intimidate',
-            condition: () => this.game.currentChallenge,
+            condition: () => this.game.isDuringChallenge(),
             phase: 'challenge',
             target: {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                                        card.getType() === 'character' && card.isFaction('targaryen') &&
-                                       this.game.currentChallenge.isAttacking(card)
+                                       card.isAttacking()
             },
             handler: context => {
                 let strBoost = this.getNumberOfDothraki();

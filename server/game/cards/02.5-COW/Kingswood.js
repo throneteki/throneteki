@@ -3,11 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class Kingswood extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.challengeType === 'power' &&
-                this.game.currentChallenge.defendingPlayer === this.controller),
-            match: (card) => this.game.currentChallenge.isAttacking(card),
+            condition: () => this.game.isDuringChallenge({ challengeType: 'power', defendingPlayer: this.controller }),
+            match: card => card.isAttacking(),
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         });

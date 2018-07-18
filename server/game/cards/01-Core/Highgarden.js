@@ -4,7 +4,6 @@ class Highgarden extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge,
             phase: 'challenge',
             cost: [
                 ability.costs.kneelSelf(),
@@ -12,7 +11,7 @@ class Highgarden extends DrawCard {
             ],
             target: {
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area' &&
-                                       this.game.currentChallenge.isAttacking(card)
+                                       card.isAttacking()
             },
             handler: context => {
                 context.target.controller.standCard(context.target);

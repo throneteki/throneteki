@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class BearIslandLoyalist extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this),
+            condition: () => this.isParticipating(),
             match: card => this.isOtherParticipatingStark(card),
             effect: ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() === 'event')
         });
@@ -11,7 +11,7 @@ class BearIslandLoyalist extends DrawCard {
 
     isOtherParticipatingStark(card) {
         return (
-            this.game.currentChallenge.isParticipating(card) &&
+            card.isParticipating() &&
             card.controller === this.controller &&
             card.isFaction('stark') &&
             card !== this

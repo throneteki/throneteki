@@ -4,7 +4,7 @@ class Val extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onAttackersDeclared: event => event.challenge.isAttacking(this)
+                onDeclaredAsAttacker: event => event.card === this
             },
             target: {
                 cardCondition: card => card.location === 'hand' && card.controller === this.controller &&

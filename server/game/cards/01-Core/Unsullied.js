@@ -3,8 +3,8 @@ const DrawCard = require('../../drawcard.js');
 class Unsullied extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
-            match: (card) => this.game.currentChallenge && this.game.currentChallenge.isDefending(card),
+            condition: () => this.isAttacking(),
+            match: card => card.isDefending(),
             targetController: 'opponent',
             effect: ability.effects.modifyStrength(-1)
         });

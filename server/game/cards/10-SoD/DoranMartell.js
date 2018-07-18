@@ -4,10 +4,9 @@ class DoranMartell extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: card => card.location === 'play area' && this.game.currentChallenge.isParticipating(card) &&
+                cardCondition: card => card.location === 'play area' && card.isParticipating() &&
                                        card.getNumberOfIcons() < 2
             },
             handler: context => {

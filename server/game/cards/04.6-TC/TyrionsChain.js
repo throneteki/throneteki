@@ -33,7 +33,7 @@ class TyrionsChain extends DrawCard {
     }
 
     hasParticipatingUniqueLannister() {
-        return this.controller.anyCardsInPlay(card => this.game.currentChallenge.isParticipating(card) && card.isUnique() && card.isFaction('lannister') && card.getType() === 'character');
+        return this.controller.anyCardsInPlay(card => card.isParticipating() && card.isUnique() && card.isFaction('lannister') && card.getType() === 'character');
     }
 
     getRevealedWarPlots() {

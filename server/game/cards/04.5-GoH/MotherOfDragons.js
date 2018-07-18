@@ -5,8 +5,8 @@ class MotherOfDragons extends DrawCard {
         this.attachmentRestriction({ trait: 'Stormborn' });
         this.action({
             title: 'Add attached character to the challenge',
-            condition: () => this.game.currentChallenge && this.parent.canParticipateInChallenge() &&
-                             this.controller.anyCardsInPlay(card => this.game.currentChallenge.isParticipating(card) && card.hasTrait('Dragon')),
+            condition: () => this.parent.canParticipateInChallenge() &&
+                             this.controller.anyCardsInPlay(card => card.isParticipating() && card.hasTrait('Dragon')),
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 let challenge = this.game.currentChallenge;

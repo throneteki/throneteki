@@ -6,7 +6,7 @@ class Osha extends DrawCard {
             title: 'Remove Osha from the challenge and stand her',
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this),
+            condition: () => this.isParticipating(),
             handler: context => {
                 this.game.currentChallenge.removeFromChallenge(this);
                 this.controller.standCard(this);

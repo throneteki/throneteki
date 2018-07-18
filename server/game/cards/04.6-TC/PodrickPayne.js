@@ -38,7 +38,7 @@ class PodrickPayne extends DrawCard {
         this.game.promptForSelect(this.controller, {
             source: this,
             cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                   this.game.currentChallenge.isAttacking(card),
+                                   card.isAttacking(),
             gameAction: 'kill',
             onSelect: (p, card) => {
                 this.game.spendGold({ amount: 2, player: this.controller });

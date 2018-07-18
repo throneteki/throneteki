@@ -6,14 +6,14 @@ class Grenn extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this) &&
+                    this.isAttacking() &&
                     event.challenge.loser.faction.power > 0)
             },
             target: {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card !== this &&
-                    this.game.currentChallenge.isAttacking(card) &&
+                    card.isAttacking() &&
                     card.isFaction('thenightswatch') &&
                     card.getType() === 'character')
             },

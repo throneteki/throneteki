@@ -4,10 +4,7 @@ class BattleOfOxcross extends PlotCard {
 
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () =>
-                this.game.currentChallenge
-                && this.game.currentChallenge.attackingPlayer === this.controller
-                && this.game.currentChallenge.number <= 1,
+            condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 1 }),
             match: (card) =>
                 card.getType() === 'character'
                 && card.getPrintedCost() >= 4,

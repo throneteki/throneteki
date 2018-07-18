@@ -5,10 +5,10 @@ class TasteForFlesh extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller &&
-                                         this.isAttackingDirewolfOrHasAttachment(event.challenge)
+                                         this.isAttackingDirewolfOrHasAttachment()
             },
             target: {
-                cardCondition: card => this.game.currentChallenge.isDefending(card),
+                cardCondition: card => card.isDefending(),
                 gameAction: 'kill'
             },
             handler: context => {
@@ -18,8 +18,8 @@ class TasteForFlesh extends DrawCard {
         });
     }
 
-    isAttackingDirewolfOrHasAttachment(challenge) {
-        return this.controller.anyCardsInPlay(card => challenge.isAttacking(card) &&
+    isAttackingDirewolfOrHasAttachment() {
+        return this.controller.anyCardsInPlay(card => card.isAttacking() &&
         (card.hasTrait('Direwolf') || card.attachments.some(attachment => attachment.hasTrait('Direwolf'))));
     }
 }

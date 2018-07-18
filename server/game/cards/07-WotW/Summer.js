@@ -5,7 +5,7 @@ class Summer extends DrawCard {
         this.attachmentRestriction({ faction: 'stark', unique: true });
         this.action({
             title: 'Add attached character to the challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             cost: ability.costs.kneelParent(),
             limit: ability.limit.perChallenge(1),
             handler: () => {

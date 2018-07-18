@@ -7,7 +7,7 @@ class TheBastardOfNightsong extends DrawCard {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.isParticipating(this) &&
+                    this.isParticipating() &&
                     event.challenge.loser.faction.power > 0)
             },
             handler: context => {

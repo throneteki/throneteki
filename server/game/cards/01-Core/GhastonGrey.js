@@ -13,7 +13,7 @@ class GhastonGrey extends DrawCard {
             target: {
                 type: 'select',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       this.game.currentChallenge.isAttacking(card)
+                                       card.isAttacking()
             },
             handler: context => {
                 context.target.owner.returnCardToHand(context.target, false);

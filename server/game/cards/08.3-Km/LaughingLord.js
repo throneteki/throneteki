@@ -9,7 +9,7 @@ class LaughingLord extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       this.game.currentChallenge.isAttacking(card) && card.isFaction('baratheon')
+                                       card.isAttacking() && card.isFaction('baratheon')
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({

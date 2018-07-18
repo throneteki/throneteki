@@ -4,8 +4,7 @@ class RaidingKhalasar extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () =>
-                this.game.currentChallenge &&
-                this.game.currentChallenge.isAttacking(this) &&
+                this.isAttacking() &&
                 this.bloodriderIsAttacking(),
             match: card => card === this.controller.activePlot,
             effect: ability.effects.modifyClaim(1)
@@ -13,11 +12,7 @@ class RaidingKhalasar extends DrawCard {
     }
 
     bloodriderIsAttacking() {
-        return this.game.currentChallenge &&
-            this.game.currentChallenge.getParticipants().some(card =>
-                card.controller === this.controller &&
-                this.game.currentChallenge.isAttacking(card) &&
-                card.hasTrait('Bloodrider'));
+        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Bloodrider'));
     }
 }
 

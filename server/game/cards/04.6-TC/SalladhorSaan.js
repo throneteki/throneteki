@@ -6,7 +6,7 @@ class SalladhorSaan extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this))
+                    this.isParticipating())
             },
             target: {
                 activePromptTitle: 'Select a card',

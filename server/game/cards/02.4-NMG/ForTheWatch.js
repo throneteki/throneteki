@@ -4,8 +4,7 @@ class ForTheWatch extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.currentChallenge &&
-                this.game.currentChallenge.defendingPlayer === this.controller &&
+                this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
                 this.numOfChallengesInitiatedAgainst() <= 1
             ),
             targetType: 'player',

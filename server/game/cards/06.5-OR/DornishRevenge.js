@@ -43,7 +43,7 @@ class DornishRevenge extends DrawCard {
                 card.location === 'play area' &&
                 card.getType() === 'character' &&
                 card.controller !== this.controller &&
-                challenge.isDefending(card)),
+                card.isDefending()),
             gameAction: 'kill',
             onSelect: (p, card) => {
                 card.controller.killCharacter(card);

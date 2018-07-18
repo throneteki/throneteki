@@ -4,7 +4,7 @@ class OfferOfAPeach extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Remove character from challenge',
-            condition: () => this.game.currentChallenge && this.controller.anyCardsInPlay(card => card.hasTrait('Lady') || card.name === 'Renly Baratheon'),
+            condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('Lady') || card.name === 'Renly Baratheon'),
             phase: 'challenge',
             target: {
                 cardCondition: card => this.cardCondition(card)
@@ -19,7 +19,7 @@ class OfferOfAPeach extends DrawCard {
     }
 
     cardCondition(card) {
-        return card.location === 'play area' && this.game.currentChallenge.isAttacking(card);
+        return card.location === 'play area' && card.isAttacking();
     }
 }
 

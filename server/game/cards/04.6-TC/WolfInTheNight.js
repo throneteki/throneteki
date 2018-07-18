@@ -4,10 +4,9 @@ class WolfInTheNight extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Give +3 STR and renown to character',
-            condition: () => this.game.currentChallenge,
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isFaction('stark') &&
-                    this.game.currentChallenge.attackers.length === 1 && this.game.currentChallenge.isAttacking(card)
+                    this.game.isDuringChallenge({ attackingAlone: card })
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({

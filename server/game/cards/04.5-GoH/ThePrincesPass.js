@@ -8,7 +8,7 @@ class ThePrincesPass extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && this.game.currentChallenge.isAttacking(card)
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isAttacking()
             },
             handler: context => {
                 this.targetCharacter = context.target;

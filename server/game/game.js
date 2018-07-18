@@ -234,6 +234,10 @@ class Game extends EventEmitter {
         }, 0);
     }
 
+    isDuringChallenge(matchers = {}) {
+        return this.currentChallenge && this.currentChallenge.isMatch(matchers);
+    }
+
     addEffect(source, properties) {
         this.addSimultaneousEffects([{ source: source, properties: properties }]);
     }

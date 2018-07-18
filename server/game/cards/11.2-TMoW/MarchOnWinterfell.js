@@ -4,7 +4,7 @@ class MarchOnWinterfell extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'End the challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.attackingPlayer === this.controller,
+            condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller }),
             handler: context => {
                 this.game.currentChallenge.cancelChallenge();
 

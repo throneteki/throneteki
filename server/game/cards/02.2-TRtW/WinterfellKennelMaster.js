@@ -22,9 +22,7 @@ class WinterfellKennelMaster extends DrawCard {
     }
 
     isStarkCardParticipatingInChallenge() {
-        return this.game.currentChallenge && this.controller.anyCardsInPlay(card => {
-            return this.game.currentChallenge.isParticipating(card) && card.isFaction('stark');
-        });
+        return this.controller.anyCardsInPlay(card => card.isParticipating() && card.isFaction('stark'));
     }
 
     isDirewolfOrHasAttachment(card) {

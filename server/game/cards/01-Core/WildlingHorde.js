@@ -5,14 +5,13 @@ class WildlingHorde extends DrawCard {
         this.action({
             title: 'Kneel your faction card',
             phase: 'challenge',
-            condition: () => this.game.currentChallenge,
             cost: ability.costs.kneelFactionCard(),
             target: {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.controller === this.controller &&
                     card.hasTrait('Wildling') &&
-                    this.game.currentChallenge.isParticipating(card)
+                    card.isParticipating()
                 )
             },
             handler: context => {

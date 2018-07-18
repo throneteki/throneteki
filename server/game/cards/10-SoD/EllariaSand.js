@@ -4,7 +4,7 @@ class EllariaSand extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onAttackersDeclared: event => event.challenge.isAttacking(this)
+                onDeclaredAsAttacker: event => event.card === this
             },
             target: {
                 mode: 'upTo',

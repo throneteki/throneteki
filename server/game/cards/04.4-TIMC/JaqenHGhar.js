@@ -31,11 +31,7 @@ class JaqenHGhar extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: event => (
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this) &&
-                    event.challenge.attackers.length === 1
-                )
+                afterChallenge: () => this.game.isDuringChallenge({ winner: this.controller, attackingAlone: this })
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasToken('valarmorghulis'),

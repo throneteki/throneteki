@@ -6,7 +6,7 @@ class TyrionLannister extends DrawCard {
             when: {
                 afterChallenge: event =>
                     event.challenge.winner === this.controller &&
-                    (event.challenge.challengeType === 'intrigue' || event.challenge.isParticipating(this)) &&
+                    (event.challenge.challengeType === 'intrigue' || this.isParticipating()) &&
                     this.controller.canDraw()
             },
             cost: ability.costs.payGold(1),

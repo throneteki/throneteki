@@ -4,7 +4,7 @@ class SerJaimeLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentChallenge && this.game.currentChallenge.attackers.length === 1,
-            match: card => card.hasTrait('Knight') && this.game.currentChallenge.isAttacking(card),
+            match: card => card.hasTrait('Knight') && card.isAttacking(),
             effect: ability.effects.addKeyword('Renown')
         });
 

@@ -5,9 +5,8 @@ class KnightOfTheReach extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => (
-                    event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this) &&
-                    this.hasSingleParticipatingChar())
+                    event.challenge.isMatch({ winner: this.controller, attackingAlone: this }) ||
+                    event.challenge.isMatch({ winner: this.controller, defendingAlone: this }))
             },
             target: {
                 cardCondition: card => (
@@ -22,13 +21,6 @@ class KnightOfTheReach extends DrawCard {
                     this.controller, this, context.target);
             }
         });
-    }
-
-    hasSingleParticipatingChar() {
-        if(this.game.currentChallenge.attackingPlayer === this.controller) {
-            return this.game.currentChallenge.attackers.length === 1;
-        }
-        return this.game.currentChallenge.defenders.length === 1;
     }
 }
 

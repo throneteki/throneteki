@@ -4,7 +4,7 @@ class Spearmaiden extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onAttackersDeclared: event => event.challenge.challengeType === 'military' && event.challenge.isAttacking(this)
+                onDeclaredAsAttacker: event => this.game.isDuringChallenge({ challengeType: 'military' }) && event.card === this
             },
             target: {
                 cardCondition: card => (

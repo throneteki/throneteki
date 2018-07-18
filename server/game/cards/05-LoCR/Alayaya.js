@@ -6,7 +6,7 @@ class Alayaya extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.isParticipating(this) &&
+                    this.isParticipating() &&
                     event.challenge.loser.gold >= 1)
             },
             handler: context => {

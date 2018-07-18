@@ -4,7 +4,7 @@ class Butterbumps extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && event.challenge.isParticipating(this)
+                afterChallenge: event => event.challenge.loser === this.controller && this.isParticipating()
             },
             handler: () => {
                 this.controller.discardAtRandom(1);

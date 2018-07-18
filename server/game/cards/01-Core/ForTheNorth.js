@@ -4,9 +4,9 @@ class ForTheNorth extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Give +2 STR to character',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.challengeType === 'military',
+            condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             target: {
-                cardCondition: card => this.game.currentChallenge.isParticipating(card) && card.isFaction('stark')
+                cardCondition: card => card.isParticipating() && card.isFaction('stark')
             },
             handler: context => {
                 this.selectedCard = context.target;

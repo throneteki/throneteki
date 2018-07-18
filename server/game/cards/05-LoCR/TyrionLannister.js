@@ -39,7 +39,7 @@ class TyrionLannister extends DrawCard {
         return (
             card.getType() === 'character' &&
             card.hasTrait('Clansman') &&
-            this.game.currentChallenge.isAttacking(card));
+            card.isAttacking());
     }
 }
 

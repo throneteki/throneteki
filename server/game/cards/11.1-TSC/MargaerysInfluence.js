@@ -4,7 +4,7 @@ class MargaerysInfluence extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Stand parent and remove from challenge',
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isParticipating(this.parent),
+            condition: () => this.parent && this.parent.isParticipating(),
             cost: [
                 ability.costs.kneelSelf(),
                 ability.costs.payGold(1)

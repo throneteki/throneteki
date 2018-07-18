@@ -4,10 +4,10 @@ class Moqorro extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'outOfShadows' && this.game.currentChallenge
+                onCardEntersPlay: event => event.card === this && event.playingType === 'outOfShadows'
             },
             target: {
-                cardCondition: card => this.game.currentChallenge.isDefending(card)
+                cardCondition: card => card.isDefending()
             },
             handler: context => {
                 context.target.owner.moveCardToTopOfDeck(context.target);

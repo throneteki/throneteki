@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class CunningSteward extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer === this.controller,
+            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
             match: this,
             effect: [
                 ability.effects.addIcon('military'),

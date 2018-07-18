@@ -8,10 +8,10 @@ class BlackBetha extends DrawCard {
         });
         this.action({
             title: 'Give attacking character +STR',
-            condition: () => this.game.currentChallenge && this.calculateStrength() >= 1,
+            condition: () => this.calculateStrength() >= 1,
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => this.game.currentChallenge.isAttacking(card)
+                cardCondition: card => card.isAttacking()
             },
             handler: context => {
                 let strBoost = this.calculateStrength();
@@ -28,12 +28,11 @@ class BlackBetha extends DrawCard {
     }
 
     calculateStrength() {
-        return this.game.allCards.reduce((counter, card) => {
-            if(card === this || card.owner === this.game.currentChallenge.attackingPlayer || card.location !== 'play area' || card.getType() !== 'character' || !card.kneeled) {
-                return counter;
-            }
-            return counter + 1;
-        }, 0);
+        if(!this.game.currentChallenge) {
+            return 0;
+        }
+
+        return this.game.getNumberOfCardsInPlay(card => card.controller === this.game.currentChallenge.defendingPlayer && card.kneeled && card.getType() === 'character');
     }
 }
 

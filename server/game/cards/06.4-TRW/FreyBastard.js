@@ -17,7 +17,7 @@ class FreyBastard extends DrawCard {
 
     getNumberOfAttackingFreys() {
         let cards = this.controller.filterCardsInPlay(card => {
-            return this.game.currentChallenge.isAttacking(card) && card.hasTrait('House Frey') && card.getType() === 'character';
+            return card.isAttacking() && card.hasTrait('House Frey') && card.getType() === 'character';
         });
 
         return cards.length;

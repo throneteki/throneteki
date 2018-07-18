@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class WexPyke extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.isAttacking(this),
+            condition: () => this.isAttacking(),
             targetController: 'any',
             match: card => card.getType() === 'character' && card.getPrintedCost() === this.tokens['gold'],
             effect: ability.effects.cannotBeDeclaredAsDefender()
