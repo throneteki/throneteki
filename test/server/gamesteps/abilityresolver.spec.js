@@ -2,7 +2,7 @@ const AbilityResolver = require('../../../server/game/gamesteps/abilityresolver.
 
 describe('AbilityResolver', function() {
     beforeEach(function() {
-        this.game = jasmine.createSpyObj('game', ['addAlert', 'markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseEvent', 'reportError']);
+        this.game = jasmine.createSpyObj('game', ['addAlert', 'markActionAsTaken', 'popAbilityContext', 'pushAbilityContext', 'raiseEvent', 'resolveEvent', 'reportError']);
         this.game.raiseEvent.and.callFake((name, params, handler) => {
             if(handler) {
                 handler(params);
@@ -96,7 +96,7 @@ describe('AbilityResolver', function() {
 
             it('should raise the onCardPlayed event', function() {
                 this.resolver.continue();
-                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardPlayed', jasmine.any(Object));
+                expect(this.game.resolveEvent).toHaveBeenCalledWith(jasmine.objectContaining({ name: 'onCardPlayed', card: this.source }));
             });
 
             describe('and the event is no longer in the "being played" state', function() {

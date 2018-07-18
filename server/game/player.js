@@ -3,6 +3,7 @@ const _ = require('underscore');
 const Spectator = require('./spectator.js');
 const DrawCard = require('./drawcard.js');
 const Deck = require('./Deck');
+const Event = require('./event');
 const AbilityContext = require('./AbilityContext.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 const BestowPrompt = require('./gamesteps/bestowprompt.js');
@@ -639,9 +640,15 @@ class Player extends Spectator {
             return;
         }
 
+        let needsShadowEvent = card.location === 'shadows';
+
         if(dupeCard && playingType !== 'setup') {
             this.removeCardFromPile(card);
             dupeCard.addDuplicate(card);
+
+            if(needsShadowEvent) {
+                this.game.raiseEvent('onCardOutOfShadows', { player: this, card: card, type: 'dupe' });
+            }
         } else {
             // Attachments placed in setup should not be considered to be 'played',
             // as it will cause then to double their effects when attached later.
@@ -666,7 +673,13 @@ class Player extends Spectator {
                 }
             });
 
-            this.game.raiseEvent('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
+            let event = new Event('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
+
+            if(needsShadowEvent) {
+                event.addChildEvent(new Event('onCardOutOfShadows', { player: this, card: card, type: 'card' }));
+            }
+
+            this.game.resolveEvent(event);
         }
     }
 

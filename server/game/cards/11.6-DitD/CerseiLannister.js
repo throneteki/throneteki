@@ -4,7 +4,7 @@ class CerseiLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card.controller === this.controller && event.playingType === 'outOfShadows' &&
+                onCardOutOfShadows: event => event.card.controller === this.controller &&
                                            this.game.currentPhase === 'challenge'
             },
             limit: ability.limit.perPhase(3),

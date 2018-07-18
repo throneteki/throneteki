@@ -4,7 +4,7 @@ class SerGerrisDrinkwater extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'outOfShadows'
+                onCardOutOfShadows: event => event.card === this
             },
             targets: {
                 plotCard: {

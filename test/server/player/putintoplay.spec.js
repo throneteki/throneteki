@@ -2,7 +2,7 @@ const Player = require('../../../server/game/player.js');
 
 describe('Player', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['queueSimpleStep', 'queueStep', 'raiseEvent', 'playerDecked']);
+        this.gameSpy = jasmine.createSpyObj('game', ['queueSimpleStep', 'queueStep', 'raiseEvent', 'resolveEvent', 'playerDecked']);
         this.player = new Player('1', {username: 'Player 1', settings: {}}, true, this.gameSpy);
         this.player.initialise();
 
@@ -45,7 +45,7 @@ describe('Player', function() {
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardEntersPlay', jasmine.objectContaining({ card: this.cardSpy, playingType: 'marshal' }));
+                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(jasmine.objectContaining({ name: 'onCardEntersPlay', card: this.cardSpy, playingType: 'marshal' }));
                 });
 
                 describe('when it has the Bestow keyword', function() {
@@ -167,7 +167,7 @@ describe('Player', function() {
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardEntersPlay', jasmine.objectContaining({ card: this.cardSpy, playingType: 'setup' }));
+                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(jasmine.objectContaining({ name: 'onCardEntersPlay', card: this.cardSpy, playingType: 'setup' }));
                 });
 
                 describe('when it has the Bestow keyword', function() {
@@ -206,7 +206,7 @@ describe('Player', function() {
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardEntersPlay', jasmine.objectContaining({ card: this.cardSpy, playingType: 'setup' }));
+                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(jasmine.objectContaining({ name: 'onCardEntersPlay', card: this.cardSpy, playingType: 'setup' }));
                 });
 
                 it('should not add as a duplicate', function() {
@@ -243,7 +243,7 @@ describe('Player', function() {
                 });
 
                 it('should raise the onCardEntersPlay event', function() {
-                    expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardEntersPlay', jasmine.objectContaining({ card: this.cardSpy, playingType: 'ambush' }));
+                    expect(this.gameSpy.resolveEvent).toHaveBeenCalledWith(jasmine.objectContaining({ name: 'onCardEntersPlay', card: this.cardSpy, playingType: 'ambush' }));
                 });
             });
 
