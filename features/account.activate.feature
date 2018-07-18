@@ -23,6 +23,7 @@ Feature: Account API - Activate endpoint
 
     Scenario: Unexpected activation
         When I set the 'token' to 'sometoken'
+        And I make sure the 'existinguser' user exists
         And I set the id to an existing user not expecting validation
         And I submit the API request to the 'account/activate' endpoint
         Then I should get a 'An error occured activating your account, check the url you have entered and try again.' failure response

@@ -49,7 +49,8 @@ When('I set valid account details', function () {
 When('I set the id to an existing user not expecting validation', async function () {
     setValidDetails(this.requestBody);
 
-    let result = await request.postToEndpoint('/account/register', this.requestBody);
+    let result = await request.postToEndpoint('account/register', this.requestBody);
+
     assert.isTrue(result.body.success);
 
     let user = await fetchUser(this.requestBody.username);
@@ -64,7 +65,7 @@ When('I set the id to an existing user not expecting validation', async function
 When('I set the id to an existing user', async function () {
     setValidDetails(this.requestBody);
 
-    let result = await request.postToEndpoint('/account/register', this.requestBody);
+    let result = await request.postToEndpoint('account/register', this.requestBody);
     assert.isTrue(result.body.success);
 
     let user = await fetchUser(this.requestBody.username);
@@ -114,6 +115,14 @@ When('I set the bearer token to {string}', function (token) {
 
 When('I use the currently active token', function () {
     this.requestAuthToken = this.result.body.token;
+});
+
+When('I make sure the {string} user exists', async function (username) {
+    let user = await fetchUser(username);
+
+    if(!user) {
+        await dbUsers.insert({ username: username });
+    }
 });
 
 Then('I should get a {string} failure response', function (message) {
