@@ -5,6 +5,7 @@ class SeasonedWoodsman extends DrawCard {
         this.reaction({
             when: {
                 onCardAttached: event =>
+                    event.card.controller === this.controller &&
                     event.parent === this &&
                     (this.controller.canGainGold() || this.controller.canDraw())
             },
