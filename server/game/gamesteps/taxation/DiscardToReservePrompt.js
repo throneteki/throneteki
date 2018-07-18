@@ -1,6 +1,4 @@
-const _ = require('underscore');
-
-const BaseStep = require('../basestep.js');
+const BaseStep = require('../basestep');
 
 class DiscardToReservePrompt extends BaseStep {
     constructor(game) {
@@ -9,16 +7,18 @@ class DiscardToReservePrompt extends BaseStep {
     }
 
     continue() {
-        this.remainingPlayers = _.reject(this.remainingPlayers, player => player.isBelowReserve());
+        while(this.remainingPlayers.length !== 0) {
+            let currentPlayer = this.remainingPlayers.shift();
 
-        if(_.isEmpty(this.remainingPlayers)) {
-            this.game.raiseEvent('onReserveChecked');
-            return true;
+            if(currentPlayer.isBelowReserve()) {
+                this.game.addMessage('{0} is already below their reserve value', currentPlayer);
+            } else {
+                this.promptPlayerToDiscard(currentPlayer);
+                return false;
+            }
         }
 
-        this.promptPlayerToDiscard(this.remainingPlayers[0]);
-
-        return false;
+        this.game.raiseEvent('onReserveChecked');
     }
 
     promptPlayerToDiscard(currentPlayer) {
@@ -40,9 +40,6 @@ class DiscardToReservePrompt extends BaseStep {
         cards = cards.reverse();
         player.discardCards(cards, false, () => {
             this.game.addMessage('{0} discards {1} to meet reserve', player, cards);
-            if(player.isBelowReserve()) {
-                this.remainingPlayers = this.remainingPlayers.slice(1);
-            }
         });
         return true;
     }
