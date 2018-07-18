@@ -38,6 +38,7 @@ class DeckEditor extends React.Component {
             this.state.bannerCards = props.deck.bannerCards;
             this.state.faction = props.deck.faction;
             this.state.agenda = props.deck.agenda;
+            this.state.showBanners = this.isAllianceAgenda(props.deck.agenda);
             this.state.status = props.deck.status;
             this.state.rookeryCards = props.deck.rookeryCards || [];
 
