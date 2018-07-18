@@ -1,6 +1,7 @@
 const _ = require('underscore');
 
 const BaseStep = require('./basestep.js');
+const Event = require('../event');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
 
@@ -14,6 +15,7 @@ class AbilityResolver extends BaseStep {
         this.pipeline.initialise([
             new SimpleStep(game, () => this.createSnapshot()),
             new SimpleStep(game, () => this.markActionAsTaken()),
+            new SimpleStep(game, () => this.recordShadowStatus()),
             new SimpleStep(game, () => this.game.pushAbilityContext(this.context)),
             new SimpleStep(game, () => this.context.resolutionStage = 'cost'),
             new SimpleStep(game, () => this.resolveCosts()),
@@ -76,6 +78,10 @@ class AbilityResolver extends BaseStep {
         if(this.ability.isAction()) {
             this.game.markActionAsTaken(this.context);
         }
+    }
+
+    recordShadowStatus() {
+        this.needsOutOfShadowEvent = this.ability.isPlayableEventAbility() && this.context.source.location === 'shadows';
     }
 
     resolveCosts() {
@@ -186,7 +192,13 @@ class AbilityResolver extends BaseStep {
             if(this.context.source.location === 'being played') {
                 this.context.source.owner.moveCard(this.context.source, this.context.source.eventPlacementLocation);
             }
-            this.game.raiseEvent('onCardPlayed', { player: this.context.player, card: this.context.source });
+
+            let event = new Event('onCardPlayed', { player: this.context.player, card: this.context.source });
+            if(this.needsOutOfShadowEvent) {
+                event.addChildEvent(new Event('onCardOutOfShadows', { player: this.context.player, card: this.context.source, type: 'card' }));
+            }
+
+            this.game.resolveEvent(event);
         }
     }
 }

@@ -4,7 +4,7 @@ class JanosSlynt extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'outOfShadows'
+                onCardOutOfShadows: event => event.card === this
             },
             target: {
                 cardCondition: card => card.controller === this.controller && card.getType() === 'character' && card.isFaction('thenightswatch'),

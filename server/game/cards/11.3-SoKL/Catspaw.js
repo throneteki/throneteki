@@ -4,7 +4,7 @@ class Catspaw extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'outOfShadows'
+                onCardOutOfShadows: event => event.card === this
             },
             cost: ability.costs.payXGold(() => this.getMinimumCost(), () => 99),
             target: {

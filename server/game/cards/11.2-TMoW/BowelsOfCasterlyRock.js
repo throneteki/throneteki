@@ -4,7 +4,7 @@ class BowelsOfCasterlyRock extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card.controller === this.controller && event.playingType === 'outOfShadows'
+                onCardOutOfShadows: event => event.card.controller === this.controller
             },
             limit: ability.limit.perPhase(1),
             choices: {

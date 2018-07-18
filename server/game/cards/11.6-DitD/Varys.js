@@ -11,7 +11,7 @@ class Varys extends DrawCard {
 
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card === this && event.playingType === 'outOfShadows'
+                onCardOutOfShadows: event => event.card === this
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPower() > 0
