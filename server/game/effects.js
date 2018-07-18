@@ -1122,19 +1122,17 @@ const Effects = {
     },
     //Meereen only effect
     removeCardsFromHand: function() {
-        let removedCards = [];
         return {
             apply: function(player, context) {
                 for(let card of player.hand) {
                     player.removeCardFromPile(card);
                     context.source.addChildCard(card, 'underneath');
                     card.facedown = true;
-                    removedCards.push(card);
                 }
             },
             unapply: function(player, context) {
                 player.discardCards(player.hand);
-                for(let card of removedCards) {
+                for(let card of context.source.childCards.filter(card => card.controller === player && card.location === 'underneath')) {
                     player.moveCard(card, 'hand');
                 }
                 context.game.addMessage('{0} discards their hand and returns each card under {1} to their hand',
