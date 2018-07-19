@@ -1,7 +1,7 @@
 const Player = require('../../../server/game/player.js');
 
 describe('the Player', () => {
-    var game = jasmine.createSpyObj('game', ['playerDecked', 'raiseEvent']);
+    var game = jasmine.createSpyObj('game', ['raiseEvent']);
 
     var player = new Player('1', {username: 'Player 1', settings: {}}, true, game);
     var drawDeck = [
