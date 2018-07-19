@@ -129,7 +129,7 @@ class ChallengeFlow extends BaseStep {
         this.forcedDefenders = this.challenge.defendingPlayer.filterCardsInPlay(card => {
             return card.getType() === 'character' &&
                 card.canDeclareAsDefender(this.challenge.challengeType) &&
-                card.challengeOptions.mustBeDeclaredAsDefender;
+                card.challengeOptions.contains('mustBeDeclaredAsDefender');
         });
 
         let defenderMaximum = this.challenge.defendingPlayer.defenderLimits.getMax();
