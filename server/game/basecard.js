@@ -377,7 +377,7 @@ class BaseCard {
     }
 
     isLoyal() {
-        return this.cardData.loyal;
+        return !!this.cardData.loyal;
     }
 
     applyAnyLocationPersistentEffects() {
