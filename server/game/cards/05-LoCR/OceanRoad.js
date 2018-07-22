@@ -12,7 +12,6 @@ class OceanRoad extends DrawCard {
                     this.controller, this);
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         1,

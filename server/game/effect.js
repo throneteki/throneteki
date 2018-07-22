@@ -24,8 +24,6 @@ const PlayAreaLocations = ['play area', 'active plot'];
  *                    than Winter plots").
  * targetController - string that determines which player's cards are targeted.
  *                    Can be 'current' (default), 'opponent' or 'any'.
- * targetType       - string that determines whether cards or players are the
- *                    target for the effect. Can be 'card' (default) or 'player'
  * targetLocation   - string that determines the location of cards that can be
  *                    applied by the effect. Can be 'play area' (default) or
  *                    'hand'.
@@ -45,7 +43,7 @@ class Effect {
         this.condition = properties.condition || (() => true);
         this.location = properties.location || 'play area';
         this.targetController = properties.targetController || 'current';
-        this.targetType = properties.targetType || 'card';
+        this.targetType = properties.effect.targetType || 'card';
         this.targetLocation = properties.targetLocation || 'play area';
         this.effect = this.buildEffect(properties.effect);
         this.gameAction = this.effect.gameAction || 'genericEffect';

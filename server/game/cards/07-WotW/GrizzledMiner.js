@@ -5,7 +5,6 @@ class GrizzledMiner extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            targetType: 'player',
             targetController: 'current',
             effect: [
                 ability.effects.reduceSelfCost('marshal', () => this.getDiscount()),

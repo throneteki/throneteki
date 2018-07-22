@@ -10,7 +10,6 @@ class TheWaterGardens extends DrawCard {
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     effect: ability.effects.reduceNextMarshalledPlayedOrAmbushedCardCost(
                         context.player.getNumberOfUsedPlots(),
                         card => card.getType() !== 'character'

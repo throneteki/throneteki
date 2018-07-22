@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class AGameOfThrones extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'any',
             match: player => player.getNumberOfChallengesWon('intrigue') < 1,
             effect: [

@@ -14,7 +14,6 @@ class RelentlessAssault extends DrawCard {
             handler: context => {
                 let type = this.game.currentChallenge.challengeType;
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge(type)
                 }));

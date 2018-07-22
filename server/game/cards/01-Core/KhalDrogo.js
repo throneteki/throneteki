@@ -3,7 +3,6 @@ const DrawCard = require('../../drawcard.js');
 class KhalDrogo extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.mayInitiateAdditionalChallenge('military')
         });

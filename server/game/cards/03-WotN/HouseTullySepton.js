@@ -9,7 +9,6 @@ class HouseTullySepton extends DrawCard {
             cost: ability.costs.discardPower(1, card => card.getType() === 'character'),
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         2,
                         card => (card.hasTrait('House Tully') || card.hasTrait('The Seven')) && card.getType() === 'character'

@@ -8,7 +8,6 @@ class HizdahrZoLoraq extends DrawCard {
             limit: ability.limit.perPhase(1),
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledAmbushedOrOutOfShadowsCardCost(3)
                 }));

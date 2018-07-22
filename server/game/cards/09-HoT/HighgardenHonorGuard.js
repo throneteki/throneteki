@@ -4,7 +4,6 @@ class HighgardenHonorGuard extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('ambush', () => this.getNumberOfReachLocations())
         });

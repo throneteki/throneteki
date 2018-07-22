@@ -22,7 +22,6 @@ class TheSilverSteed extends DrawCard {
                 this.controller.sacrificeCard(this);
 
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge('power')
                 }));

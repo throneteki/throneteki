@@ -15,7 +15,6 @@ class TheSevenPointedStar extends DrawCard {
                 this.game.addMessage('{0} uses {1} and kneels {2} to reduce the cost of the next The Seven character by 2', currentController, this, context.costs.kneel);
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     match: player => player === currentController,
                     effect: ability.effects.reduceNextMarshalledCardCost(2, card => card.hasTrait('The Seven'))

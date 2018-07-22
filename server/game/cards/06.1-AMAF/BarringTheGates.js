@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class BarringTheGates extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'any',
             effect: ability.effects.cannotPutIntoPlay((card, playingType) => card.getType() === 'character' && playingType !== 'marshal')
         });

@@ -13,7 +13,6 @@ class BloodyArakh extends DrawCard {
                 context.player.sacrificeCard(this);
 
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     effect: ability.effects.mayInitiateAdditionalChallenge('military')
                 }));
 

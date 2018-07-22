@@ -8,7 +8,6 @@ class WraithsInTheirMidst extends PlotCard {
             effect: ability.effects.modifyReserve(-2)
         });
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.setMinReserve(2)
         });

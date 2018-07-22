@@ -8,7 +8,6 @@ class Fealty extends AgendaCard {
             handler: () => {
                 this.game.addMessage('{0} uses {1} to kneel their faction card and reduce the cost of the next loyal card by 1', this.controller, this);
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledOrPlayedCardCost(1, card => card.isLoyal())
                 }));

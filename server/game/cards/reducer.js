@@ -19,7 +19,6 @@ class FactionCostReducer extends DrawCard {
                     this.controller, this, this.faction, this.reduceBy);
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(this.reduceBy, card => card.isFaction(this.faction))
                 }));
@@ -47,7 +46,6 @@ class FactionCharacterCostReducer extends DrawCard {
                     this.controller, this, this.faction, this.reduceBy);
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         this.reduceBy,

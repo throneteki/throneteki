@@ -10,7 +10,6 @@ class TourneyLance extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.parent && this.game.isDuringChallenge({ attackingAlone: this.parent }),
-            targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.setDefenderMaximum(1)
         });

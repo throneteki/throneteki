@@ -12,7 +12,6 @@ class HouseBannerman extends DrawCard {
                     this.controller, this, this.controller.getFaction());
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         1,

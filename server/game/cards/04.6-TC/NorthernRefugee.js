@@ -5,7 +5,6 @@ class NorthernRefugee extends DrawCard {
         this.persistentEffect({
             location: 'any',
             condition: () => this.game.anyPlotHasTrait('Winter'),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('marshal', 1)
         });

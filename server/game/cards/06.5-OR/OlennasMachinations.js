@@ -7,7 +7,6 @@ class OlennasMachinations extends DrawCard {
             title: 'Raise power challenge limit',
             handler: () => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge('power')
                 }));

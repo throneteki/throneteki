@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class Taxation extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             effect: ability.effects.modifyMaxLimited(1)
         });
     }

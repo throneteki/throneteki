@@ -17,7 +17,6 @@ class BeneathTheBridgeOfDream extends DrawCard {
                 this.game.queueSimpleStep(() => {
                     let plot = sample(this.controller.getPlots());
                     this.untilEndOfPhase(ability => ({
-                        targetType: 'player',
                         targetController: 'current',
                         effect: ability.effects.mustRevealPlot(plot)
                     }));

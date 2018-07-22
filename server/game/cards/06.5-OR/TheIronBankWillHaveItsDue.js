@@ -15,7 +15,6 @@ class TheIronBankWillHaveItsDue extends DrawCard {
                 gold = this.game.addGold(this.controller, gold);
 
                 this.untilEndOfRound(ability => ({
-                    targetType: 'player',
                     effect: ability.effects.cannotMarshalOrPutIntoPlayByTitle(returnedCard.name)
                 }));
 

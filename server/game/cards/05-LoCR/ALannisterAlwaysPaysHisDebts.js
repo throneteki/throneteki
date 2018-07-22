@@ -9,7 +9,6 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
             phase: 'challenge',
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: [
                         ability.effects.mayInitiateAdditionalChallenge('military', opponent => opponent === context.opponent),

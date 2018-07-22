@@ -21,7 +21,6 @@ class OlennasInformant extends DrawCard {
 
     challengeSelected(player, challenge) {
         this.untilEndOfPhase(ability => ({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.mayInitiateAdditionalChallenge(challenge)
         }));

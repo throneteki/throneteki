@@ -27,7 +27,6 @@ class BrothelMadame extends DrawCard {
                 this.hasPaymentMessageBeenPrinted = false;
 
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: context.opponent,
                     condition: () => !this.tracker.hasPaid(context.opponent, this.controller),
                     effect: ability.effects.cannotInitiateChallengeType('military', opponent => opponent === this.controller)

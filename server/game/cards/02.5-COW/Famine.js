@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class Famine extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.increaseCost({
                 playingTypes: 'marshal',

@@ -7,7 +7,6 @@ class MaesterKedry extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextPlayedCardCost(2)
                 }));

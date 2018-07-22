@@ -9,7 +9,6 @@ class TheRedKeep extends DrawCard {
                 this.game.currentChallenge.challengeType === 'power' &&
                 this.game.currentChallenge.anyParticipants(card => card.controller === this.controller) &&
                 this.controller.canDraw(),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.contributeChallengeStrength(2)
         });

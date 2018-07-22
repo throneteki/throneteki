@@ -292,6 +292,7 @@ const Effects = {
     doesNotContributeStrength: challengeOptionEffect('doesNotContributeStrength'),
     doesNotReturnUnspentGold: function() {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.doesNotReturnUnspentGold = true;
             },
@@ -659,6 +660,7 @@ const Effects = {
     },
     cannotPutIntoPlay: function(restriction) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.playCardRestrictions.push(restriction);
             },
@@ -679,6 +681,7 @@ const Effects = {
     cannotGainPower: cannotEffect('gainPower'),
     cannotGainGold: function() {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.maxGoldGain.setMax(0);
             },
@@ -690,6 +693,7 @@ const Effects = {
     cannotTarget: cannotEffect('target'),
     setMaxGoldGain: function(max) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.maxGoldGain.setMax(max);
             },
@@ -700,6 +704,7 @@ const Effects = {
     },
     setMaxCardDraw: function(max) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.maxCardDraw.setMax(max);
             },
@@ -710,6 +715,7 @@ const Effects = {
     },
     cannotGainChallengeBonus: function() {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.cannotGainChallengeBonus = true;
             },
@@ -720,6 +726,7 @@ const Effects = {
     },
     cannotWinGame: function() {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.cannotWinGame = true;
             },
@@ -731,6 +738,7 @@ const Effects = {
     },
     cannotTriggerCardAbilities: function(restriction = () => true) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.triggerRestrictions.push(restriction);
             },
@@ -741,6 +749,7 @@ const Effects = {
     },
     modifyDrawPhaseCards: function(value) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.drawPhaseCards += value;
             },
@@ -751,6 +760,7 @@ const Effects = {
     },
     modifyMaxLimited: function(amount) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.maxLimited += amount;
             },
@@ -762,6 +772,7 @@ const Effects = {
     mayInitiateAdditionalChallenge: function(challengeType, opponentFunc) {
         let allowedChallenge = new AllowedChallenge(challengeType, opponentFunc);
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.addAllowedChallenge(allowedChallenge);
             },
@@ -776,6 +787,7 @@ const Effects = {
     cannotInitiateChallengeType(challengeType, opponentCondition = () => true) {
         let restriction = new ChallengeRestriction(challengeType, opponentCondition);
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.addChallengeRestriction(restriction);
             },
@@ -801,6 +813,7 @@ const Effects = {
     },
     setMaxChallenge: function(max) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.setMaxChallenge(max);
             },
@@ -811,6 +824,7 @@ const Effects = {
     },
     setMinReserve: function(min) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 context.setMinReserve = context.setMinReserve || {};
                 context.setMinReserve[player.name] = player.minReserve;
@@ -824,6 +838,7 @@ const Effects = {
     },
     setMinCost: function(value) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 context.source.minCost = value;
             },
@@ -834,6 +849,7 @@ const Effects = {
     },
     contributeChallengeStrength: function(value) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 let challenge = context.game.currentChallenge;
                 if(!challenge) {
@@ -864,6 +880,7 @@ const Effects = {
     },
     setAttackerMaximum: function(value) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.attackerLimits.setMax(value);
             },
@@ -874,6 +891,7 @@ const Effects = {
     },
     setDefenderMinimum: function(value) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.defenderLimits.setMin(value);
             },
@@ -884,6 +902,7 @@ const Effects = {
     },
     setDefenderMaximum: function(value) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.defenderLimits.setMax(value);
             },
@@ -894,6 +913,7 @@ const Effects = {
     },
     cannotWinChallenge: function() {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.cannotWinChallenge = true;
             },
@@ -904,6 +924,7 @@ const Effects = {
     },
     canPlay: function(card) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 let playableLocation = new PlayableLocation('play', c => c === card);
                 context.canPlay = context.canPlay || {};
@@ -919,6 +940,7 @@ const Effects = {
     canMarshal: function(predicate) {
         let playableLocation = new PlayableLocation('marshal', predicate);
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.playableLocations.push(playableLocation);
             },
@@ -929,6 +951,7 @@ const Effects = {
     },
     canPlayFromOwn: function(location) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 let playableLocation = new PlayableLocation('play', card => card.controller === player && card.location === location);
                 context.canPlayFromOwn = context.canPlayFromOwn || {};
@@ -943,6 +966,7 @@ const Effects = {
     },
     canSelectAsFirstPlayer: function(condition) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.firstPlayerSelectCondition = condition;
             },
@@ -954,6 +978,7 @@ const Effects = {
     cannotStandMoreThan: function(max, match) {
         let restriction = { max: max, match: match };
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.standPhaseRestrictions.push(restriction);
             },
@@ -964,6 +989,7 @@ const Effects = {
     },
     reduceCost: function(properties) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 context.reducers = context.reducers || [];
                 var reducer = new CostReducer(context.game, context.source, properties);
@@ -979,6 +1005,7 @@ const Effects = {
     },
     reduceSelfCost: function(playingTypes, amount) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 context.reducers = context.reducers || [];
                 let reducer = new CostReducer(context.game, context.source, {
@@ -1052,6 +1079,7 @@ const Effects = {
     },
     dynamicUsedPlots: function(calculate) {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 context.dynamicUsedPlots = context.dynamicUsedPlots || {};
                 context.dynamicUsedPlots[player.name] = calculate(player, context) || 0;
@@ -1072,6 +1100,7 @@ const Effects = {
     },
     mustChooseAsClaim: function(card) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.mustChooseAsClaim.push(card);
             },
@@ -1082,6 +1111,7 @@ const Effects = {
     },
     skipPhase: function(name) {
         return {
+            targetType: 'game',
             apply: function(game) {
                 game.skipPhase[name] = true;
             },
@@ -1102,6 +1132,7 @@ const Effects = {
     },
     mustRevealPlot: function(card) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.mustRevealPlot = card;
             },
@@ -1112,6 +1143,7 @@ const Effects = {
     },
     applyClaimToMultipleOpponents: function(claimType) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.multipleOpponentClaim.push(claimType);
             },
@@ -1123,6 +1155,7 @@ const Effects = {
     //Meereen only effect
     removeCardsFromHand: function() {
         return {
+            targetType: 'player',
             apply: function(player, context) {
                 for(let card of player.hand) {
                     player.removeCardFromPile(card);

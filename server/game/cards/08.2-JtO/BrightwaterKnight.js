@@ -9,7 +9,6 @@ class BrightWaterKnight extends DrawCard {
             cost: ability.costs.discardGold(),
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         2,
                         card => card.getType() === 'character' && card.hasTrait('Knight')

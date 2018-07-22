@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class ANobleCause extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceFirstMarshalledCardCostEachRound(2, card => card.hasTrait('Lord') || card.hasTrait('Lady'))
         });

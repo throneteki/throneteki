@@ -3,7 +3,6 @@ const AgendaCard = require('../../agendacard.js');
 class UnitingTheSevenKingdoms extends AgendaCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.increaseCost({
                 playingTypes: ['marshal', 'play'],

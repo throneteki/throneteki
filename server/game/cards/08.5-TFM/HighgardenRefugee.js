@@ -5,7 +5,6 @@ class HighgardenRefugee extends DrawCard {
         this.persistentEffect({
             location: 'any',
             condition: () => this.game.anyPlotHasTrait('Summer'),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('marshal', 1)
         });

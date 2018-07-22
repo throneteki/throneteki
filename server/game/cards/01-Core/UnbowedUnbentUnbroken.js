@@ -26,7 +26,6 @@ class UnbowedUnbentUnbroken extends DrawCard {
 
     trigger(player, challengeType) {
         this.untilEndOfPhase(ability => ({
-            targetType: 'player',
             targetController: this.challengeWinner,
             effect: ability.effects.cannotInitiateChallengeType(challengeType)
         }));

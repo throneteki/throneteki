@@ -10,7 +10,6 @@ class SilverHairNet extends DrawCard {
 
         this.persistentEffect({
             condition: () => this.parent && this.parent.isParticipating(),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceCost({
                 playingTypes: 'play',

@@ -16,7 +16,6 @@ class TrisBotley extends DrawCard {
                     until: {
                         onCardLeftPlay: event => event.card === this
                     },
-                    targetType: 'player',
                     targetController: context.target.owner,
                     effect: [
                         ability.effects.cannotMarshal(card => card.code === context.target.code),

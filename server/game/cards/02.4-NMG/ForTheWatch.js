@@ -7,7 +7,6 @@ class ForTheWatch extends PlotCard {
                 this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
                 this.numOfChallengesInitiatedAgainst() <= 1
             ),
-            targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.cannotWinChallenge()
         });
