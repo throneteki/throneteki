@@ -6,7 +6,6 @@ class CityWatch extends DrawCard {
         this.persistentEffect({
             location: 'any',
             condition: () => this.hasMorePowerThanAnOpponent(),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('ambush', 2)
         });

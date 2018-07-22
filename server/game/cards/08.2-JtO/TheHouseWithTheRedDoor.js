@@ -42,7 +42,6 @@ class TheHouseWithTheRedDoor extends AgendaCard {
 
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             effect: ability.effects.setSetupGold(4)
         });
     }

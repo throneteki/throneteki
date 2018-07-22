@@ -28,7 +28,6 @@ class Spearmaiden extends DrawCard {
         this.game.addMessage('{0} uses {1} to force {2} to be chosen for claim, if able', this.controller, this, context.target);
 
         this.untilEndOfChallenge(ability => ({
-            targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.mustChooseAsClaim(context.target)
         }));

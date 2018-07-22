@@ -22,7 +22,6 @@ class TheKingsroad extends DrawCard {
                 let currentController = context.player;
                 this.game.addMessage('{0} kneels and sacrifices {1} to reduce the cost of the next character by 3', currentController, this);
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'any',
                     match: player => player === currentController,
                     effect: ability.effects.reduceNextMarshalledCardCost(3, card => card.getType() === 'character')

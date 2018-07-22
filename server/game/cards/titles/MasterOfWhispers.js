@@ -5,7 +5,6 @@ class MasterOfWhispers extends TitleCard {
         this.supports('Hand of the King');
         this.rivals('Master of Laws', 'Master of Coin');
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.applyClaimToMultipleOpponents('intrigue')
         });
@@ -15,7 +14,6 @@ class MasterOfWhispers extends TitleCard {
                 this.game.currentChallenge.challengeType === 'intrigue' &&
                 this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
             ),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.contributeChallengeStrength(1)
         });

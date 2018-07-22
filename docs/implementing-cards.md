@@ -236,12 +236,18 @@ this.persistentEffect({
 
 #### Player modifying effects
 
-Certain cards provide bonuses or restrictions on the player itself instead of on any specific cards. These can be implemented setting the `targetType` to `'player'` and using the appropriate effect.
+Certain cards provide bonuses or restrictions on the player itself instead of on any specific cards. Such effects can be implemented setting the `targetType` to `'player'`.
+
+```javascript
+mayInitiateAdditionalChallenge: function(challengeType) {
+    targetType: 'player',
+    // ...
+}
+```
 
 ```javascript
 // You may initiate an additional  challenge during the challenges phase.
 this.persistentEffect({
-    targetType: 'player',
     targetController: 'current',
     effect: ability.effects.mayInitiateAdditionalChallenge('military')
 });
@@ -266,7 +272,6 @@ To apply an effect to last until the end of the current phase, use `untilEndOfPh
 ```javascript
 // Until the end of the phase, the current player can initiate an additional power challenge.
 this.untilEndOfPhase(ability => ({
-    targetType: 'player',
     targetController: 'current',
     effect: ability.effects.mayInitiateAdditionalChallenge('power')
 }));

@@ -14,7 +14,6 @@ class Winterfell extends DrawCard {
             handler: () => {
                 this.controller.kneelCard(this);
                 this.untilEndOfChallenge(ability => ({
-                    targetType: 'player',
                     targetController: 'any',
                     match: player => !player.activePlot.hasTrait('winter'),
                     effect: ability.effects.cannotTriggerCardAbilities()

@@ -7,7 +7,6 @@ class TheHauntedForest extends DrawCard {
                 !this.kneeled &&
                 this.game.isDuringChallenge({ defendingPlayer: this.controller })
             ),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.contributeChallengeStrength(1)
         });

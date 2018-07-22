@@ -9,7 +9,6 @@ class MarchOnWinterfell extends DrawCard {
                 this.game.currentChallenge.cancelChallenge();
 
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge('power')
                 }));

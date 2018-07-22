@@ -9,7 +9,6 @@ class InTheNameOfYourKing extends DrawCard {
             handler: () => {
                 this.game.currentChallenge.cancelChallenge();
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.cannotInitiateChallengeType('military')
                 }));

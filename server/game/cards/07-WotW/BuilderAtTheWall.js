@@ -12,7 +12,6 @@ class BuilderAtTheWall extends DrawCard {
                     this.controller, this, 'thenightswatch');
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         1,

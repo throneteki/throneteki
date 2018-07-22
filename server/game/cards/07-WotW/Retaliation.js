@@ -6,7 +6,6 @@ class Retaliation extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => _.size(this.game.getPlayers()) > 1,
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.canSelectAsFirstPlayer(player => player !== this.controller)
         });

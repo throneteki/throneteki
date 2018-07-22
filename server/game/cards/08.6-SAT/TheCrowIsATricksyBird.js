@@ -33,7 +33,6 @@ class TheCrowIsATricksyBird extends DrawCard {
             until: {
                 onCardEntersPlay: event => event.card.getType() === 'plot' && event.card.controller === this.context.opponent
             },
-            targetType: player,
             match: this.context.opponent,
             effect: ability.effects.mustRevealPlot(card)
         }));

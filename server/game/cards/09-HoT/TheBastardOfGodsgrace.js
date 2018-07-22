@@ -8,7 +8,6 @@ class TheBastardOfGodsgrace extends DrawCard {
             cost: ability.costs.discardPowerFromSelf(),
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     effect: ability.effects.reduceNextAmbushedOrPlayedCardCost(2)
                 }));
 

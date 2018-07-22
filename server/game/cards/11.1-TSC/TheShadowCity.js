@@ -3,7 +3,6 @@ const DrawCard = require('../../drawcard');
 class TheShadowCity extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceCost({
                 playingTypes: 'marshalIntoShadows',

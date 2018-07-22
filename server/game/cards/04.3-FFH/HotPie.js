@@ -8,7 +8,6 @@ class HotPie extends DrawCard {
             cost: ability.costs.kneel(card => card.hasTrait('Companion') && card.getType() === 'character'),
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         1,
                         card => card.isUnique() && card.getType() === 'character'

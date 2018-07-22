@@ -20,7 +20,6 @@ class MasterOfShips extends TitleCard {
                 this.game.currentChallenge.challengeType === 'military' &&
                 this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
             ),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.contributeChallengeStrength(1)
         });

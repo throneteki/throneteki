@@ -3,7 +3,6 @@ const DrawCard = require('../../drawcard.js');
 class TheHighSparrow extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'any',
             effect: [
                 ability.effects.setMaxGoldGain(7),

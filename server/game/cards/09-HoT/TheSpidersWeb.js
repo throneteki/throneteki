@@ -10,7 +10,6 @@ class TheSpidersWeb extends PlotCard {
             handler: () => {
                 this.game.addMessage('{0} uses {1} to be able to initiate an additional {2} challenge with claim raised by 1', this.controller, this, 'intrigue');
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.mayInitiateAdditionalChallenge('intrigue')
                 }));

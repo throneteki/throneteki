@@ -15,7 +15,6 @@ class TheSwordInTheDarkness extends DrawCard {
                 this.game.addMessage('{0} plays {1} to prevent {2} from initiating any more challenges this round', this.controller, this, opponent);
 
                 this.untilEndOfRound(ability => ({
-                    targetType: 'player',
                     targetController: opponent,
                     effect: ability.effects.cannotInitiateChallengeAgainst(this.controller)
                 }));

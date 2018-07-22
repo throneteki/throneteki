@@ -6,7 +6,6 @@ class PaxterRedwyne extends DrawCard {
             gold: 1
         });
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceFirstPlayedCardCostEachRound(1, card => card.getType() === 'event')
         });

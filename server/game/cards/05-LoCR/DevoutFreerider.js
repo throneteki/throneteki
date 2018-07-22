@@ -4,7 +4,6 @@ class DevoutFreerider extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'challenge',
-            targetType: 'player',
             targetController: 'any',
             effect: ability.effects.cannotGainGold()
         });

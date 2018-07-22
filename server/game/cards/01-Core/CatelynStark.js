@@ -4,7 +4,6 @@ class CatelynStark extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isParticipating(),
-            targetType: 'player',
             targetController: 'opponent',
             effect: ability.effects.cannotTriggerCardAbilities()
         });

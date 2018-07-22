@@ -11,7 +11,6 @@ class ThePowerOfWealth extends AgendaCard {
 
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.reduceFirstMarshalledOrPlayedCardCostEachRound(1, card => card.isFaction(this.controller.getFaction()))
         });

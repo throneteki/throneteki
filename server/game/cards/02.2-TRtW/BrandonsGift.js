@@ -14,7 +14,6 @@ class BrandonsGift extends DrawCard {
             limit: ability.limit.perPhase(3),
             handler: () => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(1, card => card.isFaction('thenightswatch'))
                 }));

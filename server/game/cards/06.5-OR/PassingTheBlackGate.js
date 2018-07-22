@@ -8,7 +8,6 @@ class PassingTheBlackGate extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             handler: () => {
                 this.untilEndOfPhase(ability => ({
-                    targetType: 'player',
                     effect: ability.effects.reduceCost({
                         playingTypes: 'marshal',
                         amount: 1,

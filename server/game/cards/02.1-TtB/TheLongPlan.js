@@ -12,7 +12,6 @@ class TheLongPlan extends PlotCard {
             }
         });
         this.persistentEffect({
-            targetType: 'player',
             effect: ability.effects.doesNotReturnUnspentGold()
         });
     }

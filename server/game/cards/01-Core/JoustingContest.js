@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class JoustingContest extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'any',
             effect: [
                 ability.effects.setAttackerMaximum(1),

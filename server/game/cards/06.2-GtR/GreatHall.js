@@ -12,7 +12,6 @@ class GreatHall extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to reduce the cost of the next unique character by 1 (by 2 if it has cost of 6 or more)', context.player, this);
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextMarshalledCardCost(
                         amount,

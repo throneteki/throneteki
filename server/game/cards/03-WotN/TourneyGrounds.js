@@ -9,7 +9,6 @@ class TourneyGrounds extends DrawCard {
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
-                    targetType: 'player',
                     targetController: 'current',
                     effect: ability.effects.reduceNextPlayedCardCost(1, card => card.getType() === 'event')
                 }));

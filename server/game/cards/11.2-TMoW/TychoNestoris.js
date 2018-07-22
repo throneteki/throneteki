@@ -7,7 +7,6 @@ class TychoNestoris extends DrawCard {
         });
 
         this.persistentEffect({
-            targetType: 'player',
             effect: ability.effects.cannotWinGame()
         });
 

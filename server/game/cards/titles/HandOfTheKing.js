@@ -5,7 +5,6 @@ class HandOfTheKing extends TitleCard {
         this.supports('Master of Laws');
         this.rivals('Master of Coin', 'Master of Ships');
         this.persistentEffect({
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.mayInitiateAdditionalChallenge('power', opponent => this.allowOpponent(opponent))
         });
@@ -15,7 +14,6 @@ class HandOfTheKing extends TitleCard {
                 this.game.currentChallenge.challengeType === 'power' &&
                 this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
             ),
-            targetType: 'player',
             targetController: 'current',
             effect: ability.effects.contributeChallengeStrength(1)
         });
