@@ -18,7 +18,7 @@ describe('EffectEngine', function() {
         this.gameSpy.queueSimpleStep.and.callFake(func => func());
         this.gameSpy.allCards = [this.handCard, this.playAreaCard, this.discardedCard, this.drawCard, this.deadCard, this.activePlot, this.plotCard, this.revealedPlot, this.agendaCard, this.factionCard];
 
-        this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
+        this.effectSpy = jasmine.createSpyObj('effect', ['addTargets', 'hasEnded', 'isInActiveLocation', 'reapply', 'removeTarget', 'cancel', 'setActive']);
         this.effectSpy.isInActiveLocation.and.returnValue(true);
         this.effectSpy.targetLocation = 'play area';
 
@@ -95,6 +95,22 @@ describe('EffectEngine', function() {
 
             it('should reapply valid targets', function() {
                 expect(this.effectSpy.reapply).toHaveBeenCalledWith(jasmine.arrayContaining([this.handCard, this.playAreaCard, this.discardedCard, this.gameSpy]));
+            });
+        });
+
+        describe('when an effect is state dependent but it has ended', function() {
+            beforeEach(function() {
+                this.effectSpy.isStateDependent = true;
+                this.effectSpy.hasEnded.and.returnValue(true);
+                this.engine.reapplyStateDependentEffects();
+            });
+
+            it('should cancel the effect', function() {
+                expect(this.effectSpy.cancel).toHaveBeenCalled();
+            });
+
+            it('should remove the effect', function() {
+                expect(this.engine.effects).not.toContain(this.effectSpy);
             });
         });
 
