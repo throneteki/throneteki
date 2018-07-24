@@ -399,7 +399,6 @@ class BaseCard {
     }
 
     leavesPlay() {
-        this.cardTypeSet = undefined;
         this.tokens = {};
     }
 
