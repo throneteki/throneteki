@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class WardensOfTheSouth extends PlotCard {
     setupCardAbilities() {
         this.reaction({
-            title: context => context.event.card.name,
             when: {
                 onDeclaredAsAttacker: event => event.card.controller === this.controller && event.card.isFaction('tyrell'),
                 onDeclaredAsDefender: event => event.card.controller === this.controller && event.card.isFaction('tyrell')
