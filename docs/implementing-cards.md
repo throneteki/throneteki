@@ -677,18 +677,6 @@ this.reaction({
 });
 ```
 
-#### Changing the title of the reaction / interrupt button
-
-By default, players will see for all triggered abilities come in the form of buttons with the name of the card. In certain scenarios, you may want to override that title. This can be done by passing a `title` method which will take the ability `context` object (allowing access to the event and its parameters) and which should return the string to be added after the card name in ability prompts.
-
-```javascript
-this.interrupt({
-    // ...
-    title: context => 'Do something',
-    // Results in a prompt button: Iron Mines - Do something
-});
-```
-
 #### Limiting the number of uses
 
 Some abilities have text limiting the number of times they may be used in a given period. You can pass an optional `limit` property using one of the duration-specific ability limiters.

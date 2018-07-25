@@ -3,7 +3,6 @@ const DrawCard = require('../../drawcard.js');
 class ScorchingDeserts extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
-            title: context => context.event.card.name,
             when: {
                 onDeclaredAsAttacker: event => event.card.getNumberOfIcons() < 2 && event.card.controller !== this.controller,
                 onDeclaredAsDefender: event => event.card.getNumberOfIcons() < 2 && event.card.controller !== this.controller
