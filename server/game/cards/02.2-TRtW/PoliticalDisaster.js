@@ -30,18 +30,19 @@ class PoliticalDisaster extends PlotCard {
     }
 
     doDiscard() {
-        _.each(this.selections, selection => {
+        let toDiscard = [];
+        for(let selection of this.selections) {
             let player = selection.player;
-            let toDiscard = _.difference(player.filterCardsInPlay(card => card.getType() === 'location'), selection.cards);
+            let remainingLocations = _.difference(player.filterCardsInPlay(card => card.getType() === 'location'), selection.cards);
 
-            _.each(toDiscard, card => {
-                player.discardCard(card);
-            });
+            toDiscard = toDiscard.concat(remainingLocations);
 
-            if(!_.isEmpty(toDiscard)) {
-                this.game.addMessage('{0} discards {1} for {2}', player, toDiscard, this);
+            if(remainingLocations.length !== 0) {
+                this.game.addMessage('{0} discards {1} for {2}', player, remainingLocations, this);
             }
-        });
+        }
+
+        this.game.discardFromPlay(toDiscard);
 
         this.selections = [];
     }

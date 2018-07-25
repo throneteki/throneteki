@@ -965,7 +965,7 @@ class Player extends Spectator {
                 handler: () => true,
                 perCardEventName: 'onCardDiscarded',
                 perCardHandler: event => {
-                    this.moveCard(event.card, 'discard pile');
+                    event.card.controller.moveCard(event.card, 'discard pile');
                 },
                 postHandler: event => {
                     callback(event.cards);
