@@ -406,6 +406,10 @@ class BaseCard {
         let originalLocation = this.location;
         let originalParent = this.parent;
 
+        if(originalParent) {
+            originalParent.removeChildCard(this);
+        }
+
         this.location = targetLocation;
         this.parent = parent;
 

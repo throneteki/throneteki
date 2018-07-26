@@ -1106,11 +1106,6 @@ class Player extends Spectator {
             return;
         }
 
-        if(card.parent) {
-            card.parent.removeChildCard(card);
-            card.parent = undefined;
-        }
-
         var originalLocation = card.location;
         var originalPile = this.getSourceList(originalLocation);
 
