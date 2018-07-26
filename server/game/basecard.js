@@ -640,7 +640,7 @@ class BaseCard {
     }
 
     getSummary(activePlayer, hideWhenFaceup) {
-        let isActivePlayer = activePlayer === this.owner;
+        let isActivePlayer = activePlayer === this.controller;
 
         if(!isActivePlayer && (this.facedown || hideWhenFaceup)) {
             return { facedown: true };
