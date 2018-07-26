@@ -480,7 +480,7 @@ class Player extends Spectator {
     }
 
     isCharacterDead(card) {
-        return card.getType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
+        return card.getPrintedType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
     }
 
     playCard(card) {
@@ -517,7 +517,7 @@ class Player extends Spectator {
     }
 
     canPutIntoPlay(card, playingType = 'play', options = {}) {
-        if(card.getType() === 'event') {
+        if(card.getPrintedType() === 'event') {
             return false;
         }
 
@@ -569,7 +569,7 @@ class Player extends Spectator {
 
         var dupeCard = this.getDuplicateInPlay(card);
 
-        if(card.getType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
+        if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             this.promptForAttachment(card, playingType);
             return;
         }
@@ -586,7 +586,7 @@ class Player extends Spectator {
         } else {
             // Attachments placed in setup should not be considered to be 'played',
             // as it will cause then to double their effects when attached later.
-            let isSetupAttachment = playingType === 'setup' && card.getType() === 'attachment';
+            let isSetupAttachment = playingType === 'setup' && card.getPrintedType() === 'attachment';
 
             let originalLocation = card.location;
 

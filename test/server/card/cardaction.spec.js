@@ -11,7 +11,7 @@ describe('CardAction', function () {
         this.otherPlayerSpy = jasmine.createSpyObj('player', ['canTrigger']);
         this.otherPlayerSpy.canTrigger.and.returnValue(true);
 
-        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isAnyBlank']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'isAnyBlank']);
         this.handlerSpy = jasmine.createSpy('handler');
 
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
@@ -75,19 +75,19 @@ describe('CardAction', function () {
             });
 
             it('should default to agenda for cards with type agenda', function() {
-                this.cardSpy.getType.and.returnValue('agenda');
+                this.cardSpy.getPrintedType.and.returnValue('agenda');
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toBe('agenda');
             });
 
             it('should default to active plot for cards with type plot', function() {
-                this.cardSpy.getType.and.returnValue('plot');
+                this.cardSpy.getPrintedType.and.returnValue('plot');
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toBe('active plot');
             });
 
             it('should default to hand for cards with type event', function() {
-                this.cardSpy.getType.and.returnValue('event');
+                this.cardSpy.getPrintedType.and.returnValue('event');
                 this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toBe('hand');
             });
@@ -102,7 +102,7 @@ describe('CardAction', function () {
         describe('cost', function() {
             describe('when the card type is event', function() {
                 beforeEach(function() {
-                    this.cardSpy.getType.and.returnValue('event');
+                    this.cardSpy.getPrintedType.and.returnValue('event');
                     this.properties.cost = ['foo'];
                     this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 });
