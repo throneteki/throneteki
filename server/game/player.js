@@ -735,12 +735,8 @@ class Player extends Spectator {
         );
     }
 
-    attach(controller, attachment, card, playingType) {
+    attach(controller, attachment, card, playingType, facedown = false) {
         if(!card || !attachment) {
-            return;
-        }
-
-        if(!controller.canAttach(attachment, card)) {
             return;
         }
 
@@ -758,6 +754,7 @@ class Player extends Spectator {
         }
 
         attachment.moveTo('play area', card);
+        attachment.facedown = facedown;
         attachment.takeControl(controller);
         card.attachments.push(attachment);
 
@@ -771,7 +768,7 @@ class Player extends Spectator {
             }
         });
 
-        if(originalLocation !== 'play area') {
+        if(originalLocation !== 'play area' && !attachment.facedown) {
             this.game.raiseEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
         }
 
