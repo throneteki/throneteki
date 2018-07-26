@@ -540,9 +540,9 @@ class Player extends Spectator {
         }
 
         if(owner === this) {
-            let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this);
+            let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this && !c.facedown);
             let opponentControlsOurCopy = _.any(this.game.getPlayers(), player => {
-                return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card);
+                return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card && !c.facedown);
             });
 
             return !controlsAnOpponentsCopy && !opponentControlsOurCopy;
@@ -552,8 +552,8 @@ class Player extends Spectator {
             return false;
         }
 
-        let controlsACopy = this.anyCardsInPlay(c => c.name === card.name);
-        let opponentControlsACopy = owner.anyCardsInPlay(c => c.name === card.name && c !== card);
+        let controlsACopy = this.anyCardsInPlay(c => c.name === card.name && !c.facedown);
+        let opponentControlsACopy = owner.anyCardsInPlay(c => c.name === card.name && c !== card && !c.facedown);
 
         return !controlsACopy && !opponentControlsACopy;
     }

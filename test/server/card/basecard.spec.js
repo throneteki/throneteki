@@ -109,7 +109,7 @@ describe('BaseCard', function () {
 
                     it('should return the uuid', function() {
                         expect(this.summary.uuid).not.toBeUndefined();
-                    })
+                    });
                 });
 
                 it('should return card data', function () {

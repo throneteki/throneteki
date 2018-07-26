@@ -184,6 +184,14 @@ class PlayerInteractionWrapper {
         this.checkUnserializableGameState();
     }
 
+    discardToReserve() {
+        let needsDiscard = this.player.hand.length - this.player.getTotalReserve();
+        for(let i = 0; i < needsDiscard; ++i) {
+            this.clickCard(this.player.hand[i]);
+        }
+        this.clickPrompt('Done');
+    }
+
     togglePromptedActionWindow(window, value) {
         this.player.promptedActionWindows[window] = value;
     }
