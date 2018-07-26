@@ -66,7 +66,12 @@ class EffectEngine {
 
             for(let effect of needsRecalc) {
                 if(this.effects.includes(effect)) {
-                    effect.reapply(this.getTargets());
+                    if(effect.hasEnded()) {
+                        effect.cancel();
+                        this.effects = this.effects.filter(e => e !== effect);
+                    } else {
+                        effect.reapply(this.getTargets());
+                    }
                 }
             }
         });

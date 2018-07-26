@@ -70,6 +70,16 @@ const Effects = {
             }
         };
     },
+    setCardType: function(type) {
+        return {
+            apply: function(card) {
+                card.setCardType(type);
+            },
+            unapply: function(card) {
+                card.setCardType(undefined);
+            }
+        };
+    },
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),

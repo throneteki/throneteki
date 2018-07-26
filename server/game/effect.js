@@ -75,6 +75,10 @@ class Effect {
         return ['any', this.source.location].includes(this.location);
     }
 
+    hasEnded() {
+        return this.duration === 'custom' && Object.keys(this.until).length === 0 && !this.condition();
+    }
+
     addTargets(targets) {
         if(!this.active || !this.condition()) {
             return;

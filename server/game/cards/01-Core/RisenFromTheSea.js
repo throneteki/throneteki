@@ -13,7 +13,16 @@ class RisenFromTheSea extends DrawCard {
 
                 if(this.controller.canAttach(this, context.event.card)) {
                     this.controller.attach(this.controller, this, context.event.card, 'play');
-                    this.setCardType('attachment');
+                    this.lastingEffect(ability => ({
+                        condition: () => !!this.parent,
+                        targetLocation: 'any',
+                        match: this,
+                        effect: [
+                            ability.effects.setCardType('attachment'),
+                            ability.effects.addKeyword('Terminal'),
+                            ability.effects.addTrait('Condition')
+                        ]
+                    }));
                 }
 
                 this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.event.card);
@@ -22,15 +31,6 @@ class RisenFromTheSea extends DrawCard {
 
         this.whileAttached({
             effect: ability.effects.modifyStrength(1)
-        });
-
-        this.persistentEffect({
-            condition: () => !!this.parent,
-            match: this,
-            effect: [
-                ability.effects.addKeyword('Terminal'),
-                ability.effects.addTrait('Condition')
-            ]
         });
     }
 
