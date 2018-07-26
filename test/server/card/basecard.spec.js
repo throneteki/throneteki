@@ -99,7 +99,6 @@ describe('BaseCard', function () {
                     });
 
                     it('should return no card data', function () {
-                        expect(this.summary.uuid).toBeUndefined();
                         expect(this.summary.name).toBeUndefined();
                         expect(this.summary.code).toBeUndefined();
                     });
@@ -107,6 +106,10 @@ describe('BaseCard', function () {
                     it('should return facedown', function() {
                         expect(this.summary.facedown).toBe(true);
                     });
+
+                    it('should return the uuid', function() {
+                        expect(this.summary.uuid).not.toBeUndefined();
+                    })
                 });
 
                 it('should return card data', function () {
@@ -127,13 +130,16 @@ describe('BaseCard', function () {
                 });
 
                 it('should return no card data', function() {
-                    expect(this.summary.uuid).toBeUndefined();
                     expect(this.summary.name).toBeUndefined();
                     expect(this.summary.code).toBeUndefined();
                 });
 
                 it('should return facedown', function() {
                     expect(this.summary.facedown).toBe(true);
+                });
+
+                it('should return the uuid', function() {
+                    expect(this.summary.uuid).not.toBeUndefined();
                 });
             });
         });
