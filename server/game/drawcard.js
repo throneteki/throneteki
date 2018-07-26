@@ -126,7 +126,7 @@ class DrawCard extends BaseCard {
     }
 
     hasPrintedCost() {
-        return this.cardData.cost !== '-';
+        return !this.facedown && this.cardData.cost !== '-';
     }
 
     getPrintedCost() {
