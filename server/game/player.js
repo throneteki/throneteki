@@ -91,32 +91,12 @@ class Player extends Spectator {
     }
 
     findCard(cardList, predicate) {
-        var cards = this.findCards(cardList, predicate);
+        var cards = cardList.filter(predicate);
         if(!cards || _.isEmpty(cards)) {
             return undefined;
         }
 
         return cards[0];
-    }
-
-    findCards(cardList, predicate) {
-        if(!cardList) {
-            return;
-        }
-
-        var cardsToReturn = [];
-
-        for(let card of cardList) {
-            if(predicate(card)) {
-                cardsToReturn.push(card);
-            }
-
-            if(card.attachments) {
-                cardsToReturn = cardsToReturn.concat(card.attachments.filter(predicate));
-            }
-        }
-
-        return cardsToReturn;
     }
 
     anyCardsInPlay(predicate) {

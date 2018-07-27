@@ -185,7 +185,7 @@ class Game extends EventEmitter {
         var foundCards = [];
 
         _.each(this.getPlayers(), player => {
-            foundCards = foundCards.concat(player.findCards(player.cardsInPlay, predicate));
+            foundCards = foundCards.concat(player.cardsInPlay.filter(predicate));
         });
 
         return foundCards;
