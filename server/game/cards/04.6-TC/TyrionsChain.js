@@ -16,7 +16,7 @@ class TyrionsChain extends DrawCard {
                 let warPlots = this.getRevealedWarPlots();
 
                 let buttons = _.map(warPlots, card => ({
-                    method: 'selectWarPlot', card: card
+                    method: 'selectWarPlot', card: card, mapCard: true
                 }));
 
                 this.context = context;
@@ -46,8 +46,7 @@ class TyrionsChain extends DrawCard {
         return revealedPlots;
     }
 
-    selectWarPlot(player, cardId) {
-        let warPlot = this.game.findAnyCardInAnyList(cardId);
+    selectWarPlot(player, warPlot) {
         this.resolving = true;
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, warPlot);

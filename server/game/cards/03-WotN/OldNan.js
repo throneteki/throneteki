@@ -11,7 +11,7 @@ class OldNan extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let buttons = _.map(context.event.plots, plot => {
-                    return { text: plot.name, method: 'plotSelected', arg: plot.uuid };
+                    return { method: 'plotSelected', card: plot, mapCard: true };
                 });
 
                 this.game.promptWithMenu(this.controller, this, {
@@ -25,7 +25,7 @@ class OldNan extends DrawCard {
         });
     }
 
-    plotSelected(player, cardId) {
+    plotSelected(player, card) {
         if(this.controller !== player) {
             return false;
         }
@@ -41,13 +41,13 @@ class OldNan extends DrawCard {
             source: this
         });
 
-        this.selectedCard = cardId;
+        this.selectedCard = card;
 
         return true;
     }
 
     traitSelected(player, trait) {
-        let plotCard = this.game.findAnyCardInAnyList(this.selectedCard);
+        let plotCard = this.selectedCard;
         if(!plotCard) {
             return false;
         }

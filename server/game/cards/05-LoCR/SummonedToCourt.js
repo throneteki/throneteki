@@ -73,24 +73,22 @@ class SummonedToCourt extends PlotCard {
             activePrompt: {
                 menuTitle: 'Put ' + card.name + ' into play?',
                 buttons: [
-                    { text: 'Yes', method: 'putChoiceIntoPlay', card: card },
-                    { text: 'No', method: 'declinePutIntoPlay', arg: card.uuid }
+                    { text: 'Yes', method: 'putChoiceIntoPlay', card: card, mapCard: true },
+                    { text: 'No', method: 'declinePutIntoPlay', card: card, mapCard: true }
                 ]
             },
             source: this
         });
     }
 
-    putChoiceIntoPlay(player, cardId) {
-        let card = this.game.findAnyCardInAnyList(cardId);
+    putChoiceIntoPlay(player, card) {
         player.putIntoPlay(card);
         this.game.addMessage('{0} chooses to put {1} into play using {2}', player, card, this);
         this.promptNextPlayerToPutIntoPlay();
         return true;
     }
 
-    declinePutIntoPlay(player, cardId) {
-        let card = this.game.findAnyCardInAnyList(cardId);
+    declinePutIntoPlay(player, card) {
         this.game.addMessage('{0} declines to put {1} into play using {2}', player, card, this);
         this.promptNextPlayerToPutIntoPlay();
         return true;
