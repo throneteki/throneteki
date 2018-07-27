@@ -20,7 +20,7 @@ class Esgred extends DrawCard {
             return;
         }
 
-        let asha = this.controller.findCardByName(this.controller.cardsInPlay, 'Asha Greyjoy');
+        let asha = this.controller.cardsInPlay.find(card => card.name === 'Asha Greyjoy');
 
         if(!asha) {
             return;

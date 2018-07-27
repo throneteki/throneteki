@@ -18,11 +18,8 @@ describe('Player', function() {
 
             this.cardSpy = jasmine.createSpyObj('card', ['isUnique', 'addDuplicate']);
             this.duplicateSpy = jasmine.createSpyObj('card', ['isUnique', 'addDuplicate']);
-            this.findSpy = spyOn(this.player, 'findCardByName');
 
             spyOn(this.player, 'drawCardsToHand');
-
-            this.findSpy.and.returnValue(undefined);
 
             this.cardSpy.facedown = true;
             this.cardSpy.name = 'Card';
@@ -78,7 +75,6 @@ describe('Player', function() {
 
         describe('when cards are not unique', function() {
             it('should not attempt to add duplicates', function() {
-                expect(this.findSpy).not.toHaveBeenCalled();
                 expect(this.cardSpy.addDuplicate).not.toHaveBeenCalled();
             });
 
@@ -97,13 +93,8 @@ describe('Player', function() {
 
             describe('and a duplicate is found', function() {
                 beforeEach(function() {
-                    this.findSpy.and.callFake((list, name) => {
-                        if(name === 'Dupe') {
-                            return this.cardSpy;
-                        }
-
-                        return undefined;
-                    });
+                    this.player.cardsInPlay.push(this.duplicateSpy);
+                    this.duplicateSpy.name = this.cardSpy.name;
 
                     this.player.setupDone();
                 });
@@ -123,8 +114,6 @@ describe('Player', function() {
 
             describe('and no duplicate is found', function() {
                 beforeEach(function() {
-                    this.findSpy.and.returnValue(undefined);
-
                     this.player.setupDone();
                 });
 

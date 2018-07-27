@@ -10,13 +10,13 @@ class WillasTyrell extends DrawCard {
 
                 this.controller.kneelCard(this);
 
-                let margaery = this.controller.findCardByName(this.controller.cardsInPlay, 'Margaery Tyrell');
+                let margaery = this.controller.cardsInPlay.find(card => card.name === 'Margaery Tyrell');
                 if(margaery && margaery.kneeled) {
                     this.controller.standCard(margaery);
                     partials.push('stands {2}');
                 }
 
-                let flowers = this.controller.findCardByName(this.controller.cardsInPlay, 'The Knight of Flowers');
+                let flowers = this.controller.cardsInPlay.find(card => card.name === 'The Knight of Flowers');
                 if(flowers) {
                     this.untilEndOfPhase(ability => ({
                         match: flowers,
@@ -25,7 +25,7 @@ class WillasTyrell extends DrawCard {
                     partials.push('gives insight to {3}');
                 }
 
-                let garlan = this.controller.findCardByName(this.controller.cardsInPlay, 'Ser Garlan Tyrell');
+                let garlan = this.controller.cardsInPlay.find(card => card.name === 'Ser Garlan Tyrell');
                 if(garlan) {
                     this.untilEndOfPhase(ability => ({
                         match: garlan,

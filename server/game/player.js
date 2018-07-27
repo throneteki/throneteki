@@ -86,10 +86,6 @@ class Player extends Spectator {
         return playFromHand.concat(playFromShadows);
     }
 
-    findCardByName(list, name) {
-        return list.find(card => card.name === name);
-    }
-
     anyCardsInPlay(predicate) {
         return this.game.allCards.some(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
@@ -640,7 +636,7 @@ class Player extends Spectator {
                 continue;
             }
 
-            let duplicate = this.findCardByName(processedCards, card.name);
+            let duplicate = processedCards.find(c => c.name === card.name);
 
             if(duplicate) {
                 duplicate.addDuplicate(card);
