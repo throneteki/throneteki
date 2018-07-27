@@ -47,9 +47,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
             return;
         }
 
-        var plot = player.findCard(player.plotDeck, card => {
-            return card.selected;
-        });
+        let plot = player.plotDeck.find(card => card.selected);
 
         if(!plot) {
             return;

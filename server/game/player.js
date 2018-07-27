@@ -87,16 +87,7 @@ class Player extends Spectator {
     }
 
     findCardByName(list, name) {
-        return this.findCard(list, card => card.name === name);
-    }
-
-    findCard(cardList, predicate) {
-        var cards = cardList.filter(predicate);
-        if(!cards || _.isEmpty(cards)) {
-            return undefined;
-        }
-
-        return cards[0];
+        return list.find(card => card.name === name);
     }
 
     anyCardsInPlay(predicate) {
