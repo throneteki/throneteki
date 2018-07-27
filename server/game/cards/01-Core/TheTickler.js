@@ -15,7 +15,7 @@ class TheTickler extends DrawCard {
                     this.game.promptForSelect(this.controller, {
                         activePromptTitle: 'Select a copy of ' + topCard.name,
                         source: this,
-                        cardCondition: card => card.location === 'play area' && card.name === topCard.name,
+                        cardCondition: card => card.location === 'play area' && card.isCopyOf(topCard),
                         onSelect: (p, card) => this.onCardSelected(p, card)
                     });
                 });

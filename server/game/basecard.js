@@ -453,6 +453,10 @@ class BaseCard {
         return menu;
     }
 
+    isCopyOf(card) {
+        return this.name === card.name;
+    }
+
     isUnique() {
         return this.cardData.unique;
     }
