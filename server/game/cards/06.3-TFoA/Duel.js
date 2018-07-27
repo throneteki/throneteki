@@ -65,7 +65,7 @@ class Duel extends PlotCard {
     }
 
     notEnoughTargets() {
-        let targets = this.game.findAnyCardsInPlay(card => !card.hasTrait('Army') && card.getType() === 'character' && card.getPrintedCost() >= 6);
+        let targets = this.game.filterCardsInPlay(card => !card.hasTrait('Army') && card.getType() === 'character' && card.getPrintedCost() >= 6);
         return targets.length <= 1;
     }
 }

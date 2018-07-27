@@ -12,7 +12,7 @@ class RoseroadPatrol extends DrawCard {
     }
 
     hasCharacterWithHighestSTR() {
-        let charactersInPlay = this.game.findAnyCardsInPlay(card => card.getType() === 'character');
+        let charactersInPlay = this.game.filterCardsInPlay(card => card.getType() === 'character');
         let strengths = _.map(charactersInPlay, card => card.getStrength());
         let highestStrength = _.max(strengths);
 

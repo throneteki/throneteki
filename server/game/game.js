@@ -181,16 +181,6 @@ class Game extends EventEmitter {
         return this.allCards.find(card => card.uuid === cardId);
     }
 
-    findAnyCardsInPlay(predicate) {
-        var foundCards = [];
-
-        _.each(this.getPlayers(), player => {
-            foundCards = foundCards.concat(player.cardsInPlay.filter(predicate));
-        });
-
-        return foundCards;
-    }
-
     anyCardsInPlay(predicate) {
         return this.allCards.some(card => card.location === 'play area' && predicate(card));
     }
