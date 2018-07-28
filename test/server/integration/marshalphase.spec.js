@@ -206,5 +206,31 @@ describe('marshal phase', function() {
                 });
             });
         });
+
+        describe('when it is not your turn to marshal', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'Trading with the Pentoshi', 'Sneak Attack',
+                    'The Roseroad'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.skipSetupPhase();
+                this.player1.selectPlot('Trading with the Pentoshi');
+                this.player2.selectPlot('Sneak Attack');
+                this.selectFirstPlayer(this.player1);
+            });
+
+            it('should not allow you to marshal cards', function() {
+                let card = this.player2.findCardByName('The Roseroad', 'hand');
+                this.player2.clickCard(card);
+
+                // Even if player 2 has enough gold to marshal the card, since
+                // it is player 1's turn, it should not allow the card to be
+                // marshalled.
+                expect(card.location).not.toBe('play area');
+            });
+        });
     });
 });

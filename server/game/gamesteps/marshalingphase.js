@@ -17,8 +17,15 @@ class MarshalingPhase extends Phase {
 
     promptForMarshal() {
         let currentPlayer = this.remainingPlayers.shift();
+
         this.collectIncome(currentPlayer);
+
+        currentPlayer.allowMarshal = true;
         this.game.queueStep(new MarshalCardsPrompt(this.game, currentPlayer));
+        this.game.queueSimpleStep(() => {
+            currentPlayer.allowMarshal = false;
+        });
+
         return this.remainingPlayers.length === 0;
     }
 
