@@ -24,7 +24,7 @@ class RubyOfRhllor extends DrawCard {
 
     selectCardName(player, cardName) {
         const loser = this.game.currentChallenge.loser;
-        const matchingCards = loser.findCards(loser.hand, card => card.name === cardName);
+        const matchingCards = loser.hand.filter(card => card.name === cardName);
 
         this.game.addMessage('{0} uses {1} to name {2}, reveal {3}\'s hand as {4} and discard all matching cards by name', this.controller, this, cardName, loser, loser.hand);
         if(matchingCards.length === 0) {

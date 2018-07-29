@@ -177,29 +177,6 @@ class Game extends EventEmitter {
         return this.getPlayers().filter(p => p !== player);
     }
 
-    findAnyCardInPlayByUuid(cardId) {
-        return _.reduce(this.getPlayers(), (card, player) => {
-            if(card) {
-                return card;
-            }
-            return player.findCardInPlayByUuid(cardId);
-        }, null);
-    }
-
-    findAnyCardInAnyList(cardId) {
-        return this.allCards.find(card => card.uuid === cardId);
-    }
-
-    findAnyCardsInPlay(predicate) {
-        var foundCards = [];
-
-        _.each(this.getPlayers(), player => {
-            foundCards = foundCards.concat(player.findCards(player.cardsInPlay, predicate));
-        });
-
-        return foundCards;
-    }
-
     anyCardsInPlay(predicate) {
         return this.allCards.some(card => card.location === 'play area' && predicate(card));
     }
@@ -260,15 +237,10 @@ class Game extends EventEmitter {
     }
 
     cardClicked(sourcePlayer, cardId) {
-        var player = this.getPlayerByName(sourcePlayer);
+        let player = this.getPlayerByName(sourcePlayer);
+        let card = this.allCards.find(card => card.uuid === cardId);
 
-        if(!player) {
-            return;
-        }
-
-        var card = this.findAnyCardInAnyList(cardId);
-
-        if(!card) {
+        if(!player || !card) {
             return;
         }
 
@@ -336,7 +308,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        var card = this.findAnyCardInAnyList(cardId);
+        let card = this.allCards.find(card => card.uuid === cardId);
 
         if(!card) {
             return;
@@ -379,7 +351,7 @@ class Game extends EventEmitter {
 
     drop(playerName, cardId, source, target) {
         let player = this.getPlayerByName(playerName);
-        let card = this.findAnyCardInAnyList(cardId);
+        let card = this.allCards.find(card => card.uuid === cardId);
 
         if(!player || !card) {
             return;

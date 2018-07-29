@@ -20,7 +20,7 @@ class HouseFlorentKnight extends DrawCard {
     }
 
     getLowestStrInPlay() {
-        let charactersInPlay = this.game.findAnyCardsInPlay(card => card.getType() === 'character');
+        let charactersInPlay = this.game.filterCardsInPlay(card => card.getType() === 'character');
         let strengths = _.map(charactersInPlay, card => card.getStrength());
         return _.min(strengths);
     }

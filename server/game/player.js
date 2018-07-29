@@ -14,8 +14,6 @@ const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
 const GoldSource = require('./GoldSource.js');
 
-const logger = require('../log.js');
-
 const StartingHandSize = 7;
 const DrawPhaseCards = 2;
 const MarshalIntoShadowsCost = 2;
@@ -86,67 +84,6 @@ class Player extends Spectator {
         let playFromHand = ['marshal', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
         let playFromShadows = ['play'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'shadows'));
         return playFromHand.concat(playFromShadows);
-    }
-
-    isCardUuidInList(list, card) {
-        return list.some(c => {
-            return c.uuid === card.uuid;
-        });
-    }
-
-    isCardNameInList(list, card) {
-        return list.some(c => {
-            return c.name === card.name;
-        });
-    }
-
-    areCardsSelected() {
-        return this.cardsInPlay.some(card => {
-            return card.selected;
-        });
-    }
-
-    removeCardByUuid(list, uuid) {
-        return list.filter(card => {
-            return card.uuid !== uuid;
-        });
-    }
-
-    findCardByName(list, name) {
-        return this.findCard(list, card => card.name === name);
-    }
-
-    findCardInPlayByUuid(uuid) {
-        return this.findCard(this.cardsInPlay, card => card.uuid === uuid);
-    }
-
-    findCard(cardList, predicate) {
-        var cards = this.findCards(cardList, predicate);
-        if(!cards || _.isEmpty(cards)) {
-            return undefined;
-        }
-
-        return cards[0];
-    }
-
-    findCards(cardList, predicate) {
-        if(!cardList) {
-            return;
-        }
-
-        var cardsToReturn = [];
-
-        for(let card of cardList) {
-            if(predicate(card)) {
-                cardsToReturn.push(card);
-            }
-
-            if(card.attachments) {
-                cardsToReturn = cardsToReturn.concat(card.attachments.filter(predicate));
-            }
-        }
-
-        return cardsToReturn;
     }
 
     anyCardsInPlay(predicate) {
@@ -543,7 +480,7 @@ class Player extends Spectator {
     }
 
     isCharacterDead(card) {
-        return card.getType() === 'character' && card.isUnique() && this.isCardNameInList(this.deadPile, card);
+        return card.getType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
     }
 
     playCard(card) {
@@ -699,7 +636,7 @@ class Player extends Spectator {
                 continue;
             }
 
-            let duplicate = this.findCardByName(processedCards, card.name);
+            let duplicate = processedCards.find(c => c.name === card.name);
 
             if(duplicate) {
                 duplicate.addDuplicate(card);
@@ -1178,8 +1115,7 @@ class Player extends Spectator {
         var originalPile = this.getSourceList(originalLocation);
 
         if(originalPile) {
-            originalPile = this.removeCardByUuid(originalPile, card.uuid);
-            this.updateSourceList(originalLocation, originalPile);
+            this.updateSourceList(originalLocation, originalPile.filter(c => c.uuid !== card.uuid));
         }
     }
 
@@ -1202,17 +1138,6 @@ class Player extends Spectator {
     getTotalReserve() {
         if(!this.activePlot) {
             return 0;
-        }
-
-        let totalReserve = Math.max(this.activePlot.getReserve(), this.minReserve);
-        if(_.isNaN(totalReserve) || _.isUndefined(totalReserve)) {
-            let payload = {
-                minReserve: this.minReserve,
-                baseReserve: this.activePlot.cardData.reserve,
-                reserveModifier: this.activePlot.reserveModifier
-            };
-
-            logger.error('RESERVE BUG: ', payload);
         }
 
         return Math.max(this.activePlot.getReserve(), this.minReserve);
