@@ -285,11 +285,16 @@ class DeckEditor extends React.Component {
                     }
 
                     if(rawBanners) {
-                        let banners = rawBanners.map(rawBanner => {
-                            return this.props.banners.find(banner => {
+                        let banners = [];
+                        for(let rawBanner of rawBanners) {
+                            let banner = this.props.banners.find(banner => {
                                 return rawBanner.trim() === banner.label;
                             });
-                        });
+
+                            if(banner) {
+                                banners.push(banner);
+                            }
+                        }
 
                         bannerCards = banners;
                     }
