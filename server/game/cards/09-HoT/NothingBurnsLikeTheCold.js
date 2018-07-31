@@ -88,14 +88,15 @@ class NothingBurnsLikeTheCold extends PlotCard {
     }
 
     doDiscard() {
+        let cards = this.selections.reduce((cards, selection) => cards.concat(selection.cards), []);
         for(let selection of this.selections) {
             let player = selection.player;
 
             if(selection.cards.length !== 0) {
                 this.game.addMessage('{0} discards {1} for {2}', player, selection.cards, this);
-                player.discardCards(selection.cards, false);
             }
         }
+        this.game.discardFromPlay(cards, { allowSave: false });
 
         this.selections = [];
     }

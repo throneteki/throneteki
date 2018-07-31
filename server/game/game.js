@@ -909,6 +909,19 @@ class Game extends EventEmitter {
         this.raiseEvent('onCardSaved', { card: card });
     }
 
+    discardFromPlay(cards, options = { allowSave: true }, callback = () => true) {
+        let inPlayCards = cards.filter(card => card.location === 'play area');
+        if(inPlayCards.length === 0) {
+            return;
+        }
+
+        // The player object used is irrelevant - it shouldn't be referenced by
+        // any abilities that respond to cards being discarded from play. This
+        // should be a temporary workaround until better support is added for
+        // simultaneous resolution of events.
+        inPlayCards[0].owner.discardCards(inPlayCards, options.allowSave, callback, options);
+    }
+
     killCharacters(cards, options = {}) {
         options = Object.assign({ allowSave: true, isBurn: false }, options);
         this.queueStep(new KillCharacters(this, cards, options));

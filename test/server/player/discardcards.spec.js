@@ -6,6 +6,7 @@ describe('Player', function() {
         let spy = jasmine.createSpyObj('card', ['moveTo', 'removeDuplicate']);
         spy.num = num;
         spy.location = 'loc';
+        spy.controller = jasmine.createSpyObj('player', ['moveCard']);
         return spy;
     }
 
@@ -23,7 +24,6 @@ describe('Player', function() {
         });
 
         this.player = new Player('1', { username: 'Test 1', settings: {} }, true, this.gameSpy);
-        spyOn(this.player, 'moveCard');
 
         this.callbackSpy = jasmine.createSpy('callback');
 
@@ -67,7 +67,7 @@ describe('Player', function() {
                 });
 
                 it('should move the card to the discard pile', function() {
-                    expect(this.player.moveCard).toHaveBeenCalledWith(this.card1, 'discard pile');
+                    expect(this.card1.controller.moveCard).toHaveBeenCalledWith(this.card1, 'discard pile');
                 });
             });
 
