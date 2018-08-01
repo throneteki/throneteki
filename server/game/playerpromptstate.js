@@ -26,11 +26,6 @@ class PlayerPromptState {
     }
 
     clearSelectableCards() {
-        for(let card of this.selectableCards) {
-            if(['attachment', 'character', 'event', 'location'].includes(card.getType())) {
-                card.hideFacedownTarget();
-            }
-        }
         this.selectableCards = [];
     }
 

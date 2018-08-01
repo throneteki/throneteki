@@ -643,10 +643,8 @@ class BaseCard {
         };
     }
 
-    getSummary(activePlayer, hideWhenFaceup) {
-        let isActivePlayer = activePlayer === this.controller;
-
-        if(!isActivePlayer && (this.facedown || hideWhenFaceup)) {
+    getSummary(activePlayer) {
+        if(!this.game.isCardVisible(this, activePlayer)) {
             return { facedown: true, uuid: this.uuid };
         }
 

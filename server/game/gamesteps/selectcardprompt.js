@@ -59,6 +59,8 @@ class SelectCardPrompt extends UiPrompt {
         _.defaults(this.properties, this.defaultProperties());
         this.selector = properties.selector || CardSelector.for(properties);
         this.selectedCards = [];
+        this.revealTargets = properties.revealTargets;
+        this.revealFunc = null;
         this.savePreviouslySelectedCards();
     }
 
@@ -88,8 +90,13 @@ class SelectCardPrompt extends UiPrompt {
         let selectableCards = this.game.allCards.filter(card => {
             return this.checkCardCondition(card);
         });
-        _.each(selectableCards, card => this.selector.showFacedownTargetTo(card, this.choosingPlayer));
+
         this.choosingPlayer.setSelectableCards(selectableCards);
+
+        if(this.revealTargets && !this.revealFunc) {
+            this.revealFunc = (card, player) => player === this.choosingPlayer && player.getSelectableCards().includes(card);
+            this.game.cardVisibility.addRule(this.revealFunc);
+        }
     }
 
     activeCondition(player) {
@@ -217,6 +224,11 @@ class SelectCardPrompt extends UiPrompt {
 
         // Restore previous selections.
         this.choosingPlayer.setSelectedCards(this.previouslySelectedCards);
+
+        if(this.revealTargets && this.revealFunc) {
+            this.game.cardVisibility.removeRule(this.revealFunc);
+            this.revealFunc = null;
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-const DrawCard = require('../../../server/game/drawcard.js');
+const DrawCard = require('../../../server/game/drawcard');
 
 describe('DrawCard', function () {
     function createPlayerSpy(name) {
@@ -8,8 +8,11 @@ describe('DrawCard', function () {
     }
 
     beforeEach(function () {
+        this.gameSpy = jasmine.createSpyObj('game', ['isCardVisible']);
+        this.gameSpy.isCardVisible.and.returnValue(true);
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1', faction: 'neutral' };
         this.card = new DrawCard({}, this.testCard);
+        this.card.game = this.gameSpy;
         this.activePlayer = createPlayerSpy('player1');
         this.card.owner = this.activePlayer;
     });
@@ -39,11 +42,12 @@ describe('DrawCard', function () {
             });
         });
 
-        describe('when a card is facedown', function() {
+        describe('when a card is not visible', function() {
             beforeEach(function() {
                 this.testCard.strength = 5;
                 let anotherPlayer = createPlayerSpy('player2');
-                this.summary = this.card.getSummary(anotherPlayer, true);
+                this.gameSpy.isCardVisible.and.returnValue(false);
+                this.summary = this.card.getSummary(anotherPlayer);
             });
 
             it('should not include baseStrength', function() {

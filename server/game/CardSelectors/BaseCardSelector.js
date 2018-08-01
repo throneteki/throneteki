@@ -17,9 +17,6 @@ class BaseCardSelector {
      * the game action checked for immunity purposes on potential target cards.
      * @param {boolean} properties.singleController
      * indicates that all cards selected must belong to the same controller.
-     * @param {boolean} properties.revealTargets
-     * indicates that all selectable facedown cards are flipped faceup for
-     * the selecting player.
      * @param {boolean} properties.isCardEffect
      * indicates whether the selector is part of a card effect and thus should
      * check for card immunity
@@ -29,7 +26,6 @@ class BaseCardSelector {
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;
-        this.revealTargets = properties.revealTargets;
         this.isCardEffect = properties.isCardEffect;
 
         if(!Array.isArray(properties.cardType)) {
@@ -157,18 +153,6 @@ class BaseCardSelector {
         }
 
         return card.controller === selectedCards[0].controller;
-    }
-
-    /**
-     * Flips the specified (facedown) card faceup to the selecting player if the
-     * revealTargets flag is set.
-     * @param {BaseCard} card
-     * @param {Player} player
-     */
-    showFacedownTargetTo(card, player) {
-        if(this.revealTargets && card.getType() !== 'plot') {
-            card.showFacedownTargetTo(player);
-        }
     }
 }
 
