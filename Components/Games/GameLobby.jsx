@@ -18,7 +18,8 @@ const GameState = Object.freeze({
     None: 0,
     NewGame: 1,
     PendingGame: 2,
-    PasswordedGame: 3
+    PasswordedGame: 3,
+    Started: 4
 });
 
 class GameLobby extends React.Component {
@@ -54,8 +55,9 @@ class GameLobby extends React.Component {
         this.setGameState(props);
 
         if(!this.isPendingGameStillCurrent(props) || this.isGameInProgress(props)) {
-            $('#pendingGameModal').modal('hide');
-            this.setState({ gameState: GameState.None });
+            this.setState({ gameState: props.currentGame && props.currentGame.started ? GameState.Started : GameState.None }, () => {
+                $('#pendingGameModal').modal('hide');
+            });
         } else if(!this.isPasswordGameStillCurrent(props) && !props.currentGame) {
             $('#pendingGameModal').modal('hide');
         } else if(!this.props.passwordGame && props.passwordGame) {
@@ -74,6 +76,8 @@ class GameLobby extends React.Component {
             this.setState({ gameState: GameState.PasswordedGame });
         } else if(props.currentGame && !props.currentGame.started) {
             this.setState({ gameState: GameState.PendingGame });
+        } else if(props.currentGame && props.currentGame.started) {
+            this.setState({ gameState: GameState.Started });
         } else if(!props.currentGame && props.newGame && props.user) {
             this.setState({ gameState: GameState.NewGame });
         }
@@ -134,7 +138,9 @@ class GameLobby extends React.Component {
                 this.props.cancelPasswordJoin();
                 break;
             case GameState.PendingGame:
-                this.props.leaveGame(this.props.currentGame.id);
+                if(!this.props.currentGame.started) {
+                    this.props.leaveGame(this.props.currentGame.id);
+                }
                 break;
         }
 
