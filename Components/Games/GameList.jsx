@@ -67,6 +67,7 @@ class GameList extends React.Component {
     getPlayerCards(player, firstPlayer) {
         if(firstPlayer) {
             return (<div className='game-faction-row first-player'>
+                { this.getPlayerNameAndAvatar(player, firstPlayer) }
                 <div className='agenda-mini'>{ <img className='img-responsive' src={ `/img/cards/${player.agenda || 'cardback'}.png` } /> }</div>
                 <div className='faction-mini'>{ <img className='img-responsive' src={ `/img/cards/${player.faction || 'cardback'}.png` } /> }</div>
             </div>);
@@ -75,18 +76,19 @@ class GameList extends React.Component {
         return (<div className='game-faction-row other-player'>
             <div className='faction-mini'>{ <img className='img-responsive' src={ `/img/cards/${player.faction || 'cardback'}.png` } /> }</div>
             <div className='agenda-mini'>{ <img className='img-responsive' src={ `/img/cards/${player.agenda || 'cardback'}.png` } /> }</div>
+            { this.getPlayerNameAndAvatar(player, firstPlayer) }
         </div>);
     }
 
     getPlayerNameAndAvatar(player, firstPlayer) {
         if(firstPlayer) {
-            return (<div className='game-footer-row'>
+            return (<div className='game-player-name'>
                 <span className='gamelist-avatar'><Avatar username={ player.name } /></span>
                 <span className='bold'>{ player.name }</span>
             </div>);
         }
 
-        return (<div className='game-footer-row'>
+        return (<div className='game-player-name'>
             <span className='bold'>{ player.name }</span>
             <span className='gamelist-avatar'><Avatar username={ player.name } /></span>
         </div>);
@@ -104,7 +106,6 @@ class GameList extends React.Component {
                 <div>
                     { this.getPlayerCards(player, firstPlayer) }
                 </div>
-                <div>{ this.getPlayerNameAndAvatar(player, firstPlayer) }</div>
             </div>);
 
             firstPlayer = false;

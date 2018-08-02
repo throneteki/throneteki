@@ -18,7 +18,7 @@
 
 .game-row {
   min-height: 130px;
-  padding: 15px 5px;
+  padding: 10px 5px;
 }
 
 .player-name {
@@ -194,7 +194,7 @@
 }
 
 .game-middle-row {
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 10px;
   display: flex;
   justify-content: center;
@@ -207,12 +207,12 @@
 }
 
 .first-player {
-  .faction-mini {
-    margin-left: 10px;
+  .game-player-name {
+    margin-right: 5px;
   }
 
-  .game-footer-row {
-    text-align: right;
+  .faction-mini {
+    margin-left: 10px;
   }
 }
 
@@ -220,15 +220,19 @@
   .faction-mini {
     margin-right: 10px;
   }
+
+  .game-player-name {
+    margin-left: 5px;
+  }
 }
 
 .faction-mini {
-  width: 64px;
+  width: 48px;
   border-radius: 5px;
 }
 
 .agenda-mini {
-  width: 48px;
+  width: 32px;
 
   img {
     border-radius: 5px;    
@@ -253,7 +257,8 @@
 
 .game-faction-row {
   display: flex;
-  min-height: 84px;
+  align-items: center;
+  flex: 1;
 
   .gamelist-button {
     height: 34px;
@@ -263,16 +268,15 @@
 
 .game-header-row {
   text-align: center;
-  font-size: 1.1em;
+  font-size: 1em;
 }
 
 .game-row-buttons {
   text-align: center;
 }
 
-.game-footer-row {
-  margin-top: 10px;
-  font-size: 1.2em;
+.game-player-name {
+  font-size: 1.1em;
 }
 
 .game-header {
