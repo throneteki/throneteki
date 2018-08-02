@@ -185,9 +185,7 @@ class PlayerRow extends React.Component {
             onCardClick={ this.props.onCardClick }
             onMouseOut={ this.props.onMouseOut }
             onMouseOver={ this.props.onMouseOver }
-            showHand={ this.props.showHand }
             source='hand'
-            spectating={ this.props.spectating }
             title='Hand'
             cardSize={ this.props.cardSize } />);
         let drawDeck = (<CardPile className='draw' title='Draw' source='draw deck' cards={ this.props.drawDeck }
@@ -209,9 +207,7 @@ class PlayerRow extends React.Component {
             onCardClick={ this.props.onCardClick }
             onMouseOut={ this.props.onMouseOut }
             onMouseOver={ this.props.onMouseOver }
-            showHand={ this.props.showHand }
             source='shadows'
-            spectating={ this.props.spectating }
             title='Shadows'
             username={ this.props.username } />);
 
@@ -261,7 +257,6 @@ PlayerRow.propTypes = {
     power: PropTypes.number,
     shadows: PropTypes.array,
     showDrawDeck: PropTypes.bool,
-    showHand: PropTypes.bool,
     side: PropTypes.oneOf(['top', 'bottom']),
     spectating: PropTypes.bool,
     title: PropTypes.object,

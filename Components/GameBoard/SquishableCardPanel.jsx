@@ -5,12 +5,8 @@ import classNames from 'classnames';
 import Card from './Card';
 
 class SquishableCardPanel extends React.Component {
-    disableMouseOver(revealWhenHiddenTo) {
-        if(this.props.spectating && this.props.showHand) {
-            return false;
-        }
-
-        if(revealWhenHiddenTo === this.props.username) {
+    disableMouseOver(card) {
+        if(!card.facedown) {
             return false;
         }
 
@@ -31,7 +27,7 @@ class SquishableCardPanel extends React.Component {
         let offset = overflow / (handLength - 1);
 
         if(!this.props.isMe) {
-            cards = [...this.props.cards].sort((a, b) => a.revealWhenHiddenTo - b.revealWhenHiddenTo);
+            cards = [...this.props.cards].sort((a, b) => a.facedown && !b.facedown ? -1 : 1);
         }
 
         let hand = cards.map(card => {
@@ -46,7 +42,7 @@ class SquishableCardPanel extends React.Component {
 
             return (<Card key={ card.uuid }
                 card={ card }
-                disableMouseOver={ this.disableMouseOver(card.revealWhenHiddenTo) }
+                disableMouseOver={ this.disableMouseOver(card) }
                 onClick={ this.props.onCardClick }
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
@@ -126,9 +122,7 @@ SquishableCardPanel.propTypes = {
     onCardClick: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
-    showHand: PropTypes.bool,
     source: PropTypes.string,
-    spectating: PropTypes.bool,
     title: PropTypes.string,
     username: PropTypes.string
 };
