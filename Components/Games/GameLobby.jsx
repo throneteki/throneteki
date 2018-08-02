@@ -62,7 +62,7 @@ class GameLobby extends React.Component {
             $('#pendingGameModal').modal('show');
         }
 
-        if(props.currentGame && props.currentGame.owner !== props.user.username && !this.props.currentGame) {
+        if(props.currentGame && !this.props.currentGame) {
             // Joining a game
             $('#pendingGameModal').modal('show');
             this.setState({ gameState: GameState.PendingGame });
@@ -121,7 +121,11 @@ class GameLobby extends React.Component {
         this.props.startNewGame();
     }
 
-    onModalHidden() {
+    onModalHidden(event) {
+        if($(event.target).attr('id') !== 'pendingGameModal') {
+            return;
+        }
+
         switch(this.state.gameState) {
             case GameState.NewGame:
                 this.props.cancelNewGame();
