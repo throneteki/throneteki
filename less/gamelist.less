@@ -236,12 +236,18 @@
 }
 
 .game-player-row {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  
   &.first-player {
     margin-right: 10px;
+    align-items: flex-end;
   }
 
   &.other-player {
     margin-left: 10px;
+    align-items: flex-start;
   }
 }
 

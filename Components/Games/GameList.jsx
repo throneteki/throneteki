@@ -101,8 +101,10 @@ class GameList extends React.Component {
             });
 
             let retPlayer = (<div key={ player.name } className={ classes }>
-                { this.getPlayerCards(player, firstPlayer) }
-                { this.getPlayerNameAndAvatar(player, firstPlayer) }
+                <div>
+                    { this.getPlayerCards(player, firstPlayer) }
+                </div>
+                <div>{ this.getPlayerNameAndAvatar(player, firstPlayer) }</div>
             </div>);
 
             firstPlayer = false;
@@ -113,8 +115,10 @@ class GameList extends React.Component {
         if(players.length === 1) {
             if(this.canJoin(game)) {
                 players.push(
-                    <div className='game-faction-row other-player'>
-                        <button className='btn btn-primary gamelist-button img-responsive' onClick={ event => this.joinGame(event, game) }>Join</button>
+                    <div className={ 'game-player-row other-player' }>
+                        <div className='game-faction-row other-player'>
+                            <button className='btn btn-primary gamelist-button img-responsive' onClick={ event => this.joinGame(event, game) }>Join</button>
+                        </div>
                     </div>);
             } else {
                 players.push(<div className='game-faction-row other-player' />);
