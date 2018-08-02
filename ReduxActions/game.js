@@ -234,3 +234,15 @@ export function startGame(id) {
         return dispatch(gameStarting());
     };
 }
+
+export function leaveGame(id) {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        if(state.lobby.socket) {
+            state.lobby.socket.emit('leavegame', id);
+        }
+
+        return dispatch(gameSocketClose());
+    };
+}

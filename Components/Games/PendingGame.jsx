@@ -140,15 +140,17 @@ class PendingGame extends React.Component {
             return 'Waiting for players to select decks';
         }
 
-        return 'Ready to begin, click start to begin the game';
+        if(this.props.currentGame.owner === this.props.user.username) {
+            return 'Ready to begin, click start to begin the game';
+        }
+
+        return 'Ready to begin, waiting for opponent to start the game';
     }
 
     onLeaveClick(event) {
         event.preventDefault();
 
-        this.props.socket.emit('leavegame', this.props.currentGame.id);
-
-        this.props.gameSocketClose();
+        this.props.leaveGame(this.props.currentGame.id);
     }
 
     onStartClick(event) {
@@ -257,6 +259,7 @@ PendingGame.propTypes = {
     decks: PropTypes.array,
     gameSocketClose: PropTypes.func,
     host: PropTypes.string,
+    leaveGame: PropTypes.func,
     loadDecks: PropTypes.func,
     loadStandaloneDecks: PropTypes.func,
     loading: PropTypes.bool,

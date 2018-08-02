@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import Panel from '../Site/Panel';
 import * as actions from '../../actions';
 
+const GameNameMaxLength = 64;
+
 class NewGame extends React.Component {
     constructor() {
         super();
@@ -42,7 +44,7 @@ class NewGame extends React.Component {
     }
 
     onNameChange(event) {
-        this.setState({ gameName: event.target.value.substr(0, 140) });
+        this.setState({ gameName: event.target.value });
     }
 
     onPasswordChange(event) {
@@ -108,7 +110,7 @@ class NewGame extends React.Component {
     }
 
     render() {
-        let charsLeft = 140 - this.state.gameName.length;
+        let charsLeft = GameNameMaxLength - this.state.gameName.length;
         return this.props.socket ? (
             <div>
                 <Panel title='New game'>
@@ -117,7 +119,7 @@ class NewGame extends React.Component {
                             <div className='col-sm-8'>
                                 <label htmlFor='gameName'>Name</label>
                                 <label className='game-name-char-limit'>{ charsLeft >= 0 ? charsLeft : 0 }</label>
-                                <input className='form-control' placeholder='Game Name' type='text' onChange={ this.onNameChange } value={ this.state.gameName } />
+                                <input className='form-control' placeholder='Game Name' type='text' onChange={ this.onNameChange } value={ this.state.gameName } maxLength={ GameNameMaxLength } />
                             </div>
                         </div>
                         <div className='row'>
