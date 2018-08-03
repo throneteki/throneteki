@@ -230,6 +230,12 @@ class SelectCardPrompt extends UiPrompt {
             this.revealFunc = null;
         }
     }
+
+    cancelStep() {
+        // Explicitly complete the prompt and thus clear player selections if
+        // the prompt is cancelled.
+        this.complete();
+    }
 }
 
 module.exports = SelectCardPrompt;
