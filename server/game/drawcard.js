@@ -27,7 +27,7 @@ class DrawCard extends BaseCard {
         this.strengthMultiplier = 1;
         this.strengthSet = undefined;
         this.dominanceStrengthModifier = 0;
-        this.contributesToDominance = true;
+        this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
         this.inChallenge = false;
         this.inDanger = false;
@@ -222,7 +222,9 @@ class DrawCard extends BaseCard {
     }
 
     getDominanceStrength() {
-        let baseStrength = !this.kneeled && this.getType() === 'character' && this.contributesToDominance ? this.getStrength() : 0;
+        let baseStrength = this.getType() === 'character' &&
+            (!this.kneeled || this.dominanceOptions.contains('contributesWhileKneeling')) &&
+            !this.dominanceOptions.contains('doesNotContribute') ? this.getStrength() : 0;
 
         return Math.max(0, baseStrength + this.dominanceStrengthModifier);
     }
