@@ -150,22 +150,24 @@ module.exports.init = function (server) {
 
         let domain = req.body.email.substring(req.body.email.lastIndexOf('@') + 1);
 
-        try {
-            let response = await util.httpRequest(`http://check.block-disposable-email.com/easyapi/json/${config.emailBlockKey}/${domain}`);
-            let answer = JSON.parse(response);
+        if(config.emailBlockKey) {
+            try {
+                let response = await util.httpRequest(`http://check.block-disposable-email.com/easyapi/json/${config.emailBlockKey}/${domain}`);
+                let answer = JSON.parse(response);
 
-            if(answer.request_status !== 'success') {
-                logger.warn('Failed to check email address', answer);
+                if(answer.request_status !== 'success') {
+                    logger.warn('Failed to check email address', answer);
+                }
+
+                if(answer.domain_status === 'block') {
+                    logger.warn('Blocking', domain, 'from registering the account', req.body.username);
+                    res.send({ success: false, message: 'One time use email services are not permitted on this site.  Please use a real email address' });
+
+                    return next();
+                }
+            } catch(err) {
+                logger.warn('Could not valid email address', domain, err);
             }
-
-            if(answer.domain_status === 'block') {
-                logger.warn('Blocking', domain, 'from registering the account', req.body.username);
-                res.send({ success: false, message: 'One time use email services are not permitted on this site.  Please use a real email address' });
-
-                return next();
-            }
-        } catch(err) {
-            logger.warn('Could not valid email address', domain, err);
         }
 
         let passwordHash = await hashPassword(req.body.password, 10);
@@ -345,15 +347,14 @@ module.exports.init = function (server) {
 
         let token = req.body.token;
 
-        let user = await userService.getUserByUsername(token.username);
-        if(!user) {
-            res.send({ success: false, message: 'Invalid refresh token' });
+        if(!token.username || !token.id) {
+            res.send({ success: false, message: 'Invalid token format' });
 
             return next();
         }
 
-        if(user.username !== token.username) {
-            logger.error(`Username ${user.username} did not match token username ${token.username}`);
+        let user = await userService.getUserByUsername(token.username);
+        if(!user) {
             res.send({ success: false, message: 'Invalid refresh token' });
 
             return next();

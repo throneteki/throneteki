@@ -48,7 +48,7 @@ When('I set valid account details', function () {
 When('I set the id to an existing user not expecting validation', async function () {
     setValidDetails(this.requestBody);
 
-    let result = await request.postToEndpoint('/account/register', this.requestBody);
+    let result = await request.postToEndpoint('account/register', this.requestBody);
     assert.isTrue(result.success);
 
     let user = await fetchUser(this.requestBody.username);
@@ -63,7 +63,7 @@ When('I set the id to an existing user not expecting validation', async function
 When('I set the id to an existing user', async function () {
     setValidDetails(this.requestBody);
 
-    let result = await request.postToEndpoint('/account/register', this.requestBody);
+    let result = await request.postToEndpoint('account/register', this.requestBody);
     assert.isTrue(result.success);
 
     let user = await fetchUser(this.requestBody.username);
@@ -81,6 +81,62 @@ When('I set the token to expired', async function () {
 
 When('I set the token to the correct token', async function () {
     this.requestBody.token = this.currentUser.activationToken;
+});
+
+When('I set the username to an existing user', async function () {
+    let user = await fetchUser();
+
+    assert.isNotNull(user);
+
+    this.requestBody.username = user.username;
+});
+
+When('I uppercase the username', function () {
+    this.requestBody.username = this.requestBody.username.toUpperCase();
+});
+
+When('I set the password to the last registered password', function () {
+    this.requestBody.password = this.lastUsedPassword;
+});
+
+When('I manually verify the account', async function () {
+    await dbUsers.update({ username: this.requestBody.username }, { $set: { verified: true } });
+});
+
+When('I manually disable the account', async function () {
+    await dbUsers.update({ username: this.requestBody.username }, { $set: { disabled: true } });
+});
+
+When('I set the bearer token to {string}', function (token) {
+    this.requestAuthToken = token;
+});
+
+When('I use the currently active token', function () {
+    this.requestAuthToken = this.result.body.token;
+});
+
+When('I supply a refresh token', function () {
+    this.requestBody.token = {};
+});
+
+When('I make sure the {string} user exists', async function (username) {
+    let user = await fetchUser(username);
+
+    if(!user) {
+        await dbUsers.insert({
+            username: username,
+            email: 'valid@example.com',
+            tokens: []
+        });
+    }
+});
+
+When('I set the refresh token username to {string}', function (username) {
+    this.requestBody.token.username = username;
+});
+
+When('I set the refresh token id to {string}', function (id) {
+    this.requestBody.token.id = id;
 });
 
 Then('I should get a {string} failure response', function (message) {

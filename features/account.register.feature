@@ -39,6 +39,7 @@ Feature: Account API - Register endpoint
 
   Scenario: The email address already exists
     When I set the 'username' to 'validusername'
+    And I make sure the 'existinguser' user exists
     And I set the 'email' to 'valid@example.com'
     And I set the 'password' to 'validpassword'
     And I submit the API request to the 'account/register' endpoint
