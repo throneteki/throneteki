@@ -49,6 +49,19 @@ function challengeOptionEffect(key) {
     };
 }
 
+function dominanceOptionEffect(key) {
+    return function() {
+        return {
+            apply: function(card) {
+                card.dominanceOptions.add(key);
+            },
+            unapply: function(card) {
+                card.dominanceOptions.remove(key);
+            }
+        };
+    };
+}
+
 const Effects = {
     setSetupGold: function(value) {
         return {
@@ -613,16 +626,8 @@ const Effects = {
             }
         };
     },
-    doesNotContributeToDominance: function() {
-        return {
-            apply: function(card) {
-                card.contributesToDominance = false;
-            },
-            unapply: function(card) {
-                card.contributesToDominance = true;
-            }
-        };
-    },
+    doesNotContributeToDominance: dominanceOptionEffect('doesNotContribute'),
+    contributesToDominanceWhileKneeling: dominanceOptionEffect('contributesWhileKneeling'),
     optionalStandDuringStanding: function() {
         return {
             apply: function(card) {
