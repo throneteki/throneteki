@@ -2,3 +2,4 @@ node_modules
 dist
 *assets.json
 assets/img/cards
+features/conf
