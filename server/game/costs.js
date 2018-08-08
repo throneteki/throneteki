@@ -71,6 +71,10 @@ const Costs = {
      */
     killSelf: () => CostBuilders.kill.self(),
     /**
+     * Cost that will kill the parent card the current card is attached to.
+     */
+    killParent: () => CostBuilders.kill.parent(),
+    /**
      * Cost that requires killing a character that matches the passed condition
      * predicate function.
      */
@@ -92,6 +96,10 @@ const Costs = {
      * Cost that will return to hand the card that initiated the ability.
      */
     returnSelfToHand: () => CostBuilders.returnToHand.self(),
+    /**
+     * Cost that will place in the dead pile from hand the card that initiated the ability.
+     */
+    placeSelfInDeadPileFromHand: () => CostBuilders.placeInDeadPileFromHand.self(),
     /**
      * Cost that reveals a specific card passed into the function
      */
