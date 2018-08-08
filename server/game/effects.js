@@ -937,18 +937,15 @@ const Effects = {
             }
         };
     },
-    canPlay: function(card) {
+    canPlay: function(predicate) {
+        let playableLocation = new PlayableLocation('play', predicate);
         return {
             targetType: 'player',
-            apply: function(player, context) {
-                let playableLocation = new PlayableLocation('play', c => c === card);
-                context.canPlay = context.canPlay || {};
-                context.canPlay[player.name] = playableLocation;
+            apply: function(player) {
                 player.playableLocations.push(playableLocation);
             },
-            unapply: function(player, context) {
-                player.playableLocations = _.reject(player.playableLocations, l => l === context.canPlay[player.name]);
-                delete context.canPlay[player.name];
+            unapply: function(player) {
+                player.playableLocations = player.playableLocations.filter(l => l !== playableLocation);
             }
         };
     },

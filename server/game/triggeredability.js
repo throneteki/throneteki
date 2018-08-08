@@ -16,7 +16,7 @@ class TriggeredAbility extends BaseAbility {
         this.eventType = eventType;
         this.location = this.buildLocation(card, properties.location);
 
-        if(card.getType() === 'event' && !properties.ignoreEventCosts) {
+        if(card.getPrintedType() === 'event' && !properties.ignoreEventCosts) {
             this.cost = this.cost.concat(Costs.playEvent());
         }
 
@@ -36,7 +36,7 @@ class TriggeredAbility extends BaseAbility {
             plot: 'active plot'
         };
 
-        let defaultedLocation = location || DefaultLocationForType[card.getType()] || 'play area';
+        let defaultedLocation = location || DefaultLocationForType[card.getPrintedType()] || 'play area';
 
         if(!Array.isArray(defaultedLocation)) {
             return [defaultedLocation];
@@ -115,7 +115,7 @@ class TriggeredAbility extends BaseAbility {
         // The location property of the ability will prevent it from firing in
         // inappropriate locations when requirements are checked for the ability.
         if(this.isPlayableEventAbility()) {
-            return ['discard pile', 'hand', 'shadows'].includes(location);
+            return ['discard pile', 'hand', 'shadows', 'play area'].includes(location);
         }
 
         return this.location.includes(location);

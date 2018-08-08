@@ -29,20 +29,7 @@ class DeckBuilder {
     }
 
     buildDeck(faction, cardLabels) {
-        let cardCounts = {};
-        for(let label of cardLabels) {
-            let cardData = this.getCard(label);
-            if(cardCounts[cardData.code]) {
-                cardCounts[cardData.code].count++;
-            } else {
-                cardCounts[cardData.code] = {
-                    count: 1,
-                    card: cardData
-                };
-            }
-        }
-
-        let allCards = Object.values(cardCounts);
+        let allCards = this.createCardCounts(cardLabels);
 
         let agendas = allCards.filter(cardCount => cardCount.card.type === 'agenda').map(cardCount => cardCount.card);
         let agenda = agendas[0];
@@ -61,6 +48,29 @@ class DeckBuilder {
             drawCards: allCards.filter(cardCount => ['character', 'location', 'attachment', 'event'].includes(cardCount.card.type)),
             plotCards: allCards.filter(cardCount => cardCount.card.type === 'plot')
         };
+    }
+
+    createCardCounts(cardLabels) {
+        let cardCounts = {};
+        for(let label of cardLabels) {
+            let cardName = label;
+            let count = 1;
+            if(typeof label !== 'string') {
+                cardName = label.name;
+                count = label.count;
+            }
+
+            let cardData = this.getCard(cardName);
+            if(cardCounts[cardData.code]) {
+                cardCounts[cardData.code].count += count;
+            } else {
+                cardCounts[cardData.code] = {
+                    count: count,
+                    card: cardData
+                };
+            }
+        }
+        return Object.values(cardCounts);
     }
 
     getCard(codeOrLabelOrName) {

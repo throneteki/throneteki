@@ -5,7 +5,7 @@ const AbilityChoicePrompt = require('../../../server/game/gamesteps/AbilityChoic
 describe('CardReaction', function () {
     beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'queueStep', 'removeListener', 'registerAbility']);
-        this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getType', 'isAnyBlank']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getPrintedType', 'isAnyBlank']);
         this.cardSpy.location = 'play area';
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
 
@@ -31,19 +31,19 @@ describe('CardReaction', function () {
             });
 
             it('should default to agenda for cards with type agenda', function() {
-                this.cardSpy.getType.and.returnValue('agenda');
+                this.cardSpy.getPrintedType.and.returnValue('agenda');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toContain('agenda');
             });
 
             it('should default to active plot for cards with type plot', function() {
-                this.cardSpy.getType.and.returnValue('plot');
+                this.cardSpy.getPrintedType.and.returnValue('plot');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toContain('active plot');
             });
 
             it('should default to hand for cards with type event', function() {
-                this.cardSpy.getType.and.returnValue('event');
+                this.cardSpy.getPrintedType.and.returnValue('event');
                 this.action = new CardReaction(this.gameSpy, this.cardSpy, this.properties);
                 expect(this.action.location).toContain('hand');
             });

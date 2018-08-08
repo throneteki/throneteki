@@ -14,7 +14,7 @@ class EmissaryOfTheHightower extends DrawCard {
                 this.game.addMessage('{0} uses {1} to allow {2} to be played as if it were in their hand', this.controller, this, context.target);
                 this.untilEndOfPhase(ability => ({
                     targetController: 'current',
-                    effect: ability.effects.canPlay(context.target)
+                    effect: ability.effects.canPlay(card => card === context.target)
                 }));
 
                 this.lastingEffect(ability => ({

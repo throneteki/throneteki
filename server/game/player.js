@@ -480,7 +480,7 @@ class Player extends Spectator {
     }
 
     isCharacterDead(card) {
-        return card.getType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
+        return card.getPrintedType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
     }
 
     playCard(card) {
@@ -517,7 +517,7 @@ class Player extends Spectator {
     }
 
     canPutIntoPlay(card, playingType = 'play', options = {}) {
-        if(card.getType() === 'event') {
+        if(card.getPrintedType() === 'event') {
             return false;
         }
 
@@ -540,9 +540,9 @@ class Player extends Spectator {
         }
 
         if(owner === this) {
-            let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this);
+            let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this && !c.facedown);
             let opponentControlsOurCopy = _.any(this.game.getPlayers(), player => {
-                return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card);
+                return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card && !c.facedown);
             });
 
             return !controlsAnOpponentsCopy && !opponentControlsOurCopy;
@@ -552,8 +552,8 @@ class Player extends Spectator {
             return false;
         }
 
-        let controlsACopy = this.anyCardsInPlay(c => c.name === card.name);
-        let opponentControlsACopy = owner.anyCardsInPlay(c => c.name === card.name && c !== card);
+        let controlsACopy = this.anyCardsInPlay(c => c.name === card.name && !c.facedown);
+        let opponentControlsACopy = owner.anyCardsInPlay(c => c.name === card.name && c !== card && !c.facedown);
 
         return !controlsACopy && !opponentControlsACopy;
     }
@@ -569,7 +569,7 @@ class Player extends Spectator {
 
         var dupeCard = this.getDuplicateInPlay(card);
 
-        if(card.getType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
+        if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             this.promptForAttachment(card, playingType);
             return;
         }
@@ -586,7 +586,7 @@ class Player extends Spectator {
         } else {
             // Attachments placed in setup should not be considered to be 'played',
             // as it will cause then to double their effects when attached later.
-            let isSetupAttachment = playingType === 'setup' && card.getType() === 'attachment';
+            let isSetupAttachment = playingType === 'setup' && card.getPrintedType() === 'attachment';
 
             let originalLocation = card.location;
 
@@ -735,12 +735,8 @@ class Player extends Spectator {
         );
     }
 
-    attach(controller, attachment, card, playingType) {
+    attach(controller, attachment, card, playingType, facedown = false) {
         if(!card || !attachment) {
-            return;
-        }
-
-        if(!controller.canAttach(attachment, card)) {
             return;
         }
 
@@ -758,6 +754,7 @@ class Player extends Spectator {
         }
 
         attachment.moveTo('play area', card);
+        attachment.facedown = facedown;
         attachment.takeControl(controller);
         card.attachments.push(attachment);
 
@@ -771,7 +768,7 @@ class Player extends Spectator {
             }
         });
 
-        if(originalLocation !== 'play area') {
+        if(originalLocation !== 'play area' && !attachment.facedown) {
             this.game.raiseEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
         }
 
@@ -1104,11 +1101,6 @@ class Player extends Spectator {
             card.controller.removeCardFromPile(card);
             card.takeControl(card.owner);
             return;
-        }
-
-        if(card.parent) {
-            card.parent.removeChildCard(card);
-            card.parent = undefined;
         }
 
         var originalLocation = card.location;

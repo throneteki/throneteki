@@ -50,13 +50,13 @@ class CardAction extends BaseAbility {
         this.anyPlayer = properties.anyPlayer || false;
         this.condition = properties.condition;
         this.clickToActivate = !!properties.clickToActivate;
-        this.location = properties.location || DefaultLocationForType[card.getType()] || 'play area';
+        this.location = properties.location || DefaultLocationForType[card.getPrintedType()] || 'play area';
         this.events = new EventRegistrar(game, this);
         this.activationContexts = [];
 
         this.handler = this.buildHandler(card, properties);
 
-        if(card.getType() === 'event') {
+        if(card.getPrintedType() === 'event') {
             this.cost = this.cost.concat(Costs.playEvent());
         }
 
@@ -86,7 +86,7 @@ class CardAction extends BaseAbility {
     }
 
     allowMenu() {
-        return ['play area', 'agenda', 'active plot'].includes(this.location);
+        return ['play area', 'agenda', 'active plot'].includes(this.location) && this.card.getPrintedType() !== 'event';
     }
 
     createContext(player) {
@@ -114,11 +114,11 @@ class CardAction extends BaseAbility {
             return false;
         }
 
-        if(this.card.getType() === 'event' && !context.player.isCardInPlayableLocation(this.card, 'play')) {
+        if(this.card.getPrintedType() === 'event' && !context.player.isCardInPlayableLocation(this.card, 'play')) {
             return false;
         }
 
-        if(this.card.getType() !== 'event' && this.location !== this.card.location) {
+        if(this.card.getPrintedType() !== 'event' && this.location !== this.card.location) {
             return false;
         }
 

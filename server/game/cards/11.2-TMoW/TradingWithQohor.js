@@ -13,11 +13,11 @@ class TradingWithQohor extends AgendaCard {
             when: {
                 onClaimApplied: event => event.player === this.controller
             },
-            cost: ability.costs.sacrifice(card => card.getType() === 'attachment'),
+            cost: ability.costs.sacrifice(card => card.getType() === 'attachment' && card.hasPrintedCost()),
             handler: context => {
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'attachment' && card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost() &&
+                    cardCondition: card => card.getType() === 'attachment' && card.hasPrintedCost() && card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost() &&
                                            card.name !== context.costs.sacrifice.name,
                     onSelect: (player, card) => this.cardSelected(player, card, context.costs.sacrifice),
                     onCancel: player => this.doneSelecting(player, context.costs.sacrifice),

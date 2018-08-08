@@ -253,8 +253,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        // Attempt to play cards that are not already in the play area.
-        if(['hand', 'discard pile', 'dead pile', 'shadows'].includes(card.location) && player.playCard(card)) {
+        if(player.playCard(card)) {
             return;
         }
 

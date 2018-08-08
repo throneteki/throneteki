@@ -406,6 +406,10 @@ class BaseCard {
         let originalLocation = this.location;
         let originalParent = this.parent;
 
+        if(originalParent) {
+            originalParent.removeChildCard(this);
+        }
+
         this.location = targetLocation;
         this.parent = parent;
 
@@ -640,10 +644,10 @@ class BaseCard {
     }
 
     getSummary(activePlayer, hideWhenFaceup) {
-        let isActivePlayer = activePlayer === this.owner;
+        let isActivePlayer = activePlayer === this.controller;
 
         if(!isActivePlayer && (this.facedown || hideWhenFaceup)) {
-            return { facedown: true };
+            return { facedown: true, uuid: this.uuid };
         }
 
         let selectionState = activePlayer.getCardSelectionState(this);
