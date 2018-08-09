@@ -19,8 +19,10 @@ class GreatKraken extends DrawCard {
                     }
                 },
                 'Gain 1 power': () => {
-                    this.game.addPower(this.controller, 1);
-                    this.game.addMessage('{0} uses {1} to gain 1 power for their faction', this.controller, this);
+                    if(this.controller.canGainFactionPower()) {
+                        this.game.addPower(this.controller, 1);
+                        this.game.addMessage('{0} uses {1} to gain 1 power for their faction', this.controller, this);
+                    }
                 }
             }
         });

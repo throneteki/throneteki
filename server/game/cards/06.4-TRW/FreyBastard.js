@@ -4,7 +4,7 @@ class FreyBastard extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.getNumberOfAttackingFreys() >= 2
+                afterChallenge: event => event.challenge.winner === this.controller && this.getNumberOfAttackingFreys() >= 2 && this.controller.canGainFactionPower()
             },
             cost: ability.costs.discardGold(),
             handler: () => {

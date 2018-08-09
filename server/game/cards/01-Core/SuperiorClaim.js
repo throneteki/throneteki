@@ -6,7 +6,7 @@ class SuperiorClaim extends DrawCard {
             max: ability.limit.perChallenge(1),
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'power' && event.challenge.winner === this.controller &&
-                                         event.challenge.strengthDifference >= 5
+                                         event.challenge.strengthDifference >= 5 && this.controller.canGainFactionPower()
             },
             handler: () => {
                 this.game.addPower(this.controller, 2);

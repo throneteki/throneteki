@@ -7,7 +7,8 @@ class StreetOfTheSisters extends DrawCard {
                 afterChallenge: event =>
                     event.challenge.winner === this.controller &&
                     event.challenge.challengeType === 'power' &&
-                    event.challenge.strengthDifference >= 5
+                    event.challenge.strengthDifference >= 5 &&
+                    this.controller.canGainFactionPower()
             },
             cost: ability.costs.kneelFactionCard(),
             handler: () => {

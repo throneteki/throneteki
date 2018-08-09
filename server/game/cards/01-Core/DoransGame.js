@@ -6,7 +6,7 @@ class DoransGame extends DrawCard {
             max: ability.limit.perChallenge(1),
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue' &&
-                                         event.challenge.strengthDifference >= 5
+                                         event.challenge.strengthDifference >= 5 && this.controller.canGainFactionPower()
             },
             handler: () => {
                 let power = this.controller.getNumberOfUsedPlots();

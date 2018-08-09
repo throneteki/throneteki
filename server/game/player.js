@@ -22,6 +22,9 @@ class Player extends Spectator {
     constructor(id, user, owner, game) {
         super(id, user);
 
+        // Ensure game is set before any cards have been created.
+        this.game = game;
+
         this.beingPlayed = [];
         this.drawDeck = [];
         this.plotDeck = [];
@@ -41,7 +44,6 @@ class Player extends Spectator {
 
         this.owner = owner;
         this.takenMulligan = false;
-        this.game = game;
 
         this.setupGold = 8;
         this.cardsInPlayBeforeSetup = [];
@@ -1157,6 +1159,10 @@ class Player extends Spectator {
         }
 
         return this.title.isSupporter(opponent.title);
+    }
+
+    canGainFactionPower() {
+        return this.faction.canGainPower();
     }
 
     canGainRivalBonus(opponent) {

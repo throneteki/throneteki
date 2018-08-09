@@ -361,13 +361,12 @@ class Game extends EventEmitter {
     }
 
     addPower(player, power) {
-        player.faction.power += power;
-
-        if(player.faction.power < 0) {
-            player.faction.power = 0;
+        if(!player.faction.allowGameAction('gainPower')) {
+            this.addMessage('{0} is unable to gain power for their faction', player);
+            return;
         }
 
-        this.checkWinCondition(player);
+        player.faction.modifyPower(power);
     }
 
     addGold(player, amount) {

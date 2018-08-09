@@ -36,9 +36,12 @@ class DominancePhase extends Phase {
         });
 
         if(dominanceWinner) {
-            this.game.addMessage('{0} wins dominance ({1} vs {2})', dominanceWinner, highestDominance, lowestDominance);
-
-            this.game.addPower(dominanceWinner, 1);
+            if(dominanceWinner.canGainFactionPower()) {
+                this.game.addMessage('{0} wins dominance ({1} vs {2})', dominanceWinner, highestDominance, lowestDominance);
+                this.game.addPower(dominanceWinner, 1);
+            } else {
+                this.game.addMessage('{0} wins dominance, but cannot gain power for their faction', dominanceWinner);
+            }
         } else {
             this.game.addMessage('There was a tie for dominance');
             this.game.addMessage('No one wins dominance');
