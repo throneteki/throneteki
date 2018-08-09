@@ -28,12 +28,21 @@ class MarshalCardAction extends BaseAbility {
     }
 
     executeHandler(context) {
-        if(context.costs.isDupe) {
-            context.game.addMessage('{0} duplicates {1} for free', context.player, context.source);
-        } else {
-            context.game.addMessage('{0} marshals {1} costing {2} gold', context.player, context.source, context.costs.gold);
-        }
-        context.player.putIntoPlay(context.source, 'marshal');
+        let params = {
+            card: context.source,
+            originalController: context.source.controller,
+            originalLocation: context.source.location,
+            player: context.player,
+            type: context.costs.isDupe ? 'dupe' : 'card'
+        };
+        context.game.raiseEvent('onCardMarshalled', params, () => {
+            if(context.costs.isDupe) {
+                context.game.addMessage('{0} duplicates {1} for free', context.player, context.source);
+            } else {
+                context.game.addMessage('{0} marshals {1} costing {2} gold', context.player, context.source, context.costs.gold);
+            }
+            context.player.putIntoPlay(context.source, 'marshal');
+        });
     }
 
     isCardAbility() {
