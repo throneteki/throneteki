@@ -65,6 +65,7 @@ function dominanceOptionEffect(key) {
 const Effects = {
     setSetupGold: function(value) {
         return {
+            targetType: 'player',
             apply: function(player) {
                 player.setupGold = value;
             },
