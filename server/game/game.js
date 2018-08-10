@@ -37,6 +37,7 @@ const GroupedCardEvent = require('./GroupedCardEvent.js');
 const SimultaneousEvents = require('./SimultaneousEvents');
 const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js');
 const DropCommand = require('./ServerCommands/DropCommand');
+const CardVisibility = require('./CardVisibility');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -77,6 +78,7 @@ class Game extends EventEmitter {
         this.packData = options.packData || [];
         this.restrictedListData = options.restrictedListData || [];
         this.skipPhase = {};
+        this.cardVisibility = new CardVisibility(this);
 
         _.each(details.players, player => {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -175,6 +177,10 @@ class Game extends EventEmitter {
 
     getOpponents(player) {
         return this.getPlayers().filter(p => p !== player);
+    }
+
+    isCardVisible(card, player) {
+        return this.cardVisibility.isVisible(card, player);
     }
 
     anyCardsInPlay(predicate) {

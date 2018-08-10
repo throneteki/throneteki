@@ -5,7 +5,7 @@ describe('BaseCard', function () {
         this.testCard = { code: '111', label: 'test 1(some pack)', name: 'test 1', faction: 'neutral' };
         this.limitedCard = { code: '1234', text: 'Limited.', faction: 'neutral' };
         this.nonLimitedCard = { code: '2222', text: 'Stealth.', faction: 'neutral' };
-        this.game = jasmine.createSpyObj('game', ['raiseEvent']);
+        this.game = jasmine.createSpyObj('game', ['isCardVisible', 'raiseEvent']);
         this.owner = jasmine.createSpyObj('owner', ['getCardSelectionState']);
         this.owner.getCardSelectionState.and.returnValue({});
         this.owner.game = this.game;
@@ -50,8 +50,9 @@ describe('BaseCard', function () {
     });
 
     describe('getSummary', function() {
-        describe('when is active player', function() {
+        describe('when is visible to the active player', function() {
             beforeEach(function () {
+                this.game.isCardVisible.and.returnValue(true);
                 this.summary = this.card.getSummary(this.owner);
             });
 
@@ -85,41 +86,26 @@ describe('BaseCard', function () {
             });
         });
 
-        describe('when is not active player', function() {
+        describe('when is not visible to active player', function() {
             beforeEach(function () {
+                this.game.isCardVisible.and.returnValue(false);
                 this.anotherPlayer = jasmine.createSpyObj('owner', ['getCardSelectionState']);
                 this.anotherPlayer.getCardSelectionState.and.returnValue({});
                 this.summary = this.card.getSummary(this.anotherPlayer);
             });
 
             describe('and card is faceup', function() {
-                describe('and hiding facedown cards', function() {
-                    beforeEach(function() {
-                        this.summary = this.card.getSummary(this.anotherPlayer, true);
-                    });
-
-                    it('should return no card data', function () {
-                        expect(this.summary.name).toBeUndefined();
-                        expect(this.summary.code).toBeUndefined();
-                    });
-
-                    it('should return facedown', function() {
-                        expect(this.summary.facedown).toBe(true);
-                    });
-
-                    it('should return the uuid', function() {
-                        expect(this.summary.uuid).not.toBeUndefined();
-                    });
+                it('should return no card data', function () {
+                    expect(this.summary.name).toBeUndefined();
+                    expect(this.summary.code).toBeUndefined();
                 });
 
-                it('should return card data', function () {
-                    expect(this.summary.uuid).toEqual(this.card.uuid);
-                    expect(this.summary.name).toEqual(this.testCard.label);
-                    expect(this.summary.code).toEqual(this.testCard.code);
+                it('should return the uuid', function() {
+                    expect(this.summary.uuid).not.toBeUndefined();
                 });
 
-                it('should not return facedown', function() {
-                    expect(this.summary.facedown).toBe(false);
+                it('should return facedown', function() {
+                    expect(this.summary.facedown).toBe(true);
                 });
             });
 

@@ -1191,9 +1191,9 @@ class Player extends Spectator {
         this.promptState.clearSelectableCards();
     }
 
-    getSummaryForCardList(list, activePlayer, hideWhenFaceup) {
+    getSummaryForCardList(list, activePlayer) {
         return list.map(card => {
-            return card.getSummary(activePlayer, hideWhenFaceup);
+            return card.getSummary(activePlayer);
         });
     }
 
@@ -1226,10 +1226,6 @@ class Player extends Spectator {
         };
     }
 
-    showHandtoSpectators(player) {
-        return this.game.isSpectator(player) && this.game.showHand;
-    }
-
     disableTimerForRound() {
         this.noTimer = true;
         this.resetTimerAtEndOfRound = true;
@@ -1249,7 +1245,7 @@ class Player extends Spectator {
         // Rains
         if(this.agenda && this.agenda.code === '05045') {
             for(const plot of this.plotDeck) {
-                let plotSummary = plot.getSummary(activePlayer, true);
+                let plotSummary = plot.getSummary(activePlayer);
                 if(plot.hasTrait('scheme')) {
                     plotSummary.group = 'Scheme';
                 } else {
@@ -1259,7 +1255,7 @@ class Player extends Spectator {
                 plots.push(plotSummary);
             }
         } else {
-            plots = this.getSummaryForCardList(this.plotDeck, activePlayer, true);
+            plots = this.getSummaryForCardList(this.plotDeck, activePlayer);
         }
 
         let state = {
@@ -1268,14 +1264,14 @@ class Player extends Spectator {
             cardPiles: {
                 bannerCards: this.getSummaryForCardList(this.bannerCards, activePlayer),
                 cardsInPlay: this.getSummaryForCardList(this.cardsInPlay, activePlayer),
-                conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer, true),
+                conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer),
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
-                hand: this.getSummaryForCardList(this.hand, activePlayer, !this.showHandtoSpectators(activePlayer)),
-                outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer, false),
+                hand: this.getSummaryForCardList(this.hand, activePlayer),
+                outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer),
                 plotDeck: plots,
                 plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
-                shadows: this.getSummaryForCardList(this.shadows, activePlayer, !this.showHandtoSpectators(activePlayer))
+                shadows: this.getSummaryForCardList(this.shadows, activePlayer)
             },
             disconnected: this.disconnected,
             faction: this.faction.getSummary(activePlayer),

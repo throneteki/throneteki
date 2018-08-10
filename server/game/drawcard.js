@@ -20,7 +20,6 @@ class DrawCard extends BaseCard {
             this.icons.add(icon);
         }
 
-        this.revealWhenHiddenTo = undefined;
         this.power = 0;
         this.burnValue = 0;
         this.strengthModifier = 0;
@@ -443,39 +442,26 @@ class DrawCard extends BaseCard {
         this.saved = false;
     }
 
-    showFacedownTargetTo(player) {
-        this.revealWhenHiddenTo = player.name;
-    }
-
-    hideFacedownTarget() {
-        this.revealWhenHiddenTo = undefined;
-    }
-
-    getSummary(activePlayer, hideWhenFaceup) {
-        if(this.revealWhenHiddenTo === activePlayer.name) {
-            hideWhenFaceup = false;
-        }
-
-        let baseSummary = super.getSummary(activePlayer, hideWhenFaceup);
+    getSummary(activePlayer) {
+        let baseSummary = super.getSummary(activePlayer);
 
         let publicSummary = {
             attached: !!this.parent,
             attachments: this.attachments.map(attachment => {
-                return attachment.getSummary(activePlayer, hideWhenFaceup);
+                return attachment.getSummary(activePlayer);
             }),
             childCards: this.childCards.map(card => {
-                return card.getSummary(activePlayer, hideWhenFaceup);
+                return card.getSummary(activePlayer);
             }),
             dupes: this.dupes.map(dupe => {
                 if(dupe.dupes.length !== 0) {
                     throw new Error('A dupe should not have dupes! ' + dupe.name);
                 }
 
-                return dupe.getSummary(activePlayer, hideWhenFaceup);
+                return dupe.getSummary(activePlayer);
             }),
             kneeled: this.kneeled,
-            power: this.power,
-            revealWhenHiddenTo: this.revealWhenHiddenTo
+            power: this.power
         };
 
         if(baseSummary.facedown) {
