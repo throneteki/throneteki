@@ -2,7 +2,10 @@ const MarshalCardAction = require('../../../server/game/PlayActions/MarshalCardA
 
 describe('MarshalCardAction', function () {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'on', 'removeListener']);
+        this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'on', 'raiseEvent', 'removeListener']);
+        this.gameSpy.raiseEvent.and.callFake(function(name, params, handler) {
+            handler();
+        });
         this.playerSpy = jasmine.createSpyObj('player', ['canPutIntoPlay', 'isCardInPlayableLocation', 'putIntoPlay']);
         this.cardSpy = jasmine.createSpyObj('card', ['getType']);
         this.cardSpy.controller = this.playerSpy;

@@ -4,7 +4,7 @@ class AcolyteOfTheWaves extends DrawCard {
     setupCardAbilities() {
         this.interrupt({
             when: {
-                onCharacterKilled: event => event.card === this
+                onCharacterKilled: event => event.card === this && this.controller.canGainFactionPower()
             },
             handler: context => {
                 this.game.addPower(this.controller, 1);

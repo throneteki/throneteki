@@ -28,12 +28,30 @@ class MarshalCardAction extends BaseAbility {
     }
 
     executeHandler(context) {
-        if(context.costs.isDupe) {
-            context.game.addMessage('{0} duplicates {1} for free', context.player, context.source);
-        } else {
-            context.game.addMessage('{0} marshals {1} costing {2} gold', context.player, context.source, context.costs.gold);
-        }
-        context.player.putIntoPlay(context.source, 'marshal');
+        let params = {
+            card: context.source,
+            originalController: context.source.controller,
+            originalLocation: context.source.location,
+            player: context.player,
+            type: context.costs.isDupe ? 'dupe' : 'card'
+        };
+        context.game.raiseEvent('onCardMarshalled', params, () => {
+            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalController, params.originalLocation, context.costs.gold);
+            context.player.putIntoPlay(context.source, 'marshal');
+        });
+    }
+
+    getMessageFormat(params) {
+        const messages = {
+            'card.hand.current': '{0} marshals {1} costing {4} gold',
+            'card.other.current': '{0} marshals {1} from their {3} costing {4} gold',
+            'card.other.opponent': '{0} marshals {1} from {2}\'s {3} costing {4} gold',
+            'dupe.hand.current': '{0} duplicates {1} for free',
+            'dupe.other.current': '{0} duplicates {1} from their {3} for free'
+        };
+        let hand = params.originalLocation === 'hand' ? 'hand' : 'other';
+        let current = params.originalController === params.player ? 'current' : 'opponent';
+        return messages[`${params.type}.${hand}.${current}`] || messages['card.hand.current'];
     }
 
     isCardAbility() {

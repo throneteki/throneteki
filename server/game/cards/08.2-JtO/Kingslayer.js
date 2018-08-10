@@ -26,7 +26,7 @@ class Kingslayer extends DrawCard {
             },
             handler: context => {
                 for(let player of this.game.getPlayers()) {
-                    if(player !== this.controller) {
+                    if(player !== this.controller && player.canGainFactionPower()) {
                         this.game.addPower(player, 2);
                     }
                 }

@@ -17,7 +17,7 @@ class TheDornishmansWife extends DrawCard {
                     bonusMessage.push('gain {1} gold', gold);
                 }
 
-                if(this.opponentHasMoreCardsInHand(context.opponent)) {
+                if(this.opponentHasMoreCardsInHand(context.opponent) && this.controller.canGainFactionPower()) {
                     this.game.addPower(this.controller, 1);
                     bonusMessage.push('gain 1 power for their faction');
                 }

@@ -31,7 +31,7 @@ class TheLordOfTheCrossing extends AgendaCard {
         }
 
         let currentChallenge = this.game.currentChallenge.number;
-        if(challenge.winner === this.controller && currentChallenge === 3) {
+        if(challenge.winner === this.controller && currentChallenge === 3 && this.controller.canGainFactionPower()) {
             this.game.addMessage('{0} gains 1 power from {1}', challenge.winner, this);
             this.game.addPower(challenge.winner, 1);
         }
