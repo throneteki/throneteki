@@ -14,10 +14,10 @@ class GlassCandle extends DrawCard {
             handler: context => {
                 let players = this.game.getPlayers();
 
-                let buttons = players.map(player => { 
+                let buttons = players.map(player => {
                     return { text: player.name, method: 'chooseToDiscard', arg: player.name };
                 });
-        
+
                 this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select a player',
@@ -30,16 +30,16 @@ class GlassCandle extends DrawCard {
     }
 
     chooseToDiscard(player, playerName) {
-        let selectedPlayer = this.game.getPlayerByName(playerName);
-        this.topCard = selectedPlayer.drawDeck[0];
-        this.game.addMessage('{0} kneels {1} to look at the top card of {2}\'s deck', this.controller, this, selectedPlayer);
+        this.selectedPlayer = this.game.getPlayerByName(playerName);
+        let topCard = this.selectedPlayer.drawDeck[0];
+        this.game.addMessage('{0} kneels {1} to look at the top card of {2}\'s deck', this.controller, this, this.selectedPlayer);
 
         this.game.promptWithMenu(this.controller, this, {
             activePrompt: {
-                menuTitle: 'Discard ' + this.topCard.name + '?',
+                menuTitle: 'Discard ' + topCard.name + '?',
                 buttons: [
-                    { text: 'Yes', method: 'discard', card: this.topCard },
-                    { text: 'No', method: 'decline', card: this.topCard }
+                    { text: 'Yes', method: 'discard', card: topCard },
+                    { text: 'No', method: 'decline', card: topCard }
                 ]
             },
             source: this
@@ -49,8 +49,8 @@ class GlassCandle extends DrawCard {
     }
 
     discard() {
-        this.topCard.owner.discardFromDraw(1);
-        this.game.addMessage('{0} discards {1} from the top of {2}\'s deck', this.controller, this.topCard, this.topCard.owner);
+        this.selectedPlayer.discardFromDraw(1);
+        this.game.addMessage('{0} discards the top card of {1}\'s deck', this.controller, this.selectedPlayer);
         return true;
     }
 
