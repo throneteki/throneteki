@@ -26,7 +26,7 @@ class SquishableCardPanel extends React.Component {
         let overflow = requiredWidth - overallDimensions.width;
         let offset = overflow / (handLength - 1);
 
-        if(!this.props.isMe) {
+        if(!this.props.isMe && this.props.groupVisibleCards) {
             cards = [...this.props.cards].sort((a, b) => a.facedown && !b.facedown ? -1 : 1);
         }
 
@@ -117,6 +117,7 @@ SquishableCardPanel.propTypes = {
     cardSize: PropTypes.string,
     cards: PropTypes.array,
     className: PropTypes.string,
+    groupVisibleCards: PropTypes.bool,
     isMe: PropTypes.bool,
     maxCards: PropTypes.number,
     onCardClick: PropTypes.func,

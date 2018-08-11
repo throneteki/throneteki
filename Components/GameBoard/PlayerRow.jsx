@@ -179,6 +179,7 @@ class PlayerRow extends React.Component {
         let hand = (<SquishableCardPanel
             cards={ this.props.hand }
             className='panel hand'
+            groupVisibleCards
             isMe={ this.props.isMe }
             username={ this.props.username }
             maxCards={ 5 }
