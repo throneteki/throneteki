@@ -15,13 +15,13 @@ class LazyLeo extends DrawCard {
             },
             handler: context => {
                 for(let card of context.target) {
-                    card.owner.moveCard(this, 'draw deck', {}, () => {
+                    card.owner.moveCard(card, 'draw deck', {}, () => {
                         card.owner.shuffleDrawDeck();
                     });
                 }
 
                 this.game.addMessage('{0} uses {1} to shuffle {2} into {3}\'s deck',
-                    context.player, this, context.target, context.target.owner);
+                    context.player, this, context.target, context.target[0].owner);
             }
         });
     }
