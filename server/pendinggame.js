@@ -240,6 +240,8 @@ class PendingGame {
             return;
         }
 
+        player.argType = 'player';
+
         this.addMessage('{0} {1}', player, message);
     }
 
