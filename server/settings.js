@@ -17,7 +17,8 @@ const defaultKeywordSettings = {
 const defaultSettings = {
     windowTimer: 10,
     background: 'BG1',
-    cardSize: 'normal'
+    cardSize: 'normal',
+    promptDupes: false
 };
 
 const defaultTimerSettings = {

@@ -705,6 +705,15 @@ class Game extends EventEmitter {
         player.keywordSettings[settingName] = toggle;
     }
 
+    toggleDupes(playerName, toggle) {
+        var player = this.getPlayerByName(playerName);
+        if(!player) {
+            return;
+        }
+
+        player.promptDupes = toggle;
+    }
+
     initialise() {
         var players = {};
 

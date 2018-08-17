@@ -71,6 +71,7 @@ class Player extends Spectator {
         this.plotRevealRestrictions = [];
         this.mustRevealPlot = undefined;
         this.promptedActionWindows = user.promptedActionWindows;
+        this.promptDupes = user.settings.promptDupes;
         this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
@@ -1291,6 +1292,7 @@ class Player extends Spectator {
             phase: this.phase,
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
+            promptDupes: this.promptDupes,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
