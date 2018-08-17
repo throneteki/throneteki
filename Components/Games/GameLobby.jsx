@@ -29,13 +29,22 @@ class GameLobby extends React.Component {
         this.onNewGameClick = this.onNewGameClick.bind(this);
         this.onModalHidden = this.onModalHidden.bind(this);
 
+        let savedFilter = localStorage.getItem('gameFilter');
+        if(savedFilter) {
+            savedFilter = JSON.parse(savedFilter);
+        } else {
+            savedFilter = {};
+        }
+
+        let filterDefaults = {
+            beginner: true,
+            casual: true,
+            competitive: true
+        };
+
         this.state = {
             gameState: GameState.None,
-            filter: {
-                beginner: true,
-                casual: true,
-                competitive: true
-            }
+            filter: Object.assign(filterDefaults, savedFilter)
         };
     }
 
@@ -153,6 +162,8 @@ class GameLobby extends React.Component {
         filter[field] = event.target.checked;
 
         this.setState({ filter: filter });
+
+        localStorage.setItem('gameFilter', JSON.stringify(filter));
     }
 
     render() {
@@ -188,7 +199,7 @@ class GameLobby extends React.Component {
                 { this.props.bannerNotice ? <AlertPanel type='error' message={ this.props.bannerNotice } /> : null }
                 { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
 
-                <div className='col-xs-offset-2 col-sm-8 full-height'>
+                <div className='col-md-offset-2 col-md-8 full-height'>
                     <Panel title='Current Games'>
                         <div className='col-xs-12'>
                             <div className='col-xs-3'>
