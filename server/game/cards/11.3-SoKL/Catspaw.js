@@ -22,7 +22,7 @@ class Catspaw extends DrawCard {
     getMinimumCost() {
         return this.game.filterCardsInPlay(card => card !== this && card.getType() === 'character')
             .map(card => card.getPrintedCost())
-            .reduce(((acc, val) => Math.min(acc, val)));
+            .reduce(((acc, val) => Math.min(acc, val)), 0);
     }
 }
 
