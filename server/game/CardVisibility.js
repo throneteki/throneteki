@@ -1,6 +1,7 @@
 const OpenInformationLocations = [
     'active plot',
     'agenda',
+    'being played',
     'dead pile',
     'discard pile',
     'faction',
