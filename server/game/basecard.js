@@ -274,6 +274,10 @@ class BaseCard {
         return value === '-' ? 0 : value;
     }
 
+    getPlayActions() {
+        return [];
+    }
+
     get controller() {
         if(this.controllerStack.length === 0) {
             return this.owner;
