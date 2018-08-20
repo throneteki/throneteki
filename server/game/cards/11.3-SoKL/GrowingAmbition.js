@@ -8,6 +8,8 @@ class GrowingAmbition extends DrawCard {
             cost: ability.costs.payXGold(() => 1, () => this.controller.drawDeck.length),
             chooseOpponent: true,
             handler: context => {
+                this.chosenCards = [];
+
                 this.game.promptForDeckSearch(this.controller, {
                     numToSelect: context.xValue,
                     onSelect: (player, card) => this.cardSelected(player, card),
@@ -28,6 +30,11 @@ class GrowingAmbition extends DrawCard {
     }
 
     returnCards(context) {
+        if(this.chosenCards.length === 0) {
+            this.game.addMessage('{0} plays {1} to search their deck, but chooses no cards.', context.player, this);
+            return;
+        }
+
         this.game.addMessage('{0} plays {1} to choose {2}, search their deck and place {3} in their discard pile',
             context.player, this, context.opponent, this.chosenCards);
 
