@@ -161,6 +161,10 @@ class AbilityResolver extends BaseStep {
         }
 
         this.ability.incrementLimit();
+
+        if(this.ability.max) {
+            this.context.player.incrementAbilityMax(this.context.source.name);
+        }
     }
 
     executeHandler() {

@@ -108,7 +108,7 @@ describe('CardAction', function () {
                 });
 
                 it('should add the play event costs', function() {
-                    expect(this.action.cost.length).toBe(5);
+                    expect(this.action.cost.length).toBe(4);
                 });
             });
         });

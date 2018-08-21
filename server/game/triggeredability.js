@@ -86,6 +86,10 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
+        if(this.max && context.player.isAbilityAtMax(context.source.name)) {
+            return false;
+        }
+
         if(this.card.isAnyBlank()) {
             return false;
         }
