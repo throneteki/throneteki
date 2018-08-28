@@ -19,7 +19,7 @@ class OutOfShadowsAction extends BaseAbility {
     meetsRequirements(context) {
         return (
             context.source.isShadow() &&
-            context.source.location === 'shadows' &&
+            context.player.isCardInPlayableLocation(context.source, 'outOfShadows') &&
             context.player.canPutIntoPlay(context.source, 'outOfShadows') &&
             context.source.getType() !== 'event'
         );

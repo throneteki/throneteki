@@ -159,6 +159,30 @@ describe('Shadow keyword', function() {
                     expect(this.player1).toAllowAbilityTrigger('Bowels of Casterly Rock');
                 });
             });
+
+            describe('as an opponent\'s shadow character', function() {
+                beforeEach(function() {
+                    this.player1.clickCard(this.character);
+                    this.player1.clickPrompt('Setup in shadows');
+                    this.completeSetup();
+                    this.player1.selectPlot('Trading with the Pentoshi');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    this.completeMarshalPhase();
+
+                    // Complete Player 1 marshalling
+                    this.player1.clickPrompt('Done');
+
+                    // Attempt to bring Player 1's character out of shadows
+                    this.player2.clickCard(this.character);
+                });
+
+                it('should not put the card into play', function() {
+                    expect(this.character.location).not.toBe('play area');
+                    expect(this.character).not.toBeControlledBy(this.player2);
+                });
+            });
         });
     });
 });
