@@ -26,7 +26,8 @@ class SeaBitch extends DrawCard {
             && card.location === 'play area'
             && card.controller !== context.player
             && !card.hasKeyword('Limited')
-            && card.name !== this.name;
+            && card.name !== this.name
+            && context.player.canControl(card);
     }
 }
 
