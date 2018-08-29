@@ -4,7 +4,7 @@ class SacrificeCost {
     }
 
     isEligible(card) {
-        return card.location === 'play area';
+        return card.location === 'play area' || card.location === 'duplicate';
     }
 
     pay(cards, context) {

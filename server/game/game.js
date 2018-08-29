@@ -905,6 +905,10 @@ class Game extends EventEmitter {
     }
 
     saveWithDupe(card) {
+        if(card.owner.promptDupes) {
+            return;
+        }
+
         let player = card.controller;
         let dupe = card.dupes.find(dupe => dupe.owner === card.controller);
         if(card.canBeSaved() && dupe) {

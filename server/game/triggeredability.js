@@ -36,7 +36,7 @@ class TriggeredAbility extends BaseAbility {
             plot: 'active plot'
         };
 
-        let defaultedLocation = location || DefaultLocationForType[card.getPrintedType()] || 'play area';
+        let defaultedLocation = location || DefaultLocationForType[card.getPrintedType()] || ['play area', 'duplicate'];
 
         if(!Array.isArray(defaultedLocation)) {
             return [defaultedLocation];

@@ -57,6 +57,10 @@ const Costs = {
      */
     sacrificeSelf: () => CostBuilders.sacrifice.self(),
     /**
+     * Cost that will sacrifice a specific card
+     */
+    sacrificeCard: match => CostBuilders.sacrifice.specific(match),
+    /**
      * Cost that requires sacrificing a card that matches the passed condition
      * predicate function.
      */
@@ -348,9 +352,9 @@ const Costs = {
             },
             resolve: function(context, result = { resolved: false }) {
                 let max = _.min([maxFunc(context), context.source.tokens.gold]);
-                
+
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
-                
+
                 result.value = true;
                 result.resolved = true;
                 return result;
