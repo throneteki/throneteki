@@ -69,15 +69,11 @@ class DrawCard extends BaseCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => {
-                    return this.location === 'duplicate' && event.card === this.parent && this.parent.canBeSaved() && event.allowSave;
-                },
+                onCharacterKilled: event => this.location === 'duplicate' && event.card === this.parent && this.parent.canBeSaved() && event.allowSave,
                 onCardDiscarded: event => this.location === 'duplicate' && event.card === this.parent && this.parent.canBeSaved() && event.allowSave
             },
             match: card => card === this,
-            cost: ability.costs.sacrificeCard(() => {
-                return this;
-            }),
+            cost: ability.costs.sacrificeCard(() => this),
             handler: context => {
                 context.event.saveCard();
                 this.game.addMessage('{0} discards a duplicate to save {1}', this.owner, context.cardStateWhenInitiated.parent);
