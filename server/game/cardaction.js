@@ -110,6 +110,10 @@ class CardAction extends BaseAbility {
             return false;
         }
 
+        if(this.max && context.player.isAbilityAtMax(context.source.name)) {
+            return false;
+        }
+
         if(context.player !== this.card.controller && !this.anyPlayer) {
             return false;
         }
