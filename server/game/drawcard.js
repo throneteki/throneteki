@@ -67,7 +67,7 @@ class DrawCard extends BaseCard {
 
     setupDuplicateAbility(ability) {
         this.interrupt({
-            canCancel: false,
+            canCancel: true,
             when: {
                 onCharacterKilled: event => {
                     return this.location === 'duplicate' && event.card === this.parent && this.parent.canBeSaved() && event.allowSave;
@@ -80,7 +80,7 @@ class DrawCard extends BaseCard {
             }),
             handler: context => {
                 context.event.saveCard();
-                this.game.addMessage('{0} discards a duplicate to save {1}', this.owner, this.parent);
+                this.game.addMessage('{0} discards a duplicate to save {1}', this.owner, context.cardStateWhenInitiated.parent);
             }
         });
     }
