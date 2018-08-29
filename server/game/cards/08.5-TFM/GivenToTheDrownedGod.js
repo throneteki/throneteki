@@ -4,7 +4,7 @@ class GivenToTheDrownedGod extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw cards',
-            cost: ability.costs.kill(card => card.getType() === 'character' && card.hasTrait('Drowned God')),
+            cost: ability.costs.kill(card => card.hasTrait('Drowned God')),
             handler: context => {
                 let cards = context.costs.kill.getPrintedCost();
                 this.controller.drawCardsToHand(cards);
