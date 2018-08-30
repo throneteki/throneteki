@@ -23,6 +23,7 @@ class Profile extends React.Component {
         this.state = {
             newPassword: '',
             newPasswordAgain: '',
+            promptDupes: false,
             validation: {},
             timerSettings: {},
             keywordSettings: {}
@@ -93,6 +94,7 @@ class Profile extends React.Component {
             email: props.user.email,
             enableGravatar: props.user.enableGravatar,
             promptedActionWindows: props.user.promptedActionWindows,
+            promptDupes: props.user.settings.promptDupes,
             windowTimer: props.user.settings.windowTimer,
             timerSettings: props.user.settings.timerSettings,
             keywordSettings: props.user.settings.keywordSettings,
@@ -105,6 +107,13 @@ class Profile extends React.Component {
         var newState = {};
 
         newState[field] = event.target.value;
+        this.setState(newState);
+    }
+
+    onToggle(field, event) {
+        var newState = {};
+
+        newState[field] = event.target.checked;
         this.setState(newState);
     }
 
@@ -155,6 +164,7 @@ class Profile extends React.Component {
             promptedActionWindows: this.state.promptedActionWindows,
             enableGravatar: this.state.enableGravatar,
             settings: {
+                promptDupes: this.state.promptDupes,
                 windowTimer: this.state.windowTimer,
                 keywordSettings: this.state.keywordSettings,
                 timerSettings: this.state.timerSettings,
@@ -278,7 +288,7 @@ class Profile extends React.Component {
                             <Checkbox name='enableGravatar' label='Enable Gravatar integration' fieldClass='col-sm-offset-1 col-sm-7'
                                 onChange={ e => this.setState({ enableGravatar: e.target.checked }) } checked={ this.state.enableGravatar } />
                             <div className='col-sm-3 text-center'>Current profile picture</div>
-                            <button type='button' className='btn btn-default col-sm-offset-1 col-sm-2' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
+                            <button type='button' className='btn btn-default col-sm-offset-1 col-sm-4' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
                         </Panel>
                         <div>
                             <Panel title='Action window defaults'>
@@ -291,18 +301,20 @@ class Profile extends React.Component {
                                 <p className='help-block small'>Every time a game event occurs that you could possibly interrupt to cancel it, a timer will count down.  At the end of that timer, the window will automatically pass.
                                 This option controls the duration of the timer.  The timer can be configure to show when events are played (useful if you play cards like The Hand's Judgement) and to show when card abilities are triggered (useful if you play a lot of Treachery).</p>
                                 <div className='form-group'>
-                                    <label className='col-sm-3 control-label'>Window timeout</label>
-                                    <div className='col-sm-5'>
+                                    <label className='col-xs-3 control-label'>Window timeout</label>
+                                    <div className='col-xs-5 control-label'>
                                         <Slider value={ this.state.windowTimer }
                                             slideStop={ this.onSlideStop.bind(this) }
                                             step={ 1 }
                                             max={ 10 }
                                             min={ 0 } />
                                     </div>
-                                    <div className='col-sm-2'>
+                                    <div className='col-xs-2'>
                                         <input className='form-control text-center' name='timer' value={ this.state.windowTimer } onChange={ this.onSlideStop.bind(this) } />
                                     </div>
-                                    <label className='col-sm-1 control-label'>seconds</label>
+                                    <label className='col-xs-2 control-label text-left no-padding'>seconds</label>
+                                </div>
+                                <div className='form-group'>
 
                                     <Checkbox name='timerSettings.events' noGroup label={ 'Show timer for events' } fieldClass='col-sm-6'
                                         onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.state.timerSettings.events } />
@@ -310,12 +322,14 @@ class Profile extends React.Component {
                                         onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.state.timerSettings.abilities } />
                                 </div>
                             </Panel>
-                            <Panel title='Keywords'>
+                            <Panel title='Game Settings'>
                                 <div className='form-group'>
                                     <Checkbox name='keywordSettings.chooseOrder' noGroup label={ 'Choose order of keywords' } fieldClass='col-sm-6'
                                         onChange={ this.onKeywordSettingToggle.bind(this, 'chooseOrder') } checked={ this.state.keywordSettings.chooseOrder } />
                                     <Checkbox name='keywordSettings.chooseCards' noGroup label={ 'Make keywords optional' } fieldClass='col-sm-6'
                                         onChange={ this.onKeywordSettingToggle.bind(this, 'chooseCards') } checked={ this.state.keywordSettings.chooseCards } />
+                                    <Checkbox name='promptDupes' noGroup label={ 'Prompt before using dupes to save' } fieldClass='col-sm-6'
+                                        onChange={ this.onToggle.bind(this, 'promptDupes') } checked={ this.state.promptDupes } />
                                 </div>
                             </Panel>
                         </div>

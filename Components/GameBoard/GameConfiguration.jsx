@@ -25,8 +25,12 @@ class GameConfiguration extends React.Component {
     }
 
     onToggle(option, value) {
-        if(this.props.onToggle) {
-            this.props.onToggle(option, !value);
+        if(option === 'promptDupes') {
+            if(this.props.onPromptDupesToggle) {
+                this.props.onPromptDupesToggle(!value);
+            }
+        } else if(this.props.onActionWindowToggle) {
+            this.props.onActionWindowToggle(option, !value);
         }
     }
 
@@ -88,12 +92,14 @@ class GameConfiguration extends React.Component {
                                 onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.props.timerSettings.abilities } />
                         </div>
                     </Panel>
-                    <Panel title='Keywords'>
+                    <Panel title='Other Settings'>
                         <div className='form-group'>
                             <Checkbox name='keywordSettings.chooseOrder' noGroup label={ 'Choose order of keywords' } fieldClass='col-sm-6'
                                 onChange={ this.onKeywordSettingToggle.bind(this, 'chooseOrder') } checked={ this.props.keywordSettings.chooseOrder } />
                             <Checkbox name='keywordSettings.chooseCards' noGroup label={ 'Make keywords optional' } fieldClass='col-sm-6'
                                 onChange={ this.onKeywordSettingToggle.bind(this, 'chooseCards') } checked={ this.props.keywordSettings.chooseCards } />
+                            <Checkbox name='promptDupes' noGroup label={ 'Prompt before using dupes to save' } fieldClass='col-sm-6'
+                                onChange={ this.onToggle.bind(this, 'promptDupes', this.props.promptDupes) } checked={ this.props.promptDupes } />
                         </div>
                     </Panel>
                 </form>
@@ -106,9 +112,11 @@ GameConfiguration.displayName = 'GameConfiguration';
 GameConfiguration.propTypes = {
     actionWindows: PropTypes.object,
     keywordSettings: PropTypes.object,
+    onActionWindowToggle: PropTypes.func,
     onKeywordSettingToggle: PropTypes.func,
+    onPromptDupesToggle: PropTypes.func,
     onTimerSettingToggle: PropTypes.func,
-    onToggle: PropTypes.func,
+    promptDupes: PropTypes.bool,
     timerSettings: PropTypes.object
 };
 

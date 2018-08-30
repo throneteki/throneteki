@@ -11,10 +11,12 @@ export class GameConfigurationModal extends React.Component {
                 <GameConfiguration
                     actionWindows={ this.props.promptedActionWindows }
                     keywordSettings={ this.props.keywordSettings }
+                    promptDupes={ this.props.promptDupes }
                     timerSettings={ this.props.timerSettings }
                     onKeywordSettingToggle={ this.props.onKeywordSettingToggle }
                     onTimerSettingToggle={ this.props.onTimerSettingToggle }
-                    onToggle={ this.props.onPromptedActionWindowToggle }
+                    onActionWindowToggle={ this.props.onPromptedActionWindowToggle }
+                    onPromptDupesToggle={ this.props.onPromptDupesToggle }
                 />
             </Modal>);
     }
@@ -25,11 +27,12 @@ GameConfigurationModal.propTypes = {
     id: PropTypes.string,
     keywordSettings: PropTypes.object,
     onKeywordSettingToggle: PropTypes.func,
+    onPromptDupesToggle: PropTypes.func,
     onPromptedActionWindowToggle: PropTypes.func,
     onTimerSettingToggle: PropTypes.func,
+    promptDupes: PropTypes.bool,
     promptedActionWindows: PropTypes.object,
     timerSettings: PropTypes.object
-
 };
 
 export default GameConfigurationModal;

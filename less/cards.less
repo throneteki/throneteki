@@ -271,6 +271,15 @@
 .generate-card-dupes(@n, @i: 1) when (@i =< @n) {
   .card-dupe-@{i} {
     z-index: @layer-cards - @i;
+    top: -((@i - 1) * @attachment-offset);
+
+    &.large {
+      top: -((@i - 1) * @attachment-offset-lg);
+    }
+
+    &.x-large {
+      top: -((@i - 1) * @attachment-offset-xl);
+    }
   }
   .generate-card-dupes(@n, (@i + 1));
 }

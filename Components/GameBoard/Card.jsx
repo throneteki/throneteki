@@ -166,21 +166,21 @@ class InnerCard extends React.Component {
             return null;
         }
 
-        var facedownDupes = this.props.card.dupes.filter(card => {
-            return card.facedown;
-        });
+        let index = 1;
+        let dupes = this.props.card.dupes.map(dupe => {
+            // If a dupe is dragged into play during setup, it will display faceup.  This fixes that by forcing it to the parent's state
+            if(this.props.card.facedown) {
+                dupe.facedown = true;
+            }
 
-        if(!facedownDupes || facedownDupes.length === 0) {
-            return;
-        }
-
-        var index = 1;
-        var dupes = facedownDupes.map(dupe => {
-            var returnedDupe = (<Card key={ dupe.uuid } className={ classNames('card-dupe', `card-dupe-${index}`) }
+            let returnedDupe = (<Card key={ dupe.uuid } className={ classNames('card-dupe', `card-dupe-${index}`) }
                 source={ this.props.source } card={ dupe } wrapped={ false }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, dupe) }
                 onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
-                size={ this.props.size } />);
+                onClick={ this.props.onClick }
+                onMenuItemClick={ this.props.onMenuItemClick }
+                size={ this.props.size }
+                facedown={ this.props.card.facedown } />);
 
             index += 1;
 
