@@ -4,6 +4,7 @@ const OpenInformationLocations = [
     'being played',
     'dead pile',
     'discard pile',
+    'duplicate',
     'faction',
     'out of game',
     'play area',
