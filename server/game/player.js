@@ -620,10 +620,6 @@ class Player extends Spectator {
         }
     }
 
-    putIntoShadows(card) {
-        this.moveCard(card, 'shadows');
-    }
-
     setupDone() {
         if(this.hand.length < StartingHandSize) {
             this.drawCardsToHand(StartingHandSize - this.hand.length);
@@ -944,6 +940,13 @@ class Player extends Spectator {
                 event.cardStateWhenMoved = card.createSnapshot();
                 this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
             });
+        });
+    }
+
+    putIntoShadows(card, allowSave = true) {
+        this.game.raiseEvent('onCardPutIntoShadows', { player: this, card: card, allowSave: allowSave }, event => {
+            event.cardStateWhenMoved = card.createSnapshot();
+            this.moveCard(card, 'shadows', { allowSave: allowSave });
         });
     }
 
