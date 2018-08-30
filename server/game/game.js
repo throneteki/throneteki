@@ -705,6 +705,15 @@ class Game extends EventEmitter {
         player.keywordSettings[settingName] = toggle;
     }
 
+    toggleDupes(playerName, toggle) {
+        var player = this.getPlayerByName(playerName);
+        if(!player) {
+            return;
+        }
+
+        player.promptDupes = toggle;
+    }
+
     initialise() {
         var players = {};
 
@@ -896,6 +905,10 @@ class Game extends EventEmitter {
     }
 
     saveWithDupe(card) {
+        if(card.owner.promptDupes) {
+            return;
+        }
+
         let player = card.controller;
         let dupe = card.dupes.find(dupe => dupe.owner === card.controller);
         if(card.canBeSaved() && dupe) {

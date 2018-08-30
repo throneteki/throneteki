@@ -4,6 +4,7 @@ const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const StandardPlayActions = require('./PlayActions/StandardActions');
+const AbilityDsl = require('./abilitydsl');
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -36,6 +37,8 @@ class DrawCard extends BaseCard {
         this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
+
+        this.setupDuplicateAbility(AbilityDsl);
     }
 
     createSnapshot() {
@@ -58,7 +61,31 @@ class DrawCard extends BaseCard {
         clone.strengthSet = this.strengthSet;
         clone.tokens = Object.assign({}, this.tokens);
         clone.traits = this.traits.clone();
+
         return clone;
+    }
+
+    setupDuplicateAbility(ability) {
+        let dupeCondition = event => event.card === this.parent && this.parent.canBeSaved() && event.allowSave && this.controller.promptDupes;
+
+        this.interrupt({
+            canCancel: true,
+            cannotBeCanceled: true,
+            location: 'duplicate',
+            when: {
+                onCharacterKilled: dupeCondition,
+                onCardDiscarded: dupeCondition,
+                onCardReturnedToHand: dupeCondition,
+                onCardRemovedFromGame: dupeCondition,
+                onCardReturnedToDeck: dupeCondition,
+                onCardPutIntoShadows: dupeCondition
+            },
+            cost: ability.costs.discardDuplicate(),
+            handler: context => {
+                context.event.saveCard();
+                this.game.addMessage('{0} discards a duplicate to save {1}', this.owner, context.cardStateWhenInitiated.parent);
+            }
+        });
     }
 
     canBeDuplicated() {

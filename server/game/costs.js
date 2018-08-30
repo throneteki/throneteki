@@ -145,6 +145,10 @@ const Costs = {
         };
     },
     /**
+     * Cost that requires discarding a duplicate.
+     */
+    discardDuplicate: () => CostBuilders.discardDuplicate.self(),
+    /**
      * Cost that requires discarding from hand the card that initiated the ability.
      */
     discardSelfFromHand: () => CostBuilders.discardFromHand.self(),
@@ -333,9 +337,9 @@ const Costs = {
             },
             resolve: function(context, result = { resolved: false }) {
                 let max = _.min([maxFunc(context), context.source.tokens.gold]);
-                
+
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
-                
+
                 result.value = true;
                 result.resolved = true;
                 return result;

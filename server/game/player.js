@@ -71,6 +71,7 @@ class Player extends Spectator {
         this.plotRevealRestrictions = [];
         this.mustRevealPlot = undefined;
         this.promptedActionWindows = user.promptedActionWindows;
+        this.promptDupes = user.settings.promptDupes;
         this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
@@ -619,10 +620,6 @@ class Player extends Spectator {
         }
     }
 
-    putIntoShadows(card) {
-        this.moveCard(card, 'shadows');
-    }
-
     setupDone() {
         if(this.hand.length < StartingHandSize) {
             this.drawCardsToHand(StartingHandSize - this.hand.length);
@@ -912,25 +909,44 @@ class Player extends Spectator {
 
     returnCardToHand(card, allowSave = true) {
         this.game.applyGameAction('returnToHand', card, card => {
-            this.moveCard(card, 'hand', { allowSave: allowSave });
+            this.game.raiseEvent('onCardReturnedToHand', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenReturned = card.createSnapshot();
+                this.moveCard(card, 'hand', { allowSave: allowSave });
+            });
         });
     }
 
     removeCardFromGame(card, allowSave = true) {
         this.game.applyGameAction('removeFromGame', card, card => {
-            this.moveCard(card, 'out of game', { allowSave: allowSave });
+            this.game.raiseEvent('onCardRemovedFromGame', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenRemoved = card.createSnapshot();
+                this.moveCard(card, 'out of game', { allowSave: allowSave });
+            });
         });
     }
 
     moveCardToTopOfDeck(card, allowSave = true) {
         this.game.applyGameAction('moveToTopOfDeck', card, card => {
-            this.moveCard(card, 'draw deck', { allowSave: allowSave });
+            this.game.raiseEvent('onCardReturnedToDeck', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenMoved = card.createSnapshot();
+                this.moveCard(card, 'draw deck', { allowSave: allowSave });
+            });
         });
     }
 
     moveCardToBottomOfDeck(card, allowSave = true) {
         this.game.applyGameAction('moveToBottomOfDeck', card, card => {
-            this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
+            this.game.raiseEvent('onCardReturnedToDeck', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenMoved = card.createSnapshot();
+                this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
+            });
+        });
+    }
+
+    putIntoShadows(card, allowSave = true) {
+        this.game.raiseEvent('onCardPutIntoShadows', { player: this, card: card, allowSave: allowSave }, event => {
+            event.cardStateWhenMoved = card.createSnapshot();
+            this.moveCard(card, 'shadows', { allowSave: allowSave });
         });
     }
 
@@ -1291,6 +1307,7 @@ class Player extends Spectator {
             phase: this.phase,
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
+            promptDupes: this.promptDupes,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
