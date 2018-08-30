@@ -66,7 +66,7 @@ class DrawCard extends BaseCard {
     }
 
     setupDuplicateAbility(ability) {
-        let dupeCondition = event => event.card === this.parent && this.parent.canBeSaved() && event.allowSave;
+        let dupeCondition = event => event.card === this.parent && this.parent.canBeSaved() && event.allowSave && this.parent.owner.promptDupes;
 
         this.interrupt({
             canCancel: true,
