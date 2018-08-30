@@ -1,20 +1,25 @@
-const CostBuilder = require('./CostBuilder.js');
-const DiscardFromHandCost = require('./DiscardFromHandCost.js');
+const CostBuilder = require('./CostBuilder');
+const DiscardDuplicateCost = require('./DiscardDuplicateCost');
+const DiscardFromHandCost = require('./DiscardFromHandCost');
 const DiscardFromShadowsCost = require('./DiscardFromShadowsCost');
-const DiscardPowerCost = require('./DiscardPowerCost.js');
-const DiscardTokenCost = require('./DiscardTokenCost.js');
-const KillCost = require('./KillCost.js');
-const KneelCost = require('./KneelCost.js');
-const PlaceInDeadPileFromHandCost = require('./PlaceInDeadPileFromHandCost.js');
-const PutIntoPlayCost = require('./PutIntoPlayCost.js');
-const RemoveFromChallengeCost = require('./RemoveFromChallengeCost.js');
-const RemoveFromGameCost = require('./RemoveFromGameCost.js');
-const ReturnToHandCost = require('./ReturnToHandCost.js');
-const RevealCost = require('./RevealCost.js');
-const SacrificeCost = require('./SacrificeCost.js');
-const StandCost = require('./StandCost.js');
+const DiscardPowerCost = require('./DiscardPowerCost');
+const DiscardTokenCost = require('./DiscardTokenCost');
+const KillCost = require('./KillCost');
+const KneelCost = require('./KneelCost');
+const PlaceInDeadPileFromHandCost = require('./PlaceInDeadPileFromHandCost');
+const PutIntoPlayCost = require('./PutIntoPlayCost');
+const RemoveFromChallengeCost = require('./RemoveFromChallengeCost');
+const RemoveFromGameCost = require('./RemoveFromGameCost');
+const ReturnToHandCost = require('./ReturnToHandCost');
+const RevealCost = require('./RevealCost');
+const SacrificeCost = require('./SacrificeCost');
+const StandCost = require('./StandCost');
 
 const CostBuilders = {
+    discardDuplicate: new CostBuilder(new DiscardDuplicateCost(), {
+        select: 'Select duplicate to discard',
+        selectMultiple: number => `Select ${number} duplicates to discard`
+    }),
     discardFromHand: new CostBuilder(new DiscardFromHandCost(), {
         select: 'Select card to discard from hand',
         selectMultiple: number => `Select ${number} cards to discard from hand`

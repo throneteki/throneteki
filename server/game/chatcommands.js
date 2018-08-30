@@ -421,7 +421,7 @@ class ChatCommands {
             cardCondition: card => card.controller === player && card.owner === player && !['active plot', 'out of game'].includes(card.location),
             cardType: ['attachment', 'character', 'event', 'location', 'plot'],
             onSelect: (p, card) => {
-                player.moveCard(card, 'out of game');
+                player.removeCardFromGame(card);
                 this.game.addAlert('danger', '{0} uses the /remove-from-game command to remove {1} from the game', player, card);
                 return true;
             }

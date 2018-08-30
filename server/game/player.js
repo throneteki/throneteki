@@ -913,25 +913,37 @@ class Player extends Spectator {
 
     returnCardToHand(card, allowSave = true) {
         this.game.applyGameAction('returnToHand', card, card => {
-            this.moveCard(card, 'hand', { allowSave: allowSave });
+            this.game.raiseEvent('onCardReturnedToHand', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenReturned = card.createSnapshot();
+                this.moveCard(card, 'hand', { allowSave: allowSave });
+            });
         });
     }
 
     removeCardFromGame(card, allowSave = true) {
         this.game.applyGameAction('removeFromGame', card, card => {
-            this.moveCard(card, 'out of game', { allowSave: allowSave });
+            this.game.raiseEvent('onCardRemovedFromGame', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenRemoved = card.createSnapshot();
+                this.moveCard(card, 'out of game', { allowSave: allowSave });
+            });
         });
     }
 
     moveCardToTopOfDeck(card, allowSave = true) {
         this.game.applyGameAction('moveToTopOfDeck', card, card => {
-            this.moveCard(card, 'draw deck', { allowSave: allowSave });
+            this.game.raiseEvent('onCardReturnedToDeck', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenMoved = card.createSnapshot();
+                this.moveCard(card, 'draw deck', { allowSave: allowSave });
+            });
         });
     }
 
     moveCardToBottomOfDeck(card, allowSave = true) {
         this.game.applyGameAction('moveToBottomOfDeck', card, card => {
-            this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
+            this.game.raiseEvent('onCardReturnedToDeck', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenMoved = card.createSnapshot();
+                this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
+            });
         });
     }
 

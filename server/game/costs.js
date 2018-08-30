@@ -149,6 +149,10 @@ const Costs = {
         };
     },
     /**
+     * Cost that requires discarding a duplicate.
+     */
+    discardDuplicate: () => CostBuilders.discardDuplicate.self(),
+    /**
      * Cost that requires discarding from hand the card that initiated the ability.
      */
     discardSelfFromHand: () => CostBuilders.discardFromHand.self(),

@@ -66,14 +66,20 @@ class DrawCard extends BaseCard {
     }
 
     setupDuplicateAbility(ability) {
+        let dupeCondition = event => event.card === this.parent && this.parent.canBeSaved() && event.allowSave;
+
         this.interrupt({
             canCancel: true,
+            location: 'duplicate',
             when: {
-                onCharacterKilled: event => this.location === 'duplicate' && event.card === this.parent && this.parent.canBeSaved() && event.allowSave,
-                onCardDiscarded: event => this.location === 'duplicate' && event.card === this.parent && this.parent.canBeSaved() && event.allowSave
+                onCharacterKilled: dupeCondition,
+                onCardDiscarded: dupeCondition,
+                onCardReturnedToHand: dupeCondition,
+                onCardRemovedFromGame: dupeCondition,
+                onCardReturnedToDeck: dupeCondition
             },
             match: card => card === this,
-            cost: ability.costs.sacrificeCard(() => this),
+            cost: ability.costs.discardDuplicate(),
             handler: context => {
                 context.event.saveCard();
                 this.game.addMessage('{0} discards a duplicate to save {1}', this.owner, context.cardStateWhenInitiated.parent);
