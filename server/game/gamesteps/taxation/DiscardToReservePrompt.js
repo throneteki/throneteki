@@ -30,7 +30,8 @@ class DiscardToReservePrompt extends BaseStep {
             activePromptTitle: 'Select ' + overReserve + ' cards to discard down to reserve (top first)',
             waitingPromptTitle: 'Waiting for opponent to discard down to reserve',
             cardCondition: card => card.location === 'hand' && card.controller === currentPlayer,
-            onSelect: (player, cards) => this.discardCards(player, cards)
+            onSelect: (player, cards) => this.discardCards(player, cards),
+            onCancel: (player) => this.cancelSelection(player)
         });
     }
 
@@ -41,6 +42,12 @@ class DiscardToReservePrompt extends BaseStep {
         player.discardCards(cards, false, () => {
             this.game.addMessage('{0} discards {1} to meet reserve', player, cards);
         });
+        return true;
+    }
+
+    cancelSelection(player) {
+        this.game.addAlert('danger', '{0} continues without meeting reserve', player, this);
+
         return true;
     }
 }
