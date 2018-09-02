@@ -1309,15 +1309,17 @@ class Player extends Spectator {
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
+            showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
             user: _.pick(this.user, ['username'])
         };
 
-        if(this.showDeck) {
-            state.showDeck = true;
-            state.cardPiles.drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
+        let drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
+
+        if(drawDeck.some(card => !card.facedown)) {
+            state.cardPiles.drawDeck = drawDeck;
         }
 
         return _.extend(state, promptState);
