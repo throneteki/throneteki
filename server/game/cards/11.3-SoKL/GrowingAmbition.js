@@ -12,7 +12,7 @@ class GrowingAmbition extends DrawCard {
 
                 this.game.promptForDeckSearch(this.controller, {
                     numToSelect: context.xValue,
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, cards) => this.selectCards(player, cards, context),
                     source: this
                 });
 
@@ -23,22 +23,16 @@ class GrowingAmbition extends DrawCard {
         });
     }
 
-    cardSelected(player, card) {
-        this.chosenCards = this.chosenCards || [];
-        this.chosenCards.push(card);
-        player.removeCardFromPile(card);
-    }
-
-    returnCards(context) {
-        if(this.chosenCards.length === 0) {
+    selectCards(player, cards, context) {
+        if(cards.length === 0) {
             this.game.addMessage('{0} plays {1} to search their deck, but chooses no cards.', context.player, this);
             return;
         }
 
         this.game.addMessage('{0} plays {1} to choose {2}, search their deck and place {3} in their discard pile',
-            context.player, this, context.opponent, this.chosenCards);
+            context.player, this, context.opponent, cards);
 
-        for(let card of this.chosenCards) {
+        for(let card of cards) {
             context.player.moveCard(card, 'discard pile');
         }
 
@@ -60,7 +54,6 @@ class GrowingAmbition extends DrawCard {
         this.game.addMessage('{0} chooses to return {1} to {2}\'s hand for {3}',
             player, cards, this.controller, this);
 
-        this.chosenCards = [];
         return true;
     }
 }

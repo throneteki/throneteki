@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class WheelsWithinWheels extends PlotCard {
@@ -13,41 +11,28 @@ class WheelsWithinWheels extends PlotCard {
                     numToSelect: 10,
                     activePromptTitle: 'Select any number of events',
                     cardType: 'event',
-                    onSelect: (player, card) => this.cardsToReveal(player, card),
-                    onCancel: player => this.doneSelecting(player),
+                    onSelect: (player, cards) => this.revealSelectedCards(player, cards),
+                    onCancel: player => this.cancelSelecting(player),
                     source: this
                 });
             }
         });
     }
 
-    cardsToReveal(player, card) {
-        this.cards = this.cards || [];
-        this.cards.push(card);
-        player.removeCardFromPile(card);
+    revealSelectedCards(player, cards) {
+        this.cards = cards;
 
-        return true;
-    }
-
-    doneSelecting(player) {
-        if(_.isEmpty(this.cards)) {
-            this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards',
-                player, this);
-
-            return true;
-        }
-
-        if(this.cards.length === 1) {
+        if(cards.length === 1) {
             this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-                player, this, this.cards[0]);
+                player, this, cards[0]);
 
-            player.moveCard(this.cards[0], 'hand');
+            player.moveCard(cards[0], 'hand');
 
-            return true;
+            return;
         }
 
-        let buttons = _.map(this.cards, (card, i) => {
-            return { card: card, method: 'resolve', arg: i };
+        let buttons = cards.map(card => {
+            return { card: card, method: 'resolve', mapCard: true };
         });
 
         this.game.promptWithMenu(this.controller, this, {
@@ -61,14 +46,18 @@ class WheelsWithinWheels extends PlotCard {
         return true;
     }
 
-    resolve(player, index) {
-        let cardToHand = this.cards[index];
-        player.moveCard(cardToHand, 'hand');
-        this.cards.splice(index, 1);
+    cancelSelecting(player) {
+        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards',
+            player, this);
+    }
 
-        _.each(this.cards, card => {
+    resolve(player, cardToHand) {
+        player.moveCard(cardToHand, 'hand');
+        this.cards = this.cards.filter(card => card !== cardToHand);
+
+        for(let card of this.cards) {
             player.moveCard(card, 'discard pile');
-        });
+        }
 
         this.game.addMessage('{0} uses {1} to add {2} to their hand and place {3} in their discard pile',
             player, this, cardToHand, this.cards);

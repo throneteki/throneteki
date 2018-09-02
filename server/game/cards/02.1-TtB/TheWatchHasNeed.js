@@ -30,7 +30,7 @@ class TheWatchHasNeed extends DrawCard {
             numToSelect: reserve, // player can stop earlier clicking Done when happy
             activePromptTitle: 'Select a card',
             cardCondition: card => card.getType() === 'character' && card.hasTrait(trait),
-            onSelect: (player, card) => this.cardSelected(player, trait, card),
+            onSelect: (player, cards) => this.cardsSelected(player, trait, cards),
             onCancel: player => this.doneSelecting(player, trait),
             source: this
         });
@@ -38,10 +38,12 @@ class TheWatchHasNeed extends DrawCard {
         return true;
     }
 
-    cardSelected(player, trait, card) {
-        player.moveCard(card, 'hand');
+    cardsSelected(player, trait, cards) {
+        for(let card of cards) {
+            player.moveCard(card, 'hand');
+        }
         this.game.addMessage('{0} uses {1} to search their deck for a {2} and add {3} to their hand',
-            player, this, trait, card);
+            player, this, trait, cards);
 
         return true;
     }
