@@ -78,6 +78,7 @@ class Player extends Spectator {
         this.goldSources = [new GoldSource(this)];
         this.groupedPiles = {};
         this.bonusesFromRivals = new Set();
+        this.showDeck = false;
         this.shuffleArray = _.shuffle;
 
         this.promptState = new PlayerPromptState();
@@ -774,8 +775,8 @@ class Player extends Spectator {
         this.game.raiseEvent('onCardAttached', { card: attachment, parent: card });
     }
 
-    showDrawDeck() {
-        this.showDeck = true;
+    setDrawDeckVisibility(value) {
+        this.showDeck = value;
     }
 
     getSourceList(source) {

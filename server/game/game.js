@@ -336,21 +336,25 @@ class Game extends EventEmitter {
         }
     }
 
-    showDrawDeck(playerName) {
-        var player = this.getPlayerByName(playerName);
+    showDrawDeck(playerName, newValue) {
+        let player = this.getPlayerByName(playerName);
 
         if(!player) {
             return;
         }
 
-        if(!player.showDeck) {
-            player.showDrawDeck();
+        if(newValue === null || newValue === undefined) {
+            newValue = !player.showDeck;
+        }
 
-            this.addAlert('danger', '{0} is looking at their deck', player);
-        } else {
-            player.showDeck = false;
+        if(player.showDeck ^ newValue) {
+            player.setDrawDeckVisibility(newValue);
 
-            this.addAlert('info', '{0} stops looking at their deck', player);
+            if(newValue) {
+                this.addAlert('danger', '{0} is looking at their deck', player);
+            } else {
+                this.addAlert('info', '{0} stops looking at their deck', player);
+            }
         }
     }
 
