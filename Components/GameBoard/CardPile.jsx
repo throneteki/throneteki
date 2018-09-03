@@ -12,7 +12,7 @@ class CardPile extends React.Component {
         super(props);
 
         this.state = {
-            showPopup: false,
+            showPopup: !!props.cards && props.cards.some(card => card.selectable),
             showMenu: false
         };
 
@@ -26,9 +26,21 @@ class CardPile extends React.Component {
         let didHaveSelectableCard = this.props.cards && this.props.cards.some(card => card.selectable);
 
         if(!didHaveSelectableCard && hasNewSelectableCard) {
-            this.setState({ showPopup: true });
+            this.updatePopupVisibility(true);
         } else if(didHaveSelectableCard && !hasNewSelectableCard) {
-            this.setState({ showPopup: false });
+            this.updatePopupVisibility(false);
+        }
+    }
+
+    togglePopup() {
+        this.updatePopupVisibility(!this.state.showPopup);
+    }
+
+    updatePopupVisibility(value) {
+        this.setState({ showPopup: value });
+
+        if(this.props.onPopupChange) {
+            this.props.onPopupChange({ source: this.props.source, visible: value });
         }
     }
 
@@ -41,33 +53,33 @@ class CardPile extends React.Component {
         }
 
         if(!this.props.disablePopup) {
-            this.setState({ showPopup: !this.state.showPopup });
+            this.togglePopup();
         }
     }
 
     onMenuItemClick(menuItem) {
         if(menuItem.showPopup) {
-            this.setState({ showPopup: !this.state.showPopup });
+            this.togglePopup();
         }
 
-        menuItem.handler();
+        if(menuItem.handler) {
+            menuItem.handler();
+        }
     }
 
     onCloseClick(event) {
         event.preventDefault();
         event.stopPropagation();
 
-        this.setState({ showPopup: !this.state.showPopup });
-
-        if(this.props.onCloseClick) {
-            this.props.onCloseClick();
-        }
+        this.togglePopup();
     }
 
     onPopupMenuItemClick(menuItem) {
-        menuItem.handler();
+        if(menuItem.handler) {
+            menuItem.handler();
+        }
 
-        this.setState({ showPopup: !this.state.showPopup });
+        this.togglePopup();
     }
 
     onTopCardClick() {
@@ -84,7 +96,7 @@ class CardPile extends React.Component {
             return;
         }
 
-        this.setState({ showPopup: !this.state.showPopup });
+        this.togglePopup();
     }
 
     get isTopCardSelectable() {
@@ -97,7 +109,7 @@ class CardPile extends React.Component {
 
     onCardClick(card) {
         if(this.props.closeOnClick) {
-            this.setState({ showPopup: false });
+            this.updatePopupVisibility(false);
         }
 
         if(this.props.onCardClick) {
@@ -226,11 +238,11 @@ CardPile.propTypes = {
     hiddenTopCard: PropTypes.bool,
     menu: PropTypes.array,
     onCardClick: PropTypes.func,
-    onCloseClick: PropTypes.func,
     onDragDrop: PropTypes.func,
     onMenuItemClick: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
+    onPopupChange: PropTypes.func,
     onTouchMove: PropTypes.func,
     orientation: PropTypes.string,
     popupLocation: PropTypes.string,
