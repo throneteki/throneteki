@@ -7,40 +7,29 @@ class SmallPaul extends DrawCard {
                 onCharacterKilled: event => event.card === this
             },
             handler: () => {
-                this.selectedCards = [];
                 let reserve = this.controller.getTotalReserve();
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: reserve,
                     numToSelect: reserve,
                     activePromptTitle: 'Select any number of Stewards',
                     cardCondition: card => card.hasTrait('Steward') && card.getType() === 'character',
-                    onSelect: (player, card) => this.selectCard(player, card),
-                    onCancel: player => this.doneSelecting(player),
+                    onSelect: (player, card) => this.selectCards(player, card),
+                    onCancel: player => this.cancelSelecting(player),
                     source: this
                 });
             }
         });
     }
 
-    selectCard(player, card) {
-        this.selectedCards.push(card);
-        player.removeCardFromPile(card);
-        return true;
-    }
-
-    doneSelecting(player) {
-        if(this.selectedCards.length === 0) {
-            this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards', player, this);
-
-            return true;
-        }
-
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, this.selectedCards);
-        for(let card of this.selectedCards) {
+    selectCards(player, cards) {
+        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, cards);
+        for(let card of cards) {
             player.moveCard(card, 'hand');
         }
+    }
 
-        return true;
+    cancelSelecting(player) {
+        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards', player, this);
     }
 }
 
