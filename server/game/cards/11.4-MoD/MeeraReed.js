@@ -17,7 +17,6 @@ class MeeraReed extends DrawCard {
                 onCardOutOfShadows: event => event.card === this
             },
             target: {
-                activePromptTitle: 'Select a character',
                 cardCondition: card => card.getType() === 'character' && card.location === 'play area'
             },
             handler: context => {

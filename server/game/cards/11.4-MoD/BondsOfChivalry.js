@@ -6,7 +6,7 @@ class BondsOfChivalry extends DrawCard {
             title: 'Stand and remove Knight',
             condition: () => this.game.isDuringChallenge(),
             target: {
-                cardCondition: card => card.controller === this.controller && card.getType() === 'character' && card.isParticipating()
+                cardCondition: card => card.controller === this.controller && card.getType() === 'character' && card.isParticipating() && card.hasTrait('Knight')
             },
             handler: context => {
                 let target = context.target;
