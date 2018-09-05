@@ -14,8 +14,9 @@ class TheLongWinter extends PlotCard {
     }
 
     cancelSelection(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
+        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
         this.proceedToNextStep();
+
         return true;
     }
 
@@ -24,6 +25,7 @@ class TheLongWinter extends PlotCard {
         this.selections.push({ player: player, card: card, cardFragment: cardFragment });
         this.game.addMessage('{0} selects {1} to lose power from {2}', player, cardFragment, this);
         this.proceedToNextStep();
+
         return true;
     }
 

@@ -49,7 +49,7 @@ class TheWatchHasNeed extends DrawCard {
     }
 
     cancelTraitSelection(player) {
-        this.game.addMessage('{0} cancels the effect of {1}', player, this);
+        this.game.addAlert('danger', '{0} cancels the effect of {1}', player, this);
 
         return true;
     }
