@@ -28,7 +28,7 @@ class VictarionGreyjoy extends DrawCard {
         this.game.promptForSelect(this.controller, {
             activePromptTitle: 'Select a location',
             source: this,
-            cardCondition: card => card.getType() === 'location',
+            cardCondition: card => card.location === 'play area' && card.getType() === 'location',
             gameAction: 'kneel',
             onSelect: (player, card) => this.onLocationSelected(player, card),
             onCancel: (player) => this.cancelSelection(player)
@@ -40,16 +40,18 @@ class VictarionGreyjoy extends DrawCard {
     standVictarion(player) {
         this.controller.standCard(this);
 
-        this.game.addMessage('{0} uses {1} to stand {1}', player, this);
+        this.game.addMessage('{0} uses {2} to kneel {1} and stand {2}', player, this.context.costs.kneel, this);
 
         return true;
     }
 
-    gainRenown() {
+    gainRenown(player) {
         this.untilEndOfChallenge(ability => ({
             match: this,
             effect: ability.effects.addKeyword('renown')
         }));
+
+        this.game.addMessage('{0} uses {2} to kneel {1} and have {2} gain renown', player, this.context.costs.kneel, this);
 
         return true;
     }
@@ -57,13 +59,13 @@ class VictarionGreyjoy extends DrawCard {
     onLocationSelected(player, card) {
         card.controller.kneelCard(card);
 
-        this.game.addMessage('{0} uses {1} to kneel {2}', player, this, card);
+        this.game.addMessage('{0} uses {1} to kneel {2} and {3}', player, this, this.context.costs.kneel, card);
 
         return true;
     }
 
     cancelSelection(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
+        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
     }
 }
 

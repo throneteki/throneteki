@@ -9,7 +9,7 @@ class GreyGhost extends DrawCard {
 
     setupCardAbilities(ability) {
         this.action({
-            title: 'Choose character(s)',
+            title: 'Prevent character(s) from defending',
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.game.promptForSelect(this.controller, {
@@ -41,8 +41,7 @@ class GreyGhost extends DrawCard {
     }
 
     cancelSelection(player) {
-        this.selections.push({ player: player, cards: [] });
-        this.proceedToNextStep();
+        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
     }
 }
 
