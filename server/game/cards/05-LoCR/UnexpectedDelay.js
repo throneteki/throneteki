@@ -17,7 +17,7 @@ class UnexpectedDelay extends PlotCard {
     }
 
     cancelSelection(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
+        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
         this.proceedToNextStep();
     }
 

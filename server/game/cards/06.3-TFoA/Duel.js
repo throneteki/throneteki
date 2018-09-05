@@ -38,9 +38,9 @@ class Duel extends PlotCard {
             activePrompt: {
                 menuTitle: 'Choose character to kneel',
                 buttons: [
-                    { card: cards[0], method: 'resolve', arg: [0,1]},
-                    { card: cards[1], method: 'resolve', arg: [1,0]},
-                    { text: 'Cancel', method: 'cancel'}
+                    { card: cards[0], method: 'resolve', arg: [0, 1] },
+                    { card: cards[1], method: 'resolve', arg: [1, 0] },
+                    { text: 'Cancel', method: 'cancel' }
                 ]
             },
             source: this
@@ -59,7 +59,7 @@ class Duel extends PlotCard {
     }
 
     cancel(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
+        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
 
         return true;
     }

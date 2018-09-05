@@ -7,7 +7,7 @@ class UnbowedUnbentUnbroken extends DrawCard {
             max: ability.limit.perChallenge(1),
             when: {
                 afterChallenge: event => !this.controller.firstPlayer && event.challenge.defendingPlayer === this.controller &&
-                                         event.challenge.loser === this.controller
+                    event.challenge.loser === this.controller
             },
             handler: context => {
                 this.challengeWinner = context.event.challenge.winner;
@@ -36,7 +36,7 @@ class UnbowedUnbentUnbroken extends DrawCard {
     }
 
     cancel(player) {
-        this.game.addMessage('{0} cancels the resolution of {1}', player, this);
+        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
 
         this.game.addGold(player, this.getCost()); // TODO this fails if opponent cannot gain gold
         player.moveCard(this, 'hand');
