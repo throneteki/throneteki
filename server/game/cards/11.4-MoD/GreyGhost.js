@@ -13,6 +13,7 @@ class GreyGhost extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.game.promptForSelect(this.controller, {
+                    multiselect: true,
                     numCards: this.tracker.hasComeOutOfShadowsThisPhase ? 2 : 1,
                     activePromptTitle: this.tracker.hasComeOutOfShadowsThisPhase ? 'Select 2 characters' : 'Select a character',
                     source: this,
@@ -25,10 +26,6 @@ class GreyGhost extends DrawCard {
     }
 
     onSelect(player, cards) {
-        if(!Array.isArray(cards)) {
-            cards = [cards];
-        }
-
         this.untilEndOfPhase(ability => ({
             match: card => cards.some(c => card === c),
             targetController: 'opponent',
