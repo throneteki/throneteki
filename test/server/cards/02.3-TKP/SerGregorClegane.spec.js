@@ -1,13 +1,13 @@
-describe('Ser Gregor Clegane', function() {
-    integration(function() {
-        beforeEach(function() {
+describe('Ser Gregor Clegane', function () {
+    integration(function () {
+        beforeEach(function () {
             const deck1 = this.buildDeck('lannister', [
                 'A Noble Cause',
                 'Ser Gregor Clegane'
             ]);
             const deck2 = this.buildDeck('baratheon', [
                 'Sneak Attack',
-                'Hedge Knight', 'Maester Cressen', 'Hedge Knight', 'Shireen Baratheon', 'The Roseroad'
+                'Hedge Knight', 'Maester Cressen', 'Hedge Knight', 'Shireen Baratheon (Core)', 'The Roseroad'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);
@@ -15,37 +15,37 @@ describe('Ser Gregor Clegane', function() {
             this.keepStartingHands();
             this.player1.clickCard('Ser Gregor Clegane', 'hand');
             this.player2.clickCard('Hedge Knight', 'hand');
-            this.player2.clickCard('Shireen Baratheon', 'hand');
+            this.player2.clickCard('Shireen Baratheon (Core)', 'hand');
             this.completeSetup();
             this.selectFirstPlayer(this.player1);
 
             this.completeMarshalPhase();
 
-            this.shireen = this.player2.findCardByName('Shireen Baratheon', 'play area');
+            this.shireen = this.player2.findCardByName('Shireen Baratheon (Core)', 'play area');
             this.roseroad = this.player2.findCardByName('The Roseroad', 'hand');
             this.cressen = this.player2.findCardByName('Maester Cressen', 'hand');
             this.knight = this.player2.findCardByName('Hedge Knight', 'hand');
         });
 
-        describe('when a non-character is pillaged', function() {
-            beforeEach(function() {
+        describe('when a non-character is pillaged', function () {
+            beforeEach(function () {
                 this.roseroad.controller.moveCard(this.roseroad, 'draw deck');
                 this.unopposedChallenge(this.player1, 'Military', 'Ser Gregor Clegane');
                 this.player1.clickPrompt('Apply Claim');
                 this.player2.clickCard('Hedge Knight', 'play area');
             });
 
-            it('should discard as normal', function() {
+            it('should discard as normal', function () {
                 expect(this.roseroad.location).toBe('discard pile');
             });
 
-            it('should not prompt to kill', function() {
+            it('should not prompt to kill', function () {
                 expect(this.player1).not.toHavePrompt('Select a character');
             });
         });
 
-        describe('when a character is pillaged that has a killable cost', function() {
-            beforeEach(function() {
+        describe('when a character is pillaged that has a killable cost', function () {
+            beforeEach(function () {
                 this.knight.controller.moveCard(this.knight, 'draw deck');
                 this.unopposedChallenge(this.player1, 'Military', 'Ser Gregor Clegane');
                 this.player1.clickPrompt('Apply Claim');
@@ -53,15 +53,15 @@ describe('Ser Gregor Clegane', function() {
                 this.player1.triggerAbility('Ser Gregor Clegane');
             });
 
-            it('should put the character into the dead pile', function() {
+            it('should put the character into the dead pile', function () {
                 expect(this.knight.location).toBe('dead pile');
             });
 
-            it('should prompt to kill', function() {
+            it('should prompt to kill', function () {
                 expect(this.player1).toHavePrompt('Select a character');
             });
 
-            it('should allow the player to kill an equal cost character', function() {
+            it('should allow the player to kill an equal cost character', function () {
                 this.player1.clickCard(this.shireen);
 
                 // Pass on reactions to Shireen being killed
@@ -71,8 +71,8 @@ describe('Ser Gregor Clegane', function() {
             });
         });
 
-        describe('when a character is pillaged that does not have a killable cost', function() {
-            beforeEach(function() {
+        describe('when a character is pillaged that does not have a killable cost', function () {
+            beforeEach(function () {
                 this.cressen.controller.moveCard(this.cressen, 'draw deck');
                 this.unopposedChallenge(this.player1, 'Military', 'Ser Gregor Clegane');
                 this.player1.clickPrompt('Apply Claim');
@@ -80,11 +80,11 @@ describe('Ser Gregor Clegane', function() {
                 this.player1.triggerAbility('Ser Gregor Clegane');
             });
 
-            it('should put the character into the dead pile', function() {
+            it('should put the character into the dead pile', function () {
                 expect(this.cressen.location).toBe('dead pile');
             });
 
-            it('should not prompt to kill', function() {
+            it('should not prompt to kill', function () {
                 expect(this.player1).not.toHavePrompt('Select a character');
             });
         });

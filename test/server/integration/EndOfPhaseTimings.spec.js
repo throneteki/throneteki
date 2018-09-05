@@ -1,7 +1,7 @@
-describe('end of phase timings / WUA', function() {
-    integration(function() {
-        describe('Interrupts to "when the phase ends" vs "until the end of the phase"', function() {
-            beforeEach(function() {
+describe('end of phase timings / WUA', function () {
+    integration(function () {
+        describe('Interrupts to "when the phase ends" vs "until the end of the phase"', function () {
+            beforeEach(function () {
                 const deck = this.buildDeck('baratheon', [
                     'A Game of Thrones',
                     'Varys (Core)', 'Nightmares'
@@ -27,7 +27,7 @@ describe('end of phase timings / WUA', function() {
                 this.player2.clickCard(varys);
             });
 
-            it('should keep "until the end of the phase" effects active until after interrupts to "when the phase ends"', function() {
+            it('should keep "until the end of the phase" effects active until after interrupts to "when the phase ends"', function () {
                 // Since Nightmares will not run out until after interrupts to
                 // "when the phase ends", the player should not be able to
                 // trigger Varys.
@@ -35,11 +35,11 @@ describe('end of phase timings / WUA', function() {
             });
         });
 
-        describe('"Until end of phase" vs "At end of phase"', function() {
-            beforeEach(function() {
+        describe('"Until end of phase" vs "At end of phase"', function () {
+            beforeEach(function () {
                 const deck1 = this.buildDeck('baratheon', [
                     'A Game of Thrones',
-                    'Shireen Baratheon'
+                    'Shireen Baratheon (Core)'
                 ]);
                 const deck2 = this.buildDeck('martell', [
                     'A Game of Thrones',
@@ -50,7 +50,7 @@ describe('end of phase timings / WUA', function() {
                 this.startGame();
                 this.keepStartingHands();
 
-                this.shireen = this.player1.findCardByName('Shireen Baratheon', 'hand');
+                this.shireen = this.player1.findCardByName('Shireen Baratheon (Core)', 'hand');
                 this.character = this.player2.findCardByName('Areo Hotah', 'hand');
 
                 this.player1.clickCard(this.shireen);
@@ -76,7 +76,7 @@ describe('end of phase timings / WUA', function() {
                 this.completeChallengesPhase();
             });
 
-            it('should wear off "until end of phase" before "at end of phase" triggers', function() {
+            it('should wear off "until end of phase" before "at end of phase" triggers', function () {
                 // Nightmares wears off before the kill from Venomous Blade, so
                 // Shireen should have an opportunity to kneel someone when she
                 // dies.
