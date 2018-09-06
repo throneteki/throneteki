@@ -13,7 +13,7 @@ class GreyGhost extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.game.promptForSelect(this.controller, {
-                    multiselect: true,
+                    multiSelect: true,
                     numCards: this.tracker.hasComeOutOfShadowsThisPhase ? 2 : 1,
                     activePromptTitle: this.tracker.hasComeOutOfShadowsThisPhase ? 'Select 2 characters' : 'Select a character',
                     source: this,
