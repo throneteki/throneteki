@@ -4,19 +4,16 @@ class WunWun extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kneel Wun Wun to have him participate in the current challenge',
-            phase: 'challenge',
-            limit: ability.limit.perPhase(1),
             condition: () => this.isWildlingdParticipatingInChallenge(),
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let card = context.costs.kneel;
                 if(this.game.currentChallenge.attackingPlayer === context.player) {
-                    this.game.currentChallenge.addAttacker(card);
+                    this.game.currentChallenge.addAttacker(this);
                 } else {
-                    this.game.currentChallenge.addDefender(card);
+                    this.game.currentChallenge.addDefender(this);
                 }
 
-                this.game.addMessage('{0} uses {1} to kneel {2} and add them to the challenge', context.player, this, card);
+                this.game.addMessage('{0} uses {1} to kneel {1} and add them to the challenge', context.player, this);
             }
         });
     }

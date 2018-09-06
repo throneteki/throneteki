@@ -8,7 +8,7 @@ class TitheCollector extends DrawCard {
 
         this.reaction({
             when: {
-                onIncomeCollected: event => event.player === this.controller
+                onIncomeCollected: event => event.player === this.controller && this.canGainPower()
             },
             cost: ability.costs.payGold(2),
             handler: () => {
