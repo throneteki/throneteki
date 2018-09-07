@@ -130,7 +130,13 @@ class GameList extends React.Component {
     }
 
     getGamesForType(gameType, games) {
-        let gameDisplay = games.map(game => {
+        let gamesToReturn = [];
+
+        for(const game of games) {
+            if(this.props.gameFilter.showOnlyNewGames && game.started) {
+                continue;
+            }
+
             let players = this.getPlayers(game);
 
             let isAdmin = this.props.user && this.props.user.permissions.canManageGames;
@@ -145,7 +151,7 @@ class GameList extends React.Component {
 
             let formattedTime = moment.utc(timeDifference).format('HH:mm');
 
-            return (
+            gamesToReturn.push((
                 <div key={ game.id }>
                     <hr />
                     <div className={ rowClass }>
@@ -170,8 +176,8 @@ class GameList extends React.Component {
                         </div>
                     </div>
                 </div>
-            );
-        });
+            ));
+        }
 
         let gameHeaderClass = 'game-header bold';
         switch(gameType) {
@@ -188,9 +194,9 @@ class GameList extends React.Component {
 
         return (
             <div>
-                <div className={ gameHeaderClass }>{ gameType } ({ gameDisplay.length })
+                <div className={ gameHeaderClass }>{ gameType } ({ gamesToReturn.length })
                 </div>
-                { gameDisplay }
+                { gamesToReturn }
             </div>);
     }
 

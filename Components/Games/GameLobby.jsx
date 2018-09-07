@@ -39,7 +39,8 @@ class GameLobby extends React.Component {
         let filterDefaults = {
             beginner: true,
             casual: true,
-            competitive: true
+            competitive: true,
+            showOnlyNewGames: false
         };
 
         this.state = {
@@ -209,6 +210,7 @@ class GameLobby extends React.Component {
                                 <Checkbox name='beginner' label='Beginner' fieldClass='col-xs-4' noGroup onChange={ this.onCheckboxChange.bind(this, 'beginner') } checked={ this.state.filter['beginner'] } />
                                 <Checkbox name='casual' label='Casual' fieldClass='col-xs-4' noGroup onChange={ this.onCheckboxChange.bind(this, 'casual') } checked={ this.state.filter['casual'] } />
                                 <Checkbox name='competitive' label='Competitive' fieldClass='col-xs-4' noGroup onChange={ this.onCheckboxChange.bind(this, 'competitive') } checked={ this.state.filter['competitive'] } />
+                                <Checkbox name='showOnlyNewGames' label='Only show new games' fieldClass='col-xs-5' noGroup onChange={ this.onCheckboxChange.bind(this, 'showOnlyNewGames') } checked={ this.state.filter['showOnlyNewGames'] } />
                             </div>
                         </div>
                         { this.props.games.length === 0 ? <h4>No games are currently in progress</h4> : <GameList games={ this.props.games } gameFilter={ this.state.filter } /> }
