@@ -11,22 +11,20 @@ class SerMarkMullendore extends DrawCard {
 
                 this.game.addMessage('{0} uses {1} to reveal the top card of their deck as {2}', this.controller, this, this.topCard);
 
-                if(this.topCard.getType() === 'character') {
-                    if(!this.controller.canPutIntoPlay(this.topCard)) {
-                        this.game.addMessage('{0} is unable to put {1} into play for {2}', this.controller, this.topCard, this);
-                        return;
-                    }
-
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: `Put ${this.topCard.name} into play?`,
-                            buttons: [
-                                { text: 'Yes', method: 'accept' },
-                                { text: 'No', method: 'decline' }
-                            ]
-                        }
-                    });
+                if(!this.controller.canPutIntoPlay(this.topCard)) {
+                    this.game.addMessage('{0} is unable to put {1} into play for {2}', this.controller, this.topCard, this);
+                    return;
                 }
+
+                this.game.promptWithMenu(context.player, this, {
+                    activePrompt: {
+                        menuTitle: `Put ${this.topCard.name} into play?`,
+                        buttons: [
+                            { text: 'Yes', method: 'accept' },
+                            { text: 'No', method: 'decline' }
+                        ]
+                    }
+                });
             }
         });
     }
