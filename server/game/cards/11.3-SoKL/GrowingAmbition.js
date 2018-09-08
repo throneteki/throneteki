@@ -12,23 +12,16 @@ class GrowingAmbition extends DrawCard {
 
                 this.game.promptForDeckSearch(this.controller, {
                     numToSelect: context.xValue,
-                    onSelect: (player, cards) => this.selectCards(player, cards, context),
+                    activePromptTitle: `Select ${context.xValue} cards`,
+                    onSelect: (player, cards) => this.selectCards(cards, context),
+                    onCancel: () => this.selfCancelSearch(context),
                     source: this
-                });
-
-                this.game.queueSimpleStep(() => {
-                    this.returnCards(context);
                 });
             }
         });
     }
 
-    selectCards(player, cards, context) {
-        if(cards.length === 0) {
-            this.game.addMessage('{0} plays {1} to search their deck, but chooses no cards.', context.player, this);
-            return;
-        }
-
+    selectCards(cards, context) {
         this.game.addMessage('{0} plays {1} to choose {2}, search their deck and place {3} in their discard pile',
             context.player, this, context.opponent, cards);
 
@@ -42,11 +35,16 @@ class GrowingAmbition extends DrawCard {
             cardCondition: card => card.controller === this.controller && card.location === 'discard pile',
             numCards: context.xValue,
             source: this,
-            onSelect: (player, cards) => this.onCardsSelected(player, cards)
+            onSelect: (player, cards) => this.opponentSelectCards(player, cards),
+            onCancel: (player) => this.opponentCancel(player)
         });
     }
 
-    onCardsSelected(player, cards) {
+    selfCancelSearch(context) {
+        this.game.addMessage('{0} play {1} to search their deck, but chooses no cards', context.player, this);
+    }
+
+    opponentSelectCards(player, cards) {
         for(let card of cards) {
             this.controller.moveCard(card, 'hand');
         }
@@ -54,6 +52,11 @@ class GrowingAmbition extends DrawCard {
         this.game.addMessage('{0} chooses to return {1} to {2}\'s hand for {3}',
             player, cards, this.controller, this);
 
+        return true;
+    }
+
+    opponentCancel(player) {
+        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
         return true;
     }
 }
