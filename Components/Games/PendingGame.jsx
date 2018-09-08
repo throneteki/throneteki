@@ -55,6 +55,14 @@ class PendingGame extends React.Component {
                 }).then(() => {
                 });
             }
+
+            if(window.Notification && Notification.permission === 'granted') {
+                let otherPlayer = Object.values(props.currentGame.players).find(p => p.name !== props.user.username);
+                let windowNotification = new Notification('The Iron Throne', { body: `${otherPlayer.name} has joined your game`, icon: `/img/avatar/${otherPlayer.username}.png` });
+
+                setTimeout(() => windowNotification.close(), 5000);
+            }
+
         }
 
         if(props.connecting) {
