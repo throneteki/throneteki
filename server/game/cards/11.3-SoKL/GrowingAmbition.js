@@ -41,7 +41,7 @@ class GrowingAmbition extends DrawCard {
     }
 
     selfCancelSearch(context) {
-        this.game.addMessage('{0} play {1} to search their deck, but chooses no cards', context.player, this);
+        this.game.addMessage('{0} plays {1} to search their deck, but chooses no cards', context.player, this);
     }
 
     opponentSelectCards(player, cards) {
