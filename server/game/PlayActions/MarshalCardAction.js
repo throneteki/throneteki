@@ -4,6 +4,7 @@ const Costs = require('../costs');
 class MarshalCardAction extends BaseAbility {
     constructor() {
         super({
+            abilitySourceType: 'game',
             cost: [
                 Costs.payReduceableGoldCost('marshal'),
                 Costs.playLimited()
@@ -52,10 +53,6 @@ class MarshalCardAction extends BaseAbility {
         let hand = params.originalLocation === 'hand' ? 'hand' : 'other';
         let current = params.originalController === params.player ? 'current' : 'opponent';
         return messages[`${params.type}.${hand}.${current}`] || messages['card.hand.current'];
-    }
-
-    isCardAbility() {
-        return false;
     }
 }
 
