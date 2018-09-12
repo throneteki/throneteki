@@ -27,6 +27,7 @@ class BaseAbility {
         this.limit = properties.limit;
         this.cannotBeCanceled = !!properties.cannotBeCanceled;
         this.chooseOpponentFunc = properties.chooseOpponent;
+        this.abilitySourceType = properties.abilitySourceType || 'card';
     }
 
     buildCost(cost) {
@@ -212,7 +213,7 @@ class BaseAbility {
     }
 
     isCardAbility() {
-        return true;
+        return this.abilitySourceType === 'card';
     }
 
     isTriggeredAbility() {

@@ -4,15 +4,12 @@ const Costs = require('../costs');
 class SetupInShadowsAction extends BaseAbility {
     constructor() {
         super({
+            abilitySourceType: 'game',
             cost: [
                 Costs.payGold(2)
             ]
         });
         this.title = 'Setup in shadows';
-    }
-
-    isCardAbility() {
-        return false;
     }
 
     meetsRequirements(context) {

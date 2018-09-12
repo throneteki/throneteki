@@ -4,6 +4,7 @@ const Costs = require('../costs');
 class MarshalIntoShadowsAction extends BaseAbility {
     constructor() {
         super({
+            abilitySourceType: 'game',
             cost: [
                 Costs.payReduceableGoldCost('marshalIntoShadows')
             ]
@@ -37,10 +38,6 @@ class MarshalIntoShadowsAction extends BaseAbility {
             context.game.addMessage('{0} marshals a card into shadows costing {1} gold', context.player, context.costs.gold);
             context.player.putIntoShadows(context.source);
         });
-    }
-
-    isCardAbility() {
-        return false;
     }
 }
 

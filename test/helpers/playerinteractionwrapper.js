@@ -200,6 +200,10 @@ class PlayerInteractionWrapper {
         this.player.keywordSettings[setting] = value;
     }
 
+    toggleManualDupes(value) {
+        this.player.promptDupes = value;
+    }
+
     reconnect() {
         let newSocket = { id: uuid.v1() };
         this.game.reconnect(newSocket, this.player.name);
