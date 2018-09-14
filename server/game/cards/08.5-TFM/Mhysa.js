@@ -15,7 +15,7 @@ class Mhysa extends DrawCard {
     }
 
     getAttackingCharacters() {
-        if(this.game.isDuringChallenge()) {
+        if(!this.game.isDuringChallenge()) {
             return 0;
         }
 
