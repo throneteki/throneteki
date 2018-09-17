@@ -25,6 +25,7 @@ class BaseAbility {
         this.cost = this.buildCost(properties.cost);
         this.targets = this.buildTargets(properties);
         this.limit = properties.limit;
+        this.messageFunc = properties.message || (() => true);
         this.cannotBeCanceled = !!properties.cannotBeCanceled;
         this.chooseOpponentFunc = properties.chooseOpponent;
         this.abilitySourceType = properties.abilitySourceType || 'card';
@@ -192,6 +193,17 @@ class BaseAbility {
     incrementLimit() {
         if(this.limit) {
             this.limit.increment();
+        }
+    }
+
+    outputMessage(context) {
+        // The message function can either output a message directly, or just
+        // return an array with the message and arguments necessary to output
+        // the message.
+        let messageArgs = this.messageFunc(context);
+
+        if(Array.isArray(messageArgs)) {
+            this.game.addMessage(...messageArgs);
         }
     }
 

@@ -316,6 +316,35 @@ class SealOfTheHand extends DrawCard {
 }
 ```
 
+#### Ability messages
+
+The `message` property can be used to add a message to the game log outside of the `handler` function. By separating the message from the handler that executes the ability, messages can be added to the game log prior to prompting to cancel abilities (e.g. Treachery, Hand's Judgment, etc).
+
+The `message` property should be a function that takes an ability context object and returns an array with the message string as the first item in the array, followed by any arguments for the message:
+
+```javascript
+this.action({
+    // ...
+    message: context => ['{0} kneels {1} to stand {2}', context.player, this, this.parent],
+    handler: () => {
+        // ...
+    }
+});
+```
+
+It can also output the message directly using the game object without returning a message format:
+```javascript
+this.action({
+    // ...
+    message: context => {
+        this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, this.parent);
+    },
+    handler: () => {
+        // ...
+    }
+});
+```
+
 #### Checking ability restrictions
 
 Card abilities can only be triggered if they have the potential to modify game state (outside of paying costs). To ensure that the action's play restrictions are met, pass a `condition` function that returns `true` when the restrictions are met, and `false` otherwise. If the condition returns `false`, the action will not be executed and costs will not be paid.
