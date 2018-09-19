@@ -155,8 +155,9 @@ class CardAction extends BaseAbility {
         this.handler(context);
     }
 
-    getMenuItem(arg) {
-        return { text: this.title, method: 'doAction', anyPlayer: !!this.anyPlayer, arg: arg };
+    getMenuItem(arg, player) {
+        let context = this.createContext(player);
+        return { text: this.title, method: 'doAction', anyPlayer: !!this.anyPlayer, arg: arg, disabled: !this.meetsRequirements(context) };
     }
 
     isAction() {

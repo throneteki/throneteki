@@ -69,7 +69,6 @@ class BaseCard {
         };
 
         this.abilityRestrictions = [];
-        this.menu = [];
         this.events = new EventRegistrar(this.game, this);
 
         this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
@@ -140,11 +139,6 @@ class BaseCard {
 
     action(properties) {
         var action = new CardAction(this.game, this, properties);
-
-        if(!action.isClickToActivate() && action.allowMenu()) {
-            var index = this.abilities.actions.length;
-            this.menu.push(action.getMenuItem(index));
-        }
         this.abilities.actions.push(action);
     }
 
@@ -448,17 +442,17 @@ class BaseCard {
         }
     }
 
-    getMenu() {
-        var menu = [];
+    getMenu(player) {
+        let actionIndexPairs = this.abilities.actions.map((action, index) => [action, index]);
+        let menuActionPairs = actionIndexPairs.filter(pair => !pair[0].isClickToActivate() && pair[0].allowMenu());
 
-        if(this.menu.length === 0) {
-            return undefined;
+        if(menuActionPairs.length === 0) {
+            return;
         }
 
-        menu.push({ command: 'click', text: 'Select Card' });
-        menu = menu.concat(this.menu);
-
-        return menu;
+        return [
+            { command: 'click', text: 'Select Card' }
+        ].concat(menuActionPairs.map(([action, index]) => action.getMenuItem(index, player)));
     }
 
     isCopyOf(card) {
@@ -658,7 +652,7 @@ class BaseCard {
             controlled: this.owner !== this.controller && this.getType() !== 'title',
             facedown: this.facedown,
             factionStatus: this.getFactionStatus(),
-            menu: this.getMenu(),
+            menu: this.getMenu(activePlayer),
             name: this.cardData.label,
             new: this.new,
             tokens: this.tokens,
