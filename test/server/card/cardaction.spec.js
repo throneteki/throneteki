@@ -438,7 +438,7 @@ describe('CardAction', function () {
         });
 
         it('returns the menu item format', function() {
-            expect(this.menuItem).toEqual(jasmine.objectContaining({ text: 'Do the thing', method: 'doAction', anyPlayer: false, arg: 'arg' }));
+            expect(this.menuItem).toEqual(jasmine.objectContaining({ text: 'Do the thing', method: 'doAction', arg: 'arg' }));
         });
 
         it('should include whether the menu item is disabled', function() {

@@ -89,6 +89,10 @@ class CardAction extends BaseAbility {
         return ['play area', 'agenda', 'active plot'].includes(this.location) && this.card.getPrintedType() !== 'event';
     }
 
+    allowPlayer(player) {
+        return this.card.controller === player || this.anyPlayer;
+    }
+
     createContext(player) {
         return new AbilityContext({
             game: this.game,
@@ -114,7 +118,7 @@ class CardAction extends BaseAbility {
             return false;
         }
 
-        if(context.player !== this.card.controller && !this.anyPlayer) {
+        if(!this.allowPlayer(context.player)) {
             return false;
         }
 
@@ -157,7 +161,7 @@ class CardAction extends BaseAbility {
 
     getMenuItem(arg, player) {
         let context = this.createContext(player);
-        return { text: this.title, method: 'doAction', anyPlayer: !!this.anyPlayer, arg: arg, disabled: !this.meetsRequirements(context) };
+        return { text: this.title, method: 'doAction', arg: arg, disabled: !this.meetsRequirements(context) };
     }
 
     isAction() {

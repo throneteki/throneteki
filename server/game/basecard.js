@@ -444,7 +444,10 @@ class BaseCard {
 
     getMenu(player) {
         let actionIndexPairs = this.abilities.actions.map((action, index) => [action, index]);
-        let menuActionPairs = actionIndexPairs.filter(pair => !pair[0].isClickToActivate() && pair[0].allowMenu());
+        let menuActionPairs = actionIndexPairs.filter(pair => {
+            let action = pair[0];
+            return action.allowPlayer(player) && !action.isClickToActivate() && action.allowMenu();
+        });
 
         if(menuActionPairs.length === 0) {
             return;
