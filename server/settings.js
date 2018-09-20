@@ -1,7 +1,7 @@
 const defaultWindows = {
     plot: false,
     draw: false,
-    challengeBegin: false,
+    challengeBegin: true,
     attackersDeclared: true,
     defendersDeclared: true,
     dominance: false,
