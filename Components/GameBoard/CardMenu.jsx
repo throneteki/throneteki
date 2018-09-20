@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import classNames from 'classnames';
+
 class CardMenu extends React.Component {
     onMenuItemClick(menuItem) {
         if(this.props.onMenuItemClick) {
@@ -11,7 +13,10 @@ class CardMenu extends React.Component {
     render() {
         var menuIndex = 0;
         var menuItems = this.props.menu.map(menuItem => {
-            return <div key={ menuIndex++ } onClick={ this.onMenuItemClick.bind(this, menuItem) }>{ menuItem.text }</div>;
+            let className = classNames('menu-item', {
+                'disabled': !!menuItem.disabled
+            });
+            return <div key={ menuIndex++ } className={ className } onClick={ this.onMenuItemClick.bind(this, menuItem) }>{ menuItem.text }</div>;
         });
 
         return (

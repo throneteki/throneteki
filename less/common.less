@@ -76,16 +76,26 @@
   z-index: @layer-card-menu;
 }
 
-.menu > div {
+.menu-item {
   border: 1px solid @brand-primary;
   padding: 3px 6px;
   border-radius: 4px;
   margin-bottom: 4px;
   cursor: pointer;
-}
 
-.menu > div:hover {
-  border-color: @brand-info;
+  &:hover {
+    border-color: @brand-info;
+  }
+
+  &.disabled {
+    background-color: fadeout(#222, 20%);
+    color: #666;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: @brand-primary;
+    }
+  }
 }
 
 .bootstrap-typeahead-input-main {

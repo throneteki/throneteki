@@ -183,7 +183,7 @@ class CardPile extends React.Component {
         let menuIndex = 0;
 
         let menu = this.props.menu.map(item => {
-            return <div key={ (menuIndex++).toString() } onClick={ this.onMenuItemClick.bind(this, item) }>{ item.text }</div>;
+            return <div key={ (menuIndex++).toString() } className='menu-item' onClick={ this.onMenuItemClick.bind(this, item) }>{ item.text }</div>;
         });
 
         return (
