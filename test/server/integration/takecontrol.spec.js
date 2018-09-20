@@ -53,7 +53,9 @@ describe('take control', function() {
                         this.selectPlotOrder(this.player1);
                     });
 
-                    it('should kill the character even with dupes', function() {
+                    it('should kill the character if the owner passes on their dupe', function() {
+                        this.player2.clickPrompt('Pass');
+
                         expect(this.paxter.location).toBe('dead pile');
                     });
                 });

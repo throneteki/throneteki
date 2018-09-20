@@ -1,5 +1,52 @@
 describe('Duplicates', function() {
     integration(function() {
+        describe('automatic dupes', function() {
+            describe('when a duped character you own would be killed after being stolen', function() {
+                beforeEach(function() {
+                    const deck = this.buildDeck('stark', [
+                        'A Noble Cause', 'Sneak Attack', 'Valar Morghulis',
+                        'Arya Stark (Core)', 'Arya Stark (Core)', 'Ward'
+                    ]);
+                    this.player1.selectDeck(deck);
+                    this.player2.selectDeck(deck);
+                    this.startGame();
+                    this.keepStartingHands();
+
+                    [this.character, this.dupe] = this.player1.filterCardsByName('Arya Stark', 'hand');
+                    this.player1.clickCard(this.character);
+                    this.player1.clickCard(this.dupe);
+
+                    this.ward = this.player2.findCardByName('Ward', 'hand');
+
+                    this.completeSetup();
+                    this.player1.selectPlot('A Noble Cause');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    // Complete Player 1 marshalling
+                    this.player1.clickPrompt('Done');
+
+                    this.player2.clickCard(this.ward);
+                    this.player2.clickCard(this.character);
+                    this.player2.clickPrompt('Done');
+
+                    this.completeChallengesPhase();
+
+                    this.player1.selectPlot('Sneak Attack');
+                    this.player2.selectPlot('Valar Morghulis');
+                    this.selectFirstPlayer(this.player1);
+                });
+
+                it('should prompt to use the dupe on the controlled character', function() {
+                    expect(this.player1).toAllowAbilityTrigger(this.dupe);
+                });
+
+                it('should not automatically kill the controlled character', function() {
+                    expect(this.character.location).toBe('play area');
+                });
+            });
+        });
+
         describe('manual dupes', function() {
             beforeEach(function() {
                 this.player1.toggleManualDupes(true);
