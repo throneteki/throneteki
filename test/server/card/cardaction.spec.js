@@ -434,11 +434,15 @@ describe('CardAction', function () {
     describe('getMenuItem()', function() {
         beforeEach(function() {
             this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
-            this.menuItem = this.action.getMenuItem('arg');
+            this.menuItem = this.action.getMenuItem('arg', this.playerSpy);
         });
 
         it('returns the menu item format', function() {
-            expect(this.menuItem).toEqual({ text: 'Do the thing', method: 'doAction', anyPlayer: false, arg: 'arg' });
+            expect(this.menuItem).toEqual(jasmine.objectContaining({ text: 'Do the thing', method: 'doAction', arg: 'arg' }));
+        });
+
+        it('should include whether the menu item is disabled', function() {
+            expect(this.menuItem['disabled']).toBeDefined();
         });
     });
 

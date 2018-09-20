@@ -287,14 +287,15 @@ class Game extends EventEmitter {
         this.addAlert('danger', '{0} {1} {2}', player, standStatus, cardFragment);
     }
 
-    cardHasMenuItem(card, menuItem) {
-        return card.menu && card.menu.some(m => {
+    cardHasMenuItem(card, player, menuItem) {
+        let menu = card.getMenu(player) || [];
+        return menu.some(m => {
             return m.method === menuItem.method;
         });
     }
 
     callCardMenuCommand(card, player, menuItem) {
-        if(!card || !card[menuItem.method] || !this.cardHasMenuItem(card, menuItem)) {
+        if(!card || !card[menuItem.method] || !this.cardHasMenuItem(card, player, menuItem)) {
             return;
         }
 
