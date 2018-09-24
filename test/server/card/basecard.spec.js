@@ -6,7 +6,7 @@ describe('BaseCard', function () {
         this.limitedCard = { code: '1234', text: 'Limited.', faction: 'neutral' };
         this.nonLimitedCard = { code: '2222', text: 'Stealth.', faction: 'neutral' };
         this.game = jasmine.createSpyObj('game', ['isCardVisible', 'raiseEvent']);
-        this.owner = jasmine.createSpyObj('owner', ['getCardSelectionState']);
+        this.owner = jasmine.createSpyObj('owner', ['getCardSelectionState', 'isSpectator']);
         this.owner.getCardSelectionState.and.returnValue({});
         this.owner.game = this.game;
         this.card = new BaseCard(this.owner, this.testCard);

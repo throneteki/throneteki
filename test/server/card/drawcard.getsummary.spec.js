@@ -2,7 +2,7 @@ const DrawCard = require('../../../server/game/drawcard');
 
 describe('DrawCard', function () {
     function createPlayerSpy(name) {
-        let player = jasmine.createSpyObj('player', ['getCardSelectionState']);
+        let player = jasmine.createSpyObj('player', ['getCardSelectionState', 'isSpectator']);
         player.name = name;
         return player;
     }
