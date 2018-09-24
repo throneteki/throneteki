@@ -111,16 +111,12 @@ class Game extends EventEmitter {
         return this.gameChat.messages;
     }
 
-    isSpectator(player) {
-        return player.constructor === Spectator;
-    }
-
     hasActivePlayer(playerName) {
         return this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
     }
 
     getPlayers() {
-        return Object.values(this.playersAndSpectators).filter(player => !this.isSpectator(player));
+        return Object.values(this.playersAndSpectators).filter(player => !player.isSpectator());
     }
 
     getNumberOfPlayers() {
@@ -130,7 +126,7 @@ class Game extends EventEmitter {
     getPlayerByName(playerName) {
         let player = this.playersAndSpectators[playerName];
 
-        if(!player || this.isSpectator(player)) {
+        if(!player || player.isSpectator()) {
             return;
         }
 
@@ -159,7 +155,7 @@ class Game extends EventEmitter {
     }
 
     getSpectators() {
-        return _.pick(this.playersAndSpectators, player => this.isSpectator(player));
+        return _.pick(this.playersAndSpectators, player => player.isSpectator());
     }
 
     getFirstPlayer() {
@@ -593,7 +589,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(!this.isSpectator(player)) {
+        if(!player.isSpectator()) {
             if(this.chatCommands.executeCommand(player, args[0], args)) {
                 return;
             }
@@ -1056,7 +1052,7 @@ class Game extends EventEmitter {
 
         this.addAlert('info', '{0} has left the game', player);
 
-        if(this.isSpectator(player) || !this.started) {
+        if(player.isSpectator() || !this.started) {
             delete this.playersAndSpectators[playerName];
         } else {
             player.left = true;
@@ -1076,7 +1072,7 @@ class Game extends EventEmitter {
 
         this.addAlert('warning', '{0} has disconnected', player);
 
-        if(this.isSpectator(player)) {
+        if(player.isSpectator()) {
             delete this.playersAndSpectators[playerName];
         } else {
             player.disconnected = true;
@@ -1092,7 +1088,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        if(this.isSpectator(player) || !this.started) {
+        if(player.isSpectator() || !this.started) {
             delete this.playersAndSpectators[playerName];
         } else {
             this.addAlert('danger', '{0} has failed to connect to the game', player);

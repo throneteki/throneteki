@@ -1,12 +1,11 @@
 const Game = require('../../../server/game/game.js');
-const Spectator = require('../../../server/game/spectator.js');
 
 describe('Game', function() {
     beforeEach(function() {
         this.gameService = jasmine.createSpyObj('gameService', ['save']);
         this.game = new Game({ owner: {} }, { gameService: this.gameService });
 
-        this.player = jasmine.createSpyObj('player', ['']);
+        this.player = jasmine.createSpyObj('player', ['isSpectator']);
         this.player.name = 'Player 1';
 
         this.game.playersAndSpectators[this.player.name] = this.player;
@@ -58,7 +57,7 @@ describe('Game', function() {
 
         describe('when called by a spectator in the game', function() {
             beforeEach(function() {
-                this.player.constructor = Spectator;
+                this.player.isSpectator.and.returnValue(true);
             });
 
             describe('and the message is a command', function() {

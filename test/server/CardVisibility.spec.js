@@ -2,12 +2,12 @@ const CardVisibility = require ('../../server/game/CardVisibility');
 
 describe('CardVisibility', function() {
     beforeEach(function() {
-        this.spectator = { specator: true };
-        this.controller = { controller: true };
-        this.opponent = { opponent: true };
+        this.specator = jasmine.createSpyObj('spectator', ['isSpectator']);
+        this.specator.isSpectator.and.returnValue(true);
+        this.controller = jasmine.createSpyObj('controller', ['isSpectator']);
+        this.opponent = jasmine.createSpyObj('opponent', ['isSpectator']);
         this.card = { location: 'play area', facedown: false, controller: this.controller };
-        this.gameSpy = jasmine.createSpyObj('game', ['isSpectator']);
-        this.gameSpy.isSpectator.and.callFake(p => p === this.specator);
+        this.gameSpy = { game: true };
 
         this.visibility = new CardVisibility(this.gameSpy);
     });

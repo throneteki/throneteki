@@ -1,16 +1,22 @@
 const Game = require('../../../server/game/game.js');
 
 describe('Game', function() {
+    function createPlayerSpy(props) {
+        let spy = jasmine.createSpyObj(props.name, ['isSpectator']);
+        Object.assign(spy, { id: props.id, firstPlayer: props.firstPlayer });
+        return spy;
+    }
+
     beforeEach(function() {
         this.gameService = jasmine.createSpyObj('gameService', ['save']);
         this.game = new Game({ owner: {} }, { gameService: this.gameService });
 
-        this.notSetPlayer1 = { id: '1', name: 'test' };
-        this.notSetPlayer2 = { id: '2', name: 'test2' };
-        this.setFalsePlayer1 = { id: '1', name: 'test', firstPlayer: false };
-        this.setFalsePlayer2 = { id: '2', name: 'test2', firstPlayer: false };
-        this.setPlayer1 = { id: '1', name: 'test', firstPlayer: true };
-        this.setPlayer2 = { id: '2', name: 'test2', firstPlayer: true };
+        this.notSetPlayer1 = createPlayerSpy({ id: '1', name: 'test' });
+        this.notSetPlayer2 = createPlayerSpy({ id: '2', name: 'test2' });
+        this.setFalsePlayer1 = createPlayerSpy({ id: '1', name: 'test', firstPlayer: false });
+        this.setFalsePlayer2 = createPlayerSpy({ id: '2', name: 'test2', firstPlayer: false });
+        this.setPlayer1 = createPlayerSpy({ id: '1', name: 'test', firstPlayer: true });
+        this.setPlayer2 = createPlayerSpy({ id: '2', name: 'test2', firstPlayer: true });
     });
 
     describe('getPlayersInFirstPlayerOrder()', function() {
@@ -111,9 +117,9 @@ describe('Game', function() {
 
         describe('when there are more than two players', function() {
             beforeEach(function() {
-                this.player1 = { id: '1', name: 'test1', firstPlayer: false };
-                this.player2 = { id: '2', name: 'test2', firstPlayer: false };
-                this.player3 = { id: '3', name: 'test1', firstPlayer: false };
+                this.player1 = createPlayerSpy({ id: '1', name: 'test1', firstPlayer: false });
+                this.player2 = createPlayerSpy({ id: '2', name: 'test2', firstPlayer: false });
+                this.player3 = createPlayerSpy({ id: '3', name: 'test1', firstPlayer: false });
 
                 this.game.playersAndSpectators['test1'] = this.player1;
                 this.game.playersAndSpectators['test2'] = this.player2;

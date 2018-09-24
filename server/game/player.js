@@ -90,6 +90,10 @@ class Player extends Spectator {
         return playFromHand.concat(playFromShadows);
     }
 
+    isSpectator() {
+        return false;
+    }
+
     anyCardsInPlay(predicate) {
         return this.game.allCards.some(card => card.controller === this && card.location === 'play area' && predicate(card));
     }

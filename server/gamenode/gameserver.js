@@ -80,7 +80,7 @@ class GameServer {
                     left: player.left,
                     disconnected: player.disconnected,
                     id: player.id,
-                    spectator: game.isSpectator(player)
+                    spectator: player.isSpectator()
                 };
             });
 
@@ -298,7 +298,7 @@ class GameServer {
 
         player.socket = socket;
 
-        if(!game.isSpectator(player)) {
+        if(!player.isSpectator()) {
             game.addMessage('{0} has connected to the game server', player);
         }
 
@@ -316,7 +316,8 @@ class GameServer {
 
         logger.info('user \'%s\' disconnected from a game: %s', socket.user.username, reason);
 
-        var isSpectator = game.isSpectator(game.playersAndSpectators[socket.user.username]);
+        let player = game.playersAndSpectators[socket.user.username];
+        let isSpectator = player && player.isSpectator();
 
         game.disconnect(socket.user.username);
 
@@ -339,7 +340,8 @@ class GameServer {
             return;
         }
 
-        var isSpectator = game.isSpectator(game.playersAndSpectators[socket.user.username]);
+        let player = game.playersAndSpectators[socket.user.username];
+        let isSpectator = player.isSpectator();
 
         game.leave(socket.user.username);
 
