@@ -7,7 +7,8 @@ class GreatjonUmber extends DrawCard {
                 afterChallenge: event => event.challenge.challengeType === 'military' &&
                                          event.challenge.winner === this.controller &&
                                          this.isAttacking() &&
-                                         this.controller.getNumberOfUsedPlots() < 3
+                                         this.controller.getNumberOfUsedPlots() < 3 &&
+                                         this.kneeled
             },
             handler: context => {
                 context.player.standCard(this);
