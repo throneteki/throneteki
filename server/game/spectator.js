@@ -11,6 +11,10 @@ class Spectator {
     getCardSelectionState() {
         return {};
     }
+
+    isSpectator() {
+        return true;
+    }
 }
 
 module.exports = Spectator;

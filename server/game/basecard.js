@@ -443,6 +443,10 @@ class BaseCard {
     }
 
     getMenu(player) {
+        if(player.isSpectator()) {
+            return;
+        }
+
         let actionIndexPairs = this.abilities.actions.map((action, index) => [action, index]);
         let menuActionPairs = actionIndexPairs.filter(pair => {
             let action = pair[0];
