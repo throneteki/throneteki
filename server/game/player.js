@@ -1291,7 +1291,7 @@ class Player extends Spectator {
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
                 hand: this.getSummaryForCardList(this.hand, activePlayer),
-                outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer),
+                outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer).reverse(),
                 plotDeck: plots,
                 plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
                 shadows: this.getSummaryForCardList(this.shadows, activePlayer)
