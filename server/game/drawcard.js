@@ -497,7 +497,7 @@ class DrawCard extends BaseCard {
         }
 
         return Object.assign(baseSummary, publicSummary, {
-            baseStrength: this.getPrintedStrength(),
+            baseStrength: this.cardData.strength,
             iconsAdded: this.getIconsAdded(),
             iconsRemoved: this.getIconsRemoved(),
             inChallenge: this.inChallenge,
