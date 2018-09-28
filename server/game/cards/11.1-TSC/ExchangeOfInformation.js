@@ -68,7 +68,7 @@ class ExchangeOfInformation extends PlotCard {
             this.controller.moveCard(card, 'hand');
         }
         this.controller.shuffleDrawDeck();
-        this.game.addMessage('{0} adds the {1} cards chosen by {2} to their hand and shuffles their deck', this.controller, this.selectedCards.length, this.selectingOpponent);
+        this.game.addMessage('{0} adds {1} chosen by {2} to their hand and shuffles their deck', this.controller, this.selectedCards, this.selectingOpponent);
     }
 }
 
