@@ -6,9 +6,12 @@ class GameChat {
         this.messages = [];
     }
 
-    addChatMessage(message) {
-        let args = Array.from(arguments).slice(1);
-        let formattedMessage = this.formatMessage(message, args);
+    addChatMessage(format, player, message) {
+        let args = [
+            { name: player.name, argType: 'player' },
+            message
+        ];
+        let formattedMessage = this.formatMessage(format, args);
 
         this.messages.push({ date: new Date(), message: formattedMessage });
     }
@@ -58,7 +61,7 @@ class GameChat {
                     } else if(arg instanceof BaseCard) {
                         returnedFraments.push({ code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' });
                     } else if(arg instanceof Spectator) {
-                        returnedFraments.push({ name: arg.user.username, argType: 'player' });
+                        returnedFraments.push({ name: arg.user.username, argType: 'nonAvatarPlayer' });
                     } else {
                         returnedFraments.push(arg);
                     }
