@@ -10,14 +10,7 @@ const Player = require('./player.js');
 const Spectator = require('./spectator.js');
 const AnonymousSpectator = require('./anonymousspectator.js');
 const GamePipeline = require('./gamepipeline.js');
-const SetupPhase = require('./gamesteps/setupphase.js');
-const PlotPhase = require('./gamesteps/plotphase.js');
-const DrawPhase = require('./gamesteps/drawphase.js');
-const MarshalingPhase = require('./gamesteps/marshalingphase.js');
-const ChallengePhase = require('./gamesteps/challengephase.js');
-const DominancePhase = require('./gamesteps/dominancephase.js');
-const StandingPhase = require('./gamesteps/standingphase.js');
-const TaxationPhase = require('./gamesteps/taxationphase.js');
+const Phases = require('./gamesteps/Phases');
 const SimpleStep = require('./gamesteps/simplestep.js');
 const ChooseOpponentPrompt = require('./gamesteps/chooseopponentprompt.js');
 const DeckSearchPrompt = require('./gamesteps/DeckSearchPrompt');
@@ -77,6 +70,7 @@ class Game extends EventEmitter {
         this.cardData = options.cardData || [];
         this.packData = options.packData || [];
         this.restrictedListData = options.restrictedListData || [];
+        this.remainingPhases = [];
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
 
@@ -731,7 +725,7 @@ class Game extends EventEmitter {
         });
 
         this.pipeline.initialise([
-            new SetupPhase(this),
+            Phases.createStep('setup', this),
             new SimpleStep(this, () => this.beginRound())
         ]);
 
@@ -756,15 +750,23 @@ class Game extends EventEmitter {
     }
 
     beginRound() {
+        // Reset phases to the standard game flow.
+        this.remainingPhases = Phases.names();
         this.raiseEvent('onBeginRound');
-        this.queueStep(new PlotPhase(this));
-        this.queueStep(new DrawPhase(this));
-        this.queueStep(new MarshalingPhase(this));
-        this.queueStep(new ChallengePhase(this));
-        this.queueStep(new DominancePhase(this));
-        this.queueStep(new StandingPhase(this));
-        this.queueStep(new TaxationPhase(this));
+        this.queueSimpleStep(() => {
+            // Loop through individual phases, queuing them one at a time. This
+            // will allow additional phases to be added.
+            if(this.remainingPhases.length !== 0) {
+                let phase = this.remainingPhases.shift();
+                this.queueStep(Phases.createStep(phase, this));
+                return false;
+            }
+        });
         this.queueStep(new SimpleStep(this, () => this.beginRound()));
+    }
+
+    addPhase(phase) {
+        this.remainingPhases.unshift(phase);
     }
 
     queueStep(step) {
