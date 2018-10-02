@@ -16,6 +16,10 @@ class ChallengePhase extends Phase {
 
     beginPhase() {
         this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
+
+        for(let player of this.remainingPlayers) {
+            player.resetChallengesPerformed();
+        }
     }
 
     promptForChallenge() {
