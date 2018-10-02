@@ -664,7 +664,6 @@ class Player extends Spectator {
 
         this.gainedGold = 0;
         this.drawnCards = 0;
-        this.challenges.reset();
 
         this.drawPhaseCards = DrawPhaseCards;
 
@@ -854,6 +853,10 @@ class Player extends Spectator {
     promptForAttachment(card, playingType) {
         // TODO: Really want to move this out of here.
         this.game.queueStep(new AttachmentPrompt(this.game, this, card, playingType));
+    }
+
+    resetChallengesPerformed() {
+        this.challenges.reset();
     }
 
     beginChallenge() {
