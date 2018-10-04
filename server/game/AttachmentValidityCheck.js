@@ -18,7 +18,9 @@ class AttachmentValidityCheck {
 
         this.game.queueSimpleStep(() => {
             for(let [owner, cards] of this.groupAttachmentsByOwner(needsDiscard)) {
-                owner.discardCards(cards, false);
+                owner.discardCards(cards, false, discarded => {
+                    this.game.addMessage('{0} is forced to discard {1} due to being invalidly attached', owner, discarded);
+                });
             }
 
         });
