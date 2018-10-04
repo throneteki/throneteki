@@ -107,7 +107,7 @@ class InnerCard extends React.Component {
             counters.push({ name: 'card-power', count: card.power, fade: needsFade, shortName: 'P' });
         }
 
-        if(card.baseStrength !== card.strength) {
+        if(card.type === 'character' && card.baseStrength !== card.strength) {
             counters.push({ name: 'strength', count: card.strength, fade: needsFade, shortName: 'S' });
         }
 
