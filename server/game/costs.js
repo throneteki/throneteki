@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const AnyNumberCost = require('./costs/AnyNumberCost');
 const ChooseCost = require('./costs/choosecost.js');
 const CostBuilders = require('./costs/CostBuilders.js');
 const KneelCost = require('./costs/KneelCost.js');
@@ -205,6 +206,20 @@ const Costs = {
      * predicate function.
      */
     discardPower: (amount, condition) => CostBuilders.discardPower(amount).select(condition),
+    /**
+     * Cost that requires discarding any number of power from a single card that
+     * matches the passed condition predicate function.
+     */
+    discardAnyPower: (condition) => new AnyNumberCost({
+        cost: CostBuilders.discardPower('X').select(condition),
+        max: context => context.player.filterCardsInPlay(condition).reduce(function (maxPower, card) {
+            if(card.power > maxPower) {
+                return card.power;
+            }
+
+            return maxPower;
+        }, 0)
+    }),
     /**
      * Cost that ensures that the player can still play a Limited card this
      * round.
