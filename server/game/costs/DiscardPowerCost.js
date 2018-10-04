@@ -4,13 +4,18 @@ class DiscardPowerCost {
         this.amount = amount;
     }
 
-    isEligible(card) {
-        return ['faction', 'play area'].includes(card.location) && card.getPower() >= this.amount;
+    getAmountValue(context) {
+        return (this.amount === 'X' ? context.xValue : this.amount) || 1;
     }
 
-    pay(cards) {
+    isEligible(card, context) {
+        return ['faction', 'play area'].includes(card.location) && card.getPower() >= this.getAmountValue(context);
+    }
+
+    pay(cards, context) {
+        let amount = this.getAmountValue(context);
         for(let card of cards) {
-            card.modifyPower(-this.amount);
+            card.modifyPower(-amount);
         }
     }
 }
