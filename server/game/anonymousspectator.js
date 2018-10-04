@@ -9,6 +9,10 @@ class AnonymousSpectator {
     getCardSelectionState() {
         return {};
     }
+
+    isSpectator() {
+        return true;
+    }
 }
 
 module.exports = AnonymousSpectator;
