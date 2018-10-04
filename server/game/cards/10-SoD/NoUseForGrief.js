@@ -1,15 +1,16 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const KillTracker = require('../../EventTrackers/KillTracker');
 
 class NoUseForGrief extends DrawCard {
     constructor(owner, cardData) {
         super(owner, cardData);
-        this.tracker = new KillTracker(this.game, this.controller);
+        this.tracker = new KillTracker(this.game);
     }
 
     setupCardAbilities() {
         this.action({
             title: 'Put Sand Snake into play',
-            condition: () => this.tracker.isMartellCharacterKilledThisRound,
+            condition: () => this.tracker.anyKilledThisRound(card => card.isFaction('martell') && card.controller === this.controller),
             handler: context => {
                 let costLimit = context.player.deadPile.some(card => card.name === 'The Red Viper') ? 6 : 3;
 
@@ -33,18 +34,6 @@ class NoUseForGrief extends DrawCard {
     doneSelecting(player) {
         this.game.addMessage('{0} plays {1} to search their deck, but does not put any card into play',
             player, this);
-    }
-}
-
-class KillTracker {
-    constructor(game, player) {
-        this.isMartellCharacterKilledThisRound = false;
-        game.on('onCharacterKilled', event => {
-            if(event.cardStateWhenKilled.isFaction('martell') && event.cardStateWhenKilled.controller === player) {
-                this.isMartellCharacterKilledThisRound = true;
-            }
-        });
-        game.on('onRoundEnded', () => this.isMartellCharacterKilledThisRound = false);
     }
 }
 

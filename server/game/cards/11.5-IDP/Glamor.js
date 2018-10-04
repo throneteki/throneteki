@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const KillTracker = require('../../EventTrackers/KillTracker');
 
 class Glamor extends DrawCard {
     constructor(owner, cardData) {
@@ -30,18 +31,6 @@ class Glamor extends DrawCard {
                 context.player.putIntoPlay(context.target);
             }
         });
-    }
-}
-
-class KillTracker {
-    constructor(game) {
-        this.killedThisPhase = [];
-        game.on('onCharacterKilled', event => this.killedThisPhase.push(event.card));
-        game.on('onPhaseStarted', () => this.killedThisPhase = []);
-    }
-
-    wasKilledThisPhase(card) {
-        return this.killedThisPhase.includes(card);
     }
 }
 

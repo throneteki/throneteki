@@ -1,5 +1,5 @@
-const DrawCard = require('../../drawcard.js');
-const PaidGoldTracker = require('../../PaidGoldTracker.js');
+const DrawCard = require('../../drawcard');
+const PaidGoldTracker = require('../../EventTrackers/PaidGoldTracker');
 
 // XXX Restrict to one effect per card title (ie multiple madames should not trigger)
 class BrothelMadame extends DrawCard {
