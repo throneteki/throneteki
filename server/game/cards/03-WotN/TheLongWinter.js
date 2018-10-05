@@ -52,6 +52,7 @@ class TheLongWinter extends PlotCard {
                 });
             } else {
                 this.game.addMessage('{0} does not have any power to discard for {1}', currentPlayer, this);
+                this.proceedToNextStep();
             }
         } else {
             this.doPower();
