@@ -5,7 +5,7 @@ class APinchOfPowder extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.attackingPlayer === this.controller &&
-                                         event.challenge.strengthDifference >= 5 && ['intrigue', 'power'].contains(event.challenge.challengeType)
+                                         event.challenge.strengthDifference >= 5 && ['intrigue', 'power'].includes(event.challenge.challengeType)
             },
             handler: context => {
                 this.parent.controller.returnCardToHand(this.parent, true);
