@@ -505,11 +505,11 @@ const Effects = {
     gainAmbush: function(costModifier = 0) {
         return {
             apply: function(card) {
-                let keyword = `Ambush (${card.getPrintedCost() + costModifier})`;
+                let keyword = `Ambush (${card.translateXValue(card.getPrintedCost()) + costModifier})`;
                 card.addKeyword(keyword);
             },
             unapply: function(card) {
-                let keyword = `Ambush (${card.getPrintedCost() + costModifier})`;
+                let keyword = `Ambush (${card.translateXValue(card.getPrintedCost()) + costModifier})`;
                 card.removeKeyword(keyword);
             }
         };
