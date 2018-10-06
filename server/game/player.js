@@ -3,6 +3,7 @@ const _ = require('underscore');
 const Spectator = require('./spectator.js');
 const DrawCard = require('./drawcard.js');
 const Deck = require('./Deck');
+const AtomicEvent = require('./AtomicEvent');
 const Event = require('./event');
 const AbilityContext = require('./AbilityContext.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
@@ -750,8 +751,8 @@ class Player extends Spectator {
         let dupeCard = this.getDuplicateInPlay(attachment);
         if(dupeCard && dupeCard.controller === attachment.controller) {
             dupeCard.addDuplicate(attachment);
-            if(originalLocation !== 'play area') {
-                this.game.raiseEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
+            if(originalLocation === 'shadows') {
+                this.game.raiseEvent('onCardOutOfShadows', { player: this, card: card, type: 'dupe' });
             }
             return;
         }
@@ -771,11 +772,18 @@ class Player extends Spectator {
             }
         });
 
+        let event = new AtomicEvent();
+        event.addChildEvent(new Event('onCardAttached', { card: attachment, parent: card }));
+
         if(originalLocation !== 'play area' && !attachment.facedown) {
-            this.game.raiseEvent('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation });
+            event.addChildEvent(new Event('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation }));
         }
 
-        this.game.raiseEvent('onCardAttached', { card: attachment, parent: card });
+        if(originalLocation === 'shadows') {
+            event.addChildEvent(new Event('onCardOutOfShadows', { player: this, card: attachment, type: 'card' }));
+        }
+
+        this.game.resolveEvent(event);
     }
 
     setDrawDeckVisibility(value) {

@@ -77,7 +77,7 @@ describe('Shadow keyword', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'Trading with the Pentoshi', 'A Noble Cause',
-                    'The Queen of Thorns (TMoW)', 'The Queen of Thorns (TMoW)', 'Beneath the Bridge of Dream', 'Bowels of Casterly Rock'
+                    'The Queen of Thorns (TMoW)', 'The Queen of Thorns (TMoW)', 'Beneath the Bridge of Dream', 'Bowels of Casterly Rock', 'A Pinch of Powder'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -153,6 +153,33 @@ describe('Shadow keyword', function() {
                     this.player1.clickCard('Beneath the Bridge of Dream');
                     this.completeSetup();
                     this.player1.triggerAbility('Beneath the Bridge of Dream');
+                });
+
+                it('should count as coming out of shadow', function() {
+                    expect(this.player1).toAllowAbilityTrigger('Bowels of Casterly Rock');
+                });
+            });
+
+            describe('as an attachment', function() {
+                beforeEach(function() {
+                    this.player1.clickCard(this.character);
+                    this.player1.clickPrompt('Setup');
+                    this.completeSetup();
+                    this.player1.selectPlot('Trading with the Pentoshi');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    this.player1.clickCard('A Pinch of Powder', 'hand');
+
+                    this.completeMarshalPhase();
+
+                    this.player1.clickCard('A Pinch of Powder', 'shadows');
+                    this.player1.clickCard(this.character);
+                });
+
+                it('should cost the shadow cost on the card', function() {
+                    // 10 gold from Pentoshi - 2 cost to put into shadow - 1 Shadow cost for the attachment
+                    expect(this.player1Object.gold).toBe(7);
                 });
 
                 it('should count as coming out of shadow', function() {
