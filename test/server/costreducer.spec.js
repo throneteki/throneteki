@@ -85,6 +85,19 @@ describe('CostReducer', function () {
                 expect(this.reducer.canReduce('marshal', this.card)).toBe(false);
             });
         });
+
+        describe('when reducing out of shadows and playing an event out of shadow', function() {
+            beforeEach(function() {
+                this.reducer = new CostReducer(this.gameSpy, this.source, {
+                    playingTypes: 'outOfShadows'
+                });
+                this.card.location = 'shadows';
+            });
+
+            it('should return true', function() {
+                expect(this.reducer.canReduce('play', this.card)).toBe(true);
+            });
+        });
     });
 
     describe('markUsed()', function() {
