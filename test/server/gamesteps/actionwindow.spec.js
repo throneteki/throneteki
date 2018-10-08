@@ -51,7 +51,7 @@ describe('ActionWindow', function() {
                 this.prompt.onMenuCommand(this.player2);
 
                 // Player 1 takes an action
-                this.prompt.markActionAsTaken();
+                this.prompt.markActionAsTaken(this.player1);
             });
 
             it('should rotate the current player', function() {
@@ -70,6 +70,20 @@ describe('ActionWindow', function() {
                 this.prompt.onMenuCommand(this.player1);
 
                 expect(this.prompt.isComplete()).toBe(true);
+            });
+        });
+
+        describe('when someone other than the current player takes an action', function() {
+            beforeEach(function() {
+                // Player 2 is first player, so player 1 takes their action out
+                // of turn.
+                this.prompt.markActionAsTaken(this.player1);
+            });
+
+            it('should rotate the current player', function() {
+                // Since player 1 took their action out of turn, player 2 should
+                // be prompted again for their action.
+                expect(this.prompt.currentPlayer).toBe(this.player2);
             });
         });
     });
