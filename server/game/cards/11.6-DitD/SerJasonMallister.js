@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard');
 class SerJasonMallister extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.getOpponents(this.controller).every(opponent => opponent.shadows.length == 0) && (this.controller.shadows.length == 0),
+            condition: () => this.game.getOpponents(this.controller).every(opponent => opponent.shadows.length === 0) && (this.controller.shadows.length === 0),
             match: this,
             effect: [
                 ability.effects.addKeyword('Renown'),
