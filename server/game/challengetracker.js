@@ -38,14 +38,23 @@ class ChallengeTracker {
     useAllowedChallenge(challenge) {
         let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.isMatch(challenge.challengeType, challenge.defendingPlayer));
         if(allowedChallenge) {
-            allowedChallenge.used = true;
+            allowedChallenge.markUsed(challenge);
+        }
+    }
+
+    untrack(challenge) {
+        this.challenges = this.challenges.filter(c => c !== challenge);
+
+        let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.challenge === challenge && allowedChallenge.used);
+        if(allowedChallenge) {
+            allowedChallenge.resetUsage();
         }
     }
 
     reset() {
         this.challenges = [];
         for(let allowedChallenge of this.allowedChallenges) {
-            allowedChallenge.used = false;
+            allowedChallenge.resetUsage();
         }
     }
 
