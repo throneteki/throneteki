@@ -16,7 +16,7 @@ class CunningDiplomat extends DrawCard {
                 context.target.controller.standCard(context.target);
                 this.game.currentChallenge.removeFromChallenge(context.target);
 
-                this.game.addMessage('{0} uses {1} to remove {2} from the challenge', context.player, this, context.target);
+                this.game.addMessage('{0} uses {1} to stand and remove {2} from the challenge', context.player, this, context.target);
             }
         });
     }
