@@ -1,3 +1,5 @@
+const DrawCard = require('../../drawcard.js');
+
 class CunningDiplomat extends DrawCard {
     setupCardAbilities() {
         this.reaction({
