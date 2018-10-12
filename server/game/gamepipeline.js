@@ -43,6 +43,12 @@ class GamePipeline {
         }
     }
 
+    clear() {
+        this.cancelStep();
+        this.pipeline = [];
+        this.queue = [];
+    }
+
     cancelStep() {
         if(this.pipeline.length === 0) {
             return;
