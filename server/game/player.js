@@ -773,7 +773,7 @@ class Player extends Spectator {
         });
 
         let event = new AtomicEvent();
-        event.addChildEvent(new Event('onCardAttached', { card: attachment, parent: card }));
+        event.addChildEvent(new Event('onCardAttached', { attachment: attachment, target: card }));
 
         if(originalLocation !== 'play area' && !attachment.facedown) {
             event.addChildEvent(new Event('onCardEntersPlay', { card: attachment, playingType: playingType, originalLocation: originalLocation }));
