@@ -334,6 +334,11 @@ class ChallengeFlow extends BaseStep {
     continue() {
         return this.challenge.cancelled || this.pipeline.continue();
     }
+
+    cancelChallengeResolution() {
+        this.challenge.cancelChallenge();
+        this.pipeline.clear();
+    }
 }
 
 module.exports = ChallengeFlow;

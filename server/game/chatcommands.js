@@ -1,5 +1,6 @@
 const _ = require('underscore');
 const TextHelper = require('./TextHelper');
+const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
 
 class ChatCommands {
     constructor(game) {
@@ -12,6 +13,7 @@ class ChatCommands {
             '/bestow': this.bestow,
             '/blank': this.blank,
             '/cancel-prompt': this.cancelPrompt,
+            '/cancel-challenge': this.cancelChallenge,
             '/discard': this.discard,
             '/disconnectme': this.disconnectMe,
             '/draw': this.draw,
@@ -309,6 +311,15 @@ class ChatCommands {
         this.game.addAlert('danger', '{0} uses the /cancel-prompt to skip the current step.', player);
         this.game.pipeline.cancelStep();
         this.game.cancelPromptUsed = true;
+    }
+
+    cancelChallenge(player) {
+        if(!this.game.isDuringChallenge()) {
+            return;
+        }
+
+        this.game.addAlert('danger', '{0} uses /cancel-challenge to attempt to cancel the current challenge', player);
+        this.game.queueStep(new CancelChallengePrompt(this.game, player));
     }
 
     setToken(player, args) {

@@ -90,7 +90,8 @@ class ChallengePhase extends Phase {
             number: attackingPlayer.getNumberOfChallengesInitiated() + 1
         });
         this.game.currentChallenge = challenge;
-        this.game.queueStep(new ChallengeFlow(this.game, challenge));
+        this.game.currentChallengeStep = new ChallengeFlow(this.game, challenge);
+        this.game.queueStep(this.game.currentChallengeStep);
         this.game.queueSimpleStep(() => this.cleanupChallenge());
         this.game.queueSimpleStep(() => this.promptForChallenge());
     }
@@ -101,6 +102,7 @@ class ChallengePhase extends Phase {
         challenge.finish();
         challenge.unregisterEvents();
         this.game.currentChallenge = null;
+        this.game.currentChallengeStep = null;
         this.game.raiseEvent('onChallengeFinished', { challenge: challenge });
     }
 

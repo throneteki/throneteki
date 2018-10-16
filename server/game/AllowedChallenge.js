@@ -5,6 +5,16 @@ class AllowedChallenge {
         this.used = false;
     }
 
+    markUsed(challenge) {
+        this.challenge = challenge;
+        this.used = true;
+    }
+
+    resetUsage() {
+        this.challenge = null;
+        this.used = false;
+    }
+
     isMatch(challengeType, opponent) {
         return !this.used && this.challengeType === challengeType && this.opponentFunc(opponent);
     }

@@ -877,6 +877,10 @@ class Player extends Spectator {
         this.challenges.track(challenge);
     }
 
+    untrackChallenge(challenge) {
+        this.challenges.untrack(challenge);
+    }
+
     getParticipatedChallenges() {
         return this.challenges.getChallenges();
     }
