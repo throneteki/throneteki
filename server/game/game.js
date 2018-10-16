@@ -985,8 +985,7 @@ class Game extends EventEmitter {
                 this.raiseEvent('onCardEntersPlay', { card: card, playingType: 'play', originalLocation: originalLocation });
             }
 
-            this.raiseEvent('onCardTakenControl', { card: card });
-            this.checkWinCondition(player);
+            this.handleControlChange(card);
         });
     }
 
@@ -998,6 +997,16 @@ class Game extends EventEmitter {
         card.controller.removeCardFromPile(card);
         card.revertControl(source);
         card.controller.cardsInPlay.push(card);
+
+        this.handleControlChange(card);
+    }
+
+    handleControlChange(card) {
+        if(this.currentChallenge && this.currentChallenge.isParticipating(card)) {
+            this.addMessage('{0} is removed from the challenge because control has changed', card);
+            this.currentChallenge.removeFromChallenge(card);
+        }
+
         this.raiseEvent('onCardTakenControl', { card: card });
         this.checkWinCondition(card.controller);
     }
