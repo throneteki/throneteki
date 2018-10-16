@@ -33,6 +33,10 @@ class CostReducer {
             return false;
         }
 
+        if(playingType === 'play' && this.playingTypes.includes('outOfShadows') && card.location === 'shadows') {
+            return !!this.match(card);
+        }
+
         return this.playingTypes.includes(playingType) && !!this.match(card);
     }
 
