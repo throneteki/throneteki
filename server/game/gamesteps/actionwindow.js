@@ -44,8 +44,8 @@ class ActionWindow extends PlayerOrderPrompt {
         return true;
     }
 
-    markActionAsTaken() {
-        this.setPlayers(this.rotatedPlayerOrder(this.currentPlayer));
+    markActionAsTaken(player) {
+        this.setPlayers(this.rotatedPlayerOrder(player));
         this.forceWindow = true;
     }
 

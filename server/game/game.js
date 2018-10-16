@@ -779,7 +779,10 @@ class Game extends EventEmitter {
 
     markActionAsTaken(context) {
         if(this.currentActionWindow) {
-            this.currentActionWindow.markActionAsTaken();
+            if(this.currentActionWindow.currentPlayer !== context.player) {
+                this.addAlert('danger', '{0} uses {1} during {2}\'s turn in the action window', context.player, context.source, this.currentActionWindow.currentPlayer);
+            }
+            this.currentActionWindow.markActionAsTaken(context.player);
         } else if(this.currentPhase !== 'marshal' || this.hasOpenInterruptOrReactionWindow()) {
             this.addAlert('danger', '{0} uses {1} outside of an action window', context.player, context.source);
         }
