@@ -1,16 +1,34 @@
-const _ = require('underscore');
+const ReservedEventParamKeys = [
+    'attachedEvents',
+    'cancelled',
+    'childEvents',
+    'handler',
+    'name',
+    'params',
+    'parent',
+    'postHandlers'
+];
 
 class Event {
-    constructor(name, params, handler = () => true, postHandler = () => true) {
+    constructor(name, params = {}, handler = () => true, postHandler = () => true) {
         this.name = name;
         this.cancelled = false;
         this.handler = handler;
         this.postHandlers = [postHandler];
         this.childEvents = [];
         this.attachedEvents = [];
-
-        _.extend(this, params);
         this.params = params;
+
+        this.assignParamProperties(params);
+    }
+
+    assignParamProperties(params) {
+        let reservedKeys = ReservedEventParamKeys.filter(key => !!params[key]);
+        if(reservedKeys.length !== 0) {
+            throw new Error(`Event '${this.name}' cannot have params with keys: ${reservedKeys.map(key => `'${key}'`).join(', ')}`);
+        }
+
+        Object.assign(this, params);
     }
 
     addChildEvent(event) {

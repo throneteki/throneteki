@@ -13,6 +13,12 @@ describe('Event', function() {
         it('should merge parameters onto the event', function() {
             expect(this.event.foo).toBe('bar');
         });
+
+        it('should throw an exception if a reserved property name is used in the parameters', function() {
+            expect(function() {
+                new Event('onEvent', { parent: 'foo' });
+            }).toThrowError(/parent/);
+        });
     });
 
     describe('emitTo', function() {
