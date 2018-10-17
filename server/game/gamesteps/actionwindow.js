@@ -30,8 +30,8 @@ class ActionWindow extends PlayerOrderPrompt {
         };
     }
 
-    skipCondition(player) {
-        return !this.forceWindow && !player.promptedActionWindows[this.windowName];
+    skipCondition() {
+        return this.game.getPlayersInFirstPlayerOrder().every(player => !player.promptedActionWindows[this.windowName]);
     }
 
     onMenuCommand(player) {
@@ -46,7 +46,6 @@ class ActionWindow extends PlayerOrderPrompt {
 
     markActionAsTaken(player) {
         this.setPlayers(this.rotatedPlayerOrder(player));
-        this.forceWindow = true;
     }
 
     rotatedPlayerOrder(player) {

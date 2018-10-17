@@ -1,6 +1,7 @@
 const DominancePhase = require('../../../server/game/gamesteps/dominancephase.js');
 const Game = require('../../../server/game/game.js');
 const Player = require('../../../server/game/player.js');
+const Settings = require('../../../server/settings.js');
 
 describe('the DominancePhase', () => {
     var phase;
@@ -11,8 +12,8 @@ describe('the DominancePhase', () => {
     beforeEach(() => {
         let gameService = jasmine.createSpyObj('gameService', ['save']);
         game = new Game({ owner: {} }, { gameService: gameService });
-        player1 = new Player('1', { username: 'Player 1', settings: {} }, true, game);
-        player2 = new Player('2', { username: 'Player 2', settings: {} }, false, game);
+        player1 = new Player('1', Settings.getUserWithDefaultsSet({ username: 'Player 1' }), true, game);
+        player2 = new Player('2', Settings.getUserWithDefaultsSet({ username: 'Player 2' }), false, game);
         player2.firstPlayer = true;
         game.playersAndSpectators['Player 1'] = player1;
         game.playersAndSpectators['Player 2'] = player2;
