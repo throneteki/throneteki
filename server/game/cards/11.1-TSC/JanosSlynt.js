@@ -7,7 +7,7 @@ class JanosSlynt extends DrawCard {
                 onCardOutOfShadows: event => event.card === this
             },
             target: {
-                cardCondition: card => card.controller === this.controller && card.getType() === 'character' && card.isFaction('thenightswatch'),
+                cardCondition: card => card.controller === this.controller && card.location === 'play area' && card.getType() === 'character' && card.isFaction('thenightswatch'),
                 gameAction: 'sacrifice'
             },
             handler: context => {
