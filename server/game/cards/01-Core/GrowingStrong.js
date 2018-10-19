@@ -10,7 +10,7 @@ class GrowingStrong extends DrawCard {
             target: {
                 numCards: 3,
                 activePromptTitle: 'Select up to three characters',
-                cardCondition: card => card.isFaction('tyrell') && card.getType() === 'character'
+                cardCondition: card => card.location === 'play area' && card.isFaction('tyrell') && card.getType() === 'character'
             },
             handler: context => {
                 _.each(context.target, card => {
