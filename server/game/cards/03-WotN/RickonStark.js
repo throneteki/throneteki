@@ -5,7 +5,7 @@ class RickonStark extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onBeforeDeckSearch: event => event.player !== this.controller // Strictly speaking the rules don't apply this restriction but it's probably going to be annoying not to have it
+                onBeforeDeckSearch: () => true
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
