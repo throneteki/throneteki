@@ -60,7 +60,7 @@ describe('Craster', function() {
             describe('when sacrificing Craster in the following phase', function() {
                 beforeEach(function() {
                     // Clear plot phase by passing on the action window.
-                    this.player1.clickPrompt('Pass');
+                    this.skipActionWindow();
 
                     this.player1.clickMenu(this.craster, 'Sacrifice to resurrect');
                 });

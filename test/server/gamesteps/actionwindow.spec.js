@@ -109,5 +109,33 @@ describe('ActionWindow', function() {
                 expect(this.prompt.continue()).toBe(true);
             });
         });
+
+        describe('when only the second player has the window enabled', function() {
+            beforeEach(function() {
+                this.player1.promptedActionWindows['test'] = true;
+                this.player2.promptedActionWindows['test'] = false;
+            });
+
+            it('should prompt the first player even though the window is off', function() {
+                this.prompt.continue();
+
+                expect(this.prompt.currentPlayer).toBe(this.player2);
+            });
+
+            it('should not complete the prompt', function() {
+                expect(this.prompt.continue()).toBe(false);
+            });
+        });
+
+        describe('when both players have the window disabled', function() {
+            beforeEach(function() {
+                this.player1.promptedActionWindows['test'] = false;
+                this.player2.promptedActionWindows['test'] = false;
+            });
+
+            it('should complete the prompt', function() {
+                expect(this.prompt.continue()).toBe(true);
+            });
+        });
     });
 });
