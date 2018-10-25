@@ -42,7 +42,7 @@ class CostReducer {
 
     getAmount(card) {
         if(_.isFunction(this.amount)) {
-            return this.amount(card);
+            return this.amount(card) || 0;
         }
 
         return this.amount;
