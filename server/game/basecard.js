@@ -660,7 +660,7 @@ class BaseCard {
 
     getSummary(activePlayer) {
         if(!this.game.isCardVisible(this, activePlayer)) {
-            return { facedown: true, uuid: this.uuid };
+            return { facedown: true, uuid: this.uuid, tokens: this.tokens };
         }
 
         let selectionState = activePlayer.getCardSelectionState(this);
