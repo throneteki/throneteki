@@ -75,6 +75,7 @@ class HowToPlay extends React.Component {
                         <p>Every once in a while something happens during a game that shouldn’t have happened. This can occur due to a misclick, an unimplemented card or a bug in the software. To fix the game state in such situations a variety of manual commands are implemented. Typing these commands as a chatmessage during a game will have the following effect:</p>
                         <ul>
                             <li>/bestow x - Adds x gold to the selected card. You must have enough gold to add.</li>
+                            <li>/cancel-challenge - Cancels the current challenge after it has been initiated. <strong>Note:</strong> both players will need to manually stand any knelt characters and undo any abilities used.</li>
                             <li>/cancel-prompt - Clears the current prompt and resume the game flow.  Use with caution and only when the prompt is 'stuck' and you are unable to continue.</li>
                             <li>/discard x - Discards x cards randomly from your hand.</li>
                             <li>/draw x - Draws x cards from your deck to your hand.</li>
