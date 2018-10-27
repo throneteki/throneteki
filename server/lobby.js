@@ -392,6 +392,29 @@ class Lobby {
             return;
         }
 
+        if(gameDetails.quickJoin) {
+            let sortedGames = _.sortBy(this.games, 'createdAt');
+            let gameToJoin = sortedGames.find(game => !game.started && game.gameType === gameDetails.gameType && _.size(game.players) < 2 && !game.password);
+
+            if(gameToJoin) {
+                gameToJoin.join(socket.id, socket.user.getDetails(), undefined, (err, message) => {
+                    if(err) {
+                        socket.send('passworderror', message);
+
+                        return;
+                    }
+
+                    socket.joinChannel(gameToJoin.id);
+
+                    this.sendGameState(gameToJoin);
+
+                    this.broadcastGameList();
+                });
+
+                return;
+            }
+        }
+
         let game = new PendingGame(socket.user.getDetails(), gameDetails);
         game.newGame(socket.id, socket.user.getDetails(), gameDetails.password, (err, message) => {
             if(err) {
@@ -441,7 +464,7 @@ class Lobby {
             return;
         }
 
-        if(_.any(game.getPlayers(), function(player) {
+        if(_.any(game.getPlayers(), function (player) {
             return !player.deck;
         })) {
             return;
