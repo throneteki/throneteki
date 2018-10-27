@@ -5,14 +5,6 @@ import classNames from 'classnames';
 import Card from './Card';
 
 class SquishableCardPanel extends React.Component {
-    disableMouseOver(card) {
-        if(!card.facedown) {
-            return false;
-        }
-
-        return !this.props.isMe;
-    }
-
     getCards(needsSquish) {
         let overallDimensions = this.getOverallDimensions();
         let dimensions = this.getCardDimensions();
@@ -26,7 +18,7 @@ class SquishableCardPanel extends React.Component {
         let overflow = requiredWidth - overallDimensions.width;
         let offset = overflow / (handLength - 1);
 
-        if(!this.props.isMe && this.props.groupVisibleCards) {
+        if(this.props.groupVisibleCards && this.hasMixOfVisibleCards()) {
             cards = [...this.props.cards].sort((a, b) => a.facedown && !b.facedown ? -1 : 1);
         }
 
@@ -42,7 +34,7 @@ class SquishableCardPanel extends React.Component {
 
             return (<Card key={ card.uuid }
                 card={ card }
-                disableMouseOver={ this.disableMouseOver(card) }
+                disableMouseOver={ !card.code }
                 onClick={ this.props.onCardClick }
                 onMouseOver={ this.props.onMouseOver }
                 onMouseOut={ this.props.onMouseOut }
@@ -52,6 +44,10 @@ class SquishableCardPanel extends React.Component {
         });
 
         return hand;
+    }
+
+    hasMixOfVisibleCards() {
+        return this.props.cards.some(card => !!card.code) && this.props.cards.some(card => !card.code);
     }
 
     getCardDimensions() {
@@ -118,7 +114,6 @@ SquishableCardPanel.propTypes = {
     cards: PropTypes.array,
     className: PropTypes.string,
     groupVisibleCards: PropTypes.bool,
-    isMe: PropTypes.bool,
     maxCards: PropTypes.number,
     onCardClick: PropTypes.func,
     onMouseOut: PropTypes.func,

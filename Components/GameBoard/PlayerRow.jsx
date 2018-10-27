@@ -126,7 +126,6 @@ class PlayerRow extends React.Component {
             cards={ this.props.hand }
             className='panel hand'
             groupVisibleCards
-            isMe={ this.props.isMe }
             username={ this.props.username }
             maxCards={ 5 }
             onCardClick={ this.props.onCardClick }
@@ -154,7 +153,6 @@ class PlayerRow extends React.Component {
             cards={ this.props.shadows }
             cardSize={ this.props.cardSize }
             className='panel shadows'
-            isMe={ this.props.isMe }
             maxCards={ 2 }
             onCardClick={ this.props.onCardClick }
             onMouseOut={ this.props.onMouseOut }
