@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class NightfortBuilder extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 onCardKneeled: event => event.card === this
