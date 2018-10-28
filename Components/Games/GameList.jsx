@@ -116,13 +116,13 @@ class GameList extends React.Component {
         if(players.length === 1) {
             if(this.canJoin(game)) {
                 players.push(
-                    <div className={ 'game-player-row other-player' }>
+                    <div key={ players[0].name } className={ 'game-player-row other-player' }>
                         <div className='game-faction-row other-player'>
                             <button className='btn btn-primary gamelist-button img-responsive' onClick={ event => this.joinGame(event, game) }>Join</button>
                         </div>
                     </div>);
             } else {
-                players.push(<div className='game-faction-row other-player' />);
+                players.push(<div key={ players[0].name } className='game-faction-row other-player' />);
             }
         }
 

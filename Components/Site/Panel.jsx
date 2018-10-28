@@ -6,9 +6,11 @@ class Panel extends React.Component {
     render() {
         return (
             <div className={ classNames('panel', `panel-${this.props.type}`, this.props.className) }>
-                <div className='panel-heading'>
-                    { this.props.title }
-                </div>
+                { this.props.title &&
+                    <div className='panel-heading'>
+                        { this.props.title }
+                    </div>
+                }
                 <div className='panel-body'>
                     { this.props.children }
                 </div>
@@ -21,7 +23,7 @@ Panel.propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
     title: PropTypes.string,
-    type: PropTypes.oneOf(['danger', 'success', 'warning', 'info', 'default', 'primary'])
+    type: PropTypes.oneOf(['danger', 'success', 'warning', 'info', 'default', 'primary', 'tertiary'])
 };
 Panel.defaultProps = {
     type: 'primary'
