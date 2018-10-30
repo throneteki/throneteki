@@ -65,7 +65,8 @@ class SetupPhase extends Phase {
 
     startGame() {
         for(const player of this.game.getPlayers()) {
-            player.startGame();
+            player.readyToStart = true;
+            this.game.addGold(player, player.setupGold);
         }
     }
 

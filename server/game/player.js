@@ -384,14 +384,6 @@ class Player extends Spectator {
         this.agenda = deck.createAgendaCard(this);
     }
 
-    startGame() {
-        if(!this.readyToStart) {
-            return;
-        }
-
-        this.gold = this.setupGold;
-    }
-
     mulligan() {
         if(this.takenMulligan) {
             return false;
@@ -400,13 +392,11 @@ class Player extends Spectator {
         this.initDrawDeck();
         this.drawCardsToHand(StartingHandSize);
         this.takenMulligan = true;
-        this.readyToStart = true;
 
         return true;
     }
 
     keep() {
-        this.readyToStart = true;
     }
 
     addCostReducer(reducer) {

@@ -1,8 +1,14 @@
 const AllPlayerPrompt = require('../allplayerprompt.js');
 
 class KeepOrMulliganPrompt extends AllPlayerPrompt {
+    constructor(game) {
+        super(game);
+
+        this.completedPlayers = new Set();
+    }
+
     completionCondition(player) {
-        return player.readyToStart;
+        return this.completedPlayers.has(player);
     }
 
     activePrompt() {
@@ -20,6 +26,12 @@ class KeepOrMulliganPrompt extends AllPlayerPrompt {
     }
 
     onMenuCommand(player, arg) {
+        if(this.completedPlayers.has(player)) {
+            return;
+        }
+
+        this.completedPlayers.add(player);
+
         if(arg === 'keep') {
             player.keep();
             this.game.addMessage('{0} has kept their hand', player);
