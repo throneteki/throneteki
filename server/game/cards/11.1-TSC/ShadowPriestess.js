@@ -7,7 +7,7 @@ class ShadowPriestess extends DrawCard {
                 onCardOutOfShadows: event => event.card === this
             },
             target: {
-                cardCondition: card => card.getType() === 'character' && card.attachments.length === 0,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.attachments.length === 0,
                 gameAction: 'kneel'
             },
             handler: context => {
