@@ -1,0 +1,40 @@
+const AgendaCard = require('../../agendacard');
+
+class AssaultFromTheShadows extends AgendaCard {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            targetController: 'current',
+            match: card => card === card.controller.activePlot,
+            effect: ability.effects.modifyGold(-1)
+        });
+
+        this.action({
+            title: 'Put card into shadows',
+            phase: 'marshal',
+            cost: ability.costs.kneelFactionCard(),
+            target: {
+                activePromptTitle: 'Select a card',
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller
+            },
+            handler: context => {
+                this.game.addMessage('{0} uses {1} and kneels their faction card to put a card into shadow', context.player, this);
+                context.player.putIntoShadows(context.target, false, () => {
+                    context.target.modifyToken('shadow', 1);
+
+                    if(!context.target.isShadow()) {
+                        this.lastingEffect(ability => ({
+                            condition: () => context.target.location === 'shadows',
+                            targetLocation: 'any',
+                            match: context.target,
+                            effect: ability.effects.addKeyword(`Shadow (${context.target.getPrintedCost()})`)
+                        }));
+                    }
+                });
+            }
+        });
+    }
+}
+
+AssaultFromTheShadows.code = '11118';
+
+module.exports = AssaultFromTheShadows;

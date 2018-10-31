@@ -397,6 +397,9 @@ class BaseCard {
     }
 
     leavesPlay() {
+    }
+
+    clearTokens() {
         this.tokens = {};
     }
 
@@ -406,6 +409,13 @@ class BaseCard {
 
         if(originalParent) {
             originalParent.removeChildCard(this);
+        }
+
+        if(originalLocation !== targetLocation) {
+            // Clear any tokens on the card unless it is transitioning position
+            // within the same area e.g. moving an attachment from one character
+            // to another, or a character transferring control between players.
+            this.clearTokens();
         }
 
         this.location = targetLocation;
@@ -650,7 +660,7 @@ class BaseCard {
 
     getSummary(activePlayer) {
         if(!this.game.isCardVisible(this, activePlayer)) {
-            return { facedown: true, uuid: this.uuid };
+            return { facedown: true, uuid: this.uuid, tokens: this.tokens };
         }
 
         let selectionState = activePlayer.getCardSelectionState(this);

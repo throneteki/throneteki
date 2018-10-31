@@ -39,11 +39,13 @@ class ChatCommands {
         this.tokens = [
             'bell',
             'betrayal',
+            'blood',
             'ear',
             'gold',
             'kiss',
             'poison',
             'power',
+            'shadow',
             'stand',
             'valarmorghulis',
             'vengeance',
@@ -333,7 +335,8 @@ class ChatCommands {
         this.game.promptForSelect(player, {
             activePromptTitle: 'Select a card',
             waitingPromptTitle: 'Waiting for opponent to set token',
-            cardCondition: card => (card.location === 'play area' || card.location === 'plot') && card.controller === player,
+            cardCondition: card => ['agenda', 'active plot', 'play area', 'shadows'].includes(card.location) && card.controller === player,
+            cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot'],
             onSelect: (p, card) => {
                 let numTokens = card.tokens[token] || 0;
 
