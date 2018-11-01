@@ -85,6 +85,10 @@ const Costs = {
      */
     putSelfIntoPlay: () => CostBuilders.putIntoPlay.self(),
     /**
+     * Cost that will put into shadows the card that initiated the ability.
+     */
+    putSelfIntoShadows: () => CostBuilders.putIntoShadows.self(),
+    /**
      * Cost that will remove from game the card that initiated the ability.
      */
     removeSelfFromGame: () => CostBuilders.removeFromGame.self(),
