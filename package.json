@@ -28,7 +28,7 @@
   "homepage": "https://github.com/cryogen/throneteki#readme",
   "dependencies": {
     "@sendgrid/mail": "^6.2.0",
-    "bcrypt": "^0.8.7",
+    "bcrypt": "^3.0.2",
     "body-parser": "^1.18.2",
     "command-line-args": "^4.0.7",
     "cross-env": "^3.2.4",
