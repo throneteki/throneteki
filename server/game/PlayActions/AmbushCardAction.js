@@ -4,10 +4,7 @@ const Costs = require('../costs');
 class AmbushCardAction extends BaseAbility {
     constructor() {
         super({
-            cost: [
-                Costs.payReduceableGoldCost('ambush'),
-                Costs.playLimited()
-            ]
+            cost: Costs.payReduceableGoldCost('ambush')
         });
         this.title = 'Ambush';
     }
