@@ -14,7 +14,11 @@ class AssaultFromTheShadows extends AgendaCard {
             cost: ability.costs.kneelFactionCard(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller
+                cardCondition: card => card.location === 'hand' && card.controller === this.controller,
+                // Even though the card text uses the word 'choose', use a non
+                // targeting prompt to prevent the card from being revealed
+                // when the opponent is prompted to cancel the ability.
+                type: 'select'
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} and kneels their faction card to put a card into shadow', context.player, this);
