@@ -69,7 +69,7 @@ class AbilityResolver extends BaseStep {
     }
 
     createSnapshot() {
-        if(this.context.source.getType() === 'character' || this.context.source.getType() === 'location' || this.context.source.getType() === 'attachment') {
+        if(['attachment', 'character', 'event', 'location'].includes(this.context.source.getType())) {
             this.context.cardStateWhenInitiated = this.context.source.createSnapshot();
         }
     }
