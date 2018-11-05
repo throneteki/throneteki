@@ -13,7 +13,9 @@ class TheBastardsLetter extends DrawCard {
                 gameAction: 'stand'
             },
             handler: context => {
-                this.game.addMessage('{0} plays {1} to stand {2}', context.player, this, context.target);
+                let message = context.target.length === 0 ? '{0} plays {1}' : '{0} plays {1} to stand {2}';
+                this.game.addMessage(message, context.player, this, context.target);
+
                 for(let card of context.target) {
                     context.player.standCard(card);
                 }
