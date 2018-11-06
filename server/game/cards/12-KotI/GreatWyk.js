@@ -31,7 +31,7 @@ class GreatWyk extends DrawCard {
     }
     onSelectCard(player,card) {
         if(card === null) {
-            this.game.addMessage('danger','{0} does not choose any card for {1}', player, this);
+            this.game.addAlert('danger','{0} does not choose any card for {1}', player, this);
             return true;
         }
         
