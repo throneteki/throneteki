@@ -4,10 +4,7 @@ const Costs = require('../costs');
 class OutOfShadowsAction extends BaseAbility {
     constructor() {
         super({
-            cost: [
-                Costs.payReduceableGoldCost('outOfShadows'),
-                Costs.playLimited()
-            ]
+            cost: Costs.payReduceableGoldCost('outOfShadows')
         });
         this.title = 'Bring out of shadows';
     }
