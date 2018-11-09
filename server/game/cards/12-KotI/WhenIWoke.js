@@ -4,7 +4,7 @@ class WhenIWoke extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.challengeType === 'military' && event.challenge.loser !== undefined 
+                afterChallenge: event => event.challenge.challengeType === 'military' && !!event.challenge.loser
             },
             max: ability.limit.perChallenge(1),
             handler: () => {

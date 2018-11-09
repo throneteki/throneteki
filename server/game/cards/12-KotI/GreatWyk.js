@@ -8,8 +8,8 @@ class GreatWyk extends DrawCard {
                     event.card.getType() === 'character' &&
                     event.card.controller === this.controller &&
                     event.originalLocation === 'dead pile'
-                )}
-            ,
+                )
+            },
             limit: ability.limit.perPhase(1),
             handler: () => {
                  
@@ -29,6 +29,7 @@ class GreatWyk extends DrawCard {
         });
 
     }
+
     onSelectCard(player,card) {
         if(card === null) {
             this.game.addAlert('danger','{0} does not choose any card for {1}', player, this);
@@ -42,6 +43,7 @@ class GreatWyk extends DrawCard {
     }
 
 }
+
 GreatWyk.code = '12017';
 module.exports = GreatWyk;
     
