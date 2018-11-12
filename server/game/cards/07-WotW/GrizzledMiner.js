@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class GrizzledMiner extends DrawCard {
-
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
@@ -20,7 +19,6 @@ class GrizzledMiner extends DrawCard {
 
         return cards.length;
     }
-
 }
 
 GrizzledMiner.code = '07006';

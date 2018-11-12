@@ -8,7 +8,7 @@ class TheKnightOfFlowers extends DrawCard {
             },
             handler: () => {
                 this.game.addMessage('{0} uses {1} to gain +2 STR until the end of the phase', this.controller, this);
-                this.untilEndOfPhase(ability =>({
+                this.untilEndOfPhase(ability => ({
                     match: this,
                     effect: ability.effects.modifyStrength(2)
                 }));

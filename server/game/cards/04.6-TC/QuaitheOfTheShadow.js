@@ -24,7 +24,6 @@ class QuaitheOfTheShadow extends DrawCard {
             }
         });
     }
-
 }
 
 QuaitheOfTheShadow.code = '04113';

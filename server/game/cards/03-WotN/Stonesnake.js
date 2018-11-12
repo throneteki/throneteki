@@ -28,7 +28,6 @@ class Stonesnake extends DrawCard {
                     },
                     source: this
                 });
-
             }
         });
     }

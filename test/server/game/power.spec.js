@@ -21,7 +21,6 @@ describe('Game', function() {
             });
 
             it('should not transfer power', function() {
-
                 expect(this.target.power).toBe(1);
                 expect(this.source.power).toBe(2);
             });

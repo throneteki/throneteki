@@ -49,7 +49,6 @@ describe('ForcedTriggeredAbilityWindow', function() {
 
         spyOn(this.window, 'gatherChoices');
         spyOn(this.window, 'resolveAbility');
-
     });
 
     describe('continue()', function() {

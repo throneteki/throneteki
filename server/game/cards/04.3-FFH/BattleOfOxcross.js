@@ -1,7 +1,6 @@
 const PlotCard = require('../../plotcard.js');
 
 class BattleOfOxcross extends PlotCard {
-
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 1 }),
@@ -12,7 +11,6 @@ class BattleOfOxcross extends PlotCard {
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });
     }
-
 }
 
 BattleOfOxcross.code = '04060';

@@ -16,7 +16,6 @@ class Kingslayer extends DrawCard {
                 this.game.killCharacter(context.target);
                 this.game.addMessage('{0} uses {1} and kneels {2} to kill {3}',
                     context.player, this, this.parent, context.target);
-
             }
         });
 

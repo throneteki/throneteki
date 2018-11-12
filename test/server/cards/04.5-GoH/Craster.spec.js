@@ -20,7 +20,6 @@ describe('Craster', function() {
             this.character = this.player1.findCardByName('Steward at the Wall', 'hand');
 
             this.opponentCharacter = this.player2.findCardByName('Steward at the Wall', 'hand');
-
         });
 
         describe('while Craster is out when characters are killed', function() {

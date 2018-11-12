@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class WakingTheDragon extends DrawCard {
-
     setupCardAbilities() {
         this.action({
             title: 'Stand a character',
@@ -27,7 +26,6 @@ class WakingTheDragon extends DrawCard {
             }
         });
     }
-
 }
 
 WakingTheDragon.code = '01178';

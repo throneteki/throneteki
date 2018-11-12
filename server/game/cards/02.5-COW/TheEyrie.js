@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class TheEyrie extends DrawCard {
-
     setupCardAbilities(ability) {
         this.reaction({
             when: {

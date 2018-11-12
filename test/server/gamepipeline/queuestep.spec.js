@@ -8,7 +8,6 @@ describe('the GamePipeline', function() {
 
     describe('the queueStep() function', function() {
         describe('when the pipeline is empty', function() {
-
             it('should add the step directly to the pipeline', function() {
                 this.pipeline.queueStep(this.step);
                 expect(this.pipeline.length).toBe(1);

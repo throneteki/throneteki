@@ -3,7 +3,6 @@ const _ = require('underscore');
 const PlotCard = require('../../plotcard.js');
 
 class GhostsOfHarrenhal extends PlotCard {
-
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
@@ -20,7 +19,6 @@ class GhostsOfHarrenhal extends PlotCard {
             }
         });
     }
-
 }
 
 GhostsOfHarrenhal.code = '04100';

@@ -50,6 +50,5 @@ describe('pillage', function() {
                 expect(this.player2Object.discardPile.length).toBe(2);
             });
         });
-
     });
 });

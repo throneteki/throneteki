@@ -310,7 +310,6 @@ describe('CardReaction', function () {
                 handler: () => true
             };
             this.reaction = this.createReaction();
-
         });
 
         it('should unregister all previously registered when event handlers', function() {
