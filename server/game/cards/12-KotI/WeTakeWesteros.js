@@ -13,7 +13,6 @@ class WeTakeWesteros extends PlotCard {
             }
         });
     }
-  
 }
 
 WeTakeWesteros.code = '12046';
