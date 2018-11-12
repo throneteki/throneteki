@@ -7,7 +7,7 @@ class SerJasonMallister extends DrawCard {
 
             match: this,
             effect: [
-                ability.effects.addKeyword('Renown'),
+                ability.effects.addKeyword('Renown')
             ]
         });
         this.reaction({

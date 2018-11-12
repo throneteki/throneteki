@@ -5,17 +5,14 @@ class WeTakeWesteros extends PlotCard {
         this.whenRevealed({
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.getType()==='location' && card.location === 'discard pile' && this.controller.canPutIntoPlay(card)
+                cardCondition: card => card.getType() === 'location' && card.location === 'discard pile' && this.controller.canPutIntoPlay(card)
             },
             handler: (context) => {
-               context.player.putIntoPlay(context.target);
-               this.game.addMessage("{0} uses {1} to put {2} into play ",context.player,this,context.target);
+                context.player.putIntoPlay(context.target);
+                this.game.addMessage('{0} uses {1} to put {2} into play ',context.player,this,context.target);
             }
         });
     }
-
- 
-
   
 }
 
