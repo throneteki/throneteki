@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class Nymeria extends DrawCard {
-
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark', unique: true });
         this.whileAttached({

@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class Lady extends DrawCard {
-
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'stark' });
         this.whileAttached({

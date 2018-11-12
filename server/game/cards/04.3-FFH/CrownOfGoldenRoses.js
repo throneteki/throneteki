@@ -25,7 +25,6 @@ class CrownOfGoldenRoses extends DrawCard {
                     this.controller, this, context.costs.discardFromHand, strBoost, this.parent);
             }
         });
-
     }
 }
 

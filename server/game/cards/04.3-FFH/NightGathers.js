@@ -15,7 +15,6 @@ class NightGathers extends DrawCard {
                         card.location === 'discard pile' &&
                         card.getType() === 'character')
                 }));
-
             }
         });
     }

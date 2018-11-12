@@ -3,7 +3,6 @@ const _ = require('underscore');
 const DrawCard = require('../../drawcard.js');
 
 class KingRenlySHost extends DrawCard {
-
     setupCardAbilities(ability) {
         this.persistentEffect({ // STR increase while Summer
             condition: () => this.anyPlotHasTrait('Summer'),
@@ -22,7 +21,6 @@ class KingRenlySHost extends DrawCard {
             player.activePlot
                      && player.activePlot.hasTrait(trait));
     }
-
 }
 
 KingRenlySHost.code = '04063';

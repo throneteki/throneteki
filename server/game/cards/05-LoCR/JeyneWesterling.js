@@ -13,7 +13,6 @@ class JeyneWesterling extends DrawCard {
             handler: context => {
                 context.target.controller.standCard(context.target);
                 this.game.addMessage('{0} kneels {1} to stand {2}', this.controller, this, context.target);
-
             }
         });
     }

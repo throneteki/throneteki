@@ -4,7 +4,7 @@ class GreatWyk extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction ({
             when: {
-                onCardEntersPlay: event=>(
+                onCardEntersPlay: event => (
                     event.card.getType() === 'character' &&
                     event.card.controller === this.controller &&
                     event.originalLocation === 'dead pile'
@@ -12,7 +12,6 @@ class GreatWyk extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             handler: () => {
-                 
                 for(let opponent of this.game.getOpponents(this.controller)) {
                     if(opponent.hand.length > 0) {
                         this.game.promptForSelect(opponent, {
@@ -27,7 +26,6 @@ class GreatWyk extends DrawCard {
                 }        
             }
         });
-
     }
 
     onSelectCard(player,card) {
@@ -39,11 +37,10 @@ class GreatWyk extends DrawCard {
         player.discardCard(card);
         this.game.addMessage('{0} chooses {1} for {2}', player, card, this);
         return true;
-
     }
-
 }
 
 GreatWyk.code = '12017';
+
 module.exports = GreatWyk;
     

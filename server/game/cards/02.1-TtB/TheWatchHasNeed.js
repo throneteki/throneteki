@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class TheWatchHasNeed extends DrawCard {
-
     setupCardAbilities() {
         this.action({
             title: 'Search for a character',

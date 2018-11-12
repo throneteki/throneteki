@@ -14,7 +14,6 @@ class OldtownScholar extends DrawCard {
                 let drawn = context.player.drawCardsToHand(numToDraw);
                 this.game.addMessage('{0} kneels {1} to draw {2}',
                     context.player, this, TextHelper.count(drawn.length, 'card'));
-
             }
         });
     }

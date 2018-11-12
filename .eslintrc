@@ -1,6 +1,13 @@
 {
   "extends": "eslint:recommended",
   "rules": {
+    "arrow-spacing": [
+      "error",
+      {
+        "before": true,
+        "after": true
+      }
+    ],
     "indent": [
       2,
       4,
@@ -111,6 +118,11 @@
           }
         }
       }
+    ],
+    "padded-blocks": ["error", "never"],
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "*", "next": "cjs-export" }
     ]
   },
   "env": {

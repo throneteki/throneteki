@@ -2,7 +2,6 @@ const AgendaCard = require('../../agendacard.js');
 
 class TheFaithMilitant extends AgendaCard {
     setupCardAbilities(ability) {
-
         this.persistentEffect({
             match: card =>
                 !card.hasTrait('The Seven') &&
@@ -34,7 +33,6 @@ class TheFaithMilitant extends AgendaCard {
                     this.controller, this, otherPlayer, context.target);
             }
         });
-
     }
 }
 

@@ -10,7 +10,7 @@ class ShireenBaratheon extends DrawCard {
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to have {1} and {2} not contribute STR to the challenge', this.controller, this, context.target);
-                this.untilEndOfChallenge(ability =>({
+                this.untilEndOfChallenge(ability => ({
                     match: card => [this, context.target].includes(card),
                     targetController: 'any',
                     effect: ability.effects.doesNotContributeStrength()

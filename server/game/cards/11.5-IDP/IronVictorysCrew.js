@@ -26,7 +26,6 @@ class IronVictorysCrew extends DrawCard {
             this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, card);
             player.moveCard(card, 'hand');
         }
-
     }
 
     doneSelecting(player) {
