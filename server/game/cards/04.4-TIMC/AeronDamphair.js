@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class AeronDamphair extends DrawCard {
-
     setupCardAbilities() {
         this.reaction({
             when: {
@@ -19,7 +18,6 @@ class AeronDamphair extends DrawCard {
             }
         });
     }
-
 }
 
 AeronDamphair.code = '04071';

@@ -22,7 +22,6 @@ class AttachmentValidityCheck {
                     this.game.addMessage('{0} is forced to discard {1} due to being invalidly attached', owner, discarded);
                 });
             }
-
         });
         this.game.queueSimpleStep(() => {
             this.beingDiscarded = _.difference(this.beingDiscarded, needsDiscard);

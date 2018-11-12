@@ -20,7 +20,6 @@ class AryasGift extends DrawCard {
                         card !== oldParent && this.controller.canAttach(attachment, card) && card.location === 'play area',
                     onSelect: (player, card) => this.moveAttachment(player, card, attachment, oldParent)
                 });
-
             }
         });
     }

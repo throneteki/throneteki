@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class CityWatch extends DrawCard {
-
     setupCardAbilities(ability) {
         this.persistentEffect({
             location: 'any',
@@ -15,7 +14,6 @@ class CityWatch extends DrawCard {
         let opponents = this.game.getOpponents(this.controller);
         return opponents.some(opponent => this.controller.faction.power > opponent.faction.power);
     }
-
 }
 
 CityWatch.code = '02108';

@@ -8,7 +8,6 @@ class WhenIWoke extends DrawCard {
             },
             max: ability.limit.perChallenge(1),
             handler: () => {
-                
                 var losingplayer = this.game.currentChallenge.loser;
                 this.game.promptForSelect(losingplayer, {
                     activePromptTitle: 'Select a card',
@@ -31,7 +30,6 @@ class WhenIWoke extends DrawCard {
         player.moveCardToTopOfDeck(card);
         this.game.addMessage('{0} chooses {1} for {2} ', player, card, this);
         return true;
-
     }
 }
 

@@ -20,7 +20,6 @@ class SerLancelLannister extends DrawCard {
 
         return;
     }
-
 }
 
 SerLancelLannister.code = '05014';

@@ -18,7 +18,6 @@ class StreetOfTheSisters extends DrawCard {
             }
         });
     }
-
 }
 
 StreetOfTheSisters.code = '02018';

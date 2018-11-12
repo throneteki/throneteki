@@ -1,7 +1,6 @@
 const Player = require('../../../server/game/player.js');
 
 describe('Player', function() {
-
     function createCardSpy(num) {
         let spy = jasmine.createSpyObj('card', ['moveTo', 'removeDuplicate']);
         spy.num = num;

@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class TheKnightOfFlowers extends DrawCard {
-
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ attackingAlone: this }),
@@ -9,7 +8,6 @@ class TheKnightOfFlowers extends DrawCard {
             effect: ability.effects.setDefenderMaximum(1)
         });
     }
-
 }
 
 TheKnightOfFlowers.code = '01185';

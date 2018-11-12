@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
 class EdricStorm extends DrawCard {
-
     setupCardAbilities() {
         this.reaction({
             when: {
