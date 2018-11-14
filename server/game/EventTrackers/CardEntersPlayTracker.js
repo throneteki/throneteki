@@ -21,6 +21,10 @@ class CardEntersPlayTracker {
     hasAmbushed(card) {
         return this.events.some(event => event.card === card && event.playingType === 'ambush');
     }
+
+    hasComeOutOfShadows(card) {
+        return this.events.some(event => event.card === card && event.playingType === 'outOfShadows');
+    }
 }
 
 module.exports = CardEntersPlayTracker;
