@@ -9,7 +9,6 @@ class ShaggaSonOfDolf extends DrawCard {
             condition: () => this.hasClansmanOrTyrion(),
             handler: () => {
                 this.controller.putIntoPlay(this, 'ambush');
-                this.wasAmbush = true;
                 this.game.addMessage('{0} ambushes {1} into play for free', this.controller, this);
             }
         });

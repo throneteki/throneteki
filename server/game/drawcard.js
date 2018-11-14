@@ -31,7 +31,6 @@ class DrawCard extends BaseCard {
         this.kneeled = false;
         this.inChallenge = false;
         this.inDanger = false;
-        this.wasAmbush = false;
         this.saved = false;
         this.challengeOptions = new ReferenceCountedSetProperty();
         this.stealthLimit = 1;
@@ -395,7 +394,6 @@ class DrawCard extends BaseCard {
 
     leavesPlay() {
         this.kneeled = false;
-        this.wasAmbush = false;
         this.new = false;
         this.clearDanger();
         this.resetForChallenge();
