@@ -1,10 +1,13 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
 
 class GoldCloaks extends DrawCard {
     setupCardAbilities() {
+        this.tracker = CardEntersPlayTracker.forPhase(this.game);
+
         this.forcedInterrupt({
             when: {
-                onPhaseEnded: () => this.wasAmbush
+                onPhaseEnded: () => this.tracker.hasAmbushed(this)
             },
             handler: () => {
                 this.controller.discardCard(this);
