@@ -1,21 +1,18 @@
 const DrawCard = require('../../drawcard');
+const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
 
 class GreyGhost extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.tracker = new ShadowsTracker(this.game, this);
-    }
-
     setupCardAbilities(ability) {
+        this.tracker = CardEntersPlayTracker.forPhase(this.game);
+
         this.action({
             title: 'Prevent character(s) from defending',
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.game.promptForSelect(this.controller, {
                     multiSelect: true,
-                    numCards: this.tracker.hasComeOutOfShadowsThisPhase ? 2 : 1,
-                    activePromptTitle: this.tracker.hasComeOutOfShadowsThisPhase ? 'Select 2 characters' : 'Select a character',
+                    numCards: this.tracker.hasComeOutOfShadows(this) ? 2 : 1,
+                    activePromptTitle: this.tracker.hasComeOutOfShadows(this) ? 'Select 2 characters' : 'Select a character',
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.getType() === 'character',
                     onSelect: (player, cards) => this.onSelect(player, cards),
@@ -39,18 +36,6 @@ class GreyGhost extends DrawCard {
 
     cancelSelection(player) {
         this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-    }
-}
-
-class ShadowsTracker {
-    constructor(game, card) {
-        this.hasComeOutOfShadowsThisPhase = false;
-        game.on('onCardOutOfShadows', event => {
-            if(event.card === card) {
-                this.hasComeOutOfShadowsThisPhase = true;
-            }
-        });
-        game.on('onPhaseEnded', () => this.hasComeOutOfShadowsThisPhase = false);
     }
 }
 

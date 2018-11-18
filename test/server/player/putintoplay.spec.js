@@ -234,10 +234,6 @@ describe('Player', function() {
                     expect(this.cardSpy.new).toBe(true);
                 });
 
-                it('should play the card as an ambush', function() {
-                    expect(this.cardSpy.wasAmbush).toBe(true);
-                });
-
                 it('should apply effects for the card', function() {
                     expect(this.cardSpy.applyPersistentEffects).toHaveBeenCalled();
                 });

@@ -604,7 +604,6 @@ class Player extends Spectator {
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
             card.takeControl(this);
             card.kneeled = playingType !== 'setup' && !!card.entersPlayKneeled || !!options.kneeled;
-            card.wasAmbush = (playingType === 'ambush');
 
             if(!dupeCard && !isSetupAttachment) {
                 card.applyPersistentEffects();
