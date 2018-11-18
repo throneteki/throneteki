@@ -7,7 +7,7 @@ class DaggersInTheDark extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.defendingPlayer === this.controller
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller === this.game.currentChallenge.loser,
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller === this.game.currentChallenge.loser && card.isAttacking(),
                 gameAction: 'kill'
             },
             handler: context => {
