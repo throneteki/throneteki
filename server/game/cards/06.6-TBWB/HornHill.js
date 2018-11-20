@@ -14,7 +14,7 @@ class HornHill extends DrawCard {
                 let cards = _.filter(challenge.attackers.concat(challenge.defenders), card => card.controller === this.controller && card.isFaction('tyrell'));
 
                 this.untilEndOfChallenge(ability => ({
-                    match: card => cards.includes(card),
+                    match: cards,
                     effect: ability.effects.modifyStrength(this.tokens['gold'])
                 }));
 

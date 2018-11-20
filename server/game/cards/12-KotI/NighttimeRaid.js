@@ -12,7 +12,7 @@ class RedRain extends DrawCard {
             handler: context => {
                 this.game.addMessage('{0} plays {1} to have {2} gain stealth until the end of the phase', context.player, this, context.target);
                 this.untilEndOfPhase(ability => ({
-                    match: card => context.target.includes(card),
+                    match: context.target,
                     effect: ability.effects.addKeyword('Stealth')
                 }));
             }

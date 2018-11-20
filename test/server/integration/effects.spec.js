@@ -29,6 +29,11 @@ describe('effects', function() {
                     this.player1.clickPrompt('Military');
                 });
 
+                it('should apply to cards already in play', function() {
+                    let nymeria = this.player1.findCardByName('Nymeria Sand', 'play area');
+                    expect(nymeria.hasIcon('Military')).toBe(true);
+                });
+
                 it('should not apply the effect to new cards that come into play', function() {
                     let dorea = this.player1.findCardByName('Dorea Sand', 'hand');
                     this.player1.dragCard(dorea, 'play area');

@@ -22,7 +22,7 @@ class BalonGreyjoy extends DrawCard {
             handler: context => {
                 let loyalChars = this.controller.filterCardsInPlay(card => card.isLoyal() && card.getType() === 'character');
                 this.untilEndOfChallenge(ability => ({
-                    match: card => loyalChars.includes(card),
+                    match: loyalChars,
                     effect: ability.effects.modifyStrength(1)
                 }));
 

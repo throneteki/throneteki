@@ -23,7 +23,7 @@ class OursIsTheOldWay extends DrawCard {
     gainStealth() {
         let cards = this.controller.filterCardsInPlay(card => card.isFaction('greyjoy') && card.getType() === 'character');
         this.untilEndOfPhase(ability => ({
-            match: card => cards.includes(card),
+            match: cards,
             effect: ability.effects.addKeyword('stealth')
         }));
 
@@ -36,7 +36,7 @@ class OursIsTheOldWay extends DrawCard {
     loseStealth() {
         let cards = this.game.filterCardsInPlay(card => !card.isFaction('greyjoy') && card.getType() === 'character');
         this.untilEndOfPhase(ability => ({
-            match: card => cards.include(card),
+            match: cards,
             targetController: 'any',
             effect: ability.effects.removeKeyword('stealth')
         }));
