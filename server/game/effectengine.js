@@ -211,9 +211,13 @@ class EffectEngine {
 
     unapplyAndRemove(match) {
         var [matchingEffects, remainingEffects] = _.partition(this.effects, match);
-        _.each(matchingEffects, effect => {
+
+        // Explicitly cancel effects in reverse order that they were applied so
+        // that problems with STR reduction and burn are avoided.
+        for(let effect of matchingEffects.reverse()) {
             effect.cancel();
-        });
+        }
+
         this.effects = remainingEffects;
     }
 }
