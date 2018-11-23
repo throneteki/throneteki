@@ -9,7 +9,7 @@ class Heartsbane extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.untilEndOfChallenge(ability => ({
-                    match: card => card === this.parent,
+                    match: this.parent,
                     effect: ability.effects.modifyStrength(3)
                 }));
                 this.game.addMessage('{0} kneels {1} to give {2} +3 STR until the end of the challenge', this.controller, this, this.parent);

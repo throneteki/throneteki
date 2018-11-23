@@ -17,7 +17,7 @@ class CrownOfGoldenRoses extends DrawCard {
                 let strBoost = this.parent.getNumberOfIcons();
 
                 this.untilEndOfPhase(ability => ({
-                    match: card => card === this.parent,
+                    match: this.parent,
                     effect: ability.effects.modifyStrength(strBoost)
                 }));
 
