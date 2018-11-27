@@ -963,9 +963,11 @@ class Player extends Spectator {
     }
 
     putIntoShadows(card, allowSave = true, callback = () => true) {
-        this.game.raiseEvent('onCardPutIntoShadows', { player: this, card: card, allowSave: allowSave }, event => {
-            event.cardStateWhenMoved = card.createSnapshot();
-            this.moveCard(card, 'shadows', { allowSave: allowSave }, callback);
+        this.game.applyGameAction('putIntoShadows', card, card => {
+            this.game.raiseEvent('onCardPutIntoShadows', { player: this, card: card, allowSave: allowSave }, event => {
+                event.cardStateWhenMoved = card.createSnapshot();
+                this.moveCard(card, 'shadows', { allowSave: allowSave }, callback);
+            });
         });
     }
 
