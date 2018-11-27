@@ -51,7 +51,9 @@ class InnerCard extends React.Component {
             ear: 'E',
             venom: 'M',
             kiss: 'K',
-            bell: 'L'
+            bell: 'L',
+            blood: 'D',
+            shadow: 'W'
         };
     }
 
@@ -101,38 +103,41 @@ class InnerCard extends React.Component {
 
     getCountersForCard(card) {
         let counters = [];
-        let needsFade = card.type === 'attachment' && !['rookery', 'full deck'].includes(this.props.source);
 
         if(card.power) {
-            counters.push({ name: 'card-power', count: card.power, fade: needsFade, shortName: 'P' });
+            counters.push({ name: 'card-power', count: card.power, shortName: 'P' });
         }
 
-        if(card.type === 'character' && card.baseStrength !== card.strength) {
-            counters.push({ name: 'strength', count: card.strength, fade: needsFade, shortName: 'S' });
-        }
+        // Only display psuedo-tokens for face up cards in play
+        if(!card.facedown && this.props.source === 'play area') {
+            if(card.type === 'character' && card.baseStrength !== card.strength) {
+                counters.push({ name: 'strength', count: card.strength, shortName: 'S' });
+            }
 
-        if(card.dupes && card.dupes.length > 0) {
-            counters.push({ name: 'dupe', count: card.dupes.length, fade: needsFade, shortName: 'D' });
-        }
+            if(card.dupes && card.dupes.length > 0) {
+                counters.push({ name: 'dupe', count: card.dupes.length, shortName: 'D' });
+            }
 
-        for(const icon of card.iconsAdded || []) {
-            counters.push({ name: 'challenge-icon-token', icon: icon, count: 0, cancel: false });
-        }
+            for(const icon of card.iconsAdded || []) {
+                counters.push({ name: 'challenge-icon-token', icon: icon, count: 0, cancel: false });
+            }
 
-        for(const icon of card.iconsRemoved || []) {
-            counters.push({ name: 'challenge-icon-token', icon: icon, count: 0, cancel: true });
-        }
+            for(const icon of card.iconsRemoved || []) {
+                counters.push({ name: 'challenge-icon-token', icon: icon, count: 0, cancel: true });
+            }
 
-        for(const item of card.factionStatus || []) {
-            counters.push({ name: 'faction-token', icon: item.faction, count: 0, cancel: item.status === 'lost' });
+            for(const item of card.factionStatus || []) {
+                counters.push({ name: 'faction-token', icon: item.faction, count: 0, cancel: item.status === 'lost' });
+            }
         }
 
         for(const [key, token] of Object.entries(card.tokens || {})) {
-            counters.push({ name: key, count: token, fade: needsFade, shortName: this.shortNames[key] });
+            counters.push({ name: key, count: token, shortName: this.shortNames[key] });
         }
 
         for(const attachment of card.attachments || []) {
-            counters = counters.concat(this.getCountersForCard(attachment));
+            let attachmentCounters = this.getCountersForCard(attachment).map(counter => Object.assign({ fade: true }, counter));
+            counters = counters.concat(attachmentCounters);
         }
 
         return counters.filter(counter => counter.count >= 0);
@@ -147,6 +152,7 @@ class InnerCard extends React.Component {
         var attachments = this.props.card.attachments.map(attachment => {
             var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment }
                 className={ classNames('attachment', `attachment-${index}`) } wrapped={ false }
+                hideTokens
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment) }
                 onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
                 onClick={ this.props.onClick }
@@ -233,22 +239,6 @@ class InnerCard extends React.Component {
         return true;
     }
 
-    showCounters() {
-        if(['rookery', 'full deck'].includes(this.props.source)) {
-            return true;
-        }
-
-        if(this.props.source !== 'play area' && this.props.source !== 'faction' && this.props.source !== 'revealed plots') {
-            return false;
-        }
-
-        if(this.props.card.facedown || this.props.card.type === 'attachment') {
-            return false;
-        }
-
-        return true;
-    }
-
     isFacedown() {
         return this.props.card.facedown || !this.props.card.code;
     }
@@ -308,7 +298,7 @@ class InnerCard extends React.Component {
                         <span className='card-name'>{ this.props.card.name }</span>
                         { image }
                     </div>
-                    { this.showCounters() ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
+                    { !this.props.hideTokens ? <CardCounters counters={ this.getCountersForCard(this.props.card) } /> : null }
                 </div>
                 { this.showMenu() ? <CardMenu menu={ this.props.card.menu } onMenuItemClick={ this.onMenuItemClick } /> : null }
             </div>);
@@ -409,6 +399,7 @@ InnerCard.propTypes = {
     connectDragSource: PropTypes.func,
     disableMouseOver: PropTypes.bool,
     dragOffset: PropTypes.object,
+    hideTokens: PropTypes.bool,
     isDragging: PropTypes.bool,
     onClick: PropTypes.func,
     onMenuItemClick: PropTypes.func,
