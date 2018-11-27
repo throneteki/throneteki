@@ -36,6 +36,66 @@ describe('burn effects', function() {
             });
         });
 
+        describe('when a character with a lasting effect STR buff will be burned', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('tyrell', [
+                    'Trading with the Pentoshi',
+                    'Hedge Knight', 'Varys (Core)', '"Lord Renly\'s Ride"'
+                ]);
+                const deck2 = this.buildDeck('targaryen', [
+                    'A Noble Cause',
+                    'Drogon (Core)', 'Dracarys!'
+                ]);
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.character = this.player1.findCardByName('Hedge Knight', 'hand');
+                this.player1.clickCard(this.character);
+
+                this.dragon = this.player2.findCardByName('Drogon', 'hand');
+                this.player2.clickCard(this.dragon);
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                this.completeMarshalPhase();
+
+                // Drag Varys to the dead pile to get +3 STR from Lord Renly's Ride
+                let deadCharacter = this.player1.findCardByName('Varys', 'hand');
+                this.player1.dragCard(deadCharacter, 'dead pile');
+
+                this.player1.clickPrompt('Military');
+                this.player1.clickCard(this.character);
+                this.player1.clickPrompt('Done');
+
+                // Buff the character by +3 STR
+                this.player1.clickCard('"Lord Renly\'s Ride"', 'hand');
+                this.player1.clickCard(this.character);
+
+                this.player2.clickCard('Dracarys!');
+                this.player2.clickCard(this.dragon);
+                this.player2.clickCard(this.character);
+
+                this.skipActionWindow();
+
+                this.player2.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                // Skip claim
+                this.player1.clickPrompt('Continue');
+
+                this.completeChallengesPhase();
+            });
+
+            it('should not kill the character when lasting effects expire', function() {
+                expect(this.character.location).toBe('play area');
+            });
+        });
+
         describe('when effects are self-applied to a card that will be burned', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('baratheon', [
