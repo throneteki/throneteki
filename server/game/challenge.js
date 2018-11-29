@@ -160,10 +160,10 @@ class Challenge {
     }
 
     addParticipantToSide(player, card) {
-        if(this.game.currentChallenge.attackingPlayer === player) {
-            this.game.currentChallenge.addAttacker(card);
+        if(this.attackingPlayer === player) {
+            this.addAttacker(card);
         } else {
-            this.game.currentChallenge.addDefender(card);
+            this.addDefender(card);
         }
     }
 
