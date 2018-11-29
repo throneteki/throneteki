@@ -34,11 +34,7 @@ class BondsOfChivalry extends DrawCard {
     addToChallenge(card) {
         this.game.addMessage('{0} kneels {1} to have it participate in the challenge', this.controller, card);
         this.controller.kneelCard(card);
-        if(this.game.currentChallenge.attackingPlayer === this.controller) {
-            this.game.currentChallenge.addAttacker(card);
-        } else {
-            this.game.currentChallenge.addDefender(card);
-        }
+        this.game.currentChallenge.addParticipantToSide(this.controller, card);
 
         return true;
     }
