@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class Chollo extends DrawCard {
+class Cohollo extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Discard a card',
@@ -18,6 +18,6 @@ class Chollo extends DrawCard {
     }
 }
 
-Chollo.code = '12035';
+Cohollo.code = '12035';
 
-module.exports = Chollo;
+module.exports = Cohollo;
