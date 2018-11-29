@@ -1168,6 +1168,24 @@ const Effects = {
             }
         };
     },
+    revealTopCard: function() {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                let revealFunc = (card) => player.drawDeck.length > 0 && player.drawDeck[0] === card;
+
+                context.revealTopCard = context.revealTopCard || {};
+                context.revealTopCard[player.name] = revealFunc;
+                context.game.cardVisibility.addRule(revealFunc);
+            },
+            unapply: function(player, context) {
+                let revealFunc = context.revealTopCard[player.name];
+
+                context.game.cardVisibility.removeRule(revealFunc);
+                delete context.revealTopCard[player.name];
+            }
+        };
+    },
     //Meereen only effect
     removeCardsFromHand: function() {
         return {
