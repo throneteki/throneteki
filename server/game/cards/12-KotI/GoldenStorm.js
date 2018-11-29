@@ -11,7 +11,6 @@ class GoldenStorm extends DrawCard {
                 )
             },
             target: {
-                // activePromptTitle: 'Select a character',  // <- default prompt message, overridable
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isParticipating(),
                 gameAction: 'kill'                   
             },
@@ -27,11 +26,11 @@ class GoldenStorm extends DrawCard {
                     }
                 }
                 if(wasStand === true) {
-                    this.game.addMessage('[0] uses {1} to kill {2} and stand {3}',this.controller,this,context.target,this);
+                    this.game.addMessage('[0] uses {1} to kill {2} and stand {3}', this.controller, this,context.target, this);
                     return;
                 }
 
-                this.game.addMessage('[0] uses {1} to kill {2}',this.controller,this,context.target);
+                this.game.addMessage('[0] uses {1} to kill {2}', this.controller, this,context.target);
             }
             
         });

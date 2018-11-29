@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class Silece extends DrawCard {
+class Silence extends DrawCard {
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 2
@@ -25,16 +25,16 @@ class Silece extends DrawCard {
                     wasStand = true;
                 }
                 if(wasStand === true) {
-                    this.game.addMessage('{0} uses {1} to put {2} into play and stand {3}',this.controller,this,context.target,euron);
+                    this.game.addMessage('{0} uses {1} to put {2} into play and stand {3}', this.controller, this,context.target, euron);
                     return;
                 }
 
-                this.game.addMessage('{0} uses {1} to put {2} into play',this.controller,this,context.target);
+                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this,context.target);
             }
         });
     }
 }
 
-Silece.code = '12016';
+Silence.code = '12016';
 
-module.exports = Silece;
+module.exports = Silence;
