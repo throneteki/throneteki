@@ -166,6 +166,8 @@ class PendingGame {
             if(this.started) {
                 this.players[playerName].left = true;
             } else {
+                this.removeAndResetOwner(playerName);
+
                 delete this.players[playerName];
             }
         }
@@ -187,6 +189,8 @@ class PendingGame {
 
         if(this.players[playerName]) {
             if(!this.started) {
+                this.removeAndResetOwner(playerName);
+
                 delete this.players[playerName];
             }
         } else {
@@ -235,6 +239,16 @@ class PendingGame {
         }
 
         return true;
+    }
+
+    removeAndResetOwner(playerName) {
+        if(this.isOwner(playerName)) {
+            let otherPlayer = _.find(this.players, player => player.name !== playerName);
+            if(otherPlayer) {
+                this.owner = otherPlayer.user;
+                otherPlayer.owner = true;
+            }
+        }
     }
 
     hasActivePlayer(playerName) {
