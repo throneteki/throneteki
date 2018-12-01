@@ -26,7 +26,7 @@ class Deck {
 
     createAgendaCard(player) {
         if(this.data.agenda) {
-            return this.createCard(AgendaCard, player, this.data.agenda);
+            return this.createCardForType(AgendaCard, player, this.data.agenda);
         }
 
         return;
@@ -48,7 +48,7 @@ class Deck {
 
         this.eachRepeatedCard(this.data.drawCards || [], cardData => {
             if(this.isDrawCard(cardData)) {
-                var drawCard = this.createCard(DrawCard, player, cardData);
+                var drawCard = this.createCardForType(DrawCard, player, cardData);
                 drawCard.moveTo('draw deck');
                 result.drawCards.push(drawCard);
             }
@@ -56,7 +56,7 @@ class Deck {
 
         this.eachRepeatedCard(this.data.plotCards || [], cardData => {
             if(this.isPlotCard(cardData)) {
-                var plotCard = this.createCard(PlotCard, player, cardData);
+                var plotCard = this.createCardForType(PlotCard, player, cardData);
                 plotCard.moveTo('plot deck');
                 result.plotCards.push(plotCard);
             }
@@ -73,7 +73,7 @@ class Deck {
             result.allCards.push(result.agenda);
         }
 
-        result.bannerCards = (this.data.bannerCards || []).map(card => this.createCard(AgendaCard, player, card));
+        result.bannerCards = (this.data.bannerCards || []).map(card => this.createCardForType(AgendaCard, player, card));
 
         for(let card of result.bannerCards) {
             card.moveTo('agenda');
@@ -91,20 +91,20 @@ class Deck {
         }
     }
 
-    createCard(baseClass, player, cardData) {
+    createCardForType(baseClass, player, cardData) {
         let cardClass = cards[cardData.code] || baseClass;
         return new cardClass(player, cardData);
     }
 
-    addCardToDeck(player, cardData) {
+    createCard(player, cardData) {
         if(this.isDrawCard(cardData)) {
-            var drawCard = this.createCard(DrawCard, player, cardData);
+            var drawCard = this.createCardForType(DrawCard, player, cardData);
             drawCard.moveTo('draw deck');
             return drawCard;
         }
 
         if(this.isPlotCard(cardData)) {
-            var plotCard = this.createCard(PlotCard, player, cardData);
+            var plotCard = this.createCardForType(PlotCard, player, cardData);
             plotCard.moveTo('plot deck');
             return plotCard;
         }

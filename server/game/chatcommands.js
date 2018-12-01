@@ -455,7 +455,7 @@ class ChatCommands {
         }
 
         let deck = new Deck();
-        let preparedCard = deck.addCardToDeck(player, card);
+        let preparedCard = deck.createCard(player, card);
 
         if(deck.isDrawCard(card)) {
             player.moveCard(preparedCard, 'draw deck');
