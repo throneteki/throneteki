@@ -397,26 +397,25 @@ class Lobby {
             let gameToJoin = sortedGames.find(game => !game.started && game.gameType === gameDetails.gameType && _.size(game.players) < 2 && !game.password);
 
             if(gameToJoin) {
-                gameToJoin.join(socket.id, socket.user.getDetails(), undefined, (err, message) => {
-                    if(err) {
-                        socket.send('passworderror', message);
+                let message = gameToJoin.join(socket.id, socket.user.getDetails());
+                if(message) {
+                    socket.send('passworderror', message);
 
-                        return;
-                    }
+                    return;
+                }
 
-                    socket.joinChannel(gameToJoin.id);
+                socket.joinChannel(gameToJoin.id);
 
-                    this.sendGameState(gameToJoin);
+                this.sendGameState(gameToJoin);
 
-                    this.broadcastGameList();
-                });
+                this.broadcastGameList();
 
                 return;
             }
         }
 
         let game = new PendingGame(socket.user.getDetails(), gameDetails);
-        game.newGame(socket.id, socket.user, gameDetails.password);
+        game.newGame(socket.id, socket.user.getDetails(), gameDetails.password);
 
         socket.joinChannel(game.id);
         this.sendGameState(game);
@@ -436,7 +435,7 @@ class Lobby {
             return;
         }
 
-        let message = game.join(socket.id, socket.user, password);
+        let message = game.join(socket.id, socket.user.getDetails(), password);
         if(message) {
             socket.send('passworderror', message);
             return;
@@ -511,22 +510,22 @@ class Lobby {
             return;
         }
 
-        game.watch(socket.id, socket.user.getDetails(), password, (err, message) => {
-            if(err) {
-                socket.send('passworderror', message);
+        let message = game.watch(socket.id, socket.user.getDetails(), password);
 
-                return;
-            }
+        if(message) {
+            socket.send('passworderror', message);
 
-            socket.joinChannel(game.id);
+            return;
+        }
 
-            if(game.started) {
-                this.router.addSpectator(game, socket.user.getDetails());
-                this.sendHandoff(socket, game.node, game.id);
-            } else {
-                this.sendGameState(game);
-            }
-        });
+        socket.joinChannel(game.id);
+
+        if(game.started) {
+            this.router.addSpectator(game, socket.user.getDetails());
+            this.sendHandoff(socket, game.node, game.id);
+        } else {
+            this.sendGameState(game);
+        }
     }
 
     onLeaveGame(socket) {
