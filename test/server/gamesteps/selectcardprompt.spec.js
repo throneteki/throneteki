@@ -7,6 +7,9 @@ describe('the SelectCardPrompt', function() {
         card.getType.and.returnValue('character');
         card.allowGameAction.and.returnValue(true);
         _.extend(card, properties);
+        card.toString = function() {
+            return JSON.stringify({ name: properties.name || 'card' });
+        };
         return card;
     }
 
@@ -16,7 +19,7 @@ describe('the SelectCardPrompt', function() {
         this.player = jasmine.createSpyObj('player1', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards']);
         this.player.cardsInPlay = [];
         this.otherPlayer = jasmine.createSpyObj('player2', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards']);
-        this.card = createCardSpy({ controller: this.player });
+        this.card = createCardSpy({ name: 'card', controller: this.player });
 
         this.player.cardsInPlay.push(this.card);
 
@@ -478,6 +481,116 @@ describe('the SelectCardPrompt', function() {
                     it('should return true', function() {
                         expect(this.prompt.checkCardCondition(this.card)).toBe(true);
                     });
+                });
+            });
+        });
+    });
+
+    describe('for prompts with must-select cards', function() {
+        beforeEach(function() {
+            this.properties.cardCondition.and.returnValue(true);
+
+            this.mustSelectCard1 = createCardSpy({ name: 'mustSelect1', controller: this.player });
+            this.mustSelectCard2 = createCardSpy({ name: 'mustSelect2', controller: this.player });
+            this.properties.mustSelect = [this.mustSelectCard1, this.mustSelectCard2];
+        });
+
+        describe('and there are fewer must-select cards than the limit for the prompt', function() {
+            beforeEach(function() {
+                // Unlimited selector
+                this.properties.numCards = 0;
+                this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+            });
+
+            describe('constructor()', function() {
+                it('pre-selects the must-select cards', function() {
+                    expect(this.prompt.selectedCards).toContain(this.mustSelectCard1);
+                    expect(this.prompt.selectedCards).toContain(this.mustSelectCard2);
+                });
+
+                it('sets the selection on the player', function() {
+                    expect(this.player.setSelectedCards).toHaveBeenCalledWith([this.mustSelectCard1, this.mustSelectCard2]);
+                });
+            });
+
+            describe('onCardClicked()', function() {
+                it('cannot unselect a must-select card', function() {
+                    this.prompt.onCardClicked(this.player, this.mustSelectCard1);
+                    expect(this.prompt.selectedCards).toContain(this.mustSelectCard1);
+                });
+
+                it('can select a non-must-select card', function() {
+                    this.prompt.onCardClicked(this.player, this.card);
+                    expect(this.prompt.selectedCards).toContain(this.card);
+                });
+
+                it('can unselect a non-must-select card', function() {
+                    this.prompt.onCardClicked(this.player, this.card);
+                    this.prompt.onCardClicked(this.player, this.card);
+                    expect(this.prompt.selectedCards).not.toContain(this.card);
+                });
+            });
+        });
+
+        describe('and there are more must-select cards than the limit for the prompt', function() {
+            beforeEach(function() {
+                this.properties.numCards = 1;
+                this.properties.multiSelect = true;
+                this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+            });
+
+            describe('constructor()', function() {
+                it('does not pre-select the must-select cards', function() {
+                    expect(this.prompt.selectedCards).not.toContain(this.mustSelectCard1);
+                    expect(this.prompt.selectedCards).not.toContain(this.mustSelectCard2);
+                });
+            });
+
+            describe('onCardClicked()', function() {
+                it('can select a must-select card', function() {
+                    this.prompt.onCardClicked(this.player, this.mustSelectCard1);
+                    expect(this.prompt.selectedCards).toContain(this.mustSelectCard1);
+                });
+
+                it('can unselect a must-select card', function() {
+                    this.prompt.onCardClicked(this.player, this.mustSelectCard1);
+                    this.prompt.onCardClicked(this.player, this.mustSelectCard1);
+                    expect(this.prompt.selectedCards).not.toContain(this.mustSelectCard1);
+                });
+
+                it('cannot select a non-must-select card', function() {
+                    this.prompt.onCardClicked(this.player, this.card);
+                    expect(this.prompt.selectedCards).not.toContain(this.card);
+                });
+            });
+        });
+
+        describe('and there are exactly the number of must-select cards as the limit', function() {
+            beforeEach(function() {
+                this.properties.numCards = 2;
+                this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+            });
+
+            describe('constructor()', function() {
+                it('pre-selects the must-select cards', function() {
+                    expect(this.prompt.selectedCards).toContain(this.mustSelectCard1);
+                    expect(this.prompt.selectedCards).toContain(this.mustSelectCard2);
+                });
+
+                it('sets the selection on the player', function() {
+                    expect(this.player.setSelectedCards).toHaveBeenCalledWith([this.mustSelectCard1, this.mustSelectCard2]);
+                });
+            });
+
+            describe('onCardClicked()', function() {
+                it('cannot unselect a must-select card', function() {
+                    this.prompt.onCardClicked(this.player, this.mustSelectCard1);
+                    expect(this.prompt.selectedCards).toContain(this.mustSelectCard1);
+                });
+
+                it('cannot select additional non-must-select cards beyond the limit', function() {
+                    this.prompt.onCardClicked(this.player, this.card);
+                    expect(this.prompt.selectedCards).not.toContain(this.card);
                 });
             });
         });
