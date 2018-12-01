@@ -8,6 +8,13 @@
         "after": true
       }
     ],
+    "comma-spacing": [
+      "error",
+      {
+        "before": false,
+        "after": true
+      }
+    ],
     "indent": [
       2,
       4,
@@ -87,7 +94,8 @@
       2
     ],
     "no-multiple-empty-lines": [
-      2, {
+      2,
+      {
         "max": 1
       }
     ],
@@ -119,10 +127,17 @@
         }
       }
     ],
-    "padded-blocks": ["error", "never"],
+    "padded-blocks": [
+      "error",
+      "never"
+    ],
     "padding-line-between-statements": [
       "error",
-      { "blankLine": "always", "prev": "*", "next": "cjs-export" }
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "cjs-export"
+      }
     ]
   },
   "env": {
