@@ -56,11 +56,18 @@ class DrawDeck extends React.Component {
 
         let hasCards = !!this.props.cards && this.props.cards.length !== 0;
 
+        // If we have more than 0 cards, but were not sent an array of card
+        // objects, no cards in the deck are currently visible. Thus, we want to
+        // display a facedown card in its place. If we were sent card objects,
+        // at least one card is visible, likely due to a search or reveal
+        // effect, and therefore use the visibility of those cards directly.
+        let usePlaceholderCard = this.props.cardCount > 0 && !this.props.cards;
+
         let drawDeck = (<CardPile className='draw'
             cardCount={ this.props.cardCount }
             cards={ this.props.cards }
             disablePopup={ !hasCards && (this.props.spectating || !this.props.isMe) }
-            hiddenTopCard
+            hiddenTopCard={ usePlaceholderCard }
             menu={ drawDeckMenu }
             onCardClick={ this.props.onCardClick }
             onDragDrop={ this.props.onDragDrop }
