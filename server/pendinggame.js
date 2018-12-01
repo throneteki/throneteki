@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const _ = require('underscore');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const logger = require('./log.js');
 const GameChat = require('./game/gamechat.js');
@@ -100,34 +100,19 @@ class PendingGame {
         };
     }
 
-    newGame(id, user, password, callback) {
+    newGame(id, user, password) {
         if(password) {
-            bcrypt.hash(password, 10, (err, hash) => {
-                if(err) {
-                    logger.info(err);
-
-                    callback(err);
-
-                    return;
-                }
-
-                this.password = hash;
-                this.addPlayer(id, user);
-
-                callback();
-            });
-        } else {
-            this.addPlayer(id, user);
-
-            callback();
+            this.password = crypto.createHash('md5').update(password).digest('hex');
         }
+
+        this.addPlayer(id, user);
     }
 
     isUserBlocked(user) {
         return _.contains(this.owner.blockList, user.username.toLowerCase());
     }
 
-    join(id, user, password, callback) {
+    join(id, user, password) {
         if(_.size(this.players) === 2 || this.started) {
             return;
         }
@@ -137,24 +122,13 @@ class PendingGame {
         }
 
         if(this.password) {
-            bcrypt.compare(password, this.password, (err, valid) => {
-                if(err) {
-                    return callback(new Error('Bad password'), 'Incorrect game password');
-                }
-
-                if(!valid) {
-                    return callback(new Error('Bad password'), 'Incorrect game password');
-                }
-
-                this.addPlayer(id, user);
-
-                callback();
-            });
-        } else {
-            this.addPlayer(id, user);
-
-            callback();
+            if(crypto.createHash('md5').update(password).digest('hex') !== this.password) {
+                return 'Incorrect game password';
+            }
         }
+
+        this.addPlayer(id, user);
+        this.addMessage('{0} has joined the game', user.username);
     }
 
     watch(id, user, password, callback) {
@@ -169,27 +143,13 @@ class PendingGame {
         }
 
         if(this.password) {
-            bcrypt.compare(password, this.password, (err, valid) => {
-                if(err) {
-                    return callback(new Error('Bad password'), 'Incorrect game password');
-                }
-
-                if(!valid) {
-                    return callback(new Error('Bad password'), 'Incorrect game password');
-                }
-
-                this.addSpectator(id, user);
-
-                this.addMessage('{0} has joined the game as a spectator', user.username);
-                callback();
-            });
-        } else {
-            this.addSpectator(id, user);
-
-            this.addMessage('{0} has joined the game as a spectator', user.username);
-
-            callback();
+            if(crypto.createHash('md5').update(password).digest('hex') !== this.password) {
+                return 'Incorrect game password';
+            }
         }
+
+        this.addSpectator(id, user);
+        this.addMessage('{0} has joined the game as a spectator', user.username);
     }
 
     leave(playerName) {

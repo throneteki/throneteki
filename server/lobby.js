@@ -416,19 +416,13 @@ class Lobby {
         }
 
         let game = new PendingGame(socket.user.getDetails(), gameDetails);
-        game.newGame(socket.id, socket.user.getDetails(), gameDetails.password, (err, message) => {
-            if(err) {
-                logger.info('game failed to create', err, message);
+        game.newGame(socket.id, socket.user, gameDetails.password);
 
-                return;
-            }
+        socket.joinChannel(game.id);
+        this.sendGameState(game);
 
-            socket.joinChannel(game.id);
-            this.sendGameState(game);
-
-            this.games[game.id] = game;
-            this.broadcastGameList();
-        });
+        this.games[game.id] = game;
+        this.broadcastGameList();
     }
 
     onJoinGame(socket, gameId, password) {
@@ -442,19 +436,16 @@ class Lobby {
             return;
         }
 
-        game.join(socket.id, socket.user.getDetails(), password, (err, message) => {
-            if(err) {
-                socket.send('passworderror', message);
+        let message = game.join(socket.id, socket.user, password);
+        if(message) {
+            socket.send('passworderror', message);
+            return;
+        }
 
-                return;
-            }
+        socket.joinChannel(game.id);
 
-            socket.joinChannel(game.id);
-
-            this.sendGameState(game);
-
-            this.broadcastGameList();
-        });
+        this.sendGameState(game);
+        this.broadcastGameList();
     }
 
     onStartGame(socket, gameId) {
