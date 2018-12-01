@@ -28,6 +28,8 @@ class CoordinatedAttack extends PlotCard {
             effect: ability.effects.mayInitiateAdditionalChallenge(selectedType)
         }));
         this.game.addMessage('{0} uses {1} to be able to initate an additional {2} challenge this phase', player, this, selectedType);
+
+        return true;
     }
 }
 

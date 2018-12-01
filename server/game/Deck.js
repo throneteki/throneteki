@@ -32,6 +32,14 @@ class Deck {
         return;
     }
 
+    isPlotCard(cardData) {
+        return cardData.type === 'plot';
+    }
+
+    isDrawCard(cardData) {
+        return ['attachment', 'character', 'event', 'location'].includes(cardData.type);
+    }
+
     prepare(player) {
         let result = {
             drawCards: [],
@@ -39,7 +47,7 @@ class Deck {
         };
 
         this.eachRepeatedCard(this.data.drawCards || [], cardData => {
-            if(['attachment', 'character', 'event', 'location'].includes(cardData.type)) {
+            if(this.isDrawCard(cardData)) {
                 var drawCard = this.createCard(DrawCard, player, cardData);
                 drawCard.moveTo('draw deck');
                 result.drawCards.push(drawCard);
@@ -47,7 +55,7 @@ class Deck {
         });
 
         this.eachRepeatedCard(this.data.plotCards || [], cardData => {
-            if(cardData.type === 'plot') {
+            if(this.isPlotCard(cardData)) {
                 var plotCard = this.createCard(PlotCard, player, cardData);
                 plotCard.moveTo('plot deck');
                 result.plotCards.push(plotCard);
@@ -86,6 +94,20 @@ class Deck {
     createCard(baseClass, player, cardData) {
         let cardClass = cards[cardData.code] || baseClass;
         return new cardClass(player, cardData);
+    }
+
+    addCardToDeck(player, cardData) {
+        if(this.isDrawCard(cardData)) {
+            var drawCard = this.createCard(DrawCard, player, cardData);
+            drawCard.moveTo('draw deck');
+            return drawCard;
+        }
+
+        if(this.isPlotCard(cardData)) {
+            var plotCard = this.createCard(PlotCard, player, cardData);
+            plotCard.moveTo('plot deck');
+            return plotCard;
+        }
     }
 }
 

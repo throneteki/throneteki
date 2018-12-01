@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const zmq = require('zmq');
+const zmq = require('zeromq');
 const config = require('./nodeconfig.js');
 const logger = require('../log.js');
 const { spawnSync } = require('child_process');

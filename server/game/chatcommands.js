@@ -1,6 +1,7 @@
 const _ = require('underscore');
 const TextHelper = require('./TextHelper');
 const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
+const Deck = require('./Deck');
 
 class ChatCommands {
     constructor(game) {
@@ -10,6 +11,7 @@ class ChatCommands {
             '/add-icon': this.addIcon,
             '/add-keyword': this.addKeyword,
             '/add-trait': this.addTrait,
+            '/add-card': this.addCard,
             '/bestow': this.bestow,
             '/blank': this.blank,
             '/cancel-prompt': this.cancelPrompt,
@@ -440,6 +442,32 @@ class ChatCommands {
                 return true;
             }
         });
+    }
+
+    addCard(player, args) {
+        let cardName = args.slice(1).join(' ');
+        let card = Object.values(this.game.cardData).find(c => {
+            return c.label.toLowerCase() === cardName.toLowerCase() || c.name.toLowerCase() === cardName.toLowerCase();
+        });
+
+        if(!card) {
+            return false;
+        }
+
+        let deck = new Deck();
+        let preparedCard = deck.addCardToDeck(player, card);
+
+        if(deck.isDrawCard(card)) {
+            player.moveCard(preparedCard, 'draw deck');
+        } else if(deck.isPlotCard(card)) {
+            player.moveCard(preparedCard, 'plot deck');
+        }
+
+        this.game.allCards.push(preparedCard);
+
+        this.game.addAlert('danger', '{0} uses the /add-card command to add {1} to their deck', player, card);
+
+        return true;
     }
 
     getNumberOrDefault(string, defaultNumber) {

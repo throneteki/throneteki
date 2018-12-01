@@ -51,7 +51,7 @@
     "uuid": "^3.1.0",
     "winston": "^2.2.0",
     "winston-daily-rotate-file": "^1.7.2",
-    "zmq": "^2.15.3"
+    "zeromq": "^5.1.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
