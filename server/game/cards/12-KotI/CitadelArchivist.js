@@ -5,9 +5,10 @@ class CitadelArchivist extends DrawCard {
         this.reaction({
             when: {
                 onCardPlaced: event => event.card.location === 'discard pile' &&
-                                       event.player === this.controller &&
-                                       event.card === this
+                    event.player === this.controller &&
+                    event.card === this
             },
+            location: 'discard pile',
             handler: () => {
                 for(let player of this.game.getPlayersInFirstPlayerOrder()) {
                     for(let card of player.discardPile) {
