@@ -7,11 +7,7 @@ class WunWun extends DrawCard {
             condition: () => this.isWildlingdParticipatingInChallenge(),
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                if(this.game.currentChallenge.attackingPlayer === context.player) {
-                    this.game.currentChallenge.addAttacker(this);
-                } else {
-                    this.game.currentChallenge.addDefender(this);
-                }
+                this.game.currentChallenge.addParticipantToSide(context.player, this);
 
                 this.game.addMessage('{0} uses {1} to kneel {1} and add them to the challenge', context.player, this);
             }

@@ -26,10 +26,18 @@ class Deck {
 
     createAgendaCard(player) {
         if(this.data.agenda) {
-            return this.createCard(AgendaCard, player, this.data.agenda);
+            return this.createCardForType(AgendaCard, player, this.data.agenda);
         }
 
         return;
+    }
+
+    isPlotCard(cardData) {
+        return cardData.type === 'plot';
+    }
+
+    isDrawCard(cardData) {
+        return ['attachment', 'character', 'event', 'location'].includes(cardData.type);
     }
 
     prepare(player) {
@@ -39,16 +47,16 @@ class Deck {
         };
 
         this.eachRepeatedCard(this.data.drawCards || [], cardData => {
-            if(['attachment', 'character', 'event', 'location'].includes(cardData.type)) {
-                var drawCard = this.createCard(DrawCard, player, cardData);
+            if(this.isDrawCard(cardData)) {
+                var drawCard = this.createCardForType(DrawCard, player, cardData);
                 drawCard.moveTo('draw deck');
                 result.drawCards.push(drawCard);
             }
         });
 
         this.eachRepeatedCard(this.data.plotCards || [], cardData => {
-            if(cardData.type === 'plot') {
-                var plotCard = this.createCard(PlotCard, player, cardData);
+            if(this.isPlotCard(cardData)) {
+                var plotCard = this.createCardForType(PlotCard, player, cardData);
                 plotCard.moveTo('plot deck');
                 result.plotCards.push(plotCard);
             }
@@ -65,7 +73,7 @@ class Deck {
             result.allCards.push(result.agenda);
         }
 
-        result.bannerCards = (this.data.bannerCards || []).map(card => this.createCard(AgendaCard, player, card));
+        result.bannerCards = (this.data.bannerCards || []).map(card => this.createCardForType(AgendaCard, player, card));
 
         for(let card of result.bannerCards) {
             card.moveTo('agenda');
@@ -83,9 +91,23 @@ class Deck {
         }
     }
 
-    createCard(baseClass, player, cardData) {
+    createCardForType(baseClass, player, cardData) {
         let cardClass = cards[cardData.code] || baseClass;
         return new cardClass(player, cardData);
+    }
+
+    createCard(player, cardData) {
+        if(this.isDrawCard(cardData)) {
+            var drawCard = this.createCardForType(DrawCard, player, cardData);
+            drawCard.moveTo('draw deck');
+            return drawCard;
+        }
+
+        if(this.isPlotCard(cardData)) {
+            var plotCard = this.createCardForType(PlotCard, player, cardData);
+            plotCard.moveTo('plot deck');
+            return plotCard;
+        }
     }
 }
 

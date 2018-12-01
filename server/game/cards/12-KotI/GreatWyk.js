@@ -23,17 +23,17 @@ class GreatWyk extends DrawCard {
                             onCancel: (opponent) => this.onSelectCard(opponent, null)
                         });
                     }
-                }        
+                }
             }
         });
     }
 
-    onSelectCard(player,card) {
+    onSelectCard(player, card) {
         if(card === null) {
-            this.game.addAlert('danger','{0} does not choose any card for {1}', player, this);
+            this.game.addAlert('danger', '{0} does not choose any card for {1}', player, this);
             return true;
         }
-        
+
         player.discardCard(card);
         this.game.addMessage('{0} chooses {1} for {2}', player, card, this);
         return true;
@@ -43,4 +43,4 @@ class GreatWyk extends DrawCard {
 GreatWyk.code = '12017';
 
 module.exports = GreatWyk;
-    
+

@@ -159,6 +159,14 @@ class Challenge {
         this.calculateStrength();
     }
 
+    addParticipantToSide(player, card) {
+        if(this.attackingPlayer === player) {
+            this.addAttacker(card);
+        } else {
+            this.addDefender(card);
+        }
+    }
+
     getStealthAttackers() {
         return _.filter(this.attackers, card => card.needsStealthTarget());
     }

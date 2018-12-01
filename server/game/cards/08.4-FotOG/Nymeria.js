@@ -12,14 +12,8 @@ class Nymeria extends DrawCard {
             handler: context => {
                 let direwolvesToAdd = context.getCostValuesFor('kneel');
 
-                if(this.game.currentChallenge.attackingPlayer === context.player) {
-                    for(let card of direwolvesToAdd) {
-                        this.game.currentChallenge.addAttacker(card);
-                    }
-                } else {
-                    for(let card of direwolvesToAdd) {
-                        this.game.currentChallenge.addDefender(card);
-                    }
+                for(let card of direwolvesToAdd) {
+                    this.game.currentChallenge.addParticipantToSide(context.player, card);
                 }
 
                 this.game.addMessage('{0} kneels {1} to add them to the challenge', context.player, direwolvesToAdd);

@@ -34,18 +34,6 @@ function hashPassword(password, rounds) {
     });
 }
 
-function verifyPassword(password, dbPassword) {
-    return new Promise((resolve, reject) => {
-        bcrypt.compare(password, dbPassword, function (err, valid) {
-            if(err) {
-                return reject(err);
-            }
-
-            return resolve(valid);
-        });
-    });
-}
-
 function sendEmail(address, subject, email) {
     const message = {
         to: address,
@@ -305,7 +293,7 @@ module.exports.init = function (server) {
 
         let isValidPassword;
         try {
-            isValidPassword = await verifyPassword(req.body.password, user.password);
+            isValidPassword = await bcrypt.compare(req.body.password, user.password);
         } catch(err) {
             logger.error(err);
 

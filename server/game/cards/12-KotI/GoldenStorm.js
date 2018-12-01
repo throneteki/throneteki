@@ -6,13 +6,13 @@ class GoldenStorm extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.challengeType === 'military' && 
-                    event.challenge.attackingPlayer === this.controller                  
+                    event.challenge.challengeType === 'military' &&
+                    event.challenge.attackingPlayer === this.controller
                 )
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isParticipating(),
-                gameAction: 'kill'                   
+                gameAction: 'kill'
             },
             cost:  ability.costs.kneelSelf(),
             handler: context => {
@@ -26,13 +26,13 @@ class GoldenStorm extends DrawCard {
                     }
                 }
                 if(wasStand === true) {
-                    this.game.addMessage('[0] uses {1} to kill {2} and stand {3}', this.controller, this,context.target, this);
+                    this.game.addMessage('[0] uses {1} to kill {2} and stand {3}', this.controller, this, context.target, this);
                     return;
                 }
 
-                this.game.addMessage('[0] uses {1} to kill {2}', this.controller, this,context.target);
+                this.game.addMessage('[0] uses {1} to kill {2}', this.controller, this, context.target);
             }
-            
+
         });
     }
 }
