@@ -49,28 +49,29 @@ class ChallengeFlow extends BaseStep {
     }
 
     promptForAttackers() {
-        let title = 'Select challenge attackers';
-        let attackerMax = this.challenge.attackingPlayer.attackerLimits.getMax();
-        if(attackerMax !== 0) {
-            title += ' (max ' + attackerMax + ')';
+        this.game.queueStep(new ChooseParticipantsPrompt(this.game, this.challenge.attackingPlayer, {
+            challengeType: this.challenge.challengeType,
+            gameAction: 'declareAsAttacker',
+            mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
+            limitsProperty: 'attackerLimits',
+            activePromptTitle: 'Select challenge attackers',
+            waitingPromptTitle: 'Waiting for opponent to select attackers',
+            messages: {
+                autoDeclareSingular: '{0} is automatically declared as an attacker',
+                autoDeclarePlural: '{0} are automatically declared as attackers',
+                notEnoughSingular: '{0} did not declare at least {1} attacker but had characters to do so',
+                notEnoughPlural: '{0} did not declare at least {1} attackers but had characters to do so'
+            },
+            onSelect: attackers => this.chooseAttackers(attackers)
+        }));
+    }
+
+    chooseAttackers(attackers) {
+        if(attackers.length === 0) {
+            this.challenge.cancelChallenge();
+            return;
         }
 
-        this.game.promptForSelect(this.challenge.attackingPlayer, {
-            numCards: attackerMax,
-            multiSelect: true,
-            activePromptTitle: title,
-            waitingPromptTitle: 'Waiting for opponent to select attackers',
-            cardCondition: card => this.allowAsAttacker(card),
-            onSelect: (player, attackers) => this.chooseAttackers(player, attackers),
-            onCancel: () => this.challenge.cancelChallenge()
-        });
-    }
-
-    allowAsAttacker(card) {
-        return this.challenge.attackingPlayer === card.controller && card.canDeclareAsAttacker(this.challenge.challengeType);
-    }
-
-    chooseAttackers(player, attackers) {
         this.attackersToKneel = [];
         this.challenge.addAttackers(attackers);
 
@@ -140,9 +141,7 @@ class ChallengeFlow extends BaseStep {
                 notEnoughSingular: '{0} did not declare at least {1} defender but had characters to do so',
                 notEnoughPlural: '{0} did not declare at least {1} defenders but had characters to do so'
             },
-            onSelect: defenders => {
-                this.chooseDefenders(defenders);
-            }
+            onSelect: defenders => this.chooseDefenders(defenders)
         }));
     }
 
