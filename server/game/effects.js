@@ -118,6 +118,7 @@ const Effects = {
     },
     canBeDeclaredWithoutIcon: challengeOptionEffect('canBeDeclaredWithoutIcon'),
     canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
+    mustBeDeclaredAsAttacker: challengeOptionEffect('mustBeDeclaredAsAttacker'),
     mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
