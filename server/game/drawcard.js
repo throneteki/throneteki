@@ -416,10 +416,6 @@ class DrawCard extends BaseCard {
         return this.allowGameAction('declareAsAttacker') && this.canDeclareAsParticipant(challengeType);
     }
 
-    canDeclareAsDefender(challengeType) {
-        return this.allowGameAction('declareAsDefender') && this.canDeclareAsParticipant(challengeType);
-    }
-
     canDeclareAsParticipant(challengeType) {
         return (
             this.canParticipateInChallenge() &&

@@ -2,6 +2,7 @@ const _ = require('underscore');
 const BaseStep = require('../basestep.js');
 const GamePipeline = require('../../gamepipeline.js');
 const SimpleStep = require('../simplestep.js');
+const ChooseParticipantsPrompt = require('./ChooseParticipantsPrompt');
 const ChooseStealthTargets = require('./choosestealthtargets.js');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
@@ -126,90 +127,26 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.forcedDefenders = this.challenge.defendingPlayer.filterCardsInPlay(card => {
-            return card.getType() === 'character' &&
-                card.canDeclareAsDefender(this.challenge.challengeType) &&
-                card.challengeOptions.contains('mustBeDeclaredAsDefender');
-        });
-
-        let defenderMaximum = this.challenge.defendingPlayer.defenderLimits.getMax();
-        let defenderMinimum = this.challenge.defendingPlayer.defenderLimits.getMin();
-        let selectableLimit = defenderMaximum;
-
-        if(!_.isEmpty(this.forcedDefenders)) {
-            if(this.forcedDefenders.length === defenderMaximum) {
-                this.game.addMessage('{0} {1} automatically declared as {2}',
-                    this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
-
-                this.chooseDefenders([]);
-                return;
-            }
-
-            if(this.forcedDefenders.length < defenderMaximum || defenderMaximum === 0) {
-                this.game.addMessage('{0} {1} automatically declared as {2}',
-                    this.forcedDefenders, this.forcedDefenders.length > 1 ? 'are' : 'is', this.forcedDefenders.length > 1 ? 'defenders' : 'defender');
-
-                if(defenderMaximum !== 0) {
-                    selectableLimit -= this.forcedDefenders.length;
-                }
-            }
-        }
-
-        let title = 'Select defenders';
-        let restrictions = [];
-        if(defenderMinimum !== 0) {
-            restrictions.push(`min ${defenderMinimum}`);
-        }
-        if(defenderMaximum !== 0) {
-            restrictions.push(`max ${defenderMaximum}`);
-        }
-        if(restrictions.length !== 0) {
-            title += ` (${restrictions.join(', ')})`;
-        }
-
-        this.game.promptForSelect(this.challenge.defendingPlayer, {
-            numCards: selectableLimit,
-            multiSelect: true,
-            activePromptTitle: title,
+        this.game.queueStep(new ChooseParticipantsPrompt(this.game, this.challenge.defendingPlayer, {
+            challengeType: this.challenge.challengeType,
+            gameAction: 'declareAsDefender',
+            mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
+            limitsProperty: 'defenderLimits',
+            activePromptTitle: 'Select defenders',
             waitingPromptTitle: 'Waiting for opponent to defend',
-            cardCondition: card => this.allowAsDefender(card),
-            onSelect: (player, defenders) => this.chooseDefenders(defenders),
-            onCancel: () => this.chooseDefenders([])
-        });
-    }
-
-    allowAsDefender(card) {
-        return this.challenge.defendingPlayer === card.controller &&
-            card.canDeclareAsDefender(this.challenge.challengeType) &&
-            this.mustBeDeclaredAsDefender(card) &&
-            !this.challenge.isDefending(card);
-    }
-
-    mustBeDeclaredAsDefender(card) {
-        if(_.isEmpty(this.forcedDefenders)) {
-            return true;
-        }
-
-        let defenderMax = this.challenge.defendingPlayer.defenderLimits.getMax();
-        if(this.forcedDefenders.length < defenderMax || defenderMax === 0) {
-            return !this.forcedDefenders.includes(card);
-        }
-
-        return this.forcedDefenders.includes(card);
+            messages: {
+                autoDeclareSingular: '{0} is automatically declared as a defender',
+                autoDeclarePlural: '{0} are automatically declared as defenders',
+                notEnoughSingular: '{0} did not declare at least {1} defender but had characters to do so',
+                notEnoughPlural: '{0} did not declare at least {1} defenders but had characters to do so'
+            },
+            onSelect: defenders => {
+                this.chooseDefenders(defenders);
+            }
+        }));
     }
 
     chooseDefenders(defenders) {
-        let defendingPlayer = this.challenge.defendingPlayer;
-        let defenderMaximum = defendingPlayer.defenderLimits.getMax();
-        let defenderMinimum = defendingPlayer.defenderLimits.getMin();
-        if(this.forcedDefenders.length <= defenderMaximum || defenderMaximum === 0) {
-            defenders = defenders.concat(this.forcedDefenders);
-        }
-
-        if(!this.hasMetDefenderMinimum(defenders)) {
-            this.game.addAlert('danger', '{0} did not declare at least {1} defender but had characters to do so', defendingPlayer, defenderMinimum);
-        }
-
         let defendersToKneel = [];
         this.challenge.addDefenders(defenders);
 
@@ -239,20 +176,6 @@ class ChallengeFlow extends BaseStep {
         defendersToKneel = undefined;
 
         return true;
-    }
-
-    hasMetDefenderMinimum(defenders) {
-        let defendingPlayer = this.challenge.defendingPlayer;
-        let defenderMinimum = defendingPlayer.defenderLimits.getMin();
-
-        if(defenderMinimum === 0) {
-            return true;
-        }
-
-        let potentialDefenders = defendingPlayer.getNumberOfCardsInPlay(card => this.allowAsDefender(card));
-        let actualMinimum = Math.min(defenderMinimum, potentialDefenders);
-
-        return defenders.length >= actualMinimum;
     }
 
     announceDefenderStrength() {
