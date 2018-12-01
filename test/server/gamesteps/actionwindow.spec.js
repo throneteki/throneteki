@@ -23,7 +23,7 @@ describe('ActionWindow', function() {
     });
 
     describe('onMenuCommand()', function() {
-        describe('when it is the current player',function() {
+        describe('when it is the current player', function() {
             beforeEach(function() {
                 this.prompt.onMenuCommand(this.player2);
             });
@@ -33,7 +33,7 @@ describe('ActionWindow', function() {
             });
         });
 
-        describe('when it is not the current player',function() {
+        describe('when it is not the current player', function() {
             beforeEach(function() {
                 this.prompt.onMenuCommand(this.player1);
             });

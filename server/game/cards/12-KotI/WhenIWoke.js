@@ -21,12 +21,12 @@ class WhenIWoke extends DrawCard {
         });
     }
 
-    onSelectCard(player,card) {
+    onSelectCard(player, card) {
         if(card === null) {
-            this.game.addAlert('danger','{0} does not choose any card for {1}', player, this);
+            this.game.addAlert('danger', '{0} does not choose any card for {1}', player, this);
             return true;
         }
-        
+
         player.moveCardToTopOfDeck(card);
         this.game.addMessage('{0} chooses {1} for {2} ', player, card, this);
         return true;

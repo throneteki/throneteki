@@ -14,7 +14,7 @@ class Silence extends DrawCard {
             target: {
                 activePromptTitle: 'Select a card',
                 cardCondition: card => card.getType() === 'location' && card.location === 'hand' && card.hasTrait('Warship') && this.controller.canPutIntoPlay(card)
-               
+
             },
             handler: context => {
                 var wasStand = false;
@@ -25,11 +25,11 @@ class Silence extends DrawCard {
                     wasStand = true;
                 }
                 if(wasStand === true) {
-                    this.game.addMessage('{0} uses {1} to put {2} into play and stand {3}', this.controller, this,context.target, euron);
+                    this.game.addMessage('{0} uses {1} to put {2} into play and stand {3}', this.controller, this, context.target, euron);
                     return;
                 }
 
-                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this,context.target);
+                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, context.target);
             }
         });
     }
