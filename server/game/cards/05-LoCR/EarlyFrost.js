@@ -3,7 +3,6 @@ const PlotCard = require('../../plotcard.js');
 class EarlyFrost extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'draw',
             targetController: 'any',
             effect: ability.effects.modifyDrawPhaseCards(-1)
         });

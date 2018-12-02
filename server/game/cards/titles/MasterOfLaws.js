@@ -5,7 +5,6 @@ class MasterOfLaws extends TitleCard {
         this.supports('Master of Coin');
         this.rivals('Master of Whispers', 'Master of Ships');
         this.persistentEffect({
-            condition: () => this.game.currentPhase === 'draw',
             targetController: 'current',
             effect: ability.effects.modifyDrawPhaseCards(1)
         });

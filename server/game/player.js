@@ -47,6 +47,7 @@ class Player extends Spectator {
         this.takenMulligan = false;
 
         this.setupGold = 8;
+        this.drawPhaseCards = DrawPhaseCards;
         this.cardsInPlayBeforeSetup = [];
         this.deck = {};
         this.challenges = new ChallengeTracker(this);
@@ -664,8 +665,6 @@ class Player extends Spectator {
 
         this.gainedGold = 0;
         this.drawnCards = 0;
-
-        this.drawPhaseCards = DrawPhaseCards;
 
         this.limitedPlayed = 0;
 
