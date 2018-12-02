@@ -57,11 +57,11 @@ class ActivePlayerPrompt extends React.Component {
 
             let option = (
                 <button key={ button.command + buttonIndex.toString() }
-                    className='btn btn-default'
+                    className='btn btn-default prompt-button'
                     onClick={ clickCallback }
                     onMouseOver={ event => this.onMouseOver(event, button.card) }
                     onMouseOut={ event => this.onMouseOut(event, button.card) }
-                    disabled={ button.disabled }>{ button.text }</button>);
+                    disabled={ button.disabled }> { button.icon && <div className={ `with-background thronesicon thronesicon-${button.icon}` } /> } { button.text }</button>);
 
             buttonIndex++;
 
@@ -106,6 +106,17 @@ class ActivePlayerPrompt extends React.Component {
 
         let timer = null;
 
+        let promptText = [];
+        if(this.props.promptText.includes('\n')) {
+            let split = this.props.promptText.split('\n');
+            for(let token of split) {
+                promptText.push(token);
+                promptText.push(<br />);
+            }
+        } else {
+            promptText.push(this.props.promptText);
+        }
+
         if(this.props.timerStartTime) {
             timer = (
                 <AbilityTimer startTime={ this.props.timerStartTime } limit={ this.props.timerLimit } />);
@@ -119,7 +130,7 @@ class ActivePlayerPrompt extends React.Component {
             { promptTitle }
             <div className='menu-pane'>
                 <div className='panel'>
-                    <h4>{ this.props.title }</h4>
+                    <h4>{ promptText }</h4>
                     { this.getControls() }
                     { this.getButtons() }
                 </div>
@@ -138,12 +149,12 @@ ActivePlayerPrompt.propTypes = {
     onMouseOver: PropTypes.func,
     onTitleClick: PropTypes.func,
     phase: PropTypes.string,
+    promptText: PropTypes.string,
     promptTitle: PropTypes.string,
     socket: PropTypes.object,
     stopAbilityTimer: PropTypes.func,
     timerLimit: PropTypes.number,
     timerStartTime: PropTypes.instanceOf(Date),
-    title: PropTypes.string,
     user: PropTypes.object
 };
 
