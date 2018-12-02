@@ -9,9 +9,8 @@ class DesertRaider extends DrawCard {
             },
             location: 'dead pile',
             target: {
-                type: 'select',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&
-                                       card.isParticipating() && card.canGainPower() && this.game.currentChallenge.winner === card.controller
+                                       this.game.currentChallenge.winner === card.controller
             },
             handler: context => {
                 this.controller.putIntoPlay(this);

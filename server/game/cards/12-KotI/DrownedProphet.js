@@ -10,7 +10,7 @@ class DrownedProphet extends DrawCard {
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 5,
-                    cardCondition: card => card.isFaction('greyjoy'),
+                    cardCondition: card => card.isFaction('greyjoy') && card.getType() === 'character',
                     activePromptTitle: 'Select a card',
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),

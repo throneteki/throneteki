@@ -11,10 +11,10 @@ class GunthorSonOfGurn extends DrawCard {
                 )
             },
             handler: context => {
-                this.game.promptForSelect(context.opponent, {
+                this.game.promptForSelect(context.event.challenge.loser, {
                     activePromptTitle: 'Select a card',
                     source: this,
-                    cardCondition: card => card.location === 'hand' && card.controller === context.opponent,
+                    cardCondition: card => card.location === 'hand' && card.controller === context.event.challenge.loser,
                     onSelect: (player, card) => this.cardSelected(context, player, card)
                 });
             }
@@ -24,7 +24,7 @@ class GunthorSonOfGurn extends DrawCard {
     onCardSelected(context, player, card) {
         player.discardCard(card);
         this.game.addMessage('{0} uses {1} to have {2} discard {3} from their hand',
-            context.player, this, context.opponent, card);
+            context.player, this, context.event.challenge.loser, card);
 
         return true;
     }
