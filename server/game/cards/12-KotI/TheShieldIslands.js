@@ -1,6 +1,6 @@
-const PlotCard = require('../../plotcard.js');
+const DrawCard = require('../../drawcard');
 
-class TimeOfPlenty extends PlotCard {
+class TheShieldIslands extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
@@ -9,6 +9,7 @@ class TimeOfPlenty extends PlotCard {
     }
 }
 
-TimeOfPlenty.code = '05051';
+TheShieldIslands.code = '12038';
 
-module.exports = TimeOfPlenty;
+module.exports = TheShieldIslands;
+
