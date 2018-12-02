@@ -43,6 +43,7 @@ const CardSelector = require('../CardSelector.js');
  *                      target cards.
  * ordered            - an optional boolean indicating whether or not to display
  *                      the order of the selection during the prompt.
+ * mustSelect         - an array of cards which must be selected.
  */
 class SelectCardPrompt extends UiPrompt {
     constructor(game, choosingPlayer, properties) {
@@ -59,6 +60,15 @@ class SelectCardPrompt extends UiPrompt {
         _.defaults(this.properties, this.defaultProperties());
         this.selector = properties.selector || CardSelector.for(properties);
         this.selectedCards = [];
+        this.mustSelect = properties.mustSelect || [];
+        if(this.mustSelect.length > 0) {
+            if(this.selector.hasReachedLimit(this.mustSelect, this.numPlayers) && this.mustSelect.length > this.selector.numCards) {
+                this.onlyMustSelectMayBeChosen = true;
+            } else {
+                this.selectedCards = [...this.mustSelect];
+                this.cannotUnselectMustSelect = true;
+            }
+        }
         this.revealTargets = properties.revealTargets;
         this.revealFunc = null;
         this.savePreviouslySelectedCards();
@@ -76,6 +86,7 @@ class SelectCardPrompt extends UiPrompt {
     savePreviouslySelectedCards() {
         this.previouslySelectedCards = this.choosingPlayer.selectedCards;
         this.choosingPlayer.clearSelectedCards();
+        this.choosingPlayer.setSelectedCards(this.selectedCards);
     }
 
     continue() {
@@ -139,7 +150,10 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     checkCardCondition(card) {
-        // Always allow a card to be unselected
+        if(this.onlyMustSelectMayBeChosen && !this.mustSelect.includes(card)) {
+            return false;
+        }
+
         if(this.selectedCards.includes(card)) {
             return true;
         }
@@ -159,6 +173,11 @@ class SelectCardPrompt extends UiPrompt {
         if(!this.selectedCards.includes(card)) {
             this.selectedCards.push(card);
         } else {
+            // Don't allow must-select cards to be unselected.
+            if(this.cannotUnselectMustSelect && this.mustSelect.includes(card)) {
+                return false;
+            }
+
             this.selectedCards = this.selectedCards.filter(selectedCard => selectedCard !== card);
 
             // If unselecting this card makes other cards no longer selectable, then they need to be de-selected
