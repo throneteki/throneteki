@@ -30,6 +30,6 @@ class GunthorSonOfGurn extends DrawCard {
     }
 }
 
-GunthorSonOfGurn.code = '120??';
+GunthorSonOfGurn.code = '12027';
 
 module.exports = GunthorSonOfGurn;
