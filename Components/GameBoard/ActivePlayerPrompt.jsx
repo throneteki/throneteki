@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import AbilityTargeting from './AbilityTargeting';
 import AbilityTimer from './AbilityTimer';
 import CardNameLookup from './CardNameLookup';
+import TraitNameLookup from './TraitNameLookup';
 
 class ActivePlayerPrompt extends React.Component {
     onButtonClick(event, command, arg, method) {
@@ -71,7 +72,7 @@ class ActivePlayerPrompt extends React.Component {
         return buttons;
     }
 
-    onCardNameSelected(command, method, cardName) {
+    handleLookupValueSelected(command, method, cardName) {
         if(this.props.onButtonClick) {
             this.props.onButtonClick(command, cardName, method);
         }
@@ -92,7 +93,9 @@ class ActivePlayerPrompt extends React.Component {
                             source={ control.source }
                             targets={ control.targets } />);
                 case 'card-name':
-                    return <CardNameLookup cards={ this.props.cards } onCardSelected={ this.onCardNameSelected.bind(this, control.command, control.method) } />;
+                    return <CardNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method) } />;
+                case 'trait-name':
+                    return <TraitNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method) } />;
             }
         });
     }
@@ -107,7 +110,7 @@ class ActivePlayerPrompt extends React.Component {
         let timer = null;
 
         let promptText = [];
-        if(this.props.promptText.includes('\n')) {
+        if(this.props.promptText && this.props.promptText.includes('\n')) {
             let split = this.props.promptText.split('\n');
             for(let token of split) {
                 promptText.push(token);
