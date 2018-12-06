@@ -124,7 +124,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         }
 
         this.game.promptForSelect(player, {
-            activePromptTitle: `Choose target for ${card.name}`,
+            activePromptTitle: `Choose triggering card for ${card.name}`,
             isCardEffect: false,
             cardCondition: card => availableTargets.includes(card),
             onSelect: (player, selectedCard) => {
