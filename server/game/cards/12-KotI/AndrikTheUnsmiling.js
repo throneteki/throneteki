@@ -4,7 +4,7 @@ class AndrikTheUnsmiling extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => event.challenge.winner === this.controller && event.source === this
+                onCardDiscarded: event => event.isPillage && this.game.currentChallenge.winner === this.controller && event.source === this
             },
             target: {
                 activePromptTitle: 'Select location',
@@ -22,9 +22,9 @@ class AndrikTheUnsmiling extends DrawCard {
     }
 
     cardCondition(card) {
-        return card.controller === this.game.currentChallenge.loser && 
-                                   !card.isLimited() && 
-                                   ['location', 'attachment'].includes(card.getType()) && 
+        return card.controller === this.game.currentChallenge.loser &&
+                                   !card.isLimited() &&
+                                   ['location', 'attachment'].includes(card.getType()) &&
                                    card.location === 'discard pile';
     }
 

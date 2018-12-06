@@ -4,10 +4,10 @@ class SerGregorClegane extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => event.source === this && event.discardedCard.getType() === 'character' && event.discardedCard.location === 'discard pile'
+                onCardDiscarded: event => event.isPillage && event.source === this && event.card.getType() === 'character' && event.card.location === 'discard pile'
             },
             handler: context => {
-                let discarded = context.event.discardedCard;
+                let discarded = context.event.card;
                 discarded.controller.moveCard(discarded, 'dead pile');
                 this.game.addMessage('{0} uses {1} to place {2} in {3}\'s dead pile', this.controller, this, discarded, discarded.controller);
 

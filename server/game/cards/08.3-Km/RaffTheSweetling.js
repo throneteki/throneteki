@@ -4,7 +4,7 @@ class RaffTheSweetling extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => event.source === this && event.discardedCard.getType() === 'character'
+                onCardDiscarded: event => event.isPillage && event.source === this && event.card.getType() === 'character'
             },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' &&

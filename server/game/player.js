@@ -243,13 +243,13 @@ class Player extends Spectator {
         this.drawDeck = this.shuffleArray(this.drawDeck);
     }
 
-    discardFromDraw(number, callback = () => true) {
+    discardFromDraw(number, callback = () => true, options = {}) {
         number = Math.min(number, this.drawDeck.length);
 
         var cards = this.drawDeck.slice(0, number);
         this.discardCards(cards, false, discarded => {
             callback(discarded);
-        });
+        }, options);
     }
 
     moveFromTopToBottomOfDrawDeck(number) {
@@ -908,7 +908,9 @@ class Player extends Spectator {
                 player: this,
                 allowSave: allowSave,
                 automaticSaveWithDupe: true,
-                originalLocation: cards[0].location
+                originalLocation: cards[0].location,
+                isPillage: !!options.isPillage,
+                source: options.source
             };
             this.game.raiseSimultaneousEvent(cards, {
                 eventName: 'onCardsDiscarded',
