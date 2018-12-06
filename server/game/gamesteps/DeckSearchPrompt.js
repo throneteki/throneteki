@@ -21,6 +21,8 @@ const BaseStep = require('./basestep');
  * cardType           - a string or array of strings listing which types of
  *                      cards can be selected. Defaults to the list of draw
  *                      card types.
+ * additionalLocations - an optional array of other, non-draw-deck locations to
+ *                      include in the search.
  * onSelect           - a callback that is called once the player chooses a
  *                      card.
  * onCancel           - a callback that is called when the player clicks the
@@ -41,6 +43,7 @@ class DeckSearchPrompt extends BaseStep {
 
     defaultProperties() {
         return {
+            additionalLocations: [],
             cardCondition: () => true,
             cardType: ['attachment', 'character', 'event', 'location'],
             onSelect: () => true,
@@ -58,7 +61,7 @@ class DeckSearchPrompt extends BaseStep {
         this.game.promptForSelect(this.choosingPlayer, Object.assign(modeProps, {
             activePromptTitle: this.properties.activePromptTitle,
             context: context,
-            cardCondition: (card, context) => validCards.includes(card) && this.checkCardCondition(card, context),
+            cardCondition: (card, context) => (validCards.includes(card) || this.inAdditionalLocation(card)) && this.checkCardCondition(card, context),
             onSelect: (player, result) => {
                 this.properties.onSelect(player, result);
                 return true;
@@ -95,6 +98,10 @@ class DeckSearchPrompt extends BaseStep {
         }
 
         return this.choosingPlayer.searchDrawDeck(card => this.checkCardCondition(card, context));
+    }
+
+    inAdditionalLocation(card) {
+        return this.properties.additionalLocations.includes(card.location) && card.controller === this.choosingPlayer;
     }
 
     checkCardCondition(card, context) {
