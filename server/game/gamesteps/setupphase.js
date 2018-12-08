@@ -89,7 +89,13 @@ class SetupPhase extends Phase {
 
     setupDone() {
         for(const player of this.game.getPlayers()) {
-            player.setupDone();
+            // Draw back up to starting hand size
+            if(player.hand.length < StartingHandSize) {
+                player.drawCardsToHand(StartingHandSize - player.hand.length);
+            }
+
+            this.game.returnGoldToTreasury({ player: player, amount: player.gold });
+            player.revealSetupCards();
         }
     }
 }

@@ -612,11 +612,7 @@ class Player extends Spectator {
         }
     }
 
-    setupDone() {
-        if(this.hand.length < StartingHandSize) {
-            this.drawCardsToHand(StartingHandSize - this.hand.length);
-        }
-
+    revealSetupCards() {
         let processedCards = [];
 
         for(const card of this.cardsInPlay) {
@@ -637,7 +633,6 @@ class Player extends Spectator {
         }
 
         this.cardsInPlay = processedCards;
-        this.gold = 0;
     }
 
     startPlotPhase() {

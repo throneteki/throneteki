@@ -1,15 +1,7 @@
-const _ = require('underscore');
-
-const Player = require('../../../server/game/player.js');
-
-function addCardsToHand(hand, number) {
-    for(var i = 0; i < number; i++) {
-        hand.push({});
-    }
-}
+const Player = require('../../../server/game/player');
 
 describe('Player', function() {
-    describe('setupDone', function() {
+    describe('revealSetupCards', function() {
         beforeEach(function() {
             this.game = jasmine.createSpyObj('game', ['raiseEvent']);
             this.player = new Player('1', { username: 'Player 1', settings: {}}, true, this.game);
@@ -19,8 +11,6 @@ describe('Player', function() {
             this.cardSpy = jasmine.createSpyObj('card', ['isUnique', 'addDuplicate']);
             this.duplicateSpy = jasmine.createSpyObj('card', ['isUnique', 'addDuplicate']);
 
-            spyOn(this.player, 'drawCardsToHand');
-
             this.cardSpy.facedown = true;
             this.cardSpy.name = 'Card';
             this.duplicateSpy.facedown = true;
@@ -28,52 +18,13 @@ describe('Player', function() {
 
             this.player.cardsInPlay.push(this.cardSpy);
             this.player.cardsInPlay.push(this.duplicateSpy);
-            this.player.gold = 8;
-
-            this.player.setupDone();
-        });
-
-        describe('when the hand size is less than the starting hand size', function() {
-            beforeEach(function() {
-                addCardsToHand(this.player.hand, 4);
-
-                this.player.setupDone();
-            });
-
-            it('should draw cards back up to the starting hand size', function() {
-                expect(this.player.drawCardsToHand).toHaveBeenCalledWith(3);
-            });
-        });
-
-        describe('when the hand size is greater than the starting hand size', function() {
-            beforeEach(function() {
-                this.player.drawCardsToHand.calls.reset();
-
-                addCardsToHand(this.player.hand, 8);
-
-                this.player.setupDone();
-            });
-
-            it('should not draw any cards', function() {
-                expect(this.player.drawCardsToHand).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('when the hand size is equal to the starting hand size', function() {
-            beforeEach(function() {
-                this.player.drawCardsToHand.calls.reset();
-
-                addCardsToHand(this.player.hand, 8);
-
-                this.player.setupDone();
-            });
-
-            it('should not draw any cards', function() {
-                expect(this.player.drawCardsToHand).not.toHaveBeenCalled();
-            });
         });
 
         describe('when cards are not unique', function() {
+            beforeEach(function() {
+                this.player.revealSetupCards();
+            });
+
             it('should not attempt to add duplicates', function() {
                 expect(this.cardSpy.addDuplicate).not.toHaveBeenCalled();
             });
@@ -87,16 +38,13 @@ describe('Player', function() {
             beforeEach(function() {
                 this.cardSpy.isUnique.and.returnValue(true);
                 this.duplicateSpy.isUnique.and.returnValue(true);
-
-                this.player.setupDone();
             });
 
             describe('and a duplicate is found', function() {
                 beforeEach(function() {
-                    this.player.cardsInPlay.push(this.duplicateSpy);
                     this.duplicateSpy.name = this.cardSpy.name;
 
-                    this.player.setupDone();
+                    this.player.revealSetupCards();
                 });
 
                 it('should mark the card as face up', function() {
@@ -114,7 +62,7 @@ describe('Player', function() {
 
             describe('and no duplicate is found', function() {
                 beforeEach(function() {
-                    this.player.setupDone();
+                    this.player.revealSetupCards();
                 });
 
                 it('should not add any duplicates', function() {
@@ -128,13 +76,11 @@ describe('Player', function() {
         });
 
         it('should turn all cards faceup', function() {
-            expect(_.any(this.player.cardsInPlay, card => {
-                return card.facedown;
-            })).toBe(false);
-        });
+            this.player.revealSetupCards();
 
-        it('should return unspent setup gold', function() {
-            expect(this.player.gold).toBe(0);
+            expect(this.player.cardsInPlay).not.toContain(jasmine.objectContaining({
+                facedown: true
+            }));
         });
     });
 });
