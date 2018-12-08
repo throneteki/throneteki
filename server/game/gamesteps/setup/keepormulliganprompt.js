@@ -1,5 +1,7 @@
 const AllPlayerPrompt = require('../allplayerprompt.js');
 
+const { StartingHandSize } = require('../../Constants');
+
 class KeepOrMulliganPrompt extends AllPlayerPrompt {
     constructor(game) {
         super(game);
@@ -33,12 +35,18 @@ class KeepOrMulliganPrompt extends AllPlayerPrompt {
         this.completedPlayers.add(player);
 
         if(arg === 'keep') {
-            player.keep();
             this.game.addMessage('{0} has kept their hand', player);
-        } else if(arg === 'mulligan' && player.mulligan()) {
+        } else if(arg === 'mulligan') {
+            this.mulligan(player);
             this.game.addMessage('{0} has taken a mulligan', player);
         }
         this.game.raiseEvent('onPlayerKeepHandOrMulligan', { player: player, choice: arg });
+    }
+
+    mulligan(player) {
+        player.resetDrawDeck();
+        player.shuffleDrawDeck();
+        player.drawCardsToHand(StartingHandSize);
     }
 }
 

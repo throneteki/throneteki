@@ -3,7 +3,7 @@ const KeepOrMulliganPrompt = require('../../../../server/game/gamesteps/setup/ke
 describe('the KeepOrMulliganPrompt', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'raiseEvent']);
-        this.playerSpy = jasmine.createSpyObj('player', ['keep', 'mulligan']);
+        this.playerSpy = jasmine.createSpyObj('player', ['drawCardsToHand', 'resetDrawDeck', 'shuffleDrawDeck']);
         this.prompt = new KeepOrMulliganPrompt(this.gameSpy);
     });
 
@@ -13,9 +13,10 @@ describe('the KeepOrMulliganPrompt', function() {
                 this.prompt.onMenuCommand(this.playerSpy, 'keep');
             });
 
-            it('should call keep on the player', function() {
-                expect(this.playerSpy.keep).toHaveBeenCalled();
-                expect(this.playerSpy.mulligan).not.toHaveBeenCalled();
+            it('should not mulligan the player', function() {
+                expect(this.playerSpy.drawCardsToHand).not.toHaveBeenCalled();
+                expect(this.playerSpy.resetDrawDeck).not.toHaveBeenCalled();
+                expect(this.playerSpy.shuffleDrawDeck).not.toHaveBeenCalled();
             });
 
             it('should raise the onPlayerKeepHandOrMerged event', function() {
@@ -28,9 +29,10 @@ describe('the KeepOrMulliganPrompt', function() {
                 this.prompt.onMenuCommand(this.playerSpy, 'mulligan');
             });
 
-            it('should call mulligan on the player', function() {
-                expect(this.playerSpy.keep).not.toHaveBeenCalled();
-                expect(this.playerSpy.mulligan).toHaveBeenCalled();
+            it('should mulligan the player', function() {
+                expect(this.playerSpy.drawCardsToHand).toHaveBeenCalledWith(7);
+                expect(this.playerSpy.resetDrawDeck).toHaveBeenCalled();
+                expect(this.playerSpy.shuffleDrawDeck).toHaveBeenCalled();
             });
 
             it('should raise the onPlayerKeepHandOrMerged event', function() {

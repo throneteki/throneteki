@@ -14,7 +14,6 @@ const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
 const GoldSource = require('./GoldSource.js');
-const { StartingHandSize } = require('./Constants');
 
 const DrawPhaseCards = 2;
 const MarshalIntoShadowsCost = 2;
@@ -350,11 +349,6 @@ class Player extends Spectator {
         this.deadPile = [];
     }
 
-    initDrawDeck() {
-        this.resetDrawDeck();
-        this.shuffleDrawDeck();
-    }
-
     prepareDecks() {
         var deck = new Deck(this.deck);
         var preparedDeck = deck.prepare(this);
@@ -382,21 +376,6 @@ class Player extends Spectator {
         let deck = new Deck(this.deck);
         this.faction = deck.createFactionCard(this);
         this.agenda = deck.createAgendaCard(this);
-    }
-
-    mulligan() {
-        if(this.takenMulligan) {
-            return false;
-        }
-
-        this.initDrawDeck();
-        this.drawCardsToHand(StartingHandSize);
-        this.takenMulligan = true;
-
-        return true;
-    }
-
-    keep() {
     }
 
     addCostReducer(reducer) {
