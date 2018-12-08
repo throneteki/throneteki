@@ -26,7 +26,7 @@ class Challenge {
     singlePlayerDefender() {
         let dummyPlayer = new Player('', Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }), false, this.game);
         dummyPlayer.initialise();
-        dummyPlayer.startPlotPhase();
+        dummyPlayer.resetForStartOfRound();
         return dummyPlayer;
     }
 

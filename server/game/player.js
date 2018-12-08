@@ -613,10 +613,9 @@ class Player extends Spectator {
         this.cardsInPlay = processedCards;
     }
 
-    startPlotPhase() {
+    resetForStartOfRound() {
         this.firstPlayer = false;
         this.selectedPlot = undefined;
-        this.roundDone = false;
 
         if(this.resetTimerAtEndOfRound) {
             this.noTimer = false;

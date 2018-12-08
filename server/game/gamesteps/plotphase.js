@@ -30,7 +30,7 @@ class PlotPhase extends Phase {
 
     startPlotPhase() {
         for(const player of this.game.getPlayers()) {
-            player.startPlotPhase();
+            player.resetForStartOfRound();
         }
     }
 
