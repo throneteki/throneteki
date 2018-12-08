@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class Queensguard extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(card => card.getType() === 'character' && !card.hasTrait('Lady'));
+        this.attachmentRestriction({ not: { trait: 'Lady' } });
         this.action({
             title: 'Stand attached character',
             condition: () => this.parent.kneeled,
