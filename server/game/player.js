@@ -15,8 +15,7 @@ const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
 const GoldSource = require('./GoldSource.js');
 
-const DrawPhaseCards = 2;
-const MarshalIntoShadowsCost = 2;
+const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -45,7 +44,7 @@ class Player extends Spectator {
         this.owner = owner;
         this.takenMulligan = false;
 
-        this.setupGold = 8;
+        this.setupGold = SetupGold;
         this.drawPhaseCards = DrawPhaseCards;
         this.cardsInPlayBeforeSetup = [];
         this.deck = {};
