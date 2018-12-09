@@ -12,13 +12,10 @@ class PillageKeyword extends BaseAbility {
 
     executeHandler(context) {
         let {game, challenge, source} = context;
-        game.queueSimpleStep(() => {
-            challenge.loser.discardFromDraw(1, cards => {
-                let discarded = cards[0];
-                game.raiseEvent('onPillage', { challenge: challenge, source: source, discardedCard: discarded });
-
-                game.addMessage('{0} discards {1} from the top of their deck due to Pillage from {2}', challenge.loser, discarded, source);
-            });
+        game.raiseEvent('onPillage', { source: source, numCards: 1 }, event => {
+            challenge.loser.discardFromDraw(event.numCards, cards => {
+                game.addMessage('{0} discards {1} from the top of their deck due to Pillage from {2}', challenge.loser, cards, source);
+            }, { isPillage: true, source: source });
         });
     }
 }

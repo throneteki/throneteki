@@ -4,12 +4,12 @@ class NuteTheBarber extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPillage: event => event.source.controller === this.controller
+                onCardDiscarded: event => event.isPillage && event.source.controller === this.controller
             },
             limit: ability.limit.perPhase(3),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card, context) => card.location === 'discard pile' && card.controller === context.event.challenge.loser
+                cardCondition: card => card.location === 'discard pile' && card.controller === this.game.currentChallenge.loser
             },
             handler: context => {
                 context.target.owner.moveCard(context.target, 'hand');

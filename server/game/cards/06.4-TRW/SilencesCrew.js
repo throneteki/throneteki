@@ -9,8 +9,8 @@ class SilencesCrew extends DrawCard {
 
         this.reaction({
             when: {
-                onPillage: event => event.source === this &&
-                                    (event.discardedCard.getType() === 'location' || event.discardedCard.getType() === 'attachment')
+                onCardDiscarded: event => event.isPillage && event.source === this &&
+                                    (event.card.getType() === 'location' || event.card.getType() === 'attachment')
             },
             handler: () => {
                 this.modifyToken('gold', 1);

@@ -4,7 +4,7 @@ class EuronCrowsEye extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => event.challenge.winner === this.controller && event.source === this
+                onCardDiscarded: event => event.isPillage && event.source === this
             },
             target: {
                 activePromptTitle: 'Select location',

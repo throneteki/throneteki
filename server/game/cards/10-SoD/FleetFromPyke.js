@@ -4,8 +4,8 @@ class FleetFromPyke extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => event.source.controller === this.controller &&
-                                    ['location', 'attachment'].includes(event.discardedCard.getType())
+                onCardDiscarded: event => event.isPillage && event.source.controller === this.controller &&
+                                    ['location', 'attachment'].includes(event.card.getType())
             },
             handler: context => {
                 this.game.promptForIcon(context.player, this, icon => {

@@ -11,7 +11,7 @@ class KingOfSaltAndRock extends DrawCard {
         });
         this.reaction({
             when: {
-                onPillage: event => (event.discardedCard.getType() === 'attachment' || event.discardedCard.getType() === 'location') &&
+                onCardDiscarded: event => event.isPillage && (event.card.getType() === 'attachment' || event.card.getType() === 'location') &&
                     this.parent.allowGameAction('gainPower')
             },
             handler: () => {

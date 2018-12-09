@@ -4,14 +4,15 @@ class Polliver extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPillage: event => (
+                onCardDiscarded: event => (
+                    event.isPillage &&
                     event.source === this &&
-                    event.discardedCard.getType() === 'character' &&
-                    event.discardedCard.owner.gold >= 1
+                    event.card.getType() === 'character' &&
+                    event.card.owner.gold >= 1
                 )
             },
             handler: context => {
-                let otherPlayer = context.event.discardedCard.owner;
+                let otherPlayer = context.event.card.owner;
                 this.game.returnGoldToTreasury({ player: otherPlayer, amount: 2 });
                 this.game.addMessage('{0} uses {1} to have {2} return 2 gold to the treasury', this.controller, this, otherPlayer);
             }

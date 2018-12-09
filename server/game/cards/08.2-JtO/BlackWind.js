@@ -9,9 +9,10 @@ class BlackWind extends DrawCard {
 
         this.reaction({
             when: {
-                onPillage: event =>
+                onCardDiscarded: event =>
+                    event.isPillage &&
                     event.source.controller === this.controller &&
-                    ['attachment', 'location'].includes(event.discardedCard.getType()) &&
+                    ['attachment', 'location'].includes(event.card.getType()) &&
                     this.controller.canDraw()
             },
             limit: ability.limit.perPhase(2),
