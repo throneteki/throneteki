@@ -15,9 +15,7 @@ const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
 const GoldSource = require('./GoldSource.js');
 
-const StartingHandSize = 7;
-const DrawPhaseCards = 2;
-const MarshalIntoShadowsCost = 2;
+const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -46,7 +44,7 @@ class Player extends Spectator {
         this.owner = owner;
         this.takenMulligan = false;
 
-        this.setupGold = 8;
+        this.setupGold = SetupGold;
         this.drawPhaseCards = DrawPhaseCards;
         this.cardsInPlayBeforeSetup = [];
         this.deck = {};
@@ -350,15 +348,6 @@ class Player extends Spectator {
         this.deadPile = [];
     }
 
-    initDrawDeck() {
-        this.resetDrawDeck();
-        this.shuffleDrawDeck();
-    }
-
-    drawSetupHand() {
-        this.drawCardsToHand(StartingHandSize);
-    }
-
     prepareDecks() {
         var deck = new Deck(this.deck);
         var preparedDeck = deck.prepare(this);
@@ -386,31 +375,6 @@ class Player extends Spectator {
         let deck = new Deck(this.deck);
         this.faction = deck.createFactionCard(this);
         this.agenda = deck.createAgendaCard(this);
-    }
-
-    startGame() {
-        if(!this.readyToStart) {
-            return;
-        }
-
-        this.gold = this.setupGold;
-    }
-
-    mulligan() {
-        if(this.takenMulligan) {
-            return false;
-        }
-
-        this.initDrawDeck();
-        this.drawSetupHand();
-        this.takenMulligan = true;
-        this.readyToStart = true;
-
-        return true;
-    }
-
-    keep() {
-        this.readyToStart = true;
     }
 
     addCostReducer(reducer) {
@@ -626,11 +590,7 @@ class Player extends Spectator {
         }
     }
 
-    setupDone() {
-        if(this.hand.length < StartingHandSize) {
-            this.drawCardsToHand(StartingHandSize - this.hand.length);
-        }
-
+    revealSetupCards() {
         let processedCards = [];
 
         for(const card of this.cardsInPlay) {
@@ -651,13 +611,11 @@ class Player extends Spectator {
         }
 
         this.cardsInPlay = processedCards;
-        this.gold = 0;
     }
 
-    startPlotPhase() {
+    resetForStartOfRound() {
         this.firstPlayer = false;
         this.selectedPlot = undefined;
-        this.roundDone = false;
 
         if(this.resetTimerAtEndOfRound) {
             this.noTimer = false;
@@ -700,22 +658,6 @@ class Player extends Spectator {
             this.activePlot = undefined;
             return plot;
         }
-    }
-
-    drawPhase() {
-        if(this.canDraw()) {
-            this.game.addMessage('{0} draws {1} cards', this, this.drawPhaseCards);
-            this.drawCardsToHand(this.drawPhaseCards);
-        }
-    }
-
-    beginMarshal() {
-        if(this.canGainGold()) {
-            let gold = this.game.addGold(this, this.getTotalIncome());
-            this.game.addMessage('{0} collects {1} gold', this, gold);
-        }
-
-        this.game.raiseEvent('onIncomeCollected', { player: this });
     }
 
     hasUnmappedAttachments() {

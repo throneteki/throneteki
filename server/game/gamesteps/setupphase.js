@@ -5,6 +5,7 @@ const SetupCardsPrompt = require('./setup/setupcardsprompt.js');
 const CheckAttachmentsPrompt = require('./setup/checkattachmentsprompt.js');
 const RookerySetupPrompt = require('./setup/RookerySetupPrompt');
 const TextHelper = require('../TextHelper');
+const { StartingHandSize } = require('../Constants');
 
 class SetupPhase extends Phase {
     constructor(game) {
@@ -58,13 +59,14 @@ class SetupPhase extends Phase {
 
     drawSetupHand() {
         for(const player of this.game.getPlayers()) {
-            player.drawSetupHand();
+            player.drawCardsToHand(StartingHandSize);
         }
     }
 
     startGame() {
         for(const player of this.game.getPlayers()) {
-            player.startGame();
+            player.readyToStart = true;
+            this.game.addGold(player, player.setupGold);
         }
     }
 
@@ -87,7 +89,13 @@ class SetupPhase extends Phase {
 
     setupDone() {
         for(const player of this.game.getPlayers()) {
-            player.setupDone();
+            // Draw back up to starting hand size
+            if(player.hand.length < StartingHandSize) {
+                player.drawCardsToHand(StartingHandSize - player.hand.length);
+            }
+
+            this.game.returnGoldToTreasury({ player: player, amount: player.gold });
+            player.revealSetupCards();
         }
     }
 }
