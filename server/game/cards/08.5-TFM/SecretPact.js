@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class SecretPact extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(card => card.getType() === 'character' && !card.isFaction('martell'));
+        this.attachmentRestriction({ not: { faction: 'martell' } });
         this.whileAttached({
             effect: ability.effects.addKeyword('Renown')
         });

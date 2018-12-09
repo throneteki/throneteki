@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class LordCommander extends DrawCard {
     setupCardAbilities() {
-        this.attachmentRestriction(card => card.getType() === 'character' && card.isFaction('thenightswatch') && card.getPrintedCost() >= 5);
+        this.attachmentRestriction({ faction: 'thenightswatch', printedCostOrHigher: 5 });
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingNWCharacter()
