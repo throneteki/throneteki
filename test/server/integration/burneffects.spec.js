@@ -142,7 +142,7 @@ describe('burn effects', function() {
                 ]);
                 const deck2 = this.buildDeck('targaryen', [
                     'A Noble Cause', 'Blood of the Dragon',
-                    'Drogon (Core)', 'Dracarys!', 'Astapor', 'Targaryen Loyalist', 'Braided Warrior', 'Viserion', 'Ser Lancel Lannister'
+                    'Drogon (Core)', 'Dracarys!', 'Astapor', 'Targaryen Loyalist', 'Braided Warrior', 'Viserion (Core)', 'Ser Lancel Lannister'
                 ]);
 
                 this.player1.selectDeck(deck1);

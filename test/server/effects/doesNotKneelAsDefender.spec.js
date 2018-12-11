@@ -3,7 +3,7 @@ describe('doesNotKneelAsDefender', function() {
         beforeEach(function() {
             const deck = this.buildDeck('stark', [
                 'A Noble Cause',
-                'Littlefinger', 'Myrcella Baratheon (GoH)'
+                'Littlefinger (Core)', 'Myrcella Baratheon (GoH)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);

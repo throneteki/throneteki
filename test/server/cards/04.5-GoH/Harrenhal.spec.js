@@ -3,7 +3,7 @@ describe('Harrenhal (GoH)', function() {
         beforeEach(function() {
             const deck = this.buildDeck('stark', [
                 'Sneak Attack',
-                'Harrenhal (GoH)', 'Littlefinger'
+                'Harrenhal (GoH)', 'Littlefinger (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);

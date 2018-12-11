@@ -101,7 +101,7 @@ describe('Daenerys Targaryen (TFM)', function() {
                 const deck = this.buildDeck('targaryen', [
                     'The Lord of the Crossing',
                     'Trading with the Pentoshi',
-                    'Daenerys Targaryen (TFM)', 'Viserion', 'Viserys Targaryen (Core)'
+                    'Daenerys Targaryen (TFM)', 'Viserion (Core)', 'Viserys Targaryen (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.startGame();

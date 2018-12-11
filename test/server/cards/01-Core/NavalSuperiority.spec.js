@@ -3,7 +3,7 @@ describe('Naval Superiority', function() {
         beforeEach(function() {
             const deck = this.buildDeck('lannister', [
                 'Naval Superiority', 'A Noble Cause', 'A Feast for Crows', 'A Clash of Kings',
-                'The Roseroad', 'Littlefinger'
+                'The Roseroad', 'Littlefinger (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);

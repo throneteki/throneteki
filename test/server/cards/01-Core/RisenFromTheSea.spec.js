@@ -7,7 +7,7 @@ describe('Risen from the Sea', function() {
             ]);
             const deck2 = this.buildDeck('targaryen', [
                 'A Noble Cause',
-                'Drogon (Core)', 'Viserion', 'Dracarys!'
+                'Drogon (Core)', 'Viserion (Core)', 'Dracarys!'
             ]);
 
             this.player1.selectDeck(deck1);
