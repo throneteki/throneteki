@@ -30,7 +30,7 @@ class HeirToTheIronThrone extends PlotCard {
     }
 
     promptForSacrifice(player) {
-        this.game.promptForSelect({
+        this.game.promptForSelect(player, {
             cardCondition: card => card.location === 'play area' && card.controller === player && ['Lord', 'Lady'].some(trait => card.hasTrait(trait)) && card.allowGameAction('sacrifice'),
             source: this,
             onSelect: (_, card) => {
