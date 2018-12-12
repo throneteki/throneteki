@@ -21,7 +21,7 @@ class GunthorSonOfGurn extends DrawCard {
         });
     }
 
-    onCardSelected(context, player, card) {
+    cardSelected(context, player, card) {
         player.discardCard(card);
         this.game.addMessage('{0} uses {1} to have {2} discard {3} from their hand',
             context.player, this, context.event.challenge.loser, card);
