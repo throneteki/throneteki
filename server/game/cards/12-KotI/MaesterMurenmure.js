@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard');
 
 class MaesterMurenmure extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.interrupt({
             canCancel: true,
             when: {
@@ -12,6 +12,7 @@ class MaesterMurenmure extends DrawCard {
                     (event.ability.isForcedAbility() || event.source.controller !== this.controller)
                 )
             },
+            cost:ability.costs.kneelSelf(),
             handler: context => {
                 this.game.addMessage('{0} kneels {1} to cancel {2}', this.controller, this, context.event.source);
                 context.event.cancel();
