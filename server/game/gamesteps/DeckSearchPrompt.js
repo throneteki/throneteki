@@ -89,7 +89,7 @@ class DeckSearchPrompt extends BaseStep {
             return cards.includes(card);
         }
 
-        return card.location === 'draw deck';
+        return card.location === 'draw deck' && card.controller === this.choosingPlayer;
     }
 
     searchCards(context) {
