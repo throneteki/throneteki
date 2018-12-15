@@ -1,7 +1,5 @@
 const _ = require('underscore');
 
-const PlayAreaLocations = ['play area', 'active plot'];
-
 /**
  * Represents a card based effect applied to one or more targets.
  *
@@ -45,7 +43,7 @@ class Effect {
         this.location = properties.location || 'play area';
         this.targetController = properties.targetController || 'current';
         this.targetType = properties.effect.targetType || 'card';
-        this.targetLocation = properties.targetLocation || 'play area';
+        this.targetLocation = this.buildTargetLocation(properties.targetLocation);
         this.effect = this.buildEffect(properties.effect);
         this.gameAction = this.effect.gameAction || 'genericEffect';
         this.targets = [];
@@ -62,6 +60,14 @@ class Effect {
         }
 
         return [properties];
+    }
+
+    buildTargetLocation(targetLocation) {
+        if(Array.isArray(targetLocation)) {
+            return targetLocation;
+        }
+
+        return targetLocation || ['play area', 'active plot'];
     }
 
     buildEffect(effect) {
@@ -97,11 +103,7 @@ class Effect {
 
     isValidTarget(target) {
         if(this.targetType === 'card' && target.getGameElementType() === 'card') {
-            if(this.targetLocation === 'play area' && !PlayAreaLocations.includes(target.location)) {
-                return false;
-            }
-
-            if(!['any', 'play area'].includes(this.targetLocation) && target.location !== this.targetLocation) {
+            if(!this.targetLocation.includes('any') && !this.targetLocation.includes(target.location)) {
                 return false;
             }
 

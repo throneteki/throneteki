@@ -35,6 +35,10 @@ describe('Effect', function() {
         this.effect = new Effect(this.gameSpy, this.sourceSpy, this.properties);
     });
 
+    it('defaults to targeting both play area and active plot', function() {
+        expect(this.effect.targetLocation).toEqual(['play area', 'active plot']);
+    });
+
     describe('addTargets()', function() {
         beforeEach(function() {
             this.matchingCard = createTarget({ good: true, location: 'play area' });
@@ -204,9 +208,9 @@ describe('Effect', function() {
                 });
             });
 
-            describe('when the target location is play area', function() {
+            describe('when the target location is play area or active plot', function() {
                 beforeEach(function() {
-                    this.effect.targetLocation = 'play area';
+                    this.effect.targetLocation = ['play area', 'active plot'];
                 });
 
                 it('should add targets from play area', function() {
@@ -257,9 +261,9 @@ describe('Effect', function() {
                     this.effect.match = this.matchingCard;
                 });
 
-                describe('when the target location is play area', function() {
+                describe('when the target location is play area or active plot', function() {
                     beforeEach(function() {
-                        this.effect.targetLocation = 'play area';
+                        this.effect.targetLocation = ['play area', 'active plot'];
                     });
 
                     it('should add targets from play area', function() {
