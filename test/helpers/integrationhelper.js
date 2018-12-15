@@ -122,6 +122,29 @@ var customMatchers = {
                 return result;
             }
         };
+    },
+    toAllowSelect: function(util, customEqualityMatchers) {
+        return {
+            compare: function(actual, expected) {
+                let result = {};
+                if(typeof expected !== 'string') {
+                    expected = expected.name;
+                }
+
+                let selectableCardNames = actual.player.getSelectableCards().map(card => card.name);
+                let includesCard = selectableCardNames.some(cardName => util.equals(cardName, expected, customEqualityMatchers));
+
+                result.pass = includesCard;
+
+                if(result.pass) {
+                    result.message = `Expected ${actual.name} not to be allowed to select ${expected} but it is.`;
+                } else {
+                    result.message = `Expected ${actual.name} to be allowed to select ${expected} but it isn't.`;
+                }
+
+                return result;
+            }
+        };
     }
 };
 
