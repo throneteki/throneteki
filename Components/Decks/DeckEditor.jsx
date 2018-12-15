@@ -226,21 +226,9 @@ class DeckEditor extends React.Component {
         let rookeryCards = [];
 
         for(const line of split) {
-            let trimmedLine = line.trim();
-            let index = 2;
-
-            let num = parseInt(trimmedLine[0]);
-            if(isNaN(num)) {
-                continue;
-            }
-
-            if(line[1] === 'x') {
-                index++;
-            }
-
-            let card = this.lookupCard(trimmedLine, index);
+            let { card, count } = this.parseCardLine(line);
             if(card) {
-                this.addCard(rookeryCards, card, num);
+                this.addCard(rookeryCards, card, count);
             }
         }
 
@@ -306,21 +294,9 @@ class DeckEditor extends React.Component {
         drawCards = [];
 
         for(const line of split) {
-            let trimmedLine = line.trim();
-            let index = 2;
-
-            let num = parseInt(trimmedLine[0]);
-            if(isNaN(num)) {
-                continue;
-            }
-
-            if(line[1] === 'x') {
-                index++;
-            }
-
-            let card = this.lookupCard(trimmedLine, index);
+            let { card, count } = this.parseCardLine(line);
             if(card) {
-                this.addCard(card.type === 'plot' ? plotCards : drawCards, card, num);
+                this.addCard(card.type === 'plot' ? plotCards : drawCards, card, count);
             }
         }
 
@@ -336,30 +312,40 @@ class DeckEditor extends React.Component {
         }, this.triggerDeckUpdated);
     }
 
-    lookupCard(line, index) {
-        let packOffset = line.indexOf('(');
-        let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1).trim();
-        let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
+    parseCardLine(line) {
+        const pattern = /^(\d+)x?\s+([^()]+)(\s+\((.+)\))?$/;
 
-        if(cardName.startsWith('Custom ')) {
-            return this.createCustomCard(cardName);
+        let match = line.trim().match(pattern);
+        if(!match) {
+            return { count: 0 };
         }
 
-        let pack = this.props.packs.find(pack => {
-            return pack.code.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
-        });
+        let count = parseInt(match[1]);
+        let cardName = match[2].trim().toLowerCase();
+        let packName = match[4] && match[4].trim().toLowerCase();
+        let pack = packName && this.props.packs.find(pack => pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName);
 
-        return Object.values(this.props.cards).find(card => {
+        if(cardName.startsWith('Custom ')) {
+            return { count: count, card: this.createCustomCard(cardName) };
+        }
+
+        let cards = Object.values(this.props.cards);
+
+        let matchingCards = cards.filter(card => {
             if(this.props.agendas[card.code]) {
-                return undefined;
+                return false;
             }
 
             if(pack) {
-                return card.label.toLowerCase() === cardName.toLowerCase() || card.label.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
+                return pack.code === card.packCode && card.name.toLowerCase() === cardName;
             }
 
-            return card.label.toLowerCase() === cardName.toLowerCase();
+            return card.name.toLowerCase() === cardName;
         });
+
+        matchingCards.sort((a, b) => this.compareCardByReleaseDate(a, b));
+
+        return { count: count, card: matchingCards[0] };
     }
 
     createCustomCard(cardName) {
@@ -397,6 +383,21 @@ class DeckEditor extends React.Component {
             type: type,
             unique: name.includes('*')
         };
+    }
+
+    compareCardByReleaseDate(a, b) {
+        let packA = this.props.packs.find(pack => pack.code === a.packCode);
+        let packB = this.props.packs.find(pack => pack.code === b.packCode);
+
+        if(!packA.releaseDate && packB.releaseDate) {
+            return 1;
+        }
+
+        if(!packB.releaseDate && packA.releaseDate) {
+            return -1;
+        }
+
+        return new Date(packA.releaseDate) < new Date(packB.releaseDate) ? -1 : 1;
     }
 
     addCard(list, card, number) {
