@@ -17,17 +17,23 @@ function createPlayerTarget(properties = {}) {
     return player;
 }
 
+function resetEffectDefinitionCalls(effectDefinition) {
+    effectDefinition.apply.calls.reset();
+    effectDefinition.unapply.calls.reset();
+}
+
 describe('Effect', function() {
     beforeEach(function() {
         this.gameSpy = jasmine.createSpyObj('game', ['']);
         this.sourceSpy = jasmine.createSpyObj('source', ['getType', 'isAnyBlank']);
+        this.effectDefinition = {
+            apply: jasmine.createSpy('apply'),
+            unapply: jasmine.createSpy('unapply')
+        };
         this.properties = {
             match: jasmine.createSpy('match'),
             duration: 'persistent',
-            effect: {
-                apply: jasmine.createSpy('apply'),
-                unapply: jasmine.createSpy('unapply')
-            }
+            effect: this.effectDefinition
         };
 
         this.properties.match.and.returnValue(true);
@@ -66,8 +72,8 @@ describe('Effect', function() {
                 });
 
                 it('should apply the effect to the matching card', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.matchingCard, { game: this.gameSpy, source: this.sourceSpy });
-                    expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.nonMatchingCard, jasmine.any(Object));
+                    expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.matchingCard, { game: this.gameSpy, source: this.sourceSpy });
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.nonMatchingCard, jasmine.any(Object));
                 });
             });
 
@@ -85,8 +91,8 @@ describe('Effect', function() {
                 });
 
                 it('should not apply the effect to the matching card', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.matchingCard, jasmine.any(Object));
-                    expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.nonMatchingCard, jasmine.any(Object));
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.matchingCard, jasmine.any(Object));
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.nonMatchingCard, jasmine.any(Object));
                 });
             });
         });
@@ -103,8 +109,8 @@ describe('Effect', function() {
             });
 
             it('should apply the effect to the matching card', function() {
-                expect(this.properties.effect.apply).toHaveBeenCalledWith(this.matchingCard, { game: this.gameSpy, source: this.sourceSpy });
-                expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.nonMatchingCard, jasmine.any(Object));
+                expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.matchingCard, { game: this.gameSpy, source: this.sourceSpy });
+                expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.nonMatchingCard, jasmine.any(Object));
             });
         });
 
@@ -119,7 +125,7 @@ describe('Effect', function() {
             });
 
             it('should not apply the effect to the matching card', function() {
-                expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.matchingCard, jasmine.any(Object));
+                expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.matchingCard, jasmine.any(Object));
             });
         });
 
@@ -148,9 +154,14 @@ describe('Effect', function() {
                     this.matchingCard.allowGameAction.and.returnValue(false);
                 });
 
-                it('should reject the target', function() {
+                it('should allow the target', function() {
                     this.effect.addTargets([this.matchingCard]);
-                    expect(this.effect.targets).not.toContain(this.matchingCard);
+                    expect(this.effect.targets).toContain(this.matchingCard);
+                });
+
+                it('should not apply to the target', function() {
+                    this.effect.addTargets([this.matchingCard]);
+                    expect(this.effect.isAppliedTo(this.matchingCard)).toBe(false);
                 });
             });
 
@@ -404,7 +415,7 @@ describe('Effect', function() {
             });
 
             it('should not unapply the effect', function() {
-                expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
             });
         });
 
@@ -418,7 +429,7 @@ describe('Effect', function() {
             });
 
             it('should unapply the effect', function() {
-                expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
+                expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
             });
         });
     });
@@ -432,7 +443,8 @@ describe('Effect', function() {
         describe('when the effect is active', function() {
             beforeEach(function() {
                 this.effect.active = true;
-                this.effect.targets = [this.target];
+                this.effect.addTargets([this.target]);
+                resetEffectDefinitionCalls(this.effectDefinition);
             });
 
             describe('and is set to inactive', function() {
@@ -441,11 +453,11 @@ describe('Effect', function() {
                 });
 
                 it('should unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
+                    expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
                 });
 
                 it('should not apply the effect to anything', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
 
                 it('should remove all old targets', function() {
@@ -463,11 +475,11 @@ describe('Effect', function() {
                 });
 
                 it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
                 });
 
                 it('should not apply the effect to anything', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
 
                 it('should not modify existing targets', function() {
@@ -483,7 +495,6 @@ describe('Effect', function() {
         describe('when the effect is inactive', function() {
             beforeEach(function() {
                 this.effect.active = false;
-                this.effect.targets = [];
             });
 
             describe('and is set to inactive', function() {
@@ -492,11 +503,11 @@ describe('Effect', function() {
                 });
 
                 it('should not unapply the effect', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
                 });
 
                 it('should not apply the effect', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
 
                 it('should not add new targets', function() {
@@ -510,11 +521,11 @@ describe('Effect', function() {
                 });
 
                 it('should not unapply the effect', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
                 });
 
                 it('should apply the effect to new targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.newTarget, { game: this.gameSpy, source: this.sourceSpy });
+                    expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.newTarget, { game: this.gameSpy, source: this.sourceSpy });
                 });
 
                 it('should add new targets', function() {
@@ -526,13 +537,13 @@ describe('Effect', function() {
 
     describe('cancel()', function() {
         beforeEach(function() {
-            this.target = {};
-            this.effect.targets = [this.target];
+            this.target = createTarget({ target: 1, location: 'play area' });
+            this.effect.addTargets([this.target]);
             this.effect.cancel();
         });
 
         it('should unapply the effect from existing targets', function() {
-            expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
+            expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, { game: this.gameSpy, source: this.sourceSpy });
         });
 
         it('should remove all targets', function() {
@@ -544,14 +555,15 @@ describe('Effect', function() {
         beforeEach(function() {
             this.target = createTarget({ target: 1, location: 'play area' });
             this.newTarget = createTarget({ target: 2, location: 'play area' });
-            this.effect.targets = [this.target];
+            this.effect.addTargets([this.target]);
+            resetEffectDefinitionCalls(this.effectDefinition);
             this.newTargets = [this.target, this.newTarget];
         });
 
         describe('when the effect is neither state dependent nor conditional', function() {
             beforeEach(function() {
                 this.effect.isConditional = false;
-                this.properties.effect.isStateDependent = false;
+                this.effectDefinition.isStateDependent = false;
             });
 
             describe('when the effect is inactive', function() {
@@ -562,11 +574,11 @@ describe('Effect', function() {
                 });
 
                 it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
                 });
 
                 it('should not apply the effect for new or existing targets', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
             });
 
@@ -578,11 +590,11 @@ describe('Effect', function() {
                 });
 
                 it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
                 });
 
                 it('should not apply the effect for new or existing targets', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
             });
         });
@@ -590,7 +602,7 @@ describe('Effect', function() {
         describe('when the effect is state dependent but not conditional', function() {
             beforeEach(function() {
                 this.effect.isConditional = false;
-                this.properties.effect.isStateDependent = true;
+                this.effectDefinition.isStateDependent = true;
             });
 
             describe('when the effect is inactive', function() {
@@ -601,11 +613,11 @@ describe('Effect', function() {
                 });
 
                 it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
                 });
 
                 it('should not apply the effect for new or existing targets', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
             });
 
@@ -616,24 +628,24 @@ describe('Effect', function() {
 
                 describe('and the effect has a reapply method', function() {
                     beforeEach(function() {
-                        this.properties.effect.reapply = jasmine.createSpy('reapply');
+                        this.effectDefinition.reapply = jasmine.createSpy('reapply');
                         this.effect.reapply(this.newTargets);
                     });
 
                     it('should reapply the effect for existing targets', function() {
-                        expect(this.properties.effect.reapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                        expect(this.effectDefinition.reapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                     });
 
                     it('should not unapply the effect for existing targets', function() {
-                        expect(this.properties.effect.unapply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                        expect(this.effectDefinition.unapply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
                     });
 
                     it('should not apply the effect for existing targets', function() {
-                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                        expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.target, jasmine.any(Object));
                     });
 
                     it('should not apply the effect to new targets', function() {
-                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                        expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
                     });
                 });
 
@@ -643,15 +655,15 @@ describe('Effect', function() {
                     });
 
                     it('should unapply the effect for existing targets', function() {
-                        expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                        expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                     });
 
                     it('should apply the effect for existing targets', function() {
-                        expect(this.properties.effect.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                        expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                     });
 
                     it('should not apply the effect to new targets', function() {
-                        expect(this.properties.effect.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                        expect(this.effectDefinition.apply).not.toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
                     });
                 });
             });
@@ -671,11 +683,11 @@ describe('Effect', function() {
                 });
 
                 it('should not unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalled();
                 });
 
                 it('should not apply the effect from existing targets', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
             });
 
@@ -690,15 +702,15 @@ describe('Effect', function() {
                 });
 
                 it('should apply the effect to new targets', function() {
-                    expect(this.properties.effect.apply).toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
+                    expect(this.effectDefinition.apply).toHaveBeenCalledWith(this.newTarget, jasmine.any(Object));
                 });
 
                 it('should not unapply the effect from targets that still match', function() {
-                    expect(this.properties.effect.unapply).not.toHaveBeenCalledWith(this.matchingTarget, jasmine.any(Object));
+                    expect(this.effectDefinition.unapply).not.toHaveBeenCalledWith(this.matchingTarget, jasmine.any(Object));
                 });
 
                 it('should unapply the effect from targets that no longer match', function() {
-                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                 });
 
                 it('should update the target list', function() {
@@ -715,11 +727,11 @@ describe('Effect', function() {
                 });
 
                 it('should unapply the effect from existing targets', function() {
-                    expect(this.properties.effect.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
+                    expect(this.effectDefinition.unapply).toHaveBeenCalledWith(this.target, jasmine.any(Object));
                 });
 
                 it('should not apply the effect to new targets', function() {
-                    expect(this.properties.effect.apply).not.toHaveBeenCalled();
+                    expect(this.effectDefinition.apply).not.toHaveBeenCalled();
                 });
 
                 it('should clear the target list', function() {
