@@ -52,12 +52,12 @@ class SecretsOfTheConclave extends PlotCard {
 
     promptToPlaceNextCard() {
         let buttons = this.remainingCards.map(card => ({
-            method: 'selectCardForTop', card: card
+            method: 'selectCardForTop', card: card, mapCard: true
         }));
 
         this.game.promptWithMenu(this.controller, this, {
             activePrompt: {
-                menuTitle: 'Choose card to place on bottom of deck',
+                menuTitle: 'Choose card to place on top of deck',
                 buttons: buttons
             },
             source: this
