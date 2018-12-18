@@ -9,6 +9,12 @@ class BalonGreyjoy extends DrawCard {
                 cardCondition: card => card.location === 'discard pile' && card.controller !== this.controller &&
                                        this.controller.canPutIntoPlay(card)
             },
+            message: {
+                format: '{player} uses {source} and kneels their faction card to put {target} into play from {targetOwner}\'s discard pile under their control',
+                args: {
+                    targetOwner: context => context.target.owner
+                }
+            },
             handler: context => {
                 context.player.putIntoPlay(context.target);
 
@@ -16,9 +22,6 @@ class BalonGreyjoy extends DrawCard {
                     match: context.target,
                     effect: ability.effects.shuffleIntoDeckIfStillInPlay()
                 }));
-
-                this.game.addMessage('{0} uses {1} and kneels their faction card to put {2} into play from {3}\'s discard pile under their control',
-                    context.player, this, context.target, context.target.owner);
             }
         });
     }

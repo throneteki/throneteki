@@ -8,8 +8,8 @@ class MyMindIsMyWeapon extends DrawCard {
             target: {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.getType() === 'character' && card.hasIcon('intrigue') && !card.isParticipating()
             },
+            message: '{player} plays {source} to add {target} to the challenge',
             handler: context => {
-                this.game.addMessage('{0} plays {1} to add {2} to the challenge', context.player, this, context.target);
                 this.game.currentChallenge.addParticipantToSide(context.player, context.target);
             }
         });

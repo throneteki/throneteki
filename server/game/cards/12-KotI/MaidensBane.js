@@ -11,8 +11,8 @@ class MaidensBane extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isAttacking() && card.kneeled,
                 gameAction: 'stand'
             },
+            message: '{player} kneels {source} to stand {target}',
             handler: context => {
-                this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, context.target);
                 context.player.standCard(context.target);
 
                 if(context.target.hasTrait('Captain')) {

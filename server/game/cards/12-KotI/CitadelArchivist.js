@@ -9,6 +9,7 @@ class CitadelArchivist extends DrawCard {
                     event.card === this
             },
             location: 'discard pile',
+            message: '{player} uses {source} to shuffle each player\'s discard pile into their deck',
             handler: () => {
                 for(let player of this.game.getPlayersInFirstPlayerOrder()) {
                     for(let card of player.discardPile) {
@@ -17,8 +18,6 @@ class CitadelArchivist extends DrawCard {
 
                     player.shuffleDrawDeck();
                 }
-
-                this.game.addMessage('{0} uses {1} to shuffle each player\'s discard pile into their deck', this.controller, this);
             }
         });
     }
