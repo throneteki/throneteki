@@ -1,5 +1,6 @@
 const _ = require('underscore');
 
+const AbilityMessage = require('./AbilityMessage');
 const AbilityTarget = require('./AbilityTarget.js');
 
 /**
@@ -25,7 +26,7 @@ class BaseAbility {
         this.cost = this.buildCost(properties.cost);
         this.targets = this.buildTargets(properties);
         this.limit = properties.limit;
-        this.messageFunc = properties.message || (() => true);
+        this.message = AbilityMessage.create(properties.message);
         this.cannotBeCanceled = !!properties.cannotBeCanceled;
         this.chooseOpponentFunc = properties.chooseOpponent;
         this.abilitySourceType = properties.abilitySourceType || 'card';
@@ -197,14 +198,7 @@ class BaseAbility {
     }
 
     outputMessage(context) {
-        // The message function can either output a message directly, or just
-        // return an array with the message and arguments necessary to output
-        // the message.
-        let messageArgs = this.messageFunc(context);
-
-        if(Array.isArray(messageArgs)) {
-            this.game.addMessage(...messageArgs);
-        }
+        this.message.output(this.game, context);
     }
 
     /**

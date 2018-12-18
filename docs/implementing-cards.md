@@ -320,25 +320,39 @@ class SealOfTheHand extends DrawCard {
 
 The `message` property can be used to add a message to the game log outside of the `handler` function. By separating the message from the handler that executes the ability, messages can be added to the game log prior to prompting to cancel abilities (e.g. Treachery, Hand's Judgment, etc).
 
-The `message` property should be a function that takes an ability context object and returns an array with the message string as the first item in the array, followed by any arguments for the message:
+The `message` property can be just a string if there are no additional arguments. `{player}` will be replaced with the player initiating the ability, `{source}` will be replaced with the card associated with the ability, and `{target}` will be replaced with the target for the ability (if any):
 
 ```javascript
 this.action({
     // ...
-    message: context => ['{0} kneels {1} to stand {2}', context.player, this, this.parent],
+    message: '{player} kneels {source} to stand {target}',
     handler: () => {
         // ...
     }
 });
 ```
 
-It can also output the message directly using the game object without returning a message format:
+When you have additional parameters needed for the message, the `message` property can be an object with a `format` sub-property for the message format, and an `args` sub-property for the additional arguments. The keys of the `args` sub-property correspond to the replacement name, and the values correspond to a function that takes the `context` object and returns the appropriate argument value:
 ```javascript
 this.action({
     // ...
-    message: context => {
-        this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, this.parent);
+    message: {
+        format: '{player} uses {source} to put {target} into play from {targetOwner}\'s discard pile.',
+        args: {
+            targetOwner: context => context.target.owner
+        }
     },
+    handler: () => {
+        // ...
+    }
+});
+```
+
+Finally, you can pass a function to the `message` property that will be executed:
+```javascript
+this.action({
+    // ...
+    message: context => this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target),
     handler: () => {
         // ...
     }
