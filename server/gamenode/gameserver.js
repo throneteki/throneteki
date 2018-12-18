@@ -14,6 +14,8 @@ const Game = require('../game/game.js');
 const Socket = require('../socket.js');
 const version = require('../../version.js');
 
+const PlayerReconnectWindowTimeout = 2 * 60 * 1000;
+
 if(config.sentryDsn) {
     Raven.config(config.sentryDsn, { release: version }).install();
 }
@@ -140,9 +142,13 @@ class GameServer {
                 }
             }
 
-            delete this.games[game.id];
-            this.zmqSocket.send('GAMECLOSED', { game: game.id });
+            this.closeGame(game);
         }
+    }
+
+    closeGame(game) {
+        delete this.games[game.id];
+        this.zmqSocket.send('GAMECLOSED', { game: game.id });
     }
 
     runAndCatchErrors(game, func) {
@@ -240,9 +246,7 @@ class GameServer {
         game.failedConnect(username);
 
         if(game.isEmpty()) {
-            delete this.games[game.id];
-
-            this.zmqSocket.send('GAMECLOSED', { game: game.id });
+            this.closeGame(game);
         }
 
         this.sendGameState(game);
@@ -254,8 +258,7 @@ class GameServer {
             return;
         }
 
-        delete this.games[gameId];
-        this.zmqSocket.send('GAMECLOSED', { game: game.id });
+        this.closeGame(game);
     }
 
     onCardData(cardData) {
@@ -323,9 +326,15 @@ class GameServer {
 
         if(!socket.tIsClosing) {
             if(game.isEmpty()) {
-                delete this.games[game.id];
-
-                this.zmqSocket.send('GAMECLOSED', { game: game.id });
+                // Give players a chance to reconnect after being disconnected,
+                // for example during server connectivity problems. If the game
+                // is still empty after the reconnect window has elapsed, then
+                // close it.
+                setTimeout(() => {
+                    if(game.isEmpty()) {
+                        this.closeGame(game);
+                    }
+                }, PlayerReconnectWindowTimeout);
             } else if(isSpectator) {
                 this.zmqSocket.send('PLAYERLEFT', { gameId: game.id, game: game.getSaveState(), player: socket.user.username, spectator: true });
             }

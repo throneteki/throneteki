@@ -32,6 +32,8 @@ const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js'
 const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
 
+const DisconnectMessageDelay = 15 * 1000;
+
 class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
@@ -1084,7 +1086,16 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addAlert('warning', '{0} has disconnected', player);
+        // Delay outputing the disconnect message in case of temporary blips
+        // in network connection. This should prevent other players from leaving
+        // prematurely during unintentional, temporary disconnects.
+        setTimeout(() => {
+            if(!player.disconnected) {
+                return;
+            }
+
+            this.addAlert('warning', '{0} has disconnected', player);
+        }, DisconnectMessageDelay);
 
         if(player.isSpectator()) {
             delete this.playersAndSpectators[playerName];
