@@ -78,11 +78,11 @@ class Lobby extends React.Component {
                         <span className='text-center'><h1>A # LCG second edition</h1></span>
                     </div>
                 </div>
-                { /* <div className='col-sm-offset-1 col-sm-10'>
+                <div className='col-sm-offset-1 col-sm-10'>
                     <AlertPanel type='success'>
-                        Registration for the Fall season on the Iron Throne League is <a href='http://championsofwesteros.blogspot.com/p/registration.html' target='_blank'>open now</a> through September 30
+                        Registration for the Fall season on the Iron Throne League is <a href='http://championsofwesteros.blogspot.com/p/registration.html' target='_blank'>open now</a> through January 6
                     </AlertPanel>
-                </div> */ }
+                </div>
                 { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
                     <AlertPanel message={ this.props.bannerNotice } type='error' />
                 </div> : null }
