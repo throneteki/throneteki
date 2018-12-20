@@ -31,8 +31,7 @@ const SimultaneousEvents = require('./SimultaneousEvents');
 const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js');
 const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
-
-const DisconnectMessageDelay = 15 * 1000;
+const ConnectionMessages = require('./ConnectionMessages');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -45,6 +44,7 @@ class Game extends EventEmitter {
         this.playerPlots = {};
         this.playerCards = {};
         this.gameChat = new GameChat();
+        this.connectionMessages = new ConnectionMessages(this.gameChat);
         this.chatCommands = new ChatCommands(this);
         this.pipeline = new GamePipeline();
         this.id = details.id;
@@ -1039,8 +1039,9 @@ class Game extends EventEmitter {
             return false;
         }
 
-        this.playersAndSpectators[user.username] = new Spectator(socketId, user);
-        this.addAlert('info', '{0} has joined the game as a spectator', user.username);
+        let specator = new Spectator(socketId, user);
+        this.playersAndSpectators[user.username] = specator;
+        this.connectionMessages.printSpectatorJoined(specator);
 
         return true;
     }
@@ -1066,7 +1067,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        this.addAlert('info', '{0} has left the game', player);
+        this.connectionMessages.printLeft(player);
 
         if(player.isSpectator() || !this.started) {
             delete this.playersAndSpectators[playerName];
@@ -1086,16 +1087,7 @@ class Game extends EventEmitter {
             return;
         }
 
-        // Delay outputing the disconnect message in case of temporary blips
-        // in network connection. This should prevent other players from leaving
-        // prematurely during unintentional, temporary disconnects.
-        setTimeout(() => {
-            if(!player.disconnected) {
-                return;
-            }
-
-            this.addAlert('warning', '{0} has disconnected', player);
-        }, DisconnectMessageDelay);
+        this.connectionMessages.printDisconnected(player);
 
         if(player.isSpectator()) {
             delete this.playersAndSpectators[playerName];
@@ -1113,11 +1105,11 @@ class Game extends EventEmitter {
             return;
         }
 
+        this.connectionMessages.printFailedConnect(player);
+
         if(player.isSpectator() || !this.started) {
             delete this.playersAndSpectators[playerName];
         } else {
-            this.addAlert('danger', '{0} has failed to connect to the game', player);
-
             player.disconnected = true;
 
             if(!this.finishedAt) {
@@ -1136,7 +1128,7 @@ class Game extends EventEmitter {
         player.socket = socket;
         player.disconnected = false;
 
-        this.addAlert('info', '{0} has reconnected', player);
+        this.connectionMessages.printReconnected(player);
     }
 
     activatePersistentEffects() {
