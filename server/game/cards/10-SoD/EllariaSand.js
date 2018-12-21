@@ -14,7 +14,7 @@ class EllariaSand extends DrawCard {
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
-                    match: card => context.target.includes(card),
+                    match: context.target,
                     targetController: 'any',
                     effect: ability.effects.mustBeDeclaredAsDefender()
                 }));

@@ -13,7 +13,7 @@ class DragonSight extends DrawCard {
 
                 this.game.addMessage('{0} uses {1} to give each non-Dragon participating character -1 STR until the end of the challenge', this.controller, this);
                 this.untilEndOfChallenge(ability => ({
-                    match: card => participatingChars.includes(card),
+                    match: participatingChars,
                     targetController: 'any',
                     effect: ability.effects.modifyStrength(-1)
                 }));

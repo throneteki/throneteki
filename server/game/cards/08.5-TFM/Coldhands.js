@@ -22,7 +22,8 @@ class Coldhands extends DrawCard {
                         onCardLeftPlay: event => event.card === this
                     },
                     targetController: 'any',
-                    match: card => context.target.includes(card),
+                    match: context.target,
+                    targetLocation: ['play area', 'out of game'],
                     effect: ability.effects.removeFromGame()
                 }));
 

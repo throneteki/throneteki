@@ -28,6 +28,7 @@ class MaceTyrell extends DrawCard {
                         onPhaseStarted: () => true
                     },
                     match: context.target,
+                    targetLocation: ['play area', 'out of game'],
                     effect: ability.effects.removeFromGame()
                 }));
                 this.game.addMessage('{0} uses {1} and kneels their faction card to remove {2} from the game',

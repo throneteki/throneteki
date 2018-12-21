@@ -16,6 +16,7 @@ class JourneyToOldtown extends DrawCard {
                         onPhaseStarted: event => event.phase === 'plot'
                     },
                     match: context.target,
+                    targetLocation: ['play area', 'out of game'],
                     effect: ability.effects.removeFromGame()
                 }));
 

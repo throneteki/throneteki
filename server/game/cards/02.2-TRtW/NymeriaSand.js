@@ -19,7 +19,7 @@ class NymeriaSand extends DrawCard {
                     }));
 
                     this.untilEndOfPhase(ability => ({
-                        match: card => sandSnakes.includes(card),
+                        match: sandSnakes,
                         effect: ability.effects.addIcon(icon)
                     }));
 

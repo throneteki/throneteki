@@ -11,7 +11,7 @@ class ToTheSpears extends DrawCard {
 
                 this.untilEndOfPhase(ability => ({
                     condition: () => context.player.getNumberOfChallengesInitiated() <= numInitiated,
-                    match: card => martellCharacters.includes(card),
+                    match: martellCharacters,
                     effect: ability.effects.doesNotKneelAsAttacker()
                 }));
 

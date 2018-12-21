@@ -1,7 +1,5 @@
 const _ = require('underscore');
 
-const PlayAreaLocations = ['play area', 'active plot'];
-
 /**
  * Represents a card based effect applied to one or more targets.
  *
@@ -9,7 +7,8 @@ const PlayAreaLocations = ['play area', 'active plot'];
  * match            - function that takes a card and context object and returns
  *                    a boolean about whether the passed card should have the
  *                    effect applied. Alternatively, a card can be passed as the
- *                    match property to match that single card.
+ *                    match property to match that single card, or an array of
+ *                    cards to match each of them.
  * duration         - string representing how long the effect lasts.
  * until            - optional object to specify events that will cancel the
  *                    effect when duration is 'custom'. The keys of the object
@@ -44,14 +43,16 @@ class Effect {
         this.location = properties.location || 'play area';
         this.targetController = properties.targetController || 'current';
         this.targetType = properties.effect.targetType || 'card';
-        this.targetLocation = properties.targetLocation || 'play area';
+        this.targetLocation = this.buildTargetLocation(properties.targetLocation);
         this.effect = this.buildEffect(properties.effect);
         this.gameAction = this.effect.gameAction || 'genericEffect';
         this.targets = [];
+        this.appliedTargets = new Set();
         this.context = { game: game, source: source };
         this.active = !source.facedown;
         this.isConditional = !!properties.condition || this.targetType === 'player' && _.isFunction(properties.match);
         this.isStateDependent = this.isConditional || this.effect.isStateDependent;
+        this.appliedInitialTargets = false;
     }
 
     static flattenProperties(properties) {
@@ -61,6 +62,14 @@ class Effect {
         }
 
         return [properties];
+    }
+
+    buildTargetLocation(targetLocation) {
+        if(Array.isArray(targetLocation)) {
+            return targetLocation;
+        }
+
+        return targetLocation || ['play area', 'active plot'];
     }
 
     buildEffect(effect) {
@@ -84,34 +93,44 @@ class Effect {
             return;
         }
 
-        let newTargets = _.difference(targets, this.targets);
+        if(this.duration !== 'persistent' && typeof(this.match) !== 'function' && this.appliedInitialTargets) {
+            return;
+        }
 
-        _.each(newTargets, target => {
-            if(this.isValidTarget(target)) {
-                this.targets.push(target);
+        this.appliedInitialTargets = true;
+
+        let newTargets = targets.filter(target => !this.targets.includes(target) && this.isValidTarget(target));
+
+        for(let target of newTargets) {
+            this.targets.push(target);
+
+            if(this.canApply(target)) {
                 this.effect.apply(target, this.context);
+                this.appliedTargets.add(target);
             }
-        });
+        }
+    }
+
+    canApply(target) {
+        if(!target.allowGameAction) {
+            return true;
+        }
+
+        let gameAction = typeof this.gameAction === 'function' ? this.gameAction(target, this.context) : this.gameAction;
+
+        return target.allowGameAction(gameAction, { source: this.source, resolutionStage: 'effect' });
     }
 
     isValidTarget(target) {
         if(this.targetType === 'card' && target.getGameElementType() === 'card') {
-            if(this.targetLocation === 'play area' && !PlayAreaLocations.includes(target.location)) {
-                return false;
-            }
-
-            if(!['any', 'play area'].includes(this.targetLocation) && target.location !== this.targetLocation) {
-                return false;
-            }
-
-            let gameAction = typeof this.gameAction === 'function' ? this.gameAction(target, this.context) : this.gameAction;
-
-            if(!target.allowGameAction(gameAction, { source: this.source, resolutionStage: 'effect' })) {
+            if(!this.targetLocation.includes('any') && !this.targetLocation.includes(target.location)) {
                 return false;
             }
         }
 
-        if(!_.isFunction(this.match)) {
+        if(Array.isArray(this.match)) {
+            return this.match.includes(target);
+        } else if(typeof(this.match) !== 'function') {
             return target === this.match;
         }
 
@@ -153,13 +172,20 @@ class Effect {
             return;
         }
 
-        this.effect.unapply(card, this.context);
+        if(this.appliedTargets.has(card)) {
+            this.effect.unapply(card, this.context);
+            this.appliedTargets.delete(card);
+        }
 
         this.targets = _.reject(this.targets, target => target === card);
     }
 
     hasTarget(card) {
         return this.targets.includes(card);
+    }
+
+    isAppliedTo(target) {
+        return this.appliedTargets.has(target);
     }
 
     setActive(newActive, newTargets) {
@@ -177,8 +203,46 @@ class Effect {
     }
 
     cancel() {
-        _.each(this.targets, target => this.effect.unapply(target, this.context));
+        for(let target of this.appliedTargets) {
+            this.effect.unapply(target, this.context);
+        }
+
         this.targets = [];
+        this.appliedTargets.clear();
+    }
+
+    clearInvalidTargets() {
+        if(!this.condition()) {
+            this.cancel();
+            return;
+        }
+
+        for(let target of this.targets) {
+            if(!this.isValidTarget(target)) {
+                this.removeTarget(target);
+            }
+        }
+    }
+
+    updateAppliedTargets() {
+        let unappliedTargets = this.targets.filter(target => !this.appliedTargets.has(target));
+        let needsApply = unappliedTargets.filter(target => this.canApply(target));
+
+        for(let target of needsApply) {
+            this.effect.apply(target, this.context);
+            this.appliedTargets.add(target);
+        }
+
+        // Gaining immunity to a persistent effect should unapply the effect,
+        // but not for lasting effects.
+        if(this.duration === 'persistent') {
+            let needsUnapply = [...this.appliedTargets].filter(target => !this.canApply(target));
+
+            for(let target of needsUnapply) {
+                this.effect.unapply(target, this.context);
+                this.appliedTargets.delete(target);
+            }
+        }
     }
 
     reapply(newTargets) {
@@ -205,7 +269,9 @@ class Effect {
 
         if(this.effect.isStateDependent) {
             let reapplyFunc = this.createReapplyFunc();
-            _.each(this.targets, target => reapplyFunc(target));
+            for(let target of this.appliedTargets) {
+                reapplyFunc(target);
+            }
         }
     }
 

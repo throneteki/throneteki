@@ -29,7 +29,7 @@ class MeleeAtBitterbridge extends DrawCard {
         let renownCharacters = _.filter(cards, card => card.getStrength() === highestStrength);
 
         this.untilEndOfChallenge(ability => ({
-            match: card => renownCharacters.includes(card),
+            match: renownCharacters,
             targetController: 'any',
             effect: ability.effects.addKeyword('renown')
         }));
@@ -37,7 +37,7 @@ class MeleeAtBitterbridge extends DrawCard {
         let nonContributingCharacters = _.reject(cards, card => card.getStrength() === highestStrength);
 
         this.untilEndOfChallenge(ability => ({
-            match: card => nonContributingCharacters.includes(card),
+            match: nonContributingCharacters,
             targetController: 'any',
             effect: ability.effects.doesNotContributeStrength()
         }));

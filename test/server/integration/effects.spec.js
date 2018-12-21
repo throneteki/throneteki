@@ -29,11 +29,64 @@ describe('effects', function() {
                     this.player1.clickPrompt('Military');
                 });
 
+                it('should apply to cards already in play', function() {
+                    let nymeria = this.player1.findCardByName('Nymeria Sand', 'play area');
+                    expect(nymeria.hasIcon('Military')).toBe(true);
+                });
+
                 it('should not apply the effect to new cards that come into play', function() {
                     let dorea = this.player1.findCardByName('Dorea Sand', 'hand');
                     this.player1.dragCard(dorea, 'play area');
 
                     expect(dorea.hasIcon('Military')).toBe(false);
+                });
+            });
+
+            describe('when the lasting effect targets a game position', function() {
+                beforeEach(function() {
+                    const deck = this.buildDeck('stark', [
+                        '"The Rains of Castamere"',
+                        'Trading with the Pentoshi', 'Sneak Attack',
+                        'Catelyn Stark (WotN)', 'Winter Is Coming'
+                    ]);
+
+                    this.player1.selectDeck(deck);
+                    this.player2.selectDeck(deck);
+                    this.startGame();
+                    this.keepStartingHands();
+
+                    this.player1.clickCard('Catelyn Stark', 'hand');
+
+                    this.completeSetup();
+                    this.selectFirstPlayer(this.player1);
+                    this.selectPlotOrder(this.player1);
+                    this.completeMarshalPhase();
+
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard('Catelyn Stark', 'play area');
+                    this.player1.clickPrompt('Done');
+
+                    // Raise claim on currently revealed plot
+                    this.player1.clickCard('Winter Is Coming', 'hand');
+                    this.player2.clickPrompt('Pass');
+                    this.player1.clickPrompt('Pass');
+
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+
+                    // Trigger Rains to reveal a new plot
+                    this.player1.triggerAbility('"The Rains of Castamere"');
+                    this.player1.clickCard('Sneak Attack');
+                });
+
+                it('should apply to any new cards in that position', function() {
+                    let plot = this.player1.findCardByName('Sneak Attack');
+                    expect(plot.getClaim()).toBe(3);
+                });
+
+                it('should unapply from any new cards that leave that position', function() {
+                    let plot = this.player1.findCardByName('Trading with the Pentoshi');
+                    expect(plot.getClaim()).toBe(1);
                 });
             });
 
@@ -75,6 +128,118 @@ describe('effects', function() {
                     this.player1.clickCard(this.dany);
 
                     expect(this.dany.location).toBe('dead pile');
+                });
+            });
+
+            describe('when gaining immunity after a lasting effect is applied', function() {
+                beforeEach(function() {
+                    const deck = this.buildDeck('targaryen', [
+                        'Trading with the Pentoshi',
+                        'Maester Caleotte', 'Maester Aemon (Core)', 'Benjen Stark', 'Dragonglass Dagger'
+                    ]);
+                    this.player1.selectDeck(deck);
+                    this.player2.selectDeck(deck);
+                    this.startGame();
+                    this.keepStartingHands();
+
+                    this.intrigueChar = this.player1.findCardByName('Maester Aemon', 'hand');
+                    this.benjen = this.player1.findCardByName('Benjen Stark', 'hand');
+                    this.dagger = this.player1.findCardByName('Dragonglass Dagger', 'hand');
+                    this.caleotte = this.player2.findCardByName('Maester Caleotte', 'hand');
+
+                    this.player1.clickCard(this.intrigueChar);
+                    this.player1.clickCard(this.benjen);
+                    this.player2.clickCard(this.caleotte);
+
+                    this.completeSetup();
+                    this.selectFirstPlayer(this.player1);
+                    this.selectPlotOrder(this.player1);
+                    this.completeMarshalPhase();
+
+                    // Lose the first challenge
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.intrigueChar);
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player2.clickCard(this.caleotte);
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+
+                    // Trigger Caleotte and remove an icon from Benjen
+                    this.player2.triggerAbility(this.caleotte);
+                    this.player2.clickCard(this.benjen);
+                    this.player2.clickPrompt('Military');
+
+                    this.player1.clickPrompt('Apply Claim');
+
+                    // Get Benjen participating in a challenge
+                    this.player1.clickPrompt('Power');
+                    this.player1.clickCard(this.benjen);
+                    this.player1.clickPrompt('Done');
+
+                    // Manually drag the dagger into play
+                    this.player1.dragCard(this.dagger, 'play area');
+                    this.player1.clickCard(this.benjen);
+                });
+
+                it('should not remove the previously applied effect', function() {
+                    expect(this.benjen.hasIcon('Military')).toBe(false);
+                });
+            });
+
+            describe('when a card leaves and re-enters play', function() {
+                beforeEach(function() {
+                    const deck = this.buildDeck('targaryen', [
+                        'Trading with the Pentoshi',
+                        'Daenerys Targaryen (TFM)', 'A Dragon Is No Slave', 'Viserion (Core)', 'Fire and Blood'
+                    ]);
+                    this.player1.selectDeck(deck);
+                    this.player2.selectDeck(deck);
+                    this.startGame();
+                    this.keepStartingHands();
+
+                    this.character = this.player2.findCardByName('Viserion', 'hand');
+
+                    this.player1.clickCard('Daenerys Targaryen', 'hand');
+                    this.player2.clickCard(this.character);
+
+                    this.completeSetup();
+                    this.selectFirstPlayer(this.player2);
+                    this.selectPlotOrder(this.player1);
+                    this.completeMarshalPhase();
+
+                    this.player2.clickPrompt('Power');
+                    this.player2.clickCard(this.character);
+                    this.player2.clickPrompt('Done');
+
+                    // Kill Viserion
+                    this.player1.clickCard('A Dragon Is No Slave', 'hand');
+                    this.player1.clickCard(this.character);
+                    this.player1.triggerAbility('Daenerys Targaryen');
+                    this.player1.clickCard(this.character);
+
+                    // Bring Viserion back into play
+                    this.player2.clickCard('Fire and Blood', 'hand');
+                    this.player2.clickCard(this.character);
+                    this.player2.clickPrompt('Yes');
+
+                    this.player1.clickPrompt('Pass');
+                    this.player2.clickPrompt('Pass');
+                    this.player1.clickPrompt('Done');
+
+                    this.skipActionWindow();
+
+                    // Declare Viserion in a challenge to force a recalculation
+                    // of effects
+                    this.player2.clickPrompt('Military');
+                    this.player2.clickCard(this.character);
+                    this.player2.clickPrompt('Done');
+                });
+
+                it('should not re-apply the previously applied effect', function() {
+                    // Viserion should remain in play and not immediately killed
+                    // by the previous burn effect
+                    expect(this.character.location).toBe('play area');
                 });
             });
         });

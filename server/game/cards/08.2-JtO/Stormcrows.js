@@ -24,7 +24,7 @@ class Stormcrows extends DrawCard {
 
     targetsSelected(player, cards, xValue) {
         this.untilEndOfPhase(ability => ({
-            match: card => cards.includes(card),
+            match: cards,
             targetController: 'any',
             effect: ability.effects.modifyStrength(-1)
         }));

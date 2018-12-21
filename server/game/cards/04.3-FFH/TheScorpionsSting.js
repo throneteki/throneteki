@@ -24,7 +24,7 @@ class TheScorpionsSting extends DrawCard {
 
     targetsSelected(player, cards) {
         this.untilEndOfPhase(ability => ({
-            match: card => cards.includes(card),
+            match: cards,
             effect: ability.effects.addKeyword('renown')
         }));
 

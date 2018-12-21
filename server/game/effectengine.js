@@ -47,8 +47,13 @@ class EffectEngine {
 
         this.game.queueSimpleStep(() => {
             for(let card of dirtyCards) {
-                this.recalculateTargetingChange(card);
                 card.clearDirty();
+            }
+
+            for(let effect of this.effects) {
+                effect.clearInvalidTargets();
+                effect.addTargets(dirtyCards);
+                effect.updateAppliedTargets();
             }
         });
     }
@@ -82,59 +87,29 @@ class EffectEngine {
     }
 
     onCardMoved(event) {
-        let newArea = event.newLocation === 'hand' ? 'hand' : 'play area';
-        this.removeTargetFromEffects(event.card, event.originalLocation);
         this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === event.card && (effect.location === event.originalLocation || event.parentChanged && effect.location !== 'any'));
-        this.addTargetForPersistentEffects(event.card, newArea);
+        for(let effect of this.effects) {
+            effect.clearInvalidTargets();
+            effect.addTargets([event.card]);
+            effect.updateAppliedTargets();
+        }
     }
 
     onCardTakenControl(event) {
         let card = event.card;
-        _.each(this.effects, effect => {
+        for(let effect of this.effects) {
+            effect.clearInvalidTargets();
             if(effect.duration === 'persistent' && effect.source === card) {
                 // Since the controllers have changed, explicitly cancel the
                 // effect for existing targets and then recalculate effects for
                 // the new controller from scratch.
-                effect.cancel();
                 effect.addTargets(this.getTargets());
-            } else if(effect.duration === 'persistent' && effect.hasTarget(card) && !effect.isValidTarget(card)) {
-                // Evict the card from any effects applied on it that are no
-                // longer valid under the new controller.
-                effect.removeTarget(card);
-            }
-        });
-
-        // Reapply all relevant persistent effects given the card's new
-        // controller.
-        this.addTargetForPersistentEffects(card, 'play area');
-    }
-
-    recalculateTargetingChange(card) {
-        _.each(this.effects, effect => {
-            if(effect.duration === 'persistent' && effect.hasTarget(card) && !effect.isValidTarget(card)) {
-                effect.removeTarget(card);
-            }
-            effect.addTargets([card]);
-        });
-
-        this.addTargetForPersistentEffects(card, 'play area');
-    }
-
-    addTargetForPersistentEffects(card, targetLocation) {
-        _.each(this.effects, effect => {
-            if(effect.duration === 'persistent' && effect.targetLocation === targetLocation) {
+            } else {
                 effect.addTargets([card]);
             }
-        });
-    }
 
-    removeTargetFromEffects(card, location) {
-        let area = location === 'hand' ? 'hand' : 'play area';
-        _.each(this.effects, effect => {
-            if(effect.targetLocation === area && effect.location !== 'any' || location === 'play area' && !['custom', 'persistent'].includes(effect.duration)) {
-                effect.removeTarget(card);
-            }
-        });
+            effect.updateAppliedTargets();
+        }
     }
 
     onCardBlankToggled(event) {
