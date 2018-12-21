@@ -316,6 +316,49 @@ class SealOfTheHand extends DrawCard {
 }
 ```
 
+#### Ability messages
+
+The `message` property can be used to add a message to the game log outside of the `handler` function. By separating the message from the handler that executes the ability, messages can be added to the game log prior to prompting to cancel abilities (e.g. Treachery, Hand's Judgment, etc).
+
+The `message` property can be just a string if there are no additional arguments. `{player}` will be replaced with the player initiating the ability, `{source}` will be replaced with the card associated with the ability, and `{target}` will be replaced with the target for the ability (if any):
+
+```javascript
+this.action({
+    // ...
+    message: '{player} kneels {source} to stand {target}',
+    handler: () => {
+        // ...
+    }
+});
+```
+
+When you have additional parameters needed for the message, the `message` property can be an object with a `format` sub-property for the message format, and an `args` sub-property for the additional arguments. The keys of the `args` sub-property correspond to the replacement name, and the values correspond to a function that takes the `context` object and returns the appropriate argument value:
+```javascript
+this.action({
+    // ...
+    message: {
+        format: '{player} uses {source} to put {target} into play from {targetOwner}\'s discard pile.',
+        args: {
+            targetOwner: context => context.target.owner
+        }
+    },
+    handler: () => {
+        // ...
+    }
+});
+```
+
+Finally, you can pass a function to the `message` property that will be executed:
+```javascript
+this.action({
+    // ...
+    message: context => this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target),
+    handler: () => {
+        // ...
+    }
+});
+```
+
 #### Checking ability restrictions
 
 Card abilities can only be triggered if they have the potential to modify game state (outside of paying costs). To ensure that the action's play restrictions are met, pass a `condition` function that returns `true` when the restrictions are met, and `false` otherwise. If the condition returns `false`, the action will not be executed and costs will not be paid.

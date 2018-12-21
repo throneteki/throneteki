@@ -9,10 +9,14 @@ class Cohollo extends DrawCard {
                 ability.costs.discardFromHand()
             ],
             condition: () => !!this.game.currentChallenge,
+            message: {
+                format: '{player} kneels {source} and discards {discardCost} to have {source} participate in the current challenge',
+                args: {
+                    discardCost: context => context.costs.discardFromHand
+                }
+            },
             handler: context => {
                 this.game.currentChallenge.addParticipantToSide(context.player, this);
-
-                this.game.addMessage('{0} kneels {1} to discard {2} and have {1} participate in the current challenge', context.player, this, context.costs.discardFromHand);
             }
         });
     }

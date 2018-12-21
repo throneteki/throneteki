@@ -7,8 +7,8 @@ class DanceOfTheDragons extends DrawCard {
             target: {
                 cardCondition: card => card.controller === this.controller && card.location === 'discard pile' && card.getType() !== 'event' && card.getPrintedCost() <= 3
             },
+            message: '{player} plays {source} to return {target} to their hand',
             handler: context => {
-                this.game.addMessage('{0} plays {1} to return {2} to their hand', context.player, this, context.target);
                 context.player.returnCardToHand(context.target);
             }
         });

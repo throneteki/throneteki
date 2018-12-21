@@ -16,8 +16,8 @@ class Fury extends DrawCard {
                 activePromptTitle: 'Select a card',
                 cardCondition: card => card.location === 'play area' && ['character', 'location'].includes(card.getType()) && card.power > 0
             },
+            message: '{player} kneels {source} to move 1 power from {target} to their faction card',
             handler: context => {
-                this.game.addMessage('{0} kneels {1} to move 1 power from {2} to their faction card', context.player, this, context.target);
                 this.game.movePower(context.target, this.controller.faction, 1);
             }
         });

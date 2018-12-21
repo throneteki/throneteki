@@ -1,5 +1,6 @@
 const _ = require('underscore');
 
+const AbilityMessage = require('./AbilityMessage');
 const AbilityTarget = require('./AbilityTarget.js');
 
 /**
@@ -25,6 +26,7 @@ class BaseAbility {
         this.cost = this.buildCost(properties.cost);
         this.targets = this.buildTargets(properties);
         this.limit = properties.limit;
+        this.message = AbilityMessage.create(properties.message);
         this.cannotBeCanceled = !!properties.cannotBeCanceled;
         this.chooseOpponentFunc = properties.chooseOpponent;
         this.abilitySourceType = properties.abilitySourceType || 'card';
@@ -193,6 +195,10 @@ class BaseAbility {
         if(this.limit) {
             this.limit.increment();
         }
+    }
+
+    outputMessage(context) {
+        this.message.output(this.game, context);
     }
 
     /**

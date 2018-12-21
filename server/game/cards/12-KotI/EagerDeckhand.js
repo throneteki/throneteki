@@ -7,10 +7,9 @@ class EagerDeckhand extends DrawCard {
                 onCardEntersPlay: event => event.card.getType() === 'location' && event.card.controller === this.controller && event.card.hasTrait('warship')
             },
             location: 'hand',
+            message: '{player} puts {source} into play from their hand',
             handler: () => {
                 this.controller.putIntoPlay(this);
-
-                this.game.addMessage('{0} puts {1} into play from their hand', this.controller, this);
             }
         });
     }

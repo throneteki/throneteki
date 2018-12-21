@@ -9,8 +9,8 @@ class OldGreyGull extends DrawCard {
                 type: 'select',
                 cardCondition: card => card !== this && card.location === 'play area' && card.getType() === 'character' && card.isFaction('greyjoy') && card.controller === this.controller
             },
+            message: '{player} kneels {source} to kill {target}',
             handler: context => {
-                this.game.addMessage('{0} kneels {1} to kill {2}', context.player, this, context.target);
                 this.game.killCharacter(context.target);
                 this.game.queueSimpleStep(() => {
                     if(context.target.location !== 'dead pile') {
