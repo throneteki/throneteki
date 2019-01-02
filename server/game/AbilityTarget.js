@@ -9,10 +9,11 @@ class AbilityTarget {
         this.name = name;
         this.properties = properties;
         this.selector = CardSelector.for(properties);
+        this.ifAble = !!properties.ifAble;
     }
 
     canResolve(context) {
-        return this.selector.hasEnoughTargets(context);
+        return this.ifAble || this.selector.hasEnoughTargets(context);
     }
 
     resolve(context) {
@@ -24,6 +25,12 @@ class AbilityTarget {
             targetingType: this.type,
             name: this.name
         });
+
+        if(this.ifAble && !this.selector.hasEnoughTargets(context)) {
+            result.reject();
+            return result;
+        }
+
         let promptProperties = {
             context: context,
             source: context.source,
@@ -33,7 +40,11 @@ class AbilityTarget {
                 return true;
             },
             onCancel: () => {
-                result.reject();
+                if(this.ifAble) {
+                    result.reject();
+                } else {
+                    result.cancel();
+                }
                 return true;
             }
         };
