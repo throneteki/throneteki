@@ -3,9 +3,9 @@ const DrawCard = require('../../drawcard.js');
 class AlysaneMormont extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.allCharactersHaveStarkAffiliation() && this.game.isDuringChallange({ challangeType: 'military'}),
+            condition: () => this.allCharactersHaveStarkAffiliation() && this.game.isDuringChallenge({ challengeType: 'military'}),
             match: this,
-            efftct: [
+            effect: [
                 ability.effects.addKeyword('stealth'),
                 ability.effects.doesNotKneelAsAttacker()
             ]
