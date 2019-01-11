@@ -13,7 +13,7 @@ class OldGate extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             handler: () => {
                 let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage('{0} sacrifices {1} to draw {2} cards', 
+                this.game.addMessage('{0} sacrifices {1} to draw {2}', 
                     this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
