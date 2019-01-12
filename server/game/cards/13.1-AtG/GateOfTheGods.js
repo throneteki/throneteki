@@ -21,20 +21,10 @@ class GateOfTheGods extends DrawCard {
 
     characterWithHighestStrength() {
         let charactersInPlay = this.game.filterCardsInPlay(card => card.getType() === 'character');
-        if(charactersInPlay.length === 0) {
-            return false;
-        }
-        let cardWithHighestStrength;
-        let highestStrength = 0;
-        charactersInPlay.forEach(function(card) {
-            if(card.getStrength() > highestStrength) {
-                cardWithHighestStrength = card;
-                highestStrength = card.getStrength();
-            } else if(card.getStrength() === highestStrength) {
-                cardWithHighestStrength = null;
-            }
-        });
-        return (cardWithHighestStrength && cardWithHighestStrength.controller === this.controller);
+        let strengths = charactersInPlay.map(card => card.getStrength());
+        let highestStrength = Math.max(...strengths);
+
+        return this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.getStrength() >= highestStrength);
     }
 }
 
