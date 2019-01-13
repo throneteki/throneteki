@@ -70,6 +70,8 @@ class GameServer {
         this.io.on('connection', this.onConnection.bind(this));
 
         setInterval(() => this.clearStaleFinishedGames(), 60 * 1000);
+
+        logger.info('Game Node', (process.env.SERVER || config.nodeIdentity), 'running on port', process.env.PORT || config.socketioPort);
     }
 
     debugDump() {

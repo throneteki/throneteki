@@ -1,3 +1,9 @@
-const runServer = require('./server');
+const pmx = require('pmx');
 
-runServer();
+const GameServer = require('./server/gamenode/gameserver.js');
+
+var server = new GameServer();
+
+pmx.action('debug', reply => {
+    reply(server.debugDump());
+});
