@@ -24,9 +24,24 @@ class Deck {
         return new DrawCard(player, { type: 'faction' });
     }
 
+    getAgenda() {
+        let allianceAgenda = this.data.cards.find(dc => dc.card.code === '06018');
+        if(allianceAgenda) {
+            return allianceAgenda.card;
+        }
+
+        let agenda = this.data.cards.find(dc => dc.card.type === 'agenda');
+        if(!agenda) {
+            return undefined;
+        }
+
+        return agenda.card;
+    }
+
     createAgendaCard(player) {
-        if(this.data.agenda) {
-            return this.createCardForType(AgendaCard, player, this.data.agenda);
+        let agenda = this.getAgenda();
+        if(agenda) {
+            return this.createCardForType(AgendaCard, player, agenda);
         }
 
         return;
@@ -46,16 +61,12 @@ class Deck {
             plotCards: []
         };
 
-        this.eachRepeatedCard(this.data.drawCards || [], cardData => {
+        this.eachRepeatedCard(this.data.cards || [], cardData => {
             if(this.isDrawCard(cardData)) {
                 var drawCard = this.createCardForType(DrawCard, player, cardData);
                 drawCard.moveTo('draw deck');
                 result.drawCards.push(drawCard);
-            }
-        });
-
-        this.eachRepeatedCard(this.data.plotCards || [], cardData => {
-            if(this.isPlotCard(cardData)) {
+            } else if(this.isPlotCard(cardData)) {
                 var plotCard = this.createCardForType(PlotCard, player, cardData);
                 plotCard.moveTo('plot deck');
                 result.plotCards.push(plotCard);
@@ -73,7 +84,7 @@ class Deck {
             result.allCards.push(result.agenda);
         }
 
-        result.bannerCards = (this.data.bannerCards || []).map(card => this.createCardForType(AgendaCard, player, card));
+        result.bannerCards = (this.data.cards.filter(dc => dc.card.traits.includes('Banner'))).map(card => this.createCardForType(AgendaCard, player, card.card));
 
         for(let card of result.bannerCards) {
             card.moveTo('agenda');

@@ -18,8 +18,8 @@ const GoldSource = require('./GoldSource.js');
 const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
 class Player extends Spectator {
-    constructor(id, user, owner, game) {
-        super(id, user);
+    constructor(player, owner, game) {
+        super(player);
 
         // Ensure game is set before any cards have been created.
         this.game = game;
@@ -70,11 +70,15 @@ class Player extends Spectator {
         this.mustChooseAsClaim = [];
         this.plotRevealRestrictions = [];
         this.mustRevealPlot = undefined;
-        this.promptedActionWindows = user.promptedActionWindows;
-        this.promptDupes = user.settings.promptDupes;
-        this.timerSettings = user.settings.timerSettings || {};
-        this.timerSettings.windowTimer = user.settings.windowTimer;
-        this.keywordSettings = user.settings.keywordSettings;
+
+        let userData = JSON.parse(player.user.userData);
+        let customData = JSON.parse(userData.customData);
+
+        this.promptedActionWindows = customData.promptedActionWindows;
+        this.promptDupes = customData.promptDupes;
+        this.timerSettings = customData.timerSettings || {};
+        this.timerSettings.windowTimer = customData.timerSettings.duration;
+        this.keywordSettings = customData.keywordSettings;
         this.goldSources = [new GoldSource(this)];
         this.groupedPiles = {};
         this.bonusesFromRivals = new Set();
@@ -1218,7 +1222,7 @@ class Player extends Spectator {
     }
 
     isTimerEnabled() {
-        return !this.noTimer && this.user.settings.windowTimer !== 0;
+        return !this.noTimer && this.timerSettings.windowTimer !== 0;
     }
 
     getState(activePlayer) {
@@ -1275,8 +1279,7 @@ class Player extends Spectator {
             showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
-            title: this.title ? this.title.getSummary(activePlayer) : undefined,
-            user: _.pick(this.user, ['username'])
+            title: this.title ? this.title.getSummary(activePlayer) : undefined
         };
 
         let drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);

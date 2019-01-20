@@ -50,7 +50,7 @@ class Game extends EventEmitter {
         this.allowSpectators = details.allowSpectators;
         this.showHand = details.showHand;
         this.useRookery = details.useRookery;
-        this.owner = details.owner.username;
+        this.owner = details.owner;
         this.started = false;
         this.playStarted = false;
         this.createdAt = new Date();
@@ -74,13 +74,13 @@ class Game extends EventEmitter {
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
 
-        _.each(details.players, player => {
-            this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
-        });
-
-        _.each(details.spectators, spectator => {
-            this.playersAndSpectators[spectator.user.username] = new Spectator(spectator.id, spectator.user);
-        });
+        for(let player of Object.values(details.playersAndSpectators)) {
+            if(!player.isSpectator) {
+                this.playersAndSpectators[player.user.name] = new Player(player, this.owner === player.user.name, this);
+            } else {
+                this.playersAndSpectators[player.user.username] = new Spectator(player);
+            }
+        }
 
         this.setMaxListeners(0);
 

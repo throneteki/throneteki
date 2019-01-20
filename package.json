@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/cryogen/throneteki#readme",
   "dependencies": {
+    "async-redis": "^1.1.5",
     "command-line-args": "^4.0.7",
     "cross-env": "^3.2.4",
     "jimp": "^0.2.28",
@@ -36,7 +37,6 @@
     "pluralize": "^7.0.0",
     "pmx": "^1.5.4",
     "raven": "^1.2.1",
-    "redis": "^2.8.0",
     "socket.io": "^2.1.1",
     "throneteki-deck-helper": "^1.2.1",
     "underscore": "^1.8.3",

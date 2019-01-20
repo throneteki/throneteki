@@ -5,11 +5,12 @@ const Raven = require('raven');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const redis = require('async-redis');
+const formatDeckAsFullCards = require('throneteki-deck-helper').formatDeckAsFullCards;
 
 const config = require('./nodeconfig.js');
 const { detectBinary } = require('../util');
 const logger = require('../log.js');
-const ZmqSocket = require('./zmqsocket.js');
 const Game = require('../game/game.js');
 const Socket = require('../socket.js');
 const version = require('../../version.js');
@@ -22,26 +23,19 @@ class GameServer {
     constructor() {
         this.games = {};
 
-        this.protocol = 'https';
-
         try {
             var privateKey = fs.readFileSync(config.keyPath).toString();
             var certificate = fs.readFileSync(config.certPath).toString();
         } catch(e) {
-            this.protocol = 'http';
+            logger.warn('Failed to load certificate/key, falling back to http', e);
         }
 
         this.host = process.env.HOST || config.host;
+        this.redisClient = redis.createClient();
+        this.onRedisConnect = this.onRedisConnect.bind(this);
+        this.redisClient.on('connect', this.onRedisConnect);
 
-        this.zmqSocket = new ZmqSocket(this.host, this.protocol, version);
-        this.zmqSocket.on('onStartGame', this.onStartGame.bind(this));
-        this.zmqSocket.on('onSpectator', this.onSpectator.bind(this));
-        this.zmqSocket.on('onGameSync', this.onGameSync.bind(this));
-        this.zmqSocket.on('onFailedConnect', this.onFailedConnect.bind(this));
-        this.zmqSocket.on('onCloseGame', this.onCloseGame.bind(this));
-        this.zmqSocket.on('onCardData', this.onCardData.bind(this));
-
-        var server = undefined;
+        let server;
 
         if(!privateKey || !certificate) {
             server = http.createServer();
@@ -70,8 +64,22 @@ class GameServer {
         this.io.on('connection', this.onConnection.bind(this));
 
         setInterval(() => this.clearStaleFinishedGames(), 60 * 1000);
+        setInterval(() => this.sendHeartbeat(), 30 * 1000);
 
-        logger.info('Game Node', (process.env.SERVER || config.nodeIdentity), 'running on port', process.env.PORT || config.socketioPort);
+        this.port = process.env.PORT || config.socketioPort;
+        this.config = config;
+
+        logger.info('Game Node', (process.env.SERVER || config.nodeIdentity), 'running on port', this.port);
+    }
+
+    onRedisConnect() {
+        let address = this.host;
+
+        if(process.env.NODE_ENV !== 'production') {
+            address += ':' + this.port;
+        }
+
+        this.redisClient.publish('NodeHello', JSON.stringify({ address: address, name: process.env.SERVER || config.nodeIdentity }));
     }
 
     debugDump() {
@@ -121,20 +129,31 @@ class GameServer {
             });
         }
 
-        Raven.captureException(e, { extra: debugData });
+        if(config.sentryDsn) {
+            Raven.captureException(e, { extra: debugData });
+        }
 
         if(game) {
             game.addMessage('A Server error has occured processing your game state, apologies.  Your game may now be in an inconsistent state, or you may be able to continue.  The error has been logged.');
         }
     }
 
+    sendHeartbeat() {
+        let address = this.host;
+
+        if(process.env.NODE_ENV !== 'production') {
+            address += ':' + this.port;
+        }
+
+        this.redisClient.publish('NodeHeartbeat', JSON.stringify({ address: address, name: process.env.SERVER || config.nodeIdentity }));
+    }
+
     clearStaleFinishedGames() {
         const timeout = 20 * 60 * 1000;
 
-        let staleGames = _.filter(this.games, game => game.finishedAt && (Date.now() - game.finishedAt > timeout));
-
+        let staleGames = Object.values(this.games).filter(game => game.finishedAt && (Date.now() - game.finishedAt > timeout));
         for(let game of staleGames) {
-            logger.info('closed finished game', game.id, 'due to inactivity');
+            logger.warn('closed finished game', game.id, 'due to inactivity');
             for(let player of Object.values(game.getPlayersAndSpectators())) {
                 if(player.socket) {
                     player.socket.tIsClosing = true;
@@ -143,7 +162,11 @@ class GameServer {
             }
 
             delete this.games[game.id];
-            this.zmqSocket.send('GAMECLOSED', { game: game.id });
+            this.closeGame(game).then(() => {
+                logger.debug('Close game succeed');
+            }).catch(err => {
+                logger.error(err);
+            });
         }
     }
 
@@ -157,16 +180,22 @@ class GameServer {
         }
     }
 
-    findGameForUser(username) {
-        return _.find(this.games, game => {
-            var player = game.playersAndSpectators[username];
+    findGameForUser(user) {
+        if(!this.games[user.gameId]) {
+            return undefined;
+        }
 
-            if(!player || player.left) {
-                return false;
-            }
+        let game = this.games[user.gameId];
+        if(!game) {
+            return undefined;
+        }
 
-            return true;
-        });
+        let player = game.playersAndSpectators[user.username];
+        if(!player || player.left) {
+            return undefined;
+        }
+
+        return game;
     }
 
     sendGameState(game) {
@@ -181,12 +210,13 @@ class GameServer {
 
     handshake(socket, next) {
         if(socket.handshake.query.token && socket.handshake.query.token !== 'undefined') {
-            jwt.verify(socket.handshake.query.token, config.secret, function(err, user) {
+            jwt.verify(socket.handshake.query.token, config.secret, { audience: this.config.tokenIssuer, issuer: this.config.tokenIssuer }, function(err, token) {
                 if(err) {
+                    logger.warn('Failed to verify user', err);
                     return;
                 }
 
-                socket.request.user = user;
+                socket.request.user = { username: token['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'], gameId: socket.handshake.query.gameId };
             });
         }
 
@@ -194,19 +224,54 @@ class GameServer {
     }
 
     gameWon(game, reason, winner) {
-        this.zmqSocket.send('GAMEWIN', { game: game.getSaveState(), winner: winner.name, reason: reason });
+        //this.zmqSocket.send('GAMEWIN', { game: game.getSaveState(), winner: winner.name, reason: reason });
     }
 
-    onStartGame(pendingGame) {
-        let game = new Game(pendingGame, { router: this, titleCardData: this.titleCardData, cardData: this.cardData, packData: this.packData, restrictedListData: this.restrictedListData });
-        this.games[pendingGame.id] = game;
+    async startNewGame(user) {
+        if(this.games[user.gameId]) {
+            return this.games[user.gameId];
+        }
+
+        let gameJson = await this.redisClient.get(`game:${user.gameId}`);
+        if(!gameJson) {
+            return undefined;
+        }
+
+        let lobbyGame;
+        try {
+            lobbyGame = JSON.parse(gameJson);
+        } catch(err) {
+            logger.error('error parsing JSON', err);
+            return undefined;
+        }
+
+        let cardDataJson = await this.redisClient.get('cards');
+        this.cardData = JSON.parse(cardDataJson);
+        let factionString = await this.redisClient.get('factions');
+        this.factions = JSON.parse(factionString);
+
+        let game = new Game(lobbyGame, { router: this, titleCardData: this.titleCardData, cardData: this.cardData, packData: this.packData, restrictedListData: this.restrictedListData });
+        this.games[lobbyGame.id] = game;
 
         game.started = true;
-        _.each(pendingGame.players, player => {
-            game.selectDeck(player.name, player.deck);
-        });
+        for(let player of Object.values(lobbyGame.playersAndSpectators)) {
+            if(player.isSpectator) {
+                continue;
+            }
+
+            let customData = JSON.parse(player.customData);
+
+            let deckString = await this.redisClient.get(`deck:${customData.deck.id}`);
+            let deck = JSON.parse(deckString);
+
+            let fullDeck = formatDeckAsFullCards(deck, { cards: this.cardData });
+
+            game.selectDeck(player.user.name, fullDeck);
+        }
 
         game.initialise();
+
+        return game;
     }
 
     onSpectator(pendingGame, user) {
@@ -233,31 +298,14 @@ class GameServer {
         callback(gameSummaries);
     }
 
-    onFailedConnect(gameId, username) {
-        var game = this.findGameForUser(username);
-        if(!game || game.id !== gameId) {
-            return;
-        }
-
-        game.failedConnect(username);
-
-        if(game.isEmpty()) {
-            delete this.games[game.id];
-
-            this.zmqSocket.send('GAMECLOSED', { game: game.id });
-        }
-
-        this.sendGameState(game);
-    }
-
-    onCloseGame(gameId) {
+    async onCloseGame(gameId) {
         var game = this.games[gameId];
         if(!game) {
             return;
         }
 
         delete this.games[gameId];
-        this.zmqSocket.send('GAMECLOSED', { game: game.id });
+        await this.closeGame(game);
     }
 
     onCardData(cardData) {
@@ -267,23 +315,32 @@ class GameServer {
         this.restrictedListData = cardData.restrictedListData;
     }
 
-    onConnection(ioSocket) {
+    async onConnection(ioSocket) {
         if(!ioSocket.request.user) {
             logger.info('socket connected with no user, disconnecting');
             ioSocket.disconnect();
             return;
         }
 
-        var game = this.findGameForUser(ioSocket.request.user.username);
+        let game = this.findGameForUser(ioSocket.request.user);
+        if(!game) {
+            try {
+                game = await this.startNewGame(ioSocket.request.user);
+            } catch(err) {
+                logger.error('Error starting new game', err);
+                ioSocket.disconnect();
+                return;
+            }
+        }
+
         if(!game) {
             logger.info('No game for', ioSocket.request.user.username, 'disconnecting');
             ioSocket.disconnect();
             return;
         }
 
-        var socket = new Socket(ioSocket, { config: config });
-
-        var player = game.playersAndSpectators[socket.user.username];
+        let socket = new Socket(ioSocket, { config: config });
+        let player = game.playersAndSpectators[socket.user.username];
         if(!player) {
             return;
         }
@@ -310,64 +367,62 @@ class GameServer {
         socket.on('disconnect', this.onSocketDisconnected.bind(this));
     }
 
-    onSocketDisconnected(socket, reason) {
-        var game = this.findGameForUser(socket.user.username);
+    async onSocketDisconnected(socket, reason) {
+        let game = this.findGameForUser(socket.user);
         if(!game) {
             return;
         }
 
         logger.info('user \'%s\' disconnected from a game: %s', socket.user.username, reason);
-
-        let player = game.playersAndSpectators[socket.user.username];
-        let isSpectator = player && player.isSpectator();
-
         game.disconnect(socket.user.username);
 
         if(!socket.tIsClosing) {
             if(game.isEmpty()) {
                 delete this.games[game.id];
 
-                this.zmqSocket.send('GAMECLOSED', { game: game.id });
-            } else if(isSpectator) {
-                this.zmqSocket.send('PLAYERLEFT', { gameId: game.id, game: game.getSaveState(), player: socket.user.username, spectator: true });
+                await this.closeGame(game);
             }
         }
 
         this.sendGameState(game);
     }
 
-    onLeaveGame(socket) {
-        var game = this.findGameForUser(socket.user.username);
+    async closeGame(game) {
+        delete this.games[game.id];
+
+        await this.redisClient.del(`game:${game.id}`);
+        await this.redisClient.srem('games', game.id);
+        await this.redisClient.publish('RemoveRunningGame', game.id);
+    }
+
+    async onLeaveGame(socket) {
+        let game = this.findGameForUser(socket.user);
         if(!game) {
             return;
         }
 
-        let player = game.playersAndSpectators[socket.user.username];
-        let isSpectator = player.isSpectator();
-
         game.leave(socket.user.username);
 
-        this.zmqSocket.send('PLAYERLEFT', {
-            gameId: game.id,
-            game: game.getSaveState(),
-            player: socket.user.username,
-            spectator: isSpectator
-        });
+        let state = game.getSaveState();
 
         socket.send('cleargamestate');
         socket.leaveChannel(game.id);
 
         if(game.isEmpty()) {
+            logger.info('Removing game', game.id);
             delete this.games[game.id];
 
-            this.zmqSocket.send('GAMECLOSED', { game: game.id });
+            await this.closeGame(game);
+        } else {
+            await this.redisClient.set(`game:${game.id}`, JSON.stringify(state));
+            await this.redisClient.publish('UpdateRunningGame', game.id);
         }
 
         this.sendGameState(game);
     }
 
     onGameMessage(socket, command, ...args) {
-        var game = this.findGameForUser(socket.user.username);
+        let game = this.findGameForUser(socket.user);
 
         if(!game) {
             return;
