@@ -598,6 +598,11 @@ class BaseCard {
         }
     }
 
+    hasText(text) {
+        let cardText = this.cardData.text.toLowerCase();
+        return cardText.includes(text.toLowerCase());
+    }
+
     get gold() {
         return this.tokens['gold'] || 0;
     }

@@ -641,13 +641,17 @@ const Effects = {
         };
     },
     immuneTo: function(cardCondition) {
-        let restriction = new ImmunityRestriction(cardCondition);
         return {
-            apply: function(card) {
+            apply: function(card, context) {
+                let restriction = new ImmunityRestriction(cardCondition, context.source);
+                context.immuneTo = context.immuneTo || {};
+                context.immuneTo[card.uuid] = restriction;
                 card.addAbilityRestriction(restriction);
             },
-            unapply: function(card) {
+            unapply: function(card, context) {
+                let restriction = context.immuneTo[card.uuid];
                 card.removeAbilityRestriction(restriction);
+                delete context.immuneTo[card.uuid];
             }
         };
     },

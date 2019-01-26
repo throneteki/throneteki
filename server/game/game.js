@@ -31,6 +31,7 @@ const SimultaneousEvents = require('./SimultaneousEvents');
 const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js');
 const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
+const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -103,6 +104,11 @@ class Game extends EventEmitter {
 
     get messages() {
         return this.gameChat.messages;
+    }
+
+    getPlainTextLog() {
+        let formatter = new PlainTextGameChatFormatter(this.gameChat);
+        return formatter.format();
     }
 
     hasActivePlayer(playerName) {
