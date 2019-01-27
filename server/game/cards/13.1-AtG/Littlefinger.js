@@ -1,6 +1,5 @@
 const DrawCard = require('../../drawcard');
 const TextHelper = require('../../TextHelper');
-const _ = require('underscore');
 
 class Littlefinger extends DrawCard {
     setupCardAbilities(ability) {
@@ -34,7 +33,7 @@ class Littlefinger extends DrawCard {
             return true;
         }
 
-        let buttons = _.map(this.remainingCards, card => ({
+        let buttons = this.remainingCards.map(card => ({
             method: 'selectCardForBottom', card: card
         }));
 
@@ -50,12 +49,12 @@ class Littlefinger extends DrawCard {
     }
 
     selectCardForBottom(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         if(!card) {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.moveCard(card, 'draw deck', { bottom: true });
 
         if(this.remainingCards.length > 0) {
