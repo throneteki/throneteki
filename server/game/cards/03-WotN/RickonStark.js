@@ -5,7 +5,7 @@ class RickonStark extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onBeforeDeckSearch: () => true
+                onCardAbilityInitiated: event => event.source.hasText('search')
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
