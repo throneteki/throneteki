@@ -39,11 +39,17 @@ function losesAspectEffect(aspect) {
 function challengeOptionEffect(key) {
     return function() {
         return {
-            apply: function(card) {
+            apply: function(card, context) {
                 card.challengeOptions.add(key);
+                if(context.game.currentChallenge) {
+                    context.game.currentChallenge.calculateStrength();
+                }
             },
-            unapply: function(card) {
+            unapply: function(card, context) {
                 card.challengeOptions.remove(key);
+                if(context.game.currentChallenge) {
+                    context.game.currentChallenge.calculateStrength();
+                }
             }
         };
     };
