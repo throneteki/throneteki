@@ -9,6 +9,7 @@ class NoSurprises extends DrawCard {
             handler: context => {
                 let opponent = context.opponent;
                 this.game.addMessage('{0} plays {1} to reveal their hand', context.player, this);
+                // TODO: Update to reveal hand and apply effect to all opponents in Melee
                 this.game.promptForSelect(opponent, {
                     activePromptTitle: 'Look at opponets hand and continue',
                     source: this,
