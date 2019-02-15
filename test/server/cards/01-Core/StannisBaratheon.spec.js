@@ -3,7 +3,7 @@ describe('Stannis Baratheon', function() {
         beforeEach(function() {
             const deck = this.buildDeck('baratheon', [
                 'Trading with the Pentoshi',
-                'Stannis Baratheon (Core)', 'Robert Baratheon', 'Dragonstone Faithful', 'Maester Cressen', 'The Roseroad', 'Bodyguard', 'Recruiter for the Watch'
+                'Stannis Baratheon (Core)', 'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Maester Cressen', 'The Roseroad', 'Bodyguard', 'Recruiter for the Watch'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
