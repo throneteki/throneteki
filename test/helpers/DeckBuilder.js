@@ -1,3 +1,5 @@
+/*eslint no-console:0 */
+
 const fs = require('fs');
 const path = require('path');
 
@@ -21,6 +23,7 @@ class DeckBuilder {
 
             for(let card of pack.cards) {
                 card.packCode = pack.code;
+                card.releaseDate = pack.releaseDate;
                 cards[card.code] = card;
             }
         }
@@ -85,8 +88,9 @@ class DeckBuilder {
         }
 
         if(cardsByName.length > 1) {
+            cardsByName.sort((a, b) => a.releaseDate < b.releaseDate ? -1 : 1);
             let matchingLabels = cardsByName.map(card => `${card.name} (${card.packCode})`).join('\n');
-            throw new Error(`Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`);
+            console.warn(`Multiple cards match the name ${codeOrLabelOrName}. Use one of these instead:\n${matchingLabels}`);
         }
 
         return cardsByName[0];
