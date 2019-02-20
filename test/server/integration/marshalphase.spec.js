@@ -106,12 +106,14 @@ describe('marshal phase', function() {
                 expect(this.arbor1.location).toBe('hand');
             });
 
-            it('should not allow duplicates of a single limited location to be placed', function() {
+            it('should allow duplicates of limited cards to be placed', function() {
+                // FAQ v2.1 now allows duplicates to ignore the Limited keyword.
                 this.player1.clickCard(this.arbor1);
                 this.player1.clickCard(this.arbor2);
 
                 expect(this.arbor1.location).toBe('play area');
-                expect(this.arbor2.location).toBe('hand');
+                expect(this.arbor2.location).toBe('duplicate');
+                expect(this.arbor1.dupes).toContain(this.arbor2);
             });
         });
 

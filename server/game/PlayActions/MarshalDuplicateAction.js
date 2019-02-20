@@ -1,16 +1,11 @@
 const BaseAbility = require('../baseability');
-const Costs = require('../costs');
 
-class MarshalCardAction extends BaseAbility {
+class MarshalDuplicateAction extends BaseAbility {
     constructor() {
         super({
-            abilitySourceType: 'game',
-            cost: [
-                Costs.payReduceableGoldCost('marshal'),
-                Costs.playLimited()
-            ]
+            abilitySourceType: 'game'
         });
-        this.title = 'Marshal';
+        this.title = 'Marshal as duplicate';
     }
 
     isAction() {
@@ -25,8 +20,7 @@ class MarshalCardAction extends BaseAbility {
             source.getType() !== 'event' &&
             player.allowMarshal &&
             player.isCardInPlayableLocation(source, 'marshal') &&
-            !player.canDuplicate(source) &&
-            player.canPutIntoPlay(source, 'marshal')
+            player.canDuplicate(source)
         );
     }
 
@@ -36,7 +30,7 @@ class MarshalCardAction extends BaseAbility {
             originalController: context.source.controller,
             originalLocation: context.source.location,
             player: context.player,
-            type: 'card'
+            type: 'dupe'
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
             context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalController, params.originalLocation, context.costs.gold);
@@ -46,14 +40,12 @@ class MarshalCardAction extends BaseAbility {
 
     getMessageFormat(params) {
         const messages = {
-            'card.hand.current': '{0} marshals {1} costing {4} gold',
-            'card.other.current': '{0} marshals {1} from their {3} costing {4} gold',
-            'card.other.opponent': '{0} marshals {1} from {2}\'s {3} costing {4} gold'
+            'hand': '{0} duplicates {1} for free',
+            'other': '{0} duplicates {1} from their {3} for free'
         };
         let hand = params.originalLocation === 'hand' ? 'hand' : 'other';
-        let current = params.originalController === params.player ? 'current' : 'opponent';
-        return messages[`card.${hand}.${current}`] || messages['card.hand.current'];
+        return messages[hand];
     }
 }
 
-module.exports = MarshalCardAction;
+module.exports = MarshalDuplicateAction;

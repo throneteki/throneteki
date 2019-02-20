@@ -486,6 +486,18 @@ class Player extends Spectator {
         return !_.any(this.triggerRestrictions, restriction => restriction(card));
     }
 
+    canDuplicate(duplicateCard) {
+        if(!duplicateCard.isUnique()) {
+            return false;
+        }
+
+        if(this.isCharacterDead(duplicateCard) && !this.canResurrect(duplicateCard)) {
+            return false;
+        }
+
+        return this.anyCardsInPlay(card => duplicateCard.isCopyOf(card) && card.owner === duplicateCard.owner);
+    }
+
     canPlay(card, playingType = 'play') {
         return !_.any(this.playCardRestrictions, restriction => restriction(card, playingType));
     }
