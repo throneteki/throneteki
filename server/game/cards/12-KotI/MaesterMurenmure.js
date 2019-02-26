@@ -9,7 +9,7 @@ class MaesterMurenmure extends DrawCard {
                     event.ability.isTriggeredAbility() &&
                     event.source.getType() === 'location' &&
                     // Explicitly allow cancellation of your own forced abilities
-                    (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+                    (event.ability.isForcedAbility() || event.player !== this.controller)
                 )
             },
             cost: ability.costs.kneelSelf(),
