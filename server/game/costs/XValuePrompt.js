@@ -13,7 +13,8 @@ class XValuePrompt extends BaseStep {
     }
 
     continue() {
-        if(this.max === 0 || this.min > this.max) {
+        if(this.min > this.max) {
+            this.resolveCost(this.max);
             return;
         }
 
