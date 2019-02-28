@@ -123,10 +123,6 @@ class PlayerInteractionWrapper {
             card = this.findCardByName(card, location);
         }
 
-        if(card.location === 'draw deck') {
-            throw new Error(`Cannot click on ${card.name} because it is in the ${card.location}.`);
-        }
-
         this.game.cardClicked(this.player.name, card.uuid);
         this.game.continue();
         this.checkUnserializableGameState();
