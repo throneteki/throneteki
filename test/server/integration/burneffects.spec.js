@@ -188,21 +188,10 @@ describe('burn effects', function() {
                     this.player2.clickCard('Dracarys!', 'hand');
                     this.player2.clickCard(this.dragon);
                     this.player2.clickCard(this.quentyn);
-
-                    // 4 base = 4 remaining when Dracarys'ed
-                    expect(this.quentyn.getStrength()).toBe(4);
-
-                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
-                it('should not allow a 4 STR character to be killed', function() {
-                    this.player1.clickCard(this.str4);
-                    expect(this.str4.location).toBe('play area');
-                });
-
-                it('should allow a 3 STR character to be killed', function() {
-                    this.player1.clickCard(this.str3);
-                    expect(this.str3.location).toBe('dead pile');
+                it('should die at STR 0', function() {
+                    expect(this.player1).not.toAllowAbilityTrigger('Quentyn Martell');
                 });
             });
 
@@ -221,21 +210,10 @@ describe('burn effects', function() {
                     this.player2.clickCard('Dracarys!', 'hand');
                     this.player2.clickCard(this.dragon);
                     this.player2.clickCard(this.quentyn);
-
-                    // 4 base + 1 Song of Summer - 1 Blood of Dragon = 4 remaining when Dracarys'ed
-                    expect(this.quentyn.getStrength()).toBe(4);
-
-                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
-                it('should not allow a 4 STR character to be killed', function() {
-                    this.player1.clickCard(this.str4);
-                    expect(this.str4.location).toBe('play area');
-                });
-
-                it('should allow a 3 STR character to be killed', function() {
-                    this.player1.clickCard(this.str3);
-                    expect(this.str3.location).toBe('dead pile');
+                it('should die at STR 0', function() {
+                    expect(this.player1).not.toAllowAbilityTrigger('Quentyn Martell');
                 });
             });
 
@@ -261,21 +239,10 @@ describe('burn effects', function() {
                     this.player2.clickCard('Dracarys!', 'hand');
                     this.player2.clickCard(this.dragon);
                     this.player2.clickCard(this.quentyn);
-
-                    // 4 base + 1 Song of Summer - 2 Astapor = 3 remaining when Dracarys'ed
-                    expect(this.quentyn.getStrength()).toBe(3);
-
-                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
-                it('should not allow a 3 STR character to be killed', function() {
-                    this.player1.clickCard(this.str3);
-                    expect(this.str3.location).toBe('play area');
-                });
-
-                it('should allow a 2 STR character to be killed', function() {
-                    this.player1.clickCard(this.str2);
-                    expect(this.str2.location).toBe('dead pile');
+                it('should die at STR 0', function() {
+                    expect(this.player1).not.toAllowAbilityTrigger('Quentyn Martell');
                 });
             });
 
@@ -301,21 +268,10 @@ describe('burn effects', function() {
                     this.player1.clickPrompt('Pass');
                     this.player2.clickMenu(this.astapor, 'Give character -STR');
                     this.player2.clickCard(this.quentyn);
-
-                    // 4 base + 1 Song of Summer - 4 Dracarys! = 1 remaining when Astapor'ed
-                    expect(this.quentyn.getStrength()).toBe(1);
-
-                    this.player1.triggerAbility('Quentyn Martell');
                 });
 
-                it('should not allow a 1 STR character to be killed', function() {
-                    this.player1.clickCard(this.str1);
-                    expect(this.str1.location).toBe('play area');
-                });
-
-                it('should allow a 0 STR character to be killed', function() {
-                    this.player1.clickCard(this.str0);
-                    expect(this.str0.location).toBe('dead pile');
+                it('should die at STR 0', function() {
+                    expect(this.player1).not.toAllowAbilityTrigger('Quentyn Martell');
                 });
             });
         });
