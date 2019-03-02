@@ -457,6 +457,8 @@ class ChatCommands {
         let deck = new Deck();
         let preparedCard = deck.createCard(player, card);
 
+        preparedCard.applyAnyLocationPersistentEffects();
+
         if(deck.isDrawCard(card)) {
             player.moveCard(preparedCard, 'draw deck');
         } else if(deck.isPlotCard(card)) {
