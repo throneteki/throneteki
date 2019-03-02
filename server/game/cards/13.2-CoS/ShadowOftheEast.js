@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class ShadowOfTheWall extends DrawCard {
+class ShadowOfTheEast extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Select an attachment',
@@ -21,6 +21,6 @@ class ShadowOfTheWall extends DrawCard {
     }
 }
 
-ShadowOfTheWall.code = '13034';
+ShadowOfTheEast.code = '13034';
 
-module.exports = ShadowOfTheWall;
+module.exports = ShadowOfTheEast;
