@@ -1,6 +1,4 @@
-const _ = require('underscore');
-
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
 
 class ConsolidationOfPower extends DrawCard {
     setupCardAbilities() {
@@ -16,13 +14,19 @@ class ConsolidationOfPower extends DrawCard {
                 gameAction: 'kneel'
             },
             handler: context => {
-                this.cards = context.target;
-                this.game.promptForSelect(this.controller, {
+                this.game.addMessage('{0} plays {1} to kneel {2}', context.player, this, context.target);
+                for(let card of context.target) {
+                    card.controller.kneelCard(card);
+                }
+
+                if(!context.target.some(card => card.allowGameAction('gainPower'))) {
+                    return;
+                }
+
+                this.game.promptForSelect(context.player, {
                     activePromptTitle: 'Select character to gain power',
                     source: this,
-                    cardCondition: card => {
-                        return _.contains(this.cards, card);
-                    },
+                    cardCondition: card => context.target.includes(card),
                     gameAction: 'gainPower',
                     onSelect: (player, card) => this.onPowerSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
@@ -32,14 +36,9 @@ class ConsolidationOfPower extends DrawCard {
     }
 
     onPowerSelected(player, card) {
-        _.each(this.cards, card => {
-            card.controller.kneelCard(card);
-        });
-
         card.modifyPower(1);
 
-        this.game.addMessage('{0} plays {1} to kneel {2} and have {3} gain 1 power',
-            player, this, this.cards, card);
+        this.game.addMessage('Then {0} chooses {1} to gain 1 power', player, card);
 
         return true;
     }
