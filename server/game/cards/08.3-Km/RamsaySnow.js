@@ -1,6 +1,5 @@
-const _ = require('underscore');
-
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class RamsaySnow extends DrawCard {
     setupCardAbilities() {
@@ -29,10 +28,11 @@ class RamsaySnow extends DrawCard {
     }
 
     doSacrifice() {
-        _.each(this.selections, selection => {
-            let player = selection.player;
-            player.sacrificeCard(selection.card);
-        });
+        this.game.resolveGameAction(
+            GameActions.simultaneously(
+                this.selections.map(props => GameActions.sacrificeCard(props))
+            )
+        );
     }
 
     proceedToNextStep() {
