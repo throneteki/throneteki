@@ -180,6 +180,12 @@ class PlayerInteractionWrapper {
         this.checkUnserializableGameState();
     }
 
+    sendChat(text) {
+        this.game.chat(this.player.name, text);
+        this.game.continue();
+        this.checkUnserializableGameState();
+    }
+
     discardToReserve() {
         let needsDiscard = this.player.hand.length - this.player.getTotalReserve();
         for(let i = 0; i < needsDiscard; ++i) {

@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class RisenFromTheSea extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.interrupt({
             canCancel: true,
             when: {
@@ -23,14 +23,17 @@ class RisenFromTheSea extends DrawCard {
                             ability.effects.addTrait('Condition')
                         ]
                     }));
+
+                    this.lastingEffect(ability => ({
+                        condition: () => this.location === 'play area',
+                        targetLocation: 'any',
+                        match: card => card === this.parent,
+                        effect: ability.effects.modifyStrength(1)
+                    }));
                 }
 
                 this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.event.card);
             }
-        });
-
-        this.whileAttached({
-            effect: ability.effects.modifyStrength(1)
         });
     }
 

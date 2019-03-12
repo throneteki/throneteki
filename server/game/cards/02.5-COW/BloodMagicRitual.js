@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class BloodMagicRitual extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.interrupt({
             canCancel: true,
             when: {
@@ -25,12 +25,15 @@ class BloodMagicRitual extends DrawCard {
                     }));
                 }
 
+                this.lastingEffect(ability => ({
+                    condition: () => this.location === 'play area',
+                    targetLocation: 'any',
+                    match: card => card === this.parent,
+                    effect: ability.effects.blankExcludingTraits
+                }));
+
                 this.game.addMessage('{0} plays {1} to save {2}', this.controller, this, context.event.card);
             }
-        });
-
-        this.whileAttached({
-            effect: ability.effects.blankExcludingTraits
         });
     }
 
