@@ -1,5 +1,6 @@
 const PlotCard = require('../../plotcard');
 const TextHelper = require('../../TextHelper');
+const GameActions = require('../../GameActions');
 
 class ReturnToTheFields extends PlotCard {
     setupCardAbilities() {
@@ -12,9 +13,11 @@ class ReturnToTheFields extends PlotCard {
                 gameAction: 'sacrifice'
             },
             handler: (context) => {
-                for(let target of context.target) {
-                    context.player.sacrificeCard(target);
-                }
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        context.target.map(card => GameActions.sacrificeCard({ card }))
+                    )
+                );
 
                 let cardsDrawn = context.player.drawCardsToHand(context.target.length).length;
                 let goldGained = this.game.addGold(context.player, context.target.length);

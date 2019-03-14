@@ -14,6 +14,7 @@ const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
 const GoldSource = require('./GoldSource.js');
+const SacrificeCard = require('./GameActions/SacrificeCard');
 
 const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
@@ -844,12 +845,7 @@ class Player extends Spectator {
     }
 
     sacrificeCard(card) {
-        this.game.applyGameAction('sacrifice', card, card => {
-            this.game.raiseEvent('onSacrificed', { player: this, card: card }, event => {
-                event.cardStateWhenSacrificed = card.createSnapshot();
-                this.moveCard(card, 'discard pile');
-            });
-        });
+        return this.game.resolveGameAction(SacrificeCard, { card, player: this });
     }
 
     discardCard(card, allowSave = true, options = {}) {
