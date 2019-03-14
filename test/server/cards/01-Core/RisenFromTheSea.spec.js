@@ -144,4 +144,55 @@ describe('Risen from the Sea', function() {
             });
         });
     });
+
+    integration(function() {
+        describe('when blanked', function() {
+            beforeEach(function() {
+                const deck1 = this.buildDeck('greyjoy', [
+                    'A Noble Cause',
+                    'Theon Greyjoy (Core)', 'Risen from the Sea'
+                ]);
+                const deck2 = this.buildDeck('targaryen', [
+                    'A Noble Cause',
+                    'House Tully Septon', 'Brother\'s Robes'
+                ]);
+
+                this.player1.selectDeck(deck1);
+                this.player2.selectDeck(deck2);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.character = this.player1.findCardByName('Theon Greyjoy');
+                this.risen = this.player1.findCardByName('Risen from the Sea');
+
+                this.sevenCharacter = this.player2.findCardByName('House Tully Septon');
+                this.robes = this.player2.findCardByName('Brother\'s Robes');
+
+                this.player1.clickCard(this.character);
+                this.player2.clickCard(this.sevenCharacter);
+                this.player2.clickCard(this.robes);
+
+                this.completeSetup();
+
+                this.player2.clickCard(this.robes);
+                this.player2.clickCard(this.sevenCharacter);
+
+                this.selectFirstPlayer(this.player1);
+
+                // Kill Theon to trigger Risen
+                this.player1.sendChat('/kill');
+                this.player1.clickCard(this.character);
+                this.player1.triggerAbility(this.risen);
+
+                // Kneel The Seven character to trigger Brother's Robes
+                this.player2.clickCard(this.sevenCharacter);
+                this.player2.triggerAbility(this.robes);
+                this.player2.clickCard(this.risen);
+            });
+
+            it('does not remove the +1 STR bonus', function() {
+                expect(this.character.getStrength()).toBe(4);
+            });
+        });
+    });
 });
