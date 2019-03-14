@@ -7,7 +7,7 @@ class Duel extends PlotCard {
             handler: context => {
                 let opponent = context.opponent;
 
-                if(this.notEnoughTargets()) {
+                if(this.notEnoughTargets(context)) {
                     return;
                 }
 
@@ -19,41 +19,46 @@ class Duel extends PlotCard {
                     numCards: 2,
                     activePromptTitle: 'Select two characters',
                     source: this,
-                    cardCondition: card => (
-                        card.location === 'play area' &&
-                        !card.hasTrait('Army') &&
-                        card.getType() === 'character' &&
-                        card.getPrintedCost() >= 6),
+                    cardCondition: (card, context) => this.cardCondition(card, context),
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
                 });
             }
         });
     }
 
+    cardCondition(card, context) {
+        return (
+            card.location === 'play area' &&
+            !card.hasTrait('Army') &&
+            card.getType() === 'character' &&
+            card.getPrintedCost() >= 6 &&
+            (!card.kneeled && card.allowGameAction('kneel', context) || card.allowGameAction('kill', context))
+        );
+    }
+
     targetsSelected(player, cards) {
         this.targets = cards;
         this.game.addMessage('{0} chooses {1} as the targets for {2}', player, cards, this);
 
-        this.game.promptWithMenu(player, this, {
-            activePrompt: {
-                menuTitle: 'Choose character to kneel',
-                buttons: [
-                    { card: cards[0], method: 'resolve', arg: [0, 1] },
-                    { card: cards[1], method: 'resolve', arg: [1, 0] },
-                    { text: 'Cancel', method: 'cancel' }
-                ]
-            },
-            source: this
+        this.game.promptForSelect(player, {
+            activePromptTitle: 'Choose character to kneel',
+            cardCondition: card => cards.includes(card) && !card.kneeled,
+            gameAction: 'kneel',
+            source: this,
+            onSelect: (player, card) => this.resolve(player, card),
+            onCancel: player => this.cancel(player)
         });
 
         return true;
     }
 
-    resolve(player, index) {
-        player.kneelCard(this.targets[index[0]]);
-        this.game.killCharacter(this.targets[index[1]], { allowSave: false });
+    resolve(player, cardToKneel) {
+        const cardToKill = this.targets.find(card => card !== cardToKneel);
 
-        this.game.addMessage('{0} then chooses {1} to kneel, {2} is killed', player, this.targets[index[0]], this.targets[index[1]]);
+        player.kneelCard(cardToKneel);
+        this.game.killCharacter(cardToKill, { allowSave: false });
+
+        this.game.addMessage('{0} then chooses {1} to kneel, {2} is killed', player, cardToKneel, cardToKill);
 
         return true;
     }
@@ -64,9 +69,8 @@ class Duel extends PlotCard {
         return true;
     }
 
-    notEnoughTargets() {
-        let targets = this.game.filterCardsInPlay(card => !card.hasTrait('Army') && card.getType() === 'character' && card.getPrintedCost() >= 6);
-        return targets.length <= 1;
+    notEnoughTargets(context) {
+        return this.game.getNumberOfCardsInPlay(card => this.cardCondition(card, context)) < 2;
     }
 }
 
