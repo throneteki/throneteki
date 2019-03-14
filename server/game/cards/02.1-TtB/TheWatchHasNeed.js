@@ -4,6 +4,7 @@ class TheWatchHasNeed extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Search for a character',
+            condition: () => this.controller.getTotalReserve() > 0,
             handler: () => {
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
