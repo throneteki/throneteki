@@ -1,6 +1,4 @@
-const _ = require('underscore');
-
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
 
 class DevanSeaworth extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,7 +6,7 @@ class DevanSeaworth extends DrawCard {
             when: {
                 onDominanceDetermined: event => event.winner === this.controller
             },
-            cost: ability.costs.discardXGold(() => this.getMinimumDiscardGoldAmount(), () => 99),
+            cost: ability.costs.discardXGold(() => 1, () => 99),
             handler: context => {
                 let xValue = context.xValue;
                 this.game.promptForDeckSearch(this.controller, {
@@ -31,14 +29,6 @@ class DevanSeaworth extends DrawCard {
     doneSelecting(player, xValue) {
         this.game.addMessage('{0} discards {1} gold from {2} to search their deck, but does not put any card into play',
             player, xValue, this);
-    }
-
-    getMinimumDiscardGoldAmount() {
-        let deckLocations = this.controller.drawDeck.filter(card => card.getType() === 'location' && card.hasPrintedCost());
-        let deckCosts = _.map(deckLocations, card => card.getPrintedCost());
-        let lowestCost = _.min(deckCosts);
-
-        return _.max([lowestCost, 1]);
     }
 }
 
