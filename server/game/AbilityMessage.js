@@ -44,7 +44,7 @@ class AbilityMessage {
         let index = 0;
 
         for(let argName of this.getDefinedArgNames(args)) {
-            result = result.replace(`{${argName}}`, `{${index}}`);
+            result = result.replace(new RegExp(`\\{${argName}\\}`, 'g'), `{${index}}`);
             ++index;
         }
 
