@@ -37,6 +37,13 @@ describe('AbilityMessage', function() {
 
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith('{0} uses {1} to kill {2}', 'PLAYER_OBJ', 'SOURCE_OBJ', 'TARGET_OBJ');
             });
+
+            it('replaces all instances of the format argument', function() {
+                let message = AbilityMessage.create('{player} uses {source} to kneel {source}');
+                message.output(this.outputterSpy, this.context);
+
+                expect(this.outputterSpy.addMessage).toHaveBeenCalledWith('{0} uses {1} to kneel {1}', 'PLAYER_OBJ', 'SOURCE_OBJ', 'TARGET_OBJ');
+            });
         });
 
         describe('when a property object is passed', function() {
