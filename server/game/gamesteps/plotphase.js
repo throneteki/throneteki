@@ -36,7 +36,7 @@ class PlotPhase extends Phase {
 
     announceForcedPlotSelection() {
         for(const player of this.game.getPlayers()) {
-            if(player.mustRevealPlot) {
+            if(!player.canChoosePlot()) {
                 this.game.addMessage('{0} is forced to select a plot', player);
             }
         }

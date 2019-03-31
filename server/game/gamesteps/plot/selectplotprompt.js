@@ -2,13 +2,9 @@ const AllPlayerPrompt = require('../allplayerprompt.js');
 
 class SelectPlotPrompt extends AllPlayerPrompt {
     completionCondition(player) {
-        if(player.mustRevealPlot) {
-            player.selectedPlot = player.mustRevealPlot;
-        } else {
-            let selectableCards = player.getSelectableCards();
-            if(selectableCards.length === 1) {
-                player.selectedPlot = selectableCards[0];
-            }
+        let selectableCards = player.getRevealablePlots();
+        if(selectableCards.length === 1) {
+            player.selectedPlot = selectableCards[0];
         }
 
         return !!player.selectedPlot;
@@ -25,7 +21,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 
     waitingPrompt(player) {
-        if(player.mustRevealPlot) {
+        if(!player.canChoosePlot()) {
             return {
                 menuTitle: 'Waiting for opponent to select plot'
             };
@@ -60,13 +56,8 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 
     highlightSelectableCards(player) {
-        let selectableCards = this.game.allCards.filter(card => card.getType() === 'plot' &&
-            card.location === 'plot deck' &&
-            card.controller === player &&
-            !card.notConsideredToBeInPlotDeck);
-
         player.selectCard = true;
-        player.setSelectableCards(selectableCards);
+        player.setSelectableCards(player.getRevealablePlots());
     }
 
     continue() {

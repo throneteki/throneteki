@@ -159,6 +159,24 @@ class Player extends Spectator {
         return this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
     }
 
+    canChoosePlot() {
+        if(!this.mustRevealPlot) {
+            return true;
+        }
+
+        return this.plotDeck.every(plot => !plot.isCopyOf(this.mustRevealPlot));
+    }
+
+    getRevealablePlots() {
+        let plots = this.getPlots();
+
+        if(this.mustRevealPlot) {
+            return plots.filter(plot => plot.isCopyOf(this.mustRevealPlot));
+        }
+
+        return plots;
+    }
+
     addGoldSource(source) {
         this.goldSources.unshift(source);
     }
