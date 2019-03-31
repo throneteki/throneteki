@@ -7,7 +7,7 @@ class RhllorInfiltrator extends DrawCard {
             phase: 'dominance',
             condition: () => this.controller.canGainFactionPower(),
             chooseOpponent: true,
-            costs: ability.costs.kneelSelf(),
+            cost: ability.costs.kneelSelf(),
             message: {
                 format: '{player} kneels {source} to give control of {source} to {opponent} and gain 1 power',
                 args: { opponent: context => context.opponent }
