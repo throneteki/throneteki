@@ -24,54 +24,14 @@ class AtTheGates extends PlotCard {
     }
 
     cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-
         if(this.hasUsedCityPlot()) {
             this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
                 player, this, card);
-            return;           
+            player.moveCard(card, 'hand');
+        } else {
+            this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
+            player.putIntoPlay(card);
         }
-
-        this.selectedCard = card;
-
-        let buttons = [
-            { text: 'Keep in hand', method: 'keepInHand' },
-            { text: 'Put in play', method: 'putInPlay' }
-        ];
-
-        this.game.promptWithMenu(player, this, {
-            activePrompt: {
-                menuTitle: 'Put card into play?',
-                buttons: buttons
-            },
-
-            source: this
-        });
-    }
-
-    keepInHand(player) {
-        if(!this.selectedCard) {
-            return false;
-        }
-
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, this.selectedCard);
-        this.selectedCard = null;
-
-        return true;
-    }
-
-    putInPlay(player) {
-        if(!this.selectedCard) {
-            return false;
-        }
-
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play',
-            player, this, this.selectedCard);
-        player.putIntoPlay(this.selectedCard);
-        this.selectedCard = null;
-
-        return true;
     }
 
     doneSelecting(player) {
