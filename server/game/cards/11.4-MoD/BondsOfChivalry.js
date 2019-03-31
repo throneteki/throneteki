@@ -23,7 +23,7 @@ class BondsOfChivalry extends DrawCard {
 
                 this.game.promptForSelect(this.controller, {
                     activePromptTitle: 'Select a new participant',
-                    cardCondition: card => card !== target && card.controller === this.controller && card.getType() === 'character' && card.hasTrait('Knight') && !card.isParticipating() && !card.kneeled && card.allowGameAction('kneel', context),
+                    cardCondition: card => card !== target && card.location === 'play area' && card.controller === this.controller && card.getType() === 'character' && card.hasTrait('Knight') && !card.isParticipating() && !card.kneeled && card.allowGameAction('kneel', context),
                     onSelect: (player, card) => this.addToChallenge(card),
                     source: this
                 });
