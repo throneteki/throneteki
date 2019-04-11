@@ -95,5 +95,49 @@ describe('Rickon Stark', function() {
                 expect(this.seaOfBlood.hasToken('blood')).toBe(false);
             });
         });
+
+        describe('when a keyword triggers and the card has the word search in it', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Rickon Stark', 'Euron Crow\'s Eye (KotI)'
+                ]);
+
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.rickon = this.player1.findCardByName('Rickon Stark', 'hand');
+                this.euron = this.player2.findCardByName('Euron Crow\'s Eye', 'hand');
+
+                this.player1.clickCard(this.rickon);
+                this.player2.clickCard(this.euron);
+
+                this.completeSetup();
+                this.selectFirstPlayer(this.player2);
+
+                this.completeMarshalPhase();
+
+                this.player2.clickPrompt('Power');
+                this.player2.clickCard(this.euron);
+                this.player2.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                this.player1.clickPrompt('Done');
+
+                this.skipActionWindow();
+
+                this.player2.clickPrompt('Apply Claim');
+
+                // Intimidate Rickon
+                this.player2.clickCard(this.rickon);
+            });
+
+            it('does not allow Rickon to cancel', function() {
+                expect(this.player1).not.toAllowAbilityTrigger(this.rickon);
+            });
+        });
     });
 });
