@@ -93,6 +93,28 @@ describe('AbilityMessage', function() {
             });
         });
 
+        describe('when there are target selection arguments', function() {
+            beforeEach(function() {
+                this.message = new AbilityMessage({
+                    format: '{targetSelection.choosingPlayer} chooses {targetSelection.value} to {targetSelection.name}'
+                });
+                this.context.currentTargetSelection = {
+                    choosingPlayer: 'SELECTION_CHOOSING_PLAYER',
+                    value: 'SELECTION_VALUE',
+                    name: 'SELECTION_NAME'
+                };
+                this.message.output(this.outputterSpy, this.context);
+            });
+
+            it('translates selection arguments to their numeric values', function() {
+                expect(this.outputterSpy.addMessage).toHaveBeenCalledWith('{3} chooses {4} to {5}', jasmine.anything(), jasmine.anything(), jasmine.anything(), jasmine.anything(), jasmine.anything(), jasmine.anything());
+            });
+
+            it('passes the arguments in the correct order', function() {
+                expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(jasmine.any(String), 'PLAYER_OBJ', 'SOURCE_OBJ', 'TARGET_OBJ', 'SELECTION_CHOOSING_PLAYER', 'SELECTION_VALUE', 'SELECTION_NAME');
+            });
+        });
+
         describe('when there are additional args', function() {
             beforeEach(function() {
                 this.message = new AbilityMessage({

@@ -25,6 +25,7 @@ describe('AbilityTarget', function () {
     describe('a normal target', function() {
         beforeEach(function() {
             this.target = new AbilityTarget('foo', this.properties);
+            spyOn(this.target.message, 'output');
         });
 
         describe('canResolve()', function() {
@@ -69,7 +70,15 @@ describe('AbilityTarget', function () {
 
             it('should prompt the player to select the target', function() {
                 this.target.resolve(this.context);
-                expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 1, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context });
+                expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, {
+                    source: this.source,
+                    target: 1,
+                    onSelect: jasmine.any(Function),
+                    onCancel: jasmine.any(Function),
+                    selector: jasmine.any(Object),
+                    context: this.context,
+                    targetSelection: jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player, eligibleCards: [] })
+                });
             });
 
             describe('the select prompt', function() {
@@ -90,6 +99,10 @@ describe('AbilityTarget', function () {
 
                     it('should set the result value', function() {
                         expect(this.result.value).toBe('foo');
+                    });
+
+                    it('should print the selection message', function() {
+                        expect(this.target.message.output).toHaveBeenCalledWith(this.gameSpy, this.context);
                     });
                 });
 
@@ -118,6 +131,8 @@ describe('AbilityTarget', function () {
         beforeEach(function() {
             this.properties.ifAble = true;
             this.target = new AbilityTarget('foo', this.properties);
+            spyOn(this.target.message, 'output');
+            spyOn(this.target.noTargetsMessage, 'output');
         });
 
         describe('canResolve()', function() {
@@ -132,12 +147,15 @@ describe('AbilityTarget', function () {
             describe('when there are no eligible targets', function() {
                 beforeEach(function() {
                     this.cardCondition.and.returnValue(false);
+                    this.target.resolve(this.context);
                 });
 
                 it('does not prompt the player', function() {
-                    this.target.resolve(this.context);
-
                     expect(this.gameSpy.promptForSelect).not.toHaveBeenCalled();
+                });
+
+                it('should print the no targets message', function() {
+                    expect(this.target.noTargetsMessage.output).toHaveBeenCalledWith(this.gameSpy, this.context);
                 });
             });
 
@@ -171,6 +189,10 @@ describe('AbilityTarget', function () {
 
                     it('should set the result value', function() {
                         expect(this.result.value).toBe('foo');
+                    });
+
+                    it('should print the selection message', function() {
+                        expect(this.target.message.output).toHaveBeenCalledWith(this.gameSpy, this.context);
                     });
                 });
 

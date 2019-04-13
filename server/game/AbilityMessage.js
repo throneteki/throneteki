@@ -32,7 +32,7 @@ class AbilityMessage {
     }
 
     constructor(properties) {
-        this.args = properties.args || {};
+        this.args = this.createArgs(properties.format, properties.args || {});
         this.format = this.translateNamedArgs(properties.format, this.args);
         this.type = properties.type || 'message';
 
@@ -43,8 +43,8 @@ class AbilityMessage {
         let result = format;
         let index = 0;
 
-        for(let argName of this.getDefinedArgNames(args)) {
-            result = result.replace(new RegExp(`\\{${argName}\\}`, 'g'), `{${index}}`);
+        for(let arg of args) {
+            result = result.replace(new RegExp(`\\{${arg.name}\\}`, 'g'), `{${index}}`);
             ++index;
         }
 
@@ -52,7 +52,7 @@ class AbilityMessage {
     }
 
     validateNamedArgs(format, args) {
-        let definedArgNames = this.getDefinedArgNames(args);
+        let definedArgNames = args.map(arg => arg.name);
         let usedArgNames = this.getUsedArgNames(format);
         let undefinedArgNames = usedArgNames.filter(argName => !definedArgNames.includes(argName));
 
@@ -73,8 +73,31 @@ class AbilityMessage {
         return result;
     }
 
-    getDefinedArgNames(args) {
-        return ['player', 'source', 'target'].concat(Object.keys(args));
+    createArgs(format, customArgsHash) {
+        const standardArgs = [
+            { name: 'player', getValue: context => context.player },
+            { name: 'source', getValue: context => context.source },
+            { name: 'target', getValue: context => context.target }
+        ];
+        const targetSelectionArgs = this.getTargetSelectionArgs(format);
+        const customArgs = Object.entries(customArgsHash).map(([name, getValue]) => ({ name, getValue }));
+
+        return standardArgs.concat(targetSelectionArgs).concat(customArgs);
+    }
+
+    getTargetSelectionArgs(format) {
+        let args = [];
+        let regex = /{targetSelection\.(\w+)}/g;
+        let match;
+        while((match = regex.exec(format)) !== null) {
+            let property = match[1];
+            args.push({
+                name: `targetSelection.${property}`,
+                getValue: context => context.currentTargetSelection && context.currentTargetSelection[property]
+            });
+        }
+
+        return args;
     }
 
     output(outputter, context) {
@@ -88,9 +111,7 @@ class AbilityMessage {
     }
 
     generateArgValues(context) {
-        let customArgs = Object.values(this.args).map(argFunc => argFunc(context));
-
-        return [context.player, context.source, context.target].concat(customArgs);
+        return this.args.map(arg => arg.getValue(context));
     }
 }
 
