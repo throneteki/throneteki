@@ -22,11 +22,11 @@ class EachPlayerCardSelector extends BaseCardSelector {
     }
 
     hasEnoughSelected(selectedCards, numPlayers) {
-        return selectedCards.length === (numPlayers * this.numCardsPerPlayer);
+        return selectedCards.length === 0 && this.optional || selectedCards.length === (numPlayers * this.numCardsPerPlayer);
     }
 
     hasEnoughTargets(context) {
-        return _.every(context.game.getPlayers(), player => {
+        return this.optional || _.every(context.game.getPlayers(), player => {
             let playerCards = context.game.allCards.filter(card => card.controller === player);
             let matchingCards = _.filter(playerCards, card => super.canTarget(card, context));
             return matchingCards.length >= this.numCardsPerPlayer;

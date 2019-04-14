@@ -12,7 +12,7 @@ class ExactlyXCardSelector extends BaseCardSelector {
     }
 
     hasEnoughSelected(selectedCards) {
-        return selectedCards.length === this.numCards;
+        return selectedCards.length === 0 && this.optional || selectedCards.length === this.numCards;
     }
 
     hasEnoughTargets(context) {
@@ -23,7 +23,7 @@ class ExactlyXCardSelector extends BaseCardSelector {
             return total;
         }, 0);
 
-        return numMatchingCards >= this.numCards;
+        return this.optional || numMatchingCards >= this.numCards;
     }
 
     hasReachedLimit(selectedCards) {

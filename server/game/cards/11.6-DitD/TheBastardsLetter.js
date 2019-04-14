@@ -8,7 +8,8 @@ class TheBastardsLetter extends DrawCard {
             },
             target: {
                 type: 'select',
-                mode: 'optional',
+                mode: 'unlimited',
+                optional: true,
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller && card.hasIcon('military') && card.kneeled,
                 gameAction: 'stand'
             },
