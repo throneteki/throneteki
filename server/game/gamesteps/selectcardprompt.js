@@ -57,7 +57,6 @@ class SelectCardPrompt extends UiPrompt {
 
         this.properties = properties;
         this.context = properties.context;
-        this.targetSelection = properties.targetSelection;
         _.defaults(this.properties, this.defaultProperties());
         this.selector = properties.selector || CardSelector.for(properties);
         this.selectedCards = [];
@@ -93,10 +92,6 @@ class SelectCardPrompt extends UiPrompt {
     continue() {
         if(!this.isComplete()) {
             this.highlightSelectableCards();
-        }
-
-        if(this.context) {
-            this.context.currentTargetSelection = this.targetSelection;
         }
 
         return super.continue();

@@ -46,12 +46,12 @@ class BaseAbility {
 
     buildTargets(properties) {
         if(properties.target) {
-            return [new AbilityTarget('target', properties.target)];
+            return [AbilityTarget.create('target', properties.target)];
         }
 
         if(properties.targets) {
             let targetPairs = Object.entries(properties.targets);
-            return targetPairs.map(([name, properties]) => new AbilityTarget(name, properties));
+            return targetPairs.map(([name, properties]) => AbilityTarget.create(name, properties));
         }
 
         return [];
@@ -185,7 +185,7 @@ class BaseAbility {
      * @returns {Array} An array of target resolution objects.
      */
     resolveTargets(context) {
-        return this.targets.map(target => target.resolve(context));
+        return this.targets.flatMap(target => target.resolve(context));
     }
 
     /**

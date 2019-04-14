@@ -252,7 +252,7 @@ describe('AbilityResolver', function() {
 
                 describe('and the targets were not chosen', function() {
                     beforeEach(function() {
-                        this.targetResult.value = null;
+                        this.targetResult.cancelled = true;
                         this.resolver.continue();
                     });
 
