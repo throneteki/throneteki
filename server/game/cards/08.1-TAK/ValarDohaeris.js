@@ -1,100 +1,66 @@
-const _ = require('underscore');
-
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../plotcard');
 
 class ValarDohaeris extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.selections = [];
-                this.toMove = [];
-                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
-                this.proceedToNextStep();
-            }
-        });
-    }
-
-    proceedToNextStep() {
-        if(this.remainingPlayers.length > 0) {
-            let currentPlayer = this.remainingPlayers.shift();
-
-            if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'character')) {
-                this.game.addMessage('{0} has no characters in play to choose for {1}', currentPlayer, this);
-                this.selections.push({ player: currentPlayer, cards: [] });
-                this.proceedToNextStep();
-                return true;
-            }
-
-            this.game.promptForSelect(currentPlayer, {
+            target: {
+                choosingPlayer: 'each',
+                optional: true,
+                ifAble: true,
                 activePromptTitle: 'Select character(s)',
                 maxStat: () => 10,
                 cardStat: card => card.getPrintedCost(),
-                source: this,
-                cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'character',
-                onSelect: (player, cards) => this.onSelect(player, cards),
-                onCancel: (player) => this.cancelSelection(player)
-            });
-        } else {
-            this.promptPlayersForOrder();
-        }
-    }
-
-    onSelect(player, cards) {
-        if(_.isEmpty(cards)) {
-            this.game.addMessage('{0} does not choose any characters for {1}', player, this);
-        } else {
-            this.game.addMessage('{0} chooses {1} for {2}', player, cards, this);
-        }
-        this.selections.push({ player: player, cards: cards });
-        this.proceedToNextStep();
-        return true;
-    }
-
-    cancelSelection(player) {
-        this.game.addMessage('{0} does not choose any characters for {1}', player, this);
-        this.selections.push({ player: player, cards: [] });
-        this.proceedToNextStep();
-    }
-
-    promptPlayersForOrder() {
-        _.each(this.selections, selection => {
-            let player = selection.player;
-            let playerSpecificToMove = _.difference(player.filterCardsInPlay(card => card.getType() === 'character' && card.allowGameAction('placeOnBottomOfDeck')), selection.cards);
-            this.toMove = this.toMove.concat(playerSpecificToMove);
+                cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'character'
+            },
+            handler: context => {
+                this.promptPlayersForOrder(context.targets.selections);
+            }
         });
+    }
 
-        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-            let cardsOwnedByPlayer = _.filter(this.toMove, card => card.owner === player);
+    promptPlayersForOrder(selections) {
+        let toMove = [];
 
-            if(_.size(cardsOwnedByPlayer) >= 2) {
+        for(let selection of selections) {
+            let player = selection.choosingPlayer;
+            let cardsInPlay = player.filterCardsInPlay(card => card.getType() === 'character' && card.allowGameAction('placeOnBottomOfDeck'));
+            let selectedCards = selection.value || [];
+            let playerSpecificToMove = cardsInPlay.filter(card => !selectedCards.includes(card));
+            toMove = toMove.concat(playerSpecificToMove);
+        }
+
+        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
+            let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
+
+            if(cardsOwnedByPlayer.length >= 2) {
                 this.game.promptForSelect(player, {
                     ordered: true,
                     mode: 'exactly',
-                    numCards: _.size(cardsOwnedByPlayer),
+                    numCards: cardsOwnedByPlayer.length,
                     activePromptTitle: 'Select bottom deck order (last chosen ends up on bottom)',
                     cardCondition: card => cardsOwnedByPlayer.includes(card),
                     onSelect: (player, selectedCards) => {
-                        this.toMove = _.reject(this.toMove, card => card.owner === player).concat(selectedCards);
+                        toMove = toMove.filter(card => card.owner !== player).concat(selectedCards);
 
                         return true;
                     }
                 });
             }
-        });
+        }
 
         this.game.queueSimpleStep(() => {
-            this.moveCardsToBottom();
+            this.moveCardsToBottom(toMove);
         });
     }
 
-    moveCardsToBottom() {
-        _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
-            let cardsOwnedByPlayer = _.filter(this.toMove, card => card.owner === player);
+    moveCardsToBottom(toMove) {
+        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
+            let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
 
-            if(!_.isEmpty(cardsOwnedByPlayer)) {
-                _.each(cardsOwnedByPlayer, card => {
+            if(cardsOwnedByPlayer.length !== 0) {
+                for(let card of cardsOwnedByPlayer) {
                     this.game.placeOnBottomOfDeck(card, { allowSave: false });
-                });
+                }
 
                 this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}',
                     player, cardsOwnedByPlayer, this);
@@ -102,10 +68,7 @@ class ValarDohaeris extends PlotCard {
                 this.game.addMessage('{0} does not have any characters moved to the bottom of their deck for {1}',
                     player, this);
             }
-        });
-
-        this.selections = [];
-        this.toMove = [];
+        }
     }
 }
 

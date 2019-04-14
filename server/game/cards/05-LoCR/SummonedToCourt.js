@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class SummonedToCourt extends PlotCard {
@@ -8,55 +6,33 @@ class SummonedToCourt extends PlotCard {
             when: {
                 onPhaseEnded: event => event.phase === 'draw'
             },
-            handler: () => {
-                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
-                this.playerChoices = [];
-                this.promptNextPlayerForChoice();
+            target: {
+                choosingPlayer: 'each',
+                ifAble: true,
+                activePromptTitle: 'Choose a card to reveal',
+                cardCondition: (card, context) => card.controller === context.choosingPlayer && card.location === 'hand',
+                message: '{targetSelection.choosingPlayer} chooses a card in hand to reveal for {source}'
+            },
+            handler: context => {
+                let selections = context.targets.selections.filter(selection => !!selection.value);
+                this.revealPlayerChoices(selections);
+                this.validChoices = this.getLowestCostChoices(selections);
+                this.promptNextPlayerToPutIntoPlay();
             }
         });
     }
 
-    promptNextPlayerForChoice() {
-        while(this.remainingPlayers.length !== 0) {
-            let currentPlayer = this.remainingPlayers.shift();
-            if(currentPlayer.hand.length !== 0) {
-                this.promptPlayerForChoice(currentPlayer);
-                return;
-            }
-
-            this.game.addMessage('{0} does not have any cards to be revealed by {1}', currentPlayer, this);
+    revealPlayerChoices(selections) {
+        for(let selection of selections) {
+            this.game.addMessage('{0} reveals {1} as their choice for {2}', selection.choosingPlayer, selection.value, this);
         }
-
-        this.revealPlayerChoices();
-        this.validChoices = this.getLowestCostChoices();
-        this.promptNextPlayerToPutIntoPlay();
     }
 
-    promptPlayerForChoice(player) {
-        this.game.promptForSelect(player, {
-            activePromptTitle: 'Choose a card to reveal',
-            source: this,
-            cardCondition: card => card.controller === player && card.location === 'hand',
-            onSelect: (player, card) => this.chooseCard(player, card)
-        });
-    }
-
-    chooseCard(player, card) {
-        this.playerChoices.push({ player: player, card: card, cost: card.getPrintedCost() });
-        this.promptNextPlayerForChoice();
-        return true;
-    }
-
-    revealPlayerChoices() {
-        _.each(this.playerChoices, choice => {
-            this.game.addMessage('{0} reveals {1} as their choice for {2}', choice.player, choice.card, this);
-        });
-    }
-
-    getLowestCostChoices() {
-        let characterChoices = _.filter(this.playerChoices, choice => choice.card.getType() === 'character');
-        let minCost = _.min(_.pluck(characterChoices, 'cost'));
-        return _.filter(characterChoices, choice => choice.cost === minCost);
+    getLowestCostChoices(selections) {
+        let characterChoices = selections.filter(selection => selection.value.getType() === 'character');
+        let costs = characterChoices.map(selection => selection.value.getPrintedCost());
+        let minCost = Math.min(...costs);
+        return selections.filter(selection => selection.value.getPrintedCost() === minCost);
     }
 
     promptNextPlayerToPutIntoPlay() {
@@ -65,7 +41,7 @@ class SummonedToCourt extends PlotCard {
         }
 
         let choice = this.validChoices.shift();
-        this.promptPlayerToPutIntoPlay(choice.player, choice.card);
+        this.promptPlayerToPutIntoPlay(choice.choosingPlayer, choice.value);
     }
 
     promptPlayerToPutIntoPlay(player, card) {
