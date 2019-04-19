@@ -79,8 +79,8 @@ class Lobby extends React.Component {
                     </div>
                 </div>
                 <div className='col-sm-offset-1 col-sm-10'>
-                    <AlertPanel type='success'>
-                        Registration for the Fall season on the Iron Throne League is <a href='http://championsofwesteros.blogspot.com/p/registration.html' target='_blank'>open now</a> through April 8
+                    <AlertPanel type='info'>
+                        The hosting company is doing maintainence to the server the lobby is hosted on at 01:00 BST (== 00:00 UTC) on Tuesday 2019-04-30.  Games may be unavilable until the following morning on this day.
                     </AlertPanel>
                 </div>
                 { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
