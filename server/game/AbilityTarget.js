@@ -1,44 +1,106 @@
-const _ = require('underscore');
-
+const AbilityTargetMessages = require('./AbilityTargetMessages');
 const AbilityTargetSelection = require('./AbilityTargetSelection.js');
 const CardSelector = require('./CardSelector.js');
+const Messages = require('./Messages');
 
 class AbilityTarget {
+    static create(name, properties) {
+        let {message, messages, ...rest} = properties;
+        let defaultMessages = properties.choosingPlayer === 'each' ? Messages.eachPlayerTargeting : null;
+
+        let abilityMessages = new AbilityTargetMessages({
+            message,
+            messages: messages || defaultMessages
+        });
+
+        return new AbilityTarget(name, Object.assign(rest, { messages: abilityMessages }));
+    }
+
     constructor(name, properties) {
         this.type = properties.type || 'choose';
+        this.choosingPlayer = properties.choosingPlayer || 'current';
         this.name = name;
         this.properties = properties;
         this.selector = CardSelector.for(properties);
+        this.messages = properties.messages;
+        this.ifAble = !!properties.ifAble;
     }
 
     canResolve(context) {
-        return this.selector.hasEnoughTargets(context);
+        return this.ifAble || this.getChoosingPlayers(context).every(choosingPlayer => {
+            context.choosingPlayer = choosingPlayer;
+            return this.selector.hasEnoughTargets(context);
+        });
     }
 
     resolve(context) {
-        let eligibleCards = this.selector.getEligibleTargets(context);
-        let otherProperties = _.omit(this.properties, 'cardCondition');
-        let result = new AbilityTargetSelection({
-            choosingPlayer: context.player,
-            eligibleCards: eligibleCards,
-            targetingType: this.type,
-            name: this.name
+        let results = this.getChoosingPlayers(context).map(choosingPlayer => {
+            context.choosingPlayer = choosingPlayer;
+            let eligibleCards = this.selector.getEligibleTargets(context);
+            return new AbilityTargetSelection({
+                choosingPlayer: choosingPlayer,
+                eligibleCards: eligibleCards,
+                targetingType: this.type,
+                name: this.name
+            });
         });
+
+        for(let result of results) {
+            context.game.queueSimpleStep(() => {
+                this.resolveAction(result, context);
+            });
+        }
+
+        return results;
+    }
+
+    getChoosingPlayers(context) {
+        if(this.choosingPlayer === 'each') {
+            return context.game.getPlayersInFirstPlayerOrder();
+        }
+
+        return [context.player];
+    }
+
+    resolveAction(result, context) {
+        context.choosingPlayer = result.choosingPlayer;
+        context.currentTargetSelection = result;
+
+        let unableToSelect = !this.selector.hasEnoughTargets(context) || this.selector.optional && result.eligibleCards.length === 0;
+        if(this.ifAble && unableToSelect) {
+            this.messages.outputUnable(context.game, context);
+            result.reject();
+            return;
+        }
+
+        let otherProperties = Object.assign({}, this.properties);
+        delete otherProperties.cardCondition;
+        delete otherProperties.choosingPlayer;
+        delete otherProperties.messages;
         let promptProperties = {
             context: context,
             source: context.source,
             selector: this.selector,
             onSelect: (player, card) => {
                 result.resolve(card);
+                if(!card || card.length === 0) {
+                    this.messages.outputNoneSelected(context.game, context);
+                } else {
+                    this.messages.outputSelected(context.game, context);
+                }
                 return true;
             },
             onCancel: () => {
-                result.reject();
+                if(this.ifAble) {
+                    result.reject();
+                } else {
+                    result.cancel();
+                }
+                this.messages.outputSkipped(context.game, context);
                 return true;
             }
         };
-        context.game.promptForSelect(context.player, _.extend(promptProperties, otherProperties));
-        return result;
+        context.game.promptForSelect(result.choosingPlayer, Object.assign(promptProperties, otherProperties));
     }
 }
 

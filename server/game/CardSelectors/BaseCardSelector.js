@@ -27,6 +27,7 @@ class BaseCardSelector {
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;
         this.isCardEffect = properties.isCardEffect;
+        this.optional = !!properties.optional;
 
         if(!Array.isArray(properties.cardType)) {
             this.cardType = [properties.cardType];
@@ -75,7 +76,7 @@ class BaseCardSelector {
      * @returns {boolean}
      */
     hasEnoughSelected(selectedCards) {
-        return selectedCards.length > 0;
+        return this.optional || selectedCards.length > 0;
     }
 
     /**
@@ -85,7 +86,7 @@ class BaseCardSelector {
      * @returns {boolean}
      */
     hasEnoughTargets(context) {
-        return context.game.allCards.some(card => this.canTarget(card, context));
+        return this.optional || context.game.allCards.some(card => this.canTarget(card, context));
     }
 
     /**

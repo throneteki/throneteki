@@ -3,49 +3,16 @@ const PlotCard = require('../../plotcard.js');
 class MarchedToTheWall extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
-                this.selections = [];
-                this.proceedToNextStep();
+            target: {
+                choosingPlayer: 'each',
+                ifAble: true,
+                cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'character'
+            },
+            handler: context => {
+                let cards = context.targets.selections.map(selection => selection.value).filter(card => !!card);
+                this.game.discardFromPlay(cards, { allowSave: false });
             }
         });
-    }
-
-    cancelSelection(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1}', player, this);
-        this.proceedToNextStep();
-    }
-
-    onCardSelected(player, card) {
-        this.selections.push({ player: player, card: card });
-        this.game.addMessage('{0} selects {1} to discard for {2}', player, card, this);
-        this.proceedToNextStep();
-        return true;
-    }
-
-    doDiscard() {
-        let cards = this.selections.map(selection => selection.card);
-        this.game.discardFromPlay(cards, { allowSave: false });
-    }
-
-    proceedToNextStep() {
-        if(this.remainingPlayers.length > 0) {
-            let currentPlayer = this.remainingPlayers.shift();
-
-            if(!currentPlayer.anyCardsInPlay(card => card.getType() === 'character')) {
-                this.proceedToNextStep();
-                return true;
-            }
-
-            this.game.promptForSelect(currentPlayer, {
-                source: this,
-                cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'character',
-                onSelect: (player, cards) => this.onCardSelected(player, cards),
-                onCancel: (player) => this.cancelSelection(player)
-            });
-        } else {
-            this.doDiscard();
-        }
     }
 }
 

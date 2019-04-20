@@ -1,104 +1,32 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../plotcard');
+const Messages = require('../../Messages');
 
 class NothingBurnsLikeTheCold extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.selections = [];
-                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
-                this.proceedToNextStep();
+            targets: {
+                attachment: {
+                    choosingPlayer: 'each',
+                    ifAble: true,
+                    activePromptTitle: 'Select an attachment',
+                    cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'attachment',
+                    gameAction: 'discard',
+                    messages: Messages.eachPlayerTargetingForCardType('attachments')
+                },
+                location: {
+                    choosingPlayer: 'each',
+                    ifAble: true,
+                    activePromptTitle: 'Select a location',
+                    cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'location' && !card.isLimited(),
+                    gameAction: 'discard',
+                    messages: Messages.eachPlayerTargetingForCardType('locations')
+                }
+            },
+            handler: context => {
+                let cards = context.targets.selections.map(selection => selection.value).filter(card => !!card);
+                this.game.discardFromPlay(cards, { allowSave: false });
             }
         });
-    }
-
-    proceedToNextStep() {
-        if(this.remainingPlayers.length > 0) {
-            let currentPlayer = this.remainingPlayers.shift();
-            this.promptForAttachment(currentPlayer);
-        } else {
-            this.doDiscard();
-        }
-    }
-
-    promptForAttachment(currentPlayer) {
-        if(!this.hasValidAttachments(currentPlayer)) {
-            this.onSelectAttachment(currentPlayer, null);
-            return;
-        }
-
-        this.game.promptForSelect(currentPlayer, {
-            activePromptTitle: 'Select an attachment',
-            source: this,
-            cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'attachment',
-            gameAction: 'discard',
-            onSelect: (player, card) => this.onSelectAttachment(player, card),
-            onCancel: (player) => this.onSelectAttachment(player, null)
-        });
-    }
-
-    hasValidAttachments(player) {
-        return this.game.anyCardsInPlay(card => card.controller === player && card.getType() === 'attachment');
-    }
-
-    onSelectAttachment(currentPlayer, attachment) {
-        this.promptForLocation(currentPlayer, attachment);
-        return true;
-    }
-
-    promptForLocation(currentPlayer, attachment) {
-        if(!this.hasValidLocations(currentPlayer)) {
-            this.onSelectLocation(currentPlayer, attachment, null);
-            return;
-        }
-
-        this.game.promptForSelect(currentPlayer, {
-            activePromptTitle: 'Select a location',
-            source: this,
-            cardCondition: card => card.location === 'play area' && card.controller === currentPlayer && card.getType() === 'location' && !card.isLimited(),
-            gameAction: 'discard',
-            onSelect: (player, card) => this.onSelectLocation(player, attachment, card),
-            onCancel: (player) => this.onSelectLocation(player, attachment, null)
-        });
-    }
-
-    hasValidLocations(player) {
-        return this.game.anyCardsInPlay(card => card.controller === player && card.getType() === 'location' && !card.isLimited() && card.canBeDiscarded());
-    }
-
-    onSelectLocation(player, attachment, location) {
-        let cards = [attachment, location].filter(card => card !== null);
-
-        if(cards.length === 0) {
-            this.game.addMessage('{0} does not choose any cards for {1}', player, this);
-        } else {
-            this.game.addMessage('{0} chooses {1} for {2}', player, cards, this);
-        }
-
-        if(!attachment && this.hasValidAttachments(player)) {
-            this.game.addAlert('danger', '{0} has attachments for {1} but did not select one', player, this);
-        }
-
-        if(!location && this.hasValidLocations(player)) {
-            this.game.addAlert('danger', '{0} has locations for {1} but did not select one', player, this);
-        }
-
-        this.selections.push({ player: player, cards: cards });
-        this.proceedToNextStep();
-        return true;
-    }
-
-    doDiscard() {
-        let cards = this.selections.reduce((cards, selection) => cards.concat(selection.cards), []);
-        for(let selection of this.selections) {
-            let player = selection.player;
-
-            if(selection.cards.length !== 0) {
-                this.game.addMessage('{0} discards {1} for {2}', player, selection.cards, this);
-            }
-        }
-        this.game.discardFromPlay(cards, { allowSave: false });
-
-        this.selections = [];
     }
 }
 

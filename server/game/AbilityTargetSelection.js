@@ -8,6 +8,7 @@ class AbilityTargetSelection {
         this.targetingType = options.targetingType;
         this.name = options.name;
         this.resolved = false;
+        this.cancelled = false;
         this.value = null;
     }
 
@@ -23,6 +24,11 @@ class AbilityTargetSelection {
     reject() {
         this.resolved = true;
         this.value = null;
+    }
+
+    cancel() {
+        this.cancelled = true;
+        this.reject();
     }
 }
 

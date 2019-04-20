@@ -64,7 +64,8 @@ class CostBuilder {
      */
     selectAny(condition = () => true, zeroAllowed = true) {
         return new SelectCardCost(this.action, {
-            mode: zeroAllowed ? 'optional' : 'unlimited',
+            mode: 'unlimited',
+            optional: zeroAllowed,
             activePromptTitle: this.titles.selectAny,
             cardCondition: condition
         });

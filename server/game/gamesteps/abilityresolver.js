@@ -134,7 +134,7 @@ class AbilityResolver extends BaseStep {
             return;
         }
 
-        let cancelledTargeting = this.targetResults.some(result => result.resolved && !result.value);
+        let cancelledTargeting = this.targetResults.some(result => result.cancelled);
         if(cancelledTargeting) {
             this.cancelled = true;
             this.game.addAlert('danger', '{0} cancels the resolution of {1} (costs were still paid)', this.context.player, this.context.source);

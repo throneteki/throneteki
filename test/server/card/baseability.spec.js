@@ -239,7 +239,8 @@ describe('BaseAbility', function () {
 
     describe('resolveTargets()', function() {
         beforeEach(function() {
-            this.gameSpy = jasmine.createSpyObj('game', ['promptForSelect', 'addAlert']);
+            this.gameSpy = jasmine.createSpyObj('game', ['queueSimpleStep', 'promptForSelect', 'addAlert']);
+            this.gameSpy.queueSimpleStep.and.callFake(func => func());
             this.gameSpy.allCards = [];
             this.player = { player: 1 };
             this.source = { source: 1 };
@@ -259,8 +260,8 @@ describe('BaseAbility', function () {
 
         it('should prompt the player to select each target', function() {
             this.ability.resolveTargets(this.context);
-            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 1, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context });
-            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, { source: this.source, target: 2, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context });
+            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, jasmine.objectContaining({ source: this.source, target: 1, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context }));
+            expect(this.gameSpy.promptForSelect).toHaveBeenCalledWith(this.player, jasmine.objectContaining({ source: this.source, target: 2, onSelect: jasmine.any(Function), onCancel: jasmine.any(Function), selector: jasmine.any(Object), context: this.context }));
         });
 
         describe('the select prompt', function() {
