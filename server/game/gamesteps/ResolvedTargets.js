@@ -38,6 +38,30 @@ class ResolvedTargets {
         let targetingSelections = this.selections.filter(selection => selection.targetingType === 'choose');
         return _.flatten(targetingSelections.map(selection => selection.value));
     }
+
+    getTargetsForPlayer(player) {
+        let selectionsForPlayer = this.selections.filter(selection => selection.choosingPlayer === player);
+        let result = new ResolvedTargets();
+        result.setSelections(selectionsForPlayer);
+        result.updateTargets();
+        return result;
+    }
+
+    getSelections() {
+        return this.selections.filter(selection => selection.hasValue());
+    }
+
+    getSelectionsByName(name) {
+        return this.getSelections().filter(selection => selection.name === name);
+    }
+
+    getSelectedCards() {
+        return this.getSelections().flatMap(selection => selection.value);
+    }
+
+    getSelectedCardsByName(name) {
+        return this.getSelectionsByName(name).flatMap(selection => selection.value);
+    }
 }
 
 module.exports = ResolvedTargets;

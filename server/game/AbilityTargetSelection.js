@@ -16,6 +16,14 @@ class AbilityTargetSelection {
         return this.eligibleCards.includes(card);
     }
 
+    hasValue() {
+        if(Array.isArray(this.value)) {
+            return this.value.length !== 0;
+        }
+
+        return !!this.value;
+    }
+
     resolve(value) {
         this.resolved = true;
         this.value = value;

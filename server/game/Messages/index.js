@@ -11,9 +11,17 @@ function createEachPlayerTargetingForCardType(cardType) {
     };
 }
 
+function createEachPlayerSecretTargetingForCardType(cardType) {
+    let result = createEachPlayerTargetingForCardType(cardType);
+    return Object.assign(result, {
+        selected: `{targetSelection.choosingPlayer} chooses ${cardType} for {source}`
+    });
+}
+
 const Messages = {
     eachPlayerTargeting: createEachPlayerTargetingForCardType('cards'),
-    eachPlayerTargetingForCardType: createEachPlayerTargetingForCardType
+    eachPlayerTargetingForCardType: createEachPlayerTargetingForCardType,
+    eachPlayerSecretTargetingForCardType: createEachPlayerSecretTargetingForCardType
 };
 
 module.exports = Messages;
