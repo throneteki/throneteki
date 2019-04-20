@@ -8,19 +8,19 @@ class DragonGate extends DrawCard {
         });
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: () => this.getCardCount() >= 2,
+            condition: context => this.getCardCount(context.player) >= 2,
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
+            handler: context => {
+                let cards = context.player.drawCardsToHand(2).length;
                 this.game.addMessage('{0} sacrifices {1} to draw {2}',
-                    this.controller, this, TextHelper.count(cards, 'card'));
+                    context.player, this, TextHelper.count(cards, 'card'));
             }
         });
     }
 
-    getCardCount() {
-        return this.controller.getNumberOfCardsInPlay(card => ['attachment'].includes(card.getType()));
+    getCardCount(player) {
+        return player.getNumberOfCardsInPlay(card => ['attachment'].includes(card.getType()));
     }
 }
 
