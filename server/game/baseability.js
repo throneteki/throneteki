@@ -185,7 +185,8 @@ class BaseAbility {
      * @returns {Array} An array of target resolution objects.
      */
     resolveTargets(context) {
-        return this.targets.flatMap(target => target.resolve(context));
+        let targetSelections = this.targets.map(target => target.resolve(context));
+        return targetSelections.reduce((flattenedArray, subArray) => flattenedArray.concat(subArray), []);
     }
 
     /**
