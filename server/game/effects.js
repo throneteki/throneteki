@@ -696,6 +696,10 @@ const Effects = {
             }
         };
     },
+    cannotSetup: function(condition = () => true) {
+        let restriction = (card, playingType) => playingType === 'setup' && condition(card);
+        return this.cannotPutIntoPlay(restriction);
+    },
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),
