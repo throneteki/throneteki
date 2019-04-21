@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const {flatten} = require('../Array');
 
 /**
  * Represents a card based effect applied to one or more targets.
@@ -57,7 +58,7 @@ class Effect {
 
     static flattenProperties(properties) {
         if(Array.isArray(properties.effect)) {
-            let effects = _.flatten(properties.effect);
+            let effects = flatten(properties.effect);
             return effects.map(effect => Object.assign({}, properties, { effect: effect }));
         }
 

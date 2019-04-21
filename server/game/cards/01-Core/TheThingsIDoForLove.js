@@ -1,6 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-
-const _ = require('underscore');
+const {flatten} = require('../../../Array');
 
 class TheThingsIDoForLove extends DrawCard {
     setupCardAbilities(ability) {
@@ -27,10 +26,10 @@ class TheThingsIDoForLove extends DrawCard {
 
     getMinimumCharCost() {
         let opponents = this.game.getOpponents(this.controller);
-        let opponentCharacters = _.flatten(opponents.map(opponent => opponent.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost())));
-        let charCosts = _.map(opponentCharacters, card => card.getPrintedCost());
+        let opponentCharacters = flatten(opponents.map(opponent => opponent.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost())));
+        let charCosts = opponentCharacters.map(card => card.getPrintedCost());
 
-        return _.min(charCosts);
+        return Math.min(...charCosts);
     }
 }
 

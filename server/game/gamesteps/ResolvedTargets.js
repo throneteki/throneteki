@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const {flatten, flatMap} = require('../../Array');
 
 /**
  * Encapsulates logic around what targets have been selected during resolution
@@ -36,7 +36,31 @@ class ResolvedTargets {
 
     getTargets() {
         let targetingSelections = this.selections.filter(selection => selection.targetingType === 'choose');
-        return _.flatten(targetingSelections.map(selection => selection.value));
+        return flatten(targetingSelections.map(selection => selection.value));
+    }
+
+    getTargetsForPlayer(player) {
+        let selectionsForPlayer = this.selections.filter(selection => selection.choosingPlayer === player);
+        let result = new ResolvedTargets();
+        result.setSelections(selectionsForPlayer);
+        result.updateTargets();
+        return result;
+    }
+
+    getSelections() {
+        return this.selections.filter(selection => selection.hasValue());
+    }
+
+    getSelectionsByName(name) {
+        return this.getSelections().filter(selection => selection.name === name);
+    }
+
+    getSelectedCards() {
+        return flatMap(this.getSelections(), selection => selection.value);
+    }
+
+    getSelectedCardsByName(name) {
+        return flatMap(this.getSelectionsByName(name), selection => selection.value);
     }
 }
 

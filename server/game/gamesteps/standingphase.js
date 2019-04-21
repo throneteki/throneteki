@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const {flatten} = require('../../Array');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const ActionWindow = require('./actionwindow.js');
@@ -36,7 +37,7 @@ class StandingPhase extends Phase {
             this.selectOptionalCards(cardsToStand, player);
         });
         this.game.queueSimpleStep(() => {
-            let finalCards = _.flatten(_.values(cardsToStand));
+            let finalCards = flatten(_.values(cardsToStand));
             player.faction.kneeled = false;
             _.each(finalCards, card => {
                 player.standCard(card);
