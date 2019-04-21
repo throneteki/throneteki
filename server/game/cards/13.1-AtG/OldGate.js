@@ -8,20 +8,20 @@ class OldGate extends DrawCard {
         });
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: () => this.allCharactersHaveStarkAffiliation(),
+            condition: context => this.allCharactersHaveStarkAffiliation(context.player),
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
             handler: () => {
                 let cards = this.controller.drawCardsToHand(2).length;
-                this.game.addMessage('{0} sacrifices {1} to draw {2}', 
+                this.game.addMessage('{0} sacrifices {1} to draw {2}',
                     this.controller, this, TextHelper.count(cards, 'card'));
             }
         });
     }
 
-    allCharactersHaveStarkAffiliation() {
-        return (this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character')
-            === this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.isFaction('stark')));
+    allCharactersHaveStarkAffiliation(player) {
+        return (player.getNumberOfCardsInPlay(card => card.getType() === 'character')
+            === player.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.isFaction('stark')));
     }
 }
 

@@ -8,19 +8,19 @@ class RiverGate extends DrawCard {
         });
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: () => this.hasLost2Challenges(),
+            condition: context => this.hasLost2Challenges(context.player),
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
+            handler: context => {
+                let cards = context.player.drawCardsToHand(2).length;
                 this.game.addMessage('{0} sacrifices {1} to draw {2}',
-                    this.controller, this, TextHelper.count(cards, 'card'));
+                    context.player, this, TextHelper.count(cards, 'card'));
             }
         });
     }
 
-    hasLost2Challenges() {
-        return this.controller.challenges.countChallenges(challenge => challenge.loser === this.controller) >= 2;
+    hasLost2Challenges(player) {
+        return player.challenges.countChallenges(challenge => challenge.loser === player) >= 2;
     }
 }
 
