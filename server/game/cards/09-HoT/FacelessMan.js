@@ -1,6 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-
-const _ = require('underscore');
+const {flatten} = require('../../../Array');
 
 class FacelessMan extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,7 +11,7 @@ class FacelessMan extends DrawCard {
                 cardCondition: card => card.location === 'dead pile' && card.getType() === 'character'
             },
             handler: context => {
-                let effectArr = _.flatten([
+                let effectArr = flatten([
                     context.target.getIcons().map(icon => ability.effects.addIcon(icon)),
                     context.target.getPrintedKeywords().map(keyword => ability.effects.addKeyword(keyword)),
                     context.target.getFactions().map(faction => ability.effects.addFaction(faction)),

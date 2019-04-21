@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const {flatMap} = require('../Array');
 
 const AbilityMessage = require('./AbilityMessage');
 const AbilityTarget = require('./AbilityTarget.js');
@@ -185,8 +186,7 @@ class BaseAbility {
      * @returns {Array} An array of target resolution objects.
      */
     resolveTargets(context) {
-        let targetSelections = this.targets.map(target => target.resolve(context));
-        return targetSelections.reduce((flattenedArray, subArray) => flattenedArray.concat(subArray), []);
+        return flatMap(this.targets, target => target.resolve(context));
     }
 
     /**

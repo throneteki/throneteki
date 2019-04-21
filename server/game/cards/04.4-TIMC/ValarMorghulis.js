@@ -1,15 +1,12 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
+const {flatMap} = require('../../../Array');
 
 class ValarMorghulis extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                let characters = _.chain(this.game.getPlayersInFirstPlayerOrder())
-                    .map(player => player.filterCardsInPlay(card => card.getType() === 'character'))
-                    .flatten()
-                    .value();
+                let players = this.game.getPlayersInFirstPlayerOrder();
+                let characters = flatMap(players, player => player.filterCardsInPlay(card => card.getType() === 'character'));
                 this.game.killCharacters(characters);
             }
         });
