@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 /**
  * Base class that represents card selection requirements and the behaviours of
  * their associated prompts.
@@ -149,7 +147,7 @@ class BaseCardSelector {
      * @returns {boolean}
      */
     checkForSingleController(selectedCards, card) {
-        if(!this.singleController || _.isEmpty(selectedCards)) {
+        if(!this.singleController || (selectedCards || []).length === 0) {
             return true;
         }
 

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const UIPrompt = require('../uiprompt.js');
 
 class FirstPlayerPrompt extends UIPrompt {
@@ -16,16 +14,16 @@ class FirstPlayerPrompt extends UIPrompt {
     activePrompt() {
         return {
             menuTitle: 'Select first player',
-            buttons: _.map(this.getFirstPlayerChoices(), player => {
+            buttons: this.getFirstPlayerChoices().map(player => {
                 return { text: player.name, arg: player.name };
             })
         };
     }
 
     getFirstPlayerChoices() {
-        let opponents = _.reject(this.game.getPlayers(), player => player === this.player);
+        let opponents = this.game.getPlayers().filter(player => player !== this.player);
         let firstPlayerChoices = [this.player].concat(opponents);
-        return _.filter(firstPlayerChoices, player => this.player.canSelectAsFirstPlayer(player));
+        return firstPlayerChoices.filter(player => this.player.canSelectAsFirstPlayer(player));
     }
 
     onMenuCommand(player, playerName) {

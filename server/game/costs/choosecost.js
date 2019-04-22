@@ -1,17 +1,17 @@
-const _ = require('underscore');
-
 class ChooseCost {
     constructor(choices) {
-        this.choices = choices;
+        this.choices = Object.entries(choices).map(([text, cost]) => {
+            return { cost, text };
+        });
     }
 
     canPay(context) {
-        return _.any(this.choices, cost => cost.canPay(context));
+        return Object.values(this.choices).some(cost => cost.canPay(context));
     }
 
     resolve(context, result = { resolved: false }) {
-        let payableCosts = _.pick(this.choices, cost => cost.canPay(context));
-        let payableCostsSize = _.size(payableCosts);
+        let payableCosts = this.choices.filter(choice => choice.cost.canPay(context));
+        let payableCostsSize = payableCosts.length;
 
         if(payableCostsSize === 0) {
             result.value = false;
@@ -20,7 +20,7 @@ class ChooseCost {
         }
 
         if(payableCostsSize === 1) {
-            this.chosenCost = _.values(payableCosts)[0];
+            this.chosenCost = payableCosts[0].cost;
             return this.resolveCost(this.chosenCost, context, result);
         }
 
@@ -30,8 +30,8 @@ class ChooseCost {
         context.game.promptWithMenu(context.player, this, {
             activePrompt: {
                 menuTitle: 'Choose cost to pay',
-                buttons: _.map(payableCosts, (cost, text) => {
-                    return { text: text, arg: text, method: 'chooseCost' };
+                buttons: payableCosts.map(choice => {
+                    return { text: choice.text, arg: choice.text, method: 'chooseCost' };
                 })
             },
             source: context.source
@@ -40,8 +40,8 @@ class ChooseCost {
         return result;
     }
 
-    chooseCost(player, choice) {
-        this.chosenCost = this.choices[choice];
+    chooseCost(player, choiceText) {
+        this.chosenCost = this.choices.find(choice => choice.text === choiceText).cost;
         this.resolveCost(this.chosenCost, this.context, this.result);
         return true;
     }

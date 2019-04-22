@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseAbility = require('./baseability.js');
 const Costs = require('./costs.js');
 const TriggeredAbilityContext = require('./TriggeredAbilityContext.js');
@@ -146,17 +144,17 @@ class TriggeredAbility extends BaseAbility {
             return;
         }
 
-        var eventNames = _.keys(this.when);
+        var eventNames = Object.keys(this.when);
 
         this.events = [];
-        _.each(eventNames, eventName => {
+        for(let eventName of eventNames) {
             var event = {
                 name: eventName + ':' + this.eventType,
                 handler: event => this.eventHandler(event)
             };
             this.game.on(event.name, event.handler);
             this.events.push(event);
-        });
+        }
 
         if(this.limit) {
             this.limit.registerEvents(this.game);
@@ -165,9 +163,9 @@ class TriggeredAbility extends BaseAbility {
 
     unregisterEvents() {
         if(this.events) {
-            _.each(this.events, event => {
+            for(let event of this.events) {
                 this.game.removeListener(event.name, event.handler);
-            });
+            }
             if(this.limit) {
                 this.limit.unregisterEvents(this.game);
             }

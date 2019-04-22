@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const BaseStep = require('./basestep.js');
 
 class UiPrompt extends BaseStep {
@@ -16,13 +15,13 @@ class UiPrompt extends BaseStep {
     }
 
     setPrompt() {
-        _.each(this.game.getPlayers(), player => {
+        for(let player of this.game.getPlayers()) {
             if(this.activeCondition(player)) {
                 player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt(player)));
             } else {
                 player.setPrompt(this.addDefaultCommandToButtons(this.waitingPrompt(player)));
             }
-        });
+        }
     }
 
     activeCondition() {
@@ -33,11 +32,11 @@ class UiPrompt extends BaseStep {
     }
 
     addDefaultCommandToButtons(original) {
-        var prompt = _.clone(original);
+        var prompt = Object.assign({}, original);
         if(prompt.buttons) {
-            _.each(prompt.buttons, button => {
+            for(let button of prompt.buttons) {
                 button.command = button.command || 'menuButton';
-            });
+            }
         }
         return prompt;
     }
@@ -60,9 +59,9 @@ class UiPrompt extends BaseStep {
     }
 
     clearPrompts() {
-        _.each(this.game.getPlayers(), player => {
+        for(let player of this.game.getPlayers()) {
             player.cancelPrompt();
-        });
+        }
     }
 
     /**

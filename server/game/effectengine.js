@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const {partition, sortBy} = require('../Array');
 
 const EventRegistrar = require('./eventregistrar.js');
 
@@ -18,7 +18,7 @@ class EffectEngine {
         }
 
         this.effects.push(effect);
-        this.effects = _.sortBy(this.effects, effect => effect.order);
+        this.effects = sortBy(this.effects, effect => effect.order);
         effect.addTargets(this.getTargets());
         if(effect.duration === 'custom') {
             this.registerCustomDurationEvents(effect);
@@ -26,7 +26,7 @@ class EffectEngine {
     }
 
     addSimultaneous(effects) {
-        let sortedEffects = _.sortBy(effects, effect => effect.order);
+        let sortedEffects = sortBy(effects, effect => effect.order);
         for(let effect of sortedEffects) {
             this.add(effect);
         }
@@ -60,7 +60,7 @@ class EffectEngine {
 
     reapplyStateDependentEffects() {
         let stateDependentEffects = this.effects.filter(effect => effect.isStateDependent);
-        let needsRecalc = _.difference(stateDependentEffects, this.effectsBeingRecalculated);
+        let needsRecalc = stateDependentEffects.filter(effect => !this.effectsBeingRecalculated.includes(effect));
 
         if(needsRecalc.length === 0) {
             return;
@@ -82,7 +82,7 @@ class EffectEngine {
         });
 
         this.game.queueSimpleStep(() => {
-            this.effectsBeingRecalculated = _.difference(this.effectsBeingRecalculated, needsRecalc);
+            this.effectsBeingRecalculated = this.effectsBeingRecalculated.filter(effect => !needsRecalc.includes(effect));
         });
     }
 
@@ -115,10 +115,10 @@ class EffectEngine {
     onCardBlankToggled(event) {
         let { card, isBlank } = event;
         let targets = this.getTargets();
-        let matchingEffects = _.filter(this.effects, effect => effect.duration === 'persistent' && effect.source === card);
-        _.each(matchingEffects, effect => {
+        let matchingEffects = this.effects.filter(effect => effect.duration === 'persistent' && effect.source === card);
+        for(let effect of matchingEffects) {
             effect.setActive(!isBlank, targets);
-        });
+        }
     }
 
     onChallengeFinished() {
@@ -150,24 +150,24 @@ class EffectEngine {
             return;
         }
 
-        let eventNames = _.keys(effect.until);
+        let eventNames = Object.keys(effect.until);
         let handler = this.createCustomDurationHandler(effect);
-        _.each(eventNames, eventName => {
+        for(let eventName of eventNames) {
             this.customDurationEvents.push({
                 name: eventName,
                 handler: handler,
                 effect: effect
             });
             this.game.on(eventName, handler);
-        });
+        }
     }
 
     unregisterCustomDurationEvents(effect) {
-        let [eventsForEffect, remainingEvents] = _.partition(this.customDurationEvents, event => event.effect === effect);
+        let [eventsForEffect, remainingEvents] = partition(this.customDurationEvents, event => event.effect === effect);
 
-        _.each(eventsForEffect, event => {
+        for(let event of eventsForEffect) {
             this.game.removeListener(event.name, event.handler);
-        });
+        }
 
         this.customDurationEvents = remainingEvents;
     }
@@ -179,13 +179,13 @@ class EffectEngine {
             if(listener && listener(...args)) {
                 customDurationEffect.cancel();
                 this.unregisterCustomDurationEvents(customDurationEffect);
-                this.effects = _.reject(this.effects, effect => effect === customDurationEffect);
+                this.effects = this.effects.filter(effect => effect !== customDurationEffect);
             }
         };
     }
 
     unapplyAndRemove(match) {
-        var [matchingEffects, remainingEffects] = _.partition(this.effects, match);
+        var [matchingEffects, remainingEffects] = partition(this.effects, match);
 
         // Explicitly cancel effects in reverse order that they were applied so
         // that problems with STR reduction and burn are avoided.

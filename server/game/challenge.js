@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const Player = require('./player.js');
 const EventRegistrar = require('./eventregistrar.js');
 const Settings = require('../settings.js');
@@ -69,8 +68,8 @@ class Challenge {
             return;
         }
 
-        this.attackers = _.reject(this.attackers, c => c === card);
-        this.defenders = _.reject(this.defenders, c => c === card);
+        this.attackers = this.attackers.filter(c => c !== card);
+        this.defenders = this.defenders.filter(c => c !== card);
 
         card.inChallenge = false;
 
@@ -80,10 +79,10 @@ class Challenge {
     }
 
     markAsParticipating(cards) {
-        _.each(cards, card => {
+        for(let card of cards) {
             card.inChallenge = true;
             card.markAsDirty();
-        });
+        }
     }
 
     isAttacking(card) {
@@ -104,7 +103,7 @@ class Challenge {
 
     anyParticipants(predicate) {
         let participants = this.attackers.concat(this.defenders);
-        return _.any(participants, predicate);
+        return participants.some(predicate);
     }
 
     hasSingleParticipant(player) {
@@ -117,7 +116,7 @@ class Challenge {
 
     getNumberOfParticipants(predicate = () => true) {
         let participants = this.attackers.concat(this.defenders);
-        return _.reduce(participants, (count, card) => {
+        return participants.reduce((count, card) => {
             if(predicate(card)) {
                 return count + 1;
             }
@@ -140,7 +139,7 @@ class Challenge {
     }
 
     calculateStrengthFor(cards) {
-        return _.reduce(cards, (sum, card) => {
+        return cards.reduce((sum, card) => {
             if(card.challengeOptions.contains('doesNotContributeStrength')) {
                 return sum;
             }
@@ -168,7 +167,7 @@ class Challenge {
     }
 
     getStealthAttackers() {
-        return _.filter(this.attackers, card => card.needsStealthTarget());
+        return this.attackers.filter(card => card.needsStealthTarget());
     }
 
     determineWinner() {
@@ -226,10 +225,9 @@ class Challenge {
             }
         ];
 
-        return _.chain(noWinnerRules)
+        return noWinnerRules
             .map(rule => ({ noWinner: !!rule.condition(), message: rule.message }))
-            .find(match => match.noWinner)
-            .value() || { noWinner: false };
+            .find(match => match.noWinner) || { noWinner: false };
     }
 
     isAttackerTheWinner() {
@@ -275,8 +273,12 @@ class Challenge {
     }
 
     finish() {
-        _.each(this.attackers, card => card.inChallenge = false);
-        _.each(this.defenders, card => card.inChallenge = false);
+        for(let card of this.attackers) {
+            card.inChallenge = false;
+        }
+        for(let card of this.defenders) {
+            card.inChallenge = false;
+        }
     }
 
     cancelChallenge() {

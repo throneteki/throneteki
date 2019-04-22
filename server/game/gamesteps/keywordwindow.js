@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const {sortBy} = require('../../Array');
 
 const AbilityContext = require('../AbilityContext.js');
 const BaseStep = require('./basestep.js');
@@ -10,7 +10,7 @@ class KeywordWindow extends BaseStep {
     constructor(game, challenge) {
         super(game);
         this.challenge = challenge;
-        this.winnerCardsWithContext = _.map(challenge.getWinnerCards(), card => {
+        this.winnerCardsWithContext = challenge.getWinnerCards().map(card => {
             return { card: card, context: new AbilityContext({ player: this.challenge.winner, game: this.game, challenge: this.challenge, source: card }) };
         });
         this.firstPlayer = game.getFirstPlayer();
@@ -33,7 +33,7 @@ class KeywordWindow extends BaseStep {
     }
 
     promptForKeywordOrder() {
-        let buttons = _.map(this.remainingKeywords, keyword => {
+        let buttons = this.remainingKeywords.map(keyword => {
             return { text: GameKeywords[keyword].title, arg: keyword, method: 'chooseKeyword' };
         });
         this.game.promptWithMenu(this.firstPlayer, this, {
@@ -41,7 +41,7 @@ class KeywordWindow extends BaseStep {
                 menuTitle: 'Choose keyword order',
                 buttons: [
                     { text: 'Automatic', arg: 'automatic', method: 'chooseKeyword' }
-                ].concat(_.sortBy(buttons, button => button.title))
+                ].concat(sortBy(buttons, button => button.title))
             },
             waitingPromptTitle: 'Waiting for first player to choose keyword order'
         });
@@ -54,7 +54,7 @@ class KeywordWindow extends BaseStep {
         }
 
         this.applyKeyword(keyword);
-        this.remainingKeywords = _.reject(this.remainingKeywords, k => k === keyword);
+        this.remainingKeywords = this.remainingKeywords.filter(k => k !== keyword);
         return true;
     }
 
@@ -75,14 +75,14 @@ class KeywordWindow extends BaseStep {
         }
 
         if(this.challenge.winner.keywordSettings.chooseCards) {
-            let cards = _.pluck(participantsWithKeyword, 'card');
+            let cards = participantsWithKeyword.map(participant => participant.card);
             this.game.promptForSelect(this.challenge.winner, {
                 mode: 'unlimited',
                 ordered: true,
                 activePromptTitle: 'Select ' + keyword + ' cards',
                 cardCondition: card => cards.includes(card),
                 onSelect: (player, selectedCards) => {
-                    let finalParticipants = _.map(selectedCards, card => _.find(participantsWithKeyword, participant => participant.card === card));
+                    let finalParticipants = selectedCards.map(card => participantsWithKeyword.find(participant => participant.card === card));
 
                     this.resolveAbility(ability, finalParticipants);
                     this.game.checkWinCondition(this.challenge.winner);
@@ -91,7 +91,7 @@ class KeywordWindow extends BaseStep {
                 }
             });
         } else {
-            if(keyword === 'pillage' && _.size(participantsWithKeyword) > 1) {
+            if(keyword === 'pillage' && participantsWithKeyword.length > 1) {
                 this.promptForPillageOrder(ability, participantsWithKeyword);
             } else {
                 this.resolveAbility(ability, participantsWithKeyword);
@@ -102,11 +102,11 @@ class KeywordWindow extends BaseStep {
     }
 
     getParticipantsForKeyword(keyword, ability) {
-        let participants = _.filter(this.winnerCardsWithContext, participant => {
+        let participants = this.winnerCardsWithContext.filter(participant => {
             return participant.card.hasKeyword(keyword) && ability.meetsRequirements(participant.context);
         });
 
-        if(keyword === 'intimidate' && !_.isEmpty(participants)) {
+        if(keyword === 'intimidate' && participants.lenght > 0) {
             return [participants[0]];
         }
 
@@ -114,15 +114,15 @@ class KeywordWindow extends BaseStep {
     }
 
     promptForPillageOrder(ability, participants) {
-        let cards = _.pluck(participants, 'card');
+        let cards = participants.map(participant => participant.card);
         this.game.promptForSelect(this.challenge.winner, {
             ordered: true,
             mode: 'exactly',
-            numCards: _.size(participants),
+            numCards: participants.length,
             activePromptTitle: 'Select order for pillage',
             cardCondition: card => cards.includes(card),
             onSelect: (player, selectedCards) => {
-                let finalParticipants = _.map(selectedCards, card => _.find(participants, participant => participant.card === card));
+                let finalParticipants = selectedCards.map(card => participants.find(participant => participant.card === card));
 
                 this.resolveAbility(ability, finalParticipants);
 
@@ -136,9 +136,9 @@ class KeywordWindow extends BaseStep {
     }
 
     resolveAbility(ability, participants) {
-        _.each(participants, participant => {
+        for(let participant of participants) {
             this.game.resolveAbility(ability, participant.context);
-        });
+        }
     }
 }
 

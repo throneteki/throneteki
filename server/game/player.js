@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const shuffle = require('lodash.shuffle');
 
 const Spectator = require('./spectator.js');
 const DrawCard = require('./drawcard.js');
@@ -81,7 +81,7 @@ class Player extends Spectator {
         this.groupedPiles = {};
         this.bonusesFromRivals = new Set();
         this.showDeck = false;
-        this.shuffleArray = _.shuffle;
+        this.shuffleArray = shuffle;
         this.role = user.role;
 
         this.promptState = new PlayerPromptState();
@@ -116,7 +116,7 @@ class Player extends Spectator {
     }
 
     isCardInPlayableLocation(card, playingType) {
-        return _.any(this.playableLocations, location => location.playingType === playingType && location.contains(card));
+        return this.playableLocations.some(location => location.playingType === playingType && location.contains(card));
     }
 
     getDuplicateInPlay(card) {
@@ -227,7 +227,7 @@ class Player extends Spectator {
     searchDrawDeck(limit, predicate = () => true) {
         let cards = this.drawDeck;
 
-        if(_.isFunction(limit)) {
+        if(typeof(limit) === 'function') {
             predicate = limit;
         } else {
             if(limit > 0) {
@@ -266,7 +266,7 @@ class Player extends Spectator {
         var cards = [];
 
         while(cards.length < toDiscard) {
-            var cardIndex = _.random(0, this.hand.length - 1);
+            var cardIndex = Math.floor(Math.random() * this.hand.length);
 
             var card = this.hand[cardIndex];
             if(!cards.includes(card)) {
@@ -385,15 +385,15 @@ class Player extends Spectator {
     }
 
     removeCostReducer(reducer) {
-        if(_.contains(this.costReducers, reducer)) {
+        if(this.costReducers.includes(reducer)) {
             reducer.unregisterEvents();
-            this.costReducers = _.reject(this.costReducers, r => r === reducer);
+            this.costReducers = this.costReducers.filter(r => r !== reducer);
         }
     }
 
     getCostReduction(playingType, card) {
-        let matchingReducers = _.filter(this.costReducers, reducer => reducer.canReduce(playingType, card));
-        let reduction = _.reduce(matchingReducers, (memo, reducer) => reducer.getAmount(card) + memo, 0);
+        let matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
+        let reduction = matchingReducers.reduce((memo, reducer) => reducer.getAmount(card) + memo, 0);
         return reduction;
     }
 
@@ -420,13 +420,13 @@ class Player extends Spectator {
     }
 
     markUsedReducers(playingType, card) {
-        var matchingReducers = _.filter(this.costReducers, reducer => reducer.canReduce(playingType, card));
-        _.each(matchingReducers, reducer => {
+        var matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
+        for(let reducer of matchingReducers) {
             reducer.markUsed();
             if(reducer.isExpired()) {
                 this.removeCostReducer(reducer);
             }
-        });
+        }
     }
 
     registerAbilityMax(cardName, limit) {
@@ -470,7 +470,7 @@ class Player extends Spectator {
             player: this,
             source: card
         });
-        var playActions = _.filter(card.getPlayActions(), action => action.meetsRequirements(context) && action.canPayCosts(context) && action.canResolveTargets(context));
+        var playActions = card.getPlayActions().filter(action => action.meetsRequirements(context) && action.canPayCosts(context) && action.canResolveTargets(context));
 
         if(playActions.length === 0) {
             return false;
@@ -486,7 +486,7 @@ class Player extends Spectator {
     }
 
     canTrigger(card) {
-        return !_.any(this.triggerRestrictions, restriction => restriction(card));
+        return !this.triggerRestrictions.some(restriction => restriction(card));
     }
 
     canDuplicate(duplicateCard) {
@@ -502,7 +502,7 @@ class Player extends Spectator {
     }
 
     canPlay(card, playingType = 'play') {
-        return !_.any(this.playCardRestrictions, restriction => restriction(card, playingType));
+        return !this.playCardRestrictions.some(restriction => restriction(card, playingType));
     }
 
     canPutIntoPlay(card, playingType = 'play', options = {}) {
@@ -530,7 +530,7 @@ class Player extends Spectator {
 
         if(owner === this) {
             let controlsAnOpponentsCopy = this.anyCardsInPlay(c => c.name === card.name && c.owner !== this && !c.facedown);
-            let opponentControlsOurCopy = _.any(this.game.getPlayers(), player => {
+            let opponentControlsOurCopy = this.game.getPlayers().some(player => {
                 return player !== this && player.anyCardsInPlay(c => c.name === card.name && c.owner === this && c !== card && !c.facedown);
             });
 
@@ -982,7 +982,7 @@ class Player extends Spectator {
     moveCard(card, targetLocation, options = {}, callback) {
         let targetPile = this.getSourceList(targetLocation);
 
-        options = _.extend({ allowSave: false, bottom: false, isDupe: false }, options);
+        options = Object.assign({ allowSave: false, bottom: false, isDupe: false }, options);
 
         if(!targetPile) {
             return;
@@ -1281,7 +1281,9 @@ class Player extends Spectator {
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
-            user: _.pick(this.user, ['username'])
+            user: {
+                username: this.user.username
+            }
         };
 
         let drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
@@ -1290,7 +1292,7 @@ class Player extends Spectator {
             state.cardPiles.drawDeck = drawDeck;
         }
 
-        return _.extend(state, promptState);
+        return Object.assign(state, promptState);
     }
 }
 

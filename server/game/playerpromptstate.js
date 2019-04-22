@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 class PlayerPromptState {
     constructor() {
         this.selectCard = false;
@@ -14,7 +12,7 @@ class PlayerPromptState {
     }
 
     setSelectedCards(cards) {
-        this.selectedCards = cards;
+        this.selectedCards = cards || [];
     }
 
     clearSelectedCards() {
@@ -22,7 +20,7 @@ class PlayerPromptState {
     }
 
     setSelectableCards(cards) {
-        this.selectableCards = cards;
+        this.selectableCards = cards || [];
     }
 
     clearSelectableCards() {
@@ -34,11 +32,12 @@ class PlayerPromptState {
         this.selectOrder = prompt.selectOrder || false;
         this.menuTitle = prompt.menuTitle || '';
         this.promptTitle = prompt.promptTitle;
-        this.buttons = _.map(prompt.buttons || [], button => {
+        this.buttons = (prompt.buttons || []).map(button => {
             if(button.card) {
                 let card = button.card;
-                let properties = _.omit(button, 'card');
-                return _.extend({ text: card.name, arg: card.uuid, card: card.getShortSummary() }, properties);
+                let properties = Object.assign({}, button);
+                delete properties['card'];
+                return Object.assign({ text: card.name, arg: card.uuid, card: card.getShortSummary() }, properties);
             }
 
             return button;
@@ -55,7 +54,7 @@ class PlayerPromptState {
 
     getCardSelectionState(card) {
         let selectable = this.selectableCards.includes(card);
-        let index = _.indexOf(this.selectedCards, card);
+        let index = this.selectedCards.indexOf(card);
         let result = {
             // The `card.selected` property here is a hack for plot selection,
             // which we do differently from normal card selection.
@@ -65,7 +64,7 @@ class PlayerPromptState {
         };
 
         if(index !== -1 && this.selectOrder) {
-            return _.extend({ order: index + 1 }, result);
+            return Object.assign({ order: index + 1 }, result);
         }
 
         return result;

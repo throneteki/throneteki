@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const EventEmitter = require('events');
 
 const AttachmentValidityCheck = require('./AttachmentValidityCheck.js');
@@ -76,13 +75,13 @@ class Game extends EventEmitter {
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
 
-        _.each(details.players, player => {
+        for(let player of details.players || []) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
-        });
+        }
 
-        _.each(details.spectators, spectator => {
+        for(let spectator of details.spectators || []) {
             this.playersAndSpectators[spectator.user.username] = new Spectator(spectator.id, spectator.user);
-        });
+        }
 
         this.setMaxListeners(0);
 
@@ -156,11 +155,11 @@ class Game extends EventEmitter {
     }
 
     getSpectators() {
-        return _.pick(this.playersAndSpectators, player => player.isSpectator());
+        return Object.values(this.playersAndSpectators).filter(player => player.isSpectator());
     }
 
     getFirstPlayer() {
-        return _.find(this.getPlayers(), p => {
+        return this.getPlayers().find(p => {
             return p.firstPlayer;
         });
     }
@@ -199,13 +198,13 @@ class Game extends EventEmitter {
     }
 
     anyPlotHasTrait(trait) {
-        return _.any(this.getPlayers(), player =>
+        return this.getPlayers().some(player =>
             player.activePlot &&
             player.activePlot.hasTrait(trait));
     }
 
     getNumberOfPlotsWithTrait(trait) {
-        return _.reduce(this.getPlayers(), (sum, player) => {
+        return this.getPlayers().reduce((sum, player) => {
             if(player.activePlot && player.activePlot.hasTrait(trait)) {
                 return sum + 1;
             }
@@ -562,7 +561,7 @@ class Game extends EventEmitter {
             player.minReserve = 0;
         }
 
-        if(stat === 'claim' && _.isNumber(player.activePlot.claimSet)) {
+        if(stat === 'claim' && typeof(player.activePlot.claimSet) === 'number') {
             player.activePlot.claimSet += value;
 
             if(player.activePlot.claimSet < 0) {
@@ -729,17 +728,17 @@ class Game extends EventEmitter {
     initialise() {
         var players = {};
 
-        _.each(this.playersAndSpectators, player => {
+        for(let player of Object.values(this.playersAndSpectators)) {
             if(!player.left) {
                 players[player.name] = player;
             }
-        });
+        }
 
         this.playersAndSpectators = players;
 
-        _.each(this.getPlayers(), player => {
+        for(let player of this.getPlayers()) {
             player.initialise();
-        });
+        }
 
         this.pipeline.initialise([
             Phases.createStep('setup', this),
@@ -806,7 +805,11 @@ class Game extends EventEmitter {
     }
 
     get currentAbilityContext() {
-        return _.last(this.abilityContextStack);
+        if(this.abilityContextStack.length === 0) {
+            return null;
+        }
+
+        return this.abilityContextStack[this.abilityContextStack.length - 1];
     }
 
     pushAbilityContext(context) {
@@ -849,13 +852,13 @@ class Game extends EventEmitter {
     }
 
     registerAbility(ability, event) {
-        let windowIndex = _.findLastIndex(this.abilityWindowStack, window => window.canTriggerAbility(ability));
+        let reverseStack = [...this.abilityWindowStack].reverse();
+        let window = reverseStack.find(window => window.canTriggerAbility(ability));
 
-        if(windowIndex === -1) {
+        if(!window) {
             return;
         }
 
-        let window = this.abilityWindowStack[windowIndex];
         window.registerAbility(ability, event);
     }
 
@@ -897,9 +900,9 @@ class Game extends EventEmitter {
      * version of the event that lists all cards.
      */
     raiseSimultaneousEvent(cards, properties) {
-        let event = new GroupedCardEvent(properties.eventName, _.extend({ cards: cards }, properties.params), properties.handler, properties.postHandler);
+        let event = new GroupedCardEvent(properties.eventName, Object.assign({ cards: cards }, properties.params), properties.handler, properties.postHandler);
         for(let card of cards) {
-            let perCardParams = _.extend({ card: card }, properties.params);
+            let perCardParams = Object.assign({ card: card }, properties.params);
             let childEvent = new Event(properties.perCardEventName, perCardParams, properties.perCardHandler);
             event.addChildEvent(childEvent);
         }
@@ -1071,7 +1074,7 @@ class Game extends EventEmitter {
     }
 
     join(socketId, user) {
-        if(this.started || _.values(this.getPlayers()).length === 2) {
+        if(this.started || this.getPlayers().length === 2) {
             return false;
         }
 
@@ -1081,7 +1084,7 @@ class Game extends EventEmitter {
     }
 
     isEmpty() {
-        return _.all(this.playersAndSpectators, player => player.disconnected || player.left || player.id === 'TBA');
+        return Object.values(this.playersAndSpectators).every(player => player.disconnected || player.left || player.id === 'TBA');
     }
 
     leave(playerName) {
@@ -1168,7 +1171,7 @@ class Game extends EventEmitter {
     }
 
     getSaveState() {
-        var players = _.map(this.getPlayers(), player => {
+        var players = this.getPlayers().map(player => {
             return {
                 name: player.name,
                 faction: player.faction.name || player.faction.value,
@@ -1193,9 +1196,9 @@ class Game extends EventEmitter {
         let playerState = {};
 
         if(this.started) {
-            _.each(this.getPlayers(), player => {
+            for(let player of this.getPlayers()) {
                 playerState[player.name] = player.getState(activePlayer);
-            });
+            }
 
             return {
                 id: this.id,
@@ -1205,7 +1208,7 @@ class Game extends EventEmitter {
                 players: playerState,
                 messages: this.gameChat.messages,
                 showHand: this.showHand,
-                spectators: _.map(this.getSpectators(), spectator => {
+                spectators: this.getSpectators().map(spectator => {
                     return {
                         id: spectator.id,
                         name: spectator.name
@@ -1223,7 +1226,7 @@ class Game extends EventEmitter {
     getSummary(activePlayerName, options = {}) {
         var playerSummaries = {};
 
-        _.each(this.getPlayers(), player => {
+        for(let player of this.getPlayers()) {
             var deck = undefined;
             if(player.left) {
                 return;
@@ -1248,7 +1251,7 @@ class Game extends EventEmitter {
                 owner: player.owner,
                 user: options.fullData && player.user
             };
-        });
+        }
 
         return {
             allowSpectators: this.allowSpectators,
@@ -1263,7 +1266,7 @@ class Game extends EventEmitter {
             showHand: this.showHand,
             started: this.started,
             startedAt: this.startedAt,
-            spectators: _.map(this.getSpectators(), spectator => {
+            spectators: this.getSpectators().map(spectator => {
                 return {
                     id: spectator.id,
                     lobbyId: spectator.lobbyId,

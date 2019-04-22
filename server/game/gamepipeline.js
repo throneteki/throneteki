@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 class GamePipeline {
     constructor() {
         this.pipeline = [];
@@ -7,7 +5,7 @@ class GamePipeline {
     }
 
     initialise(steps) {
-        if(!_.isArray(steps)) {
+        if(!Array.isArray(steps)) {
             steps = [steps];
         }
 
@@ -19,9 +17,9 @@ class GamePipeline {
     }
 
     getCurrentStep() {
-        var step = _.first(this.pipeline);
+        var step = this.pipeline[0];
 
-        if(_.isFunction(step)) {
+        if(typeof(step) === 'function') {
             var createdStep = step();
             this.pipeline[0] = createdStep;
             return createdStep;
@@ -104,7 +102,7 @@ class GamePipeline {
                     return false;
                 }
             } else {
-                this.pipeline = _.rest(this.pipeline, 1);
+                this.pipeline = this.pipeline.slice(1);
             }
             this.pipeline = this.queue.concat(this.pipeline);
             this.queue = [];
@@ -114,8 +112,8 @@ class GamePipeline {
 
     getDebugInfo() {
         return {
-            pipeline: _.map(this.pipeline, step => this.getDebugInfoForStep(step)),
-            queue: _.map(this.queue, step => this.getDebugInfoForStep(step))
+            pipeline: this.pipeline.map(step => this.getDebugInfoForStep(step)),
+            queue: this.queue.map(step => this.getDebugInfoForStep(step))
         };
     }
 
@@ -131,7 +129,7 @@ class GamePipeline {
             return step.getDebugInfo();
         }
 
-        if(_.isFunction(step)) {
+        if(typeof(step) === 'function') {
             return step.toString();
         }
 
