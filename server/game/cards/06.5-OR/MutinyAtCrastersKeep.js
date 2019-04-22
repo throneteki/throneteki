@@ -1,7 +1,5 @@
 const DrawCard = require('../../drawcard.js');
 
-const _ = require('underscore');
-
 class MutinyAtCrastersKeep extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
@@ -23,8 +21,8 @@ class MutinyAtCrastersKeep extends DrawCard {
 
     getHighestCharacterCost() {
         let charactersInPlay = this.controller.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost());
-        let costs = _.map(charactersInPlay, card => card.getPrintedCost());
-        return _.max(costs);
+        let costs = charactersInPlay.map(card => card.getPrintedCost());
+        return Math.max(...costs);
     }
 }
 

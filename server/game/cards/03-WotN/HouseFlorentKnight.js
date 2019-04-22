@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const _ = require('underscore');
 
 class HouseFlorentKnight extends DrawCard {
     setupCardAbilities() {
@@ -21,8 +20,8 @@ class HouseFlorentKnight extends DrawCard {
 
     getLowestStrInPlay() {
         let charactersInPlay = this.game.filterCardsInPlay(card => card.getType() === 'character');
-        let strengths = _.map(charactersInPlay, card => card.getStrength());
-        return _.min(strengths);
+        let strengths = charactersInPlay.map(card => card.getStrength());
+        return Math.min(...strengths);
     }
 }
 HouseFlorentKnight.code = '03037';

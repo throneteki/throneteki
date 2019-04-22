@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Doreah extends DrawCard {
@@ -18,7 +16,7 @@ class Doreah extends DrawCard {
         }
 
         let ourCards = challenge.attackingPlayer === this.controller ? challenge.attackers : challenge.defenders;
-        return _.any(ourCards, card => card.hasTrait('Lord') || card.hasTrait('Lady'));
+        return ourCards.some(card => card.hasTrait('Lord') || card.hasTrait('Lady'));
     }
 }
 

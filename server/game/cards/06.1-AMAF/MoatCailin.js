@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class MoatCailin extends DrawCard {
@@ -16,8 +14,8 @@ class MoatCailin extends DrawCard {
     }
 
     moreWinterThanSummerPlotsRevealed() {
-        let winterPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Winter'));
-        let summerPlots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Summer'));
+        let winterPlots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Winter'));
+        let summerPlots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Summer'));
 
         return winterPlots.length > summerPlots.length;
     }

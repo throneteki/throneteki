@@ -1,12 +1,10 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class CaswellsKeep extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.controller === this.controller)
+                onPlotsRevealed: event => event.plots.some(plot => plot.controller === this.controller)
             },
             choosePlayer: true,
             message:'{player} uses {source} to look at the top 2 cards of {chosenPlayer}\'s deck',
@@ -31,8 +29,8 @@ class CaswellsKeep extends DrawCard {
     }
 
     selectCard(player, cardId) {
-        let card = _.find(this.topCards, c => c.uuid === cardId);
-        let otherCard = _.find(this.topCards, c => c.uuid !== cardId);
+        let card = this.topCards.find(c => c.uuid === cardId);
+        let otherCard = this.topCards.find(c => c.uuid !== cardId);
 
         if(!card) {
             return false;

@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const DrawCard = require('../../drawcard.js');
 
 class TyrionsChain extends DrawCard {
@@ -15,7 +14,7 @@ class TyrionsChain extends DrawCard {
             handler: context => {
                 let warPlots = this.getRevealedWarPlots();
 
-                let buttons = _.map(warPlots, card => ({
+                let buttons = warPlots.map(card => ({
                     method: 'selectWarPlot', card: card, mapCard: true
                 }));
 
@@ -38,11 +37,11 @@ class TyrionsChain extends DrawCard {
 
     getRevealedWarPlots() {
         let revealedPlots = [];
-        _.each(this.game.getPlayers(), player => {
+        for(let player of this.game.getPlayers()) {
             if(player.activePlot && player.activePlot.hasTrait('War')) {
                 revealedPlots = revealedPlots.concat(player.activePlot);
             }
-        });
+        }
         return revealedPlots;
     }
 

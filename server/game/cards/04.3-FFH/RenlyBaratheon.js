@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class RenlyBaratheon extends DrawCard {
@@ -26,7 +24,7 @@ class RenlyBaratheon extends DrawCard {
     }
 
     anyOpponentControlsKing() {
-        return _.any(this.game.getPlayers(), player => {
+        return this.game.getPlayers().some(player => {
             if(player === this.controller) {
                 return false;
             }

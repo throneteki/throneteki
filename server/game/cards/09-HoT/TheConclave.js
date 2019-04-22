@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const AgendaCard = require('../../agendacard.js');
 
 class TheConclave extends AgendaCard {
@@ -42,9 +40,9 @@ class TheConclave extends AgendaCard {
         }
 
         let top7Cards = this.controller.drawDeck.slice(0, 7);
-        _.each(top7Cards, card => {
+        for(let card of top7Cards) {
             this.controller.moveCard(card, 'conclave');
-        });
+        }
         this.game.addMessage('{0} moves the top 7 cards of their deck under {1}', this.controller, this);
     }
 }

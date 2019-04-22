@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheReader extends DrawCard {
@@ -9,7 +7,7 @@ class TheReader extends DrawCard {
                 afterChallenge: event =>
                     event.challenge.winner === this.controller &&
                     event.challenge.isUnopposed() &&
-                    _.any(event.challenge.getWinnerCards(), card => card.isFaction('greyjoy') && card.isUnique())
+                    event.challenge.getWinnerCards().some(card => card.isFaction('greyjoy') && card.isUnique())
             },
             limit: ability.limit.perPhase(1),
             choices: {

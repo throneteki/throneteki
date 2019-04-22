@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class UnbridledGenerosity extends DrawCard {
@@ -13,9 +11,9 @@ class UnbridledGenerosity extends DrawCard {
                 multiSelect: true
             },
             handler: context => {
-                _.each(context.target, card => {
+                for(let card of context.target) {
                     card.modifyToken('gold', 1);
-                });
+                }
 
                 this.game.addMessage('{0} plays {1} to move 1 gold from the treasury to {2}',
                     this.controller, this, context.target);

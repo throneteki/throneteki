@@ -1,12 +1,10 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class FalseSpring extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                this.remainingOpponents = _.filter(this.game.getPlayers(), player => player !== this.controller);
+                this.remainingOpponents = this.game.getPlayers().filter(player => player !== this.controller);
                 this.selections = [];
                 this.proceedToNextStep();
             }
@@ -56,7 +54,9 @@ class FalseSpring extends PlotCard {
     }
 
     onToDiscardardSelected(player, cards) {
-        _.each(cards, card => card.controller.discardCard(card));
+        for(let card of cards) {
+            card.controller.discardCard(card);
+        }
         this.game.addMessage('{0} uses {1} to discard {2}', player, this, cards);
         return true;
     }

@@ -1,21 +1,19 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class GhostsOfHarrenhal extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: () => {
-                _.each(this.game.getPlayersInFirstPlayerOrder(), player => {
+                for(let player of this.game.getPlayersInFirstPlayerOrder()) {
                     let deadCharacters = player.deadPile.filter(card => card.getType() === 'character');
-                    if(!_.isEmpty(deadCharacters)) {
-                        let lastDeadCharacter = _.last(deadCharacters);
+                    if(deadCharacters.length !== 0) {
+                        let lastDeadCharacter = deadCharacters[deadCharacters.length - 1];
                         player.putIntoPlay(lastDeadCharacter);
 
                         this.game.addMessage('{0} uses {1} to put {2} into play from {3}\'s dead pile',
                             this.controller, this, lastDeadCharacter, lastDeadCharacter.controller);
                     }
-                });
+                }
             }
         });
     }

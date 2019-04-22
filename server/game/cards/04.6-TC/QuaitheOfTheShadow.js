@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const _ = require('underscore');
 
 class QuaitheOfTheShadow extends DrawCard {
     setupCardAbilities() {
@@ -12,12 +11,12 @@ class QuaitheOfTheShadow extends DrawCard {
                 )
             },
             handler: () => {
-                let attackers = _.filter(this.game.currentChallenge.attackers, card => card.getStrength() <= 2);
-                let defenders = _.filter(this.game.currentChallenge.defenders, card => card.getStrength() <= 2);
+                let attackers = this.game.currentChallenge.attackers.filter(card => card.getStrength() <= 2);
+                let defenders = this.game.currentChallenge.defenders.filter(card => card.getStrength() <= 2);
                 let participants = attackers.concat(defenders);
-                _.each(participants, card => {
+                for(let card of participants) {
                     this.game.currentChallenge.removeFromChallenge(card);
-                });
+                }
 
                 this.game.addMessage('{0} uses {1} to remove all characters with STR 2 or lower from the challenge',
                     this.controller, this);

@@ -1,12 +1,10 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class BitterbridgeEncampment extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onPlotsRevealed: event => _.any(event.plots, plot => plot.hasTrait('Summer')) && !this.kneeled
+                onPlotsRevealed: event => event.plots.some(plot => plot.hasTrait('Summer')) && !this.kneeled
             },
             handler: () => {
                 this.controller.kneelCard(this);
@@ -32,10 +30,10 @@ class BitterbridgeEncampment extends DrawCard {
     }
 
     doPutIntoPlay() {
-        _.each(this.selections, selection => {
+        for(let selection of this.selections) {
             let player = selection.player;
             player.putIntoPlay(selection.card);
-        });
+        }
     }
 
     proceedToNextStep() {

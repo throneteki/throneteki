@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class OldWyk extends DrawCard {
@@ -12,7 +10,8 @@ class OldWyk extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                let card = _.last(this.controller.deadPile.filter(c => c.hasTrait('Drowned God')));
+                let cards = this.controller.deadPile.filter(c => c.hasTrait('Drowned God'));
+                let card = cards[cards.length - 1];
 
                 this.controller.putIntoPlay(card, 'play', { kneeled: true });
 

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class PoliticalDisaster extends PlotCard {
@@ -20,7 +18,9 @@ class PoliticalDisaster extends PlotCard {
                 let toDiscard = [];
                 for(let selection of context.targets.selections) {
                     let player = selection.choosingPlayer;
-                    let remainingLocations = _.difference(player.filterCardsInPlay(card => card.getType() === 'location'), selection.value || []);
+                    let locations = player.filterCardsInPlay(card => card.getType() === 'location');
+                    let selectedCards = selection.value || [];
+                    let remainingLocations = locations.filter(location => !selectedCards.includes(location));
 
                     toDiscard = toDiscard.concat(remainingLocations);
 

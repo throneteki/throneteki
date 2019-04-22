@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheFrozenShore extends DrawCard {
@@ -27,19 +25,19 @@ class TheFrozenShore extends DrawCard {
     }
 
     standWildlings(player, cards) {
-        _.each(cards, card => {
+        for(let card of cards) {
             player.standCard(card);
-        });
+        }
         this.game.addMessage('{0} uses {1} to stand {2}', player, this, cards);
         return true;
     }
 
     getNumOfAttackingWildlings(challenge) {
-        return _.size(_.filter(challenge.attackers, card => card.hasTrait('Wildling')));
+        return challenge.attackers.filter(card => card.hasTrait('Wildling')).length;
     }
 
     getNumOfWinterPlots() {
-        return _.size(_.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Winter')));
+        return this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Winter')).length;
     }
 }
 

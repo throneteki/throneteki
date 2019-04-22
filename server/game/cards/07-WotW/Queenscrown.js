@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Queenscrown extends DrawCard {
@@ -14,7 +12,7 @@ class Queenscrown extends DrawCard {
                 this.remainingCards = opponent.drawDeck.slice(0, 3);
                 this.game.addMessage('{0} kneels {1} to reveal {2} from the top of {3}\'s deck', this.controller, this, this.remainingCards, opponent);
 
-                let characters = _.filter(this.remainingCards, card => card.getType() === 'character');
+                let characters = this.remainingCards.filter(card => card.getType() === 'character');
                 if(characters.length > 0) {
                     this.promptToDiscardCharacter(characters);
                 } else {
@@ -25,7 +23,7 @@ class Queenscrown extends DrawCard {
     }
 
     promptToDiscardCharacter(characters) {
-        let buttons = _.map(characters, card => {
+        let buttons = characters.map(card => {
             return { method: 'placeCharacterInDiscard', card: card };
         });
         buttons.push({ text: 'Done', method: 'promptToPlaceOnBottom' });
@@ -39,10 +37,10 @@ class Queenscrown extends DrawCard {
     }
 
     placeCharacterInDiscard(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         card.controller.moveCard(card, 'discard pile');
         this.game.addMessage('{0} uses {1} to place {2} in {3}\'s discard pile', player, this, card, card.controller);
-        this.remainingCards = _.reject(this.remainingCards, c => c === card);
+        this.remainingCards = this.remainingCards.filter(c => c !== card);
         this.promptToPlaceOnBottom();
         return true;
     }
@@ -59,7 +57,7 @@ class Queenscrown extends DrawCard {
             return;
         }
 
-        let buttons = _.map(this.remainingCards, card => {
+        let buttons = this.remainingCards.map(card => {
             return { method: 'placeCardOnBottom', card: card };
         });
 
@@ -74,14 +72,14 @@ class Queenscrown extends DrawCard {
     }
 
     placeCardOnBottom(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
 
         if(!card) {
             return false;
         }
 
         card.controller.moveCard(card, 'draw deck', { bottom: true });
-        this.remainingCards = _.reject(this.remainingCards, c => c === card);
+        this.remainingCards = this.remainingCards.filter(c => c !== card);
         this.promptToPlaceOnBottom();
         return true;
     }

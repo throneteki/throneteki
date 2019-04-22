@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const AgendaCard = require('../../agendacard.js');
 
 class KingsOfSummer extends AgendaCard {
@@ -10,7 +8,7 @@ class KingsOfSummer extends AgendaCard {
             effect: ability.effects.modifyReserve(1)
         });
         this.persistentEffect({
-            condition: () => _.all(this.game.getPlayers(), player => player.activePlot && !player.activePlot.hasTrait('Winter')),
+            condition: () => this.game.getPlayers().every(player => player.activePlot && !player.activePlot.hasTrait('Winter')),
             match: card => card === card.controller.activePlot && card.hasTrait('Summer'),
             effect: ability.effects.modifyGold(1)
         });

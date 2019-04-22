@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const AgendaCard = require('../../agendacard.js');
 
 class ThePowerOfWealth extends AgendaCard {
@@ -25,14 +23,14 @@ class ThePowerOfWealth extends AgendaCard {
             }
         }
 
-        let factionToAnnounce = _.filter(factionsInDecks, faction => faction !== this.controller.getFaction() && faction !== 'neutral');
+        let factionToAnnounce = factionsInDecks.filter(faction => faction !== this.controller.getFaction() && faction !== 'neutral');
         let message = '{0} names {1} as their {2} for {3}';
 
         if(factionToAnnounce.length > 1) {
             message += ' (this exceeds the maximum allowed number of factions)';
         }
 
-        if(_.isEmpty(factionToAnnounce)) {
+        if(factionToAnnounce.length === 0) {
             //Don't print any message: allows the player to bluff any faction
             return;
         }

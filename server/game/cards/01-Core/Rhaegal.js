@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Rhaegal extends DrawCard {
@@ -8,7 +6,7 @@ class Rhaegal extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    _.any(event.challenge.getWinnerCards(), card => card.hasTrait('Stormborn'))
+                    event.challenge.getWinnerCards().some(card => card.hasTrait('Stormborn'))
                 )
             },
             limit: ability.limit.perPhase(1),
