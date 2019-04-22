@@ -202,7 +202,7 @@ class NewGame extends React.Component {
                 </Panel >
             </div >) : (
             <div>
-                    Connecting to the server, please wait...
+                <AlertPanel type='warning' message='Your connection to the lobby has been interrupted, if this message persists, refresh your browser' />
             </div>
         );
     }

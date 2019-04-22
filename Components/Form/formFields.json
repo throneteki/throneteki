@@ -178,5 +178,33 @@
       "labelClass": "col-sm-4",
       "fieldClass": "col-sm-7"
     }
+  ],
+  "userAdmin": [
+    {
+      "name": "username",
+      "label": "Search for a user",
+      "placeholder": "Enter a username",
+      "inputType": "text",
+      "validationProperties": {
+        "data-val": true,
+        "data-val-required": "Please enter a username"
+      },
+      "labelClass": "col-sm-4",
+      "fieldClass": "col-sm-6"
+    }
+  ],
+  "newsAdmin": [
+    {
+      "name": "newsText",
+      "label": "Add news item",
+      "placeholder": "Enter news",
+      "inputType": "textarea",
+      "validationProperties": {
+        "data-val": true,
+        "data-val-required": "Please enter the news text"
+      },
+      "labelClass": "col-sm-2",
+      "fieldClass": "col-sm-10"
+    }
   ]
 }

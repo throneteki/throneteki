@@ -220,16 +220,14 @@ class GameLobby extends React.Component {
 
         return (
             <div className='full-height'>
-                { this.props.bannerNotice ? <AlertPanel type='error' message={ this.props.bannerNotice } /> : null }
-                { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
-
                 <div className='col-md-offset-2 col-md-8 full-height'>
+                    { this.props.bannerNotice ? <AlertPanel type='error' message={ this.props.bannerNotice } /> : null }
+                    { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
                     <Panel title='Current Games'>
                         <div className='col-xs-12 game-controls'>
                             <div className='col-xs-3 join-buttons'>
-                                <button className='btn btn-primary' onClick={ this.onNewGameClick } disabled={ !!this.props.currentGame }>New Game</button>
-                                <button className='btn btn-primary' onClick={ this.onQuickJoinClick } disabled={ !!this.props.currentGame }>Quick Join</button>
-                            </div>
+                                <button className='btn btn-primary' onClick={ this.onNewGameClick } disabled={ !!this.props.currentGame || !this.props.user }>New Game</button>
+                                <button className='btn btn-primary' onClick={ this.onQuickJoinClick } disabled={ !!this.props.currentGame || !this.props.user }>Quick Join</button>                            </div>
                             <div className='col-xs-9 game-filter'>
                                 <Panel type='tertiary'>
                                     <Checkbox name='beginner' label='Beginner' fieldClass='col-xs-4' noGroup onChange={ this.onCheckboxChange.bind(this, 'beginner') } checked={ this.state.filter['beginner'] } />

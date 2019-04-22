@@ -68,6 +68,14 @@ class Lobby extends React.Component {
         let isLoggedIn = !!this.props.user;
         let placeholder = isLoggedIn ? 'Enter a message...' : 'You must be logged in to send lobby chat messages';
 
+        let newsStatus = null;
+
+        if(this.props.newsLoading) {
+            newsStatus = <div>News loading...</div>;
+        } else if(!this.props.newsSuccess) {
+            newsStatus = <div>Site news failed to load.</div>;
+        }
+
         return (
             <div className='flex-container'>
                 <SideBar>
@@ -88,8 +96,8 @@ class Lobby extends React.Component {
                 </div> : null }
                 <div className='col-sm-offset-1 col-sm-10'>
                     <Panel title='Latest site news'>
-                        { this.props.loading ? <div>News loading...</div> : null }
-                        <News news={ this.props.news } />
+                        { newsStatus }
+                        { this.props.newsSuccess && <News news={ this.props.news } /> }
                     </Panel>
                 </div>
                 <div className='col-sm-offset-1 col-sm-10 chat-container'>
@@ -124,6 +132,8 @@ Lobby.propTypes = {
     loading: PropTypes.bool,
     messages: PropTypes.array,
     news: PropTypes.array,
+    newsLoading: PropTypes.bool,
+    newsSuccess: PropTypes.bool,
     removeLobbyMessage: PropTypes.func,
     socket: PropTypes.object,
     user: PropTypes.object,
@@ -136,7 +146,8 @@ function mapStateToProps(state) {
         loading: state.api.loading,
         messages: state.lobby.messages,
         news: state.news.news,
-        newsLoading: state.news.newsLoading,
+        newsLoading: state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.loading,
+        newsSuccess: state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.success,
         socket: state.lobby.socket,
         user: state.account.user,
         users: state.lobby.users

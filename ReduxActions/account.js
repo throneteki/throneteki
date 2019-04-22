@@ -21,9 +21,9 @@ export function loginAccount(auth) {
             url: '/api/account/login',
             type: 'POST',
             data: JSON.stringify({ username: auth.username, password: auth.password }),
-            contentType: 'application/json',
-            skipAuth: true
-        }
+            contentType: 'application/json'
+        },
+        skipAuth: true
     };
 }
 
@@ -64,6 +64,9 @@ export function logout() {
 }
 
 export function forgotPassword(details) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+
     return {
         types: ['FORGOTPASSWORD_ACCOUNT', 'ACCOUNT_FORGOTPASSWORD'],
         shouldCallAPI: () => true,

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import moment from 'moment';
 
-import AlertPanel from '../Components/Site/AlertPanel';
+import Form from '../Components/Form/Form';
 import TextArea from '../Components/Form/TextArea';
+import Panel from '../Components/Site/Panel';
+import ApiStatus from '../Components/Site/ApiStatus';
 import * as actions from '../actions';
 
 class NewsAdmin extends React.Component {
@@ -12,9 +14,11 @@ class NewsAdmin extends React.Component {
         super(props);
 
         this.state = {
-            newsText: ''
+            newsText: '',
+            currentRequest: 'REQUEST_NEWS'
         };
 
+        this.onAddNewsClick = this.onAddNewsClick.bind(this);
         this.onSaveClick = this.onSaveClick.bind(this);
     }
 
@@ -22,10 +26,27 @@ class NewsAdmin extends React.Component {
         this.props.loadNews({ limit: 5, forceLoad: true });
     }
 
-    componentWillUpdate(props) {
-        if(props.newsChanged) {
+    componentWillReceiveProps(props) {
+        let clearStatus = false;
+        if(props.newsAdded) {
+            clearStatus = true;
+            this.setState({ successMessage: 'News item added successfully.' });
+        }
+
+        if(props.newsDeleted) {
+            clearStatus = true;
+            this.setState({ successMessage: 'News item deleted successfully.' });
+        }
+
+        if(props.newsSaved) {
+            clearStatus = true;
+            this.setState({ successMessage: 'News item saved successfully.' });
+        }
+
+        if(clearStatus) {
             setTimeout(() => {
                 this.props.clearNewsStatus();
+                this.setState({ successMessage: undefined });
             }, 5000);
         }
     }
@@ -38,15 +59,13 @@ class NewsAdmin extends React.Component {
         this.setState({ editText: event.target.value });
     }
 
-    onAddNews(event) {
-        event.preventDefault();
-
-        this.props.addNews(this.state.newsText);
-
-        this.setState({ newsText: '' });
+    onAddNewsClick(state) {
+        this.setState({ currentRequest: 'ADD_NEWS' });
+        this.props.addNews(state.newsText);
     }
 
     onDeleteClick(id) {
+        this.setState({ currentRequest: 'DELETE_NEWS' });
         this.props.deleteNews(id);
     }
 
@@ -56,13 +75,32 @@ class NewsAdmin extends React.Component {
 
     onSaveClick() {
         this.props.saveNews(this.state.editItemId, this.state.editText);
-        this.setState({ editItemId: undefined, editText: undefined });
+        this.setState({ currentRequest: 'SAVE_NEWS', editItemId: undefined, editText: undefined });
     }
 
     render() {
-        let content = null;
+        if(this.props.apiState && this.props.apiState.loading) {
+            return 'Loading news, please wait...';
+        }
 
-        var renderedNews = this.props.news.map(newsItem => {
+        let statusBar;
+
+        switch(this.state.currentRequest) {
+            case 'REQUEST_NEWS':
+                statusBar = <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />;
+                break;
+            case 'ADD_NEWS':
+                statusBar = <ApiStatus apiState={ this.props.apiAddState } successMessage={ this.state.successMessage } />;
+                break;
+            case 'DELETE_NEWS':
+                statusBar = <ApiStatus apiState={ this.props.apiDeleteState } successMessage={ this.state.successMessage } />;
+                break;
+            case 'SAVE_NEWS':
+                statusBar = <ApiStatus apiState={ this.props.apiSaveState } successMessage={ this.state.successMessage } />;
+                break;
+        }
+
+        let renderedNews = this.props.news.map(newsItem => {
             return (<tr key={ newsItem._id }>
                 <td>{ moment(newsItem.datePublished).format('YYYY-MM-DD') }</td>
                 <td>{ newsItem.poster }</td>
@@ -77,28 +115,17 @@ class NewsAdmin extends React.Component {
                             <button type='button' className='btn btn-primary' onClick={ this.onSaveClick }>Save</button> :
                             <button type='button' className='btn btn-primary' onClick={ this.onEditClick.bind(this, newsItem) }>Edit</button>
                         }
-                        <button type='button' className='btn btn-danger' onClick={ this.onDeleteClick.bind(this, newsItem._id) }>Delete</button>
+                        <button type='button' className='btn btn-danger' onClick={ this.onDeleteClick.bind(this, newsItem._id) }>Delete { this.props.apiDeleteState &&
+                            this.props.apiDeleteState.loading && <span className='spinner button-spinner' /> }</button>
                     </div>
                 </td>
             </tr>);
         });
 
-        let successPanel = null;
-
-        if(this.props.newsChanged) {
-            successPanel = (
-                <AlertPanel message={ this.props.successMessage } type={ 'success' } />
-            );
-        }
-
-        if(this.props.apiLoading) {
-            content = <div>Loading news from the server...</div>;
-        } else if(this.props.apiSuccess === false) {
-            content = <AlertPanel type='error' message={ this.props.apiMessage } />;
-        } else {
-            content = (
-                <div>
-                    { successPanel }
+        return (
+            <div className='col-xs-12'>
+                { statusBar }
+                <Panel title='News administration'>
                     <table className='table table-striped'>
                         <thead>
                             <tr>
@@ -112,102 +139,45 @@ class NewsAdmin extends React.Component {
                             { renderedNews }
                         </tbody>
                     </table>
+                </Panel>
+                <Panel title='Add new news item'>
+                    <Form name='newsAdmin' apiLoading={ this.props.apiAddState && this.props.apiAddState.loading } buttonClass='col-sm-offset-2 col-sm-4' buttonText='Add' onSubmit={ this.onAddNewsClick } />
+                </Panel>
+            </div>);
 
-                    <form className='form'>
-                        <TextArea name='newsText' label='Add news item' value={ this.state.newsText } onChange={ this.onNewsTextChange.bind(this) } />
-
-                        <button type='submit' className='btn btn-primary' onClick={ this.onAddNews.bind(this) }>Add</button>
-                    </form>
-                </div>);
-        }
-
-        return content;
     }
 }
 
 NewsAdmin.displayName = 'NewsAdmin';
 NewsAdmin.propTypes = {
     addNews: PropTypes.func,
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
+    apiAddState: PropTypes.object,
+    apiDeleteState: PropTypes.object,
+    apiSaveState: PropTypes.object,
+    apiState: PropTypes.object,
     clearNewsStatus: PropTypes.func,
     deleteNews: PropTypes.func,
     loadNews: PropTypes.func,
     news: PropTypes.array,
-    newsChanged: PropTypes.bool,
+    newsAdded: PropTypes.bool,
+    newsDeleted: PropTypes.bool,
+    newsSaved: PropTypes.bool,
     saveNews: PropTypes.func,
     successMessage: PropTypes.string
 };
 
-function getApiLoadingStatus(state) {
-    if(state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.loading) {
-        return true;
-    }
-
-    if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.loading) {
-        return true;
-    }
-
-    if(state.api.SAVE_NEWS && state.api.SAVE_NEWS.loading) {
-        return true;
-    }
-
-    return false;
-}
-
-function getApiMessage(state) {
-    if(state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.message) {
-        return state.api.REQUEST_NEWS.message;
-    }
-
-    if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.message) {
-        return state.api.DELETE_NEWS.message;
-    }
-
-    if(state.api.SAVE_NEWS && state.api.SAVE_NEWS.message) {
-        return state.api.SAVE_NEWS.message;
-    }
-
-    return undefined;
-}
-
-function getApiSuccess(state) {
-    if(state.api.DELETE_NEWS && state.api.DELETE_NEWS.success) {
-        return true;
-    }
-
-    if(state.api.SAVE_NEWS && state.api.SAVE_NEWS.success) {
-        return true;
-    }
-}
-
-function getSuccessMessage(state) {
-    if(state.news.newsAdded) {
-        return 'News item added successfully';
-    }
-
-    if(state.news.newsDeleted) {
-        return 'News item deleted successfully';
-    }
-
-    if(state.news.newsSaved) {
-        return 'News item saved successfully';
-    }
-
-    return undefined;
-}
-
 function mapStateToProps(state) {
     return {
-        apiLoading: getApiLoadingStatus(state),
-        apiMessage: getApiMessage(state),
-        apiSuccess: getApiSuccess(state),
+        apiAddState: state.api.ADD_NEWS,
+        apiDeleteState: state.api.DELETE_NEWS,
+        apiSaveState: state.api.SAVE_NEWS,
+        apiState: state.api.REQUEST_NEWS,
         loadNews: state.news.loadNews,
         loading: state.api.loading,
         news: state.news.news,
-        newsChanged: state.news.newsSaved || state.news.newsDeleted || state.news.newsAdded,
-        successMessage: getSuccessMessage(state)
+        newsAdded: state.news.newsAdded,
+        newsDeleted: state.news.newsDeleted,
+        newsSaved: state.news.newsSaved
     };
 }
 

@@ -118,6 +118,10 @@ class LobbyChat extends React.Component {
     }
 
     render() {
+        if(this.props.messages.length === 0) {
+            return <div>There are no messages at the moment.</div>;
+        }
+
         return (<div className='lobby-messages' ref='messages' onScroll={ this.onScroll }>
             { this.getMessages() }
         </div>);

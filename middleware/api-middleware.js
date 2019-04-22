@@ -48,7 +48,7 @@ export default function callAPIMiddleware({ dispatch, getState }) {
         try {
             response = await $.ajax(apiParams.url, apiParams);
         } catch(error) {
-            if(error.status === 401) {
+            if(error.status === 401 && !skipAuth) {
                 let state = getState();
                 let authResponse = await $.ajax('/api/account/token', {
                     contentType: 'application/json',
@@ -74,8 +74,21 @@ export default function callAPIMiddleware({ dispatch, getState }) {
                 } catch(innerError) {
                     errorStatus = innerError.status;
                 }
+            } else if(error.status === 400) {
+                response = { message: error.responseJSON, status: error.status };
             } else {
                 errorStatus = error.status;
+            }
+
+            if(response && response.status === 400) {
+                dispatch(Object.assign({}, payload, {
+                    status: response.status,
+                    message: response.message,
+                    type: 'API_FAILURE',
+                    request: requestType
+                }));
+
+                return;
             }
         }
 
@@ -100,7 +113,7 @@ export default function callAPIMiddleware({ dispatch, getState }) {
         if(!response.success) {
             dispatch(Object.assign({}, payload, {
                 status: 200,
-                message: response.message,
+                message: response.message || 'An error occurred communicating with the server, please try again later.',
                 type: 'API_FAILURE',
                 request: requestType
             }));

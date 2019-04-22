@@ -42,7 +42,7 @@ class ForgotPassword extends React.Component {
                     { errorBar }
                     { this.props.apiSuccess === false ? null : <AlertPanel type='info' message='To start the password recovery process, please enter your username and click the submit button.' /> }
                     <Panel title='Forgot password'>
-                        <Form name='forgotpassword' buttonText='Submit' onSubmit={ this.onSubmit } apiLoading={ this.props.apiLoading }>
+                        <Form name='forgotpassword' buttonClass='col-sm-offset-2 col-sm-3' buttonText='Submit' onSubmit={ this.onSubmit } apiLoading={ this.props.apiLoading }>
                             <div className='form-group'>
                                 <div className='col-sm-offset-2 col-sm-3'>
                                     <ReCAPTCHA ref='recaptcha' sitekey='6LfELhMUAAAAAKbD2kLd6OtbsBbrZJFs7grwOREZ' theme='dark' onChange={ this.onCaptchaChange.bind(this) } />

@@ -4,7 +4,8 @@ export function loadCards() {
         shouldCallAPI: (state) => {
             return !state.cards.cards;
         },
-        APIParams: { url: '/api/cards', cache: false }
+        APIParams: { url: '/api/cards', cache: false },
+        skipAuth: true
     };
 }
 
@@ -14,7 +15,8 @@ export function loadPacks() {
         shouldCallAPI: (state) => {
             return !state.cards.packs;
         },
-        APIParams: { url: '/api/packs', cache: false }
+        APIParams: { url: '/api/packs', cache: false },
+        skipAuth: true
     };
 }
 
@@ -24,7 +26,8 @@ export function loadFactions() {
         shouldCallAPI: (state) => {
             return !state.cards.factions;
         },
-        APIParams: { url: '/api/factions', cache: false }
+        APIParams: { url: '/api/factions', cache: false },
+        skipAuth: true
     };
 }
 
@@ -34,7 +37,8 @@ export function loadRestrictedList() {
         shouldCallAPI: (state) => {
             return !state.cards.restrictedList;
         },
-        APIParams: { url: '/api/restricted-list', cache: false }
+        APIParams: { url: '/api/restricted-list', cache: false },
+        skipAuth: true
     };
 }
 
@@ -44,6 +48,7 @@ export function loadStandaloneDecks() {
         shouldCallAPI: (state) => {
             return !state.cards.standaloneDecks;
         },
-        APIParams: { url: '/api/standalone-decks', cache: false }
+        APIParams: { url: '/api/standalone-decks', cache: false },
+        skipAuth: true
     };
 }

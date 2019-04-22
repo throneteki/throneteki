@@ -4,8 +4,9 @@ import { connect } from 'react-redux';
 import Slider from 'react-bootstrap-slider';
 
 import AlertPanel from '../Components/Site/AlertPanel';
+import ApiStatus from '../Components/Site/ApiStatus';
 import Panel from '../Components/Site/Panel';
-import Input from '../Components/Form/Input';
+import Form from '../Components/Form/Form';
 import Checkbox from '../Components/Form/Checkbox';
 import CardSizeOption from '../Components/Profile/CardSizeOption';
 import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
@@ -19,12 +20,13 @@ class Profile extends React.Component {
         this.handleSelectBackground = this.handleSelectBackground.bind(this);
         this.handleSelectCardSize = this.handleSelectCardSize.bind(this);
         this.onUpdateAvatarClick = this.onUpdateAvatarClick.bind(this);
+        this.onSaveClick = this.onSaveClick.bind(this);
 
         this.state = {
             newPassword: '',
             newPasswordAgain: '',
+            successMessage: '',
             promptDupes: false,
-            validation: {},
             timerSettings: {},
             keywordSettings: {}
         };
@@ -141,22 +143,10 @@ class Profile extends React.Component {
         this.setState(newState);
     }
 
-    onSaveClick(event) {
-        event.preventDefault();
-
-        this.setState({ errorMessage: undefined, successMessage: undefined });
-
-        this.verifyEmail();
-        this.verifyPassword(true);
+    onSaveClick() {
+        this.setState({ successMessage: undefined });
 
         document.getElementsByClassName('wrapper')[0].scrollTop = 0;
-
-        if(Object.values(this.state.validation).some(message => {
-            return message && message !== '';
-        })) {
-            this.setState({ errorMessage: 'There was an error in one or more fields, please see below, correct the error and try again' });
-            return;
-        }
 
         this.props.saveProfile(this.props.user.username, {
             email: this.state.email,
@@ -172,42 +162,6 @@ class Profile extends React.Component {
                 cardSize: this.state.selectedCardSize
             }
         });
-    }
-
-    verifyPassword(isSubmitting) {
-        var validation = this.state.validation;
-
-        delete validation['password'];
-
-        if(!this.state.newPassword && !this.state.newPasswordAgain) {
-            return;
-        }
-
-        if(this.state.newPassword.length < 6) {
-            validation['password'] = 'The password you specify must be at least 6 characters long';
-        }
-
-        if(isSubmitting && !this.state.newPasswordAgain) {
-            validation['password'] = 'Please enter your password again';
-        }
-
-        if(this.state.newPassword && this.state.newPasswordAgain && this.state.newPassword !== this.state.newPasswordAgain) {
-            validation['password'] = 'The passwords you have specified do not match';
-        }
-
-        this.setState({ validation: validation });
-    }
-
-    verifyEmail() {
-        var validation = this.state.validation;
-
-        delete validation['email'];
-
-        if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(this.state.email)) {
-            validation['email'] = 'Please enter a valid email address';
-        }
-
-        this.setState({ validation: validation });
     }
 
     onSlideStop(event) {
@@ -258,39 +212,26 @@ class Profile extends React.Component {
                 checked={ this.state.promptedActionWindows[window.name] } />);
         });
 
-        let successBar;
         if(this.props.profileSaved) {
             setTimeout(() => {
                 this.props.clearProfileStatus();
             }, 5000);
-            successBar = <AlertPanel type='success' message='Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.' />;
         }
 
-        let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
+        let initialValues = { email: this.props.user.email };
 
         return (
             <div className='col-sm-8 col-sm-offset-2 profile full-height'>
                 <div className='about-container'>
-                    { errorBar }
-                    { successBar }
-                    <form className='form form-horizontal'>
-                        <Panel title='Profile'>
-                            <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
-                                type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
-                                onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
-                            <Input name='newPassword' label='New Password' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password'
-                                type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
-                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
-                            <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
-                                type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
-                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
-                            <span className='col-sm-3 text-center'><Avatar username={ this.props.user.username } /></span>
-                            <Checkbox name='enableGravatar' label='Enable Gravatar integration' fieldClass='col-sm-offset-1 col-sm-7'
-                                onChange={ e => this.setState({ enableGravatar: e.target.checked }) } checked={ this.state.enableGravatar } />
-                            <div className='col-sm-3 text-center'>Current profile picture</div>
-                            <button type='button' className='btn btn-default col-sm-offset-1 col-sm-4' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
-                        </Panel>
-                        <div>
+                    <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
+
+                    <Form panelTitle='Profile' name='profile' initialValues={ initialValues } apiLoading={ this.props.apiState && this.props.apiState.loading } buttonClass='col-sm-offset-10 col-sm-2' buttonText='Save' onSubmit={ this.onSaveClick }>
+                        <span className='col-sm-3 text-center'><Avatar username={ this.props.user.username } /></span>
+                        <Checkbox name='enableGravatar' label='Enable Gravatar integration' fieldClass='col-sm-offset-1 col-sm-7'
+                            onChange={ e => this.setState({ enableGravatar: e.target.checked }) } checked={ this.state.enableGravatar } />
+                        <div className='col-sm-3 text-center'>Current profile picture</div>
+                        <button type='button' className='btn btn-default col-sm-offset-1 col-sm-4' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
+                        <div className='col-sm-12 profile-inner'>
                             <Panel title='Action window defaults'>
                                 <p className='help-block small'>If an option is selected here, you will always be prompted if you want to take an action in that window.  If an option is not selected, you will receive no prompts for that window.  For some windows (e.g. dominance) this could mean the whole window is skipped.</p>
                                 <div className='form-group'>
@@ -315,7 +256,6 @@ class Profile extends React.Component {
                                     <label className='col-xs-2 control-label text-left no-padding'>seconds</label>
                                 </div>
                                 <div className='form-group'>
-
                                     <Checkbox name='timerSettings.events' noGroup label={ 'Show timer for events' } fieldClass='col-sm-6'
                                         onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.state.timerSettings.events } />
                                     <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for card abilities' } fieldClass='col-sm-6'
@@ -333,7 +273,7 @@ class Profile extends React.Component {
                                 </div>
                             </Panel>
                         </div>
-                        <div>
+                        <div className='col-sm-12'>
                             <Panel title='Game Board Background'>
                                 <div className='row'>
                                     {
@@ -350,7 +290,7 @@ class Profile extends React.Component {
                                 </div>
                             </Panel>
                         </div>
-                        <div>
+                        <div className='col-sm-12'>
                             <Panel title='Card Image Size'>
                                 <div className='row'>
                                     <div className='col-xs-12'>
@@ -368,12 +308,7 @@ class Profile extends React.Component {
                                 </div>
                             </Panel>
                         </div>
-                        <div className='col-sm-offset-10 col-sm-2'>
-                            <button className='btn btn-primary' type='button' disabled={ this.props.apiLoading } onClick={ this.onSaveClick.bind(this) }>
-                                Save{ this.props.apiLoading ? <span className='spinner button-spinner' /> : null }
-                            </button>
-                        </div>
-                    </form>
+                    </Form>
                 </div>
             </div>);
     }
@@ -381,9 +316,7 @@ class Profile extends React.Component {
 
 Profile.displayName = 'Profile';
 Profile.propTypes = {
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
+    apiState: PropTypes.object,
     clearProfileStatus: PropTypes.func,
     profileSaved: PropTypes.bool,
     refreshUser: PropTypes.func,
@@ -395,9 +328,7 @@ Profile.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        apiLoading: state.api.SAVE_PROFILE ? state.api.SAVE_PROFILE.loading : undefined,
-        apiMessage: state.api.SAVE_PROFILE ? state.api.SAVE_PROFILE.message : undefined,
-        apiSuccess: state.api.SAVE_PROFILE ? state.api.SAVE_PROFILE.success : undefined,
+        apiState: state.api.SAVE_PROFILE,
         profileSaved: state.user.profileSaved,
         socket: state.lobby.socket,
         user: state.account.user

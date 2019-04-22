@@ -5,7 +5,7 @@ import rootReducer from './reducers';
 import callAPIMiddleware from './middleware/api-middleware.js';
 
 const windowIfDefined = typeof window === 'undefined' ? null : window;
-const devToolsExtension = windowIfDefined && windowIfDefined.devToolsExtension;
+const devToolsExtension = windowIfDefined && windowIfDefined.__REDUX_DEVTOOLS_EXTENSION__;
 const enhancer = compose(
     applyMiddleware(thunkMiddleware, callAPIMiddleware),
     devToolsExtension ? devToolsExtension() : (next) => next

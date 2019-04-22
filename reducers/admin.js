@@ -1,5 +1,10 @@
 export default function(state = {}, action) {
     switch(action.type) {
+        case 'REQUEST_FINDUSER':
+            return Object.assign({}, state, {
+                userSaved: false,
+                currentUser: undefined
+            });
         case 'RECEIVE_FINDUSER':
             return Object.assign({}, state, {
                 currentUser: action.response.user

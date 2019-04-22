@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import AlertPanel from '../Components/Site/AlertPanel';
+import ApiStatus from '../Components/Site/ApiStatus';
 import Panel from '../Components/Site/Panel';
 import Form from '../Components/Form/Form';
 import Link from '../Components/Site/Link';
@@ -40,17 +40,14 @@ export class Register extends React.Component {
     }
 
     render() {
-        let errorBar = this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null;
-        let successBar = this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null;
 
         return (
             <div className='col-sm-6 col-sm-offset-3'>
-                { errorBar }
-                { successBar }
+                <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
                 <Panel title='Register an account'>
                     <p>We require information from you in order to service your access to the site.  Please see the <Link href='/privacy'>privacy policy</Link> for details on why we need this information and what we do with it.  Please pay particular attention to the section on avatars.</p>
 
-                    <Form name='register' apiLoading={ this.props.apiLoading } buttonText='Register' onSubmit={ this.onRegister } />
+                    <Form name='register' apiLoading={ this.props.apiState && this.props.apiState.loading } buttonClass='col-sm-offset-4 col-sm-3' buttonText='Register' onSubmit={ this.onRegister } />
                 </Panel>
             </div>);
     }
@@ -59,9 +56,7 @@ export class Register extends React.Component {
 Register.displayName = 'Register';
 Register.propTypes = {
     accountRegistered: PropTypes.bool,
-    apiLoading: PropTypes.bool,
-    apiMessage: PropTypes.string,
-    apiSuccess: PropTypes.bool,
+    apiState: PropTypes.object,
     navigate: PropTypes.func,
     register: PropTypes.func,
     registerAccount: PropTypes.func,
@@ -73,9 +68,7 @@ Register.propTypes = {
 function mapStateToProps(state) {
     return {
         accountRegistered: state.account.registered,
-        apiLoading: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.loading : undefined,
-        apiMessage: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.message : undefined,
-        apiSuccess: state.api.REGISTER_ACCOUNT ? state.api.REGISTER_ACCOUNT.success : undefined,
+        apiState: state.api.REGISTER_ACCOUNT,
         socket: state.lobby.socket
     };
 }
