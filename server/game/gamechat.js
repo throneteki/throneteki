@@ -8,7 +8,7 @@ class GameChat {
 
     addChatMessage(format, player, message) {
         let args = [
-            { name: player.name, argType: 'player', role: player.user.role },
+            { name: player.name, argType: 'player', role: player.user && player.user.role },
             message
         ];
         let formattedMessage = this.formatMessage(format, args);
