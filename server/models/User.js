@@ -61,6 +61,34 @@ class User {
         return this.userData.verified;
     }
 
+    get isAdmin() {
+        return this.userData.permissions.isAdmin;
+    }
+
+    get isContributor() {
+        return this.userData.permissions.isContributor;
+    }
+
+    get isSupporter() {
+        return this.userData.permissions.isSupporter;
+    }
+
+    get role() {
+        if(this.isAdmin) {
+            return 'admin';
+        }
+
+        if(this.isContributor) {
+            return 'contributor';
+        }
+
+        if(this.isSupporter) {
+            return 'supporter';
+        }
+
+        return undefined;
+    }
+
     getWireSafeDetails() {
         let user = {
             _id: this.userData._id,
@@ -81,7 +109,8 @@ class User {
     getShortSummary() {
         return {
             username: this.username,
-            name: this.username
+            name: this.username,
+            role: this.role
         };
     }
 
@@ -92,6 +121,7 @@ class User {
         delete user.tokens;
 
         user = Settings.getUserWithDefaultsSet(user);
+        user.role = this.role;
 
         return user;
     }
