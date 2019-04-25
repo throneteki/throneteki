@@ -407,11 +407,16 @@ class DrawCard extends BaseCard {
     }
 
     canDeclareAsParticipant(challengeType) {
+        let canKneelForChallenge =
+            !this.kneeled && this.challengeOptions.contains('doesNotKneelAsAttacker') ||
+            !this.kneeled && this.allowGameAction('kneel') ||
+            this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling');
+
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             !this.stealth &&
-            (!this.kneeled || this.challengeOptions.contains('canBeDeclaredWhileKneeling')) &&
+            canKneelForChallenge &&
             (this.hasIcon(challengeType) || this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
         );
     }
