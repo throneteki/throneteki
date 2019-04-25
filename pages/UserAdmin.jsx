@@ -20,7 +20,10 @@ class UserAdmin extends React.Component {
             canManagePermissions: false,
             canManageGames: false,
             canManageNodes: false,
-            canModerateChat: false
+            canModerateChat: false,
+            isAdmin: false,
+            isContributor: false,
+            isSupporter: false
         };
 
         this.state = {
@@ -36,7 +39,10 @@ class UserAdmin extends React.Component {
             { name: 'canManagePermissions', label: 'Permissions Manager' },
             { name: 'canManageGames', label: 'Games Manager' },
             { name: 'canManageNodes', label: 'Node Manager' },
-            { name: 'canModerateChat', label: 'Chat Moderator' }
+            { name: 'canModerateChat', label: 'Chat Moderator' },
+            { name: 'isAdmin', label: 'Site Admin' },
+            { name: 'isContributor', label: 'Contributor' },
+            { name: 'isSupporter', label: 'Supporter' }
         ];
 
         this.onDisabledChanged = this.onDisabledChanged.bind(this);
