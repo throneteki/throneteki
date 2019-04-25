@@ -7,6 +7,7 @@ const XValuePrompt = require('./costs/XValuePrompt.js');
 const SelfCost = require('./costs/SelfCost.js');
 const StandCost = require('./costs/StandCost.js');
 const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
+const MovePowerFromFactionCost = require('./costs/MovePowerFromFactionCost');
 
 const Costs = {
     /**
@@ -201,6 +202,11 @@ const Costs = {
      * destination card matching the passed condition predicate function.
      */
     moveTokenFromSelf: (type, amount, condition) => new MoveTokenFromSelfCost(type, amount, condition),
+    /**
+     * Cost that will move a fixed amount of power from the player's faction card to a
+     * destination card matching the passed condition predicate function.
+     */
+    movePowerFromFaction: ({amount, condition}) => new MovePowerFromFactionCost({amount, condition }),
     /**
      * Cost that will discard faction power matching the passed amount.
      */
