@@ -6,7 +6,8 @@ describe('AbilityMessage', function() {
         this.context = {
             player: 'PLAYER_OBJ',
             source: 'SOURCE_OBJ',
-            target: 'TARGET_OBJ'
+            target: 'TARGET_OBJ',
+            opponent: 'OPPONENT_OBJ'
         };
     });
 
@@ -90,6 +91,23 @@ describe('AbilityMessage', function() {
 
             it('passes the arguments in the correct order', function() {
                 expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(jasmine.any(String), 'PLAYER_OBJ', 'SOURCE_OBJ', 'TARGET_OBJ');
+            });
+        });
+
+        describe('when there are optional args', function() {
+            beforeEach(function() {
+                this.message = new AbilityMessage({
+                    format: '{player} uses {source} to look at {opponent}\'s hand'
+                });
+                this.message.output(this.outputterSpy, this.context);
+            });
+
+            it('translates named arguments to their numeric values', function() {
+                expect(this.outputterSpy.addMessage).toHaveBeenCalledWith('{0} uses {1} to look at {3}\'s hand', jasmine.anything(), jasmine.anything(), jasmine.anything(), jasmine.anything());
+            });
+
+            it('passes the arguments in the correct order', function() {
+                expect(this.outputterSpy.addMessage).toHaveBeenCalledWith(jasmine.any(String), 'PLAYER_OBJ', 'SOURCE_OBJ', 'TARGET_OBJ', 'OPPONENT_OBJ');
             });
         });
 

@@ -79,10 +79,22 @@ class AbilityMessage {
             { name: 'source', getValue: context => context.source },
             { name: 'target', getValue: context => context.target }
         ];
+        const optionalArgs = this.getOptionalArgs(format);
         const targetSelectionArgs = this.getTargetSelectionArgs(format);
         const customArgs = Object.entries(customArgsHash).map(([name, getValue]) => ({ name, getValue }));
 
-        return standardArgs.concat(targetSelectionArgs).concat(customArgs);
+        return standardArgs.concat(optionalArgs).concat(targetSelectionArgs).concat(customArgs);
+    }
+
+    getOptionalArgs(format) {
+        const regex = /{opponent}/g;
+        if(regex.test(format)) {
+            return [
+                { name: 'opponent', getValue: context => context.opponent }
+            ];
+        }
+
+        return [];
     }
 
     getTargetSelectionArgs(format) {
