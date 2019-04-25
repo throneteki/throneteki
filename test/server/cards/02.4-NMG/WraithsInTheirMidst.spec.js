@@ -3,7 +3,7 @@ describe('WraithsInTheirMidst', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('greyjoy', [
                 'Wraiths in Their Midst', 'A Noble Cause',
-                'Alannys Greyjoy'
+                'Alannys Greyjoy (Core)'
             ]);
             const deck2 = this.buildDeck('lannister', [
                 '"The Rains of Castamere"',
