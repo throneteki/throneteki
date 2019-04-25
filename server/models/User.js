@@ -62,15 +62,15 @@ class User {
     }
 
     get isAdmin() {
-        return this.userData.permissions.isAdmin;
+        return this.userData.permissions && this.userData.permissions.isAdmin;
     }
 
     get isContributor() {
-        return this.userData.permissions.isContributor;
+        return this.userData.permissions && this.userData.permissions.isContributor;
     }
 
     get isSupporter() {
-        return this.userData.permissions.isSupporter;
+        return this.userData.permissions && this.userData.permissions.isSupporter;
     }
 
     get role() {
@@ -86,7 +86,7 @@ class User {
             return 'supporter';
         }
 
-        return undefined;
+        return 'user';
     }
 
     getWireSafeDetails() {
