@@ -279,6 +279,7 @@ class PendingGame {
                 left: player.left,
                 name: player.name,
                 owner: player.owner,
+                role: player.user.role,
                 settings: player.user.settings
             };
         });

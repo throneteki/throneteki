@@ -81,6 +81,7 @@ class Player extends Spectator {
         this.bonusesFromRivals = new Set();
         this.showDeck = false;
         this.shuffleArray = _.shuffle;
+        this.role = user.role;
 
         this.promptState = new PlayerPromptState();
     }
