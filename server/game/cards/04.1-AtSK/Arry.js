@@ -2,7 +2,6 @@ const DrawCard = require('../../drawcard.js');
 
 class Arry extends DrawCard {
     setupCardAbilities(ability) {
-        // TODO: If you control Arya, sacrifice Arry.
         this.action({
             title: 'Draw 1 card',
             cost: ability.costs.returnSelfToHand(),
@@ -17,5 +16,6 @@ class Arry extends DrawCard {
 }
 
 Arry.code = '04006';
+Arry.TODO = 'Does not sacrifice Arry if you control Arya';
 
 module.exports = Arry;

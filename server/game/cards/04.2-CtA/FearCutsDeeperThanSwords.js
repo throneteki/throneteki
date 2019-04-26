@@ -2,7 +2,6 @@ const DrawCard = require('../../drawcard.js');
 
 class FearCutsDeeperThanSwords extends DrawCard {
     setupCardAbilities() {
-        //TODO: needs to be able to cancel stealth
         this.interrupt({
             canCancel: true,
             when: {
@@ -28,5 +27,6 @@ class FearCutsDeeperThanSwords extends DrawCard {
 }
 
 FearCutsDeeperThanSwords.code = '04022';
+FearCutsDeeperThanSwords.TODO = 'Does not allow cancellation of stealth';
 
 module.exports = FearCutsDeeperThanSwords;

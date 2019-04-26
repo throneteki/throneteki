@@ -39,5 +39,6 @@ class ValyriansCrew extends DrawCard {
 }
 
 ValyriansCrew.code = '11047';
+ValyriansCrew.TODO = 'The facedown cards often do not act as if they\'re facedown, and playing events is especially buggy.';
 
 module.exports = ValyriansCrew;

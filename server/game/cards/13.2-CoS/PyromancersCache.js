@@ -7,12 +7,12 @@ class PyromancersCache extends DrawCard {
         this.whileAttached({
             effect: ability.effects.blankExcludingTraits
         });
-
-        // TODO: Have attached card gain the kneel to draw action
     }
 }
 
 PyromancersCache.code = '13030';
+
+PyromancersCache.TODO = 'The attached card does not gain the kneel to draw action';
 
 module.exports = PyromancersCache;
 

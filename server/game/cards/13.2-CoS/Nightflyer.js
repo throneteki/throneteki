@@ -41,5 +41,6 @@ class Nightflyer extends DrawCard {
 }
 
 Nightflyer.code = '13032';
+Nightflyer.TODO = 'It always comes out of shadows for 0, then prompts the player to spend X when the ability is triggered';
 
 module.exports = Nightflyer;
