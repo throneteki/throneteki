@@ -18,7 +18,7 @@ class WildfireAssault extends PlotCard {
                     let player = selection.choosingPlayer;
                     let selectedCards = selection.value || [];
                     let charactersInPlay = player.filterCardsInPlay(card => card.getType() === 'character');
-                    let toKill = charactersInPlay.filter(card => !selectedCards.include(card));
+                    let toKill = charactersInPlay.filter(card => !selectedCards.includes(card));
 
                     characters = characters.concat(toKill);
 
