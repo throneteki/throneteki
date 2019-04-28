@@ -1,10 +1,10 @@
 /**
  * Represents a card selected by the player during targeting
  */
-class AbilityTargetSelection {
+class AbilityChoiceSelection {
     constructor(options) {
         this.choosingPlayer = options.choosingPlayer;
-        this.eligibleCards = options.eligibleCards;
+        this.eligibleChoices = options.eligibleChoices;
         this.targetingType = options.targetingType;
         this.name = options.name;
         this.resolved = false;
@@ -12,8 +12,12 @@ class AbilityTargetSelection {
         this.value = null;
     }
 
-    isEligible(card) {
-        return this.eligibleCards.includes(card);
+    hasNoChoices() {
+        return this.eligibleChoices.length === 0;
+    }
+
+    isEligible(choice) {
+        return this.eligibleChoices.includes(choice);
     }
 
     hasValue() {
@@ -40,4 +44,4 @@ class AbilityTargetSelection {
     }
 }
 
-module.exports = AbilityTargetSelection;
+module.exports = AbilityChoiceSelection;

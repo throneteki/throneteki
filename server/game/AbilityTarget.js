@@ -1,5 +1,5 @@
 const AbilityTargetMessages = require('./AbilityTargetMessages');
-const AbilityTargetSelection = require('./AbilityTargetSelection.js');
+const AbilityChoiceSelection = require('./AbilityChoiceSelection');
 const CardSelector = require('./CardSelector.js');
 const Messages = require('./Messages');
 
@@ -37,9 +37,9 @@ class AbilityTarget {
         let results = this.getChoosingPlayers(context).map(choosingPlayer => {
             context.choosingPlayer = choosingPlayer;
             let eligibleCards = this.selector.getEligibleTargets(context);
-            return new AbilityTargetSelection({
+            return new AbilityChoiceSelection({
                 choosingPlayer: choosingPlayer,
-                eligibleCards: eligibleCards,
+                eligibleChoices: eligibleCards,
                 targetingType: this.type,
                 name: this.name
             });
@@ -66,7 +66,7 @@ class AbilityTarget {
         context.choosingPlayer = result.choosingPlayer;
         context.currentTargetSelection = result;
 
-        let unableToSelect = !this.selector.hasEnoughTargets(context) || this.selector.optional && result.eligibleCards.length === 0;
+        let unableToSelect = !this.selector.hasEnoughTargets(context) || this.selector.optional && result.hasNoChoices();
         if(this.ifAble && unableToSelect) {
             this.messages.outputUnable(context.game, context);
             result.reject();
