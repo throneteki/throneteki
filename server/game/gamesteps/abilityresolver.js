@@ -22,7 +22,8 @@ class AbilityResolver extends BaseStep {
             new SimpleStep(game, () => this.waitForCostResolution()),
             new SimpleStep(game, () => this.payCosts()),
             new SimpleStep(game, () => this.context.resolutionStage = 'effect'),
-            new SimpleStep(game, () => this.chooseOpponents()),
+            new SimpleStep(game, () => this.choosePlayer()),
+            new SimpleStep(game, () => this.waitForChoosePlayerResolution()),
             new SimpleStep(game, () => this.resolveTargets()),
             new SimpleStep(game, () => this.waitForTargetResolution()),
             new SimpleStep(game, () => this.incrementAbilityLimit()),
@@ -104,21 +105,28 @@ class AbilityResolver extends BaseStep {
         this.ability.payCosts(this.context);
     }
 
-    chooseOpponents() {
-        if(this.cancelled || !this.ability.needsChooseOpponent()) {
+    choosePlayer() {
+        if(this.cancelled || !this.ability.needsChoosePlayer()) {
             return;
         }
 
-        this.game.promptForOpponentChoice(this.context.player, {
-            condition: opponent => this.ability.canChooseOpponent(opponent),
-            onSelect: opponent => {
-                this.context.opponent = opponent;
-            },
-            onCancel: () => {
-                this.cancelled = true;
-            },
-            source: this.context.source
-        });
+        this.playerResult = this.ability.resolvePlayer(this.context);
+    }
+
+    waitForChoosePlayerResolution() {
+        if(this.cancelled || !this.playerResult) {
+            return;
+        }
+
+        if(!this.playerResult.resolved) {
+            return false;
+        }
+
+        if(this.playerResult.cancelled) {
+            this.cancelled = true;
+            this.game.addAlert('danger', '{0} cancels the resolution of {1} (costs were still paid)', this.context.player, this.context.source);
+            return;
+        }
     }
 
     resolveTargets() {

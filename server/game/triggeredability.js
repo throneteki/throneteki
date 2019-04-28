@@ -106,7 +106,7 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if(!this.canResolveOpponents(context) || !this.canPayCosts(context) || !this.canResolveTargets(context)) {
+        if(!this.canResolvePlayer(context) || !this.canPayCosts(context) || !this.canResolveTargets(context)) {
             return false;
         }
 

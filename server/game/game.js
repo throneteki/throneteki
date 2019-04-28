@@ -12,7 +12,7 @@ const AnonymousSpectator = require('./anonymousspectator.js');
 const GamePipeline = require('./gamepipeline.js');
 const Phases = require('./gamesteps/Phases');
 const SimpleStep = require('./gamesteps/simplestep.js');
-const ChooseOpponentPrompt = require('./gamesteps/chooseopponentprompt.js');
+const ChoosePlayerPrompt = require('./gamesteps/ChoosePlayerPrompt');
 const DeckSearchPrompt = require('./gamesteps/DeckSearchPrompt');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const IconPrompt = require('./gamesteps/iconprompt.js');
@@ -665,8 +665,18 @@ class Game extends EventEmitter {
         });
     }
 
-    promptForOpponentChoice(player, properties) {
-        this.queueStep(new ChooseOpponentPrompt(this, player, properties));
+    promptForOpponentChoice(player, { condition = () => true, context, enabled, onSelect, onCancel }) {
+        let finalCondition = (opponent, context) => opponent !== player && condition(opponent, context);
+
+        this.queueStep(new ChoosePlayerPrompt(this, player, {
+            context,
+            enabled,
+            onSelect,
+            onCancel,
+            condition: finalCondition,
+            activePromptTitle: 'Select an opponent',
+            waitingPromptTitle: 'Waiting for player to select an opponent'
+        }));
     }
 
     menuButton(playerName, arg, method) {

@@ -1,6 +1,7 @@
 const _ = require('underscore');
 const {flatMap} = require('../Array');
 
+const AbilityChoosePlayerDefinition = require('./AbilityChoosePlayerDefinition');
 const AbilityMessage = require('./AbilityMessage');
 const AbilityTarget = require('./AbilityTarget.js');
 
@@ -26,10 +27,10 @@ class BaseAbility {
     constructor(properties) {
         this.cost = this.buildCost(properties.cost);
         this.targets = this.buildTargets(properties);
+        this.choosePlayerDefinition = AbilityChoosePlayerDefinition.create(properties);
         this.limit = properties.limit;
         this.message = AbilityMessage.create(properties.message);
         this.cannotBeCanceled = !!properties.cannotBeCanceled;
-        this.chooseOpponentFunc = properties.chooseOpponent;
         this.abilitySourceType = properties.abilitySourceType || 'card';
     }
 
@@ -140,35 +141,33 @@ class BaseAbility {
     }
 
     /**
-     * Returns whether the ability requires an opponent to be chosen.
+     * Returns whether the ability requires a player to be chosen.
      */
-    needsChooseOpponent() {
-        return !!this.chooseOpponentFunc;
+    needsChoosePlayer() {
+        return !!this.choosePlayerDefinition;
     }
 
     /**
-     * Returns whether there are opponents that can be chosen, if the ability
-     * requires that an opponent be chosen.
+     * Returns whether there are players that can be chosen, if the ability
+     * requires that a player be chosen.
      */
-    canResolveOpponents(context) {
-        if(!this.needsChooseOpponent()) {
+    canResolvePlayer(context) {
+        if(!this.needsChoosePlayer()) {
             return true;
         }
 
-        return _.any(context.game.getPlayers(), player => {
-            return player !== context.player && this.canChooseOpponent(player);
-        });
+        return this.choosePlayerDefinition.canResolve(context);
     }
 
     /**
-     * Returns whether a specific player can be chosen as an opponent.
+     * Prompts the current player to choose a player
      */
-    canChooseOpponent(opponent) {
-        if(_.isFunction(this.chooseOpponentFunc)) {
-            return this.chooseOpponentFunc(opponent);
+    resolvePlayer(context) {
+        if(!this.needsChoosePlayer()) {
+            return;
         }
 
-        return this.chooseOpponentFunc === true;
+        return this.choosePlayerDefinition.resolve(context);
     }
 
     /**
