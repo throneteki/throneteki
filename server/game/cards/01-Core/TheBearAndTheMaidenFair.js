@@ -6,37 +6,16 @@ class TheBearAndTheMaidenFair extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Look at top 5 cards of a deck',
-            handler: () => {
-                let buttons = _.map(this.game.getPlayers(), player => ({
-                    text: player.name, arg: player.name, method: 'selectPlayer'
-                }));
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Choose a player',
-                        buttons: buttons
-                    },
-                    source: this
-                });
+            choosePlayer: true,
+            message: '{player} plays {source} to look at the top 5 cards of {chosenPlayer}\'s deck',
+            handler: context => {
+                this.selectedPlayer = context.chosenPlayer;
+                this.remainingCards = this.selectedPlayer.searchDrawDeck(5);
+                this.cardsPlaced = 0;
+                this.mode = 'bottom';
+                this.promptToPlaceNextCard();
             }
         });
-    }
-
-    selectPlayer(player, playerName) {
-        this.selectedPlayer = this.game.getPlayerByName(playerName);
-
-        if(!this.selectedPlayer) {
-            return false;
-        }
-
-        this.game.addMessage('{0} plays {1} to look at the top 5 cards of {2}\'s deck', player, this, this.selectedPlayer);
-
-        this.remainingCards = this.selectedPlayer.searchDrawDeck(5);
-        this.cardsPlaced = 0;
-        this.mode = 'bottom';
-        this.promptToPlaceNextCard();
-
-        return true;
     }
 
     promptToPlaceNextCard() {

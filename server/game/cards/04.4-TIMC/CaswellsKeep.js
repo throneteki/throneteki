@@ -8,46 +8,26 @@ class CaswellsKeep extends DrawCard {
             when: {
                 onPlotsRevealed: event => _.any(event.plots, plot => plot.controller === this.controller)
             },
-            handler: () => {
-                let buttons = _.map(this.game.getPlayers(), player => ({
-                    text: player.name, arg: player.name, method: 'selectPlayer'
+            choosePlayer: true,
+            message:'{player} uses {source} to look at the top 2 cards of {chosenPlayer}\'s deck',
+            handler: context => {
+                this.selectedPlayer = context.chosenPlayer;
+
+                this.topCards = this.selectedPlayer.searchDrawDeck(2);
+
+                let buttons = this.topCards.map(card => ({
+                    method: 'selectCard', card: card
                 }));
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
-                        menuTitle: 'Choose a player',
+                        menuTitle: 'Choose card to place on bottom of deck',
                         buttons: buttons
                     },
                     source: this
                 });
             }
         });
-    }
-
-    selectPlayer(player, playerName) {
-        this.selectedPlayer = this.game.getPlayerByName(playerName);
-
-        if(!this.selectedPlayer) {
-            return false;
-        }
-
-        this.game.addMessage('{0} uses {1} to look at the top 2 cards of {2}\'s deck', player, this, this.selectedPlayer);
-
-        this.topCards = this.selectedPlayer.searchDrawDeck(2);
-
-        let buttons = _.map(this.topCards, card => ({
-            method: 'selectCard', card: card
-        }));
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Choose card to place on bottom of deck',
-                buttons: buttons
-            },
-            source: this
-        });
-
-        return true;
     }
 
     selectCard(player, cardId) {
