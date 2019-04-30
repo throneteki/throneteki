@@ -88,7 +88,7 @@ class Lobby extends React.Component {
                 </div>
                 <div className='col-sm-offset-1 col-sm-10 banner'>
                     <AlertPanel type='success'>
-                        Our Patreon page is now live! <a href='https://www.patreon.com/throneteki'>Please check it out and grab yourself that green chat!</a>
+                        Our Patreon page is now live! <a href='https://www.patreon.com/throneteki' target=“_blank”>Please check it out</a>and grab yourself that green chat!
                     </AlertPanel>
                 </div>
                 { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
