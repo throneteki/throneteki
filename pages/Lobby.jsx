@@ -86,9 +86,9 @@ class Lobby extends React.Component {
                         <span className='text-center'><h1>A # LCG second edition</h1></span>
                     </div>
                 </div>
-                <div className='col-sm-offset-1 col-sm-10'>
-                    <AlertPanel type='info'>
-                        The hosting company is doing maintainence to the server the lobby is hosted on at 01:00 BST (== 00:00 UTC) on Tuesday 2019-04-30.  Games may be unavilable until the following morning on this day.
+                <div className='col-sm-offset-1 col-sm-10 banner'>
+                    <AlertPanel type='success'>
+                        Our Patreon page is now live! <a href='https://www.patreon.com/throneteki'>Please check it out and grab yourself that green chat!</a>
                     </AlertPanel>
                 </div>
                 { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
