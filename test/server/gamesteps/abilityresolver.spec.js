@@ -11,7 +11,7 @@ describe('AbilityResolver', function() {
         this.game.reportError.and.callFake(error => {
             throw error;
         });
-        this.ability = jasmine.createSpyObj('ability', ['incrementLimit', 'isAction', 'isCardAbility', 'isForcedAbility', 'isPlayableEventAbility', 'needsChooseOpponent', 'outputMessage', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
+        this.ability = jasmine.createSpyObj('ability', ['incrementLimit', 'isAction', 'isCardAbility', 'isForcedAbility', 'isPlayableEventAbility', 'needsChoosePlayer', 'outputMessage', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
         this.ability.isCardAbility.and.returnValue(true);
         this.ability.resolveTargets.and.returnValue([]);
         this.player = jasmine.createSpyObj('player', ['moveCard']);

@@ -1,9 +1,9 @@
 const BaseStep = require('./basestep.js');
 
 /**
- * Prompt that asks the current player to select an opponent.
+ * Prompt that asks the current player to select a player.
  */
-class ChooseOpponentPrompt extends BaseStep {
+class ChoosePlayerPrompt extends BaseStep {
     constructor(game, player, properties) {
         super(game);
         this.player = player;
@@ -12,31 +12,33 @@ class ChooseOpponentPrompt extends BaseStep {
         this.onSelect = properties.onSelect;
         this.onCancel = properties.onCancel || (() => true);
         this.source = properties.source;
+        this.activePromptTitle = properties.activePromptTitle;
+        this.waitingPromptTitle = properties.waitingPromptTitle;
     }
 
     continue() {
-        let otherPlayers = this.game.getPlayers().filter(player => player !== this.player && this.condition(player));
+        let players = this.game.getPlayers().filter(player => this.condition(player));
 
-        if(otherPlayers.length === 0) {
+        if(players.length === 0) {
             this.onCancel();
             return;
         }
 
-        if(otherPlayers.length === 1) {
-            this.onSelect(otherPlayers[0]);
+        if(players.length === 1) {
+            this.onSelect(players[0]);
             return;
         }
 
-        let buttons = otherPlayers.map(player => {
+        let buttons = players.map(player => {
             return { text: player.name, arg: player.name, method: 'selectPlayer', disabled: () => !this.enabled(player) };
         });
         buttons.push({ text: 'Cancel', method: 'cancel' });
         this.game.promptWithMenu(this.player, this, {
             activePrompt: {
-                menuTitle: 'Select an opponent',
+                menuTitle: this.activePromptTitle,
                 buttons: buttons
             },
-            waitingPromptTitle: 'Waiting for player to select an opponent',
+            waitingPromptTitle: this.waitingPromptTitle,
             source: this.source
         });
     }
@@ -58,4 +60,4 @@ class ChooseOpponentPrompt extends BaseStep {
     }
 }
 
-module.exports = ChooseOpponentPrompt;
+module.exports = ChoosePlayerPrompt;

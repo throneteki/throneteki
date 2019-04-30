@@ -69,7 +69,7 @@ describe('AbilityTarget', function () {
         describe('resolve()', function() {
             it('should return an array of pending target result', function() {
                 expect(this.target.resolve(this.context)).toEqual([
-                    jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player, eligibleCards: [] })
+                    jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player, eligibleChoices: [] })
                 ]);
             });
 
@@ -303,8 +303,8 @@ describe('AbilityTarget', function () {
         describe('resolve()', function() {
             it('should return an array of pending target results for each player', function() {
                 expect(this.target.resolve(this.context)).toEqual([
-                    jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player, eligibleCards: [] }),
-                    jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player2, eligibleCards: [] })
+                    jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player, eligibleChoices: [] }),
+                    jasmine.objectContaining({ resolved: false, name: 'foo', value: null, choosingPlayer: this.player2, eligibleChoices: [] })
                 ]);
             });
 
