@@ -3,6 +3,7 @@ const DrawCard = require('../../drawcard');
 class TheFowlerTwins extends DrawCard {
     setupCardAbilities() {
         this.action({
+            title: 'Force participant',
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },

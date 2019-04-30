@@ -13,6 +13,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
                 this.remainingCards = this.selectedPlayer.searchDrawDeck(5);
                 this.cardsPlaced = 0;
                 this.mode = 'bottom';
+
                 this.promptToPlaceNextCard();
             }
         });
