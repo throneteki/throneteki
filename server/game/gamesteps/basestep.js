@@ -14,6 +14,10 @@ class BaseStep {
         return false;
     }
 
+    isCorrectPrompt() {
+        return true;
+    }
+
     getDebugInfo() {
         return this.constructor.name;
     }

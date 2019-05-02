@@ -19,7 +19,7 @@ class GamePipeline {
     getCurrentStep() {
         var step = this.pipeline[0];
 
-        if(typeof(step) === 'function') {
+        if(typeof (step) === 'function') {
             var createdStep = step();
             this.pipeline[0] = createdStep;
             return createdStep;
@@ -75,10 +75,15 @@ class GamePipeline {
         return false;
     }
 
-    handleMenuCommand(player, arg, method) {
+    handleMenuCommand(player, arg, method, promptId) {
         if(this.pipeline.length > 0) {
             var step = this.getCurrentStep();
-            if(step.onMenuCommand(player, arg, method) !== false) {
+
+            if(!step.isCorrectPrompt(promptId)) {
+                return false;
+            }
+
+            if(step.onMenuCommand(player, arg, method, promptId) !== false) {
                 return true;
             }
         }
@@ -129,7 +134,7 @@ class GamePipeline {
             return step.getDebugInfo();
         }
 
-        if(typeof(step) === 'function') {
+        if(typeof (step) === 'function') {
             return step.toString();
         }
 
