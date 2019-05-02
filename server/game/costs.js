@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const AnyNumberCost = require('./costs/AnyNumberCost');
 const ChooseCost = require('./costs/choosecost.js');
 const CostBuilders = require('./costs/CostBuilders.js');
@@ -331,7 +330,7 @@ const Costs = {
                 let reduction = context.player.getCostReduction('play', context.source);
                 let opponentObj = opponentFunc && opponentFunc(context);
                 let gold = opponentObj ? opponentObj.getSpendableGold({ playingType: 'play' }) : context.player.getSpendableGold({ playingType: 'play' });
-                let max = _.min([maxFunc(context), gold + reduction]);
+                let max = Math.min(maxFunc(context), gold + reduction);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context, reduction));
 
@@ -361,7 +360,7 @@ const Costs = {
                 return context.source.tokens.gold >= minFunc(context);
             },
             resolve: function(context, result = { resolved: false }) {
-                let max = _.min([maxFunc(context), context.source.tokens.gold]);
+                let max = Math.min(maxFunc(context), context.source.tokens.gold);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
 

@@ -1,5 +1,4 @@
 const Lobby = require('../../../server/lobby.js');
-const _ = require('underscore');
 
 describe('lobby', function() {
     beforeEach(function() {
@@ -30,8 +29,8 @@ describe('lobby', function() {
             });
 
             it('should create a new game with the player in it', function() {
-                expect(_.size(this.lobby.games)).toBe(1);
-                var gamesArray = _.toArray(this.lobby.games);
+                expect(Object.values(this.lobby.games).length).toBe(1);
+                var gamesArray = Object.values(this.lobby.games);
                 var player = gamesArray[0].players['test'];
 
                 expect(player.name).toBe('test');
@@ -45,7 +44,7 @@ describe('lobby', function() {
             });
 
             it('should only create 1 game', function() {
-                expect(_.size(this.lobby.games)).toBe(1);
+                expect(Object.values(this.lobby.games).length).toBe(1);
             });
         });
     });

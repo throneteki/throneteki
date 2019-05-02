@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const Effects = require('../../../server/game/effects.js');
 
 describe('Effects.dynamicStrength', function() {
@@ -31,7 +29,7 @@ describe('Effects.dynamicStrength', function() {
         });
 
         it('should store the modifier for each card on context', function() {
-            expect(_.keys(this.context.dynamicStrength).length).toBe(2);
+            expect(Object.keys(this.context.dynamicStrength).length).toBe(2);
         });
     });
 

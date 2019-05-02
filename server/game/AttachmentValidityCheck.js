@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 class AttachmentValidityCheck {
     constructor(game) {
         this.game = game;
@@ -8,7 +6,7 @@ class AttachmentValidityCheck {
 
     enforceValidity() {
         let invalidAttachments = this.filterInvalidAttachments();
-        let needsDiscard = _.difference(invalidAttachments, this.beingDiscarded);
+        let needsDiscard = invalidAttachments.filter(attachment => !this.beingDiscarded.includes(attachment));
 
         if(needsDiscard.length === 0) {
             return;
@@ -24,7 +22,7 @@ class AttachmentValidityCheck {
             }
         });
         this.game.queueSimpleStep(() => {
-            this.beingDiscarded = _.difference(this.beingDiscarded, needsDiscard);
+            this.beingDiscarded = this.beingDiscarded.filter(attachment => !needsDiscard.includes(attachment));
         });
     }
 

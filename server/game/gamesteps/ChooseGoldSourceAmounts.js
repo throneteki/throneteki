@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const range = require('lodash.range');
 
 const BaseStep = require('./basestep');
 
@@ -25,7 +25,7 @@ class ChooseGoldSourceAmounts extends BaseStep {
             let minAmount = Math.max(0, this.remainingAmount - this.getMaxRemainingAvailable());
 
             if(this.sources.length > 0 && minAmount !== maxAmount) {
-                let buttons = _.range(minAmount, maxAmount + 1).reverse().map(amount => {
+                let buttons = range(minAmount, maxAmount + 1).reverse().map(amount => {
                     return { text: amount.toString(), method: 'payGold', arg: amount };
                 });
                 this.game.promptWithMenu(this.player, this, {

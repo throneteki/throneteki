@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseStep = require('../basestep.js');
 
 class ChooseStealthTargets extends BaseStep {
@@ -38,16 +36,16 @@ class ChooseStealthTargets extends BaseStep {
     }
 
     selectStealthTarget(character, targets) {
-        if(!_.isArray(targets)) {
+        if(!Array.isArray(targets)) {
             targets = [targets];
         }
-        _.each(targets, target => {
+        for(let target of targets) {
             if(!character.useStealthToBypass(target)) {
                 return false;
             }
 
             this.challenge.addStealthChoice(character, target);
-        });
+        }
 
         this.game.addMessage('{0} has chosen {1} as the stealth target for {2}', this.challenge.attackingPlayer, targets, character);
 

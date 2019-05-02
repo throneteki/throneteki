@@ -1,6 +1,6 @@
 /* global jasmine */
 
-const _ = require('underscore');
+const range = require('lodash.range');
 
 const Game = require('../../server/game/game.js');
 const PlayerInteractionWrapper = require('./playerinteractionwrapper.js');
@@ -37,18 +37,25 @@ class GameFlowWrapper {
         this.game.started = true;
 
         this.allPlayers = this.game.getPlayers().map(player => new PlayerInteractionWrapper(this.game, player));
+        this.playerToPlayerWrapperIndex = this.allPlayers.reduce((index, playerWrapper) => {
+            index[playerWrapper.player] = playerWrapper;
+            return index;
+        }, {});
     }
 
     generatePlayerDetails(numOfPlayers) {
-        return _.range(1, numOfPlayers + 1).map(i => {
+        return range(1, numOfPlayers + 1).map(i => {
             return { id: i.toString(), user: Settings.getUserWithDefaultsSet({ username: `player${i}` }) };
         });
     }
 
     eachPlayerInFirstPlayerOrder(handler) {
-        var playersInOrder = _.sortBy(this.allPlayers, player => !player.firstPlayer);
+        let players = this.game.getPlayersInFirstPlayerOrder();
+        let playersInOrder = players.map(player => this.playerToPlayerWrapperIndex[player]);
 
-        _.each(playersInOrder, player => handler(player));
+        for(let player of playersInOrder) {
+            handler(player);
+        }
     }
 
     startGame() {
@@ -56,12 +63,16 @@ class GameFlowWrapper {
     }
 
     keepStartingHands() {
-        _.each(this.allPlayers, player => player.clickPrompt('Keep Hand'));
+        for(let player of this.allPlayers) {
+            player.clickPrompt('Keep Hand');
+        }
     }
 
     skipSetupPhase() {
         this.keepStartingHands();
-        _.each(this.allPlayers, player => player.clickPrompt('Done'));
+        for(let player of this.allPlayers) {
+            player.clickPrompt('Done');
+        }
     }
 
     guardCurrentPhase(phase) {
@@ -72,7 +83,9 @@ class GameFlowWrapper {
 
     completeSetup() {
         this.guardCurrentPhase('setup');
-        _.each(this.allPlayers, player => player.clickPrompt('Done'));
+        for(let player of this.allPlayers) {
+            player.clickPrompt('Done');
+        }
     }
 
     completeMarshalPhase() {
@@ -109,7 +122,7 @@ class GameFlowWrapper {
         var promptedPlayer = this.allPlayers.find(p => p.hasPrompt(title));
 
         if(!promptedPlayer) {
-            var promptString = _.map(this.allPlayers, player => player.name + ': ' + player.formatPrompt()).join('\n\n');
+            var promptString = this.allPlayers.map(player => player.name + ': ' + player.formatPrompt()).join('\n\n');
             throw new Error(`No players are being prompted with "${title}". Current prompts are:\n\n${promptString}`);
         }
 

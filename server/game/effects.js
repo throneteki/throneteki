@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const AbilityLimit = require('./abilitylimit.js');
 const AllowedChallenge = require('./AllowedChallenge');
 const CostReducer = require('./costreducer.js');
@@ -356,16 +354,24 @@ const Effects = {
         return {
             apply: function(card, context) {
                 context.dynamicIcons = context.dynamicIcons || {};
-                context.dynamicIcons[card.uuid] = iconsFunc(card, context) || 0;
-                _.each(context.dynamicIcons[card.uuid], icon => card.addIcon(icon));
+                context.dynamicIcons[card.uuid] = iconsFunc(card, context) || [];
+                for(let icon of context.dynamicIcons[card.uuid]) {
+                    card.addIcon(icon);
+                }
             },
             reapply: function(card, context) {
-                _.each(context.dynamicIcons[card.uuid], icon => card.removeIcon(icon));
+                for(let icon of context.dynamicIcons[card.uuid]) {
+                    card.removeIcon(icon);
+                }
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context);
-                _.each(context.dynamicIcons[card.uuid], icon => card.addIcon(icon));
+                for(let icon of context.dynamicIcons[card.uuid]) {
+                    card.addIcon(icon);
+                }
             },
             unapply: function(card, context) {
-                _.each(context.dynamicIcons[card.uuid], icon => card.removeIcon(icon));
+                for(let icon of context.dynamicIcons[card.uuid]) {
+                    card.removeIcon(icon);
+                }
                 delete context.dynamicIcons[card.uuid];
             },
             isStateDependent: true
@@ -395,16 +401,24 @@ const Effects = {
         return {
             apply: function(card, context) {
                 context.dynamicKeywords = context.dynamicKeywords || {};
-                context.dynamicKeywords[card.uuid] = keywordsFunc(card, context) || 0;
-                _.each(context.dynamicKeywords[card.uuid], keyword => card.addKeyword(keyword));
+                context.dynamicKeywords[card.uuid] = keywordsFunc(card, context) || [];
+                for(let keyword of context.dynamicKeywords[card.uuid]) {
+                    card.addKeyword(keyword);
+                }
             },
             reapply: function(card, context) {
-                _.each(context.dynamicKeywords[card.uuid], icon => card.removeKeyword(icon));
+                for(let keyword of context.dynamicKeywords[card.uuid]) {
+                    card.removeKeyword(keyword);
+                }
                 context.dynamicKeywords[card.uuid] = keywordsFunc(card, context);
-                _.each(context.dynamicKeywords[card.uuid], keyword => card.addKeyword(keyword));
+                for(let keyword of context.dynamicKeywords[card.uuid]) {
+                    card.addKeyword(keyword);
+                }
             },
             unapply: function(card, context) {
-                _.each(context.dynamicKeywords[card.uuid], keyword => card.removeKeyword(keyword));
+                for(let keyword of context.dynamicKeywords[card.uuid]) {
+                    card.removeKeyword(keyword);
+                }
                 delete context.dynamicKeywords[card.uuid];
             },
             isStateDependent: true
@@ -423,10 +437,14 @@ const Effects = {
     addMultipleKeywords: function(keywords) {
         return {
             apply: function(card) {
-                _.each(keywords, keyword => card.addKeyword(keyword));
+                for(let keyword of keywords) {
+                    card.addKeyword(keyword);
+                }
             },
             unapply: function(card) {
-                _.each(keywords, keyword => card.removeKeyword(keyword));
+                for(let keyword of keywords) {
+                    card.removeKeyword(keyword);
+                }
             }
         };
     },
@@ -539,7 +557,7 @@ const Effects = {
             },
             unapply: function(card, context) {
                 if(card.location === 'play area' && context.discardIfStillInPlay.includes(card)) {
-                    context.discardIfStillInPlay = _.reject(context.discardIfStillInPlay, c => c === card);
+                    context.discardIfStillInPlay = context.discardIfStillInPlay.filter(c => c !== card);
                     card.controller.discardCard(card, allowSave);
                     context.game.addMessage('{0} discards {1} at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
@@ -554,7 +572,7 @@ const Effects = {
             },
             unapply: function(card, context) {
                 if(card.location === 'play area' && context.killIfStillInPlay.includes(card)) {
-                    context.killIfStillInPlay = _.reject(context.killIfStillInPlay, c => c === card);
+                    context.killIfStillInPlay = context.killIfStillInPlay.filter(c => c !== card);
                     card.controller.killCharacter(card, allowSave);
                     context.game.addMessage('{0} kills {1} at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
@@ -569,7 +587,7 @@ const Effects = {
             },
             unapply: function(card, context) {
                 if(card.location === 'play area' && context.moveToDeadPileIfStillInPlay.includes(card)) {
-                    context.moveToDeadPileIfStillInPlay = _.reject(context.moveToDeadPileIfStillInPlay, c => c === card);
+                    context.moveToDeadPileIfStillInPlay = context.moveToDeadPileIfStillInPlay.filter(c => c !== card);
                     card.owner.moveCard(card, 'dead pile');
                     context.game.addMessage('{0} moves {1} to its owner\'s dead pile at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
@@ -584,7 +602,7 @@ const Effects = {
             },
             unapply: function(card, context) {
                 if(['play area', 'duplicate'].includes(card.location) && context.moveToBottomOfDeckIfStillInPlay.includes(card)) {
-                    context.moveToBottomOfDeckIfStillInPlay = _.reject(context.moveToBottomOfDeckIfStillInPlay, c => c === card);
+                    context.moveToBottomOfDeckIfStillInPlay = context.moveToBottomOfDeckIfStillInPlay.filter(c => c !== card);
                     card.owner.moveCardToBottomOfDeck(card, allowSave);
                     context.game.addMessage('{0} moves {1} to the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
@@ -599,7 +617,7 @@ const Effects = {
             },
             unapply: function(card, context) {
                 if(card.location === 'play area' && context.returnToHandIfStillInPlay.includes(card)) {
-                    context.returnToHandIfStillInPlay = _.reject(context.returnToHandIfStillInPlay, c => c === card);
+                    context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(c => c !== card);
                     card.controller.returnCardToHand(card, allowSave);
                     context.game.addMessage('{0} returns {1} to hand at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
@@ -614,7 +632,7 @@ const Effects = {
             },
             unapply: function(card, context) {
                 if(card.location === 'play area' && context.shuffleIntoDeckIfStillInPlay.includes(card)) {
-                    context.shuffleIntoDeckIfStillInPlay = _.reject(context.shuffleIntoDeckIfStillInPlay, c => c === card);
+                    context.shuffleIntoDeckIfStillInPlay = context.shuffleIntoDeckIfStillInPlay.filter(c => c !== card);
                     card.owner.shuffleCardIntoDeck(card, allowSave);
                     context.game.addMessage('{0} shuffles {1} into their deck at the end of the phase because of {2}', card.owner, card, context.source);
                 }
@@ -692,7 +710,7 @@ const Effects = {
                 player.playCardRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.playCardRestrictions = _.reject(player.playCardRestrictions, r => r === restriction);
+                player.playCardRestrictions = player.playCardRestrictions.filter(r => r !== restriction);
             }
         };
     },
@@ -777,7 +795,7 @@ const Effects = {
                 player.triggerRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.triggerRestrictions = _.reject(player.triggerRestrictions, r => r === restriction);
+                player.triggerRestrictions = player.triggerRestrictions.filter(r => r === restriction);
             }
         };
     },
@@ -976,7 +994,7 @@ const Effects = {
                 player.playableLocations.push(playableLocation);
             },
             unapply: function(player) {
-                player.playableLocations = _.reject(player.playableLocations, l => l === playableLocation);
+                player.playableLocations = player.playableLocations.filter(l => l !== playableLocation);
             }
         };
     },
@@ -990,7 +1008,7 @@ const Effects = {
                 player.playableLocations.push(playableLocation);
             },
             unapply: function(player, context) {
-                player.playableLocations = _.reject(player.playableLocations, l => l === context.canPlayFromOwn[player.name]);
+                player.playableLocations = player.playableLocations.filter(l => l !== context.canPlayFromOwn[player.name]);
                 delete context.canPlayFromOwn[player.name];
             }
         };
@@ -1014,7 +1032,7 @@ const Effects = {
                 player.standPhaseRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.standPhaseRestrictions = _.reject(player.standPhaseRestrictions, r => r === restriction);
+                player.standPhaseRestrictions = player.standPhaseRestrictions.filter(r => r !== restriction);
             }
         };
     },
@@ -1029,7 +1047,9 @@ const Effects = {
             },
             unapply: function(player, context) {
                 if(context.reducers.length > 0) {
-                    _.each(context.reducers, reducer => player.removeCostReducer(reducer));
+                    for(let reducer of context.reducers) {
+                        player.removeCostReducer(reducer);
+                    }
                 }
             }
         };
@@ -1049,7 +1069,9 @@ const Effects = {
             },
             unapply: function(player, context) {
                 if(context.reducers.length > 0) {
-                    _.each(context.reducers, reducer => player.removeCostReducer(reducer));
+                    for(let reducer of context.reducers) {
+                        player.removeCostReducer(reducer);
+                    }
                 }
             }
         };
@@ -1136,7 +1158,7 @@ const Effects = {
                 player.mustChooseAsClaim.push(card);
             },
             unapply: function(player) {
-                player.mustChooseAsClaim = _.reject(player.mustChooseAsClaim, c => c === card);
+                player.mustChooseAsClaim = player.mustChooseAsClaim.filter(c => c !== card);
             }
         };
     },

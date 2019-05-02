@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const {flatten} = require('../Array');
 
 /**
@@ -51,7 +50,7 @@ class Effect {
         this.appliedTargets = new Set();
         this.context = { game: game, source: source };
         this.active = !source.facedown;
-        this.isConditional = !!properties.condition || this.targetType === 'player' && _.isFunction(properties.match);
+        this.isConditional = !!properties.condition || this.targetType === 'player' && typeof(properties.match) === 'function';
         this.isStateDependent = this.isConditional || this.effect.isStateDependent;
         this.appliedInitialTargets = false;
     }
@@ -74,7 +73,7 @@ class Effect {
     }
 
     buildEffect(effect) {
-        if(_.isArray(effect)) {
+        if(Array.isArray(effect)) {
             throw new '`effect` cannot be an array';
         }
 
@@ -169,7 +168,7 @@ class Effect {
     }
 
     removeTarget(card) {
-        if(!_.contains(this.targets, card)) {
+        if(!this.targets.includes(card)) {
             return;
         }
 
@@ -178,7 +177,7 @@ class Effect {
             this.appliedTargets.delete(card);
         }
 
-        this.targets = _.reject(this.targets, target => target === card);
+        this.targets = this.targets.filter(target => target !== card);
     }
 
     hasTarget(card) {
@@ -260,10 +259,10 @@ class Effect {
             }
 
             if(newCondition) {
-                let invalidTargets = _.filter(this.targets, target => !this.isValidTarget(target));
-                _.each(invalidTargets, target => {
+                let invalidTargets = this.targets.filter(target => !this.isValidTarget(target));
+                for(let target of invalidTargets) {
                     this.removeTarget(target);
-                });
+                }
                 this.addTargets(newTargets);
             }
         }

@@ -13,6 +13,7 @@ describe('AbilityResolver', function() {
         });
         this.ability = jasmine.createSpyObj('ability', ['incrementLimit', 'isAction', 'isCardAbility', 'isForcedAbility', 'isPlayableEventAbility', 'needsChoosePlayer', 'outputMessage', 'resolveCosts', 'payCosts', 'resolveTargets', 'executeHandler']);
         this.ability.isCardAbility.and.returnValue(true);
+        this.ability.resolveCosts.and.returnValue([]);
         this.ability.resolveTargets.and.returnValue([]);
         this.player = jasmine.createSpyObj('player', ['moveCard']);
         this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);

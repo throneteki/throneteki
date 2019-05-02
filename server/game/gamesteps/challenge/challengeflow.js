@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const BaseStep = require('../basestep.js');
 const GamePipeline = require('../../gamepipeline.js');
 const SimpleStep = require('../simplestep.js');
@@ -76,14 +75,14 @@ class ChallengeFlow extends BaseStep {
         this.attackersToKneel = [];
         this.challenge.addAttackers(attackers);
 
-        _.each(attackers, card => {
+        for(let card of attackers) {
             if(!card.kneeled && !card.challengeOptions.contains('doesNotKneelAsAttacker')) {
                 this.game.applyGameAction('kneel', card, card => {
                     card.kneeled = true;
                     this.attackersToKneel.push(card);
                 });
             }
-        });
+        }
 
         return true;
     }
@@ -100,15 +99,15 @@ class ChallengeFlow extends BaseStep {
             { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
         ];
 
-        let attackerEvents = _.map(this.challenge.attackers, card => {
+        let attackerEvents = this.challenge.attackers.map(card => {
             return { name: 'onDeclaredAsAttacker', params: { card: card } };
         });
 
-        let kneelEvents = _.map(this.attackersToKneel, card => {
+        let kneelEvents = this.attackersToKneel.map(card => {
             return { name: 'onCardKneeled', params: { player: this.challenge.attackingPlayer, card: card } };
         });
 
-        let stealthEvents = _.map(this.challenge.stealthData, stealth => {
+        let stealthEvents = this.challenge.stealthData.map(stealth => {
             return { name: 'onBypassedByStealth', params: { challenge: this.challenge, source: stealth.source, target: stealth.target } };
         });
 
@@ -150,24 +149,24 @@ class ChallengeFlow extends BaseStep {
         let defendersToKneel = [];
         this.challenge.addDefenders(defenders);
 
-        _.each(defenders, card => {
+        for(let card of defenders) {
             if(!card.kneeled && !card.challengeOptions.contains('doesNotKneelAsDefender')) {
                 this.game.applyGameAction('kneel', card, card => {
                     card.kneeled = true;
                     defendersToKneel.push(card);
                 });
             }
-        });
+        }
 
         let events = [
             { name: 'onDefendersDeclared', params: { challenge: this.challenge } }
         ];
 
-        let defenderEvents = _.map(defenders, card => {
+        let defenderEvents = defenders.map(card => {
             return { name: 'onDeclaredAsDefender', params: { card: card } };
         });
 
-        let kneelEvents = _.map(defendersToKneel, card => {
+        let kneelEvents = defendersToKneel.map(card => {
             return { name: 'onCardKneeled', params: { player: this.challenge.defendingPlayer, card: card } };
         });
 

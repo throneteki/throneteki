@@ -1,5 +1,4 @@
 const uuid = require('uuid');
-const _ = require('underscore');
 
 const AbilityDsl = require('./abilitydsl');
 const CardAction = require('./cardaction');
@@ -54,6 +53,7 @@ class BaseCard {
         this.blanks = new ReferenceCountedSetProperty();
         this.losesAspects = new ReferenceCountedSetProperty();
         this.controllerStack = [];
+        this.eventsForRegistration = [];
 
         this.tokens = {};
         this.plotModifierValues = {
@@ -110,7 +110,7 @@ class BaseCard {
     }
 
     plotModifiers(modifiers) {
-        this.plotModifierValues = _.extend(this.plotModifierValues, modifiers);
+        this.plotModifierValues = Object.assign(this.plotModifierValues, modifiers);
         if(modifiers.gold) {
             this.persistentEffect({
                 condition: () => this.canProvidePlotModifier['gold'],
@@ -188,7 +188,7 @@ class BaseCard {
             throw new Error(`'${location}' is not a supported effect location.`);
         }
 
-        this.abilities.persistentEffects.push(_.extend({ duration: 'persistent', location: location }, properties));
+        this.abilities.persistentEffects.push(Object.assign({ duration: 'persistent', location: location }, properties));
     }
 
     /**
@@ -213,7 +213,7 @@ class BaseCard {
      */
     untilEndOfChallenge(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'untilEndOfChallenge', location: 'any' }, properties));
+        this.game.addEffect(this, Object.assign({ duration: 'untilEndOfChallenge', location: 'any' }, properties));
     }
 
     /**
@@ -221,7 +221,7 @@ class BaseCard {
      */
     untilEndOfPhase(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'untilEndOfPhase', location: 'any' }, properties));
+        this.game.addEffect(this, Object.assign({ duration: 'untilEndOfPhase', location: 'any' }, properties));
     }
 
     /**
@@ -230,7 +230,7 @@ class BaseCard {
      */
     atEndOfPhase(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'atEndOfPhase', location: 'any' }, properties));
+        this.game.addEffect(this, Object.assign({ duration: 'atEndOfPhase', location: 'any' }, properties));
     }
 
     /**
@@ -238,7 +238,7 @@ class BaseCard {
      */
     untilEndOfRound(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'untilEndOfRound', location: 'any' }, properties));
+        this.game.addEffect(this, Object.assign({ duration: 'untilEndOfRound', location: 'any' }, properties));
     }
 
     /**
@@ -247,7 +247,7 @@ class BaseCard {
      */
     lastingEffect(propertyFactory) {
         let properties = propertyFactory(AbilityDsl);
-        this.game.addEffect(this, _.extend({ duration: 'custom', location: 'any' }, properties));
+        this.game.addEffect(this, Object.assign({ duration: 'custom', location: 'any' }, properties));
     }
 
     doAction(player, arg) {
@@ -354,9 +354,9 @@ class BaseCard {
     }
 
     getFactions() {
-        let factions = _.filter(ValidFactions, faction => this.isFaction(faction));
+        let factions = ValidFactions.filter(faction => this.isFaction(faction));
 
-        if(_.isEmpty(factions)) {
+        if(factions.length === 0) {
             factions.push('neutral');
         }
 
@@ -379,11 +379,11 @@ class BaseCard {
     }
 
     applyAnyLocationPersistentEffects() {
-        _.each(this.abilities.persistentEffects, effect => {
+        for(let effect of this.abilities.persistentEffects) {
             if(effect.location === 'any') {
                 this.game.addEffect(this, effect);
             }
-        });
+        }
     }
 
     getPersistentEffects() {
@@ -427,21 +427,21 @@ class BaseCard {
             this.events.unregisterAll();
         }
 
-        _.each(this.abilities.actions, action => {
+        for(let action of this.abilities.actions) {
             if(action.isEventListeningLocation(targetLocation) && !action.isEventListeningLocation(originalLocation)) {
                 action.registerEvents();
             } else if(action.isEventListeningLocation(originalLocation) && !action.isEventListeningLocation(targetLocation)) {
                 action.unregisterEvents();
             }
-        });
-        _.each(this.abilities.reactions, reaction => {
+        }
+        for(let reaction of this.abilities.reactions) {
             if(reaction.isEventListeningLocation(targetLocation) && !reaction.isEventListeningLocation(originalLocation)) {
                 reaction.registerEvents();
             } else if(reaction.isEventListeningLocation(originalLocation) && !reaction.isEventListeningLocation(targetLocation)) {
                 reaction.unregisterEvents();
                 this.game.clearAbilityResolution(reaction);
             }
-        });
+        }
 
         if(targetLocation !== 'play area') {
             this.facedown = false;
@@ -532,7 +532,7 @@ class BaseCard {
 
     allowGameAction(actionType, context) {
         let currentAbilityContext = context || this.game.currentAbilityContext;
-        return !_.any(this.abilityRestrictions, restriction => restriction.isMatch(actionType, currentAbilityContext));
+        return !this.abilityRestrictions.some(restriction => restriction.isMatch(actionType, currentAbilityContext));
     }
 
     addAbilityRestriction(restriction) {
@@ -541,7 +541,7 @@ class BaseCard {
     }
 
     removeAbilityRestriction(restriction) {
-        this.abilityRestrictions = _.reject(this.abilityRestrictions, r => r === restriction);
+        this.abilityRestrictions = this.abilityRestrictions.filter(r => r !== restriction);
         this.markAsDirty();
     }
 
@@ -616,7 +616,7 @@ class BaseCard {
     }
 
     modifyToken(type, number) {
-        if(_.isUndefined(this.tokens[type])) {
+        if(!this.tokens[type]) {
             this.tokens[type] = 0;
         }
 
@@ -642,7 +642,7 @@ class BaseCard {
     }
 
     onClick(player) {
-        var action = _.find(this.abilities.actions, action => action.isClickToActivate());
+        var action = this.abilities.actions.find(action => action.isClickToActivate());
         if(action) {
             return action.execute(player) || action.deactivate(player);
         }
@@ -682,7 +682,7 @@ class BaseCard {
             uuid: this.uuid
         };
 
-        return _.extend(state, selectionState);
+        return Object.assign(state, selectionState);
     }
 }
 
