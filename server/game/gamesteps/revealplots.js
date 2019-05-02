@@ -15,6 +15,9 @@ class RevealPlots extends BaseStep {
     }
 
     continue() {
+        for(let plot of this.plots) {
+            this.game.addMessage('{0} reveals {1}', plot.controller, plot);
+        }
         let event = this.generateEvent(this.plots);
         if(this.parentEvent) {
             this.parentEvent.thenAttachEvent(event);

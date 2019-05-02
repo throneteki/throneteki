@@ -48,7 +48,7 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
             return false;
         }
         if(this.abilityType === 'whenrevealed') {
-            this.game.addMessage('{0} has chosen to resolve first the when revealed ability of {1}\'s {2}',
+            this.game.addMessage('{0} chooses to resolve {1}\'s {2}',
                 player, choice.player.name, choice.card);
         }
 
