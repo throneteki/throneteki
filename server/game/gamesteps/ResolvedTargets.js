@@ -35,7 +35,7 @@ class ResolvedTargets {
     }
 
     getTargets() {
-        let targetingSelections = this.selections.filter(selection => selection.targetingType === 'choose');
+        let targetingSelections = this.selections.filter(selection => selection.resolved && selection.hasValue() && selection.targetingType === 'choose');
         return flatten(targetingSelections.map(selection => selection.value));
     }
 
