@@ -31,6 +31,7 @@ describe('the UiPrompt', function() {
             });
 
             it('should set the active prompt for players meeting the active condition', function() {
+                this.activePrompt.promptId = this.prompt.promptId;
                 this.prompt.continue();
                 expect(this.player2.setPrompt).toHaveBeenCalledWith(this.activePrompt);
             });
@@ -38,7 +39,7 @@ describe('the UiPrompt', function() {
             it('should default the command for any buttons on the active prompt', function() {
                 this.prompt.activePrompt.and.returnValue({ buttons: [{ text: 'foo' }] });
                 this.prompt.continue();
-                expect(this.player2.setPrompt).toHaveBeenCalledWith({ buttons: [{ command: 'menuButton', text: 'foo' }] });
+                expect(this.player2.setPrompt).toHaveBeenCalledWith({ buttons: [{ command: 'menuButton', text: 'foo', promptId: this.prompt.promptId }] });
             });
 
             it('should set the waiting prompt for players that do not meet the active condition', function() {
