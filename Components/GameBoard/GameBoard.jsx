@@ -244,10 +244,8 @@ export class GameBoard extends React.Component {
         </div>);
     }
 
-    onCommand(command, arg, method) {
-        let commandArg = arg;
-
-        this.props.sendGameMessage(command, commandArg, method);
+    onCommand(button) {
+        this.props.sendGameMessage(button.command, button.arg, button.method, button.promptId);
     }
 
     onMenuItemClick(card, menuItem) {

@@ -7,13 +7,13 @@ import CardNameLookup from './CardNameLookup';
 import TraitNameLookup from './TraitNameLookup';
 
 class ActivePlayerPrompt extends React.Component {
-    onButtonClick(event, command, arg, method) {
+    onButtonClick(event, button) {
         event.preventDefault();
 
         this.props.stopAbilityTimer();
 
         if(this.props.onButtonClick) {
-            this.props.onButtonClick(command, arg, method);
+            this.props.onButtonClick(button);
         }
     }
 
@@ -54,7 +54,7 @@ class ActivePlayerPrompt extends React.Component {
             }
 
             let clickCallback = button.timerCancel ? event => this.onCancelTimerClick(event, button) :
-                event => this.onButtonClick(event, button.command, button.arg, button.method);
+                event => this.onButtonClick(event, button);
 
             let option = (
                 <button key={ button.command + buttonIndex.toString() }
