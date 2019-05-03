@@ -30,6 +30,7 @@ class PullingTheStrings extends PlotCard {
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', player, this, card);
         card.takeControl(player, this);
+        this.game.raiseEvent('onCardTakenControl', { card });
 
         let whenRevealed = card.getWhenRevealedAbility();
         if(whenRevealed) {
@@ -39,7 +40,7 @@ class PullingTheStrings extends PlotCard {
         }
         this.game.queueSimpleStep(() => {
             card.revertControl(this);
-
+            this.game.raiseEvent('onCardTakenControl', { card });
             this.resolving = false;
         });
 
