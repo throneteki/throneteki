@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const BaseCardSelector = require('./BaseCardSelector.js');
 
 class EachPlayerCardSelector extends BaseCardSelector {
@@ -8,11 +7,11 @@ class EachPlayerCardSelector extends BaseCardSelector {
     }
 
     canTarget(card, context, selectedCards) {
-        return super.canTarget(card, context, selectedCards) && !this.isPlayerSatisfied(card, selectedCards);
+        return super.canTarget(card, context, selectedCards || []) && !this.isPlayerSatisfied(card, selectedCards || []);
     }
 
     isPlayerSatisfied(card, selectedCards) {
-        let count = _.filter(selectedCards, selectedCard => selectedCard.controller === card.controller).length;
+        let count = selectedCards.filter(selectedCard => selectedCard.controller === card.controller).length;
         return count >= this.numCardsPerPlayer;
     }
 
@@ -26,9 +25,9 @@ class EachPlayerCardSelector extends BaseCardSelector {
     }
 
     hasEnoughTargets(context) {
-        return this.optional || _.every(context.game.getPlayers(), player => {
+        return this.optional || context.game.getPlayers().every(player => {
             let playerCards = context.game.allCards.filter(card => card.controller === player);
-            let matchingCards = _.filter(playerCards, card => super.canTarget(card, context));
+            let matchingCards = playerCards.filter(card => super.canTarget(card, context));
             return matchingCards.length >= this.numCardsPerPlayer;
         });
     }

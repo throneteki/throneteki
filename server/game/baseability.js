@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const {flatMap} = require('../Array');
 
 const AbilityChoosePlayerDefinition = require('./AbilityChoosePlayerDefinition');
@@ -39,7 +38,7 @@ class BaseAbility {
             return [];
         }
 
-        if(!_.isArray(cost)) {
+        if(!Array.isArray(cost)) {
             return [cost];
         }
 
@@ -65,7 +64,7 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canPayCosts(context) {
-        return this.executeWithTemporaryContext(context, 'cost', () => _.all(this.cost, cost => cost.canPay(context)));
+        return this.executeWithTemporaryContext(context, 'cost', () => this.cost.every(cost => cost.canPay(context)));
     }
 
     /**
@@ -103,7 +102,7 @@ class BaseAbility {
      * @returns {Array} An array of cost resolution results.
      */
     resolveCosts(context) {
-        return _.map(this.cost, cost => {
+        return this.cost.map(cost => {
             if(cost.resolve) {
                 return cost.resolve(context);
             }
@@ -116,9 +115,9 @@ class BaseAbility {
      * Pays all costs for the ability simultaneously.
      */
     payCosts(context) {
-        _.each(this.cost, cost => {
+        for(let cost of this.cost) {
             cost.pay(context);
-        });
+        }
     }
 
     /**
@@ -128,16 +127,16 @@ class BaseAbility {
      * @returns {boolean}
      */
     canUnpayCosts(context) {
-        return _.all(this.cost, cost => cost.unpay && cost.canUnpay(context));
+        return this.cost.every(cost => cost.unpay && cost.canUnpay(context));
     }
 
     /**
      * Unpays each cost associated with the ability.
      */
     unpayCosts(context) {
-        _.each(this.cost, cost => {
+        for(let cost of this.cost) {
             cost.unpay(context);
-        });
+        }
     }
 
     /**

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseStep = require('./basestep.js');
 const Event = require('../event');
 const GamePipeline = require('../gamepipeline.js');
@@ -45,8 +43,8 @@ class AbilityResolver extends BaseStep {
         return this.pipeline.handleCardClicked(player, card);
     }
 
-    onMenuCommand(player, arg, method) {
-        return this.pipeline.handleMenuCommand(player, arg, method);
+    onMenuCommand(player, arg, method, promptId) {
+        return this.pipeline.handleMenuCommand(player, arg, method, promptId);
     }
 
     cancelStep() {
@@ -90,9 +88,9 @@ class AbilityResolver extends BaseStep {
     }
 
     waitForCostResolution() {
-        this.cancelled = _.any(this.canPayResults, result => result.resolved && !result.value);
+        this.cancelled = this.canPayResults.some(result => result.resolved && !result.value);
 
-        if(!_.all(this.canPayResults, result => result.resolved)) {
+        if(!this.canPayResults.every(result => result.resolved)) {
             return false;
         }
     }

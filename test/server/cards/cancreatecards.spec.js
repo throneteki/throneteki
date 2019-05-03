@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const cards = require('../../../server/game/cards');
 
 describe('All Cards', function() {
@@ -9,12 +7,12 @@ describe('All Cards', function() {
         this.playerSpy.game = this.gameSpy;
     });
 
-    _.each(cards, cardClass => {
+    for(let cardClass of Object.values(cards)) {
         it('should be able to create \'' + cardClass.name + '\' and set it up', function() {
             // No explicit assertion - if this throws an exception it will fail
             // and give us a better stacktrace than the expect().not.toThrow()
             // assertion.
             new cardClass(this.playerSpy, {});
         });
-    });
+    }
 });

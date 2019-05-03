@@ -30,8 +30,8 @@ describe('the GamePipeline', function() {
             });
 
             it('should call the onMenuCommand handler', () => {
-                pipeline.handleMenuCommand(player, arg, method);
-                expect(step.onMenuCommand).toHaveBeenCalledWith(player, arg, method);
+                pipeline.handleMenuCommand(player, arg, method, 'foo');
+                expect(step.onMenuCommand).toHaveBeenCalledWith(player, arg, method, 'foo');
             });
 
             it('should return false', function() {
@@ -46,8 +46,8 @@ describe('the GamePipeline', function() {
             });
 
             it('should call the onMenuCommand handler', () => {
-                pipeline.handleMenuCommand(player, arg, method);
-                expect(step.onMenuCommand).toHaveBeenCalledWith(player, arg, method);
+                pipeline.handleMenuCommand(player, arg, method, 'foo');
+                expect(step.onMenuCommand).toHaveBeenCalledWith(player, arg, method, 'foo');
             });
 
             it('should return true', function() {

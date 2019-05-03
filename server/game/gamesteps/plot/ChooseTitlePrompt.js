@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseStep = require('../basestep.js');
 
 class ChooseTitlePrompt extends BaseStep {
@@ -26,14 +24,14 @@ class ChooseTitlePrompt extends BaseStep {
             return false;
         }
 
-        _.each(this.selections, selection => {
+        for(let selection of this.selections) {
             this.titlePool.chooseFromPool(selection.player, selection.title);
             this.game.addMessage('{0} selects {1}', selection.player, selection.title);
-        });
+        }
     }
 
     promptForTitle(player) {
-        let buttons = _.map(this.remainingTitles, title => {
+        let buttons = this.remainingTitles.map(title => {
             return { method: 'chooseTitle', card: title };
         });
         this.game.promptWithMenu(player, this, {
@@ -52,7 +50,7 @@ class ChooseTitlePrompt extends BaseStep {
             return false;
         }
 
-        this.remainingTitles = _.reject(this.remainingTitles, t => t === title);
+        this.remainingTitles = this.remainingTitles.filter(t => t !== title);
         this.selections.push({ player: player, title: title });
 
         return true;

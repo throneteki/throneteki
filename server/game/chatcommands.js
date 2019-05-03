@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const TextHelper = require('./TextHelper');
 const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
 const Deck = require('./Deck');
@@ -237,7 +236,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to set strength',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
-                if(_.isNumber(card.strengthSet)) {
+                if(typeof(card.strengthSet) === 'number') {
                     card.strengthSet = num;
                 } else {
                     card.strengthModifier = num - card.getPrintedStrength();
@@ -503,7 +502,7 @@ class ChatCommands {
 
         var lowerToken = token.toLowerCase();
 
-        return _.contains(this.tokens, lowerToken);
+        return this.tokens.includes(lowerToken);
     }
 }
 

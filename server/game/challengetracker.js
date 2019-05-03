@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const AllowedChallenge = require('./AllowedChallenge');
 
 class ChallengeTracker {
@@ -63,7 +61,7 @@ class ChallengeTracker {
     }
 
     canInitiate(challengeType, opponent) {
-        if(!_.isUndefined(this.maxTotal) && this.getPerformed() >= this.maxTotal) {
+        if(!!this.maxTotal && this.getPerformed() >= this.maxTotal) {
             return false;
         }
 

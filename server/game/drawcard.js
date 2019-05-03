@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
@@ -229,7 +227,7 @@ class DrawCard extends BaseCard {
             return baseStrength;
         }
 
-        if(_.isNumber(this.strengthSet)) {
+        if(typeof(this.strengthSet) === 'number') {
             return this.strengthSet;
         }
 
@@ -263,11 +261,15 @@ class DrawCard extends BaseCard {
     }
 
     getIconsAdded() {
-        return _.difference(this.getIcons(), this.getPrintedIcons());
+        let icons = this.getIcons();
+        let printedIcons = this.getPrintedIcons();
+        return icons.filter(icon => !printedIcons.includes(icon));
     }
 
     getIconsRemoved() {
-        return _.difference(this.getPrintedIcons(), this.getIcons());
+        let icons = this.getIcons();
+        let printedIcons = this.getPrintedIcons();
+        return printedIcons.filter(icon => !icons.includes(icon));
     }
 
     getNumberOfIcons() {
@@ -325,7 +327,7 @@ class DrawCard extends BaseCard {
      */
     attachmentRestriction(...restrictions) {
         this.attachmentRestrictions = restrictions.map(restriction => {
-            if(_.isFunction(restriction)) {
+            if(typeof(restriction) === 'function') {
                 return restriction;
             }
 
@@ -383,7 +385,7 @@ class DrawCard extends BaseCard {
     getPlayActions() {
         return StandardPlayActions
             .concat(this.abilities.playActions)
-            .concat(_.filter(this.abilities.actions, action => !action.allowMenu()));
+            .concat(this.abilities.actions.filter(action => !action.allowMenu()));
     }
 
     leavesPlay() {

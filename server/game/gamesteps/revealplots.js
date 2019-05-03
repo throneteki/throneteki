@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const sample = require('lodash.sample');
 const BaseStep = require('./basestep.js');
 const SimpleStep = require('./simplestep.js');
@@ -58,7 +57,7 @@ class RevealPlots extends BaseStep {
     }
 
     needsFirstPlayerChoice() {
-        return _.all(this.game.getPlayers(), player => !player.firstPlayer);
+        return this.game.getPlayers().every(player => !player.firstPlayer);
     }
 
     determineInitiative() {
@@ -83,17 +82,19 @@ class RevealPlots extends BaseStep {
 
     getInitiativeResult(sampleFunc = sample) {
         let result = { initiativeTied: false, powerTied: false, player: undefined };
-        let playerInitiatives = _.map(this.game.getPlayers(), player => {
+        let playerInitiatives = this.game.getPlayers().map(player => {
             return { player: player, initiative: player.getTotalInitiative(), power: player.getTotalPower() };
         });
-        let highestInitiative = _.max(_.pluck(playerInitiatives, 'initiative'));
-        let potentialWinners = _.filter(playerInitiatives, p => p.initiative === highestInitiative);
+        let initiativeValues = playerInitiatives.map(p => p.initiative);
+        let highestInitiative = Math.max(...initiativeValues);
+        let potentialWinners = playerInitiatives.filter(p => p.initiative === highestInitiative);
 
         result.initiativeTied = potentialWinners.length > 1;
 
         if(result.initiativeTied) {
-            let lowestPower = _.min(_.pluck(potentialWinners, 'power'));
-            potentialWinners = _.filter(potentialWinners, p => p.power === lowestPower);
+            let powerValues = potentialWinners.map(p => p.power);
+            let lowestPower = Math.min(...powerValues);
+            potentialWinners = potentialWinners.filter(p => p.power === lowestPower);
         }
 
         result.powerTied = potentialWinners.length > 1;

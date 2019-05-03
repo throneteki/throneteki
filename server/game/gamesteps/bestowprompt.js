@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const range = require('lodash.range');
 
 const BaseStep = require('./basestep');
 
@@ -12,13 +12,13 @@ class BestowPrompt extends BaseStep {
 
     continue() {
         let limit = Math.min(this.player.getSpendableGold({ activePlayer: this.player }), this.card.getBestowMax());
-        let range = _.range(1, limit + 1).reverse();
+        let rangeArray = range(1, limit + 1).reverse();
 
         if(limit === 0) {
             return;
         }
 
-        let buttons = _.map(range, gold => {
+        let buttons = rangeArray.map(gold => {
             return { text: gold.toString(), method: 'bestow', arg: gold };
         });
         buttons.push({ text: 'Done', method: 'bestow', arg: 0 });

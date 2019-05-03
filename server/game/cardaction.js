@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const AbilityContext = require('./AbilityContext.js');
 const BaseAbility = require('./baseability.js');
 const Costs = require('./costs.js');
@@ -193,7 +191,11 @@ class CardAction extends BaseAbility {
     }
 
     deactivate(player) {
-        var context = _.last(this.activationContexts);
+        if(this.activationContexts.length === 0) {
+            return false;
+        }
+
+        var context = this.activationContexts[this.activationContexts.length - 1];
 
         if(!context || player !== context.player) {
             return false;

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const Effects = require('../../../server/game/effects.js');
 
 const PlayableLocation = require('../../../server/game/playablelocation.js');
@@ -23,7 +21,7 @@ describe('Effects.canMarshal', function() {
         });
 
         it('should add a marshal location', function() {
-            let marshalLocation = _.last(this.player.playableLocations);
+            let marshalLocation = this.player.playableLocations[this.player.playableLocations.length - 1];
             expect(marshalLocation.playingType).toBe('marshal');
             expect(marshalLocation.contains({ controller: this.player, location: 'discard pile'})).toBe(false);
             expect(marshalLocation.contains({ controller: this.opponent, location: 'hand'})).toBe(false);

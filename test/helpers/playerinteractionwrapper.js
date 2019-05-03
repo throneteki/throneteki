@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const uuid = require('uuid');
 
 const { matchCardByNameAndPack } = require('./cardutil.js');
@@ -86,7 +85,7 @@ class PlayerInteractionWrapper {
     }
 
     selectPlot(plot) {
-        if(_.isString(plot)) {
+        if(typeof (plot) === 'string') {
             plot = this.findCardByName(plot, 'plot deck');
         }
 
@@ -113,13 +112,13 @@ class PlayerInteractionWrapper {
             throw new Error(`Couldn't click on "${text}" for ${this.player.name} because it is disabled. Current prompt is:\n${this.formatPrompt()}`);
         }
 
-        this.game.menuButton(this.player.name, promptButton.arg, promptButton.method);
+        this.game.menuButton(this.player.name, promptButton.arg, promptButton.method, promptButton.promptId);
         this.game.continue();
         this.checkUnserializableGameState();
     }
 
     clickCard(card, location = 'any') {
-        if(_.isString(card)) {
+        if(typeof (card) === 'string') {
             card = this.findCardByName(card, location);
         }
 
@@ -129,11 +128,11 @@ class PlayerInteractionWrapper {
     }
 
     clickMenu(card, menuText) {
-        if(_.isString(card)) {
+        if(typeof (card) === 'string') {
             card = this.findCardByName(card);
         }
 
-        var items = _.filter(card.getMenu(this.player), item => item.text === menuText);
+        var items = card.getMenu(this.player).filter(item => item.text === menuText);
 
         if(items.length === 0) {
             throw new Error(`Card ${card.name} does not have a menu item "${menuText}"`);

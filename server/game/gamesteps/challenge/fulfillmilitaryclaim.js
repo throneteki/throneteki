@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const BaseStep = require('../basestep.js');
 
 class FulfillMilitaryClaim extends BaseStep {
@@ -11,10 +9,10 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 
     continue() {
-        this.forcedClaim = _.filter(this.player.mustChooseAsClaim, card => card.controller === this.player && card.location === 'play area');
-        
+        this.forcedClaim = this.player.mustChooseAsClaim.filter(card => card.controller === this.player && card.location === 'play area');
+
         let claimToSelect = this.claim;
-        
+
         if(this.forcedClaim.length >= 1 && this.forcedClaim.length < this.claim) {
             claimToSelect = this.claim - this.forcedClaim.length;
             this.game.addMessage('{0} {1} automatically chosen for claim',
@@ -40,7 +38,7 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 
     mustChooseAsClaim(card) {
-        if(_.isEmpty(this.forcedClaim)) {
+        if(this.forcedClaim.length === 0) {
             return true;
         }
 
@@ -52,7 +50,7 @@ class FulfillMilitaryClaim extends BaseStep {
     }
 
     fulfillClaim(p, cards) {
-        if(!_.isArray(cards)) {
+        if(!Array.isArray(cards)) {
             cards = [cards];
         }
 

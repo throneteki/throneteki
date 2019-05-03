@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const {flatten} = require('../../Array');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
@@ -14,34 +13,34 @@ class StandingPhase extends Phase {
     }
 
     standCards() {
-        _.each(this.game.getPlayers(), player => {
+        for(let player of this.game.getPlayers()) {
             this.standCardsForPlayer(player);
-        });
+        }
     }
 
     standCardsForPlayer(player) {
         let kneelingCards = this.game.allCards.filter(card => card.location === 'play area' && card.kneeled && card.controller === player && card.allowGameAction('stand'));
         let restrictedSubset = [];
-        _.each(player.standPhaseRestrictions, restriction => {
-            let restrictedCards = _.filter(kneelingCards, card => restriction.match(card));
-            kneelingCards = _.difference(kneelingCards, restrictedCards);
+        for(let restriction of player.standPhaseRestrictions) {
+            let restrictedCards = kneelingCards.filter(card => restriction.match(card));
+            kneelingCards = kneelingCards.filter(card => !restrictedCards.includes(card));
             restrictedSubset.push({ max: restriction.max, cards: restrictedCards });
-        });
+        }
         // Automatically stand non-restricted cards
         let cardsToStand = { automatic: kneelingCards, selected: [] };
 
-        _.each(restrictedSubset, restriction => {
+        for(let restriction of restrictedSubset) {
             this.selectRestrictedCards(cardsToStand, player, restriction);
-        });
+        }
         this.game.queueSimpleStep(() => {
             this.selectOptionalCards(cardsToStand, player);
         });
         this.game.queueSimpleStep(() => {
-            let finalCards = flatten(_.values(cardsToStand));
+            let finalCards = flatten(cardsToStand.automatic.concat(cardsToStand.selected));
             player.faction.kneeled = false;
-            _.each(finalCards, card => {
+            for(let card of finalCards) {
                 player.standCard(card);
-            });
+            }
         });
     }
 
@@ -71,13 +70,13 @@ class StandingPhase extends Phase {
     }
 
     selectOptionalCards(cardsToStand, player) {
-        let optionalStandCards = _.filter(cardsToStand.automatic, card => card.optionalStandDuringStanding);
+        let optionalStandCards = cardsToStand.automatic.filter(card => card.optionalStandDuringStanding);
 
         if(optionalStandCards.length === 0) {
             return;
         }
 
-        cardsToStand.automatic = _.filter(cardsToStand.automatic, card => !card.optionalStandDuringStanding);
+        cardsToStand.automatic = cardsToStand.automatic.filter(card => !card.optionalStandDuringStanding);
 
         this.game.promptForSelect(player, {
             mode: 'unlimited',

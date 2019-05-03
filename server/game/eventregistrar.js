@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 /**
  * Simplifies event registration given an event emitter to listen to events and
  * a context object to bind handlers on.
@@ -29,15 +27,15 @@ class EventRegistrar {
      * event-to-method mappings.
      */
     register(events) {
-        _.each(events, event => {
-            if(_.isString(event)) {
+        for(let event of events) {
+            if(typeof(event) === 'string') {
                 this.registerEvent(event);
             } else {
-                _.each(event, (methodName, eventName) => {
+                for(let [eventName, methodName] of Object.entries(event)) {
                     this.registerEvent(eventName, methodName);
-                });
+                }
             }
-        });
+        }
     }
 
     /**
@@ -63,9 +61,9 @@ class EventRegistrar {
      * Unbinds all registered handlers from the event emitter.
      */
     unregisterAll() {
-        _.each(this.events, event => {
+        for(let event of this.events) {
             this.game.removeListener(event.name, event.handler);
-        });
+        }
         this.events = [];
     }
 }

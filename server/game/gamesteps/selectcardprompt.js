@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const UiPrompt = require('./uiprompt.js');
 const CardSelector = require('../CardSelector.js');
 
@@ -49,6 +48,8 @@ class SelectCardPrompt extends UiPrompt {
     constructor(game, choosingPlayer, properties) {
         super(game);
 
+        properties = Object.assign(this.defaultProperties(), properties);
+
         this.numPlayers = this.game.getNumberOfPlayers();
         this.choosingPlayer = choosingPlayer;
         if(properties.source && !properties.waitingPromptTitle) {
@@ -57,7 +58,6 @@ class SelectCardPrompt extends UiPrompt {
 
         this.properties = properties;
         this.context = properties.context;
-        _.defaults(this.properties, this.defaultProperties());
         this.selector = properties.selector || CardSelector.for(properties);
         this.selectedCards = [];
         this.mustSelect = properties.mustSelect || [];

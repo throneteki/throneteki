@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 class MinMaxProperty {
     constructor(options) {
         this.minValues = [];
@@ -35,7 +33,7 @@ class MinMaxProperty {
             return this.defaultMin;
         }
 
-        return _.max(this.minValues);
+        return Math.max(...this.minValues);
     }
 
     getMax() {
@@ -43,7 +41,7 @@ class MinMaxProperty {
             return this.defaultMax;
         }
 
-        return _.min(this.maxValues);
+        return Math.min(...this.maxValues);
     }
 }
 

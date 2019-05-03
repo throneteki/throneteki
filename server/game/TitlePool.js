@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const shuffle = require('lodash.shuffle');
 
 const titles = [
     require('./cards/titles/CrownRegent.js'),
@@ -21,9 +21,9 @@ class TitlePool {
 
     getCardsForSelection() {
         let amount = this.amountToSetAside();
-        let shuffledPool = _.shuffle(this.cards);
+        let shuffledPool = shuffle(this.cards);
 
-        return _.first(shuffledPool, this.cards.length - amount);
+        return shuffledPool.slice(0, this.cards.length - amount);
     }
 
     amountToSetAside() {

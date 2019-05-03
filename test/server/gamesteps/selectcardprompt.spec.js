@@ -1,4 +1,3 @@
-const _ = require('underscore');
 const SelectCardPrompt = require('../../../server/game/gamesteps/selectcardprompt.js');
 
 describe('the SelectCardPrompt', function() {
@@ -6,7 +5,7 @@ describe('the SelectCardPrompt', function() {
         let card = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
         card.getType.and.returnValue('character');
         card.allowGameAction.and.returnValue(true);
-        _.extend(card, properties);
+        Object.assign(card, properties);
         card.toString = function() {
             return JSON.stringify({ name: properties.name || 'card' });
         };
@@ -15,6 +14,7 @@ describe('the SelectCardPrompt', function() {
 
     beforeEach(function() {
         this.game = jasmine.createSpyObj('game', ['getPlayers', 'getNumberOfPlayers']);
+        this.game.getPlayers.and.returnValue([]);
 
         this.player = jasmine.createSpyObj('player1', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards']);
         this.player.cardsInPlay = [];
@@ -87,7 +87,7 @@ describe('the SelectCardPrompt', function() {
                 beforeEach(function() {
                     this.properties.cardCondition.and.returnValue(true);
                     this.card.getType.and.returnValue('character');
-                    this.prompt.properties.cardType = ['event'];
+                    this.properties.cardType = ['event'];
                     this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
                 });
 

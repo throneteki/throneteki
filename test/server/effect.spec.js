@@ -1,19 +1,17 @@
-const _ = require('underscore');
-
 const Effect = require('../../server/game/effect.js');
 
 function createTarget(properties = {}) {
     let card = jasmine.createSpyObj('card', ['allowGameAction', 'getGameElementType']);
     card.allowGameAction.and.returnValue(true);
     card.getGameElementType.and.returnValue('card');
-    _.extend(card, properties);
+    Object.assign(card, properties);
     return card;
 }
 
 function createPlayerTarget(properties = {}) {
     let player = jasmine.createSpyObj('player', ['getGameElementType']);
     player.getGameElementType.and.returnValue('player');
-    _.extend(player, properties);
+    Object.assign(player, properties);
     return player;
 }
 
