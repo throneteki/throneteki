@@ -85,7 +85,7 @@ class PlayerInteractionWrapper {
     }
 
     selectPlot(plot) {
-        if(typeof(plot) === 'string') {
+        if(typeof (plot) === 'string') {
             plot = this.findCardByName(plot, 'plot deck');
         }
 
@@ -112,13 +112,13 @@ class PlayerInteractionWrapper {
             throw new Error(`Couldn't click on "${text}" for ${this.player.name} because it is disabled. Current prompt is:\n${this.formatPrompt()}`);
         }
 
-        this.game.menuButton(this.player.name, promptButton.arg, promptButton.method);
+        this.game.menuButton(this.player.name, promptButton.arg, promptButton.method, promptButton.promptId);
         this.game.continue();
         this.checkUnserializableGameState();
     }
 
     clickCard(card, location = 'any') {
-        if(typeof(card) === 'string') {
+        if(typeof (card) === 'string') {
             card = this.findCardByName(card, location);
         }
 
@@ -128,7 +128,7 @@ class PlayerInteractionWrapper {
     }
 
     clickMenu(card, menuText) {
-        if(typeof(card) === 'string') {
+        if(typeof (card) === 'string') {
             card = this.findCardByName(card);
         }
 

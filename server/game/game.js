@@ -75,11 +75,11 @@ class Game extends EventEmitter {
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
 
-        for(let player of details.players || []) {
+        for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
         }
 
-        for(let spectator of details.spectators || []) {
+        for(let spectator of Object.values(details.spectators || {})) {
             this.playersAndSpectators[spectator.user.username] = new Spectator(spectator.id, spectator.user);
         }
 
@@ -561,7 +561,7 @@ class Game extends EventEmitter {
             player.minReserve = 0;
         }
 
-        if(stat === 'claim' && typeof(player.activePlot.claimSet) === 'number') {
+        if(stat === 'claim' && typeof (player.activePlot.claimSet) === 'number') {
             player.activePlot.claimSet += value;
 
             if(player.activePlot.claimSet < 0) {
@@ -678,13 +678,13 @@ class Game extends EventEmitter {
         }));
     }
 
-    menuButton(playerName, arg, method) {
+    menuButton(playerName, arg, method, promptId) {
         var player = this.getPlayerByName(playerName);
         if(!player) {
             return;
         }
 
-        if(this.pipeline.handleMenuCommand(player, arg, method)) {
+        if(this.pipeline.handleMenuCommand(player, arg, method, promptId)) {
             return true;
         }
     }

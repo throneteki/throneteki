@@ -1,9 +1,11 @@
 const BaseStep = require('./basestep.js');
+const uuid = require('uuid');
 
 class UiPrompt extends BaseStep {
     constructor(game) {
         super(game);
         this.completed = false;
+        this.promptId = uuid.v1();
     }
 
     isComplete() {
@@ -36,6 +38,7 @@ class UiPrompt extends BaseStep {
         if(prompt.buttons) {
             for(let button of prompt.buttons) {
                 button.command = button.command || 'menuButton';
+                button.promptId = this.promptId;
             }
         }
         return prompt;
@@ -62,6 +65,14 @@ class UiPrompt extends BaseStep {
         for(let player of this.game.getPlayers()) {
             player.cancelPrompt();
         }
+    }
+
+    isCorrectPrompt(promptId) {
+        if(!promptId) {
+            return false;
+        }
+
+        return promptId.toLowerCase() === this.promptId.toLowerCase();
     }
 
     /**
