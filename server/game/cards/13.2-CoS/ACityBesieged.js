@@ -16,7 +16,7 @@ class ACityBesieged extends PlotCard {
                                             card.getType() === 'location' &&
                                             !card.kneeled,
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
-                })
+                });
             }
         });
     }
