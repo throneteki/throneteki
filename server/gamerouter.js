@@ -224,9 +224,13 @@ class GameRouter extends EventEmitter {
         const pingTimeout = 1 * 60 * 1000;
 
         for(const worker of Object.values(this.workers)) {
+            if(worker.disconnceted) {
+                continue;
+            }
+
             if(worker.pingSent && currentTime - worker.pingSent > pingTimeout) {
                 logger.info('worker', worker.identity + ' timed out');
-                this.workers[worker.identity].disconnected = true;
+                worker.disconnected = true;
                 this.emit('onWorkerTimedOut', worker.identity);
             } else if(!worker.pingSent) {
                 if(currentTime - worker.lastMessage > pingTimeout) {
