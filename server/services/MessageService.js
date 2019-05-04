@@ -17,7 +17,7 @@ class MessageService extends EventEmitter {
     }
 
     getLastMessages() {
-        return this.messages.find({}, { limit: 100, sort: { time: -1 } });
+        return this.messages.find({ type: { $ne: 'motd' } }, { limit: 100, sort: { time: -1 } });
     }
 
     removeMessage(messageId) {
@@ -31,22 +31,16 @@ class MessageService extends EventEmitter {
     }
 
     setMotdMessage(message) {
-        return this.messages.count({ type: 'motd' }).then(count => {
-            if(count > 0) {
-                return this.messages.update({
-                    type: 'motd'
-                }, {
-                    '$set': {
-                        message: message.message,
-                        user: message.user,
-                        time: message.time,
-                        motdType: message.motdType
-                    }
-                });
-            }
-
-            return this.messages.insert(message);
-        });
+        return this.messages.findOneAndUpdate({ type: 'motd' },
+            {
+                '$set': {
+                    message: message.message,
+                    user: message.user,
+                    time: message.time,
+                    motdType: message.motdType
+                }
+            },
+            { upsert: true, new: true });
     }
 }
 
