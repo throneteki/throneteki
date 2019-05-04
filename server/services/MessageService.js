@@ -25,6 +25,29 @@ class MessageService extends EventEmitter {
             this.emit('messageDeleted', messageId);
         });
     }
+
+    getMotdMessage() {
+        return this.messages.find({ type: 'motd' });
+    }
+
+    setMotdMessage(message) {
+        return this.messages.count({ type: 'motd' }).then(count => {
+            if(count > 0) {
+                return this.messages.update({
+                    type: 'motd'
+                }, {
+                    '$set': {
+                        message: message.message,
+                        user: message.user,
+                        time: message.time,
+                        motdType: message.motdType
+                    }
+                });
+            }
+
+            return this.messages.insert(message);
+        });
+    }
 }
 
 module.exports = MessageService;
