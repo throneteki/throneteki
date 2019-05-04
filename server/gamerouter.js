@@ -189,6 +189,18 @@ class GameRouter extends EventEmitter {
             case 'GAMEWIN':
                 this.gameService.update(message.arg.game);
                 break;
+            case 'REMATCH':
+                this.gameService.update(message.arg.game);
+
+                if(worker) {
+                    worker.numGames--;
+                } else {
+                    logger.error('Got close game for non existant worker', identity);
+                }
+
+                this.emit('onGameRematch', message.arg.game);
+
+                break;
             case 'GAMECLOSED':
                 if(worker) {
                     worker.numGames--;

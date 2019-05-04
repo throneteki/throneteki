@@ -24,6 +24,7 @@ class ChatCommands {
             '/move-bottom': this.moveBottom,
             '/pillage': this.pillage,
             '/power': this.power,
+            '/rematch': this.rematch,
             '/remove-faction': this.removeFaction,
             '/remove-from-game': this.removeFromGame,
             '/remove-icon': this.removeIcon,
@@ -236,7 +237,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to set strength',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
-                if(typeof(card.strengthSet) === 'number') {
+                if(typeof (card.strengthSet) === 'number') {
                     card.strengthSet = num;
                 } else {
                     card.strengthModifier = num - card.getPrintedStrength();
@@ -503,6 +504,11 @@ class ChatCommands {
         var lowerToken = token.toLowerCase();
 
         return this.tokens.includes(lowerToken);
+    }
+
+    rematch(player) {
+        this.game.rematch();
+        this.game.addAlert('danger', '{0} uses /rematch to reset the game and start a rematch', player);
     }
 }
 
