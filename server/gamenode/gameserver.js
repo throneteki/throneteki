@@ -216,11 +216,14 @@ class GameServer {
         this.games[pendingGame.id] = game;
 
         game.started = true;
-        _.each(pendingGame.players, player => {
+        for(let player of Object.values(pendingGame.players)) {
             game.selectDeck(player.name, player.deck);
-        });
+        }
 
         game.initialise();
+        if(pendingGame.rematch) {
+            game.addAlert('info', 'The rematch is ready');
+        }
     }
 
     onSpectator(pendingGame, user) {

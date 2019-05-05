@@ -25,7 +25,7 @@ class GameRouter extends EventEmitter {
 
     // External methods
     startGame(game) {
-        var node = this.getNextAvailableGameNode();
+        let node = this.getNextAvailableGameNode();
 
         if(!node) {
             logger.error('Could not find new node for game');

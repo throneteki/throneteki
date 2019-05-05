@@ -1,6 +1,7 @@
 const TextHelper = require('./TextHelper');
 const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
 const Deck = require('./Deck');
+const RematchPrompt = require('./gamesteps/RematchPrompt');
 
 class ChatCommands {
     constructor(game) {
@@ -507,8 +508,13 @@ class ChatCommands {
     }
 
     rematch(player) {
-        this.game.rematch();
-        this.game.addAlert('danger', '{0} uses /rematch to reset the game and start a rematch', player);
+        if(this.game.finishedAt) {
+            this.game.addAlert('info', '{0} is requesting a rematch', player);
+        } else {
+            this.game.addAlert('danger', '{0} is requesting a rematch.  The current game is not finished', player);
+        }
+
+        this.game.queueStep(new RematchPrompt(this.game, player));
     }
 }
 

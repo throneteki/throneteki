@@ -587,13 +587,13 @@ class Lobby {
         this.messageService.addMessage(chatMessage);
     }
 
-    onSelectDeck(socket, gameId, deckId, cb) {
+    onSelectDeck(socket, gameId, deckId) {
         let game = this.games[gameId];
         if(!game) {
-            return;
+            return undefined;
         }
 
-        Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId), this.cardService.getRestrictedList()])
+        return Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId), this.cardService.getRestrictedList()])
             .then(results => {
                 let [cards, packs, deck, restrictedList] = results;
                 let formattedDeck = formatDeckAsFullCards(deck, { cards: cards });
@@ -603,17 +603,9 @@ class Lobby {
                 game.selectDeck(socket.user.username, formattedDeck);
 
                 this.sendGameState(game);
-
-                if(cb) {
-                    cb();
-                }
             })
             .catch(err => {
                 logger.info(err);
-
-                if(cb) {
-                    cb(err);
-                }
 
                 return;
             });
@@ -725,26 +717,38 @@ class Lobby {
             isMelee: game.isMelee,
             useRookery: game.useRookery
         });
+        newGame.rematch = true;
+
+        this.games[newGame.id] = newGame;
 
         let socket = this.sockets[game.getPlayerOrSpectator(game.owner.username).id];
 
         newGame.newGame(socket.id, socket.user.getDetails());
-        newGame.password = game.password;
 
         socket.joinChannel(newGame.id);
         this.sendGameState(newGame);
 
-        this.games[newGame.id] = newGame;
+        let promises = [this.onSelectDeck(socket, newGame.id, game.getPlayers()[newGame.owner.username].deck._id)];
 
-        this.broadcastGameList();
+        for(let player of Object.values(game.getPlayers()).filter(player => player.name !== newGame.owner.username)) {
+            let socket = this.sockets[player.id];
+            newGame.join(socket.id, player.user);
+            promises.push(this.onSelectDeck(socket, newGame.id, player.deck._id));
+        }
 
-        this.onSelectDeck(socket, newGame.id, game.getPlayers()[newGame.owner.username].deck._id, (err) => {
-            if(err) {
-                return;
-            }
+        for(let spectator of game.getSpectators()) {
+            let socket = this.sockets[spectator.id];
+            newGame.watch(socket.id, spectator.user);
+        }
 
+        // Set the password after everyone has joined, so we don't need to worry about overriding the password, or storing it unencrypted/hashed
+        newGame.password = game.password;
+
+        Promise.all(promises).then(() => {
             this.onStartGame(socket, newGame.id);
         });
+
+        this.broadcastGameList();
     }
 
     onPlayerLeft(gameId, player) {

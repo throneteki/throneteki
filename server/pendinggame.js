@@ -30,6 +30,10 @@ class PendingGame {
         return this.players;
     }
 
+    getSpectators() {
+        return Object.values(this.spectators);
+    }
+
     getPlayerOrSpectator(playerName) {
         return this.getPlayersAndSpectators()[playerName];
     }
