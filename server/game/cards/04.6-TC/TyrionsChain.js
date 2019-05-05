@@ -51,6 +51,7 @@ class TyrionsChain extends DrawCard {
 
         this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, warPlot);
         warPlot.takeControl(this.controller, this);
+        this.game.raiseEvent('onCardTakenControl', { card: warPlot });
 
         let whenRevealed = warPlot.getWhenRevealedAbility();
         if(whenRevealed) {
@@ -60,6 +61,7 @@ class TyrionsChain extends DrawCard {
         }
         this.game.queueSimpleStep(() => {
             warPlot.revertControl(this);
+            this.game.raiseEvent('onCardTakenControl', { card: warPlot });
             this.resolving = false;
         });
         return true;
