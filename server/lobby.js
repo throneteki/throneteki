@@ -566,18 +566,17 @@ class Lobby {
         this.sendGameState(game);
     }
 
-    onLobbyChat(socket, message) {
-        var chatMessage = { user: socket.user.getShortSummary(), message: message, time: new Date() };
+    async onLobbyChat(socket, message) {
+        let chatMessage = { user: socket.user.getShortSummary(), message: message, time: new Date() };
+        let newMessage = await this.messageService.addMessage(chatMessage);
 
-        _.each(this.sockets, s => {
-            if(s.user && _.contains(s.user.blockList, chatMessage.user.username.toLowerCase())) {
+        for(let socket of Object.values(this.sockets)) {
+            if(socket.user && socket.user.blockList.includes(chatMessage.user.username.toLowerCase())) {
                 return;
             }
 
-            s.send('lobbychat', chatMessage);
-        });
-
-        this.messageService.addMessage(chatMessage);
+            socket.send('lobbychat', newMessage);
+        }
     }
 
     onSelectDeck(socket, gameId, deckId) {
