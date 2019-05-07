@@ -299,6 +299,7 @@ class Lobby {
         socket.registerEvent('getnodestatus', this.onGetNodeStatus.bind(this));
         socket.registerEvent('togglenode', this.onToggleNode.bind(this));
         socket.registerEvent('restartnode', this.onRestartNode.bind(this));
+        socket.registerEvent('motd', this.onMotdChange.bind(this));
 
         socket.on('authenticate', this.onAuthenticated.bind(this));
         socket.on('disconnect', this.onSocketDisconnected.bind(this));
@@ -315,6 +316,14 @@ class Lobby {
         this.sendUserListFilteredWithBlockList(socket, this.getUserList());
         this.sendFilteredMessages(socket);
         this.broadcastGameList(socket);
+
+        this.messageService.getMotdMessage().then(message => {
+            if(message) {
+                socket.send('motd', message[0]);
+            }
+        }).catch(err => {
+            logger.error(err);
+        });
 
         if(!socket.user) {
             return;
@@ -454,7 +463,7 @@ class Lobby {
             return;
         }
 
-        if(_.any(game.getPlayers(), function (player) {
+        if(_.any(game.getPlayers(), function(player) {
             return !player.deck;
         })) {
             return;
@@ -651,6 +660,26 @@ class Lobby {
         this.router.restartNode(node);
 
         socket.send('nodestatus', this.router.getNodeStatus());
+    }
+
+    onMotdChange(socket, motd) {
+        if(!socket.user.permissions.canManageMotd) {
+            return;
+        }
+
+        let newMotd = motd && motd.message ? {
+            message: motd.message,
+            motdType: motd.motdType,
+            type: 'motd',
+            user: socket.user.getShortSummary(),
+            time: new Date()
+        } : {};
+
+        this.messageService.setMotdMessage(newMotd).then(() => {
+            this.io.emit('motd', { message: newMotd.message, motdType: newMotd.motdType });
+        }).catch(err => {
+            logger.error(err);
+        });
     }
 
     // router Events
