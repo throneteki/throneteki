@@ -590,7 +590,7 @@ class Lobby {
     onSelectDeck(socket, gameId, deckId) {
         let game = this.games[gameId];
         if(!game) {
-            return undefined;
+            return Promise.reject('Game not found');
         }
 
         return Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId), this.cardService.getRestrictedList()])
