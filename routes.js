@@ -21,29 +21,31 @@ import GameLobby from './Components/Games/GameLobby';
 import GameBoard from './Components/GameBoard/GameBoard';
 import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
+import MotdAdmin from './pages/MotdAdmin';
 import Privacy from './pages/Privacy';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
     { path: '/about', action: () => <About key='about' /> },
     { path: '/activation', action: context => <Activation key='activation' id={ context.params.id } token={ context.params.token } /> },
-    { path: '/blocklist', action: () => <BlockList key='blocklist'/> },
-    { path: '/decks', action: () => <Decks key='decks'/> },
-    { path: '/decks/add', action: () => <AddDeck key='adddecks'/> },
+    { path: '/blocklist', action: () => <BlockList key='blocklist' /> },
+    { path: '/decks', action: () => <Decks key='decks' /> },
+    { path: '/decks/add', action: () => <AddDeck key='adddecks' /> },
     { path: '/decks/edit/:id([a-f\\d]{24})', action: context => <EditDeck key='editdeck' deckId={ context.params.id } /> },
-    { path: '/forgot', action: () => <ForgotPassword key='forgotpassword'/> },
-    { path: '/how-to-play', action: () => <HowToPlay key='howtoplay'/> },
-    { path: '/login', action: () => <Login key='login'/> },
-    { path: '/logout', action: () => <Logout key='logout'/> },
+    { path: '/forgot', action: () => <ForgotPassword key='forgotpassword' /> },
+    { path: '/how-to-play', action: () => <HowToPlay key='howtoplay' /> },
+    { path: '/login', action: () => <Login key='login' /> },
+    { path: '/logout', action: () => <Logout key='logout' /> },
     { path: '/news', action: () => <NewsAdmin key='newsadmin' />, permission: 'canEditNews' },
-    { path: '/play', action: context => (context.currentGame && context.currentGame.started) ? <GameBoard key='gameboard'/> : <GameLobby key='gamelobby' /> },
+    { path: '/play', action: context => (context.currentGame && context.currentGame.started) ? <GameBoard key='gameboard' /> : <GameLobby key='gamelobby' /> },
     { path: '/profile', action: () => <Profile key='profile' /> },
-    { path: '/register', action: () => <Register key='register'/> },
+    { path: '/register', action: () => <Register key='register' /> },
     { path: '/reset-password', action: context => <ResetPassword key='resetpassword' id={ context.params.id } token={ context.params.token } /> },
     { path: '/security', action: () => <Security key='security' /> },
     { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' },
     { path: '/nodes', action: () => <NodesAdmin key='nodesadmin' />, permission: 'canManageNodes' },
-    { path: '/privacy', action: () => <Privacy key='privacy' /> }
+    { path: '/privacy', action: () => <Privacy key='privacy' /> },
+    { path: '/admin/motd', action: () => <MotdAdmin key='motdadmin' />, permission: 'canManageMotd' }
 ];
 
 export default routes;

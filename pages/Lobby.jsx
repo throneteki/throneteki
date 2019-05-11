@@ -9,6 +9,7 @@ import Typeahead from '../Components/Form/Typeahead';
 import SideBar from '../Components/Lobby/SideBar';
 import UserList from '../Components/Lobby/UserList';
 import LobbyChat from '../Components/Lobby/LobbyChat';
+import { getMessageWithLinks } from '../util';
 
 import * as actions from '../actions';
 
@@ -86,11 +87,13 @@ class Lobby extends React.Component {
                         <span className='text-center'><h1>A # LCG second edition</h1></span>
                     </div>
                 </div>
-                <div className='col-sm-offset-1 col-sm-10 banner'>
-                    <AlertPanel type='success'>
-                        Our Patreon page is now live! <a href='https://www.patreon.com/throneteki' target='_blank'>Please check it out</a>and grab yourself that green chat!
-                    </AlertPanel>
-                </div>
+                { this.props.motd && this.props.motd.message &&
+                    <div className='col-sm-offset-1 col-sm-10 banner'>
+                        <AlertPanel type={ this.props.motd.motdType }>
+                            { getMessageWithLinks(this.props.motd.message) }
+                        </AlertPanel>
+                    </div>
+                }
                 { this.props.bannerNotice ? <div className='col-sm-offset-1 col-sm-10 announcement'>
                     <AlertPanel message={ this.props.bannerNotice } type='error' />
                 </div> : null }
@@ -131,6 +134,7 @@ Lobby.propTypes = {
     loadNews: PropTypes.func,
     loading: PropTypes.bool,
     messages: PropTypes.array,
+    motd: PropTypes.object,
     news: PropTypes.array,
     newsLoading: PropTypes.bool,
     newsSuccess: PropTypes.bool,
@@ -145,6 +149,7 @@ function mapStateToProps(state) {
         bannerNotice: state.lobby.notice,
         loading: state.api.loading,
         messages: state.lobby.messages,
+        motd: state.lobby.motd,
         news: state.news.news,
         newsLoading: state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.loading,
         newsSuccess: state.api.REQUEST_NEWS && state.api.REQUEST_NEWS.success,

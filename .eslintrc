@@ -141,6 +141,15 @@
       }
     ]
   },
+  "overrides": [
+    {
+      "files": [ "*.js" ],
+      "excludedFiles": "*.spec.js",
+      "env": { "jest": true },
+      "rules": {
+      }
+    }
+  ],
   "parser": "babel-eslint",
   "env": {
     "browser": true,

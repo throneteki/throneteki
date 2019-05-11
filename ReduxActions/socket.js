@@ -168,6 +168,10 @@ export function connectLobby() {
             dispatch(lobbyMessageReceived('banner', notice));
         });
 
+        socket.on('motd', motd => {
+            dispatch(lobbyMessageReceived('motd', motd));
+        });
+
         socket.on('gamestate', game => {
             state = getState();
             dispatch(lobbyMessageReceived('gamestate', game, state.account.user ? state.account.user.username : undefined));

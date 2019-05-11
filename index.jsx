@@ -14,8 +14,12 @@ $.validator.setDefaults({
     }
 });
 
+let index;
+
 if(process.env.NODE_ENV === 'production') {
-    module.exports = require('./index.prod');
+    index = require('./index.prod');
 } else {
-    module.exports = require('./index.dev');
+    index = require('./index.dev');
 }
+
+export default index;

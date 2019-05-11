@@ -21,6 +21,7 @@ class UserAdmin extends React.Component {
             canManageGames: false,
             canManageNodes: false,
             canModerateChat: false,
+            canManageMotd: false,
             isAdmin: false,
             isContributor: false,
             isSupporter: false
@@ -40,6 +41,7 @@ class UserAdmin extends React.Component {
             { name: 'canManageGames', label: 'Games Manager' },
             { name: 'canManageNodes', label: 'Node Manager' },
             { name: 'canModerateChat', label: 'Chat Moderator' },
+            { name: 'canManageMotd', label: 'Motd Manager' },
             { name: 'isAdmin', label: 'Site Admin' },
             { name: 'isContributor', label: 'Contributor' },
             { name: 'isSupporter', label: 'Supporter' }
@@ -133,10 +135,8 @@ class UserAdmin extends React.Component {
                                     { permissions }
                                 </div>
                             </Panel> : null }
-                        <div className='col-xs-12' />
                         <button type='button' className='btn btn-primary col-xs-3' onClick={ this.onClearClick.bind(this) }>Clear sessions</button>
-                        <div className='col-xs-12' />
-                        <button type='button' className='btn btn-primary col-xs-2' onClick={ this.onSaveClick.bind(this) }>Save { this.props.apiSaveState && this.props.apiSaveState.loading && <span className='spinner button-spinner' /> }</button>
+                        <button type='button' className='btn btn-primary col-xs-3' onClick={ this.onSaveClick.bind(this) }>Save { this.props.apiSaveState && this.props.apiSaveState.loading && <span className='spinner button-spinner' /> }</button>
                     </form>
                 </div>
             );

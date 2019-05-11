@@ -163,6 +163,12 @@ function handleMessage(action, state) {
             });
 
             break;
+        case 'motd':
+            newState = Object.assign({}, state, {
+                motd: action.args[0]
+            });
+
+            break;
         case 'gamestate':
             newState = handleGameState(action, state);
 
