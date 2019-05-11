@@ -129,10 +129,10 @@ class Messages extends React.Component {
             } else if(fragment.argType === 'nonAvatarPlayer') {
                 let userClass = 'username' + (fragment.role ? ` ${fragment.role}-role` : '');
 
-                messages.push(<span className={ userClass }>{ fragment.name }</span>);
+                messages.push(<span key={ index++ } className={ userClass }>{ fragment.name }</span>);
             } else if(ThronesIcons.includes(fragment)) {
                 messages.push(
-                    <span className={ `thronesicon thronesicon-${fragment}` } key={ index++ } />
+                    <span key={ index++ } className={ `thronesicon thronesicon-${fragment}` } />
                 );
             } else {
                 let messageFragment = this.processKeywords(fragment.toString());

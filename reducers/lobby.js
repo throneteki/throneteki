@@ -60,6 +60,11 @@ export default function(state = defaultState, action) {
             return Object.assign({}, state, {
                 newGame: false
             });
+        case 'CLEAR_GAMESTATE':
+            return Object.assign({}, state, {
+                newGame: false,
+                currentGame: undefined
+            });
     }
 
     return state;
@@ -93,6 +98,10 @@ function handleGameState(action, state) {
         delete retState.passwordGame;
         delete retState.passwordJoinType;
         delete retState.passwordError;
+    }
+
+    if(!retState.currentGame.started) {
+        retState.newGame = true;
     }
 
     return retState;
@@ -175,10 +184,9 @@ function handleMessage(action, state) {
             break;
         case 'cleargamestate':
             newState = Object.assign({}, state, {
-                newGame: false
+                newGame: false,
+                currentGame: undefined
             });
-
-            newState.currentGame = undefined;
 
             break;
     }
