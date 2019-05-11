@@ -208,6 +208,8 @@ class Lobby {
 
         if(socket) {
             sockets[socket.id] = socket;
+        } else {
+            sockets = this.sockets;
         }
 
         for(let socket of Object.values(sockets)) {
