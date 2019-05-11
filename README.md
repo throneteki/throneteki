@@ -26,6 +26,7 @@ These instructions are only needed if you are actively working on the client.
 git clone https://github.com/throneteki/throneteki-client.git
 cd throneteki-client
 npm install
+npm run build-vendor-dev
 npm run start
 ```
 
