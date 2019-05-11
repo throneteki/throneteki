@@ -1,6 +1,7 @@
 const TextHelper = require('./TextHelper');
 const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
 const Deck = require('./Deck');
+const RematchPrompt = require('./gamesteps/RematchPrompt');
 
 class ChatCommands {
     constructor(game) {
@@ -24,6 +25,7 @@ class ChatCommands {
             '/move-bottom': this.moveBottom,
             '/pillage': this.pillage,
             '/power': this.power,
+            '/rematch': this.rematch,
             '/remove-faction': this.removeFaction,
             '/remove-from-game': this.removeFromGame,
             '/remove-icon': this.removeIcon,
@@ -236,7 +238,7 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to set strength',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
-                if(typeof(card.strengthSet) === 'number') {
+                if(typeof (card.strengthSet) === 'number') {
                     card.strengthSet = num;
                 } else {
                     card.strengthModifier = num - card.getPrintedStrength();
@@ -503,6 +505,16 @@ class ChatCommands {
         var lowerToken = token.toLowerCase();
 
         return this.tokens.includes(lowerToken);
+    }
+
+    rematch(player) {
+        if(this.game.finishedAt) {
+            this.game.addAlert('info', '{0} is requesting a rematch', player);
+        } else {
+            this.game.addAlert('danger', '{0} is requesting a rematch.  The current game is not finished', player);
+        }
+
+        this.game.queueStep(new RematchPrompt(this.game, player));
     }
 }
 
