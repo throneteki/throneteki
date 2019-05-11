@@ -177,7 +177,7 @@ class Lobby {
 
         return Object.values(this.games).filter(game => {
             let userBlockedByOwner = game.isUserBlocked(user);
-            let userHasBlockedPlayer = Object.values(game.players).some(player => user.blocklist.includes(player.name.toLowerCase()));
+            let userHasBlockedPlayer = Object.values(game.players).some(player => user.blocklist && user.blocklist.includes(player.name.toLowerCase()));
             return !userBlockedByOwner && !userHasBlockedPlayer;
         });
     }
