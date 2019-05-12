@@ -412,7 +412,7 @@ class Lobby {
         }
 
         if(gameDetails.quickJoin) {
-            let sortedGames = sortBy(Object.values(this.games), 'createdAt');
+            let sortedGames = sortBy(Object.values(this.games), game => game.createdAt);
             let gameToJoin = sortedGames.find(game => !game.started && game.gameType === gameDetails.gameType && Object.values(game.players).length < 2 && !game.password);
 
             if(gameToJoin) {
