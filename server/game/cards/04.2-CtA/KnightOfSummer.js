@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const _ = require('underscore');
 
 class KnightOfSummer extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,14 +16,14 @@ class KnightOfSummer extends DrawCard {
         let summerPlots = 0;
         let winterPlots = 0;
 
-        _.each(this.game.getPlayers(), player => {
+        for(let player of this.game.getPlayers()) {
             if(player.activePlot && player.activePlot.hasTrait('winter')) {
                 winterPlots++;
             }
             if(player.activePlot && player.activePlot.hasTrait('summer')) {
                 summerPlots++;
             }
-        });
+        }
 
         return summerPlots > winterPlots;
     }

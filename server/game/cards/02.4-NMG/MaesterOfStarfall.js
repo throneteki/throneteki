@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class MaesterOfStarfall extends DrawCard {
@@ -16,7 +14,7 @@ class MaesterOfStarfall extends DrawCard {
 
                 this.selectedCard = context.target;
 
-                let buttons = _.map(keywords, keyword => {
+                let buttons = keywords.map(keyword => {
                     return { text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() };
                 });
 

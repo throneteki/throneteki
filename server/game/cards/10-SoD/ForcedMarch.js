@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class ForcedMarch extends PlotCard {
@@ -51,7 +49,7 @@ class ForcedMarch extends PlotCard {
             card.controller.kneelCard(card);
         }
 
-        if(this.hasStandingMilIcon(this.controller) && !_.isEmpty(this.filterForOpponents())) {
+        if(this.hasStandingMilIcon(this.controller) && this.filterForOpponents().length > 0) {
             this.game.promptForSelect(this.controller, {
                 source: this,
                 gameAction: 'kneel',
@@ -74,7 +72,7 @@ class ForcedMarch extends PlotCard {
     }
 
     filterForOpponents() {
-        return _.filter(this.game.getPlayers(), player => player !== this.controller &&
+        return this.game.getPlayers().filter(player => player !== this.controller &&
                                                           this.hasStandingMilIcon(player));
     }
 

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class Oldtown extends DrawCard {
@@ -10,7 +8,7 @@ class Oldtown extends DrawCard {
             handler: () => {
                 let cardTypes = ['Character', 'Location', 'Attachment', 'Event'];
 
-                let buttons = _.map(cardTypes, cardType => {
+                let buttons = cardTypes.map(cardType => {
                     return { text: cardType, method: 'cardTypeSelected', arg: cardType.toLowerCase() };
                 });
 

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class INeverBetAgainstMyFamily extends DrawCard {
@@ -13,7 +11,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
 
                 this.game.addMessage('{0} uses {1} to reveal from the bottom of their deck: {2}', this.controller, this, this.remainingCards);
 
-                this.uniqueCharacters = _.filter(this.remainingCards, card => card.isUnique() && card.getType() === 'character' && card.isFaction('lannister'));
+                this.uniqueCharacters = this.remainingCards.filter(card => card.isUnique() && card.getType() === 'character' && card.isFaction('lannister'));
 
                 if(this.uniqueCharacters.length > 0) {
                     this.promptToChooseCharacter();
@@ -25,7 +23,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
     }
 
     promptToChooseCharacter() {
-        let buttons = _.map(this.uniqueCharacters, card => ({
+        let buttons = this.uniqueCharacters.map(card => ({
             method: 'selectCharacter', card: card
         }));
 
@@ -43,12 +41,12 @@ class INeverBetAgainstMyFamily extends DrawCard {
     }
 
     selectCharacter(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         if(!card) {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.putIntoPlay(card);
         this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, card);
         this.untilEndOfPhase(ability => ({
@@ -65,7 +63,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
             return true;
         }
 
-        let buttons = _.map(this.remainingCards, card => ({
+        let buttons = this.remainingCards.map(card => ({
             method: 'selectCardForBottom', card: card
         }));
 
@@ -81,12 +79,12 @@ class INeverBetAgainstMyFamily extends DrawCard {
     }
 
     selectCardForBottom(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         if(!card) {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.moveCard(card, 'draw deck', { bottom: true });
 
         if(this.remainingCards.length > 0) {

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 const TextHelper = require('../../TextHelper');
 
@@ -24,9 +22,9 @@ class MeleeAtBitterbridge extends DrawCard {
     }
 
     targetsSelected(player, cards, goldCost) {
-        let strengths = _.map(cards, card => card.getStrength());
-        let highestStrength = _.max(strengths);
-        let renownCharacters = _.filter(cards, card => card.getStrength() === highestStrength);
+        let strengths = cards.map(card => card.getStrength());
+        let highestStrength = Math.max(...strengths);
+        let renownCharacters = cards.filter(card => card.getStrength() === highestStrength);
 
         this.untilEndOfChallenge(ability => ({
             match: renownCharacters,
@@ -34,7 +32,7 @@ class MeleeAtBitterbridge extends DrawCard {
             effect: ability.effects.addKeyword('renown')
         }));
 
-        let nonContributingCharacters = _.reject(cards, card => card.getStrength() === highestStrength);
+        let nonContributingCharacters = cards.filter(card => card.getStrength() !== highestStrength);
 
         this.untilEndOfChallenge(ability => ({
             match: nonContributingCharacters,
@@ -44,7 +42,7 @@ class MeleeAtBitterbridge extends DrawCard {
 
         let message = '{0} plays {1} and pays {2} gold to give renown to {3}';
 
-        if(!_.isEmpty(nonContributingCharacters)) {
+        if(nonContributingCharacters.legnth > 0) {
             message += ' and have {4} not contribute strength to the challenge';
         }
 

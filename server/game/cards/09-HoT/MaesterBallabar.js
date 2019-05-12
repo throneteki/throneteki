@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class MaesterBallabar extends DrawCard {
@@ -21,8 +19,8 @@ class MaesterBallabar extends DrawCard {
 
     getLowestParticipatingStrength() {
         let participatingCharacters = this.game.currentChallenge.attackers.concat(this.game.currentChallenge.defenders);
-        let strengths = _.map(participatingCharacters, card => card.getStrength());
-        return _.min(strengths);
+        let strengths = participatingCharacters.map(card => card.getStrength());
+        return Math.min(...strengths);
     }
 }
 

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const PlotCard = require('../../plotcard.js');
 
 class TheLongWinter extends PlotCard {
@@ -7,7 +5,7 @@ class TheLongWinter extends PlotCard {
         this.whenRevealed({
             handler: () => {
                 this.selections = [];
-                this.remainingPlayers = _.reject(this.game.getPlayersInFirstPlayerOrder(), player => player.activePlot.hasTrait('Summer'));
+                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder().filter(player => !player.activePlot.hasTrait('Summer'));
                 this.proceedToNextStep();
             }
         });
@@ -30,10 +28,10 @@ class TheLongWinter extends PlotCard {
     }
 
     doPower() {
-        _.each(this.selections, selection => {
+        for(let selection of this.selections) {
             this.game.addMessage('{0} discards 1 power from {1}', selection.player, selection.cardFragment);
             selection.card.modifyPower(-1);
-        });
+        }
 
         this.selections = [];
     }

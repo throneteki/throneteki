@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class HornHill extends DrawCard {
@@ -11,7 +9,7 @@ class HornHill extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let challenge = this.game.currentChallenge;
-                let cards = _.filter(challenge.attackers.concat(challenge.defenders), card => card.controller === this.controller && card.isFaction('tyrell'));
+                let cards = challenge.attackers.concat(challenge.defenders).filter(card => card.controller === this.controller && card.isFaction('tyrell'));
 
                 this.untilEndOfChallenge(ability => ({
                     match: cards,

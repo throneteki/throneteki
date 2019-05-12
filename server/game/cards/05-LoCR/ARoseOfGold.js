@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class ARoseOfGold extends DrawCard {
@@ -12,7 +10,7 @@ class ARoseOfGold extends DrawCard {
 
                 this.remainingCards = this.controller.searchDrawDeck(3);
 
-                let buttons = _.map(this.remainingCards, card => ({
+                let buttons = this.remainingCards.map(card => ({
                     method: 'selectCardForHand', card: card
                 }));
 
@@ -28,12 +26,12 @@ class ARoseOfGold extends DrawCard {
     }
 
     selectCardForHand(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         if(!card) {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.moveCard(card, 'hand');
         this.game.addMessage('{0} added a card to their hand', this.controller);
         this.promptToPlaceNextCard();
@@ -42,7 +40,7 @@ class ARoseOfGold extends DrawCard {
     }
 
     promptToPlaceNextCard() {
-        let buttons = _.map(this.remainingCards, card => ({
+        let buttons = this.remainingCards.map(card => ({
             method: 'selectCardForBottom', card: card
         }));
 
@@ -56,12 +54,12 @@ class ARoseOfGold extends DrawCard {
     }
 
     selectCardForBottom(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
         if(!card) {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.moveCard(card, 'draw deck', { bottom: true });
 
         if(this.remainingCards.length > 0) {

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheBearAndTheMaidenFair extends DrawCard {
@@ -20,7 +18,7 @@ class TheBearAndTheMaidenFair extends DrawCard {
     }
 
     promptToPlaceNextCard() {
-        let buttons = _.map(this.remainingCards, card => ({
+        let buttons = this.remainingCards.map(card => ({
             method: 'selectCard', card: card
         }));
 
@@ -38,13 +36,13 @@ class TheBearAndTheMaidenFair extends DrawCard {
     }
 
     selectCard(player, cardId) {
-        let card = _.find(this.remainingCards, card => card.uuid === cardId);
+        let card = this.remainingCards.find(card => card.uuid === cardId);
 
         if(!card) {
             return false;
         }
 
-        this.remainingCards = _.reject(this.remainingCards, card => card.uuid === cardId);
+        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.selectedPlayer.moveCard(card, 'draw deck', { bottom: this.mode === 'bottom' });
         this.cardsPlaced += 1;
 

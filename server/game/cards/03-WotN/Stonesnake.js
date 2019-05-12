@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 const keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
@@ -15,11 +13,11 @@ class Stonesnake extends DrawCard {
                 let target = context.event.target;
                 let buttons = [];
 
-                _.each(keywords, keyword => {
+                for(let keyword of keywords) {
                     if(target.hasKeyword(keyword)) {
                         buttons.push({ text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() });
                     }
-                });
+                }
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
@@ -45,7 +43,7 @@ class Stonesnake extends DrawCard {
     }
 
     hasCopyableKeyword(card) {
-        return _.any(keywords, keyword => card.hasKeyword(keyword));
+        return keywords.some(keyword => card.hasKeyword(keyword));
     }
 }
 

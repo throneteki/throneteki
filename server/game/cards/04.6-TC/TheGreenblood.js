@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheGreenblood extends DrawCard {
@@ -11,7 +9,7 @@ class TheGreenblood extends DrawCard {
     }
 
     numOfSummerPlotsRevealed() {
-        let plots = _.filter(this.game.getPlayers(), player => player.activePlot && player.activePlot.hasTrait('Summer'));
+        let plots = this.game.getPlayers().filter(player => player.activePlot && player.activePlot.hasTrait('Summer'));
 
         return plots.length;
     }

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 const TextHelper = require('../../TextHelper');
 
@@ -26,9 +24,9 @@ class RitualOfRhllor extends DrawCard {
     }
 
     targetsSelected(player, cards, goldCost) {
-        _.each(cards, card => {
+        for(let card of cards) {
             card.modifyPower(1);
-        });
+        }
 
         this.game.addMessage('{0} plays {1} and pays {2} gold to have {3} gain 1 power', player, this, goldCost, cards);
 

@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class OldNan extends DrawCard {
@@ -10,7 +8,7 @@ class OldNan extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let buttons = _.map(context.event.plots, plot => {
+                let buttons = context.event.plots.map(plot => {
                     return { method: 'plotSelected', card: plot, mapCard: true };
                 });
 

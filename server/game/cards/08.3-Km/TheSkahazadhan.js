@@ -1,5 +1,3 @@
-const _ = require('underscore');
-
 const DrawCard = require('../../drawcard.js');
 
 class TheSkahazadhan extends DrawCard {
@@ -7,7 +5,7 @@ class TheSkahazadhan extends DrawCard {
         this.reaction({
             when: {
                 onPlotsRevealed: event =>
-                    _.any(event.plots, plot => plot.controller === this.controller) &&
+                    event.plots.some(plot => plot.controller === this.controller) &&
                     this.controller.canGainGold()
             },
             cost: [

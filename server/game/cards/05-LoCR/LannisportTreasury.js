@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const range = require('lodash.range');
 
 const DrawCard = require('../../drawcard.js');
 
@@ -20,8 +20,8 @@ class LannisportTreasury extends DrawCard {
             condition: () => this.hasToken('gold'),
             cost: ability.costs.kneelSelf(),
             handler: context => {
-                let range = _.range(1, this.tokens['gold'] + 1).reverse();
-                let buttons = _.map(range, gold => {
+                let rangeArray = range(1, this.tokens['gold'] + 1).reverse();
+                let buttons = rangeArray.map(gold => {
                     return { text: gold, method: 'moveGold', arg: gold };
                 });
 
