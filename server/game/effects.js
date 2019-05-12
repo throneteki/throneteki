@@ -795,7 +795,7 @@ const Effects = {
                 player.triggerRestrictions.push(restriction);
             },
             unapply: function(player) {
-                player.triggerRestrictions = player.triggerRestrictions.filter(r => r === restriction);
+                player.triggerRestrictions = player.triggerRestrictions.filter(r => r !== restriction);
             }
         };
     },
