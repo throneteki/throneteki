@@ -201,9 +201,11 @@
   align-items: center;
 }
 
-.gamelist-button {
+.gamelist-lower-button {
   margin-left: 5px;
   margin-top: 5px;
+  font-size: 10px;
+  padding: 5px;
 }
 
 .first-player {
@@ -269,6 +271,7 @@
 .game-header-row {
   text-align: center;
   font-size: 1em;
+  color: white;
 }
 
 .game-row-buttons {
@@ -282,6 +285,11 @@
 .game-header {
   padding: 5px;
   text-align: center;
+  text-transform: capitalize;
+}
+
+.game-type {
+  margin-right: 5px;
   text-transform: capitalize;
 }
 
@@ -312,4 +320,16 @@
 .join-buttons {
   display: flex;
   flex-direction: column;
+}
+
+.casual {
+  background-color: fade(@brand-warning, 40%);
+}
+
+.beginner {
+  background-color: fade(@brand-success, 40%);
+}
+
+.competitive {
+  background-color: fade(@brand-danger, 40%);
 }
