@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run jasmine",
-    "jasmine": "cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine",
+    "jasmine": "node testrunner",
     "cover": "cross-env JASMINE_CONFIG_PATH=./jasmine.json istanbul cover --include-all-sources jasmine",
     "lint": "eslint server/ test/server/ --ext=js"
   },
@@ -33,6 +33,7 @@
     "command-line-args": "^4.0.7",
     "cross-env": "^3.2.4",
     "express": "^4.15.5",
+    "jasmine-reporters": "^2.3.2",
     "jimp": "^0.2.28",
     "jsonwebtoken": "^8.2.2",
     "lodash.range": "^3.2.0",

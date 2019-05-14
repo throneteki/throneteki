@@ -10,3 +10,4 @@ nodeconfig.js
 server/events.txt
 server/logs/*.gz
 features/conf/*
+testoutput/*
