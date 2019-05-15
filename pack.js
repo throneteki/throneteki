@@ -5,7 +5,6 @@ const version = require('./packagever');
 octo.pack('targz', { version: version })
     .append('./version.js')
     .append('./index.js')
-    .append('./packagever.js')
     .append('./package.json')
     .append('./server/**/*.js')
     .append('./public/**/*')
