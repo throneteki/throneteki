@@ -23,7 +23,7 @@ class ActivePlayerPrompt extends React.Component {
         this.props.stopAbilityTimer();
 
         if(button.method || button.arg) {
-            this.props.onButtonClick(button.command, button.arg, button.method);
+            this.props.onButtonClick(button);
         }
     }
 
@@ -72,9 +72,9 @@ class ActivePlayerPrompt extends React.Component {
         return buttons;
     }
 
-    handleLookupValueSelected(command, method, cardName) {
+    handleLookupValueSelected(command, method, promptId, cardName) {
         if(this.props.onButtonClick) {
-            this.props.onButtonClick(command, cardName, method);
+            this.props.onButtonClick({ command: command, arg: cardName, method: method, promptId: promptId });
         }
     }
 
@@ -93,9 +93,9 @@ class ActivePlayerPrompt extends React.Component {
                             source={ control.source }
                             targets={ control.targets } />);
                 case 'card-name':
-                    return <CardNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method) } />;
+                    return <CardNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
                 case 'trait-name':
-                    return <TraitNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method) } />;
+                    return <TraitNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
             }
         });
     }
