@@ -2,8 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const merge = require('webpack-merge');
-var AssetsPlugin = require('assets-webpack-plugin');
-var assetsPluginInstance = new AssetsPlugin({ filename: 'assets.json' });
+const AssetsPlugin = require('assets-webpack-plugin');
+const assetsPluginInstance = new AssetsPlugin({ filename: 'assets.json' });
+const OctoWebpackPlugin = require('./OctoWebpackPlugin');
+const version = require('./packagever');
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -32,9 +34,11 @@ module.exports = (env) => {
     // Configuration for client-side bundle suitable for running in browsers
     const clientBundleOutputDir = './dist';
     const clientBundleConfig = merge(sharedConfig(), {
-        entry: { 'bundle': (isDevBuild ? [
-            'react-hot-loader/patch',
-            'webpack/hot/only-dev-server'] : []).concat(['./index.jsx', './less/site.less', 'babel-polyfill']) },
+        entry: {
+            'bundle': (isDevBuild ? [
+                'react-hot-loader/patch',
+                'webpack/hot/only-dev-server'] : []).concat(['./index.jsx', './less/site.less', 'babel-polyfill'])
+        },
         devServer: {
             contentBase: './assets',
             hot: true,
@@ -73,7 +77,8 @@ module.exports = (env) => {
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery'
-            })
+            }),
+            new OctoWebpackPlugin({ version: version })
         ].concat(isDevBuild ? [
             new webpack.NamedModulesPlugin(),
             new webpack.HotModuleReplacementPlugin()

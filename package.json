@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/throneteki/throneteki-client#readme",
   "devDependencies": {
+    "@octopusdeploy/octopackjs": "^0.2.1",
     "assets-webpack-plugin": "^3.5.1",
     "babel-eslint": "^8.2.3",
     "babel-loader": "^8.0.5",
