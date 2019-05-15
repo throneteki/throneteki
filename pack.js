@@ -8,7 +8,6 @@ octo.pack('targz', { version: version })
     .append('./package.json')
     .append('./server/**/*.js')
     .append('./public/**/*')
-    .append('./node_modules/**/*')
     .append('./throneteki-json-data/**/*')
     .append('./views/**/*.pug')
     .toFile('./dist', function(err, data) {
