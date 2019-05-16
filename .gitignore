@@ -3,3 +3,5 @@ dist
 *assets.json
 assets/img/cards
 features/conf
+out
+packagever.js
