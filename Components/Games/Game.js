@@ -69,8 +69,8 @@ function Game(props) {
             </div>
             <div className='game-row-buttons'>
                 { props.showWatchButton &&
-                    <button className='btn btn-primary gamelist-lower-button' onClick={ event => this.watchGame(event, game) }>Watch</button> }
-                { props.isAdmin && <button className='btn btn-primary gamelist-lower-button' onClick={ event => this.removeGame(event, game) }>Remove</button> }
+                    <button className='btn btn-primary gamelist-lower-button' onClick={ props.onWatchGame }>Watch</button> }
+                { props.isAdmin && <button className='btn btn-primary gamelist-lower-button' onClick={ props.onRemoveGame }>Remove</button> }
             </div>
         </div>
     </div>);
@@ -82,6 +82,8 @@ Game.propTypes = {
     game: PropTypes.object,
     isAdmin: PropTypes.bool,
     onJoinGame: PropTypes.func,
+    onRemoveGame: PropTypes.func,
+    onWatchGame: PropTypes.func,
     showJoinButton: PropTypes.bool,
     showWatchButton: PropTypes.bool
 };

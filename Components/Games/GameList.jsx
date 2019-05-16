@@ -8,9 +8,7 @@ import Game from './Game';
 import * as actions from '../../actions';
 
 class GameList extends React.Component {
-    joinGame(event, game) {
-        event.preventDefault();
-
+    joinGame(game) {
         if(!this.props.user) {
             toastr.error('Please login before trying to join a game');
             return;
@@ -27,9 +25,7 @@ class GameList extends React.Component {
         return !this.props.currentGame && game.allowSpectators;
     }
 
-    watchGame(event, game) {
-        event.preventDefault();
-
+    watchGame(game) {
         if(!this.props.user) {
             toastr.error('Please login before trying to watch a game');
             return;
@@ -42,9 +38,7 @@ class GameList extends React.Component {
         }
     }
 
-    removeGame(event, game) {
-        event.preventDefault();
-
+    removeGame(game) {
         this.props.socket.emit('removegame', game.id);
     }
 
@@ -76,6 +70,8 @@ class GameList extends React.Component {
                     showJoinButton={ this.canJoin(game) }
                     showWatchButton={ this.canWatch(game) }
                     onJoinGame={ this.joinGame.bind(this, game) }
+                    onRemoveGame={ this.removeGame.bind(this, game) }
+                    onWatchGame={ this.watchGame.bind(this, game) }
                     isAdmin={ isAdmin } />
             ));
         }
