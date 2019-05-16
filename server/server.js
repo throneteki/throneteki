@@ -24,8 +24,8 @@ class Server {
         this.server = http.Server(app);
 
         if(!this.isDeveloping) {
-            this.vendorAssets = require('../vendor-assets.json');
-            this.assets = require('../assets.json');
+            this.vendorAssets = require('../public/vendor-assets.json');
+            this.assets = require('../public/assets.json');
         } else {
             this.vendorAssets = undefined;
             this.assets = { bundle: { js: '/bundle.js' } };
