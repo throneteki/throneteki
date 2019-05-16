@@ -9,9 +9,11 @@ class CerseiLannister extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardsDiscarded: event => (
-                    this.controller !== event.player &&
-                    event.originalLocation === 'hand' &&
+                'onCardDiscarded:aggregate': event => (
+                    event.events.some(discardEvent => (
+                        discardEvent.player !== this.controller &&
+                        discardEvent.originalLocation === 'hand'
+                    )) &&
                     this.allowGameAction('gainPower')
                 )
             },

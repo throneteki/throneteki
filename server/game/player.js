@@ -14,8 +14,10 @@ const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
 const GoldSource = require('./GoldSource.js');
+const GameActions = require('./GameActions');
 const RemoveFromGame = require('./GameActions/RemoveFromGame');
 const SacrificeCard = require('./GameActions/SacrificeCard');
+
 
 const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
@@ -855,28 +857,22 @@ class Player extends Spectator {
     }
 
     discardCards(cards, allowSave = true, callback = () => true, options = {}) {
-        this.game.applyGameAction('discard', cards, cards => {
-            var params = {
-                player: this,
-                allowSave: allowSave,
-                automaticSaveWithDupe: true,
-                originalLocation: cards[0].location,
-                isPillage: !!options.isPillage,
-                source: options.source
-            };
-            this.game.raiseSimultaneousEvent(cards, {
-                eventName: 'onCardsDiscarded',
-                params: params,
-                handler: () => true,
-                perCardEventName: 'onCardDiscarded',
-                perCardHandler: event => {
-                    event.card.controller.moveCard(event.card, 'discard pile');
-                },
-                postHandler: event => {
-                    callback(event.cards);
-                }
-            });
-        }, { force: options.force });
+        let action = GameActions.simultaneously(
+            cards.map(card => GameActions.discardCard({
+                card,
+                allowSave,
+                isPillage: options.isPillage,
+                source: options.source,
+                force: options.force
+            }))
+        );
+        let event = this.game.resolveGameAction(action);
+        event.thenExecute(() => {
+            let cards = event.childEvents.map(childEvent => childEvent.card);
+            callback(cards);
+        });
+
+        return event;
     }
 
     returnCardToHand(card, allowSave = true) {
