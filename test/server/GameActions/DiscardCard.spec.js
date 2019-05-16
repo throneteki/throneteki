@@ -12,7 +12,7 @@ describe('DiscardCard', function() {
             this.cardSpy.allowGameAction.and.returnValue(true);
         });
 
-        for(let location of ['draw deck', 'hand', 'play area', 'shadows']) {
+        for(let location of ['draw deck', 'hand', 'play area', 'shadows', 'duplicate']) {
             describe(`when the card is in ${location}`, function() {
                 beforeEach(function() {
                     this.cardSpy.location = location;
