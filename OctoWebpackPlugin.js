@@ -17,6 +17,8 @@ OctoWebpackPlugin.prototype.apply = function(compiler) {
             pkg.append(name, compilation.assets[name].existsAt);
         }
 
+        pkg.append('vendor-assets.json', './vendor-assets.json');
+        pkg.append('assets.json', './assets.json');
         pkg.append(assets.vendor.js.slice(1), './dist' + assets.vendor.js);
 
         pkg.toFile('./out', function(error, data) {
