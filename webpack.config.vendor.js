@@ -1,8 +1,10 @@
 const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-var AssetsPlugin = require('assets-webpack-plugin');
-var assetsPluginInstance = new AssetsPlugin({ filename: 'vendor-assets.json' });
+const AssetsPlugin = require('assets-webpack-plugin');
+const assetsPluginInstance = new AssetsPlugin({ filename: 'vendor-assets.json' });
+const OctoWebpackPlugin = require('./OctoWebpackPlugin');
+const version = require('./packagever');
 
 const BUILD_DIR = path.resolve(__dirname, 'dist');
 
@@ -61,7 +63,8 @@ module.exports = (env) => {
         plugins: [
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
             new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, require.resolve('node-noop')), // Workaround for https://github.com/andris9/encoding/issues/16
-            assetsPluginInstance
+            assetsPluginInstance,
+            new OctoWebpackPlugin({ version: version })
         ]
     };
 
