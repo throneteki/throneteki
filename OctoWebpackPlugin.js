@@ -8,11 +8,9 @@ function OctoWebpackPlugin(options) {
 
 OctoWebpackPlugin.prototype.apply = function(compiler) {
     let options = this.options;
-
     let pkg;
 
     compiler.plugin('after-emit', function(compilation, callback) {
-        let files = compilation.assets;
         pkg = octo.pack(options.type, { id: options.id, version: options.version });
 
         for(var name in compilation.assets) {
@@ -25,7 +23,7 @@ OctoWebpackPlugin.prototype.apply = function(compiler) {
         callback();
     });
 
-    compiler.plugin('done', function(foo) {
+    compiler.plugin('done', function() {
         pkg.append('assets.json', './assets.json');
 
         pkg.toFile('./out', function(error, data) {
