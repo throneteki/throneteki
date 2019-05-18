@@ -44,7 +44,6 @@ describe('DiscardCard', function() {
         it('creates a onCardDiscarded event', function() {
             expect(this.event.name).toBe('onCardDiscarded');
             expect(this.event.card).toBe(this.cardSpy);
-            expect(this.event.player).toBe(this.playerSpy);
         });
 
         describe('the event handler', function() {

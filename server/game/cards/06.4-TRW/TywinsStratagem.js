@@ -22,8 +22,8 @@ class TywinsStratagem extends DrawCard {
         this.reaction({
             location: 'discard pile',
             when: {
-                onCardDiscarded: event => this.controller !== event.player &&
-                                          ['hand', 'draw deck'].includes(event.originalLocation) &&
+                onCardDiscarded: event => this.controller !== event.cardStateWhenDiscarded.controller &&
+                                          ['hand', 'draw deck'].includes(event.cardStateWhenDiscarded.location) &&
                                           event.card.getType() === 'character'
             },
             ignoreEventCosts: true,

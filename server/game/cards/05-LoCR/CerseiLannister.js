@@ -11,8 +11,8 @@ class CerseiLannister extends DrawCard {
             when: {
                 'onCardDiscarded:aggregate': event => (
                     event.events.some(discardEvent => (
-                        discardEvent.player !== this.controller &&
-                        discardEvent.originalLocation === 'hand'
+                        discardEvent.cardStateWhenDiscarded.controller !== this.controller &&
+                        discardEvent.cardStateWhenDiscarded.location === 'hand'
                     )) &&
                     this.allowGameAction('gainPower')
                 )

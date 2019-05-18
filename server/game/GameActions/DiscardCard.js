@@ -12,7 +12,6 @@ class DiscardCard extends GameAction {
     createEvent({ card, allowSave = true, isPillage = false, source }) {
         let params = {
             card: card,
-            player: card.controller,
             allowSave: allowSave,
             automaticSaveWithDupe: true,
             originalLocation: card.location,
@@ -21,7 +20,7 @@ class DiscardCard extends GameAction {
         };
         return this.event('onCardDiscarded', params, event => {
             event.cardStateWhenDiscarded = event.card.createSnapshot();
-            event.player.moveCard(event.card, 'discard pile');
+            event.card.controller.moveCard(event.card, 'discard pile');
         });
     }
 }
