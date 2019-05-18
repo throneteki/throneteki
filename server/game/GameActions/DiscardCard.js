@@ -9,10 +9,10 @@ class DiscardCard extends GameAction {
         return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate'].includes(card.location);
     }
 
-    createEvent({ card, player, allowSave = true, isPillage = false, source }) {
+    createEvent({ card, allowSave = true, isPillage = false, source }) {
         let params = {
             card: card,
-            player: player || card.controller,
+            player: card.controller,
             allowSave: allowSave,
             automaticSaveWithDupe: true,
             originalLocation: card.location,

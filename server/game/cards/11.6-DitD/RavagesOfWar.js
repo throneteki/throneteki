@@ -51,11 +51,11 @@ class RavagesOfWar extends PlotCard {
                     }
 
                     if(targets.hand) {
-                        actions.push(GameActions.discardCard({ player, card: targets.hand }));
+                        actions.push(GameActions.discardCard({ card: targets.hand }));
                     }
 
                     if(targets.shadows) {
-                        actions.push(GameActions.discardCard({ player, card: targets.shadows }));
+                        actions.push(GameActions.discardCard({ card: targets.shadows }));
                     }
                 }
 

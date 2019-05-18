@@ -23,7 +23,7 @@ class GhostOfHighHeart extends DrawCard {
             message: '{player} kneels {source} to look at {chosenPlayer}\'s hand and discard {target}',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.discardCard({ card: context.target, player: context.player })
+                    GameActions.discardCard({ card: context.target })
                 ).thenExecute(() => {
                     if(context.chosenPlayer.canDraw()) {
                         this.game.addMessage('Then {0} draws 1 card', context.chosenPlayer);

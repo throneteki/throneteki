@@ -2,9 +2,10 @@ const DiscardCard = require('../../../server/game/GameActions/DiscardCard');
 
 describe('DiscardCard', function() {
     beforeEach(function() {
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
         this.playerSpy = jasmine.createSpyObj('player', ['moveCard']);
-        this.props = { card: this.cardSpy, player: this.playerSpy };
+        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
+        this.cardSpy.controller = this.playerSpy;
+        this.props = { card: this.cardSpy };
     });
 
     describe('allow()', function() {

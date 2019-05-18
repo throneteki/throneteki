@@ -18,7 +18,6 @@ const GameActions = require('./GameActions');
 const RemoveFromGame = require('./GameActions/RemoveFromGame');
 const SacrificeCard = require('./GameActions/SacrificeCard');
 
-
 const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
 class Player extends Spectator {
