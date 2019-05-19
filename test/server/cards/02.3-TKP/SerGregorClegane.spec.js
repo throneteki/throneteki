@@ -1,9 +1,9 @@
-describe('Ser Gregor Clegane', function () {
+describe('Ser Gregor Clegane (TKP)', function () {
     integration(function () {
         beforeEach(function () {
             const deck1 = this.buildDeck('lannister', [
                 'A Noble Cause',
-                'Ser Gregor Clegane'
+                'Ser Gregor Clegane (TKP)'
             ]);
             const deck2 = this.buildDeck('baratheon', [
                 'Sneak Attack',

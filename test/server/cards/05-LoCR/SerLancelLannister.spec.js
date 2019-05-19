@@ -3,7 +3,7 @@ describe('Ser Lancel Lannister', function() {
         beforeEach(function() {
             const deck = this.buildDeck('lannister', [
                 'Trading with the Pentoshi',
-                'Ser Lancel Lannister', 'Joffrey Baratheon (Core)', 'Ser Gregor Clegane', 'I Never Bet Against My Family'
+                'Ser Lancel Lannister', 'Joffrey Baratheon (Core)', 'Ser Gregor Clegane (TKP)', 'I Never Bet Against My Family'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
