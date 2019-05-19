@@ -106,7 +106,7 @@ class KeywordWindow extends BaseStep {
             return participant.card.hasKeyword(keyword) && ability.meetsRequirements(participant.context);
         });
 
-        if(keyword === 'intimidate' && participants.lenght > 0) {
+        if(keyword === 'intimidate' && participants.length > 0) {
             return [participants[0]];
         }
 

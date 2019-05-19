@@ -93,6 +93,7 @@ describe('intimidate', function() {
                 this.player1.clickCard(this.gendry);
                 expect(this.gendry.kneeled).toBe(true);
 
+                expect(this.player1).not.toHavePrompt('Select a character to intimidate');
                 expect(this.player1).not.toHavePrompt('Choose and kneel a character with 10 strength or less');
             });
         });
