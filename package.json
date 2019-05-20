@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run jasmine",
-    "jasmine": "node testrunner",
+    "jasmine": "cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine",
     "cover": "cross-env JASMINE_CONFIG_PATH=./jasmine.json istanbul cover --include-all-sources jasmine",
     "lint": "eslint server/ test/server/ --ext=js",
     "pack-lobby": "node ./pack.js"
