@@ -1,5 +1,6 @@
 const AbilityAdapter = require('./AbilityAdapter');
 const DiscardCard = require('./DiscardCard');
+const DiscardPower = require('./DiscardPower');
 const GainPower = require('./GainPower');
 const LookAtHand = require('./LookAtHand');
 const RemoveFromGame = require('./RemoveFromGame');
@@ -8,6 +9,7 @@ const SimultaneousAction = require('./SimultaneousAction');
 
 const GameActions = {
     discardCard: props => new AbilityAdapter(DiscardCard, props),
+    discardPower: props => new AbilityAdapter(DiscardPower, props),
     gainPower: props => new AbilityAdapter(GainPower, props),
     lookAtHand: props => new AbilityAdapter(LookAtHand, props),
     removeFromGame: props => new AbilityAdapter(RemoveFromGame, props),

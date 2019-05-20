@@ -286,21 +286,10 @@ class DrawCard extends BaseCard {
     }
 
     modifyPower(power) {
-        if(power > 0) {
-            return this.game.resolveGameAction(
-                GameActions.gainPower({ card: this, amount: power })
-            );
-        }
-
-        this.game.applyGameAction('discardPower', this, card => {
-            card.power += power;
-
-            if(card.power < 0) {
-                card.power = 0;
-            }
-
-            this.game.checkWinCondition(this.controller);
-        });
+        let action = power > 0 ?
+            GameActions.gainPower({ card: this, amount: power }) :
+            GameActions.discardPower({ card: this, amount: -power });
+        return this.game.resolveGameAction(action);
     }
 
     needsStealthTarget() {
