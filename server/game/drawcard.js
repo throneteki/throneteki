@@ -3,6 +3,7 @@ const CardMatcher = require('./CardMatcher.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const StandardPlayActions = require('./PlayActions/StandardActions');
 const AbilityDsl = require('./abilitydsl');
+const GameActions = require('./GameActions');
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -285,18 +286,17 @@ class DrawCard extends BaseCard {
     }
 
     modifyPower(power) {
-        let action = power < 0 ? 'discardPower' : 'gainPower';
-        this.game.applyGameAction(action, this, card => {
-            let oldPower = card.power;
+        if(power > 0) {
+            return this.game.resolveGameAction(
+                GameActions.gainPower({ card: this, amount: power })
+            );
+        }
 
+        this.game.applyGameAction('discardPower', this, card => {
             card.power += power;
 
             if(card.power < 0) {
                 card.power = 0;
-            }
-
-            if(power > 0) {
-                this.game.raiseEvent('onCardPowerGained', { card: this, power: card.power - oldPower });
             }
 
             this.game.checkWinCondition(this.controller);
