@@ -16,9 +16,8 @@ class WymanManderly extends DrawCard {
         });
         this.reaction({
             when: {
-                onSacrificed: event => this.isCharacterYouControlled(event.cardStateWhenSacrificed) && this.canChangeGameState(),
-                onCharactersKilled: event => event.snapshots.some(card => card.controller === this.controller) &&
-                                             this.canChangeGameState()
+                'onSacrificed:aggregate': event => this.hasCharacterYouControlled(event, 'cardStateWhenSacrificed'),
+                'onCharacterKilled:aggregate': event => this.hasCharacterYouControlled(event, 'cardStateWhenKilled')
             },
             limit: ability.limit.perRound(3),
             handler: context => {
@@ -33,14 +32,17 @@ class WymanManderly extends DrawCard {
                     context.player.drawCardsToHand(1).length;
                     bonusMessages.push('draw 1 card');
                 }
-                
+
                 this.game.addMessage('{0} uses {1} to ' + bonusMessages.join(' and '), context.player, this);
             }
         });
     }
 
-    isCharacterYouControlled(cardState) {
-        return cardState.controller === this.controller && cardState.getType() === 'character';
+    hasCharacterYouControlled(event, cardStateKey) {
+        return this.canChangeGameState() && event.events.some(subEvent => {
+            let cardState = subEvent[cardStateKey];
+            return cardState.controller === this.controller && cardState.getType() === 'character';
+        });
     }
 
     canChangeGameState() {

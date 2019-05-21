@@ -6,13 +6,12 @@ class DiscardCard extends GameAction {
     }
 
     canChangeGameState({ card }) {
-        return ['draw deck', 'hand', 'play area', 'shadows'].includes(card.location);
+        return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate'].includes(card.location);
     }
 
-    createEvent({ card, player, allowSave = true, isPillage = false, source }) {
+    createEvent({ card, allowSave = true, isPillage = false, source }) {
         let params = {
             card: card,
-            player: player || card.controller,
             allowSave: allowSave,
             automaticSaveWithDupe: true,
             originalLocation: card.location,
@@ -21,7 +20,7 @@ class DiscardCard extends GameAction {
         };
         return this.event('onCardDiscarded', params, event => {
             event.cardStateWhenDiscarded = event.card.createSnapshot();
-            event.player.moveCard(event.card, 'discard pile');
+            event.card.controller.moveCard(event.card, 'discard pile');
         });
     }
 }

@@ -15,7 +15,7 @@ class ShadowPolitics extends DrawCard {
             message: '{player} plays {source} to discard {target} from shadows',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.discardCard({ card: context.target, player: context.player })
+                    GameActions.discardCard({ card: context.target })
                 );
             }
         });

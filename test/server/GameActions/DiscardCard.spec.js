@@ -2,9 +2,10 @@ const DiscardCard = require('../../../server/game/GameActions/DiscardCard');
 
 describe('DiscardCard', function() {
     beforeEach(function() {
-        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
         this.playerSpy = jasmine.createSpyObj('player', ['moveCard']);
-        this.props = { card: this.cardSpy, player: this.playerSpy };
+        this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'createSnapshot']);
+        this.cardSpy.controller = this.playerSpy;
+        this.props = { card: this.cardSpy };
     });
 
     describe('allow()', function() {
@@ -12,7 +13,7 @@ describe('DiscardCard', function() {
             this.cardSpy.allowGameAction.and.returnValue(true);
         });
 
-        for(let location of ['draw deck', 'hand', 'play area', 'shadows']) {
+        for(let location of ['draw deck', 'hand', 'play area', 'shadows', 'duplicate']) {
             describe(`when the card is in ${location}`, function() {
                 beforeEach(function() {
                     this.cardSpy.location = location;
@@ -43,7 +44,6 @@ describe('DiscardCard', function() {
         it('creates a onCardDiscarded event', function() {
             expect(this.event.name).toBe('onCardDiscarded');
             expect(this.event.card).toBe(this.cardSpy);
-            expect(this.event.player).toBe(this.playerSpy);
         });
 
         describe('the event handler', function() {

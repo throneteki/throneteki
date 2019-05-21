@@ -1,6 +1,7 @@
 class SimultaneousEvents {
     constructor() {
         this.childEvents = [];
+        this.postHandlers = [];
     }
 
     addChildEvent(event) {
@@ -37,6 +38,10 @@ class SimultaneousEvents {
         for(let event of this.childEvents) {
             event.executePostHandler();
         }
+
+        for(let postHandler of this.postHandlers) {
+            postHandler(this);
+        }
     }
 
     getConcurrentEvents() {
@@ -47,6 +52,11 @@ class SimultaneousEvents {
 
     getPrimaryEvent() {
         return this.childEvents[0];
+    }
+
+    thenExecute(func) {
+        this.postHandlers.push(func);
+        return this;
     }
 
     toString() {

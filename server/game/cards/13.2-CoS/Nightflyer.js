@@ -20,7 +20,7 @@ class Nightflyer extends DrawCard {
             message: '{player} uses {source} to discard {target} from play',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.discardCard({ card: context.target, player: context.player })
+                    GameActions.discardCard({ card: context.target })
                 );
             }
         });
