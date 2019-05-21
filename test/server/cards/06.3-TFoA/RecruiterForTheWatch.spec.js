@@ -3,7 +3,7 @@ describe('Recruiter for the Watch', function() {
         beforeEach(function() {
             const deck = this.buildDeck('thenightswatch', [
                 'Trading with the Pentoshi',
-                'Recruiter for the Watch', 'Dragonstone Faithful', 'Nightmares', 'Yoren'
+                'Recruiter for the Watch', 'Dragonstone Faithful', 'Nightmares', 'Yoren (Core)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
