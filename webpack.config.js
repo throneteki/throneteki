@@ -78,7 +78,7 @@ module.exports = (env) => {
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
-        plugins: process.env.TEAMCITY_VERSION ? [new OctoWebpackPlugin({ version: version })] : [].concat([
+        plugins: (process.env.TEAMCITY_VERSION ? [new OctoWebpackPlugin({ version: version })] : []).concat([
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery'
