@@ -4,8 +4,13 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const merge = require('webpack-merge');
 const AssetsPlugin = require('assets-webpack-plugin');
 const assetsPluginInstance = new AssetsPlugin({ filename: 'assets.json' });
-const OctoWebpackPlugin = require('./OctoWebpackPlugin');
-const version = require('./packagever');
+let OctoWebpackPlugin;
+let version;
+
+if(process.env.TEAMCITY_VERSION) {
+    OctoWebpackPlugin = require('./OctoWebpackPlugin');
+    version = require('./packagever');
+}
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
@@ -73,13 +78,13 @@ module.exports = (env) => {
             ]
         },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
-        plugins: [
+        plugins: process.env.TEAMCITY_VERSION ? [new OctoWebpackPlugin({ version: version })] : [].concat([
             new webpack.ProvidePlugin({
                 $: 'jquery',
                 jQuery: 'jquery'
-            }),
-            new OctoWebpackPlugin({ version: version })
-        ].concat(isDevBuild ? [
+            })
+
+        ]).concat(isDevBuild ? [
             new webpack.NamedModulesPlugin(),
             new webpack.HotModuleReplacementPlugin()
         ] : [
