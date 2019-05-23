@@ -89,7 +89,7 @@ class Player extends Spectator {
     }
 
     createDefaultPlayableLocations() {
-        let playFromHand = ['marshal', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
+        let playFromHand = ['marshal', 'marshalIntoShadows', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
         let playFromShadows = ['outOfShadows', 'play'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'shadows'));
         return playFromHand.concat(playFromShadows);
     }
