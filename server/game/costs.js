@@ -145,6 +145,7 @@ const Costs = {
                 // and are not placed in discard until after resolution / cancel
                 // of their effects.
                 // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/35981-the-annals-of-castle-black/
+                context.originalLocation = context.source.location;
                 context.source.controller.moveCard(context.source, 'being played');
             }
         };
