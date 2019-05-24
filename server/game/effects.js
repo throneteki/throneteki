@@ -1229,11 +1229,13 @@ const Effects = {
                 context.revealTopCard = context.revealTopCard || {};
                 context.revealTopCard[player.name] = revealFunc;
                 context.game.cardVisibility.addRule(revealFunc);
+                player.flags.add('revealTopCard');
             },
             unapply: function(player, context) {
                 let revealFunc = context.revealTopCard[player.name];
 
                 context.game.cardVisibility.removeRule(revealFunc);
+                player.flags.remove('revealTopCard');
                 delete context.revealTopCard[player.name];
             }
         };

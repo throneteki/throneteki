@@ -13,6 +13,7 @@ const PlayableLocation = require('./playablelocation.js');
 const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
+const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const GoldSource = require('./GoldSource.js');
 const GameActions = require('./GameActions');
 const RemoveFromGame = require('./GameActions/RemoveFromGame');
@@ -84,6 +85,7 @@ class Player extends Spectator {
         this.showDeck = false;
         this.shuffleArray = shuffle;
         this.role = user.role;
+        this.flags = new ReferenceCountedSetProperty();
 
         this.promptState = new PlayerPromptState();
     }
@@ -1252,6 +1254,7 @@ class Player extends Spectator {
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
+            revealTopCard: this.flags.contains('revealTopCard'),
             showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
