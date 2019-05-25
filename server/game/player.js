@@ -1050,15 +1050,7 @@ class Player extends Spectator {
     }
 
     kneelCard(card, options = {}) {
-        if(card.kneeled) {
-            return;
-        }
-
-        this.game.applyGameAction('kneel', card, card => {
-            card.kneeled = true;
-
-            this.game.raiseEvent('onCardKneeled', { player: this, card: card });
-        }, { force: options.force });
+        return this.game.resolveGameAction(GameActions.kneelCard({ card, force: options.force }));
     }
 
     standCard(card, options = {}) {
