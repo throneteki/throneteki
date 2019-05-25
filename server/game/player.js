@@ -1235,6 +1235,7 @@ class Player extends Spectator {
                 conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer),
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
+                drawDeck: this.getSummaryForCardList(this.drawDeck, activePlayer),
                 hand: this.getSummaryForCardList(this.hand, activePlayer),
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer).reverse(),
                 plotDeck: plots,
@@ -1263,12 +1264,6 @@ class Player extends Spectator {
                 username: this.user.username
             }
         };
-
-        let drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
-
-        if(drawDeck.some(card => !card.facedown)) {
-            state.cardPiles.drawDeck = drawDeck;
-        }
 
         return Object.assign(state, promptState);
     }

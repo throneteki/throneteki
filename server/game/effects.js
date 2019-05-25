@@ -1220,6 +1220,24 @@ const Effects = {
             }
         };
     },
+    lookAtTopCard: function() {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                let revealFunc = (card, viewingPlayer) => player.drawDeck.length > 0 && player.drawDeck[0] === card && card.controller === player && viewingPlayer === player;
+
+                context.lookAtTopCard = context.lookAtTopCard || {};
+                context.lookAtTopCard[player.name] = revealFunc;
+                context.game.cardVisibility.addRule(revealFunc);
+            },
+            unapply: function(player, context) {
+                let revealFunc = context.lookAtTopCard[player.name];
+
+                context.game.cardVisibility.removeRule(revealFunc);
+                delete context.lookAtTopCard[player.name];
+            }
+        };
+    },
     revealTopCard: function() {
         return {
             targetType: 'player',
