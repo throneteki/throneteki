@@ -721,10 +721,13 @@ class Lobby {
         });
         newGame.rematch = true;
 
-        this.games[newGame.id] = newGame;
-
         let socket = this.sockets[game.getPlayerOrSpectator(game.owner.username).id];
+        if(!socket) {
+            logger.error('Tried to rematch but the owner socket has gone away');
+            return;
+        }
 
+        this.games[newGame.id] = newGame;
         newGame.newGame(socket.id, socket.user.getDetails());
 
         socket.joinChannel(newGame.id);
