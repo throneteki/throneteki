@@ -40,7 +40,7 @@ export function receiveGameState(game, username) {
             let previousRookery = getRookeryPrompt(previousGameState, user.username);
             let currentRookery = getRookeryPrompt(game, user.username);
             if(!previousRookery && currentRookery) {
-                dispatch(actions.openRookeryPrompt(currentRookery.deck));
+                dispatch(actions.openRookeryPrompt(currentRookery));
             } else if(previousRookery && !currentRookery) {
                 dispatch(actions.closeRookeryPrompt());
             }

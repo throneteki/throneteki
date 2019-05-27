@@ -18,11 +18,13 @@ export default function(state = {}, action) {
             });
         case 'OPEN_ROOKERY_PROMPT':
             return Object.assign({}, state, {
-                rookeryDeck: action.deck
+                rookeryDeck: action.deck,
+                rookeryPromptId: action.promptId
             });
         case 'CLOSE_ROOKERY_PROMPT':
             return Object.assign({}, state, {
-                rookeryDeck: null
+                rookeryDeck: null,
+                rookeryPromptId: null
             });
     }
 

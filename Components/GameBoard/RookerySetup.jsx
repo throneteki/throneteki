@@ -100,7 +100,7 @@ class RookerySetup extends React.Component {
     }
 
     handleDoneClick() {
-        this.props.onSubmit(formatDeckAsShortCards(this.state.deck));
+        this.props.onSubmit(formatDeckAsShortCards(this.state.deck), this.props.promptId);
     }
 
     getGroupedCards(cards) {
@@ -185,6 +185,7 @@ RookerySetup.propTypes = {
     onSubmit: PropTypes.func,
     packs: PropTypes.array,
     players: PropTypes.array,
+    promptId: PropTypes.string,
     restrictedList: PropTypes.array
 };
 
