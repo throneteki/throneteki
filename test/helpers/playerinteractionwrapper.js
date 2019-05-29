@@ -100,6 +100,19 @@ class PlayerInteractionWrapper {
         this.clickPrompt(title);
     }
 
+    nameTrait(trait) {
+        let currentPrompt = this.player.currentPrompt();
+        let traitControl = currentPrompt.controls.find(control => control.type === 'trait-name');
+
+        if(!traitControl) {
+            throw new Error(`Couldn't name a trait for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`);
+        }
+
+        this.game.menuButton(this.player.name, trait, traitControl.method, traitControl.promptId);
+        this.game.continue();
+        this.checkUnserializableGameState();
+    }
+
     clickPrompt(text) {
         let currentPrompt = this.player.currentPrompt();
         let promptButton = currentPrompt.buttons.find(button => button.text.toLowerCase() === text.toLowerCase());
