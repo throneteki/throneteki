@@ -58,6 +58,19 @@ class BaseAbility {
         return [];
     }
 
+    canResolve(context) {
+        return (
+            this.meetsRequirements(context) &&
+            this.canResolvePlayer(context) &&
+            this.canPayCosts(context) &&
+            this.canResolveTargets(context)
+        );
+    }
+
+    meetsRequirements() {
+        return true;
+    }
+
     /**
      * Return whether all costs are capable of being paid for the ability.
      *
@@ -197,7 +210,7 @@ class BaseAbility {
     }
 
     outputMessage(context) {
-        this.message.output(this.game, context);
+        this.message.output(context.game, context);
     }
 
     /**

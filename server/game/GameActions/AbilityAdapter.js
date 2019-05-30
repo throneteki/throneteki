@@ -1,3 +1,5 @@
+const ThenAbilityAction = require('./ThenAbilityAction');
+
 /**
  * Translates the methods of a standard game action to one that will take an
  * ability context => properties factory method.
@@ -22,6 +24,10 @@ class AbilityAdapter {
         let baseProps = (typeof this.propertyFactory === 'function') ? this.propertyFactory(context) : this.propertyFactory;
 
         return Object.assign({ context: context }, baseProps);
+    }
+
+    then(abilityPropertiesFactory) {
+        return new ThenAbilityAction(this, abilityPropertiesFactory);
     }
 }
 
