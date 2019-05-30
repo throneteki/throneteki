@@ -641,13 +641,21 @@ const Effects = {
     },
     removeFromGame: function() {
         return {
-            apply: function(card) {
+            apply: function(card, context) {
+                context.removeFromGame = context.removeFromGame || {};
+                context.removeFromGame[card.uuid] = card.location;
                 card.owner.removeCardFromGame(card);
             },
             unapply: function(card, context) {
                 if(card.location === 'out of game') {
-                    card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
+                    let originalLocation = context.removeFromGame[card.uuid];
+                    if(originalLocation === 'play area') {
+                        card.owner.putIntoPlay(card, 'play', { isEffectExpiration: true });
+                    } else {
+                        card.owner.moveCard(card, originalLocation);
+                    }
                     context.game.addMessage('{0} is put into play because of {1}', card, context.source);
+                    delete context.removeFromGame[card.uuid];
                 }
             }
         };
