@@ -1,4 +1,4 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
 
 class SeptonMeribald extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,12 +12,13 @@ class SeptonMeribald extends DrawCard {
                                        card.getPrintedStrength() <= 1 && card.kneeled,
                 gameAction: 'stand'
             },
+            message: '{player} kneels {source} to stand {target}',
             handler: context => {
                 for(let card of context.target) {
                     card.controller.standCard(card);
                 }
-                this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, context.target);
-            }
+            },
+            limit: ability.limit.perRound(1)
         });
     }
 }
