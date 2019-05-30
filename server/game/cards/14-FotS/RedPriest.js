@@ -17,7 +17,8 @@ class RedPriest extends DrawCard {
                     })).then(context => ({
                         target: {
                             activePromptTitle: 'Select a card',
-                            cardCondition: card => card.location === 'hand' && card.controller === context.opponent
+                            cardCondition: card => card.location === 'hand' && card.controller === context.opponent,
+                            revealTargets: true
                         },
                         message: 'Then {player} uses {source} to remove {target} from the game',
                         handler: thenContext => {
