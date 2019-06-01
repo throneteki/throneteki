@@ -875,12 +875,7 @@ class Player extends Spectator {
     }
 
     returnCardToHand(card, allowSave = true) {
-        this.game.applyGameAction('returnToHand', card, card => {
-            this.game.raiseEvent('onCardReturnedToHand', { player: this, card: card, allowSave: allowSave }, event => {
-                event.cardStateWhenReturned = card.createSnapshot();
-                this.moveCard(card, 'hand', { allowSave: allowSave });
-            });
-        });
+        return this.game.resolveGameAction(GameActions.returnCardToHand({ card, allowSave }));
     }
 
     removeCardFromGame(card, allowSave = true) {
