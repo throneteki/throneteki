@@ -1062,15 +1062,7 @@ class Player extends Spectator {
     }
 
     standCard(card, options = {}) {
-        if(!card.kneeled) {
-            return;
-        }
-
-        this.game.applyGameAction('stand', card, card => {
-            card.kneeled = false;
-
-            this.game.raiseEvent('onCardStood', { player: this, card: card });
-        }, { force: options.force });
+        return this.game.resolveGameAction(GameActions.standCard({ card, force: options.force }));
     }
 
     removeCardFromPile(card) {
