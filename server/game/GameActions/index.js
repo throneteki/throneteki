@@ -7,6 +7,7 @@ const LookAtHand = require('./LookAtHand');
 const MovePower = require('./MovePower');
 const RemoveFromGame = require('./RemoveFromGame');
 const ReturnCardToHand = require('./ReturnCardToHand');
+const ReturnGoldToTreasury = require('./ReturnGoldToTreasury');
 const SacrificeCard = require('./SacrificeCard');
 const SimultaneousAction = require('./SimultaneousAction');
 const StandCard = require('./StandCard');
@@ -20,6 +21,7 @@ const GameActions = {
     movePower: props => new AbilityAdapter(MovePower, props),
     removeFromGame: props => new AbilityAdapter(RemoveFromGame, props),
     returnCardToHand: props => new AbilityAdapter(ReturnCardToHand, props),
+    returnGoldToTreasury: props => new AbilityAdapter(ReturnGoldToTreasury, props),
     sacrificeCard: props => new AbilityAdapter(SacrificeCard, props),
     simultaneously: function(actions) {
         return new SimultaneousAction(actions);
