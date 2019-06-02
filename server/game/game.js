@@ -32,6 +32,7 @@ const ChooseGoldSourceAmounts = require('./gamesteps/ChooseGoldSourceAmounts.js'
 const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
 const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
+const GameActions = require('./GameActions');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -394,19 +395,9 @@ class Game extends EventEmitter {
     }
 
     movePower(fromCard, toCard, power) {
-        if(power < 1) {
-            return;
-        }
-
-        this.applyGameAction('movePower', fromCard, fromCard => {
-            let appliedPower = Math.min(fromCard.power, power);
-            fromCard.power -= appliedPower;
-            toCard.power += appliedPower;
-
-            this.raiseEvent('onCardPowerMoved', { source: fromCard, target: toCard, power: appliedPower });
-
-            this.checkWinCondition(toCard.controller);
-        });
+        return this.resolveGameAction(
+            GameActions.movePower({ from: fromCard, to: toCard, amount: power })
+        );
     }
 
     /**

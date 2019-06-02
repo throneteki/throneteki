@@ -875,12 +875,7 @@ class Player extends Spectator {
     }
 
     returnCardToHand(card, allowSave = true) {
-        this.game.applyGameAction('returnToHand', card, card => {
-            this.game.raiseEvent('onCardReturnedToHand', { player: this, card: card, allowSave: allowSave }, event => {
-                event.cardStateWhenReturned = card.createSnapshot();
-                this.moveCard(card, 'hand', { allowSave: allowSave });
-            });
-        });
+        return this.game.resolveGameAction(GameActions.returnCardToHand({ card, allowSave }));
     }
 
     removeCardFromGame(card, allowSave = true) {
@@ -1055,27 +1050,11 @@ class Player extends Spectator {
     }
 
     kneelCard(card, options = {}) {
-        if(card.kneeled) {
-            return;
-        }
-
-        this.game.applyGameAction('kneel', card, card => {
-            card.kneeled = true;
-
-            this.game.raiseEvent('onCardKneeled', { player: this, card: card });
-        }, { force: options.force });
+        return this.game.resolveGameAction(GameActions.kneelCard({ card, force: options.force }));
     }
 
     standCard(card, options = {}) {
-        if(!card.kneeled) {
-            return;
-        }
-
-        this.game.applyGameAction('stand', card, card => {
-            card.kneeled = false;
-
-            this.game.raiseEvent('onCardStood', { player: this, card: card });
-        }, { force: options.force });
+        return this.game.resolveGameAction(GameActions.standCard({ card, force: options.force }));
     }
 
     removeCardFromPile(card) {
