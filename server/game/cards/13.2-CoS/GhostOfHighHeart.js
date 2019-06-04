@@ -15,21 +15,32 @@ class GhostOfHighHeart extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             choosePlayer: player => player.hand.length > 0,
-            target: {
-                activePromptTitle: 'Select a card',
-                cardCondition: (card, context) => card.location === 'hand' && (!context.chosenPlayer || card.controller === context.chosenPlayer),
-                revealTargets: true
-            },
-            message: '{player} kneels {source} to look at {chosenPlayer}\'s hand and discard {target}',
+            message: '{player} kneels {source} to look at {chosenPlayer}\'s hand',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.discardCard({ card: context.target })
-                ).thenExecute(() => {
-                    if(context.chosenPlayer.canDraw()) {
-                        this.game.addMessage('Then {0} draws 1 card', context.chosenPlayer);
-                        context.chosenPlayer.drawCardsToHand(1);
-                    }
-                });
+                    GameActions.lookAtHand(context => ({
+                        player: context.player,
+                        opponent: context.chosenPlayer
+                    })).then({
+                        target: {
+                            activePromptTitle: 'Select a card',
+                            cardCondition: (card, context) => card.location === 'hand' && (!context.chosenPlayer || card.controller === context.chosenPlayer),
+                            revealTargets: true
+                        },
+                        message: 'Then {player} uses {source} to discard {target}',
+                        handler: thenContext => {
+                            this.game.resolveGameAction(
+                                GameActions.discardCard({ card: thenContext.target })
+                            ).thenExecute(() => {
+                                if(context.chosenPlayer.canDraw()) {
+                                    this.game.addMessage('Then {0} draws 1 card', context.chosenPlayer);
+                                    context.chosenPlayer.drawCardsToHand(1);
+                                }
+                            });
+                        }
+                    }),
+                    context
+                );
             }
         });
     }
