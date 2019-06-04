@@ -5,7 +5,7 @@ class TheKingInTheNorth extends PlotCard {
         this.persistentEffect({
             targetController: 'any',
             match: player => !player.anyCardsInPlay(card => card.getType() === 'character' && card.hasTrait('King')),
-            effect: ability.effects.cannotTriggerCardAbilities(card => ['character', 'location', 'attachment'].includes(card.getType()))
+            effect: ability.effects.cannotTriggerCardAbilities(ability => ['character', 'location', 'attachment'].includes(ability.card.getType()))
         });
     }
 }

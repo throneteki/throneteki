@@ -55,6 +55,10 @@ class TriggeredAbility extends BaseAbility {
         return new TriggeredAbilityContext({ event: event, game: this.game, source: this.card, player: this.playerFunc() });
     }
 
+    triggersFor(eventName) {
+        return !!this.when[eventName];
+    }
+
     isTriggeredByEvent(event) {
         let listener = this.when[event.name];
 
@@ -76,7 +80,7 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
-        if(this.isCardAbility() && !this.isForcedAbility() && context.player && !context.player.canTrigger(this.card)) {
+        if(this.isCardAbility() && !this.isForcedAbility() && context.player && !context.player.canTrigger(this)) {
             return false;
         }
 
