@@ -268,20 +268,20 @@ class Game extends EventEmitter {
     }
 
     defaultCardClick(player, card) {
-        if(card.facedown || card.controller !== player || !['faction', 'play area'].includes(card.location)) {
+        if(card.facedown || card.controller !== player) {
             return;
         }
 
-        if(card.kneeled) {
-            player.standCard(card, { force: true });
-        } else {
-            player.kneelCard(card, { force: true });
-        }
+        let action = card.kneeled ?
+            GameActions.standCard({ card, force: true }) :
+            GameActions.kneelCard({ card, force: true });
 
-        let standStatus = card.kneeled ? 'kneels' : 'stands';
-        let cardFragment = card.getType() === 'faction' ? 'their faction card' : card;
+        this.resolveGameAction(action).thenExecute(() => {
+            let standStatus = card.kneeled ? 'kneels' : 'stands';
+            let cardFragment = card.getType() === 'faction' ? 'their faction card' : card;
 
-        this.addAlert('danger', '{0} {1} {2}', player, standStatus, cardFragment);
+            this.addAlert('danger', '{0} {1} {2}', player, standStatus, cardFragment);
+        });
     }
 
     cardHasMenuItem(card, player, menuItem) {
