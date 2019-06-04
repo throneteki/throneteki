@@ -1,0 +1,34 @@
+const DrawCard = require('../../drawcard');
+
+class EveryCaptainIsAKing extends DrawCard {
+    setupCardAbilities() {
+        this.action({
+            title: 'Grant King trait',
+            condition: () => this.getCaptains(this.controller).length > 0,
+            message: {
+                format: '{player} plays {source} to have {captains} gain the King trait',
+                args: { captains: context => this.getCaptains(context.player) }
+            },
+            handler: context => {
+                let captains = this.getCaptains(context.player);
+                this.untilEndOfPhase(ability => ({
+                    match: captains,
+                    effect: ability.effects.addTrait('King')
+                }));
+                this.untilEndOfPhase(ability => ({
+                    condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
+                    match: captains,
+                    effect: ability.effects.doesNotKneelAsAttacker()
+                }));
+            }
+        });
+    }
+
+    getCaptains(player) {
+        return player.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Captain'));
+    }
+}
+
+EveryCaptainIsAKing.code = '14026';
+
+module.exports = EveryCaptainIsAKing;
