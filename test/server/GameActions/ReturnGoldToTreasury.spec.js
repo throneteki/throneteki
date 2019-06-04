@@ -1,6 +1,6 @@
 const ReturnGoldToTreasury = require('../../../server/game/GameActions/ReturnGoldToTreasury');
 
-fdescribe('ReturnGoldToTreasury', function() {
+describe('ReturnGoldToTreasury', function() {
     beforeEach(function() {
         this.playerSpy = jasmine.createSpyObj('player', ['modifyGold']);
         this.playerSpy.gold = 2;
