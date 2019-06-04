@@ -12,7 +12,7 @@ class FieldsOfTheReach extends DrawCard {
                 args: { kneeledCards: context => context.costs.kneel }
             },
             handler: () => {
-                this.untilEndOfPhase(ability => ({
+                this.untilEndOfChallenge(ability => ({
                     match: card => card === this.controller.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
