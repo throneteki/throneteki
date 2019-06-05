@@ -4,9 +4,8 @@ class AzorAhaiReborn extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ unique: true, controller: 'current' });
 
-        this.persistentEffect({
+        this.whileAttached({
             condition: () => this.hasAttackingRhllor(),
-            match: this,
             effect: ability.effects.consideredToBeAttacking()
         });
     }
