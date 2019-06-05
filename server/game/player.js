@@ -937,11 +937,12 @@ class Player extends Spectator {
     }
 
     getTotalPower() {
-        var power = this.cardsInPlay.reduce((memo, card) => {
+        return this.game.allCards.reduce((memo, card) => {
+            if(card.controller !== this) {
+                return memo;
+            }
             return memo + card.getPower();
-        }, this.faction.power);
-
-        return power;
+        }, 0);
     }
 
     removeAttachment(attachment, allowSave = true) {

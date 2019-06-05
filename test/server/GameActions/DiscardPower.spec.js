@@ -15,7 +15,7 @@ describe('DiscardPower', function() {
             this.cardSpy.allowGameAction.and.returnValue(true);
         });
 
-        for(let location of ['faction', 'play area']) {
+        for(let location of ['active plot', 'faction', 'play area']) {
             describe(`when the card is in ${location} and has power`, function() {
                 beforeEach(function() {
                     this.cardSpy.location = location;

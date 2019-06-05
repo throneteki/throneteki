@@ -3,7 +3,6 @@ const CardMatcher = require('./CardMatcher.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const StandardPlayActions = require('./PlayActions/StandardActions');
 const AbilityDsl = require('./abilitydsl');
-const GameActions = require('./GameActions');
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -20,7 +19,6 @@ class DrawCard extends BaseCard {
             this.icons.add(icon);
         }
 
-        this.power = 0;
         this.strengthModifier = 0;
         this.strengthMultiplier = 1;
         this.strengthSet = undefined;
@@ -178,10 +176,6 @@ class DrawCard extends BaseCard {
         return this.keywords.getShadowCost();
     }
 
-    getPower() {
-        return this.power;
-    }
-
     modifyStrength(amount, applying = true) {
         this.strengthModifier += amount;
 
@@ -285,13 +279,6 @@ class DrawCard extends BaseCard {
         this.icons.remove(icon);
     }
 
-    modifyPower(power) {
-        let action = power > 0 ?
-            GameActions.gainPower({ card: this, amount: power }) :
-            GameActions.discardPower({ card: this, amount: -power });
-        return this.game.resolveGameAction(action);
-    }
-
     needsStealthTarget() {
         return this.isStealth() && !this.stealthTarget;
     }
@@ -386,11 +373,6 @@ class DrawCard extends BaseCard {
         super.leavesPlay();
     }
 
-    clearTokens() {
-        super.clearTokens();
-        this.power = 0;
-    }
-
     resetForChallenge() {
         this.stealth = false;
         this.stealthTarget = undefined;
@@ -437,10 +419,6 @@ class DrawCard extends BaseCard {
         return this.allowGameAction('save');
     }
 
-    canGainPower() {
-        return this.allowGameAction('gainPower');
-    }
-
     markAsInDanger() {
         this.inDanger = true;
     }
@@ -473,8 +451,7 @@ class DrawCard extends BaseCard {
 
                 return dupe.getSummary(activePlayer);
             }),
-            kneeled: this.kneeled,
-            power: this.power
+            kneeled: this.kneeled
         };
 
         if(baseSummary.facedown) {

@@ -6,7 +6,7 @@ class DiscardPower extends GameAction {
     }
 
     canChangeGameState({ card }) {
-        return ['faction', 'play area'].includes(card.location) && card.power > 0;
+        return ['active plot', 'faction', 'play area'].includes(card.location) && card.power > 0;
     }
 
     createEvent({ card, amount = 1 }) {

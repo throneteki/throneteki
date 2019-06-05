@@ -8,6 +8,7 @@ const CardInterrupt = require('./cardinterrupt');
 const CardReaction = require('./cardreaction');
 const CustomPlayAction = require('./PlayActions/CustomPlayAction');
 const EventRegistrar = require('./eventregistrar');
+const GameActions = require('./GameActions');
 const KeywordsProperty = require('./PropertyTypes/KeywordsProperty');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 
@@ -55,6 +56,7 @@ class BaseCard {
         this.controllerStack = [];
         this.eventsForRegistration = [];
 
+        this.power = 0;
         this.tokens = {};
         this.plotModifierValues = {
             gold: 0,
@@ -378,6 +380,21 @@ class BaseCard {
         return !!this.cardData.loyal;
     }
 
+    canGainPower() {
+        return this.allowGameAction('gainPower');
+    }
+
+    getPower() {
+        return this.power;
+    }
+
+    modifyPower(power) {
+        let action = power > 0 ?
+            GameActions.gainPower({ card: this, amount: power }) :
+            GameActions.discardPower({ card: this, amount: -power });
+        return this.game.resolveGameAction(action);
+    }
+
     applyAnyLocationPersistentEffects() {
         for(let effect of this.abilities.persistentEffects) {
             if(effect.location === 'any') {
@@ -401,6 +418,7 @@ class BaseCard {
 
     clearTokens() {
         this.tokens = {};
+        this.power = 0;
     }
 
     moveTo(targetLocation, parent) {
@@ -677,6 +695,7 @@ class BaseCard {
             menu: this.getMenu(activePlayer),
             name: this.cardData.label,
             new: this.new,
+            power: this.power,
             tokens: this.tokens,
             type: this.getType(),
             uuid: this.uuid

@@ -13,8 +13,8 @@ class MovePower extends GameAction {
         return (
             amount > 0 &&
             from.power > 0 &&
-            ['faction', 'play area'].includes(from.location) &&
-            ['faction', 'play area'].includes(to.location)
+            ['active plot', 'faction', 'play area'].includes(from.location) &&
+            ['active plot', 'faction', 'play area'].includes(to.location)
         );
     }
 
