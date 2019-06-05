@@ -16,6 +16,6 @@ class SiegePreparations extends PlotCard {
     }
 }
 
-SiegePreparations.code = '14047';
+SiegePreparations.code = '14048';
 
 module.exports = SiegePreparations;
