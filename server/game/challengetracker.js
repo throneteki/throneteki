@@ -3,17 +3,6 @@ const AllowedChallenge = require('./AllowedChallenge');
 class ChallengeTracker {
     constructor(player) {
         this.player = player;
-        this.challengeTypes = {
-            military: {
-                max: 1
-            },
-            intrigue: {
-                max: 1
-            },
-            power: {
-                max: 1
-            }
-        };
         this.allowedChallenges = [
             new AllowedChallenge('military'),
             new AllowedChallenge('intrigue'),
@@ -118,10 +107,6 @@ class ChallengeTracker {
 
     removeRestriction(restriction) {
         this.restrictions = this.restrictions.filter(r => r !== restriction);
-    }
-
-    modifyMaxForType(challengeType, number) {
-        this.challengeTypes[challengeType].max += number;
     }
 
     addAllowedChallenge(allowedChallenge) {
