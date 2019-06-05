@@ -12,14 +12,14 @@ class SheBear extends DrawCard {
                     card.location === 'hand' &&
                     card.controller === this.controller &&
                     ['character', 'attachment'].includes(card.getType()) &&
-                    card.isFaction('stark'),
+                    card.isFaction('stark') &&
                     card.hasPrintedCost() &&
                     card.getPrintedCost() <= 3 &&
                     this.controller.canPutIntoPlay(card)
                 )
             },
             message: '{player} uses {source} to put {target} into play',
-            hander: context => {
+            handler: context => {
                 context.player.putIntoPlay(context.target);
             }
         });
