@@ -1,11 +1,11 @@
-describe('Nightfire Vision', function() {
+describe('Nightfire Visions', function() {
     integration(function() {
         describe('plot reveal delayed effect', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('baratheon', [
                     'A Noble Cause', 'A Storm of Swords', 'A Game of Thrones',
                     { name: 'Fiery Followers', count: 10 },
-                    { name: 'Nightfire Vision', count: 10 }
+                    { name: 'Nightfire Visions', count: 10 }
                 ]);
                 const deck2 = this.buildDeck('lannister', [
                     'A Noble Cause', 'A Storm of Swords', 'A Game of Thrones',
@@ -20,7 +20,7 @@ describe('Nightfire Vision', function() {
                 this.keepStartingHands();
 
                 this.character = this.player1.findCardByName('Fiery Followers', 'draw deck');
-                this.event = this.player1.findCardByName('Nightfire Vision', 'draw deck');
+                this.event = this.player1.findCardByName('Nightfire Visions', 'draw deck');
 
                 this.player1.dragCard(this.character, 'hand');
                 this.player1.dragCard(this.event, 'hand');
