@@ -3,14 +3,20 @@ const AbilityContext = require('./AbilityContext');
 
 class ThenClauseAbility extends BaseAbility {
     constructor(properties) {
-        super(properties);
+        super(Object.assign({ abilitySourceType: 'then' }, properties));
 
+        this.player = properties.player;
         this.handler = properties.handler;
     }
+
+    isTriggeredAbility() {
+        return false;
+    }
+
     createContext(parentContext) {
         return new AbilityContext({
             game: parentContext.game,
-            player: parentContext.player,
+            player: this.player || parentContext.player,
             source: parentContext.source
         });
     }

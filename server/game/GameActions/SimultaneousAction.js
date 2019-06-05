@@ -1,5 +1,6 @@
 const GameAction = require('./GameAction');
 const SimultaneousEvents = require('../SimultaneousEvents');
+const ThenAbilityAction = require('./ThenAbilityAction');
 
 class SimultaneousAction extends GameAction {
     constructor(actions) {
@@ -20,6 +21,10 @@ class SimultaneousAction extends GameAction {
         }
 
         return event;
+    }
+
+    then(abilityPropertiesFactory) {
+        return new ThenAbilityAction(this, abilityPropertiesFactory);
     }
 }
 
