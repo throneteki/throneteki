@@ -6,7 +6,7 @@ class GainPower extends GameAction {
     }
 
     canChangeGameState({ card }) {
-        return ['faction', 'play area'].includes(card.location);
+        return ['active plot', 'faction', 'play area'].includes(card.location);
     }
 
     createEvent({ card, amount = 1 }) {

@@ -21,7 +21,7 @@ describe('MovePower', function() {
             this.fromCardSpy.allowGameAction.and.returnValue(true);
         });
 
-        for(let location of ['faction', 'play area']) {
+        for(let location of ['active plot', 'faction', 'play area']) {
             describe(`when the from card is in ${location}`, function() {
                 beforeEach(function() {
                     this.fromCardSpy.location = location;
