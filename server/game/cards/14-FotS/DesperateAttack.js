@@ -5,6 +5,7 @@ class DesperateAttack extends PlotCard {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }),
             match: card => card === this.game.currentChallenge.attackingPlayer.activePlot,
+            targetController: 'any',
             effect: ability.effects.modifyClaim(1)
         });
     }
