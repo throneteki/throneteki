@@ -36,9 +36,9 @@ class DrawCard extends BaseCard {
         clone.controllerStack = [...this.controllerStack];
         clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
         clone.factions = this.factions.clone();
+        clone.flags = this.flags.clone();
         clone.icons = this.icons.clone();
         clone.location = this.location;
-        clone.losesAspects = this.losesAspects.clone();
         clone.keywords = this.keywords.clone();
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;

@@ -8,7 +8,7 @@ const CannotRestriction = require('./cannotrestriction.js');
 const ChallengeRestriction = require('./ChallengeRestriction.js');
 const ImmunityRestriction = require('./immunityrestriction.js');
 const GoldSource = require('./GoldSource.js');
-const {Tokens} = require('./Constants');
+const {Flags, Tokens} = require('./Constants');
 
 function cannotEffect(type) {
     return function(predicate) {
@@ -24,14 +24,14 @@ function cannotEffect(type) {
     };
 }
 
-function losesAspectEffect(aspect) {
+function modifyFlag(flag) {
     return function() {
         return {
             apply: function(card) {
-                card.loseAspect(aspect);
+                card.addFlag(flag);
             },
             unapply: function(card) {
-                card.restoreAspect(aspect);
+                card.removeFlag(flag);
             }
         };
     };
@@ -412,11 +412,11 @@ const Effects = {
             }
         };
     },
-    losesAllFactions: losesAspectEffect('factions'),
-    losesAllKeywords: losesAspectEffect('keywords'),
-    losesAllTraits: losesAspectEffect('traits'),
+    losesAllFactions: modifyFlag(Flags.loseAspect.factions),
+    losesAllKeywords: modifyFlag(Flags.loseAspect.keywords),
+    losesAllTraits: modifyFlag(Flags.loseAspect.traits),
     loseFaction: function(faction) {
-        return losesAspectEffect(`factions.${faction.toLowerCase()}`)();
+        return modifyFlag(Flags.loseAspect.faction(faction))();
     },
     addTrait: function(trait) {
         return {

@@ -1,4 +1,5 @@
 const BaseCard = require('../../../server/game/basecard.js');
+const {Flags} = require('../../../server/game/Constants');
 
 describe('BaseCard', function () {
     beforeEach(function () {
@@ -256,7 +257,7 @@ describe('BaseCard', function () {
 
         describe('when the card loses all factions', function() {
             beforeEach(function() {
-                this.card.loseAspect('factions');
+                this.card.addFlag(Flags.loseAspect.factions);
             });
 
             it('should return true for neutral', function() {
@@ -267,7 +268,7 @@ describe('BaseCard', function () {
         describe('when the card loses a specific faction', function() {
             beforeEach(function() {
                 this.card.addFaction('lannister');
-                this.card.loseAspect('factions.stark');
+                this.card.addFlag(Flags.loseAspect.faction('stark'));
             });
 
             it('should return false for the faction lost', function() {
@@ -279,7 +280,7 @@ describe('BaseCard', function () {
             });
 
             it('should read as neutral if it has lost all its specific factions', function() {
-                this.card.loseAspect('factions.lannister');
+                this.card.addFlag(Flags.loseAspect.faction('lannister'));
 
                 expect(this.card.isFaction('neutral')).toBe(true);
             });
