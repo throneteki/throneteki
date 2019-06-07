@@ -379,9 +379,27 @@ class DrawCard extends BaseCard {
         this.inChallenge = false;
     }
 
+    kneelsAsAttacker(challengeType) {
+        const keys = [
+            'doesNotKneelAsAttacker.any',
+            `doesNotKneelAsAttacker.${challengeType}`
+        ];
+
+        return keys.every(key => !this.challengeOptions.contains(key));
+    }
+
+    kneelsAsDefender(challengeType) {
+        const keys = [
+            'doesNotKneelAsDefender.any',
+            `doesNotKneelAsDefender.${challengeType}`
+        ];
+
+        return keys.every(key => !this.challengeOptions.contains(key));
+    }
+
     canDeclareAsParticipant(challengeType) {
         let canKneelForChallenge =
-            !this.kneeled && this.challengeOptions.contains('doesNotKneelAsAttacker') ||
+            !this.kneeled && !this.kneelsAsAttacker(challengeType) ||
             !this.kneeled && this.allowGameAction('kneel') ||
             this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling');
 

@@ -101,8 +101,12 @@ const Effects = {
     cannotBeDeclaredAsAttacker: cannotEffect('declareAsAttacker'),
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
-    doesNotKneelAsAttacker: challengeOptionEffect('doesNotKneelAsAttacker'),
-    doesNotKneelAsDefender: challengeOptionEffect('doesNotKneelAsDefender'),
+    doesNotKneelAsAttacker: function({ challengeType = 'any' } = {}) {
+        return challengeOptionEffect(`doesNotKneelAsAttacker.${challengeType}`)();
+    },
+    doesNotKneelAsDefender: function({ challengeType = 'any' } = {}) {
+        return challengeOptionEffect(`doesNotKneelAsDefender.${challengeType}`)();
+    },
     consideredToBeAttacking: function() {
         return {
             apply: function(card, context) {

@@ -76,7 +76,7 @@ class ChallengeFlow extends BaseStep {
         this.challenge.addAttackers(attackers);
 
         for(let card of attackers) {
-            if(!card.kneeled && !card.challengeOptions.contains('doesNotKneelAsAttacker')) {
+            if(!card.kneeled && card.kneelsAsAttacker(this.challenge.challengeType)) {
                 this.game.applyGameAction('kneel', card, card => {
                     card.kneeled = true;
                     this.attackersToKneel.push(card);
@@ -150,7 +150,7 @@ class ChallengeFlow extends BaseStep {
         this.challenge.addDefenders(defenders);
 
         for(let card of defenders) {
-            if(!card.kneeled && !card.challengeOptions.contains('doesNotKneelAsDefender')) {
+            if(!card.kneeled && card.kneelsAsDefender(this.challenge.challengeType)) {
                 this.game.applyGameAction('kneel', card, card => {
                     card.kneeled = true;
                     defendersToKneel.push(card);

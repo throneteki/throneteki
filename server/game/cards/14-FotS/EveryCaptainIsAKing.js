@@ -16,9 +16,8 @@ class EveryCaptainIsAKing extends DrawCard {
                     effect: ability.effects.addTrait('King')
                 }));
                 this.untilEndOfPhase(ability => ({
-                    condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
                     match: captains,
-                    effect: ability.effects.doesNotKneelAsAttacker()
+                    effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'power' })
                 }));
             }
         });
