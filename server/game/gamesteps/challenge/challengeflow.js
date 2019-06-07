@@ -50,6 +50,7 @@ class ChallengeFlow extends BaseStep {
 
     promptForAttackers() {
         this.game.queueStep(new ChooseParticipantsPrompt(this.game, this.challenge.attackingPlayer, {
+            attacking: true,
             challengeType: this.challenge.challengeType,
             gameAction: 'declareAsAttacker',
             mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
@@ -129,6 +130,7 @@ class ChallengeFlow extends BaseStep {
         }
 
         this.game.queueStep(new ChooseParticipantsPrompt(this.game, this.challenge.defendingPlayer, {
+            attacking: false,
             challengeType: this.challenge.challengeType,
             gameAction: 'declareAsDefender',
             mustBeDeclaredOption: 'mustBeDeclaredAsDefender',

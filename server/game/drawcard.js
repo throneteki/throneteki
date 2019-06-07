@@ -397,9 +397,10 @@ class DrawCard extends BaseCard {
         return keys.every(key => !this.challengeOptions.contains(key));
     }
 
-    canDeclareAsParticipant(challengeType) {
+    canDeclareAsParticipant({ attacking, challengeType }) {
         let canKneelForChallenge =
-            !this.kneeled && !this.kneelsAsAttacker(challengeType) ||
+            attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType) ||
+            !attacking && !this.kneeled && !this.kneelsAsDefender(challengeType) ||
             !this.kneeled && this.allowGameAction('kneel') ||
             this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling');
 
