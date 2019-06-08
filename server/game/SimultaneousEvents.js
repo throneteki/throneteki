@@ -4,12 +4,16 @@ class SimultaneousEvents {
         this.postHandlers = [];
     }
 
+    get activeChildEvents() {
+        return this.childEvents.filter(event => !event.cancelled);
+    }
+
     addChildEvent(event) {
         this.childEvents.push(event);
     }
 
     emitTo(emitter, suffix) {
-        for(let event of this.childEvents) {
+        for(let event of this.activeChildEvents) {
             event.emitTo(emitter, suffix);
         }
     }
@@ -19,7 +23,7 @@ class SimultaneousEvents {
     }
 
     cancel() {
-        for(let event of this.childEvents) {
+        for(let event of this.activeChildEvents) {
             event.cancel();
         }
 
@@ -29,13 +33,13 @@ class SimultaneousEvents {
     }
 
     executeHandler() {
-        for(let event of this.childEvents) {
+        for(let event of this.activeChildEvents) {
             event.executeHandler();
         }
     }
 
     executePostHandler() {
-        for(let event of this.childEvents) {
+        for(let event of this.activeChildEvents) {
             event.executePostHandler();
         }
 
@@ -45,13 +49,13 @@ class SimultaneousEvents {
     }
 
     getConcurrentEvents() {
-        return this.childEvents.reduce((concurrentEvents, event) => {
+        return this.activeChildEvents.reduce((concurrentEvents, event) => {
             return concurrentEvents.concat(event.getConcurrentEvents());
         }, []);
     }
 
     getPrimaryEvent() {
-        return this.childEvents[0];
+        return this.activeChildEvents[0];
     }
 
     thenExecute(func) {
@@ -60,7 +64,7 @@ class SimultaneousEvents {
     }
 
     toString() {
-        return `simultaneous(${this.childEvents.map(e => e.toString()).join(', ')})`;
+        return `simultaneous(${this.activeChildEvents.map(e => e.toString()).join(', ')})`;
     }
 }
 
