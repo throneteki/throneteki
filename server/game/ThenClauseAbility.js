@@ -14,11 +14,13 @@ class ThenClauseAbility extends BaseAbility {
     }
 
     createContext(parentContext) {
-        return new AbilityContext({
+        let context = new AbilityContext({
             game: parentContext.game,
             player: this.player || parentContext.player,
             source: parentContext.source
         });
+        context.parentContext = parentContext;
+        return context;
     }
 
     meetsRequirements() {

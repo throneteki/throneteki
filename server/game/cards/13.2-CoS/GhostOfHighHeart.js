@@ -24,7 +24,7 @@ class GhostOfHighHeart extends DrawCard {
                     })).then({
                         target: {
                             activePromptTitle: 'Select a card',
-                            cardCondition: (card, context) => card.location === 'hand' && (!context.chosenPlayer || card.controller === context.chosenPlayer),
+                            cardCondition: (card, context) => card.location === 'hand' && (!context.parentContext.chosenPlayer || card.controller === context.parentContext.chosenPlayer),
                             revealTargets: true
                         },
                         message: 'Then {player} uses {source} to discard {target}',
