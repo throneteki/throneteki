@@ -1,5 +1,5 @@
 const SimultaneousEvents = require('../../server/game/SimultaneousEvents');
-const Event = require('../../server/game/Event');
+const Event = require('../../server/game/event');
 
 describe('SimultaneousEvents', function() {
     beforeEach(function() {
