@@ -6,7 +6,8 @@ describe('DropCommand', () => {
             this.gameSpy = jasmine.createSpyObj('game', ['addAlert', 'killCharacter']);
             this.playerSpy = jasmine.createSpyObj('player', ['discardCard', 'moveCard', 'putIntoPlay']);
 
-            this.cardSpy = jasmine.createSpyObj('card', ['getType']);
+            this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'getType']);
+            this.cardSpy.allowGameAction.and.returnValue(true);
             this.cardSpy.controller = this.cardSpy.owner = this.playerSpy;
             this.cardSpy.getType.and.returnValue('character');
             this.cardSpy.location = 'hand';
@@ -100,12 +101,32 @@ describe('DropCommand', () => {
                 describe(`when the card is a ${type}`, function() {
                     beforeEach(function() {
                         this.cardSpy.getType.and.returnValue(type);
-
-                        this.executeForLocation('discard pile');
                     });
 
-                    it('should discard the card', function() {
-                        expect(this.playerSpy.discardCard).toHaveBeenCalledWith(this.cardSpy, false, jasmine.objectContaining({ force: true }));
+                    describe('and it is not in play', function() {
+                        beforeEach(function() {
+                            this.cardSpy.location = 'dead pile';
+                            this.executeForLocation('discard pile');
+                        });
+
+                        it('should move the card directly', function() {
+                            expect(this.playerSpy.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
+                        });
+
+                        it('should not discard the card', function() {
+                            expect(this.playerSpy.discardCard).not.toHaveBeenCalled();
+                        });
+                    });
+
+                    describe('and it is in play', function() {
+                        beforeEach(function() {
+                            this.cardSpy.location = 'play area';
+                            this.executeForLocation('discard pile');
+                        });
+
+                        it('should discard the card', function() {
+                            expect(this.playerSpy.discardCard).toHaveBeenCalledWith(this.cardSpy, false, jasmine.objectContaining({ force: true }));
+                        });
                     });
                 });
             }

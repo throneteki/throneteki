@@ -1,4 +1,5 @@
 const PublicLocations = new Set(['dead pile', 'discard pile', 'out of game', 'play area']);
+const DiscardCard = require('../GameActions/DiscardCard');
 
 class DropCommand {
     constructor(game, player, card, targetLocation) {
@@ -22,7 +23,7 @@ class DropCommand {
             this.player.putIntoPlay(this.card, 'play', { force: true });
         } else if(this.targetLocation === 'dead pile' && this.card.location === 'play area') {
             this.game.killCharacter(this.card, { allowSave: false, force: true });
-        } else if(this.targetLocation === 'discard pile') {
+        } else if(this.targetLocation === 'discard pile' && DiscardCard.allow({ card: this.card, force: true })) {
             this.player.discardCard(this.card, false, { force: true });
         } else {
             this.player.moveCard(this.card, this.targetLocation);
