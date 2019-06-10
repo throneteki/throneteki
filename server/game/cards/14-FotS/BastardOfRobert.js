@@ -18,7 +18,7 @@ class BastardOfRobert extends DrawCard {
                 )
             },
             message: '{player} uses {source} to draw 1 card',
-            hander: context => {
+            handler: context => {
                 context.player.drawCardsToHand(1);
             }
         });
