@@ -10,9 +10,8 @@ class BearIslandHost extends DrawCard {
             },
             handler: context => {
                 this.untilEndOfPhase(ability => ({
-                    condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
                     match: context.target,
-                    effect: ability.effects.doesNotKneelAsAttacker()
+                    effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
                 }));
 
                 this.game.addMessage('{0} discards a gold from {1} to make {2} not kneel as an attacker in a military challenge',

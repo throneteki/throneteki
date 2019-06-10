@@ -4,11 +4,10 @@ class VanguardOfTheNorth extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
-                this.game.isDuringChallenge({ challengeType: 'military' }) &&
                 this.game.getPlayers().some(player => player.activePlot && player.activePlot.hasTrait('War'))
             ),
             match: this,
-            effect: ability.effects.doesNotKneelAsAttacker()
+            effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
         });
     }
 }

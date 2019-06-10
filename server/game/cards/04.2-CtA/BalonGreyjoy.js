@@ -5,12 +5,11 @@ class BalonGreyjoy extends DrawCard {
         this.persistentEffect({
             condition: () => {
                 return (this.game.currentChallenge &&
-                    this.game.currentChallenge.challengeType === 'military' &&
                     !this.game.currentChallenge.defendingPlayer.anyCardsInPlay(card => card.hasTrait('King')));
             },
             match: this,
             effect: [
-                ability.effects.doesNotKneelAsAttacker()
+                ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
             ]
         });
 

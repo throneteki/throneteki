@@ -3,11 +3,9 @@ const DrawCard = require('../../drawcard.js');
 class MyrcellaBaratheon extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => (
-                this.areNoKingsInPlay() &&
-                this.game.isDuringChallenge({ challengeType: 'power' })),
+            condition: () => this.areNoKingsInPlay(),
             match: this,
-            effect: ability.effects.doesNotKneelAsDefender()
+            effect: ability.effects.doesNotKneelAsDefender({ challengeType: 'power' })
         });
 
         this.persistentEffect({
