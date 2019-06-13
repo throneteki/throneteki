@@ -24,7 +24,7 @@ class SerImryFlorent extends DrawCard {
                         target: {
                             mode: 'exactly',
                             numCards: Math.min(context.target.length, context.opponent.getNumberOfCardsInPlay(card => card.getType() === 'character' && !card.kneeled)),
-                            cardCondition: card => card.getType() === 'character' && !card.kneeled && card.location === 'play area',
+                            cardCondition: card => card.getType() === 'character' && !card.kneeled && card.location === 'play area' && card.controller === context.opponent,
                             gameAction: 'kneel'
                         },
                         message: 'Then {player} kneels {target} for {source}',
