@@ -1,8 +1,11 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
 const TextHelper = require('../../TextHelper');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class TheRedKeep extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forRound(this.game);
+
         this.persistentEffect({
             condition: () =>
                 this.game.currentChallenge &&
@@ -15,7 +18,7 @@ class TheRedKeep extends DrawCard {
         this.interrupt({
             when: {
                 onPhaseEnded: event => event.phase === 'challenge' &&
-                    this.controller.getNumberOfChallengesLost('power') === 0
+                    !this.tracker.some({ loser: this.controller, challengeType: 'power' })
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {

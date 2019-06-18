@@ -1,19 +1,22 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class ServeObeyProtect extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.reaction({
             when: {
                 onChallengeInitiated: event => event.challenge.defendingPlayer === this.controller &&
-                                               this.controller.getNumberOfChallengesLost('defender') >= 1
+                                               this.tracker.some({ loser: this.controller, defendingPlayer: this.controller })
             },
             cost: ability.costs.returnToHand(card => card.isFaction('martell') && card.getType() === 'character'),
             target: {
                 cardCondition: (card, context) => card.location === 'hand' && card.controller === this.controller &&
                                                   card.isFaction('martell') && card.getType() === 'character' &&
-                                                  card.getPrintedCost() <= 5 && 
+                                                  card.getPrintedCost() <= 5 &&
                                                   (!context.costs.returnToHand || card !== context.costs.returnToHand)
-                                       
+
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);

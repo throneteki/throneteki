@@ -1,11 +1,15 @@
 const DrawCard = require('../../drawcard.js');
+const {ChallengeTracker} = require('../../EventTrackers');
 const TextHelper = require('../../TextHelper');
 
 class RiverGate extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.plotModifiers({
             gold: 1
         });
+
         this.action({
             title: 'Sacrifice to draw 2 cards',
             condition: context => this.hasLost2Challenges(context.player),
@@ -20,7 +24,7 @@ class RiverGate extends DrawCard {
     }
 
     hasLost2Challenges(player) {
-        return player.challenges.countChallenges(challenge => challenge.loser === player) >= 2;
+        return this.tracker.count({ loser: player }) >= 2;
     }
 }
 

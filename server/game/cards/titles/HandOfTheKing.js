@@ -1,7 +1,10 @@
-const TitleCard = require('../../TitleCard.js');
+const TitleCard = require('../../TitleCard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class HandOfTheKing extends TitleCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.supports('Master of Laws');
         this.rivals('Master of Coin', 'Master of Ships');
         this.persistentEffect({
@@ -34,8 +37,7 @@ class HandOfTheKing extends TitleCard {
     }
 
     powerChallengeOpponents() {
-        let challenges = this.controller.getParticipatedChallenges();
-        let powerChallenges = challenges.filter(challenge => challenge.attackingPlayer === this.controller && challenge.challengeType === 'power');
+        let powerChallenges = this.tracker.filter({ attackingPlayer: this.controller, challengeType: 'power' });
 
         return new Set(powerChallenges.map(challenge => challenge.defendingPlayer));
     }

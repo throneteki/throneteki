@@ -1,7 +1,10 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../plotcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class ForTheWatch extends PlotCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.persistentEffect({
             condition: () => (
                 this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
@@ -13,14 +16,7 @@ class ForTheWatch extends PlotCard {
     }
 
     numOfChallengesInitiatedAgainst() {
-        let challenges = this.controller.getParticipatedChallenges();
-        return challenges.reduce((sum, challenge) => {
-            if(challenge.defendingPlayer === this.controller) {
-                return sum + 1;
-            }
-
-            return sum;
-        }, 0);
+        return this.tracker.count({ defendingPlayer: this.controller });
     }
 }
 

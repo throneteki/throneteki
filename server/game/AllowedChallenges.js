@@ -1,6 +1,6 @@
 const AllowedChallenge = require('./AllowedChallenge');
 
-class ChallengeTracker {
+class AllowedChallenges {
     constructor(player) {
         this.player = player;
         this.allowedChallenges = [
@@ -8,15 +8,22 @@ class ChallengeTracker {
             new AllowedChallenge('intrigue'),
             new AllowedChallenge('power')
         ];
-        this.challenges = [];
         this.restrictions = [];
 
         this.reset();
     }
 
-    track(challenge) {
-        this.challenges.push(challenge);
+    get numInitiated() {
+        return this.allowedChallenges.reduce((count, allowance) => {
+            if(allowance.used) {
+                return count + 1;
+            }
 
+            return count;
+        }, 0);
+    }
+
+    track(challenge) {
         if(challenge.attackingPlayer === this.player) {
             this.useAllowedChallenge(challenge);
         }
@@ -30,8 +37,6 @@ class ChallengeTracker {
     }
 
     untrack(challenge) {
-        this.challenges = this.challenges.filter(c => c !== challenge);
-
         let allowedChallenge = this.allowedChallenges.find(allowedChallenge => allowedChallenge.challenge === challenge && allowedChallenge.used);
         if(allowedChallenge) {
             allowedChallenge.resetUsage();
@@ -39,18 +44,13 @@ class ChallengeTracker {
     }
 
     reset() {
-        this.challenges = [];
         for(let allowedChallenge of this.allowedChallenges) {
             allowedChallenge.resetUsage();
         }
     }
 
-    getChallenges() {
-        return this.challenges;
-    }
-
     canInitiate(challengeType, opponent) {
-        if(!!this.maxTotal && this.getPerformed() >= this.maxTotal) {
+        if(!!this.maxTotal && this.numInitiated >= this.maxTotal) {
             return false;
         }
 
@@ -59,38 +59,6 @@ class ChallengeTracker {
         }
 
         return this.allowedChallenges.some(allowedChallenge => allowedChallenge.isMatch(challengeType, opponent));
-    }
-
-    getWon(challengeType) {
-        return this.countChallenges(this.challengeTypePredicate(challengeType, 'winner'));
-    }
-
-    getLost(challengeType) {
-        return this.countChallenges(this.challengeTypePredicate(challengeType, 'loser'));
-    }
-
-    challengeTypePredicate(challengeType, property) {
-        return challenge => {
-            if(challengeType === 'attacker') {
-                return challenge.attackingPlayer === this.player && challenge[property] === this.player;
-            }
-
-            if(challengeType === 'defender') {
-                return challenge.defendingPlayer === this.player && challenge[property] === this.player;
-            }
-
-            return challenge.challengeType === challengeType && challenge[property] === this.player;
-        };
-    }
-
-    getPerformed(challengeType) {
-        return this.countChallenges(challenge => {
-            if(!challengeType) {
-                return challenge.attackingPlayer === this.player;
-            }
-
-            return challenge.challengeType === challengeType && challenge.attackingPlayer === this.player;
-        });
     }
 
     setMax(max) {
@@ -119,16 +87,6 @@ class ChallengeTracker {
             this.allowedChallenges.splice(index, 1);
         }
     }
-
-    countChallenges(predicate) {
-        return this.challenges.reduce((sum, challenge) => {
-            if(!predicate(challenge)) {
-                return sum;
-            }
-
-            return sum + 1;
-        }, 0);
-    }
 }
 
-module.exports = ChallengeTracker;
+module.exports = AllowedChallenges;

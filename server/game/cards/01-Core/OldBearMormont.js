@@ -1,7 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class OldBearMormont extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.persistentEffect({
             condition: () => this.controller.anyCardsInPlay(card => card.name === 'The Wall'),
             match: this,
@@ -9,7 +12,7 @@ class OldBearMormont extends DrawCard {
         });
         this.interrupt({
             when: {
-                onPhaseEnded: event => event.phase === 'challenge' && this.controller.getNumberOfChallengesLost('defender') === 0
+                onPhaseEnded: event => event.phase === 'challenge' && !this.tracker.some({ defendingPlayer: this.controller, loser: this.controller })
             },
             target: {
                 activePromptTitle: 'Select a card',

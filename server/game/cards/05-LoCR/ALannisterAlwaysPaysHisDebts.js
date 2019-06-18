@@ -1,7 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class ALannisterAlwaysPaysHisDebts extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.action({
             max: ability.limit.perPhase(1),
             title: 'Raise challenge limit',
@@ -23,8 +26,7 @@ class ALannisterAlwaysPaysHisDebts extends DrawCard {
     }
 
     hasLostChallengeAgainst(opponent) {
-        let challenges = this.controller.getParticipatedChallenges();
-        return challenges.some(challenge => challenge.winner === opponent);
+        return this.tracker.some({ winner: opponent, loser: this.controller });
     }
 }
 

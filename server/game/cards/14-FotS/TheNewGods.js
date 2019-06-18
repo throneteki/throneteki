@@ -1,7 +1,10 @@
 const PlotCard = require('../../plotcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class TheNewGods extends PlotCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.persistentEffect({
             match: card => card.getType() === 'character' && card.hasTrait('The Seven'),
             condition: () => this.isAttackingInFirstChallenge(),
@@ -10,11 +13,7 @@ class TheNewGods extends PlotCard {
     }
 
     isAttackingInFirstChallenge() {
-        let currentChallenge = this.game.currentChallenge;
-
-        return currentChallenge &&
-                currentChallenge.attackingPlayer === this.controller &&
-                this.controller.getNumberOfChallengesInitiated() === 0;
+        return !this.tracker.some({ attackingPlayer: this.controller });
     }
 }
 
