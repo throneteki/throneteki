@@ -1,7 +1,10 @@
 const DrawCard = require('../../drawcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class PrivilegedPosition extends DrawCard {
     setupCardAbilities() {
+        this.tracker = ChallengeTracker.forRound(this.game);
+
         this.interrupt({
             canCancel: true,
             when: {
@@ -20,8 +23,7 @@ class PrivilegedPosition extends DrawCard {
     }
 
     hasLostPowerChallenge() {
-        let challenges = this.controller.getParticipatedChallenges();
-        return challenges.some(challenge => challenge.loser === this.controller && challenge.challengeType === 'power');
+        return this.tracker.some({ loser: this.controller, challengeType: 'power' });
     }
 }
 
