@@ -1,4 +1,4 @@
-fdescribe('Mhysa', function() {
+describe('Mhysa', function() {
     integration({ numOfPlayers: 1 }, function() {
         describe('when attacking in a power challenge', function() {
             beforeEach(function() {
