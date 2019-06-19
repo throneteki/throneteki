@@ -1,7 +1,10 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class BridgeOfSkulls extends DrawCard {
     setupCardAbilities() {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.interrupt({
             when: {
                 onPhaseEnded: event => event.phase === 'challenge'
@@ -19,13 +22,7 @@ class BridgeOfSkulls extends DrawCard {
     }
 
     hasInitiatedMilitaryChallenge(opponent) {
-        let challenges = opponent.getParticipatedChallenges();
-
-        return challenges.some(challenge => (
-            challenge.challengeType === 'military' &&
-            challenge.attackingPlayer === opponent &&
-            challenge.defendingPlayer === this.controller
-        ));
+        return this.tracker.some({ attackingPlayer: opponent, defendingPlayer: this.controller, challengeType: 'military' });
     }
 }
 

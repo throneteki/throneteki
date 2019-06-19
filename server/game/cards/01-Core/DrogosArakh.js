@@ -1,18 +1,18 @@
 const DrawCard = require('../../drawcard.js');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class DrogosArakh extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forRound(this.game);
+
         this.attachmentRestriction({ trait: 'Dothraki' });
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
         this.whileAttached({
-            condition: () => (
-                this.game.isDuringChallenge({ challengeType: 'military' }) &&
-                this.controller.getNumberOfChallengesInitiatedByType('military') === 0
-            ),
+            condition: () => !this.tracker.some({ attackingPlayer: this.controller, challengeType: 'military' }),
             match: card => card.name === 'Khal Drogo',
-            effect: ability.effects.doesNotKneelAsAttacker()
+            effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'military' })
         });
     }
 }

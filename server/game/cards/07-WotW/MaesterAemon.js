@@ -1,9 +1,12 @@
 const ApplyClaim = require('../../gamesteps/challenge/applyclaim.js');
 const DrawCard = require('../../drawcard.js');
 const Claim = require('../../Claim');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class MaesterAemon extends DrawCard {
     setupCardAbilities() {
+        this.tracker = ChallengeTracker.forPhase(this.game);
+
         this.interrupt({
             when: {
                 onPhaseEnded: event => event.phase === 'challenge' && !this.allChallengesDefended()
@@ -69,8 +72,7 @@ class MaesterAemon extends DrawCard {
     }
 
     challengeTypesDefended() {
-        let challenges = this.controller.getParticipatedChallenges();
-        let challengesDefended = challenges.filter(challenge => challenge.defendingPlayer === this.controller);
+        let challengesDefended = this.tracker.filter({ defendingPlayer: this.controller });
         return challengesDefended.map(challenge => challenge.challengeType);
     }
 }

@@ -8,7 +8,7 @@ const Event = require('./event');
 const AbilityContext = require('./AbilityContext.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 const BestowPrompt = require('./gamesteps/bestowprompt.js');
-const ChallengeTracker = require('./challengetracker.js');
+const AllowedChallenges = require('./AllowedChallenges');
 const PlayableLocation = require('./playablelocation.js');
 const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
@@ -51,7 +51,7 @@ class Player extends Spectator {
         this.drawPhaseCards = DrawPhaseCards;
         this.cardsInPlayBeforeSetup = [];
         this.deck = {};
-        this.challenges = new ChallengeTracker(this);
+        this.challenges = new AllowedChallenges(this);
         this.minReserve = 0;
         this.costReducers = [];
         this.playableLocations = this.createDefaultPlayableLocations();
@@ -136,22 +136,6 @@ class Player extends Spectator {
 
     getFaction() {
         return this.faction.getPrintedFaction();
-    }
-
-    getNumberOfChallengesWon(challengeType) {
-        return this.challenges.getWon(challengeType);
-    }
-
-    getNumberOfChallengesLost(challengeType) {
-        return this.challenges.getLost(challengeType);
-    }
-
-    getNumberOfChallengesInitiatedByType(challengeType) {
-        return this.challenges.getPerformed(challengeType);
-    }
-
-    getNumberOfChallengesInitiated() {
-        return this.challenges.getPerformed();
     }
 
     getNumberOfUsedPlots() {
@@ -835,10 +819,6 @@ class Player extends Spectator {
 
     untrackChallenge(challenge) {
         this.challenges.untrack(challenge);
-    }
-
-    getParticipatedChallenges() {
-        return this.challenges.getChallenges();
     }
 
     resetForChallenge() {

@@ -1,14 +1,15 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class Mhysa extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = ChallengeTracker.forRound(this.game);
+
         this.attachmentRestriction({ trait: 'Lady' });
         this.whileAttached({
-            condition: () =>
-                this.game.isDuringChallenge({ challengeType: 'power' }) &&
-                this.controller.getNumberOfChallengesInitiatedByType('power') === 0,
+            condition: () => !this.tracker.some({ attackingPlayer: this.controller, challengeType: 'power' }),
             effect: [
-                ability.effects.doesNotKneelAsAttacker(),
+                ability.effects.doesNotKneelAsAttacker({ challengeType: 'power' }),
                 ability.effects.dynamicStrength(() => this.getAttackingCharacters())
             ]
         });
