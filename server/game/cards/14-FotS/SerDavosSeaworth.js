@@ -17,7 +17,7 @@ class SerDavosSeaworth extends DrawCard {
                         card: context.event.challenge.loser.faction
                     })).then({
                         target: {
-                            cardCondition: card => card.controller === context.player && card.getType() === 'character' && card.hasTrait('King')
+                            cardCondition: card => card.location === 'play area' && card.controller === context.player && card.getType() === 'character' && card.hasTrait('King') && card.canGainPower()
                         },
                         message: 'Then {player} uses {source} to have {target} gain 1 power',
                         handler: thenContext => {
