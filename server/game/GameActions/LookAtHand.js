@@ -6,7 +6,7 @@ class LookAtHand extends GameAction {
     }
 
     canChangeGameState({ opponent }) {
-        return opponent.hand.length > 0;
+        return opponent && opponent.hand.length > 0;
     }
 
     createEvent({ player, opponent, context }) {
