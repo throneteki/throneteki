@@ -7,6 +7,7 @@ const SelfCost = require('./costs/SelfCost.js');
 const StandCost = require('./costs/StandCost.js');
 const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
 const MovePowerFromFactionCost = require('./costs/MovePowerFromFactionCost');
+const DiscardFromDeckCost = require('./costs/DiscardFromDeckCost');
 
 const Costs = {
     /**
@@ -173,6 +174,10 @@ const Costs = {
      * condition predicate function.
      */
     discardFromShadows: condition => CostBuilders.discardFromShadows.select(condition),
+    /**
+     * Cost that requires discarding the top card from the draw deck.
+     */
+    discardFromDeck: () => new DiscardFromDeckCost(),
     /**
      * Cost that will pay the reduceable gold cost associated with an event card
      * and place it in discard.
