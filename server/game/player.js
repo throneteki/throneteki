@@ -1,6 +1,7 @@
 const shuffle = require('lodash.shuffle');
 
 const Spectator = require('./spectator.js');
+const CardMatcher = require('./CardMatcher');
 const DrawCard = require('./drawcard.js');
 const Deck = require('./Deck');
 const AtomicEvent = require('./AtomicEvent');
@@ -100,7 +101,10 @@ class Player extends Spectator {
         return false;
     }
 
-    anyCardsInPlay(predicate) {
+    anyCardsInPlay(predicateOrMatcher) {
+        const predicate = typeof(predicateOrMatcher) === 'function'
+            ? predicateOrMatcher
+            : card => CardMatcher.isMatch(card, predicateOrMatcher);
         return this.game.allCards.some(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
