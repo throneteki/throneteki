@@ -1,15 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const GenericTracker = require('../../EventTrackers/GenericTracker');
 
 class KingsLanding extends DrawCard {
-    constructor(owner, cardData) {
-        super(owner, cardData);
-
-        this.registerEvents(['onCardMarshalled', 'onPhaseEnded']);
-    }
-
     setupCardAbilities(ability) {
+        this.tracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
+
         this.persistentEffect({
-            condition: () => !this.hasMarshalledThisPhase,
+            condition: () => !this.hasMarshalledThisPhase(),
             targetController: 'current',
             effect: ability.effects.canMarshal(card => card.controller === this.controller && card.location === 'discard pile' && card.getType() === 'location')
         });
@@ -30,17 +27,13 @@ class KingsLanding extends DrawCard {
         });
     }
 
-    onCardMarshalled(event) {
-        if(event.player === this.controller && event.originalController === this.controller && event.originalLocation === 'discard pile' && event.card.getType() === 'location') {
-            this.hasMarshalledThisPhase = true;
-            // Explicitly recalculate effects to ensure that the persistent
-            // effect's condition is checked immediately and thus disabled.
-            this.game.postEventCalculations();
-        }
-    }
-
-    onPhaseEnded() {
-        this.hasMarshalledThisPhase = false;
+    hasMarshalledThisPhase() {
+        return this.tracker.events.some(event => (
+            event.player === this.controller &&
+            event.originalController === this.controller &&
+            event.originalLocation === 'discard pile' &&
+            event.card.getType() === 'location'
+        ));
     }
 }
 

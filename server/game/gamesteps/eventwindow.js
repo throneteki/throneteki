@@ -14,7 +14,8 @@ class EventWindow extends BaseStep {
             new SimpleStep(game, () => this.emitBaseEvent()),
             new SimpleStep(game, () => this.openWhenRevealedWindow()),
             new SimpleStep(game, () => this.openAbilityWindow('forcedreaction')),
-            new SimpleStep(game, () => this.openAbilityWindow('reaction'))
+            new SimpleStep(game, () => this.openAbilityWindow('reaction')),
+            new SimpleStep(game, () => this.postHandlerFunc())
         ]);
         this.postHandlerFunc = postHandlerFunc;
     }

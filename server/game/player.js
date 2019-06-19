@@ -13,6 +13,7 @@ const PlayableLocation = require('./playablelocation.js');
 const PlayActionPrompt = require('./gamesteps/playactionprompt.js');
 const PlayerPromptState = require('./playerpromptstate.js');
 const MinMaxProperty = require('./PropertyTypes/MinMaxProperty');
+const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const GoldSource = require('./GoldSource.js');
 const GameActions = require('./GameActions');
 const RemoveFromGame = require('./GameActions/RemoveFromGame');
@@ -84,12 +85,13 @@ class Player extends Spectator {
         this.showDeck = false;
         this.shuffleArray = shuffle;
         this.role = user.role;
+        this.flags = new ReferenceCountedSetProperty();
 
         this.promptState = new PlayerPromptState();
     }
 
     createDefaultPlayableLocations() {
-        let playFromHand = ['marshal', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
+        let playFromHand = ['marshal', 'marshalIntoShadows', 'play', 'ambush'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'hand'));
         let playFromShadows = ['outOfShadows', 'play'].map(playingType => new PlayableLocation(playingType, card => card.controller === this && card.location === 'shadows'));
         return playFromHand.concat(playFromShadows);
     }
@@ -1213,6 +1215,7 @@ class Player extends Spectator {
                 conclavePile: this.getSummaryForCardList(this.conclavePile, activePlayer),
                 deadPile: this.getSummaryForCardList(this.deadPile, activePlayer).reverse(),
                 discardPile: this.getSummaryForCardList(fullDiscardPile, activePlayer).reverse(),
+                drawDeck: this.getSummaryForCardList(this.drawDeck, activePlayer),
                 hand: this.getSummaryForCardList(this.hand, activePlayer),
                 outOfGamePile: this.getSummaryForCardList(this.outOfGamePile, activePlayer).reverse(),
                 plotDeck: plots,
@@ -1232,6 +1235,7 @@ class Player extends Spectator {
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
+            revealTopCard: this.flags.contains('revealTopCard'),
             showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,
@@ -1240,12 +1244,6 @@ class Player extends Spectator {
                 username: this.user.username
             }
         };
-
-        let drawDeck = this.getSummaryForCardList(this.drawDeck, activePlayer);
-
-        if(drawDeck.some(card => !card.facedown)) {
-            state.cardPiles.drawDeck = drawDeck;
-        }
 
         return Object.assign(state, promptState);
     }
