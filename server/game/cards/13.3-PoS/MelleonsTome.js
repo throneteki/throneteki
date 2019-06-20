@@ -29,7 +29,8 @@ class MalleonsTome extends DrawCard {
                 }
 
                 this.game.addMessage(message, ...messageArgs);
-            }
+            },
+            limit: ability.limit.perPhase(1)
         });
     }
 }
