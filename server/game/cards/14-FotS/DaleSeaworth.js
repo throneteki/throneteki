@@ -9,7 +9,7 @@ class DaleSeaworth extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select a location',
-                cardCondition: card => card.location === 'discard pile' && card.getType() === 'location' && card.controller === this.controller,
+                cardCondition: card => card.location === 'discard pile' && card.getType() === 'location' && card.controller === this.controller
             },
             message: '{player} uses {source} to return {target} to hand',
             handler: context => {
