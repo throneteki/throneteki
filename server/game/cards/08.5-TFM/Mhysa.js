@@ -8,10 +8,12 @@ class Mhysa extends DrawCard {
         this.attachmentRestriction({ trait: 'Lady' });
         this.whileAttached({
             condition: () => !this.tracker.some({ attackingPlayer: this.controller, challengeType: 'power' }),
-            effect: [
-                ability.effects.doesNotKneelAsAttacker({ challengeType: 'power' }),
-                ability.effects.dynamicStrength(() => this.getAttackingCharacters())
-            ]
+            effect: ability.effects.doesNotKneelAsAttacker({ challengeType: 'power' })
+        });
+
+        this.whileAttached({
+            condition: () => this.tracker.count({ attackingPlayer: this.controller, challengeType: 'power' }) <= 1,
+            effect: ability.effects.dynamicStrength(() => this.getAttackingCharacters())
         });
     }
 
