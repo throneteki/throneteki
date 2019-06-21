@@ -12,7 +12,7 @@ class UnexpectedGuile extends DrawCard {
 
         this.forcedInterrupt({
             when: {
-                afterChallenge: event => event.challenge.isParticipating(this.parent)
+                onChallengeFinished: event => event.challenge.isParticipating(this.parent)
             },
             handler: context => {
                 context.player.moveCard(this.parent, 'shadows');
