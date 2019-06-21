@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class UnexpectedGuile extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(card => card.isShadow() && card.controller === this.controller);
+        this.attachmentRestriction({ controller: 'current', shadow: true });
         this.whileAttached({
             effect: [
                 ability.effects.modifyStrength(2),
