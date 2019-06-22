@@ -13,7 +13,10 @@ class TowerOfTheHand extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isFaction('stark'),
                 gameAction: 'stand'
             },
-            message: '{player} kneels {source} to stand {target}'
+            message: '{player} kneels {source} to stand {target}',
+            handler: context => {
+                context.player.standCard(context.target);
+            }
         });
     }
 }
