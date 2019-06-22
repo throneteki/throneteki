@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 class Counter extends React.Component {
     render() {
-        let className = classNames('counter', this.props.name, {
+        let className = classNames('counter', `${this.props.name}-token`, {
             'cancel': this.props.cancel,
             'fade-out': this.props.fade
         });
