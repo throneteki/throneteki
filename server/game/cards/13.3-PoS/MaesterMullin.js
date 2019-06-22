@@ -1,13 +1,10 @@
 const DrawCard = require('../../drawcard.js');
 const ChallengeTypes = require('../../ChallengeTypes');
 
-class MeasterMullin extends DrawCard {
+class MaesterMullin extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Kneel to choose a character',
-            when: {
-                onCardEntersPlay: event => event.card === this
-            },
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
@@ -42,6 +39,6 @@ class MeasterMullin extends DrawCard {
     }
 }
 
-MeasterMullin.code = '13045';
+MaesterMullin.code = '13045';
 
-module.exports = MeasterMullin;
+module.exports = MaesterMullin;
