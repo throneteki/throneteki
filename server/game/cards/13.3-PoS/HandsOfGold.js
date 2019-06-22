@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions');
 
 class HandsOfGold extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.isMatch({
@@ -22,7 +22,8 @@ class HandsOfGold extends DrawCard {
                     GameActions.returnCardToHand(context => ({ card: context.target })),
                     context
                 );
-            }
+            },
+            max: ability.limit.perChallenge(1)
         });
     }
 }
