@@ -11,7 +11,7 @@ class GuardDuty extends DrawCard {
             handler: () => {
                 this.controller.standCard(this.parent);
 
-                this.game.addMessafge('{0} kneels {1} to stand {2}', this.controller, this, this.parent);
+                this.game.addMessage('{0} kneels {1} to stand {2}', this.controller, this, this.parent);
             }
         });
     }
