@@ -2,16 +2,16 @@ const DrawCard = require('../../drawcard.js');
 
 class GuardDuty extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction(
-            { faction: 'thenightswatch' }
-        );
+        this.attachmentRestriction({ faction: 'thenightswatch' });
         this.reaction({
             when: {
-                onDeclaredAsDefender: event => event.card === this.parent
+                onDeclaredAsDefender: event => this.parent && event.card === this.parent && this.parent.kneeled && this.parent.allowGameAction('stand')
             },
             cost: ability.costs.kneelSelf(),
             handler: () => {
                 this.controller.standCard(this.parent);
+
+                this.game.addMessafge('{0} kneels {1} to stand {2}', this.controller, this, this.parent);
             }
         });
     }
