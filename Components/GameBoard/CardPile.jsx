@@ -79,7 +79,9 @@ class CardPile extends React.Component {
             menuItem.handler();
         }
 
-        this.togglePopup();
+        if(menuItem.close) {
+            this.togglePopup();
+        }
     }
 
     onTopCardClick() {
@@ -159,9 +161,18 @@ class CardPile extends React.Component {
         let innerClass = classNames('inner', this.props.size);
         let linkIndex = 0;
 
-        let popupMenu = this.props.popupMenu ? (<div>{ this.props.popupMenu.map(menuItem => {
-            return <a className='btn btn-default' key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>{ menuItem.text }</a>;
-        }) }</div>) : null;
+        let popupMenu = this.props.popupMenu && (
+            <div className='card-pile-buttons'>
+                { this.props.popupMenu.map(menuItem => {
+                    return (
+                        <a className='btn btn-default' key={ linkIndex++ } onClick={ () => this.onPopupMenuItemClick(menuItem) }>
+                            { menuItem.icon && <span className={ `glyphicon glyphicon-${menuItem.icon}` }/> }
+                            { ' ' }
+                            { menuItem.text }
+                        </a>);
+                }) }
+            </div>
+        );
 
         popup = (
             <MovablePanel title={ this.props.title } name={ this.props.source } onCloseClick={ this.onCloseClick } side={ this.props.popupLocation }>

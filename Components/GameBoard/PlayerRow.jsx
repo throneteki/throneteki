@@ -141,6 +141,7 @@ class PlayerRow extends React.Component {
             numDrawCards={ this.props.numDrawCards }
             onPopupChange={ this.props.onDrawPopupChange }
             onShuffleClick={ this.props.onShuffleClick }
+            revealTopCard={ this.props.revealTopCard }
             showDeck={ this.props.showDeck }
             spectating={ this.props.spectating }
             { ...cardPileProps } />);
@@ -205,6 +206,7 @@ PlayerRow.propTypes = {
     outOfGamePile: PropTypes.array,
     plotDeck: PropTypes.array,
     power: PropTypes.number,
+    revealTopCard: PropTypes.bool,
     shadows: PropTypes.array,
     showDeck: PropTypes.bool,
     side: PropTypes.oneOf(['top', 'bottom']),

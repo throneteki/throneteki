@@ -330,6 +330,7 @@ export class GameBoard extends React.Component {
                         onMouseOut={ this.onMouseOut }
                         outOfGamePile={ otherPlayer.cardPiles.outOfGamePile }
                         username={ this.props.user.username }
+                        revealTopCard={ otherPlayer.revealTopCard }
                         shadows={ otherPlayer.cardPiles.shadows }
                         spectating={ this.state.spectating }
                         title={ otherPlayer.title }
@@ -395,6 +396,7 @@ export class GameBoard extends React.Component {
                         onDragDrop={ this.onDragDrop }
                         discardPile={ thisPlayer.cardPiles.discardPile }
                         deadPile={ thisPlayer.cardPiles.deadPile }
+                        revealTopCard= { thisPlayer.revealTopCard }
                         shadows={ thisPlayer.cardPiles.shadows }
                         showDeck={ thisPlayer.showDeck }
                         spectating={ this.state.spectating }
