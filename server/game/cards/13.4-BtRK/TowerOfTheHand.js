@@ -10,7 +10,7 @@ class TowerOfTheHand extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isFaction('stark'),
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isFaction('stark') && card.kneeled,
                 gameAction: 'stand'
             },
             message: '{player} kneels {source} to stand {target}',
