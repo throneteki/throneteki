@@ -5,7 +5,7 @@ class DothrakiSteed extends DrawCard {
         this.attachmentRestriction(card => card.getType() === 'character' && card.attachments.every(attachment => attachment === this || attachment.name !== 'Dothraki Steed'));
 
         this.whileAttached({
-            condition: () => this.isAttacking(),
+            condition: () => this.parent.isAttacking(),
             effect: ability.effects.dynamicStrength(() => this.getSTR())
         });
     }
