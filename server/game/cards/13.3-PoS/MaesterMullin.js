@@ -2,9 +2,10 @@ const DrawCard = require('../../drawcard.js');
 const ChallengeTypes = require('../../ChallengeTypes');
 
 class MaesterMullin extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Kneel to choose a character',
+            cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
