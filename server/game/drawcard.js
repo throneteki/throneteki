@@ -279,10 +279,6 @@ class DrawCard extends BaseCard {
         this.icons.remove(icon);
     }
 
-    needsStealthTarget() {
-        return this.isStealth() && !this.stealthTarget;
-    }
-
     canUseStealthToBypass(targetCard) {
         return this.isStealth() && targetCard.canBeBypassedByStealth();
     }

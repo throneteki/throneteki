@@ -166,10 +166,6 @@ class Challenge {
         }
     }
 
-    getStealthAttackers() {
-        return this.attackers.filter(card => card.needsStealthTarget());
-    }
-
     determineWinner() {
         this.calculateStrength();
 
