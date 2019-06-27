@@ -6,7 +6,7 @@ class ShadowOfTheIsles extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Choose and discard locations',
-            targets: {
+            target: {
                 choosingPlayer: 'each',
                 activePromptTitle: 'Select a location',
                 cardCondition: (card, context) => card.location === 'play area' && card.controller === context.choosingPlayer && card.getType() === 'location' && !card.isLimited(),
@@ -15,7 +15,8 @@ class ShadowOfTheIsles extends DrawCard {
             },
             message: '{player} plays {source} to have each player choose and discard a non-limited location',
             handler: context => {
-                let actions = context.targets.map(card => GameActions.discardCard({ card }));
+                let cards = context.targets.selections.map(selection => selection.value).filter(card => !!card);
+                let actions = cards.map(card => GameActions.discardCard({ card }));
 
                 this.game.resolveGameAction(
                     GameActions.simultaneously(actions),
