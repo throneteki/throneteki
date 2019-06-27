@@ -26,7 +26,7 @@ class TheMaidenvault extends DrawCard {
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 context.player.putIntoShadows(this, false);
-                this.game.addMessage('{0} kneels {1} to return it to shadows.', this.controller, this);
+                this.game.addMessage('{0} kneels {1} to return it to shadows.', context.player, this);
             }
         });
     }
