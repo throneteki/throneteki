@@ -11,6 +11,7 @@ class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
         super(game);
         this.challenge = challenge;
+        this.declaredAttackers = [];
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(this.game, () => this.resetCards()),
@@ -73,6 +74,7 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
+        this.declaredAttackers = attackers;
         this.attackersToKneel = [];
         this.challenge.addAttackers(attackers);
 
@@ -89,7 +91,8 @@ class ChallengeFlow extends BaseStep {
     }
 
     chooseStealthTargets() {
-        this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, this.challenge.getStealthAttackers()));
+        const stealthAttackers = this.declaredAttackers.filter(card => card.isStealth());
+        this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, stealthAttackers));
     }
 
     initiateChallenge() {
@@ -100,7 +103,7 @@ class ChallengeFlow extends BaseStep {
             { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
         ];
 
-        let attackerEvents = this.challenge.attackers.map(card => {
+        let attackerEvents = this.declaredAttackers.map(card => {
             return { name: 'onDeclaredAsAttacker', params: { card: card } };
         });
 
