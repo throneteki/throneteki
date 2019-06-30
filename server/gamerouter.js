@@ -69,7 +69,7 @@ class GameRouter extends EventEmitter {
             return {
                 name: worker.identity,
                 numGames: worker.numGames,
-                status: worker.disconnceted ? 'disconnected' : worker.disabled ? 'disabled' : 'active',
+                status: worker.disconnected ? 'disconnected' : worker.disabled ? 'disabled' : 'active',
                 version: worker.version
             };
         });
@@ -236,7 +236,7 @@ class GameRouter extends EventEmitter {
         const pingTimeout = 1 * 60 * 1000;
 
         for(const worker of Object.values(this.workers)) {
-            if(worker.disconnceted) {
+            if(worker.disconnected) {
                 continue;
             }
 
