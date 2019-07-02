@@ -11,7 +11,8 @@ class Lionstar extends DrawCard {
                     card.controller === this.controller &&
                     card.getType() === 'character' &&
                     card.isFaction('lannister') &&
-                    this.controller.canPutIntoPlay(card)
+                    this.controller.canPutIntoPlay(card) &&
+                    card.getPrintedCost() <= 4
                 )
             },
             message: '{player} kneels {source} to put {target} into play',
