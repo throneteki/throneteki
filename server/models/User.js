@@ -41,6 +41,10 @@ class User {
         return this.userData.blockList || [];
     }
 
+    set blockList(value) {
+        this.userData.blockList = value;
+    }
+
     get password() {
         return this.userData.password;
     }
@@ -87,6 +91,15 @@ class User {
         }
 
         return 'user';
+    }
+
+    block(otherUser) {
+        this.userData.blockList = this.userData.blockList || [];
+        this.userData.blockList.push(otherUser.username.toLowerCase());
+    }
+
+    hasUserBlocked(otherUser) {
+        return this.blockList.includes(otherUser.username.toLowerCase());
     }
 
     getWireSafeDetails() {

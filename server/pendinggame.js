@@ -255,6 +255,15 @@ class PendingGame {
         }
     }
 
+    isVisibleFor(user) {
+        if(!user) {
+            return true;
+        }
+
+        let players = Object.values(this.players);
+        return !this.owner.hasUserBlocked(user) && !user.hasUserBlocked(this.owner) && players.every(player => !player.user.hasUserBlocked(user));
+    }
+
     hasActivePlayer(playerName) {
         return this.players[playerName] && !this.players[playerName].left && !this.players[playerName].disconnected || this.spectators[playerName];
     }
