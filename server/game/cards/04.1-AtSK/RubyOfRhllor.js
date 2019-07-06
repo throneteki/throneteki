@@ -2,6 +2,9 @@ const DrawCard = require('../../drawcard.js');
 
 class RubyOfRhllor extends DrawCard {
     setupCardAbilities() {
+        this.attachmentRestriction(
+            { trait: 'R\'hllor' }
+        );
         this.reaction({
             when: {
                 afterChallenge: event =>
