@@ -530,7 +530,7 @@ class Lobby {
         socket.joinChannel(game.id);
 
         if(game.started) {
-            this.router.addSpectator(game, socket.user;
+            this.router.addSpectator(game, socket.user);
             this.sendHandoff(socket, game.node, game.id);
         } else {
             this.sendGameState(game);
