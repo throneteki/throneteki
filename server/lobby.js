@@ -407,7 +407,7 @@ class Lobby {
             let gameToJoin = sortedGames.find(game => !game.started && game.gameType === gameDetails.gameType && Object.values(game.players).length < 2 && !game.password);
 
             if(gameToJoin) {
-                let message = gameToJoin.join(socket.id, socket.user.getDetails());
+                let message = gameToJoin.join(socket.id, socket.user);
                 if(message) {
                     socket.send('passworderror', message);
 
@@ -445,7 +445,7 @@ class Lobby {
             return;
         }
 
-        let message = game.join(socket.id, socket.user.getDetails(), password);
+        let message = game.join(socket.id, socket.user, password);
         if(message) {
             socket.send('passworderror', message);
             return;
@@ -520,7 +520,7 @@ class Lobby {
             return;
         }
 
-        let message = game.watch(socket.id, socket.user.getDetails(), password);
+        let message = game.watch(socket.id, socket.user, password);
         if(message) {
             socket.send('passworderror', message);
 
@@ -530,7 +530,7 @@ class Lobby {
         socket.joinChannel(game.id);
 
         if(game.started) {
-            this.router.addSpectator(game, socket.user.getDetails());
+            this.router.addSpectator(game, socket.user;
             this.sendHandoff(socket, game.node, game.id);
         } else {
             this.sendGameState(game);
