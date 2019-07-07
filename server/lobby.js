@@ -204,7 +204,7 @@ class Lobby {
         }
 
         for(let socket of Object.values(sockets)) {
-            let filteredGames = Object.values(this.games).filter(game => game.isVisibleForUser(socket.user));
+            let filteredGames = Object.values(this.games).filter(game => game.isVisibleFor(socket.user));
             let gameSummaries = this.mapGamesToGameSummaries(filteredGames);
             socket.send('games', gameSummaries);
         }
@@ -424,8 +424,8 @@ class Lobby {
             }
         }
 
-        let game = new PendingGame(socket.user.getDetails(), gameDetails);
-        game.newGame(socket.id, socket.user.getDetails(), gameDetails.password);
+        let game = new PendingGame(socket.user, gameDetails);
+        game.newGame(socket.id, socket.user, gameDetails.password);
 
         socket.joinChannel(game.id);
         this.sendGameState(game);
@@ -719,7 +719,7 @@ class Lobby {
         }
 
         this.games[newGame.id] = newGame;
-        newGame.newGame(socket.id, socket.user.getDetails());
+        newGame.newGame(socket.id, socket.user);
 
         socket.joinChannel(newGame.id);
         this.sendGameState(newGame);

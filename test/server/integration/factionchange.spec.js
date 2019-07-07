@@ -61,7 +61,7 @@ describe('faction change', function() {
                 ]);
                 const deck2 = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Targaryen Loyalist', 'Ser Jorah Mormont'
+                    'Targaryen Loyalist', 'Ser Jorah Mormont (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -72,7 +72,7 @@ describe('faction change', function() {
 
                 this.player1.clickCard('Robb Stark', 'hand');
                 this.player2.clickCard(this.character);
-                this.player2.clickCard('Ser Jorah Mormont', 'hand');
+                this.player2.clickCard('Ser Jorah Mormont (Core)', 'hand');
 
                 this.completeSetup();
 
@@ -91,7 +91,7 @@ describe('faction change', function() {
                 // Skip Player 1 challenges
                 this.player1.clickPrompt('Done');
 
-                this.unopposedChallenge(this.player2, 'Military', 'Ser Jorah Mormont');
+                this.unopposedChallenge(this.player2, 'Military', 'Ser Jorah Mormont (Core)');
 
                 this.player2.clickPrompt('Apply Claim');
                 this.player1.clickCard(this.character);
