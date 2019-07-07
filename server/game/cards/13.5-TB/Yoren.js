@@ -17,7 +17,8 @@ class Yoren extends DrawCard {
                     },
                     match: context.target,
                     effect: ability.effects.takeControl(this.controller)
-                }));            }
+                }));            
+            }
         });
     }
 }
