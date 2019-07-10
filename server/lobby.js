@@ -24,7 +24,7 @@ class Lobby {
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
-        this.userService = options.userService || new UserService(options.db);
+        this.userService = options.userService || new UserService(options.db, options.config);
         this.router = options.router || new GameRouter(this.config);
 
         this.router.on('onGameClosed', this.onGameClosed.bind(this));
@@ -33,6 +33,8 @@ class Lobby {
         this.router.on('onWorkerTimedOut', this.onWorkerTimedOut.bind(this));
         this.router.on('onNodeReconnected', this.onNodeReconnected.bind(this));
         this.router.on('onWorkerStarted', this.onWorkerStarted.bind(this));
+
+        this.userService.on('onBlocklistChanged', this.onBlocklistChanged.bind(this));
 
         this.io = options.io || socketio(server, { perMessageDeflate: false });
         this.io.set('heartbeat timeout', 30000);
@@ -150,6 +152,7 @@ class Lobby {
 
                     ioSocket.request.user = dbUser.getWireSafeDetails();
                     socket.user = dbUser;
+                    this.users[dbUser.username] = socket.user;
 
                     this.doPostAuth(socket);
                 }).catch(err => {
@@ -170,18 +173,6 @@ class Lobby {
     }
 
     // Actions
-    filterGameListWithBlockList(user) {
-        if(!user) {
-            return Object.values(this.games);
-        }
-
-        return Object.values(this.games).filter(game => {
-            let userBlockedByOwner = game.isUserBlocked(user);
-            let userHasBlockedPlayer = Object.values(game.players).some(player => user.blocklist && user.blocklist.includes(player.name.toLowerCase()));
-            return !userBlockedByOwner && !userHasBlockedPlayer;
-        });
-    }
-
     mapGamesToGameSummaries(games) {
         return _.chain(games)
             .map(game => game.getSummary())
@@ -196,7 +187,7 @@ class Lobby {
 
         if(socket.user) {
             filteredUsers = userList.filter(user => {
-                return !socket.user.blockList.includes(user.name.toLowerCase());
+                return !socket.user.hasUserBlocked(user);
             });
         }
 
@@ -213,7 +204,7 @@ class Lobby {
         }
 
         for(let socket of Object.values(sockets)) {
-            let filteredGames = this.filterGameListWithBlockList(socket.user);
+            let filteredGames = Object.values(this.games).filter(game => game.isVisibleFor(socket.user));
             let gameSummaries = this.mapGamesToGameSummaries(filteredGames);
             socket.send('games', gameSummaries);
         }
@@ -287,7 +278,7 @@ class Lobby {
         }
 
         return messages.filter(message => {
-            return !socket.user.blockList.includes(message.user.username.toLowerCase());
+            return !socket.user.hasUserBlocked(message.user);
         });
     }
 
@@ -416,7 +407,7 @@ class Lobby {
             let gameToJoin = sortedGames.find(game => !game.started && game.gameType === gameDetails.gameType && Object.values(game.players).length < 2 && !game.password);
 
             if(gameToJoin) {
-                let message = gameToJoin.join(socket.id, socket.user.getDetails());
+                let message = gameToJoin.join(socket.id, socket.user);
                 if(message) {
                     socket.send('passworderror', message);
 
@@ -433,8 +424,8 @@ class Lobby {
             }
         }
 
-        let game = new PendingGame(socket.user.getDetails(), gameDetails);
-        game.newGame(socket.id, socket.user.getDetails(), gameDetails.password);
+        let game = new PendingGame(socket.user, gameDetails);
+        game.newGame(socket.id, socket.user, gameDetails.password);
 
         socket.joinChannel(game.id);
         this.sendGameState(game);
@@ -454,7 +445,7 @@ class Lobby {
             return;
         }
 
-        let message = game.join(socket.id, socket.user.getDetails(), password);
+        let message = game.join(socket.id, socket.user, password);
         if(message) {
             socket.send('passworderror', message);
             return;
@@ -529,7 +520,7 @@ class Lobby {
             return;
         }
 
-        let message = game.watch(socket.id, socket.user.getDetails(), password);
+        let message = game.watch(socket.id, socket.user, password);
         if(message) {
             socket.send('passworderror', message);
 
@@ -539,7 +530,7 @@ class Lobby {
         socket.joinChannel(game.id);
 
         if(game.started) {
-            this.router.addSpectator(game, socket.user.getDetails());
+            this.router.addSpectator(game, socket.user);
             this.sendHandoff(socket, game.node, game.id);
         } else {
             this.sendGameState(game);
@@ -579,7 +570,7 @@ class Lobby {
         let chatMessage = { user: socket.user.getShortSummary(), message: message, time: new Date() };
 
         for(let s of Object.values(this.sockets)) {
-            if(s.user && s.user.blockList.includes(chatMessage.user.username.toLowerCase())) {
+            if(s.user && s.user.hasUserBlocked(socket.user)) {
                 continue;
             }
 
@@ -728,7 +719,7 @@ class Lobby {
         }
 
         this.games[newGame.id] = newGame;
-        newGame.newGame(socket.id, socket.user.getDetails());
+        newGame.newGame(socket.id, socket.user);
 
         socket.joinChannel(newGame.id);
         this.sendGameState(newGame);
@@ -799,6 +790,16 @@ class Lobby {
                 socket.disconnect();
             }
         });
+    }
+
+    onBlocklistChanged(user) {
+        let updatedUser = this.users[user.username];
+
+        if(!updatedUser) {
+            return;
+        }
+
+        updatedUser.blockList = user.blockList;
     }
 
     onWorkerTimedOut(nodeName) {

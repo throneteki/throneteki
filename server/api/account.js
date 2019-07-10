@@ -3,7 +3,6 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const moment = require('moment');
-const monk = require('monk');
 const _ = require('underscore');
 const sendgrid = require('@sendgrid/mail');
 const fs = require('fs');
@@ -15,12 +14,7 @@ const { wrapAsync } = require('../util');
 const UserService = require('../services/UserService');
 const User = require('../models/User');
 
-let db = monk(config.dbPath);
-let userService = new UserService(db, config);
-
-if(config.emailKey) {
-    sendgrid.setApiKey(config.emailKey);
-}
+let userService;
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
@@ -101,7 +95,12 @@ function writeFile(path, data, opts = 'utf8') {
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
-module.exports.init = function (server) {
+module.exports.init = function (server, options) {
+    userService = options.userService || new UserService(options.db, options.config);
+    if(options.config.emailKey) {
+        sendgrid.setApiKey(options.config.emailKey);
+    }
+
     server.post('/api/account/register', wrapAsync(async (req, res, next) => {
         let message = validateUserName(req.body.username);
         if(message) {
