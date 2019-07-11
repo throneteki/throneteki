@@ -7,7 +7,10 @@ class PaintedDogs extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.returnSelfToHand(),
             target: {
-                cardCondition: card => card.getType() === 'character' && (card.hasTrait('Clansman') || card.name === 'Tyrion Lannister'),
+                cardCondition: card =>
+                    card.getType() === 'character' &&
+                    card.location === 'play area' &&
+                    (card.hasTrait('Clansman') || card.name === 'Tyrion Lannister'),
                 gameAction: 'stand'
             },
             handler: context => {
