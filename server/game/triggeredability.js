@@ -120,8 +120,10 @@ class TriggeredAbility extends BaseAbility {
         // game events in all open information locations plus while in hand.
         // The location property of the ability will prevent it from firing in
         // inappropriate locations when requirements are checked for the ability.
+        //
+        // Also apparently the draw deck because of Maester Gormon.
         if(this.isPlayableEventAbility()) {
-            return ['discard pile', 'hand', 'shadows', 'play area'].includes(location);
+            return ['discard pile', 'draw deck', 'hand', 'shadows', 'play area'].includes(location);
         }
 
         return this.location.includes(location);
