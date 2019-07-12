@@ -15,6 +15,7 @@ class ThenClauseAbility extends BaseAbility {
 
     createContext(parentContext) {
         let context = new AbilityContext({
+            ability: this,
             game: parentContext.game,
             player: this.player || parentContext.player,
             source: parentContext.source
