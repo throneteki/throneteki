@@ -176,6 +176,10 @@ class Game extends EventEmitter {
         return this.getPlayers().filter(p => p !== player);
     }
 
+    getOpponentsInFirstPlayerOrder(player) {
+        return this.getPlayersInFirstPlayerOrder().filter(p => p !== player);
+    }
+
     isCardVisible(card, player) {
         return this.cardVisibility.isVisible(card, player);
     }
