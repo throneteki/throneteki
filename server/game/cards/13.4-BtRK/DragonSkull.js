@@ -19,6 +19,6 @@ class DragonSkull extends DrawCard {
     }
 }
 
-DragonSkull.code = 'TODO';
+DragonSkull.code = '13074';
 
 module.exports = DragonSkull;
