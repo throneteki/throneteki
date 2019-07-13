@@ -16,6 +16,6 @@ class PublicExecution extends DrawCard {
     }
 }
 
-PublicExecution.code = 'TODO';
+PublicExecution.code = '13068';
 
 module.exports = PublicExecution;
