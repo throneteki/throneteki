@@ -25,6 +25,6 @@ class Blackbird extends DrawCard {
     }
 }
 
-Blackbird.code = 'TODO';
+Blackbird.code = '13066';
 
 module.exports = Blackbird;
