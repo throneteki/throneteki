@@ -19,6 +19,6 @@ class ShadowblackAssassin extends DrawCard {
     }
 }
 
-ShadowblackAssassin.code = 'TODO';
+ShadowblackAssassin.code = '13073';
 
 module.exports = ShadowblackAssassin;
