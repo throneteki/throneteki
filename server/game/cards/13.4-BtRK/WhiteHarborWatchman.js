@@ -15,6 +15,6 @@ class WhiteHarborWatchman extends DrawCard {
     }
 }
 
-WhiteHarborWatchman.code = 'TODO';
+WhiteHarborWatchman.code = '13061';
 
 module.exports = WhiteHarborWatchman;
