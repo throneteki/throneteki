@@ -6,7 +6,7 @@ const Messages = require('./Messages');
 class AbilityTarget {
     static create(name, properties) {
         let {message, messages, ...rest} = properties;
-        let defaultMessages = properties.choosingPlayer === 'each' ? Messages.eachPlayerTargeting : null;
+        let defaultMessages = ['each', 'eachOpponent'].includes(properties.choosingPlayer) ? Messages.eachPlayerTargeting : null;
 
         let abilityMessages = new AbilityTargetMessages({
             message,
@@ -57,6 +57,10 @@ class AbilityTarget {
     getChoosingPlayers(context) {
         if(this.choosingPlayer === 'each') {
             return context.game.getPlayersInFirstPlayerOrder();
+        }
+
+        if(this.choosingPlayer === 'eachOpponent') {
+            return context.game.getOpponentsInFirstPlayerOrder(context.player);
         }
 
         return [context.player];

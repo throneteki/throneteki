@@ -2,6 +2,7 @@ const ResolvedTargets = require('./gamesteps/ResolvedTargets.js');
 
 class AbilityContext {
     constructor(properties) {
+        this.ability = properties.ability;
         this.challenge = properties.challenge;
         this.game = properties.game;
         this.source = properties.source;

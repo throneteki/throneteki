@@ -93,6 +93,7 @@ class CardAction extends BaseAbility {
 
     createContext(player) {
         return new AbilityContext({
+            ability: this,
             game: this.game,
             player: player,
             source: this.card

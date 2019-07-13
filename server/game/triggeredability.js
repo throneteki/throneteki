@@ -52,7 +52,13 @@ class TriggeredAbility extends BaseAbility {
     }
 
     createContext(event) {
-        return new TriggeredAbilityContext({ event: event, game: this.game, source: this.card, player: this.playerFunc() });
+        return new TriggeredAbilityContext({
+            ability: this,
+            event: event,
+            game: this.game,
+            source: this.card,
+            player: this.playerFunc()
+        });
     }
 
     triggersFor(eventName) {
