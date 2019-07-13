@@ -21,6 +21,6 @@ class AlyceGraceford extends DrawCard {
     }
 }
 
-AlyceGraceford.code = 'TODO';
+AlyceGraceford.code = '13063';
 
 module.exports = AlyceGraceford;
