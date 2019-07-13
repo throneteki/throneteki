@@ -17,6 +17,6 @@ class ForestPatrol extends DrawCard {
     }
 }
 
-ForestPatrol.code = 'TODO';
+ForestPatrol.code = '13065';
 
 module.exports = ForestPatrol;
