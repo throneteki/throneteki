@@ -4,6 +4,7 @@ const Tokens = {
     blood: 'blood',
     ear: 'ear',
     gold: 'gold',
+    journey: 'journey',
     kiss: 'kiss',
     poison: 'poison',
     shadow: 'shadow',
