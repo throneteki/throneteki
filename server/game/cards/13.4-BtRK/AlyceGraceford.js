@@ -6,7 +6,6 @@ class AlyceGraceford extends DrawCard {
             title: 'Kneel to stand character',
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select another The Seven character',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('The Seven')
             },
             handler: context => {
