@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class AlyceGraceford extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel to stand character',
+            title: 'Give renown',
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('The Seven')
