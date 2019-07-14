@@ -5,7 +5,7 @@ class GoroldGoodbrother extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDiscarded: event => event.card.getType() === 'location' && event.card.controller !== this.controller
+                onCardPlaced: event => event.card.getType() === 'location' && event.card.controller !== this.controller && event.location === 'discard pile'
             },
             limit: ability.limit.perPhase(2),
             handler: context => {
