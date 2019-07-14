@@ -1,3 +1,5 @@
+const {Tokens} = require('../../../../server/game/Constants');
+
 describe('The Iron Bank', function() {
     integration(function() {
         beforeEach(function() {
@@ -22,7 +24,7 @@ describe('The Iron Bank', function() {
 
             this.completeSetup();
 
-            this.ironBank.modifyToken('gold', 10);
+            this.ironBank.modifyToken(Tokens.gold, 10);
         });
 
         describe('when the player collects income', function() {

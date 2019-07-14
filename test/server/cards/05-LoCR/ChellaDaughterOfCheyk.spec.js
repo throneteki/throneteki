@@ -1,3 +1,5 @@
+const {Tokens} = require('../../../../server/game/Constants');
+
 describe('Chella Daughter of Cheyk', function() {
     integration(function() {
         beforeEach(function() {
@@ -28,7 +30,7 @@ describe('Chella Daughter of Cheyk', function() {
 
         describe('when Chella gains the 3rd ear after military claim', function() {
             beforeEach(function() {
-                this.chella.modifyToken('ear', 2);
+                this.chella.modifyToken(Tokens.ear, 2);
 
                 this.unopposedChallenge(this.player1, 'military', this.chella);
                 this.player1.clickPrompt('Apply Claim');

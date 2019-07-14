@@ -1,13 +1,14 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class MolesTown extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Move gold to character',
-            condition: () => this.hasToken('gold'),
+            condition: () => this.hasToken(Tokens.gold),
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasToken('gold')
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.hasToken(Tokens.gold)
             },
             handler: context => {
                 this.game.transferGold({ from: this, to: context.target, amount: 1 });

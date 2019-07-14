@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class WarriorsBraid extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,7 +8,7 @@ class WarriorsBraid extends DrawCard {
         this.whileAttached({
             effect: [
                 ability.effects.addKeyword('renown'),
-                ability.effects.dynamicStrength(() => this.tokens['bell'])
+                ability.effects.dynamicStrength(() => this.tokens[Tokens.bell])
             ]
         });
         this.reaction({
@@ -14,9 +16,12 @@ class WarriorsBraid extends DrawCard {
                 afterChallenge: event => event.challenge.challengeType === 'military' && event.challenge.winner === this.controller &&
                                          event.challenge.isAttacking(this.parent)
             },
-            handler: () => {
-                this.modifyToken('bell', 1);
-                this.game.addMessage('{0} places 1 bell token on {1}', this.controller, this);
+            message: '{player} uses {source} to place 1 bell token on {source}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.placeToken(() => ({ card: this, token: Tokens.bell })),
+                    context
+                );
             }
         });
     }

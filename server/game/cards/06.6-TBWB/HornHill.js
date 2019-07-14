@@ -1,11 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class HornHill extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Give participating characters +STR',
             phase: 'challenge',
-            condition: () => this.game.currentChallenge && this.hasToken('gold'),
+            condition: () => this.game.currentChallenge && this.hasToken(Tokens.gold),
             cost: ability.costs.kneelSelf(),
             handler: context => {
                 let challenge = this.game.currentChallenge;
@@ -13,11 +14,11 @@ class HornHill extends DrawCard {
 
                 this.untilEndOfChallenge(ability => ({
                     match: cards,
-                    effect: ability.effects.modifyStrength(this.tokens['gold'])
+                    effect: ability.effects.modifyStrength(this.tokens[Tokens.gold])
                 }));
 
                 this.game.addMessage('{0} kneels {1} to give {2} +{3} STR until the end of the challenge',
-                    context.player, this, cards, this.tokens['gold']);
+                    context.player, this, cards, this.tokens[Tokens.gold]);
             }
         });
     }

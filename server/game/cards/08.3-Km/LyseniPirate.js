@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class LyseniPirate extends DrawCard {
     setupCardAbilities(ability) {
@@ -51,7 +52,7 @@ class LyseniPirate extends DrawCard {
             activePromptTitle: 'Select a card',
             source: this,
             cardCondition: card => card.location === 'play area' && card.controller === this.context.event.challenge.loser &&
-                                   card.hasToken('gold'),
+                                   card.hasToken(Tokens.gold),
             onSelect: (player, card) => this.targetSelected(player, card)
         });
 
@@ -71,7 +72,7 @@ class LyseniPirate extends DrawCard {
     }
 
     loserHasGoldOnCard(loser) {
-        return loser.anyCardsInPlay(card => card.hasToken('gold'));
+        return loser.anyCardsInPlay(card => card.hasToken(Tokens.gold));
     }
 }
 

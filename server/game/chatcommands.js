@@ -2,6 +2,7 @@ const TextHelper = require('./TextHelper');
 const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
 const Deck = require('./Deck');
 const RematchPrompt = require('./gamesteps/RematchPrompt');
+const {Tokens} = require('./Constants');
 
 class ChatCommands {
     constructor(game) {
@@ -39,21 +40,6 @@ class ChatCommands {
             '/token': this.setToken,
             '/unblank': this.unblank
         };
-        this.tokens = [
-            'bell',
-            'betrayal',
-            'blood',
-            'ear',
-            'gold',
-            'kiss',
-            'poison',
-            'power',
-            'shadow',
-            'stand',
-            'valarmorghulis',
-            'vengeance',
-            'venom'
-        ];
     }
 
     executeCommand(player, command, args) {
@@ -502,9 +488,7 @@ class ChatCommands {
             return false;
         }
 
-        var lowerToken = token.toLowerCase();
-
-        return this.tokens.includes(lowerToken);
+        return Tokens.includes(token);
     }
 
     rematch(player) {

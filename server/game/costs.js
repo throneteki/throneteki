@@ -8,6 +8,7 @@ const StandCost = require('./costs/StandCost.js');
 const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
 const MovePowerFromFactionCost = require('./costs/MovePowerFromFactionCost');
 const DiscardFromDeckCost = require('./costs/DiscardFromDeckCost');
+const {Tokens} = require('./Constants');
 
 const Costs = {
     /**
@@ -375,7 +376,7 @@ const Costs = {
                 return result;
             },
             pay: function(context) {
-                context.source.modifyToken('gold', -context.xValue);
+                context.source.modifyToken(Tokens.gold, -context.xValue);
             }
         };
     }

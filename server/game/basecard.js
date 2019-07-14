@@ -11,6 +11,7 @@ const EventRegistrar = require('./eventregistrar');
 const GameActions = require('./GameActions');
 const KeywordsProperty = require('./PropertyTypes/KeywordsProperty');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
+const {Tokens} = require('./Constants');
 
 const ValidKeywords = [
     'ambush',
@@ -622,11 +623,11 @@ class BaseCard {
     }
 
     get gold() {
-        return this.tokens['gold'] || 0;
+        return this.tokens[Tokens.gold] || 0;
     }
 
     modifyGold(amount) {
-        this.modifyToken('gold', amount);
+        this.modifyToken(Tokens.gold, amount);
     }
 
     hasToken(type) {

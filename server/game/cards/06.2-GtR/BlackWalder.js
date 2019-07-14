@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class BlackWalder extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,7 +8,7 @@ class BlackWalder extends DrawCard {
             match: this,
             effect: [
                 ability.effects.addKeyword('Renown'),
-                ability.effects.dynamicStrength(() => this.tokens['gold'] * 2)
+                ability.effects.dynamicStrength(() => this.tokens[Tokens.gold] * 2)
             ]
         });
     }

@@ -1,14 +1,16 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class ChellaDaughterOfCheyk extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.tokens['ear'])
+            effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.ear])
         });
 
         this.persistentEffect({
-            condition: () => this.tokens['ear'] >= 3,
+            condition: () => this.tokens[Tokens.ear] >= 3,
             match: this,
             effect: [
                 ability.effects.addKeyword('Intimidate'),
@@ -20,9 +22,12 @@ class ChellaDaughterOfCheyk extends DrawCard {
             when: {
                 onCharacterKilled: event => this.isAttacking() && event.card !== this
             },
-            handler: () => {
-                this.modifyToken('ear', 1);
-                this.game.addMessage('{0} uses {1} to add 1 ear token to {1}', this.controller, this);
+            message: '{player} uses {source} to place 1 ear token to {source}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.placeToken(() => ({ card: this, token: Tokens.ear })),
+                    context
+                );
             }
         });
     }

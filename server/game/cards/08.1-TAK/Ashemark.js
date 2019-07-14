@@ -1,10 +1,11 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class Ashemark extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onPhaseStarted: () => this.hasToken('gold')
+                onPhaseStarted: () => this.hasToken(Tokens.gold)
             },
             cost: [
                 ability.costs.kneelSelf(),

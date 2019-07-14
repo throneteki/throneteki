@@ -1,3 +1,5 @@
+const {Tokens} = require('../../../../server/game/Constants');
+
 describe('Rickon Stark', function() {
     integration(function() {
         describe('when a normal search would be triggered', function() {
@@ -92,7 +94,7 @@ describe('Rickon Stark', function() {
 
                 // Ensure costs were paid but the pre-then effect didn't resolve
                 expect(this.player2Object.faction.kneeled).toBe(true);
-                expect(this.seaOfBlood.hasToken('blood')).toBe(false);
+                expect(this.seaOfBlood.hasToken(Tokens.blood)).toBe(false);
             });
         });
 

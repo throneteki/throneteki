@@ -1,3 +1,5 @@
+const {Tokens} = require('../../../../server/game/Constants');
+
 describe('Power Behind the Throne', function() {
     integration(function() {
         beforeEach(function() {
@@ -27,7 +29,7 @@ describe('Power Behind the Throne', function() {
         });
 
         it('should place a stand token', function() {
-            expect(this.plot.tokens['stand']).toBe(1);
+            expect(this.plot.tokens[Tokens.stand]).toBe(1);
         });
 
         describe('when using the stand action', function() {
@@ -42,7 +44,7 @@ describe('Power Behind the Throne', function() {
 
             it('should spend the stand token', function() {
                 // We delete tokens once they reach 0.
-                expect(this.plot.tokens['stand']).toBeUndefined();
+                expect(this.plot.tokens[Tokens.stand]).toBeUndefined();
             });
         });
     });
