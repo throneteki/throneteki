@@ -13,7 +13,7 @@ describe('PlaceToken', function() {
             this.cardSpy.allowGameAction.and.returnValue(true);
         });
 
-        for(let location of ['active plot', 'play area', 'shadows', 'title']) {
+        for(let location of ['active plot', 'agenda', 'play area', 'shadows', 'title']) {
             describe(`when the card is in ${location}`, function() {
                 beforeEach(function() {
                     this.cardSpy.location = location;
