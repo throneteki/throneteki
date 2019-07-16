@@ -5,7 +5,7 @@ class ShadowOfTheNorth extends DrawCard {
         this.action({
             title: 'Raise claim by 1',
             max: ability.limit.perChallenge(1),
-            cardCondition: () => this.game.isDuringChallenge(),
+            condition: () => this.game.isDuringChallenge(),
             handler: () => {
                 this.untilEndOfChallenge(ability => ({
                     match: card => card === this.controller.activePlot,
