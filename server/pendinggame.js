@@ -320,6 +320,43 @@ class PendingGame {
             useRookery: this.useRookery
         };
     }
+
+    getStartGameDetails() {
+        const players = {};
+
+        for(let playerDetails of Object.values(this.players)) {
+            const {name, user, ...rest} = playerDetails;
+            players[name] = {
+                name,
+                user: user.getDetails(),
+                ...rest
+            };
+        }
+
+        const spectators = {};
+        for(let spectatorDetails of Object.values(this.spectators)) {
+            const {name, user, ...rest} = spectatorDetails;
+            spectators[name] = {
+                name,
+                user: user.getDetails(),
+                ...rest
+            };
+        }
+
+        return {
+            allowSpectators: this.allowSpectators,
+            createdAt: this.createdAt,
+            gameType: this.gameType,
+            id: this.id,
+            isMelee: this.isMelee,
+            name: this.name,
+            owner: this.owner.getDetails(),
+            players,
+            showHand: this.showHand,
+            spectators,
+            useRookery: this.useRookery
+        };
+    }
 }
 
 module.exports = PendingGame;
