@@ -41,6 +41,6 @@ class CityOfSpiders extends PlotCard {
     }
 }
 
-CityOfSpiders.code = 'TODO';
+CityOfSpiders.code = '13080';
 
 module.exports = CityOfSpiders;
