@@ -22,6 +22,6 @@ class AdvisorToTheCrown extends DrawCard {
     }
 }
 
-AdvisorToTheCrown.code = 'TODO';
+AdvisorToTheCrown.code = '13077';
 
 module.exports = AdvisorToTheCrown;
