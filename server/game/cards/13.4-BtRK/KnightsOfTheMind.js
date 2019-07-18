@@ -16,6 +16,6 @@ class KnightsOfTheMind extends DrawCard {
     }
 }
 
-KnightsOfTheMind.code = 'TODO';
+KnightsOfTheMind.code = '13078';
 
 module.exports = KnightsOfTheMind;
