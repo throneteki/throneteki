@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class SerJorahMormont extends DrawCard {
     setupCardAbilities() {
@@ -6,15 +8,19 @@ class SerJorahMormont extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
-            handler: () => {
-                this.modifyToken('betrayal', 1);
-                this.game.addMessage('{0} is forced to place a betrayal token on {1} after winning a challenge in which he was participating', this.controller, this);
-
-                if(this.tokens['betrayal'] >= 3) {
-                    this.controller.sacrificeCard(this, false);
-
-                    this.game.addMessage('{0} sacrifices {1} as it has 3 or more betrayal tokens', this.controller, this);
-                }
+            message: '{player} is forced to place 1 betrayal token on {source}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.placeToken(() => ({ card: this, token: Tokens.betrayal })),
+                    context
+                ).thenExecute(() => {
+                    if(this.tokens[Tokens.betrayal] >= 3) {
+                        this.game.addMessage('{0} sacrifices {1} as it has 3 or more betrayal tokens', context.player, this);
+                        this.game.resolveGameAction(
+                            GameActions.sacrificeCard({ card: this })
+                        );
+                    }
+                });
             }
         });
     }

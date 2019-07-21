@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class FickleBannerman extends DrawCard {
     setupCardAbilities() {
@@ -9,7 +10,7 @@ class FickleBannerman extends DrawCard {
             handler: context => {
                 this.challengeWinner = context.event.challenge.winner;
 
-                if(!this.hasToken('gold')) {
+                if(!this.hasToken(Tokens.gold)) {
                     this.loseControl();
                     return;
                 }
@@ -29,7 +30,7 @@ class FickleBannerman extends DrawCard {
     }
 
     discardGold() {
-        this.modifyToken('gold', -1);
+        this.modifyToken(Tokens.gold, -1);
         this.game.addMessage('{0} is forced to discard a gold from {1}', this.controller, this);
 
         return true;

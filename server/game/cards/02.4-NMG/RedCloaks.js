@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class RedCloaks extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,7 +15,7 @@ class RedCloaks extends DrawCard {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ challengeType: 'intrigue' }),
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.tokens['gold'])
+            effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.gold])
         });
     }
 }

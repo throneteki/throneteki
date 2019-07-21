@@ -1,11 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class WexPyke extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
             targetController: 'any',
-            match: card => card.getType() === 'character' && card.getPrintedCost() === this.tokens['gold'],
+            match: card => card.getType() === 'character' && card.getPrintedCost() === this.tokens[Tokens.gold],
             effect: ability.effects.cannotBeDeclaredAsDefender()
         });
 

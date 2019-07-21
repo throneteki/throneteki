@@ -1,11 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class KingsBlood extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: ['Bastard', 'King'], controller: 'current' });
         this.action({
             title: 'Discard power from opponent\'s faction',
-            condition: () => this.hasToken('gold'),
+            condition: () => this.hasToken(Tokens.gold),
             phase: 'plot',
             cost: [
                 ability.costs.kneelParent(),

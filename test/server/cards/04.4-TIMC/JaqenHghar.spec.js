@@ -1,3 +1,5 @@
+const {Tokens} = require('../../../../server/game/Constants');
+
 describe('Jaqen H\'ghar', function() {
     integration(function() {
         beforeEach(function() {
@@ -30,7 +32,7 @@ describe('Jaqen H\'ghar', function() {
                 this.player1.clickCard(this.tickler);
                 this.player1.clickPrompt('Done');
 
-                expect(this.tickler.hasToken('valarmorghulis')).toBe(true);
+                expect(this.tickler.hasToken(Tokens.valarmorghulis)).toBe(true);
             });
         });
 
@@ -44,7 +46,7 @@ describe('Jaqen H\'ghar', function() {
             });
 
             it('should remove all Valar Morghulis tokens', function() {
-                expect(this.tickler.hasToken('valarmorghulis')).toBe(false);
+                expect(this.tickler.hasToken(Tokens.valarmorghulis)).toBe(false);
             });
         });
 

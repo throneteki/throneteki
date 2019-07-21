@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class SweetCersei extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,9 +13,12 @@ class SweetCersei extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue'
             },
-            handler: () => {
-                this.modifyToken('gold', 1);
-                this.game.addMessage('{0} uses {1} to place 1 gold from the treasury on {1}', this.controller, this);
+            message: '{player} uses {source} to place 1 gold from the treasury on {source}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.placeToken(() => ({ card: this, token: Tokens.gold })),
+                    context
+                );
             }
         });
     }

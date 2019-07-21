@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class Yunkai extends DrawCard {
     setupCardAbilities(ability) {
@@ -30,7 +31,7 @@ class Yunkai extends DrawCard {
             return;
         }
 
-        this.modifyToken('gold', 2);
+        this.modifyToken(Tokens.gold, 2);
         this.game.addMessage('{0} places 2 gold tokens from the treasury on {1}', this.controller, this);
     }
 

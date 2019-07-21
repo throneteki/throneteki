@@ -1,4 +1,6 @@
 const AgendaCard = require('../../agendacard');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class SeaOfBlood extends AgendaCard {
     setupCardAbilities(ability) {
@@ -6,7 +8,7 @@ class SeaOfBlood extends AgendaCard {
             condition: () => this.game.isDuringChallenge({ challengeType: 'military' }),
             effect: ability.effects.reduceCost({
                 playingTypes: 'play',
-                amount: () => this.tokens['blood'],
+                amount: () => this.tokens[Tokens.blood],
                 match: card => card.getType() === 'event'
             })
         });
@@ -23,9 +25,12 @@ class SeaOfBlood extends AgendaCard {
                     event.challenge.strengthDifference >= 5
             },
             cost: ability.costs.kneelFactionCard(),
+            message: '{player} users {source} and kneels their faction card to place 1 blood token on {source}',
             handler: context => {
-                this.game.addMessage('{0} uses {1} and kneels their faction card to place a blood token on {1}', context.player, this);
-                this.modifyToken('blood', 1);
+                this.game.resolveGameAction(
+                    GameActions.placeToken(() => ({ card: this, token: Tokens.blood })),
+                    context
+                );
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select an event',
                     cardCondition: card => card.getType() === 'event',

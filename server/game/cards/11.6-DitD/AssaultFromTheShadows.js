@@ -1,4 +1,5 @@
 const AgendaCard = require('../../agendacard');
+const {Tokens} = require('../../Constants');
 
 class AssaultFromTheShadows extends AgendaCard {
     setupCardAbilities(ability) {
@@ -23,7 +24,7 @@ class AssaultFromTheShadows extends AgendaCard {
             handler: context => {
                 this.game.addMessage('{0} uses {1} and kneels their faction card to put a card into shadow', context.player, this);
                 context.player.putIntoShadows(context.target, false, () => {
-                    context.target.modifyToken('shadow', 1);
+                    context.target.modifyToken(Tokens.shadow, 1);
 
                     if(!context.target.isShadow()) {
                         this.lastingEffect(ability => ({

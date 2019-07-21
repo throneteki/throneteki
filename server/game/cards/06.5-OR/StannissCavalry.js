@@ -1,11 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class StannissCavalry extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.currentPhase === 'standing',
             targetController: 'opponent',
-            match: card => card.getType() === 'character' && card.getPrintedCost() === this.tokens['gold'],
+            match: card => card.getType() === 'character' && card.getPrintedCost() === this.tokens[Tokens.gold],
             effect: ability.effects.cannotBeStood()
         });
 

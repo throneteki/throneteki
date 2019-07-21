@@ -1,3 +1,5 @@
+const {Tokens} = require('../../../server/game/Constants');
+
 describe('effects', function() {
     integration(function() {
         describe('lasting effects', function() {
@@ -348,7 +350,7 @@ describe('effects', function() {
                 this.player2.triggerAbility('Tyene Sand');
                 this.player2.clickCard(this.character);
 
-                expect(this.character.tokens['poison']).toBeTruthy();
+                expect(this.character.tokens[Tokens.poison]).toBeTruthy();
 
                 this.player2.clickPrompt('Apply Claim');
 

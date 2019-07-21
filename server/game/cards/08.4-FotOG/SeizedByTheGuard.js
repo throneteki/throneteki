@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class SeizedByTheGuard extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,7 +12,7 @@ class SeizedByTheGuard extends DrawCard {
                 onPhaseStarted: event => event.phase === 'marshal'
             },
             handler: context => {
-                if(!this.hasToken('gold')) {
+                if(!this.hasToken(Tokens.gold)) {
                     this.sacrifice();
                     return;
                 }
@@ -31,7 +32,7 @@ class SeizedByTheGuard extends DrawCard {
     }
 
     discardGold() {
-        this.modifyToken('gold', -1);
+        this.modifyToken(Tokens.gold, -1);
         this.game.addMessage('{0} is forced to discard 1 gold from {1}', this.controller, this);
         return true;
     }

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class Astapor extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,11 +16,11 @@ class Astapor extends DrawCard {
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
                     match: context.target,
-                    effect: ability.effects.modifyStrength(-this.tokens['gold'])
+                    effect: ability.effects.modifyStrength(-this.tokens[Tokens.gold])
                 }));
 
                 this.game.addMessage('{0} kneels {1} to give {2} -{3} STR until the end of the challenge',
-                    context.player, this, context.target, this.tokens['gold']);
+                    context.player, this, context.target, this.tokens[Tokens.gold]);
             }
         });
     }

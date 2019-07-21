@@ -1,14 +1,15 @@
 const DrawCard = require('../../drawcard.js');
+const {Tokens} = require('../../Constants');
 
 class SaltcliffeSailor extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.getType() === 'character' && card.hasToken('gold'),
+            match: card => card.getType() === 'character' && card.hasToken(Tokens.gold),
             effect: ability.effects.addKeyword('Stealth')
         });
         this.action({
             title: 'Move 1 gold to character',
-            condition: () => this.hasToken('gold'),
+            condition: () => this.hasToken(Tokens.gold),
             target: {
                 type: 'select',
                 cardCondition: card =>

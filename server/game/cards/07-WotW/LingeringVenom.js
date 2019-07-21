@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class LingeringVenom extends DrawCard {
     setupCardAbilities() {
@@ -6,14 +8,23 @@ class LingeringVenom extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.loser === this.controller
             },
-            handler: () => {
-                this.modifyToken('venom', 1);
-                this.game.addMessage('{0} uses {1} to place a venom token on {1}', this.controller, this);
-
-                if(this.parent.getStrength() <= this.tokens['venom']) {
-                    this.parent.controller.killCharacter(this.parent);
-                    this.game.addMessage('{0} uses {1} to kill {2}', this.controller, this, this.parent);
-                }
+            message: '{player} uses {source} to place 1 venom token on {source}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.placeToken({
+                        card: this, token: Tokens.venom
+                    }).then({
+                        condition: () => this.parent.getStrength() <= this.tokens[Tokens.venom],
+                        message: {
+                            format: 'Then {player} uses {source} to kill {parent}',
+                            args: { parent: () => this.parent }
+                        },
+                        handler: () => {
+                            this.game.killCharacter(this.parent);
+                        }
+                    }),
+                    context
+                );
             }
         });
     }

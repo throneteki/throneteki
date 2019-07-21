@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class TheBoneway extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,9 +8,12 @@ class TheBoneway extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.loser === this.controller
             },
-            handler: () => {
-                this.modifyToken('vengeance', 1);
-                this.game.addMessage('{0} places 1 vengeance token on {1}', this.controller, this);
+            message: '{player} uses {source} to place 1 vengeance token on {source}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.placeToken(() => ({ card: this, token: Tokens.vengeance })),
+                    context
+                );
             }
         });
 
@@ -18,7 +23,7 @@ class TheBoneway extends DrawCard {
             condition: () => this.controller.canGainFactionPower(),
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.discardTokenFromSelf('vengeance', 6)
+                ability.costs.discardTokenFromSelf(Tokens.vengeance, 6)
             ],
             handler: () => {
                 this.game.addPower(this.controller, 3);

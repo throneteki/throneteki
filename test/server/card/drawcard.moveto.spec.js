@@ -1,4 +1,5 @@
 const DrawCard = require('../../../server/game/drawcard.js');
+const {Tokens} = require('../../../server/game/Constants');
 
 describe('DrawCard', function () {
     beforeEach(function () {
@@ -19,7 +20,7 @@ describe('DrawCard', function () {
             beforeEach(function() {
                 this.card.location = 'play area';
                 this.card.power = 1;
-                this.card.modifyToken('gold', 2);
+                this.card.modifyToken(Tokens.gold, 2);
             });
 
             describe('when moving the card between areas', function() {
@@ -32,7 +33,7 @@ describe('DrawCard', function () {
                 });
 
                 it('should remove any tokens on the card', function() {
-                    expect(this.card.tokens['gold']).toBeUndefined();
+                    expect(this.card.tokens[Tokens.gold]).toBeUndefined();
                 });
             });
 
@@ -47,7 +48,7 @@ describe('DrawCard', function () {
                 });
 
                 it('should not remove any tokens on the card', function() {
-                    expect(this.card.tokens['gold']).toBe(2);
+                    expect(this.card.tokens[Tokens.gold]).toBe(2);
                 });
             });
         });

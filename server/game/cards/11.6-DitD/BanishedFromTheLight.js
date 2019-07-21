@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const {Tokens} = require('../../Constants');
 
 class BanishedFromTheLight extends DrawCard {
     setupCardAbilities() {
@@ -12,7 +13,7 @@ class BanishedFromTheLight extends DrawCard {
             handler: context => {
                 this.game.addMessage('{0} plays {1} to put {2} into shadow', context.player, this, context.target);
                 context.player.putIntoShadows(context.target, true, () => {
-                    context.target.modifyToken('shadow', 1);
+                    context.target.modifyToken(Tokens.shadow, 1);
 
                     this.lastingEffect(ability => ({
                         condition: () => context.target.location === 'shadows',

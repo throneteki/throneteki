@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class JaqenHGhar extends DrawCard {
     constructor(owner, cardData) {
@@ -17,22 +19,27 @@ class JaqenHGhar extends DrawCard {
                 activePromptTitle: 'Select up to 3 characters',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isUnique()
             },
+            message: '{player} uses {source} to add Valar Morghulis tokens to {target}',
             handler: context => {
                 this.selectedCards = context.target;
-                for(let card of this.selectedCards) {
-                    card.modifyToken('valarmorghulis', 1);
-                }
-
-                this.game.addMessage('{0} uses {1} to add Valar Morghulis tokens to {2}',
-                    this.controller, this, this.selectedCards);
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        context.target.map(card => GameActions.placeToken({
+                            card,
+                            token: Tokens.valarmorghulis
+                        }))
+                    ),
+                    context
+                );
             }
         });
+
         this.reaction({
             when: {
                 afterChallenge: () => this.game.isDuringChallenge({ winner: this.controller, attackingAlone: this })
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasToken('valarmorghulis'),
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasToken(Tokens.valarmorghulis),
                 gameAction: 'kill'
             },
             handler: context => {
@@ -52,7 +59,7 @@ class JaqenHGhar extends DrawCard {
         }
 
         for(let card of this.selectedCards) {
-            card.modifyToken('valarmorghulis', -1);
+            card.modifyToken(Tokens.valarmorghulis, -1);
         }
 
         this.selectedCards = null;
