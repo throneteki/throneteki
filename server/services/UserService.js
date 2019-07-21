@@ -137,15 +137,15 @@ class UserService extends EventEmitter {
     }
 
     clearUserSessions(username) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const user = this.getUserByUsername(username);
             if(!user) {
                 return reject('User not found');
             }
 
-            await this.users.update({ username: username }, { '$set': { tokens: [] } });
-
-            resolve(true);
+            this.users.update({ username: username }, { '$set': { tokens: [] } }).then(() => {
+                resolve(true);
+            });
         });
     }
 
