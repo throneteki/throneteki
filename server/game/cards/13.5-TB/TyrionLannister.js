@@ -17,15 +17,13 @@ class TyrionLannister extends DrawCard {
                 this.game.addMessage('{0} uses {1} to put a card into shadow', context.player, this);
                 context.player.putIntoShadows(context.target, false, () => {
                     context.target.modifyToken(Tokens.shadow, 1);
-
-                    if(!context.target.isShadow()) {
-                        this.lastingEffect(ability => ({
-                            condition: () => context.target.location === 'shadows',
-                            targetLocation: 'any',
-                            match: context.target,
-                            effect: ability.effects.addKeyword(`Shadow (${context.target.getPrintedCost()})`)
-                        }));
-                    }
+                    
+                    this.lastingEffect(ability => ({
+                        condition: () => context.target.location === 'shadows',
+                        targetLocation: 'any',
+                        match: context.target,
+                        effect: ability.effects.addKeyword(`Shadow (${context.target.getPrintedCost()})`)
+                    }));
                 });
             }
         });
