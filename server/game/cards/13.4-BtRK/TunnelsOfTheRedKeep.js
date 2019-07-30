@@ -5,16 +5,19 @@ class TunnelsOfTheRedKeep extends DrawCard {
         this.action({
             title: 'Kneel and return to shadows',
             cost: ability.costs.kneelSelf(),
-            max: ability.limit.perPhase(1),
+            message: '{player} kneels {source} to return {source} to shadows',
             handler: context => {
-                context.player.putIntoShadows(this, false);
-                this.game.addMessage('{0} kneels {1} to return it to shadows.', context.player, this);
-                let targetCharacters = context.player.filterCardsInPlay(card => card.getType() === 'character');
-                this.untilEndOfPhase(ability => ({
-                    match: targetCharacters,
-                    effect: ability.effects.dynamicStrength(() => context.player.shadows.length)
-                }));
-            }
+                context.player.putIntoShadows(this, false, () => {
+                    let strBoost = context.player.shadows.length;
+                    let targetCharacters = context.player.filterCardsInPlay(card => card.getType() === 'character');
+                    this.game.addMessage('Then {0} gains +{1} STR for {2}', targetCharacters, strBoost, this);
+                    this.untilEndOfPhase(ability => ({
+                        match: targetCharacters,
+                        effect: ability.effects.modifyStrength(strBoost)
+                    }));
+                });
+            },
+            max: ability.limit.perPhase(1)
         });
     }
 }
