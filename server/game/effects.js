@@ -1115,6 +1115,9 @@ const Effects = {
     reduceNextMarshalledAmbushedOrOutOfShadowsCardCost: function(amount, match) {
         return this.reduceNextCardCost(['marshal', 'ambush', 'outOfShadows'], amount, match);
     },
+    reduceNextOutOfShadowsCardCost: function(amount, match) {
+        return this.reduceNextCardCost('outOfShadows', amount, match);
+    },
     reduceFirstCardCostEachRound: function(playingTypes, amount, match) {
         return this.reduceCost({
             playingTypes: playingTypes,
