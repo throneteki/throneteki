@@ -14,7 +14,7 @@ class TyrionLannister extends DrawCard {
                                     && card.controller === this.controller
             },
             handler: context => {
-                this.game.addMessage('{0} uses {1} to put a card into shadow', context.player, this);
+                this.game.addMessage('{0} uses {1} to put {2} into shadow', context.player, this, context.target);
                 context.player.putIntoShadows(context.target, false, () => {
                     context.target.modifyToken(Tokens.shadow, 1);
                     
