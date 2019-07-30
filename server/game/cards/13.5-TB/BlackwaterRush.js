@@ -6,7 +6,6 @@ class BlackwaterRush extends DrawCard {
             when: {
                 onCardOutOfShadows: event => event.card.controller === this.controller
             },
-            title: 'Have character gain one power',
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => (
