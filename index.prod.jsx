@@ -55,7 +55,7 @@ const ravenOptions = {
         /metrics\.itunes\.apple\.com\.edgesuite\.net\//i,
         /YoukuAntiAds\.eval/i
     ],
-    release: version
+    release: version.build
 };
 
 Raven.config('https://f5286cd580bf46898e7180c7a46de2f6@sentry.io/123019', ravenOptions)

@@ -5,7 +5,7 @@
   ],
   "plugins": [
     "react-hot-loader/babel",
-    "transform-object-assign",
+    "@babel/transform-object-assign",
     "@babel/plugin-proposal-object-rest-spread"
   ]
 }
