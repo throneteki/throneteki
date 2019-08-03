@@ -22,19 +22,11 @@ class Server {
         this.userService = new UserService(db);
         this.isDeveloping = isDeveloping;
         this.server = http.Server(app);
-
-        if(!this.isDeveloping) {
-            this.vendorAssets = require('../public/vendor-assets.json');
-            this.assets = require('../public/assets.json');
-        } else {
-            this.vendorAssets = undefined;
-            this.assets = { bundle: { js: '/bundle.js' } };
-        }
     }
 
     init(options) {
         if(!this.isDeveloping) {
-            Raven.config(config.sentryDsn, { release: version }).install();
+            Raven.config(config.sentryDsn, { release: version.releaseDate }).install();
 
             app.use(Raven.requestHandler());
             app.use(Raven.errorHandler());
@@ -63,14 +55,9 @@ class Server {
         api.init(app, options);
 
         app.use(express.static(__dirname + '/../public'));
-        app.set('view engine', 'pug');
-        app.set('views', path.join(__dirname, '..', 'views'));
 
         app.get('*', (req, res) => {
-            res.render('index', {
-                basedir: path.join(__dirname, '..', 'views'),
-                vendorAssets: this.vendorAssets, assets: this.assets
-            });
+            res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
         });
 
         // Define error middleware last
