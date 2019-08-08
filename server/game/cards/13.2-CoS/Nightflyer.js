@@ -17,7 +17,12 @@ class Nightflyer extends DrawCard {
                 cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'location' && (context.xValue === undefined || card.getPrintedCost() <= context.xValue),
                 gameAction: 'discard'
             },
-            message: '{player} uses {source} to discard {target} from play',
+            message: {
+                format: '{player} uses {source} and pays {xValue} gold to discard {target} from play',
+                args: {
+                    xValue: context => context.xValue
+                }
+            },
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.discardCard({ card: context.target })
