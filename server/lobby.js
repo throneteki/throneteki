@@ -13,6 +13,7 @@ const ServiceFactory = require('./services/ServiceFactory');
 const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const UserService = require('./services/UserService.js');
+const User = require('./models/User');
 const { sortBy } = require('./Array');
 
 class Lobby {
@@ -838,7 +839,7 @@ class Lobby {
                     owner: game.owner === player.name,
                     faction: { cardData: { code: player.faction } },
                     agenda: { cardData: { code: player.agenda } },
-                    user: player.user
+                    user: new User(player.user)
                 };
             }
 
@@ -846,7 +847,7 @@ class Lobby {
                 syncGame.spectators[player.name] = {
                     id: player.id,
                     name: player.name,
-                    user: player.user
+                    user: new User(player.user)
                 };
             }
 
