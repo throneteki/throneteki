@@ -6,14 +6,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 let OctoWebpackPlugin;
 let version;
 
-if(process.env.TEAMCITY_VERSION) {   
+if(process.env.TEAMCITY_VERSION) {
     OctoWebpackPlugin = require('./OctoWebpackPlugin');
-    version = require('./packagever');
+    version = require('./version');
 }
 
 module.exports = {
     resolve: { extensions: ['.js', '.jsx'] },
-    plugins: (process.env.TEAMCITY_VERSION ? [new OctoWebpackPlugin({ version: version })] : []).concat([
+    plugins: (process.env.TEAMCITY_VERSION ? [new OctoWebpackPlugin({ version: version.build })] : []).concat([
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             template: './views/index.pug',
