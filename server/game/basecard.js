@@ -5,6 +5,7 @@ const CardAction = require('./cardaction');
 const CardForcedInterrupt = require('./cardforcedinterrupt');
 const CardForcedReaction = require('./cardforcedreaction');
 const CardInterrupt = require('./cardinterrupt');
+const CardMatcher = require('./CardMatcher');
 const CardReaction = require('./cardreaction');
 const CustomPlayAction = require('./PlayActions/CustomPlayAction');
 const EventRegistrar = require('./eventregistrar');
@@ -650,6 +651,10 @@ class BaseCard {
         }
 
         this.markAsDirty();
+    }
+
+    isMatch(properties) {
+        return CardMatcher.isMatch(this, properties);
     }
 
     markAsDirty() {
