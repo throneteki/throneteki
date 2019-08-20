@@ -9,7 +9,7 @@ class MovePower extends GameAction {
         super.isImmune({ card: from, context });
     }
 
-    canChangeGameState({ from, to, amount }) {
+    canChangeGameState({ from, to, amount = 1 }) {
         return (
             amount > 0 &&
             from.power > 0 &&
