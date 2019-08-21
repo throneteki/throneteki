@@ -12,7 +12,7 @@ class Mhysa extends DrawCard {
         });
 
         this.whileAttached({
-            condition: () => this.tracker.count({ attackingPlayer: this.controller, challengeType: 'power' }) <= 1,
+            condition: () => this.tracker.count({ attackingPlayer: this.controller, challengeType: 'power' }) === 1,
             effect: ability.effects.dynamicStrength(() => this.getAttackingCharacters())
         });
     }
