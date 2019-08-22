@@ -10,7 +10,8 @@ class Sparrows extends DrawCard {
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card !== this &&
-                    card.hasTrait('The Seven'))
+                    card.hasTrait('The Seven') &&
+                    card.controller === this.controller)
             },
             handler: context => {
                 let opponents = this.game.getOpponents(this.controller).filter(opponent => opponent.faction.power > 0);
@@ -30,14 +31,15 @@ class Sparrows extends DrawCard {
                     activePromptTitle: 'Select a faction card',
                     cardCondition: card => factionCards.includes(card),
                     cardType: 'faction',
-                    onSelect: (player, card) => this.stealPowerFromOpponent(card.owner, context.target)
+                    onSelect: (player, card) => this.stealPowerFromOpponent(card.owner, context.target),
+                    source: this
                 });
             }
         });
     }
 
     stealPowerFromOpponent(opponent, targetCard) {
-        this.game.addMessage('{0} moves 1 power from {1}\'s faction card to {2}',
+        this.game.addMessage('{0} uses Sparrows to move 1 power from {1}\'s faction card to {2}',
             this.controller, opponent, targetCard);
         this.game.movePower(opponent.faction, targetCard, 1);
         return true;
