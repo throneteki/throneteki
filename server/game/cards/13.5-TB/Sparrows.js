@@ -39,8 +39,8 @@ class Sparrows extends DrawCard {
     }
 
     stealPowerFromOpponent(opponent, targetCard) {
-        this.game.addMessage('{0} uses Sparrows to move 1 power from {1}\'s faction card to {2}',
-            this.controller, opponent, targetCard);
+        this.game.addMessage('{0} uses {3} to move 1 power from {1}\'s faction card to {2}',
+            this.controller, opponent, targetCard, this);
         this.game.movePower(opponent.faction, targetCard, 1);
         return true;
     }
