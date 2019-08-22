@@ -48,7 +48,7 @@
     "pmx": "^1.6.7",
     "raven": "^1.2.1",
     "socket.io": "^2.1.1",
-    "throneteki-deck-helper": "^1.2.2",
+    "throneteki-deck-helper": "^1.2.3",
     "underscore": "^1.8.3",
     "uuid": "^3.1.0",
     "winston": "^2.2.0",
