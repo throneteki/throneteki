@@ -2,7 +2,45 @@ const CardMatcher = require('../../server/game/CardMatcher.js');
 
 describe('CardMatcher', function() {
     beforeEach(function() {
-        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isUnique', 'isLimited', 'isLoyal']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getType', 'isAttacking', 'isDefending', 'isParticipating', 'isUnique', 'isLimited', 'isLoyal']);
+    });
+
+    describe('.isMatch', function() {
+        describe('attacking', function() {
+            it('returns true if the card is attacking', function() {
+                this.cardSpy.isAttacking.and.returnValue(true);
+                expect(CardMatcher.isMatch(this.cardSpy, { attacking: true })).toBe(true);
+            });
+
+            it('returns false if the card is not attacking', function() {
+                this.cardSpy.isAttacking.and.returnValue(false);
+                expect(CardMatcher.isMatch(this.cardSpy, { attacking: true })).toBe(false);
+            });
+        });
+
+        describe('defending', function() {
+            it('returns true if the card is defending', function() {
+                this.cardSpy.isDefending.and.returnValue(true);
+                expect(CardMatcher.isMatch(this.cardSpy, { defending: true })).toBe(true);
+            });
+
+            it('returns false if the card is not defending', function() {
+                this.cardSpy.isDefending.and.returnValue(false);
+                expect(CardMatcher.isMatch(this.cardSpy, { defending: true })).toBe(false);
+            });
+        });
+
+        describe('participating', function() {
+            it('returns true if the card is participating', function() {
+                this.cardSpy.isParticipating.and.returnValue(true);
+                expect(CardMatcher.isMatch(this.cardSpy, { participating: true })).toBe(true);
+            });
+
+            it('returns false if the card is not participating', function() {
+                this.cardSpy.isParticipating.and.returnValue(false);
+                expect(CardMatcher.isMatch(this.cardSpy, { participating: true })).toBe(false);
+            });
+        });
     });
 
     describe('createAttachmentMatcher', function() {
