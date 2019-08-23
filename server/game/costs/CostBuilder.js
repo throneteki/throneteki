@@ -1,3 +1,4 @@
+const CardMatcher = require('../CardMatcher');
 const FactionCardCost = require('./FactionCardCost.js');
 const ParentCost = require('./ParentCost.js');
 const SelectCardCost = require('./SelectCardCost.js');
@@ -34,26 +35,26 @@ class CostBuilder {
 
     /**
      * Returns a cost that asks the player to select a card matching the passed condition.
-     * @param {function} condition Function that takes a card and ability context and returns whether to allow the player to select it.
+     * @param {function} conditionOrMatcher Either a function that takes a card and ability context and returns whether to allow the player to select it, or a properties hash to be used as a card matcher.
      */
-    select(condition = () => true) {
+    select(conditionOrMatcher = () => true) {
         return new SelectCardCost(this.action, {
             activePromptTitle: this.titles.select,
-            cardCondition: condition
+            cardCondition: CardMatcher.createMatcher(conditionOrMatcher)
         });
     }
 
     /**
      * Returns a cost that asks the player to select an exact number of cards matching the passed condition.
      * @param {number} number The number of cards that must be selected.
-     * @param {function} condition Function that takes a card and ability context and returns whether to allow the player to select it.
+     * @param {function} conditionOrMatcher Either a function that takes a card and ability context and returns whether to allow the player to select it, or a properties hash to be used as a card matcher.
      */
-    selectMultiple(number, condition = () => true) {
+    selectMultiple(number, conditionOrMatcher = () => true) {
         return new SelectCardCost(this.action, {
             mode: 'exactly',
             numCards: number,
             activePromptTitle: this.titles.selectMultiple(number),
-            cardCondition: condition
+            cardCondition: CardMatcher.createMatcher(conditionOrMatcher)
         });
     }
 

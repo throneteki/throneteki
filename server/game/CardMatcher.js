@@ -22,6 +22,16 @@ class CardMatcher {
         );
     }
 
+    static createMatcher(propertiesOrFunc) {
+        return function(card, context) {
+            if(typeof(propertiesOrFunc) === 'function') {
+                return propertiesOrFunc(card, context);
+            }
+
+            return CardMatcher.isMatch(card, propertiesOrFunc);
+        };
+    }
+
     /**
      * Creates a matcher function to determine whether an attachment can be
      * attached to a particular card based on the properties passed. It defaults
