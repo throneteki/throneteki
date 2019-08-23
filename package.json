@@ -76,7 +76,7 @@
     "selenium-webdriver": "^4.0.0-alpha.1",
     "socket.io-client": "^2.1.0",
     "style-loader": "^0.21.0",
-    "throneteki-deck-helper": "^1.2.2",
+    "throneteki-deck-helper": "^1.2.3",
     "url-loader": "^1.0.1",
     "webpack": "^4.38.0",
     "webpack-dev-server": "^3.7.2",
