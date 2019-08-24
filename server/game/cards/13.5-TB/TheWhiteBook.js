@@ -32,7 +32,7 @@ class TheWhiteBook extends AgendaCard {
             return player.filterCardsInPlay({ type: 'character', trait: 'Kingsguard', participating: true });
         }
 
-        return player.filterCardsInPlay({ type: 'character', trait: 'Kingsguard', attacking: true });
+        return player.filterCardsInPlay({ type: 'character', trait: 'Kingsguard', defending: true });
     }
 }
 

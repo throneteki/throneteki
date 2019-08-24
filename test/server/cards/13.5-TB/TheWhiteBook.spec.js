@@ -38,10 +38,8 @@ describe('The White Book', function() {
                     this.skipActionWindow();
                 });
 
-                it('stands attacking characters', function() {
-                    this.player1.triggerAbility('The White Book');
-
-                    expect(this.kingsguard.kneeled).toBe(false);
+                it('does not allow to trigger', function() {
+                    expect(this.player1).not.toAllowAbilityTrigger('The White Book');
                 });
             });
 
@@ -61,8 +59,10 @@ describe('The White Book', function() {
                     this.skipActionWindow();
                 });
 
-                it('does not allow to trigger', function() {
-                    expect(this.player1).not.toAllowAbilityTrigger('The White Book');
+                it('stands defending characters', function() {
+                    this.player1.triggerAbility('The White Book');
+
+                    expect(this.kingsguard.kneeled).toBe(false);
                 });
             });
         });
