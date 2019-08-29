@@ -7,7 +7,7 @@ class Yoren extends DrawCard {
                 onCardEntersPlay: event => event.card === this
             },
             target: {
-                cardCondition: card => card.getType() === 'character' && card.owner !== this.controller && card.getPrintedCost() <= 5 && card.location === 'play area'
+                cardCondition: card => card.getType() === 'character' && card.getPrintedCost() <= 5 && card.location === 'play area'
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to take control of {2}', context.player, this, context.target);
