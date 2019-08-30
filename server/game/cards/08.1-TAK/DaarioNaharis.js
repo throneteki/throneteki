@@ -7,7 +7,7 @@ class DaarioNaharis extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card !== this && (card.kneeled || card.controller !== this.controller) &&
+                cardCondition: card => card.location === 'play area' && card !== this &&
                                        (card.hasTrait('Ally') || card.hasTrait('Companion') || card.hasTrait('Mercenary'))
             },
             handler: context => {
