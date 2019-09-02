@@ -1,14 +1,11 @@
-const monk = require('monk');
 const passport = require('passport');
 
-const UserService = require('../services/UserService.js');
+const ServiceFactory = require('../services/ServiceFactory.js');
 const logger = require('../log.js');
-const config = require('../config.js');
 
-let db = monk(config.dbPath);
-let userService = new UserService(db);
+module.exports.init = function(server, options) {
+    let userService = ServiceFactory.userService(options.db, ServiceFactory.configService());
 
-module.exports.init = function(server) {
     server.get('/api/user/:username', passport.authenticate('jwt', { session: false }), function(req, res) {
         if(!req.user.permissions || !req.user.permissions.canManageUsers) {
             return res.status(403);

@@ -8,12 +8,12 @@ const logger = require('../log');
 const User = require('../models/User');
 
 class UserService extends EventEmitter {
-    constructor(db, config) {
+    constructor(db, configService) {
         super();
 
         this.users = db.get('users');
         this.sessions = db.get('sessions');
-        this.config = config;
+        this.configService = configService;
     }
 
     getUserByUsername(username) {
@@ -72,7 +72,8 @@ class UserService extends EventEmitter {
             promptedActionWindows: user.promptedActionWindows,
             permissions: user.permissions,
             verified: user.verified,
-            disabled: user.disabled
+            disabled: user.disabled,
+            patreon: user.patreon
         };
 
         if(user.password && user.password !== '') {
@@ -151,7 +152,7 @@ class UserService extends EventEmitter {
 
     addRefreshToken(username, token, ip) {
         let expiration = moment().add(1, 'months');
-        let hmac = crypto.createHmac('sha512', this.config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', this.configService.getValue('hmacSecret'));
 
         let newId = monk.id();
         let encodedToken = hmac.update(`REFRESH ${username} ${newId}`).digest('hex');
@@ -180,7 +181,7 @@ class UserService extends EventEmitter {
     }
 
     verifyRefreshToken(username, refreshToken) {
-        let hmac = crypto.createHmac('sha512', this.config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', this.configService.getValue('hmacSecret'));
         let encodedToken = hmac.update(`REFRESH ${username} ${refreshToken._id}`).digest('hex');
 
         if(encodedToken !== refreshToken.token) {
@@ -217,6 +218,10 @@ class UserService extends EventEmitter {
         return this.users.update({ username: username }, { '$pull': { tokens: { _id: tokenId } } }).catch(err => {
             logger.error(err);
         });
+    }
+    
+    setSupporterStatus(username, isSupporter) {
+        return this.users.update({ username: username }, { '$set': { 'permissions.isSupporter': isSupporter } });
     }
 }
 

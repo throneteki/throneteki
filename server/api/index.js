@@ -7,9 +7,9 @@ const messages = require('./messages');
 
 module.exports.init = function(server, options) {
     account.init(server, options);
-    decks.init(server);
-    cards.init(server);
-    news.init(server);
-    user.init(server);
-    messages.init(server);
+    decks.init(server, options);
+    cards.init(server, options);
+    news.init(server, options);
+    user.init(server, options);
+    messages.init(server, options);
 };

@@ -1,14 +1,11 @@
-const monk = require('monk');
 const passport = require('passport');
 
-const config = require('../config.js');
 const DeckService = require('../services/DeckService.js');
 const { wrapAsync } = require('../util.js');
 
-let db = monk(config.dbPath);
-let deckService = new DeckService(db);
+module.exports.init = function(server, options) {
+    let deckService = new DeckService(options.db);
 
-module.exports.init = function(server) {
     server.get('/api/decks/:id', passport.authenticate('jwt', { session: false }), wrapAsync(async function(req, res) {
         if(!req.params.id || req.params.id === '') {
             return res.status(404).send({ message: 'No such deck' });
