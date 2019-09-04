@@ -1,6 +1,7 @@
 const AbilityAdapter = require('./AbilityAdapter');
 const DiscardCard = require('./DiscardCard');
 const DiscardPower = require('./DiscardPower');
+const DrawCards = require('./DrawCards');
 const GainPower = require('./GainPower');
 const KneelCard = require('./KneelCard');
 const LookAtDeck = require('./LookAtDeck');
@@ -18,6 +19,7 @@ const StandCard = require('./StandCard');
 const GameActions = {
     discardCard: props => new AbilityAdapter(DiscardCard, props),
     discardPower: props => new AbilityAdapter(DiscardPower, props),
+    drawCards: props => new AbilityAdapter(DrawCards, props),
     gainPower: props => new AbilityAdapter(GainPower, props),
     kneelCard: props => new AbilityAdapter(KneelCard, props),
     lookAtDeck: props => new AbilityAdapter(LookAtDeck, props),

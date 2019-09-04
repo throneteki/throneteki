@@ -190,7 +190,9 @@ class Player extends Spectator {
         this.game.raiseEvent('onUsedPlotsModified', { player: this });
     }
 
-    drawCardsToHand(numCards) {
+    getNumCardsToDraw(amount) {
+        let numCards = amount;
+
         if(numCards > this.drawDeck.length) {
             numCards = this.drawDeck.length;
         }
@@ -199,23 +201,11 @@ class Player extends Spectator {
             numCards = Math.min(numCards, this.maxCardDraw.getMax() - this.drawnCards);
         }
 
-        if(numCards < 0) {
-            numCards = 0;
-        }
+        return numCards;
+    }
 
-        let cards = this.drawDeck.slice(0, numCards);
-
-        for(const card of cards) {
-            this.moveCard(card, 'hand');
-        }
-
-        this.drawnCards += numCards;
-
-        if(this.game.currentPhase !== 'setup') {
-            this.game.raiseEvent('onCardsDrawn', { cards: cards, player: this });
-        }
-
-        return cards;
+    drawCardsToHand(numCards) {
+        return this.game.resolveGameAction(GameActions.drawCards({ player: this, amount: numCards }));
     }
 
     searchDrawDeck(limit, predicate = () => true) {
@@ -998,14 +988,6 @@ class Player extends Spectator {
     }
 
     synchronousMoveCard(card, targetLocation, options = {}) {
-        this.removeCardFromPile(card);
-
-        let targetPile = this.getSourceList(targetLocation);
-
-        if(!targetPile || targetPile.includes(card)) {
-            return;
-        }
-
         if(card.location === 'play area') {
             for(const attachment of card.attachments) {
                 this.removeAttachment(attachment, false);
@@ -1024,18 +1006,30 @@ class Player extends Spectator {
             this.game.raiseEvent('onCardLeftPlay', { player: this, card: card });
         }
 
-        card.moveTo(targetLocation);
-
-        if(targetLocation === 'active plot') {
-            this.activePlot = card;
-        } else if(targetLocation === 'draw deck' && !options.bottom) {
-            targetPile.unshift(card);
-        } else {
-            targetPile.push(card);
-        }
+        this.placeCardInPile({ card, location: targetLocation, bottom: options.bottom });
 
         if(['dead pile', 'discard pile', 'revealed plots'].includes(targetLocation)) {
             this.game.raiseEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
+        }
+    }
+
+    placeCardInPile({ card, location, bottom = false }) {
+        this.removeCardFromPile(card);
+
+        let targetPile = this.getSourceList(location);
+
+        if(!targetPile) {
+            return;
+        }
+
+        card.moveTo(location);
+
+        if(location === 'active plot') {
+            this.activePlot = card;
+        } else if(location === 'draw deck' && !bottom) {
+            targetPile.unshift(card);
+        } else {
+            targetPile.push(card);
         }
     }
 

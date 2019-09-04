@@ -1,4 +1,5 @@
-const BaseAbility = require('./baseability.js');
+const BaseAbility = require('./baseability');
+const GameActions = require('./GameActions');
 
 class InsightKeyword extends BaseAbility {
     constructor() {
@@ -12,9 +13,15 @@ class InsightKeyword extends BaseAbility {
 
     executeHandler(context) {
         let {game, challenge, source} = context;
-        let drawn = (challenge.winner.drawCardsToHand(1))[0];
-        game.raiseEvent('onInsight', { challenge: challenge, source: source, card: drawn });
         game.addMessage('{0} draws a card from Insight on {1}', challenge.winner, source);
+        game.resolveGameAction(
+            GameActions.drawCards({
+                player: challenge.winner,
+                amount: 1,
+                reason: 'insight',
+                source
+            })
+        );
     }
 }
 

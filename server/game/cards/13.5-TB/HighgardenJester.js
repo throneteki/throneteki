@@ -5,7 +5,7 @@ class HighgardenJester extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onInsight: event => event.source === this && this.controller.hand.length > 0
+                onCardsDrawn: event => event.reason === 'insight' && event.source === this && this.controller.hand.length > 0
             },
             handler: context => {
                 if(this.game.anyCardsInPlay(card => card !== this && card.isMatch({type: 'character', trait: 'Fool'}))) {
