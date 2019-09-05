@@ -113,4 +113,37 @@ describe('AtomicEvent', function() {
             expect(this.event.getConcurrentEvents()).toEqual(['child1-events', 'child2-events']);
         });
     });
+
+    describe('resolved', function() {
+        beforeEach(function() {
+            this.childEventSpy1.resolved = true;
+            this.childEventSpy2.resolved = true;
+        });
+
+        describe('when the event has been cancelled', function() {
+            beforeEach(function() {
+                this.event.cancel();
+            });
+
+            it('returns false', function() {
+                expect(this.event.resolved).toBe(false);
+            });
+        });
+
+        describe('when all child events are resolved', function() {
+            it('returns true', function() {
+                expect(this.event.resolved).toBe(true);
+            });
+        });
+
+        describe('when any child event is not resolved', function() {
+            beforeEach(function() {
+                this.childEventSpy2.resolved = false;
+            });
+
+            it('returns false', function() {
+                expect(this.event.resolved).toBe(false);
+            });
+        });
+    });
 });

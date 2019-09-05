@@ -4,6 +4,7 @@ const ThenClauseAbility = require('../../../server/game/ThenClauseAbility');
 describe('ThenAbilityAction', function() {
     beforeEach(function() {
         this.eventSpy = jasmine.createSpyObj('event', ['thenExecute']);
+        this.eventSpy.resolved = true;
         this.internalActionSpy = jasmine.createSpyObj('action', ['allow', 'createEvent']);
         this.internalActionSpy.createEvent.and.returnValue(this.eventSpy);
         this.gameSpy = jasmine.createSpyObj('game', ['popAbilityContext', 'pushAbilityContext', 'resolveAbility']);
@@ -56,8 +57,8 @@ describe('ThenAbilityAction', function() {
                     expect(this.gameSpy.resolveAbility).toHaveBeenCalledWith(jasmine.any(ThenClauseAbility), jasmine.any(Object));
                 });
 
-                it('does not resolve the ability if the event is cancelled', function() {
-                    this.eventSpy.cancelled = true;
+                it('does not resolve the ability if the event failed to fully resolve', function() {
+                    this.eventSpy.resolved = false;
                     this.thenExecute(this.eventSpy);
 
                     expect(this.gameSpy.resolveAbility).not.toHaveBeenCalled();

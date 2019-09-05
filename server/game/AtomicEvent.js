@@ -6,6 +6,10 @@ class AtomicEvent {
         this.params = {};
     }
 
+    get resolved() {
+        return !this.cancelled && this.childEvents.every(event => event.resolved);
+    }
+
     addChildEvent(event) {
         this.params = Object.assign({}, event.params, this.params);
         Object.assign(this, this.params);

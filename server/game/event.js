@@ -31,6 +31,10 @@ class Event {
         Object.assign(this, params);
     }
 
+    get resolved() {
+        return !this.cancelled && this.amount === this.desiredAmount;
+    }
+
     addChildEvent(event) {
         event.parent = this;
         this.childEvents.push(event);

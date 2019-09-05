@@ -14,7 +14,7 @@ class ThenAbilityAction {
         let event = this.preThenAction.createEvent(context);
 
         event.thenExecute(event => {
-            if(event.cancelled) {
+            if(!event.resolved) {
                 return;
             }
 
