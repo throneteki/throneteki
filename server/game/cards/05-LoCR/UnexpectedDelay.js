@@ -1,4 +1,5 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../plotcard');
+const GameActions = require('../../GameActions');
 
 class UnexpectedDelay extends PlotCard {
     setupCardAbilities() {
@@ -10,13 +11,25 @@ class UnexpectedDelay extends PlotCard {
                 choosingPlayer: 'each',
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.power === 0 && card.attachments.length === 0
             },
+            message: {
+                format: '{source} forces {chosenCards} to return to their owner\'s hands',
+                args: { chosenCards: context => this.getChosenCards(context) }
+            },
             handler: context => {
-                for(let selection of context.targets.selections) {
-                    let card = selection.value;
-                    card.owner.returnCardToHand(card);
-                }
+                const uniqueCards = this.getChosenCards(context);
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        uniqueCards.map(card => GameActions.returnCardToHand({ card }))
+                    ),
+                    context
+                );
             }
         });
+    }
+
+    getChosenCards(context) {
+        const cards = context.targets.selections.map(selection => selection.value);
+        return [...new Set(cards)];
     }
 }
 
