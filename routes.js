@@ -23,6 +23,7 @@ import BlockList from './pages/BlockList';
 import NodesAdmin from './pages/NodesAdmin';
 import MotdAdmin from './pages/MotdAdmin';
 import Privacy from './pages/Privacy';
+import Patreon from './pages/Patreon';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -45,7 +46,8 @@ const routes = [
     { path: '/users', action: () => <UserAdmin key='useradmin' />, permission: 'canManageUsers' },
     { path: '/nodes', action: () => <NodesAdmin key='nodesadmin' />, permission: 'canManageNodes' },
     { path: '/privacy', action: () => <Privacy key='privacy' /> },
-    { path: '/admin/motd', action: () => <MotdAdmin key='motdadmin' />, permission: 'canManageMotd' }
+    { path: '/admin/motd', action: () => <MotdAdmin key='motdadmin' />, permission: 'canManageMotd' },
+    { path: '/patreon', action: context => <Patreon code={ context.params.code } />}
 ];
 
 export default routes;
