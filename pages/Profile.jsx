@@ -241,7 +241,7 @@ class Profile extends React.Component {
                             onChange={ e => this.setState({ enableGravatar: e.target.checked }) } checked={ this.state.enableGravatar } />
                         <div className='col-sm-3 text-center'>Current profile picture</div>
                         <button type='button' className='btn btn-default col-sm-offset-1 col-sm-3' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
-                        { !this.isPatreonLinked() && <a className='btn btn-default col-sm-offset-1 col-sm-3' href={ `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=HlGZCMj-SxdBmv0RMWfV3jtHLkhWSQThHuv6sEcSBtyrxjJsx6v65mGARuwAbkwU&redirect_uri=${callbackUrl}` }><img src='/img/Patreon_Mark_Coral.jpg' style={ {height:'21px'} } />&nbsp;Link Patreon account</a> }
+                        { !this.isPatreonLinked() && <a className='btn btn-default col-sm-offset-1 col-sm-3' href={ `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}` }><img src='/img/Patreon_Mark_Coral.jpg' style={ {height:'21px'} } />&nbsp;Link Patreon account</a> }
                         { this.isPatreonLinked() && <button type='button' className='btn btn-default col-sm-offset-1 col-sm-3' onClick={ this.onUnlinkClick }>Unlink Patreon account</button> }
                         <div className='col-sm-12 profile-inner'>
                             <Panel title='Action window defaults'>
