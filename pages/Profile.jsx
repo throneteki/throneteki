@@ -228,7 +228,7 @@ class Profile extends React.Component {
         }
 
         let initialValues = { email: this.props.user.email };
-        let callbackUrl = process.env.NODE_ENV === 'production' ? 'http://theironthrone.net/patreon' : 'http://localhost:8080/patreon';
+        let callbackUrl = process.env.NODE_ENV === 'production' ? 'https://theironthrone.net/patreon' : 'http://localhost:8080/patreon';
 
         return (
             <div className='col-sm-8 col-sm-offset-2 profile full-height'>
