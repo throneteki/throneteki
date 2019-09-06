@@ -1,12 +1,9 @@
-const monk = require('monk');
-const config = require('../config.js');
-const CardService = require('../services/CardService.js');
+const CardService = require('../services/CardService');
 const Factions = require('../game/Factions');
 
-let db = monk(config.dbPath);
-let cardService = new CardService(db);
+module.exports.init = function(server, options) {
+    let cardService = new CardService(options.db);
 
-module.exports.init = function(server) {
     server.get('/api/cards', function(req, res, next) {
         cardService.getAllCards()
             .then(cards => {

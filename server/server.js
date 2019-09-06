@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const config = require('./config.js');
 const passport = require('passport');
 const logger = require('./log.js');
 const api = require('./api');
@@ -13,20 +12,24 @@ const passportJwt = require('passport-jwt');
 const JwtStrategy = passportJwt.Strategy;
 const ExtractJwt = passportJwt.ExtractJwt;
 
-const UserService = require('./services/UserService.js');
+const ServiceFactory = require('./services/ServiceFactory.js');
+
 const version = require('../version.js');
 
 class Server {
     constructor(isDeveloping) {
-        let db = monk(config.dbPath);
-        this.userService = new UserService(db);
+        this.configService = ServiceFactory.configService();
+
+        let db = monk(this.configService.getValue('dbPath'));
+
+        this.userService = ServiceFactory.userService(db, this.configService);
         this.isDeveloping = isDeveloping;
         this.server = http.Server(app);
     }
 
     init(options) {
         if(!this.isDeveloping) {
-            Raven.config(config.sentryDsn, { release: version.releaseDate }).install();
+            Raven.config(this.configService.getValue('sentryDsn'), { release: version.releaseDate }).install();
 
             app.use(Raven.requestHandler());
             app.use(Raven.errorHandler());
@@ -34,7 +37,7 @@ class Server {
 
         var opts = {};
         opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-        opts.secretOrKey = config.secret;
+        opts.secretOrKey = this.configService.getValue('secret');
 
         passport.use(new JwtStrategy(opts, (jwtPayload, done) => {
             this.userService.getUserById(jwtPayload._id).then(user => {
@@ -75,7 +78,7 @@ class Server {
     }
 
     run() {
-        let port = process.env.PORT || config.port || 4000;
+        let port = process.env.PORT || this.configService.getValue('port') || 4000;
 
         this.server.listen(port, '0.0.0.0', function onStart(err) {
             if(err) {

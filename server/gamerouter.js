@@ -3,16 +3,20 @@ const router = zmq.socket('router');
 const logger = require('./log.js');
 const monk = require('monk');
 const EventEmitter = require('events');
+
 const GameService = require('./services/GameService.js');
+const ServiceFactory = require('./services/ServiceFactory.js');
 
 class GameRouter extends EventEmitter {
-    constructor(config) {
+    constructor() {
         super();
 
-        this.workers = {};
-        this.gameService = new GameService(monk(config.dbPath));
+        let configService = ServiceFactory.configService();
 
-        router.bind(config.mqUrl, err => {
+        this.workers = {};
+        this.gameService = new GameService(monk(configService.getValue('dbPath')));
+
+        router.bind(configService.getValue('mqUrl'), err => {
             if(err) {
                 logger.info(err);
             }

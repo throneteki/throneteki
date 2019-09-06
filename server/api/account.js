@@ -8,11 +8,9 @@ const sendgrid = require('@sendgrid/mail');
 const fs = require('fs');
 
 const logger = require('../log');
-const config = require('../config');
 const util = require('../util');
 const { wrapAsync } = require('../util');
-const UserService = require('../services/UserService');
-const User = require('../models/User');
+const ServiceFactory = require('../services/ServiceFactory.js');
 
 let userService;
 
@@ -96,9 +94,14 @@ function writeFile(path, data, opts = 'utf8') {
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
 module.exports.init = function (server, options) {
-    userService = options.userService || new UserService(options.db, options.config);
-    if(options.config.emailKey) {
-        sendgrid.setApiKey(options.config.emailKey);
+    let configService = ServiceFactory.configService();
+    userService = ServiceFactory.userService(options.db, configService);
+    let patreonService = ServiceFactory.patreonService(configService.getValue('patreonClientId'), configService.getValue('patreonSecret'), userService, 
+        configService.getValue('patreonCallbackUrl'));
+    let emailKey = configService.getValue('emailKey');
+
+    if(emailKey) {
+        sendgrid.setApiKey(emailKey);
     }
 
     server.post('/api/account/register', wrapAsync(async (req, res, next) => {
@@ -137,29 +140,32 @@ module.exports.init = function (server, options) {
 
         let domain = req.body.email.substring(req.body.email.lastIndexOf('@') + 1);
 
-        try {
-            let response = await util.httpRequest(`http://check.block-disposable-email.com/easyapi/json/${config.emailBlockKey}/${domain}`);
-            let answer = JSON.parse(response);
+        let emailBlockKey = configService.getValue('emailBlockKey');
+        if(emailBlockKey) {
+            try {
+                let response = await util.httpRequest(`http://check.block-disposable-email.com/easyapi/json/${emailBlockKey}/${domain}`);
+                let answer = JSON.parse(response);
 
-            if(answer.request_status !== 'success') {
-                logger.warn('Failed to check email address', answer);
+                if(answer.request_status !== 'success') {
+                    logger.warn('Failed to check email address', answer);
+                }
+
+                if(answer.domain_status === 'block') {
+                    logger.warn('Blocking', domain, 'from registering the account', req.body.username);
+                    res.send({ success: false, message: 'One time use email services are not permitted on this site.  Please use a real email address' });
+
+                    return next();
+                }
+            } catch(err) {
+                logger.warn('Could not valid email address', domain, err);
             }
-
-            if(answer.domain_status === 'block') {
-                logger.warn('Blocking', domain, 'from registering the account', req.body.username);
-                res.send({ success: false, message: 'One time use email services are not permitted on this site.  Please use a real email address' });
-
-                return next();
-            }
-        } catch(err) {
-            logger.warn('Could not valid email address', domain, err);
         }
 
         let passwordHash = await hashPassword(req.body.password, 10);
 
         let expiration = moment().add(7, 'days');
         let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
 
         let activationToken = hmac.update(`ACTIVATE ${req.body.username} ${formattedExpiration}`).digest('hex');
 
@@ -222,7 +228,7 @@ module.exports.init = function (server, options) {
             return next();
         }
 
-        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
         let resetToken = hmac.update('ACTIVATE ' + user.username + ' ' + user.activationTokenExpiry).digest('hex');
 
         if(resetToken !== req.body.token) {
@@ -262,11 +268,43 @@ module.exports.init = function (server, options) {
         res.send({ success: true });
     }));
 
-    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), function (req, res) {
-        let user = new User(req.user).getWireSafeDetails();
+    server.post('/api/account/checkauth', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        let user = await userService.getUserByUsername(req.user.username);
+        let userDetails = user.getWireSafeDetails();
 
-        res.send({ success: true, user: user });
-    });
+        if(!user.patreon) {
+            return res.send({ success: true, user: userDetails });
+        }
+
+        userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
+
+        if(userDetails.patreon === 'none') {           
+            delete(userDetails.patreon);
+
+            let ret = await patreonService.refreshTokenForUser(user);
+            if(!ret) {
+                return res.send({ success: true, user: userDetails });
+            }
+
+            userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
+            
+            if(userDetails.patreon === 'none') {           
+                return res.send({ success: true, user: userDetails });
+            }
+        }
+
+        if(userDetails.patreon === 'pledged' && !userDetails.permissions.isSupporter) {
+            await userService.setSupporterStatus(user.username, true);
+            // eslint-disable-next-line require-atomic-updates
+            userDetails.permissions.isSupporter = req.user.permissions.isSupporter = true;
+        } else if(userDetails.patreon !== 'pledged' && userDetails.permissions.isSupporter) {
+            await userService.setSupporterStatus(user.username, false);
+            // eslint-disable-next-line require-atomic-updates
+            userDetails.permissions.isSupporter = req.user.permissions.isSupporter = false;
+        }
+
+        res.send({ success: true, user: userDetails });
+    }));
 
     server.post('/api/account/login', wrapAsync(async (req, res, next) => {
         if(!req.body.username) {
@@ -309,7 +347,7 @@ module.exports.init = function (server, options) {
 
         let userObj = user.getWireSafeDetails();
 
-        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+        let authToken = jwt.sign(userObj, configService.geValue('secret'), { expiresIn: '5m' });
         let ip = req.get('x-real-ip');
         if(!ip) {
             ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -368,7 +406,7 @@ module.exports.init = function (server, options) {
             ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         }
 
-        let authToken = jwt.sign(userObj, config.secret, { expiresIn: '5m' });
+        let authToken = jwt.sign(userObj, configService.getValue('secret'), { expiresIn: '5m' });
 
         await userService.updateRefreshTokenUsage(refreshToken.id, ip);
 
@@ -406,7 +444,7 @@ module.exports.init = function (server, options) {
             return next();
         }
 
-        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
         let resetToken = hmac.update('RESET ' + user.username + ' ' + user.tokenExpires).digest('hex');
 
         if(resetToken !== req.body.token) {
@@ -429,7 +467,7 @@ module.exports.init = function (server, options) {
     server.post('/api/account/password-reset', wrapAsync(async (req, res) => {
         let resetToken;
 
-        let response = await util.httpRequest(`https://www.google.com/recaptcha/api/siteverify?secret=${config.captchaKey}&response=${req.body.captcha}`);
+        let response = await util.httpRequest(`https://www.google.com/recaptcha/api/siteverify?secret=${configService.getValue('captchaKey')}&response=${req.body.captcha}`);
         let answer = JSON.parse(response);
 
         if(!answer.success) {
@@ -447,7 +485,7 @@ module.exports.init = function (server, options) {
 
         let expiration = moment().add(4, 'hours');
         let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-        let hmac = crypto.createHmac('sha512', config.hmacSecret);
+        let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
 
         resetToken = hmac.update(`RESET ${user.username} ${formattedExpiration}`).digest('hex');
 
@@ -494,7 +532,7 @@ module.exports.init = function (server, options) {
         let authToken;
 
         if(!safeUser.disabled && !safeUser.verified) {
-            authToken = jwt.sign(safeUser, config.secret, { expiresIn: '5m' });
+            authToken = jwt.sign(safeUser, configService.getValue('secret'), { expiresIn: '5m' });
         }
 
         res.send(Object.assign({ success: true }, { user: updatedUser.getWireSafeDetails(), token: authToken }));
@@ -634,6 +672,57 @@ module.exports.init = function (server, options) {
 
         res.send({ success: true });
     }));
+
+    server.post('/api/account/linkPatreon', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        req.params.username = req.user ? req.user.username : undefined;
+
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        if(!req.body.code) {
+            return res.send({ success: false, message: 'Code is required' });
+        }
+
+        let ret = await patreonService.linkAccount(req.params.username, req.body.code);
+        if(!ret) {
+            return res.send({ success: false, message: 'An error occured syncing your patreon account.  Please try again later.' });
+        }
+
+        user.patreon = ret;
+        let status = await patreonService.getPatreonStatusForUser(user);
+
+        if(status === 'pledged' && !user.permissions.isSupporter) {
+            await userService.setSupporterStatus(user.username, true);
+            // eslint-disable-next-line require-atomic-updates
+            user.permissions.isSupporter = req.user.permissions.isSupporter = true;
+        } else if(status !== 'pledged' && user.permissions.isSupporter) {
+            await userService.setSupporterStatus(user.username, false);
+            // eslint-disable-next-line require-atomic-updates
+            user.permissions.isSupporter = req.user.permissions.isSupporter = false;
+        }
+
+        return res.send({ success: true });
+    }));
+
+    server.post('/api/account/unlinkPatreon', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+        req.params.username = req.user ? req.user.username : undefined;
+
+        let user = await checkAuth(req, res);
+
+        if(!user) {
+            return;
+        }
+
+        let ret = await patreonService.unlinkAccount(req.params.username);
+        if(!ret) {
+            return res.send({ success: false, message: 'An error occured unlinking your patreon account.  Please try again later.' });
+        }
+
+        return res.send({ success: true });
+    }));
 };
 
 async function downloadAvatar(user) {
@@ -652,7 +741,7 @@ async function checkAuth(req, res) {
     }
 
     if(req.user.username !== req.params.username) {
-        res.status(401).send({ message: 'Unauthorized' });
+        res.status(403).send({ message: 'Forbidden' });
 
         return null;
     }

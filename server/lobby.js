@@ -12,7 +12,6 @@ const GameRouter = require('./gamerouter.js');
 const ServiceFactory = require('./services/ServiceFactory');
 const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
-const UserService = require('./services/UserService.js');
 const User = require('./models/User');
 const { sortBy } = require('./Array');
 
@@ -21,12 +20,12 @@ class Lobby {
         this.sockets = {};
         this.users = {};
         this.games = {};
-        this.config = options.config;
+        this.configService = options.configService || ServiceFactory.configService();
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
-        this.userService = options.userService || new UserService(options.db, options.config);
-        this.router = options.router || new GameRouter(this.config);
+        this.userService = options.userService || ServiceFactory.userService(options.db, this.configService);
+        this.router = options.router || new GameRouter();
 
         this.router.on('onGameClosed', this.onGameClosed.bind(this));
         this.router.on('onGameRematch', this.onGameRematch.bind(this));
@@ -138,7 +137,7 @@ class Lobby {
         let versionInfo = undefined;
 
         if(ioSocket.handshake.query.token && ioSocket.handshake.query.token !== 'undefined') {
-            jwt.verify(ioSocket.handshake.query.token, this.config.secret, (err, user) => {
+            jwt.verify(ioSocket.handshake.query.token, this.configService.getValue('secret'), (err, user) => {
                 if(err) {
                     ioSocket.emit('authfailed');
                     return;
@@ -285,7 +284,7 @@ class Lobby {
 
     // Events
     onConnection(ioSocket) {
-        let socket = new Socket(ioSocket, { config: this.config });
+        let socket = new Socket(ioSocket, { configService: this.configService });
 
         socket.registerEvent('lobbychat', this.onLobbyChat.bind(this));
         socket.registerEvent('newgame', this.onNewGame.bind(this));
@@ -498,7 +497,7 @@ class Lobby {
     }
 
     sendHandoff(socket, gameNode, gameId) {
-        let authToken = jwt.sign(socket.user.getWireSafeDetails(), this.config.secret, { expiresIn: '5m' });
+        let authToken = jwt.sign(socket.user.getWireSafeDetails(), this.configService.getValue('secret'), { expiresIn: '5m' });
 
         socket.send('handoff', {
             address: gameNode.address,

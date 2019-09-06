@@ -1,15 +1,12 @@
-const monk = require('monk');
 const passport = require('passport');
 
 const NewsService = require('../services/NewsService.js');
 const logger = require('../log.js');
-const config = require('../config.js');
 const { wrapAsync } = require('../util.js');
 
-let db = monk(config.dbPath);
-let newsService = new NewsService(db);
+module.exports.init = function(server, options) {
+    let newsService = new NewsService(options.db);
 
-module.exports.init = function(server) {
     server.get('/api/news', function(req, res) {
         newsService.getRecentNewsItems({ limit: req.query.limit })
             .then(news => {
