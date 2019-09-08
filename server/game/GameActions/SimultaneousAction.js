@@ -1,23 +1,29 @@
 const GameAction = require('./GameAction');
 const SimultaneousEvents = require('../SimultaneousEvents');
 const ThenAbilityAction = require('./ThenAbilityAction');
+const NullEvent = require('../NullEvent');
 
 class SimultaneousAction extends GameAction {
-    constructor(actions) {
+    constructor(actionFactory) {
         super();
-        this.actions = actions;
+        this.actionFactory = actionFactory;
     }
 
-    allow(props) {
-        return this.actions.some(action => action.allow(props));
+    allow(context) {
+        const actions = this.resolveActions(context);
+        return actions.some(action => action.allow(context));
     }
 
-    createEvent(props) {
+    createEvent(context) {
         let event = new SimultaneousEvents();
-        let actions = this.actions.filter(action => action.allow(props));
+        const actions = this.resolveActions(context);
 
         for(let action of actions) {
-            event.addChildEvent(action.createEvent(props));
+            if(action.allow(context)) {
+                event.addChildEvent(action.createEvent(context));
+            } else {
+                event.addChildEvent(new NullEvent());
+            }
         }
 
         return event;
@@ -25,6 +31,14 @@ class SimultaneousAction extends GameAction {
 
     then(abilityPropertiesFactory) {
         return new ThenAbilityAction(this, abilityPropertiesFactory);
+    }
+
+    resolveActions(context) {
+        if(typeof this.actionFactory === 'function') {
+            return this.actionFactory(context);
+        }
+
+        return this.actionFactory;
     }
 }
 
