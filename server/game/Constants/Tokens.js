@@ -7,6 +7,7 @@ const Tokens = {
     journey: 'journey',
     kiss: 'kiss',
     poison: 'poison',
+    prayer: 'prayer',
     shadow: 'shadow',
     stand: 'stand',
     valarmorghulis: 'valarmorghulis',
