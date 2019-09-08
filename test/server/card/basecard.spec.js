@@ -18,6 +18,55 @@ describe('BaseCard', function () {
         });
     });
 
+    describe('.parseKeywords', function() {
+        it('parses keywords with a parenthesized value', function() {
+            const keywords = BaseCard.parseKeywords('Ambush (1). Bestow (2). Shadow (3).');
+            expect(keywords.length).toBe(3);
+            expect(keywords).toContain('ambush (1)');
+            expect(keywords).toContain('bestow (2)');
+            expect(keywords).toContain('shadow (3)');
+        });
+
+        it('parses non-value keywords', function() {
+            const keywords = BaseCard.parseKeywords('Stealth. Intimidate. Renown. Insight. Terminal. Limited. Pillage.');
+
+            expect(keywords.length).toBe(7);
+            expect(keywords).toContain('stealth');
+            expect(keywords).toContain('intimidate');
+            expect(keywords).toContain('renown');
+            expect(keywords).toContain('insight');
+            expect(keywords).toContain('terminal');
+            expect(keywords).toContain('limited');
+            expect(keywords).toContain('pillage');
+        });
+
+        it('parses no attachment keywords', function() {
+            const keywords = BaseCard.parseKeywords('No attachments. No attachments except <i>Weapon</i>.');
+
+            expect(keywords.length).toBe(2);
+            expect(keywords).toContain('no attachments');
+            expect(keywords).toContain('no attachments except <i>weapon</i>');
+        });
+
+        it('parses keywords on multiple lines', function() {
+            const keywords = BaseCard.parseKeywords(`
+                Shadow (4).\n
+                No attachments except <i>Weapon</i>.\n
+                <b>Action:</b> Until the end of phase, cannot be bypassed by Stealth.
+            `);
+
+            expect(keywords.length).toBe(2);
+            expect(keywords).toContain('shadow (4)');
+            expect(keywords).toContain('no attachments except <i>weapon</i>');
+        });
+
+        it('does not parse keywords that are embedded in abilities', function() {
+            const keywords = BaseCard.parseKeywords('Cannot be bypassed by stealth.');
+
+            expect(keywords).toEqual([]);
+        });
+    });
+
     describe('doAction()', function() {
         describe('when there is no action for the card', function() {
             beforeEach(function() {

@@ -76,32 +76,41 @@ class BaseCard {
         this.events = new EventRegistrar(this.game, this);
 
         this.abilities = { actions: [], reactions: [], persistentEffects: [], playActions: [] };
-        this.parseKeywords(cardData.text || '');
-        for(let trait of cardData.traits || []) {
-            this.addTrait(trait);
-        }
 
+        this.setupCardTextProperties(AbilityDsl);
         this.setupCardAbilities(AbilityDsl);
 
-        this.factions = new ReferenceCountedSetProperty();
         this.cardTypeSet = undefined;
-        this.addFaction(cardData.faction);
     }
 
-    parseKeywords(text) {
-        let firstLine = text.split('\n')[0] || '';
-        let potentialKeywords = firstLine.split('.').map(k => k.toLowerCase().trim());
+    static parseKeywords(text) {
+        const lines = text.toLowerCase().split('\n');
+        const potentialKeywordLines = lines.filter(line => !line.includes('<b>'));
+        const potentialKeywords = potentialKeywordLines.reduce((words, line) => {
+            return words.concat(line.split('.').map(word => word.trim()));
+        }, []);
 
-        this.printedKeywords = potentialKeywords.filter(potentialKeyword => {
+        return potentialKeywords.filter(potentialKeyword => {
             return ValidKeywords.some(keyword => potentialKeyword.indexOf(keyword) === 0);
         });
+    }
+
+    setupCardTextProperties(ability) {
+        this.factions = new ReferenceCountedSetProperty();
+        this.printedKeywords = BaseCard.parseKeywords(this.cardData.text || '');
+
+        this.addFaction(this.cardData.faction);
+
+        for(let trait of this.cardData.traits || []) {
+            this.addTrait(trait);
+        }
 
         if(this.printedKeywords.length > 0) {
             this.persistentEffect({
                 match: this,
                 location: 'any',
                 targetLocation: 'any',
-                effect: AbilityDsl.effects.addMultipleKeywords(this.printedKeywords)
+                effect: ability.effects.addMultipleKeywords(this.printedKeywords)
             });
         }
     }

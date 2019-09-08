@@ -2,7 +2,6 @@ const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const StandardPlayActions = require('./PlayActions/StandardActions');
-const AbilityDsl = require('./abilitydsl');
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -13,12 +12,6 @@ class DrawCard extends BaseCard {
         this.dupes = [];
         this.attachments = [];
         this.childCards = [];
-        this.icons = new ReferenceCountedSetProperty();
-
-        for(let icon of this.getPrintedIcons()) {
-            this.icons.add(icon);
-        }
-
         this.strengthModifier = 0;
         this.strengthMultiplier = 1;
         this.strengthSet = undefined;
@@ -32,8 +25,6 @@ class DrawCard extends BaseCard {
         this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
-
-        this.setupDuplicateAbility(AbilityDsl);
     }
 
     createSnapshot() {
@@ -59,6 +50,18 @@ class DrawCard extends BaseCard {
         clone.traits = this.traits.clone();
 
         return clone;
+    }
+
+    setupCardTextProperties(ability) {
+        super.setupCardTextProperties(ability);
+
+        this.icons = new ReferenceCountedSetProperty();
+
+        for(let icon of this.getPrintedIcons()) {
+            this.icons.add(icon);
+        }
+
+        this.setupDuplicateAbility(ability);
     }
 
     setupDuplicateAbility(ability) {
