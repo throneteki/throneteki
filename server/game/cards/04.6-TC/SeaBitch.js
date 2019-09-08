@@ -24,7 +24,6 @@ class SeaBitch extends DrawCard {
     cardCondition(card, context) {
         return card.getType() === 'location'
             && card.location === 'play area'
-            && card.controller !== context.player
             && !card.hasKeyword('Limited')
             && card.name !== this.name
             && context.player.canControl(card);

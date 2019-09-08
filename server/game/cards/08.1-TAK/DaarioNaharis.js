@@ -7,7 +7,7 @@ class DaarioNaharis extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
             },
             target: {
-                cardCondition: card => card.location === 'play area' && card !== this && (card.kneeled || card.controller !== this.controller) &&
+                cardCondition: card => card.location === 'play area' && card !== this &&
                                        (card.hasTrait('Ally') || card.hasTrait('Companion') || card.hasTrait('Mercenary'))
             },
             handler: context => {
@@ -15,12 +15,10 @@ class DaarioNaharis extends DrawCard {
                     context.target.controller.standCard(context.target);
                 }
 
-                if(context.target.controller !== this.controller) {
-                    this.untilEndOfPhase(ability => ({
-                        match: context.target,
-                        effect: ability.effects.takeControl(this.controller)
-                    }));
-                }
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: ability.effects.takeControl(this.controller)
+                }));
 
                 this.game.addMessage('{0} uses {1} to stand and take control of {2}', context.player, this, context.target);
             }

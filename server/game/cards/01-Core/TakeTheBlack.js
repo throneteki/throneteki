@@ -17,7 +17,7 @@ class TakeTheBlack extends DrawCard {
     }
 
     cardCondition(card) {
-        return card.controller !== this.controller && card.getType() === 'character' && !card.isUnique() && card.getPrintedCost() <= 6;
+        return card.getType() === 'character' && !card.isUnique() && card.getPrintedCost() <= 6;
     }
 }
 

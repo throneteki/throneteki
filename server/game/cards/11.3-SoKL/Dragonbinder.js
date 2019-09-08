@@ -40,7 +40,7 @@ class Dragonbinder extends DrawCard {
     takeDragon() {
         this.game.promptForSelect(this.controller, {
             source: this,
-            cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
+            cardCondition: card => card.location === 'play area' &&
                                    card.getType() === 'character' && card.hasTrait('Dragon'),
             onSelect: (player, card) => this.onDragonSelected(player, card),
             onCancel: (player) => this.onDragonCanceled(player)

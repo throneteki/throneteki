@@ -5,8 +5,7 @@ class Turncloak extends DrawCard {
         this.attachmentRestriction({ loyal: false });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isParticipating(this.parent) &&
-                                         this.parent.controller !== this.game.currentChallenge.winner
+                afterChallenge: event => event.challenge.isParticipating(this.parent)
             },
             player: () => this.game.currentChallenge.winner,
             handler: context => {
