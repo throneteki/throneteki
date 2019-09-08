@@ -11,7 +11,9 @@ class MercenaryContract extends DrawCard {
             when: {
                 afterChallenge: event => (
                     event.challenge.winner === this.controller &&
-                    event.challenge.isAttacking(this.parent))
+                    event.challenge.isAttacking(this.parent) &&
+                    this.parent.kneeled &&
+                    this.parent.allowGameAction('stand'))
             },
             cost: [
                 ability.costs.payGold(1),
