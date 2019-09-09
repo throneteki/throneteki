@@ -5,8 +5,14 @@ describe('Kings Of Summer', function() {
         this.gameSpy = jasmine.createSpyObj('game', ['addMessage', 'getPlayers', 'on']);
 
         this.plot1 = jasmine.createSpyObj('plot1', ['hasTrait']);
+        this.plot1.goldModifier = 0;
+        this.plot1.reserveModifier = 0;
         this.plot2 = jasmine.createSpyObj('plot2', ['hasTrait']);
+        this.plot2.goldModifier = 0;
+        this.plot2.reserveModifier = 0;
         this.plot3 = jasmine.createSpyObj('plot3', ['hasTrait']);
+        this.plot3.goldModifier = 0;
+        this.plot3.reserveModifier = 0;
 
         this.plot1.hasTrait.and.callFake(trait => {
             return trait === 'Summer';
@@ -31,6 +37,7 @@ describe('Kings Of Summer', function() {
         this.gameSpy.getPlayers.and.returnValue([this.player1Fake, this.player2Fake]);
 
         this.agenda = new KingsOfSummer(this.player1Fake, {});
+        this.context = {};
     });
 
     describe('reserve persistent effect', function() {
@@ -49,7 +56,7 @@ describe('Kings Of Summer', function() {
         });
 
         it('should increase the plots reserve', function() {
-            this.reserveEffect.effect.apply(this.plot1);
+            this.reserveEffect.effect.apply(this.plot1, this.context);
             expect(this.plot1.reserveModifier).toBe(1);
         });
     });
@@ -60,7 +67,7 @@ describe('Kings Of Summer', function() {
         });
 
         it('should increase the gold on the plot', function() {
-            this.goldEffect.effect.apply(this.plot1);
+            this.goldEffect.effect.apply(this.plot1, this.context);
             expect(this.plot1.goldModifier).toBe(1);
         });
 

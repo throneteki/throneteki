@@ -67,6 +67,32 @@ function dominanceOptionEffect(key) {
     };
 }
 
+function dynamicCardModifier(propName) {
+    return function(calculateOrValue) {
+        const isStateDependent = (typeof calculateOrValue === 'function');
+        const calculate = isStateDependent ? calculateOrValue : () => calculateOrValue;
+
+        return {
+            apply: function(card, context) {
+                context[propName] = context[propName] || {};
+                context[propName][card.uuid] = calculate(card, context) || 0;
+                card[propName] += context[propName][card.uuid];
+            },
+            reapply: function(card, context) {
+                let currentInitiative = context[propName][card.uuid];
+                let newInitiative = calculate(card, context) || 0;
+                context[propName][card.uuid] = newInitiative;
+                card[propName] += newInitiative - currentInitiative;
+            },
+            unapply: function(card, context) {
+                card[propName] -= context[propName][card.uuid];
+                delete context[propName][card.uuid];
+            },
+            isStateDependent
+        };
+    };
+}
+
 const Effects = {
     setSetupGold: function(value) {
         return {
@@ -195,66 +221,10 @@ const Effects = {
             isStateDependent: true
         };
     },
-    modifyGold: function(value) {
-        return {
-            apply: function(card) {
-                card.goldModifier += value;
-            },
-            unapply: function(card) {
-                card.goldModifier -= value;
-            }
-        };
-    },
-    modifyInitiative: function(value) {
-        return {
-            apply: function(card) {
-                card.initiativeModifier += value;
-            },
-            unapply: function(card) {
-                card.initiativeModifier -= value;
-            }
-        };
-    },
-    dynamicInitiative: function(calculate) {
-        return {
-            apply: function(card, context) {
-                context.dynamicInitiative = context.dynamicInitiative || {};
-                context.dynamicInitiative[card.uuid] = calculate(card, context) || 0;
-                card.initiativeModifier += context.dynamicInitiative[card.uuid];
-            },
-            reapply: function(card, context) {
-                let currentInitiative = context.dynamicInitiative[card.uuid];
-                let newInitiative = calculate(card, context) || 0;
-                context.dynamicInitiative[card.uuid] = newInitiative;
-                card.initiativeModifier += newInitiative - currentInitiative;
-            },
-            unapply: function(card, context) {
-                card.initiativeModifier -= context.dynamicInitiative[card.uuid];
-                delete context.dynamicInitiative[card.uuid];
-            },
-            isStateDependent: true
-        };
-    },
-    modifyReserve: function(value) {
-        return {
-            apply: function(card) {
-                card.reserveModifier += value;
-            },
-            unapply: function(card) {
-                card.reserveModifier -= value;
-            }
-        };
-    },
-    modifyClaim: function(value) {
-        return {
-            apply: function(card) {
-                card.claimModifier += value;
-            },
-            unapply: function(card) {
-                card.claimModifier -= value;
-            }
-        };
-    },
+    modifyGold: dynamicCardModifier('goldModifier'),
+    modifyInitiative: dynamicCardModifier('initiativeModifier'),
+    modifyReserve: dynamicCardModifier('reserveModifier'),
+    modifyClaim: dynamicCardModifier('claimModifier'),
     setClaim: function(value) {
         return {
             apply: function(card) {
@@ -263,26 +233,6 @@ const Effects = {
             unapply: function(card) {
                 card.claimSet = undefined;
             }
-        };
-    },
-    dynamicClaim: function(calculate) {
-        return {
-            apply: function(card, context) {
-                context.dynamicClaim = context.dynamicClaim || {};
-                context.dynamicClaim[card.uuid] = calculate(card, context) || 0;
-                card.claimModifier += context.dynamicClaim[card.uuid];
-            },
-            reapply: function(card, context) {
-                let currentClaim = context.dynamicClaim[card.uuid];
-                let newClaim = calculate(card, context) || 0;
-                context.dynamicClaim[card.uuid] = newClaim;
-                card.claimModifier += newClaim - currentClaim;
-            },
-            unapply: function(card, context) {
-                card.claimModifier -= context.dynamicClaim[card.uuid];
-                delete context.dynamicClaim[card.uuid];
-            },
-            isStateDependent: true
         };
     },
     preventPlotModifier: function(modifier) {
