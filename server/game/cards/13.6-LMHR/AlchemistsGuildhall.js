@@ -11,7 +11,10 @@ class AlchemistsGuildhall extends DrawCard {
                                                  (event.ability.isForcedAbility() || event.source.controller !== this.controller) &&
                                                  !event.source.isShadow()
             },
-            cost: ability.costs.kneelSelf() && ability.costs.putSelfIntoShadows(),
+            cost: [
+                ability.costs.kneelSelf(),
+                ability.costs.putSelfIntoShadows()
+            ],
             handler: context => {
                 context.event.cancel();
                 this.game.addMessage('{0} kneels and returns {1} to shadows to cancel {2}', this.controller, this, context.event.source);
