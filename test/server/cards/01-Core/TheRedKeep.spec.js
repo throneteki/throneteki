@@ -1,16 +1,16 @@
-describe('The Red Keep', function() {
+describe('The Red Keep (Core)', function() {
     integration(function() {
         beforeEach(function() {
             const deck = this.buildDeck('stark', [
                 'Trading with the Pentoshi',
-                'The Red Keep', 'Areo Hotah (Core)', 'Maester Caleotte', 'Nightmares'
+                'The Red Keep (Core)', 'Areo Hotah (Core)', 'Maester Caleotte', 'Nightmares'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
             this.startGame();
             this.keepStartingHands();
 
-            this.redKeep = this.player1.findCardByName('The Red Keep', 'hand');
+            this.redKeep = this.player1.findCardByName('The Red Keep (Core)', 'hand');
             this.character = this.player1.findCardByName('Maester Caleotte', 'hand');
 
             this.player1.clickCard(this.character);
