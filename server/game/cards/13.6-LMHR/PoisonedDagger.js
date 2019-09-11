@@ -21,6 +21,11 @@ class PoisonedDagger extends DrawCard {
                     activePromptTitle: 'Select character to kill',
                     source: this,
                     gameAction: 'kill',
+                    onCancel: player => {
+                        this.game.addAlert('danger', '{0} cancels resolution of {1}', player, this);
+                        
+                        return true;
+                    },
                     onSelect: (player, card) => {
                         card.controller.killCharacter(card);
                         this.game.addMessage('{0} uses {1} to force {2} to kill {3}', this.controller, this, otherPlayer, card);
