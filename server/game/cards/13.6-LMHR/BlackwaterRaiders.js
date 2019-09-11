@@ -13,7 +13,7 @@ class BlackwaterRaiders extends DrawCard {
                     && card.location === 'discard pile' 
                     && this.controller.canPutIntoPlay(card) 
                     && card.controller !== this.controller
-                    && card.getPrintedCost() <= 3
+                    && card.getPrintedCost() <= 2
             },
             handler: (context) => {
                 context.player.putIntoPlay(context.target);
