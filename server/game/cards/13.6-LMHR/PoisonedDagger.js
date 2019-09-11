@@ -16,8 +16,8 @@ class PoisonedDagger extends DrawCard {
                 this.game.promptForSelect(otherPlayer, {
                     cardCondition: card => (
                         card.isParticipating() &&
-                        card.getType() === 'character') &&
-                        card.controller === otherPlayer,
+                        card.getType() === 'character' &&
+                        card.controller === otherPlayer),
                     activePromptTitle: 'Select character to kill',
                     source: this,
                     gameAction: 'kill',
