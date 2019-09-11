@@ -7,15 +7,12 @@ class BloodOfTheFirstMen extends DrawCard {
             effect: ability.effects.addTrait('Old Gods')
         });
         this.action({
-            title: 'Kneel attached character to have it participate in the current challenge',
-            condition: () => (
-                this.isStarkCardParticipatingInChallenge() && 
-                !this.parent.kneeled &&
-                this.parent.allowGameAction('kneel')),
-            cost: ability.costs.kneel(card => card === this.parent && card.canParticipateInChallenge()),
+            title: 'Participate in challenge',
+            condition: () => this.isStarkCardParticipatingInChallenge() && this.parent.canParticipateInChallenge(),
+            cost: ability.costs.kneelParent(),
             handler: context => {
                 this.game.currentChallenge.addParticipantToSide(context.player, this.parent);
-                this.game.addMessage('{0} uses {1} to kneel {2} and add them to the challenge', context.player, this, this.parent);
+                this.game.addMessage('{0} uses {1} and kneels {2} to add them to the challenge', context.player, this, this.parent);
             }
         });
     }
