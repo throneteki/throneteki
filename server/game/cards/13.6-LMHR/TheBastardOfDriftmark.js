@@ -5,7 +5,7 @@ class TheBastardOfDriftmark extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating() && event.challenge.challengeType === 'Intrigue'
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating() && event.challenge.challengeType === 'intrigue'
             },
             target: {
                 activePromptTitle: 'Select a location',
