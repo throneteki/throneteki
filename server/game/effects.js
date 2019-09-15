@@ -114,13 +114,18 @@ const Effects = {
                 let challenge = context.game.currentChallenge;
                 if(card.canParticipateInChallenge() && !challenge.isAttacking(card)) {
                     challenge.addAttacker(card);
-                }
+                    card.consideredToBeAttackingWasApplied = true;
+                    context.game.once('afterChallenge', () => {
+                        card.consideredToBeAttackingWasApplied = false;
+                    });
+                }                
             },
             unapply: function(card, context) {
                 let challenge = context.game.currentChallenge;
 
-                if(challenge && challenge.isAttacking(card)) {
+                if(challenge && challenge.isAttacking(card) && card.consideredToBeAttackingWasApplied) {
                     challenge.removeFromChallenge(card);
+                    card.consideredToBeAttackingWasApplied = false;
                 }
             }
         };
