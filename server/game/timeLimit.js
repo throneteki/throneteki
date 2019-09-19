@@ -3,33 +3,33 @@ const moment = require('moment');
 class TimeLimit {
     constructor(game) {
         this.game = game;
-        this.timerType = null;
-        this.timerStarted = false;
-        this.timerStartedAt = null;
+        this.timeLimitStartType = null;
+        this.timeLimitStarted = false;
+        this.timeLimitStartedAt = null;
         this.timeLimitInMinutes = null;
         this.isTimeLimitReached = false;
     }
 
-    initialiseTimeLimit(timerType, timeLimitInMinutes) {
-        this.timerType = timerType;
+    initialiseTimeLimit(timeLimitStartType, timeLimitInMinutes) {
+        this.timeLimitStartType = timeLimitStartType;
         this.timeLimitInMinutes = timeLimitInMinutes;
-        if(timerType === 'whenSetupFinished') {
+        if(timeLimitStartType === 'whenSetupFinished') {
             this.game.on('onSetupFinished', () => this.startTimer());
         }
-        //todo: implement more kinds of timer   
+        //todo: implement more kinds of triggers to star the time limit   
     }
 
     startTimer() {
-        if(!this.timerStarted) {
-            this.timerStarted = true;
-            this.timerStartedAt = new Date();
+        if(!this.timeLimitStarted) {
+            this.timeLimitStarted = true;
+            this.timeLimitStartedAt = new Date();
             this.game.addMessage('Time limit of {0} minutes starts now!', this.timeLimitInMinutes);
         }
     }
 
     checkForTimeLimitReached() {
         if(this.game.useGameTimeLimit && !this.isTimeLimitReached) {
-            let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timerStartedAt));
+            let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timeLimitStartedAt));
             if(differenceBetweenStartOfTimerAndNow.asSeconds() / 60 >= this.timeLimitInMinutes) {
                 this.game.addMessage('Time limit of {0} minutes reached, the game will end after the current round has finished!', this.timeLimitInMinutes);
                 this.isTimeLimitReached = true;

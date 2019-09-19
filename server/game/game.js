@@ -736,9 +736,9 @@ class Game extends EventEmitter {
         this.playersAndSpectators = players;
 
         if(this.useGameTimeLimit) {
-            let timerType = 'whenSetupFinished'; //todo: change to properties of game when more kinds of timer are implemented/asked for
+            let timeLimitStartType = 'whenSetupFinished'; //todo: change to property of game when more kinds of time limit start triggers are implemented/asked for
             let timeLimitInMinutes = this.gameTimeLimit;
-            this.timeLimit.initialiseTimeLimit(timerType, timeLimitInMinutes); 
+            this.timeLimit.initialiseTimeLimit(timeLimitStartType, timeLimitInMinutes); 
         }
 
         for(let player of this.getPlayers()) {
@@ -1234,8 +1234,8 @@ class Game extends EventEmitter {
                 winner: this.winner ? this.winner.name : undefined,
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
-                gameTimerStarted: this.timeLimit.timerStarted,
-                gameTimerStartedAt: this.timeLimit.timerStartedAt
+                gameTimeLimitStarted: this.timeLimit.timeLimitStarted,
+                gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt
             };
         }
 
