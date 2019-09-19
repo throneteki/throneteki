@@ -4,7 +4,7 @@ class CommonCause extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicClaim(() => this.getNumberOfFactions())
+            effect: ability.effects.modifyClaim(() => this.getNumberOfFactions())
         });
     }
 
