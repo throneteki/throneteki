@@ -174,6 +174,18 @@ class Player extends Spectator {
         return validSources.reduce((sum, source) => sum + source.gold, 0);
     }
 
+    getGoldToGain(amount) {
+        if(amount < 0) {
+            return 0;
+        }
+
+        if(this.maxGoldGain.getMax() !== undefined) {
+            return Math.min(amount, this.maxGoldGain.getMax() - this.gainedGold);
+        }
+
+        return amount;
+    }
+
     modifyGold(amount) {
         this.gold += amount;
 
