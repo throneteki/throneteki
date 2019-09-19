@@ -19,6 +19,8 @@ class PendingGame {
         this.useRookery = details.useRookery;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
+        this.useGameTimeLimit = details.useGameTimeLimit;
+        this.gameTimeLimit = details.gameTimeLimit;
     }
 
     // Getters
@@ -317,7 +319,9 @@ class PendingGame {
                     settings: spectator.settings
                 };
             }),
-            useRookery: this.useRookery
+            useRookery: this.useRookery,
+            useGameTimeLimit: this.useGameTimeLimit,
+            gameTimeLimit: this.gameTimeLimit
         };
     }
 
@@ -354,7 +358,9 @@ class PendingGame {
             players,
             showHand: this.showHand,
             spectators,
-            useRookery: this.useRookery
+            useRookery: this.useRookery,
+            useGameTimeLimit: this.useGameTimeLimit,
+            gameTimeLimit: this.gameTimeLimit
         };
     }
 }

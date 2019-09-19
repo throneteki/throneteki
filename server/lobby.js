@@ -708,7 +708,9 @@ class Lobby {
             showHand: game.showHand,
             gameType: game.gameType,
             isMelee: game.isMelee,
-            useRookery: game.useRookery
+            useRookery: game.useRookery,
+            useGameTimeLimit: game.useGameTimeLimit,
+            gameTimeLimit: game.gameTimeLimit
         });
         newGame.rematch = true;
 

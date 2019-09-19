@@ -97,6 +97,7 @@ class SetupPhase extends Phase {
             this.game.returnGoldToTreasury({ player: player, amount: player.gold });
             player.revealSetupCards();
         }
+        this.game.raiseEvent('onSetupFinished');
     }
 }
 
