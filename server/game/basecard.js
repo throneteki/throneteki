@@ -697,11 +697,12 @@ class BaseCard {
     }
 
     getSummary(activePlayer) {
+        let selectionState = activePlayer.getCardSelectionState(this);
+
         if(!this.game.isCardVisible(this, activePlayer)) {
-            return { facedown: true, uuid: this.uuid, tokens: this.tokens };
+            return { facedown: true, uuid: this.uuid, tokens: this.tokens, ...selectionState };
         }
 
-        let selectionState = activePlayer.getCardSelectionState(this);
         let state = {
             code: this.cardData.code,
             controlled: this.owner !== this.controller && this.getType() !== 'title',
