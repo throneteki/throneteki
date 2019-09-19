@@ -39,31 +39,7 @@ node server/gamenode
 
 There are two exectuable components and you'll need to configure/run both to run a local server.  First is the lobby server and then there are game nodes.
 
-For the lobby server, you'll need a file called server/config.js that should look like this:
-```javascript
-var config = {
-  secret: 'somethingverysecret',
-  hmacSecret: 'somethingsupersecret',
-  dbPath: 'mongodb://127.0.0.1:27017/throneteki',
-  mqUrl: 'tcp://127.0.0.1:6000' // This is the host/port of the Zero MQ server which does the node load balancing
-};
-
-module.exports = config;
-```
-
-For the game nodes you will need a file called server/gamenode/nodeconfig.js that looks like this:
-
-```javascript
-var config = {
-  secret: 'somethingverysecret', // This needs to match the config above
-  mqUrl: 'tcp://127.0.0.1:6000', // This is the host/port of the Zero MQ server which does the node load balancing and needs to match the config above
-  socketioPort: 9500, // This is the port for the game node to listen on
-  nodeIdentity: 'test1', // This is the identity of the node,
-  host: 'localhost'
-};
-
-module.exports = config;
-```
+For the lobby server, if you need to override any of the config settings, create a file named config/local.json5
 
 This will get you up and running in development mode.
 
