@@ -347,7 +347,7 @@ module.exports.init = function (server, options) {
 
         let userObj = user.getWireSafeDetails();
 
-        let authToken = jwt.sign(userObj, configService.geValue('secret'), { expiresIn: '5m' });
+        let authToken = jwt.sign(userObj, configService.getValue('secret'), { expiresIn: '5m' });
         let ip = req.get('x-real-ip');
         if(!ip) {
             ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
