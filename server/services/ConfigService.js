@@ -1,5 +1,5 @@
 const config = require('config');
-const logger = require('../log.js');
+const logger = require('../log');
 
 class ConfigService {
     getValue(key) {
