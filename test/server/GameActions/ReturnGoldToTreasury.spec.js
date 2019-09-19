@@ -38,6 +38,7 @@ describe('ReturnGoldToTreasury', function() {
             expect(this.event.name).toBe('onGoldReturned');
             expect(this.event.player).toBe(this.playerSpy);
             expect(this.event.amount).toBe(2);
+            expect(this.event.desiredAmount).toBe(3);
         });
 
         describe('the event handler', function() {

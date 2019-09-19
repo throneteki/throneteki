@@ -166,25 +166,6 @@ describe('Player', function() {
             });
         });
 
-        describe('when the card location property and actual location do not match', function() {
-            // Game.takeControl used to push the card directly onto cardsInPlay
-            // but did not update the location for the card. This caused weird
-            // problems where the strength of the card would be doubled for both
-            // challenges and dominance.
-            beforeEach(function() {
-                // Put into play with the wrong location.
-                this.card.location = 'discard pile';
-                this.player.cardsInPlay = [this.card];
-
-                this.player.moveCard(this.card, 'play area');
-            });
-
-            it('should not duplicate the card', function() {
-                expect(this.player.cardsInPlay.length).toBe(1);
-                expect(this.player.cardsInPlay).toEqual([this.card]);
-            });
-        });
-
         describe('when the target location is the active plot', function() {
             it('should set the card as the active plot', function() {
                 this.player.moveCard(this.card, 'active plot');

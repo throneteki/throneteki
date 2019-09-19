@@ -18,6 +18,10 @@ class SimultaneousEvents {
         }
     }
 
+    get resolved() {
+        return this.childEvents.every(event => event.resolved);
+    }
+
     get cancelled() {
         return this.childEvents.every(event => event.cancelled);
     }

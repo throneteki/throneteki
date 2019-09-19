@@ -113,4 +113,33 @@ describe('SimultaneousEvents', function() {
             expect(this.event.getConcurrentEvents()).toEqual([this.childEvent1, this.childEvent3]);
         });
     });
+
+    describe('resolved', function() {
+        beforeEach(function() {
+            this.childEvent1 = new Event('event1');
+            this.childEvent2 = new Event('event2');
+            this.childEvent3 = new Event('event3');
+
+            this.event = new SimultaneousEvents();
+            this.event.addChildEvent(this.childEvent1);
+            this.event.addChildEvent(this.childEvent2);
+            this.event.addChildEvent(this.childEvent3);
+        });
+
+        describe('when all child events are resolved', function() {
+            it('returns true', function() {
+                expect(this.event.resolved).toBe(true);
+            });
+        });
+
+        describe('when any child event is not resolved', function() {
+            beforeEach(function() {
+                this.childEvent2.cancel();
+            });
+
+            it('returns false', function() {
+                expect(this.event.resolved).toBe(false);
+            });
+        });
+    });
 });

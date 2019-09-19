@@ -11,7 +11,7 @@ class ReturnGoldToTreasury extends GameAction {
 
     createEvent({ player, amount = 1 }) {
         let appliedGold = Math.min(player.gold, amount);
-        return this.event('onGoldReturned', { player, amount: appliedGold }, event => {
+        return this.event('onGoldReturned', { player, amount: appliedGold, desiredAmount: amount }, event => {
             event.player.modifyGold(-event.amount);
         });
     }
