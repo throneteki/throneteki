@@ -11,12 +11,14 @@ const logger = require('../log');
 const util = require('../util');
 const { wrapAsync } = require('../util');
 const ServiceFactory = require('../services/ServiceFactory.js');
+const configService = ServiceFactory.configService();
+const appName = configService.getValue('appName');
 
 let userService;
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
-        bcrypt.hash(password, rounds, function (err, hash) {
+        bcrypt.hash(password, rounds, function(err, hash) {
             if(err) {
                 return reject(err);
             }
@@ -93,10 +95,9 @@ function writeFile(path, data, opts = 'utf8') {
 
 const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.net').digest('hex');
 
-module.exports.init = function (server, options) {
-    let configService = ServiceFactory.configService();
+module.exports.init = function(server, options) {
     userService = ServiceFactory.userService(options.db, configService);
-    let patreonService = ServiceFactory.patreonService(configService.getValue('patreonClientId'), configService.getValue('patreonSecret'), userService, 
+    let patreonService = ServiceFactory.patreonService(configService.getValue('patreonClientId'), configService.getValue('patreonSecret'), userService,
         configService.getValue('patreonCallbackUrl'));
     let emailKey = configService.getValue('emailKey');
 
@@ -163,11 +164,17 @@ module.exports.init = function (server, options) {
 
         let passwordHash = await hashPassword(req.body.password, 10);
 
-        let expiration = moment().add(7, 'days');
-        let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
-        let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
+        let requireActivation = configService.getValue('requireActivation');
 
-        let activationToken = hmac.update(`ACTIVATE ${req.body.username} ${formattedExpiration}`).digest('hex');
+        if(requireActivation) {
+            let expiration = moment().add(7, 'days');
+            let formattedExpiration = expiration.format('YYYYMMDD-HH:mm:ss');
+            let hmac = crypto.createHmac('sha512', configService.getValue('hmacSecret'));
+
+            let activationToken = hmac.update(`ACTIVATE ${req.body.username} ${formattedExpiration}`).digest('hex');
+            newUser.activationToken = activationToken;
+            newUser.activationTokenExpiry = formattedExpiration;
+        }
 
         let newUser = {
             password: passwordHash,
@@ -175,22 +182,22 @@ module.exports.init = function (server, options) {
             username: req.body.username,
             email: req.body.email,
             enableGravatar: req.body.enableGravatar,
-            verified: false,
-            activationToken: activationToken,
-            activationTokenExpiry: formattedExpiration,
+            verified: !requireActivation,
             registerIp: req.get('x-real-ip')
         };
 
         user = await userService.addUser(newUser);
-        let url = `https://theironthrone.net/activation?id=${user._id}&token=${activationToken}`;
-        let emailText = `Hi,\n\nSomeone, hopefully you, has requested an account to be created on The Iron Throne (https://theironthrone.net).  If this was you, click this link ${url} to complete the process.\n\n` +
-            'If you did not request this please disregard this email.\n' +
-            'Kind regards,\n\n' +
-            'The Iron Throne team';
+        if(requireActivation) {
+            let url = `${req.protocol}://${req.get('host')}/activation?id=${user._id}&token=${newUser.activationToken}`;
+            let emailText = `Hi,\n\nSomeone, hopefully you, has requested an account to be created on ${appName} (${req.protocol}://${req.get('host')}).  If this was you, click this link ${url} to complete the process.\n\n` +
+                'If you did not request this please disregard this email.\n' +
+                'Kind regards,\n\n' +
+                `${appName} team`;
 
-        await sendEmail(user.email, 'The Iron Throne - Account activation', emailText);
+            await sendEmail(user.email, `${appName} - Account activation`, emailText);
+        }
 
-        res.send({ success: true });
+        res.send({ success: true, requireActivation: requireActivation });
 
         await downloadAvatar(user);
     }));
@@ -278,8 +285,8 @@ module.exports.init = function (server, options) {
 
         userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
 
-        if(userDetails.patreon === 'none') {           
-            delete(userDetails.patreon);
+        if(userDetails.patreon === 'none') {
+            delete (userDetails.patreon);
 
             let ret = await patreonService.refreshTokenForUser(user);
             if(!ret) {
@@ -287,8 +294,8 @@ module.exports.init = function (server, options) {
             }
 
             userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
-            
-            if(userDetails.patreon === 'none') {           
+
+            if(userDetails.patreon === 'none') {
                 return res.send({ success: true, user: userDetails });
             }
         }
