@@ -390,12 +390,8 @@ class Game extends EventEmitter {
             return 0;
         }
 
-        if(player.maxGoldGain.getMax() !== undefined) {
-            amount = Math.min(amount, player.maxGoldGain.getMax() - player.gainedGold);
-        }
-        player.gainedGold += amount;
-
-        return player.modifyGold(amount);
+        const event = this.resolveGameAction(GameActions.gainGold({ player, amount }));
+        return event.amount;
     }
 
     movePower(fromCard, toCard, power) {
