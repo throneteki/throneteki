@@ -54,7 +54,8 @@ class InnerCard extends React.Component {
             bell: 'L',
             blood: 'D',
             shadow: 'W',
-            journey: 'J'
+            journey: 'J',
+            prayer: 'R'
         };
     }
 
