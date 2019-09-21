@@ -6,5 +6,7 @@
 
     dbPath: 'mongodb://127.0.0.1:27017/throneteki',
     // This is the host/port of the Zero MQ server which does the node load balancing
-    mqUrl: 'tcp://127.0.0.1:6000' 
+    mqUrl: 'tcp://127.0.0.1:6000',
+    requireActiviation: false,
+    appName: 'The Iron Throne'
 }
