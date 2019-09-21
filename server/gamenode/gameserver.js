@@ -6,7 +6,7 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 
-const config = require('./nodeconfig.js');
+const config = require('config');
 const { detectBinary } = require('../util');
 const logger = require('../log.js');
 const ZmqSocket = require('./zmqsocket.js');

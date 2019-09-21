@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const zmq = require('zeromq');
-const config = require('./nodeconfig.js');
+const config = require('config');
 const logger = require('../log.js');
 const { spawnSync } = require('child_process');
 
@@ -16,7 +16,7 @@ class ZmqSocket extends EventEmitter {
         this.socket.identity = process.env.SERVER || config.nodeIdentity;
         this.socket.monitor(500, 0);
 
-        this.socket.connect(config.mqUrl, err => {
+        this.socket.connect(`tcp://${config.mqHost}:${config.mqPort}`, err => {
             if(err) {
                 logger.info(err);
             }
@@ -41,7 +41,8 @@ class ZmqSocket extends EventEmitter {
             address: this.listenAddress,
             port: process.env.NODE_ENV === 'production' ? 80 : (process.env.PORT || config.socketioPort),
             protocol: this.protocol,
-            games: games });
+            games: games
+        });
     }
 
     onMessage(x, msg) {
