@@ -4,7 +4,7 @@
     secret: 'somethingverysecret',
     hmacSecret: 'somethingevenmoresecret',
 
-    dbPath: 'mongodb://mongo:27017/keyforge',
+    dbPath: 'mongodb://mongo:27017/throneteki',
     // This is the host/port of the Zero MQ server which does the node load balancing
     requireActiviation: false,
     appName: 'The Iron Throne',
