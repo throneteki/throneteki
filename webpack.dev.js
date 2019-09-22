@@ -18,8 +18,8 @@ module.exports = merge(common, {
         historyApiFallback: true,
         proxy: [{
             context: ['/api', '/socket.io'],
-            target: `http://${process.env.HOST || 'localhost'}:4000`
-        }]        
+            target: `http://${process.env.LOBBYHOST || 'localhost'}:4000`
+        }]
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin()
