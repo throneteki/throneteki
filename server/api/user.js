@@ -1,30 +1,35 @@
 const passport = require('passport');
 
+const { wrapAsync } = require('../util.js');
 const ServiceFactory = require('../services/ServiceFactory.js');
 const logger = require('../log.js');
 
 module.exports.init = function(server, options) {
     let userService = ServiceFactory.userService(options.db, ServiceFactory.configService());
 
-    server.get('/api/user/:username', passport.authenticate('jwt', { session: false }), function(req, res) {
+    server.get('/api/user/:username', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
         if(!req.user.permissions || !req.user.permissions.canManageUsers) {
             return res.status(403);
         }
 
-        userService.getUserByUsername(req.params.username)
-            .then(user => {
-                if(!user) {
-                    res.status(404).send({ message: 'Not found' });
+        let user;
+        let linkedAccounts;
+        try {
+            user = await userService.getUserByUsername(req.params.username);
 
-                    return Promise.reject('User not found');
-                }
+            if(!user) {
+                return res.status(404).send({ message: 'Not found' });
+            }
 
-                res.send({ success: true, user: user.getDetails() });
-            })
-            .catch(err => {
-                logger.error(err);
-            });
-    });
+            linkedAccounts = await userService.getPossiblyLinkedAccounts(user);
+        } catch(error) {
+            logger.error(error);
+
+            return res.send({ success: false, message: 'An error occurred searching the user.  Please try again later.' });
+        }
+
+        res.send({ success: true, user: user.getFullDetails(), linkedAccounts: linkedAccounts && linkedAccounts.map(account => account.username).filter(name => name !== user.username) });
+    }));
 
     server.put('/api/user/:username', passport.authenticate('jwt', { session: false }), function(req, res) {
         if(!req.user.permissions || !req.user.permissions.canManageUsers) {

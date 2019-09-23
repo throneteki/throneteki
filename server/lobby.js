@@ -150,6 +150,11 @@ class Lobby {
                         return;
                     }
 
+                    if(dbUser.disabled) {
+                        ioSocket.disconnect();
+                        return;
+                    }
+
                     ioSocket.request.user = dbUser.getWireSafeDetails();
                     socket.user = dbUser;
                     this.users[dbUser.username] = socket.user;
@@ -566,18 +571,21 @@ class Lobby {
         this.sendGameState(game);
     }
 
-    onLobbyChat(socket, message) {
-        let chatMessage = { user: socket.user.getShortSummary(), message: message, time: new Date() };
+    async onLobbyChat(socket, message) {
+        if(Date.now() - socket.user.registered < this.configService.getValue('minLobbyChatTime') * 1000) {
+            socket.send('nochat');
+            return;
+        }
 
+        let chatMessage = { user: socket.user.getShortSummary(), message: message, time: new Date() };
+        let newMessage = await this.messageService.addMessage(chatMessage);
         for(let s of Object.values(this.sockets)) {
             if(s.user && s.user.hasUserBlocked(socket.user)) {
                 continue;
             }
 
-            s.send('lobbychat', chatMessage);
+            s.send('lobbychat', newMessage);
         }
-
-        this.messageService.addMessage(chatMessage);
     }
 
     onSelectDeck(socket, gameId, deckId) {

@@ -65,6 +65,10 @@ class User {
         return this.userData.verified;
     }
 
+    get registered() {
+        return this.userData.registered;
+    }
+
     get isAdmin() {
         return this.userData.permissions && this.userData.permissions.isAdmin;
     }
@@ -108,6 +112,16 @@ class User {
 
     hasUserBlocked(otherUser) {
         return this.blockList.includes(otherUser.username.toLowerCase());
+    }
+
+    getFullDetails() {
+        let user = Object.assign({}, this.userData);
+
+        delete user.password;
+
+        user = Settings.getUserWithDefaultsSet(user);
+
+        return user;
     }
 
     getWireSafeDetails() {
