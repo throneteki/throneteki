@@ -17,6 +17,7 @@ import RookerySetup from './RookerySetup';
 import GameConfigurationModal from './GameConfigurationModal';
 import Droppable from './Droppable';
 import * as actions from '../../actions';
+import TimeLimitClock from './TimeLimitClock';
 
 const placeholderPlayer = {
     activePlot: null,
@@ -213,7 +214,7 @@ export class GameBoard extends React.Component {
         this.props.sendGameMessage('drop', card.uuid, source, target);
     }
 
-    getPlots(thisPlayer, otherPlayer) {
+    getPlotsAndTimeLimitClock(thisPlayer, otherPlayer) {
         let commonProps = {
             cardSize: this.props.user.settings.cardSize,
             onCardClick: this.onCardClick,
@@ -222,6 +223,12 @@ export class GameBoard extends React.Component {
             onDragDrop: this.onDragDrop,
             onMenuItemClick: this.onMenuItemClick
         };
+        let timeLimitClock = null;
+        if(this.props.currentGame.useGameTimeLimit) {
+            timeLimitClock = (<TimeLimitClock
+                timeLimitStarted={ this.props.currentGame.gameTimeLimitStarted }
+                timeLimitStartedAt={ this.props.currentGame.gameTimeLimitStartedAt } />);
+        }    
         return (<div key='plots-pane' className='plots-pane'>
             <PlayerPlots
                 { ...commonProps }
@@ -232,6 +239,7 @@ export class GameBoard extends React.Component {
                 plotDeck={ otherPlayer.cardPiles.plotDeck }
                 plotDiscard={ otherPlayer.cardPiles.plotDiscard }
                 plotSelected={ otherPlayer.plotSelected } />
+            { timeLimitClock }
             <PlayerPlots
                 { ...commonProps }
                 activePlot={ thisPlayer.activePlot }
@@ -311,7 +319,7 @@ export class GameBoard extends React.Component {
         }
 
         return [
-            this.getPlots(thisPlayer, otherPlayer),
+            this.getPlotsAndTimeLimitClock(thisPlayer, otherPlayer),
             <div key='board-middle' className='board-middle'>
                 <div className='player-home-row'>
                     <PlayerRow

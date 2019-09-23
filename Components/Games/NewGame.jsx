@@ -19,6 +19,8 @@ class NewGame extends React.Component {
         this.onSpectatorsClick = this.onSpectatorsClick.bind(this);
         this.onShowHandClick = this.onShowHandClick.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
+        this.onUseGameTimeLimitClick = this.onUseGameTimeLimitClick.bind(this);
+        this.onGameTimeLimitChange = this.onGameTimeLimitChange.bind(this);
 
         this.state = {
             spectators: true,
@@ -26,7 +28,9 @@ class NewGame extends React.Component {
             selectedGameFormat: 'joust',
             selectedGameType: 'casual',
             password: '',
-            useRookery: false
+            useRookery: false,
+            useGameTimeLimit: false,
+            gameTimeLimit: 55
         };
     }
 
@@ -71,7 +75,9 @@ class NewGame extends React.Component {
             isMelee: this.state.selectedGameFormat === 'melee',
             password: this.state.password,
             useRookery: this.state.useRookery,
-            quickJoin: this.props.quickJoin
+            quickJoin: this.props.quickJoin,
+            useGameTimeLimit: this.state.useGameTimeLimit,
+            gameTimeLimit: this.state.gameTimeLimit
         });
     }
 
@@ -81,6 +87,14 @@ class NewGame extends React.Component {
 
     onGameFormatChange(format) {
         this.setState({ selectedGameFormat: format });
+    }
+
+    onUseGameTimeLimitClick(event) {
+        this.setState({ useGameTimeLimit: event.target.checked });
+    }
+
+    onGameTimeLimitChange(event) {
+        this.setState({ gameTimeLimit: event.target.value });
     }
 
     isGameTypeSelected(gameType) {
@@ -105,6 +119,14 @@ class NewGame extends React.Component {
                 <label>
                     <input type='checkbox' onChange={ this.handleRookeryClick } checked={ this.state.useRookery } />
                     Rookery format
+                </label>
+            </div>
+            <div className='checkbox col-sm-8'>
+                <label>
+                    <input type='checkbox' onChange={ this.onUseGameTimeLimitClick } checked={ this.state.useGameTimeLimit } />
+                    Use a time limit of
+                    <input type='number' onChange={ this.onGameTimeLimitChange } value={ this.state.gameTimeLimit } />
+                    minutes
                 </label>
             </div>
         </div>);
