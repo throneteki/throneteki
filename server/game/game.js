@@ -33,6 +33,7 @@ const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
 const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 const GameActions = require('./GameActions');
+const TimeLimit = require('./timeLimit.js');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -56,6 +57,9 @@ class Game extends EventEmitter {
         this.started = false;
         this.playStarted = false;
         this.createdAt = new Date();
+        this.useGameTimeLimit = details.useGameTimeLimit;
+        this.gameTimeLimit = details.gameTimeLimit;
+        this.timeLimit = new TimeLimit(this);
         this.savedGameId = details.savedGameId;
         this.gameType = details.gameType;
         this.abilityContextStack = [];
@@ -727,6 +731,12 @@ class Game extends EventEmitter {
 
         this.playersAndSpectators = players;
 
+        if(this.useGameTimeLimit) {
+            let timeLimitStartType = 'whenSetupFinished'; //todo: change to property of game when more kinds of time limit start triggers are implemented/asked for
+            let timeLimitInMinutes = this.gameTimeLimit;
+            this.timeLimit.initialiseTimeLimit(timeLimitStartType, timeLimitInMinutes); 
+        }
+
         for(let player of this.getPlayers()) {
             player.initialise();
         }
@@ -1200,6 +1210,8 @@ class Game extends EventEmitter {
                 playerState[player.name] = player.getState(activePlayer);
             }
 
+            this.timeLimit.checkForTimeLimitReached();
+
             return {
                 id: this.id,
                 isMelee: this.isMelee,
@@ -1216,7 +1228,10 @@ class Game extends EventEmitter {
                 }),
                 started: this.started,
                 winner: this.winner ? this.winner.name : undefined,
-                cancelPromptUsed: this.cancelPromptUsed
+                cancelPromptUsed: this.cancelPromptUsed,
+                useGameTimeLimit: this.useGameTimeLimit,
+                gameTimeLimitStarted: this.timeLimit.timeLimitStarted,
+                gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt
             };
         }
 
