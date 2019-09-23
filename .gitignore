@@ -11,3 +11,4 @@ server/logs/*.gz
 features/conf/*
 testoutput/*
 dist/*
+local.json5

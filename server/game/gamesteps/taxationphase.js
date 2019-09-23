@@ -44,6 +44,8 @@ class TaxationPhase extends Phase {
         this.game.addAlert('endofround', 'End of round {0}', this.game.round);
         this.game.addMessage(playerPower);
         this.game.addAlert('startofround', 'Round {0}', this.game.round + 1);
+
+        this.game.checkForTimeExpired();
     }
 }
 
