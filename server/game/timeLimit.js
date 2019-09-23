@@ -23,7 +23,10 @@ class TimeLimit {
         if(!this.timeLimitStarted) {
             this.timeLimitStarted = true;
             this.timeLimitStartedAt = new Date();
-            this.game.addMessage('Time limit of {0} minutes starts now!', this.timeLimitInMinutes);
+
+            this.timer = setInterval(() => {
+                this.checkForTimeLimitReached();
+            }, 1000);
         }
     }
 
@@ -31,17 +34,14 @@ class TimeLimit {
         if(this.game.useGameTimeLimit && !this.isTimeLimitReached) {
             let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timeLimitStartedAt));
             if(differenceBetweenStartOfTimerAndNow.asSeconds() / 60 >= this.timeLimitInMinutes) {
-                this.game.addMessage('Time limit of {0} minutes reached, the game will end after the current round has finished!', this.timeLimitInMinutes);
+                this.game.addAlert('warning', 'Time up.  The game will end after the current round has finished');
                 this.isTimeLimitReached = true;
-                this.game.on('onRoundEnded', () => this.handleEndOfRoundWhenTimeLimitIsReached());
+                this.timeLimitStarted = false;
+                this.game.timeExpired();
             }
-        }
-    }
-
-    handleEndOfRoundWhenTimeLimitIsReached() {
-        if(!this.game.isFinished) {
-            //todo: check for win condition in case of time called, for example who is closer to 15 power or in case of draw, who has more cards left in his/her deck
-            this.game.addMessage('Please determine the winner based on who is closer to 15 power or, in case of a draw, who has more cards left in his/her deck.');
+        } else if(this.isTimeLimitReached && this.timer) {
+            clearInterval(this.timer);
+            this.timer = undefined;
         }
     }
 }

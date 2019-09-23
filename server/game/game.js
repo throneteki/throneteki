@@ -734,7 +734,7 @@ class Game extends EventEmitter {
         if(this.useGameTimeLimit) {
             let timeLimitStartType = 'whenSetupFinished'; //todo: change to property of game when more kinds of time limit start triggers are implemented/asked for
             let timeLimitInMinutes = this.gameTimeLimit;
-            this.timeLimit.initialiseTimeLimit(timeLimitStartType, timeLimitInMinutes); 
+            this.timeLimit.initialiseTimeLimit(timeLimitStartType, timeLimitInMinutes);
         }
 
         for(let player of this.getPlayers()) {
@@ -766,9 +766,17 @@ class Game extends EventEmitter {
         }
     }
 
+    checkForTimeExpired() {
+        if(this.timeLimit.isTimeLimitReached && !this.finishedAt) {
+            this.addAlert('success', 'The game has ended because the timer has expired.  Timed wins are not currently implemented');
+            this.finishedAt = new Date();
+        }
+    }
+
     beginRound() {
         // Reset phases to the standard game flow.
         this.remainingPhases = Phases.names();
+
         this.raiseEvent('onBeginRound');
         this.queueSimpleStep(() => {
             // Loop through individual phases, queuing them one at a time. This
@@ -1168,6 +1176,10 @@ class Game extends EventEmitter {
         this.router.rematch(this);
     }
 
+    timeExpired() {
+        this.emit('onTimeExpired');
+    }
+
     activatePersistentEffects() {
         this.effectEngine.activatePersistentEffects();
     }
@@ -1231,7 +1243,8 @@ class Game extends EventEmitter {
                 cancelPromptUsed: this.cancelPromptUsed,
                 useGameTimeLimit: this.useGameTimeLimit,
                 gameTimeLimitStarted: this.timeLimit.timeLimitStarted,
-                gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt
+                gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt,
+                gameTimeLimitTime: this.timeLimit.timeLimitInMinutes
             };
         }
 

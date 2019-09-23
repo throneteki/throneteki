@@ -12,5 +12,7 @@
     mqHost: 'lobby',
     mqPort: 6000,
 
-    nodeIdentity: 'node1'
+    nodeIdentity: 'node1',
+    host: 'localhost',
+    socketioPort: 5000
 }
