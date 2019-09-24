@@ -79,6 +79,7 @@ class Game extends EventEmitter {
         this.remainingPhases = [];
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
+        this.winnerOfDominanceInLastRound = undefined;
 
         for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -768,8 +769,7 @@ class Game extends EventEmitter {
 
     checkForTimeExpired() {
         if(this.timeLimit.isTimeLimitReached && !this.finishedAt) {
-            this.addAlert('success', 'The game has ended because the timer has expired.  Timed wins are not currently implemented');
-            this.finishedAt = new Date();
+            this.determineWinnerAfterTimeLimitExpired();
         }
     }
 
@@ -1302,6 +1302,84 @@ class Game extends EventEmitter {
                 };
             })
         };
+    }
+
+    determineWinnerAfterTimeLimitExpired() {
+        //collect relevant summary of a player in one array, only players who can win the game
+        const playerSummaries = this.getPlayers().map(player => {
+            return {
+                id: player.id,
+                name: player.name,
+                powerTotal: player.getTotalPower(),
+                cardsLeftInDeck: player.drawDeck.length,
+                charactersInDeadPile:  player.deadPile.length,
+                firstPlayer: player.firstPlayer,
+                canWinGame: player.canWinGame(),
+                playerObject: player
+            };
+        }).filter(playerSummary => playerSummary.canWinGame);
+        if(playerSummaries.length === 1) {
+            this.recordWinner(playerSummaries[0].playerObject, 'time');
+            return;
+        } else if(playerSummaries.length === 0) {
+            this.recordDraw('No one');
+            return;
+        }
+        //find out the highest power total among all players left
+        const highestPowerTotal = playerSummaries.reduce((highestPowerTotal, playerSummary) => {
+            if(highestPowerTotal < playerSummary.powerTotal) {
+                highestPowerTotal = playerSummary.powerTotal;
+            }
+            return highestPowerTotal;
+        }, 0);
+        //filter for players whose power total equals the highest power total
+        const playersWithHighestPower = playerSummaries.filter(playerSummary => playerSummary.powerTotal === highestPowerTotal);
+        if(playersWithHighestPower.length === 1) {
+            this.recordWinner(playersWithHighestPower[0].playerObject, 'time');
+            return;
+        }
+        //find out the highest number of cards left in a draw deck among the remaining players
+        const mostCardsLeftInDrawDeck = playersWithHighestPower.reduce((mostCardsLeftInDrawDeck, playerSummary) => {
+            if(mostCardsLeftInDrawDeck < playerSummary.cardsLeftInDeck) {
+                mostCardsLeftInDrawDeck = playerSummary.cardsLeftInDeck;
+            }
+            return mostCardsLeftInDrawDeck;
+        }, 0);
+        //filter for players whose number of cards left in the draw deck equals the highest number of cards left in a draw deck
+        const playersWithMostCardsLeftInDrawDeck = playersWithHighestPower.filter(playerSummary => playerSummary.cardsLeftInDeck === mostCardsLeftInDrawDeck);
+        if(playersWithMostCardsLeftInDrawDeck.length === 1) {
+            this.recordWinner(playersWithMostCardsLeftInDrawDeck[0].playerObject, 'time');
+            return;
+        }
+        //if the player who won dom in the last round is among the remaining players, he/she wins the game
+        if(this.winnerOfDominanceInLastRound) {
+            const playerWhoWonDominanceInLastRound = playersWithMostCardsLeftInDrawDeck.filter(playerSummary => playerSummary.name === this.winnerOfDominanceInLastRound.name);
+            if(playerWhoWonDominanceInLastRound) {
+                this.recordWinner(playerWhoWonDominanceInLastRound.playerObject, 'time');
+                return;
+            }
+        }
+        //find out the smallest number of characters in a dead pile among the remaining players
+        const smallestNumberOfCharsInDeadPile = playersWithMostCardsLeftInDrawDeck.reduce((smallestNumberOfCharsInDeadPile, playerSummary) => {
+            if(smallestNumberOfCharsInDeadPile > playerSummary.charactersInDeadPile) {
+                smallestNumberOfCharsInDeadPile = playerSummary.charactersInDeadPile;
+            }
+            return smallestNumberOfCharsInDeadPile;
+        }, 1000);
+        //filter for players whose number of dead characters equals the smallest number of dead characters
+        const playersWithFewestDeadCharacters = smallestNumberOfCharsInDeadPile.filter(playerSummary => playerSummary.charactersInDeadPile === smallestNumberOfCharsInDeadPile);
+        if(playersWithFewestDeadCharacters.length === 1) {
+            this.recordWinner(playersWithFewestDeadCharacters[0].playerObject, 'time');
+            return;
+        }
+        //if no one has won by now, the first player chooses a winner or to simplify things, he/she wins the game
+        const firstPlayer = playersWithFewestDeadCharacters.filter(playerSummary => playerSummary.firstPlayer);
+        if(firstPlayer.length === 1) {
+            this.recordWinner(firstPlayer[0].playerObject, 'time');
+            return;
+        }
+        //if no one won the tie breakers, record a draw
+        this.recordDraw('No one');
     }
 }
 

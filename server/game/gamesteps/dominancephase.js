@@ -15,6 +15,8 @@ class DominancePhase extends Phase {
         var highestDominance = 0;
         var lowestDominance = 0;
         var dominanceWinner = undefined;
+        //save the winner of dominance on the game object in order to use this information in determining the winner of the game after the time limit has expired
+        this.game.winnerOfDominanceInLastRound = dominanceWinner;
 
         for(let player of this.game.getPlayers()) {
             var dominance = player.getDominance();
