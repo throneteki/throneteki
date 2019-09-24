@@ -214,7 +214,19 @@ export class GameBoard extends React.Component {
         this.props.sendGameMessage('drop', card.uuid, source, target);
     }
 
-    getPlotsAndTimeLimitClock(thisPlayer, otherPlayer) {
+    getTimer() {
+        let timeLimitClock = null;
+        if(this.props.currentGame.useGameTimeLimit && this.props.currentGame.gameTimeLimitStarted) {
+            timeLimitClock = (<TimeLimitClock
+                timeLimitStarted={ this.props.currentGame.gameTimeLimitStarted }
+                timeLimitStartedAt={ this.props.currentGame.gameTimeLimitStartedAt }
+                timeLimit={ this.props.currentGame.gameTimeLimitTime } />);
+        }
+
+        return timeLimitClock;
+    }
+
+    getPlots(thisPlayer, otherPlayer) {
         let commonProps = {
             cardSize: this.props.user.settings.cardSize,
             onCardClick: this.onCardClick,
@@ -223,12 +235,7 @@ export class GameBoard extends React.Component {
             onDragDrop: this.onDragDrop,
             onMenuItemClick: this.onMenuItemClick
         };
-        let timeLimitClock = null;
-        if(this.props.currentGame.useGameTimeLimit) {
-            timeLimitClock = (<TimeLimitClock
-                timeLimitStarted={ this.props.currentGame.gameTimeLimitStarted }
-                timeLimitStartedAt={ this.props.currentGame.gameTimeLimitStartedAt } />);
-        }    
+
         return (<div key='plots-pane' className='plots-pane'>
             <PlayerPlots
                 { ...commonProps }
@@ -239,7 +246,7 @@ export class GameBoard extends React.Component {
                 plotDeck={ otherPlayer.cardPiles.plotDeck }
                 plotDiscard={ otherPlayer.cardPiles.plotDiscard }
                 plotSelected={ otherPlayer.plotSelected } />
-            { timeLimitClock }
+            { this.getTimer() }
             <PlayerPlots
                 { ...commonProps }
                 activePlot={ thisPlayer.activePlot }
@@ -319,7 +326,7 @@ export class GameBoard extends React.Component {
         }
 
         return [
-            this.getPlotsAndTimeLimitClock(thisPlayer, otherPlayer),
+            this.getPlots(thisPlayer, otherPlayer),
             <div key='board-middle' className='board-middle'>
                 <div className='player-home-row'>
                     <PlayerRow
@@ -404,7 +411,7 @@ export class GameBoard extends React.Component {
                         onDragDrop={ this.onDragDrop }
                         discardPile={ thisPlayer.cardPiles.discardPile }
                         deadPile={ thisPlayer.cardPiles.deadPile }
-                        revealTopCard= { thisPlayer.revealTopCard }
+                        revealTopCard={ thisPlayer.revealTopCard }
                         shadows={ thisPlayer.cardPiles.shadows }
                         showDeck={ thisPlayer.showDeck }
                         spectating={ this.state.spectating }

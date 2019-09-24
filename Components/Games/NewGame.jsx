@@ -121,14 +121,15 @@ class NewGame extends React.Component {
                     Rookery format
                 </label>
             </div>
-            <div className='checkbox col-sm-8'>
+            <div className='checkbox col-sm-12'>
                 <label>
                     <input type='checkbox' onChange={ this.onUseGameTimeLimitClick } checked={ this.state.useGameTimeLimit } />
-                    Use a time limit of
-                    <input type='number' onChange={ this.onGameTimeLimitChange } value={ this.state.gameTimeLimit } />
-                    minutes
+                    Use a time limit (in minutes)
                 </label>
             </div>
+            { this.state.useGameTimeLimit && <div className='col-sm-4'>
+                <input className='form-control' type='number' onChange={ this.onGameTimeLimitChange } value={ this.state.gameTimeLimit } />
+            </div> }
         </div>);
     }
 
@@ -159,7 +160,7 @@ class NewGame extends React.Component {
     getGameTypeOptions() {
         return (
             <div className='row'>
-                <div className='col-sm-12'>
+                <div className='col-sm-12 game-type'>
                     <b>Game Type</b>
                 </div>
                 <div className='col-sm-10'>
