@@ -22,7 +22,7 @@ class MercenaryContract extends DrawCard {
             message: {
                 format: '{player} kneels {source} and pays 1 gold to stand {parent}',
                 args: {
-                    parent: context => context.card.parent
+                    parent: context => context.source.parent
                 }
             },
             handler: context => {
