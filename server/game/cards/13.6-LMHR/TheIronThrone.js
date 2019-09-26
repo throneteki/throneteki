@@ -23,6 +23,7 @@ class TheIronThrone extends DrawCard {
     selectCardName(player, cardName) {
         this.game.addMessage('{0} kneels {1} to name {2}', player, this, cardName);
         this.untilEndOfPhase(ability => ({
+            targetController: 'any',
             effect: [
                 ability.effects.cannotMarshal(card => card.name.toLowerCase() === cardName.toLowerCase()),
                 ability.effects.cannotPlay(card => card.name.toLowerCase() === cardName.toLowerCase()),
