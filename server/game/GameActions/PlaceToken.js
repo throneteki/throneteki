@@ -10,7 +10,7 @@ class PlaceToken extends GameAction {
     }
 
     createEvent({ card, token, amount = 1 }) {
-        return this.event('onTokenPlaced', { card, token, amount }, event => {
+        return this.event('onTokenPlaced', { card, token, amount, desiredAmount: amount }, event => {
             event.card.modifyToken(event.token, event.amount);
         });
     }
