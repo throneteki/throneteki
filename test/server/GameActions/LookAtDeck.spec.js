@@ -9,7 +9,7 @@ describe('LookAtDeck', function() {
             game: this.gameSpy,
             source: 'SOURCE'
         };
-        this.props = { player: this.playerSpy, lookingAt: this.opponentSpy, amount: 1, context: this.contextSpy };
+        this.props = { player: this.playerSpy, lookingAt: this.opponentSpy, amount: 3, context: this.contextSpy };
     });
 
     describe('allow()', function() {
@@ -43,7 +43,8 @@ describe('LookAtDeck', function() {
             expect(this.event.name).toBe('onLookAtDeck');
             expect(this.event.player).toBe(this.playerSpy);
             expect(this.event.lookingAt).toBe(this.opponentSpy);
-            expect(this.event.amount).toBe(1);
+            expect(this.event.amount).toBe(2);
+            expect(this.event.desiredAmount).toBe(3);
         });
 
         describe('the event handler', function() {
