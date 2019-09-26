@@ -13,7 +13,6 @@
     mqPort: 6000,
 
     minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
-
     nodeIdentity: 'node1',
     host: 'localhost',
     socketioPort: 5000
