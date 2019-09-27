@@ -97,6 +97,7 @@ const DefaultEmailHash = crypto.createHash('md5').update('noreply@theironthrone.
 
 module.exports.init = function(server, options) {
     userService = ServiceFactory.userService(options.db, configService);
+    let banlistService = ServiceFactory.banlistService(options.db);
     let patreonService = ServiceFactory.patreonService(configService.getValue('patreonClientId'), configService.getValue('patreonSecret'), userService,
         configService.getValue('patreonCallbackUrl'));
     let emailKey = configService.getValue('emailKey');
@@ -176,6 +177,21 @@ module.exports.init = function(server, options) {
             newUser.activationTokenExpiry = formattedExpiration;
         }
 
+        let ip = req.get('x-real-ip');
+        if(!ip) {
+            ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        }
+        try {
+            let lookup = await banlistService.getEntryByIp(ip);
+            if(lookup) {
+                return res.send({ success: false, message: 'An error occurred registering your account, please try again later.' });
+            }
+        } catch(err) {
+            logger.error(err);
+
+            return res.send({ success: false, message: 'An error occurred registering your account, please try again later.' });
+        }
+
         let newUser = {
             password: passwordHash,
             registered: new Date(),
@@ -183,7 +199,7 @@ module.exports.init = function(server, options) {
             email: req.body.email,
             enableGravatar: req.body.enableGravatar,
             verified: !requireActivation,
-            registerIp: req.get('x-real-ip')
+            registerIp: ip
         };
 
         user = await userService.addUser(newUser);
@@ -401,6 +417,12 @@ module.exports.init = function(server, options) {
         }
 
         if(!userService.verifyRefreshToken(user.username, refreshToken)) {
+            res.send({ success: false, message: 'Invalid refresh token' });
+
+            return next();
+        }
+
+        if(user.disabled) {
             res.send({ success: false, message: 'Invalid refresh token' });
 
             return next();

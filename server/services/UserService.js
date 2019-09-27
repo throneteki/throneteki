@@ -219,9 +219,21 @@ class UserService extends EventEmitter {
             logger.error(err);
         });
     }
-    
+
     setSupporterStatus(username, isSupporter) {
         return this.users.update({ username: username }, { '$set': { 'permissions.isSupporter': isSupporter } });
+    }
+
+    async getPossiblyLinkedAccounts(user) {
+        if(!user.tokens) {
+            return [];
+        }
+
+        let ips = [...new Set(user.tokens.map(token => token.ip).filter(ip => ip))];
+
+        return this.users.find({ 'tokens.ip': { '$in': ips } }).catch(err => {
+            logger.error('Error finding related ips', err, user.username);
+        });
     }
 }
 
