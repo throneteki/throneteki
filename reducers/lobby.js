@@ -65,6 +65,10 @@ export default function(state = defaultState, action) {
                 newGame: false,
                 currentGame: undefined
             });
+        case 'CLEAR_CHAT_STATUS':
+            return Object.assign({}, state, {
+                lobbyError: false
+            });
     }
 
     return state;
@@ -155,6 +159,12 @@ function handleMessage(action, state) {
         case 'lobbymessages':
             newState = Object.assign({}, state, {
                 messages: action.args[0]
+            });
+
+            break;
+        case 'nochat':
+            newState = Object.assign({}, state, {
+                lobbyError: true
             });
 
             break;

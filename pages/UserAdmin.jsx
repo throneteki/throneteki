@@ -42,6 +42,7 @@ class UserAdmin extends React.Component {
             { name: 'canManageNodes', label: 'Node Manager' },
             { name: 'canModerateChat', label: 'Chat Moderator' },
             { name: 'canManageMotd', label: 'Motd Manager' },
+            { name: 'canManageBanlist', label: 'Banlist Manager' },
             { name: 'isAdmin', label: 'Site Admin' },
             { name: 'isContributor', label: 'Contributor' },
             { name: 'isSupporter', label: 'Supporter' }
@@ -105,6 +106,12 @@ class UserAdmin extends React.Component {
         this.setState({ verified: event.target.checked });
     }
 
+    onLinkedUserClick(name) {
+        this.setState({ username: name });
+
+        this.props.findUser(name);
+    }
+
     render() {
         let renderedUser = null;
 
@@ -129,6 +136,34 @@ class UserAdmin extends React.Component {
                             <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
                                 onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
                         </Panel>
+                        { this.props.currentUser && this.props.currentUser.linkedAccounts &&
+                            <Panel title='Possibly linked accounts'>
+                                <ul className='list'>
+                                    { this.props.currentUser.linkedAccounts.map(name => {
+                                        return <li key={ name }><a href='javascript:void(0)' onClick={ () => this.onLinkedUserClick(name) }>{ name }</a></li>;
+                                    }) }
+                                </ul>
+                            </Panel>
+                        }
+                        { this.props.currentUser && this.props.currentUser.tokens &&
+                            <Panel title='Sessions'>
+                                <table className='table table-striped'>
+                                    <thead>
+                                        <tr>
+                                            <th>IP Address</th>
+                                            <th>Last Used</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        { this.props.currentUser.tokens.map(token => {
+                                            return (<tr>
+                                                <td>{ token.ip }</td>
+                                                <td>{ moment(token.lastUsed).format('YYYY-MM-DD HH:MM') }</td>
+                                            </tr>);
+                                        }) }
+                                    </tbody>
+                                </table>
+                            </Panel> }
                         { this.props.user && this.props.user.permissions.canManagePermissions ?
                             <Panel title='Permissions'>
                                 <div>

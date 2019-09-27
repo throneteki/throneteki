@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 
 import News from '../Components/News/News';
 import AlertPanel from '../Components/Site/AlertPanel';
@@ -29,6 +30,22 @@ class Lobby extends React.Component {
 
     componentDidMount() {
         this.props.loadNews({ limit: 3 });
+
+        this.checkChatError(this.props);
+    }
+
+    componentWillReceiveProps(props) {
+        this.checkChatError(props);
+    }
+
+    checkChatError(props) {
+        if(props.lobbyError) {
+            toastr.error('New users are limited from chatting in the lobby, try again later');
+
+            setTimeout(() => {
+                this.props.clearChatStatus();
+            }, 5000);
+        }
     }
 
     sendMessage() {
@@ -130,9 +147,11 @@ class Lobby extends React.Component {
 Lobby.displayName = 'Lobby';
 Lobby.propTypes = {
     bannerNotice: PropTypes.string,
+    clearChatStatus: PropTypes.func,
     fetchNews: PropTypes.func,
     loadNews: PropTypes.func,
     loading: PropTypes.bool,
+    lobbyError: PropTypes.string,
     messages: PropTypes.array,
     motd: PropTypes.object,
     news: PropTypes.array,
@@ -148,6 +167,7 @@ function mapStateToProps(state) {
     return {
         bannerNotice: state.lobby.notice,
         loading: state.api.loading,
+        lobbyError: state.lobby.lobbyError,
         messages: state.lobby.messages,
         motd: state.lobby.motd,
         news: state.news.news,

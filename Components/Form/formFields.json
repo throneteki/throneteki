@@ -206,5 +206,19 @@
       "labelClass": "col-sm-2",
       "fieldClass": "col-sm-10"
     }
+  ],
+  "banlistAdmin": [
+    {
+      "name": "ip",
+      "label": "Add ip address",
+      "placeholder": "Enter Ip",
+      "inputType": "text",
+      "validationProperties": {
+        "data-val": true,
+        "data-val-required": "Please enter the Ip address"
+      },
+      "labelClass": "col-sm-2",
+      "fieldClass": "col-sm-4"
+    }
   ]
 }
