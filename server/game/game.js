@@ -1367,7 +1367,7 @@ class Game extends EventEmitter {
             return smallestNumberOfCharsInDeadPile;
         }, 1000);
         //filter for players whose number of dead characters equals the smallest number of dead characters
-        const playersWithFewestDeadCharacters = smallestNumberOfCharsInDeadPile.filter(playerSummary => playerSummary.charactersInDeadPile === smallestNumberOfCharsInDeadPile);
+        const playersWithFewestDeadCharacters = playersWithMostCardsLeftInDrawDeck.filter(playerSummary => playerSummary.charactersInDeadPile === smallestNumberOfCharsInDeadPile);
         if(playersWithFewestDeadCharacters.length === 1) {
             this.recordWinner(playersWithFewestDeadCharacters[0].playerObject, 'time');
             return;
