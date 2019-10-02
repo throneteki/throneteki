@@ -7,12 +7,14 @@ class TheQueensRetinue extends DrawCard {
             location: 'shadows',
             handler: context => {
                 context.player.putIntoPlay(this);
-                for(let opponent of this.game.getOpponents(this.controller)) {
-                    if(opponent.canDraw()) {
-                        opponent.drawCardsToHand(2);
+                if(this.location === 'play area') {
+                    for(let opponent of this.game.getOpponents(this.controller)) {
+                        if(opponent.canDraw()) {
+                            opponent.drawCardsToHand(2);
+                        }
                     }
+                    this.game.addMessage('{0} uses {1} to put {1} into play from shadows and have each opponent draw 2 cards', this.controller, this);
                 }
-                this.game.addMessage('{0} uses {1} to put {1} into play from shadows and have each opponent draw 2 cards', this.controller, this);
             }
         });
     }
