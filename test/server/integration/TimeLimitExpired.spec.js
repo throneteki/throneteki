@@ -59,6 +59,7 @@ describe('time limit', function() {
 
                 it('based on which player won dominance in the last round', function() {
                     this.game.addGold(this.player2Object, 1);
+                    this.game.addPower(this.player1Object, 1);
                     this.player2.clickPrompt('Done');
                     expect(this.game.winnerOfDominanceInLastRound).toBe(this.player2Object);
                     this.game.determineWinnerAfterTimeLimitExpired();
@@ -82,13 +83,13 @@ describe('time limit', function() {
                 });
     
                 it('when one player cannot win the game', function() {
-                    this.tycho = this.player1.findCardByName('Tycho Nestoris', 'hand');
-                    this.player1Object.moveCard(this.tycho, 'hand');
+                    this.tycho = this.player1.findCardByName('Tycho Nestoris');
+                    this.player1Object.putIntoPlay(this.tycho);
                     this.game.addPower(this.player1Object, 1);
                     this.player2.clickPrompt('Done');
                     this.game.determineWinnerAfterTimeLimitExpired();
                     expect(this.game.finishedAt).toBeDefined();
-                    expect(this.game.winner).toBe(this.player1Object);
+                    expect(this.game.winner).toBe(this.player2Object);
                 });
             });
         });
