@@ -79,6 +79,7 @@ class Game extends EventEmitter {
         this.remainingPhases = [];
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
+        this.winnerOfDominanceInLastRound = undefined;
 
         for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -768,8 +769,7 @@ class Game extends EventEmitter {
 
     checkForTimeExpired() {
         if(this.timeLimit.isTimeLimitReached && !this.finishedAt) {
-            this.addAlert('success', 'The game has ended because the timer has expired.  Timed wins are not currently implemented');
-            this.finishedAt = new Date();
+            this.determineWinnerAfterTimeLimitExpired();
         }
     }
 
@@ -1302,6 +1302,60 @@ class Game extends EventEmitter {
                 };
             })
         };
+    }
+
+    determineWinnerAfterTimeLimitExpired() {
+        //find out the highest power total among all players left
+        const highestPowerTotal = this.getPlayers().reduce((highestPowerTotal, player) => {
+            if(highestPowerTotal < player.getTotalPower()) {
+                highestPowerTotal = player.getTotalPower();
+            }
+            return highestPowerTotal;
+        }, 0);
+        //find out the highest number of cards left in a draw deck among the remaining players
+        const mostCardsLeftInDrawDeck = this.getPlayers().reduce((mostCardsLeftInDrawDeck, player) => {
+            if(mostCardsLeftInDrawDeck < player.drawDeck.length) {
+                mostCardsLeftInDrawDeck = player.drawDeck.length;
+            }
+            return mostCardsLeftInDrawDeck;
+        }, 0);
+        //find out the smallest number of characters in a dead pile among the remaining players
+        const smallestNumberOfCharsInDeadPile = this.getPlayers().reduce((smallestNumberOfCharsInDeadPile, player) => {
+            if(smallestNumberOfCharsInDeadPile > player.deadPile.length) {
+                smallestNumberOfCharsInDeadPile = player.deadPile.length;
+            }
+            return smallestNumberOfCharsInDeadPile;
+        }, 1000);
+
+        const rules = [
+            player => player.canWinGame(),
+            player => player.getTotalPower() >= highestPowerTotal,
+            player => player.drawDeck.length >= mostCardsLeftInDrawDeck,
+            player => {
+                if(this.winnerOfDominanceInLastRound) {
+                    return player.name === this.winnerOfDominanceInLastRound.name;
+                }
+                //if no one won dom, then this rule should not filter any players
+                return true;           
+            },
+            player => player.deadPile.length <= smallestNumberOfCharsInDeadPile,
+            player => player.firstPlayer
+        ];
+
+        let remainingPlayers = this.getPlayers();
+        for(const rule of rules) {
+            remainingPlayers = remainingPlayers.filter(player => rule(player));
+            if(remainingPlayers.length === 1) {
+                this.recordWinner(remainingPlayers[0], 'time');
+                return;
+            } else if(remainingPlayers.length === 0) {
+                this.recordDraw('No one');
+                return;
+            }
+        }
+        //this should not be reached as it means after filtering the players with every rule there are still multiple players left
+        this.addAlert('After checking for every tie breaker rule to determine the winner of the game, no winner could be determined. This should not have happened. Please report this to the developers as it is likely a bug.');
+        this.recordDraw('No one');
     }
 }
 
