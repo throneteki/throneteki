@@ -24,7 +24,7 @@ class TheFaithsDecree extends DrawCard {
             return false;
         }
 
-        this.game.addMessage('{0} plays {1} to prevent opponent\'s from triggering {2}', player, cardName, this);
+        this.game.addMessage('{0} plays {1} to prevent opponent\'s from triggering {2}', player, this, cardName);
         this.untilEndOfPhase(ability => ({
             targetController: 'opponent',
             effect: ability.effects.cannotTriggerCardAbilities(ability => ability.card.name === cardName)
