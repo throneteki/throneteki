@@ -6,6 +6,7 @@ class ForestPatrol extends DrawCard {
             title: 'Put into play',
             location: 'shadows',
             cost: ability.costs.kneel(card => card.isFaction('thenightswatch') && card.getType() === 'location'),
+            condition: context => context.player.canPutIntoPlay(this, 'outOfShadows'),
             message: {
                 format: '{player} uses {source} and kneels {location} to put {source} into play from shadows',
                 args: { location: context => context.costs.kneel }
