@@ -5,6 +5,7 @@ class TheQueensRetinue extends DrawCard {
         this.action({
             title: 'Put into play',
             location: 'shadows',
+            condition: context => context.player.canPutIntoPlay(this, 'outOfShadows'),
             handler: context => {
                 context.player.putIntoPlay(this);
                 for(let opponent of this.game.getOpponents(this.controller)) {

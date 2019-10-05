@@ -5,7 +5,7 @@ class CovertLoyalist extends DrawCard {
         this.action({
             title: 'Put into play',
             location: 'shadows',
-            condition: context => context.player.canPutIntoPlay(this),
+            condition: context => context.player.canPutIntoPlay(this, 'outOfShadows'),
             cost: ability.costs.discardFromHand({ faction: 'targaryen', printedCostOrHigher: 4 }),
             message: {
                 format: '{player} uses {source} and discards {discardedCard} to put {source} into play from shadows',

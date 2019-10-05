@@ -6,6 +6,7 @@ class KingsLandingProselyte extends DrawCard {
             title: 'Put into play',
             location: 'shadows',
             cost: ability.costs.kill(card => !card.kneeled && card.isFaction('greyjoy')),
+            condition: context => context.player.canPutIntoPlay(this, 'outOfShadows'),
             message: {
                 format: '{player} uses {source} and kills {killed} to put {source} into play from shadows',
                 args: { killed: context => context.costs.kill }

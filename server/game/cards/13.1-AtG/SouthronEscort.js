@@ -4,7 +4,7 @@ class SouthronEscort extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',
-            condition: () => this.controller.canPutIntoPlay(this),
+            condition: () => this.controller.canPutIntoPlay(this, 'outOfShadows'),
             location: 'shadows',
             cost: ability.costs.discardFromShadows(card => card !== this),
             message: {

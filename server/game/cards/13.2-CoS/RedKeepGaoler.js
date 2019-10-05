@@ -4,7 +4,7 @@ class RedKeepGaoler extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Put into play',
-            condition: context => context.player.canPutIntoPlay(this),
+            condition: context => context.player.canPutIntoPlay(this, 'outOfShadows'),
             location: 'shadows',
             cost: ability.costs.movePowerFromFaction({
                 amount: 2,
