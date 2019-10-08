@@ -76,7 +76,7 @@ class ChallengeFlow extends BaseStep {
 
         this.declaredAttackers = attackers;
         this.attackersToKneel = [];
-        this.challenge.addAttackers(attackers);
+        this.challenge.declareAttackers(attackers);
 
         for(let card of attackers) {
             if(!card.kneeled && card.kneelsAsAttacker(this.challenge.challengeType)) {

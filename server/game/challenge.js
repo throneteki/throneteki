@@ -12,6 +12,7 @@ class Challenge {
         this.challengeType = properties.challengeType;
         this.number = properties.number;
         this.attackers = [];
+        this.declaredAttackers = [];
         this.attackerStrength = 0;
         this.attackerStrengthModifier = 0;
         this.defenders = [];
@@ -39,6 +40,11 @@ class Challenge {
         this.defendingPlayer.trackChallenge(this);
     }
 
+    declareAttackers(attackers) {
+        this.addAttackers(attackers);
+        this.declaredAttackers = this.declaredAttackers.concat(attackers);
+    }
+
     addAttackers(attackers) {
         this.attackers = this.attackers.concat(attackers);
         this.markAsParticipating(attackers);
@@ -46,9 +52,7 @@ class Challenge {
     }
 
     addAttacker(attacker) {
-        this.attackers.push(attacker);
-        this.markAsParticipating([attacker]);
-        this.calculateStrength();
+        this.addAttackers([attacker]);
     }
 
     addDefenders(defenders) {
@@ -58,9 +62,7 @@ class Challenge {
     }
 
     addDefender(defender) {
-        this.defenders.push(defender);
-        this.markAsParticipating([defender]);
-        this.calculateStrength();
+        this.addDefenders([defender]);
     }
 
     removeFromChallenge(card) {
@@ -69,6 +71,7 @@ class Challenge {
         }
 
         this.attackers = this.attackers.filter(c => c !== card);
+        this.declaredAttackers = this.declaredAttackers.filter(c => c !== card);
         this.defenders = this.defenders.filter(c => c !== card);
 
         card.inChallenge = false;
@@ -83,6 +86,10 @@ class Challenge {
             card.inChallenge = true;
             card.markAsDirty();
         }
+    }
+
+    isDeclared(card) {
+        return this.declaredAttackers.includes(card);
     }
 
     isAttacking(card) {

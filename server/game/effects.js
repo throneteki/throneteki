@@ -114,20 +114,22 @@ const Effects = {
                 let challenge = context.game.currentChallenge;
                 if(card.canParticipateInChallenge() && !challenge.isAttacking(card)) {
                     challenge.addAttacker(card);
-                    card.consideredToBeAttackingWasApplied = true;
-                    context.game.once('afterChallenge', () => {
-                        card.consideredToBeAttackingWasApplied = false;
-                    });
-                }                
+                }
+            },
+            reapply: function(card, context) {
+                let challenge = context.game.currentChallenge;
+                if(card.canParticipateInChallenge() && !challenge.isAttacking(card)) {
+                    challenge.addAttacker(card);
+                }
             },
             unapply: function(card, context) {
                 let challenge = context.game.currentChallenge;
 
-                if(challenge && challenge.isAttacking(card) && card.consideredToBeAttackingWasApplied) {
+                if(challenge && challenge.isAttacking(card) && !challenge.isDeclared(card)) {
                     challenge.removeFromChallenge(card);
-                    card.consideredToBeAttackingWasApplied = false;
                 }
-            }
+            },
+            isStateDependent: true
         };
     },
     canBeDeclaredWithoutIcon: challengeOptionEffect('canBeDeclaredWithoutIcon'),
