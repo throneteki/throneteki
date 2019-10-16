@@ -142,13 +142,20 @@ const Effects = {
                     challenge.addAttacker(card);
                 }
             },
+            reapply: function(card, context) {
+                let challenge = context.game.currentChallenge;
+                if(card.canParticipateInChallenge() && !challenge.isAttacking(card)) {
+                    challenge.addAttacker(card);
+                }
+            },
             unapply: function(card, context) {
                 let challenge = context.game.currentChallenge;
 
-                if(challenge && challenge.isAttacking(card)) {
+                if(challenge && challenge.isAttacking(card) && !challenge.isDeclared(card)) {
                     challenge.removeFromChallenge(card);
                 }
-            }
+            },
+            isStateDependent: true
         };
     },
     canBeDeclaredWithoutIcon: challengeOptionEffect('canBeDeclaredWithoutIcon'),
