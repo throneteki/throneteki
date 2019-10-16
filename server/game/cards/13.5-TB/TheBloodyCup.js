@@ -15,7 +15,7 @@ class TheBloodyCup extends DrawCard {
             },
             handler: context => {
                 const loser = context.event.challenge.loser;
-                loser.moveCard(context.target, 'draw deck');
+                loser.moveCardToTopOfDeck(context.target);
             },
             max: ability.limit.perChallenge(1)
         });
