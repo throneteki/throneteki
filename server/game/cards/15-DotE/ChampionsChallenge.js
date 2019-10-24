@@ -7,7 +7,10 @@ class ChampionsChallenge extends PlotCard {
                 onChallengeInitiated: event => event.challenge.defendingPlayer === this.controller
             },
             cost: ability.costs.kneel((card, context) => card.getType() === 'character' && card.getStrength() === this.highestStrength(context.player)),
-            message: '{player} uses {source} and kneels {costs.kneel} to end the current challenge',
+            message: {
+                format: '{player} uses {source} and kneels {kneeledCard} to end the current challenge',
+                args: { kneeledCard: context => context.costs.kneel }
+            },
             handler: context => {
                 context.event.challenge.cancelChallenge();
             }
