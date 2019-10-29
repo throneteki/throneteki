@@ -15,7 +15,7 @@ class Drogon extends DrawCard {
                 let characters = this.game.currentChallenge.defendingPlayer.filterCardsInPlay(card => card.getType() === 'character' && card.getStrength() <= 1);
                 this.game.killCharacters(characters);
 
-                this.game.addMessage('{0} uses {1} to kill all characters {2} controls with STR 1',
+                this.game.addMessage('{0} uses {1} to kill all characters {2} controls with STR 1 or lower',
                     context.player, this, this.game.currentChallenge.defendingPlayer);
             }
         });
