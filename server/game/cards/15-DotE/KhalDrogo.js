@@ -3,7 +3,6 @@ const DrawCard = require('../../drawcard.js');
 class KhalDrogo extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
-            canCancel: true,
             when: {
                 onCardReturnedToHand: event => 
                     event.allowSave &&
