@@ -5,7 +5,7 @@ class Jhogo extends DrawCard {
         this.reaction({
             when: {
                 afterChallenge: event => 
-                    event.challenge.winner === this.controller && 
+                    event.challenge.winner === this.controller && event.challenge.challengeType === 'military' &&
                     this.getNumberOfAttackingDothrakis() >= 2
             },
             handler: context => {
