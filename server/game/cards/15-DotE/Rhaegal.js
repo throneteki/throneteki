@@ -12,7 +12,8 @@ class Rhaegal extends DrawCard {
                     card.location === 'play area' &&
                     card.getType() === 'character' &&
                     card.kneeled &&
-                    card.controller === this.controller,
+                    card.controller === this.controller &&
+                    card !== this,
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
