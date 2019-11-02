@@ -1,0 +1,21 @@
+const DrawCard = require('../../drawcard');
+
+class Horselord extends DrawCard {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => this.isAttacking(),
+            effect: ability.effects.dynamicStrength(() => this.getSTR())
+        });
+    }
+
+    getSTR() {
+        let cards = this.controller.filterCardsInPlay(card => {
+            card.isAttacking() && card.hasTrait('Dothraki') && card !== this;
+        });
+        return cards.length;
+    }
+}
+
+Horselord.code = '15015';
+
+module.exports = Horselord;
