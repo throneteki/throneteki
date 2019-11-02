@@ -15,6 +15,7 @@ class Viserion extends DrawCard {
                 !card.hasTrait('Dragon') &&
                 !card.hasTrait('Stormborn')
             ),
+            targetController: 'any',
             effect: ability.effects.modifyStrength(-2)
         });
     }
