@@ -9,7 +9,7 @@ class BlueGraces extends DrawCard {
             target: {
                 activePromptTitle: 'Select a card',
                 cardCondition: card => (card.location === 'discard pile' || card.location === 'dead pile') &&
-                                       card.getPrintedCost() >= 6
+                                       card.getPrintedCost() >= 6 && card.controller === this.controller
             },
             handler: context => {
                 context.target.owner.moveCard(context.target, 'draw deck');
