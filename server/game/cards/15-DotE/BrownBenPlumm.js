@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class BrownBenPlumm extends DrawCard {
     setupCardAbilities() {
@@ -6,10 +7,12 @@ class BrownBenPlumm extends DrawCard {
             when: {
                 onPhaseEnded: event => event.phase === 'challenge' && this.controller.gold === 0
             },
-            handler: () => {
-                this.controller.sacrificeCard(this);
-                this.game.addMessage('{0} sacrifices {1} because they have no gold left in their gold pool',
-                    this.controller, this);
+            message: '{player} is forced to sacrifice {source} because they have no gold left in their gold pool',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.sacrificeCard({ card: this }),
+                    context
+                );
             }
         });
     }
