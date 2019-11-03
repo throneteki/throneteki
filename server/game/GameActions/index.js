@@ -15,6 +15,8 @@ const ReturnCardToHand = require('./ReturnCardToHand');
 const ReturnGoldToTreasury = require('./ReturnGoldToTreasury');
 const RevealCard = require('./RevealCard');
 const SacrificeCard = require('./SacrificeCard');
+const Shuffle = require('./Shuffle');
+const ShuffleIntoDeck = require('./ShuffleIntoDeck');
 const SimultaneousAction = require('./SimultaneousAction');
 const StandCard = require('./StandCard');
 
@@ -35,6 +37,8 @@ const GameActions = {
     returnGoldToTreasury: props => new AbilityAdapter(ReturnGoldToTreasury, props),
     revealCard: props => new AbilityAdapter(RevealCard, props),
     sacrificeCard: props => new AbilityAdapter(SacrificeCard, props),
+    shuffle: props => new AbilityAdapter(Shuffle, props),
+    shuffleIntoDeck: props => new AbilityAdapter(ShuffleIntoDeck, props),
     simultaneously: function(actions) {
         return new SimultaneousAction(actions);
     },
