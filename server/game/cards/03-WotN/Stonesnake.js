@@ -1,6 +1,4 @@
-const DrawCard = require('../../drawcard.js');
-
-const keywords = ['Insight', 'Intimidate', 'Pillage', 'Renown'];
+const DrawCard = require('../../drawcard');
 
 class Stonesnake extends DrawCard {
     setupCardAbilities() {
@@ -10,14 +8,10 @@ class Stonesnake extends DrawCard {
                                                this.hasCopyableKeyword(event.target)
             },
             handler: context => {
-                let target = context.event.target;
-                let buttons = [];
-
-                for(let keyword of keywords) {
-                    if(target.hasKeyword(keyword)) {
-                        buttons.push({ text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase() });
-                    }
-                }
+                const keywords = context.event.target.getKeywords();
+                let buttons = keywords.map(keyword => ({
+                    text: keyword, method: 'keywordSelected', arg: keyword.toLowerCase()
+                }));
 
                 this.game.promptWithMenu(this.controller, this, {
                     activePrompt: {
@@ -43,7 +37,7 @@ class Stonesnake extends DrawCard {
     }
 
     hasCopyableKeyword(card) {
-        return keywords.some(keyword => card.hasKeyword(keyword));
+        return card.getKeywords().length > 0;
     }
 }
 
