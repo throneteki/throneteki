@@ -1,4 +1,5 @@
 const AbilityAdapter = require('./AbilityAdapter');
+const AddToHand = require('./AddToHand');
 const DiscardCard = require('./DiscardCard');
 const DiscardPower = require('./DiscardPower');
 const DrawCards = require('./DrawCards');
@@ -18,6 +19,7 @@ const SimultaneousAction = require('./SimultaneousAction');
 const StandCard = require('./StandCard');
 
 const GameActions = {
+    addToHand: props => new AbilityAdapter(AddToHand, props),
     discardCard: props => new AbilityAdapter(DiscardCard, props),
     discardPower: props => new AbilityAdapter(DiscardPower, props),
     drawCards: props => new AbilityAdapter(DrawCards, props),
