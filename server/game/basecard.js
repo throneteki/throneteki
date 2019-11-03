@@ -332,6 +332,10 @@ class BaseCard {
         return this.keywords.contains(keyword);
     }
 
+    getKeywords() {
+        return this.keywords.getValues();
+    }
+
     hasPrintedKeyword(keyword) {
         return this.printedKeywords.includes(keyword.toLowerCase());
     }
