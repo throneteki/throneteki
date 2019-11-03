@@ -28,7 +28,10 @@ class CardMatcher {
                 return propertiesOrFunc(card, context);
             }
 
-            return CardMatcher.isMatch(card, propertiesOrFunc);
+            return (
+                CardMatcher.isMatch(card, propertiesOrFunc) &&
+                Matcher.anyValue(propertiesOrFunc.controller, controller => card.controller === controller || CardMatcher.attachmentControllerMatches(controller, card, context))
+            );
         };
     }
 
