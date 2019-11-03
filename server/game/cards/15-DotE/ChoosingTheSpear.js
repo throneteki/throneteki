@@ -1,8 +1,9 @@
 const DrawCard = require('../../drawcard');
 
 class ChoosingTheSpear extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
+            max: ability.limit.perChallenge(1),
             when: {
                 onDeclaredAsAttacker: event => 
                     event.card.controller === this.controller && 
