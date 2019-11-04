@@ -8,9 +8,8 @@ class Braavos extends DrawCard {
             condition: () => this.controller.canGainGold(),
             cost: ability.costs.kneelSelf(),
             handler: () => {
-                let gold = this.getNumberOfFactions();
-                this.game.addGold(this.controller, gold);
-                this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, gold);
+                const goldGained = this.game.addGold(this.controller, this.getNumberOfFactions());
+                this.game.addMessage('{0} kneels {1} to gain {2} gold', this.controller, this, goldGained);
             }
         });
     }
