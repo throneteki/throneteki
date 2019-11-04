@@ -4,19 +4,12 @@ class Clydas extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Move 1 gold to your gold pool',
-            limit: ability.limit.perPhase(1),
-            chooseOpponent: true,
+            chooseOpponent: opponent => opponent.gold > 0,
+            message: '{player} uses {source} to move 1 gold from {opponent}\'s gold pool to their own',
             handler: context => {
-                let opponent = context.opponent;
-
-                if(!opponent) {
-                    return;
-                }
-
-                this.game.transferGold({ from: opponent, to: this.controller, amount: 1 });
-                this.game.addMessage('{0} uses {1} to move 1 gold from {2}\'s gold pool to their own',
-                    this.controller, this, opponent);
-            }
+                this.game.transferGold({ from: context.opponent, to: context.player, amount: 1 });
+            },
+            limit: ability.limit.perPhase(1)
         });
     }
 }
