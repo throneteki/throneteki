@@ -5,7 +5,6 @@ class ChampionsFavor extends DrawCard {
         this.attachmentRestriction({ trait: 'Lady' });
         this.action({
             title: 'Give STR',
-            condition: () => this.isNonLadyParticipating(),
             cost: ability.costs.kneelParent(),
             target: {
                 cardCondition: card => card.isParticipating() && !card.hasTrait('Lady') && card.getType() === 'character'
@@ -20,10 +19,6 @@ class ChampionsFavor extends DrawCard {
                 }));
             }
         });
-    }
-
-    isNonLadyParticipating() {
-        return this.game.anyCardsInPlay(card => card.isParticipating() && !card.hasTrait('Lady') && card.getType() === 'character');
     }
 }
 
