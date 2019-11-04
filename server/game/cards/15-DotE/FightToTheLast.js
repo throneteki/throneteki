@@ -25,7 +25,7 @@ class FightToTheLast extends DrawCard {
                 this.game.addMessage('{0} plays {1} to save, stand and set {2}\'s STR to 1 until the end of the phase',
                     this.controller, this, context.event.card);
                 
-                this.untilEndOfPhase(ability => ({
+                this.atEndOfPhase(ability => ({
                     match: context.event.card,
                     effect: ability.effects.killIfStillInPlay(false)
                 }));
