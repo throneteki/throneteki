@@ -1,4 +1,5 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class LysaArryn extends DrawCard {
     setupCardAbilities() {
@@ -10,14 +11,12 @@ class LysaArryn extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card !== this && 
                                        ['character', 'attachment', 'location'].includes(card.getType())
             },
+            message: '{player} uses {source} to remove {target} from the game',
             handler: context => {
-                this.game.addMessage('{0} uses {1} to remove {2} from the game', this.controller, this, context.target);
-                this.lastingEffect(ability => ({
-                    targetController: 'any',
-                    match: context.target,
-                    targetLocation: ['play area', 'out of game'],
-                    effect: ability.effects.removeFromGame()
-                }));
+                this.game.resolveGameAction(
+                    GameActions.removeFromGame(context => ({ card: context.target })),
+                    context
+                );
             }
         });
     }
