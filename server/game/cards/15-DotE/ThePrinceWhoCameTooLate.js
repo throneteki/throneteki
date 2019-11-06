@@ -1,7 +1,7 @@
 const PlotCard = require('../../plotcard');
 const GameActions = require('../../GameActions');
 
-class TheLostMessage extends PlotCard {
+class ThePrinceWhoCameTooLate extends PlotCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Search your deck',
@@ -26,6 +26,6 @@ class TheLostMessage extends PlotCard {
     }
 }
 
-TheLostMessage.code = '15052';
+ThePrinceWhoCameTooLate.code = '15052';
 
-module.exports = TheLostMessage;
+module.exports = ThePrinceWhoCameTooLate;
