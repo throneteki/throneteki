@@ -1,4 +1,5 @@
 const AbilityAdapter = require('./AbilityAdapter');
+const AddToHand = require('./AddToHand');
 const DiscardCard = require('./DiscardCard');
 const DiscardPower = require('./DiscardPower');
 const DrawCards = require('./DrawCards');
@@ -9,15 +10,20 @@ const LookAtDeck = require('./LookAtDeck');
 const LookAtHand = require('./LookAtHand');
 const MovePower = require('./MovePower');
 const PlaceToken = require('./PlaceToken');
+const PutIntoPlay = require('./PutIntoPlay');
 const RemoveFromGame = require('./RemoveFromGame');
 const ReturnCardToHand = require('./ReturnCardToHand');
 const ReturnGoldToTreasury = require('./ReturnGoldToTreasury');
 const RevealCard = require('./RevealCard');
 const SacrificeCard = require('./SacrificeCard');
+const Search = require('./Search');
+const Shuffle = require('./Shuffle');
+const ShuffleIntoDeck = require('./ShuffleIntoDeck');
 const SimultaneousAction = require('./SimultaneousAction');
 const StandCard = require('./StandCard');
 
 const GameActions = {
+    addToHand: props => new AbilityAdapter(AddToHand, props),
     discardCard: props => new AbilityAdapter(DiscardCard, props),
     discardPower: props => new AbilityAdapter(DiscardPower, props),
     drawCards: props => new AbilityAdapter(DrawCards, props),
@@ -28,11 +34,18 @@ const GameActions = {
     lookAtHand: props => new AbilityAdapter(LookAtHand, props),
     movePower: props => new AbilityAdapter(MovePower, props),
     placeToken: props => new AbilityAdapter(PlaceToken, props),
+    putIntoPlay: props => new AbilityAdapter(PutIntoPlay, props),
     removeFromGame: props => new AbilityAdapter(RemoveFromGame, props),
     returnCardToHand: props => new AbilityAdapter(ReturnCardToHand, props),
     returnGoldToTreasury: props => new AbilityAdapter(ReturnGoldToTreasury, props),
     revealCard: props => new AbilityAdapter(RevealCard, props),
     sacrificeCard: props => new AbilityAdapter(SacrificeCard, props),
+    search: props => new AbilityAdapter(
+        new Search(props),
+        context => ({ player: context.player, context })
+    ),
+    shuffle: props => new AbilityAdapter(Shuffle, props),
+    shuffleIntoDeck: props => new AbilityAdapter(ShuffleIntoDeck, props),
     simultaneously: function(actions) {
         return new SimultaneousAction(actions);
     },

@@ -13,6 +13,7 @@ const Tokens = {
     valarmorghulis: 'valarmorghulis',
     vengeance: 'vengeance',
     venom: 'venom',
+    tale: 'tale',
     includes: token => {
         return Object.values(Tokens).includes(token.toLowerCase());
     }
