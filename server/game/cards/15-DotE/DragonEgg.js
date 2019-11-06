@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class DragonEgg extends DrawCard {
     setupCardAbilities(ability) {
@@ -12,7 +13,19 @@ class DragonEgg extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
-                //todo add search effect
+                this.game.resolveGameAction(
+                    GameActions.search({
+                        title: 'Select a Hatchling character',
+                        match: { type: 'character', trait: 'Hatchling' },
+                        message: '{player} uses {source} to search their deck and put {searchTarget} into play',
+                        cancelMessage: '{player} uses {source} to search their deck but does not find a card',
+                        gameAction: GameActions.putIntoPlay(context => ({
+                            player: context.player,
+                            card: context.searchTarget
+                        }))
+                    }),
+                    context
+                );
             }
         });
     }
