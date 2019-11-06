@@ -250,7 +250,7 @@ describe('effects', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('targaryen', [
                     'Sneak Attack',
-                    'Jhogo', 'Hedge Knight', 'Nightmares'
+                    'Jhogo (TS)', 'Hedge Knight', 'Nightmares'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

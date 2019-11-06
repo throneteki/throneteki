@@ -1,9 +1,9 @@
-describe('Jhogo', function() {
+describe('Jhogo (TS)', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('targaryen', [
                 'Marching Orders',
-                'Jhogo', 'Aggo'
+                'Jhogo (TS)', 'Aggo'
             ]);
             const deck2 = this.buildDeck('targaryen', [
                 'Marching Orders',
