@@ -1,4 +1,5 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class WaterDancersSword extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,10 +11,12 @@ class WaterDancersSword extends DrawCard {
             when: {
                 onPhaseEnded: event => event.phase === 'challenge'
             },
+            message: '{player} is forced to return {source} to their hand',
             handler: context => {
-                context.player.moveCard(this, 'hand');
-
-                this.game.addMessage('{0} is forced to return {1} to their hand', this.controller, this);
+                this.game.resolveGameAction(
+                    GameActions.returnCardToHand(context => ({ card: context.source })),
+                    context
+                );
             }
         });
     }
