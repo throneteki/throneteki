@@ -42,7 +42,7 @@ const GameActions = {
     sacrificeCard: props => new AbilityAdapter(SacrificeCard, props),
     search: props => new AbilityAdapter(
         new Search(props),
-        context => ({ player: context.player, context })
+        context => ({ context })
     ),
     shuffle: props => new AbilityAdapter(Shuffle, props),
     shuffleIntoDeck: props => new AbilityAdapter(ShuffleIntoDeck, props),

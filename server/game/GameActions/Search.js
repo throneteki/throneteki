@@ -4,22 +4,25 @@ const CardMatcher = require('../CardMatcher');
 const Shuffle = require('./Shuffle');
 
 class Search extends GameAction {
-    constructor({ gameAction, match, message, cancelMessage, topCards, numToSelect, title }) {
+    constructor({ gameAction, match, message, cancelMessage, topCards, numToSelect, player, title }) {
         super('search');
         this.gameAction = gameAction;
         this.match = match;
         this.topCards = topCards;
         this.numToSelect = numToSelect;
+        this.playerFunc = player || (context => context.player);
         this.title = title;
         this.message = AbilityMessage.create(message);
         this.cancelMessage = AbilityMessage.create(cancelMessage || '{player} uses {source} to search their deck but does not find a card');
     }
 
-    canChangeGameState({ player }) {
+    canChangeGameState({ context }) {
+        const player = this.playerFunc(context);
         return player.drawDeck.length > 0;
     }
 
-    createEvent({ player, context }) {
+    createEvent({ context }) {
+        const player = this.playerFunc(context);
         return this.event('onDeckSearched', { player }, event => {
             const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, numCards: this.topCards });
             const searchCondition = this.createSearchCondition(player);
