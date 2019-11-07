@@ -4,11 +4,11 @@ const CardMatcher = require('../CardMatcher');
 const Shuffle = require('./Shuffle');
 
 class Search extends GameAction {
-    constructor({ gameAction, match, message, cancelMessage, numCards, numToSelect, title }) {
+    constructor({ gameAction, match, message, cancelMessage, topCards, numToSelect, title }) {
         super('search');
         this.gameAction = gameAction;
         this.match = match;
-        this.numCards = numCards;
+        this.topCards = topCards;
         this.numToSelect = numToSelect;
         this.title = title;
         this.message = AbilityMessage.create(message);
@@ -21,7 +21,7 @@ class Search extends GameAction {
 
     createEvent({ player, context }) {
         return this.event('onDeckSearched', { player }, event => {
-            const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, numCards: this.numCards });
+            const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, numCards: this.topCards });
             const searchCondition = this.createSearchCondition(player);
             const modeProps = this.numToSelect ? { mode: 'upTo', numCards: this.numToSelect } : {};
 
@@ -68,18 +68,20 @@ class Search extends GameAction {
     createSearchCondition(player) {
         const match = Object.assign({ location: 'draw deck', controller: player }, this.match);
         const baseMatcher = CardMatcher.createMatcher(match);
-        const topCards = this.numCards ? player.searchDrawDeck(this.numCards) : [];
+        const topCards = this.topCards ? player.searchDrawDeck(this.topCards) : [];
 
         return (card, context) => {
             if(!baseMatcher(card, context)) {
                 return false;
             }
 
-            if(this.numCards && !topCards.includes(card)) {
+            if(this.topCards && !topCards.includes(card)) {
                 return false;
             }
 
-            context.searchTarget = card;
+            const result = this.numToSelect ? [card] : card;
+
+            context.searchTarget = result;
             const isActionAllowed = this.gameAction.allow(context);
             context.searchTarget = null;
             return isActionAllowed;
