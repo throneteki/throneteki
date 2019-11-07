@@ -15,7 +15,7 @@ class DragonEgg extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.search({
-                        title: 'Select a Hatchling character',
+                        title: 'Select a character',
                         match: { type: 'character', trait: 'Hatchling' },
                         message: '{player} uses {source} to search their deck and put {searchTarget} into play',
                         cancelMessage: '{player} uses {source} to search their deck but does not find a card',
