@@ -8,11 +8,11 @@ class LayWaste extends DrawCard {
             phase: 'dominance',
             target: {
                 activePromptTitle: 'Select a non-limited location or attachment',
-                cardCondition: card => card.location === 'play area' && 
-                                       (
-                                           (card.getType() === 'location' && !card.isLimited()) ||
-                                           card.getType() === 'attachment'
-                                       ),
+                cardCondition: card => card.isMatch({
+                    location: 'play area',
+                    type: ['attachment', 'location'],
+                    limited: false
+                }),
                 gameAction: 'discard'
             },
             message: '{player} uses {source} to discard {target} from play',
@@ -21,20 +21,29 @@ class LayWaste extends DrawCard {
                     GameActions.discardCard(context => ({
                         card: context.target
                     })).then({
-                        handler: () => {
+                        handler: thenContext => {
                             this.game.resolveGameAction(
                                 GameActions.search({
-                                    player: context.target.owner,
-                                    title: 'Select a location or attachment',
-                                    match: { type: 'location', printedCostOrLower: context.target.getPrintedCost() },
-                                    message: 'Then {player} uses {source} to search their deck and put {searchTarget} into play',
-                                    cancelMessage: '{player} uses {source} to search their deck but does not find a card',
+                                    player: thenContext => thenContext.parentContext.target.owner,
+                                    title: 'Select a card',
+                                    match: {
+                                        type: ['attachment', 'location'],
+                                        printedCostOrLower: context.target.getPrintedCost() - 1
+                                    },
+                                    message: {
+                                        format: 'Then {targetOwner} uses {source} to search their deck and put {searchTarget} into play',
+                                        args: { targetOwner: thenContext => thenContext.parentContext.target.owner }
+                                    },
+                                    cancelMessage: {
+                                        format: 'Then {targetOwner} uses {source} to search their deck but does not find a card',
+                                        args: { targetOwner: thenContext => thenContext.parentContext.target.owner }
+                                    },
                                     gameAction: GameActions.putIntoPlay(thenContext => ({
                                         player: thenContext.player,
                                         card: thenContext.searchTarget
                                     }))
                                 }),
-                                context
+                                thenContext
                             );
                         }
                     }),
