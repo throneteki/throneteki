@@ -1,5 +1,6 @@
 const AbilityLimit = require('./abilitylimit.js');
 const AllowedChallenge = require('./AllowedChallenge');
+const CardMatcher = require('./CardMatcher');
 const CostReducer = require('./costreducer.js');
 const PlayableLocation = require('./playablelocation.js');
 const CannotRestriction = require('./cannotrestriction.js');
@@ -957,7 +958,7 @@ const Effects = {
         };
     },
     canMarshal: function(predicate) {
-        let playableLocation = new PlayableLocation('marshal', predicate);
+        let playableLocation = new PlayableLocation('marshal', CardMatcher.createMatcher(predicate));
         return {
             targetType: 'player',
             apply: function(player) {

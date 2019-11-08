@@ -18,6 +18,8 @@ class CardMatcher {
             Matcher.anyValue(properties.attacking, attacking => card.isAttacking() === attacking) &&
             Matcher.anyValue(properties.defending, defending => card.isDefending() === defending) &&
             Matcher.anyValue(properties.participating, participating => card.isParticipating() === participating) &&
+            Matcher.containsValue(properties.facedown, card.facedown) &&
+            Matcher.containsValue(properties.parent, card.parent) &&
             Matcher.anyValue(properties.not, notProperties => !CardMatcher.isMatch(card, notProperties))
         );
     }
