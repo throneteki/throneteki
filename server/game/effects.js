@@ -571,7 +571,7 @@ const Effects = {
             }
         };
     },
-    returnToHandIfStillInPlay: function(allowSave = false) {
+    returnToHandIfStillInPlay: function(allowSave = false, duration = 'phase') {
         return {
             apply: function(card, context) {
                 context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay || [];
@@ -581,7 +581,7 @@ const Effects = {
                 if(card.location === 'play area' && context.returnToHandIfStillInPlay.includes(card)) {
                     context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(c => c !== card);
                     card.controller.returnCardToHand(card, allowSave);
-                    context.game.addMessage('{0} returns {1} to hand at the end of the phase because of {2}', context.source.controller, card, context.source);
+                    context.game.addMessage('{0} returns {1} to hand at the end of the {2} because of {3}', context.source.controller, card, duration, context.source);
                 }
             }
         };

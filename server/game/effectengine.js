@@ -6,7 +6,7 @@ class EffectEngine {
     constructor(game) {
         this.game = game;
         this.events = new EventRegistrar(game, this);
-        this.events.register(['onCardMoved', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfPhase', 'onRoundEnded']);
+        this.events.register(['onCardMoved', 'onCardTakenControl', 'onCardBlankToggled', 'onChallengeFinished', 'onPhaseEnded', 'onAtEndOfChallenge', 'onAtEndOfPhase', 'onRoundEnded']);
         this.effects = [];
         this.customDurationEvents = [];
         this.effectsBeingRecalculated = [];
@@ -127,6 +127,10 @@ class EffectEngine {
 
     onPhaseEnded() {
         this.unapplyAndRemove(effect => effect.duration === 'untilEndOfPhase');
+    }
+
+    onAtEndOfChallenge() {
+        this.unapplyAndRemove(effect => effect.duration === 'atEndOfChallenge');
     }
 
     onAtEndOfPhase() {

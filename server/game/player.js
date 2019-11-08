@@ -115,7 +115,10 @@ class Player extends Spectator {
         return this.game.allCards.filter(card => card.controller === this && card.location === 'play area' && predicate(card));
     }
 
-    getNumberOfCardsInPlay(predicate) {
+    getNumberOfCardsInPlay(predicateOrMatcher) {
+        const predicate = typeof(predicateOrMatcher) === 'function'
+            ? predicateOrMatcher
+            : card => CardMatcher.isMatch(card, predicateOrMatcher);
         return this.game.allCards.reduce((num, card) => {
             if(card.controller === this && card.location === 'play area' && predicate(card)) {
                 return num + 1;
