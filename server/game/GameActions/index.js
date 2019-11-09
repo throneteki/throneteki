@@ -16,6 +16,7 @@ const RevealCard = require('./RevealCard');
 const SacrificeCard = require('./SacrificeCard');
 const SimultaneousAction = require('./SimultaneousAction');
 const StandCard = require('./StandCard');
+const TakeControl = require('./TakeControl');
 
 const GameActions = {
     discardCard: props => new AbilityAdapter(DiscardCard, props),
@@ -36,7 +37,8 @@ const GameActions = {
     simultaneously: function(actions) {
         return new SimultaneousAction(actions);
     },
-    standCard: props => new AbilityAdapter(StandCard, props)
+    standCard: props => new AbilityAdapter(StandCard, props),
+    takeControl: props => new AbilityAdapter(TakeControl, props)
 };
 
 module.exports = GameActions;
