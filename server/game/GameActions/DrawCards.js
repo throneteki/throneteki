@@ -34,10 +34,14 @@ class DrawCards extends GameAction {
         return this.event('onCardsDrawn', eventProps, event => {
             let cards = player.drawDeck.slice(0, event.amount);
             for(const card of cards) {
-                player.placeCardInPile({ card, location: 'hand' });
+                event.thenAttachEvent(
+                    this.event('onCardDrawn', { card, player: event.player, reason, source }, () => {
+                        player.placeCardInPile({ card, location: 'hand' });
+                        player.drawnCards += 1;
+                    })
+                );
             }
 
-            player.drawnCards += event.amount;
             event.cards = cards;
         });
     }
