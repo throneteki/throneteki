@@ -1,22 +1,39 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class Pentos extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardsDrawn: event =>
-                    event.source.controller === this.controller &&
-                    event.cards[0].getType() === 'attachment' &&
-                    this.controller.canPutIntoPlay(event.cards[0])
+                onCardDrawn: event =>
+                    event.player === this.controller &&
+                    event.card.getType() === 'attachment' &&
+                    this.controller.canPutIntoPlay(event.card)
             },
             cost: ability.costs.kneelSelf(),
+            message: {
+                format: '{player} kneels {source} to reveal {drawnCard} and put it into play',
+                args: { drawnCard: context => context.event.card }
+            },
             handler: context => {
-                this.controller.putIntoPlay(context.event.cards[0]);
-                this.game.addMessage('{0} reveals {1} and kneels {2} to put it into play', context.player, context.event.cards[0], this);
-                if(this.controller.canDraw()) {
-                    this.controller.drawCardsToHand(1);
-                    this.game.addMessage('{0} then draws 1 card', context.player, context.event.cards[0], this);
-                }
+                this.game.resolveGameAction(
+                    GameActions.putIntoPlay(context => ({
+                        card: context.event.card
+                    })).then({
+                        condition: thenContext => thenContext.player.canDraw(),
+                        message: 'Then {player} draws 1 card',
+                        handler: thenContext => {
+                            this.game.resolveGameAction(
+                                GameActions.drawCards(thenContext => ({
+                                    player: thenContext.player,
+                                    amount: 1
+                                })),
+                                thenContext
+                            );
+                        }
+                    }),
+                    context
+                );
             }
         });
     }

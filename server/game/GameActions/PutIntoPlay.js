@@ -6,6 +6,7 @@ class PutIntoPlay extends GameAction {
     }
 
     canChangeGameState({ player, card }) {
+        player = player || card.controller;
         return player.canPutIntoPlay(card);
     }
 
