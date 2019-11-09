@@ -70,6 +70,16 @@ describe('DrawCards', function() {
         describe('the event handler', function() {
             beforeEach(function() {
                 this.event.executeHandler();
+                for(const attachedEvent of this.event.attachedEvents) {
+                    attachedEvent.executeHandler();
+                }
+            });
+
+            it('attaches individual drawn event', function() {
+                expect(this.event.attachedEvents[0]).toEqual(jasmine.objectContaining({
+                    name: 'onCardDrawn',
+                    card: 'card1'
+                }));
             });
 
             it('moves the appropriate number of cards', function() {
