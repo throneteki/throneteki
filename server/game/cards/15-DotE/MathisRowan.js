@@ -1,4 +1,5 @@
-const DrawCard = require('../../drawcard.js');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class MathisRowan extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,22 +8,34 @@ class MathisRowan extends DrawCard {
             limit: ability.limit.perRound(1),
             chooseOpponent: () => true,
             target: {
-                type: 'select',
-                cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
-                                       ['character', 'attachment', 'location'].includes(card.getType())
+                activePromptTitle: 'Select a card',
+                cardCondition: (card, context) => (
+                    card.isMatch({ location: 'play area', type: ['character', 'attachment', 'location'] }) &&
+                    card.controller === this.controller &&
+                    (!context.opponent || context.opponent.canControl(card))
+                )
             },
+            message: '{player} uses {source} to give {opponent} control of {target}',
             handler: context => {
-                this.lastingEffect(ability => ({
-                    match: context.target,
-                    effect: ability.effects.takeControl(context.opponent)
-                }));
-                this.game.addMessage('{0} uses {1} to give {2} control of {3}',
-                    this.controller, this, context.opponent, context.target);
-                if(this.controller.canGainGold()) {
-                    this.game.addGold(this.controller, 2);
-                    this.game.addMessage('Then {0} gains 2 gold',
-                        this.controller);
-                }
+                this.game.resolveGameAction(
+                    GameActions.takeControl(context => ({
+                        player: context.opponent,
+                        card: context.target
+                    })).then(context => ({
+                        condition: () => context.player.canGainGold(),
+                        message: 'Then {player} gains 2 gold for {source}',
+                        handler: thenContext => {
+                            this.game.resolveGameAction(
+                                GameActions.gainGold(thenContext => ({
+                                    player: thenContext.player,
+                                    amount: 2
+                                })),
+                                thenContext
+                            );
+                        }
+                    })),
+                    context
+                );
             }
         });
     }
