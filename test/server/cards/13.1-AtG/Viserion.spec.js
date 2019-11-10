@@ -3,7 +3,7 @@ describe('Viserion (AtG)', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('targaryen', [
                 'Marching Orders',
-                'Viserion (AtG)', 'Jhogo', 'Aggo'
+                'Viserion (AtG)', 'Jhogo (TS)', 'Aggo'
             ]);
             const deck2 = this.buildDeck('targaryen', [
                 'Marching Orders',
@@ -13,7 +13,7 @@ describe('Viserion (AtG)', function() {
             this.player2.selectDeck(deck2);
             this.startGame();
             this.keepStartingHands();
-            
+
             this.viserion = this.player1.findCardByName('Viserion (AtG)');
             this.jhogo = this.player1.findCardByName('Jhogo');
             this.aggo = this.player1.findCardByName('Aggo');
@@ -34,7 +34,7 @@ describe('Viserion (AtG)', function() {
                 this.unopposedChallenge(this.player1, 'Military', this.viserion);
                 this.player1.triggerAbility('Viserion');
                 this.player1.clickCard(this.aggo);
-                
+
                 expect(this.aggo.location).toBe('discard pile');
                 expect(this.viserion.hasKeyword('Intimidate')).toBe(true);
             });
@@ -47,7 +47,7 @@ describe('Viserion (AtG)', function() {
             it('should allow to discard a card to gain Intimidate', function() {
                 this.unopposedChallenge(this.player1, 'Military', this.viserion);
                 expect(this.player1).toAllowAbilityTrigger('Viserion');
-            });          
+            });
         });
     });
 });
