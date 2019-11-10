@@ -104,7 +104,7 @@ class ChallengeFlow extends BaseStep {
         ];
 
         let attackerEvents = this.declaredAttackers.map(card => {
-            return { name: 'onDeclaredAsAttacker', params: { card: card } };
+            return { name: 'onDeclaredAsAttacker', params: { card: card, challenge: this.challenge } };
         });
 
         let kneelEvents = this.attackersToKneel.map(card => {
