@@ -1,21 +1,24 @@
-const DrawCard = require('../../drawcard.js');
-const DiscardToReservePrompt = require('../../gamesteps/taxation/DiscardToReservePrompt');
+const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class HothoHumpback extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
+            title: 'Draw card and check reserve',
             phase: 'challenge',
-            limit: ability.limit.perRound(1),
-            handler: () => {
-                this.game.addMessage('{0} uses {1} to have each player draw a card and check for reserve', this.controller, this);
-                for(let player of this.game.getPlayers()) {
-                    if(player.canDraw()) {
-                        player.drawCardsToHand(1);
-                    }
-                }
-                let discardToReservePrompt = new DiscardToReservePrompt(this.game);
-                discardToReservePrompt.continue();
-            }
+            message: '{player} uses {source} to have each player draw a card and check for reserve',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(() => [
+                        ...this.game.getPlayersInFirstPlayerOrder().map(player =>
+                            GameActions.drawCards({ player, amount: 1 })
+                        ),
+                        GameActions.checkReserve()
+                    ]),
+                    context
+                );
+            },
+            limit: ability.limit.perRound(1)
         });
     }
 }
