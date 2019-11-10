@@ -1,22 +1,29 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class TheShavepate extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            limit: ability.limit.perPhase(1),
             phase: 'challenge',
             cost: ability.costs.payXGold(() => this.getMinimumCost(), () => 99),
             target: {
+                type: 'select',
                 cardCondition: (card, context) => card.location === 'discard pile' && card.getType() === 'character' &&
                                                   card.controller === this.controller &&
-                                                  this.controller.canPutIntoPlay(card) &&
+                                                  context.player.canPutIntoPlay(card) &&
                                                   (context.xValue ? (card.getPrintedCost() <= context.xValue) : (card.getPrintedCost() <= this.controller.getSpendableGold()))
             },
             handler: context => {
-                context.player.putIntoPlay(context.target);
+                this.game.resolveGameActions(
+                    GameActions.putIntoPlay(context => ({
+                        card: context.target
+                    })),
+                    context
+                );
                 this.game.addMessage('{0} uses {1} and pays {2} gold to put {3} into play from their discard pile',
                     context.player, this, context.goldCost, context.target);
-            }
+            },
+            limit: ability.limit.perPhase(1)
         });
     }
 
