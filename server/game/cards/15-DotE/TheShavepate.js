@@ -4,6 +4,7 @@ const GameActions = require('../../GameActions');
 class TheShavepate extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
+            title: 'Put character into play',
             phase: 'challenge',
             cost: ability.costs.payXGold(() => this.getMinimumCost(), () => 99),
             target: {
@@ -14,7 +15,7 @@ class TheShavepate extends DrawCard {
                                                   (context.xValue ? (card.getPrintedCost() <= context.xValue) : (card.getPrintedCost() <= this.controller.getSpendableGold()))
             },
             handler: context => {
-                this.game.resolveGameActions(
+                this.game.resolveGameAction(
                     GameActions.putIntoPlay(context => ({
                         card: context.target
                     })),
