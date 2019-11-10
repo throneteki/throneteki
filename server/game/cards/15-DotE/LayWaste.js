@@ -15,7 +15,7 @@ class LayWaste extends DrawCard {
                 }),
                 gameAction: 'discard'
             },
-            message: '{player} uses {source} to discard {target} from play',
+            message: '{player} plays {source} to discard {target} from play',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.discardCard(context => ({
