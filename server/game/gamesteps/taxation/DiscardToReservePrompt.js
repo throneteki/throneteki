@@ -1,9 +1,10 @@
 const BaseStep = require('../basestep');
 
 class DiscardToReservePrompt extends BaseStep {
-    constructor(game) {
+    constructor(game, source) {
         super(game);
         this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
+        this.source = source;
     }
 
     continue() {
@@ -31,7 +32,8 @@ class DiscardToReservePrompt extends BaseStep {
             waitingPromptTitle: 'Waiting for opponent to discard down to reserve',
             cardCondition: card => card.location === 'hand' && card.controller === currentPlayer,
             onSelect: (player, cards) => this.discardCards(player, cards),
-            onCancel: (player) => this.cancelSelection(player)
+            onCancel: (player) => this.cancelSelection(player),
+            source: this.source
         });
     }
 
