@@ -29,7 +29,8 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.determineWinner()),
             new SimpleStep(this.game, () => this.challengeBonusPower()),
             new SimpleStep(this.game, () => this.beforeClaim()),
-            () => new KeywordWindow(this.game, this.challenge)
+            () => new KeywordWindow(this.game, this.challenge),
+            new SimpleStep(this.game, () => this.atEndOfChallenge())
         ]);
     }
 
@@ -236,6 +237,10 @@ class ChallengeFlow extends BaseStep {
         }
 
         this.game.queueStep(new ClaimPrompt(this.game, this.challenge));
+    }
+
+    atEndOfChallenge() {
+        this.game.raiseEvent('onAtEndOfChallenge', { challenge: this.challenge });
     }
 
     isComplete() {
