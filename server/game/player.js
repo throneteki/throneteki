@@ -137,6 +137,7 @@ class Player extends Spectator {
         return this.game.allCards.find(playCard => (
             playCard.controller === this &&
             playCard.location === 'play area' &&
+            !playCard.facedown &&
             playCard !== card &&
             (playCard.code === card.code || playCard.name === card.name) &&
             playCard.owner === this
@@ -494,7 +495,7 @@ class Player extends Spectator {
             return false;
         }
 
-        return this.anyCardsInPlay(card => duplicateCard.isCopyOf(card) && card.owner === duplicateCard.owner);
+        return this.anyCardsInPlay(card => duplicateCard.isCopyOf(card) && card.owner === duplicateCard.owner && !card.facedown);
     }
 
     canPlay(card, playingType = 'play') {
