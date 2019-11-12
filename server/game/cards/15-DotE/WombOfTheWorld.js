@@ -1,42 +1,50 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class WombOfTheWorld extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top 5 cards',
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                this.revealedCards = this.controller.drawDeck.slice(0, 5);
-                this.game.addMessage('{0} kneels {1} to reveal {2} from the top of their deck', this.controller, this, this.revealedCards);
+            handler: context => {
+                const revealedCards = context.player.drawDeck.slice(0, 5);
+                const revealFunction = (card) => revealedCards.includes(card);
 
-                let characters = this.remainingCards.filter(card => card.getType() === 'character' && card.hasTrait('Dothraki') && this.controller.canPutIntoPlay(card));
-                if(characters.length > 0) {
-                    this.promptToPutCharacterIntoPlay(characters);
-                }
-                this.controller.shuffleDrawDeck();
-                this.game.addMessage('{0} then shuffles their deck', this.controller);
+                this.game.addMessage('{0} kneels {1} to reveal {2} from the top of their deck', context.player, this, revealedCards);
+
+                this.game.cardVisibility.addRule(revealFunction);
+
+                this.game.promptForSelect(context.player, {
+                    activePromptTitle: 'Select a character',
+                    cardCondition: card => (
+                        revealedCards.includes(card) &&
+                        card.isMatch({ trait: 'Dothraki', type: 'character' }) &&
+                        context.player.canPutIntoPlay(card)
+                    ),
+                    onSelect: (player, card) => this.putCharacterIntoPlay(player, card),
+                    onCancel: (player) => this.promptToCancel(player),
+                    source: this
+                });
+                this.game.queueSimpleStep(() => {
+                    this.game.cardVisibility.removeRule(revealFunction);
+
+                    this.game.addMessage('{0} shuffles their deck', this.controller);
+                    this.game.resolveGameAction(
+                        GameActions.shuffle(context => ({ player: context.player })),
+                        context
+                    );
+                });
             }
         });
     }
 
-    promptToPutCharacterIntoPlay(characters) {
-        let buttons = characters.map(card => {
-            return { method: 'putCharacterIntoPlay', card: card };
-        });
-        buttons.push({ text: 'Done', method: 'promptToCancel' });
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Put a character into play?',
-                buttons: buttons
-            },
-            source: this
-        });
-    }
-
-    putCharacterIntoPlay(player, cardId) {
-        let card = this.revealedCards.find(card => card.uuid === cardId);
+    putCharacterIntoPlay(player, card) {
         player.putIntoPlay(card);
-        this.game.addMessage('{0} uses {1} to put {2} into play', player, this, card);        
+        this.atEndOfPhase(ability => ({
+            match: card,
+            effect: ability.effects.returnToHandIfStillInPlay(true)
+        }));
+        this.game.addMessage('{0} uses {1} to put {2} into play', player, this, card);
         return true;
     }
 
