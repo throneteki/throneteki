@@ -1,4 +1,5 @@
 const PlotCard = require('../../plotcard');
+const GameActions = require('../../GameActions');
 
 class TheWhiteSwords extends PlotCard {
     setupCardAbilities() {
@@ -18,7 +19,13 @@ class TheWhiteSwords extends PlotCard {
                 args: { originalLocation: context => context.target.location }
             },
             handler: context => {
-                context.player.putIntoPlay(context.target);
+                this.game.resolveGameAction(
+                    GameActions.putIntoPlay(context => ({
+                        player: context.player,
+                        card: context.target
+                    })),
+                    context
+                );
             }
         });
     }
