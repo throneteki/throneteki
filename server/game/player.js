@@ -140,7 +140,7 @@ class Player extends Spectator {
         return this.game.allCards.find(playCard => (
             playCard.controller === this &&
             playCard.location === 'play area' &&
-            !playCard.facedown &&
+            (this.game.currentPhase === 'setup' || !playCard.facedown) &&
             playCard !== card &&
             (playCard.code === card.code || playCard.name === card.name) &&
             playCard.owner === this
