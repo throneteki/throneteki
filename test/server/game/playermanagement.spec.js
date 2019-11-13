@@ -160,7 +160,7 @@ describe('Game', function() {
 
             it('should mark the player as disconnected', function() {
                 this.game.disconnect('foo');
-                expect(this.game.playersAndSpectators['foo'].disconnected).toBe(true);
+                expect(this.game.playersAndSpectators['foo'].disconnectedAt).not.toBe(undefined);
             });
         });
 
@@ -192,7 +192,7 @@ describe('Game', function() {
         });
 
         it('should mark the player as no longer disconnected', function() {
-            expect(this.game.playersAndSpectators['foo'].disconnected).toBe(undefined);
+            expect(this.game.playersAndSpectators['foo'].disconnectedAt).toBe(undefined);
         });
     });
 
