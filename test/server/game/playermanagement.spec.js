@@ -192,7 +192,7 @@ describe('Game', function() {
         });
 
         it('should mark the player as no longer disconnected', function() {
-            expect(this.game.playersAndSpectators['foo'].disconnected).toBe(false);
+            expect(this.game.playersAndSpectators['foo'].disconnected).toBe(undefined);
         });
     });
 
