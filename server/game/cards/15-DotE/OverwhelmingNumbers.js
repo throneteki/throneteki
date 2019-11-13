@@ -9,7 +9,7 @@ class OverwhelmingNumbers extends DrawCard {
                 type: 'select',
                 numCards: 2,
                 cardCondition: (card, context) => (
-                    card.isMatch({ trait: 'Dothraki', type: 'character', location: 'hand' }) &&
+                    card.isMatch({ trait: 'Dothraki', type: 'character', location: ['hand', 'discard pile'] }) &&
                     card.controller === context.player &&
                     context.player.canPutIntoPlay(card)
                 )
