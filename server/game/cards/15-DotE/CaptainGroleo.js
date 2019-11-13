@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class CaptainGroleo extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,8 +8,14 @@ class CaptainGroleo extends DrawCard {
                 onCardEntersPlay: event => event.card.getType() === 'attachment' && this.controller.canGainGold()
             },
             message: '{player} uses {source} to gain 1 gold',
-            handler: () => {
-                this.game.addGold(this.controller, 1);
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.gainGold(context => ({
+                        player: context.player,
+                        amount: 1
+                    })),
+                    context
+                );
             },
             limit: ability.limit.perPhase(1)
         });

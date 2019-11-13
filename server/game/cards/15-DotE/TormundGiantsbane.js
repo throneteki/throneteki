@@ -21,6 +21,7 @@ class TormundGiantsbane extends DrawCard {
             title: 'Give Wildling +2 STR',
             cost: ability.costs.discardTokenFromSelf(Tokens.tale, 1),
             target: {
+                type: 'select',
                 cardCondition: card => (
                     card.location === 'play area' &&
                     card.hasTrait('Wildling') &&

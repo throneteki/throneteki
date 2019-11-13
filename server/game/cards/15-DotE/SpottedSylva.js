@@ -10,7 +10,7 @@ class SpottedSylva extends DrawCard {
             target: {
                 choosingPlayer: 'each',
                 ifAble: true,
-                cardCondition: (card, context) => 
+                cardCondition: (card, context) =>
                     card.location === 'play area' &&
                     card.controller === context.choosingPlayer &&
                     card.getType() === 'character' &&
@@ -18,6 +18,9 @@ class SpottedSylva extends DrawCard {
             },
             handler: context => {
                 let selections = context.targets.selections.filter(selection => !!selection.value);
+                for(const selection of selections) {
+                    this.game.addMessage('{0} returns {1} to their hand for {2}', selection.choosingPlayer, selection.value, this);
+                }
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
                         selections.map(selection => GameActions.returnCardToHand({ player: selection.choosingPlayer, card: selection.value }))

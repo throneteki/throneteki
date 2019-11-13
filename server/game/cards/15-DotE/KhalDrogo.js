@@ -4,7 +4,7 @@ class KhalDrogo extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCardReturnedToHand: event => 
+                onCardReturnedToHand: event =>
                     event.allowSave &&
                     event.card.getType() === 'character' &&
                     (event.card.hasTrait('Army') || event.card.hasTrait('Dothraki')) &&
@@ -12,9 +12,15 @@ class KhalDrogo extends DrawCard {
 
             },
             cost: ability.costs.discardFromHand(),
+            message: {
+                format: '{player} uses {source} and discards {discardedCard} from their hand to save {card}',
+                args: {
+                    discardedCard: context => context.costs.discardFromHand,
+                    card: context => context.event.card
+                }
+            },
             handler: context => {
                 context.event.saveCard();
-                this.game.addMessage('{0} discards {1} from their hand to save {2}', this.controller, context.costs.discardFromHand, context.event.target);
             }
         });
     }
