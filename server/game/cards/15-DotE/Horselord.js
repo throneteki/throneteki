@@ -4,6 +4,7 @@ class Horselord extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.isAttacking(),
+            match: this,
             effect: ability.effects.dynamicStrength(() => this.getSTR())
         });
     }
