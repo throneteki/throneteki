@@ -1239,7 +1239,7 @@ class Player extends Spectator {
                 plotDiscard: this.getSummaryForCardList(this.plotDiscard, activePlayer),
                 shadows: this.getSummaryForCardList(this.shadows, activePlayer)
             },
-            disconnected: this.disconnected,
+            disconnected: !!this.disconnectedAt,
             faction: this.faction.getSummary(activePlayer),
             firstPlayer: this.firstPlayer,
             id: this.id,

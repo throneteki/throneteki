@@ -295,7 +295,7 @@ module.exports.init = function(server, options) {
         let user = await userService.getUserByUsername(req.user.username);
         let userDetails = user.getWireSafeDetails();
 
-        if(!user.patreon) {
+        if(!user.patreon || !user.patreon.refresh_token) {
             return res.send({ success: true, user: userDetails });
         }
 
