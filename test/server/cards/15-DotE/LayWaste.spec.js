@@ -67,6 +67,7 @@ describe('Lay Waste', function() {
                 expect(this.westernFiefdom.location).toBe('draw deck');
                 this.player2.clickCard(this.westernFiefdom);
                 expect(this.westernFiefdom.location).toBe('play area');
+                expect(this.westernFiefdom.controller).toBe(this.player2Object);
             });
         });
     });

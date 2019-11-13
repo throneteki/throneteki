@@ -39,7 +39,7 @@ class LayWaste extends DrawCard {
                                         args: { targetOwner: thenContext => thenContext.parentContext.target.owner }
                                     },
                                     gameAction: GameActions.putIntoPlay(thenContext => ({
-                                        player: thenContext.player,
+                                        player: thenContext.parentContext.target.owner,
                                         card: thenContext.searchTarget
                                     }))
                                 }),
