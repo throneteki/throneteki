@@ -6,11 +6,15 @@ class SerMerynTrant extends DrawCard {
             when: {
                 onCardDiscarded: event => event.originalLocation === 'hand' && event.card.controller !== this.controller
             },
+            message: {
+                format: '{player} uses {source} to remove {card} from the game',
+                args: { card: context => context.event.card }
+            },
             handler: context => {
-                let card = context.event.card;
-                let player = card.controller;
-                player.moveCard(card, 'out of game');
-                this.game.addMessage('{0} uses {1} to remove {2} from the game', this.controller, this, card);
+                context.event.replaceHandler(event => {
+                    event.cardStateWhenDiscarded = event.card.createSnapshot();
+                    event.card.controller.moveCard(event.card, 'out of game');
+                });
             }
         });
     }
