@@ -1,3 +1,5 @@
+const CardMatcher = require('../CardMatcher');
+
 /**
  * Base class that represents card selection requirements and the behaviours of
  * their associated prompts.
@@ -20,7 +22,7 @@ class BaseCardSelector {
      * check for card immunity
      */
     constructor(properties) {
-        this.cardCondition = properties.cardCondition;
+        this.cardCondition = CardMatcher.createMatcher(properties.cardCondition);
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;

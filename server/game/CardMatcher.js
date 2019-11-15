@@ -25,11 +25,11 @@ class CardMatcher {
     }
 
     static createMatcher(propertiesOrFunc) {
-        return function(card, context) {
-            if(typeof(propertiesOrFunc) === 'function') {
-                return propertiesOrFunc(card, context);
-            }
+        if(typeof(propertiesOrFunc) === 'function') {
+            return propertiesOrFunc;
+        }
 
+        return function(card, context) {
             return (
                 CardMatcher.isMatch(card, propertiesOrFunc) &&
                 Matcher.anyValue(propertiesOrFunc.controller, controller => card.controller === controller || CardMatcher.attachmentControllerMatches(controller, card, context)) &&
