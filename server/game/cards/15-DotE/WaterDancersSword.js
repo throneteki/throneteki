@@ -3,7 +3,7 @@ const GameActions = require('../../GameActions');
 
 class WaterDancersSword extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ printedCostOrLower: 3 });
+        this.attachmentRestriction({ printedStrengthOrLower: 3 });
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
