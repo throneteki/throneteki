@@ -214,6 +214,10 @@ class DrawCard extends BaseCard {
         return this.getPrintedNumberFor(this.cardData.strength);
     }
 
+    hasPrintedStrength() {
+        return !this.facedown && !!this.cardData.strength;
+    }
+
     getStrength() {
         return this.getBoostedStrength(0);
     }
