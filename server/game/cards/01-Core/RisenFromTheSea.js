@@ -27,6 +27,7 @@ class RisenFromTheSea extends DrawCard {
                     this.lastingEffect(ability => ({
                         condition: () => this.location === 'play area',
                         targetLocation: 'any',
+                        targetController: 'any',
                         match: card => card === this.parent,
                         effect: ability.effects.modifyStrength(1)
                     }));
