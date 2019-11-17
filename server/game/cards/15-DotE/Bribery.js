@@ -7,19 +7,27 @@ class Bribery extends DrawCard {
             cost: ability.costs.payXGold(() => this.getMinXValue(), () => 99),
             target: {
                 cardCondition: (card, context) => (
-                    card.isMatch({ location: 'play area', type: 'character', kneeled: false }) &&
-                    (!context.xValue || card.getPrintedCost() <= context.xValue)
-                ),
-                gameAction: 'kneel'
+                    card.isMatch({ location: 'play area', type: 'character' }) &&
+                    (!context.xValue || card.getPrintedCost() <= context.xValue) &&
+                    (
+                        card.isMatch({ kneeled: false }) && card.allowGameAction('kneel') ||
+                        card.isMatch({ trait: ['Ally', 'Mercenary'] })
+                    )
+                )
             },
             handler: context => {
-                this.context = context;
-                if(context.target.hasTrait('Ally') || context.target.hasTrait('Mercenary')) {
-                    let buttons = [
-                        { text: 'Kneel', method: 'kneelCharacter' },
-                        { text: 'Take control', method: 'takeControl' }
-                    ];
+                const buttons = [];
 
+                this.context = context;
+                if(!context.target.kneeled && context.target.allowGameAction('kneel')) {
+                    buttons.push({ text: 'Kneel', method: 'kneelCharacter' });
+                }
+
+                if(context.target.hasTrait('Ally') || context.target.hasTrait('Mercenary')) {
+                    buttons.push({ text: 'Take control', method: 'takeControl' });
+                }
+
+                if(buttons.length > 1) {
                     this.game.promptWithMenu(context.player, this, {
                         activePrompt: {
                             menuTitle: 'Take control of character?',
@@ -28,14 +36,17 @@ class Bribery extends DrawCard {
                         source: this
                     });
                 } else {
-                    this.kneelCharacter(context.player);
+                    this[buttons[0].method](context.player);
                 }
             }
         });
     }
 
     getMinXValue() {
-        const characters = this.game.filterCardsInPlay(card => card.isMatch({ type: 'character', kneeled: false }));
+        const characters = this.game.filterCardsInPlay(card => (
+            card.isMatch({ type: 'character', kneeled: false })) ||
+            card.isMatch({ type: 'character', trait: ['Ally', 'Mercenary'] })
+        );
         const costs = characters.map(card => card.getPrintedCost());
         return Math.min(...costs);
     }
