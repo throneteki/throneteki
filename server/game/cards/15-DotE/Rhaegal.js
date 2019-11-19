@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
 
 class Rhaegal extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => this.controller === event.challenge.winner && this.isAttacking()
@@ -17,6 +17,7 @@ class Rhaegal extends DrawCard {
                 gameAction: 'stand'
             },
             message: '{player} uses {source} to stand {target}',
+            limit: ability.limit.perPhase(1),
             handler: context => {
                 this.game.resolveGameAction(GameActions.standCard({ card: context.target })
                 ).thenExecute(() => {
