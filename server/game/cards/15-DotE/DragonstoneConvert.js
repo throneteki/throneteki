@@ -27,7 +27,7 @@ class DragonstoneConvert extends DrawCard {
         this.game.addMessage('{0} uses {1} to prevent events with the title {2} to be played', player, this, cardName);
         this.untilEndOfPhase(ability => ({
             targetController: 'any',
-            effect: ability.effects.cannotPlay(ability => ability.card.name === cardName)
+            effect: ability.effects.cannotPlay(card => card.name === cardName)
         }));
 
         return true;
