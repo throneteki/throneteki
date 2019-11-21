@@ -84,10 +84,18 @@ class AbilityResolver extends BaseStep {
     }
 
     resolveCosts() {
+        if(this.cancelled) {
+            return;
+        }
+
         this.canPayResults = this.ability.resolveCosts(this.context);
     }
 
     waitForCostResolution() {
+        if(this.cancelled) {
+            return;
+        }
+
         this.cancelled = this.canPayResults.some(result => result.resolved && !result.value);
 
         if(!this.canPayResults.every(result => result.resolved)) {
