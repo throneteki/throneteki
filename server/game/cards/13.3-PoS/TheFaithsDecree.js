@@ -5,14 +5,11 @@ class TheFaithsDecree extends DrawCard {
         this.action({
             title: 'Prevent abilities',
             condition: context => context.player.anyCardsInPlay({ type: ['character', 'location'], trait: 'The Seven' }),
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Name a card',
-                        controls: [
-                            { type: 'card-name', command: 'menuButton', method: 'selectCardName' }
-                        ]
-                    },
+            handler: context => {
+                this.game.promptForCardName({
+                    player: context.player,
+                    match: cardData => !['agenda', 'plot'].includes(cardData.type),
+                    onSelect: (player, cardName) => this.selectCardName(player, cardName),
                     source: this
                 });
             }
@@ -20,24 +17,11 @@ class TheFaithsDecree extends DrawCard {
     }
 
     selectCardName(player, cardName) {
-        if(!this.isValidCardName(cardName)) {
-            return false;
-        }
-
-        this.game.addMessage('{0} plays {1} to prevent opponent\'s from triggering {2}', player, this, cardName);
+        this.game.addMessage('{0} plays {1} to prevent opponents from triggering {2}', player, this, cardName);
         this.untilEndOfPhase(ability => ({
             targetController: 'opponent',
             effect: ability.effects.cannotTriggerCardAbilities(ability => ability.card.name === cardName)
         }));
-
-        return true;
-    }
-
-    isValidCardName(cardName) {
-        return Object.values(this.game.cardData).some(card => (
-            card.name === cardName &&
-            !['agenda', 'plot'].includes(card.type)
-        ));
     }
 }
 

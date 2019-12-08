@@ -85,33 +85,18 @@ class ThePrinceThatWasPromised extends AgendaCard {
     }
 
     onDecksPrepared() {
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Name a unique character',
-                controls: [
-                    { type: 'card-name', command: 'menuButton', method: 'selectCardName' }
-                ]
-            }
+        this.game.promptForCardName({
+            title: 'Name a unique character',
+            player: this.controller,
+            match: cardData => cardData.type === 'character' && cardData.unique,
+            onSelect: (player, cardName) => this.selectCardName(player, cardName),
+            source: this
         });
     }
 
     selectCardName(player, cardName) {
-        if(!this.isUniqueCharacter(cardName)) {
-            return false;
-        }
-
         this.game.addMessage('{0} names {1} for {2}', player, cardName, this);
         this.selectedCardName = cardName;
-
-        return true;
-    }
-
-    isUniqueCharacter(cardName) {
-        return Object.values(this.game.cardData).some(card => (
-            card.type === 'character' &&
-            card.unique &&
-            card.name === cardName
-        ));
     }
 }
 
