@@ -3,6 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class DaenerysTargaryen extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
+            title: 'Search deck',
             limit: ability.limit.perRound(1),
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
@@ -25,7 +26,7 @@ class DaenerysTargaryen extends DrawCard {
                 player, this, card);
             return;
         }
-        
+
         this.revealedCard = card;
 
         let buttons = [
