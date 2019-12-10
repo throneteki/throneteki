@@ -13,6 +13,7 @@ const GamePipeline = require('./gamepipeline.js');
 const Phases = require('./gamesteps/Phases');
 const SimpleStep = require('./gamesteps/simplestep.js');
 const ChoosePlayerPrompt = require('./gamesteps/ChoosePlayerPrompt');
+const CardNamePrompt = require('./gamesteps/CardNamePrompt');
 const DeckSearchPrompt = require('./gamesteps/DeckSearchPrompt');
 const MenuPrompt = require('./gamesteps/menuprompt.js');
 const IconPrompt = require('./gamesteps/iconprompt.js');
@@ -645,6 +646,10 @@ class Game extends EventEmitter {
 
     promptWithMenu(player, contextObj, properties) {
         this.queueStep(new MenuPrompt(this, player, contextObj, properties));
+    }
+
+    promptForCardName(properties) {
+        this.queueStep(new CardNamePrompt(this, properties));
     }
 
     promptForIcon(player, card, callback = () => true) {

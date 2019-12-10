@@ -7,14 +7,11 @@ class TheIronThrone extends DrawCard {
                 onPhaseStarted: () => true
             },
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Name a card',
-                        controls: [
-                            { type: 'card-name', command: 'menuButton', method: 'selectCardName' }
-                        ]
-                    }
+            handler: context => {
+                this.game.promptForCardName({
+                    player: context.player,
+                    onSelect: (player, cardName) => this.selectCardName(player, cardName),
+                    source: context.source
                 });
             }
         });
@@ -30,7 +27,6 @@ class TheIronThrone extends DrawCard {
                 ability.effects.cannotPutIntoPlay(card => card.name.toLowerCase() === cardName.toLowerCase())
             ]
         }));
-        return true;
     }
 }
 
