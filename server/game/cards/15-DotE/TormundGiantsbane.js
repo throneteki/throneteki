@@ -30,7 +30,7 @@ class TormundGiantsbane extends DrawCard {
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} and discards 1 tale token to increase the strength of {2} by 2 and give renown until the end of the phase', this.controller, this, context.target);
-                this.untilEndOfChallenge(ability => ({
+                this.untilEndOfPhase(ability => ({
                     match: context.target,
                     effect: [
                         ability.effects.modifyStrength(2),
