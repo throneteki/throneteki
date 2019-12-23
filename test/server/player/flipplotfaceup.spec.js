@@ -7,12 +7,12 @@ describe('Player', function() {
         this.player = new Player('1', { username: 'Player 1', settings: {} }, true, this.gameSpy);
         this.player.initialise();
 
-        this.selectedPlotSpy = jasmine.createSpyObj('plot', ['flipFaceup', 'moveTo', 'applyPersistentEffects']);
+        this.selectedPlotSpy = jasmine.createSpyObj('plot', ['createSnapshot', 'flipFaceup', 'moveTo', 'applyPersistentEffects']);
         this.selectedPlotSpy.uuid = '111';
         this.selectedPlotSpy.location = 'plot deck';
         this.selectedPlotSpy.controller = this.player;
         this.selectedPlotSpy.owner = this.player;
-        this.anotherPlotSpy = jasmine.createSpyObj('plot', ['flipFaceup', 'moveTo', 'applyPersistentEffects']);
+        this.anotherPlotSpy = jasmine.createSpyObj('plot', ['createSnapshot', 'flipFaceup', 'moveTo', 'applyPersistentEffects']);
         this.anotherPlotSpy.uuid = '222';
         this.anotherPlotSpy.location = 'plot deck';
         this.anotherPlotSpy.controller = this.player;
@@ -49,7 +49,8 @@ describe('Player', function() {
 
     describe('removeActivePlot()', function() {
         beforeEach(function() {
-            this.activePlotSpy = jasmine.createSpyObj('plot', ['leavesPlay', 'moveTo']);
+            this.activePlotSpy = jasmine.createSpyObj('plot', ['createSnapshot', 'leavesPlay', 'moveTo']);
+            this.activePlotSpy.createSnapshot.and.returnValue('ACTIVE-PLOT-SNAPSHOT');
             this.activePlotSpy.location = 'active plot';
             this.activePlotSpy.controller = this.player;
             this.activePlotSpy.owner = this.player;
@@ -68,7 +69,7 @@ describe('Player', function() {
         });
 
         it('should raise the onCardLeftPlay event', function() {
-            expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardLeftPlay', { player: this.player, card: this.activePlotSpy });
+            expect(this.gameSpy.raiseEvent).toHaveBeenCalledWith('onCardLeftPlay', { player: this.player, card: this.activePlotSpy, cardStateWhenLeftPlay: 'ACTIVE-PLOT-SNAPSHOT' });
         });
 
         it('should raise the onPlotDiscarded event', function() {
