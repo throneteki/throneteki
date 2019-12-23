@@ -22,6 +22,7 @@ const ValidKeywords = [
     'limited',
     'no attachments',
     'pillage',
+    'prized',
     'renown',
     'shadow',
     'stealth',
@@ -282,6 +283,23 @@ class BaseCard {
         action.execute(player, arg);
     }
 
+    createSnapshot() {
+        let clone = new BaseCard(this.owner, this.cardData);
+
+        clone.blanks = this.blanks.clone();
+        clone.controllerStack = [...this.controllerStack];
+        clone.factions = this.factions.clone();
+        clone.location = this.location;
+        clone.losesAspects = this.losesAspects.clone();
+        clone.keywords = this.keywords.clone();
+        clone.parent = this.parent;
+        clone.power = this.power;
+        clone.tokens = Object.assign({}, this.tokens);
+        clone.traits = this.traits.clone();
+
+        return clone;
+    }
+
     getPrintedNumberFor(value) {
         return (value === 'X' ? 0 : value) || 0;
     }
@@ -351,6 +369,10 @@ class BaseCard {
 
     getPrintedKeywords() {
         return this.printedKeywords;
+    }
+
+    getPrizedValue() {
+        return this.keywords.getPrizedValue();
     }
 
     hasTrait(trait) {
