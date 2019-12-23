@@ -44,6 +44,29 @@ describe('AbilityAdapter', function() {
 
                 expect(this.adapter.createEvent(this.context)).toBe('INTERNAL CREATE EVENT');
             });
+
+            it('adds each post-execution handler to the created event', function() {
+                const eventSpy = jasmine.createSpyObj('event', ['thenExecute']);
+                this.internalActionSpy.createEvent.and.returnValue(eventSpy);
+
+                this.adapter.thenExecute('my-func1').thenExecute('my-func2');
+                this.adapter.createEvent(this.context);
+
+                expect(eventSpy.thenExecute).toHaveBeenCalledWith('my-func1');
+                expect(eventSpy.thenExecute).toHaveBeenCalledWith('my-func2');
+            });
+        });
+
+        describe('thenExecute()', function() {
+            it('adds the function handler', function() {
+                this.adapter.thenExecute('my-func');
+
+                expect(this.adapter.thenExecuteHandlers).toContain('my-func');
+            });
+
+            it('returns the adapter', function() {
+                expect(this.adapter.thenExecute('my-func')).toBe(this.adapter);
+            });
         });
     });
 
