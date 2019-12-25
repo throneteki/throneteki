@@ -6,6 +6,7 @@ class ChampionsChallenge extends PlotCard {
             when: {
                 onChallengeInitiated: event => event.challenge.defendingPlayer === this.controller
             },
+            limit: ability.limit.perPhase(1),
             cost: ability.costs.kneel((card, context) => card.getType() === 'character' && card.getStrength() === this.highestStrength(context.player)),
             message: {
                 format: '{player} uses {source} and kneels {kneeledCard} to end the current challenge',
