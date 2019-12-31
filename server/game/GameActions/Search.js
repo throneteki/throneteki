@@ -4,32 +4,35 @@ const CardMatcher = require('../CardMatcher');
 const Shuffle = require('./Shuffle');
 
 class Search extends GameAction {
-    constructor({ gameAction, match, message, cancelMessage, topCards, numToSelect, player, title }) {
+    constructor({ gameAction, location, match, message, cancelMessage, topCards, numToSelect, player, searchedPlayer, title }) {
         super('search');
         this.gameAction = gameAction;
         this.match = match;
         this.topCards = topCards;
         this.numToSelect = numToSelect;
         this.playerFunc = player || (context => context.player);
+        this.searchedPlayerFunc = searchedPlayer || this.playerFunc;
         this.title = title;
+        this.location = location || ['draw deck'];
         this.message = AbilityMessage.create(message);
         this.cancelMessage = AbilityMessage.create(cancelMessage || '{player} uses {source} to search their deck but does not find a card');
     }
 
     canChangeGameState({ context }) {
-        const player = this.playerFunc(context);
+        const player = this.searchedPlayerFunc(context);
         return player.drawDeck.length > 0;
     }
 
     createEvent({ context }) {
         const player = this.playerFunc(context);
-        return this.event('onDeckSearched', { player }, event => {
-            const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, numCards: this.topCards });
-            const searchCondition = this.createSearchCondition(player);
+        const searchedPlayer = this.searchedPlayerFunc(context);
+        return this.event('onDeckSearched', { player, searchedPlayer }, event => {
+            const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, searchedPlayer: event.searchedPlayer, numCards: this.topCards });
+            const searchCondition = this.createSearchCondition(event.searchedPlayer);
             const modeProps = this.numToSelect ? { mode: 'upTo', numCards: this.numToSelect } : {};
 
             context.game.cardVisibility.addRule(revealFunc);
-            context.game.promptForSelect(player, Object.assign(modeProps, {
+            context.game.promptForSelect(event.player, Object.assign(modeProps, {
                 activePromptTitle: this.title,
                 context: context,
                 cardCondition: searchCondition,
@@ -47,13 +50,14 @@ class Search extends GameAction {
             }));
             context.game.queueSimpleStep(() => {
                 context.game.cardVisibility.removeRule(revealFunc);
-                event.thenAttachEvent(Shuffle.createEvent({ player: event.player }));
-                context.game.addMessage('{0} shuffles their deck', event.player);
+                event.thenAttachEvent(Shuffle.createEvent({ player: event.searchedPlayer }));
+                context.game.addMessage('{0} shuffles their deck', event.searchedPlayer);
             });
         });
     }
 
-    createRevealDrawDeckCards({ choosingPlayer, numCards }) {
+    createRevealDrawDeckCards({ choosingPlayer, searchedPlayer, numCards }) {
+        const validLocations = this.location;
         return function(card, player) {
             if(player !== choosingPlayer) {
                 return false;
@@ -64,12 +68,12 @@ class Search extends GameAction {
                 return cards.includes(card);
             }
 
-            return card.location === 'draw deck' && card.controller === choosingPlayer;
+            return validLocations.includes(card.location) && card.controller === searchedPlayer;
         };
     }
 
     createSearchCondition(player) {
-        const match = Object.assign({ location: 'draw deck', controller: player }, this.match);
+        const match = Object.assign({ location: this.location, controller: player }, this.match);
         const baseMatcher = CardMatcher.createMatcher(match);
         const topCards = this.topCards ? player.searchDrawDeck(this.topCards) : [];
 
