@@ -17,6 +17,7 @@ class CardMatcher {
             Matcher.anyValue(properties.printedStrengthOrLower, amount => card.hasPrintedStrength() && card.getPrintedStrength() <= amount) &&
             Matcher.anyValue(properties.printedStrengthOrHigher, amount => card.hasPrintedStrength() && card.getPrintedStrength() >= amount) &&
             Matcher.anyValue(properties.shadow, isShadow => card.isShadow() === isShadow) &&
+            Matcher.anyValue(properties.hasAttachments, hasAttachments => hasAttachments === (card.attachments.length > 0)) &&
             Matcher.anyValue(properties.attacking, attacking => card.isAttacking() === attacking) &&
             Matcher.anyValue(properties.defending, defending => card.isDefending() === defending) &&
             Matcher.anyValue(properties.participating, participating => card.isParticipating() === participating) &&
