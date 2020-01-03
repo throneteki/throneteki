@@ -63,6 +63,10 @@ describe('LookAtDeck', function() {
                     revealTargets: true
                 }));
             });
+
+            it('sets the top cards', function() {
+                expect(this.event.topCards).toEqual(['card1', 'card2']);
+            });
         });
     });
 });
