@@ -63,7 +63,7 @@ class BaseAbility {
 
     buildGameAction(properties) {
         if(properties.gameAction) {
-            if(properties.cost || properties.target || properties.targets || properties.chooseOpponent || properties.choosePlayer) {
+            if(properties.target || properties.targets || properties.chooseOpponent || properties.choosePlayer) {
                 throw new Error('Cannot use gameAction with abilities with choices');
             }
 
