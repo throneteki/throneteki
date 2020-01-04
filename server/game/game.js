@@ -36,6 +36,7 @@ const CardVisibility = require('./CardVisibility');
 const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 const GameActions = require('./GameActions');
 const TimeLimit = require('./timeLimit.js');
+const PrizedKeywordListener = require('./PrizedKeywordListener');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -82,6 +83,7 @@ class Game extends EventEmitter {
         this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
+        this.prizedKeywordListener = new PrizedKeywordListener(this);
 
         for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);

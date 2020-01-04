@@ -983,6 +983,7 @@ class Player extends Spectator {
             var params = {
                 player: this,
                 card: card,
+                cardStateWhenLeftPlay: card.createSnapshot(),
                 allowSave: options.allowSave,
                 automaticSaveWithDupe: true
             };
@@ -1019,7 +1020,7 @@ class Player extends Spectator {
         }
 
         if(card.location === 'active plot') {
-            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card });
+            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card, cardStateWhenLeftPlay: card.createSnapshot() });
         }
 
         this.placeCardInPile({ card, location: targetLocation, bottom: options.bottom });

@@ -8,6 +8,7 @@ class AbilityAdapter {
     constructor(action, propertyFactory) {
         this.action = action;
         this.propertyFactory = propertyFactory;
+        this.thenExecuteHandlers = [];
     }
 
     allow(context) {
@@ -16,8 +17,14 @@ class AbilityAdapter {
     }
 
     createEvent(context) {
-        let properties = this.resolveProperties(context);
-        return this.action.createEvent(properties);
+        const properties = this.resolveProperties(context);
+        const event = this.action.createEvent(properties);
+
+        for(const handler of this.thenExecuteHandlers) {
+            event.thenExecute(handler);
+        }
+
+        return event;
     }
 
     resolveProperties(context) {
@@ -28,6 +35,11 @@ class AbilityAdapter {
 
     then(abilityPropertiesFactory) {
         return new ThenAbilityAction(this, abilityPropertiesFactory);
+    }
+
+    thenExecute(handler) {
+        this.thenExecuteHandlers.push(handler);
+        return this;
     }
 }
 
