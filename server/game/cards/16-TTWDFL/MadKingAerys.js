@@ -25,7 +25,7 @@ class MadKingAerys extends DrawCard {
     }
 
     opponentControlsKingslayer() {
-        return this.game.anyCardsInPlay(card =>(
+        return this.game.anyCardsInPlay(card => (
             card.controller !== this.controller &&
             (card.hasTrait('Lord') || card.hasTrait('Lady') || card.name === 'Ser Jaime Lannister')
         ));
