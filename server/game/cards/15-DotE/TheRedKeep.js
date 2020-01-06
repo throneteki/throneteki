@@ -6,10 +6,9 @@ class TheRedKeep extends DrawCard {
             canCancel: true,
             cost: ability.costs.kneelSelf(),
             when: {
-                //Restrict triggering on own triggered abilities to forced triggered abilities
                 onCardAbilityInitiated: event => event.ability.isTriggeredAbility() &&
                                                  ['character', 'location', 'attachment'].includes(event.source.getType()) &&
-                                                 (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+                                                 event.source.controller !== this.controller
             },
             handler: context => {
                 context.event.cancel();
