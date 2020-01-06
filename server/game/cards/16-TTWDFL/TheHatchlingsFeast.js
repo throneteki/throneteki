@@ -42,7 +42,7 @@ class TheHatchlingsFeast extends DrawCard {
         remainingCards = remainingCards.filter(c => c !== card);
 
         if(remainingCards.length > 0) {
-            this.chooseStrDebuff({ context, remainingCards, amount: amount + 1, choices })
+            this.chooseStrDebuff({ context, remainingCards, amount: amount + 1, choices });
         } else {
             this.applyStrDebuffs({ context, choices });
         }
