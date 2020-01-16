@@ -22,18 +22,8 @@ const TriggeredAbility = require('./triggeredability.js');
  *            be in in order to activate the reaction. Defaults to 'play area'.
  */
 class ForcedTriggeredAbility extends TriggeredAbility {
-    constructor(game, card, type, properties) {
-        super(game, card, type, properties);
-
-        this.handler = properties.handler;
-    }
-
     isForcedAbility() {
         return true;
-    }
-
-    executeHandler(context) {
-        this.handler(context);
     }
 }
 

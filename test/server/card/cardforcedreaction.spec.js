@@ -3,7 +3,7 @@ const Event = require('../../../server/game/event.js');
 
 describe('CardForcedReaction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'removeListener', 'registerAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'removeListener', 'registerAbility', 'resolveGameAction']);
         this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getType', 'isAnyBlank']);
         this.cardSpy.location = 'play area';
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
@@ -144,12 +144,12 @@ describe('CardForcedReaction', function () {
     describe('executeHandler', function() {
         beforeEach(function() {
             this.reaction = new CardForcedReaction(this.gameSpy, this.cardSpy, this.properties);
-            this.context = { context: 1 };
+            this.context = { context: 1, game: this.gameSpy };
         });
 
-        it('should execute the handler', function() {
+        it('resolve the game action', function() {
             this.reaction.executeHandler(this.context);
-            expect(this.properties.handler).toHaveBeenCalledWith(this.context);
+            expect(this.gameSpy.resolveGameAction).toHaveBeenCalledWith(jasmine.any(Object), this.context);
         });
     });
 

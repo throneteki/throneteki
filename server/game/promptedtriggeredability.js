@@ -41,39 +41,11 @@ class PromptedTriggeredAbility extends TriggeredAbility {
     constructor(game, card, type, properties) {
         super(game, card, type, properties);
 
-        this.choices = this.createChoices(properties);
         this.title = properties.title;
     }
 
     getTitle(context) {
         return this.title ? this.title(context) : null;
-    }
-
-    createChoices(properties) {
-        let choices = [];
-
-        if(properties.choices) {
-            for(let [text, handler] of Object.entries(properties.choices)) {
-                choices.push({ text: text, handler: handler });
-            }
-        } else {
-            choices.push({ text: 'default', handler: properties.handler });
-        }
-
-        return choices;
-    }
-
-    executeHandler(context) {
-        if(this.choices.length === 0) {
-            return;
-        }
-
-        if(this.choices.length === 1) {
-            this.choices[0].handler(context);
-            return;
-        }
-
-        this.game.queueStep(new AbilityChoicePrompt(this.game, context, this.choices));
     }
 }
 
