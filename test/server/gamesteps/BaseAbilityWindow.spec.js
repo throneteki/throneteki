@@ -7,7 +7,7 @@ describe('BaseAbilityWindow', function() {
         this.eventSpy = jasmine.createSpyObj('event', ['clearAttachedEvents', 'emitTo', 'getConcurrentEvents']);
         this.eventSpy.getConcurrentEvents.and.returnValue([this.eventSpy]);
 
-        this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'isTriggeredByEvent', 'meetsRequirements']);
+        this.abilitySpy = jasmine.createSpyObj('ability', ['createContext', 'isTriggeredByEvent', 'canResolve']);
 
         this.window = new BaseAbilityWindow(this.gameSpy, {
             event: this.eventSpy,
@@ -68,7 +68,7 @@ describe('BaseAbilityWindow', function() {
             this.context = { context: 1, player: this.player };
             this.abilitySpy.card = this.card;
             this.abilitySpy.createContext.and.returnValue(this.context);
-            this.abilitySpy.meetsRequirements.and.returnValue(true);
+            this.abilitySpy.canResolve.and.returnValue(true);
         });
 
         describe('when the ability can be registerd', function() {
@@ -93,7 +93,7 @@ describe('BaseAbilityWindow', function() {
 
         describe('when the ability does not meet requirements', function() {
             beforeEach(function() {
-                this.abilitySpy.meetsRequirements.and.returnValue(false);
+                this.abilitySpy.canResolve.and.returnValue(false);
 
                 this.window.registerAbility(this.abilitySpy, this.eventSpy);
             });

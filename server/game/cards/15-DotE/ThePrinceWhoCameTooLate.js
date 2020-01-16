@@ -6,21 +6,16 @@ class ThePrinceWhoCameTooLate extends PlotCard {
         this.action({
             title: 'Search your deck',
             phase: 'standing',
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.search({
-                        title: 'Select a character',
-                        match: { type: 'character' },
-                        message: '{player} uses {source} to search their deck and put {searchTarget} into play',
-                        cancelMessage: '{player} uses {source} to search their deck but does not find a card',
-                        gameAction: GameActions.putIntoPlay(context => ({
-                            player: context.player,
-                            card: context.searchTarget
-                        }))
-                    }),
-                    context
-                );
-            },
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { type: 'character' },
+                message: '{player} uses {source} to search their deck and put {searchTarget} into play',
+                cancelMessage: '{player} uses {source} to search their deck but does not find a card',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    player: context.player,
+                    card: context.searchTarget
+                }))
+            }),
             limit: ability.limit.perRound(1)
         });
     }

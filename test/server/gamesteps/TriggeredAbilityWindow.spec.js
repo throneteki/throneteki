@@ -32,11 +32,11 @@ describe('TriggeredAbilityWindow', function() {
         }
 
         function createAbility(card, context) {
-            let ability = jasmine.createSpyObj('ability', ['createContext', 'getTitle', 'hasMax', 'meetsRequirements']);
+            let ability = jasmine.createSpyObj('ability', ['createContext', 'getTitle', 'hasMax', 'canResolve']);
             ability.card = card;
             ability.createContext.and.returnValue(context);
             ability.location = ['play area'];
-            ability.meetsRequirements.and.returnValue(true);
+            ability.canResolve.and.returnValue(true);
             return ability;
         }
 

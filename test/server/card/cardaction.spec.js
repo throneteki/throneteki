@@ -2,7 +2,7 @@ const CardAction = require('../../../server/game/cardaction.js');
 
 describe('CardAction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'removeListener', 'raiseEvent', 'resolveAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'removeListener', 'raiseEvent', 'resolveAbility', 'resolveGameAction']);
         this.gameSpy.currentPhase = 'marshal';
 
         this.playerSpy = jasmine.createSpyObj('player', ['canTrigger']);
@@ -61,8 +61,8 @@ describe('CardAction', function () {
                     this.action = new CardAction(this.gameSpy, this.cardSpy, this.properties);
                 });
 
-                it('should use the handler directly', function() {
-                    this.action.handler(this.context);
+                it('should convert the handler to a game action', function() {
+                    this.action.gameAction.createEvent(this.context).executeHandler();
                     expect(this.properties.handler).toHaveBeenCalledWith(this.context);
                 });
             });
@@ -468,8 +468,8 @@ describe('CardAction', function () {
             this.action.executeHandler(this.context);
         });
 
-        it('should call the handler', function() {
-            expect(this.handler).toHaveBeenCalledWith(this.context);
+        it('should resolve the game action', function() {
+            expect(this.gameSpy.resolveGameAction).toHaveBeenCalledWith(jasmine.any(Object), this.context);
         });
     });
 });

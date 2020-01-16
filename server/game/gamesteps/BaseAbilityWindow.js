@@ -57,7 +57,7 @@ class BaseAbilityWindow extends BaseStep {
 
         let context = ability.createContext(event);
 
-        if(!ability.meetsRequirements(context)) {
+        if(!ability.canResolve(context)) {
             return;
         }
 

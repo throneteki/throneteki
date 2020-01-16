@@ -11,7 +11,7 @@ class SimultaneousAction extends GameAction {
 
     allow(context) {
         const actions = this.resolveActions(context);
-        return actions.some(action => action.allow(context));
+        return actions.length > 0 && actions.some(action => action.allow(context));
     }
 
     createEvent(context) {

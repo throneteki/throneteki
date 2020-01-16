@@ -6,7 +6,6 @@ class ThenClauseAbility extends BaseAbility {
         super(Object.assign({ abilitySourceType: 'then' }, properties));
 
         this.player = properties.player;
-        this.handler = properties.handler;
         this.condition = properties.condition || (() => true);
     }
 
@@ -14,23 +13,20 @@ class ThenClauseAbility extends BaseAbility {
         return false;
     }
 
-    createContext(parentContext) {
+    createContext(parentContext, event) {
         let context = new AbilityContext({
             ability: this,
             game: parentContext.game,
             player: this.player || parentContext.player,
             source: parentContext.source
         });
+        context.event = event;
         context.parentContext = parentContext;
         return context;
     }
 
     meetsRequirements(context) {
         return this.condition(context);
-    }
-
-    executeHandler(context) {
-        this.handler(context);
     }
 }
 

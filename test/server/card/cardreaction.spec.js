@@ -1,10 +1,9 @@
 const CardReaction = require('../../../server/game/cardreaction.js');
 const Event = require('../../../server/game/event.js');
-const AbilityChoicePrompt = require('../../../server/game/gamesteps/AbilityChoicePrompt');
 
 describe('CardReaction', function () {
     beforeEach(function () {
-        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'queueStep', 'removeListener', 'registerAbility']);
+        this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'queueStep', 'removeListener', 'registerAbility', 'resolveGameAction']);
         this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getPrintedType', 'isAnyBlank']);
         this.cardSpy.location = 'play area';
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
@@ -233,45 +232,19 @@ describe('CardReaction', function () {
 
     describe('executeHandler()', function() {
         beforeEach(function() {
-            this.context = { context: 1 };
+            this.context = { context: 1, game: this.gameSpy };
+            this.properties = {
+                when: {
+                    onSomething: () => true
+                },
+                handler: jasmine.createSpy('handler')
+            };
+            this.reaction = this.createReaction();
+            this.reaction.executeHandler(this.context);
         });
 
-        describe('with single choice reactions', function() {
-            beforeEach(function() {
-                this.properties = {
-                    when: {
-                        onSomething: () => true
-                    },
-                    handler: jasmine.createSpy('handler')
-                };
-                this.reaction = this.createReaction();
-                this.reaction.executeHandler(this.context);
-            });
-
-            it('should call the handler', function() {
-                expect(this.properties.handler).toHaveBeenCalled();
-            });
-        });
-
-        describe('with multiple choice reactions', function() {
-            beforeEach(function() {
-                this.properties = {
-                    when: {
-                        onSomething: () => true
-                    },
-                    choices: {
-                        'Foo': jasmine.createSpy('handler1'),
-                        'Bar': jasmine.createSpy('handler2'),
-                        'Baz': jasmine.createSpy('handler3')
-                    }
-                };
-                this.reaction = this.createReaction();
-                this.reaction.executeHandler(this.context);
-            });
-
-            it('should call queue the ability choice prompt', function() {
-                expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(AbilityChoicePrompt));
-            });
+        it('resolves the game action', function() {
+            expect(this.gameSpy.resolveGameAction).toHaveBeenCalledWith(jasmine.any(Object), this.context);
         });
     });
 

@@ -13,7 +13,7 @@ describe('ThenAbilityAction', function() {
 
     describe('when passed a properties object', function() {
         beforeEach(function() {
-            this.abilityProps = { props: 'internal' };
+            this.abilityProps = { props: 'internal', handler: () => true };
             this.action = new ThenAbilityAction(this.internalActionSpy, this.abilityProps);
         });
 

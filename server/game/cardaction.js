@@ -52,14 +52,16 @@ class CardAction extends BaseAbility {
         this.events = new EventRegistrar(game, this);
         this.activationContexts = [];
 
-        this.handler = this.buildHandler(card, properties);
-
         if(card.getPrintedType() === 'event') {
             this.cost = this.cost.concat(Costs.playEvent());
         }
 
         if(this.max) {
             this.card.owner.registerAbilityMax(this.card.name, this.max);
+        }
+
+        if(!this.gameAction) {
+            throw new Error('Actions must have a `gameAction` or `handler` property.');
         }
     }
 
@@ -73,14 +75,6 @@ class CardAction extends BaseAbility {
         }
 
         return properties.phase;
-    }
-
-    buildHandler(card, properties) {
-        if(!properties.handler) {
-            throw new Error('Actions must have a `handler` property.');
-        }
-
-        return properties.handler;
     }
 
     allowMenu() {
@@ -137,7 +131,7 @@ class CardAction extends BaseAbility {
             return false;
         }
 
-        return this.canResolvePlayer(context) && this.canPayCosts(context) && this.canResolveTargets(context);
+        return this.canResolvePlayer(context) && this.canPayCosts(context) && this.canResolveTargets(context) && this.gameAction.allow(context);
     }
 
     execute(player, arg) {
@@ -152,10 +146,6 @@ class CardAction extends BaseAbility {
         this.game.resolveAbility(this, context);
 
         return true;
-    }
-
-    executeHandler(context) {
-        this.handler(context);
     }
 
     getMenuItem(arg, player) {

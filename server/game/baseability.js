@@ -3,6 +3,8 @@ const {flatMap} = require('../Array');
 const AbilityChoosePlayerDefinition = require('./AbilityChoosePlayerDefinition');
 const AbilityMessage = require('./AbilityMessage');
 const AbilityTarget = require('./AbilityTarget.js');
+const ChooseGameAction = require('./GameActions/ChooseGameAction');
+const HandlerGameActionWrapper = require('./GameActions/HandlerGameActionWrapper');
 
 /**
  * Base class representing an ability that can be done by the player. This
@@ -31,6 +33,7 @@ class BaseAbility {
         this.message = AbilityMessage.create(properties.message);
         this.cannotBeCanceled = !!properties.cannotBeCanceled;
         this.abilitySourceType = properties.abilitySourceType || 'card';
+        this.gameAction = this.buildGameAction(properties);
     }
 
     buildCost(cost) {
@@ -58,12 +61,33 @@ class BaseAbility {
         return [];
     }
 
+    buildGameAction(properties) {
+        if(properties.gameAction) {
+            if(properties.cost || properties.target || properties.targets || properties.chooseOpponent || properties.choosePlayer) {
+                throw new Error('Cannot use gameAction with abilities with choices');
+            }
+
+            return properties.gameAction;
+        }
+
+        if(properties.choices) {
+            return new ChooseGameAction(properties.choices);
+        }
+
+        if(properties.handler) {
+            return new HandlerGameActionWrapper({ handler: properties.handler });
+        }
+
+        return null;
+    }
+
     canResolve(context) {
         return (
             this.meetsRequirements(context) &&
             this.canResolvePlayer(context) &&
             this.canPayCosts(context) &&
-            this.canResolveTargets(context)
+            this.canResolveTargets(context) &&
+            this.gameAction.allow(context)
         );
     }
 
@@ -218,8 +242,8 @@ class BaseAbility {
      * should override this method to implement their behavior; by default it
      * does nothing.
      */
-    executeHandler() {
-        throw new Error('Abstract method executeHandler must be overridden');
+    executeHandler(context) {
+        context.game.resolveGameAction(this.gameAction, context);
     }
 
     isAction() {

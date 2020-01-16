@@ -20,7 +20,7 @@ class ThenAbilityAction {
 
             let abilityProperties = this.abilityPropertiesFactory(context);
             let ability = new ThenClauseAbility(abilityProperties);
-            let thenContext = ability.createContext(context);
+            let thenContext = ability.createContext(context, event);
 
             if(ability.canResolve(thenContext)) {
                 thenContext.game.resolveAbility(ability, thenContext);
