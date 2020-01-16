@@ -7,7 +7,7 @@ class Search extends GameAction {
     constructor({ gameAction, match, message, cancelMessage, topCards, numToSelect, player, title }) {
         super('search');
         this.gameAction = gameAction;
-        this.match = match;
+        this.match = match || {};
         this.topCards = topCards;
         this.numToSelect = numToSelect;
         this.playerFunc = player || (context => context.player);
