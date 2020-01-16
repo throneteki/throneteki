@@ -1,5 +1,4 @@
 const TriggeredAbility = require('./triggeredability.js');
-const AbilityChoicePrompt = require('./gamesteps/AbilityChoicePrompt');
 
 /**
  * Represents a reaction ability provided by card text.

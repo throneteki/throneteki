@@ -1,6 +1,5 @@
 const CardReaction = require('../../../server/game/cardreaction.js');
 const Event = require('../../../server/game/event.js');
-const AbilityChoicePrompt = require('../../../server/game/gamesteps/AbilityChoicePrompt');
 
 describe('CardReaction', function () {
     beforeEach(function () {
