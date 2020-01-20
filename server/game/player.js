@@ -380,6 +380,10 @@ class Player extends Spectator {
         this.agenda = deck.createAgendaCard(this);
     }
 
+    hasFlag(flagName) {
+        return this.flags.contains(flagName);
+    }
+
     addCostReducer(reducer) {
         this.costReducers.push(reducer);
     }
@@ -666,7 +670,7 @@ class Player extends Spectator {
     }
 
     removeActivePlot() {
-        if(this.activePlot) {
+        if(this.activePlot && this.selectedPlot) {
             let plot = this.activePlot;
             this.moveCard(this.activePlot, 'revealed plots');
             this.game.raiseEvent('onPlotDiscarded', { player: this, card: plot });
