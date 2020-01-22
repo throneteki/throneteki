@@ -1,6 +1,7 @@
 const AbilityLimit = require('./abilitylimit.js');
 const AllowedChallenge = require('./AllowedChallenge');
 const CardMatcher = require('./CardMatcher');
+const CardTextDefinition = require('./CardTextDefinition');
 const CostReducer = require('./costreducer.js');
 const PlayableLocation = require('./playablelocation.js');
 const CannotRestriction = require('./cannotrestriction.js');
@@ -661,6 +662,11 @@ const Effects = {
                 context.game.revertControl(card, context.source);
             }
         };
+    },
+    gainText: function(configureText) {
+        const definition = new CardTextDefinition();
+        configureText(definition);
+        return definition;
     },
     cannotMarshalOrPutIntoPlayByTitle: function(name) {
         let restriction = card => card.name === name;
