@@ -27,7 +27,8 @@ class AbilityTarget {
     }
 
     canResolve(context) {
-        return this.ifAble || this.getChoosingPlayers(context).every(choosingPlayer => {
+        const players = this.getChoosingPlayers(context);
+        return this.ifAble || players.length > 0 && players.every(choosingPlayer => {
             context.choosingPlayer = choosingPlayer;
             return this.selector.hasEnoughTargets(context);
         });
@@ -55,6 +56,10 @@ class AbilityTarget {
     }
 
     getChoosingPlayers(context) {
+        if(typeof this.choosingPlayer === 'function') {
+            return context.game.getPlayersInFirstPlayerOrder().filter(player => this.choosingPlayer(player));
+        }
+
         if(this.choosingPlayer === 'each') {
             return context.game.getPlayersInFirstPlayerOrder();
         }
