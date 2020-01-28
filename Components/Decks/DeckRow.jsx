@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import DeckStatusLabel from './DeckStatusLabel';
 
 class DeckRow extends React.Component {
     constructor() {
@@ -15,23 +16,19 @@ class DeckRow extends React.Component {
         }
     }
 
-    getStatusName(status) {
-        if(!status.basicRules) {
-            return 'Invalid';
-        } else if(!status.faqJoustRules || !status.noUnreleasedCards) {
-            return 'Casual';
-        }
-
-        return 'Valid';
-    }
-
     render() {
+        const { deck } = this.props;
+
         return (
             <div className={ this.props.active ? 'deck-row active' : 'deck-row' } key={ this.props.deck.name } onClick={ this.handleDeckClick }>
                 <div className='col-xs-1 deck-image'><img className='card-small' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /></div>
-                <span className='col-xs-8 col-md-7 col-lg-9 deck-name'>{ this.props.deck.name }</span><span className='col-xs-2 col-md-3 col-lg-2 deck-status-label text-right pull-right'>{ this.props.deck.status ? this.getStatusName(this.props.deck.status) : 'Loading...' }</span>
+                { deck.agenda && (<div className='col-xs-1 deck-image'><img className='card-small' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /></div>) }
+                <span className='col-xs-9 col-md-9 col-lg-10 deck-name'>
+                    <span>{ this.props.deck.name }</span>
+                    <DeckStatusLabel className='pull-right text-shadow' status={ this.props.deck.status } />
+                </span>
                 <div className='row small'>
-                    <span className='col-md-7 deck-factionagenda'>{ this.props.deck.faction.name }{ this.props.deck.agenda && this.props.deck.agenda.label ? <span>/{ this.props.deck.agenda.label }</span> : null }</span>
+                    <span className='col-xs-6 col-md-6 deck-factionagenda'>{ this.props.deck.faction.name }{ this.props.deck.agenda && this.props.deck.agenda.label ? <span>/{ this.props.deck.agenda.label }</span> : null }</span>
                     <span className='col-xs-4 col-md-3 deck-date text-right pull-right'>{ moment(this.props.deck.lastUpdated).format('Do MMM YYYY') }</span>
                 </div>
             </div>);
