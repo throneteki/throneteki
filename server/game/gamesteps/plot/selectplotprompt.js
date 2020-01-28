@@ -11,7 +11,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
             }
         }
 
-        return !!player.selectedPlot;
+        return !!player.selectedPlot || player.hasFlag('cannotRevealPlot');
     }
 
     activePrompt() {
@@ -25,7 +25,7 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     }
 
     waitingPrompt(player) {
-        if(player.mustRevealPlot) {
+        if(player.mustRevealPlot || player.hasFlag('cannotRevealPlot')) {
             return {
                 menuTitle: 'Waiting for opponent to select plot'
             };

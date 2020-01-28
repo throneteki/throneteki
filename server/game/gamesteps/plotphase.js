@@ -38,12 +38,14 @@ class PlotPhase extends Phase {
         for(const player of this.game.getPlayers()) {
             if(player.mustRevealPlot) {
                 this.game.addMessage('{0} is forced to select a plot', player);
+            } else if(player.hasFlag('cannotRevealPlot')) {
+                this.game.addMessage('{0} cannot reveal a new plot', player);
             }
         }
     }
 
     choosePlots() {
-        let choosingPlayers = this.game.getPlayers().filter(player => !player.mustRevealPlot);
+        let choosingPlayers = this.game.getPlayers().filter(player => !player.mustRevealPlot && !player.hasFlag('cannotRevealPlot'));
         this.game.raiseEvent('onChoosePlot', { players: choosingPlayers }, () => {
             this.game.queueStep(new SelectPlotPrompt(this.game));
         });
@@ -68,7 +70,8 @@ class PlotPhase extends Phase {
     }
 
     getActivePlots() {
-        return this.game.getPlayers().filter(player => !!player.activePlot).map(player => player.activePlot);
+        const revealingPlayers = this.game.getPlayers().filter(player => !!player.activePlot && !player.hasFlag('cannotRevealPlot'));
+        return revealingPlayers.map(player => player.activePlot);
     }
 }
 

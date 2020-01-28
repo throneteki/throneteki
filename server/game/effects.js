@@ -1220,6 +1220,17 @@ const Effects = {
             }
         };
     },
+    cannotRevealPlot: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('cannotRevealPlot');
+            },
+            unapply: function(player) {
+                player.flags.add('cannotRevealPlot');
+            }
+        };
+    },
     //Meereen only effect
     removeCardsFromHand: function() {
         return {
