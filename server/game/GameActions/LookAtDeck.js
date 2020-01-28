@@ -12,12 +12,12 @@ class LookAtDeck extends GameAction {
     createEvent({ player, lookingAt, context, amount = 1 }) {
         const actualAmount = Math.min(amount, lookingAt.drawDeck.length);
         return this.event('onLookAtDeck', { player, lookingAt, amount: actualAmount, desiredAmount: amount }, event => {
-            let topCards = event.lookingAt.drawDeck.slice(0, amount);
+            event.topCards = event.lookingAt.drawDeck.slice(0, event.amount);
             context.game.promptForSelect(event.player, {
                 activePromptTitle: `Look at ${event.lookingAt.name}'s deck`,
                 source: context.source,
                 revealTargets: true,
-                cardCondition: card => card.location === 'draw deck' && card.controller === event.lookingAt && topCards.includes(card),
+                cardCondition: card => card.location === 'draw deck' && card.controller === event.lookingAt && event.topCards.includes(card),
                 onSelect: () => true
             });
         });
