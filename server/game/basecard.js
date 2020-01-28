@@ -154,6 +154,7 @@ class BaseCard {
     action(properties) {
         var action = new CardAction(this.game, this, properties);
         this.abilities.actions.push(action);
+        return action;
     }
 
     reaction(properties) {
