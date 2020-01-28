@@ -4,6 +4,7 @@ const CancelEffects = require('./CancelEffects');
 const CheckReserve = require('./CheckReserve');
 const ChooseGameAction = require('./ChooseGameAction');
 const DiscardCard = require('./DiscardCard');
+const DiscardTopCards = require('./DiscardTopCards');
 const DiscardPower = require('./DiscardPower');
 const DrawCards = require('./DrawCards');
 const GainGold = require('./GainGold');
@@ -35,6 +36,7 @@ const GameActions = {
         context => context
     ),
     discardCard: props => new AbilityAdapter(DiscardCard, props),
+    discardTopCards: props => new AbilityAdapter(DiscardTopCards, props),
     discardPower: props => new AbilityAdapter(DiscardPower, props),
     drawCards: props => new AbilityAdapter(DrawCards, props),
     gainGold: props => new AbilityAdapter(GainGold, props),
