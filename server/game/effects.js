@@ -1233,7 +1233,7 @@ const Effects = {
                 player.flags.add('cannotRevealPlot');
             },
             unapply: function(player) {
-                player.flags.add('cannotRevealPlot');
+                player.flags.remove('cannotRevealPlot');
             }
         };
     },
