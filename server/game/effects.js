@@ -24,7 +24,7 @@ function cannotEffect(type) {
     };
 }
 
-function modifyFlag(flag) {
+function modifyFlagEffect(flag) {
     return function() {
         return {
             apply: function(card) {
@@ -32,25 +32,6 @@ function modifyFlag(flag) {
             },
             unapply: function(card) {
                 card.removeFlag(flag);
-            }
-        };
-    };
-}
-
-function challengeOptionEffect(key) {
-    return function() {
-        return {
-            apply: function(card, context) {
-                card.challengeOptions.add(key);
-                if(context.game.currentChallenge) {
-                    context.game.currentChallenge.calculateStrength();
-                }
-            },
-            unapply: function(card, context) {
-                card.challengeOptions.remove(key);
-                if(context.game.currentChallenge) {
-                    context.game.currentChallenge.calculateStrength();
-                }
             }
         };
     };
@@ -131,10 +112,10 @@ const Effects = {
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
     doesNotKneelAsAttacker: function({ challengeType = 'any' } = {}) {
-        return challengeOptionEffect(`doesNotKneelAsAttacker.${challengeType}`)();
+        return modifyFlagEffect(Flags.challenges.doesNotKneelAsAttacker(challengeType))();
     },
     doesNotKneelAsDefender: function({ challengeType = 'any' } = {}) {
-        return challengeOptionEffect(`doesNotKneelAsDefender.${challengeType}`)();
+        return modifyFlagEffect(Flags.challenges.doesNotKneelAsDefender(challengeType))();
     },
     consideredToBeAttacking: function() {
         return {
@@ -160,10 +141,10 @@ const Effects = {
             isStateDependent: true
         };
     },
-    canBeDeclaredWithoutIcon: challengeOptionEffect('canBeDeclaredWithoutIcon'),
-    canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
-    mustBeDeclaredAsAttacker: challengeOptionEffect('mustBeDeclaredAsAttacker'),
-    mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
+    canBeDeclaredWithoutIcon: modifyFlagEffect(Flags.challenges.canBeDeclaredWithoutIcon),
+    canBeDeclaredWhileKneeling: modifyFlagEffect(Flags.challenges.canBeDeclaredWhileKneeling),
+    mustBeDeclaredAsAttacker: modifyFlagEffect(Flags.challenges.mustBeDeclaredAsAttacker),
+    mustBeDeclaredAsDefender: modifyFlagEffect(Flags.challenges.mustBeDeclaredAsDefender),
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
@@ -282,7 +263,7 @@ const Effects = {
         let negatedCalculate = (card, context) => -(calculate(card, context) || 0);
         return Effects.dynamicStrength(negatedCalculate, 'decreaseStrength');
     },
-    doesNotContributeStrength: challengeOptionEffect('doesNotContributeStrength'),
+    doesNotContributeStrength: modifyFlagEffect(Flags.challenges.doesNotContributeStrength),
     doesNotReturnUnspentGold: function() {
         return {
             targetType: 'player',
@@ -412,11 +393,11 @@ const Effects = {
             }
         };
     },
-    losesAllFactions: modifyFlag(Flags.loseAspect.factions),
-    losesAllKeywords: modifyFlag(Flags.loseAspect.keywords),
-    losesAllTraits: modifyFlag(Flags.loseAspect.traits),
+    losesAllFactions: modifyFlagEffect(Flags.loseAspect.factions),
+    losesAllKeywords: modifyFlagEffect(Flags.loseAspect.keywords),
+    losesAllTraits: modifyFlagEffect(Flags.loseAspect.traits),
     loseFaction: function(faction) {
-        return modifyFlag(Flags.loseAspect.faction(faction))();
+        return modifyFlagEffect(Flags.loseAspect.faction(faction))();
     },
     addTrait: function(trait) {
         return {

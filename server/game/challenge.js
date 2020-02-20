@@ -2,6 +2,7 @@ const Player = require('./player.js');
 const EventRegistrar = require('./eventregistrar.js');
 const Settings = require('../settings.js');
 const ChallengeMatcher = require('./ChallengeMatcher');
+const {Flags} = require('./Constants');
 
 class Challenge {
     constructor(game, properties) {
@@ -147,7 +148,7 @@ class Challenge {
 
     calculateStrengthFor(cards) {
         return cards.reduce((sum, card) => {
-            if(card.challengeOptions.contains('doesNotContributeStrength')) {
+            if(card.hasFlag(Flags.challenges.doesNotContributeStrength)) {
                 return sum;
             }
 

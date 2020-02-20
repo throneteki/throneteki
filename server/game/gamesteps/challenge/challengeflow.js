@@ -6,6 +6,7 @@ const ChooseStealthTargets = require('./choosestealthtargets.js');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
 const KeywordWindow = require('../keywordwindow.js');
+const {Flags} = require('../../Constants');
 
 class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
@@ -55,7 +56,7 @@ class ChallengeFlow extends BaseStep {
             attacking: true,
             challengeType: this.challenge.challengeType,
             gameAction: 'declareAsAttacker',
-            mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
+            mustBeDeclaredOption: Flags.challenges.mustBeDeclaredAsAttacker,
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
             waitingPromptTitle: 'Waiting for opponent to select attackers',
@@ -137,7 +138,7 @@ class ChallengeFlow extends BaseStep {
             attacking: false,
             challengeType: this.challenge.challengeType,
             gameAction: 'declareAsDefender',
-            mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
+            mustBeDeclaredOption: Flags.challenges.mustBeDeclaredAsDefender,
             limitsProperty: 'defenderLimits',
             activePromptTitle: 'Select defenders',
             waitingPromptTitle: 'Waiting for opponent to defend',

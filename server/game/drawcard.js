@@ -2,6 +2,7 @@ const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const StandardPlayActions = require('./PlayActions/StandardActions');
+const {Flags} = require('./Constants');
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -21,7 +22,6 @@ class DrawCard extends BaseCard {
         this.inChallenge = false;
         this.inDanger = false;
         this.saved = false;
-        this.challengeOptions = new ReferenceCountedSetProperty();
         this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
@@ -384,20 +384,20 @@ class DrawCard extends BaseCard {
 
     kneelsAsAttacker(challengeType) {
         const keys = [
-            'doesNotKneelAsAttacker.any',
-            `doesNotKneelAsAttacker.${challengeType}`
+            Flags.challenges.doesNotKneelAsAttacker('any'),
+            Flags.challenges.doesNotKneelAsAttacker(challengeType)
         ];
 
-        return keys.every(key => !this.challengeOptions.contains(key));
+        return keys.every(key => !this.hasFlag(key));
     }
 
     kneelsAsDefender(challengeType) {
         const keys = [
-            'doesNotKneelAsDefender.any',
-            `doesNotKneelAsDefender.${challengeType}`
+            Flags.challenges.doesNotKneelAsDefender('any'),
+            Flags.challenges.doesNotKneelAsDefender(challengeType)
         ];
 
-        return keys.every(key => !this.challengeOptions.contains(key));
+        return keys.every(key => !this.hasFlag(key));
     }
 
     canDeclareAsParticipant({ attacking, challengeType }) {
@@ -405,14 +405,14 @@ class DrawCard extends BaseCard {
             attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType) ||
             !attacking && !this.kneeled && !this.kneelsAsDefender(challengeType) ||
             !this.kneeled && this.allowGameAction('kneel') ||
-            this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling');
+            this.kneeled && this.hasFlag(Flags.challenges.canBeDeclaredWhileKneeling);
 
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             !this.stealth &&
             canKneelForChallenge &&
-            (this.hasIcon(challengeType) || this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
+            (this.hasIcon(challengeType) || this.hasFlag(Flags.challenges.canBeDeclaredWithoutIcon))
         );
     }
 
