@@ -20,7 +20,7 @@ const GameActions = require('./GameActions');
 const RemoveFromGame = require('./GameActions/RemoveFromGame');
 const SacrificeCard = require('./GameActions/SacrificeCard');
 
-const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
+const { DrawPhaseCards, Flags, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -587,7 +587,7 @@ class Player extends Spectator {
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
             card.takeControl(this);
-            card.kneeled = playingType !== 'setup' && !!card.entersPlayKneeled || !!options.kneeled;
+            card.kneeled = playingType !== 'setup' && card.hasFlag(Flags.state.entersPlayKneeled) || !!options.kneeled;
 
             if(!dupeCard && !isSetupAttachment) {
                 card.applyPersistentEffects();

@@ -189,7 +189,7 @@ class DrawCard extends BaseCard {
                 applying: applying
             };
             this.game.raiseEvent('onCardStrengthChanged', params, () => {
-                if(this.isBurning && this.getStrength() <= 0) {
+                if(this.hasFlag(Flags.state.isBurning) && this.getStrength() <= 0) {
                     this.game.killCharacter(this, { allowSave: false, isBurn: true });
                 }
             });

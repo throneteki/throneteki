@@ -67,12 +67,6 @@ class BaseCard {
             reserve: 0
         };
 
-        this.canProvidePlotModifier = {
-            gold: true,
-            initiative: true,
-            reserve: true
-        };
-
         this.abilityRestrictions = [];
         this.events = new EventRegistrar(this.game, this);
 
@@ -127,7 +121,7 @@ class BaseCard {
         this.plotModifierValues = Object.assign(this.plotModifierValues, modifiers);
         if(modifiers.gold) {
             this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['gold'],
+                condition: () => !this.hasFlag(Flags.state.cannotProvidePlotModifier('gold')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyGold(modifiers.gold)
@@ -135,7 +129,7 @@ class BaseCard {
         }
         if(modifiers.initiative) {
             this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['initiative'],
+                condition: () => !this.hasFlag(Flags.state.cannotProvidePlotModifier('initiative')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyInitiative(modifiers.initiative)
@@ -143,7 +137,7 @@ class BaseCard {
         }
         if(modifiers.reserve) {
             this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['reserve'],
+                condition: () => !this.hasFlag(Flags.state.cannotProvidePlotModifier('reserve')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)

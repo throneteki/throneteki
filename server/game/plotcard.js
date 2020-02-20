@@ -1,5 +1,6 @@
 const BaseCard = require('./basecard.js');
 const CardWhenRevealed = require('./cardwhenrevealed.js');
+const {Flags} = require('./Constants');
 
 class PlotCard extends BaseCard {
     constructor(owner, cardData) {
@@ -28,7 +29,7 @@ class PlotCard extends BaseCard {
     }
 
     getInitiative() {
-        var baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
+        var baseValue = !this.hasFlag(Flags.state.cannotProvidePlotModifier('initiative')) ? this.getPrintedInitiative() : 0;
         return baseValue + this.initiativeModifier;
     }
 
@@ -37,7 +38,7 @@ class PlotCard extends BaseCard {
     }
 
     getIncome() {
-        let baseValue = this.canProvidePlotModifier['gold'] ? (this.baseIncome || this.getPrintedIncome()) : 0;
+        let baseValue = !this.hasFlag(Flags.state.cannotProvidePlotModifier('gold')) ? (this.baseIncome || this.getPrintedIncome()) : 0;
 
         return baseValue + this.goldModifier;
     }
@@ -47,7 +48,7 @@ class PlotCard extends BaseCard {
     }
 
     getReserve() {
-        var baseValue = this.canProvidePlotModifier['reserve'] ? this.getPrintedReserve() : 0;
+        var baseValue = !this.hasFlag(Flags.state.cannotProvidePlotModifier('reserve')) ? this.getPrintedReserve() : 0;
         return baseValue + this.reserveModifier;
     }
 

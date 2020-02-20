@@ -2,6 +2,7 @@ const {flatten} = require('../../Array');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const ActionWindow = require('./actionwindow.js');
+const {Flags} = require('../Constants');
 
 class StandingPhase extends Phase {
     constructor(game) {
@@ -70,13 +71,13 @@ class StandingPhase extends Phase {
     }
 
     selectOptionalCards(cardsToStand, player) {
-        let optionalStandCards = cardsToStand.automatic.filter(card => card.optionalStandDuringStanding);
+        let optionalStandCards = cardsToStand.automatic.filter(card => card.hasFlag(Flags.state.optionalStandDuringStanding));
 
         if(optionalStandCards.length === 0) {
             return;
         }
 
-        cardsToStand.automatic = cardsToStand.automatic.filter(card => !card.optionalStandDuringStanding);
+        cardsToStand.automatic = cardsToStand.automatic.filter(card => !card.hasFlag(Flags.state.optionalStandDuringStanding));
 
         this.game.promptForSelect(player, {
             mode: 'unlimited',

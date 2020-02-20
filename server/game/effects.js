@@ -88,16 +88,7 @@ const Effects = {
             }
         };
     },
-    entersPlayKneeled: function() {
-        return {
-            apply: function(card) {
-                card.entersPlayKneeled = true;
-            },
-            unapply: function(card) {
-                card.entersPlayKneeled = false;
-            }
-        };
-    },
+    entersPlayKneeled: modifyFlagEffect(Flags.state.entersPlayKneeled),
     setCardType: function(type) {
         return {
             apply: function(card) {
@@ -226,14 +217,7 @@ const Effects = {
         };
     },
     preventPlotModifier: function(modifier) {
-        return {
-            apply: function(card) {
-                card.canProvidePlotModifier[modifier] = false;
-            },
-            unapply: function(card) {
-                card.canProvidePlotModifier[modifier] = true;
-            }
-        };
+        return modifyFlagEffect(Flags.state.cannotProvidePlotModifier(modifier))();
     },
     dynamicStrength: function(calculate, gameAction = 'increaseStrength') {
         return {
@@ -429,14 +413,7 @@ const Effects = {
             }
         };
     },
-    burn: {
-        apply: function(card) {
-            card.isBurning = true;
-        },
-        unapply: function(card) {
-            card.isBurning = false;
-        }
-    },
+    burn: modifyFlagEffect(Flags.state.isBurning)(),
     killByStrength: function(value) {
         return [
             Effects.burn,
@@ -607,16 +584,7 @@ const Effects = {
     },
     doesNotContributeToDominance: dominanceOptionEffect('doesNotContribute'),
     contributesToDominanceWhileKneeling: dominanceOptionEffect('contributesWhileKneeling'),
-    optionalStandDuringStanding: function() {
-        return {
-            apply: function(card) {
-                card.optionalStandDuringStanding = true;
-            },
-            unapply: function(card) {
-                card.optionalStandDuringStanding = false;
-            }
-        };
-    },
+    optionalStandDuringStanding: modifyFlagEffect(Flags.state.optionalStandDuringStanding),
     immuneTo: function(cardCondition) {
         return {
             apply: function(card, context) {

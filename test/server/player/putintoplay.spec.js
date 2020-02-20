@@ -12,7 +12,7 @@ describe('Player', function() {
 
         this.gameSpy.queueSimpleStep.and.callFake(func => func());
 
-        this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getCost', 'isBestow', 'isUnique', 'applyPersistentEffects', 'moveTo', 'takeControl']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getCost', 'hasFlag', 'isBestow', 'isUnique', 'applyPersistentEffects', 'moveTo', 'takeControl']);
         this.cardSpy.controller = this.player;
         this.cardSpy.owner = this.player;
         this.dupeCardSpy = jasmine.createSpyObj('dupecard', ['addDuplicate']);

@@ -19,6 +19,14 @@ const Flags = {
         factions: 'loseAspect.factions',
         keywords: 'loseAspect.keywords',
         traits: 'loseAspect.traits'
+    },
+    state: {
+        cannotProvidePlotModifier: function(modifier) {
+            return `state.cannotProvidePlotModifier.${modifier}`;
+        },
+        entersPlayKneeled: 'state.entersPlayKneeled',
+        isBurning: 'state.isBurning',
+        optionalStandDuringStanding: 'state.optionalStandDuringStanding'
     }
 };
 
