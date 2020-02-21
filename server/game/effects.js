@@ -1066,15 +1066,7 @@ const Effects = {
         };
     },
     skipPhase: function(name) {
-        return {
-            targetType: 'game',
-            apply: function(game) {
-                game.skipPhase[name] = true;
-            },
-            unapply: function(game) {
-                game.skipPhase[name] = false;
-            }
-        };
+        return modifyFlagEffect(Flags.game.skipPhase(name), { targetType: 'game' })();
     },
     notConsideredToBeInPlotDeck: function() {
         return {

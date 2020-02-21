@@ -28,6 +28,11 @@ const Flags = {
         },
         optionalStandDuringStanding: 'card.optionalStandDuringStanding'
     },
+    game: {
+        skipPhase: function(phase) {
+            return `game.skipPhase.${phase}`;
+        }
+    },
     player: {
         cannotGainChallengeBonus: 'player.cannotGainChallengeBonus',
         cannotRevealPlot: 'player.cannotRevealPlot',

@@ -37,6 +37,8 @@ const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 const GameActions = require('./GameActions');
 const TimeLimit = require('./timeLimit.js');
 const PrizedKeywordListener = require('./PrizedKeywordListener');
+const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
+const {Flags} = require('./Constants');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -80,10 +82,10 @@ class Game extends EventEmitter {
         this.packData = options.packData || [];
         this.restrictedListData = options.restrictedListData || [];
         this.remainingPhases = [];
-        this.skipPhase = {};
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
+        this.flags = new ReferenceCountedSetProperty();
 
         for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -187,6 +189,18 @@ class Game extends EventEmitter {
 
     getOpponentsInFirstPlayerOrder(player) {
         return this.getPlayersInFirstPlayerOrder().filter(p => p !== player);
+    }
+
+    addFlag(flag) {
+        this.flags.add(flag);
+    }
+
+    removeFlag(flag) {
+        this.flags.remove(flag);
+    }
+
+    hasFlag(flagName) {
+        return this.flags.contains(flagName);
     }
 
     isCardVisible(card, player) {
@@ -954,7 +968,7 @@ class Game extends EventEmitter {
     }
 
     isPhaseSkipped(name) {
-        return !!this.skipPhase[name];
+        return this.hasFlag(Flags.game.skipPhase(name));
     }
 
     saveWithDupe(card) {
