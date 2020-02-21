@@ -189,7 +189,7 @@ class DrawCard extends BaseCard {
                 applying: applying
             };
             this.game.raiseEvent('onCardStrengthChanged', params, () => {
-                if(this.hasFlag(Flags.state.isBurning) && this.getStrength() <= 0) {
+                if(this.hasFlag(Flags.card.isBurning) && this.getStrength() <= 0) {
                     this.game.killCharacter(this, { allowSave: false, isBurn: true });
                 }
             });
@@ -296,7 +296,6 @@ class DrawCard extends BaseCard {
         }
 
         targetCard.stealth = true;
-        this.stealthTarget = targetCard;
 
         return true;
     }
@@ -378,14 +377,13 @@ class DrawCard extends BaseCard {
 
     resetForChallenge() {
         this.stealth = false;
-        this.stealthTarget = undefined;
         this.inChallenge = false;
     }
 
     kneelsAsAttacker(challengeType) {
         const keys = [
-            Flags.challenges.doesNotKneelAsAttacker('any'),
-            Flags.challenges.doesNotKneelAsAttacker(challengeType)
+            Flags.card.challenges.doesNotKneelAsAttacker('any'),
+            Flags.card.challenges.doesNotKneelAsAttacker(challengeType)
         ];
 
         return keys.every(key => !this.hasFlag(key));
@@ -393,8 +391,8 @@ class DrawCard extends BaseCard {
 
     kneelsAsDefender(challengeType) {
         const keys = [
-            Flags.challenges.doesNotKneelAsDefender('any'),
-            Flags.challenges.doesNotKneelAsDefender(challengeType)
+            Flags.card.challenges.doesNotKneelAsDefender('any'),
+            Flags.card.challenges.doesNotKneelAsDefender(challengeType)
         ];
 
         return keys.every(key => !this.hasFlag(key));
@@ -405,14 +403,14 @@ class DrawCard extends BaseCard {
             attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType) ||
             !attacking && !this.kneeled && !this.kneelsAsDefender(challengeType) ||
             !this.kneeled && this.allowGameAction('kneel') ||
-            this.kneeled && this.hasFlag(Flags.challenges.canBeDeclaredWhileKneeling);
+            this.kneeled && this.hasFlag(Flags.card.challenges.canBeDeclaredWhileKneeling);
 
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             !this.stealth &&
             canKneelForChallenge &&
-            (this.hasIcon(challengeType) || this.hasFlag(Flags.challenges.canBeDeclaredWithoutIcon))
+            (this.hasIcon(challengeType) || this.hasFlag(Flags.card.challenges.canBeDeclaredWithoutIcon))
         );
     }
 

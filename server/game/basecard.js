@@ -121,7 +121,7 @@ class BaseCard {
         this.plotModifierValues = Object.assign(this.plotModifierValues, modifiers);
         if(modifiers.gold) {
             this.persistentEffect({
-                condition: () => !this.hasFlag(Flags.state.cannotProvidePlotModifier('gold')),
+                condition: () => !this.hasFlag(Flags.card.cannotProvidePlotModifier('gold')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyGold(modifiers.gold)
@@ -129,7 +129,7 @@ class BaseCard {
         }
         if(modifiers.initiative) {
             this.persistentEffect({
-                condition: () => !this.hasFlag(Flags.state.cannotProvidePlotModifier('initiative')),
+                condition: () => !this.hasFlag(Flags.card.cannotProvidePlotModifier('initiative')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyInitiative(modifiers.initiative)
@@ -137,7 +137,7 @@ class BaseCard {
         }
         if(modifiers.reserve) {
             this.persistentEffect({
-                condition: () => !this.hasFlag(Flags.state.cannotProvidePlotModifier('reserve')),
+                condition: () => !this.hasFlag(Flags.card.cannotProvidePlotModifier('reserve')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
@@ -350,7 +350,7 @@ class BaseCard {
     }
 
     hasKeyword(keyword) {
-        if(this.hasFlag(Flags.loseAspect.keywords)) {
+        if(this.hasFlag(Flags.card.loseAspect.keywords)) {
             return false;
         }
 
@@ -374,7 +374,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        if(this.hasFlag(Flags.loseAspect.traits)) {
+        if(this.hasFlag(Flags.card.loseAspect.traits)) {
             return false;
         }
 
@@ -384,15 +384,15 @@ class BaseCard {
     isFaction(faction) {
         let normalizedFaction = faction.toLowerCase();
 
-        if(this.hasFlag(Flags.loseAspect.factions)) {
+        if(this.hasFlag(Flags.card.loseAspect.factions)) {
             return normalizedFaction === 'neutral';
         }
 
         if(normalizedFaction === 'neutral') {
-            return ValidFactions.every(f => !this.factions.contains(f) || this.hasFlag(Flags.loseAspect.faction(f)));
+            return ValidFactions.every(f => !this.factions.contains(f) || this.hasFlag(Flags.card.loseAspect.faction(f)));
         }
 
-        return this.factions.contains(normalizedFaction) && !this.hasFlag(Flags.loseAspect.faction(normalizedFaction));
+        return this.factions.contains(normalizedFaction) && !this.hasFlag(Flags.card.loseAspect.faction(normalizedFaction));
     }
 
     isOutOfFaction() {
@@ -618,7 +618,7 @@ class BaseCard {
     }
 
     getTraits() {
-        if(this.hasFlag(Flags.loseAspect.traits)) {
+        if(this.hasFlag(Flags.card.loseAspect.traits)) {
             return [];
         }
 

@@ -592,7 +592,7 @@ class Player extends Spectator {
             card.new = true;
             this.moveCard(card, 'play area', { isDupe: !!dupeCard });
             card.takeControl(this);
-            card.kneeled = playingType !== 'setup' && card.hasFlag(Flags.state.entersPlayKneeled) || !!options.kneeled;
+            card.kneeled = playingType !== 'setup' && card.hasFlag(Flags.card.entersPlayKneeled) || !!options.kneeled;
 
             if(!dupeCard && !isSetupAttachment) {
                 card.applyPersistentEffects();

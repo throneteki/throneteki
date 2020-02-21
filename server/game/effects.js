@@ -89,7 +89,7 @@ const Effects = {
             }
         };
     },
-    entersPlayKneeled: modifyFlagEffect(Flags.state.entersPlayKneeled),
+    entersPlayKneeled: modifyFlagEffect(Flags.card.entersPlayKneeled),
     setCardType: function(type) {
         return {
             apply: function(card) {
@@ -104,10 +104,10 @@ const Effects = {
     cannotBeDeclaredAsDefender: cannotEffect('declareAsDefender'),
     cannotParticipate: cannotEffect('participateInChallenge'),
     doesNotKneelAsAttacker: function({ challengeType = 'any' } = {}) {
-        return modifyFlagEffect(Flags.challenges.doesNotKneelAsAttacker(challengeType))();
+        return modifyFlagEffect(Flags.card.challenges.doesNotKneelAsAttacker(challengeType))();
     },
     doesNotKneelAsDefender: function({ challengeType = 'any' } = {}) {
-        return modifyFlagEffect(Flags.challenges.doesNotKneelAsDefender(challengeType))();
+        return modifyFlagEffect(Flags.card.challenges.doesNotKneelAsDefender(challengeType))();
     },
     consideredToBeAttacking: function() {
         return {
@@ -133,10 +133,10 @@ const Effects = {
             isStateDependent: true
         };
     },
-    canBeDeclaredWithoutIcon: modifyFlagEffect(Flags.challenges.canBeDeclaredWithoutIcon),
-    canBeDeclaredWhileKneeling: modifyFlagEffect(Flags.challenges.canBeDeclaredWhileKneeling),
-    mustBeDeclaredAsAttacker: modifyFlagEffect(Flags.challenges.mustBeDeclaredAsAttacker),
-    mustBeDeclaredAsDefender: modifyFlagEffect(Flags.challenges.mustBeDeclaredAsDefender),
+    canBeDeclaredWithoutIcon: modifyFlagEffect(Flags.card.challenges.canBeDeclaredWithoutIcon),
+    canBeDeclaredWhileKneeling: modifyFlagEffect(Flags.card.challenges.canBeDeclaredWhileKneeling),
+    mustBeDeclaredAsAttacker: modifyFlagEffect(Flags.card.challenges.mustBeDeclaredAsAttacker),
+    mustBeDeclaredAsDefender: modifyFlagEffect(Flags.card.challenges.mustBeDeclaredAsDefender),
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
@@ -218,7 +218,7 @@ const Effects = {
         };
     },
     preventPlotModifier: function(modifier) {
-        return modifyFlagEffect(Flags.state.cannotProvidePlotModifier(modifier))();
+        return modifyFlagEffect(Flags.card.cannotProvidePlotModifier(modifier))();
     },
     dynamicStrength: function(calculate, gameAction = 'increaseStrength') {
         return {
@@ -248,7 +248,7 @@ const Effects = {
         let negatedCalculate = (card, context) => -(calculate(card, context) || 0);
         return Effects.dynamicStrength(negatedCalculate, 'decreaseStrength');
     },
-    doesNotContributeStrength: modifyFlagEffect(Flags.challenges.doesNotContributeStrength),
+    doesNotContributeStrength: modifyFlagEffect(Flags.card.challenges.doesNotContributeStrength),
     doesNotReturnUnspentGold: modifyFlagEffect(Flags.player.doesNotReturnUnspentGold, { targetType: 'player' }),
     addStealthLimit: function(value) {
         return {
@@ -368,11 +368,11 @@ const Effects = {
             }
         };
     },
-    losesAllFactions: modifyFlagEffect(Flags.loseAspect.factions),
-    losesAllKeywords: modifyFlagEffect(Flags.loseAspect.keywords),
-    losesAllTraits: modifyFlagEffect(Flags.loseAspect.traits),
+    losesAllFactions: modifyFlagEffect(Flags.card.loseAspect.factions),
+    losesAllKeywords: modifyFlagEffect(Flags.card.loseAspect.keywords),
+    losesAllTraits: modifyFlagEffect(Flags.card.loseAspect.traits),
     loseFaction: function(faction) {
-        return modifyFlagEffect(Flags.loseAspect.faction(faction))();
+        return modifyFlagEffect(Flags.card.loseAspect.faction(faction))();
     },
     addTrait: function(trait) {
         return {
@@ -404,7 +404,7 @@ const Effects = {
             }
         };
     },
-    burn: modifyFlagEffect(Flags.state.isBurning)(),
+    burn: modifyFlagEffect(Flags.card.isBurning)(),
     killByStrength: function(value) {
         return [
             Effects.burn,
@@ -575,7 +575,7 @@ const Effects = {
     },
     doesNotContributeToDominance: dominanceOptionEffect('doesNotContribute'),
     contributesToDominanceWhileKneeling: dominanceOptionEffect('contributesWhileKneeling'),
-    optionalStandDuringStanding: modifyFlagEffect(Flags.state.optionalStandDuringStanding),
+    optionalStandDuringStanding: modifyFlagEffect(Flags.card.optionalStandDuringStanding),
     immuneTo: function(cardCondition) {
         return {
             apply: function(card, context) {

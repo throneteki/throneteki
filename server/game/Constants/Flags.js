@@ -1,32 +1,32 @@
 const Flags = {
-    challenges: {
-        canBeDeclaredWhileKneeling: 'challenges.canBeDeclaredWhileKneeling',
-        canBeDeclaredWithoutIcon: 'challenges.canBeDeclaredWithoutIcon',
-        doesNotContributeStrength: 'challenges.doesNotContributeStrength',
-        doesNotKneelAsAttacker: function(challengeType = 'any') {
-            return `challenges.doesNotKneelAsAttacker.${challengeType}`;
-        },
-        doesNotKneelAsDefender: function(challengeType = 'any') {
-            return `challenges.doesNotKneelAsDefender.${challengeType}`;
-        },
-        mustBeDeclaredAsAttacker: 'mustBeDeclaredAsAttacker',
-        mustBeDeclaredAsDefender: 'mustBeDeclaredAsDefender'
-    },
-    loseAspect: {
-        faction: function(faction) {
-            return `loseAspect.faction.${faction.toLowerCase()}`;
-        },
-        factions: 'loseAspect.factions',
-        keywords: 'loseAspect.keywords',
-        traits: 'loseAspect.traits'
-    },
-    state: {
+    card: {
         cannotProvidePlotModifier: function(modifier) {
-            return `state.cannotProvidePlotModifier.${modifier}`;
+            return `card.cannotProvidePlotModifier.${modifier}`;
         },
-        entersPlayKneeled: 'state.entersPlayKneeled',
-        isBurning: 'state.isBurning',
-        optionalStandDuringStanding: 'state.optionalStandDuringStanding'
+        challenges: {
+            canBeDeclaredWhileKneeling: 'card.challenges.canBeDeclaredWhileKneeling',
+            canBeDeclaredWithoutIcon: 'card.challenges.canBeDeclaredWithoutIcon',
+            doesNotContributeStrength: 'card.challenges.doesNotContributeStrength',
+            doesNotKneelAsAttacker: function(challengeType = 'any') {
+                return `card.challenges.doesNotKneelAsAttacker.${challengeType}`;
+            },
+            doesNotKneelAsDefender: function(challengeType = 'any') {
+                return `card.challenges.doesNotKneelAsDefender.${challengeType}`;
+            },
+            mustBeDeclaredAsAttacker: 'card.challenges.mustBeDeclaredAsAttacker',
+            mustBeDeclaredAsDefender: 'card.challenges.mustBeDeclaredAsDefender'
+        },
+        entersPlayKneeled: 'card.entersPlayKneeled',
+        isBurning: 'card.isBurning',
+        loseAspect: {
+            faction: function(faction) {
+                return `card.loseAspect.faction.${faction.toLowerCase()}`;
+            },
+            factions: 'card.loseAspect.factions',
+            keywords: 'card.loseAspect.keywords',
+            traits: 'card.loseAspect.traits'
+        },
+        optionalStandDuringStanding: 'card.optionalStandDuringStanding'
     },
     player: {
         cannotGainChallengeBonus: 'player.cannotGainChallengeBonus',

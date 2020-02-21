@@ -29,7 +29,7 @@ class PlotCard extends BaseCard {
     }
 
     getInitiative() {
-        var baseValue = !this.hasFlag(Flags.state.cannotProvidePlotModifier('initiative')) ? this.getPrintedInitiative() : 0;
+        var baseValue = !this.hasFlag(Flags.card.cannotProvidePlotModifier('initiative')) ? this.getPrintedInitiative() : 0;
         return baseValue + this.initiativeModifier;
     }
 
@@ -38,7 +38,7 @@ class PlotCard extends BaseCard {
     }
 
     getIncome() {
-        let baseValue = !this.hasFlag(Flags.state.cannotProvidePlotModifier('gold')) ? (this.baseIncome || this.getPrintedIncome()) : 0;
+        let baseValue = !this.hasFlag(Flags.card.cannotProvidePlotModifier('gold')) ? (this.baseIncome || this.getPrintedIncome()) : 0;
 
         return baseValue + this.goldModifier;
     }
@@ -48,7 +48,7 @@ class PlotCard extends BaseCard {
     }
 
     getReserve() {
-        var baseValue = !this.hasFlag(Flags.state.cannotProvidePlotModifier('reserve')) ? this.getPrintedReserve() : 0;
+        var baseValue = !this.hasFlag(Flags.card.cannotProvidePlotModifier('reserve')) ? this.getPrintedReserve() : 0;
         return baseValue + this.reserveModifier;
     }
 

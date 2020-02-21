@@ -71,13 +71,13 @@ class StandingPhase extends Phase {
     }
 
     selectOptionalCards(cardsToStand, player) {
-        let optionalStandCards = cardsToStand.automatic.filter(card => card.hasFlag(Flags.state.optionalStandDuringStanding));
+        let optionalStandCards = cardsToStand.automatic.filter(card => card.hasFlag(Flags.card.optionalStandDuringStanding));
 
         if(optionalStandCards.length === 0) {
             return;
         }
 
-        cardsToStand.automatic = cardsToStand.automatic.filter(card => !card.hasFlag(Flags.state.optionalStandDuringStanding));
+        cardsToStand.automatic = cardsToStand.automatic.filter(card => !card.hasFlag(Flags.card.optionalStandDuringStanding));
 
         this.game.promptForSelect(player, {
             mode: 'unlimited',

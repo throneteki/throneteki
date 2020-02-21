@@ -148,7 +148,7 @@ class Challenge {
 
     calculateStrengthFor(cards) {
         return cards.reduce((sum, card) => {
-            if(card.hasFlag(Flags.challenges.doesNotContributeStrength)) {
+            if(card.hasFlag(Flags.card.challenges.doesNotContributeStrength)) {
                 return sum;
             }
 
