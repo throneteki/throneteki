@@ -64,9 +64,6 @@ class Player extends Spectator {
         this.maxGoldGain = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
         this.drawnCards = 0;
         this.maxCardDraw = new MinMaxProperty({ defaultMin: 0, defaultMax: undefined });
-        this.doesNotReturnUnspentGold = false;
-        this.cannotGainChallengeBonus = false;
-        this.cannotWinGame = false;
         this.triggerRestrictions = [];
         this.playCardRestrictions = [];
         this.abilityMaxByTitle = {};
@@ -301,7 +298,7 @@ class Player extends Spectator {
     }
 
     canWinGame() {
-        return !this.cannotWinGame;
+        return !this.hasFlag(Flags.player.cannotWinGame);
     }
 
     addAllowedChallenge(allowedChallenge) {
@@ -378,6 +375,14 @@ class Player extends Spectator {
         let deck = new Deck(this.deck);
         this.faction = deck.createFactionCard(this);
         this.agenda = deck.createAgendaCard(this);
+    }
+
+    addFlag(flag) {
+        this.flags.add(flag);
+    }
+
+    removeFlag(flag) {
+        this.flags.remove(flag);
     }
 
     hasFlag(flagName) {
@@ -1130,7 +1135,7 @@ class Player extends Spectator {
     }
 
     canGainRivalBonus(opponent) {
-        return !this.cannotGainChallengeBonus && this.isRival(opponent) && !this.bonusesFromRivals.has(opponent);
+        return !this.hasFlag(Flags.player.cannotGainChallengeBonus) && this.isRival(opponent) && !this.bonusesFromRivals.has(opponent);
     }
 
     markRivalBonusGained(opponent) {

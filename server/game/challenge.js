@@ -212,7 +212,7 @@ class Challenge {
                 message: 'There is no winner or loser for this challenge because the attacker strength is 0'
             },
             {
-                condition: () => this.attackerStrength >= this.defenderStrength && this.attackingPlayer.cannotWinChallenge,
+                condition: () => this.attackerStrength >= this.defenderStrength && this.attackingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message: 'There is no winner or loser for this challenge because the attacker cannot win'
             },
             {
@@ -220,7 +220,7 @@ class Challenge {
                 message: 'There is no winner or loser for this challenge because the attacker has no participants'
             },
             {
-                condition: () => this.defenderStrength > this.attackerStrength && this.defendingPlayer.cannotWinChallenge,
+                condition: () => this.defenderStrength > this.attackerStrength && this.defendingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message: 'There is no winner or loser for this challenge because the defender cannot win'
             },
             {

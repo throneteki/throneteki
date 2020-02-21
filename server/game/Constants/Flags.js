@@ -27,6 +27,14 @@ const Flags = {
         entersPlayKneeled: 'state.entersPlayKneeled',
         isBurning: 'state.isBurning',
         optionalStandDuringStanding: 'state.optionalStandDuringStanding'
+    },
+    player: {
+        cannotGainChallengeBonus: 'player.cannotGainChallengeBonus',
+        cannotRevealPlot: 'player.cannotRevealPlot',
+        cannotWinChallenge: 'player.cannotWinChallenge',
+        cannotWinGame: 'player.cannotWinGame',
+        doesNotReturnUnspentGold: 'player.doesNotReturnUnspentGold',
+        revealTopCard: 'player.revealTopCard'
     }
 };
 
