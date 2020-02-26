@@ -5,6 +5,7 @@ class ValyriansCrew extends DrawCard {
         this.persistentEffect({
             effect: [
                 ability.effects.canMarshal(card => this.isFacedownAttachment(card) && card.getPrintedType() !== 'event'),
+                ability.effects.canMarshalIntoShadows(card => this.isFacedownAttachment(card)),
                 ability.effects.canPlay(card => this.isFacedownAttachment(card) && card.getPrintedType() === 'event')
             ]
         });
