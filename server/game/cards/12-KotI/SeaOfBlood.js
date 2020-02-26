@@ -25,7 +25,7 @@ class SeaOfBlood extends AgendaCard {
                     event.challenge.strengthDifference >= 5
             },
             cost: ability.costs.kneelFactionCard(),
-            message: '{player} users {source} and kneels their faction card to place 1 blood token on {source}',
+            message: '{player} uses {source} and kneels their faction card to place 1 blood token on {source}',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.placeToken(() => ({ card: this, token: Tokens.blood })),
