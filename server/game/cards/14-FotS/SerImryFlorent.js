@@ -6,7 +6,7 @@ class SerImryFlorent extends DrawCard {
         this.action({
             title: 'Force kneel',
             cost: ability.costs.killSelf(),
-            chooseOpponent: opponent => opponent.anyCardsInPlay(card => card.getType() === 'character' && !card.kneeled && card.allowGameAction('stand')),
+            chooseOpponent: opponent => opponent.anyCardsInPlay(card => card.getType() === 'character' && !card.kneeled && card.allowGameAction('kneel')),
             target: {
                 type: 'select',
                 mode: 'unlimited',
