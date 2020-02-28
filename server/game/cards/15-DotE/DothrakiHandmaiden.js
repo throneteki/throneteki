@@ -4,7 +4,10 @@ class DothrakiHandmaiden extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.controller.anyCardsInPlay(card => card.name === 'Daenerys Targaryen'),
-            effect: ability.effects.canMarshal({ type: 'attachment', facedown: true, parent: this })
+            effect: [
+                ability.effects.canMarshal({ type: 'attachment', facedown: true, parent: this }),
+                ability.effects.canMarshalIntoShadows({ type: 'attachment', facedown: true, parent: this})
+            ]
         });
         this.action({
             title: 'Attach facedown attachment',

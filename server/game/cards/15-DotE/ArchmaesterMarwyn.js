@@ -12,6 +12,7 @@ class ArchmaesterMarwyn extends DrawCard {
             targetController: 'current',
             effect: [
                 ability.effects.canMarshal(card => card.location === 'conclave'),
+                ability.effects.canMarshalIntoShadows(card => card.location === 'conclave'),
                 ability.effects.canPlay(card => card.location === 'conclave')
             ]
         });
