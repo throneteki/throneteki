@@ -19,7 +19,7 @@ class TheRainsOfCastamere extends AgendaCard {
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                cardCondition: card => card.controller === this.controller && card.hasTrait('scheme'),
+                cardCondition: card => card.controller === this.controller && card.hasTrait('scheme') && card.location === 'plot deck',
                 cardType: 'plot'
             },
             handler: context => this.trigger(context)
