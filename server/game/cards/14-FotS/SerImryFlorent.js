@@ -11,7 +11,7 @@ class SerImryFlorent extends DrawCard {
                 type: 'select',
                 mode: 'unlimited',
                 activePromptTitle: 'Select any number of locations',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && card.controller === this.controller,
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'location' && card.controller === context.player,
                 gameAction: 'sacrifice'
             },
             message: '{player} kills {source} to sacrifice {target}',
