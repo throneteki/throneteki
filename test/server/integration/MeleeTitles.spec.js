@@ -134,5 +134,44 @@ describe('melee titles', function() {
                 });
             });
         });
+
+        describe('supporters', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'A Noble Cause',
+                    'Hedge Knight', 'Wildling Horde'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.player3.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.player1.clickCard('Hedge Knight', 'hand');
+                this.player1.clickCard('Wildling Horde', 'hand');
+                this.player2.clickCard('Hedge Knight', 'hand');
+                this.player2.clickCard('Wildling Horde', 'hand');
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+
+                this.player1.selectTitle('Hand of the King');
+                this.player2.selectTitle('Master of Laws');
+                this.player3.selectTitle('Master of Whispers');
+
+                this.completeMarshalPhase();
+
+                this.player1.clickPrompt('Military');
+            });
+
+            it('disallows challenges against titles you support', function() {
+                expect(this.player1).not.toHavePromptButton('player2');
+            });
+
+            it('allows challenges against titles that support you', function() {
+                expect(this.player1).toHavePromptButton('player3');
+            });
+        });
     });
 });
