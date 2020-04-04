@@ -10,10 +10,10 @@ class PutIntoPlay extends GameAction {
         return player.canPutIntoPlay(card);
     }
 
-    createEvent({ player, card }) {
+    createEvent({ player, card, kneeled }) {
         player = player || card.controller;
         return this.event('__PLACEHOLDER_EVENT__', { player, card }, event => {
-            event.player.putIntoPlay(event.card);
+            event.player.putIntoPlay(event.card, 'play', { kneeled });
         });
     }
 }
