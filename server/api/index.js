@@ -1,4 +1,5 @@
 const account = require('./account');
+const events = require('./events');
 const decks = require('./decks');
 const cards = require('./cards');
 const news = require('./news');
@@ -14,4 +15,5 @@ module.exports.init = function(server, options) {
     user.init(server, options);
     messages.init(server, options);
     banlist.init(server, options);
+    events.init(server, options);
 };
