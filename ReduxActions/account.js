@@ -152,7 +152,7 @@ export function linkPatreon(code) {
         APIParams: {
             url: '/api/account/linkPatreon',
             type: 'POST',
-            data:  JSON.stringify({ code: code }),
+            data: JSON.stringify({ code: code }),
             contentType: 'application/json'
         }
     };

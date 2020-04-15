@@ -16,6 +16,8 @@ OctoWebpackPlugin.prototype.apply = function(compiler) {
             pkg.append(name, compilation.assets[name].existsAt);
         }
 
+        pkg.appendSubDir('./assets', true);
+
         callback();
     });
 
