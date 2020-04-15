@@ -3,6 +3,7 @@ const PatreonService = require('./PatreonService');
 const ConfigService = require('./ConfigService');
 const UserService = require('./UserService');
 const BanlistService = require('./BanlistService');
+const EventService = require('./EventService');
 
 let services = {};
 
@@ -41,5 +42,12 @@ module.exports = {
         }
 
         return services.banlistService;
+    },
+    eventService: (db) => {
+        if(!services.eventService) {
+            services.eventService = new EventService(db);
+        }
+
+        return services.eventService;
     }
 };

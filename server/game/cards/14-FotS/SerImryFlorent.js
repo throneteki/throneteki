@@ -6,12 +6,12 @@ class SerImryFlorent extends DrawCard {
         this.action({
             title: 'Force kneel',
             cost: ability.costs.killSelf(),
-            chooseOpponent: opponent => opponent.anyCardsInPlay(card => card.getType() === 'character' && !card.kneeled && card.allowGameAction('stand')),
+            chooseOpponent: opponent => opponent.anyCardsInPlay(card => card.getType() === 'character' && !card.kneeled && card.allowGameAction('kneel')),
             target: {
                 type: 'select',
                 mode: 'unlimited',
                 activePromptTitle: 'Select any number of locations',
-                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && card.controller === this.controller,
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'location' && card.controller === context.player,
                 gameAction: 'sacrifice'
             },
             message: '{player} kills {source} to sacrifice {target}',

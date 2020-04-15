@@ -11,21 +11,17 @@ class CatelynStark extends DrawCard {
                 this.controller.canPutIntoPlay(this)
             ),
             message: '{player} puts {source} into play as a defender',
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.putIntoPlay(context => ({
-                        player: context.player,
-                        card: this,
-                        kneeled: true
-                    })),
-                    context
-                );
+            gameAction: GameActions.putIntoPlay(context => ({
+                player: context.player,
+                card: this,
+                kneeled: true
+            })).thenExecute(() => {
                 this.game.currentChallenge.addDefender(this);
                 this.atEndOfPhase(ability => ({
                     match: this,
                     effect: ability.effects.returnToHandIfStillInPlay(true)
                 }));
-            }
+            })
         });
     }
 }

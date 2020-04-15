@@ -278,6 +278,10 @@ class Player extends Spectator {
     }
 
     canInitiateChallenge(challengeType, opponent) {
+        if(this.isSupporter(opponent)) {
+            return false;
+        }
+
         return this.challenges.canInitiate(challengeType, opponent);
     }
 
@@ -1123,7 +1127,7 @@ class Player extends Spectator {
     }
 
     isSupporter(opponent) {
-        if(!this.title) {
+        if(!this.title || !opponent.title) {
             return false;
         }
 

@@ -7,7 +7,7 @@ class BenjensCache extends PlotCard {
             condition: () => !this.controller.plotDiscard.some(card => card.hasTrait('Kingdom')),
             gameAction: GameActions.search({
                 title: 'Select a card',
-                message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
+                message: '{player} uses {source} to search their deck and add a card to their hand',
                 gameAction: GameActions.addToHand(context => ({
                     card: context.searchTarget
                 }))

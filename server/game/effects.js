@@ -895,6 +895,18 @@ const Effects = {
             }
         };
     },
+    canMarshalIntoShadows: function(predicate) {
+        let playableLocation = new PlayableLocation('marshalIntoShadows', CardMatcher.createMatcher(predicate));
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.playableLocations.push(playableLocation);
+            },
+            unapply: function(player) {
+                player.playableLocations = player.playableLocations.filter(l => l !== playableLocation);
+            }
+        };
+    },
     canPlayFromOwn: function(location) {
         return {
             targetType: 'player',

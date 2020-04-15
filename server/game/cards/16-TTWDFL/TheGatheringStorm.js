@@ -20,7 +20,8 @@ class TheGatheringStorm extends PlotCard {
                     if(plot) {
                         this.game.addMessage('{player} chooses to reveal {plot} for {source}', { player, plot, source: this });
                         player.selectedPlot = plot;
-                        player.removeActivePlot();
+                        player.moveCard(player.activePlot, 'plot deck');
+                        player.activePlot = null;
                         player.flipPlotFaceup();
                         plots.push(plot);
                     } else {
