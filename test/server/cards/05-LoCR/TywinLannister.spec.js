@@ -7,7 +7,7 @@ describe('Tywin Lannister (LoCR)', function() {
             ]);
             const deck2 = this.buildDeck('lannister', [
                 'Sneak Attack',
-                'The Tickler', 'The Reader', 'Cersei Lannister (Core)', 'Hedge Knight'
+                'The Tickler', 'The Reader (TRtW)', 'Cersei Lannister (Core)', 'Hedge Knight'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck2);

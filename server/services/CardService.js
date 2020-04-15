@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment');
 
 const logger = require('../log.js');
 
@@ -7,6 +8,7 @@ class CardService {
     constructor(db) {
         this.cards = db.get('cards');
         this.packs = db.get('packs');
+        this.events = db.get('events');
     }
 
     replaceCards(cards) {
@@ -57,8 +59,38 @@ class CardService {
                     return reject(err);
                 }
 
-                resolve(JSON.parse(data));
+                const officialLists = this.convertOfficialListToNewFormat(JSON.parse(data));
+                this.events.find({}).then(events => {
+                    resolve(officialLists.concat(events));
+                }).catch(err => {
+                    logger.info(`Unable to load events: ${err}`);
+                    resolve(officialLists);
+                });
             });
+        });
+    }
+
+    convertOfficialListToNewFormat(versions) {
+        const activeVersion = this.getActiveVersion(versions);
+        return [
+            {
+                name: `${activeVersion.issuer} FAQ v${activeVersion.version}`,
+                date: activeVersion.date,
+                restricted: activeVersion.joustCards,
+                banned: activeVersion.bannedCards
+            }
+        ];
+    }
+
+    getActiveVersion(versions) {
+        const now = moment();
+        return versions.reduce((max, list) => {
+            let effectiveDate = moment(list.date, 'YYYY-MM-DD');
+            if(effectiveDate <= now && effectiveDate > moment(max.date, 'YYYY-MM-DD')) {
+                return list;
+            }
+
+            return max;
         });
     }
 }
