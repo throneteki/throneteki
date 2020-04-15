@@ -618,7 +618,7 @@ class Lobby {
                 let [cards, packs, deck, restrictedList] = results;
                 let formattedDeck = formatDeckAsFullCards(deck, { cards: cards });
 
-                formattedDeck.status = validateDeck(formattedDeck, { packs: packs, restrictedList: restrictedList, includeExtendedStatus: false });
+                formattedDeck.status = validateDeck(formattedDeck, { packs: packs, restrictedLists: restrictedList, includeExtendedStatus: false });
 
                 game.selectDeck(socket.user.username, formattedDeck);
 

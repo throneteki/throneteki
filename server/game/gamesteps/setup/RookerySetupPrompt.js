@@ -78,7 +78,7 @@ class RookerySetupPrompt extends AllPlayerPrompt {
     }
 
     getStatus(deck) {
-        let status = validateDeck(deck, { packs: this.game.packData, restrictedList: this.game.restrictedListData });
+        let status = validateDeck(deck, { packs: this.game.packData, restrictedLists: this.game.restrictedListData });
 
         if(!status.basicRules) {
             return 'Invalid';
