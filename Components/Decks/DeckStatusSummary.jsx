@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 
 class DeckStatusSummary extends React.Component {
     render() {
-        let { basicRules, faqJoustRules, faqVersion, noBannedCards, noUnreleasedCards } = this.props.status;
+        let { basicRules, noUnreleasedCards, restrictedLists } = this.props.status;
+        const restrictedListItems = (restrictedLists || []).map(rl => [
+            { title: `${rl.name} restricted list`, value: rl.restrictedRules },
+            { title: `${rl.name} banned list`, value: rl.noBannedCards }
+        ]).reduce((items, rlItems) => items.concat(rlItems), []);
         const items = [
             { title: 'Basic deckbuilding rules', value: basicRules },
-            { title: `FAQ v${faqVersion} restricted list`, value: faqJoustRules },
-            { title: 'Only legal cards', value: noBannedCards },
+            ...restrictedListItems,
             { title: 'Only released cards', value: noUnreleasedCards }
         ];
 

@@ -30,7 +30,8 @@ const menus = [
             { path: '/users', title: 'Users', permission: 'canManageUsers' },
             { path: '/nodes', title: 'Nodes', permission: 'canManageNodes' },
             { path: '/admin/motd', title: 'Motd', permission: 'canManageMotd' },
-            { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' }
+            { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },
+            { path: '/events', title: 'Events', permission: 'canManageEvents' }
         ], position: 'left'
     }
 ];

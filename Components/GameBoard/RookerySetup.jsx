@@ -129,7 +129,7 @@ class RookerySetup extends React.Component {
         let deck = this.state.deck;
         let rookeryCards = this.createLinearCards(deck.rookeryCards);
         let deckCards = this.createLinearCards(deck.plotCards).concat(this.createLinearCards(deck.drawCards));
-        let status = validateDeck(deck, { packs: this.props.packs, restrictedList: this.props.restrictedList });
+        let status = validateDeck(deck, { packs: this.props.packs, restrictedLists: this.props.restrictedList });
 
         return (
             <div className='rookery'>

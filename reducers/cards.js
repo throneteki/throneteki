@@ -28,7 +28,7 @@ function processDeck(deck, state) {
     if(!state.restrictedList) {
         formattedDeck.status = {};
     } else {
-        formattedDeck.status = validateDeck(formattedDeck, { packs: state.packs, restrictedList: state.restrictedList });
+        formattedDeck.status = validateDeck(formattedDeck, { packs: state.packs, restrictedLists: state.restrictedList });
     }
 
     return formattedDeck;

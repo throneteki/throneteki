@@ -88,7 +88,7 @@ class DeckEditor extends React.Component {
         if(!this.props.restrictedList) {
             deck.status = {};
         } else {
-            deck.status = validateDeck(deck, { packs: this.props.packs, restrictedList: this.props.restrictedList });
+            deck.status = validateDeck(deck, { packs: this.props.packs, restrictedLists: this.props.restrictedList });
         }
 
         return deck;

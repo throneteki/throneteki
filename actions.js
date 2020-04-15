@@ -1,4 +1,5 @@
 export * from './ReduxActions/cards';
+export * from './ReduxActions/events';
 export * from './ReduxActions/game';
 export * from './ReduxActions/lobby';
 export * from './ReduxActions/misc';

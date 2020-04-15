@@ -25,6 +25,8 @@ import MotdAdmin from './pages/MotdAdmin';
 import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
 import BanlistAdmin from './pages/BanlistAdmin';
+import EventsAdmin from './pages/EventsAdmin';
+import EditEvent from './pages/EventsAdmin/EditEvent';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },
@@ -49,7 +51,10 @@ const routes = [
     { path: '/privacy', action: () => <Privacy key='privacy' /> },
     { path: '/admin/motd', action: () => <MotdAdmin key='motdadmin' />, permission: 'canManageMotd' },
     { path: '/patreon', action: context => <Patreon code={ context.params.code } /> },
-    { path: '/banlist', action: () => <BanlistAdmin key='banlist' permission='canManageBanlist' /> }
+    { path: '/banlist', action: () => <BanlistAdmin key='banlist' permission='canManageBanlist' /> },
+    { path: '/events', action: () => <EventsAdmin key='events' /> },
+    { path: '/events/add', action: () => <EditEvent key='eventsadd' /> },
+    { path: '/events/:id', action: context => <EditEvent eventId={ context.params.id } key='eventsedit' /> }
 ];
 
 export default routes;

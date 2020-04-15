@@ -76,7 +76,6 @@
     "selenium-webdriver": "^4.0.0-alpha.1",
     "socket.io-client": "^2.1.0",
     "style-loader": "^0.21.0",
-    "throneteki-deck-helper": "^1.3.0",
     "url-loader": "^1.0.1",
     "webpack": "^4.38.0",
     "webpack-dev-server": "^3.7.2",
@@ -104,6 +103,7 @@
     "react-test-renderer": "^16.8.6",
     "redux-loop": "^4.5.2",
     "regenerator-runtime": "^0.13.3",
+    "throneteki-deck-helper": "^2.0.1",
     "webpack-cli": "^3.3.6",
     "webpack-dev-middleware": "^3.7.0"
   }

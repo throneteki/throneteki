@@ -22,6 +22,7 @@ class UserAdmin extends React.Component {
             canManageNodes: false,
             canModerateChat: false,
             canManageMotd: false,
+            canManageEvents: false,
             isAdmin: false,
             isContributor: false,
             isSupporter: false
@@ -43,6 +44,7 @@ class UserAdmin extends React.Component {
             { name: 'canModerateChat', label: 'Chat Moderator' },
             { name: 'canManageMotd', label: 'Motd Manager' },
             { name: 'canManageBanlist', label: 'Banlist Manager' },
+            { name: 'canManageEvents', label: 'Events Manager' },
             { name: 'isAdmin', label: 'Site Admin' },
             { name: 'isContributor', label: 'Contributor' },
             { name: 'isSupporter', label: 'Supporter' }
