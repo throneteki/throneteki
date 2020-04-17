@@ -1,16 +1,20 @@
+const GameActions = require('../GameActions');
+
 class StandCost {
     constructor() {
         this.name = 'stand';
     }
 
     isEligible(card) {
-        return card.location === 'play area' && card.kneeled;
+        return GameActions.standCard({ card }).allow();
     }
 
     pay(cards, context) {
-        for(let card of cards) {
-            context.player.standCard(card);
-        }
+        context.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map(card => GameActions.standCard({ card }))
+            )
+        );
     }
 }
 
