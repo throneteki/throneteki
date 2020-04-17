@@ -10,7 +10,7 @@ class BreakerOfChains extends DrawCard {
 
         this.reaction({
             when: {
-                onAttackersDeclared: event => event.challenge.isAttacking(this.parent)
+                onDeclaredAsAttacker: event => event.card === this.parent
             },
             target: {
                 cardCondition: card =>
