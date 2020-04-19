@@ -453,7 +453,7 @@ class Lobby {
         const restrictedListsResult = this.cardService.getRestrictedList();
         const eventResult = gameDetails.eventId === 'none' ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
 
-        Promise.all([eventResult, restrictedListsResult]).then(([event, restrictedLists]) => {
+        return Promise.all([eventResult, restrictedListsResult]).then(([event, restrictedLists]) => {
             const restrictedList = restrictedLists.find(restrictedList => restrictedList.name === event.name) || restrictedLists[0];
 
             let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
