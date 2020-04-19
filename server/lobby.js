@@ -12,6 +12,7 @@ const GameRouter = require('./gamerouter.js');
 const ServiceFactory = require('./services/ServiceFactory');
 const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
+const EventService = require('./services/EventService.js');
 const User = require('./models/User');
 const { sortBy } = require('./Array');
 
@@ -24,6 +25,7 @@ class Lobby {
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
+        this.eventService = options.eventService || new EventService(options.db);
         this.userService = options.userService || ServiceFactory.userService(options.db, this.configService);
         this.router = options.router || new GameRouter();
 
@@ -448,14 +450,21 @@ class Lobby {
             }
         }
 
-        let game = new PendingGame(socket.user, gameDetails);
-        game.newGame(socket.id, socket.user, gameDetails.password);
+        const restrictedListsResult = this.cardService.getRestrictedList();
+        const eventResult = gameDetails.eventId === 'none' ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
 
-        socket.joinChannel(game.id);
-        this.sendGameState(game);
+        Promise.all([eventResult, restrictedListsResult]).then(([event, restrictedLists]) => {
+            const restrictedList = restrictedLists.find(restrictedList => restrictedList.name === event.name) || restrictedLists[0];
 
-        this.games[game.id] = game;
-        this.broadcastGameMessage('newgame', game);
+            let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
+            game.newGame(socket.id, socket.user, gameDetails.password);
+
+            socket.joinChannel(game.id);
+            this.sendGameState(game);
+
+            this.games[game.id] = game;
+            this.broadcastGameMessage('newgame', game);
+        });
     }
 
     onJoinGame(socket, gameId, password) {
@@ -613,12 +622,12 @@ class Lobby {
             return Promise.reject('Game not found');
         }
 
-        return Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId), this.cardService.getRestrictedList()])
+        return Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId)])
             .then(results => {
-                let [cards, packs, deck, restrictedList] = results;
+                let [cards, packs, deck] = results;
                 let formattedDeck = formatDeckAsFullCards(deck, { cards: cards });
 
-                formattedDeck.status = validateDeck(formattedDeck, { packs: packs, restrictedLists: restrictedList, includeExtendedStatus: false });
+                formattedDeck.status = validateDeck(formattedDeck, { packs: packs, restrictedLists: [game.restrictedList], includeExtendedStatus: false });
 
                 game.selectDeck(socket.user.username, formattedDeck);
 
