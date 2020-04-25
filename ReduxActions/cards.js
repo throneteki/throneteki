@@ -52,3 +52,10 @@ export function loadStandaloneDecks() {
         skipAuth: true
     };
 }
+
+export function setCurrentRestrictedList(currentRestrictedList) {
+    return {
+        type: 'SET_CURRENT_RESTRICTED_LIST',
+        currentRestrictedList
+    };
+}

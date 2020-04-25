@@ -33,7 +33,7 @@ class EventsAdmin extends React.Component {
         return (
             <div className='col-xs-12'>
                 <Panel title='Events administration'>
-                    <a className='btn btn-primary' href='/events/add'>Add event</a>
+                    <a className='btn btn-primary' onClick={ () => navigate('/events/add') }>Add event</a>
                     <table className='table table-striped'>
                         <thead>
                             <tr>

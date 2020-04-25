@@ -36,6 +36,7 @@ class PendingGame extends React.Component {
     }
 
     componentDidMount() {
+        this.props.setCurrentRestrictedList(this.props.currentGame.restrictedList);
         this.props.loadDecks();
         this.props.loadStandaloneDecks();
     }
@@ -74,6 +75,10 @@ class PendingGame extends React.Component {
 
     componentDidUpdate() {
         $(this.refs.messagePanel).scrollTop(999999);
+    }
+
+    componentWillUnmount() {
+        this.props.setCurrentRestrictedList(null);
     }
 
     isGameReady() {
@@ -212,13 +217,16 @@ class PendingGame extends React.Component {
             return <div>You must be logged in to play, redirecting...</div>;
         }
 
+        const { currentGame } = this.props;
+        const title = currentGame.event.name ? `${currentGame.name} - ${currentGame.event.name}` : currentGame.name;
+
         return (
             <div>
                 <audio ref={ ref => this.notification = ref }>
                     <source src='/sound/charge.mp3' type='audio/mpeg' />
                     <source src='/sound/charge.ogg' type='audio/ogg' />
                 </audio>
-                <Panel title={ this.props.currentGame.name }>
+                <Panel title={ title }>
                     <div className='btn-group'>
                         <button className='btn btn-primary' disabled={ !this.isGameReady() || this.props.connecting || this.state.waiting } onClick={ this.onStartClick }>Start</button>
                         <button className='btn btn-primary' onClick={ this.onLeaveClick }>Leave</button>
@@ -273,6 +281,7 @@ PendingGame.propTypes = {
     loading: PropTypes.bool,
     navigate: PropTypes.func,
     sendSocketMessage: PropTypes.func,
+    setCurrentRestrictedList: PropTypes.func,
     socket: PropTypes.object,
     standaloneDecks: PropTypes.array,
     startGame: PropTypes.func,

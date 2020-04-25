@@ -16,6 +16,7 @@ class NewGame extends React.Component {
         this.onCancelClick = this.onCancelClick.bind(this);
         this.onSubmitClick = this.onSubmitClick.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
+        this.onEventChange = this.onEventChange.bind(this);
         this.onSpectatorsClick = this.onSpectatorsClick.bind(this);
         this.onShowHandClick = this.onShowHandClick.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
@@ -23,6 +24,7 @@ class NewGame extends React.Component {
         this.onGameTimeLimitChange = this.onGameTimeLimitChange.bind(this);
 
         this.state = {
+            eventId: 'none',
             spectators: true,
             showHand: false,
             selectedGameFormat: 'joust',
@@ -35,6 +37,7 @@ class NewGame extends React.Component {
     }
 
     componentWillMount() {
+        this.props.loadEvents();
         this.setState({ gameName: this.props.defaultGameName });
     }
 
@@ -50,6 +53,10 @@ class NewGame extends React.Component {
 
     onNameChange(event) {
         this.setState({ gameName: event.target.value });
+    }
+
+    onEventChange(event) {
+        this.setState({ eventId: event.target.value });
     }
 
     onPasswordChange(event) {
@@ -69,6 +76,7 @@ class NewGame extends React.Component {
 
         this.props.socket.emit('newgame', {
             name: this.state.gameName,
+            eventId: this.state.eventId,
             spectators: this.state.spectators,
             showHand: this.state.showHand,
             gameType: this.state.selectedGameType,
@@ -180,9 +188,33 @@ class NewGame extends React.Component {
             </div>);
     }
 
+    getEventSelection() {
+        const { events } = this.props;
+
+        if(events.length === 0) {
+            return null;
+        }
+
+        return (
+            <div className='row'>
+                <div className='col-sm-8'>
+                    <label htmlFor='gameName'>Event</label>
+                    <select className='form-control' value={ this.state.eventId } onChange={ this.onEventChange }>
+                        <option value='none'>None</option>
+                        { events.map(event => (<option value={ event._id }>{ event.name }</option>)) }
+                    </select>
+                </div>
+            </div>
+        );
+    }
+
     render() {
         let charsLeft = GameNameMaxLength - this.state.gameName.length;
         let content = [];
+
+        if(!this.props.events) {
+            return <div>Loading...</div>;
+        }
 
         if(this.props.quickJoin) {
             content =
@@ -200,6 +232,7 @@ class NewGame extends React.Component {
                         <input className='form-control' placeholder='Game Name' type='text' onChange={ this.onNameChange } value={ this.state.gameName } maxLength={ GameNameMaxLength } />
                     </div>
                 </div>
+                { this.getEventSelection() }
                 { this.getOptions() }
                 { this.getMeleeOptions() }
                 { this.getGameTypeOptions() }
@@ -236,6 +269,8 @@ NewGame.propTypes = {
     allowMelee: PropTypes.bool,
     cancelNewGame: PropTypes.func,
     defaultGameName: PropTypes.string,
+    events: PropTypes.array,
+    loadEvents: PropTypes.func,
     quickJoin: PropTypes.bool,
     socket: PropTypes.object
 };
@@ -243,6 +278,7 @@ NewGame.propTypes = {
 function mapStateToProps(state) {
     return {
         allowMelee: state.account.user ? state.account.user.permissions.allowMelee : false,
+        events: state.events.events,
         socket: state.lobby.socket
     };
 }

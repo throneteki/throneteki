@@ -24,11 +24,12 @@ function processDeck(deck, state) {
     }
 
     let formattedDeck = formatDeckAsFullCards(deck, state);
+    const restrictedLists = state.currentRestrictedList ? [state.currentRestrictedList] : state.restrictedList;
 
-    if(!state.restrictedList) {
+    if(!restrictedLists) {
         formattedDeck.status = {};
     } else {
-        formattedDeck.status = validateDeck(formattedDeck, { packs: state.packs, restrictedLists: state.restrictedList });
+        formattedDeck.status = validateDeck(formattedDeck, { packs: state.packs, restrictedLists });
     }
 
     return formattedDeck;
@@ -85,6 +86,15 @@ export default function(state = { decks: [] }, action) {
             });
 
             // In case the restricted list is received after the decks, updated the decks now
+            newState.decks = processDecks(newState.decks, newState);
+
+            return newState;
+        case 'SET_CURRENT_RESTRICTED_LIST':
+            newState = Object.assign({}, state, {
+                currentRestrictedList: action.currentRestrictedList
+            });
+
+            // Force an update to the validation results
             newState.decks = processDecks(newState.decks, newState);
 
             return newState;
