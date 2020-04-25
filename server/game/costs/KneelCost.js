@@ -1,16 +1,20 @@
+const GameActions = require('../GameActions');
+
 class KneelCost {
     constructor() {
         this.name = 'kneel';
     }
 
     isEligible(card) {
-        return ['faction', 'play area'].includes(card.location) && !card.kneeled;
+        return GameActions.kneelCard({ card }).allow();
     }
 
     pay(cards, context) {
-        for(let card of cards) {
-            context.player.kneelCard(card);
-        }
+        context.game.resolveGameAction(
+            GameActions.simultaneously(
+                cards.map(card => GameActions.kneelCard({ card }))
+            )
+        );
     }
 }
 
