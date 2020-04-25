@@ -6,6 +6,7 @@ const ChooseStealthTargets = require('./choosestealthtargets.js');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
 const KeywordWindow = require('../keywordwindow.js');
+const {Flags} = require('../../Constants');
 
 class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
@@ -55,7 +56,7 @@ class ChallengeFlow extends BaseStep {
             attacking: true,
             challengeType: this.challenge.challengeType,
             gameAction: 'declareAsAttacker',
-            mustBeDeclaredOption: 'mustBeDeclaredAsAttacker',
+            mustBeDeclaredOption: Flags.card.challenges.mustBeDeclaredAsAttacker,
             limitsProperty: 'attackerLimits',
             activePromptTitle: 'Select challenge attackers',
             waitingPromptTitle: 'Waiting for opponent to select attackers',
@@ -136,7 +137,7 @@ class ChallengeFlow extends BaseStep {
             attacking: false,
             challengeType: this.challenge.challengeType,
             gameAction: 'declareAsDefender',
-            mustBeDeclaredOption: 'mustBeDeclaredAsDefender',
+            mustBeDeclaredOption: Flags.card.challenges.mustBeDeclaredAsDefender,
             limitsProperty: 'defenderLimits',
             activePromptTitle: 'Select defenders',
             waitingPromptTitle: 'Waiting for opponent to defend',
@@ -203,7 +204,7 @@ class ChallengeFlow extends BaseStep {
 
     challengeBonusPower() {
         if(this.challenge.isUnopposed() && this.challenge.isAttackerTheWinner()) {
-            if(this.challenge.winner.cannotGainChallengeBonus) {
+            if(this.challenge.winner.hasFlag(Flags.player.cannotGainChallengeBonus)) {
                 this.game.addMessage('{0} won the challenge unopposed but cannot gain challenge bonuses', this.challenge.winner);
             } else if(!this.challenge.winner.canGainFactionPower()) {
                 this.game.addMessage('{0} won the challenge unopposed but cannot gain power for their faction', this.challenge.winner);

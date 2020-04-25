@@ -55,6 +55,10 @@ class EffectEngine {
                 effect.addTargets(dirtyCards);
                 effect.updateAppliedTargets();
             }
+
+            if(this.game.currentChallenge && dirtyCards.some(card => card.isParticipating())) {
+                this.game.currentChallenge.calculateStrength();
+            }
         });
     }
 

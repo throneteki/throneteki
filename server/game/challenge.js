@@ -2,6 +2,7 @@ const Player = require('./player.js');
 const EventRegistrar = require('./eventregistrar.js');
 const Settings = require('../settings.js');
 const ChallengeMatcher = require('./ChallengeMatcher');
+const {Flags} = require('./Constants');
 
 class Challenge {
     constructor(game, properties) {
@@ -147,7 +148,7 @@ class Challenge {
 
     calculateStrengthFor(cards) {
         return cards.reduce((sum, card) => {
-            if(card.challengeOptions.contains('doesNotContributeStrength')) {
+            if(card.hasFlag(Flags.card.challenges.doesNotContributeStrength)) {
                 return sum;
             }
 
@@ -211,7 +212,7 @@ class Challenge {
                 message: 'There is no winner or loser for this challenge because the attacker strength is 0'
             },
             {
-                condition: () => this.attackerStrength >= this.defenderStrength && this.attackingPlayer.cannotWinChallenge,
+                condition: () => this.attackerStrength >= this.defenderStrength && this.attackingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message: 'There is no winner or loser for this challenge because the attacker cannot win'
             },
             {
@@ -219,7 +220,7 @@ class Challenge {
                 message: 'There is no winner or loser for this challenge because the attacker has no participants'
             },
             {
-                condition: () => this.defenderStrength > this.attackerStrength && this.defendingPlayer.cannotWinChallenge,
+                condition: () => this.defenderStrength > this.attackerStrength && this.defendingPlayer.hasFlag(Flags.player.cannotWinChallenge),
                 message: 'There is no winner or loser for this challenge because the defender cannot win'
             },
             {

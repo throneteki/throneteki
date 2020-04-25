@@ -2,6 +2,7 @@ const BaseCard = require('./basecard.js');
 const CardMatcher = require('./CardMatcher.js');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
 const StandardPlayActions = require('./PlayActions/StandardActions');
+const {Flags} = require('./Constants');
 
 const Icons = ['military', 'intrigue', 'power'];
 
@@ -21,7 +22,6 @@ class DrawCard extends BaseCard {
         this.inChallenge = false;
         this.inDanger = false;
         this.saved = false;
-        this.challengeOptions = new ReferenceCountedSetProperty();
         this.stealthLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
@@ -36,9 +36,9 @@ class DrawCard extends BaseCard {
         clone.controllerStack = [...this.controllerStack];
         clone.dupes = this.dupes.map(dupe => dupe.createSnapshot());
         clone.factions = this.factions.clone();
+        clone.flags = this.flags.clone();
         clone.icons = this.icons.clone();
         clone.location = this.location;
-        clone.losesAspects = this.losesAspects.clone();
         clone.keywords = this.keywords.clone();
         clone.kneeled = this.kneeled;
         clone.parent = this.parent;
@@ -189,7 +189,7 @@ class DrawCard extends BaseCard {
                 applying: applying
             };
             this.game.raiseEvent('onCardStrengthChanged', params, () => {
-                if(this.isBurning && this.getStrength() <= 0) {
+                if(this.hasFlag(Flags.card.isBurning) && this.getStrength() <= 0) {
                     this.game.killCharacter(this, { allowSave: false, isBurn: true });
                 }
             });
@@ -296,7 +296,6 @@ class DrawCard extends BaseCard {
         }
 
         targetCard.stealth = true;
-        this.stealthTarget = targetCard;
 
         return true;
     }
@@ -378,26 +377,25 @@ class DrawCard extends BaseCard {
 
     resetForChallenge() {
         this.stealth = false;
-        this.stealthTarget = undefined;
         this.inChallenge = false;
     }
 
     kneelsAsAttacker(challengeType) {
         const keys = [
-            'doesNotKneelAsAttacker.any',
-            `doesNotKneelAsAttacker.${challengeType}`
+            Flags.card.challenges.doesNotKneelAsAttacker('any'),
+            Flags.card.challenges.doesNotKneelAsAttacker(challengeType)
         ];
 
-        return keys.every(key => !this.challengeOptions.contains(key));
+        return keys.every(key => !this.hasFlag(key));
     }
 
     kneelsAsDefender(challengeType) {
         const keys = [
-            'doesNotKneelAsDefender.any',
-            `doesNotKneelAsDefender.${challengeType}`
+            Flags.card.challenges.doesNotKneelAsDefender('any'),
+            Flags.card.challenges.doesNotKneelAsDefender(challengeType)
         ];
 
-        return keys.every(key => !this.challengeOptions.contains(key));
+        return keys.every(key => !this.hasFlag(key));
     }
 
     canDeclareAsParticipant({ attacking, challengeType }) {
@@ -405,14 +403,14 @@ class DrawCard extends BaseCard {
             attacking && !this.kneeled && !this.kneelsAsAttacker(challengeType) ||
             !attacking && !this.kneeled && !this.kneelsAsDefender(challengeType) ||
             !this.kneeled && this.allowGameAction('kneel') ||
-            this.kneeled && this.challengeOptions.contains('canBeDeclaredWhileKneeling');
+            this.kneeled && this.hasFlag(Flags.card.challenges.canBeDeclaredWhileKneeling);
 
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
             !this.stealth &&
             canKneelForChallenge &&
-            (this.hasIcon(challengeType) || this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
+            (this.hasIcon(challengeType) || this.hasFlag(Flags.card.challenges.canBeDeclaredWithoutIcon))
         );
     }
 

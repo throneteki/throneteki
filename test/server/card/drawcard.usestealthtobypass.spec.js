@@ -34,11 +34,6 @@ describe('the DrawCard', function() {
                 this.source.useStealthToBypass(this.target);
                 expect(this.target.stealth).toBe(true);
             });
-
-            it('should set the stealth target on the source card', function() {
-                this.source.useStealthToBypass(this.target);
-                expect(this.source.stealthTarget).toBe(this.target);
-            });
         });
 
         describe('when the target cannot be bypassed', function() {
@@ -56,11 +51,6 @@ describe('the DrawCard', function() {
             it('should not mark the target card as being bypassed', function() {
                 this.source.useStealthToBypass(this.target);
                 expect(this.target.stealth).toBeFalsy();
-            });
-
-            it('should not set the stealth target on the source card', function() {
-                this.source.useStealthToBypass(this.target);
-                expect(this.source.stealthTarget).toBeUndefined();
             });
         });
     });

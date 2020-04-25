@@ -2,6 +2,7 @@ const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const DiscardToReservePrompt = require('./taxation/DiscardToReservePrompt');
 const ActionWindow = require('./actionwindow.js');
+const {Flags} = require('../Constants');
 
 class TaxationPhase extends Phase {
     constructor(game) {
@@ -17,7 +18,7 @@ class TaxationPhase extends Phase {
 
     returnGold() {
         for(let player of this.game.getPlayersInFirstPlayerOrder()) {
-            if(!player.doesNotReturnUnspentGold) {
+            if(!player.hasFlag(Flags.player.doesNotReturnUnspentGold)) {
                 this.game.returnGoldToTreasury({ player: player, amount: player.gold });
             }
         }

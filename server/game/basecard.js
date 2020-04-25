@@ -12,7 +12,7 @@ const EventRegistrar = require('./eventregistrar');
 const GameActions = require('./GameActions');
 const KeywordsProperty = require('./PropertyTypes/KeywordsProperty');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
-const {Tokens} = require('./Constants');
+const {Flags, Tokens} = require('./Constants');
 
 const ValidKeywords = [
     'ambush',
@@ -55,7 +55,7 @@ class BaseCard {
         this.keywords = new KeywordsProperty();
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
-        this.losesAspects = new ReferenceCountedSetProperty();
+        this.flags = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
 
@@ -65,12 +65,6 @@ class BaseCard {
             gold: 0,
             initiative: 0,
             reserve: 0
-        };
-
-        this.canProvidePlotModifier = {
-            gold: true,
-            initiative: true,
-            reserve: true
         };
 
         this.abilityRestrictions = [];
@@ -127,7 +121,7 @@ class BaseCard {
         this.plotModifierValues = Object.assign(this.plotModifierValues, modifiers);
         if(modifiers.gold) {
             this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['gold'],
+                condition: () => !this.hasFlag(Flags.card.cannotProvidePlotModifier('gold')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyGold(modifiers.gold)
@@ -135,7 +129,7 @@ class BaseCard {
         }
         if(modifiers.initiative) {
             this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['initiative'],
+                condition: () => !this.hasFlag(Flags.card.cannotProvidePlotModifier('initiative')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyInitiative(modifiers.initiative)
@@ -143,7 +137,7 @@ class BaseCard {
         }
         if(modifiers.reserve) {
             this.persistentEffect({
-                condition: () => this.canProvidePlotModifier['reserve'],
+                condition: () => !this.hasFlag(Flags.card.cannotProvidePlotModifier('reserve')),
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
@@ -291,7 +285,6 @@ class BaseCard {
         clone.controllerStack = [...this.controllerStack];
         clone.factions = this.factions.clone();
         clone.location = this.location;
-        clone.losesAspects = this.losesAspects.clone();
         clone.keywords = this.keywords.clone();
         clone.parent = this.parent;
         clone.power = this.power;
@@ -342,18 +335,22 @@ class BaseCard {
         this.controllerStack = this.controllerStack.filter(control => control.source !== source);
     }
 
-    loseAspect(aspect) {
-        this.losesAspects.add(aspect);
+    addFlag(flag) {
+        this.flags.add(flag);
         this.markAsDirty();
     }
 
-    restoreAspect(aspect) {
-        this.losesAspects.remove(aspect);
+    removeFlag(flag) {
+        this.flags.remove(flag);
         this.markAsDirty();
+    }
+
+    hasFlag(flag) {
+        return this.flags.contains(flag);
     }
 
     hasKeyword(keyword) {
-        if(this.losesAspects.contains('keywords')) {
+        if(this.hasFlag(Flags.card.loseAspect.keywords)) {
             return false;
         }
 
@@ -377,7 +374,7 @@ class BaseCard {
     }
 
     hasTrait(trait) {
-        if(this.losesAspects.contains('traits')) {
+        if(this.hasFlag(Flags.card.loseAspect.traits)) {
             return false;
         }
 
@@ -387,15 +384,15 @@ class BaseCard {
     isFaction(faction) {
         let normalizedFaction = faction.toLowerCase();
 
-        if(this.losesAspects.contains('factions')) {
+        if(this.hasFlag(Flags.card.loseAspect.factions)) {
             return normalizedFaction === 'neutral';
         }
 
         if(normalizedFaction === 'neutral') {
-            return ValidFactions.every(f => !this.factions.contains(f) || this.losesAspects.contains(`factions.${f}`));
+            return ValidFactions.every(f => !this.factions.contains(f) || this.hasFlag(Flags.card.loseAspect.faction(f)));
         }
 
-        return this.factions.contains(normalizedFaction) && !this.losesAspects.contains(`factions.${normalizedFaction}`);
+        return this.factions.contains(normalizedFaction) && !this.hasFlag(Flags.card.loseAspect.faction(normalizedFaction));
     }
 
     isOutOfFaction() {
@@ -621,7 +618,7 @@ class BaseCard {
     }
 
     getTraits() {
-        if(this.losesAspects.contains('traits')) {
+        if(this.hasFlag(Flags.card.loseAspect.traits)) {
             return [];
         }
 
