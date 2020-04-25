@@ -100,8 +100,7 @@ class ChallengeFlow extends BaseStep {
         this.challenge.initiateChallenge();
 
         let events = [
-            { name: 'onChallengeInitiated', params: { challenge: this.challenge } },
-            { name: 'onAttackersDeclared', params: { challenge: this.challenge } }
+            { name: 'onChallengeInitiated', params: { challenge: this.challenge } }
         ];
 
         let attackerEvents = this.declaredAttackers.map(card => {
@@ -164,10 +163,6 @@ class ChallengeFlow extends BaseStep {
             }
         }
 
-        let events = [
-            { name: 'onDefendersDeclared', params: { challenge: this.challenge } }
-        ];
-
         let defenderEvents = defenders.map(card => {
             return { name: 'onDeclaredAsDefender', params: { card: card } };
         });
@@ -176,7 +171,7 @@ class ChallengeFlow extends BaseStep {
             return { name: 'onCardKneeled', params: { player: this.challenge.defendingPlayer, card: card } };
         });
 
-        this.game.raiseAtomicEvent(events.concat(defenderEvents).concat(kneelEvents));
+        this.game.raiseAtomicEvent(defenderEvents.concat(kneelEvents));
 
         defendersToKneel = undefined;
 
