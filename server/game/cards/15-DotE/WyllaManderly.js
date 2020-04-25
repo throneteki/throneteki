@@ -4,8 +4,8 @@ class WyllaManderly extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCharacterKilled: event => event.card.controller === this.controller,
-                onSacrificed: event => event.card.controller === this.controller && event.card.getType() === 'character'
+                onCharacterKilled: event => event.cardStateWhenKilled.controller === this.controller,
+                onSacrificed: event => event.cardStateWhenSacrificed.controller === this.controller && event.cardStateWhenSacrificed.getType() === 'character'
             },
             target: {
                 cardCondition: (card, context) => card.location === 'discard pile' && card.controller === this.controller && card !== context.event.card
