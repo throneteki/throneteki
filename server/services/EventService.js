@@ -17,6 +17,10 @@ class EventService {
             });
     }
 
+    async getEventById(id) {
+        return this.events.findOne({ _id: id });
+    }
+
     async create(entry) {
         return this.events.insert(entry)
             .then(() => {

@@ -12,6 +12,8 @@ class PendingGame {
         this.spectators = {};
         this.id = uuid.v1();
         this.name = details.name;
+        this.event = details.event || { _id: 'none' };
+        this.restrictedList = details.restrictedList;
         this.allowSpectators = details.spectators;
         this.showHand = details.showHand;
         this.gameType = details.gameType;
@@ -303,6 +305,7 @@ class PendingGame {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             gameType: this.gameType,
+            event: this.event,
             id: this.id,
             messages: activePlayer ? this.gameChat.messages : undefined,
             name: this.name,
@@ -310,6 +313,7 @@ class PendingGame {
             node: this.node ? this.node.identity : undefined,
             owner: this.owner.username,
             players: playerSummaries,
+            restrictedList: this.restrictedList,
             showHand: this.showHand,
             started: this.started,
             spectators: _.map(this.spectators, spectator => {
@@ -350,12 +354,14 @@ class PendingGame {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            event: this.event,
             gameType: this.gameType,
             id: this.id,
             isMelee: this.isMelee,
             name: this.name,
             owner: this.owner.getDetails(),
             players,
+            restrictedList: this.restrictedList,
             showHand: this.showHand,
             spectators,
             useRookery: this.useRookery,
