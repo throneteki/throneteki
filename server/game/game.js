@@ -37,6 +37,7 @@ const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 const GameActions = require('./GameActions');
 const TimeLimit = require('./timeLimit.js');
 const PrizedKeywordListener = require('./PrizedKeywordListener');
+const GameWonPrompt = require('./gamesteps/GameWonPrompt');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -525,6 +526,7 @@ class Game extends EventEmitter {
         this.winReason = 'draw';
 
         this.router.gameWon(this, this.winReason, this.winner);
+        this.queueStep(new GameWonPrompt(this, null));
     }
 
     recordWinner(winner, reason) {
@@ -539,6 +541,7 @@ class Game extends EventEmitter {
         this.winReason = reason;
 
         this.router.gameWon(this, reason, winner);
+        this.queueStep(new GameWonPrompt(this, winner));
     }
 
     changeStat(playerName, stat, value) {
