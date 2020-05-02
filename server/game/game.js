@@ -526,6 +526,7 @@ class Game extends EventEmitter {
         this.winReason = 'draw';
 
         this.router.gameWon(this, this.winReason, this.winner);
+        this.queueStep(new GameWonPrompt(this, null));
     }
 
     recordWinner(winner, reason) {
