@@ -9,7 +9,7 @@ class Halder extends DrawCard {
                 (card.getType() === 'attachment' || card.getType() === 'location')
             )),
             target: {
-                cardCondition: card => card.isFaction('thenightswatch') && card.getType() === 'character'
+                cardCondition: card => card.isFaction('thenightswatch') && card.getType() === 'character' && card.location === 'play area'
             },
             handler: (context) => {
                 this.game.addMessage('{0} uses {1} and kneels {2} to give {3} +1 STR until the end of the phase', this.controller, this, context.costs.kneel, context.target);
