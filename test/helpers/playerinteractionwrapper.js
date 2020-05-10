@@ -156,6 +156,15 @@ class PlayerInteractionWrapper {
         this.checkUnserializableGameState();
     }
 
+    hasEnabledMenu(card, menuText) {
+        if(typeof (card) === 'string') {
+            card = this.findCardByName(card);
+        }
+
+        const items = card.getMenu(this.player).filter(item => item.text === menuText);
+        return items.some(item => !item.disabled);
+    }
+
     triggerAbility(cardOrCardName) {
         if(!this.game.hasOpenInterruptOrReactionWindow()) {
             throw new Error(`Couldn't trigger ability for ${this.name}. Not in an ability window. Current prompt is:\n${this.formatPrompt()}`);

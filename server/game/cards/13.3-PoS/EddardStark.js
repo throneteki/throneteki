@@ -1,11 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const Conditions = require('../../Conditions');
 
 class EddardStark extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Kill a character',
             phase: 'dominance',
-            condition: context => this.allCharactersHaveStarkAffiliation(context.player),
+            condition: context => Conditions.allCharactersAreStark({ player: context.player }),
             cost: ability.costs.kneelSelf(),
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getPrintedCost() <= 4,
@@ -17,12 +18,6 @@ class EddardStark extends DrawCard {
             },
             limit: ability.limit.perPhase(1)
         });
-    }
-
-    allCharactersHaveStarkAffiliation(player) {
-        let characters = player.filterCardsInPlay(card => card.getType() === 'character');
-
-        return characters.length > 0 && characters.every(card => card.isFaction('stark'));
     }
 }
 

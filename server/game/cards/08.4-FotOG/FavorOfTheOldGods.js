@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const Conditions = require('../../Conditions');
+const GameActions = require('../../GameActions');
 
 class FavorOfTheOldGods extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,12 +10,15 @@ class FavorOfTheOldGods extends DrawCard {
 
         this.action({
             title: 'Stand attached character',
-            condition: () => this.parent.kneeled && !this.controller.anyCardsInPlay(card => !card.isFaction('stark')),
+            condition: context => Conditions.allCardsAreStark({ player: context.player }),
             cost: ability.costs.kneelSelf(),
-            handler: context => {
-                this.parent.controller.standCard(this.parent);
-                this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, this.parent);
-            }
+            message: {
+                format: '{player} kneels {source} to stand {parent}',
+                args: { parent: context => context.source.parent }
+            },
+            gameAction: GameActions.standCard(context => ({
+                card: context.source.parent
+            }))
         });
     }
 }
