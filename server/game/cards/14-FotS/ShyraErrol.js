@@ -19,7 +19,8 @@ class ShyraErrol extends DrawCard {
                 this.game.resolveGameAction(
                     GameActions.movePower(context => ({
                         from: context.event.card,
-                        to: context.event.card.controller.faction
+                        to: context.event.card.controller.faction,
+                        amount: context.event.card.power
                     })),
                     context
                 );
