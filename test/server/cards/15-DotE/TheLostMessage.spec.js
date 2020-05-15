@@ -57,11 +57,14 @@ describe('The Lost Message', function() {
                     }
                 });
 
-                it('shuffles cards into the deck but does not add to hand', function() {
+                it('shuffles cards into the deck then adds equal amounts back to hand', function() {
+                    const player2Hand = [...this.player2Object.hand];
+
                     this.player1.clickMenu(this.plot, 'Shuffle cards into deck');
 
                     expect(this.player1Object.hand).toEqual([]);
-                    expect(this.player2Object.hand).toEqual([]);
+                    expect(this.player2Object.hand.length).toEqual(player2Hand.length);
+                    expect(this.player2Object.hand).not.toEqual(player2Hand);
                 });
             });
         });
