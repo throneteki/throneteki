@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const Conditions = require('../../Conditions');
+const GameActions = require('../../GameActions');
 const TextHelper = require('../../TextHelper');
 
 class OldGate extends DrawCard {
@@ -6,22 +8,20 @@ class OldGate extends DrawCard {
         this.plotModifiers({
             gold: 1
         });
+
         this.action({
             title: 'Sacrifice to draw 2 cards',
-            condition: context => this.allCharactersHaveStarkAffiliation(context.player),
+            condition: context => Conditions.allCharactersAreStark({ player: context.player }),
             phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
-            handler: () => {
-                let cards = this.controller.drawCardsToHand(2).length;
+            gameAction: GameActions.drawCards(context => ({
+                player: context.player,
+                amount: 2
+            })).thenExecute(event => {
                 this.game.addMessage('{0} sacrifices {1} to draw {2}',
-                    this.controller, this, TextHelper.count(cards, 'card'));
-            }
+                    event.player, this, TextHelper.count(event.cards.length, 'card'));
+            })
         });
-    }
-
-    allCharactersHaveStarkAffiliation(player) {
-        return (player.getNumberOfCardsInPlay(card => card.getType() === 'character')
-            === player.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.isFaction('stark')));
     }
 }
 
