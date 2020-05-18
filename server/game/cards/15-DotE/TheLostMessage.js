@@ -9,9 +9,9 @@ class TheLostMessage extends PlotCard {
         this.action({
             title: 'Shuffle cards into deck',
             message: '{player} uses {source} to have each player shuffle their hand into their deck',
-            gameAction: GameActions.simultaneously(() => this.game.getPlayers().map(
-                player => GameActions.shuffleIntoDeck({ cards: player.hand })
-            )).then({
+            gameAction: GameActions.shuffleIntoDeck(() => ({
+                cards: flatten(this.game.getPlayers().map(player => player.hand))
+            })).then({
                 message: {
                     format: 'Then {fragments} for {source}',
                     args: { fragments: context => this.getMessageFragments(context) }
