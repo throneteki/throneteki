@@ -88,6 +88,7 @@ class Game extends EventEmitter {
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
+        this.isChatForSpectatorsEnabled = details.isChatForSpectatorsEnabled;
 
         for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -609,6 +610,14 @@ class Game extends EventEmitter {
 
                 return;
             }
+        }
+
+        //check if spectators may write messages in the chat
+        //chat input is disabled on the client side, so just in case
+        //somebody messes with the client, the message of a spectator 
+        //will not be written in any case
+        if(player.isSpectator() && !this.isChatForSpectatorsEnabled) {
+            return;
         }
 
         this.gameChat.addChatMessage('{0} {1}', player, message);
@@ -1274,7 +1283,8 @@ class Game extends EventEmitter {
                 useGameTimeLimit: this.useGameTimeLimit,
                 gameTimeLimitStarted: this.timeLimit.timeLimitStarted,
                 gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt,
-                gameTimeLimitTime: this.timeLimit.timeLimitInMinutes
+                gameTimeLimitTime: this.timeLimit.timeLimitInMinutes,
+                isChatForSpectatorsEnabled: this.isChatForSpectatorsEnabled
             };
         }
 
@@ -1330,7 +1340,8 @@ class Game extends EventEmitter {
                     lobbyId: spectator.lobbyId,
                     name: spectator.name
                 };
-            })
+            }),
+            isChatForSpectatorsEnabled: this.isChatForSpectatorsEnabled
         };
     }
 
