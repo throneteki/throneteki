@@ -88,7 +88,7 @@ class Game extends EventEmitter {
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
-        this.isChatForSpectatorsEnabled = details.isChatForSpectatorsEnabled;
+        this.isChatForSpectatorsEnabled = details.isChatForSpectatorsEnabled === undefined ? true : details.isChatForSpectatorsEnabled;
 
         for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
