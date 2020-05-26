@@ -53,6 +53,8 @@ export class PlayerStats extends React.Component {
                 <b>{ this.props.user ? this.props.user.username : 'Noone' }</b>
             </div>);
 
+        let muteClass = this.props.muteSpectators ? 'glyphicon-eye-close' : 'glyphicon-eye-open';
+
         return (
             <div className='panel player-stats'>
                 { playerAvatar }
@@ -69,11 +71,18 @@ export class PlayerStats extends React.Component {
                 </div> : null }
 
                 { this.props.showMessages &&
-                    <div className='chat-status' onClick={ this.props.onMessagesClick }>
-                        <button className='btn btn-transparent'>
-                            <span className='glyphicon glyphicon-envelope' />
-                            <span className='chat-badge badge progress-bar-danger'>{ this.props.numMessages || null }</span>
-                        </button>
+                    <div className='state chat-status'>
+                        <div className='state' onClick={ this.props.onMuteClick }>
+                            <button className='btn btn-transparent'>
+                                <span className={ `glyphicon ${muteClass}` } />
+                            </button>
+                        </div>
+                        <div className='state' onClick={ this.props.onMessagesClick }>
+                            <button className='btn btn-transparent'>
+                                <span className='glyphicon glyphicon-envelope' />
+                                <span className='chat-badge badge progress-bar-danger'>{ this.props.numMessages || null }</span>
+                            </button>
+                        </div>
                     </div>
                 }
             </div>
@@ -84,8 +93,10 @@ export class PlayerStats extends React.Component {
 PlayerStats.displayName = 'PlayerStats';
 PlayerStats.propTypes = {
     firstPlayer: PropTypes.bool,
+    muteSpectators: PropTypes.bool,
     numMessages: PropTypes.number,
     onMessagesClick: PropTypes.func,
+    onMuteClick: PropTypes.func,
     onSettingsClick: PropTypes.func,
     playerName: PropTypes.string,
     sendGameMessage: PropTypes.func,

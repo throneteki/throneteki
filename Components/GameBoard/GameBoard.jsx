@@ -60,6 +60,7 @@ export class GameBoard extends React.Component {
         this.sendChatMessage = this.sendChatMessage.bind(this);
         this.onSettingsClick = this.onSettingsClick.bind(this);
         this.onMessagesClick = this.onMessagesClick.bind(this);
+        this.onMuteClick = this.onMuteClick.bind(this);
 
         this.state = {
             cardToZoom: undefined,
@@ -284,6 +285,10 @@ export class GameBoard extends React.Component {
         this.props.sendGameMessage('toggleKeywordSetting', option, value);
     }
 
+    onMuteClick() {
+        this.props.sendGameMessage('toggleMuteSpectators');
+    }
+
     onSettingsClick() {
         $('#settings-modal').modal('show');
     }
@@ -485,7 +490,8 @@ export class GameBoard extends React.Component {
                                 messages={ this.props.currentGame.messages }
                                 onCardMouseOut={ this.onMouseOut }
                                 onCardMouseOver={ this.onMouseOver }
-                                onSendChat={ this.sendChatMessage } />
+                                onSendChat={ this.sendChatMessage }
+                                muted={ this.state.spectating && this.props.currentGame.muteSpectators } />
                         </div>
                     </div>
                     }
@@ -493,7 +499,8 @@ export class GameBoard extends React.Component {
                 <div className='player-stats-row'>
                     <PlayerStats { ...boundActionCreators } stats={ thisPlayer.stats } showControls={ !this.state.spectating } user={ thisPlayer.user }
                         firstPlayer={ thisPlayer.firstPlayer } onSettingsClick={ this.onSettingsClick } showMessages
-                        onMessagesClick={ this.onMessagesClick } numMessages={ this.state.newMessages } />
+                        onMessagesClick={ this.onMessagesClick } numMessages={ this.state.newMessages } muteSpectators={ this.props.currentGame.muteSpectators } 
+                        onMuteClick={ this.onMuteClick }/>
                 </div>
             </div >);
     }
