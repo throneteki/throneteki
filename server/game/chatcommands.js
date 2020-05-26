@@ -38,7 +38,8 @@ class ChatCommands {
             '/strength': this.strength,
             '/take-icon': this.removeIcon,
             '/token': this.setToken,
-            '/unblank': this.unblank
+            '/unblank': this.unblank,
+            '/mute-spectators': this.muteSpectators
         };
     }
 
@@ -499,6 +500,17 @@ class ChatCommands {
         }
 
         this.game.queueStep(new RematchPrompt(this.game, player));
+    }
+
+    muteSpectators(player) {
+        this.game.muteSpectators = !this.game.muteSpectators;
+
+        this.game.addAlert(
+            'warning',
+            '{0} {1}mutes spectators',
+            player,
+            this.game.muteSpectators ? '' : 'un'
+        );
     }
 }
 

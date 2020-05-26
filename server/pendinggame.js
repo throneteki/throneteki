@@ -23,6 +23,7 @@ class PendingGame {
         this.gameChat = new GameChat();
         this.useGameTimeLimit = details.useGameTimeLimit;
         this.gameTimeLimit = details.gameTimeLimit;
+        this.muteSpectators = details.muteSpectators;
     }
 
     // Getters
@@ -325,7 +326,8 @@ class PendingGame {
             }),
             useRookery: this.useRookery,
             useGameTimeLimit: this.useGameTimeLimit,
-            gameTimeLimit: this.gameTimeLimit
+            gameTimeLimit: this.gameTimeLimit,
+            muteSpectators: this.muteSpectators
         };
     }
 
@@ -366,7 +368,8 @@ class PendingGame {
             spectators,
             useRookery: this.useRookery,
             useGameTimeLimit: this.useGameTimeLimit,
-            gameTimeLimit: this.gameTimeLimit
+            gameTimeLimit: this.gameTimeLimit,
+            muteSpectators: this.muteSpectators
         };
     }
 }
