@@ -88,6 +88,7 @@ class Game extends EventEmitter {
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
+        this.muteSpectators = details.muteSpectators;
 
         for(let player of Object.values(details.players || {})) {
             this.playersAndSpectators[player.user.username] = new Player(player.id, player.user, this.owner === player.user.username, this);
@@ -611,7 +612,9 @@ class Game extends EventEmitter {
             }
         }
 
-        this.gameChat.addChatMessage('{0} {1}', player, message);
+        if(!player.isSpectator() || !this.muteSpectators) {
+            this.gameChat.addChatMessage('{0} {1}', player, message);
+        }
     }
 
     concede(playerName) {
@@ -1274,7 +1277,8 @@ class Game extends EventEmitter {
                 useGameTimeLimit: this.useGameTimeLimit,
                 gameTimeLimitStarted: this.timeLimit.timeLimitStarted,
                 gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt,
-                gameTimeLimitTime: this.timeLimit.timeLimitInMinutes
+                gameTimeLimitTime: this.timeLimit.timeLimitInMinutes,
+                muteSpectators: this.muteSpectators
             };
         }
 
@@ -1330,7 +1334,8 @@ class Game extends EventEmitter {
                     lobbyId: spectator.lobbyId,
                     name: spectator.name
                 };
-            })
+            }),
+            muteSpectators: this.muteSpectators
         };
     }
 
@@ -1386,6 +1391,15 @@ class Game extends EventEmitter {
         //this should not be reached as it means after filtering the players with every rule there are still multiple players left
         this.addAlert('After checking for every tie breaker rule to determine the winner of the game, no winner could be determined. This should not have happened. Please report this to the developers as it is likely a bug.');
         this.recordDraw('No one');
+    }
+
+    toggleMuteSpectators(playerName) {
+        let player = this.getPlayerByName(playerName);
+        if(!player) {
+            return;
+        }
+
+        this.chatCommands.muteSpectators(player);
     }
 }
 
