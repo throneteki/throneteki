@@ -218,7 +218,7 @@ class PendingGame extends React.Component {
         }
 
         const { currentGame } = this.props;
-        const title = currentGame.event.name ? `${currentGame.name} - ${currentGame.event.name}` : currentGame.name;
+        const title = currentGame.event.name ? `${currentGame.event.name} - ${currentGame.name}` : currentGame.name;
 
         return (
             <div>

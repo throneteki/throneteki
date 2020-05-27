@@ -47,7 +47,7 @@ function Game(props) {
 
     let formattedTime = moment.utc(timeDifference).format('HH:mm');
 
-    const title = game.event.name ? `${game.name} - ${game.event.name}` : game.name;
+    const title = game.event.name ? `${game.event.name} - ${game.name}` : game.name;
 
     return (<div key={ game.id }>
         <hr />
