@@ -11,15 +11,16 @@ class DoubtingSepta extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             target: {
-                cardCondition: card => card.location === 'play area' &&
-                    card.controller === this.controller && 
+                cardCondition: (card, context) => card.location === 'play area' &&
+                    card.controller === context.player &&
                     (card.getType() === 'character' || card.getType() === 'location') &&
                     card.canGainPower()
             },
+            message: '{player} sacrifices {source} to have {target} gain 1 power',
             handler: context => {
-                this.game.addMessage('{0} uses {1} to have {2} gain 1 power', this.controller, this, context.target);
                 this.game.resolveGameAction(
-                    GameActions.gainPower({ card: context.target, amount: 1 })
+                    GameActions.gainPower({ card: context.target, amount: 1 }),
+                    context
                 );
             }
         });
