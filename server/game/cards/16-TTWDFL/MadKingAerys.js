@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard');
 class MadKingAerys extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.opponentControlsKingslayer(),
+            condition: () => !this.opponentControlsKingslayer(),
             match: this,
             effect: ability.effects.cannotBeKilled()
         });
