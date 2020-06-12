@@ -11,7 +11,7 @@ class CardMatcher {
             Matcher.anyValue(properties.trait, trait => card.hasTrait(trait)) &&
             Matcher.containsValue(properties.unique, card.isUnique()) &&
             Matcher.containsValue(properties.loyal, card.isLoyal()) &&
-            Matcher.containsValue(properties.limited, card.isLimited()) &&
+            Matcher.containsValue(properties.limited, card.isLimited && card.isLimited()) &&
             Matcher.anyValue(properties.printedCostOrLower, amount => card.hasPrintedCost() && card.getPrintedCost() <= amount) &&
             Matcher.anyValue(properties.printedCostOrHigher, amount => card.hasPrintedCost() && card.getPrintedCost() >= amount) &&
             Matcher.anyValue(properties.printedStrengthOrLower, amount => card.hasPrintedStrength() && card.getPrintedStrength() <= amount) &&
