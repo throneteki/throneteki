@@ -9,7 +9,7 @@ class ReturnToTheFields extends PlotCard {
                 type: 'select',
                 mode: 'upTo',
                 numCards: 3,
-                cardCondition: card => card.getType() === 'character' && card.location === 'play area' && card.controller === this.controller,
+                cardCondition: (card, context) => card.getType() === 'character' && card.location === 'play area' && card.controller === context.player,
                 gameAction: 'sacrifice'
             },
             handler: (context) => {

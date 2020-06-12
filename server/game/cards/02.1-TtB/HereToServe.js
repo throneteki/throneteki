@@ -3,10 +3,10 @@ const PlotCard = require('../../plotcard.js');
 class HereToServe extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
+            handler: context => {
+                this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
-                    cardCondition: card => card.hasTrait('Maester') && card.getPrintedCost() <= 3 && this.controller.canPutIntoPlay(card),
+                    cardCondition: card => card.hasTrait('Maester') && card.getPrintedCost() <= 3 && context.player.canPutIntoPlay(card),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),
                     source: this

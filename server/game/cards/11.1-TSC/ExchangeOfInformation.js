@@ -6,10 +6,11 @@ class ExchangeOfInformation extends PlotCard {
             chooseOpponent: true,
             handler: context => {
                 this.remainingCardTypes = ['character', 'location', 'attachment', 'event'];
-                this.potentialCards = this.controller.searchDrawDeck(10);
+                this.potentialCards = context.player.searchDrawDeck(10);
                 this.selectedCards = [];
                 this.selectingOpponent = context.opponent;
-                this.game.addMessage('{0} uses {1} to choose {2} and reveals {3}', this.controller, this, context.opponent, this.potentialCards);
+                this.initiatingPlayer = context.player;
+                this.game.addMessage('{0} uses {1} to choose {2} and reveals {3}', context.player, this, context.opponent, this.potentialCards);
 
                 let revealFunc = card => this.potentialCards.includes(card);
                 this.game.cardVisibility.addRule(revealFunc);
@@ -42,7 +43,7 @@ class ExchangeOfInformation extends PlotCard {
         let text = ['attachment', 'event'].includes(cardType) ? `an ${cardType}` : `a ${cardType}`;
 
         this.game.promptForSelect(this.selectingOpponent, {
-            activePromptTitle: `Select ${text} for ${this.controller.name}`,
+            activePromptTitle: `Select ${text} for ${this.initiatingPlayer.name}`,
             cardCondition: card => this.potentialCards.includes(card) && card.getType() === cardType,
             onSelect: (player, card) => this.selectCard(player, card),
             onCancel: (player) => this.skipCard(player, cardType),
@@ -65,10 +66,10 @@ class ExchangeOfInformation extends PlotCard {
 
     completeSelection() {
         for(let card of this.selectedCards) {
-            this.controller.moveCard(card, 'hand');
+            this.initiatingPlayer.moveCard(card, 'hand');
         }
-        this.controller.shuffleDrawDeck();
-        this.game.addMessage('{0} adds {1} chosen by {2} to their hand and shuffles their deck', this.controller, this.selectedCards, this.selectingOpponent);
+        this.initiatingPlayer.shuffleDrawDeck();
+        this.game.addMessage('{0} adds {1} chosen by {2} to their hand and shuffles their deck', this.initiatingPlayer, this.selectedCards, this.selectingOpponent);
     }
 }
 

@@ -3,8 +3,8 @@ const PlotCard = require('../../plotcard.js');
 class Summons extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
+            handler: context => {
+                this.game.promptForDeckSearch(context.player, {
                     numCards: 10,
                     activePromptTitle: 'Select a card',
                     cardType: 'character',

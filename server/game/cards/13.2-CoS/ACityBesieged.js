@@ -3,13 +3,13 @@ const PlotCard = require('../../plotcard.js');
 class ACityBesieged extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
+            handler: context => {
                 let numTargets = this.hasUsedCityPlot() ? 2 : 1;
 
-                this.game.promptForSelect(this.controller, {
+                this.game.promptForSelect(context.player, {
                     mode: 'upTo',
                     numCards: numTargets,
-                    activePromptTitle: this.hasUsedCityPlot() ? 'Select up to 2 locations' : 'Select a location',
+                    activePromptTitle: this.hasUsedCityPlot(context.player) ? 'Select up to 2 locations' : 'Select a location',
                     source: this,
                     gameAction: 'kneel',
                     cardCondition: card => card.location === 'play area' &&
@@ -23,16 +23,16 @@ class ACityBesieged extends PlotCard {
 
     targetsSelected(player, cards) {
         for(let card of cards) {
-            this.controller.kneelCard(card);
+            player.kneelCard(card);
         }
 
         this.game.addMessage('{0} uses {1} to kneel {2}', player, this, cards);
         return true;
     }
 
-    hasUsedCityPlot() {
+    hasUsedCityPlot(player) {
         return this.game.allCards.some(card => (
-            card.controller === this.controller &&
+            card.controller === player &&
             card.location === 'revealed plots' &&
             card.hasTrait('City')
         ));

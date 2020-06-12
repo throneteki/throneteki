@@ -10,8 +10,8 @@ class CallingTheBanners extends PlotCard {
                     return;
                 }
 
-                let gold = this.game.addGold(this.controller, characterCount);
-                this.game.addMessage('{0} uses {1} to gain {2} gold', this.controller, this, gold);
+                let gold = this.game.addGold(context.player, characterCount);
+                this.game.addMessage('{0} uses {1} to gain {2} gold', context.player, this, gold);
             }
         });
     }

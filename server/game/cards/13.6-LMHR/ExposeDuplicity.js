@@ -4,6 +4,7 @@ const GameActions = require('../../GameActions');
 class ExposeDuplicity extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            message: '{player} uses {source} to discard each card in shadows',
             handler: () => {
                 let cardsInShadows = this.game.allCards.filter(card => card.location === 'shadows');
 
@@ -14,9 +15,6 @@ class ExposeDuplicity extends PlotCard {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(actions)
                 );
-
-                this.game.addMessage('{0} uses {1} to discard each card in shadows',
-                    this.controller, this);
             }
         });
     }

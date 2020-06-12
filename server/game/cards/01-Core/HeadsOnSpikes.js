@@ -20,13 +20,13 @@ class HeadsOnSpikes extends PlotCard {
                             otherPlayer.moveCard(card, 'dead pile');
                         }
 
-                        if(this.controller.canGainFactionPower()) {
+                        if(context.player.canGainFactionPower()) {
                             powerMessage = ' and gain 2 power for their faction';
-                            this.game.addPower(this.controller, 2);
+                            this.game.addPower(context.player, 2);
                         }
                     }
 
-                    this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}', this.controller, this, card, otherPlayer, powerMessage);
+                    this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}', context.player, this, card, otherPlayer, powerMessage);
                 });
             }
         });
