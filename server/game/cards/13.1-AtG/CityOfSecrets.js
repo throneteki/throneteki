@@ -1,45 +1,43 @@
 const PlotCard = require('../../plotcard');
+const GameActions = require('../../GameActions');
+const Message = require('../../Message');
 
 class CityOfSecrets extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to have each player draw 2 cards', context.player, this);
-                let players = this.game.getPlayersInFirstPlayerOrder();
-                for(let player of players) {
-                    player.drawCardsToHand(2);
+            message: '{player} uses {source} to have each player draw 2 cards',
+            gameAction: GameActions.simultaneously(context => context.game.getPlayers().map(player => (
+                GameActions.drawCards({ player, amount: 2 })
+            ))).then({
+                target: {
+                    choosingPlayer: player => !this.hasUsedCityPlot(player),
+                    mode: 'exactly',
+                    numCards: 2,
+                    activePromptTitle: 'Select 2 cards',
+                    cardCondition: { location: 'hand', controller: 'choosingPlayer' }
+                },
+                message: {
+                    format: 'Then {fragments} for {source}',
+                    args: {
+                        fragments: context => context.targets.selections.map(selection =>
+                            Message.fragment('{player} discards {cards} from their hand', { player: selection.choosingPlayer, cards: selection.value })
+                        )
+                    }
+                },
+                handler: context => {
+                    context.game.resolveGameAction(
+                        GameActions.simultaneously(context => context.targets.getTargets().map(card =>
+                            GameActions.discardCard({ card })
+                        )),
+                        context
+                    );
                 }
-
-                let playersWithoutCity = players.filter(player => !this.hasUsedCityPlot(player) && player.hand.length >= 2);
-
-                for(let player of playersWithoutCity) {
-                    this.game.promptForSelect(player, {
-                        mode: 'exactly',
-                        numCards: 2,
-                        activePromptTitle: 'Select 2 cards',
-                        cardCondition: card => card.location === 'hand' && card.controller === player,
-                        onSelect: (player, cards) => this.cardSelected(player, cards),
-                        onCancel: (player) => this.promptCancelled(player),
-                        source: this
-                    });
-                }
-            }
+            })
         });
     }
 
     hasUsedCityPlot(player) {
         return player.plotDiscard.some(plot => plot.hasTrait('City'));
-    }
-
-    cardSelected(player, cards) {
-        this.game.addMessage('Then {0} discards {1}', player, cards);
-        player.discardCards(cards);
-        return true;
-    }
-
-    promptCancelled(player) {
-        this.game.addAlert('danger', '{0} cancels resolution of {1}', player, this);
-        return true;
     }
 }
 

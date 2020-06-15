@@ -64,6 +64,8 @@ class CardMatcher {
                 return card.controller === context.player;
             case 'opponent':
                 return card.controller !== context.player;
+            case 'choosingPlayer':
+                return card.controller === context.choosingPlayer;
         }
 
         return false;
