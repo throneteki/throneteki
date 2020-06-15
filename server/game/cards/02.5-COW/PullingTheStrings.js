@@ -3,48 +3,22 @@ const PlotCard = require('../../plotcard.js');
 class PullingTheStrings extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            target: {
+                activePromptTitle: 'Select a plot',
+                cardCondition: { location: 'revealed plots', controller: 'opponent', trait: ['Edict', 'Kingdom', 'Scheme'] },
+                cardType: 'plot'
+            },
+            message: '{player} uses {source} to initiate the When Revealed ability of {target}',
             handler: context => {
-                if(this.resolving) {
-                    return;
+                const whenRevealed = context.target.getWhenRevealedAbility();
+                if(whenRevealed) {
+                    // Attach the current When Revealed event to the new context
+                    let newContext = whenRevealed.createContext(context.event);
+                    newContext.player = context.player;
+                    this.game.resolveAbility(whenRevealed, newContext);
                 }
-
-                this.context = context;
-
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.cardCondition(card),
-                    cardType: 'plot',
-                    activePromptTitle: 'Select a plot',
-                    source: this,
-                    onSelect: (player, card) => this.onCardSelected(player, card)
-                });
             }
         });
-    }
-
-    cardCondition(card) {
-        return card.location === 'revealed plots' && card.controller !== this.controller && (card.hasTrait('Edict') || card.hasTrait('Kingdom') || card.hasTrait('Scheme'));
-    }
-
-    onCardSelected(player, card) {
-        this.resolving = true;
-
-        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', player, this, card);
-        card.takeControl(player, this);
-        this.game.raiseEvent('onCardTakenControl', { card });
-
-        let whenRevealed = card.getWhenRevealedAbility();
-        if(whenRevealed) {
-            // Attach the current When Revealed event to the new context
-            let context = whenRevealed.createContext(this.context.event);
-            this.game.resolveAbility(whenRevealed, context);
-        }
-        this.game.queueSimpleStep(() => {
-            card.revertControl(this);
-            this.game.raiseEvent('onCardTakenControl', { card });
-            this.resolving = false;
-        });
-
-        return true;
     }
 }
 

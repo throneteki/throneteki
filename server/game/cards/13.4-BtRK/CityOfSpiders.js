@@ -10,8 +10,8 @@ class CityOfSpiders extends PlotCard {
 
                 this.context = context;
 
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.isCityPlotInControllersUsedPileWithWhenRevealedAbility(card),
+                this.game.promptForSelect(context.player, {
+                    cardCondition: card => this.isCityPlotInControllersUsedPileWithWhenRevealedAbility(card, context.player),
                     cardType: 'plot',
                     activePromptTitle: 'Select a plot',
                     source: this,
@@ -21,8 +21,8 @@ class CityOfSpiders extends PlotCard {
         });
     }
 
-    isCityPlotInControllersUsedPileWithWhenRevealedAbility(card) {
-        return card.location === 'revealed plots' && card.controller === this.controller && card.hasTrait('City') && card.getWhenRevealedAbility();
+    isCityPlotInControllersUsedPileWithWhenRevealedAbility(card, player) {
+        return card.location === 'revealed plots' && card.controller === player && card.hasTrait('City') && card.getWhenRevealedAbility();
     }
 
     onCardSelected(player, card) {

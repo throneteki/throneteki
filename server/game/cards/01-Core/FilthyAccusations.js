@@ -7,10 +7,9 @@ class FilthyAccusations extends PlotCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.kneeled,
                 gameAction: 'kneel'
             },
+            message: '{player} uses {source} to kneel {target}',
             handler: context => {
-                this.controller.kneelCard(context.target);
-
-                this.game.addMessage('{0} uses {1} to kneel {2}', this.controller, this, context.target);
+                context.player.kneelCard(context.target);
             }
         });
     }

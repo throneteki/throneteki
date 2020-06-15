@@ -3,10 +3,10 @@ const PlotCard = require('../../plotcard.js');
 class WheelsWithinWheels extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
+            handler: context => {
                 this.cards = undefined;
 
-                this.game.promptForDeckSearch(this.controller, {
+                this.game.promptForDeckSearch(context.player, {
                     numCards: 10,
                     numToSelect: 10,
                     activePromptTitle: 'Select any number of events',
@@ -35,7 +35,7 @@ class WheelsWithinWheels extends PlotCard {
             return { card: card, method: 'resolve', mapCard: true };
         });
 
-        this.game.promptWithMenu(this.controller, this, {
+        this.game.promptWithMenu(player, this, {
             activePrompt: {
                 menuTitle: 'Select a card to draw',
                 buttons: buttons

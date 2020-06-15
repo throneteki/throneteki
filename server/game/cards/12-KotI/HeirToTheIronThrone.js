@@ -3,11 +3,11 @@ const PlotCard = require('../../plotcard');
 class HeirToTheIronThrone extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
+            handler: context => {
+                this.game.promptForDeckSearch(context.player, {
                     numCards: 10,
                     activePromptTitle: 'Select a character',
-                    cardCondition: card => card.getType() === 'character' && ['Lord', 'Lady'].some(trait => card.hasTrait(trait)) && this.controller.canPutIntoPlay(card),
+                    cardCondition: card => card.getType() === 'character' && ['Lord', 'Lady'].some(trait => card.hasTrait(trait)) && context.player.canPutIntoPlay(card),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),
                     source: this

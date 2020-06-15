@@ -3,8 +3,8 @@ const PlotCard = require('../../plotcard.js');
 class BuildingOrders extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
+            handler: context => {
+                this.game.promptForDeckSearch(context.player, {
                     numCards: 10,
                     activePromptTitle: 'Select a card',
                     cardType: ['attachment', 'location'],

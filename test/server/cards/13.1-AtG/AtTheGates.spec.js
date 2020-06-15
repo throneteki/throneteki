@@ -35,5 +35,65 @@ describe('At The Gates', function() {
                 expect(this.player2Object.getTotalIncome()).toBe(8);
             });
         });
+
+        describe('w/ Pulling the Strings', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('targaryen', [
+                    'At the Gates', 'Pulling the Strings', 'A Noble Cause', 'City of Spiders',
+                    'Gates of the Moon'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.limitedCard = this.player1.findCardByName('Gates of the Moon');
+
+                this.atTheGates = this.player2.findCardByName('At the Gates');
+
+                this.completeSetup();
+
+                // Draw the limited card back into the deck
+                this.player1.dragCard(this.limitedCard, 'draw deck');
+
+                // Drag At The Gates to used pile to be copied
+                this.player2.dragCard(this.atTheGates, 'revealed plots');
+            });
+
+            describe('when there is no City plot in your used pile', function() {
+                beforeEach(function() {
+                    this.player1.selectPlot('Pulling the Strings');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    this.player1.clickCard(this.atTheGates);
+
+                    this.player1.clickCard(this.limitedCard);
+                });
+
+                it('puts the card into play', function() {
+                    expect(this.limitedCard.location).toBe('play area');
+                });
+            });
+
+            describe('when there is a City plot in your used pile', function() {
+                beforeEach(function() {
+                    const ownCityPlot = this.player1.findCardByName('City of Spiders');
+                    this.player1.dragCard(ownCityPlot, 'revealed plots');
+
+                    this.player1.selectPlot('Pulling the Strings');
+                    this.player2.selectPlot('A Noble Cause');
+                    this.selectFirstPlayer(this.player1);
+
+                    this.player1.clickCard(this.atTheGates);
+
+                    this.player1.clickCard(this.limitedCard);
+                });
+
+                it('puts the card into hand', function() {
+                    expect(this.limitedCard.location).toBe('hand');
+                });
+            });
+        });
     });
 });

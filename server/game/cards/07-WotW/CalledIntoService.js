@@ -3,26 +3,26 @@ const PlotCard = require('../../plotcard.js');
 class CalledIntoService extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                let topCard = this.controller.drawDeck[0];
+            handler: context => {
+                let topCard = context.player.drawDeck[0];
 
                 if(topCard.getType() === 'character') {
-                    this.controller.putIntoPlay(topCard);
+                    context.player.putIntoPlay(topCard);
                     this.game.addMessage('{0} uses {1} to reveal {2} as the top card of their deck and put it into play',
-                        this.controller, this, topCard);
-                } else if(this.controller.canDraw() || this.controller.canGainGold()) {
+                        context.player, this, topCard);
+                } else if(context.player.canDraw() || context.player.canGainGold()) {
                     let msg = '{0} uses {1} to reveal {2} as the top card of their deck';
                     let gold;
-                    if(this.controller.canDraw()) {
-                        this.controller.drawCardsToHand(1);
+                    if(context.player.canDraw()) {
+                        context.player.drawCardsToHand(1);
                         msg += ', draw it';
                     }
-                    if(this.controller.canGainGold()) {
-                        gold = this.game.addGold(this.controller, 2);
+                    if(context.player.canGainGold()) {
+                        gold = this.game.addGold(context.player, 2);
                         msg += ', gain {3} gold';
                     }
 
-                    this.game.addMessage(msg, this.controller, this, topCard, gold);
+                    this.game.addMessage(msg, context.player, this, topCard, gold);
                 }
             }
         });
