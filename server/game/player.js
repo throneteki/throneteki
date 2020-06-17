@@ -69,6 +69,7 @@ class Player extends Spectator {
         this.cannotWinGame = false;
         this.triggerRestrictions = [];
         this.playCardRestrictions = [];
+        this.putIntoShadowsRestrictions = [];
         this.abilityMaxByTitle = {};
         this.standPhaseRestrictions = [];
         this.multipleOpponentClaim = [];
@@ -904,7 +905,7 @@ class Player extends Spectator {
     }
 
     canPutIntoShadows(card, playingType = 'put') {
-        return !this.playCardRestrictions.some(restriction => restriction(card, playingType));
+        return !this.putIntoShadowsRestrictions.some(restriction => restriction(card, playingType));
     }
 
     putIntoShadows(card, allowSave = true, callback = () => true) {
