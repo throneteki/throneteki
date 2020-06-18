@@ -695,6 +695,18 @@ const Effects = {
         let restriction = (card, playingType) => playingType === 'setup' && condition(card);
         return this.cannotPutIntoPlay(restriction);
     },
+    cannotSetupIntoShadows: function(condition = () => true) {
+        let restriction = (card, playingType) => playingType === 'setup' && condition(card);
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.putIntoShadowsRestrictions.push(restriction);
+            },
+            unapply: function(player) {
+                player.putIntoShadowsRestrictions = player.putIntoShadowsRestrictions.filter(r => r !== restriction);
+            }
+        };
+    },
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),

@@ -8,6 +8,11 @@ class KnightsOfHollowHill extends AgendaCard {
         });
 
         this.persistentEffect({
+            targetController: 'current',
+            effect: ability.effects.cannotSetupIntoShadows()
+        });
+
+        this.persistentEffect({
             match: card => card !== this && card.getType() !== 'plot',
             targetController: 'current',
             effect: ability.effects.preventPlotModifier('gold')
