@@ -4,7 +4,7 @@ class ACityBesieged extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: context => {
-                let numTargets = this.hasUsedCityPlot() ? 2 : 1;
+                let numTargets = this.hasUsedCityPlot(context.player) ? 2 : 1;
 
                 this.game.promptForSelect(context.player, {
                     mode: 'upTo',
