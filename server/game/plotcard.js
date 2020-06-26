@@ -16,7 +16,7 @@ class PlotCard extends BaseCard {
         const condition = properties.condition || (() => true);
         let whenClause = {
             when: {
-                onPlotRevealed: event => event.plot === this && condition()
+                onPlotRevealed: (event, context) => event.plot === this && condition(context)
             }
         };
         let reaction = new CardWhenRevealed(this.game, this, Object.assign(whenClause, properties));

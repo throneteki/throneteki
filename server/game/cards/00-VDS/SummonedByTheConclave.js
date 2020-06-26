@@ -3,11 +3,11 @@ const PlotCard = require('../../plotcard.js');
 class SummonedByTheConclave extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
+            handler: context => {
+                this.game.promptForDeckSearch(context.player, {
                     numCards: 10,
                     activePromptTitle: 'Select a card',
-                    cardCondition: card => card.isFaction(this.controller.getFaction()),
+                    cardCondition: card => card.isFaction(context.player.getFaction()),
                     onSelect: (player, card) => this.cardSelected(player, card),
                     onCancel: player => this.doneSelecting(player),
                     source: this

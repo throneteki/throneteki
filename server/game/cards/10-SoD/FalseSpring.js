@@ -3,8 +3,9 @@ const PlotCard = require('../../plotcard.js');
 class FalseSpring extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.remainingOpponents = this.game.getPlayers().filter(player => player !== this.controller);
+            handler: context => {
+                this.context = context;
+                this.remainingOpponents = this.game.getPlayers().filter(player => player !== context.player);
                 this.selections = [];
                 this.proceedToNextStep();
             }
@@ -41,7 +42,7 @@ class FalseSpring extends PlotCard {
         let numToDiscard = this.game.getNumberOfPlayers() - 1;
 
         //TODO Melee: This prompt should work in Melee with well-meaning players but can be abused as well
-        this.game.promptForSelect(this.controller, {
+        this.game.promptForSelect(this.context.player, {
             activePromptTitle: `Select up to ${numToDiscard} card(s)`,
             mode: 'upTo',
             source: this,

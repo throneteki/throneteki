@@ -5,11 +5,11 @@ class BattleOfTheBlackwater extends PlotCard {
         this.whenRevealed({
             chooseOpponent: true,
             handler: context => {
-                this.removeAllDupes(this.controller);
+                this.removeAllDupes(context.player);
                 this.removeAllDupes(context.opponent);
 
                 this.game.addMessage('{0} uses {1} to have themself and {2} discard each duplicate they control',
-                    this.controller, this, context.opponent);
+                    context.player, this, context.opponent);
             }
         });
     }
