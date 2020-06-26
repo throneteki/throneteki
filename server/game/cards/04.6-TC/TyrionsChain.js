@@ -4,9 +4,9 @@ class TyrionsChain extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => (
-                    event.challenge.winner === this.controller &&
-                    this.hasParticipatingUniqueLannister() &&
+                afterChallenge: (event, context) => (
+                    event.challenge.winner === context.player &&
+                    this.hasParticipatingUniqueLannister(context.player) &&
                     this.game.anyPlotHasTrait('War')
                 )
             },
@@ -20,7 +20,7 @@ class TyrionsChain extends DrawCard {
 
                 this.context = context;
 
-                this.game.promptWithMenu(this.controller, this, {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select a plot',
                         buttons: buttons
@@ -31,8 +31,8 @@ class TyrionsChain extends DrawCard {
         });
     }
 
-    hasParticipatingUniqueLannister() {
-        return this.controller.anyCardsInPlay(card => card.isParticipating() && card.isUnique() && card.isFaction('lannister') && card.getType() === 'character');
+    hasParticipatingUniqueLannister(player) {
+        return player.anyCardsInPlay(card => card.isParticipating() && card.isUnique() && card.isFaction('lannister') && card.getType() === 'character');
     }
 
     getRevealedWarPlots() {
@@ -46,23 +46,15 @@ class TyrionsChain extends DrawCard {
     }
 
     selectWarPlot(player, warPlot) {
-        this.resolving = true;
-
-        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, warPlot);
-        warPlot.takeControl(this.controller, this);
-        this.game.raiseEvent('onCardTakenControl', { card: warPlot });
+        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.context.player, this, warPlot);
 
         let whenRevealed = warPlot.getWhenRevealedAbility();
         if(whenRevealed) {
             // Attach the current When Revealed event to the new context
             let context = whenRevealed.createContext(this.context.event);
+            context.player = this.context.player;
             this.game.resolveAbility(whenRevealed, context);
         }
-        this.game.queueSimpleStep(() => {
-            warPlot.revertControl(this);
-            this.game.raiseEvent('onCardTakenControl', { card: warPlot });
-            this.resolving = false;
-        });
         return true;
     }
 }
