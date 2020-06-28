@@ -2,11 +2,14 @@ export function deckStatusLabel(status) {
     if(!status.basicRules) {
         return 'Invalid';
     }
-    const category = status.noBannedCards ? 'Tournament' : 'Premium';
 
-    if(!status.faqJoustRules || !status.noUnreleasedCards) {
-        return `${category} (Casual)`;
+    if(!status.noBannedCards) {
+        return 'Banned';
     }
 
-    return `${category} (Legal)`;
+    if(!status.faqJoustRules || !status.noUnreleasedCards) {
+        return 'Casual';
+    }
+
+    return 'Legal';
 }
