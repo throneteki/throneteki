@@ -3,9 +3,9 @@ const PlotCard = require('../../plotcard.js');
 class CloseCall extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    cardCondition: card => this.cardCondition(card),
+            handler: context => {
+                this.game.promptForSelect(context.player, {
+                    cardCondition: card => this.cardCondition(card, context),
                     source: this,
                     onSelect: (player, card) => this.onCardSelected(player, card)
                 });
@@ -13,8 +13,8 @@ class CloseCall extends PlotCard {
         });
     }
 
-    cardCondition(card) {
-        return card.getType() === 'character' && card.location === 'dead pile' && card.controller === this.controller;
+    cardCondition(card, context) {
+        return card.getType() === 'character' && card.location === 'dead pile' && card.controller === context.player;
     }
 
     onCardSelected(player, card) {

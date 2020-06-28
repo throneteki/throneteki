@@ -12,7 +12,7 @@ class Duel extends PlotCard {
                 }
 
                 this.game.addMessage('{0} uses {1} to have {2} choose 2 non-Army characters with printed cost 6 or higher',
-                    this.controller, this, opponent);
+                    context.player, this, opponent);
 
                 this.game.promptForSelect(opponent, {
                     mode: 'exactly',

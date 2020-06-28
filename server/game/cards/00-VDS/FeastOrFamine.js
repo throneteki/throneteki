@@ -3,8 +3,8 @@ const PlotCard = require('../../plotcard.js');
 class FeastOrFamine extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
+            handler: context => {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Increase gold value on ' + this.name + ' by 5?',
                         buttons: [
@@ -18,7 +18,7 @@ class FeastOrFamine extends PlotCard {
         });
     }
 
-    accept() {
+    accept(player) {
         this.untilEndOfRound(ability => ({
             match: this,
             effect: [
@@ -28,13 +28,13 @@ class FeastOrFamine extends PlotCard {
         }));
 
         this.game.addMessage('{0} increases the gold value by 5 and reduces the claim value by 2 on {1}',
-            this.controller, this);
+            player, this);
 
         return true;
     }
 
-    decline() {
-        this.game.addMessage('{0} does not increase the gold value on {1}', this.controller, this);
+    decline(player) {
+        this.game.addMessage('{0} does not increase the gold value on {1}', player, this);
 
         return true;
     }

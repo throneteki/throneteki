@@ -4,7 +4,7 @@ class VaryssRiddle extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             handler: context => {
-                let opponents = this.game.getOpponents(this.controller);
+                let opponents = this.game.getOpponents(context.player);
                 this.nonRiddlePlots = opponents.map(opponent => opponent.activePlot).filter(plot => !plot.hasTrait('Riddle'));
 
                 if(this.resolving || this.nonRiddlePlots.length === 0) {
@@ -24,7 +24,7 @@ class VaryssRiddle extends PlotCard {
                 let buttons = this.nonRiddlePlots.map(plot => {
                     return { text: `${plot.owner.name} - ${plot.name}`, method: 'selectPlot', card: plot };
                 });
-                this.game.promptWithMenu(this.controller, this, {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select a plot',
                         buttons: buttons
@@ -42,21 +42,18 @@ class VaryssRiddle extends PlotCard {
     }
 
     resolveWhenRevealed(plot) {
-        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.controller, this, plot);
-        plot.takeControl(this.controller, this);
-        this.game.raiseEvent('onCardTakenControl', { card: plot });
+        this.game.addMessage('{0} uses {1} to initiate the When Revealed ability of {2}', this.context.player, this, plot);
         this.resolving = true;
 
         let whenRevealed = plot.getWhenRevealedAbility();
         if(whenRevealed) {
             // Attach the current When Revealed event to the new context
             let context = whenRevealed.createContext(this.context.event);
+            context.player = this.context.player;
             this.game.resolveAbility(whenRevealed, context);
         }
         this.game.queueSimpleStep(() => {
             this.resolving = false;
-            plot.revertControl(this);
-            this.game.raiseEvent('onCardTakenControl', { card: plot });
         });
     }
 }

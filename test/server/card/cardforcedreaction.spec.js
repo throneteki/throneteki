@@ -33,7 +33,7 @@ describe('CardForcedReaction', function () {
 
         it('should call the when handler with the appropriate arguments', function() {
             this.executeEventHandler();
-            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event);
+            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event, jasmine.anything());
         });
 
         describe('when the when condition returns false', function() {
@@ -71,7 +71,7 @@ describe('CardForcedReaction', function () {
 
         it('should call the when handler with the appropriate arguments', function() {
             this.meetsRequirements();
-            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event);
+            expect(this.properties.when.onSomething).toHaveBeenCalledWith(this.event, jasmine.anything());
         });
 
         describe('when in the setup phase', function() {
