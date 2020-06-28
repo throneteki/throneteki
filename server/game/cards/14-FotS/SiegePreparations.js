@@ -5,6 +5,7 @@ class SiegePreparations extends PlotCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Draw cards',
+            phase: 'dominance',
             condition: () => this.controller.canDraw() && this.controller.getTotalReserve() > this.controller.hand.length,
             handler: context => {
                 let cardsToDraw = context.player.getTotalReserve() - context.player.hand.length;
