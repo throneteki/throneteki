@@ -18,7 +18,7 @@ module.exports.init = function(server, options) {
         }
 
         const { name, restricted, banned } = req.body.event;
-        const event = { name, restricted, banned };
+        const event = { name, restricted, banned, pods: [] };
 
         eventService.create(event)
             .then(e => {
@@ -39,7 +39,8 @@ module.exports.init = function(server, options) {
             id: req.params.id,
             name,
             restricted,
-            banned
+            banned,
+            pods: []
         };
 
         eventService.update(event)

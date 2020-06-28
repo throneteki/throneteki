@@ -72,12 +72,14 @@ class CardService {
 
     convertOfficialListToNewFormat(versions) {
         const activeVersion = this.getActiveVersion(versions);
+        const joustFormat = activeVersion.formats.find(format => format.name === 'joust');
         return [
             {
                 name: `${activeVersion.issuer} FAQ v${activeVersion.version}`,
                 date: activeVersion.date,
-                restricted: activeVersion.joustCards,
-                banned: activeVersion.bannedCards
+                restricted: joustFormat.restricted,
+                banned: activeVersion.bannedCards.concat(joustFormat.banned || []),
+                pods: joustFormat.pods
             }
         ];
     }
