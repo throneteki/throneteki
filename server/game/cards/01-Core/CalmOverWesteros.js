@@ -4,8 +4,8 @@ const ChallengeTypes = require('../../ChallengeTypes');
 class CalmOverWesteros extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
+            handler: context => {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select a challenge type',
                         buttons: ChallengeTypes.asButtons({ method: 'setChallengeType' })

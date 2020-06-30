@@ -6,9 +6,9 @@ class FallenFromFavor extends PlotCard {
         this.whenRevealed({
             target: {
                 type: 'select',
-                cardCondition: card =>
+                cardCondition: (card, context) =>
                     card.location === 'play area'
-                    && card.controller === this.controller
+                    && card.controller === context.player
                     && card.getType() === 'character'
             },
             handler: context => {

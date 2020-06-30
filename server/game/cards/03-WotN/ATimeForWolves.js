@@ -3,8 +3,8 @@ const PlotCard = require('../../plotcard.js');
 class ATimeForWolves extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
+            handler: context => {
+                this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Direwolf'),
                     onSelect: (player, card) => this.cardSelected(player, card),
@@ -18,7 +18,7 @@ class ATimeForWolves extends PlotCard {
     cardSelected(player, card) {
         player.moveCard(card, 'hand');
 
-        if(card.getPrintedCost() > 3 || !this.controller.canPutIntoPlay(card)) {
+        if(card.getPrintedCost() > 3 || !player.canPutIntoPlay(card)) {
             this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
                 player, this, card);
             return;

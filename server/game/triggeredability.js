@@ -76,7 +76,9 @@ class TriggeredAbility extends BaseAbility {
             return;
         }
 
-        return listener(event);
+        const context = this.createContext(event);
+
+        return listener(event, context);
     }
 
     meetsRequirements(context) {

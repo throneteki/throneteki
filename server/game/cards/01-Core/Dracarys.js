@@ -5,7 +5,7 @@ class Dracarys extends DrawCard {
         this.action({
             title: 'Reduce character STR by 4',
             condition: () => this.game.isDuringChallenge(),
-            cost: ability.costs.kneel(card => card.name === 'Daenerys Targaryen' || card.hasTrait('Dragon')),
+            cost: ability.costs.kneel(card => card.name === 'Daenerys Targaryen' || card.hasTrait('Dragon') && card.getType() === 'character'),
             target: {
                 cardCondition: card => card.location === 'play area' && card.isParticipating()
             },
