@@ -24,6 +24,8 @@ class PendingGame {
         this.useGameTimeLimit = details.useGameTimeLimit;
         this.gameTimeLimit = details.gameTimeLimit;
         this.muteSpectators = details.muteSpectators;
+        this.useChessClocks = details.useChessClocks;
+        this.chessClockTimeLimit = details.chessClockTimeLimit;
     }
 
     // Getters
@@ -327,7 +329,9 @@ class PendingGame {
             useRookery: this.useRookery,
             useGameTimeLimit: this.useGameTimeLimit,
             gameTimeLimit: this.gameTimeLimit,
-            muteSpectators: this.muteSpectators
+            muteSpectators: this.muteSpectators,
+            useChessClocks: this.useChessClocks,
+            chessClockTimeLimit: this.chessClockTimeLimit
         };
     }
 
@@ -369,7 +373,9 @@ class PendingGame {
             useRookery: this.useRookery,
             useGameTimeLimit: this.useGameTimeLimit,
             gameTimeLimit: this.gameTimeLimit,
-            muteSpectators: this.muteSpectators
+            muteSpectators: this.muteSpectators,
+            useChessClocks: this.useChessClocks,
+            chessClockTimeLimit: this.chessClockTimeLimit
         };
     }
 }

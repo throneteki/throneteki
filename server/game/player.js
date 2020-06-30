@@ -19,6 +19,7 @@ const GoldSource = require('./GoldSource.js');
 const GameActions = require('./GameActions');
 const RemoveFromGame = require('./GameActions/RemoveFromGame');
 const SacrificeCard = require('./GameActions/SacrificeCard');
+const ChessClock = require('./ChessClock.js');
 
 const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
 
@@ -88,6 +89,11 @@ class Player extends Spectator {
         this.shuffleArray = shuffle;
         this.role = user.role;
         this.flags = new ReferenceCountedSetProperty();
+        if(game.useChessClocks) {
+            this.chessClock = new ChessClock(this, game.chessClockTimeLimit, game.delayToStartClock);
+        } else {
+            this.chessClock = undefined;
+        }
 
         this.promptState = new PlayerPromptState();
     }
@@ -1217,6 +1223,30 @@ class Player extends Spectator {
         return !this.noTimer && this.user.settings.windowTimer !== 0;
     }
 
+    startClock() {
+        if(this.chessClock) {
+            this.chessClock.start();
+        }
+    }
+
+    stopClock() {
+        if(this.chessClock) {
+            this.chessClock.stop();
+        }
+    }
+
+    addSecondsToClock(seconds) {
+        if(this.chessClock && seconds) {
+            this.chessClock.modify(seconds);
+        }
+    }
+
+    togglePauseChessClock() {
+        if(this.chessClock) {
+            this.chessClock.togglePause();
+        }
+    }
+
     getState(activePlayer) {
         let isActivePlayer = activePlayer === this;
         let promptState = isActivePlayer ? this.promptState.getState() : {};
@@ -1238,6 +1268,12 @@ class Player extends Spectator {
             }
         } else {
             plots = this.getSummaryForCardList(this.plotDeck, activePlayer);
+        }
+
+        let chessClockState = undefined;
+
+        if(this.chessClock) {
+            chessClockState = this.chessClock.getState();
         }
 
         let state = {
@@ -1276,7 +1312,8 @@ class Player extends Spectator {
             title: this.title ? this.title.getSummary(activePlayer) : undefined,
             user: {
                 username: this.user.username
-            }
+            },
+            chessClock : chessClockState
         };
 
         return Object.assign(state, promptState);

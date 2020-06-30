@@ -23,6 +23,10 @@ class AttachmentPrompt extends UiPrompt {
     setupRestriction(card) {
         return this.game.currentPhase === 'setup' ? card.controller === this.attachmentCard.controller : true;
     }
+
+    getPlayer() {
+        return this.player;
+    }
 }
 
 module.exports = AttachmentPrompt;

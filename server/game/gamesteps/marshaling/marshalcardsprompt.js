@@ -31,6 +31,10 @@ class MarshalCardsPrompt extends UiPrompt {
         this.game.addMessage('{0} has finished marshalling', player);
         this.complete();
     }
+
+    getPlayer() {
+        return this.player;
+    }
 }
 
 module.exports = MarshalCardsPrompt;
