@@ -5,7 +5,7 @@ class DesertRaider extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.loser === this.controller && this.controller.canPutIntoPlay(this)
+                afterChallenge: event => event.challenge.loser === this.controller
             },
             location: 'dead pile',
             target: {
@@ -13,7 +13,9 @@ class DesertRaider extends DrawCard {
                                        this.game.currentChallenge.winner === card.controller
             },
             handler: context => {
-                this.controller.putIntoPlay(this);
+                if(this.controller.canPutIntoPlay(this)) {
+                    this.controller.putIntoPlay(this);
+                }
                 context.target.modifyPower(1);
 
                 this.target = context.target;
