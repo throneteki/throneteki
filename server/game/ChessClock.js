@@ -20,11 +20,12 @@ class ChessClock {
     }
 
     togglePause() {
-        if(this.activated) {
-            this.paused = !this.paused;
-            if(this.paused) {
-                this.stop();
-            }
+        if(!this.activated) {
+            return;
+        }
+        this.paused = !this.paused;
+        if(this.paused) {
+            this.stop();
         }
     }
 
@@ -37,30 +38,33 @@ class ChessClock {
     }
 
     start() {
-        if(this.activated) {
-            if(!this.paused && !this.running) {
-                this.mode = 'down';
-                this.running = true;
-                this.timerStart = Date.now();
-                this.updateStateId();
-            }
+        if(!this.activated) {
+            return;
+        }
+        if(!this.paused && !this.running) {
+            this.mode = 'down';
+            this.running = true;
+            this.timerStart = Date.now();
+            this.updateStateId();
         }
     }
 
     stop() {
-        if(this.activated) {
-            if(this.timerStart > 0 && this.running) {
-                this.running = false;
-                this.updateTimeLeft(Math.floor(((Date.now() - this.timerStart) / 1000) + 0.5));
-                this.timerStart = 0;
-                this.updateStateId();
-            }
-            this.mode = 'stop';
+        if(!this.activated) {
+            return;
         }
+        if(this.timerStart > 0 && this.running) {
+            this.running = false;
+            this.updateTimeLeft(Math.floor(((Date.now() - this.timerStart) / 1000) + 0.5));
+            this.timerStart = 0;
+            this.updateStateId();
+        }
+        this.mode = 'stop';
     }
 
     timeRanOut() {
         this.player.game.addMessage('{0}\'s clock has run out', this.player);
+        //TODO make this melee friendly
         this.player.game.recordWinner(this.player.game.getOpponents(this.player)[0], 'time');
         return;
     }
