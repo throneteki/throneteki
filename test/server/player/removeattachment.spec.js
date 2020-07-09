@@ -8,7 +8,6 @@ describe('Player', function() {
         this.player = new Player('1', {username: 'Player 1', settings: {}}, true, this.gameSpy);
         this.player.deck = {};
         this.player.initialise();
-        this.player.phase = 'marshal';
         this.attachmentOwner = new Player('2', {username: 'Player 2', settings: {}}, false, this.gameSpy);
         this.attachmentOwner.initialise();
         this.attachment = new DrawCard(this.attachmentOwner, {});

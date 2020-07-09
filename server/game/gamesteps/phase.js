@@ -41,9 +41,6 @@ class Phase extends BaseStep {
 
     startPhase() {
         this.game.currentPhase = this.name;
-        for(const player of this.game.getPlayers()) {
-            player.phase = this.name;
-        }
 
         this.game.raiseEvent('onPhaseStarted', { phase: this.name });
         this.game.addAlert('phasestart', '{0} phase', this.name);
@@ -52,9 +49,6 @@ class Phase extends BaseStep {
     endPhase() {
         this.game.raiseEvent('onPhaseEnded', { phase: this.name });
         this.game.currentPhase = '';
-        for(const player of this.game.getPlayers()) {
-            player.phase = '';
-        }
 
         this.game.raiseEvent('onAtEndOfPhase', { phase: this.name });
     }

@@ -1202,7 +1202,7 @@ class Player extends Spectator {
     getStats(isActivePlayer) {
         return {
             claim: this.getClaim(),
-            gold: !isActivePlayer && this.phase === 'setup' ? 0 : this.gold,
+            gold: !isActivePlayer && this.game.currentPhase === 'setup' ? 0 : this.gold,
             reserve: this.getTotalReserve(),
             totalPower: this.getTotalPower()
         };
@@ -1265,7 +1265,7 @@ class Player extends Spectator {
             numDrawCards: this.drawDeck.length,
             name: this.name,
             numPlotCards: this.plotDeck.length,
-            phase: this.phase,
+            phase: this.game.currentPhase,
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,

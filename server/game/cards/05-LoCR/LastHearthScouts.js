@@ -4,7 +4,7 @@ class LastHearthScouts extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardEntersPlay: event => this.controller.phase === 'challenge' && event.card.getType() === 'character'
+                onCardEntersPlay: event => this.game.currentPhase === 'challenge' && event.card.getType() === 'character'
             },
             handler: (context) => {
                 context.event.card.controller.kneelCard(context.event.card);
