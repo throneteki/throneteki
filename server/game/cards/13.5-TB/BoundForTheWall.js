@@ -17,7 +17,7 @@ class BoundForTheWall extends DrawCard {
                     this.game.cardVisibility.addRule(revealFunc);
                 });
                 this.game.promptForSelect(context.player, {
-                    cardCondition: card => card.controller === loser && card.location === 'draw deck' && card.getType() === 'character' && context.player.canPutIntoPlay(card),
+                    cardCondition: card => topCards.includes(card) && card.controller === loser && card.location === 'draw deck' && card.getType() === 'character' && context.player.canPutIntoPlay(card),
                     onSelect: (player, card) => this.handleSelect({ player, card, loser, topCards }),
                     onCancel: (player) => this.handleCancel({player, loser, topCards}),
                     source: this
