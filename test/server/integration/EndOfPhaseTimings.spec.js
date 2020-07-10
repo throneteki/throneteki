@@ -83,5 +83,45 @@ describe('end of phase timings / WUA', function () {
                 expect(this.player1).toAllowAbilityTrigger('Shireen Baratheon');
             });
         });
+
+        describe('interrupts to when phase ends', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('stark', [
+                    'Trading with the Pentoshi',
+                    'Delena Florent', 'In Daznak\'s Pit'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.delena = this.player1.findCardByName('Delena Florent');
+                this.daznak = this.player1.findCardByName('In Daznak\'s Pit');
+
+                this.player1.clickCard(this.delena);
+                this.player1.clickCard(this.daznak);
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player1);
+                this.selectPlotOrder(this.player1);
+
+                this.completeMarshalPhase();
+
+                // Kneel to Delena
+                this.player1.clickCard(this.delena);
+
+                // End Challenges phase
+                this.player1.clickPrompt('Done');
+                this.player2.clickPrompt('Done');
+
+                this.player1.triggerAbility(this.daznak);
+            });
+
+            it('is considered to still be during the phase', function() {
+                // Delena should still be kneeling since we are still in the challenges phase
+                expect(this.delena.kneeled).toEqual(true);
+            });
+        });
     });
 });

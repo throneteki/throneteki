@@ -1,6 +1,7 @@
 const BaseStep = require('./basestep.js');
 const GamePipeline = require('../gamepipeline.js');
 const SimpleStep = require('./simplestep.js');
+const EndPhase = require('../GameActions/EndPhase');
 
 class Phase extends BaseStep {
     constructor(game, name) {
@@ -47,10 +48,7 @@ class Phase extends BaseStep {
     }
 
     endPhase() {
-        this.game.raiseEvent('onPhaseEnded', { phase: this.name });
-        this.game.currentPhase = '';
-
-        this.game.raiseEvent('onAtEndOfPhase', { phase: this.name });
+        this.game.resolveGameAction(EndPhase, { game: this.game });
     }
 }
 
