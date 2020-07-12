@@ -18,6 +18,7 @@ import GameConfigurationModal from './GameConfigurationModal';
 import Droppable from './Droppable';
 import * as actions from '../../actions';
 import TimeLimitClock from './TimeLimitClock';
+import ChessClock from './ChessClock';
 
 const placeholderPlayer = {
     activePlot: null,
@@ -215,13 +216,37 @@ export class GameBoard extends React.Component {
         this.props.sendGameMessage('drop', card.uuid, source, target);
     }
 
-    getTimer() {
-        let timeLimitClock = null;
+    getTimer(thisPlayer, otherPlayer) {
+        let timeLimitClock = undefined;
+
         if(this.props.currentGame.useGameTimeLimit && this.props.currentGame.gameTimeLimitStarted) {
             timeLimitClock = (<TimeLimitClock
                 timeLimitStarted={ this.props.currentGame.gameTimeLimitStarted }
                 timeLimitStartedAt={ this.props.currentGame.gameTimeLimitStartedAt }
                 timeLimit={ this.props.currentGame.gameTimeLimitTime } />);
+        } else if(this.props.currentGame.useChessClocks) {
+            let chessClockOtherPlayer = undefined;
+            if(otherPlayer.chessClock) {
+                chessClockOtherPlayer = (
+                    <ChessClock
+                        delayToStartClock= { otherPlayer.chessClock.delayToStartClock }
+                        mode={ otherPlayer.chessClock.mode }
+                        secondsLeft={ otherPlayer.chessClock.timeLeft }
+                        stateId={ otherPlayer.chessClock.stateId } />);
+            }
+            let chessClockThisPlayer = undefined;
+            if(thisPlayer.chessClock) {
+                chessClockThisPlayer = (
+                    <ChessClock
+                        delayToStartClock= { thisPlayer.chessClock.delayToStartClock }
+                        mode={ thisPlayer.chessClock.mode }
+                        secondsLeft={ thisPlayer.chessClock.timeLeft }
+                        stateId={ thisPlayer.chessClock.stateId } />);
+            }
+            timeLimitClock = (<div>
+                { chessClockOtherPlayer }
+                { chessClockThisPlayer }
+            </div>);
         }
 
         return timeLimitClock;
@@ -247,7 +272,7 @@ export class GameBoard extends React.Component {
                 plotDeck={ otherPlayer.cardPiles.plotDeck }
                 plotDiscard={ otherPlayer.cardPiles.plotDiscard }
                 plotSelected={ otherPlayer.plotSelected } />
-            { this.getTimer() }
+            { this.getTimer(thisPlayer, otherPlayer) }
             <PlayerPlots
                 { ...commonProps }
                 activePlot={ thisPlayer.activePlot }

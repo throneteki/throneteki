@@ -92,6 +92,8 @@ class HowToPlay extends React.Component {
                             <li>/take-icon x - Takes an x icon from a character; where 'x' is as per '/give-icon'.</li>
                             <li>/token t x - Sets the token count of a card of type 't' to 'x'. Currently used token types are: 'bell', betrayal', 'ear', 'ghost', 'gold', 'journey', 'kiss', 'poison', 'prayer', 'stand', 'tale', 'valarmorghulis', 'vengeance' and 'venom'.</li>
                             <li>/mute-spectators - Mutes spectators so they can´t use the chat. Using this command a second time enables the chat again.</li>
+                            <li>/pause-clock - Pauses/Unpauses all players clocks until /pause-clock is used again.</li>
+                            <li>/add-chess-clock-time x - Adds x seconds to the players chess clock timelimit.</li>
                         </ul>
                     </div>
                     <div className='htp-topic'>

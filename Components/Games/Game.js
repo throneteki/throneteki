@@ -65,6 +65,7 @@ function Game(props) {
                     { game.showHand && <img src='/img/ShowHandIcon.png' className='game-list-icon' alt='Show hands to spectators' /> }
                     { game.needsPassword && <span className='password-game glyphicon glyphicon-lock' /> }
                     { game.useGameTimeLimit && <img src='/img/Timelimit.png' className='game-list-icon' alt='Time limit used' /> }
+                    { game.useChessClocks && <img src='/img/chess-clock.png' className='game-list-icon' alt='Chess clocks used' /> }
                 </span>
             </div>
             <div className='game-middle-row'>

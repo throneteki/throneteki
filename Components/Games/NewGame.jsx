@@ -23,6 +23,8 @@ class NewGame extends React.Component {
         this.onUseGameTimeLimitClick = this.onUseGameTimeLimitClick.bind(this);
         this.onGameTimeLimitChange = this.onGameTimeLimitChange.bind(this);
         this.onMuteSpectatorsClick = this.onMuteSpectatorsClick.bind(this);
+        this.onUseChessClocksClick = this.onUseChessClocksClick.bind(this);
+        this.onChessClockTimeLimitChange = this.onChessClockTimeLimitChange.bind(this);
 
         this.state = {
             eventId: 'none',
@@ -34,7 +36,9 @@ class NewGame extends React.Component {
             useRookery: false,
             useGameTimeLimit: false,
             gameTimeLimit: 55,
-            muteSpectators: false
+            muteSpectators: false,
+            useChessClocks: false,
+            chessClockTimeLimit: 30
         };
     }
 
@@ -77,6 +81,18 @@ class NewGame extends React.Component {
         this.setState({ muteSpectators: event.target.checked });
     }
 
+    onUseChessClocksClick(event) {
+        this.setState({ useChessClocks: event.target.checked });
+        //deactivate other timeLimit when chessClocks are used
+        if(event.target.checked) {
+            this.setState({ useGameTimeLimit: false });
+        }
+    }
+
+    onChessClockTimeLimitChange(event) {
+        this.setState({ chessClockTimeLimit: event.target.value });
+    }
+
     onSubmitClick(event) {
         event.preventDefault();
 
@@ -92,7 +108,9 @@ class NewGame extends React.Component {
             quickJoin: this.props.quickJoin,
             useGameTimeLimit: this.state.useGameTimeLimit,
             gameTimeLimit: this.state.gameTimeLimit,
-            muteSpectators: this.state.muteSpectators
+            muteSpectators: this.state.muteSpectators,
+            useChessClocks: this.state.useChessClocks,
+            chessClockTimeLimit: this.state.chessClockTimeLimit
         });
     }
 
@@ -106,6 +124,10 @@ class NewGame extends React.Component {
 
     onUseGameTimeLimitClick(event) {
         this.setState({ useGameTimeLimit: event.target.checked });
+        //deactivate other timeLimit when chessClocks are used
+        if(event.target.checked) {
+            this.setState({ useChessClocks: false });
+        }
     }
 
     onGameTimeLimitChange(event) {
@@ -150,6 +172,15 @@ class NewGame extends React.Component {
             </div>
             { this.state.useGameTimeLimit && <div className='col-sm-4'>
                 <input className='form-control' type='number' onChange={ this.onGameTimeLimitChange } value={ this.state.gameTimeLimit } />
+            </div> }
+            <div className='checkbox col-sm-12'>
+                <label>
+                    <input type='checkbox' onChange={ this.onUseChessClocksClick } checked={ this.state.useChessClocks } />
+                    Use chess clocks with a time limit per player (in minutes)
+                </label>
+            </div>
+            { this.state.useChessClocks && <div className='col-sm-4'>
+                <input className='form-control' type='number' onChange={ this.onChessClockTimeLimitChange } value={ this.state.chessClockTimeLimit } />
             </div> }
         </div>);
     }
