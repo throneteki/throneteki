@@ -66,6 +66,10 @@ class MenuPrompt extends UiPrompt {
     getButton(method, arg) {
         return this.properties.activePrompt.buttons && this.properties.activePrompt.buttons.find(button => button.method === method && (!button.mapCard || button.card.uuid === arg));
     }
+
+    getPlayer() {
+        return this.player;
+    }
 }
 
 module.exports = MenuPrompt;

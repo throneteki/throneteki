@@ -41,6 +41,10 @@ class FirstPlayerPrompt extends UIPrompt {
 
         this.complete();
     }
+
+    getPlayer() {
+        return this.player;
+    }
 }
 
 module.exports = FirstPlayerPrompt;

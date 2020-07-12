@@ -255,6 +255,10 @@ class SelectCardPrompt extends UiPrompt {
         // the prompt is cancelled.
         this.complete();
     }
+
+    getPlayer() {
+        return this.choosingPlayer;
+    }
 }
 
 module.exports = SelectCardPrompt;

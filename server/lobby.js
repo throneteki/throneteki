@@ -749,7 +749,9 @@ class Lobby {
             isMelee: game.isMelee,
             useRookery: game.useRookery,
             useGameTimeLimit: game.useGameTimeLimit,
-            gameTimeLimit: game.gameTimeLimit
+            gameTimeLimit: game.gameTimeLimit,
+            useChessClocks: game.useChessClocks,
+            chessClockTimeLimit: game.chessClockTimeLimit
         });
         newGame.rematch = true;
 

@@ -66,6 +66,10 @@ class Game extends EventEmitter {
         this.createdAt = new Date();
         this.useGameTimeLimit = details.useGameTimeLimit;
         this.gameTimeLimit = details.gameTimeLimit;
+        this.useChessClocks = details.useChessClocks;
+        this.chessClockTimeLimit = details.chessClockTimeLimit;
+        this.delayToStartClock = 5;
+        this.clockPaused = false;
         this.timeLimit = new TimeLimit(this);
         this.savedGameId = details.savedGameId;
         this.gameType = details.gameType;
@@ -1225,6 +1229,18 @@ class Game extends EventEmitter {
         return 'game';
     }
 
+    pauseClock() {
+        this.clockPaused = !this.clockPaused;
+        if(this.useChessClocks) {
+            let players = this.getPlayers();
+            for(let player of players) {
+                player.togglePauseChessClock();
+            }
+        }
+
+        //TODO pause time limit clock, not only chess clock
+    }
+
     getSaveState() {
         var players = this.getPlayers().map(player => {
             return {
@@ -1278,7 +1294,9 @@ class Game extends EventEmitter {
                 gameTimeLimitStarted: this.timeLimit.timeLimitStarted,
                 gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt,
                 gameTimeLimitTime: this.timeLimit.timeLimitInMinutes,
-                muteSpectators: this.muteSpectators
+                muteSpectators: this.muteSpectators,
+                useChessClocks: this.useChessClocks,
+                chessClockTimeLimit: this.chessClockTimeLimit
             };
         }
 
@@ -1335,7 +1353,8 @@ class Game extends EventEmitter {
                     name: spectator.name
                 };
             }),
-            muteSpectators: this.muteSpectators
+            muteSpectators: this.muteSpectators,
+            useChessClocks: this.useChessClocks
         };
     }
 

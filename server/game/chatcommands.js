@@ -39,7 +39,9 @@ class ChatCommands {
             '/take-icon': this.removeIcon,
             '/token': this.setToken,
             '/unblank': this.unblank,
-            '/mute-spectators': this.muteSpectators
+            '/mute-spectators': this.muteSpectators,
+            '/pause-clock': this.pauseClock,
+            '/add-chess-clock-time': this.addChessClockTime
         };
     }
 
@@ -511,6 +513,31 @@ class ChatCommands {
             player,
             this.game.muteSpectators ? '' : 'un'
         );
+    }
+
+    pauseClock(player) {
+        this.game.pauseClock();
+
+        this.game.addAlert(
+            'danger',
+            '{0} has {1}paused the clock',
+            player,
+            this.game.clockPaused ? '' : 'un'
+        );
+    }
+
+    addChessClockTime(player, args) {
+        var numberOfSeconds = this.getNumberOrDefault(args[1], 0);
+        if(player) {
+            player.addSecondsToClock(numberOfSeconds);
+
+            this.game.addAlert(
+                'danger',
+                '{0} has added {1} seconds to his/her chess clock',
+                player,
+                numberOfSeconds
+            );
+        }
     }
 }
 

@@ -14,14 +14,19 @@ class UiPrompt extends BaseStep {
 
     complete() {
         this.completed = true;
+        if(this.getPlayer()) {
+            this.getPlayer().stopClock();
+        }
     }
 
     setPrompt() {
         for(let player of this.game.getPlayers()) {
             if(this.activeCondition(player)) {
                 player.setPrompt(this.addDefaultCommandToButtons(this.activePrompt(player)));
+                player.startClock();
             } else {
                 player.setPrompt(this.addDefaultCommandToButtons(this.waitingPrompt(player)));
+                player.stopClock();
             }
         }
     }
@@ -55,7 +60,7 @@ class UiPrompt extends BaseStep {
         return { menuTitle: 'Waiting for opponent' };
     }
 
-    continue() {
+    continue() {        
         var completed = this.isComplete();
 
         if(completed) {
@@ -86,6 +91,13 @@ class UiPrompt extends BaseStep {
      * Handler that will be called once isComplete() returns true.
      */
     onCompleted() {
+    }
+
+    /**
+     * Will be implemented in sub classes that have a specific player that is using the prompt
+     */
+    getPlayer() {
+        return undefined;
     }
 }
 
