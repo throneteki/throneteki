@@ -11,7 +11,7 @@ function getDirectories(srcpath) {
 function loadFiles(directory) {
     let fullPath = path.join(__dirname, directory);
     let files = fs.readdirSync(fullPath).filter(file => {
-        return !fs.statSync(path.join(fullPath, file)).isDirectory();
+        return !fs.statSync(path.join(fullPath, file)).isDirectory() && file.endsWith('.js');
     });
 
     for(let file of files) {

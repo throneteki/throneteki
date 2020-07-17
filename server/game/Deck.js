@@ -93,6 +93,9 @@ class Deck {
 
     createCardForType(baseClass, player, cardData) {
         let cardClass = cards[cardData.code] || baseClass;
+        if(cardClass.cardData) {
+            cardData = Object.assign({}, cardData, cardClass.cardData);
+        }
         return new cardClass(player, cardData);
     }
 
