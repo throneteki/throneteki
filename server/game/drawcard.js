@@ -225,7 +225,7 @@ class DrawCard extends BaseCard {
     getBoostedStrength(boostValue) {
         let baseStrength = this.getPrintedStrength();
 
-        if(this.controller.phase === 'setup') {
+        if(this.game.currentPhase === 'setup') {
             return baseStrength;
         }
 

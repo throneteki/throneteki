@@ -7,7 +7,6 @@ describe('Player', function() {
             this.gameSpy = jasmine.createSpyObj('game', ['raiseEvent', 'on']);
             this.player = new Player('1', {username: 'Player 1', settings: {}}, true, this.gameSpy);
             this.player.initialise();
-            this.player.phase = 'marshal';
 
             this.gameSpy.raiseEvent.and.callFake((name, params, handler) => {
                 if(handler) {

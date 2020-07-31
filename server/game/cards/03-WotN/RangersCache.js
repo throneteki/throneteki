@@ -2,7 +2,7 @@ const PlotCard = require('../../plotcard.js');
 
 class RangersCache extends PlotCard {
     setupCardAbilities() {
-        this.reaction({
+        this.interrupt({
             when: {
                 onPhaseEnded: event =>
                     event.phase === 'taxation' &&
