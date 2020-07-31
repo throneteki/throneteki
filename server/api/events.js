@@ -17,8 +17,8 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, restricted, banned } = req.body.event;
-        const event = { name, restricted, banned, pods: [] };
+        const { name, useDefaultRestrictedList, restricted, banned } = req.body.event;
+        const event = { name, useDefaultRestrictedList, restricted, banned, pods: [] };
 
         eventService.create(event)
             .then(e => {
@@ -34,10 +34,11 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, restricted, banned } = req.body.event;
+        const { name, useDefaultRestrictedList, restricted, banned } = req.body.event;
         const event = {
             id: req.params.id,
             name,
+            useDefaultRestrictedList,
             restricted,
             banned,
             pods: []
