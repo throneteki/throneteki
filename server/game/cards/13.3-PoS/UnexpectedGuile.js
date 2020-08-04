@@ -15,8 +15,8 @@ class UnexpectedGuile extends DrawCard {
                 onChallengeFinished: event => event.challenge.isParticipating(this.parent)
             },
             handler: context => {
-                context.player.moveCard(this.parent, 'shadows');
-                context.player.moveCard(this, 'shadows');
+                context.player.putIntoShadows(this.parent, true);
+                context.player.putIntoShadows(this);
 
                 this.game.addMessage('{0} is forced to return {1} and {2} to shadows', this.controller, this, this.parent);
             }
