@@ -10,8 +10,9 @@ class TyrionLannister extends DrawCard {
             },
             limit: ability.limit.perRound(1),
             target: {
-                cardCondition: card => card.location === 'play area'
+                cardCondition: (card, context) => card.location === 'play area'
                                     && card.controller === this.controller
+                                    && card !== context.event.card
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to put {2} into shadow', context.player, this, context.target);
