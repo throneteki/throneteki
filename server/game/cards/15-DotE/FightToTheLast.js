@@ -6,14 +6,15 @@ class FightToTheLast extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && event.card.controller === this.controller
+                onCharacterKilled: event => (event.allowSave || event.isBurn) && event.card.canBeSaved() && event.card.controller === this.controller
             },
             location: 'hand',
             handler: context => {
                 context.event.saveCard();
+                let savedCard = context.event.card;
                 if(context.event.card.kneeled && context.event.card.allowGameAction('stand')) {
                     this.game.resolveGameAction(
-                        GameActions.standCard(context.event.card),
+                        GameActions.standCard(() => ({ card: savedCard })),
                         context
                     );
                 }
