@@ -17,8 +17,8 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, useDefaultRestrictedList, restricted, banned } = req.body.event;
-        const event = { name, useDefaultRestrictedList, restricted, banned, pods: [] };
+        const { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned } = req.body.event;
+        const event = { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, pods: [] };
 
         eventService.create(event)
             .then(e => {
@@ -34,11 +34,13 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, useDefaultRestrictedList, restricted, banned } = req.body.event;
+        const { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned } = req.body.event;
         const event = {
             id: req.params.id,
             name,
             useDefaultRestrictedList,
+            useEventGameOptions,
+            eventGameOptions,
             restricted,
             banned,
             pods: []
