@@ -17,8 +17,8 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned } = req.body.event;
-        const event = { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, pods: [] };
+        const { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, restrictSpectators, validSpectators } = req.body.event;
+        const event = { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, pods: [], restrictSpectators, validSpectators };
 
         eventService.create(event)
             .then(e => {
@@ -34,7 +34,7 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned } = req.body.event;
+        const { name, useDefaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, restrictSpectators, validSpectators } = req.body.event;
         const event = {
             id: req.params.id,
             name,
@@ -43,7 +43,9 @@ module.exports.init = function(server, options) {
             eventGameOptions,
             restricted,
             banned,
-            pods: []
+            pods: [],
+            restrictSpectators,
+            validSpectators
         };
 
         eventService.update(event)

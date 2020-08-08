@@ -1101,6 +1101,13 @@ class Game extends EventEmitter {
             return false;
         }
 
+        //check if the game has an event selected that restricts spectators
+        if(this.event && this.event.restrictSpectators && this.event.validSpectators) {
+            if(!this.event.validSpectators.includes(user.username.toLowerCase())) {
+                return false;
+            }
+        }
+
         this.playersAndSpectators[user.username] = new Spectator(socketId, user);
         this.addAlert('info', '{0} has joined the game as a spectator', user.username);
 
