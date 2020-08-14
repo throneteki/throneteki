@@ -5,6 +5,8 @@ class TitleCard extends BaseCard {
         super(owner, cardData);
 
         this.dominanceStrengthModifier = 0;
+        this.supporterNames = this.supporterNames || [];
+        this.rivalNames = this.rivalNames || [];
     }
 
     supports(...values) {
