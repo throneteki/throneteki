@@ -286,21 +286,6 @@ class DrawCard extends BaseCard {
         this.icons.remove(icon);
     }
 
-    canUseStealthToBypass(targetCard) {
-        return this.isStealth() && targetCard.canBeBypassedByStealth();
-    }
-
-    useStealthToBypass(targetCard) {
-        if(!this.canUseStealthToBypass(targetCard)) {
-            return false;
-        }
-
-        targetCard.stealth = true;
-        this.stealthTarget = targetCard;
-
-        return true;
-    }
-
     /**
      * Defines restrictions on what cards this attachment can be placed on.
      */
@@ -419,10 +404,6 @@ class DrawCard extends BaseCard {
     canParticipateInChallenge() {
         return this.getType() === 'character'
             && this.allowGameAction('participateInChallenge');
-    }
-
-    canBeBypassedByStealth() {
-        return !this.isStealth() && this.allowGameAction('bypassByStealth');
     }
 
     canBeKneeled() {

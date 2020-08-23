@@ -6,12 +6,12 @@ const ChooseStealthTargets = require('./choosestealthtargets.js');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
 const KeywordWindow = require('../keywordwindow.js');
+const InitiateChallenge = require('../../GameActions/InitiateChallenge');
 
 class ChallengeFlow extends BaseStep {
     constructor(game, challenge) {
         super(game);
         this.challenge = challenge;
-        this.declaredAttackers = [];
         this.pipeline = new GamePipeline();
         this.pipeline.initialise([
             new SimpleStep(this.game, () => this.resetCards()),
@@ -75,49 +75,18 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.declaredAttackers = attackers;
-        this.attackersToKneel = [];
         this.challenge.declareAttackers(attackers);
-
-        for(let card of attackers) {
-            if(!card.kneeled && card.kneelsAsAttacker(this.challenge.challengeType)) {
-                this.game.applyGameAction('kneel', card, card => {
-                    card.kneeled = true;
-                    this.attackersToKneel.push(card);
-                });
-            }
-        }
 
         return true;
     }
 
     chooseStealthTargets() {
-        const stealthAttackers = this.declaredAttackers.filter(card => card.isStealth());
+        const stealthAttackers = this.challenge.declaredAttackers.filter(card => card.isStealth());
         this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, stealthAttackers));
     }
 
     initiateChallenge() {
-        this.challenge.initiateChallenge();
-
-        let events = [
-            { name: 'onChallengeInitiated', params: { challenge: this.challenge } }
-        ];
-
-        let attackerEvents = this.declaredAttackers.map(card => {
-            return { name: 'onDeclaredAsAttacker', params: { card: card, challenge: this.challenge } };
-        });
-
-        let kneelEvents = this.attackersToKneel.map(card => {
-            return { name: 'onCardKneeled', params: { player: this.challenge.attackingPlayer, card: card } };
-        });
-
-        let stealthEvents = this.challenge.stealthData.map(stealth => {
-            return { name: 'onBypassedByStealth', params: { challenge: this.challenge, source: stealth.source, target: stealth.target } };
-        });
-
-        this.game.raiseAtomicEvent(events.concat(attackerEvents).concat(stealthEvents).concat(kneelEvents));
-
-        this.attackersToKneel = undefined;
+        this.game.resolveGameAction(InitiateChallenge, { challenge: this.challenge });
     }
 
     announceAttackerStrength() {
