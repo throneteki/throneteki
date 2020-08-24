@@ -6,6 +6,7 @@ const ChallengeMatcher = require('./ChallengeMatcher');
 class Challenge {
     constructor(game, properties) {
         this.game = game;
+        this.initiatingPlayer = properties.attackingPlayer;
         this.attackingPlayer = properties.attackingPlayer;
         this.isSinglePlayer = !properties.defendingPlayer;
         this.defendingPlayer = properties.defendingPlayer || this.singlePlayerDefender();
@@ -130,6 +131,10 @@ class Challenge {
 
             return count;
         }, 0);
+    }
+
+    clearStealthChoices() {
+        this.stealthData = [];
     }
 
     addStealthChoice(source, target) {
