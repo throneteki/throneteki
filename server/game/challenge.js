@@ -10,6 +10,7 @@ class Challenge {
         this.attackingPlayer = properties.attackingPlayer;
         this.isSinglePlayer = !properties.defendingPlayer;
         this.defendingPlayer = properties.defendingPlayer || this.singlePlayerDefender();
+        this.initiatedAgainstPlayer = this.defendingPlayer;
         this.challengeType = properties.challengeType;
         this.number = properties.number;
         this.attackers = [];

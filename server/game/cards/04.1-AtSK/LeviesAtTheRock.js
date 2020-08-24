@@ -5,7 +5,7 @@ class LeviesAtTheRock extends DrawCard {
         this.reaction({
             when: {
                 onChallengeInitiated: event => (
-                    event.challenge.defendingPlayer === this.controller &&
+                    event.challenge.initiatedAgainstPlayer === this.controller &&
                     event.challenge.attackingPlayer.gold >= 1
                 )
             },

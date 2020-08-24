@@ -5,7 +5,7 @@ class TheHornThatWakesTheSleepers extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isMatch({ defendingPlayer: this.controller })
+                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller })
             },
             targets: {
                 builder: {

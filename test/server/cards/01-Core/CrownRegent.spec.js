@@ -51,6 +51,7 @@ describe('Crown Regent', function() {
                 this.player1.triggerAbility('Crown Regent');
                 this.player2.clickPrompt('player3');
                 expect(this.game.currentChallenge.defendingPlayer).toBe(this.player3Object);
+                expect(this.game.currentChallenge.initiatedAgainstPlayer).toBe(this.player1Object);
             });
         });
 
