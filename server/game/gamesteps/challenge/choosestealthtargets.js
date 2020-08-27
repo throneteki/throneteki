@@ -1,4 +1,5 @@
 const BaseStep = require('../basestep.js');
+const BypassByStealth = require('../../GameActions/BypassByStealth');
 
 class ChooseStealthTargets extends BaseStep {
     constructor(game, challenge, stealthCharacters) {
@@ -29,21 +30,15 @@ class ChooseStealthTargets extends BaseStep {
     }
 
     canStealth(card, challenge, character) {
-        return card.controller === challenge.defendingPlayer
-            && card.location === 'play area'
-            && card.getType() === 'character'
-            && character.canUseStealthToBypass(card);
+        return BypassByStealth.allow({ challenge, source: character, target: card });
     }
 
     selectStealthTarget(character, targets) {
         if(!Array.isArray(targets)) {
             targets = [targets];
         }
-        for(let target of targets) {
-            if(!character.useStealthToBypass(target)) {
-                return false;
-            }
 
+        for(let target of targets) {
             this.challenge.addStealthChoice(character, target);
         }
 

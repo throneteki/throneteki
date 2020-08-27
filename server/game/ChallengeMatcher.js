@@ -6,6 +6,7 @@ class ChallengeMatcher {
             Matcher.containsValue(matchers.challengeType, challenge.challengeType) &&
             Matcher.containsValue(matchers.attackingPlayer, challenge.attackingPlayer) &&
             Matcher.containsValue(matchers.defendingPlayer, challenge.defendingPlayer) &&
+            Matcher.containsValue(matchers.initiatedAgainstPlayer, challenge.initiatedAgainstPlayer) &&
             Matcher.containsValue(matchers.loser, challenge.loser) &&
             Matcher.containsValue(matchers.winner, challenge.winner) &&
             Matcher.anyValue(matchers.attackingAlone, card => card.isAttacking() && challenge.attackers.length === 1) &&

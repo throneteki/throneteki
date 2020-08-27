@@ -4,7 +4,7 @@ class ChampionsChallenge extends PlotCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.defendingPlayer === this.controller
+                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller
             },
             limit: ability.limit.perPhase(1),
             cost: ability.costs.kneel((card, context) => card.getType() === 'character' && card.getStrength() === this.highestStrength(context.player)),

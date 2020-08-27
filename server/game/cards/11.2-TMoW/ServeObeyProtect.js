@@ -7,7 +7,7 @@ class ServeObeyProtect extends DrawCard {
 
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.defendingPlayer === this.controller &&
+                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller &&
                                                this.tracker.some({ loser: this.controller, defendingPlayer: this.controller })
             },
             cost: ability.costs.returnToHand(card => card.isFaction('martell') && card.getType() === 'character'),

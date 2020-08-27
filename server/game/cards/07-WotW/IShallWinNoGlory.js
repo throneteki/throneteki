@@ -4,7 +4,7 @@ class IShallWinNoGlory extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.defendingPlayer === this.controller
+                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller
             },
             cost: ability.costs.choose({
                 'Kneel Builders': ability.costs.kneelMultiple(3, card => card.hasTrait('Builder') && card.getType() === 'character'),
