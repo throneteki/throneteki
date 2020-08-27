@@ -28,6 +28,7 @@ class NewGame extends React.Component {
 
         this.state = {
             eventId: 'none',
+            optionsLocked: false,
             spectators: true,
             showHand: false,
             selectedGameFormat: 'joust',
@@ -63,6 +64,47 @@ class NewGame extends React.Component {
 
     onEventChange(event) {
         this.setState({ eventId: event.target.value });
+
+        //set game options when the selected event uses event specific options
+        //find the corresponding event
+        const { events } = this.props;
+        let selectedEvent = events.find(e => {
+            return e._id === event.target.value;
+        });
+        //unlock game options in case they were locked before
+        this.setState({ optionsLocked: false });
+        if(selectedEvent && selectedEvent.useEventGameOptions) {
+            //if the selectedEvent uses event game options, lock and set the options
+            this.setState({ optionsLocked: true });
+            if(selectedEvent.eventGameOptions.spectators !== undefined) {
+                this.setState({ spectators: selectedEvent.eventGameOptions.spectators });
+            }                
+            if(selectedEvent.eventGameOptions.muteSpectators !== undefined) {
+                this.setState({ muteSpectators: selectedEvent.eventGameOptions.muteSpectators });
+            }
+            if(selectedEvent.eventGameOptions.showHand !== undefined) {
+                this.setState({ showHand: selectedEvent.eventGameOptions.showHand });
+            }
+            if(selectedEvent.eventGameOptions.useRookery !== undefined) {
+                this.setState({ useRookery: selectedEvent.eventGameOptions.useRookery });
+            }
+            if(selectedEvent.eventGameOptions.useGameTimeLimit !== undefined) {
+                this.setState({ useGameTimeLimit: selectedEvent.eventGameOptions.useGameTimeLimit });
+            }
+            if(selectedEvent.eventGameOptions.gameTimeLimit !== undefined) {
+                this.setState({ gameTimeLimit: selectedEvent.eventGameOptions.gameTimeLimit });
+            }
+            if(selectedEvent.eventGameOptions.useChessClocks !== undefined) {
+                this.setState({ useChessClocks: selectedEvent.eventGameOptions.useChessClocks });
+            }
+            if(selectedEvent.eventGameOptions.chessClockTimeLimit !== undefined) {
+                this.setState({ chessClockTimeLimit: selectedEvent.eventGameOptions.chessClockTimeLimit });
+            }
+            if(selectedEvent.eventGameOptions.password !== undefined) {
+                this.setState({ password: selectedEvent.eventGameOptions.password });
+            }
+            this.setState({ selectedGameType: 'competitive' });
+        }
     }
 
     onPasswordChange(event) {
@@ -142,45 +184,45 @@ class NewGame extends React.Component {
         return (<div className='row'>
             <div className='checkbox col-sm-8'>
                 <label>
-                    <input type='checkbox' onChange={ this.onSpectatorsClick } checked={ this.state.spectators } />
+                    <input type='checkbox' onChange={ this.onSpectatorsClick } checked={ this.state.spectators } disabled={ this.state.optionsLocked } />
                     Allow spectators
                 </label>
             </div>
             { this.state.spectators && <div className='checkbox col-sm-8'>
                 <label>
-                    <input type='checkbox' onChange={ this.onMuteSpectatorsClick } checked={ this.state.muteSpectators } />
+                    <input type='checkbox' onChange={ this.onMuteSpectatorsClick } checked={ this.state.muteSpectators } disabled={ this.state.optionsLocked }/>
                     Mute spectators
                 </label>
             </div> }
             <div className='checkbox col-sm-8'>
                 <label>
-                    <input type='checkbox' onChange={ this.onShowHandClick } checked={ this.state.showHand } />
+                    <input type='checkbox' onChange={ this.onShowHandClick } checked={ this.state.showHand } disabled={ this.state.optionsLocked }/>
                     Show hands to spectators
                 </label>
             </div>
             <div className='checkbox col-sm-8'>
                 <label>
-                    <input type='checkbox' onChange={ this.handleRookeryClick } checked={ this.state.useRookery } />
+                    <input type='checkbox' onChange={ this.handleRookeryClick } checked={ this.state.useRookery } disabled={ this.state.optionsLocked }/>
                     Rookery format
                 </label>
             </div>
             <div className='checkbox col-sm-12'>
                 <label>
-                    <input type='checkbox' onChange={ this.onUseGameTimeLimitClick } checked={ this.state.useGameTimeLimit } />
+                    <input type='checkbox' onChange={ this.onUseGameTimeLimitClick } checked={ this.state.useGameTimeLimit } disabled={ this.state.optionsLocked }/>
                     Use a time limit (in minutes)
                 </label>
             </div>
             { this.state.useGameTimeLimit && <div className='col-sm-4'>
-                <input className='form-control' type='number' onChange={ this.onGameTimeLimitChange } value={ this.state.gameTimeLimit } />
+                <input className='form-control' type='number' onChange={ this.onGameTimeLimitChange } value={ this.state.gameTimeLimit } disabled={ this.state.optionsLocked }/>
             </div> }
             <div className='checkbox col-sm-12'>
                 <label>
-                    <input type='checkbox' onChange={ this.onUseChessClocksClick } checked={ this.state.useChessClocks } />
+                    <input type='checkbox' onChange={ this.onUseChessClocksClick } checked={ this.state.useChessClocks } disabled={ this.state.optionsLocked }/>
                     Use chess clocks with a time limit per player (in minutes)
                 </label>
             </div>
             { this.state.useChessClocks && <div className='col-sm-4'>
-                <input className='form-control' type='number' onChange={ this.onChessClockTimeLimitChange } value={ this.state.chessClockTimeLimit } />
+                <input className='form-control' type='number' onChange={ this.onChessClockTimeLimitChange } value={ this.state.chessClockTimeLimit } disabled={ this.state.optionsLocked }/>
             </div> }
         </div>);
     }
@@ -217,15 +259,15 @@ class NewGame extends React.Component {
                 </div>
                 <div className='col-sm-10'>
                     <label className='radio-inline'>
-                        <input type='radio' onChange={ this.onRadioChange.bind(this, 'beginner') } checked={ this.isGameTypeSelected('beginner') } />
+                        <input type='radio' onChange={ this.onRadioChange.bind(this, 'beginner') } checked={ this.isGameTypeSelected('beginner') } disabled={ this.state.optionsLocked }/>
                         Beginner
                     </label>
                     <label className='radio-inline'>
-                        <input type='radio' onChange={ this.onRadioChange.bind(this, 'casual') } checked={ this.isGameTypeSelected('casual') } />
+                        <input type='radio' onChange={ this.onRadioChange.bind(this, 'casual') } checked={ this.isGameTypeSelected('casual') } disabled={ this.state.optionsLocked }/>
                         Casual
                     </label>
                     <label className='radio-inline'>
-                        <input type='radio' onChange={ this.onRadioChange.bind(this, 'competitive') } checked={ this.isGameTypeSelected('competitive') } />
+                        <input type='radio' onChange={ this.onRadioChange.bind(this, 'competitive') } checked={ this.isGameTypeSelected('competitive') } disabled={ this.state.optionsLocked } />
                         Competitive
                     </label>
                 </div>
@@ -283,7 +325,7 @@ class NewGame extends React.Component {
                 <div className='row game-password'>
                     <div className='col-sm-8'>
                         <label>Password</label>
-                        <input className='form-control' type='password' onChange={ this.onPasswordChange } value={ this.state.password } />
+                        <input className='form-control' type='password' onChange={ this.onPasswordChange } value={ this.state.password } disabled={ this.state.optionsLocked }/>
                     </div>
                 </div>
             </div>);
