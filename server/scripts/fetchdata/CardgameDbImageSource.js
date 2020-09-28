@@ -25,9 +25,14 @@ class CardgameDbImageSource {
             return;
         }
 
-        let cgdbId = pack.cgdbId.toString().padStart(2, '0');
-        let cardNumber = parseInt(card.code.substring(2), 10);
-        let url = `http://lcg-cdn.fantasyflightgames.com/got2nd/GT${cgdbId}_${cardNumber}.jpg`;
+        let url = card.imageUrl;
+
+        // Use the official card images if imageUrl isn't present
+        if(!url) {
+            let cgdbId = pack.cgdbId.toString().padStart(2, '0');
+            let cardNumber = parseInt(card.code.substring(2), 10);
+            url = `http://lcg-cdn.fantasyflightgames.com/got2nd/GT${cgdbId}_${cardNumber}.jpg`;
+        }
 
         request({ url: url, encoding: null }, function(err, response, body) {
             if(err || response.statusCode !== 200) {
