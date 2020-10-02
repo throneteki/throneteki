@@ -71,22 +71,28 @@ class CardService {
     }
 
     convertOfficialListToNewFormat(versions) {
-        const activeVersion = this.getActiveVersion(versions);
-        const joustFormat = activeVersion.formats.find(format => format.name === 'joust');
-        return [
-            {
+        const issuers = [...new Set(versions.map(version => version.issuer))];
+        return issuers.map(issuer => {
+            const activeVersion = this.getActiveVersion(versions, issuer);
+            const joustFormat = activeVersion.formats.find(format => format.name === 'joust');
+            return {
+                _id: `${activeVersion.issuer}-${activeVersion.version}`.replace(' ', '-').toLowerCase(),
                 name: `${activeVersion.issuer} FAQ v${activeVersion.version}`,
                 date: activeVersion.date,
+                issuer: activeVersion.issuer,
+                version: activeVersion.version,
                 restricted: joustFormat.restricted,
                 banned: activeVersion.bannedCards.concat(joustFormat.banned || []),
-                pods: joustFormat.pods
-            }
-        ];
+                pods: joustFormat.pods,
+                official: true
+            };
+        });
     }
 
-    getActiveVersion(versions) {
+    getActiveVersion(versions, issuer) {
         const now = moment();
-        return versions.reduce((max, list) => {
+        const versionsFromIssuer = versions.filter(version => version.issuer === issuer);
+        return versionsFromIssuer.reduce((max, list) => {
             let effectiveDate = moment(list.date, 'YYYY-MM-DD');
             if(effectiveDate <= now && effectiveDate > moment(max.date, 'YYYY-MM-DD')) {
                 return list;
