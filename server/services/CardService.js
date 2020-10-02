@@ -59,7 +59,10 @@ class CardService {
                     return reject(err);
                 }
 
-                const officialLists = this.convertOfficialListToNewFormat(JSON.parse(data));
+                const officialLists = this.convertOfficialListToNewFormat(JSON.parse(data)).sort((a, b) => {
+                    return a.date > b.date ? -1 : 1;
+                });
+
                 this.events.find({}).then(events => {
                     resolve(officialLists.concat(events));
                 }).catch(err => {
