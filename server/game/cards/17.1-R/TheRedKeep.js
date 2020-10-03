@@ -11,7 +11,7 @@ class TheRedKeep extends DrawCard {
             },
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.payGold(1),
+                ability.costs.payGold(1)
             ],
             handler: context => {
                 context.event.cancel();

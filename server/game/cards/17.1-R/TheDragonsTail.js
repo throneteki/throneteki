@@ -23,6 +23,5 @@ class TheDragonsTail extends DrawCard {
 }
 
 TheDragonsTail.code = '17147';
-       
 
 module.exports = TheDragonsTail;

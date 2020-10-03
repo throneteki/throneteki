@@ -49,8 +49,4 @@ class DaenerysTargaryen extends DrawCard {
 
 DaenerysTargaryen.code = '17128';
 
-DaenerysTargaryen.cardData = {
-    "text": "<b>Action:</b>Kneel your faction card to search the top 10 cards of your deck for a <i>Dragon</i> or <i>Title</i> card and put it into play. Shuffle your deck. At the end of the phase, if that card is still in play and not attached to Daenerys Targaryen, return it to your hand (cannot be saved)."
-};
-
 module.exports = DaenerysTargaryen;

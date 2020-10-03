@@ -41,7 +41,7 @@ class TheQueensRetinue extends DrawCard {
     }
                     
     doNotDraw(opponent) {
-        this.game.addMessage('{0} uses {1} to put {1} into play from shadows, but {2} does not draw', this.controller, this, opponent)
+        this.game.addMessage('{0} uses {1} to put {1} into play from shadows, but {2} does not draw', this.controller, this, opponent);
         return true;
     }
 }

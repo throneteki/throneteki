@@ -39,7 +39,6 @@ class Dorne extends DrawCard {
 
         return true;
     }
-
 }
 
 Dorne.code = '17113';

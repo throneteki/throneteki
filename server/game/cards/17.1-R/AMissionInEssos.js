@@ -39,8 +39,4 @@ class AMissionInEssos extends DrawCard {
 
 AMissionInEssos.code = '17115';
 
-AMissionInEssos.cardData = {
-    "text": "Shadow (0).\n<b>Action</b>: Return a [martell] character you control to your hand. Then, search your deck for a character that shares a <i>Trait</i> with that character and with lower printed cost and put it in play. Shuffle your deck."
-};
-
 module.exports = AMissionInEssos;
