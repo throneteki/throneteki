@@ -379,7 +379,8 @@ const Costs = {
                 context.source.modifyToken(Tokens.gold, -context.xValue);
             }
         };
-    }
+    },
+    shuffleCardIntoDeck: condition => CostBuilders.shuffleCardIntoDeck.select(condition)
 };
 
 module.exports = Costs;

@@ -193,7 +193,7 @@ class AbilityResolver extends BaseStep {
         // thus is not subject to cancels such as Treachery.
         if(this.ability.isCardAbility()) {
             let targets = this.context.targets.getTargets();
-            this.game.raiseEvent('onCardAbilityInitiated', { player: this.context.player, source: this.context.source, ability: this.ability, targets: targets }, () => {
+            this.game.raiseEvent('onCardAbilityInitiated', { player: this.context.player, source: this.context.source, ability: this.ability, targets: targets, originalLocation: this.context.originalLocation }, () => {
                 this.ability.executeHandler(this.context);
             });
         } else {

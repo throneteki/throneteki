@@ -201,7 +201,7 @@ describe('take control', function() {
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
-                    'Steward at the Wall', 'The Wall (Core)'
+                    'Samwell Tarly (Core)', 'The Wall (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -210,11 +210,11 @@ describe('take control', function() {
 
                 this.euron = this.player1.findCardByName('Euron Crow\'s Eye', 'hand');
                 this.aemon = this.player1.findCardByName('Maester Aemon', 'hand');
-                this.steward = this.player2.findCardByName('Steward at the Wall', 'hand');
+                this.samwell = this.player2.findCardByName('Samwell Tarly', 'hand');
                 this.wall = this.player2.findCardByName('The Wall', 'hand');
 
                 this.player1.clickCard(this.euron);
-                this.player2.clickCard(this.steward);
+                this.player2.clickCard(this.samwell);
 
                 this.completeSetup();
             });
@@ -259,7 +259,7 @@ describe('take control', function() {
                 });
 
                 it('should not apply the effect to the old controller', function() {
-                    expect(this.steward.getStrength()).toBe(1);
+                    expect(this.samwell.getStrength()).toBe(1);
                 });
             });
 
@@ -277,7 +277,7 @@ describe('take control', function() {
                     this.player2.clickCard(this.wall);
                     this.player2.clickPrompt('Done');
 
-                    expect(this.steward.getStrength()).toBe(2);
+                    expect(this.samwell.getStrength()).toBe(2);
 
                     // Use Sea Bitch to take control of the opponent Wall.
                     this.player1.clickMenu(this.seaBitch, 'Take control of location');
@@ -293,7 +293,7 @@ describe('take control', function() {
                 });
 
                 it('should unapply the effect from the old controller', function() {
-                    expect(this.steward.getStrength()).toBe(1);
+                    expect(this.samwell.getStrength()).toBe(1);
                 });
             });
 
@@ -306,15 +306,15 @@ describe('take control', function() {
                     this.player2.clickCard(this.wall);
                     this.player2.clickPrompt('Done');
                     this.player1.clickCard('Ward', 'hand');
-                    this.player1.clickCard(this.steward);
+                    this.player1.clickCard(this.samwell);
 
-                    expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.steward.uuid);
-                    expect(this.steward.controller.name).toBe(this.player1Object.name);
-                    expect(this.steward.location).toBe('play area');
+                    expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.samwell.uuid);
+                    expect(this.samwell.controller.name).toBe(this.player1Object.name);
+                    expect(this.samwell.location).toBe('play area');
                 });
 
                 it('should unapply the effect from the old controller', function() {
-                    expect(this.steward.getStrength()).toBe(1);
+                    expect(this.samwell.getStrength()).toBe(1);
                 });
             });
         });
