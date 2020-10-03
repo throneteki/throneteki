@@ -3,7 +3,7 @@ describe('Womb of the World', function() {
         beforeEach(function() {
             const deck = this.buildDeck('targaryen', [
                 'Trading with the Pentoshi',
-                'Womb of the World (R)', 'Qotho', 'Qotho', 'Rakharo (DotE)', 'Rakharo (DotE)'
+                'Womb of the World (R)', 'Qotho (HoT)', 'Qotho (HoT)', 'Rakharo (DotE)', 'Rakharo (DotE)'
             ]);
 
             this.player1.selectDeck(deck);

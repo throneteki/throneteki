@@ -3,7 +3,7 @@ describe('Valyrian Steel', function() {
         describe('when an attachment enters play', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel',
+                    'Valyrian Steel (LMHR)',
                     'Late Summer Feast',
                     'Hedge Knight',
                     'Little Bird'
@@ -34,7 +34,7 @@ describe('Valyrian Steel', function() {
         describe('vs Risen from the Sea', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel',
+                    'Valyrian Steel (LMHR)',
                     'Valar Morghulis', 'A Noble Cause',
                     'Theon Greyjoy (Core)', 'Risen from the Sea'
                 ]);

@@ -4,7 +4,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('stark', [
                     'Sneak Attack', 'A Noble Cause', 'Valar Morghulis',
-                    'Ward'
+                    'Ward (TS)'
                 ]);
                 const deck2 = this.buildDeck('tyrell', [
                     'Sneak Attack', 'Confiscation',
@@ -197,7 +197,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Trading with the Pentoshi',
-                    'Euron Crow\'s Eye (Core)', 'Maester Aemon (Core)', 'Sea Bitch', 'Ward'
+                    'Euron Crow\'s Eye (Core)', 'Maester Aemon (Core)', 'Sea Bitch', 'Ward (TS)'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
@@ -323,7 +323,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('greyjoy', [
                     'Trading with the Pentoshi',
-                    'Euron Crow\'s Eye (Core)', 'Iron Mines', 'Hedge Knight'
+                    'Euron Crow\'s Eye (Core)', 'Iron Mines (CoW)', 'Hedge Knight'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -456,7 +456,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Trading with the Pentoshi',
-                    'Ward', 'Night Gathers...', 'Will'
+                    'Ward (TS)', 'Night Gathers...', 'Will'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
@@ -608,7 +608,7 @@ describe('take control', function() {
                 ]);
                 const deck2 = this.buildDeck('stark', [
                     'Sneak Attack', 'A Game of Thrones', 'A Game of Thrones',
-                    'Ward', 'Ward'
+                    'Ward (TS)', 'Ward (TS)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);

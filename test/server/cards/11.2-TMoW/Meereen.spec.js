@@ -4,10 +4,10 @@ describe('Meereen', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen'
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -47,10 +47,10 @@ describe('Meereen', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('targaryen', [
                     'A Noble Cause',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen',
-                    'Meereen', 'Meereen', 'Meereen', 'Meereen', 'Meereen'
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)',
+                    'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)', 'Meereen (TMoW)'
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
                     'A Noble Cause',

@@ -4,7 +4,7 @@ describe('Gifts for the Widow', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Gifts for the Widow', 'Eddard Stark (Core)', 'Noble Lineage'
+                    'Gifts for the Widow (DitD)', 'Eddard Stark (Core)', 'Noble Lineage'
                 ]);
 
                 this.player1.togglePromptedActionWindow('draw', true);

@@ -34,7 +34,7 @@ describe('Valyrian Steel', function() {
         describe('vs Risen from the Sea', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('lannister', [
-                    'Valyrian Steel',
+                    'Valyrian Steel (R)',
                     'Valar Morghulis', 'A Noble Cause',
                     'Theon Greyjoy (Core)', 'Risen from the Sea'
                 ]);

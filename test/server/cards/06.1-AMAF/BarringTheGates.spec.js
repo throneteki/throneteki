@@ -7,7 +7,7 @@ describe('Barring the Gates', function() {
             ]);
             const deck2 = this.buildDeck('lannister', [
                 'A Noble Cause',
-                'Burned Men', 'Hear Me Roar!', 'Ward'
+                'Burned Men', 'Hear Me Roar!', 'Ward (TS)'
             ]);
 
             this.player1.selectDeck(deck1);

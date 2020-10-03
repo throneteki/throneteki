@@ -4,7 +4,7 @@ describe('"Loses all" related effects', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'I Am No One', 'Ser Colen of Greenpools', 'Knighted'
+                    'I Am No One (TFM)', 'Ser Colen of Greenpools', 'Knighted'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
