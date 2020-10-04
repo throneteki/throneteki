@@ -51,6 +51,55 @@ describe('faction change', function() {
                     expect(this.character.getStrength()).toBe(2);
                 });
             });
+            
+            describe('when a character with gained affiliation is killed', function() {
+                beforeEach(function() {
+                    const deck1 = this.buildDeck('stark', [
+                        'A Noble Cause',
+                        'Robb Stark (Core)', 'Ward (TS)'
+                    ]);
+                    const deck2 = this.buildDeck('targaryen', [
+                        'A Noble Cause',
+                        'Targaryen Loyalist', 'Ser Jorah Mormont (Core)'
+                    ]);
+                    this.player1.selectDeck(deck1);
+                    this.player2.selectDeck(deck2);
+                    this.startGame();
+                    this.keepStartingHands();
+
+                    this.character = this.player2.findCardByName('Targaryen Loyalist', 'hand');
+
+                    this.player1.clickCard('Robb Stark', 'hand');
+                    this.player2.clickCard(this.character);
+                    this.player2.clickCard('Ser Jorah Mormont (Core)', 'hand');
+
+                    this.completeSetup();
+
+                    this.selectFirstPlayer(this.player1);
+
+                    this.player1.clickCard('Ward', 'hand');
+                    this.player1.clickCard(this.character);
+
+                    expect(this.character.controller).toBe(this.player1Object);
+
+                    // Kneel Robb so his ability can trigger
+                    this.player1.clickCard('Robb Stark', 'play area');
+
+                    this.completeMarshalPhase();
+
+                    // Skip Player 1 challenges
+                    this.player1.clickPrompt('Done');
+
+                    this.unopposedChallenge(this.player2, 'Military', 'Ser Jorah Mormont (Core)');
+
+                    this.player2.clickPrompt('Apply Claim');
+                    this.player1.clickCard(this.character);
+                });
+
+                it('should count as that affiliation having been killed', function() {
+                    expect(this.player1).toAllowAbilityTrigger('Robb Stark');
+                });
+            });
         });
     });
 });
