@@ -20,7 +20,7 @@ class CardgameDbImageSource {
             return;
         }
 
-        if(!pack.cgdbId) {
+        if(!pack.cgdbId && !card.imageUrl) {
             console.log(`Could not fetch image for ${card.name} (${card.packCode}), as no images are hosted for ${pack.name}`);
             return;
         }

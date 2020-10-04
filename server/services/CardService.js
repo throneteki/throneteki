@@ -59,7 +59,15 @@ class CardService {
                     return reject(err);
                 }
 
-                const officialLists = this.convertOfficialListToNewFormat(JSON.parse(data));
+                const officialLists = this.convertOfficialListToNewFormat(JSON.parse(data)).sort((a, b) => {
+                    // For now, default to original versions of cards.
+                    if(a.cardSet === 'original' && b.cardSet !== 'original') {
+                        return -1;
+                    }
+
+                    return a.date > b.date ? -1 : 1;
+                });
+
                 this.events.find({}).then(events => {
                     resolve(officialLists.concat(events));
                 }).catch(err => {
@@ -71,22 +79,29 @@ class CardService {
     }
 
     convertOfficialListToNewFormat(versions) {
-        const activeVersion = this.getActiveVersion(versions);
-        const joustFormat = activeVersion.formats.find(format => format.name === 'joust');
-        return [
-            {
+        const cardSets = [...new Set(versions.map(version => version.cardSet))];
+        return cardSets.map(cardSet => {
+            const activeVersion = this.getActiveVersion(versions, cardSet);
+            const joustFormat = activeVersion.formats.find(format => format.name === 'joust');
+            return {
+                _id: `${activeVersion.issuer}-${activeVersion.version}`.replace(' ', '-').toLowerCase(),
                 name: `${activeVersion.issuer} FAQ v${activeVersion.version}`,
                 date: activeVersion.date,
+                issuer: activeVersion.issuer,
+                cardSet: activeVersion.cardSet,
+                version: activeVersion.version,
                 restricted: joustFormat.restricted,
                 banned: activeVersion.bannedCards.concat(joustFormat.banned || []),
-                pods: joustFormat.pods
-            }
-        ];
+                pods: joustFormat.pods,
+                official: true
+            };
+        });
     }
 
-    getActiveVersion(versions) {
+    getActiveVersion(versions, cardSet) {
         const now = moment();
-        return versions.reduce((max, list) => {
+        const versionsForCardset = versions.filter(version => version.cardSet === cardSet);
+        return versionsForCardset.reduce((max, list) => {
             let effectiveDate = moment(list.date, 'YYYY-MM-DD');
             if(effectiveDate <= now && effectiveDate > moment(max.date, 'YYYY-MM-DD')) {
                 return list;
