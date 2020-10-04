@@ -8,6 +8,7 @@ import Select from '../Form/Select';
 import Typeahead from '../Form/Typeahead';
 import TextArea from '../Form/TextArea';
 import ApiStatus from '../Site/ApiStatus';
+import RestrictedListDropdown from './RestrictedListDropdown';
 import * as actions from '../../actions';
 
 class DeckEditor extends React.Component {
@@ -73,7 +74,7 @@ class DeckEditor extends React.Component {
         }
     }
 
-    getDeckFromState() {
+    getDeckFromState(restrictedList) {
         let deck = {
             _id: this.state.deckId,
             name: this.state.deckName,
@@ -85,17 +86,19 @@ class DeckEditor extends React.Component {
             rookeryCards: this.state.rookeryCards
         };
 
-        if(!this.props.restrictedList) {
+        if(!this.props.restrictedList && !this.props.currentRestrictedList) {
             deck.status = {};
         } else {
-            deck.status = validateDeck(deck, { packs: this.props.packs, restrictedLists: this.props.restrictedList });
+            const selectedRestrictedList = restrictedList || this.props.currentRestrictedList;
+            const restrictedLists = selectedRestrictedList ? [selectedRestrictedList] : this.props.restrictedList;
+            deck.status = validateDeck(deck, { packs: this.props.packs, restrictedLists });
         }
 
         return deck;
     }
 
-    triggerDeckUpdated() {
-        const deck = this.getDeckFromState();
+    triggerDeckUpdated(restrictedList) {
+        const deck = this.getDeckFromState(restrictedList);
 
         if(this.props.onDeckUpdated) {
             this.props.onDeckUpdated(deck);
@@ -457,6 +460,14 @@ class DeckEditor extends React.Component {
                     </div>
                 </div>
 
+                <div className='form-group'>
+                    <RestrictedListDropdown
+                        currentRestrictedList={ this.props.currentRestrictedList }
+                        onChange={ (restrictedList) => this.triggerDeckUpdated(restrictedList) }
+                        restrictedLists={ this.props.restrictedList }
+                        setCurrentRestrictedList={ this.props.setCurrentRestrictedList } />
+                </div>
+
                 <h4>Either type the cards manually into the box below, add the cards one by one using the card box and autocomplete or for best results, copy and paste a decklist from <a href='http://thronesdb.com' target='_blank'>Thrones DB</a> into the box below.</h4>
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
@@ -517,6 +528,7 @@ DeckEditor.propTypes = {
     apiState: PropTypes.object,
     banners: PropTypes.array,
     cards: PropTypes.object,
+    currentRestrictedList: PropTypes.object,
     deck: PropTypes.object,
     factions: PropTypes.object,
     navigate: PropTypes.func,
@@ -524,6 +536,7 @@ DeckEditor.propTypes = {
     onDeckUpdated: PropTypes.func,
     packs: PropTypes.array,
     restrictedList: PropTypes.array,
+    setCurrentRestrictedList: PropTypes.func,
     updateDeck: PropTypes.func
 };
 
@@ -533,6 +546,7 @@ function mapStateToProps(state) {
         apiState: state.api.SAVE_DECK,
         banners: state.cards.banners,
         cards: state.cards.cards,
+        currentRestrictedList: state.cards.currentRestrictedList,
         decks: state.cards.decks,
         factions: state.cards.factions,
         loading: state.api.loading,

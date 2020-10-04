@@ -6,11 +6,13 @@ import Panel from '../Site/Panel';
 import * as actions from '../../actions';
 import AlertPanel from '../Site/AlertPanel';
 
+import { cardSetLabel } from '../Decks/DeckHelper';
+
 const GameNameMaxLength = 64;
 
 class NewGame extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.handleRookeryClick = this.handleRookeryClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
@@ -26,8 +28,12 @@ class NewGame extends React.Component {
         this.onUseChessClocksClick = this.onUseChessClocksClick.bind(this);
         this.onChessClockTimeLimitChange = this.onChessClockTimeLimitChange.bind(this);
 
+        const defaultRestrictedList = props.restrictedLists.filter(rl => rl.official)[0];
+
         this.state = {
+            selectedMode: `none:${defaultRestrictedList && defaultRestrictedList._id}`,
             eventId: 'none',
+            restrictedListId: defaultRestrictedList && defaultRestrictedList._id,
             optionsLocked: false,
             spectators: true,
             showHand: false,
@@ -63,7 +69,11 @@ class NewGame extends React.Component {
     }
 
     onEventChange(event) {
-        this.setState({ eventId: event.target.value });
+        const selectedValues = event.target.value.split(':');
+        const eventId = selectedValues[0] || 'none';
+        const restrictedListId = selectedValues[1] || '';
+
+        this.setState({ eventId, restrictedListId, selectedMode: event.target.value });
 
         //set game options when the selected event uses event specific options
         //find the corresponding event
@@ -141,6 +151,7 @@ class NewGame extends React.Component {
         this.props.socket.emit('newgame', {
             name: this.state.gameName,
             eventId: this.state.eventId,
+            restrictedListId: this.state.restrictedListId,
             spectators: this.state.spectators,
             showHand: this.state.showHand,
             gameType: this.state.selectedGameType,
@@ -275,19 +286,15 @@ class NewGame extends React.Component {
     }
 
     getEventSelection() {
-        const { events } = this.props;
-
-        if(events.length === 0) {
-            return null;
-        }
+        const { events, restrictedLists } = this.props;
 
         return (
             <div className='row'>
                 <div className='col-sm-8'>
-                    <label htmlFor='gameName'>Event</label>
-                    <select className='form-control' value={ this.state.eventId } onChange={ this.onEventChange }>
-                        <option value='none'>None</option>
-                        { events.map(event => (<option value={ event._id }>{ event.name }</option>)) }
+                    <label htmlFor='gameName'>Mode</label>
+                    <select className='form-control' value={ this.state.selectedMode } onChange={ this.onEventChange }>
+                        { restrictedLists.filter(rl => rl.official).map(rl => (<option value={ `none:${rl._id}` }>{ `${cardSetLabel(rl.cardSet)}` }</option>)) }
+                        { events.map(event => (<option value={ event._id }>Event - { event.name }</option>)) }
                     </select>
                 </div>
             </div>
@@ -358,6 +365,7 @@ NewGame.propTypes = {
     events: PropTypes.array,
     loadEvents: PropTypes.func,
     quickJoin: PropTypes.bool,
+    restrictedLists: PropTypes.array,
     socket: PropTypes.object
 };
 
@@ -365,6 +373,7 @@ function mapStateToProps(state) {
     return {
         allowMelee: state.account.user ? state.account.user.permissions.allowMelee : false,
         events: state.events.events,
+        restrictedLists: state.cards.restrictedList,
         socket: state.lobby.socket
     };
 }

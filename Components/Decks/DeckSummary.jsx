@@ -145,6 +145,7 @@ class DeckSummary extends React.Component {
 DeckSummary.displayName = 'DeckSummary';
 DeckSummary.propTypes = {
     cards: PropTypes.object,
+    currentRestrictedList: PropTypes.object,
     deck: PropTypes.object
 };
 

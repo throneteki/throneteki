@@ -13,3 +13,14 @@ export function deckStatusLabel(status) {
 
     return 'Legal';
 }
+
+export function cardSetLabel(cardSet) {
+    switch(cardSet) {
+        case 'redesign':
+            return 'Redesigned Cards';
+        case 'original':
+            return 'Original Cards';
+    }
+
+    return 'Unknown';
+}

@@ -68,7 +68,7 @@ class EditDeck extends React.Component {
                     </div>
                     <div className='col-sm-6'>
                         <Panel title={ this.props.deck.name }>
-                            <DeckSummary cards={ this.props.cards } deck={ this.state.deck } />
+                            <DeckSummary cards={ this.props.cards } deck={ this.state.deck } currentRestrictedList={ this.props.currentRestrictedList } />
                         </Panel>
                     </div>
                 </div>);
@@ -86,6 +86,7 @@ EditDeck.propTypes = {
     apiSuccess: PropTypes.bool,
     banners: PropTypes.array,
     cards: PropTypes.object,
+    currentRestrictedList: PropTypes.object,
     deck: PropTypes.object,
     deckId: PropTypes.string,
     deckSaved: PropTypes.bool,
@@ -106,6 +107,7 @@ function mapStateToProps(state) {
         apiError: state.api.message,
         banners: state.cards.banners,
         cards: state.cards.cards,
+        currentRestrictedList: state.cards.currentRestrictedList,
         deck: state.cards.selectedDeck,
         deckSaved: state.cards.deckSaved,
         factions: state.cards.factions,

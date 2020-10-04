@@ -6,6 +6,7 @@ import AlertPanel from '../Components/Site/AlertPanel';
 import Panel from '../Components/Site/Panel';
 import Link from '../Components/Site/Link';
 import DeckList from '../Components/Decks/DeckList';
+import RestrictedListDropdown from '../Components/Decks/RestrictedListDropdown';
 import ViewDeck from '../Components/Decks/ViewDeck';
 import * as actions from '../actions';
 
@@ -55,7 +56,12 @@ class Decks extends React.Component {
                     </div>
                     <div className='col-sm-5 full-height'>
                         <Panel title='Your decks'>
-                            <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
+                            <div className='form-group'>
+                                <Link className='btn btn-primary' href='/decks/add'>New Deck</Link>
+                            </div>
+                            <div>
+                                <RestrictedListDropdown currentRestrictedList={ this.props.currentRestrictedList } restrictedLists={ this.props.restrictedLists } setCurrentRestrictedList={ this.props.setCurrentRestrictedList } />
+                            </div>
                             <DeckList className='deck-list' activeDeck={ this.props.selectedDeck } decks={ this.props.decks } onSelectDeck={ this.props.selectDeck } />
                         </Panel>
                     </div>
@@ -76,14 +82,17 @@ Decks.propTypes = {
     apiSuccess: PropTypes.bool,
     cards: PropTypes.object,
     clearDeckStatus: PropTypes.func,
+    currentRestrictedList: PropTypes.object,
     deckDeleted: PropTypes.bool,
     decks: PropTypes.array,
     deleteDeck: PropTypes.func,
     loadDecks: PropTypes.func,
     loading: PropTypes.bool,
     navigate: PropTypes.func,
+    restrictedLists: PropTypes.array,
     selectDeck: PropTypes.func,
-    selectedDeck: PropTypes.object
+    selectedDeck: PropTypes.object,
+    setCurrentRestrictedList: PropTypes.func
 };
 
 function mapStateToProps(state) {
@@ -92,9 +101,11 @@ function mapStateToProps(state) {
         apiMessage: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.message : undefined,
         apiSuccess: state.api.REQUEST_DECKS ? state.api.REQUEST_DECKS.success : undefined,
         cards: state.cards.cards,
+        currentRestrictedList: state.cards.currentRestrictedList,
         deckDeleted: state.cards.deckDeleted,
         decks: state.cards.decks,
         loading: state.api.loading,
+        restrictedLists: state.cards.restrictedList,
         selectedDeck: state.cards.selectedDeck
     };
 }

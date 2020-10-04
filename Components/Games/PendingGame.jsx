@@ -8,6 +8,7 @@ import Messages from '../GameBoard/Messages';
 import Avatar from '../Site/Avatar';
 import SelectDeckModal from './SelectDeckModal';
 import DeckStatus from '../Decks/DeckStatus';
+import { cardSetLabel } from '../Decks/DeckHelper';
 import * as actions from '../../actions';
 
 class PendingGame extends React.Component {
@@ -227,6 +228,13 @@ class PendingGame extends React.Component {
                     <source src='/sound/charge.ogg' type='audio/ogg' />
                 </audio>
                 <Panel title={ title }>
+                    { currentGame.event.name && <p><strong>Event:</strong> { currentGame.event.name }</p> }
+                    <p>
+                        <strong>Restricted List:</strong> { currentGame.restrictedList.name }
+                    </p>
+                    <p>
+                        <strong>Cards:</strong> { cardSetLabel(currentGame.restrictedList.cardSet) }
+                    </p>
                     <div className='btn-group'>
                         <button className='btn btn-primary' disabled={ !this.isGameReady() || this.props.connecting || this.state.waiting } onClick={ this.onStartClick }>Start</button>
                         <button className='btn btn-primary' onClick={ this.onLeaveClick }>Leave</button>
