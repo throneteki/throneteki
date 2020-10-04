@@ -57,7 +57,7 @@ describe('faction change', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Robb Stark (Core)', 'Ward'
+                    'Robb Stark (Core)', 'Ward (TS)'
                 ]);
                 const deck2 = this.buildDeck('targaryen', [
                     'A Noble Cause',

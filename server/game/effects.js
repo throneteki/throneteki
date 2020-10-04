@@ -580,10 +580,27 @@ const Effects = {
                 context.returnToHandIfStillInPlay.push(card);
             },
             unapply: function(card, context) {
-                if(card.location === 'play area' && context.returnToHandIfStillInPlay.includes(card)) {
+                if(['play area', 'duplicate'].includes(card.location) && context.returnToHandIfStillInPlay.includes(card)) {
                     context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(c => c !== card);
                     card.controller.returnCardToHand(card, allowSave);
                     context.game.addMessage('{0} returns {1} to hand at the end of the {2} because of {3}', context.source.controller, card, duration, context.source);
+                }
+            }
+        };
+    },
+    returnToHandIfStillInPlayAndNotAttachedToCardByTitle: function(parentCardTitle, allowSave = false, duration = 'phase') {
+        return {
+            apply: function(card, context) {
+                context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay || [];
+                context.returnToHandIfStillInPlay.push(card);
+            },
+            unapply: function(card, context) {
+                if(card.location === 'play area' && context.returnToHandIfStillInPlay.includes(card)) {
+                    context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(c => c !== card);
+                    if((card.parent && card.parent.name !== parentCardTitle) || !card.parent) {
+                        card.controller.returnCardToHand(card, allowSave);
+                        context.game.addMessage('{0} returns {1} to hand at the end of the {2} because of {3}', context.source.controller, card, duration, context.source);
+                    }
                 }
             }
         };
@@ -1125,6 +1142,17 @@ const Effects = {
     },
     reduceFirstOutOfShadowsCardCostEachRound: function(amount, match) {
         return this.reduceFirstCardCostEachRound(['outOfShadows'], amount, match);
+    },
+    reduceFirstCardCostEachPhase: function(playingTypes, amount, match) {
+        return this.reduceCost({
+            playingTypes: playingTypes,
+            amount: amount,
+            match: match,
+            limit: AbilityLimit.perPhase(1)
+        });
+    },
+    reduceFirstPlayedCardCostEachPhase: function(amount, match) {
+        return this.reduceFirstCardCostEachPhase('play', amount, match);
     },
     reduceAmbushCardCost: function(amount, match) {
         return this.reduceCost({

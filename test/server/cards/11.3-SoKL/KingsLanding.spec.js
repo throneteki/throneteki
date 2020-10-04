@@ -4,7 +4,7 @@ describe('King\'s Landing', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'King\'s Landing', 'The Roseroad', 'Winterfell Crypt', 'Skagos'
+                    'King\'s Landing', 'The Roseroad', 'Winterfell Crypt', 'Skagos (IDP)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

@@ -2,7 +2,7 @@ describe('The Annals of Castle Black', function() {
     integration(function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('greyjoy', [
-                'The Annals of Castle Black', 'A Noble Cause',
+                'The Annals of Castle Black (GtR)', 'A Noble Cause',
                 'Wildling Horde', 'Lannisport Merchant', 'Hear Me Roar!', 'Ahead of the Tide'
             ]);
             const deck2 = this.buildDeck('greyjoy', [

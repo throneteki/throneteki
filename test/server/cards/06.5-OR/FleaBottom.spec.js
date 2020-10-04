@@ -3,7 +3,7 @@ describe('Flea Bottom', function() {
         beforeEach(function() {
             const deck = this.buildDeck('targaryen', [
                 'Trading with the Pentoshi',
-                'Flea Bottom', 'Drogon (Core)', 'Drogon (Core)', 'Hedge Knight'
+                'Flea Bottom (OR)', 'Drogon (Core)', 'Drogon (Core)', 'Hedge Knight'
             ]);
 
             this.player1.selectDeck(deck);

@@ -15,6 +15,7 @@ const ReturnToHandCost = require('./ReturnToHandCost');
 const RevealCost = require('./RevealCost');
 const SacrificeCost = require('./SacrificeCost');
 const StandCost = require('./StandCost');
+const ShuffleCardIntoDeckCost = require('./ShuffleCardIntoDeckCost');
 
 const CostBuilders = {
     discardDuplicate: new CostBuilder(new DiscardDuplicateCost(), {
@@ -86,6 +87,11 @@ const CostBuilders = {
     stand: new CostBuilder(new StandCost(), {
         select: 'Select card to stand',
         selectMultiple: number => `Select ${number} cards to stand`
+    }),
+    shuffleCardIntoDeck: new CostBuilder(new ShuffleCardIntoDeckCost(), {
+        select: 'Select a card to shuffle back into the deck',
+        selectMultiple: number => `Select ${number} cards to shuffle back into the deck`,
+        selectAny: 'Select any number of cards to shuffle back into the deck'
     })
 };
 

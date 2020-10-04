@@ -156,7 +156,7 @@ describe('marshal phase', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('targaryen', [
                     'Trading with the Pentoshi',
-                    'Crown of Gold', 'Crown of Gold', 'Khal Drogo (Core)'
+                    'Crown of Gold (TRtW)', 'Crown of Gold (TRtW)', 'Khal Drogo (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

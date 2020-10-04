@@ -53,7 +53,7 @@ describe('Rickon Stark', function() {
                     'Rickon Stark'
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
-                    'Sea of Blood',
+                    'Sea of Blood (KotI)',
                     'A Noble Cause',
                     'Balon Greyjoy (Core)'
                 ]);

@@ -54,7 +54,7 @@ describe('Maximums', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('greyjoy', [
                     'A Noble Cause',
-                    'Hedge Knight', 'Hedge Knight', 'Drowned God Fanatic', 'Drowned God Fanatic'
+                    'Hedge Knight', 'Hedge Knight', 'Drowned God Fanatic (SoKL)', 'Drowned God Fanatic (SoKL)'
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
                     'A Noble Cause',

@@ -4,7 +4,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('stark', [
                     'Sneak Attack', 'A Noble Cause', 'Valar Morghulis',
-                    'Ward'
+                    'Ward (TS)'
                 ]);
                 const deck2 = this.buildDeck('tyrell', [
                     'Sneak Attack', 'Confiscation',
@@ -197,11 +197,11 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Trading with the Pentoshi',
-                    'Euron Crow\'s Eye (Core)', 'Maester Aemon (Core)', 'Sea Bitch', 'Ward'
+                    'Euron Crow\'s Eye (Core)', 'Maester Aemon (Core)', 'Sea Bitch', 'Ward (TS)'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'Trading with the Pentoshi',
-                    'Steward at the Wall', 'The Wall (Core)'
+                    'Samwell Tarly (Core)', 'The Wall (Core)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
@@ -210,11 +210,11 @@ describe('take control', function() {
 
                 this.euron = this.player1.findCardByName('Euron Crow\'s Eye', 'hand');
                 this.aemon = this.player1.findCardByName('Maester Aemon', 'hand');
-                this.steward = this.player2.findCardByName('Steward at the Wall', 'hand');
+                this.samwell = this.player2.findCardByName('Samwell Tarly', 'hand');
                 this.wall = this.player2.findCardByName('The Wall', 'hand');
 
                 this.player1.clickCard(this.euron);
-                this.player2.clickCard(this.steward);
+                this.player2.clickCard(this.samwell);
 
                 this.completeSetup();
             });
@@ -259,7 +259,7 @@ describe('take control', function() {
                 });
 
                 it('should not apply the effect to the old controller', function() {
-                    expect(this.steward.getStrength()).toBe(1);
+                    expect(this.samwell.getStrength()).toBe(1);
                 });
             });
 
@@ -277,7 +277,7 @@ describe('take control', function() {
                     this.player2.clickCard(this.wall);
                     this.player2.clickPrompt('Done');
 
-                    expect(this.steward.getStrength()).toBe(2);
+                    expect(this.samwell.getStrength()).toBe(2);
 
                     // Use Sea Bitch to take control of the opponent Wall.
                     this.player1.clickMenu(this.seaBitch, 'Take control of location');
@@ -293,7 +293,7 @@ describe('take control', function() {
                 });
 
                 it('should unapply the effect from the old controller', function() {
-                    expect(this.steward.getStrength()).toBe(1);
+                    expect(this.samwell.getStrength()).toBe(1);
                 });
             });
 
@@ -306,15 +306,15 @@ describe('take control', function() {
                     this.player2.clickCard(this.wall);
                     this.player2.clickPrompt('Done');
                     this.player1.clickCard('Ward', 'hand');
-                    this.player1.clickCard(this.steward);
+                    this.player1.clickCard(this.samwell);
 
-                    expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.steward.uuid);
-                    expect(this.steward.controller.name).toBe(this.player1Object.name);
-                    expect(this.steward.location).toBe('play area');
+                    expect(this.player1Object.cardsInPlay.map(card => card.uuid)).toContain(this.samwell.uuid);
+                    expect(this.samwell.controller.name).toBe(this.player1Object.name);
+                    expect(this.samwell.location).toBe('play area');
                 });
 
                 it('should unapply the effect from the old controller', function() {
-                    expect(this.steward.getStrength()).toBe(1);
+                    expect(this.samwell.getStrength()).toBe(1);
                 });
             });
         });
@@ -323,7 +323,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('greyjoy', [
                     'Trading with the Pentoshi',
-                    'Euron Crow\'s Eye (Core)', 'Iron Mines', 'Hedge Knight'
+                    'Euron Crow\'s Eye (Core)', 'Iron Mines (CoW)', 'Hedge Knight'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -456,7 +456,7 @@ describe('take control', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('greyjoy', [
                     'Trading with the Pentoshi',
-                    'Ward', 'Night Gathers...', 'Will'
+                    'Ward (TS)', 'Night Gathers...', 'Will'
                 ]);
                 const deck2 = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
@@ -608,7 +608,7 @@ describe('take control', function() {
                 ]);
                 const deck2 = this.buildDeck('stark', [
                     'Sneak Attack', 'A Game of Thrones', 'A Game of Thrones',
-                    'Ward', 'Ward'
+                    'Ward (TS)', 'Ward (TS)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);
