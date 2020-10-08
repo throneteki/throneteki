@@ -1001,7 +1001,7 @@ class Player extends Spectator {
             return;
         }
 
-        if(card.location === 'play area') {
+        if(card.location === 'play area' && targetLocation !== 'play area') {
             var params = {
                 player: this,
                 card: card,
