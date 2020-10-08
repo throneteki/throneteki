@@ -271,7 +271,7 @@ class DeckEditor extends React.Component {
                         rawAgenda = header[0].trim();
                     }
 
-                    let newAgenda = Object.values(this.props.agendas).find(agenda => agenda.name === rawAgenda);
+                    let newAgenda = this.lookupCard(rawAgenda);
                     if(newAgenda) {
                         agenda = newAgenda;
                     }
@@ -279,9 +279,7 @@ class DeckEditor extends React.Component {
                     if(rawBanners) {
                         let banners = [];
                         for(let rawBanner of rawBanners) {
-                            let banner = this.props.banners.find(banner => {
-                                return rawBanner.trim() === banner.label;
-                            });
+                            let banner = this.lookupCard(rawBanner);
 
                             if(banner) {
                                 banners.push(banner);
@@ -317,7 +315,7 @@ class DeckEditor extends React.Component {
     }
 
     parseCardLine(line) {
-        const pattern = /^(\d+)x?\s+([^()]+)(\s+\((.+)\))?$/;
+        const pattern = /^(\d+)x?\s+(.+)$/;
 
         let match = line.trim().match(pattern);
         if(!match) {
@@ -325,23 +323,28 @@ class DeckEditor extends React.Component {
         }
 
         let count = parseInt(match[1]);
-        let cardName = match[2].trim().toLowerCase();
+        let card = this.lookupCard(match[2]);
+
+        return { count: count, card: card };
+    }
+
+    lookupCard(cardLine) {
+        const pattern = /^([^()]+)(\s+\((.+)\))?$/;
+
+        const match = cardLine.trim().match(pattern);
+
         //remove all bracket [] indicators that appear in a card name when the list is copied from thronesdb, trim at the end to remove the space between cardname and []
-        cardName = cardName.replace(/\[.+\]/g,'').trim();
-        let packName = match[4] && match[4].trim().toLowerCase();
+        const cardName = match[1].replace(/\[.+\]/g,'').trim().toLowerCase();
+        let packName = match[3] && match[3].trim().toLowerCase();
         let pack = packName && this.props.packs.find(pack => pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName);
 
         if(cardName.startsWith('Custom ')) {
-            return { count: count, card: this.createCustomCard(cardName) };
+            return this.createCustomCard(cardName);
         }
 
         let cards = Object.values(this.props.cards);
 
         let matchingCards = cards.filter(card => {
-            if(this.props.agendas[card.code]) {
-                return false;
-            }
-
             if(pack) {
                 return pack.code === card.packCode && card.name.toLowerCase() === cardName;
             }
@@ -351,7 +354,7 @@ class DeckEditor extends React.Component {
 
         matchingCards.sort((a, b) => this.compareCardByReleaseDate(a, b));
 
-        return { count: count, card: matchingCards[0] };
+        return matchingCards[0];
     }
 
     createCustomCard(cardName) {
