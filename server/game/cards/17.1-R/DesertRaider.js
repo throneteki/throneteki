@@ -14,9 +14,6 @@ class DesertRaider extends DrawCard {
                                        this.game.currentChallenge.winner === card.controller
             },
             handler: context => {
-                if(this.controller.canPutIntoPlay(this)) {
-                    this.controller.putIntoPlay(this);
-                }
                 this.target = context.target;
 
                 this.game.promptWithMenu(context.player, this, {
