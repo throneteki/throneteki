@@ -9,6 +9,7 @@ import Typeahead from '../Form/Typeahead';
 import TextArea from '../Form/TextArea';
 import ApiStatus from '../Site/ApiStatus';
 import RestrictedListDropdown from './RestrictedListDropdown';
+import { lookupCardByName } from './DeckParser';
 import * as actions from '../../actions';
 
 class DeckEditor extends React.Component {
@@ -271,7 +272,7 @@ class DeckEditor extends React.Component {
                         rawAgenda = header[0].trim();
                     }
 
-                    let newAgenda = this.lookupCard(rawAgenda);
+                    let newAgenda = lookupCardByName({ cardName: rawAgenda, cards: Object.values(this.props.cards), packs: this.props.packs });
                     if(newAgenda) {
                         agenda = newAgenda;
                     }
@@ -279,7 +280,7 @@ class DeckEditor extends React.Component {
                     if(rawBanners) {
                         let banners = [];
                         for(let rawBanner of rawBanners) {
-                            let banner = this.lookupCard(rawBanner);
+                            let banner = lookupCardByName({ cardName: rawBanner, cards: Object.values(this.props.cards), packs: this.props.packs });
 
                             if(banner) {
                                 banners.push(banner);
@@ -323,90 +324,9 @@ class DeckEditor extends React.Component {
         }
 
         let count = parseInt(match[1]);
-        let card = this.lookupCard(match[2]);
+        let card = lookupCardByName({ cardName: match[2], cards: Object.values(this.props.cards), packs: this.props.packs });
 
         return { count: count, card: card };
-    }
-
-    lookupCard(cardLine) {
-        const pattern = /^([^()]+)(\s+\((.+)\))?$/;
-
-        const match = cardLine.trim().match(pattern);
-
-        //remove all bracket [] indicators that appear in a card name when the list is copied from thronesdb, trim at the end to remove the space between cardname and []
-        const cardName = match[1].replace(/\[.+\]/g,'').trim().toLowerCase();
-        let packName = match[3] && match[3].trim().toLowerCase();
-        let pack = packName && this.props.packs.find(pack => pack.code.toLowerCase() === packName || pack.name.toLowerCase() === packName);
-
-        if(cardName.startsWith('Custom ')) {
-            return this.createCustomCard(cardName);
-        }
-
-        let cards = Object.values(this.props.cards);
-
-        let matchingCards = cards.filter(card => {
-            if(pack) {
-                return pack.code === card.packCode && card.name.toLowerCase() === cardName;
-            }
-
-            return card.name.toLowerCase() === cardName;
-        });
-
-        matchingCards.sort((a, b) => this.compareCardByReleaseDate(a, b));
-
-        return matchingCards[0];
-    }
-
-    createCustomCard(cardName) {
-        let match = /Custom (.*) - (.*)/.exec(cardName);
-        if(!match) {
-            return null;
-        }
-
-        let type = match[1].toLowerCase();
-        let name = match[2];
-
-        return {
-            code: 'custom_' + type,
-            cost: 0,
-            custom: true,
-            faction: 'neutral',
-            icons: {
-                military: true,
-                intrigue: true,
-                power: true
-            },
-            label: name + ' (Custom)',
-            loyal: false,
-            name: name,
-            packCode: 'Custom',
-            plotStats: {
-                claim: 0,
-                income: 0,
-                initiative: 0,
-                reserve: 0
-            },
-            strength: 0,
-            text: 'Custom',
-            traits: [],
-            type: type,
-            unique: name.includes('*')
-        };
-    }
-
-    compareCardByReleaseDate(a, b) {
-        let packA = this.props.packs.find(pack => pack.code === a.packCode);
-        let packB = this.props.packs.find(pack => pack.code === b.packCode);
-
-        if(!packA.releaseDate && packB.releaseDate) {
-            return 1;
-        }
-
-        if(!packB.releaseDate && packA.releaseDate) {
-            return -1;
-        }
-
-        return new Date(packA.releaseDate) < new Date(packB.releaseDate) ? -1 : 1;
     }
 
     addCard(list, card, number) {
