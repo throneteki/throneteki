@@ -1,5 +1,3 @@
-const e = require("express");
-
 describe('The Lord of the Crossing', function() {
     integration(function() {
         beforeEach(function() {
