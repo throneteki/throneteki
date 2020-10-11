@@ -2,7 +2,7 @@ const GameAction = require('./GameAction');
 const DeclareAsAttacker = require('./DeclareAsAttacker');
 const BypassByStealth = require('./BypassByStealth');
 
-class InitiateCallenge extends GameAction {
+class InitiateChallenge extends GameAction {
     constructor() {
         super('initiateChallenge');
     }
@@ -24,4 +24,4 @@ class InitiateCallenge extends GameAction {
     }
 }
 
-module.exports = new InitiateCallenge();
+module.exports = new InitiateChallenge();
