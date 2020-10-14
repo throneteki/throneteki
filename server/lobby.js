@@ -457,10 +457,16 @@ class Lobby {
             const defaultRestrictedList = restrictedLists[0];
             let restrictedList;
 
+            //when there is no event chosen for the game, use the restricted list that was chosen or the default restricted list (first one in the list)
             if(gameDetails.eventId === 'none') {
                 restrictedList = restrictedLists.find(restrictedList => restrictedList._id === gameDetails.restrictedListId) || defaultRestrictedList;
+            //when there is an event chosen for the game, check if the event uses a custom or a default restricted list
             } else {
-                restrictedList = restrictedLists.find(restrictedList => restrictedList.name === event.name && !event.useDefaultRestrictedList) || defaultRestrictedList;
+                if(event.useDefaultRestrictedList && event.defaultRestrictedList) {
+                    restrictedList = restrictedLists.find(restrictedList => restrictedList.name === event.defaultRestrictedList) || defaultRestrictedList;
+                } else {
+                    restrictedList = restrictedLists.find(restrictedList => restrictedList.name === event.name) || defaultRestrictedList;
+                }
             }
 
             let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
