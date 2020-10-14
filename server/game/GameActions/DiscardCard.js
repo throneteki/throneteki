@@ -20,7 +20,7 @@ class DiscardCard extends GameAction {
         };
         return this.event('onCardDiscarded', params, event => {
             event.cardStateWhenDiscarded = event.card.createSnapshot();
-            event.card.controller.moveCard(event.card, 'discard pile');
+            event.card.controller.moveCard(event.card, 'discard pile', {allowSave: allowSave});
         });
     }
 }

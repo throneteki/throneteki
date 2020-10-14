@@ -6,12 +6,12 @@ class ImprovedFortifications extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardLeftPlay: event => event.card === this.parent && this.parent.canBeSaved()
+                onCardLeftPlay: event => event.card === this.parent && this.parent.canBeSaved() && event.allowSave
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
                 context.event.cancel();
-                this.game.addMessage('{0} sacrifices {1} to save {2}', context.player, this, this.parent);
+                this.game.addMessage('{0} sacrifices {1} to save {2}', context.player, this, context.cardStateWhenInitiated.parent);
             }
         });
     }

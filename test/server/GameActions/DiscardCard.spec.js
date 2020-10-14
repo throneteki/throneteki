@@ -57,7 +57,7 @@ describe('DiscardCard', function() {
             });
 
             it('moves the card to discard', function() {
-                expect(this.playerSpy.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
+                expect(this.playerSpy.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile', {allowSave: true});
             });
         });
     });
