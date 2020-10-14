@@ -8,7 +8,7 @@ module.exports.init = function(server, options) {
 
     server.get('/api/events', wrapAsync(async function(req, res) {
         const events = await eventService.getEvents();
-        
+
         return res.send({ success: true, events });
     }));
 
