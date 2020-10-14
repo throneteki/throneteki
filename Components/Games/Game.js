@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import moment from 'moment';
 
 import GamePlayer from './GamePlayer';
+import { createGameTitle } from './GameHelper';
 
 function Game(props) {
     let game = props.game;
@@ -47,7 +48,7 @@ function Game(props) {
 
     let formattedTime = moment.utc(timeDifference).format('HH:mm');
 
-    const title = game.event.name ? `${game.event.name} - ${game.name}` : game.name;
+    const title = createGameTitle(game.name, game.event.name, game.restrictedList.cardSet);
 
     return (<div key={ game.id }>
         <hr />

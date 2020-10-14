@@ -12,7 +12,9 @@ class RestrictedListDropdown extends React.Component {
         const selectedName = event.target.value;
         const restrictedList = this.props.restrictedLists.find(rl => rl.name === selectedName);
         this.setState({ value: selectedName });
-        this.props.setCurrentRestrictedList(restrictedList);
+        if(this.props.setCurrentRestrictedList) {
+            this.props.setCurrentRestrictedList(restrictedList);
+        }
         if(this.props.onChange) {
             this.props.onChange(restrictedList);
         }

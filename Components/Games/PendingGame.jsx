@@ -9,6 +9,7 @@ import Avatar from '../Site/Avatar';
 import SelectDeckModal from './SelectDeckModal';
 import DeckStatus from '../Decks/DeckStatus';
 import { cardSetLabel } from '../Decks/DeckHelper';
+import { createGameTitle } from './GameHelper';
 import * as actions from '../../actions';
 
 class PendingGame extends React.Component {
@@ -219,7 +220,7 @@ class PendingGame extends React.Component {
         }
 
         const { currentGame } = this.props;
-        const title = currentGame.event.name ? `${currentGame.event.name} - ${currentGame.name}` : currentGame.name;
+        const title = createGameTitle(currentGame.name, currentGame.event.name, currentGame.restrictedList.cardSet);
 
         return (
             <div>

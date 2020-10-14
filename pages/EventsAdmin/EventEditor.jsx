@@ -6,6 +6,7 @@ import Checkbox from '../../Components/Form/Checkbox';
 import Typeahead from '../../Components/Form/Typeahead';
 import TextArea from '../../Components/Form/TextArea';
 import ApiStatus from '../../Components/Site/ApiStatus';
+import RestrictedListDropdown from '../../Components/Decks/RestrictedListDropdown';
 
 class EventEditor extends React.Component {
     constructor(props) {
@@ -14,6 +15,7 @@ class EventEditor extends React.Component {
         let event = {};
         event = Object.assign(event, {
             useDefaultRestrictedList: false,
+            defaultRestrictedList: undefined,
             useEventGameOptions: false, 
             eventGameOptions: {}, 
             restricted: [], 
@@ -25,6 +27,7 @@ class EventEditor extends React.Component {
             eventId: event._id,
             name: event.name,
             useDefaultRestrictedList: event.useDefaultRestrictedList,
+            defaultRestrictedList: event.defaultRestrictedList,
             restricted: event.restricted,
             banned: event.banned,
             restrictedListText: this.formatListTextForCards(props.cards, event.restricted),
@@ -42,6 +45,7 @@ class EventEditor extends React.Component {
             _id: this.state.eventId,
             name: this.state.name,
             useDefaultRestrictedList: this.state.useDefaultRestrictedList,
+            defaultRestrictedList: this.state.defaultRestrictedList,
             useEventGameOptions: this.state.useEventGameOptions,
             eventGameOptions: this.state.eventGameOptions,
             restricted: this.state.restricted,
@@ -105,6 +109,14 @@ class EventEditor extends React.Component {
         let state = this.state;
 
         state['eventGameOptions'][field] = event.target.checked;
+
+        this.setState({ state });
+    }
+
+    onDefaultRestrictedListChange(restrictedList) {
+        let state = this.state;
+
+        state.defaultRestrictedList = restrictedList.name;
 
         this.setState({ state });
     }
@@ -222,6 +234,14 @@ class EventEditor extends React.Component {
     render() {
         const allCards = Object.values(this.props.cards);
 
+        //filter restrictedLists to the official ones, as we do not want an event to use the RL of an event as its default RL
+        const restrictedListDropdown = (
+            <RestrictedListDropdown
+                currentRestrictedList={ this.props.restrictedLists.find(rl => rl.name === this.state.defaultRestrictedList) }
+                onChange={ (restrictedList) => this.onDefaultRestrictedListChange(restrictedList) }
+                restrictedLists={ this.props.restrictedLists.filter(rl => rl.official) } /> 
+        );
+
         return (
             <div>
                 <ApiStatus apiState={ this.props.apiState } successMessage='Deck saved successfully.' />
@@ -231,7 +251,14 @@ class EventEditor extends React.Component {
                         type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.name } />
                     <Checkbox name='useDefaultRestrictedList' label='Use default Restricted List' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
                         onChange={ this.onCheckboxChange.bind(this, 'useDefaultRestrictedList') } checked={ this.state.useDefaultRestrictedList } />
-                    
+                    { this.state.useDefaultRestrictedList
+                    && <div className='form-group'>
+                        <div className='col-sm-offset-3'>
+                            { restrictedListDropdown }
+                        </div>
+                    </div>
+                    }
+
                     <div className='form-group'>
                         <label className='col-sm-3 col-xs-2 control-label'>Event Game Options</label>
                     </div>
@@ -324,7 +351,8 @@ EventEditor.propTypes = {
     event: PropTypes.object,
     navigate: PropTypes.func,
     onEventSave: PropTypes.func,
-    packs: PropTypes.array
+    packs: PropTypes.array,
+    restrictedLists: PropTypes.array
 };
 
 export default EventEditor;

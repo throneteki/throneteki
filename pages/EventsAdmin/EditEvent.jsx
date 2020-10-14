@@ -19,9 +19,9 @@ class EditEvent extends React.Component {
     }
 
     render() {
-        const { apiState, cards, eventId, events, navigate, packs, saveEvent } = this.props;
+        const { apiState, cards, eventId, events, navigate, packs, saveEvent, restrictedLists } = this.props;
 
-        if(!cards || !packs || !events) {
+        if(!cards || !packs || !events || !restrictedLists) {
             return <div>Please wait while loading from the server...</div>;
         }
 
@@ -32,7 +32,8 @@ class EditEvent extends React.Component {
                 event: events.find(event => event._id === eventId),
                 navigate,
                 packs,
-                onEventSave: saveEvent
+                onEventSave: saveEvent,
+                restrictedLists: restrictedLists
             } } />
         );
     }
@@ -47,6 +48,7 @@ EditEvent.propTypes = {
     loadEventEditor: PropTypes.func,
     navigate: PropTypes.func,
     packs: PropTypes.array,
+    restrictedLists : PropTypes.array,
     saveEvent: PropTypes.func
 };
 
@@ -57,7 +59,8 @@ function mapStateToProps(state) {
         events: state.events.events,
         eventSaved: state.events.eventSaved,
         loading: state.api.loading,
-        packs: state.cards.packs
+        packs: state.cards.packs,
+        restrictedLists: state.cards.restrictedList
     };
 }
 
