@@ -363,7 +363,7 @@ class DeckEditor extends React.Component {
     }
 
     render() {
-        if(!this.props.factions || !this.props.agendas || !this.props.cards) {
+        if(!this.props.factions || !this.props.agendas || !this.props.cards || !this.props.restrictedList) {
             return <div>Please wait while loading from the server...</div>;
         }
 
