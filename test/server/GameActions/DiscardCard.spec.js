@@ -38,6 +38,7 @@ describe('DiscardCard', function() {
 
     describe('createEvent()', function() {
         beforeEach(function() {
+            this.cardSpy.createSnapshot.and.returnValue('snapshot');
             this.event = DiscardCard.createEvent(this.props);
         });
 
@@ -48,12 +49,11 @@ describe('DiscardCard', function() {
 
         describe('the event handler', function() {
             beforeEach(function() {
-                this.cardSpy.createSnapshot.and.returnValue('snapshot');
                 this.event.executeHandler();
             });
 
             it('sets the card snapshot on the event', function() {
-                expect(this.event.cardStateWhenDiscarded).toBe('snapshot');
+                expect(this.event.params.cardStateWhenDiscarded).toBe('snapshot');
             });
 
             it('moves the card to discard', function() {
