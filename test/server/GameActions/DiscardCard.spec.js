@@ -53,7 +53,7 @@ describe('DiscardCard', function() {
             });
 
             it('sets the card snapshot on the event', function() {
-                expect(this.event.params.cardStateWhenDiscarded).toBe('snapshot');
+                expect(this.event.cardStateWhenDiscarded).toBe('snapshot');
             });
 
             it('moves the card to discard', function() {

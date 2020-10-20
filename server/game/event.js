@@ -79,6 +79,9 @@ class Event {
     }
 
     executeHandler() {
+        if(this.params.card && this.params.card.createSnapshot && this.params.snapshotName) {
+            this[this.params.snapshotName] = this.params.card.createSnapshot();
+        }
         this.handler(this);
 
         for(let event of this.childEvents) {

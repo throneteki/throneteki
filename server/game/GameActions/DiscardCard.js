@@ -17,7 +17,7 @@ class DiscardCard extends GameAction {
             originalLocation: card.location,
             isPillage: !!isPillage,
             source: source,
-            cardStateWhenDiscarded: card.createSnapshot()
+            snapshotName: 'cardStateWhenDiscarded'
         };
         return this.event('onCardDiscarded', params, event => {
             event.card.controller.moveCard(event.card, 'discard pile');
