@@ -38,6 +38,7 @@ describe('DiscardCard', function() {
 
     describe('createEvent()', function() {
         beforeEach(function() {
+            this.cardSpy.createSnapshot.and.returnValue('snapshot');
             this.event = DiscardCard.createEvent(this.props);
         });
 
@@ -48,7 +49,6 @@ describe('DiscardCard', function() {
 
         describe('the event handler', function() {
             beforeEach(function() {
-                this.cardSpy.createSnapshot.and.returnValue('snapshot');
                 this.event.executeHandler();
             });
 

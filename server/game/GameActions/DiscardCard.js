@@ -16,10 +16,10 @@ class DiscardCard extends GameAction {
             automaticSaveWithDupe: true,
             originalLocation: card.location,
             isPillage: !!isPillage,
-            source: source
+            source: source,
+            snapshotName: 'cardStateWhenDiscarded'
         };
         return this.event('onCardDiscarded', params, event => {
-            event.cardStateWhenDiscarded = event.card.createSnapshot();
             event.card.controller.moveCard(event.card, 'discard pile');
         });
     }
