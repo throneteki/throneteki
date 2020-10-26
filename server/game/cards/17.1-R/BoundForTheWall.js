@@ -19,7 +19,8 @@ class BoundForTheWall extends DrawCard {
                     onSelect: (player, card) => this.onCardSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
                 });
-            }
+            },
+            max: ability.limit.perChallenge(1)
         });
     }
 
