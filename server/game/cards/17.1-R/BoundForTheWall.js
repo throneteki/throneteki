@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard');
 
 class BoundForTheWall extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller })
@@ -19,7 +19,8 @@ class BoundForTheWall extends DrawCard {
                     onSelect: (player, card) => this.onCardSelected(player, card),
                     onCancel: (player) => this.cancelSelection(player)
                 });
-            }
+            },
+            max: ability.limit.perChallenge(1)
         });
     }
 
