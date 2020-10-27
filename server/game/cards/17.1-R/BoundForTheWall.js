@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard');
 
 class BoundForTheWall extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller })
