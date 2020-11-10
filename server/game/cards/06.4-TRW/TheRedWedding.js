@@ -12,7 +12,8 @@ class TheRedWedding extends PlotCard {
                 cardCondition: (card, context) => (
                     card.getType() === 'character' &&
                     card.controller !== context.player &&
-                    (card.hasTrait('Lord') || card.hasTrait('Lady'))
+                    (card.hasTrait('Lord') || card.hasTrait('Lady')) &&
+                    card.location === 'play area'
                 )
             },
             handler: context => {
