@@ -7,7 +7,7 @@ class OnAMistyMorn extends DrawCard {
             target: {
                 mode: 'upTo',
                 numCards: 2,
-                cardCondition: card => card.controller === this.controller && card.location === 'dead pile' && card.getType() === 'character'
+                cardCondition: card => card.controller === this.controller && card.location === 'dead pile' && card.getType() === 'character' && !card.isUnique()
             },
             handler: context => {
                 this.game.addMessage('{0} plays {1} to return {2} to hand', context.player, this, context.target);
