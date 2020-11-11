@@ -60,9 +60,9 @@ class CardService {
                 }
 
                 const officialLists = this.convertOfficialListToNewFormat(JSON.parse(data)).sort((a, b) => {
-                    // For now, default to original versions of cards.
+                    // default to redesigned versions of cards.
                     if(a.cardSet === 'original' && b.cardSet !== 'original') {
-                        return -1;
+                        return 1;
                     }
 
                     return a.date > b.date ? -1 : 1;
