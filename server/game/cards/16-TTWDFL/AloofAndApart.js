@@ -8,6 +8,7 @@ class AloofAndApart extends AgendaCard {
         });
 
         this.persistentEffect({
+            condition: () => true,
             match: card => card.isMatch({ type: 'character', printedCostOrHigher: 6 }),
             targetController: 'current',
             effect: ability.effects.addKeyword('Prized 1')

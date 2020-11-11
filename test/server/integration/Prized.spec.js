@@ -3,19 +3,21 @@ describe('Prized keyword', function() {
         describe('when a Prized card leaves play', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
-                    'Marched to the Wall', 'A Noble Cause',
-                    'Mad King Aerys'
+                    'Marched to the Wall', 'A Noble Cause', 'Aloof and Apart', 'Doran Martell (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.keepStartingHands();
 
-                this.prizedCharacter = this.player1.findCardByName('Mad King Aerys', 'hand');
+                this.prizedCharacter = this.player1.findCardByName('Doran Martell', 'hand');
 
                 this.player1.clickCard(this.prizedCharacter);
 
                 this.completeSetup();
+
+                expect(this.prizedCharacter.location).toBe('play area');
+                expect(this.prizedCharacter.getPrizedValue()).toBe(1);
 
                 this.player1.selectPlot('Marched to the Wall');
                 this.player2.selectPlot('A Noble Cause');
