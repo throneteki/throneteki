@@ -423,7 +423,7 @@ class ChatCommands {
             cardCondition: card => card.controller === player && card.owner === player,
             onSelect: (p, card) => {
                 player.moveCard(card, 'shadows');
-                this.game.addAlert('danger', '{0} uses the /move-shadows command to move {1} to their shadows area', p, card);
+                this.game.addAlert('danger', '{0} uses the /move-shadows command to move a card to their shadows area', p);
                 return true;
             }
         });
