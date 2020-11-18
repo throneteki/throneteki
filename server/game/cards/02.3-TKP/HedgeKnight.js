@@ -13,7 +13,7 @@ class HedgeKnight extends DrawCard {
     }
 
     isControlAnotherKnight() {
-        return this.controller.anyCardsInPlay(card => card.hasTrait('Knight') && card !== this);
+        return this.controller.anyCardsInPlay(card => card.hasTrait('Knight') && card !== this && card.getType() === 'character');
     }
 }
 
