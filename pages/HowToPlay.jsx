@@ -83,6 +83,7 @@ class HowToPlay extends React.Component {
                             <li>/give-icon x - Gives a character an x icon; where 'x' is one of 'military', 'intrigue', 'power'.</li>
                             <li>/kill - Kills a character.  Use with caution.</li>
                             <li>/move-bottom - Moves a card to the bottom of your draw deck.</li>
+                            <li>/move-shadows - Moves a card to your shadows area.</li>
                             <li>/pillage - Discards the top card from your deck.</li>
                             <li>/power x - Sets the power of a card to x.</li>
                             <li>/rematch - Start over a new game with the current opponent.</li>
