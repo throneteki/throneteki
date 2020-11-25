@@ -13,9 +13,11 @@ class PlotPhase extends Phase {
             new SimpleStep(game, () => this.startPlotPhase()),
             new SimpleStep(game, () => this.announceForcedPlotSelection()),
             new SimpleStep(game, () => this.choosePlots()),
+            new SimpleStep(game, () => this.game.startRevealingPlots()),
             new SimpleStep(game, () => this.removeActivePlots()),
             new SimpleStep(game, () => this.flipPlotsFaceup()),
             () => new RevealPlots(game, this.getActivePlots()),
+            new SimpleStep(game, () => this.game.stopRevealingPlots()),
             new SimpleStep(game, () => this.recyclePlots()),
             () => new ChooseTitlePrompt(game, game.titlePool),
             new ActionWindow(this.game, 'After plots revealed', 'plot')

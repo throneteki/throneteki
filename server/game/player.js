@@ -666,6 +666,10 @@ class Player extends Spectator {
 
         this.selectedPlot.flipFaceup();
         this.moveCard(this.selectedPlot, 'active plot');
+        if(this.previousPlot) {
+            this.selectedPlot.previousPlot = this.previousPlot;
+            this.previousPlot = undefined;
+        }
         this.selectedPlot = undefined;
     }
 
@@ -683,6 +687,8 @@ class Player extends Spectator {
     removeActivePlot() {
         if(this.activePlot && this.selectedPlot) {
             let plot = this.activePlot;
+            plot.previousPlot = undefined;
+            this.previousPlot = plot;
             this.moveCard(this.activePlot, 'revealed plots');
             this.game.raiseEvent('onPlotDiscarded', { player: this, card: plot });
             this.activePlot = undefined;

@@ -8,7 +8,14 @@ class SandSteed extends DrawCard {
                 onCardPlaced: event => event.card.hasTrait('Summer') &&
                         event.location === 'revealed plots' &&
                         event.player === this.controller &&
-                        this.parent.allowGameAction('gainPower')
+                        this.parent.allowGameAction('gainPower') &&
+                        !this.game.isRevealingPlots,
+                onPlotRevealed: event => !!event.plot.previousPlot && 
+                        event.plot.previousPlot.hasTrait('Summer') &&
+                        event.plot.previousPlot.location === 'revealed plots' &&
+                        event.plot.controller === this.controller &&
+                        this.parent.allowGameAction('gainPower') &&
+                        this.game.isRevealingPlots
             },
             handler: context => {
                 this.parent.modifyPower(1);
