@@ -1,5 +1,4 @@
 const TheRainsOfCastamere = require('../../../../server/game/cards/05-LoCR/TheRainsOfCastamere.js');
-const RevealPlots = require('../../../../server/game/gamesteps/revealplots.js');
 
 describe('The Rains of Castamere', function() {
     function createPlotSpy(uuid, hasTrait) {
