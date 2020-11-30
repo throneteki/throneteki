@@ -6,13 +6,9 @@ class TheTatteredPrince extends DrawCard {
         this.forcedReaction({
             when: {
                 onCardPlaced: event => event.location === 'revealed plots' &&
-                        event.player === this.controller &&
-                        !this.game.isRevealingPlots,
-                onPlotRevealed: event => !!event.plot.previousPlot && 
-                        event.plot.controller === this.controller &&
-                        this.game.isRevealingPlots
+                        event.player === this.controller
             },
-            handler: context => {                
+            handler: context => {
                 if(!this.hasToken(Tokens.gold)) {
                     context.player.putIntoShadows(this, false);
                     return;

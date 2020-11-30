@@ -1426,14 +1426,6 @@ class Game extends EventEmitter {
 
         this.chatCommands.muteSpectators(player);
     }
-
-    startRevealingPlots() {
-        this.isRevealingPlots = true;
-    }
-
-    stopRevealingPlots() {
-        this.isRevealingPlots = false;
-    }
 }
 
 module.exports = Game;

@@ -1,6 +1,5 @@
 const AgendaCard = require('../../agendacard');
 const RevealPlots = require('../../gamesteps/revealplots');
-const SimpleStep = require('../../gamesteps/simplestep');
 
 class TheRainsOfCastamere extends AgendaCard {
     constructor(owner, cardData) {
@@ -51,12 +50,10 @@ class TheRainsOfCastamere extends AgendaCard {
         this.game.addMessage('{0} uses {1} and kneels their faction card to reveal {2}',
             context.player, this, context.target);
 
-        this.game.startRevealingPlots();
         context.player.selectedPlot = context.target;
         context.player.removeActivePlot();
         context.player.flipPlotFaceup();
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
-        this.game.queueStep(new SimpleStep(this.game, () => this.game.stopRevealingPlots()));
     }
 
     onPlotDiscarded(event) {
