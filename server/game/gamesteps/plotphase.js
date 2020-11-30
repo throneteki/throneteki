@@ -13,8 +13,6 @@ class PlotPhase extends Phase {
             new SimpleStep(game, () => this.startPlotPhase()),
             new SimpleStep(game, () => this.announceForcedPlotSelection()),
             new SimpleStep(game, () => this.choosePlots()),
-            new SimpleStep(game, () => this.removeActivePlots()),
-            new SimpleStep(game, () => this.flipPlotsFaceup()),
             () => new RevealPlots(game, this.getActivePlots()),
             new SimpleStep(game, () => this.recyclePlots()),
             () => new ChooseTitlePrompt(game, game.titlePool),
@@ -51,18 +49,6 @@ class PlotPhase extends Phase {
         });
     }
 
-    removeActivePlots() {
-        for(const player of this.game.getPlayers()) {
-            player.removeActivePlot();
-        }
-    }
-
-    flipPlotsFaceup() {
-        for(const player of this.game.getPlayers()) {
-            player.flipPlotFaceup();
-        }
-    }
-
     recyclePlots() {
         for(const player of this.game.getPlayers()) {
             player.recyclePlots();
@@ -70,8 +56,8 @@ class PlotPhase extends Phase {
     }
 
     getActivePlots() {
-        const revealingPlayers = this.game.getPlayers().filter(player => !!player.activePlot && !player.hasFlag('cannotRevealPlot'));
-        return revealingPlayers.map(player => player.activePlot);
+        const revealingPlayers = this.game.getPlayers().filter(player => !!player.selectedPlot && !player.hasFlag('cannotRevealPlot'));
+        return revealingPlayers.map(player => player.selectedPlot);
     }
 }
 
