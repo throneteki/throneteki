@@ -17,8 +17,6 @@ class WheelsWithinWheels extends DrawCard {
             },
             handler: context => {
                 context.player.selectedPlot = context.target;
-                context.player.removeActivePlot();
-                context.player.flipPlotFaceup();
                 this.game.queueStep(new RevealPlots(this.game, [context.target]));
             },
             max: ability.limit.perRound(1)

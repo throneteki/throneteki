@@ -1,5 +1,4 @@
 const TheRainsOfCastamere = require('../../../../server/game/cards/05-LoCR/TheRainsOfCastamere.js');
-const RevealPlots = require('../../../../server/game/gamesteps/revealplots.js');
 
 describe('The Rains of Castamere', function() {
     function createPlotSpy(uuid, hasTrait) {
@@ -25,7 +24,7 @@ describe('The Rains of Castamere', function() {
         this.scheme1 = scheme('3333');
         this.scheme2 = scheme('4444');
 
-        this.player = jasmine.createSpyObj('player', ['flipPlotFaceup', 'removeActivePlot', 'kneelCard', 'moveCard']);
+        this.player = jasmine.createSpyObj('player', ['kneelCard', 'moveCard']);
         this.player.game = this.gameSpy;
         this.player.faction = {};
 
@@ -120,79 +119,6 @@ describe('The Rains of Castamere', function() {
                 let event = { name: 'afterChallenge', challenge: this.challenge };
                 this.reaction.eventHandler(event);
                 expect(this.gameSpy.registerAbility).toHaveBeenCalledWith(this.reaction, event);
-            });
-        });
-    });
-
-    describe('trigger()', function() {
-        beforeEach(function() {
-            this.player.schemePlots = [this.scheme1, this.scheme2];
-            this.context = { player: this.player, target: this.scheme1 };
-        });
-
-        describe('when the argument is a scheme', function() {
-            describe('and there is no active plot', function() {
-                beforeEach(function() {
-                    this.player.activePlot = undefined;
-
-                    this.result = this.agenda.trigger(this.context);
-                });
-
-                it('should remove the revealed scheme from the choices list', function() {
-                    expect(this.agenda.schemes).not.toContain(this.scheme1);
-                });
-
-                it('should flip the plot face up', function() {
-                    expect(this.player.flipPlotFaceup).toHaveBeenCalled();
-                });
-
-                it('should reveal the plot', function() {
-                    expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(RevealPlots));
-                });
-            });
-
-            describe('and the active plot is not a scheme', function() {
-                beforeEach(function() {
-                    this.player.activePlot = this.plot1;
-
-                    this.result = this.agenda.trigger(this.context);
-                });
-
-                it('should remove the revealed scheme from the choices list', function() {
-                    expect(this.agenda.schemes).not.toContain(this.scheme1);
-                });
-
-                it('should flip the plot face up', function() {
-                    expect(this.player.flipPlotFaceup).toHaveBeenCalled();
-                });
-
-                it('should reveal the plot', function() {
-                    expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(RevealPlots));
-                });
-            });
-
-            describe('when the active plot is a scheme', function() {
-                beforeEach(function() {
-                    this.player.activePlot = this.scheme2;
-
-                    this.result = this.agenda.trigger(this.context);
-                });
-
-                it('should remove the current plot from play', function() {
-                    expect(this.player.removeActivePlot).toHaveBeenCalled();
-                });
-
-                it('should remove the revealed scheme from the choices list', function() {
-                    expect(this.agenda.schemes).not.toContain(this.scheme1);
-                });
-
-                it('should flip the plot face up', function() {
-                    expect(this.player.flipPlotFaceup).toHaveBeenCalled();
-                });
-
-                it('should reveal the plot', function() {
-                    expect(this.gameSpy.queueStep).toHaveBeenCalledWith(jasmine.any(RevealPlots));
-                });
             });
         });
     });
