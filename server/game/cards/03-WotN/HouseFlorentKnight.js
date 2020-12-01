@@ -8,7 +8,7 @@ class HouseFlorentKnight extends DrawCard {
             },
             target: {
                 cardCondition: card => {
-                    return card.getStrength() === this.getLowestStrInPlay() && card.location === 'play area';
+                    return card.getStrength() === this.getLowestStrInPlay() && card.location === 'play area' && card.getType() === 'character';
                 }
             },
             handler: context => {

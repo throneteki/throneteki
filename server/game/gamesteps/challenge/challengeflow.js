@@ -144,6 +144,8 @@ class ChallengeFlow extends BaseStep {
 
         defendersToKneel = undefined;
 
+        this.game.raiseEvent('onDefendersDeclared', { player: this.challenge.defendingPlayer, numOfDefendingCharacters: defenders.length });
+
         return true;
     }
 
