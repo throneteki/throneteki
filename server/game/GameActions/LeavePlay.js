@@ -15,11 +15,11 @@ class LeavePlay extends GameAction {
         const params = {
             card,
             allowSave,
-            automaticSaveWithDupe: true
+            automaticSaveWithDupe: true,
+            snapshotName: 'cardStateWhenLeftPlay'
         };
 
         return this.event('onCardLeftPlay', params, event => {
-            event.cardStateWhenLeftPlay = event.card.createSnapshot();
             event.card.leavesPlay();
 
             for(const attachment of event.card.attachments || []) {

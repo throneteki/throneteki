@@ -13,7 +13,7 @@ class PlotPhase extends Phase {
             new SimpleStep(game, () => this.startPlotPhase()),
             new SimpleStep(game, () => this.announceForcedPlotSelection()),
             new SimpleStep(game, () => this.choosePlots()),
-            () => new RevealPlots(game, this.getActivePlots()),
+            () => new RevealPlots(game, this.getSelectedPlots()),
             new SimpleStep(game, () => this.recyclePlots()),
             () => new ChooseTitlePrompt(game, game.titlePool),
             new ActionWindow(this.game, 'After plots revealed', 'plot')
@@ -55,7 +55,7 @@ class PlotPhase extends Phase {
         }
     }
 
-    getActivePlots() {
+    getSelectedPlots() {
         const revealingPlayers = this.game.getPlayers().filter(player => !!player.selectedPlot && !player.hasFlag('cannotRevealPlot'));
         return revealingPlayers.map(player => player.selectedPlot);
     }

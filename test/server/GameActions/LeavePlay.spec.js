@@ -78,8 +78,7 @@ describe('LeavePlay', function() {
             });
 
             it('creates a snapshot', function() {
-                expect(this.cardSpy.createSnapshot).toHaveBeenCalled();
-                expect(this.event.cardStateWhenLeftPlay).toBe('SNAPSHOT');
+                expect(this.event.snapshotName).toBe('cardStateWhenLeftPlay');
             });
 
             it('attaches discard events for the dupes', function() {
