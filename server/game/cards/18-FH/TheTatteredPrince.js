@@ -11,6 +11,7 @@ class TheTatteredPrince extends DrawCard {
             handler: context => {
                 if(!this.hasToken(Tokens.gold)) {
                     context.player.putIntoShadows(this, false);
+                    this.game.addMessage('{0} is forced by {1} to return {1} to shadows', this.controller, this);
                     return;
                 }
 
