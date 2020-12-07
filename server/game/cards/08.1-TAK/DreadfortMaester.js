@@ -9,6 +9,7 @@ class DreadfortMaester extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
+                    targetController: 'any', //here any is necessary in case dreadfort maester changes it´s controller to a player other than the owner
                     match: card => card === context.player.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
