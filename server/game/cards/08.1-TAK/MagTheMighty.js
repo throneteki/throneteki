@@ -18,10 +18,14 @@ class MagTheMighty extends DrawCard {
                         card: context.target
                     })).then(preThenContext => ({
                         target: {
+                            choosingPlayer: player => player === preThenContext.event.challenge.loser,
                             cardCondition: { location: 'play area', type: 'character', controller: preThenContext.event.challenge.loser },
                             gameAction: 'kill'
                         },
-                        message: 'Then {player} uses {source} to kill {target}',
+                        message: {
+                            format: 'Then {loser} kills {target} for {source}',
+                            args: { loser: () => preThenContext.event.challenge.loser }
+                        },
                         handler: context => {
                             this.game.resolveGameAction(
                                 GameActions.kill(context => ({ card: context.target })),
