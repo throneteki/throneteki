@@ -13,6 +13,14 @@ class DeckService {
             });
     }
 
+    getByName(name) {
+        return this.decks.findOne({ name })
+            .catch(err => {
+                logger.error('Unable to fetch deck', err);
+                throw new Error('Unable to fetch deck ' + name);
+            });
+    }
+
     getByStandaloneId(id) {
         return this.decks.findOne({ standaloneDeckId: id })
             .catch(err => {
