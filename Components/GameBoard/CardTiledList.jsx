@@ -13,6 +13,7 @@ function CardTiledList(props) {
             onMouseOut={ props.onCardMouseOut }
             onMouseOver={ props.onCardMouseOver }
             onTouchMove={ props.onTouchMove }
+            onMenuItemClick={ props.onMenuItemClick }
             orientation={ card.type === 'plot' ? 'horizontal' : 'vertical' }
             size={ props.size }
             source={ props.source } />);
@@ -37,6 +38,7 @@ CardTiledList.propTypes = {
     onCardClick: PropTypes.func,
     onCardMouseOut: PropTypes.func,
     onCardMouseOver: PropTypes.func,
+    onMenuItemClick: PropTypes.func,
     onTouchMove: PropTypes.func,
     size: PropTypes.string,
     source: PropTypes.string,
