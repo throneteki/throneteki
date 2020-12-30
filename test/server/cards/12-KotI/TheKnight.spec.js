@@ -34,6 +34,7 @@ describe('The Knight (KotI)', function() {
             it('gains stealth and renown', function() {
                 expect(this.knight.hasKeyword('Stealth')).toBe(true);
                 expect(this.knight.hasKeyword('Renown')).toBe(true);
+                expect(this.player1).toHavePrompt('Select stealth target for The Knight');
             });
         });
 
@@ -48,6 +49,7 @@ describe('The Knight (KotI)', function() {
             it('does not gains stealth and renown', function() {
                 expect(this.knight.hasKeyword('Stealth')).toBe(false);
                 expect(this.knight.hasKeyword('Renown')).toBe(false);
+                expect(this.player1).not.toHavePrompt('Select stealth target for The Knight');
             });
         });
     });
