@@ -13,12 +13,14 @@ class HothoHumpback extends DrawCard {
                         ...this.game.getPlayersInFirstPlayerOrder().map(player =>
                             GameActions.drawCards({ player, amount: 1 })
                         )
-                    ]).then({
-                        gameAction: GameActions.checkReserve()
-                    }),
+                    ]),
                     context
                 );
-            },
+                this.game.resolveGameAction(
+                    GameActions.checkReserve(),
+                    context
+                );
+            },            
             limit: ability.limit.perRound(1)
         });
     }
