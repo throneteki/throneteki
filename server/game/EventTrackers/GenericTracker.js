@@ -10,6 +10,10 @@ class GenericTracker {
         game.on(endingEvent, () => this.clearEvents());
     }
 
+    some(predicate) {
+        return this.events.some(predicate);
+    }
+
     trackEvent(event) {
         this.events.push(event);
     }
