@@ -30,6 +30,7 @@ class Challenge {
         let dummyPlayer = new Player('', Settings.getUserWithDefaultsSet({ name: 'Dummy Player' }), false, this.game);
         dummyPlayer.initialise();
         dummyPlayer.resetForStartOfRound();
+        dummyPlayer.isFake = true;
         return dummyPlayer;
     }
 
