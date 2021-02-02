@@ -1,4 +1,4 @@
-fdescribe('Archmaester Marwyn', function() {
+describe('Archmaester Marwyn', function() {
     integration(function() {
         describe('ability', function() {
             beforeEach(function() {
