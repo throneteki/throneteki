@@ -37,7 +37,7 @@ class CityOfSecrets extends PlotCard {
     }
 
     hasUsedCityPlot(player) {
-        return player.plotDiscard.some(plot => plot.hasTrait('City'));
+        return player.getNumberOfUsedPlotsByTrait('City') > 0;
     }
 }
 

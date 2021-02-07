@@ -54,6 +54,12 @@ class ReferenceCountedSetProperty {
         clonedSet.referenceCounts = new Map(this.referenceCounts);
         return clonedSet;
     }
+
+    getCountForReference(value) {
+        let lowerCaseValue = value.toLowerCase();
+        let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
+        return currentCount;
+    }
 }
 
 module.exports = ReferenceCountedSetProperty;
