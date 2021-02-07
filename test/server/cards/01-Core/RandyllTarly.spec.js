@@ -3,7 +3,7 @@ describe('Randyll Tarly', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('tyrell', [
                 'A Feast for Crows', 'A Song of Summer',
-                'Randyll Tarly', 'Margaery Tyrell (Core)'
+                'Randyll Tarly (Core)', 'Margaery Tyrell (Core)'
             ]);
             const deck2 = this.buildDeck('stark', [
                 'A Feast for Crows',
