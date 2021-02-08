@@ -13,16 +13,14 @@ class Wraith extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.sacrificeSelf()
             ],
-            targets: {
-                location: {
-                    activePromptTitle: 'Select a location',
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
-                    gameAction: 'kneel'
-                }
+            target: {
+                activePromptTitle: 'Select a location',
+                cardCondition: card => card.location === 'play area' && card.getType() === 'location' && !card.kneeled,
+                gameAction: 'kneel'
             },
             handler: context => {
-                this.game.addMessage('{0} kneels and sacrifices {1} to kneel {2}', context.player, this, context.targets.location);
-                context.targets.location.controller.kneelCard(context.targets.location);
+                this.game.addMessage('{0} kneels and sacrifices {1} to kneel {2}', context.player, this, context.target);
+                context.target.controller.kneelCard(context.target.location);
             }
         });
     }

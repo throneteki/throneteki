@@ -12,7 +12,7 @@ class TheWinterMaid extends DrawCard {
                     return { method: 'plotSelected', card: plot, mapCard: true };
                 });
 
-                this.game.promptWithMenu(this.controller, this, {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select plot',
                         buttons: buttons
@@ -36,8 +36,8 @@ class TheWinterMaid extends DrawCard {
             player, this, card);
 
         if(!this.game.anyPlotHasTrait('Summer')) {
-            this.game.addMessage('{0} uses {1} to return {1} to their hand instead of their discard pile', this.controller, this);
-            this.controller.moveCard(this, 'hand');                    
+            this.game.addMessage('{0} uses {1} to return {1} to their hand instead of their discard pile', player, this);
+            player.moveCard(this, 'hand');
         }
 
         return true;

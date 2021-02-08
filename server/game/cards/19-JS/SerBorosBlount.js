@@ -8,10 +8,10 @@ class SerBorosBlount extends DrawCard {
                 onCardEntersPlay: event => event.card === this
             },
             handler: context => {
-                this.game.promptForDeckSearch(this.controller, {
+                this.game.promptForDeckSearch(context.player, {
                     numCards: 10,
                     activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'character' && (card.hasTrait('Kingsguard') || (card.hasTrait('Knight') && !card.isFaction('lannister'))) && this.controller.canPutIntoPlay(card),
+                    cardCondition: card => card.getType() === 'character' && (card.hasTrait('Kingsguard') || (card.hasTrait('Knight') && !card.isFaction('lannister'))) && context.player.canPutIntoPlay(card),
                     onSelect: (player, card) => this.cardSelected(player, card, context),
                     onCancel: player => this.doneSelecting(player),
                     source: this

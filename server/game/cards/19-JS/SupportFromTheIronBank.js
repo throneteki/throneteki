@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class SupportFromTheIronBank extends DrawCard {
     setupCardAbilities() {
         this.action({
-            handler: () => {
+            handler: context => {
                 this.untilEndOfPhase(ability => ({
                     effect: ability.effects.reduceCost({
                         playingTypes: ['marshal', 'play'],
@@ -13,7 +13,7 @@ class SupportFromTheIronBank extends DrawCard {
                 }));
 
                 this.game.addMessage('{0} uses {1} to reduce the cost of each {2} non-character card they marshal or play this phase by 1',
-                    this.controller, this, 'baratheon');
+                    context.player, this, 'baratheon');
             }
         });
     }

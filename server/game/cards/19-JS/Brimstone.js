@@ -12,12 +12,12 @@ class Brimstone extends DrawCard {
             phase: 'challenge',
             cost: [
                 ability.costs.kneelSelf(),
-                ability.costs.returnToHand(card => card.getType() === 'character' && card.controller === this.controller && card.hasTrait('Sand Snake'))
+                ability.costs.returnToHand(card => card.getType() === 'character' && card.hasTrait('Sand Snake'))
             ],
             handler: context => {
-                this.game.addGold(this.controller, 1);
+                this.game.addGold(context.player, 1);
                 this.game.addMessage('{0} kneels {1} and returns {2} to their hand to gain 1 gold',
-                    this.controller, this, context.costs.returnToHand);
+                    context.player, this, context.costs.returnToHand);
             }
         });
     }
