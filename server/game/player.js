@@ -223,7 +223,6 @@ class Player extends Spectator {
 
     modifyUsedPlots(value) {
         this.usedPlotsModifier += value;
-        this.game.raiseEvent('onUsedPlotsModified', { player: this });
     }
 
     modifyUsedPlotsWithTrait(value, trait) {
@@ -236,8 +235,6 @@ class Player extends Spectator {
                 this.usedPlotsModifierByTrait.remove(trait);
             }
         }
-        
-        this.game.raiseEvent('onUsedPlotsModified', { player: this });
     }
 
     getNumCardsToDraw(amount) {
