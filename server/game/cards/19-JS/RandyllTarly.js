@@ -9,7 +9,7 @@ class RandyllTarly extends DrawCard {
             handler: context => {
                 this.context = context;
 
-                this.game.promptWithMenu(this.controller, this, {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Choose one',
                         buttons: [
@@ -24,7 +24,7 @@ class RandyllTarly extends DrawCard {
     }
 
     standArmy() {
-        this.game.promptForSelect(this.controller, {
+        this.game.promptForSelect(this.context.player, {
             activePromptTitle: 'Select an Army',
             source: this,
             cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Army') && card.kneeled,

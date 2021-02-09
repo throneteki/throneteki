@@ -6,15 +6,15 @@ class LeftHandLew extends DrawCard {
             title: 'Stand character',
             cost: ability.costs.kneelSelf(),
             target: {
-                cardCondition: card =>
+                cardCondition: (card, context) =>
                     card.location === 'play area'
                     && card.getType() === 'character'
                     && card.kneeled
-                    && card.owner !== this.controller
+                    && card.owner !== context.player
             },
             handler: context => {
                 context.target.controller.standCard(context.target);
-                this.game.addMessage('{0} kneels {1} to stand {2}', this.controller, this, context.target);
+                this.game.addMessage('{0} kneels {1} to stand {2}', context.player, this, context.target);
             }
         });
     }
