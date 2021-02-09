@@ -15,7 +15,7 @@ class KingsLandingSmuggler extends DrawCard {
             handler: (context) => {
                 this.game.addMessage('{0} uses {1} to place a gold from the treasury on {2}', context.player, this, context.target);
                 this.game.resolveGameAction(
-                    GameActions.placeToken(() => ({ card: context.target, token: Tokens.gold, source: this })),
+                    GameActions.placeToken(() => ({ card: context.target, token: Tokens.gold })),
                     context
                 );
             }
