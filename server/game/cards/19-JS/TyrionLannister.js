@@ -7,7 +7,7 @@ class TyrionLannister extends DrawCard {
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGold(),
             target: {
-                cardCondition: card => card.location === 'discard pile' && card.getType() === 'character' && card.hasTrait('Mercenary') && this.controller.canPutIntoPlay(card)
+                cardCondition: (card, context) => card.location === 'discard pile' && card.getType() === 'character' && card.hasTrait('Mercenary') && context.player.canPutIntoPlay(card)
             },
             handler: context => {
                 context.player.putIntoPlay(context.target);

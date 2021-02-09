@@ -10,13 +10,12 @@ class GulltownCityGuard extends DrawCard {
                 ability.effects.setMinCost(1)
             ]
         });
-    }  
-  
+    }
+
     numOfCityPlots() {
         return this.controller.getNumberOfUsedPlotsByTrait('City');
     }
 }
-
 
 GulltownCityGuard.code = '19017';
 
