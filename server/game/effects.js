@@ -1189,6 +1189,28 @@ const Effects = {
             isStateDependent: true
         };
     },
+    dynamicUsedPlotsWithTrait: function(calculate, trait) {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                context.dynamicUsedPlotsWithTrait = context.dynamicUsedPlotsWithTrait || {};
+                context.dynamicUsedPlotsWithTrait[player.name] = context.dynamicUsedPlotsWithTrait[player.name] || {};
+                context.dynamicUsedPlotsWithTrait[player.name][trait] = calculate(player, context) || 0;
+                player.modifyUsedPlotsWithTrait(context.dynamicUsedPlotsWithTrait[player.name][trait], trait);
+            },
+            reapply: function(player, context) {
+                let oldValue = context.dynamicUsedPlotsWithTrait[player.name][trait];
+                let newValue = calculate(player, context) || 0;
+                context.dynamicUsedPlotsWithTrait[player.name][trait] = newValue;
+                player.modifyUsedPlotsWithTrait(newValue - oldValue, trait);
+            },
+            unapply: function(player, context) {
+                player.modifyUsedPlotsWithTrait(-context.dynamicUsedPlotsWithTrait[player.name][trait], trait);
+                delete context.dynamicUsedPlotsWithTrait[player.name];
+            },
+            isStateDependent: true
+        };
+    },
     mustChooseAsClaim: function(card) {
         return {
             targetType: 'player',

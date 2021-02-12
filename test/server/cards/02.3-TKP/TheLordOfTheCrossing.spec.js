@@ -237,7 +237,7 @@ describe('The Lord of the Crossing', function() {
                 const deck = this.buildDeck('tyrell', [
                     'The Lord of the Crossing',
                     'A Noble Cause',
-                    'Randyll Tarly', 'Garden Caretaker', 'Steward at the Wall'
+                    'Randyll Tarly (Core)', 'Garden Caretaker', 'Steward at the Wall'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

@@ -16,11 +16,7 @@ class AtTheGates extends PlotCard {
     }
 
     hasUsedCityPlot(player) {
-        return this.game.allCards.some(card => (
-            card.controller === player &&
-            card.location === 'revealed plots' &&
-            card.hasTrait('City')
-        ));
+        return player.getNumberOfUsedPlotsByTrait('City') > 0;
     }
 
     cardSelected(player, card) {
