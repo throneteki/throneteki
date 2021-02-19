@@ -9,13 +9,13 @@ class TheScorpionsSting extends DrawCard {
                     this.controller.getNumberOfUsedPlots() >= 1 &&
                     this.hasMartellCharacter())
             },
-            handler: () => {
-                this.game.promptForSelect(this.controller, {
-                    numCards: this.controller.getNumberOfUsedPlots(),
+            handler: context => {
+                this.game.promptForSelect(context.player, {
+                    numCards: context.player.getNumberOfUsedPlots(),
                     multiSelect: true,
-                    activePromptTitle: 'Select up to ' + this.controller.getNumberOfUsedPlots() + ' characters',
+                    activePromptTitle: 'Select up to ' + context.player.getNumberOfUsedPlots() + ' characters',
                     source: this,
-                    cardCondition: card => card.isFaction('martell') && card.getType() === 'character',
+                    cardCondition: card => card.isFaction('martell') && card.getType() === 'character' && card.location === 'play area',
                     onSelect: (player, cards) => this.targetsSelected(player, cards)
                 });
             }
