@@ -13,7 +13,7 @@ class CityOfWealth extends PlotCard {
     }
 
     numOfCityPlots() {
-        this.controller.getNumberOfUsedPlotsByTrait('City');
+        return this.controller.getNumberOfUsedPlotsByTrait('City');
     }
 }
 
