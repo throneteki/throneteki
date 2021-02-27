@@ -20,7 +20,7 @@ class Wraith extends DrawCard {
             },
             handler: context => {
                 this.game.addMessage('{0} kneels and sacrifices {1} to kneel {2}', context.player, this, context.target);
-                context.target.controller.kneelCard(context.target.location);
+                context.target.controller.kneelCard(context.target);
             }
         });
     }
