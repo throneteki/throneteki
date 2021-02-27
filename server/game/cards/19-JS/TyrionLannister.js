@@ -14,6 +14,7 @@ class TyrionLannister extends DrawCard {
 
                 this.atEndOfPhase(ability => ({
                     match: context.target,
+                    targetLocation: ['play area', 'duplicate'],
                     effect: ability.effects.moveToBottomOfDeckIfStillInPlay(true)
                 }));
 
