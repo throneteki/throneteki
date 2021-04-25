@@ -5,6 +5,7 @@ import AbilityTargeting from './AbilityTargeting';
 import AbilityTimer from './AbilityTimer';
 import CardNameLookup from './CardNameLookup';
 import TraitNameLookup from './TraitNameLookup';
+import SelectFromValuesLookup from './SelectFromValuesLookup';
 
 class ActivePlayerPrompt extends React.Component {
     onButtonClick(event, button) {
@@ -96,6 +97,8 @@ class ActivePlayerPrompt extends React.Component {
                     return <CardNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
                 case 'trait-name':
                     return <TraitNameLookup cards={ this.props.cards } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
+                case 'select-from-values':
+                    return <SelectFromValuesLookup selectableValues={ control.selectableValues } onValueSelected={ this.handleLookupValueSelected.bind(this, control.command, control.method, control.promptId) } />;
             }
         });
     }
