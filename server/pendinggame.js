@@ -15,6 +15,7 @@ class PendingGame {
         this.event = details.event || { _id: 'none' };
         this.restrictedList = details.restrictedList;
         this.allowSpectators = details.spectators;
+        this.publicForSpectators = details.publicForSpectators;
         this.showHand = details.showHand;
         this.gameType = details.gameType;
         this.isMelee = details.isMelee;
@@ -153,7 +154,7 @@ class PendingGame {
             return;
         }
 
-        if(this.password) {
+        if(this.password && !this.publicForSpectators) {
             if(crypto.createHash('md5').update(password).digest('hex') !== this.password) {
                 return 'Incorrect game password';
             }
@@ -320,6 +321,7 @@ class PendingGame {
             messages: activePlayer ? this.gameChat.messages : undefined,
             name: this.name,
             needsPassword: !!this.password,
+            publicForSpectators: this.publicForSpectators,
             node: this.node ? this.node.identity : undefined,
             owner: this.owner.username,
             players: playerSummaries,
