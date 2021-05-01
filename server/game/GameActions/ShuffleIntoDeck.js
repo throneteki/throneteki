@@ -1,5 +1,6 @@
 const GameAction = require('./GameAction');
 const Shuffle = require('./Shuffle');
+const ReturnCardToDeck = require('./ReturnCardToDeck');
 
 class ShuffleIntoDeck extends GameAction {
     constructor() {
@@ -15,7 +16,7 @@ class ShuffleIntoDeck extends GameAction {
             const players = new Set();
 
             for(const card of event.cards) {
-                card.owner.moveCard(card, 'draw deck', { allowSave });
+                event.thenAttachEvent(ReturnCardToDeck.createEvent({card, allowSave}));
                 players.add(card.owner);
             }
 

@@ -26,6 +26,7 @@ const ShuffleIntoDeck = require('./ShuffleIntoDeck');
 const SimultaneousAction = require('./SimultaneousAction');
 const StandCard = require('./StandCard');
 const TakeControl = require('./TakeControl');
+const ReturnCardToDeck = require('./ReturnCardToDeck');
 
 const GameActions = {
     addToHand: props => new AbilityAdapter(AddToHand, props),
@@ -62,7 +63,8 @@ const GameActions = {
         return new SimultaneousAction(actions);
     },
     standCard: props => new AbilityAdapter(StandCard, props),
-    takeControl: props => new AbilityAdapter(TakeControl, props)
+    takeControl: props => new AbilityAdapter(TakeControl, props),
+    returnCardToDeck: props => new AbilityAdapter(ReturnCardToDeck, props),
 };
 
 module.exports = GameActions;
