@@ -62,7 +62,10 @@ describe('SacrificeCard', function() {
             });
 
             it('moves the card to discard', function() {
-                expect(this.playerSpy.moveCard).toHaveBeenCalledWith(this.cardSpy, 'discard pile');
+                const placeEvent = this.event.attachedEvents[0];
+                expect(placeEvent.name).toBe('onCardPlaced');
+                expect(placeEvent.card).toBe(this.cardSpy);
+                expect(placeEvent.location).toBe('discard pile');
             });
         });
     });
