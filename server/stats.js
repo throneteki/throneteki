@@ -4,8 +4,9 @@ const _ = require('underscore');
 const monk = require('monk');
 
 const GameService = require('./services/GameService.js');
+const config = require('./config.js');
 
-let db = monk('mongodb://127.0.0.1:27017/throneteki');
+let db = monk(config.dbPath);
 let gameService = new GameService(db);
 
 let args = process.argv.slice(2);
@@ -135,10 +136,6 @@ gameService.getAllGames(args[0], args[1]).then(games => {
     _.each(factionAgendaWinRateStats, winner => {
         console.info(winner.name, ' | ', winner.wins, ' | ', winner.losses, ' | ', winner.winRate + '%');
     });
-
-    console.info('### Number of unique players:');
-
-    console.info(Object.keys(players).length);
 
     console.info(rejected);
 })
