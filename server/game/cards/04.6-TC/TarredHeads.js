@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class TarredHeads extends DrawCard {
     setupCardAbilities() {
@@ -9,22 +10,27 @@ class TarredHeads extends DrawCard {
                     event.challenge.winner === this.controller &&
                     event.challenge.loser.hand.length >= 1)
             },
-            handler: context => {
-                let opponent = context.event.challenge.loser;
-
-                opponent.discardAtRandom(1, cards => {
-                    let card = cards[0];
+            gameAction: GameActions.discardAtRandom(context => ({
+                amount: 1,
+                player: context.event.challenge.loser,
+                discardEvent: (card) => {
+                    const event = GameActions.discardCard({ card, allowSave: false }).createEvent();
                     let deadMessage = '';
 
                     if(card.getType() === 'character') {
                         deadMessage = ' and place it in the dead pile';
-                        opponent.moveCard(card, 'dead pile');
+                        event.replaceHandler(() => {
+                            event.thenAttachEvent(
+                                GameActions.placeCard({ card: event.card, location: 'dead pile' }).createEvent()
+                            );
+                        });
                     }
 
-                    this.game.addMessage('{0} plays {1} to discard {2} from {3}\'s hand{4}',
-                        this.controller, this, card, opponent, deadMessage);
-                });
-            }
+                    this.game.addMessage('{0} plays {1} to discard {2} from {3}\'s hand{4}', context.player, context.source, card, context.event.challenge.loser, deadMessage);
+
+                    return event;
+                }
+            }))
         });
     }
 }
