@@ -34,6 +34,11 @@ class XValuePrompt extends BaseStep {
     resolveCost(player, xValue) {
         //value selected in prompt is of type string
         xValue = typeof(xValue) === 'string' ? parseInt(xValue) : xValue;
+
+        if(xValue < this.min || xValue > this.max) {
+            return false;
+        }
+
         this.context.xValue = xValue;
         this.context.goldCost = Math.max(xValue - this.reduction, 0);
 
