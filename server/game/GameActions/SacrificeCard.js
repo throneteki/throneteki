@@ -1,4 +1,5 @@
 const GameAction = require('./GameAction');
+const PlaceCard = require('./PlaceCard');
 
 class SacrificeCard extends GameAction {
     constructor() {
@@ -13,7 +14,7 @@ class SacrificeCard extends GameAction {
         player = player || card.controller;
         return this.event('onSacrificed', { card, player }, event => {
             event.cardStateWhenSacrificed = event.card.createSnapshot();
-            event.player.moveCard(event.card, 'discard pile');
+            event.thenAttachEvent(PlaceCard.createEvent({ card: card, location: 'discard pile' }));
         });
     }
 }
