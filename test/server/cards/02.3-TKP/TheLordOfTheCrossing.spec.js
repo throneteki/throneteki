@@ -230,4 +230,65 @@ describe('The Lord of the Crossing', function() {
             });
         });
     });
+
+    integration(function() {
+        describe('vs Randyll Tarly', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('tyrell', [
+                    'The Lord of the Crossing',
+                    'A Noble Cause',
+                    'Randyll Tarly (Core)', 'Garden Caretaker', 'Steward at the Wall'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.randyll = this.player1.findCardByName('Randyll Tarly', 'hand');
+                this.powerchud = this.player1.findCardByName('Garden Caretaker', 'hand');
+                this.intriguechud = this.player1.findCardByName('Steward at the Wall', 'hand');
+
+                this.player1.clickCard(this.randyll);
+                this.player1.clickCard(this.powerchud);
+                this.player1.clickCard(this.intriguechud);
+
+                this.completeSetup();
+            });
+
+            describe('when Randyll Tarly attacks in the third challenge', function() {
+                beforeEach(function() {
+                    this.selectFirstPlayer(this.player1);
+
+                    this.completeMarshalPhase();
+
+                    this.player1.clickPrompt('Intrigue');
+                    this.player1.clickCard(this.intriguechud);
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+
+                    this.player1.clickPrompt('Power');
+                    this.player1.clickCard(this.powerchud);
+                    this.player1.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player2.clickPrompt('Done');
+                    this.skipActionWindow();
+                    this.player1.clickPrompt('Apply Claim');
+
+                    this.player1.clickPrompt('Military');
+                    this.player1.clickCard(this.randyll);
+                    this.player1.clickPrompt('Done');
+                });
+
+                it('should trigger his str buff reaction', function() {
+                    expect(this.randyll.getStrength()).toBe(7);
+                    expect(this.player1).toHavePrompt('Any reactions?');
+                    expect(this.randyll.kneeled).toBe(true);
+                    this.player1.clickCard(this.randyll);
+                    expect(this.randyll.kneeled).toBe(false);
+                });
+            });
+        });
+    });
 });

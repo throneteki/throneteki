@@ -580,10 +580,27 @@ const Effects = {
                 context.returnToHandIfStillInPlay.push(card);
             },
             unapply: function(card, context) {
-                if(card.location === 'play area' && context.returnToHandIfStillInPlay.includes(card)) {
+                if(['play area', 'duplicate'].includes(card.location) && context.returnToHandIfStillInPlay.includes(card)) {
                     context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(c => c !== card);
                     card.controller.returnCardToHand(card, allowSave);
                     context.game.addMessage('{0} returns {1} to hand at the end of the {2} because of {3}', context.source.controller, card, duration, context.source);
+                }
+            }
+        };
+    },
+    returnToHandIfStillInPlayAndNotAttachedToCardByTitle: function(parentCardTitle, allowSave = false, duration = 'phase') {
+        return {
+            apply: function(card, context) {
+                context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay || [];
+                context.returnToHandIfStillInPlay.push(card);
+            },
+            unapply: function(card, context) {
+                if(card.location === 'play area' && context.returnToHandIfStillInPlay.includes(card)) {
+                    context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(c => c !== card);
+                    if((card.parent && card.parent.name !== parentCardTitle) || !card.parent) {
+                        card.controller.returnCardToHand(card, allowSave);
+                        context.game.addMessage('{0} returns {1} to hand at the end of the {2} because of {3}', context.source.controller, card, duration, context.source);
+                    }
                 }
             }
         };
@@ -1106,6 +1123,9 @@ const Effects = {
     reduceNextOutOfShadowsCardCost: function(amount, match) {
         return this.reduceNextCardCost('outOfShadows', amount, match);
     },
+    reduceNextMarshalledOrAmbushedCardCost: function(amount, match) {
+        return this.reduceNextCardCost(['marshal', 'ambush'], amount, match);
+    },
     reduceFirstCardCostEachRound: function(playingTypes, amount, match) {
         return this.reduceCost({
             playingTypes: playingTypes,
@@ -1125,6 +1145,17 @@ const Effects = {
     },
     reduceFirstOutOfShadowsCardCostEachRound: function(amount, match) {
         return this.reduceFirstCardCostEachRound(['outOfShadows'], amount, match);
+    },
+    reduceFirstCardCostEachPhase: function(playingTypes, amount, match) {
+        return this.reduceCost({
+            playingTypes: playingTypes,
+            amount: amount,
+            match: match,
+            limit: AbilityLimit.perPhase(1)
+        });
+    },
+    reduceFirstPlayedCardCostEachPhase: function(amount, match) {
+        return this.reduceFirstCardCostEachPhase('play', amount, match);
     },
     reduceAmbushCardCost: function(amount, match) {
         return this.reduceCost({
@@ -1154,6 +1185,28 @@ const Effects = {
             unapply: function(player, context) {
                 player.modifyUsedPlots(-context.dynamicUsedPlots[player.name]);
                 delete context.dynamicUsedPlots[player.name];
+            },
+            isStateDependent: true
+        };
+    },
+    dynamicUsedPlotsWithTrait: function(calculate, trait) {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                context.dynamicUsedPlotsWithTrait = context.dynamicUsedPlotsWithTrait || {};
+                context.dynamicUsedPlotsWithTrait[player.name] = context.dynamicUsedPlotsWithTrait[player.name] || {};
+                context.dynamicUsedPlotsWithTrait[player.name][trait] = calculate(player, context) || 0;
+                player.modifyUsedPlotsWithTrait(context.dynamicUsedPlotsWithTrait[player.name][trait], trait);
+            },
+            reapply: function(player, context) {
+                let oldValue = context.dynamicUsedPlotsWithTrait[player.name][trait];
+                let newValue = calculate(player, context) || 0;
+                context.dynamicUsedPlotsWithTrait[player.name][trait] = newValue;
+                player.modifyUsedPlotsWithTrait(newValue - oldValue, trait);
+            },
+            unapply: function(player, context) {
+                player.modifyUsedPlotsWithTrait(-context.dynamicUsedPlotsWithTrait[player.name][trait], trait);
+                delete context.dynamicUsedPlotsWithTrait[player.name];
             },
             isStateDependent: true
         };

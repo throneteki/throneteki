@@ -18,22 +18,27 @@ class XValuePrompt extends BaseStep {
             return;
         }
 
-        let rangeArray = range(this.min, this.max + 1).reverse();
-
-        let buttons = rangeArray.map(xValue => {
-            return { text: xValue.toString(), method: 'resolveCost', arg: xValue };
-        });
+        let rangeArray = range(this.min, this.max + 1).reverse().map(xValue => xValue.toString());
 
         this.context.game.promptWithMenu(this.context.player, this, {
             activePrompt: {
                 menuTitle: 'Select value of X',
-                buttons: buttons
+                controls: [
+                    { type: 'select-from-values', command: 'menuButton', method: 'resolveCost', selectableValues: rangeArray }
+                ]
             },
             source: this.context.source
         });
     }
 
     resolveCost(player, xValue) {
+        //value selected in prompt is of type string
+        xValue = typeof(xValue) === 'string' ? parseInt(xValue) : xValue;
+
+        if(xValue < this.min || xValue > this.max) {
+            return false;
+        }
+
         this.context.xValue = xValue;
         this.context.goldCost = Math.max(xValue - this.reduction, 0);
 

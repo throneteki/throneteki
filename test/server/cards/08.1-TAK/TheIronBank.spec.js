@@ -5,7 +5,7 @@ describe('The Iron Bank', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('lannister', [
                 'A Noble Cause',
-                'The Iron Bank', 'Cersei Lannister (LoCR)', 'Stone Crows', 'Janos Slynt (AtSK)', 'Red Cloaks', 'Nightmares', 'The Hand\'s Judgment'
+                'The Iron Bank (TAK)', 'Cersei Lannister (LoCR)', 'Stone Crows', 'Janos Slynt (AtSK)', 'Red Cloaks', 'Nightmares', 'The Hand\'s Judgment'
             ]);
             const deck2 = this.buildDeck('thenightswatch', [
                 'A Noble Cause',

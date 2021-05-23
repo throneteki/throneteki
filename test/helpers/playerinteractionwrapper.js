@@ -113,6 +113,19 @@ class PlayerInteractionWrapper {
         this.checkUnserializableGameState();
     }
 
+    selectValue(value) {
+        let currentPrompt = this.player.currentPrompt();
+        let selectValueControl = currentPrompt.controls.find(control => control.type === 'select-from-values');
+
+        if(!selectValueControl) {
+            throw new Error(`Couldn't select a value for ${this.player.name}. Current prompt is:\n${this.formatPrompt()}`);
+        }
+
+        this.game.menuButton(this.player.name, value, selectValueControl.method, selectValueControl.promptId);
+        this.game.continue();
+        this.checkUnserializableGameState();
+    }
+
     clickPrompt(text) {
         let currentPrompt = this.player.currentPrompt();
         let promptButton = currentPrompt.buttons.find(button => button.text.toLowerCase() === text.toLowerCase());

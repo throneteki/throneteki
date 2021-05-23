@@ -23,6 +23,7 @@ const ReturnCardToDeck = require('./GameActions/ReturnCardToDeck.js');
 const ChessClock = require('./ChessClock.js');
 
 const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
+const { flatten } = require('underscore');
 
 class Player extends Spectator {
     constructor(id, user, owner, game) {
@@ -60,6 +61,7 @@ class Player extends Spectator {
         this.costReducers = [];
         this.playableLocations = this.createDefaultPlayableLocations();
         this.usedPlotsModifier = 0;
+        this.usedPlotsModifierByTrait = new ReferenceCountedSetProperty();
         this.attackerLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.defenderLimits = new MinMaxProperty({ defaultMin: 0, defaultMax: 0 });
         this.gainedGold = 0;
@@ -160,7 +162,18 @@ class Player extends Spectator {
     }
 
     getNumberOfUsedPlots() {
-        return this.plotDiscard.length + this.usedPlotsModifier;
+        return this.plotDiscard.length + this.usedPlotsModifier + this.usedPlotsModifierByTrait.getValues().reduce((sum, entry) => sum + this.usedPlotsModifierByTrait.getCountForReference(entry), 0);
+    }
+
+    getNumberOfUsedPlotsByTrait(trait) {
+        return this.plotDiscard.filter(card => card.hasTrait(trait)).length + this.usedPlotsModifierByTrait.getCountForReference(trait);
+    }
+
+    getTraitsOfUsedPlots() {
+        let traits = flatten(this.plotDiscard.map(card => card.getTraits()));
+        traits = traits.concat(this.usedPlotsModifierByTrait.getValues());
+        const uniqueTraits = new Set(traits);
+        return uniqueTraits;
     }
 
     getPlots() {
@@ -211,7 +224,18 @@ class Player extends Spectator {
 
     modifyUsedPlots(value) {
         this.usedPlotsModifier += value;
-        this.game.raiseEvent('onUsedPlotsModified', { player: this });
+    }
+
+    modifyUsedPlotsWithTrait(value, trait) {
+        if(value >= 0) {
+            for(let i = 0; i < value; i++) {
+                this.usedPlotsModifierByTrait.add(trait);
+            }
+        } else {
+            for(let i = 0; i < value * -1; i++) {
+                this.usedPlotsModifierByTrait.remove(trait);
+            }
+        }
     }
 
     getNumCardsToDraw(amount) {
@@ -660,16 +684,6 @@ class Player extends Spectator {
         this.bonusesFromRivals.clear();
     }
 
-    flipPlotFaceup() {
-        if(!this.selectedPlot) {
-            return;
-        }
-
-        this.selectedPlot.flipFaceup();
-        this.moveCard(this.selectedPlot, 'active plot');
-        this.selectedPlot = undefined;
-    }
-
     recyclePlots() {
         const plots = this.plotDeck.filter(plot => !plot.notConsideredToBeInPlotDeck);
         if(plots.length === 0) {
@@ -678,16 +692,6 @@ class Player extends Spectator {
             }
 
             this.game.raiseEvent('onPlotsRecycled', { player: this });
-        }
-    }
-
-    removeActivePlot() {
-        if(this.activePlot && this.selectedPlot) {
-            let plot = this.activePlot;
-            this.moveCard(this.activePlot, 'revealed plots');
-            this.game.raiseEvent('onPlotDiscarded', { player: this, card: plot });
-            this.activePlot = undefined;
-            return plot;
         }
     }
 
@@ -988,7 +992,7 @@ class Player extends Spectator {
             return;
         }
 
-        if(card.location === 'play area') {
+        if(card.location === 'play area' && targetLocation !== 'play area') {
             var params = {
                 player: this,
                 card: card,

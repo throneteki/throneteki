@@ -51,8 +51,6 @@ class TheRainsOfCastamere extends AgendaCard {
             context.player, this, context.target);
 
         context.player.selectedPlot = context.target;
-        context.player.removeActivePlot();
-        context.player.flipPlotFaceup();
         this.game.queueStep(new RevealPlots(this.game, [context.target]));
     }
 

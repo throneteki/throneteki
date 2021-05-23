@@ -343,9 +343,8 @@ class Game extends EventEmitter {
             case 'active plot':
                 this.callCardMenuCommand(player.activePlot, player, menuItem);
                 break;
+            //agenda and play area can behave the same now as the alliance agenda allows you to have more than one agenda card that are clickable
             case 'agenda':
-                this.callCardMenuCommand(player.agenda, player, menuItem);
-                break;
             case 'play area':
                 if(card.controller !== player && !menuItem.anyPlayer) {
                     return;
@@ -1099,6 +1098,13 @@ class Game extends EventEmitter {
     watch(socketId, user) {
         if(!this.allowSpectators) {
             return false;
+        }
+
+        //check if the game has an event selected that restricts spectators
+        if(this.event && this.event.restrictSpectators && this.event.validSpectators) {
+            if(!this.event.validSpectators.includes(user.username.toLowerCase())) {
+                return false;
+            }
         }
 
         this.playersAndSpectators[user.username] = new Spectator(socketId, user);

@@ -14,8 +14,6 @@ class AtPrinceDoransBehest extends PlotCard {
                 this.game.addMessage('{0} uses {1} to reveal {2}', context.player, this, context.target);
 
                 context.player.selectedPlot = context.target;
-                context.player.removeActivePlot();
-                context.player.flipPlotFaceup();
                 this.game.queueStep(new RevealPlots(this.game, [context.target], context.event));
             }
         });

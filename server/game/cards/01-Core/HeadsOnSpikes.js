@@ -1,33 +1,39 @@
-const PlotCard = require('../../plotcard.js');
+const PlotCard = require('../../plotcard');
+const GameActions = require('../../GameActions');
 
 class HeadsOnSpikes extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,
             handler: context => {
-                let otherPlayer = context.opponent;
+                this.game.resolveGameAction(
+                    GameActions.discardAtRandom(context => ({
+                        amount: 1,
+                        player: context.opponent,
+                        discardEvent: (card) => {
+                            const event = GameActions.discardCard({ card, allowSave: false }).createEvent();
+                            let powerMessage = '';
 
-                if(otherPlayer.hand.length === 0) {
-                    return true;
-                }
+                            if(card.getType() === 'character') {
+                                event.replaceHandler(() => {
+                                    event.thenAttachEvent(
+                                        GameActions.placeCard({ card: event.card, location: 'dead pile' }).createEvent()
+                                    );
+                                });
+                                const gainPower = GameActions.gainPower({ amount: 2, card: context.player.faction });
+                                if(gainPower.allow()) {
+                                    powerMessage = ' and gain 2 power for their faction';
+                                    event.addChildEvent(gainPower.createEvent());
+                                }
+                            }
 
-                otherPlayer.discardAtRandom(1, cards => {
-                    let powerMessage = '';
-                    let card = cards[0];
+                            this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}', context.player, context.source, card, context.opponent, powerMessage);
 
-                    if(card.getType() === 'character') {
-                        if(card.location === 'discard pile') {
-                            otherPlayer.moveCard(card, 'dead pile');
+                            return event;
                         }
-
-                        if(context.player.canGainFactionPower()) {
-                            powerMessage = ' and gain 2 power for their faction';
-                            this.game.addPower(context.player, 2);
-                        }
-                    }
-
-                    this.game.addMessage('{0} uses {1} to discard {2} from {3}\'s hand{4}', context.player, this, card, otherPlayer, powerMessage);
-                });
+                    })),
+                    context
+                );
             }
         });
     }

@@ -4,14 +4,14 @@ describe('"Loses all" related effects', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'I Am No One', 'Hedge Knight', 'Knighted'
+                    'I Am No One (TFM)', 'Ser Colen of Greenpools', 'Knighted'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
                 this.startGame();
                 this.keepStartingHands();
 
-                this.knight = this.player1.findCardByName('Hedge Knight');
+                this.knight = this.player1.findCardByName('Ser Colen of Greenpools');
 
                 this.player1.clickCard(this.knight);
 

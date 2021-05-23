@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard');
-const {flatten} = require('../../../Array');
 
 class DagosManwoody extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,8 +13,7 @@ class DagosManwoody extends DrawCard {
     }
 
     numOfTraitsInUsedPile() {
-        const traits = flatten(this.controller.plotDiscard.map(card => card.getTraits()));
-        const uniqueTraits = new Set(traits);
+        const uniqueTraits = this.controller.getTraitsOfUsedPlots();
         return uniqueTraits.size;
     }
 }

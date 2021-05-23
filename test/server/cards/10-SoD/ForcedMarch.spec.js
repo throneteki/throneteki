@@ -3,7 +3,7 @@ describe('Forced March', function() {
         describe('when revealed', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('targaryen', [
-                    'Forced March', 'A Noble Cause',
+                    'Forced March (SoD)', 'A Noble Cause',
                     'Hedge Knight', 'Hedge Knight', 'Hedge Knight'
                 ]);
 
@@ -55,7 +55,7 @@ describe('Forced March', function() {
         describe('vs cancels', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('targaryen', [
-                    'Forced March', 'A Noble Cause', 'Outwit',
+                    'Forced March (SoD)', 'A Noble Cause', 'Outwit',
                     'Hedge Knight', 'Hedge Knight', 'Hedge Knight', 'Maester Wendamyr'
                 ]);
 

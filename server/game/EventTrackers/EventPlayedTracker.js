@@ -25,9 +25,9 @@ class EventPlayedTracker {
         this.events = [];
     }
 
-    getNumberOfPlayedEvents(player) {
+    getNumberOfPlayedEvents(player, playedFromLocation) {
         return this.events.reduce((count, event) => {
-            return event.player === player ? count + 1 : count;
+            return event.player === player && (!playedFromLocation || playedFromLocation === event.originalLocation) ? count + 1 : count;
         }, 0);
     }
 }

@@ -72,6 +72,10 @@ class SelectCardPrompt extends UiPrompt {
         this.revealTargets = properties.revealTargets;
         this.revealFunc = null;
         this.savePreviouslySelectedCards();
+
+        if(choosingPlayer.isFake) {
+            this.complete();
+        }
     }
 
     defaultProperties() {

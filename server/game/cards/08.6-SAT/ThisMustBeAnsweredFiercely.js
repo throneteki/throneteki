@@ -5,7 +5,7 @@ class ThisMustBeAnsweredFiercely extends DrawCard {
         this.reaction({
             when: {
                 onChallengeInitiated: event =>
-                    event.challenge.defendingPlayer === this.controller && event.challenge.attackers.length >= 3
+                    event.challenge.initiatedAgainstPlayer === this.controller && event.challenge.attackers.length >= 3
             },
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {

@@ -5,7 +5,7 @@ describe('Duplicates', function() {
                 beforeEach(function() {
                     const deck = this.buildDeck('stark', [
                         'A Noble Cause', 'Sneak Attack', 'Valar Morghulis',
-                        'Arya Stark (Core)', 'Arya Stark (Core)', 'Ward'
+                        'Arya Stark (Core)', 'Arya Stark (Core)', 'Ward (TS)'
                     ]);
                     this.player1.selectDeck(deck);
                     this.player2.selectDeck(deck);
@@ -56,7 +56,7 @@ describe('Duplicates', function() {
             describe('when abilities cannot be triggered and a duped character would be killed', function() {
                 beforeEach(function() {
                     const deck = this.buildDeck('stark', [
-                        'The King in the North',
+                        'The King in the North (FotOG)',
                         'Hedge Knight', 'Arya Stark (Core)', 'Arya Stark (Core)'
                     ]);
                     this.player1.selectDeck(deck);

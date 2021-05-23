@@ -13,13 +13,7 @@ class CityOfWealth extends PlotCard {
     }
 
     numOfCityPlots() {
-        return this.controller.plotDiscard.reduce((count, card) => {
-            if(card.hasTrait('City')) {
-                return count + 1;
-            }
-
-            return count;
-        }, 0);
+        return this.controller.getNumberOfUsedPlotsByTrait('City');
     }
 }
 

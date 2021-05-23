@@ -25,6 +25,10 @@ class MenuPrompt extends UiPrompt {
         }
 
         this.properties = properties;
+
+        if(player.isFake) {
+            this.complete();
+        }
     }
 
     activeCondition(player) {

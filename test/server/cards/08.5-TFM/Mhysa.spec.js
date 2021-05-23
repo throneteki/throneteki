@@ -83,6 +83,14 @@ describe('Mhysa', function() {
 
                 this.completeMarshalPhase();
 
+                //make a power challenge first
+                this.player1.clickPrompt('Power');
+                this.player1.clickCard(this.mhysaChar);
+                this.player1.clickCard(this.attackingChar);
+                this.player1.clickPrompt('Done');
+                this.skipActionWindow();
+                this.skipActionWindow();
+
                 this.player1.clickPrompt('Intrigue');
                 this.player1.clickCard(this.mhysaChar);
                 this.player1.clickCard(this.attackingChar);

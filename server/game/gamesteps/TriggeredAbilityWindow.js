@@ -50,7 +50,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             activePromptTitle: TriggeredAbilityWindowTitles.getTitle(this.abilityType, this.event.getPrimaryEvent()),
             isCardEffect: false,
             cardCondition: card => cardsForPlayer.includes(card),
-            cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot'],
+            cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
             additionalButtons: this.getButtons(player, unclickableCards),
             additionalControls: this.getAdditionalPromptControls(),
             doneButtonText: 'Pass',

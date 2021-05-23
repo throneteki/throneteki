@@ -24,6 +24,7 @@ class ChatCommands {
             '/give-icon': this.addIcon,
             '/kill': this.kill,
             '/move-bottom': this.moveBottom,
+            '/move-shadows': this.moveShadows,
             '/pillage': this.pillage,
             '/power': this.power,
             '/rematch': this.rematch,
@@ -410,6 +411,19 @@ class ChatCommands {
             onSelect: (p, card) => {
                 player.moveCard(card, 'draw deck', { bottom: true });
                 this.game.addAlert('danger', '{0} uses the /move-bottom command to move {1} to the bottom of their deck', p, card);
+                return true;
+            }
+        });
+    }
+
+    moveShadows(player) {
+        this.game.promptForSelect(player, {
+            activePromptTitle: 'Select a card',
+            waitingPromptTitle: 'Waiting for opponent to move a card to their shadows area',
+            cardCondition: card => card.controller === player && card.owner === player,
+            onSelect: (p, card) => {
+                player.moveCard(card, 'shadows');
+                this.game.addAlert('danger', '{0} uses the /move-shadows command to move a card to their shadows area', p);
                 return true;
             }
         });

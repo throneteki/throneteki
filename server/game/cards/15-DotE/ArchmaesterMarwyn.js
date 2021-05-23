@@ -1,10 +1,9 @@
 const DrawCard = require('../../drawcard');
 const GenericTracker = require('../../EventTrackers/GenericTracker');
-const CardEntersPlayTracker = require('../../EventTrackers/CardEntersPlayTracker');
 
 class ArchmaesterMarwyn extends DrawCard {
     setupCardAbilities(ability) {
-        this.enterPlayTracker = CardEntersPlayTracker.forPhase(this.game);
+        this.enterPlayTracker = GenericTracker.forPhase(this.game, 'onCardMarshalled');
         this.playedTracker = GenericTracker.forPhase(this.game, 'onCardPlayed');
 
         this.persistentEffect({
@@ -41,7 +40,7 @@ class ArchmaesterMarwyn extends DrawCard {
     hasMarshalledFromUnderAgenda() {
         return this.enterPlayTracker.events.some(event => (
             event.originalLocation === 'conclave' &&
-            event.card.controller === this.controller
+            event.originalController === this.controller
         ));
     }
 }

@@ -2,8 +2,8 @@ const sample = require('lodash.sample');
 const BaseStep = require('./basestep.js');
 const SimpleStep = require('./simplestep.js');
 const FirstPlayerPrompt = require('./plot/firstplayerprompt.js');
-const AtomicEvent = require('../AtomicEvent');
 const Event = require('../event');
+const RevealPlot = require('../GameActions/RevealPlot');
 
 class RevealPlots extends BaseStep {
     constructor(game, plots, parentEvent = null) {
@@ -26,6 +26,29 @@ class RevealPlots extends BaseStep {
     }
 
     generateEvent(plots) {
+        // General sequence:
+        // * Simultaneously move each selected plot to the revealed location and
+        //   discard the current active plot. This ensures plots are visible on
+        //   the board before resolving them.
+        // * Interrupts to plots being revealed
+        // * Plot card persistent effects are activated
+        // * Initiative is compared and first player chosen if a new round
+        // * "When revealed" abilities are resolved
+        // * Reactions to plots being revealed, plots being discarded
+        const event = new Event('_TOP_LEVEL_REVEAL_', {});
+        for(const plot of plots) {
+            event.addChildEvent(RevealPlot.createEvent({ card: plot, player: plot.controller }));
+        }
+
+        event.thenExecute(() => {
+            event.thenAttachEvent(this.generateRevealEvent(plots));
+            this.game.openInterruptWindowForAttachedEvents(event);
+        });
+
+        return event;
+    }
+
+    generateRevealEvent(plots) {
         let event = new Event('onPlotsRevealed', { plots: plots }, () => {
             this.game.addSimultaneousEffects(this.getPlotEffects(plots));
             if(this.needsFirstPlayerChoice()) {
@@ -36,16 +59,9 @@ class RevealPlots extends BaseStep {
         });
 
         for(let plot of plots) {
-            event.addChildEvent(this.generateRevealEvent(plot));
+            event.addChildEvent(new Event('onPlotRevealed', { plot: plot }));
         }
 
-        return event;
-    }
-
-    generateRevealEvent(plot) {
-        let event = new AtomicEvent();
-        event.addChildEvent(new Event('onPlotRevealed', { plot: plot }));
-        event.addChildEvent(new Event('onCardEntersPlay', { card: plot, playingType: 'plot' }));
         return event;
     }
 

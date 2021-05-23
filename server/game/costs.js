@@ -196,6 +196,10 @@ const Costs = {
      */
     discardGold: amount => CostBuilders.discardToken('gold', amount).self(),
     /**
+     * Cost that will discard a gold from a card specified by condition.
+     */
+    discardGoldFromCard: (amount, condition) => CostBuilders.discardToken('gold', amount).select(condition),
+    /**
      * Cost that will discard a fixed amount of power from the current card.
      */
     discardPowerFromSelf: amount => CostBuilders.discardPower(amount).self(),
@@ -379,7 +383,8 @@ const Costs = {
                 context.source.modifyToken(Tokens.gold, -context.xValue);
             }
         };
-    }
+    },
+    shuffleCardIntoDeck: condition => CostBuilders.shuffleCardIntoDeck.select(condition)
 };
 
 module.exports = Costs;

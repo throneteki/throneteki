@@ -1,10 +1,10 @@
-describe('King\'s Landing', function() {
+describe('King\'s Landing (SoKL)', function() {
     integration(function() {
         describe('when marshalling from the discard pile', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'King\'s Landing', 'The Roseroad', 'Winterfell Crypt', 'Skagos'
+                    'King\'s Landing (SoKL)', 'The Roseroad', 'Winterfell Crypt', 'Skagos (IDP)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
