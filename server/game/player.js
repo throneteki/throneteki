@@ -897,11 +897,11 @@ class Player extends Spectator {
     }
 
     moveCardToTopOfDeck(card, allowSave = true) {
-        return this.game.resolveGameAction(GameActions.returnCardToDeck, { card, allowSave });
+        return this.game.resolveGameAction(GameActions.returnCardToDeck({ card, allowSave }));
     }
 
     moveCardToBottomOfDeck(card, allowSave = true) {
-        return this.game.resolveGameAction(GameActions.returnCardToDeck, { card, allowSave, bottom: true });
+        return this.game.resolveGameAction(GameActions.returnCardToDeck({ card, allowSave, bottom: true }));
     }
 
     canPutIntoShadows(card, playingType = 'put') {
