@@ -19,7 +19,6 @@ const GoldSource = require('./GoldSource.js');
 const GameActions = require('./GameActions');
 const RemoveFromGame = require('./GameActions/RemoveFromGame');
 const SacrificeCard = require('./GameActions/SacrificeCard');
-const ReturnCardToDeck = require('./GameActions/ReturnCardToDeck.js');
 const ChessClock = require('./ChessClock.js');
 
 const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
@@ -898,11 +897,11 @@ class Player extends Spectator {
     }
 
     moveCardToTopOfDeck(card, allowSave = true) {
-        return this.game.resolveGameAction(ReturnCardToDeck, { card, allowSave });
+        return this.game.resolveGameAction(GameActions.returnCardToDeck, { card, allowSave });
     }
 
     moveCardToBottomOfDeck(card, allowSave = true) {
-        return this.game.resolveGameAction(ReturnCardToDeck, { card, allowSave, bottom: true });
+        return this.game.resolveGameAction(GameActions.returnCardToDeck, { card, allowSave, bottom: true });
     }
 
     canPutIntoShadows(card, playingType = 'put') {

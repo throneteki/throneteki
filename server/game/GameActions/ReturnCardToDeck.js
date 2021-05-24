@@ -14,10 +14,10 @@ class ReturnCardToDeck extends GameAction {
             card: card,
             allowSave: allowSave,
             automaticSaveWithDupe: true,
-            bottom: bottom
+            bottom: bottom,
+            snapshotName: 'cardStateWhenMoved'
         };
         return this.event('onCardReturnedToDeck', params, event => {
-            event.cardStateWhenMoved = card.createSnapshot();
             event.card.controller.moveCard(card, 'draw deck', { bottom: bottom, allowSave: allowSave });
         });
     }

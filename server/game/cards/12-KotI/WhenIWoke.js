@@ -13,7 +13,6 @@ class WhenIWoke extends DrawCard {
                     activePromptTitle: 'Select a card',
                     source: this,
                     cardCondition: card => this.game.currentChallenge.isParticipating(card),
-                    gameAction: 'moveToTopOfDeck',
                     onSelect: (losingplayer, card) => this.onSelectCard(losingplayer, card),
                     onCancel: (losingplayer) => this.onSelectCard(losingplayer, null)
                 });
