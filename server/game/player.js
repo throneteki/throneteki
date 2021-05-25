@@ -897,21 +897,11 @@ class Player extends Spectator {
     }
 
     moveCardToTopOfDeck(card, allowSave = true) {
-        this.game.applyGameAction('moveToTopOfDeck', card, card => {
-            this.game.raiseEvent('onCardReturnedToDeck', { player: this, card: card, allowSave: allowSave }, event => {
-                event.cardStateWhenMoved = card.createSnapshot();
-                this.moveCard(card, 'draw deck', { allowSave: allowSave });
-            });
-        });
+        return this.game.resolveGameAction(GameActions.returnCardToDeck({ card, allowSave }));
     }
 
     moveCardToBottomOfDeck(card, allowSave = true) {
-        this.game.applyGameAction('moveToBottomOfDeck', card, card => {
-            this.game.raiseEvent('onCardReturnedToDeck', { player: this, card: card, allowSave: allowSave }, event => {
-                event.cardStateWhenMoved = card.createSnapshot();
-                this.moveCard(card, 'draw deck', { bottom: true, allowSave: allowSave });
-            });
-        });
+        return this.game.resolveGameAction(GameActions.returnCardToDeck({ card, allowSave, bottom: true }));
     }
 
     canPutIntoShadows(card, playingType = 'put') {
@@ -931,11 +921,7 @@ class Player extends Spectator {
     }
 
     shuffleCardIntoDeck(card, allowSave = true) {
-        this.game.applyGameAction('shuffleIntoDeck', card, card => {
-            this.moveCard(card, 'draw deck', { allowSave: allowSave }, () => {
-                this.shuffleDrawDeck();
-            });
-        });
+        return this.game.resolveGameAction(GameActions.shuffleIntoDeck({ cards: [card], allowSave: allowSave }));
     }
 
     /**

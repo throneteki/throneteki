@@ -19,6 +19,7 @@ const PlaceCard = require('./PlaceCard');
 const PlaceToken = require('./PlaceToken');
 const PutIntoPlay = require('./PutIntoPlay');
 const RemoveFromGame = require('./RemoveFromGame');
+const ReturnCardToDeck = require('./ReturnCardToDeck');
 const ReturnCardToHand = require('./ReturnCardToHand');
 const ReturnGoldToTreasury = require('./ReturnGoldToTreasury');
 const RevealCard = require('./RevealCard');
@@ -54,6 +55,7 @@ const GameActions = {
     placeToken: props => new AbilityAdapter(PlaceToken, props),
     putIntoPlay: props => new AbilityAdapter(PutIntoPlay, props),
     removeFromGame: props => new AbilityAdapter(RemoveFromGame, props),
+    returnCardToDeck: props => new AbilityAdapter(ReturnCardToDeck, props),
     returnCardToHand: props => new AbilityAdapter(ReturnCardToHand, props),
     returnGoldToTreasury: props => new AbilityAdapter(ReturnGoldToTreasury, props),
     revealCard: props => new AbilityAdapter(RevealCard, props),
@@ -68,7 +70,7 @@ const GameActions = {
         return new SimultaneousAction(actions);
     },
     standCard: props => new AbilityAdapter(StandCard, props),
-    takeControl: props => new AbilityAdapter(TakeControl, props)
+    takeControl: props => new AbilityAdapter(TakeControl, props)    
 };
 
 module.exports = GameActions;
