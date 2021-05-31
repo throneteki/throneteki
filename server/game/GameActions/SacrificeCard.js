@@ -1,4 +1,5 @@
 const GameAction = require('./GameAction');
+const LeavePlay = require('./LeavePlay');
 const PlaceCard = require('./PlaceCard');
 
 class SacrificeCard extends GameAction {
@@ -7,15 +8,17 @@ class SacrificeCard extends GameAction {
     }
 
     canChangeGameState({ card }) {
-        return card.location === 'play area';
+        return card.location === 'play area' && LeavePlay.allow({ card });
     }
 
     createEvent({ card, player }) {
         player = player || card.controller;
-        return this.event('onSacrificed', { card, player }, event => {
+        const sacrificeEvent = this.event('onSacrificed', { card, player }, event => {
             event.cardStateWhenSacrificed = event.card.createSnapshot();
             event.thenAttachEvent(PlaceCard.createEvent({ card: card, location: 'discard pile' }));
         });
+        const leavePlayEvent = LeavePlay.createEvent({ card });
+        return this.atomic(sacrificeEvent, leavePlayEvent);
     }
 }
 

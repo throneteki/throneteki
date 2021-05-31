@@ -28,9 +28,19 @@ describe('SacrificeCard', function() {
             });
         });
 
-        describe('when the card is immune', function() {
+        describe('when the card is immune to sacrifice', function() {
             beforeEach(function() {
-                this.cardSpy.allowGameAction.and.returnValue(false);
+                this.cardSpy.allowGameAction.and.callFake((actionName) => actionName !== 'sacrifice');
+            });
+
+            it('returns false', function() {
+                expect(SacrificeCard.allow(this.props)).toBe(false);
+            });
+        });
+
+        describe('when the card is immune to leaving play', function() {
+            beforeEach(function() {
+                this.cardSpy.allowGameAction.and.callFake((actionName) => actionName !== 'leavePlay');
             });
 
             it('returns false', function() {
@@ -41,17 +51,26 @@ describe('SacrificeCard', function() {
 
     describe('createEvent()', function() {
         beforeEach(function() {
-            this.event = SacrificeCard.createEvent(this.props);
+            this.events = SacrificeCard.createEvent(this.props).getConcurrentEvents();
         });
 
         it('creates a onSacrificed event', function() {
-            expect(this.event.name).toBe('onSacrificed');
-            expect(this.event.card).toBe(this.cardSpy);
-            expect(this.event.player).toBe(this.player1Object);
+            const event = this.events.find(e => e.name === 'onSacrificed');
+            expect(event).toBeDefined();
+            expect(event.card).toBe(this.cardSpy);
+            expect(event.player).toBe(this.player1Object);
+        });
+
+        it('creates an onCardLeftPlay event', function() {
+            const event = this.events.find(e => e.name === 'onCardLeftPlay');
+            expect(event).toBeDefined();
+            expect(event.card).toBe(this.cardSpy);
+            expect(event.allowSave).toBe(false);
         });
 
         describe('the event handler', function() {
             beforeEach(function() {
+                this.event = this.events.find(e => e.name === 'onSacrificed');
                 this.cardSpy.createSnapshot.and.returnValue('snapshot');
                 this.event.executeHandler();
             });
