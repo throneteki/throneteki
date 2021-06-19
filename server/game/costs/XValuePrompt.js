@@ -32,6 +32,10 @@ class XValuePrompt extends BaseStep {
     }
 
     resolveCost(player, xValue) {
+        //if the xValue is undefined, return false will prompt the player again
+        if(!xValue) {
+            return false;
+        }
         //value selected in prompt is of type string
         xValue = typeof(xValue) === 'string' ? parseInt(xValue) : xValue;
 
