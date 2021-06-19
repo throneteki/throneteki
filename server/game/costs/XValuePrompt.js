@@ -33,7 +33,7 @@ class XValuePrompt extends BaseStep {
 
     resolveCost(player, xValue) {
         //if the xValue is undefined, return false will prompt the player again
-        if(!xValue) {
+        if(!xValue && xValue !== 0) {
             return false;
         }
         //value selected in prompt is of type string
