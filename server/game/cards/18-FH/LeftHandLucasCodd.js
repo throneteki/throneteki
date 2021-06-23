@@ -5,7 +5,7 @@ class LeftHandLucasCodd extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onDefendersDeclared: event => event.player !== this.controller && event.numOfDefendingCharacters === 0 && this.hasAttackingRaider()
+                onDefendersDeclared: event => event.player !== this.controller && event.numOfDefendingCharacters === 0 && this.hasAttackingRaider(this.controller)
             },
             handler: context => {
                 this.game.promptForSelect(context.player, {
@@ -18,8 +18,8 @@ class LeftHandLucasCodd extends DrawCard {
         });
     }
 
-    hasAttackingRaider() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character');
+    hasAttackingRaider(player) {
+        return player.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character');
     }
 
     onCardSelectedForGold(player, card) {
