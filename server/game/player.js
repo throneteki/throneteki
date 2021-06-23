@@ -618,9 +618,10 @@ class Player extends Spectator {
 
             let originalLocation = card.location;
 
+            let originalFacedownState = card.facedown;
             card.facedown = this.game.currentPhase === 'setup';
             card.new = true;
-            this.moveCard(card, 'play area', { isDupe: !!dupeCard });
+            this.moveCard(card, 'play area', { isDupe: !!dupeCard, wasFacedown: originalFacedownState });
             card.takeControl(this);
             card.kneeled = playingType !== 'setup' && !!card.entersPlayKneeled || !!options.kneeled;
 
@@ -722,13 +723,15 @@ class Player extends Spectator {
 
         attachment.owner.removeCardFromPile(attachment);
 
-        let dupeCard = this.getDuplicateInPlay(attachment);
-        if(dupeCard && dupeCard.controller === attachment.controller) {
-            dupeCard.addDuplicate(attachment);
-            if(originalLocation === 'shadows') {
-                this.game.raiseEvent('onCardOutOfShadows', { player: this, card: card, type: 'dupe' });
+        if(!facedown) {
+            let dupeCard = this.getDuplicateInPlay(attachment);
+            if(dupeCard && dupeCard.controller === attachment.controller) {
+                dupeCard.addDuplicate(attachment);
+                if(originalLocation === 'shadows') {
+                    this.game.raiseEvent('onCardOutOfShadows', { player: this, card: card, type: 'dupe' });
+                }
+                return;
             }
-            return;
         }
 
         attachment.moveTo('play area', card);
@@ -948,7 +951,8 @@ class Player extends Spectator {
             if(card.controller !== this) {
                 return memo;
             }
-            return memo + card.getPower();
+            let cardPower = card.powerOptions.contains('doesNotContribute') ? 0 : card.getPower();
+            return memo + cardPower;
         }, 0);
     }
 
@@ -1027,22 +1031,23 @@ class Player extends Spectator {
             }
         }
 
-        if(['play area', 'active plot'].includes(card.location)) {
-            card.leavesPlay();
-        }
-
-        if(card.location === 'active plot') {
-            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card, cardStateWhenLeftPlay: card.createSnapshot() });
-        }
-
-        this.placeCardInPile({ card, location: targetLocation, bottom: options.bottom });
+        this.placeCardInPile({ card, location: targetLocation, bottom: options.bottom, wasFacedown: options.wasFacedown });
 
         if(['dead pile', 'discard pile', 'revealed plots'].includes(targetLocation)) {
             this.game.raiseEvent('onCardPlaced', { card: card, location: targetLocation, player: this });
         }
     }
 
-    placeCardInPile({ card, location, bottom = false }) {
+    placeCardInPile({ card, location, bottom = false, wasFacedown = false }) {
+        //card doesn´t leave play when it moves from play area to play area
+        if(['play area', 'active plot'].includes(card.location) && location !== 'play area') {
+            card.leavesPlay();
+        }
+
+        if(card.location === 'active plot') {
+            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card, cardStateWhenLeftPlay: card.createSnapshot() });
+        }
+        
         this.removeCardFromPile(card);
 
         let targetPile = this.getSourceList(location);
@@ -1051,7 +1056,7 @@ class Player extends Spectator {
             return;
         }
 
-        card.moveTo(location);
+        card.moveTo(location, undefined, wasFacedown);
 
         if(location === 'active plot') {
             this.activePlot = card;

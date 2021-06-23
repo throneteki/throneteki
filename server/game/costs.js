@@ -208,6 +208,10 @@ const Costs = {
      */
     discardTokenFromSelf: (type, amount) => CostBuilders.discardToken(type, amount).self(),
     /**
+     * Cost that will discard a fixed amount of a passed type token from a card specified by condition.
+     */
+    discardTokenFromCard: (type, amount, condition) => CostBuilders.discardToken(type, amount).select(condition),
+    /**
      * Cost that will move a fixed amount of a passed type token from the current card to a
      * destination card matching the passed condition predicate function.
      */
@@ -384,7 +388,23 @@ const Costs = {
             }
         };
     },
-    shuffleCardIntoDeck: condition => CostBuilders.shuffleCardIntoDeck.select(condition)
+    shuffleCardIntoDeck: condition => CostBuilders.shuffleCardIntoDeck.select(condition),
+    giveControl: function(card, opponentFunc) {
+        return {
+            canPay: function(context) {
+                let opponentObj = opponentFunc && opponentFunc(context);
+
+                if(!opponentObj) {
+                    return false;
+                }
+                return opponentObj.canControl(card);
+            },
+            pay: function(context) {
+                let opponentObj = opponentFunc && opponentFunc(context);
+                context.game.takeControl(opponentObj, card);
+            }
+        };
+    }
 };
 
 module.exports = Costs;

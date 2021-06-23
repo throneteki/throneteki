@@ -116,7 +116,15 @@ class TriggeredAbility extends BaseAbility {
             return false;
         }
 
+        if(this.card.getPrintedType() !== 'event' && this.card.facedown) {
+            return false;
+        }
+
         if(!this.canResolvePlayer(context) || !this.canPayCosts(context) || !this.canResolveTargets(context)) {
+            return false;
+        }
+
+        if(this.card.getPrintedType() !== 'event' && this.card.facedown) {
             return false;
         }
 

@@ -56,6 +56,7 @@ class BaseCard {
         this.traits = new ReferenceCountedSetProperty();
         this.blanks = new ReferenceCountedSetProperty();
         this.losesAspects = new ReferenceCountedSetProperty();
+        this.powerOptions = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
 
@@ -468,7 +469,7 @@ class BaseCard {
         this.power = 0;
     }
 
-    moveTo(targetLocation, parent) {
+    moveTo(targetLocation, parent, wasFacedown = false) {
         let originalLocation = this.location;
         let originalParent = this.parent;
 
@@ -512,7 +513,7 @@ class BaseCard {
             this.facedown = false;
         }
 
-        if(originalLocation !== targetLocation || originalParent !== parent) {
+        if(originalLocation !== targetLocation || originalParent !== parent || (originalLocation === targetLocation && wasFacedown !== this.facedown)) {
             this.game.raiseEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation, parentChanged: originalParent !== parent });
         }
     }

@@ -3,11 +3,17 @@ class CardEntersPlayTracker {
         return new CardEntersPlayTracker(game, 'onPhaseEnded');
     }
 
+    static forRound(game) {
+        return new CardEntersPlayTracker(game, 'onRoundEnded');
+    }
+
     constructor(game, endingEvent) {
         this.events = [];
 
         game.on('onCardEntersPlay', event => this.trackEvent(event));
         game.on(endingEvent, () => this.clearEvents());
+        //always clear the events when the setup finishes as the first round wrongly also tracks the setup phase
+        game.on('onSetupFinished', () => this.clearEvents());
     }
 
     trackEvent(event) {

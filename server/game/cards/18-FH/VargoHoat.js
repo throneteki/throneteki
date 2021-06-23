@@ -33,10 +33,15 @@ class VargoHoat extends DrawCard {
             },
             handler: context => {
                 this.game.transferGold({ from: this, to: context.target, amount: 1 });
-                this.untilEndOfPhase(ability => ({
-                    match: this,
-                    effect: flatten(context.target.getKeywords().map(keyword => ability.effects.addKeyword(keyword)))
-                })),
+                //adding the untilEndOfPhase effect in a step after the resolution of this handler function
+                //to work around timing issues in case the transfer of gold leads to the target gaining a keyword
+                //(for example Golden Company) 
+                this.game.queueSimpleStep(() => {
+                    this.untilEndOfPhase(ability => ({
+                        match: this,
+                        effect: flatten(context.target.getKeywords().map(keyword => ability.effects.addKeyword(keyword)))
+                    }));
+                });
                 this.game.addMessage('{0} uses {1} to move 1 gold from {1} to {2} to have {1} gain {2}\'s keywords', this.controller, this, context.target);
             }
         });

@@ -1,0 +1,28 @@
+const DrawCard = require('../../drawcard.js');
+
+class MinaRedwyne extends DrawCard {
+    setupCardAbilities(ability) {
+        this.reaction({
+            when: {
+                onCardEntersPlay: event =>
+                    event.card.controller === this.controller &&
+                    (event.card.hasTrait('House Redwyne') || event.card.name === 'The Queen of Thorns') &&
+                    this.controller.canDraw(),
+                onCardPlaced: event => event.card.location === 'discard pile' &&
+                    event.player === this.controller &&
+                    event.card.owner === this.controller &&
+                    (event.card.hasTrait('House Redwyne') || event.card.name === 'The Queen of Thorns') &&
+                    this.controller.canDraw()
+            },
+            limit: ability.limit.perPhase(1),
+            handler: context => {
+                context.player.drawCardsToHand(1);
+                this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
+            }
+        });
+    }
+}
+
+MinaRedwyne.code = '20036';
+
+module.exports = MinaRedwyne;

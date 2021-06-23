@@ -3,7 +3,7 @@ describe('Shield of Lannisport', function() {
         beforeEach(function() {
             const deck = this.buildDeck('greyjoy', [
                 'A Noble Cause',
-                'Shield of Lannisport', 'Tyrion Lannister (Core)', 'Cersei Lannister (Core)', 'Ser Lancel Lannister'
+                'Shield of Lannisport', 'Tyrion Lannister (Core)', 'Cersei Lannister (Core)', 'Ser Lancel Lannister (LoCR)'
             ]);
 
             this.player1.selectDeck(deck);

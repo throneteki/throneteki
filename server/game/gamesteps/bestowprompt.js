@@ -11,6 +11,9 @@ class BestowPrompt extends BaseStep {
     }
 
     continue() {
+        if(this.card.facedown) {
+            return;
+        }
         let limit = Math.min(this.player.getSpendableGold({ activePlayer: this.player }), this.card.getBestowMax());
         let rangeArray = range(1, limit + 1).reverse();
 

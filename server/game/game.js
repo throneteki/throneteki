@@ -825,11 +825,11 @@ class Game extends EventEmitter {
     markActionAsTaken(context) {
         if(this.currentActionWindow) {
             if(this.currentActionWindow.currentPlayer !== context.player) {
-                this.addAlert('danger', '{0} uses {1} during {2}\'s turn in the action window', context.player, context.source, this.currentActionWindow.currentPlayer);
+                this.addAlert('danger', '{0} uses {1} during {2}\'s turn in the action window', context.player, context.hideSourceInMessage ? 'a card' : context.source, this.currentActionWindow.currentPlayer);
             }
             this.currentActionWindow.markActionAsTaken(context.player);
         } else if(this.currentPhase !== 'marshal' || this.hasOpenInterruptOrReactionWindow()) {
-            this.addAlert('danger', '{0} uses {1} outside of an action window', context.player, context.source);
+            this.addAlert('danger', '{0} uses {1} outside of an action window', context.player, context.hideSourceInMessage ? 'a card' : context.source);
         }
     }
 
@@ -1014,9 +1014,7 @@ class Game extends EventEmitter {
     }
 
     placeOnBottomOfDeck(card, options = { allowSave: true }) {
-        this.applyGameAction('placeOnBottomOfDeck', card, card => {
-            card.owner.moveCard(card, 'draw deck', { allowSave: options.allowSave, bottom: true });
-        });
+        card.owner.moveCardToBottomOfDeck(card, options.allowSave);
     }
 
     takeControl(player, card, source = null) {

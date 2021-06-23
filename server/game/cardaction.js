@@ -78,7 +78,7 @@ class CardAction extends BaseAbility {
     }
 
     allowMenu() {
-        return ['play area', 'agenda', 'active plot'].includes(this.location) && this.card.getPrintedType() !== 'event';
+        return ['play area', 'agenda', 'active plot'].includes(this.location) && this.card.getPrintedType() !== 'event' && !this.card.facedown;
     }
 
     allowPlayer(player) {
@@ -128,6 +128,10 @@ class CardAction extends BaseAbility {
         }
 
         if(this.condition && !this.condition(context)) {
+            return false;
+        }
+
+        if(this.card.getPrintedType() !== 'event' && this.card.facedown) {
             return false;
         }
 
