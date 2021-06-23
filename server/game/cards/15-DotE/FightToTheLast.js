@@ -28,6 +28,7 @@ class FightToTheLast extends DrawCard {
                 
                 this.atEndOfPhase(ability => ({
                     match: context.event.card,
+                    condition: () => 'play area' === context.event.card.location,
                     effect: ability.effects.killIfStillInPlay(false)
                 }));
             }

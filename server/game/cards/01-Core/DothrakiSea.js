@@ -14,8 +14,10 @@ class DothrakiSea extends DrawCard {
             },
             handler: context => {
                 context.target.controller.putIntoPlay(context.target);
-                this.untilEndOfPhase(ability => ({
+                this.atEndOfPhase(ability => ({
                     match: context.target,
+                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
+                    targetLocation: 'any',
                     effect: ability.effects.returnToHandIfStillInPlay()
                 }));
                 this.game.addMessage('{0} sacrifices {1} to put {2} into play from their hand', this.controller, this, context.target);

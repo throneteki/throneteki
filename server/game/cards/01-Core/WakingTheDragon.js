@@ -18,6 +18,7 @@ class WakingTheDragon extends DrawCard {
 
                 this.atEndOfPhase(ability => ({
                     match: targetCharacter,
+                    condition: () => ['play area', 'duplicate'].includes(targetCharacter.location),
                     effect: ability.effects.returnToHandIfStillInPlay(true)
                 }));
 

@@ -14,8 +14,9 @@ class WinterfellCrypt extends DrawCard {
 
             },
             handler: context => {
-                this.untilEndOfPhase(ability => ({
+                this.atEndOfPhase(ability => ({
                     match: context.target,
+                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
                     effect: ability.effects.shuffleIntoDeckIfStillInPlay()
                 }));
 

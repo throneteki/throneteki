@@ -19,6 +19,7 @@ class CatelynStark extends DrawCard {
                 this.game.currentChallenge.addDefender(this);
                 this.atEndOfPhase(ability => ({
                     match: this,
+                    condition: () => 'play area' === this.location,
                     effect: ability.effects.returnToHandIfStillInPlay(true)
                 }));
             })

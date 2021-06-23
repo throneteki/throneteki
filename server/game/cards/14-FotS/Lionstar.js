@@ -20,6 +20,8 @@ class Lionstar extends DrawCard {
                 context.player.putIntoPlay(context.target);
                 this.atEndOfPhase(ability => ({
                     match: context.target,
+                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
+                    targetLocation: 'any',
                     effect: ability.effects.discardIfStillInPlay()
                 }));
             }
