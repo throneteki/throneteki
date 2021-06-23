@@ -1031,6 +1031,15 @@ class Player extends Spectator {
             }
         }
 
+        //card doesn´t leave play when it moves from play area to play area
+        if(['play area', 'active plot'].includes(card.location) && targetLocation !== 'play area') {
+            card.leavesPlay();
+        }
+
+        if(card.location === 'active plot') {
+            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card, cardStateWhenLeftPlay: card.createSnapshot() });
+        }
+
         this.placeCardInPile({ card, location: targetLocation, bottom: options.bottom, wasFacedown: options.wasFacedown });
 
         if(['dead pile', 'discard pile', 'revealed plots'].includes(targetLocation)) {
@@ -1038,16 +1047,7 @@ class Player extends Spectator {
         }
     }
 
-    placeCardInPile({ card, location, bottom = false, wasFacedown = false }) {
-        //card doesn´t leave play when it moves from play area to play area
-        if(['play area', 'active plot'].includes(card.location) && location !== 'play area') {
-            card.leavesPlay();
-        }
-
-        if(card.location === 'active plot') {
-            this.game.raiseEvent('onCardLeftPlay', { player: this, card: card, cardStateWhenLeftPlay: card.createSnapshot() });
-        }
-        
+    placeCardInPile({ card, location, bottom = false, wasFacedown = false }) {        
         this.removeCardFromPile(card);
 
         let targetPile = this.getSourceList(location);
