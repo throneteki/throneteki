@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const {flatten} = require('../../../Array');
 
-//No Ambush or Bestow included
-const Keywords = ['Insight', 'Intimidate', 'Limited', 'No Attachments', 'Pillage', 'Renown', 'Stealth', 'Terminal'];
 const Icons = ['Military', 'Intrigue', 'Power'];
 
 class Patchface extends DrawCard {
@@ -16,17 +15,8 @@ class Patchface extends DrawCard {
     }
 
     getFoolKeywords() {
-        let foolKeywords = [];
         let fools = this.game.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Fool') && card !== this);
-
-        for(let card of fools) {
-            for(let keyword of Keywords) {
-                if(card.hasKeyword(keyword)) {
-                    foolKeywords.push(keyword);
-                }
-            }
-        }
-
+        let foolKeywords = [...new Set(flatten(fools.map(card => card.getKeywords())))];
         return foolKeywords;
     }
 
