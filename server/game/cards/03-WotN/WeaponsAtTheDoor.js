@@ -7,7 +7,7 @@ class WeaponsAtTheDoor extends PlotCard {
                 onPhaseStarted: event => event.phase === 'challenge'
             },
             handler: () => {
-                let attachments = this.game.allCards.filter(card => card.getPrintedType() === 'attachment' && card.parent);
+                let attachments = this.game.allCards.filter(card => card.getPrintedType() === 'attachment' && card.parent && !card.facedown);
                 for(let card of attachments) {
                     card.owner.returnCardToHand(card);
                 }
