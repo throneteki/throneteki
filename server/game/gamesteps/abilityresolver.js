@@ -75,6 +75,7 @@ class AbilityResolver extends BaseStep {
 
     markActionAsTaken() {
         if(this.ability.isAction()) {
+            this.context.hideSourceInMessage = this.ability.shouldHideSourceInMessage();
             this.game.markActionAsTaken(this.context);
         }
     }

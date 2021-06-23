@@ -269,6 +269,10 @@ class BaseAbility {
     hasMax() {
         return false;
     }
+
+    shouldHideSourceInMessage() {
+        return false;
+    }
 }
 
 module.exports = BaseAbility;
