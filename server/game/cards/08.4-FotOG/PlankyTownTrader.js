@@ -26,8 +26,7 @@ class PlankyTownTrader extends DrawCard {
                         ability.effects.cannotBePutIntoShadows(),
                         ability.effects.cannotBeRemovedFromGame(),
                         ability.effects.cannotBeReturnedToHand(),
-                        ability.effects.cannotBeSacrificed(),
-                        ability.effects.cannotBePlacedOnBottomOfDeck()
+                        ability.effects.cannotBeSacrificed()
                     ]
                 }));
 
