@@ -6,7 +6,7 @@ class ThoughAllMenDoDespiseUs extends DrawCard {
         this.reaction({
             max: ability.limit.perChallenge(1),
             when: {
-                onDefendersDeclared: event => event.player !== this.controller && event.numOfDefendingCharacters === 0 && this.hasAttackingRaider(this.controller)
+                onDefendersDeclared: event => event.player !== this.controller && event.numOfDefendingCharacters === 0 && this.hasAttackingRaider()
             },
             handler: context => {
                 this.game.resolveGameAction(
@@ -22,8 +22,8 @@ class ThoughAllMenDoDespiseUs extends DrawCard {
         });
     }
      
-    hasAttackingRaider(player) {
-        return player.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character');
+    hasAttackingRaider() {
+        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character');
     }
 }
 
