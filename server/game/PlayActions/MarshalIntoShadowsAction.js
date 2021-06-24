@@ -40,6 +40,10 @@ class MarshalIntoShadowsAction extends BaseAbility {
             context.player.putIntoShadows(context.source);
         });
     }
+
+    shouldHideSourceInMessage() {
+        return true;
+    }
 }
 
 module.exports = MarshalIntoShadowsAction;
