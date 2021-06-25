@@ -15,6 +15,7 @@ class Harrenhal extends DrawCard {
 
                 this.atEndOfPhase(ability => ({
                     match: context.target,
+                    condition: () => 'play area' === context.target.location,
                     effect: ability.effects.killIfStillInPlay(false)
                 }));
 

@@ -42,6 +42,7 @@ class WombOfTheWorld extends DrawCard {
         player.putIntoPlay(card);
         this.atEndOfPhase(ability => ({
             match: card,
+            condition: () => 'play area' === card.location,
             effect: ability.effects.returnToHandIfStillInPlay(true)
         }));
         this.game.addMessage('{0} uses {1} to put {2} into play', player, this, card);

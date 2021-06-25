@@ -5,8 +5,8 @@ class SerDontosHollard extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && this.isControlledLady(event.card),
-                onCardDiscarded: event => event.allowSave && event.card.canBeSaved() && this.isControlledLady(event.card)
+                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && this.isLady(event.card),
+                onCardDiscarded: event => event.allowSave && event.card.canBeSaved() && this.isLady(event.card)
             },
             cost: ability.costs.standSelf(),
             handler: context => {
@@ -17,8 +17,8 @@ class SerDontosHollard extends DrawCard {
         });
     }
 
-    isControlledLady(card) {
-        return card.location === 'play area' && card.controller === this.controller && card.hasTrait('Lady');
+    isLady(card) {
+        return card.location === 'play area' && card.hasTrait('Lady');
     }
 }
 

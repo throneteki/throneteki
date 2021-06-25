@@ -520,7 +520,7 @@ const Effects = {
                 context.discardIfStillInPlay.push(card);
             },
             unapply: function(card, context) {
-                if(card.location === 'play area' && context.discardIfStillInPlay.includes(card)) {
+                if(['play area', 'duplicate'].includes(card.location) && context.discardIfStillInPlay.includes(card)) {
                     context.discardIfStillInPlay = context.discardIfStillInPlay.filter(c => c !== card);
                     card.controller.discardCard(card, allowSave);
                     context.game.addMessage('{0} discards {1} at the end of the phase because of {2}', context.source.controller, card, context.source);
@@ -550,7 +550,7 @@ const Effects = {
                 context.moveToDeadPileIfStillInPlay.push(card);
             },
             unapply: function(card, context) {
-                if(card.location === 'play area' && context.moveToDeadPileIfStillInPlay.includes(card)) {
+                if(['play area', 'duplicate'].includes(card.location) && context.moveToDeadPileIfStillInPlay.includes(card)) {
                     context.moveToDeadPileIfStillInPlay = context.moveToDeadPileIfStillInPlay.filter(c => c !== card);
                     card.owner.moveCard(card, 'dead pile');
                     context.game.addMessage('{0} moves {1} to its owner\'s dead pile at the end of the phase because of {2}', context.source.controller, card, context.source);
@@ -595,7 +595,7 @@ const Effects = {
                 context.returnToHandIfStillInPlay.push(card);
             },
             unapply: function(card, context) {
-                if(card.location === 'play area' && context.returnToHandIfStillInPlay.includes(card)) {
+                if(['play area', 'duplicate'].includes(card.location) && context.returnToHandIfStillInPlay.includes(card)) {
                     context.returnToHandIfStillInPlay = context.returnToHandIfStillInPlay.filter(c => c !== card);
                     if((card.parent && card.parent.name !== parentCardTitle) || !card.parent) {
                         card.controller.returnCardToHand(card, allowSave);
@@ -612,7 +612,7 @@ const Effects = {
                 context.shuffleIntoDeckIfStillInPlay.push(card);
             },
             unapply: function(card, context) {
-                if(card.location === 'play area' && context.shuffleIntoDeckIfStillInPlay.includes(card)) {
+                if(['play area', 'duplicate'].includes(card.location) && context.shuffleIntoDeckIfStillInPlay.includes(card)) {
                     context.shuffleIntoDeckIfStillInPlay = context.shuffleIntoDeckIfStillInPlay.filter(c => c !== card);
                     card.owner.shuffleCardIntoDeck(card, allowSave);
                     context.game.addMessage('{0} shuffles {1} into their deck at the end of the phase because of {2}', card.owner, card, context.source);

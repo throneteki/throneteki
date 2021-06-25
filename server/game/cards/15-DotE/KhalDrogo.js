@@ -8,6 +8,7 @@ class KhalDrogo extends DrawCard {
                     event.allowSave &&
                     event.card.getType() === 'character' &&
                     (event.card.hasTrait('Army') || event.card.hasTrait('Dothraki')) &&
+                    event.card.location === 'play area' &&
                     event.card.owner === this.controller //check for owner of the returned card in case dothraki/army card got stolen by the opponent
 
             },

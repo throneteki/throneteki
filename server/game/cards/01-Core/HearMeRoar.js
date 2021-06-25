@@ -13,6 +13,8 @@ class HearMeRoar extends DrawCard {
 
                 this.atEndOfPhase(ability => ({
                     match: context.target,
+                    condition: () => ['play area', 'duplicate'].includes(context.target.location),
+                    targetLocation: 'any',
                     effect: ability.effects.discardIfStillInPlay(false)
                 }));
 

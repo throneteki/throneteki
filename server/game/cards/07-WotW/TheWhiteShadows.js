@@ -13,6 +13,8 @@ class TheWhiteShadows extends PlotCard {
 
                 this.atEndOfPhase(ability => ({
                     match: context.event.card,
+                    condition: () => ['play area', 'duplicate'].includes(context.event.card.location),
+                    targetLocation: 'any',
                     effect: [
                         ability.effects.fullBlank,
                         ability.effects.moveToDeadPileIfStillInPlay()

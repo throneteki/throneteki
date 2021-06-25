@@ -23,6 +23,8 @@ class AegonTargaryen extends DrawCard {
         this.controller.putIntoPlay(card);
         this.atEndOfPhase(ability => ({
             match: card,
+            condition: () => ['play area', 'duplicate'].includes(card.location),
+            targetLocation: 'any',
             effect: ability.effects.returnToHandIfStillInPlay(true)
         }));
     }

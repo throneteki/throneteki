@@ -29,6 +29,8 @@ class DaenerysTargaryen extends DrawCard {
                 handler: () => {
                     this.atEndOfPhase(ability => ({
                         match: card,
+                        condition: () => ['play area', 'duplicate'].includes(card.location),
+                        targetLocation: 'any',
                         effect: ability.effects.returnToHandIfStillInPlayAndNotAttachedToCardByTitle('Daenerys Targaryen', false)
                     }));
                 }

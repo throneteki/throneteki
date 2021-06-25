@@ -20,6 +20,7 @@ class OverwhelmingNumbers extends DrawCard {
                     this.game.currentChallenge.addAttacker(card);
                     this.atEndOfChallenge(ability => ({
                         match: card,
+                        condition: () => 'play area' === card.location,
                         effect: ability.effects.returnToHandIfStillInPlay(true, 'challenge')
                     }));
                 }

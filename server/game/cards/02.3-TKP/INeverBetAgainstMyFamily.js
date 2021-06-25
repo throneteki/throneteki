@@ -49,8 +49,10 @@ class INeverBetAgainstMyFamily extends DrawCard {
         this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
         this.controller.putIntoPlay(card);
         this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, card);
-        this.untilEndOfPhase(ability => ({
+        this.atEndOfPhase(ability => ({
             match: card,
+            condition: () => ['play area', 'duplicate'].includes(card.location),
+            targetLocation: 'any',
             effect: ability.effects.discardIfStillInPlay(false)
         }));
         this.promptToPlaceNextCard();
