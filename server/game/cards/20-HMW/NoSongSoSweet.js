@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class NoSongSoSweet extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,7 +7,7 @@ class NoSongSoSweet extends DrawCard {
             title: 'Add to challenge',
             condition: () => this.game.isDuringChallenge({ challengeType: 'power' }),
             target: {
-                cardCondition: card => card.location === 'play area' && !card.kneeled && card.controller === this.controller &&
+                cardCondition: (card, context) => card.location === 'play area' && !card.kneeled && card.controller === context.player &&
                                        card.isFaction('baratheon') && card.canParticipateInChallenge()
             },
             message: '{player} plays {source} to add {target} to the challenge',
@@ -22,10 +23,8 @@ class NoSongSoSweet extends DrawCard {
             },
             ignoreEventCosts: true,
             cost: ability.costs.payGold(1),
-            handler: () => {
-                this.game.addMessage('{0} returns {1} back to their hand', this.controller, this);
-                this.controller.moveCard(this, 'hand');
-            }
+            message: '{player} uses {source} to return {source} to their hand',
+            gameAction: GameActions.returnCardToHand({ card: this })
         });
     }
 }
