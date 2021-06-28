@@ -514,7 +514,7 @@ class BaseCard {
         }
 
         if(originalLocation !== targetLocation || originalParent !== parent || (originalLocation === targetLocation && wasFacedown !== this.facedown)) {
-            this.game.raiseEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation, parentChanged: originalParent !== parent });
+            this.game.raiseEvent('onCardMoved', { card: this, originalLocation: originalLocation, newLocation: targetLocation, parentChanged: originalParent !== parent, facedownChanged: wasFacedown !== this.facedown });
         }
     }
 

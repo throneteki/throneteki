@@ -87,7 +87,7 @@ class EffectEngine {
     }
 
     onCardMoved(event) {
-        this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === event.card && event.originalLocation !== event.newLocation && (effect.location === event.originalLocation || event.parentChanged && effect.location !== 'any'));
+        this.unapplyAndRemove(effect => effect.duration === 'persistent' && effect.source === event.card && !event.facedownChanged && (effect.location === event.originalLocation || event.parentChanged && effect.location !== 'any'));
         for(let effect of this.effects) {
             effect.clearInvalidTargets();
             effect.addTargets([event.card]);
