@@ -23,7 +23,7 @@ class ValarDohaeris extends PlotCard {
 
         for(let selection of selections) {
             let player = selection.choosingPlayer;
-            let cardsInPlay = player.filterCardsInPlay(card => card.getType() === 'character' && card.allowGameAction('placeOnBottomOfDeck'));
+            let cardsInPlay = player.filterCardsInPlay(card => card.getType() === 'character' && card.allowGameAction('returnCardToDeck'));
             let selectedCards = selection.value || [];
             let playerSpecificToMove = cardsInPlay.filter(card => !selectedCards.includes(card));
             toMove = toMove.concat(playerSpecificToMove);
