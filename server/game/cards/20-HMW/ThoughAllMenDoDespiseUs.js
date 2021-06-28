@@ -8,17 +8,12 @@ class ThoughAllMenDoDespiseUs extends DrawCard {
             when: {
                 onDefendersDeclared: event => event.player !== this.controller && event.numOfDefendingCharacters === 0 && this.hasAttackingRaider()
             },
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.player
-                            .filterCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character')
-                            .map(card => GameActions.gainPower({ card: card, amount: 1}))
-                    ),
-                    context
-                );
-                this.game.addMessage('{0} uses {1} to have each attacking Raider character gain 1 power', context.player, this); 
-            }
+            message: '{player} uses {source} to have each attacking Raider character gain 1 power',
+            gameAction: GameActions.simultaneously(context => (
+                context.player
+                    .filterCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character')
+                    .map(card => GameActions.gainPower({ card: card, amount: 1}))
+            ))
         });
     }
      
