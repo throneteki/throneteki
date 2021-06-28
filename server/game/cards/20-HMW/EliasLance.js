@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class EliasLance extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,26 +14,16 @@ class EliasLance extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.loser === this.controller && this.parent.isAttacking()
             },
-            handler: context => {
-                this.game.promptForSelect(context.event.challenge.winner, {
-                    activePromptTitle: 'Select a defending character',
-                    source: this,
-                    cardCondition: card => card.location === 'play area' &&
-                        card.controller === context.event.challenge.winner &&
-                        card.getType() === 'character' &&
-                        card.isParticipating(),
-                    onSelect: (player, card) => this.cardSelected(context, player, card)
-                });
-            }
+            target: {
+                choosingPlayer: (player, context) => player === context.event.challenge.winner,
+                cardCondition: (card, context) => card.location === 'play area' &&
+                    card.controller === context.event.challenge.winner &&
+                    card.getType() === 'character' &&
+                    card.isParticipating()
+            },
+            message: '{player} uses {source} to have {opponent} return {target} to their hand',
+            gameAction: GameActions.returnCardToHand(context => ({ card: context.target }))
         });
-    }
-
-    cardSelected(context, player, card) {
-        context.event.challenge.winner.returnCardToHand(card);
-        this.game.addMessage('{0} uses {1} to have {2} return {3} to their hand',
-            this.controller, this, context.event.challenge.winner, card);
-
-        return true;
     }
 }
 
