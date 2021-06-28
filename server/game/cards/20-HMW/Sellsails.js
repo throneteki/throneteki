@@ -13,7 +13,7 @@ class Sellsails extends DrawCard {
             },
             handler: context => {
                 context.target.controller.standCard(context.target);
-                this.game.addMessage('{0} discards 1 gold from {1} to stand {2}', this.controller, this, context.target);
+                this.game.addMessage('{0} discards 1 gold from {1} to stand {2}', context.player, this, context.target);
             }
         });
     }

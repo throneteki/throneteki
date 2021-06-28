@@ -23,7 +23,7 @@ class ALionStillHasClaws extends DrawCard {
             handler: context => {
                 this.context = context;
 
-                this.game.promptWithMenu(this.controller, this, {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Name a trait',
                         controls: [

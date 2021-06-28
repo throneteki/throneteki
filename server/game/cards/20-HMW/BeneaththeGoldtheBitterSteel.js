@@ -32,7 +32,7 @@ class BeneaththeGoldtheBitterSteel extends DrawCard {
                     goldMessage = ' and insight and intimidate';
                 }
                 this.game.addMessage('{0} plays {1} to have {2} gain No attachments except Item and renown{3} until the end of the phase',
-                    this.controller, this, context.target, goldMessage);
+                    context.player, this, context.target, goldMessage);
             }
         });
     }

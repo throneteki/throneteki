@@ -31,7 +31,7 @@ class CornCornCorn extends DrawCard {
                 }
                 buttons.push({ text: 'Done', method: 'cancel' });
 
-                this.game.promptWithMenu(this.controller, this, {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select a challenge type',
                         buttons: buttons

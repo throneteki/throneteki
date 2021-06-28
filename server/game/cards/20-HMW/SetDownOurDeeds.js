@@ -8,7 +8,7 @@ class SetDownOurDeeds extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             target: {
                 activePromptTitle: 'Select card with power',
-                cardCondition: card => card.owner === this.controller && ['active plot', 'faction', 'play area'].includes(card.location) && card.power > 0,
+                cardCondition: (card, context) => card.owner === context.player && ['active plot', 'faction', 'play area'].includes(card.location) && card.power > 0,
                 cardType: ['attachment', 'character', 'faction', 'location', 'plot']
             },
             handler: context => {
@@ -23,7 +23,7 @@ class SetDownOurDeeds extends DrawCard {
                     return { text: num, method: 'numSelected', arg: num };
                 });
 
-                this.game.promptWithMenu(this.controller, this, {
+                this.game.promptWithMenu(context.player, this, {
                     activePrompt: {
                         menuTitle: 'Select # of power to discard',
                         buttons: buttons

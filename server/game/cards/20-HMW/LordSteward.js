@@ -21,7 +21,7 @@ class LordSteward extends DrawCard {
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
-                    effect: ability.effects.takeControl(this.controller)
+                    effect: ability.effects.takeControl(context.player)
                 }));
 
                 this.game.addMessage('{0} uses {1} to take control of {2}', context.player, this, context.target);

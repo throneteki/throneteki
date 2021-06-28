@@ -15,7 +15,7 @@ class OurBladesAreSharp extends DrawCard {
             target: {
                 mode: 'upTo',
                 numCards: 2,
-                cardCondition: card => card.controller === this.controller && card.hasTrait('House Bolton') && ['dead pile', 'discard pile'].includes(card.location)
+                cardCondition: (card, context) => card.controller === context.player && card.hasTrait('House Bolton') && ['dead pile', 'discard pile'].includes(card.location)
             },
             handler: context => {
                 this.game.addMessage('{0} plays {1} and sacrifices {2} to return {3} to hand', context.player, this, context.costs.sacrifice, context.target);

@@ -8,7 +8,7 @@ class AsHighAsHonor extends DrawCard {
             phase: 'marshal',
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.isFaction('neutral') && card.getPrintedCost() >= 1),
             target: {
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller && card.isFaction('neutral') && this.controller.canPutIntoPlay(card)
+                cardCondition: (card, context) => card.location === 'hand' && card.controller === context.player && card.isFaction('neutral') && context.player.canPutIntoPlay(card)
             },
             handler: context => {
                 this.game.addMessage('{0} uses {1} to put {2} into play from their hand', context.player, this, context.target);

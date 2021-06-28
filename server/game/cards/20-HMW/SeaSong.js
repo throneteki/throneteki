@@ -17,16 +17,16 @@ class SeaSong extends DrawCard {
             },
             limit: ability.limit.perRound(2),
             choices: {
-                'Draw 1 card': () => {
-                    if(this.controller.canDraw()) {
-                        this.controller.drawCardsToHand(1);
-                        this.game.addMessage('{0} uses {1} to draw 1 card', this.controller, this);
+                'Draw 1 card': context => {
+                    if(context.player.canDraw()) {
+                        context.player.drawCardsToHand(1);
+                        this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
                     }
                 },
-                'Gain 1 power': () => {
-                    if(this.controller.canGainFactionPower()) {
-                        this.game.addPower(this.controller, 1);
-                        this.game.addMessage('{0} uses {1} to gain 1 power for their faction', this.controller, this);
+                'Gain 1 power': context => {
+                    if(context.player.canGainFactionPower()) {
+                        this.game.addPower(context.player, 1);
+                        this.game.addMessage('{0} uses {1} to gain 1 power for their faction', context.player, this);
                     }
                 }
             }

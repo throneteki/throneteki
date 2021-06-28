@@ -14,7 +14,7 @@ class SerRichardHorpe extends DrawCard {
             targets: {
                 from: {
                     activePromptTitle: 'Select card with power',
-                    cardCondition: card => ['active plot', 'faction', 'play area'].includes(card.location) && card.power > 0 && card.controller === this.controller,
+                    cardCondition: (card, context) => ['active plot', 'faction', 'play area'].includes(card.location) && card.power > 0 && card.controller === context.player,
                     cardType: ['attachment', 'character', 'faction', 'location', 'plot']
                 },
                 to: {
