@@ -18,7 +18,7 @@ class Bronn extends DrawCard {
                     this.tokens[Tokens.gold] > 0
                 )
             },
-            cost: ability.costs.discardGold(this.tokens[Tokens.gold]),
+            cost: ability.costs.discardGold(() => this.tokens[Tokens.gold]),
             handler: context => {
                 context.event.saveCard();
                 this.game.addMessage('{0} discards each gold from {1} to save {2}',
