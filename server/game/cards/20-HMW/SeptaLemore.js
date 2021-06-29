@@ -12,7 +12,7 @@ class SeptaLemore extends DrawCard {
                 onCardLeftPlay: event => event.card === this
             },
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.isShadow() && card.controller === context.player
+                cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.isShadow() && card.controller === context.player && card.isFaction('targaryen')
             },
             handler: context => {
                 context.player.moveCard(context.target, 'shadows');
