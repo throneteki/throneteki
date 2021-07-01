@@ -1244,7 +1244,9 @@ class Game extends EventEmitter {
             }
         }
 
-        //TODO pause time limit clock, not only chess clock
+        if(this.useGameTimeLimit) {
+            this.timeLimit.togglePause();
+        }
     }
 
     getSaveState() {
@@ -1299,7 +1301,7 @@ class Game extends EventEmitter {
                 useGameTimeLimit: this.useGameTimeLimit,
                 gameTimeLimitStarted: this.timeLimit.timeLimitStarted,
                 gameTimeLimitStartedAt: this.timeLimit.timeLimitStartedAt,
-                gameTimeLimitTime: this.timeLimit.timeLimitInMinutes,
+                gameTimeLimitTime: this.timeLimit.timeLimitInSeconds,
                 muteSpectators: this.muteSpectators,
                 useChessClocks: this.useChessClocks,
                 chessClockTimeLimit: this.chessClockTimeLimit
