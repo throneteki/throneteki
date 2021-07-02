@@ -40,11 +40,7 @@ class TimeLimit {
             this.timeLimitInSeconds -= Math.floor(differenceBetweenStartOfTimerAndNow.asSeconds());
         } else {
         //unpause
-            this.timeLimitStarted = true;
-            this.timeLimitStartedAt = new Date();
-            this.timer = setInterval(() => {
-                this.checkForTimeLimitReached();
-            }, 1000);
+            this.startTimer();
         }
     }
 
