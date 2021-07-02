@@ -22,7 +22,12 @@ class EliasLance extends DrawCard {
                     card.isParticipating()
             },
             message: '{player} uses {source} to have {opponent} return {target} to their hand',
-            gameAction: GameActions.returnCardToHand(context => ({ card: context.target }))
+            handle: context => {
+                this.game.resolveGameAction(
+                    GameActions.returnCardToHand(context => ({ card: context.target })),
+                    context
+                );
+            }
         });
     }
 }
