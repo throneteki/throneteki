@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard');
 const {Tokens} = require('../../Constants');
 
 class DarkandFullofTerrors extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
             title: 'Place character in shadows',
             condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('R\'hllor') && card.getType() === 'character'),

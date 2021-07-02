@@ -1,8 +1,7 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
 
 class IPledgeMyLifeAndHonor extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             title: 'Search deck for character',
             when: {
