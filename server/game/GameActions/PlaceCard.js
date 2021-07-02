@@ -1,4 +1,5 @@
 const GameAction = require('./GameAction');
+const MoveCardEventGenerator = require('./MoveCardEventGenerator');
 
 class PlaceCard extends GameAction {
     constructor() {
@@ -19,11 +20,7 @@ class PlaceCard extends GameAction {
     }
 
     createEvent({ card, player, location, bottom = false }) {
-        player = player || card.controller;
-        return this.event('onCardPlaced', { card, location, player, bottom }, event => {
-            const actualPlayer = event.location !== 'play area' ? event.card.owner : event.player;
-            actualPlayer.placeCardInPile({ card, location, bottom });
-        });
+        return MoveCardEventGenerator.createPlaceCardEvent({ card, player, location, bottom });
     }
 }
 

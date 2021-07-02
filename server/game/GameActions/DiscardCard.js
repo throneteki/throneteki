@@ -1,4 +1,6 @@
 const GameAction = require('./GameAction');
+const LeavePlay = require('./LeavePlay');
+const MoveCardEventGenerator = require('./MoveCardEventGenerator');
 
 class DiscardCard extends GameAction {
     constructor() {
@@ -6,22 +8,15 @@ class DiscardCard extends GameAction {
     }
 
     canChangeGameState({ card }) {
+        if(card.location === 'play area' && !LeavePlay.allow({ card })) {
+            return false;
+        }
+
         return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate'].includes(card.location);
     }
 
     createEvent({ card, allowSave = true, isPillage = false, source }) {
-        let params = {
-            card: card,
-            allowSave: allowSave,
-            automaticSaveWithDupe: true,
-            originalLocation: card.location,
-            isPillage: !!isPillage,
-            source: source,
-            snapshotName: 'cardStateWhenDiscarded'
-        };
-        return this.event('onCardDiscarded', params, event => {
-            event.card.controller.moveCard(event.card, 'discard pile');
-        });
+        return MoveCardEventGenerator.createDiscardCardEvent({ card, allowSave, isPillage, source });
     }
 }
 

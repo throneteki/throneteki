@@ -1,4 +1,5 @@
 const GameAction = require('./GameAction');
+const MoveCardEventGenerator = require('./MoveCardEventGenerator');
 
 class ReturnCardToHand extends GameAction {
     constructor() {
@@ -10,15 +11,7 @@ class ReturnCardToHand extends GameAction {
     }
 
     createEvent({ card, allowSave = true }) {
-        let params = {
-            card: card,
-            allowSave: allowSave,
-            automaticSaveWithDupe: true
-        };
-        return this.event('onCardReturnedToHand', params, event => {
-            event.cardStateWhenReturned = card.createSnapshot();
-            event.card.controller.moveCard(card, 'hand', { allowSave: allowSave });
-        });
+        return MoveCardEventGenerator.createReturnCardToHandEvent({ card, allowSave });
     }
 }
 
