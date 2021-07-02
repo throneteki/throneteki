@@ -14,9 +14,9 @@ class SeptaLemore extends DrawCard {
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.getType() === 'character' && card.isShadow() && card.controller === context.player && card.isFaction('targaryen')
             },
+            message: '{player} uses {source} to return {target} to shadows',
             handler: context => {
                 context.player.moveCard(context.target, 'shadows');
-                this.game.addMessage('{0} uses {1} to return {2} to shadows', context.player, this, context.target);
             }
         });
     }

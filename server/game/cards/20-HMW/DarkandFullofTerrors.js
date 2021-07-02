@@ -9,8 +9,8 @@ class DarkandFullofTerrors extends DrawCard {
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.getStrength() <= 3 && card.kneeled
             },
+            message: '{player} plays {source} to put {target} into shadow',
             handler: context => {
-                this.game.addMessage('{0} plays {1} to put {2} into shadow', context.player, this, context.target);
                 context.player.putIntoShadows(context.target, false, () => {
                     context.target.modifyToken(Tokens.shadow, 1);
 

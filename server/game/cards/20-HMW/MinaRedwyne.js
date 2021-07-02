@@ -15,9 +15,9 @@ class MinaRedwyne extends DrawCard {
                     this.controller.canDraw()
             },
             limit: ability.limit.perPhase(1),
+            message: '{player} uses {source} to draw 1 card',
             handler: context => {
                 context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
             }
         });
     }

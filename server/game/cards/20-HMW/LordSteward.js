@@ -18,13 +18,12 @@ class LordSteward extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.controller === this.game.currentChallenge.loser && card.getPrintedCost() <= this.getNumberOfStewards()
             },
             limit: ability.limit.perPhase(1),
+            message: '{player} uses {source} to take control of {target}',
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
                     effect: ability.effects.takeControl(context.player)
                 }));
-
-                this.game.addMessage('{0} uses {1} to take control of {2}', context.player, this, context.target);
             }
         });
     }

@@ -12,6 +12,7 @@ class TheFather extends PlotCard {
                 mode: 'eachPlayer',
                 gameAction: 'returnToHand'
             },
+            message: '{player} uses {source} to return {target} to its owner\'s hands',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
@@ -19,8 +20,6 @@ class TheFather extends PlotCard {
                     ),
                     context
                 );
-                this.game.addMessage('{0} uses {1} to return {2} to its owner\'s hands',
-                    context.player, this, context.target);
             }
         });
     }

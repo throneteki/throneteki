@@ -11,9 +11,9 @@ class Sellsails extends DrawCard {
                                        (card.hasTrait('Smuggler') || card.hasTrait('Warship')),
                 gameAction: 'stand'
             },
+            message: '{player} discards 1 gold from {source} to stand {target}',
             handler: context => {
                 context.target.controller.standCard(context.target);
-                this.game.addMessage('{0} discards 1 gold from {1} to stand {2}', context.player, this, context.target);
             }
         });
     }

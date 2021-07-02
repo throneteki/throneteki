@@ -16,9 +16,9 @@ class MountainsMan extends DrawCard {
                 cardCondition: (card, context) => card.location === 'play area' && card.getPrintedCost() < context.event.card.getPrintedCost() && !card.kneeled,
                 gameAction: 'kneel'
             },
+            message: '{player} uses {source} to kneel {target}',
             handler: context => {
                 context.target.controller.kneelCard(context.target);
-                this.game.addMessage('{0} uses {1} to kneel {2}', context.player, this, context.target);
             }
         });
     }

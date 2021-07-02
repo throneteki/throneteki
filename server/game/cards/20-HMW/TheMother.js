@@ -14,9 +14,9 @@ class TheMother extends PlotCard {
                 )
             },
             limit: ability.limit.perRound(2),
+            message: '{player} uses {source} to draw 1 card',
             handler: context => {
                 context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
             }
         });
     }

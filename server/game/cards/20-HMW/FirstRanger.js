@@ -20,9 +20,9 @@ class FirstRanger extends DrawCard {
                 gameAction: 'kill'
             },
             limit: ability.limit.perPhase(1),
+            message: '{player} uses {source} to kill {target}',
             handler: context => {
                 context.target.controller.killCharacter(context.target);
-                this.game.addMessage('{0} uses {1} to kill {2}', context.player, this, context.target);
             }
         });
     }
