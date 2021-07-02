@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class OldWyk extends DrawCard {
     setupCardAbilities(ability) {
@@ -38,7 +39,9 @@ class OldWyk extends DrawCard {
             return;
         }
 
-        this.game.placeOnBottomOfDeck(card);
+        this.game.resolveGameAction(
+            GameActions.returnCardToDeck({ card, bottom: true })
+        );
         this.game.addMessage('{0} is placed on the bottom of {1}\'s deck because of {2}',
             card, this.controller, this);
     }

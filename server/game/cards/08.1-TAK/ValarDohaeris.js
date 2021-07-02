@@ -1,4 +1,5 @@
 const PlotCard = require('../../plotcard');
+const GameActions = require('../../GameActions');
 
 class ValarDohaeris extends PlotCard {
     setupCardAbilities() {
@@ -54,12 +55,14 @@ class ValarDohaeris extends PlotCard {
     }
 
     moveCardsToBottom(toMove) {
+        let gameActions = [];
+
         for(let player of this.game.getPlayersInFirstPlayerOrder()) {
             let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
 
             if(cardsOwnedByPlayer.length !== 0) {
                 for(let card of cardsOwnedByPlayer) {
-                    this.game.placeOnBottomOfDeck(card, { allowSave: false });
+                    gameActions.push(GameActions.returnCardToDeck({ card, bottom: true, allowSave: false }));
                 }
 
                 this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}',
@@ -69,6 +72,8 @@ class ValarDohaeris extends PlotCard {
                     player, this);
             }
         }
+
+        this.game.resolveGameAction(GameActions.simultaneously(gameActions));
     }
 }
 
