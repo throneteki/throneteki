@@ -219,7 +219,7 @@ export class GameBoard extends React.Component {
     getTimer(thisPlayer, otherPlayer) {
         let timeLimitClock = undefined;
 
-        if(this.props.currentGame.useGameTimeLimit && this.props.currentGame.gameTimeLimitStarted) {
+        if(this.props.currentGame.useGameTimeLimit) {
             timeLimitClock = (<TimeLimitClock
                 timeLimitStarted={ this.props.currentGame.gameTimeLimitStarted }
                 timeLimitStartedAt={ this.props.currentGame.gameTimeLimitStartedAt }
