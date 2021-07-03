@@ -6,13 +6,13 @@ class TimeLimit {
         this.timeLimitStartType = null;
         this.timeLimitStarted = false;
         this.timeLimitStartedAt = null;
-        this.timeLimitInMinutes = null;
+        this.timeLimitInSeconds = null;
         this.isTimeLimitReached = false;
     }
 
     initialiseTimeLimit(timeLimitStartType, timeLimitInMinutes) {
         this.timeLimitStartType = timeLimitStartType;
-        this.timeLimitInMinutes = timeLimitInMinutes;
+        this.timeLimitInSeconds = timeLimitInMinutes * 60;
         if(timeLimitStartType === 'whenSetupFinished') {
             this.game.on('onSetupFinished', () => this.startTimer());
         }
@@ -30,10 +30,24 @@ class TimeLimit {
         }
     }
 
+    togglePause() {
+        //pause
+        if(this.timeLimitStarted) {
+            this.timeLimitStarted = false;
+            clearInterval(this.timer);
+            this.timer = undefined;
+            let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timeLimitStartedAt));
+            this.timeLimitInSeconds -= Math.floor(differenceBetweenStartOfTimerAndNow.asSeconds());
+        } else {
+        //unpause
+            this.startTimer();
+        }
+    }
+
     checkForTimeLimitReached() {
         if(this.game.useGameTimeLimit && !this.isTimeLimitReached) {
             let differenceBetweenStartOfTimerAndNow = moment.duration(moment().diff(this.timeLimitStartedAt));
-            if(differenceBetweenStartOfTimerAndNow.asSeconds() / 60 >= this.timeLimitInMinutes) {
+            if(differenceBetweenStartOfTimerAndNow.asSeconds() >= this.timeLimitInSeconds) {
                 this.game.addAlert('warning', 'Time up.  The game will end after the current round has finished');
                 this.isTimeLimitReached = true;
                 this.timeLimitStarted = false;
