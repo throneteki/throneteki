@@ -5,7 +5,7 @@ describe('Vargo Hoat', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('tyrell', [
                 'Marching Orders',
-                'Vargo Hoat', 'Planky Town Trader', 'Robert Baratheon (Core)'
+                'Vargo Hoat', 'Planky Town Trader', 'Golden Company'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -14,8 +14,8 @@ describe('Vargo Hoat', function() {
 
             this.vargo = this.player1.findCardByName('Vargo Hoat');
             this.bestowChud = this.player1.findCardByName('Planky Town Trader');
-            this.robert = this.player2.findCardByName('Robert Baratheon');
-            this.player2.clickCard(this.robert);
+            this.company = this.player2.findCardByName('Golden Company');
+            this.player2.clickCard(this.company);
             this.completeSetup();
 
             this.selectFirstPlayer(this.player1);
@@ -52,11 +52,14 @@ describe('Vargo Hoat', function() {
             });
 
             it('it should give Vargo Hoat that characters keywords', function() {
+                expect(this.company.getKeywords()).toContain('bestow (1)');
                 expect(this.vargo.getKeywords()).toContain('bestow (2)');
                 expect(this.player1).toHavePrompt('Select a character');
-                this.player1.clickCard(this.robert);
+                this.player1.clickCard(this.company);
+                expect(this.company.getKeywords()).toContain('renown');
                 expect(this.vargo.getKeywords()).toContain('renown');
-                expect(this.vargo.getKeywords()).toContain('intimidate');
+                expect(this.company.hasToken('gold')).toBe(true);
+                expect(this.vargo.tokens['gold']).toBe(1);
             });
         });
     });

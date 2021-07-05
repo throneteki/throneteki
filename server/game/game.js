@@ -1013,12 +1013,6 @@ class Game extends EventEmitter {
         this.killCharacters([card], options);
     }
 
-    placeOnBottomOfDeck(card, options = { allowSave: true }) {
-        this.applyGameAction('placeOnBottomOfDeck', card, card => {
-            card.owner.moveCard(card, 'draw deck', { allowSave: options.allowSave, bottom: true });
-        });
-    }
-
     takeControl(player, card, source = null) {
         var oldController = card.controller;
         var newController = player;

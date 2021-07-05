@@ -34,7 +34,7 @@ describe('Player', function() {
             });
 
             it('should move the contents of the used plots pile back to the plots pile', function() {
-                expect(this.anotherPlotSpy.moveTo).toHaveBeenCalledWith('plot deck');
+                expect(this.anotherPlotSpy.moveTo).toHaveBeenCalledWith('plot deck', undefined, false);
                 expect(this.player.plotDeck).toContain(this.anotherPlotSpy);
                 expect(this.player.plotDiscard).not.toContain(this.anotherPlotSpy);
             });

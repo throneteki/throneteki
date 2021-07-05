@@ -1,9 +1,9 @@
-describe('Bronn', function() {
+describe('Bronn (CoW)', function() {
     integration(function() {
         beforeEach(function() {
             const deck = this.buildDeck('targaryen', [
                 'A Noble Cause',
-                'Bronn'
+                'Bronn (CoW)'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);

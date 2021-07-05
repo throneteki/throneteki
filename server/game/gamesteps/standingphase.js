@@ -2,6 +2,7 @@ const {flatten} = require('../../Array');
 const Phase = require('./phase.js');
 const SimpleStep = require('./simplestep.js');
 const ActionWindow = require('./actionwindow.js');
+const GameActions = require('../GameActions');
 
 class StandingPhase extends Phase {
     constructor(game) {
@@ -38,9 +39,15 @@ class StandingPhase extends Phase {
         this.game.queueSimpleStep(() => {
             let finalCards = flatten(cardsToStand.automatic.concat(cardsToStand.selected));
             player.faction.kneeled = false;
+            let standActions = [];
             for(let card of finalCards) {
-                player.standCard(card);
+                standActions.push(GameActions.standCard({ card: card }));
             }
+            this.game.resolveGameAction(
+                GameActions.simultaneously(
+                    standActions
+                )
+            );
         });
     }
 

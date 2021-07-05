@@ -69,6 +69,19 @@ function dominanceOptionEffect(key) {
     };
 }
 
+function powerOptionEffect(key) {
+    return function() {
+        return {
+            apply: function(card) {
+                card.powerOptions.add(key);
+            },
+            unapply: function(card) {
+                card.powerOptions.remove(key);
+            }
+        };
+    };
+}
+
 function dynamicCardModifier(propName) {
     return function(calculateOrValue) {
         const isStateDependent = (typeof calculateOrValue === 'function');
@@ -643,6 +656,7 @@ const Effects = {
     },
     doesNotContributeToDominance: dominanceOptionEffect('doesNotContribute'),
     contributesToDominanceWhileKneeling: dominanceOptionEffect('contributesWhileKneeling'),
+    doesNotContributeToPowerTotal: powerOptionEffect('doesNotContribute'),
     optionalStandDuringStanding: function() {
         return {
             apply: function(card) {
@@ -734,6 +748,7 @@ const Effects = {
     cannotBeRemovedFromGame: cannotEffect('removeFromGame'),
     cannotBeReturnedToHand: cannotEffect('returnToHand'),
     cannotBeSacrificed: cannotEffect('sacrifice'),
+    cannotBeReturnedToDeck: cannotEffect('returnCardToDeck'),
     cannotIncreaseStrength: cannotEffect('increaseStrength'),
     cannotDecreaseStrength: cannotEffect('decreaseStrength'),
     cannotGainPower: cannotEffect('gainPower'),

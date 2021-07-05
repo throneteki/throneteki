@@ -27,7 +27,9 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
     promptPlayer() {
         let buttons = this.abilityChoices
             .map(abilityChoice => {
-                let title = abilityChoice.player.name + ' - ' + abilityChoice.card.name;
+                //put a suffix on the title so it is clear which ability belongs to which card
+                let titleSuffix = abilityChoice.context.event.card ? ' - ' + abilityChoice.context.event.card.name : '';
+                let title = abilityChoice.player.name + ' - ' + abilityChoice.card.name + titleSuffix;
                 return { text: title, method: 'chooseAbility', arg: abilityChoice.id, card: abilityChoice.card };
             })
             .sort((a, b) => a.text > b.text ? 1 : -1);

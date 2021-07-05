@@ -57,7 +57,7 @@ class AbilityTarget {
 
     getChoosingPlayers(context) {
         if(typeof this.choosingPlayer === 'function') {
-            return context.game.getPlayersInFirstPlayerOrder().filter(player => this.choosingPlayer(player));
+            return context.game.getPlayersInFirstPlayerOrder().filter(player => this.choosingPlayer(player, context));
         }
 
         if(this.choosingPlayer === 'each') {

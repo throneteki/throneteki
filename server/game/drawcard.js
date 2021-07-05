@@ -97,8 +97,12 @@ class DrawCard extends BaseCard {
             return;
         }
 
-        this.dupes.push(card);
+        //first move the card to the duplicate area, then push it to the dupes array
+        //this is necessary for A Mummer´s Farce
+        //this allows a facedown character card attached to a unique character to be marshalled as a dupe to the character
+        //pushing it to the dupes array first will lead to the dupe being removed in card.moveTo
         card.moveTo('duplicate', this);
+        this.dupes.push(card);
     }
 
     removeDuplicate(force = false) {

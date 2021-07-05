@@ -43,7 +43,7 @@ class DiscardToReservePrompt extends BaseStep {
         cards = cards.reverse();
         player.discardCards(cards, false, () => {
             this.game.addMessage('{0} discards {1} to meet reserve', player, cards);
-        });
+        }, {source: 'reserve'});
         return true;
     }
 
