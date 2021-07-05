@@ -14,12 +14,16 @@ class HaldonHalfmaester extends DrawCard {
 
                 //place 1 gold on card of the same type
                 if(['character', 'location', 'attachment'].includes(topCard.getType())) {
-                    this.game.promptForSelect(context.player, {
-                        activePromptTitle: 'Select card to gain 1 gold',
-                        cardCondition: card => card.getType() === topCard.getType() && card.location === 'play area',
-                        source: this,
-                        onSelect: (player, card) => this.onCardSelectedForGold(card, topCard, context)
-                    });
+                    if(this.game.anyCardsInPlay(card => card.getType() === topCard.getType())) {
+                        this.game.promptForSelect(context.player, {
+                            activePromptTitle: 'Select card to gain 1 gold',
+                            cardCondition: card => card.getType() === topCard.getType() && card.location === 'play area',
+                            source: this,
+                            onSelect: (player, card) => this.onCardSelectedForGold(card, topCard, context)
+                        });
+                    } else {
+                        this.continueHandler(topCard, context);
+                    }
                 } else {
                     this.continueHandler(topCard, context);
                 }
