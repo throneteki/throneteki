@@ -25,8 +25,6 @@ class HeirToTheIronThrone extends PlotCard {
             this.game.queueSimpleStep(() => {
                 this.promptForSacrifice(player);
             });
-        } else {
-            this.game.addMessage('{0} can not sacrifice a character because {1} is put into play as a duplicate', player, card);
         }
     }
 
