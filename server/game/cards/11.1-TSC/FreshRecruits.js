@@ -25,29 +25,29 @@ class FreshRecruits extends DrawCard {
     remainingTraits(selectedCards) {
         const traits = ['Ranger', 'Builder', 'Steward'];
         let tempCards = selectedCards.slice();
-        for(let i=tempCards.length ; i<traits.length ; i++)
+        for(let i = tempCards.length ; i < traits.length ; i++) {
             tempCards.push(null);
+        }
         var remaining = [];
-        this.permutate([],[],tempCards).every(p => {
-            if(p.every((c, i) => !c || c.hasTrait(traits[i]))){
-                remaining = remaining.concat(traits.filter((t, i) => !remaining.some(r => r == t) && !p[i]));
+        this.permutate([], [], tempCards).every(p => {
+            if(p.every((c, i) => !c || c.hasTrait(traits[i]))) {
+                remaining = remaining.concat(traits.filter((t, i) => !remaining.some(r => r === t) && !p[i]));
             }
-            return remaining.length != traits.length;
-        })
+            return remaining.length !== traits.length;
+        });
         return remaining;
     }
 
-    permutate(generated, current, remaining){
-        if(remaining.length > 0){
+    permutate(generated, current, remaining) {
+        if(remaining.length > 0) {
             remaining.forEach((r, index) => {
                 var next = current.slice();
                 next.push(r);
                 var newRemaining = remaining.slice();
                 newRemaining.splice(index, 1);
-                this.permutate(generated, next, newRemaining)
-            })
-        }
-        else {
+                this.permutate(generated, next, newRemaining);
+            });
+        } else {
             generated.push(current);
         }
         return generated;
