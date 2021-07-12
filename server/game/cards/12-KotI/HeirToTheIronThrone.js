@@ -18,11 +18,14 @@ class HeirToTheIronThrone extends PlotCard {
 
     cardSelected(player, card) {
         this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
+        let dupeCard = player.getDuplicateInPlay(card);
         player.putIntoPlay(card);
-
-        this.game.queueSimpleStep(() => {
-            this.promptForSacrifice(player);
-        });
+        //only prompt for sacrifice if the card put into play wasn´t a duplicate
+        if(!dupeCard) {
+            this.game.queueSimpleStep(() => {
+                this.promptForSacrifice(player);
+            });
+        }
     }
 
     doneSelecting(player) {
