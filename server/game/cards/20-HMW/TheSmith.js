@@ -12,8 +12,8 @@ class TheSmith extends PlotCard {
             },
             handler: context => {
                 context.target.controller.kneelCard(context.target);
-
-                this.game.addMessage('{0} uses {1} and kneels {2} to kneel {3}', context.player, this, context.costs.kneel, context.target);
+                let attachmentCost = context.costs.kneel.facedown ? 'a facedown attachment' : context.costs.kneel;
+                this.game.addMessage('{0} uses {1} and kneels {2} to kneel {3}', context.player, this, attachmentCost, context.target);
             }
         });
     }
