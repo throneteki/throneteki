@@ -4,7 +4,7 @@ const TextHelper = require('../../TextHelper');
 class WeGuardtheWay extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            cost: ability.costs.discardXGold(() => 1, () => this.game.getNumberOfCardsInPlay(card => card.getType() === 'character' && (card.hasTrait('Guard') || card.hasTrait('House Yronwood')))),
+            cost: ability.costs.payXGold(() => 1, () => this.game.getNumberOfCardsInPlay(card => card.getType() === 'character' && (card.hasTrait('Guard') || card.hasTrait('House Yronwood')))),
             handler: context => {
                 let xValue = context.xValue;
                 this.game.promptForSelect(context.player, {
