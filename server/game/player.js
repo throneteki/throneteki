@@ -645,11 +645,17 @@ class Player extends Spectator {
         }
     }
 
+    flipSetupCardsFaceUp() {
+        for(const card of this.cardsInPlay) {
+            card.facedown = false;
+        }
+    }
+
     revealSetupCards() {
         let processedCards = [];
 
         for(const card of this.cardsInPlay) {
-            card.facedown = false;
+            this.flipSetupCardsFaceUp();
 
             if(!card.isUnique()) {
                 processedCards.push(card);
@@ -761,9 +767,7 @@ class Player extends Spectator {
         }
 
         this.game.resolveEvent(event);
-        if(!attachment.facedown) {
-            this.game.addMessage('{0} attaches {1} to {2}', this, attachment, card);
-        }
+        this.game.addMessage('{0} attaches {1} to {2}', this, attachment, card);
     }
 
     setDrawDeckVisibility(value) {
