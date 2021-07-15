@@ -11,7 +11,7 @@ class OurBladesAreSharp extends DrawCard {
         });
         
         this.action({
-            cost: ability.costs.sacrifice(card => card.getType() === 'character' && !card.isFaction('stark')),
+            cost: ability.costs.sacrifice(card => !card.isFaction('stark')),
             target: {
                 mode: 'upTo',
                 numCards: 2,
