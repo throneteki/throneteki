@@ -3,6 +3,7 @@ const EventToTitleFunc = {
     onCardEntersPlay: event => `${event.card.name} entering play`,
     onCardPowerGained: event => `${event.card.name} gaining power`,
     onCardPowerMoved: event => `power moved from ${event.source.name} to ${event.target.name}`,
+    onCardReturnedToHand: event => `${event.card.name} being returned to hand`,
     onClaimApplied: () => 'to claim effects being applied',
     onCharacterKilled: event => `${event.card.name} being killed`,
     onCharactersKilled: () => 'characters being killed',
