@@ -654,6 +654,8 @@ class Player extends Spectator {
     revealSetupCards() {
         let processedCards = [];
 
+        this.flipSetupCardsFaceUp();
+
         for(const card of this.cardsInPlay) {
             if(!card.isUnique()) {
                 processedCards.push(card);
