@@ -21,8 +21,11 @@ class EliasLance extends DrawCard {
                     card.getType() === 'character' &&
                     card.isParticipating()
             },
-            message: '{player} uses {source} to have {opponent} return {target} to their hand',
-            handle: context => {
+            message: {
+                format: '{player} uses {source} to have {winner} return {target} to their hand',
+                args: { winner: context => context.event.challenge.winner }
+            },
+            handler: context => {
                 this.game.resolveGameAction(
                     GameActions.returnCardToHand(context => ({ card: context.target })),
                     context
