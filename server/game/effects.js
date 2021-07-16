@@ -3,6 +3,7 @@ const AllowedChallenge = require('./AllowedChallenge');
 const CardMatcher = require('./CardMatcher');
 const CardTextDefinition = require('./CardTextDefinition');
 const CostReducer = require('./costreducer.js');
+const GameActions = require('./GameActions');
 const PlayableLocation = require('./playablelocation.js');
 const CannotRestriction = require('./cannotrestriction.js');
 const ChallengeRestriction = require('./ChallengeRestriction.js');
@@ -580,7 +581,9 @@ const Effects = {
             unapply: function(card, context) {
                 if(['play area', 'duplicate'].includes(card.location) && context.moveToBottomOfDeckIfStillInPlay.includes(card)) {
                     context.moveToBottomOfDeckIfStillInPlay = context.moveToBottomOfDeckIfStillInPlay.filter(c => c !== card);
-                    card.owner.moveCardToBottomOfDeck(card, allowSave);
+                    context.game.resolveGameAction(
+                        GameActions.returnCardToDeck({ card, allowSave, bottom: true })
+                    );
                     context.game.addMessage('{0} moves {1} to the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
             }

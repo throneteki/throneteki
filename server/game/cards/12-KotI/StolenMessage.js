@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions');
 const PlotCard = require('../../plotcard');
 
 class StolenMessage extends PlotCard {
@@ -14,8 +15,10 @@ class StolenMessage extends PlotCard {
             limit: ability.limit.perRound(3),
             handler: context => {
                 this.game.addMessage('{0} uses {1} to place the top card of {2}\'s deck on the bottom of their deck', context.player, this, context.opponent);
-                let topCard = context.opponent.drawDeck[0];
-                context.opponent.moveCardToBottomOfDeck(topCard);
+                this.game.resolveGameAction(
+                    GameActions.placeCard(context => ({ card: context.opponent.drawDeck[0], location: 'draw deck', bottom: true })),
+                    context
+                );
             }
         });
     }
