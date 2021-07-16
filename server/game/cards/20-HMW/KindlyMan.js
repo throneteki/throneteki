@@ -47,9 +47,9 @@ class KindlyMan extends DrawCard {
     }
 
     tokenSelected(player, token) {
-        let amount = this.context.gainOrLose === 'gain' ? 1 : -1;
+        const action = this.context.gainOrLose === 'gain' ? GameActions.placeToken : GameActions.discardToken;
         this.game.resolveGameAction(
-            GameActions.placeToken(() => ({ card: this.context.target, token: token, amount: amount })),
+            action(context => ({ card: context.target, token: token })),
             this.context
         );
         let tokenMessage = this.context.gainOrLose === 'gain' ? 'to have {2} gain 1 {3} token' : 'to discard 1 {3} token from {2}';

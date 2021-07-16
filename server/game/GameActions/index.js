@@ -5,6 +5,7 @@ const CheckReserve = require('./CheckReserve');
 const ChooseGameAction = require('./ChooseGameAction');
 const DiscardAtRandom = require('./DiscardAtRandom');
 const DiscardCard = require('./DiscardCard');
+const DiscardToken = require('./DiscardToken');
 const DiscardTopCards = require('./DiscardTopCards');
 const DiscardPower = require('./DiscardPower');
 const DrawCards = require('./DrawCards');
@@ -41,6 +42,7 @@ const GameActions = {
     ),
     discardAtRandom: props => new AbilityAdapter(DiscardAtRandom, props),
     discardCard: props => new AbilityAdapter(DiscardCard, props),
+    discardToken: props => new AbilityAdapter(DiscardToken, props),
     discardTopCards: props => new AbilityAdapter(DiscardTopCards, props),
     discardPower: props => new AbilityAdapter(DiscardPower, props),
     drawCards: props => new AbilityAdapter(DrawCards, props),
