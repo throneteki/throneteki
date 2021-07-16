@@ -645,12 +645,18 @@ class Player extends Spectator {
         }
     }
 
+    flipSetupCardsFaceUp() {
+        for(const card of this.cardsInPlay) {
+            card.facedown = false;
+        }
+    }
+
     revealSetupCards() {
         let processedCards = [];
 
-        for(const card of this.cardsInPlay) {
-            card.facedown = false;
+        this.flipSetupCardsFaceUp();
 
+        for(const card of this.cardsInPlay) {
             if(!card.isUnique()) {
                 processedCards.push(card);
                 continue;

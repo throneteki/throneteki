@@ -74,6 +74,7 @@ class SetupPhase extends Phase {
         for(const player of this.game.getPlayers()) {
             let cardsInShadow = player.shadows.length;
             let cards = [...player.cardsInPlay];
+            player.flipSetupCardsFaceUp();
 
             if(cardsInShadow > 0) {
                 cards.push(`${TextHelper.count(cardsInShadow, 'card')} into shadows`);

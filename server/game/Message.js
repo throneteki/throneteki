@@ -43,6 +43,9 @@ class Message {
         if(Array.isArray(arg)) {
             return this.formatArray(arg);
         } else if(arg instanceof BaseCard) {
+            if(arg.facedown) {
+                return 'a facedown card';
+            }
             return { code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' };
         } else if(arg instanceof Spectator) {
             return { name: arg.user.username, argType: 'nonAvatarPlayer' };
