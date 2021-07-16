@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class MeereeneseMarket extends DrawCard {
     setupCardAbilities(ability) {
@@ -14,8 +15,10 @@ class MeereeneseMarket extends DrawCard {
                 cardCondition: card => card.location === 'discard pile'
             },
             handler: context => {
-                let card = context.target;
-                card.owner.moveCardToBottomOfDeck(card);
+                this.game.resolveGameAction(
+                    GameActions.returnCardToDeck(context => ({ card: context.target, bottom: true })),
+                    context
+                );
                 this.game.addMessage('{0} kneels {1} to place {2} on the bottom of {3}\'s deck',
                     this.controller, this, context.target, context.target.owner);
             }
