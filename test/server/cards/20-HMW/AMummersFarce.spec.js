@@ -67,7 +67,7 @@ describe('A Mummer´s Farce', function() {
                 this.player1.clickCard(this.jinglebell);
             });
 
-            it('the persistent effect of that card should activate once the card enters play', function() {
+            it('the weapon attachments should be discarded because they are invalidly attached', function() {
                 expect(this.jinglebell.location).toBe('play area');
                 expect(this.jinglebell.getStrength()).toBe(1);
                 expect(this.knight2.location).toBe('discard pile');
