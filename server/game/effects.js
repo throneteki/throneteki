@@ -388,10 +388,15 @@ const Effects = {
                 for(let keyword of context.dynamicKeywords[card.uuid]) {
                     card.removeKeyword(keyword);
                 }
-                context.dynamicKeywords[card.uuid] = keywordsFunc(card, context);
-                for(let keyword of context.dynamicKeywords[card.uuid]) {
-                    card.addKeyword(keyword);
-                }
+                //queue the adding of keywords 
+                //so that first all keywords on all cards being affected by the effect are removed
+                //and then the keywords are recalculated and reapplied (necessary for Shagwell)
+                card.game.queueSimpleStep(() => {
+                    context.dynamicKeywords[card.uuid] = keywordsFunc(card, context);
+                    for(let keyword of context.dynamicKeywords[card.uuid]) {
+                        card.addKeyword(keyword);
+                    }
+                });
             },
             unapply: function(card, context) {
                 for(let keyword of context.dynamicKeywords[card.uuid]) {
