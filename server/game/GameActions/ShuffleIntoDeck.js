@@ -20,9 +20,11 @@ class ShuffleIntoDeck extends GameAction {
                 players.add(card.owner);
             }
 
-            for(const player of players) {
-                event.thenAttachEvent(Shuffle.createEvent({ player }));
-            }
+            event.thenExecute(() => {
+                for(const player of players) {
+                    event.thenAttachEvent(Shuffle.createEvent({ player }));
+                }
+            });
         });
     }
 }
