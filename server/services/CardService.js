@@ -84,8 +84,8 @@ class CardService {
             const activeVersion = this.getActiveVersion(versions, cardSet);
             const joustFormat = activeVersion.formats.find(format => format.name === 'joust');
             return {
-                _id: `${activeVersion.issuer}-${activeVersion.version}`.replace(' ', '-').toLowerCase(),
-                name: `${activeVersion.issuer} FAQ v${activeVersion.version}`,
+                _id: activeVersion.code,
+                name: activeVersion.name,
                 date: activeVersion.date,
                 issuer: activeVersion.issuer,
                 cardSet: activeVersion.cardSet,
