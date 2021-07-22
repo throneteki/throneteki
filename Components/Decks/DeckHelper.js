@@ -17,9 +17,9 @@ export function deckStatusLabel(status) {
 export function cardSetLabel(cardSet) {
     switch(cardSet) {
         case 'redesign':
-            return 'Redesigned Cards';
+            return 'Standard';
         case 'original':
-            return 'Original Cards';
+            return 'Valyrian';
     }
 
     return 'Unknown';
