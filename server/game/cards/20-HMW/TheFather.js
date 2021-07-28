@@ -3,7 +3,7 @@ const GameActions = require('../../GameActions');
 
 class TheFather extends PlotCard {
     setupCardAbilities() {
-        this.forcedReaction({
+        this.forcedInterrupt({
             when: {
                 onPhaseEnded: event => event.phase === 'dominance' && this.game.anyCardsInPlay(card => card.getType() === 'character' && card.isUnique())
             },
