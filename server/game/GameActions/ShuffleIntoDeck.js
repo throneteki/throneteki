@@ -1,6 +1,7 @@
 const GameAction = require('./GameAction');
 const Shuffle = require('./Shuffle');
 const ReturnCardToDeck = require('./ReturnCardToDeck');
+const SimultaneousEvents = require('../SimultaneousEvents');
 
 class ShuffleIntoDeck extends GameAction {
     constructor() {
@@ -13,19 +14,25 @@ class ShuffleIntoDeck extends GameAction {
 
     createEvent({ cards, allowSave = true }) {
         return this.event('onCardsShuffledIntoDeck', { cards }, event => {
-            const players = new Set();
-
+            const returnEvents = new SimultaneousEvents();
             for(const card of event.cards) {
-                event.thenAttachEvent(ReturnCardToDeck.createEvent({card, allowSave}));
-                players.add(card.owner);
+                returnEvents.addChildEvent(ReturnCardToDeck.createEvent({card, allowSave}));
             }
+            returnEvents.addChildEvent(this.createShuffleSequenceEvent(event.cards));
 
-            event.thenExecute(() => {
-                for(const player of players) {
-                    event.thenAttachEvent(Shuffle.createEvent({ player }));
-                }
-            });
+            event.thenAttachEvent(returnEvents);
         });
+    }
+
+    createShuffleSequenceEvent(cards) {
+        const players = new Set(cards.map(card => card.owner));
+        const shuffleSequenceEvent = this.event('__SHUFFLE_SEQUENCE__');
+        shuffleSequenceEvent.thenExecute(() => {
+            for(const player of players) {
+                shuffleSequenceEvent.thenAttachEvent(Shuffle.createEvent({ player }));
+            }
+        });
+        return shuffleSequenceEvent;
     }
 }
 
