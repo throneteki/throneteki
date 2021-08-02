@@ -41,7 +41,6 @@ class MoveCardEventGenerator {
         let params = {
             card: card,
             allowSave: allowSave,
-            automaticSaveWithDupe: true,
             originalLocation: card.location,
             isPillage: !!isPillage,
             source: source,
@@ -64,8 +63,7 @@ class MoveCardEventGenerator {
     createReturnCardToHandEvent({ card, allowSave = true }) {
         let params = {
             card: card,
-            allowSave: allowSave,
-            automaticSaveWithDupe: true
+            allowSave: allowSave
         };
         return this.event('onCardReturnedToHand', params, event => {
             event.cardStateWhenReturned = card.createSnapshot();

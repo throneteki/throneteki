@@ -16,7 +16,6 @@ class Kill extends GameAction {
             card,
             player: player || card.controller,
             allowSave,
-            automaticSaveWithDupe: true,
             isBurn,
             snapshotName: 'cardStateWhenKilled'
         };

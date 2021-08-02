@@ -63,7 +63,6 @@ describe('Kill', function() {
             expect(this.killEvent.card).toBe(this.cardSpy);
             expect(this.killEvent.player).toBe(this.playerSpy);
             expect(this.killEvent.allowSave).toBe(true);
-            expect(this.killEvent.automaticSaveWithDupe).toBe(true);
             expect(this.killEvent.isBurn).toBe(false);
             expect(this.killEvent.snapshotName).toBe('cardStateWhenKilled');
         });
