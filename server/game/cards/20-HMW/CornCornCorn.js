@@ -12,8 +12,8 @@ class CornCornCorn extends DrawCard {
                 onPhaseEnded: event => event.phase === 'challenge' && !this.allChallengesDefended()
             },
             max: ability.limit.perPhase(1),
-            chooseOpponent: true,
-            cost: ability.costs.kneel(card => card === card.hasTrait('Steward') || card.hasTrait('Raven')),
+            chooseOpponent: (opponent, context) => !opponent.isSupporter(context.player),
+            cost: ability.costs.kneel({ trait: ['Steward', 'Raven'] }),
             handler: context => {
                 this.chosenOpponent = context.opponent;
 
@@ -49,7 +49,7 @@ class CornCornCorn extends DrawCard {
         claim.value = player.getClaim();
         claim.winner = player;
 
-        this.game.addMessage('{0} uses {1} to have {2} satisfy {3} claim',
+        this.game.addMessage('{0} plays {1} to have {2} satisfy {3} claim',
             player, this, this.chosenOpponent, claimType);
 
         this.game.queueStep(new ApplyClaim(this.game, claim));
