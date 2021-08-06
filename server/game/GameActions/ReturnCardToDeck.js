@@ -1,4 +1,6 @@
 const GameAction = require('./GameAction');
+const LeavePlay = require('./LeavePlay');
+const PlaceCard = require('./PlaceCard');
 
 class ReturnCardToDeck extends GameAction {
     constructor() {
@@ -17,9 +19,15 @@ class ReturnCardToDeck extends GameAction {
             bottom: bottom,
             snapshotName: 'cardStateWhenMoved'
         };
-        return this.event('onCardReturnedToDeck', params, event => {
-            event.card.controller.moveCard(card, 'draw deck', { bottom: bottom, allowSave: allowSave });
+        const returnEvent = this.event('onCardReturnedToDeck', params, event => {
+            event.thenAttachEvent(PlaceCard.createEvent({ card: event.card, location: 'draw deck', bottom }));
         });
+
+        if(card.location === 'play area') {
+            return this.atomic(returnEvent, LeavePlay.createEvent({ card, allowSave }));
+        }
+
+        return returnEvent;
     }
 }
 

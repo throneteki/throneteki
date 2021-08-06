@@ -13,17 +13,22 @@ class ShuffleIntoDeck extends GameAction {
 
     createEvent({ cards, allowSave = true }) {
         return this.event('onCardsShuffledIntoDeck', { cards }, event => {
-            const players = new Set();
-
             for(const card of event.cards) {
                 event.thenAttachEvent(ReturnCardToDeck.createEvent({card, allowSave}));
-                players.add(card.owner);
             }
+            event.thenAttachEvent(this.createShuffleSequenceEvent(event.cards));
+        });
+    }
 
+    createShuffleSequenceEvent(cards) {
+        const players = new Set(cards.map(card => card.owner));
+        const shuffleSequenceEvent = this.event('__SHUFFLE_SEQUENCE__');
+        shuffleSequenceEvent.thenExecute(() => {
             for(const player of players) {
-                event.thenAttachEvent(Shuffle.createEvent({ player }));
+                shuffleSequenceEvent.thenAttachEvent(Shuffle.createEvent({ player }));
             }
         });
+        return shuffleSequenceEvent;
     }
 }
 

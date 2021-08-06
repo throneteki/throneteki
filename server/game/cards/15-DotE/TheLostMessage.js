@@ -5,7 +5,7 @@ const TextHelper = require('../../TextHelper');
 const {flatten} = require('../../../Array');
 
 class TheLostMessage extends PlotCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Shuffle cards into deck',
             message: '{player} uses {source} to have each player shuffle their hand into their deck',
@@ -19,7 +19,8 @@ class TheLostMessage extends PlotCard {
                 gameAction: GameActions.simultaneously(context => this.getTopCards(context).map(
                     card => GameActions.addToHand({ card })
                 ))
-            })
+            }),
+            limit: ability.limit.perRound(1)
         });
     }
 

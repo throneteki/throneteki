@@ -1,9 +1,11 @@
 const DrawCard = require('../../drawcard.js');
 const {Tokens} = require('../../Constants');
 const GameActions = require('../../GameActions');
+const Array = require('../../../Array');
 
 class BraveCompanions extends DrawCard {
     setupCardAbilities(ability) {
+        const selectableTraits = ['Army', 'Commander', 'Mercenary'];
         this.persistentEffect({
             match: card => card === this,
             effect: ability.effects.dynamicStrength(() => this.calculateStrength())
@@ -19,7 +21,10 @@ class BraveCompanions extends DrawCard {
                 numToSelect: 3,
                 match: {
                     type: 'character',
-                    condition: (card, context) => this.remainingTraits(context.selectedCards).some(trait => card.hasTrait(trait))
+                    // Checking if the card is already selected || if it has one of the selectable traits && that trait is remaining for selection
+                    condition: (card, context) => context.selectedCards.includes(card) 
+                        || selectableTraits.some(trait => card.hasTrait(trait)) 
+                        && Array.availableToPair(selectableTraits, context.selectedCards, (trait, card) => card.hasTrait(trait)).some(trait => card.hasTrait(trait))
                 },
                 message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
                 cancelMessage: '{player} uses {source} to search their deck but does not find a card',
@@ -36,11 +41,6 @@ class BraveCompanions extends DrawCard {
         });
 
         return cards.length;
-    }
-
-    remainingTraits(selectedCards) {
-        const traits = ['Army', 'Commander', 'Mercenary'];
-        return traits.filter(trait => !selectedCards.some(card => card.hasTrait(trait)));
     }
 }
 
