@@ -12,7 +12,7 @@ class SeaSong extends DrawCard {
                 'onCardDiscarded:aggregate': event => (
                     event.events.some(discardEvent => (
                         discardEvent.source === 'reserve')) && 
-                    this.controller.canDraw()
+                    (this.controller.canDraw() || this.controller.canGainFactionPower())
                 )
             },
             limit: ability.limit.perRound(2),
