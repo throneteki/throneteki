@@ -15,7 +15,6 @@ class ReturnCardToDeck extends GameAction {
         let params = {
             card: card,
             allowSave: allowSave,
-            automaticSaveWithDupe: true,
             bottom: bottom,
             snapshotName: 'cardStateWhenMoved'
         };
