@@ -767,7 +767,7 @@ class Player extends Spectator {
         }
 
         this.game.resolveEvent(event);
-        this.game.addMessage('{0} attaches {1} to {2}', this, attachment, card);
+        this.game.addMessage('{0} attaches {1} to {2}', controller, attachment, card);
     }
 
     setDrawDeckVisibility(value) {
