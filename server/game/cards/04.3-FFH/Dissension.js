@@ -6,7 +6,7 @@ class Dissension extends DrawCard {
             title: 'Discard Ally from play',
             phase: 'marshal',
             target: {
-                cardCondition: card => card.hasTrait('Ally') && card.getType() === 'character'
+                cardCondition: card => card.hasTrait('Ally') && card.getType() === 'character' && card.location === 'play area'
             },
             handler: context => {
                 context.target.controller.discardCard(context.target);
