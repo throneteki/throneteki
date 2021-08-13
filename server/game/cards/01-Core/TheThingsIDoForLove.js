@@ -19,7 +19,7 @@ class TheThingsIDoForLove extends DrawCard {
             handler: context => {
                 context.target.controller.returnCardToHand(context.target);
                 this.game.addMessage('{0} plays {1}, kneels their faction card and pays {2} gold to return {3} to {4}\'s hand',
-                    context.player, this, context.goldCost, context.target, context.target.owner);
+                    context.player, this, context.costs.gold, context.target, context.target.owner);
             }
         });
     }

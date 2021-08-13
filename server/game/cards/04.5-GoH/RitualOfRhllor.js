@@ -17,7 +17,7 @@ class RitualOfRhllor extends DrawCard {
                     activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
                     cardCondition: card => card.location === 'play area' && !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',
-                    onSelect: (player, cards) => this.targetsSelected(player, cards, context.goldCost)
+                    onSelect: (player, cards) => this.targetsSelected(player, cards, context.costs.gold)
                 });
             }
         });
