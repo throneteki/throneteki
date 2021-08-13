@@ -35,7 +35,7 @@ class TheWinterMaid extends DrawCard {
         this.game.addMessage('{0} uses {1} to give the Winter trait to {2}',
             player, this, card);
 
-        if(!this.game.anyPlotHasTrait('Summer')) {
+        if(!this.game.anyPlotHasTraitDuringPlotInterrupt('Summer')) {
             this.game.addMessage('{0} uses {1} to return {1} to their hand instead of their discard pile', player, this);
             player.moveCard(this, 'hand');
         }

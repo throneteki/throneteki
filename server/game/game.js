@@ -226,6 +226,18 @@ class Game extends EventEmitter {
             player.activePlot.hasTrait(trait));
     }
 
+    //during the interrupt window for when plots get revealed
+    //the active plot is not yet revealed and the previous plot
+    //needs to be considered "in play"
+    //the previous plot is always at player.plotDiscard[player.plotDiscard.length - 1]
+    //due to it being pushed to the plotDiscard array during plot revelation
+    anyPlotHasTraitDuringPlotInterrupt(trait) {
+        return this.getPlayers().some(player =>
+            player.plotDiscard &&
+            player.plotDiscard[player.plotDiscard.length - 1] &&
+            player.plotDiscard[player.plotDiscard.length - 1].hasTrait(trait));
+    }
+
     getNumberOfPlotsWithTrait(trait) {
         return this.getPlayers().reduce((sum, player) => {
             if(player.activePlot && player.activePlot.hasTrait(trait)) {
