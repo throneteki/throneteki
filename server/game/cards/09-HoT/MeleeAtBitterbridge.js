@@ -22,7 +22,7 @@ class MeleeAtBitterbridge extends DrawCard {
                     cardCondition: (card) =>
                         card.location === 'play area' && card.isParticipating(),
                     onSelect: (player, cards) =>
-                        this.targetsSelected(player, cards, context.goldCost)
+                        this.targetsSelected(player, cards, context.costs.gold)
                 });
             }
         });

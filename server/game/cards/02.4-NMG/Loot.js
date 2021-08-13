@@ -21,7 +21,7 @@ class Loot extends DrawCard {
                     "{0} plays {1} and pays {2} gold from {3}'s gold pool to discard the top {2} cards from {3}'s deck",
                     this.controller,
                     this,
-                    context.goldCost,
+                    context.costs.gold,
                     opponent
                 );
             }

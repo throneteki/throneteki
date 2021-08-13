@@ -35,7 +35,7 @@ class TheThingsIDoForLove extends DrawCard {
                     "{0} plays {1}, kneels their faction card and pays {2} gold to return {3} to {4}'s hand",
                     context.player,
                     this,
-                    context.goldCost,
+                    context.costs.gold,
                     context.target,
                     context.target.owner
                 );

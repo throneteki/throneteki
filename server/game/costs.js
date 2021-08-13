@@ -420,7 +420,9 @@ const Costs = {
             },
             pay: function(context) {
                 const player = playerFunc(context);
-                context.game.spendGold({ player, amount: context.goldCost, playingType: 'play' });
+                const reduction = context.player.getCostReduction('play', context.source);
+                context.costs.gold = Math.max(context.xValue - reduction, 0);
+                context.game.spendGold({ player, amount: context.costs.gold, playingType: 'play' });
                 context.player.markUsedReducers('play', context.source);
             }
         };

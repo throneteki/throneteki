@@ -26,7 +26,7 @@ class RitualOfRhllor extends DrawCard {
                         card.hasTrait("R'hllor") &&
                         card.getType() === 'character',
                     onSelect: (player, cards) =>
-                        this.targetsSelected(player, cards, context.goldCost)
+                        this.targetsSelected(player, cards, context.costs.gold)
                 });
             }
         });
