@@ -396,26 +396,20 @@ const Costs = {
     },
     /**
      * Reducable cost where the player gets prompted to pay from a passed minimum up to the lesser of two values:
-     * the passed maximum and either the player's or his opponent's gold.
-     * Used by Ritual of R'hllor, Loot, The Things I Do For Love and Melee at Bitterbridge.
+     * the passed maximum and either the player's or the opponent's gold.
      */
-    payXGold: function (minFunc, maxFunc, opponentFunc) {
+    payXGold: function(minFunc, maxFunc, opponentFunc) {
+        const playerFunc = opponentFunc || ((context) => context.player);
         return {
             canPay: function (context) {
                 let reduction = context.player.getCostReduction('play', context.source);
-                let opponentObj = opponentFunc && opponentFunc(context);
-
-                if (!opponentObj) {
-                    return context.player.getSpendableGold() >= minFunc(context) - reduction;
-                }
-                return opponentObj.getSpendableGold() >= minFunc(context) - reduction;
+                const player = playerFunc(context);
+                return player.getSpendableGold() >= (minFunc(context) - reduction);
             },
             resolve: function (context, result = { resolved: false }) {
                 let reduction = context.player.getCostReduction('play', context.source);
-                let opponentObj = opponentFunc && opponentFunc(context);
-                let gold = opponentObj
-                    ? opponentObj.getSpendableGold({ playingType: 'play' })
-                    : context.player.getSpendableGold({ playingType: 'play' });
+                const player = playerFunc(context);
+                let gold = player.getSpendableGold({ playingType: 'play' });
                 let max = Math.min(maxFunc(context), gold + reduction);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context, reduction));
@@ -424,21 +418,9 @@ const Costs = {
                 result.resolved = true;
                 return result;
             },
-            pay: function (context) {
-                let opponentObj = opponentFunc && opponentFunc(context);
-                if (!opponentObj) {
-                    context.game.spendGold({
-                        player: context.player,
-                        amount: context.goldCost,
-                        playingType: 'play'
-                    });
-                } else {
-                    context.game.spendGold({
-                        player: opponentObj,
-                        amount: context.goldCost,
-                        playingType: 'play'
-                    });
-                }
+            pay: function(context) {
+                const player = playerFunc(context);
+                context.game.spendGold({ player, amount: context.goldCost, playingType: 'play' });
                 context.player.markUsedReducers('play', context.source);
             }
         };
