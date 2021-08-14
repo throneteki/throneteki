@@ -21,7 +21,7 @@ const RemoveFromGame = require('./GameActions/RemoveFromGame');
 const SacrificeCard = require('./GameActions/SacrificeCard');
 const ChessClock = require('./ChessClock.js');
 
-const { DrawPhaseCards, MarshalIntoShadowsCost, SetupGold } = require('./Constants');
+const { DrawPhaseCards, SetupGold } = require('./Constants');
 const { flatten } = require('underscore');
 
 class Player extends Spectator {
@@ -434,28 +434,6 @@ class Player extends Spectator {
         let matchingReducers = this.costReducers.filter(reducer => reducer.canReduce(playingType, card));
         let reduction = matchingReducers.reduce((memo, reducer) => reducer.getAmount(card) + memo, 0);
         return reduction;
-    }
-
-    getReducedCost(playingType, card) {
-        let baseCost = this.getBaseCost(playingType, card);
-        let reducedCost = baseCost - this.getCostReduction(playingType, card);
-        return Math.max(reducedCost, card.getMinCost());
-    }
-
-    getBaseCost(playingType, card) {
-        if(playingType === 'marshalIntoShadows') {
-            return MarshalIntoShadowsCost;
-        }
-
-        if(playingType === 'outOfShadows' || playingType === 'play' && card.location === 'shadows') {
-            return card.getShadowCost();
-        }
-
-        if(playingType === 'ambush') {
-            return card.getAmbushCost();
-        }
-
-        return card.getCost();
     }
 
     markUsedReducers(playingType, card) {

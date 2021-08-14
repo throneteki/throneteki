@@ -2,12 +2,11 @@ const DrawCard = require('../../drawcard');
 
 class GiftsForTheWidow extends DrawCard {
     setupCardAbilities(ability) {
+        this.xValue({ min: () => 0, max: () => 99 });
+
         this.action({
             title: 'Search for attachment',
-            cost: [
-                ability.costs.kneelFactionCard(),
-                ability.costs.payXGold(() => 0, () => 99)
-            ],
+            cost: ability.costs.kneelFactionCard(),
             handler: context => {
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select an attachment',

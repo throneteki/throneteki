@@ -3,15 +3,16 @@ const {flatten} = require('../../../Array');
 
 class TheThingsIDoForLove extends DrawCard {
     setupCardAbilities(ability) {
+        this.xValue({
+            min: () => this.getMinimumCharCost(),
+            max: () => 99
+        });
+
         this.action({
             title: 'Return character to owner\'s hand',
             condition: () => this.controller.anyCardsInPlay(card => card.isFaction('lannister') && (card.hasTrait('Lord') || card.hasTrait('Lady'))),
             phase: 'challenge',
-            cost: [
-                ability.costs.kneelFactionCard(),
-                //There's no max aside from the player's gold which is handled in the cost function
-                ability.costs.payXGold(() => this.getMinimumCharCost(), () => 99)
-            ],
+            cost: ability.costs.kneelFactionCard(),
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.controller !== this.controller && card.getType() === 'character' &&
                                                   (context.xValue ? (card.getPrintedCost() <= context.xValue) : (card.getPrintedCost() <= this.controller.getSpendableGold()))

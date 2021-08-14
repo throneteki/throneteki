@@ -8,6 +8,7 @@ const StandCost = require('./costs/StandCost.js');
 const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
 const MovePowerFromFactionCost = require('./costs/MovePowerFromFactionCost');
 const DiscardFromDeckCost = require('./costs/DiscardFromDeckCost');
+const ReduceableGoldCost = require('./costs/ReduceableGoldCost');
 const {Tokens} = require('./Constants');
 
 const Costs = {
@@ -289,28 +290,7 @@ const Costs = {
      * matching reducer effects will expire, if applicable.
      */
     payReduceableGoldCost: function(playingType) {
-        return {
-            canPay: function(context) {
-                var hasDupe = context.player.getDuplicateInPlay(context.source);
-                if(hasDupe && playingType === 'marshal') {
-                    return true;
-                }
-
-                let reducedCost = context.player.getReducedCost(playingType, context.source);
-                return context.player.getSpendableGold({ playingType: playingType }) >= reducedCost;
-            },
-            pay: function(context) {
-                var hasDupe = context.player.getDuplicateInPlay(context.source);
-                context.costs.isDupe = !!hasDupe;
-                if(hasDupe && playingType === 'marshal') {
-                    context.costs.gold = 0;
-                } else {
-                    context.costs.gold = context.player.getReducedCost(playingType, context.source);
-                    context.game.spendGold({ amount: context.costs.gold, player: context.player, playingType: playingType });
-                    context.player.markUsedReducers(playingType, context.source);
-                }
-            }
-        };
+        return new ReduceableGoldCost({ playingType });
     },
     /**
      * Cost in which the player must pay a fixed, non-reduceable amount of gold.
@@ -343,7 +323,7 @@ const Costs = {
                 let gold = player.getSpendableGold({ playingType: 'play' });
                 let max = Math.min(maxFunc(context), gold + reduction);
 
-                context.game.queueStep(new XValuePrompt(minFunc(context), max, context, reduction));
+                context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
 
                 result.value = true;
                 result.resolved = true;

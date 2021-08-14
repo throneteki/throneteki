@@ -10,7 +10,9 @@ class ALionStillHasClaws extends DrawCard {
             targetController: 'current',
             effect: ability.effects.reduceSelfCost('play', () => this.numOfSchemePlotsRevealed())
         });
-        
+
+        this.xValue({ min: () => 0, max: () => 99 });
+
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.isMatch({
@@ -19,7 +21,6 @@ class ALionStillHasClaws extends DrawCard {
                     by5: true
                 })
             },
-            cost: ability.costs.payXGold(() => 0, () => 99),
             handler: context => {
                 this.context = context;
 

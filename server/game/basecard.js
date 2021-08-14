@@ -12,6 +12,7 @@ const EventRegistrar = require('./eventregistrar');
 const GameActions = require('./GameActions');
 const KeywordsProperty = require('./PropertyTypes/KeywordsProperty');
 const ReferenceCountedSetProperty = require('./PropertyTypes/ReferenceCountedSetProperty');
+const XValueDefinition = require('./XValueDefinition');
 const {Tokens} = require('./Constants');
 
 const ValidKeywords = [
@@ -273,6 +274,10 @@ class BaseCard {
     lastingEffect(propertyFactory) {
         let properties = propertyFactory(AbilityDsl);
         this.game.addEffect(this, Object.assign({ duration: 'custom', location: 'any' }, properties));
+    }
+
+    xValue({ max, min, value }) {
+        this.xValueDefinition = new XValueDefinition({ max, min, value});
     }
 
     doAction(player, arg) {
