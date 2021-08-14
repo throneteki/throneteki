@@ -375,16 +375,17 @@ const Costs = {
      * the passed maximum and the player's.
      */
     payXGold: function (minFunc, maxFunc) {
+        const playingType = 'ability';
         return {
             canPay: function (context) {
-                let reduction = context.player.getCostReduction('play', context.source);
+                let reduction = context.player.getCostReduction(playingType, context.source);
                 const payingPlayer = context.payingPlayer;
                 return payingPlayer.getSpendableGold() >= minFunc(context) - reduction;
             },
             resolve: function (context, result = { resolved: false }) {
-                let reduction = context.player.getCostReduction('play', context.source);
+                let reduction = context.player.getCostReduction(playingType, context.source);
                 const payingPlayer = context.payingPlayer;
-                let gold = payingPlayer.getSpendableGold({ playingType: 'play' });
+                let gold = payingPlayer.getSpendableGold({ playingType: playingType });
                 let max = Math.min(maxFunc(context), gold + reduction);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
@@ -395,12 +396,12 @@ const Costs = {
             },
             pay: function (context) {
                 const payingPlayer = context.payingPlayer;
-                const reduction = context.player.getCostReduction('play', context.source);
+                const reduction = context.player.getCostReduction(playingType, context.source);
                 context.costs.gold = Math.max(context.xValue - reduction, 0);
                 context.game.spendGold({
                     player: payingPlayer,
                     amount: context.costs.gold,
-                    playingType: 'play'
+                    playingType: playingType
                 });
                 context.player.markUsedReducers('play', context.source);
             }
