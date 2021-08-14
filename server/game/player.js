@@ -733,7 +733,12 @@ class Player extends Spectator {
 
             if (needsShadowEvent) {
                 event.addChildEvent(
-                    new Event('onCardOutOfShadows', { player: this, card: card, type: 'card' })
+                    new Event('onCardOutOfShadows', {
+                        player: this,
+                        card: card,
+                        type: 'card',
+                        xValue: options.xValue
+                    })
                 );
             }
 
