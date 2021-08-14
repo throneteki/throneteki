@@ -12,6 +12,7 @@ class Loot extends DrawCard {
                 afterChallenge: event => this.controller === event.challenge.winner && event.challenge.isUnopposed() &&
                                          this.getLoserDeckSize(event.challenge) >= 1
             },
+            payingPlayer: context => context.event.challenge.loser,
             handler: context => {
                 let opponent = context.event.challenge.loser;
                 opponent.discardFromDraw(context.xValue);
