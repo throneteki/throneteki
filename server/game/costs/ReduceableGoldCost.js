@@ -15,15 +15,15 @@ class ReduceableGoldCost {
         const card = context.source;
         const baseCost = this.getBaseCost(this.playingType, card);
         const reduction = context.player.getCostReduction(this.playingType, card);
+        const payingPlayer = context.payingPlayer;
+
         if (baseCost !== 'X') {
             const reducedCost = Math.max(baseCost - reduction, card.getMinCost());
-            return (
-                context.player.getSpendableGold({ playingType: this.playingType }) >= reducedCost
-            );
+            return payingPlayer.getSpendableGold({ playingType: this.playingType }) >= reducedCost;
         }
 
         const minValue = card.xValueDefinition.getMinValue(context);
-        return context.player.getSpendableGold() >= minValue - reduction;
+        return payingPlayer.getSpendableGold() >= minValue - reduction;
     }
 
     resolve(context, result = { resolved: false }) {
@@ -36,8 +36,8 @@ class ReduceableGoldCost {
         }
 
         const reduction = context.player.getCostReduction(this.playingType, context.source);
-        const player = context.player;
-        let gold = player.getSpendableGold({ playingType: this.playingType });
+        const payingPlayer = context.payingPlayer;
+        let gold = payingPlayer.getSpendableGold({ playingType: this.playingType });
         let maxXValue = context.source.xValueDefinition.getMaxValue(context);
         let max = Math.min(maxXValue, gold + reduction);
         let min = context.source.xValueDefinition.getMinValue(context);
@@ -67,7 +67,7 @@ class ReduceableGoldCost {
             }
             context.game.spendGold({
                 amount: context.costs.gold,
-                player: context.player,
+                player: context.payingPlayer,
                 playingType: this.playingType
             });
             context.player.markUsedReducers(this.playingType, context.source);

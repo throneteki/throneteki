@@ -372,20 +372,19 @@ const Costs = {
     },
     /**
      * Reducable cost where the player gets prompted to pay from a passed minimum up to the lesser of two values:
-     * the passed maximum and either the player's or the opponent's gold.
+     * the passed maximum and the player's.
      */
-    payXGold: function (minFunc, maxFunc, opponentFunc) {
-        const playerFunc = opponentFunc || ((context) => context.player);
+    payXGold: function (minFunc, maxFunc) {
         return {
             canPay: function (context) {
                 let reduction = context.player.getCostReduction('play', context.source);
-                const player = playerFunc(context);
-                return player.getSpendableGold() >= minFunc(context) - reduction;
+                const payingPlayer = context.payingPlayer;
+                return payingPlayer.getSpendableGold() >= minFunc(context) - reduction;
             },
             resolve: function (context, result = { resolved: false }) {
                 let reduction = context.player.getCostReduction('play', context.source);
-                const player = playerFunc(context);
-                let gold = player.getSpendableGold({ playingType: 'play' });
+                const payingPlayer = context.payingPlayer;
+                let gold = payingPlayer.getSpendableGold({ playingType: 'play' });
                 let max = Math.min(maxFunc(context), gold + reduction);
 
                 context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
@@ -395,10 +394,14 @@ const Costs = {
                 return result;
             },
             pay: function (context) {
-                const player = playerFunc(context);
+                const payingPlayer = context.payingPlayer;
                 const reduction = context.player.getCostReduction('play', context.source);
                 context.costs.gold = Math.max(context.xValue - reduction, 0);
-                context.game.spendGold({ player, amount: context.costs.gold, playingType: 'play' });
+                context.game.spendGold({
+                    player: payingPlayer,
+                    amount: context.costs.gold,
+                    playingType: 'play'
+                });
                 context.player.markUsedReducers('play', context.source);
             }
         };
