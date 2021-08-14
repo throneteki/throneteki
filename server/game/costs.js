@@ -8,6 +8,7 @@ import StandCost from './costs/StandCost.js';
 import MoveTokenFromSelfCost from './costs/MoveTokenFromSelfCost.js';
 import MovePowerFromFactionCost from './costs/MovePowerFromFactionCost.js';
 import DiscardFromDeckCost from './costs/DiscardFromDeckCost.js';
+import ReduceableGoldCost from './costs/ReduceableGoldCost.js';
 import { Tokens } from './Constants/index.js';
 import MovePowerFromCardCost from './costs/MovePowerFromCardCost.js';
 
@@ -349,32 +350,7 @@ const Costs = {
      * matching reducer effects will expire, if applicable.
      */
     payReduceableGoldCost: function (playingType) {
-        return {
-            canPay: function (context) {
-                var hasDupe = context.player.getDuplicateInPlay(context.source);
-                if (hasDupe && playingType === 'marshal') {
-                    return true;
-                }
-
-                let reducedCost = context.player.getReducedCost(playingType, context.source);
-                return context.player.getSpendableGold({ playingType: playingType }) >= reducedCost;
-            },
-            pay: function (context) {
-                var hasDupe = context.player.getDuplicateInPlay(context.source);
-                context.costs.isDupe = !!hasDupe;
-                if (hasDupe && playingType === 'marshal') {
-                    context.costs.gold = 0;
-                } else {
-                    context.costs.gold = context.player.getReducedCost(playingType, context.source);
-                    context.game.spendGold({
-                        amount: context.costs.gold,
-                        player: context.player,
-                        playingType: playingType
-                    });
-                    context.player.markUsedReducers(playingType, context.source);
-                }
-            }
-        };
+        return new ReduceableGoldCost({ playingType });
     },
     /**
      * Cost in which the player must pay a fixed, non-reduceable amount of gold.
@@ -398,13 +374,13 @@ const Costs = {
      * Reducable cost where the player gets prompted to pay from a passed minimum up to the lesser of two values:
      * the passed maximum and either the player's or the opponent's gold.
      */
-    payXGold: function(minFunc, maxFunc, opponentFunc) {
+    payXGold: function (minFunc, maxFunc, opponentFunc) {
         const playerFunc = opponentFunc || ((context) => context.player);
         return {
             canPay: function (context) {
                 let reduction = context.player.getCostReduction('play', context.source);
                 const player = playerFunc(context);
-                return player.getSpendableGold() >= (minFunc(context) - reduction);
+                return player.getSpendableGold() >= minFunc(context) - reduction;
             },
             resolve: function (context, result = { resolved: false }) {
                 let reduction = context.player.getCostReduction('play', context.source);
@@ -412,13 +388,13 @@ const Costs = {
                 let gold = player.getSpendableGold({ playingType: 'play' });
                 let max = Math.min(maxFunc(context), gold + reduction);
 
-                context.game.queueStep(new XValuePrompt(minFunc(context), max, context, reduction));
+                context.game.queueStep(new XValuePrompt(minFunc(context), max, context));
 
                 result.value = true;
                 result.resolved = true;
                 return result;
             },
-            pay: function(context) {
+            pay: function (context) {
                 const player = playerFunc(context);
                 const reduction = context.player.getCostReduction('play', context.source);
                 context.costs.gold = Math.max(context.xValue - reduction, 0);

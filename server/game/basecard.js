@@ -11,6 +11,7 @@ import EventRegistrar from './eventregistrar.js';
 import GameActions from './GameActions/index.js';
 import KeywordsProperty from './PropertyTypes/KeywordsProperty.js';
 import ReferenceCountedSetProperty from './PropertyTypes/ReferenceCountedSetProperty.js';
+import XValueDefinition from './XValueDefinition.js';
 import { Tokens } from './Constants/index.js';
 
 const ValidKeywords = [
@@ -304,6 +305,10 @@ class BaseCard {
             this,
             Object.assign({ duration: 'custom', location: 'any' }, properties)
         );
+    }
+
+    xValue({ max, min, value }) {
+        this.xValueDefinition = new XValueDefinition({ max, min, value });
     }
 
     doAction(player, arg) {
