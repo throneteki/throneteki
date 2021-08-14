@@ -85,7 +85,13 @@ class KeywordsProperty {
         let pattern = `${keywordName} \\(?(\\w+)\\)?`;
         let matches = this.data.getValues().map(keyword => keyword.match(pattern));
 
-        return matches.filter(match => !!match).map(match => isNaN(match[1]) ? 0 : parseInt(match[1]));
+        return matches.filter(match => !!match).map(match => {
+            if(match[1] === 'x') {
+                return 'X';
+            }
+
+            return isNaN(match[1]) ? 0 : parseInt(match[1]);
+        });
     }
 
     safeReduce(values, func) {

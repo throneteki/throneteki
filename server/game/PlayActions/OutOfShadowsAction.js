@@ -29,7 +29,7 @@ class OutOfShadowsAction extends BaseAbility {
         } else {
             context.game.addMessage('{0} brings {1} out of shadows (card #{2}) costing {3} gold', context.player, context.source, position, context.costs.gold);
         }
-        context.player.putIntoPlay(context.source, 'outOfShadows');
+        context.player.putIntoPlay(context.source, 'outOfShadows', { xValue: context.xValue });
     }
 }
 

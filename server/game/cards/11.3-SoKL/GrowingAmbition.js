@@ -1,11 +1,12 @@
 const DrawCard = require('../../drawcard');
 
 class GrowingAmbition extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({ min: () => 1, max: context => context.player.drawDeck.length });
+
         this.action({
             title: 'Search deck',
             phase: 'challenge',
-            cost: ability.costs.payXGold(() => 1, () => this.controller.drawDeck.length),
             chooseOpponent: true,
             handler: context => {
                 this.chosenCards = [];

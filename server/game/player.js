@@ -616,7 +616,7 @@ class Player extends Spectator {
             let event = new Event('onCardEntersPlay', { card: card, playingType: playingType, originalLocation: originalLocation });
 
             if(needsShadowEvent) {
-                event.addChildEvent(new Event('onCardOutOfShadows', { player: this, card: card, type: 'card' }));
+                event.addChildEvent(new Event('onCardOutOfShadows', { player: this, card: card, type: 'card', xValue: options.xValue }));
             }
 
             this.game.resolveEvent(event);
