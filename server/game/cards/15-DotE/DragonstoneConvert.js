@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard');
 
 class DragonstoneConvert extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Prevent event',
             phase: 'challenge',
@@ -13,7 +13,8 @@ class DragonstoneConvert extends DrawCard {
                     onSelect: (player, cardName) => this.selectCardName(player, cardName),
                     source: this
                 });
-            }
+            },
+            limit: ability.limit.perPhase(1)
         });
     }
 
