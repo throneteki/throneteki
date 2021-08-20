@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard');
 
 class TheFowlerTwins extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             title: 'Force participant',
             target: {
@@ -20,7 +20,8 @@ class TheFowlerTwins extends DrawCard {
                         ability.effects.mustBeDeclaredAsDefender()
                     ]
                 }));
-            }
+            },
+            limit: ability.limit.perPhase(1)
         });
     }
 }
