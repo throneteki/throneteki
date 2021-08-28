@@ -9,7 +9,6 @@ class FreshRecruits extends DrawCard {
             title: 'Search deck',
             gameAction: GameActions.search({
                 title: 'Select cards',
-                topCards: 10,
                 numToSelect: 3,
                 match: {
                     type: 'character',
