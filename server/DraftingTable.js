@@ -1,13 +1,11 @@
-const lodashShuffle = require('lodash.shuffle');
 const DraftingPlayer = require('./DraftingPlayer');
 class DraftingTable {
-    constructor({ playerNames, cardPool, deckService, event, numCardsPerRound = 15, numOfRounds, shuffle = lodashShuffle, starterCards }) {
-        this.cubeDeck = shuffle(cardPool);
+    constructor({ playerNames, deckService, draftCube, event, numOfRounds, starterCards }) {
         this.currentRound = 1;
         this.deckService = deckService;
         this.event = event;
-        this.numCardsPerRound = numCardsPerRound;
         this.numOfRounds = numOfRounds;
+        this.packs = draftCube.generatePacks();
         this.players = playerNames.map(name => new DraftingPlayer({ name, starterCards }));
         this.rotateClockwise = true;
     }
@@ -18,7 +16,7 @@ class DraftingTable {
 
     drawHands() {
         for(const player of this.players) {
-            const hand = this.cubeDeck.splice(0, this.numCardsPerRound);
+            const hand = this.packs.shift();
             player.receiveNewHand(hand);
         }
     }

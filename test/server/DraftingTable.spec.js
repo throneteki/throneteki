@@ -2,22 +2,28 @@ const DraftingTable = require('../../server/DraftingTable.js');
 
 describe('DraftingTable', function() {
     beforeEach(function() {
-        this.cubeDeck = ['card1', 'card2', 'card3', 'card4', 'card5', 'card6', 'card7', 'card8', 'card9', 'card10', 'card11', 'card12'];
-        this.shuffleFunc = jasmine.createSpy('shuffle');
-        this.shuffleFunc.and.callFake(deck => deck);
+        this.draftCubeSpy = jasmine.createSpyObj('draftCube', ['generatePacks']);
+        this.draftCubeSpy.generatePacks.and.callFake(() => {
+            return [
+                ['card1', 'card2'],
+                ['card3', 'card4'],
+                ['card5', 'card6'],
+                ['card7', 'card8'],
+                ['card9', 'card10'],
+                ['card11', 'card12']
+            ];
+        });
         this.deckServiceSpy = jasmine.createSpyObj('deckService', ['create']);
         this.draftingTable = new DraftingTable({
-            cardPool: this.cubeDeck,
             deckService: this.deckServiceSpy,
+            draftCube: this.draftCubeSpy,
             event: {
                 _id: 'event-id',
                 name: 'Event 2021'
             },
             numOfRounds: 2,
-            numCardsPerRound: 2,
             playerNames: ['player1', 'player2', 'player3'],
-            starterCards: ['starter1', 'starter2', 'starter3'],
-            shuffle: this.shuffleFunc
+            starterCards: ['starter1', 'starter2', 'starter3']
         });
         this.player1 = this.draftingTable.getPlayer('player1');
         this.player2 = this.draftingTable.getPlayer('player2');
@@ -25,8 +31,8 @@ describe('DraftingTable', function() {
     });
 
     describe('constructor', function() {
-        it('shuffles the cube deck', function() {
-            expect(this.shuffleFunc).toHaveBeenCalledWith(this.cubeDeck);
+        it('generates packs from the cube deck', function() {
+            expect(this.draftCubeSpy.generatePacks).toHaveBeenCalled();
         });
 
         it('immediately adds the starter cards to each player\'s deck', function() {
