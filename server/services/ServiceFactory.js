@@ -4,6 +4,7 @@ const ConfigService = require('./ConfigService');
 const UserService = require('./UserService');
 const BanlistService = require('./BanlistService');
 const EventService = require('./EventService');
+const DraftCubeService = require('./DraftCubeService');
 
 let services = {};
 
@@ -49,5 +50,12 @@ module.exports = {
         }
 
         return services.eventService;
+    },
+    draftCubeService: (db) => {
+        if(!services.draftCubeService) {
+            services.draftCubeService = new DraftCubeService(db);
+        }
+
+        return services.draftCubeService;
     }
 };
