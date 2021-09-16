@@ -277,10 +277,6 @@ class EventEditor extends React.Component {
                         onChange={ this.onEventGameOptionCheckboxChange.bind(this, 'showHand') } checked={ this.state.eventGameOptions.showHand } />
                     }
                     { this.state.useEventGameOptions
-                    && <Checkbox name='useRookery' label='Rookery format' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
-                        onChange={ this.onEventGameOptionCheckboxChange.bind(this, 'useRookery') } checked={ this.state.eventGameOptions.useRookery } />
-                    }
-                    { this.state.useEventGameOptions
                     && <Checkbox name='useGameTimeLimit' label='Use a time limit (in minutes)' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
                         onChange={ this.onEventGameOptionCheckboxChange.bind(this, 'useGameTimeLimit') } checked={ this.state.eventGameOptions.useGameTimeLimit } />
                     }

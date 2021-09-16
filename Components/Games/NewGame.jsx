@@ -14,7 +14,6 @@ class NewGame extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handleRookeryClick = this.handleRookeryClick.bind(this);
         this.onCancelClick = this.onCancelClick.bind(this);
         this.onSubmitClick = this.onSubmitClick.bind(this);
         this.onNameChange = this.onNameChange.bind(this);
@@ -40,7 +39,6 @@ class NewGame extends React.Component {
             selectedGameFormat: 'joust',
             selectedGameType: 'casual',
             password: '',
-            useRookery: false,
             useGameTimeLimit: false,
             gameTimeLimit: 55,
             muteSpectators: false,
@@ -52,10 +50,6 @@ class NewGame extends React.Component {
     componentWillMount() {
         this.props.loadEvents();
         this.setState({ gameName: this.props.defaultGameName });
-    }
-
-    handleRookeryClick(event) {
-        this.setState({ useRookery: event.target.checked });
     }
 
     onCancelClick(event) {
@@ -88,15 +82,12 @@ class NewGame extends React.Component {
             this.setState({ optionsLocked: true });
             if(selectedEvent.eventGameOptions.spectators !== undefined) {
                 this.setState({ spectators: selectedEvent.eventGameOptions.spectators });
-            }                
+            }
             if(selectedEvent.eventGameOptions.muteSpectators !== undefined) {
                 this.setState({ muteSpectators: selectedEvent.eventGameOptions.muteSpectators });
             }
             if(selectedEvent.eventGameOptions.showHand !== undefined) {
                 this.setState({ showHand: selectedEvent.eventGameOptions.showHand });
-            }
-            if(selectedEvent.eventGameOptions.useRookery !== undefined) {
-                this.setState({ useRookery: selectedEvent.eventGameOptions.useRookery });
             }
             if(selectedEvent.eventGameOptions.useGameTimeLimit !== undefined) {
                 this.setState({ useGameTimeLimit: selectedEvent.eventGameOptions.useGameTimeLimit });
@@ -157,7 +148,6 @@ class NewGame extends React.Component {
             gameType: this.state.selectedGameType,
             isMelee: this.state.selectedGameFormat === 'melee',
             password: this.state.password,
-            useRookery: this.state.useRookery,
             quickJoin: this.props.quickJoin,
             useGameTimeLimit: this.state.useGameTimeLimit,
             gameTimeLimit: this.state.gameTimeLimit,
@@ -209,12 +199,6 @@ class NewGame extends React.Component {
                 <label>
                     <input type='checkbox' onChange={ this.onShowHandClick } checked={ this.state.showHand } disabled={ this.state.optionsLocked }/>
                     Show hands to spectators
-                </label>
-            </div>
-            <div className='checkbox col-sm-8'>
-                <label>
-                    <input type='checkbox' onChange={ this.handleRookeryClick } checked={ this.state.useRookery } disabled={ this.state.optionsLocked }/>
-                    Rookery format
                 </label>
             </div>
             <div className='checkbox col-sm-12'>

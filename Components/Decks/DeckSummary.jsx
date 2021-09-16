@@ -73,16 +73,6 @@ class DeckSummary extends React.Component {
             }
         }
 
-        if(this.props.deck.rookeryCards) {
-            for(const card of this.props.deck.rookeryCards) {
-                if(!groupedCards['Rookery']) {
-                    groupedCards['Rookery'] = [card];
-                } else {
-                    groupedCards['Rookery'].push(card);
-                }
-            }
-        }
-
         for(const [key, cardList] of Object.entries(groupedCards)) {
             let cards = [];
             let count = 0;

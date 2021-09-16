@@ -19,7 +19,6 @@ class DeckEditor extends React.Component {
         this.state = {
             bannerCards: [],
             cardList: '',
-            rookeryList: '',
             deckName: 'New Deck',
             drawCards: [],
             faction: props.factions && props.factions['baratheon'],
@@ -43,10 +42,8 @@ class DeckEditor extends React.Component {
             this.state.agenda = props.deck.agenda;
             this.state.showBanners = this.isAllianceAgenda(props.deck.agenda);
             this.state.status = props.deck.status;
-            this.state.rookeryCards = props.deck.rookeryCards || [];
 
             let cardList = '';
-            let rookeryList = '';
             for(const card of props.deck.drawCards) {
                 cardList += this.formatCardListItem(card) + '\n';
             }
@@ -56,12 +53,6 @@ class DeckEditor extends React.Component {
             }
 
             this.state.cardList = cardList;
-
-            for(const rookery of this.state.rookeryCards) {
-                rookeryList += this.formatCardListItem(rookery) + '\n';
-            }
-
-            this.state.rookeryList = rookeryList;
         }
     }
 
@@ -83,8 +74,7 @@ class DeckEditor extends React.Component {
             agenda: this.state.agenda,
             bannerCards: this.state.bannerCards,
             plotCards: this.state.plotCards,
-            drawCards: this.state.drawCards,
-            rookeryCards: this.state.rookeryCards
+            drawCards: this.state.drawCards
         };
 
         if(!this.props.restrictedList && !this.props.currentRestrictedList) {
@@ -209,35 +199,6 @@ class DeckEditor extends React.Component {
             this.addCard(cards, this.state.cardToAdd, parseInt(this.state.numberToAdd));
             this.setState({ cardList: cardList, drawCards: cards }, this.triggerDeckUpdated);
         }
-    }
-
-    onAddRookeryCard(event) {
-        event.preventDefault();
-
-        if(!this.state.cardToAdd || !this.state.cardToAdd.label) {
-            return;
-        }
-
-        let rookeryList = this.state.rookeryList;
-        rookeryList += `${this.state.numberToAdd}  ${this.state.cardToAdd.label}\n`;
-
-        let cards = this.state.rookeryCards || [];
-        this.addCard(cards, this.state.cardToAdd, parseInt(this.state.numberToAdd));
-        this.setState({ rookeryList: rookeryList, rookeryCards: cards }, this.triggerDeckUpdated);
-    }
-
-    onRookeryListChange(event) {
-        let split = event.target.value.split('\n');
-        let rookeryCards = [];
-
-        for(const line of split) {
-            let { card, count } = this.parseCardLine(line);
-            if(card) {
-                this.addCard(rookeryCards, card, count);
-            }
-        }
-
-        this.setState({ rookeryList: event.target.value, rookeryCards: rookeryCards }, this.triggerDeckUpdated);
     }
 
     onCardListChange(event) {
@@ -418,21 +379,15 @@ class DeckEditor extends React.Component {
                             value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) } noGroup>
                             <div className='col-xs-1 no-x-padding'>
                                 <div className='btn-group'>
-                                    <button className='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                                        Add <span className='caret' />
+                                    <button className='btn btn-primary' onClick={ this.onAddCard.bind(this) }>
+                                        Add
                                     </button>
-                                    <ul className='dropdown-menu'>
-                                        <li><a href='#' onClick={ this.onAddCard.bind(this) }>Add to deck</a></li>
-                                        <li><a href='#' onClick={ this.onAddRookeryCard.bind(this) }>Add to rookery</a></li>
-                                    </ul>
                                 </div>
                             </div>
                         </Input>
                     </Typeahead>
                     <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.cardList }
                         onChange={ this.onCardListChange.bind(this) } />
-                    <TextArea label='Rookery' labelClass='col-sm-3' fieldClass='col-sm-9' rows='4' value={ this.state.rookeryList }
-                        onChange={ this.onRookeryListChange.bind(this) } />
 
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
