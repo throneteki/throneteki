@@ -1,6 +1,6 @@
 const logger = require('../log.js');
 
-class DeckService {
+class DraftCubeService {
     constructor(db) {
         this.draftCubes = db.get('draftCubes');
     }
@@ -52,5 +52,5 @@ class DeckService {
     }
 }
 
-module.exports = DeckService;
+module.exports = DraftCubeService;
 
