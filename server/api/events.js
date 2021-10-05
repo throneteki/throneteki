@@ -3,6 +3,37 @@ const passport = require('passport');
 const { wrapAsync } = require('../util');
 const ServiceFactory = require('../services/ServiceFactory.js');
 
+function extractEventFromRequest(req) {
+    const {
+        banned,
+        defaultRestrictedList,
+        draftOptions,
+        eventGameOptions,
+        format,
+        name,
+        restricted,
+        restrictSpectators,
+        useDefaultRestrictedList,
+        useEventGameOptions,
+        validSpectators
+    } = req.body.event;
+    return {
+        id: req.params.id,
+        banned,
+        defaultRestrictedList,
+        draftOptions,
+        eventGameOptions,
+        format,
+        name,
+        pods: [],
+        restricted,
+        restrictSpectators,
+        useDefaultRestrictedList,
+        useEventGameOptions,
+        validSpectators
+    };
+}
+
 module.exports.init = function(server, options) {
     const eventService = ServiceFactory.eventService(options.db);
 
@@ -17,8 +48,7 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, useDefaultRestrictedList, defaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, restrictSpectators, validSpectators } = req.body.event;
-        const event = { name, useDefaultRestrictedList, defaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, pods: [], restrictSpectators, validSpectators };
+        const event = extractEventFromRequest(req);
 
         eventService.create(event)
             .then(e => {
@@ -34,20 +64,7 @@ module.exports.init = function(server, options) {
             return res.status(403).send({ message: 'Forbidden' });
         }
 
-        const { name, useDefaultRestrictedList, defaultRestrictedList, useEventGameOptions, eventGameOptions, restricted, banned, restrictSpectators, validSpectators } = req.body.event;
-        const event = {
-            id: req.params.id,
-            name,
-            useDefaultRestrictedList,
-            defaultRestrictedList,
-            useEventGameOptions,
-            eventGameOptions,
-            restricted,
-            banned,
-            pods: [],
-            restrictSpectators,
-            validSpectators
-        };
+        const event = extractEventFromRequest(req);
 
         eventService.update(event)
             .then(e => {
