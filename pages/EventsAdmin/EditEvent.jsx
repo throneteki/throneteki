@@ -7,8 +7,9 @@ import EventEditor from './EventEditor';
 
 class EditEvent extends React.Component {
     componentWillMount() {
-        const {loadEventEditor, eventId} = this.props;
+        const {loadDraftCubes, loadEventEditor, eventId} = this.props;
 
+        loadDraftCubes();
         loadEventEditor(eventId);
     }
 
@@ -19,9 +20,9 @@ class EditEvent extends React.Component {
     }
 
     render() {
-        const { apiState, cards, eventId, events, navigate, packs, saveEvent, restrictedLists } = this.props;
+        const { apiState, cards, draftCubes, eventId, events, navigate, packs, saveEvent, restrictedLists } = this.props;
 
-        if(!cards || !packs || !events || !restrictedLists) {
+        if(!cards || !packs || !events || !restrictedLists || !draftCubes) {
             return <div>Please wait while loading from the server...</div>;
         }
 
@@ -29,6 +30,7 @@ class EditEvent extends React.Component {
             <EventEditor { ...{
                 apiState,
                 cards,
+                draftCubes,
                 event: events.find(event => event._id === eventId),
                 navigate,
                 packs,
@@ -43,8 +45,10 @@ EditEvent.displayName = 'EditEvent';
 EditEvent.propTypes = {
     apiState: PropTypes.object,
     cards: PropTypes.object,
+    draftCubes: PropTypes.array,
     eventId: PropTypes.string,
     events: PropTypes.array,
+    loadDraftCubes: PropTypes.func,
     loadEventEditor: PropTypes.func,
     navigate: PropTypes.func,
     packs: PropTypes.array,
@@ -56,6 +60,7 @@ function mapStateToProps(state) {
     return {
         apiState: state.api.SAVE_EVENT,
         cards: state.cards.cards,
+        draftCubes: state.events.draftCubes,
         events: state.events.events,
         eventSaved: state.events.eventSaved,
         loading: state.api.loading,

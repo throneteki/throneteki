@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Input from '../../Components/Form/Input';
 import Checkbox from '../../Components/Form/Checkbox';
+import Select from '../../Components/Form/Select';
 import Typeahead from '../../Components/Form/Typeahead';
 import TextArea from '../../Components/Form/TextArea';
 import ApiStatus from '../../Components/Site/ApiStatus';
-import RestrictedListDropdown from '../../Components/Decks/RestrictedListDropdown';
 
 class EventEditor extends React.Component {
     constructor(props) {
@@ -14,20 +14,23 @@ class EventEditor extends React.Component {
 
         let event = {};
         event = Object.assign(event, {
-            useDefaultRestrictedList: false,
-            defaultRestrictedList: undefined,
-            useEventGameOptions: false, 
-            eventGameOptions: {}, 
-            restricted: [], 
-            banned: [], 
-            restrictSpectators: false, 
-            validSpectators: [] 
+            draftOptions: {
+                draftCubeId: props.draftCubes.length > 0 && props.draftCubes[0]._id,
+                numOfRounds: 3
+            },
+            format: 'standard',
+            useEventGameOptions: false,
+            eventGameOptions: {},
+            restricted: [],
+            banned: [],
+            restrictSpectators: false,
+            validSpectators: []
         }, props.event);
         this.state = {
             eventId: event._id,
             name: event.name,
-            useDefaultRestrictedList: event.useDefaultRestrictedList,
-            defaultRestrictedList: event.defaultRestrictedList,
+            draftOptions: event.draftOptions,
+            format: event.format,
             restricted: event.restricted,
             banned: event.banned,
             restrictedListText: this.formatListTextForCards(props.cards, event.restricted),
@@ -41,11 +44,20 @@ class EventEditor extends React.Component {
     }
 
     getEventFromState() {
+        let defaultRestrictedList = null;
+        if(this.state.format === 'standard') {
+            defaultRestrictedList = this.props.restrictedLists.find(rl => rl.cardSet === 'redesign').name;
+        } else if(this.state.format === 'valyrian') {
+            defaultRestrictedList = this.props.restrictedLists.find(rl => rl.cardSet === 'original').name;
+        }
+
         return {
             _id: this.state.eventId,
             name: this.state.name,
-            useDefaultRestrictedList: this.state.useDefaultRestrictedList,
-            defaultRestrictedList: this.state.defaultRestrictedList,
+            draftOptions: this.state.draftOptions,
+            format: this.state.format,
+            useDefaultRestrictedList: ['draft', 'standard', 'valyrian'].includes(this.state.format),
+            defaultRestrictedList,
             useEventGameOptions: this.state.useEventGameOptions,
             eventGameOptions: this.state.eventGameOptions,
             restricted: this.state.restricted,
@@ -84,7 +96,14 @@ class EventEditor extends React.Component {
     onChange(field, event) {
         let state = this.state;
 
-        state[field] = event.target.value;
+        const value = event.target ? event.target.value : event.value;
+
+        const fields = field.split('.');
+        if(fields.length === 1) {
+            state[field] = value;
+        } else {
+            state[fields[0]][fields[1]] = value;
+        }
 
         this.setState({ state });
     }
@@ -109,14 +128,6 @@ class EventEditor extends React.Component {
         let state = this.state;
 
         state['eventGameOptions'][field] = event.target.checked;
-
-        this.setState({ state });
-    }
-
-    onDefaultRestrictedListChange(restrictedList) {
-        let state = this.state;
-
-        state.defaultRestrictedList = restrictedList.name;
 
         this.setState({ state });
     }
@@ -234,13 +245,14 @@ class EventEditor extends React.Component {
     render() {
         const allCards = Object.values(this.props.cards);
 
-        //filter restrictedLists to the official ones, as we do not want an event to use the RL of an event as its default RL
-        const restrictedListDropdown = (
-            <RestrictedListDropdown
-                currentRestrictedList={ this.props.restrictedLists.find(rl => rl.name === this.state.defaultRestrictedList) }
-                onChange={ (restrictedList) => this.onDefaultRestrictedListChange(restrictedList) }
-                restrictedLists={ this.props.restrictedLists.filter(rl => rl.official) } /> 
-        );
+        const standardRL = this.props.restrictedLists.find(rl => rl.official && rl.cardSet === 'redesign');
+        const valyrianRL = this.props.restrictedLists.find(rl => rl.official && rl.cardSet === 'original');
+        const formats = [
+            { name: standardRL.name, value: 'standard' },
+            { name: valyrianRL.name, value: 'valyrian' },
+            { name: 'Draft', value: 'draft' },
+            { name: 'Custom Joust', value: 'custom-joust' }
+        ];
 
         return (
             <div>
@@ -249,15 +261,13 @@ class EventEditor extends React.Component {
                 <form className='form form-horizontal'>
                     <Input name='name' label='Event Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Event Name'
                         type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.name } />
-                    <Checkbox name='useDefaultRestrictedList' label='Use default Restricted List' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
-                        onChange={ this.onCheckboxChange.bind(this, 'useDefaultRestrictedList') } checked={ this.state.useDefaultRestrictedList } />
-                    { this.state.useDefaultRestrictedList
-                    && <div className='form-group'>
-                        <div className='col-sm-offset-3'>
-                            { restrictedListDropdown }
-                        </div>
-                    </div>
-                    }
+                    <Select
+                        label='Format'
+                        labelClass='col-sm-3'
+                        fieldClass='col-sm-9'
+                        options={ formats }
+                        value={ this.state.format }
+                        onChange={ this.onChange.bind(this, 'format') } />
 
                     <div className='form-group'>
                         <label className='col-sm-3 col-xs-2 control-label'>Event Game Options</label>
@@ -280,7 +290,7 @@ class EventEditor extends React.Component {
                     && <Checkbox name='useGameTimeLimit' label='Use a time limit (in minutes)' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
                         onChange={ this.onEventGameOptionCheckboxChange.bind(this, 'useGameTimeLimit') } checked={ this.state.eventGameOptions.useGameTimeLimit } />
                     }
-                    { this.state.useEventGameOptions && this.state.eventGameOptions.useGameTimeLimit 
+                    { this.state.useEventGameOptions && this.state.eventGameOptions.useGameTimeLimit
                     && <Input name='gameTimeLimit' label='Timelimit in minutes' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Timelimit in minutes'
                         type='number' onChange={ this.onEventGameOptionChange.bind(this, 'gameTimeLimit') } value={ this.state.eventGameOptions.gameTimeLimit } />
                     }
@@ -288,7 +298,7 @@ class EventEditor extends React.Component {
                     && <Checkbox name='useChessClocks' label='Use chess clocks with a time limit per player (in minutes)' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
                         onChange={ this.onEventGameOptionCheckboxChange.bind(this, 'useChessClocks') } checked={ this.state.eventGameOptions.useChessClocks } />
                     }
-                    { this.state.useEventGameOptions && this.state.eventGameOptions.useChessClocks 
+                    { this.state.useEventGameOptions && this.state.eventGameOptions.useChessClocks
                     && <Input name='chessClockTimeLimit' label='Timelimit in minutes' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Timelimit in minutes'
                         type='number' onChange={ this.onEventGameOptionChange.bind(this, 'chessClockTimeLimit') } value={ this.state.eventGameOptions.chessClockTimeLimit } />
                     }
@@ -306,28 +316,46 @@ class EventEditor extends React.Component {
                     && <TextArea label='Valid Spectators' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.validSpectatorsText }
                         onChange={ event => this.handleUserListChange({ event, textProperty: 'validSpectatorsText', arrayProperty: 'validSpectators' }) } />
                     }
-
-                    <div className='form-group'>
-                        <label className='col-sm-3 col-xs-2 control-label'>Custom Restricted/Banned List</label>
-                    </div>
-                    <Typeahead label='Card' labelClass={ 'col-sm-3 col-xs-2' } fieldClass='col-sm-4 col-xs-5' labelKey={ 'label' } options={ allCards }
-                        onChange={ this.addCardChange.bind(this) }>
-                        <div className='col-xs-1 no-x-padding'>
-                            <div className='btn-group'>
-                                <button className='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                                    Add <span className='caret' />
-                                </button>
-                                <ul className='dropdown-menu'>
-                                    <li><a href='#' onClick={ event => this.handleAddCard({ event, textProperty: 'restrictedListText', arrayProperty: 'restricted' }) }>Add to restricted</a></li>
-                                    <li><a href='#' onClick={ event => this.handleAddCard({ event, textProperty: 'bannedListText', arrayProperty: 'banned' }) }>Add to banned</a></li>
-                                </ul>
-                            </div>
+                    { this.state.format === 'draft' && (<div>
+                        <Select
+                            label='Draft Cube'
+                            labelClass='col-sm-3'
+                            fieldClass='col-sm-9'
+                            options={ this.props.draftCubes.map(draftCube => ({ value: draftCube._id, name: draftCube.name })) }
+                            value={ this.state.draftOptions.draftCubeId }
+                            onChange={ this.onChange.bind(this, 'draftOptions.draftCubeId') } />
+                        <Input
+                            name='numOfRounds'
+                            label='Num of Rounds'
+                            labelClass='col-sm-3'
+                            fieldClass='col-sm-9'
+                            type='text'
+                            value={ this.state.draftOptions.numOfRounds }
+                            onChange={ this.onChange.bind(this, 'draftOptions.numOfRounds') } />
+                    </div>) }
+                    { this.state.format === 'custom-joust' && (<div>
+                        <div className='form-group'>
+                            <label className='col-sm-3 col-xs-2 control-label'>Custom Restricted/Banned List</label>
                         </div>
-                    </Typeahead>
-                    <TextArea label='Restricted List' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.restrictedListText }
-                        onChange={ event => this.handleCardListChange({ event, textProperty: 'restrictedListText', arrayProperty: 'restricted' }) } />
-                    <TextArea label='Banned List' labelClass='col-sm-3' fieldClass='col-sm-9' rows='4' value={ this.state.bannedListText }
-                        onChange={ event => this.handleCardListChange({ event, textProperty: 'bannedListText', arrayProperty: 'banned' }) } />
+                        <Typeahead label='Card' labelClass={ 'col-sm-3 col-xs-2' } fieldClass='col-sm-4 col-xs-5' labelKey={ 'label' } options={ allCards }
+                            onChange={ this.addCardChange.bind(this) }>
+                            <div className='col-xs-1 no-x-padding'>
+                                <div className='btn-group'>
+                                    <button className='btn btn-primary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                        Add <span className='caret' />
+                                    </button>
+                                    <ul className='dropdown-menu'>
+                                        <li><a href='#' onClick={ event => this.handleAddCard({ event, textProperty: 'restrictedListText', arrayProperty: 'restricted' }) }>Add to restricted</a></li>
+                                        <li><a href='#' onClick={ event => this.handleAddCard({ event, textProperty: 'bannedListText', arrayProperty: 'banned' }) }>Add to banned</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </Typeahead>
+                        <TextArea label='Restricted List' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.restrictedListText }
+                            onChange={ event => this.handleCardListChange({ event, textProperty: 'restrictedListText', arrayProperty: 'restricted' }) } />
+                        <TextArea label='Banned List' labelClass='col-sm-3' fieldClass='col-sm-9' rows='4' value={ this.state.bannedListText }
+                            onChange={ event => this.handleCardListChange({ event, textProperty: 'bannedListText', arrayProperty: 'banned' }) } />
+                    </div>) }
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
                             <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.handleSaveClick.bind(this) }>Save { this.props.apiState && this.props.apiState.loading && <span className='spinner button-spinner' /> }</button>
@@ -344,6 +372,7 @@ EventEditor.displayName = 'EventEditor';
 EventEditor.propTypes = {
     apiState: PropTypes.object,
     cards: PropTypes.object,
+    draftCubes: PropTypes.array,
     event: PropTypes.object,
     navigate: PropTypes.func,
     onEventSave: PropTypes.func,
