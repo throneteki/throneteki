@@ -97,6 +97,10 @@ class User {
         return 'user';
     }
 
+    get avatar() {
+        return this.userData && this.userData.settings && this.userData.settings.avatar;
+    }
+
     get patreon() {
         return this.userData.patreon;
     }
@@ -127,13 +131,13 @@ class User {
     getWireSafeDetails() {
         let user = {
             _id: this.userData._id,
-            username: this.userData.username,
+            avatar: this.userData.settings && this.userData.settings.avatar,
             email: this.userData.email,
-            settings: this.userData.settings,
-            promptedActionWindows: this.userData.promptedActionWindows,
             permissions: this.userData.permissions,
-            verified: this.userData.verified,
-            enableGravatar: this.userData.enableGravatar
+            promptedActionWindows: this.userData.promptedActionWindows,
+            settings: this.userData.settings,
+            username: this.userData.username,
+            verified: this.userData.verified
         };
 
         user = Settings.getUserWithDefaultsSet(user);
@@ -143,9 +147,10 @@ class User {
 
     getShortSummary() {
         return {
-            username: this.username,
+            avatar: this.avatar,
             name: this.username,
-            role: this.role
+            role: this.role,
+            username: this.username
         };
     }
 

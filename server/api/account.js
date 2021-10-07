@@ -6,6 +6,7 @@ const moment = require('moment');
 const _ = require('underscore');
 const sendgrid = require('@sendgrid/mail');
 const fs = require('fs');
+const { fabric } = require('fabric');
 
 const logger = require('../log');
 const util = require('../util');
@@ -15,6 +16,92 @@ const configService = ServiceFactory.configService();
 const appName = configService.getValue('appName');
 
 let userService;
+
+function processImage(image, width, height) {
+    return new Promise((resolve, reject) => {
+        const canvas = new fabric.StaticCanvas();
+        canvas.setWidth(width);
+        canvas.setHeight(height);
+        fabric.Image.fromURL(
+            'data:image/png;base64,' + image,
+            (img) => {
+                if(img.getElement() == null) {
+                    reject('Error occured in fabric');
+                } else {
+                    img.scaleToWidth(width)
+                        .scaleToHeight(height)
+                        .set({
+                            originX: 'center',
+                            originY: 'center',
+                            left: width / 2,
+                            top: height / 2
+                        });
+                    canvas.add(img);
+                    canvas.renderAll();
+                    resolve(canvas);
+                }
+            },
+            { crossOrigin: 'anonymous' }
+        );
+    });
+}
+
+async function processAvatar(newUser, user) {
+    let hash = crypto.randomBytes(16).toString('hex');
+
+    if(fs.existsSync(`public/img/avatar/${user.settings.avatar}.png`)) {
+        fs.unlinkSync(`public/img/avatar/${user.settings.avatar}.png`);
+    }
+
+    let canvas;
+    try {
+        canvas = await processImage(newUser.avatar, 24, 24);
+    } catch(err) {
+        logger.error(err);
+        return null;
+    }
+
+    let fileName = `${user.username}-${hash}`;
+    const stream = canvas.createPNGStream();
+    const out = fs.createWriteStream(`public/img/avatar/${fileName}.png`);
+    stream.on('data', (chunk) => {
+        out.write(chunk);
+    });
+
+    return fileName;
+}
+
+async function processCustomBackground(newUser, user) {
+    let hash = crypto.randomBytes(16).toString('hex');
+
+    if(fs.existsSync(`public/img/bgs/${user.settings.customBackground}.png`)) {
+        fs.unlinkSync(`public/img/bgs/${user.settings.customBackground}.png`);
+    }
+
+    if(!fs.existsSync('public/img/bgs')) {
+        fs.mkdirSync('public/img/bgs/');
+    }
+
+    let canvas;
+    try {
+        canvas = await processImage(newUser.customBackground, 700, 410);
+    } catch(err) {
+        logger.error(err);
+        return null;
+    }
+
+    let fileName = `${user.username}-${hash}`;
+    const stream = canvas.createPNGStream();
+    const out = fs.createWriteStream(`public/img/bgs/${fileName}.png`);
+    stream.on('data', (chunk) => {
+        out.write(chunk);
+    });
+    stream.on('end', () => {
+        canvas.dispose();
+    });
+
+    return fileName;
+}
 
 function hashPassword(password, rounds) {
     return new Promise((resolve, reject) => {
@@ -26,6 +113,12 @@ function hashPassword(password, rounds) {
             return resolve(hash);
         });
     });
+}
+
+function isValidImage(base64Image) {
+    let buffer = Buffer.from(base64Image, 'base64');
+
+    return buffer.toString('hex', 0, 4) === '89504e47' || buffer.toString('hex', 0, 2) === 'ffd8';
 }
 
 function sendEmail(address, subject, email) {
@@ -528,7 +621,7 @@ module.exports.init = function(server, options) {
         await sendEmail(user.email, 'The Iron Throne - Password reset', emailText);
     }));
 
-    server.put('/api/account/:username', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res) => {
+    server.put('/api/account/:username', passport.authenticate('jwt', { session: false }), wrapAsync(async (req, res, next) => {
         let userToSet = req.body.data;
 
         if(req.user.username !== req.params.username) {
@@ -540,19 +633,53 @@ module.exports.init = function(server, options) {
             return res.status(404).send({ message: 'Not found' });
         }
 
+        if(user.username !== userToSet.username) {
+            let userTest = await userService.doesUserExist(userToSet.username);
+            if(userTest) {
+                res.send({
+                    success: false,
+                    message: 'An account with that name already exists, please choose another'
+                });
+
+                return next();
+            }
+        }
+
+        if(userToSet.avatar && !isValidImage(userToSet.avatar)) {
+            return res.status(400).send({ success: false, message: 'Avatar must be image' });
+        }
+
+        if(userToSet.customBackground && !isValidImage(userToSet.customBackground)) {
+            return res
+                .status(400)
+                .send({ success: false, message: 'Background must be image' });
+        }
+
         user = user.getDetails();
 
+        user.username = userToSet.username;
         user.email = userToSet.email;
-        user.settings = userToSet.settings;
         user.promptedActionWindows = userToSet.promptedActionWindows;
 
+        let oldAvatar = user.settings.avatar;
+        let oldCustomBg = user.settings.customBackground;
+        
+        user.settings = userToSet.settings;
+
+        user.settings.avatar = oldAvatar;
+        user.settings.customBackground = oldCustomBg;
+        
         if(userToSet.password && userToSet.password !== '') {
             user.password = await hashPassword(userToSet.password, 10);
         }
 
-        user.enableGravatar = userToSet.enableGravatar;
+        if(userToSet.avatar) {
+            user.settings.avatar = await processAvatar(userToSet, user);
+        }
 
-        await downloadAvatar(user);
+        if(userToSet.customBackground) {
+            user.settings.customBackground = await processCustomBackground(userToSet, user);
+        }
 
         await userService.update(user);
 
