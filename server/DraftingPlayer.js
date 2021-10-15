@@ -1,9 +1,24 @@
 class DraftingPlayer {
-    constructor({ name, starterCards }) {
-        this.name = name;
+    constructor({ name, starterCards = [] }) {
+        this.chosenCards = [];
         this.hand = [];
-        this.deck = [...starterCards];
         this.hasChosen = false;
+        this.name = name;
+        this.starterCards = starterCards;
+    }
+
+    get deck() {
+        // Clone objects from starter and chosen cards so that we don't unintentionally modify their counts
+        const deckCards = this.starterCards.map(cardQuantity => ({ ...cardQuantity }));
+        for(const cardQuantity of this.chosenCards) {
+            const existingCardQuantity = deckCards.find(cq => cq.code === cardQuantity.code);
+            if(existingCardQuantity) {
+                existingCardQuantity.count += cardQuantity.count;
+            } else {
+                deckCards.push({ ...cardQuantity });
+            }
+        }
+        return deckCards;
     }
 
     chooseCard(card) {
@@ -17,7 +32,12 @@ class DraftingPlayer {
         }
 
         this.hand.splice(index, 1);
-        this.deck.push(card);
+        const existingCardQuantity = this.chosenCards.find(cardQuantity => cardQuantity.code === card);
+        if(existingCardQuantity) {
+            existingCardQuantity.count += 1;
+        } else {
+            this.chosenCards.push({ count: 1, code: card });
+        }
         this.hasChosen = true;
     }
 
@@ -39,7 +59,7 @@ class DraftingPlayer {
         return {
             name: `${event.name}: Drafted Deck`,
             bannerCards: [],
-            draftedCards: [...draftedCards.entries()].map(([code, count]) => ({ code, count })),
+            draftedCards: this.deck,
             drawCards: [],
             eventId: event._id,
             faction: { value: 'baratheon' },

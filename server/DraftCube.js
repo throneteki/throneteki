@@ -27,7 +27,8 @@ class DraftCube {
     getNumOfPossiblePacks() {
         const counts = [];
         for(const rarity of this.rarities) {
-            counts.push(Math.floor(rarity.cards.length / rarity.numPerPack));
+            const countForRarity = rarity.cards.reduce((count, cardQuantity) => count + cardQuantity.count, 0);
+            counts.push(Math.floor(countForRarity / rarity.numPerPack));
         }
         return Math.min(...counts);
     }
@@ -35,9 +36,19 @@ class DraftCube {
     cloneCardPool() {
         const cardPool = {};
         for(const rarity of this.rarities) {
-            cardPool[rarity.name] = [...rarity.cards];
+            cardPool[rarity.name] = this.flattenCardQuantities(rarity.cards);
         }
         return cardPool;
+    }
+
+    flattenCardQuantities(cardQuantities) {
+        const cards = [];
+        for(const cardQuantity of cardQuantities) {
+            for(let i = 0; i < cardQuantity.count; ++i) {
+                cards.push(cardQuantity.cardCode);
+            }
+        }
+        return cards;
     }
 
     randomlyChooseAndRemove(array, count) {

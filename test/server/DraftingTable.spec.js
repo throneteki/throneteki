@@ -23,7 +23,11 @@ describe('DraftingTable', function() {
             },
             numOfRounds: 2,
             playerNames: ['player1', 'player2', 'player3'],
-            starterCards: ['starter1', 'starter2', 'starter3']
+            starterCards: [
+                { count: 1, code: 'starter1' },
+                { count: 1, code: 'starter2' },
+                { count: 1, code: 'starter3' }
+            ]
         });
         this.player1 = this.draftingTable.getPlayer('player1');
         this.player2 = this.draftingTable.getPlayer('player2');
@@ -36,9 +40,21 @@ describe('DraftingTable', function() {
         });
 
         it('immediately adds the starter cards to each player\'s deck', function() {
-            expect(this.player1.deck).toEqual(['starter1', 'starter2', 'starter3']);
-            expect(this.player2.deck).toEqual(['starter1', 'starter2', 'starter3']);
-            expect(this.player3.deck).toEqual(['starter1', 'starter2', 'starter3']);
+            expect(this.player1.deck).toEqual([
+                { count: 1, code: 'starter1' },
+                { count: 1, code: 'starter2' },
+                { count: 1, code: 'starter3' }
+            ]);
+            expect(this.player2.deck).toEqual([
+                { count: 1, code: 'starter1' },
+                { count: 1, code: 'starter2' },
+                { count: 1, code: 'starter3' }
+            ]);
+            expect(this.player3.deck).toEqual([
+                { count: 1, code: 'starter1' },
+                { count: 1, code: 'starter2' },
+                { count: 1, code: 'starter3' }
+            ]);
         });
     });
 
@@ -56,7 +72,7 @@ describe('DraftingTable', function() {
                 });
 
                 it('does not add to deck', function() {
-                    expect(this.player1.deck).not.toContain('cardC');
+                    expect(this.player1.deck).not.toContain({ count: 1, code: 'cardC' });
                 });
             });
 
@@ -72,7 +88,7 @@ describe('DraftingTable', function() {
                 });
 
                 it('adds the card to the player\'s deck', function() {
-                    expect(this.player1.deck).toContain('cardA');
+                    expect(this.player1.deck).toContain({ count: 1, code: 'cardA' });
                 });
             });
 
@@ -90,7 +106,7 @@ describe('DraftingTable', function() {
                 });
 
                 it('does not add the second card to the player\'s deck', function() {
-                    expect(this.player1.deck).not.toContain('cardB');
+                    expect(this.player1.deck).not.toContain({ count: 1, code: 'cardB' });
                 });
             });
         });
@@ -116,7 +132,7 @@ describe('DraftingTable', function() {
                 this.draftingTable.chooseCard('player1', 'cardF');
 
                 expect(this.player1.hand).toEqual([]);
-                expect(this.player1.deck).toContain('cardF');
+                expect(this.player1.deck).toContain({ count: 1, code: 'cardF' });
             });
         });
 

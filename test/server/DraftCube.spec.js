@@ -3,9 +3,35 @@ const DraftingCube = require('../../server/DraftCube');
 describe('DraftCube', function() {
     beforeEach(function() {
         this.rarities = [
-            { name: 'Rare', numPerPack: 1, cards: ['rare-1', 'rare-2'] },
-            { name: 'Uncommon', numPerPack: 2, cards: ['uncommon-1', 'uncommon-2', 'uncommon-3', 'uncommon-4'] },
-            { name: 'Common', numPerPack: 3, cards: ['common-1', 'common-2', 'common-3', 'common-4', 'common-5', 'common-6'] }
+            {
+                name: 'Rare',
+                numPerPack: 1,
+                cards: [
+                    { count: 1, cardCode: 'rare-1' },
+                    { count: 1, cardCode: 'rare-2' }
+                ]
+            },
+            {
+                name: 'Uncommon',
+                numPerPack: 2,
+                cards: [
+                    { count: 1, cardCode: 'uncommon-1' },
+                    { count: 1, cardCode: 'uncommon-2' },
+                    { count: 1, cardCode: 'uncommon-3' },
+                    { count: 1, cardCode: 'uncommon-4' }
+                ]
+            },
+            {
+                name: 'Common',
+                numPerPack: 3,
+                cards: [
+                    { count: 1, cardCode: 'common-1' },
+                    { count: 1, cardCode: 'common-2' },
+                    { count: 1, cardCode: 'common-3' },
+                    { count: 1, cardCode: 'common-4' },
+                    { count: 2, cardCode: 'common-repeated' }
+                ]
+            }
         ];
         this.cube = new DraftingCube({ _id: 'cube-id', name: 'Event Cube 2021', rarities: this.rarities });
     });
@@ -32,7 +58,7 @@ describe('DraftCube', function() {
             expect(allCards).toEqual(jasmine.arrayWithExactContents([
                 'rare-1', 'rare-2',
                 'uncommon-1', 'uncommon-2', 'uncommon-3', 'uncommon-4',
-                'common-1', 'common-2', 'common-3', 'common-4', 'common-5', 'common-6'
+                'common-1', 'common-2', 'common-3', 'common-4', 'common-repeated', 'common-repeated'
             ]));
         });
     });
