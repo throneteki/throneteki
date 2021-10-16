@@ -1,11 +1,10 @@
-const DraftingPlayer = require('./DraftingPlayer');
 class DraftingTable {
-    constructor({ playerNames, draftCube, event, numOfRounds, saveDeck, starterCards }) {
+    constructor({ draftCube, event, numOfRounds, players, saveDeck }) {
         this.currentRound = 1;
         this.event = event;
         this.numOfRounds = numOfRounds;
         this.packs = draftCube.generatePacks();
-        this.players = playerNames.map(name => new DraftingPlayer({ name, starterCards }));
+        this.players = players;
         this.rotateClockwise = true;
         this.saveDeck = saveDeck;
     }
@@ -62,6 +61,18 @@ class DraftingTable {
         for(const player of this.players) {
             this.saveDeck(player.formatDeck(this.event));
         }
+    }
+
+    getState(playerName) {
+        const activePlayer = this.getPlayer(playerName);
+        return {
+            activePlayer: activePlayer && activePlayer.getCardState(),
+            currentRound: this.currentRound,
+            players: this.players.map(player => ({
+                hasChosen: player.hasChosen
+            })),
+            rotateClockwise: this.rotateClockwise
+        };
     }
 }
 

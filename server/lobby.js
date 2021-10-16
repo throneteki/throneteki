@@ -11,6 +11,7 @@ const PendingGame = require('./pendinggame.js');
 const GameRouter = require('./gamerouter.js');
 const ServiceFactory = require('./services/ServiceFactory');
 const DeckService = require('./services/DeckService.js');
+const DraftCubeService = require('./services/DraftCubeService');
 const CardService = require('./services/CardService.js');
 const EventService = require('./services/EventService.js');
 const User = require('./models/User');
@@ -24,6 +25,7 @@ class Lobby {
         this.configService = options.configService || ServiceFactory.configService();
         this.messageService = options.messageService || ServiceFactory.messageService(options.db);
         this.deckService = options.deckService || new DeckService(options.db);
+        this.draftCubeService = options.draftCubeService || new DraftCubeService(options.db);
         this.cardService = options.cardService || new CardService(options.db);
         this.eventService = options.eventService || new EventService(options.db);
         this.userService = options.userService || ServiceFactory.userService(options.db, this.configService);
@@ -451,9 +453,10 @@ class Lobby {
         }
 
         const restrictedListsResult = this.cardService.getRestrictedList();
+        const draftCubesResult = this.draftCubeService.getAll();
         const eventResult = gameDetails.eventId === 'none' ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
 
-        return Promise.all([eventResult, restrictedListsResult]).then(([event, restrictedLists]) => {
+        return Promise.all([eventResult, restrictedListsResult, draftCubesResult]).then(([event, restrictedLists, draftCubes]) => {
             const defaultRestrictedList = restrictedLists[0];
             let restrictedList;
 
@@ -467,6 +470,10 @@ class Lobby {
                 } else {
                     restrictedList = restrictedLists.find(restrictedList => restrictedList.name === event.name) || defaultRestrictedList;
                 }
+            }
+
+            if(event.draftOptions && event.draftOptions.draftCubeId) {
+                gameDetails.draftCube = draftCubes.find(draftCube => draftCube._id.toHexString() === event.draftOptions.draftCubeId);
             }
 
             let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});

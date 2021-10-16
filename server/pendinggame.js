@@ -12,6 +12,7 @@ class PendingGame {
         this.spectators = {};
         this.id = uuid.v1();
         this.name = details.name;
+        this.draftCube = details.draftCube;
         this.event = details.event || { _id: 'none' };
         this.restrictedList = details.restrictedList;
         this.allowSpectators = details.spectators;
@@ -367,6 +368,7 @@ class PendingGame {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            draftCube: this.draftCube,
             event: this.event,
             gameType: this.gameType,
             id: this.id,

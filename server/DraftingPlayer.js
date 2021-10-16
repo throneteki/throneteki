@@ -1,10 +1,15 @@
-class DraftingPlayer {
-    constructor({ name, starterCards = [] }) {
+const Spectator = require('./game/spectator');
+
+class DraftingPlayer extends Spectator {
+    constructor({ id, user, starterCards = [] }) {
+        super(id, user);
+
         this.chosenCards = [];
+        this.disconnectedAt = null;
         this.hand = [];
         this.hasChosen = false;
-        this.name = name;
-        this.starterCards = starterCards;
+        this.left = false;
+        this.starterCards = starterCards.map(cardQuantity => ({ count: cardQuantity.count, code: cardQuantity.cardCode }));
     }
 
     get deck() {
@@ -65,6 +70,30 @@ class DraftingPlayer {
             faction: { value: 'baratheon' },
             plotCards: [],
             username: this.name
+        };
+    }
+
+    isSpectator() {
+        return false;
+    }
+
+    getConnectionState() {
+        return {
+            disconnected: !!this.disconnectedAt,
+            id: this.id,
+            left: this.left,
+            name: this.name,
+            user: {
+                username: this.user.username
+            }
+        };
+    }
+
+    getCardState() {
+        return {
+            chosenCards: this.chosenCards,
+            hand: this.hand,
+            starterCards: this.starterCards
         };
     }
 }
