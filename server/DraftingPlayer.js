@@ -62,12 +62,13 @@ class DraftingPlayer extends Spectator {
         }
 
         return {
-            name: `${event.name}: Drafted Deck`,
             bannerCards: [],
+            deckName: `${event.name}: Drafted Deck`,
             draftedCards: this.deck,
             drawCards: [],
             eventId: event._id,
             faction: { value: 'baratheon' },
+            format: 'draft',
             plotCards: [],
             username: this.name
         };

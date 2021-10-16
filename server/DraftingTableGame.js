@@ -30,7 +30,9 @@ class DraftingTableGame extends EventEmitter {
             event,
             numOfRounds: event.draftOptions.numOfRounds,
             players: playerObjects,
-            saveDeck: deck => console.log(deck)
+            saveDeck: deck => {
+                router.saveDeck(deck);
+            }
         });
         this.event = event;
         this.eventName = event && event.name;

@@ -42,7 +42,7 @@ class DeckService {
             username: deck.username,
             name: deck.deckName,
             format: deck.format,
-            draftedCards: deck.drawCards,
+            draftedCards: deck.draftedCards,
             plotCards: deck.plotCards,
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,

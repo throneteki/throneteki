@@ -205,6 +205,10 @@ class GameServer {
         this.zmqSocket.send('GAMEWIN', { game: game.getSaveState(), winner: winner.name, reason: reason });
     }
 
+    saveDeck(deck) {
+        this.zmqSocket.send('SAVEDECK', { deck });
+    }
+
     rematch(game) {
         this.zmqSocket.send('REMATCH', { game: game.getSaveState() });
 
