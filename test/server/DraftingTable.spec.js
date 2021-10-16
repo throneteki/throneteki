@@ -13,9 +13,8 @@ describe('DraftingTable', function() {
                 ['card11', 'card12']
             ];
         });
-        this.deckServiceSpy = jasmine.createSpyObj('deckService', ['create']);
+        this.saveDeckSpy = jasmine.createSpy('saveDeck');
         this.draftingTable = new DraftingTable({
-            deckService: this.deckServiceSpy,
             draftCube: this.draftCubeSpy,
             event: {
                 _id: 'event-id',
@@ -23,6 +22,7 @@ describe('DraftingTable', function() {
             },
             numOfRounds: 2,
             playerNames: ['player1', 'player2', 'player3'],
+            saveDeck: this.saveDeckSpy,
             starterCards: [
                 { count: 1, code: 'starter1' },
                 { count: 1, code: 'starter2' },
@@ -187,7 +187,7 @@ describe('DraftingTable', function() {
             });
 
             it('saves the final decks for each player', function() {
-                expect(this.deckServiceSpy.create).toHaveBeenCalledWith({
+                expect(this.saveDeckSpy).toHaveBeenCalledWith({
                     name: 'Event 2021: Drafted Deck',
                     bannerCards: [],
                     draftedCards: [
@@ -205,7 +205,7 @@ describe('DraftingTable', function() {
                     plotCards: [],
                     username: 'player1'
                 });
-                expect(this.deckServiceSpy.create).toHaveBeenCalledWith({
+                expect(this.saveDeckSpy).toHaveBeenCalledWith({
                     name: 'Event 2021: Drafted Deck',
                     bannerCards: [],
                     draftedCards: [
@@ -223,7 +223,7 @@ describe('DraftingTable', function() {
                     plotCards: [],
                     username: 'player2'
                 });
-                expect(this.deckServiceSpy.create).toHaveBeenCalledWith({
+                expect(this.saveDeckSpy).toHaveBeenCalledWith({
                     name: 'Event 2021: Drafted Deck',
                     bannerCards: [],
                     draftedCards: [
