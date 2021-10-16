@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import DeckSummary from './DeckSummary';
 import DeckEditor from './DeckEditor';
+import DraftDeckEditor from './DraftDeckEditor';
 import AlertPanel from '../Site/AlertPanel';
 import Panel from '../Site/Panel';
 import * as actions from '../../actions';
@@ -58,6 +59,15 @@ class EditDeck extends React.Component {
             content = <AlertPanel type='error' message={ this.props.apiMessage } />;
         } else if(!this.props.deck) {
             content = <AlertPanel message='The specified deck was not found' type='error' />;
+        } else if(this.props.deck.format === 'draft') {
+            content = (
+                <Panel title='Deck Editor'>
+                    <DraftDeckEditor
+                        deck={ this.state.deck }
+                        onDeckSave={ this.onEditDeck }
+                        onDeckUpdated={ this.onDeckUpdated } />
+                </Panel>
+            );
         } else {
             content = (
                 <div>

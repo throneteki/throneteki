@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
-import DeckStatus from './DeckStatus';
-import AltCard from '../GameBoard/AltCard';
+import CardHoverPreview from './CardHoverPreview';
+import CardTypeGroups from './CardTypeGroups';
+import DeckSummaryHeader from './DeckSummaryHeader';
 
 class DeckSummary extends React.Component {
     constructor() {
@@ -17,80 +17,14 @@ class DeckSummary extends React.Component {
         };
     }
 
-    hasTrait(card, trait) {
-        return card.traits.some(t => t.toLowerCase() === trait.toLowerCase());
-    }
+    onCardMouseOver(card) {
+        let cardToDisplay = this.props.cards[card.code];
 
-    onCardMouseOver(event) {
-        let cardToDisplay = Object.values(this.props.cards).filter(card => {
-            return event.target.innerText === card.label;
-        });
-
-        this.setState({ cardToShow: cardToDisplay[0] });
+        this.setState({ cardToShow: cardToDisplay });
     }
 
     onCardMouseOut() {
         this.setState({ cardToShow: undefined });
-    }
-
-    getBannersToRender() {
-        let banners = [];
-
-        if(this.props.deck.bannerCards) {
-            for(const card of this.props.deck.bannerCards) {
-                banners.push(<div className='pull-right' key={ card.code ? card.code : card }>
-                    <span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.label }</span>
-                </div>);
-            }
-        }
-
-        return <div className='info-row row'><span>Banners:</span>{ banners }</div>;
-    }
-
-    getCardsToRender() {
-        let cardsToRender = [];
-        let groupedCards = {};
-        let combinedCards = this.props.deck.plotCards.concat(this.props.deck.drawCards);
-
-        for(const card of combinedCards) {
-            let typeCode = card.card.type;
-            if(!typeCode) {
-                continue;
-            }
-
-            let type = typeCode[0].toUpperCase() + typeCode.slice(1);
-
-            if(this.props.deck.agenda && this.props.deck.agenda.code === '05045') {
-                if(this.hasTrait(card.card, 'scheme')) {
-                    type = 'Scheme';
-                }
-            }
-
-            if(!groupedCards[type]) {
-                groupedCards[type] = [card];
-            } else {
-                groupedCards[type].push(card);
-            }
-        }
-
-        for(const [key, cardList] of Object.entries(groupedCards)) {
-            let cards = [];
-            let count = 0;
-            let index = 0;
-
-            for(const card of cardList) {
-                cards.push(<div key={ `${card.card.code}${index++}` }><span>{ card.count + 'x ' }</span><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.card.label }</span></div>);
-                count += parseInt(card.count);
-            }
-
-            cardsToRender.push(
-                <div className='cards-no-break' key={ key }>
-                    <div className='card-group-title'>{ key + ' (' + count.toString() + ')' }</div>
-                    <div key={ key } className='card-group'>{ cards }</div>
-                </div>);
-        }
-
-        return cardsToRender;
     }
 
     render() {
@@ -98,35 +32,19 @@ class DeckSummary extends React.Component {
             return <div>Waiting for selected deck...</div>;
         }
 
-        let cardsToRender = this.getCardsToRender();
-        let banners = this.getBannersToRender();
-
         return (
             <div className='deck-summary col-xs-12'>
-                { this.state.cardToShow ?
-                    <div className={ classNames('hover-card', { 'horizontal': this.state.cardToShow.type === 'plot'}) }>
-                        <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.code + '.png' } />
-                        <AltCard card={ this.state.cardToShow } />
-                    </div> : null }
-                <div className='decklist'>
-                    <div className='col-xs-2 col-sm-3 no-x-padding'>{ this.props.deck.faction ? <img className='img-responsive' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /> : null }</div>
-                    <div className='col-xs-8 col-sm-6'>
-                        <div className='info-row row'><span>Faction:</span>{ this.props.deck.faction ? <span className={ 'pull-right' }>{ this.props.deck.faction.name }</span> : null }</div>
-                        <div className='info-row row' ref='agenda'><span>Agenda:</span> { this.props.deck.agenda && this.props.deck.agenda.label ? <span className='pull-right card-link' onMouseOver={ this.onCardMouseOver }
-                            onMouseOut={ this.onCardMouseOut }>{ this.props.deck.agenda.label }</span> : <span>None</span> }</div>
-                        { (this.props.deck.agenda && this.props.deck.agenda.label === 'Alliance') ? banners : null }
-                        <div className='info-row row' ref='drawCount'><span>Draw deck:</span><span className='pull-right'>{ this.props.deck.status.drawCount } cards</span></div>
-                        <div className='info-row row' ref='plotCount'><span>Plot deck:</span><span className='pull-right'>{ this.props.deck.status.plotCount } cards</span></div>
-                        <div className='info-row row'><span>Validity:</span>
-                            <DeckStatus className='pull-right' status={ this.props.deck.status } />
-                        </div>
-                    </div>
-                    <div className='col-xs-2 col-sm-3 no-x-padding'>{ this.props.deck.agenda && this.props.deck.agenda.code ? <img className='img-responsive' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /> : null }</div>
-                </div>
+                { this.state.cardToShow && <CardHoverPreview card={ this.state.cardToShow } /> }
+                <DeckSummaryHeader
+                    deck={ this.props.deck }
+                    onCardMouseOut={ this.onCardMouseOut }
+                    onCardMouseOver={ this.onCardMouseOver } />
                 <div className='col-xs-12 no-x-padding'>
-                    <div className='cards'>
-                        { cardsToRender }
-                    </div>
+                    <CardTypeGroups
+                        cards={ this.props.deck.plotCards.concat(this.props.deck.drawCards) }
+                        onCardMouseOut={ this.onCardMouseOut }
+                        onCardMouseOver={ this.onCardMouseOver }
+                        useSchemes={ this.props.deck.agenda && this.props.deck.agenda.code === '05045' } />
                 </div>
             </div>);
     }
