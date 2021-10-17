@@ -49,6 +49,7 @@ class DraftingTableGame extends EventEmitter {
         this.savedGameId = details.savedGameId;
         this.started = false;
         this.restrictedList = details.restrictedList;
+        this.cardData = options.cardData || [];
 
         for(let player of Object.values(players || {})) {
             this.playersAndSpectators[player.user.username] = new DraftingPlayer({ id: player.id, name: player.user.username, user: player.user });
