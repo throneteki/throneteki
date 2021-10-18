@@ -28,6 +28,7 @@ class PendingGame {
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
         this.tableType = details.tableType || 'game';
+        this.maxPlayers = this.tableType === 'game' ? 2 : 8;
     }
 
     // Getters
@@ -55,7 +56,7 @@ class PendingGame {
         var players = _.map(this.getPlayers(), player => {
             return {
                 agenda: player.agenda ? player.agenda.cardData.name : undefined,
-                faction: player.faction.cardData.name,
+                faction: player.faction && player.faction.cardData.name,
                 name: player.name
             };
         });
@@ -64,7 +65,8 @@ class PendingGame {
             gameId: this.id,
             gameType: this.gameType,
             players: players,
-            startedAt: this.createdAt
+            startedAt: this.createdAt,
+            tableType: this.tableType
         };
     }
 
@@ -126,7 +128,7 @@ class PendingGame {
     }
 
     join(id, user, password) {
-        if(_.size(this.players) === 2 || this.started) {
+        if(_.size(this.players) === this.maxPlayers || this.started) {
             return;
         }
 
@@ -247,6 +249,16 @@ class PendingGame {
     }
 
     // interrogators
+    isReady() {
+        if(this.tableType === 'drafting-table') {
+            return true;
+        }
+
+        return Object.values(this.getPlayers()).some(player => {
+            return !player.deck;
+        });
+    }
+
     isEmpty() {
         return !_.any(this.getPlayersAndSpectators(), player => this.hasActivePlayer(player.name));
     }
@@ -318,6 +330,7 @@ class PendingGame {
             createdAt: this.createdAt,
             gameType: this.gameType,
             event: this.event,
+            full: Object.values(this.players).length >= this.maxPlayers,
             id: this.id,
             messages: activePlayer ? this.gameChat.messages : undefined,
             name: this.name,

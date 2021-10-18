@@ -517,9 +517,7 @@ class Lobby {
             return;
         }
 
-        if(Object.values(game.getPlayers()).some(player => {
-            return !player.deck;
-        })) {
+        if(!game.isReady()) {
             return;
         }
 
