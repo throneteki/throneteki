@@ -233,18 +233,19 @@ class GameServer {
             router: this,
             titleCardData: this.titleCardData
         };
-        const game = new DraftingTableGame(pendingGame, gameOptions);
+        const game = pendingGame.tableType === 'drafting-table' ? new DraftingTableGame(pendingGame, gameOptions) : new Game(pendingGame, gameOptions);
 
-        // let game = new Game(pendingGame, { router: this, titleCardData: this.titleCardData, cardData: this.cardData, packData: this.packData, restrictedListData: this.restrictedListData });
         game.on('onTimeExpired', () => {
             this.sendGameState(game);
         });
         this.games[pendingGame.id] = game;
 
         game.started = true;
-        // for(let player of Object.values(pendingGame.players)) {
-        //     game.selectDeck(player.name, player.deck);
-        // }
+        if(pendingGame.tableType !== 'drafting-table') {
+            for(let player of Object.values(pendingGame.players)) {
+                game.selectDeck(player.name, player.deck);
+            }
+        }
 
         game.initialise();
         if(pendingGame.rematch) {
