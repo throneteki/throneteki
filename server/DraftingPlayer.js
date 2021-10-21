@@ -92,9 +92,8 @@ class DraftingPlayer extends Spectator {
 
     getCardState() {
         return {
-            chosenCards: this.chosenCards,
-            hand: this.hand,
-            starterCards: this.starterCards
+            deck: this.deck,
+            hand: this.hand
         };
     }
 }
