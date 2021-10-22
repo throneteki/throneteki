@@ -41,6 +41,8 @@ class DeckService {
         let properties = {
             username: deck.username,
             name: deck.deckName,
+            draftCubeId: deck.draftCubeId,
+            eventId: deck.eventId,
             format: deck.format,
             draftedCards: deck.draftedCards,
             plotCards: deck.plotCards,

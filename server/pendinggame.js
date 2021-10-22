@@ -237,6 +237,10 @@ class PendingGame {
             return;
         }
 
+        if(this.event.format === 'draft' && deck.eventId !== this.event._id.toHexString()) {
+            return;
+        }
+
         if(player.deck) {
             player.deck.selected = false;
         }
