@@ -8,6 +8,7 @@ class DraftingTable {
         this.players = players;
         this.rotateClockwise = true;
         this.saveDeck = saveDeck;
+        this.draftFinished = false;
     }
 
     getPlayer(name) {
@@ -32,6 +33,7 @@ class DraftingTable {
 
         if(this.players[0].hand.length === 0 && this.currentRound === this.numOfRounds) {
             this.saveDraftedDecks();
+            this.draftFinished = true;
             this.gameLog.addAlert('success', 'Drafting complete!');
         } else if(this.players[0].hand.length === 0) {
             this.drawHands();
@@ -71,6 +73,7 @@ class DraftingTable {
         return {
             activePlayer: activePlayer && activePlayer.getCardState(),
             currentRound: this.currentRound,
+            draftFinished: this.draftFinished,
             players: this.players.map(player => ({
                 hasChosen: player.hasChosen
             })),

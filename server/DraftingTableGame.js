@@ -238,10 +238,7 @@ class DraftingTableGame extends EventEmitter {
     getSaveState() {
         var players = this.getPlayers().map(player => {
             return {
-                name: player.name,
-                faction: player.faction.name || player.faction.value,
-                agenda: player.agenda ? player.agenda.name : undefined,
-                power: player.getTotalPower()
+                name: player.name
             };
         });
 
@@ -250,8 +247,6 @@ class DraftingTableGame extends EventEmitter {
             gameId: this.id,
             startedAt: this.startedAt,
             players: players,
-            winner: this.winner ? this.winner.name : undefined,
-            winReason: this.winReason,
             finishedAt: this.finishedAt
         };
     }
