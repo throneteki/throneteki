@@ -1,7 +1,8 @@
 class DraftingTable {
-    constructor({ draftCube, event, numOfRounds, players, saveDeck }) {
+    constructor({ draftCube, event, gameLog, numOfRounds, players, saveDeck }) {
         this.currentRound = 1;
         this.event = event;
+        this.gameLog = gameLog;
         this.numOfRounds = numOfRounds;
         this.packs = draftCube.generatePacks();
         this.players = players;
@@ -31,10 +32,12 @@ class DraftingTable {
 
         if(this.players[0].hand.length === 0 && this.currentRound === this.numOfRounds) {
             this.saveDraftedDecks();
+            this.gameLog.addAlert('success', 'Drafting complete!');
         } else if(this.players[0].hand.length === 0) {
             this.drawHands();
             this.currentRound += 1;
             this.rotateClockwise = !this.rotateClockwise;
+            this.gameLog.addAlert('startofround', 'Round {0} / {1}', this.currentRound, this.numOfRounds);
         } else {
             this.passHands();
         }

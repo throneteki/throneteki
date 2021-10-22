@@ -21,17 +21,6 @@ class DraftingTableGame extends EventEmitter {
         this.allowSpectators = details.allowSpectators;
         this.createdAt = new Date();
         this.draftCube = draftCube;
-        this.draftingTable = new DraftingTable({
-            draftCube: new DraftCube({
-                rarities: draftCube.packDefinitions[0].rarities
-            }),
-            event,
-            numOfRounds: event.draftOptions.numOfRounds,
-            players: playerObjects,
-            saveDeck: deck => {
-                router.saveDeck(deck);
-            }
-        });
         this.event = event;
         this.eventName = event && event.name;
         this.gameChat = new GameChat();
@@ -48,6 +37,19 @@ class DraftingTableGame extends EventEmitter {
         this.started = false;
         this.restrictedList = details.restrictedList;
         this.cardData = options.cardData || [];
+
+        this.draftingTable = new DraftingTable({
+            draftCube: new DraftCube({
+                rarities: draftCube.packDefinitions[0].rarities
+            }),
+            event,
+            gameLog: this.gameChat,
+            numOfRounds: event.draftOptions.numOfRounds,
+            players: playerObjects,
+            saveDeck: deck => {
+                router.saveDeck(deck);
+            }
+        });
 
         for(let player of Object.values(players || {})) {
             this.playersAndSpectators[player.user.username] = new DraftingPlayer({ id: player.id, name: player.user.username, user: player.user });
@@ -131,6 +133,7 @@ class DraftingTableGame extends EventEmitter {
     }
 
     initialise() {
+        this.addAlert('startofround', 'Round 1 / {0}', this.draftingTable.numOfRounds);
         this.draftingTable.drawHands();
     }
 
