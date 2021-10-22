@@ -78,15 +78,14 @@ class DraftingPlayer extends Spectator {
         return false;
     }
 
-    getConnectionState() {
+    getConnectionState({ fullData = false }) {
+        const user = fullData ? this.user : { username: this.user.username };
         return {
             disconnected: !!this.disconnectedAt,
             id: this.id,
             left: this.left,
             name: this.name,
-            user: {
-                username: this.user.username
-            }
+            user
         };
     }
 

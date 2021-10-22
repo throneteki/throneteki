@@ -259,7 +259,7 @@ class DraftingTableGame extends EventEmitter {
             draftingTable: this.draftingTable.getState(activePlayerName),
             messages: this.gameChat.messages,
             players: this.getPlayers().reduce((data, player) => {
-                data[player.name] = player.getConnectionState();
+                data[player.name] = player.getConnectionState({});
                 return data;
             }, {}),
             spectators: this.getSpectators().map(spectator => {
@@ -273,7 +273,7 @@ class DraftingTableGame extends EventEmitter {
         };
     }
 
-    getSummary(activePlayerName, options = {}) {
+    getSummary(activePlayerName, { fullData = false }) {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
@@ -284,7 +284,7 @@ class DraftingTableGame extends EventEmitter {
             name: this.name,
             owner: this.owner,
             players: this.getPlayers().reduce((data, player) => {
-                data[player.name] = player.getConnectionState();
+                data[player.name] = player.getConnectionState({ fullData });
                 return data;
             }, {}),
             spectators: this.getSpectators().map(spectator => {
