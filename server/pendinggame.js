@@ -255,7 +255,7 @@ class PendingGame {
         }
 
         return Object.values(this.getPlayers()).some(player => {
-            return !player.deck;
+            return !!player.deck;
         });
     }
 
