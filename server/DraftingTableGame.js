@@ -16,8 +16,6 @@ class DraftingTableGame extends EventEmitter {
         const { draftCube, event, owner, players, spectators } = details;
         const { router } = options;
 
-        console.log(details);
-
         const playerObjects = Object.values(players || []).map(player => new DraftingPlayer({ id: player.id, name: player.user.username, starterCards: draftCube.starterDeck, user: player.user }));
 
         this.allowSpectators = details.allowSpectators;
@@ -277,8 +275,26 @@ class DraftingTableGame extends EventEmitter {
 
     getSummary(activePlayerName, options = {}) {
         return {
+            allowSpectators: this.allowSpectators,
+            createdAt: this.createdAt,
+            event: this.event,
+            gameType: this.gameType,
             id: this.id,
-            messages: this.gameChat.messages
+            messages: this.gameChat.messages,
+            name: this.name,
+            owner: this.owner,
+            players: this.getPlayers().reduce((data, player) => {
+                data[player.name] = player.getConnectionState();
+                return data;
+            }, {}),
+            spectators: this.getSpectators().map(spectator => {
+                return {
+                    id: spectator.id,
+                    name: spectator.name
+                };
+            }),
+            started: this.started,
+            startedAt: this.startedAt
         };
     }
 
