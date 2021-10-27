@@ -44,6 +44,7 @@ class DraftingTableGame extends EventEmitter {
             }),
             event,
             gameLog: this.gameChat,
+            messageBus: this,
             numOfRounds: event.draftOptions.numOfRounds,
             players: playerObjects,
             saveDeck: deck => {
@@ -51,8 +52,8 @@ class DraftingTableGame extends EventEmitter {
             }
         });
 
-        for(let player of Object.values(players || {})) {
-            this.playersAndSpectators[player.user.username] = new DraftingPlayer({ id: player.id, name: player.user.username, user: player.user });
+        for(let player of playerObjects) {
+            this.playersAndSpectators[player.name] = player;
         }
 
         for(let spectator of Object.values(spectators || {})) {
@@ -133,8 +134,7 @@ class DraftingTableGame extends EventEmitter {
     }
 
     initialise() {
-        this.addAlert('startofround', 'Round 1 / {0}', this.draftingTable.numOfRounds);
-        this.draftingTable.drawHands();
+        this.draftingTable.startRound();
     }
 
     watch(socketId, user) {
@@ -171,6 +171,8 @@ class DraftingTableGame extends EventEmitter {
         } else {
             player.left = true;
 
+            this.draftingTable.handleLeftPlayer(playerName);
+
             if(!this.finishedAt) {
                 this.finishedAt = new Date();
             }
@@ -190,6 +192,7 @@ class DraftingTableGame extends EventEmitter {
             delete this.playersAndSpectators[playerName];
         } else {
             player.disconnectedAt = new Date();
+            this.draftingTable.handleDisconnectedPlayer(playerName);
         }
 
         player.socket = undefined;

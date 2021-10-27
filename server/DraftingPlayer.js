@@ -1,3 +1,4 @@
+const sample = require('lodash.sample');
 const Spectator = require('./game/spectator');
 
 class DraftingPlayer extends Spectator {
@@ -44,6 +45,15 @@ class DraftingPlayer extends Spectator {
             this.chosenCards.push({ count: 1, code: card });
         }
         this.hasChosen = true;
+    }
+
+    chooseRandomCard() {
+        if(this.hand.length === 0) {
+            return;
+        }
+
+        const card = sample(this.hand);
+        this.chooseCard(card);
     }
 
     receiveNewHand(hand) {

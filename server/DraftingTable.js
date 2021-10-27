@@ -1,14 +1,24 @@
+const DisconnectCardTimeoutInSeconds = 120;
+
 class DraftingTable {
-    constructor({ draftCube, event, gameLog, numOfRounds, players, saveDeck }) {
-        this.currentRound = 1;
+    constructor({ draftCube, event, gameLog, messageBus, numOfRounds, players, saveDeck }) {
+        this.currentRound = 0;
         this.event = event;
         this.gameLog = gameLog;
+        this.messageBus = messageBus;
         this.numOfRounds = numOfRounds;
         this.packs = draftCube.generatePacks();
         this.players = players;
-        this.rotateClockwise = true;
+        this.rotateClockwise = false;
         this.saveDeck = saveDeck;
         this.draftFinished = false;
+    }
+
+    startRound() {
+        this.gameLog.addAlert('startofround', 'Round {0} / {1}', this.currentRound + 1, this.numOfRounds);
+        this.drawHands();
+        this.currentRound += 1;
+        this.rotateClockwise = !this.rotateClockwise;
     }
 
     getPlayer(name) {
@@ -20,13 +30,70 @@ class DraftingTable {
             const hand = this.packs.shift();
             player.receiveNewHand(hand);
         }
+
+        this.handleInactivePlayers();
+    }
+
+    handleInactivePlayers() {
+        for(const player of this.players) {
+            if(player.left) {
+                this.handleLeftPlayer(player.name);
+            }
+
+            if(player.disconnectedAt) {
+                this.handleDisconnectedPlayer(player.name);
+            }
+        }
+    }
+
+    handleLeftPlayer(playerName) {
+        const player = this.getPlayer(playerName);
+
+        if(player.hasChosen) {
+            return;
+        }
+
+        player.chooseRandomCard();
+        this.gameLog.addMessage('A random card is chosen for {0} because they left the table', player);
+
+        this.executeNextDraftStep();
+    }
+
+    handleDisconnectedPlayer(playerName) {
+        const player = this.getPlayer(playerName);
+
+        if(player.hasChosen) {
+            return;
+        }
+
+        this.gameLog.addMessage('A random card is will be chosen for {0} in {1} seconds', player, DisconnectCardTimeoutInSeconds);
+        setTimeout(() => {
+            if(player.hasChosen || !player.disconnectedAt) {
+                return;
+            }
+
+            player.chooseRandomCard();
+            this.gameLog.addMessage('A random card is chosen for {0} because they are disconnected', player);
+
+            this.executeNextDraftStep();
+
+            // Emit event to force game state to be updated
+            this.messageBus.emit('onTimeExpired');
+        }, DisconnectCardTimeoutInSeconds * 1000);
     }
 
     chooseCard(playerName, card) {
         const player = this.getPlayer(playerName);
 
-        player.chooseCard(card);
+        if(!player.hasChosen) {
+            player.chooseCard(card);
+            this.gameLog.addMessage('{0} chooses a card', player);
+        }
 
+        this.executeNextDraftStep();
+    }
+
+    executeNextDraftStep() {
         if(!this.players.every(player => player.hasChosen)) {
             return;
         }
@@ -36,10 +103,7 @@ class DraftingTable {
             this.draftFinished = true;
             this.gameLog.addAlert('success', 'Drafting complete!');
         } else if(this.players[0].hand.length === 0) {
-            this.drawHands();
-            this.currentRound += 1;
-            this.rotateClockwise = !this.rotateClockwise;
-            this.gameLog.addAlert('startofround', 'Round {0} / {1}', this.currentRound, this.numOfRounds);
+            this.startRound();
         } else {
             this.passHands();
         }
@@ -50,6 +114,10 @@ class DraftingTable {
         for(let i = 0; i < rotatedHands.length; ++i) {
             this.players[i].receiveNewHand(rotatedHands[i]);
         }
+
+        this.gameLog.addMessage('Each player passes their hands {0} ({1} cards remaining)', this.rotateClockwise ? 'clockwise' : 'counter-clockwise', this.players[0].hand.length);
+
+        this.handleInactivePlayers();
     }
 
     getRotatedHands() {
