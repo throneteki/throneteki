@@ -1,7 +1,13 @@
-const DraftingTable = require('../../server/DraftingTable.js');
+const DraftingTable = require('../../server/DraftingTable');
+const DraftingPlayer = require('../../server/DraftingPlayer');
 
 describe('DraftingTable', function() {
     beforeEach(function() {
+        const starterCards = [
+            { count: 1, cardCode: 'starter1' },
+            { count: 1, cardCode: 'starter2' },
+            { count: 1, cardCode: 'starter3' }
+        ];
         this.draftCubeSpy = jasmine.createSpyObj('draftCube', ['generatePacks']);
         this.draftCubeSpy.generatePacks.and.callFake(() => {
             return [
@@ -18,17 +24,22 @@ describe('DraftingTable', function() {
             draftCube: this.draftCubeSpy,
             event: {
                 _id: 'event-id',
+                draftOptions: {
+                    draftCubeId: 'draft-cube-id'
+                },
                 name: 'Event 2021'
             },
+            gameLog: jasmine.createSpyObj('gameLog', ['addAlert', 'addMessage']),
+            messageBus: jasmine.createSpyObj('messageBus', ['emit']),
             numOfRounds: 2,
-            playerNames: ['player1', 'player2', 'player3'],
-            saveDeck: this.saveDeckSpy,
-            starterCards: [
-                { count: 1, code: 'starter1' },
-                { count: 1, code: 'starter2' },
-                { count: 1, code: 'starter3' }
-            ]
+            players: [
+                new DraftingPlayer({ user: { username: 'player1' }, starterCards }),
+                new DraftingPlayer({ user: { username: 'player2' }, starterCards }),
+                new DraftingPlayer({ user: { username: 'player3' }, starterCards })
+            ],
+            saveDeck: this.saveDeckSpy
         });
+
         this.player1 = this.draftingTable.getPlayer('player1');
         this.player2 = this.draftingTable.getPlayer('player2');
         this.player3 = this.draftingTable.getPlayer('player3');
@@ -113,6 +124,8 @@ describe('DraftingTable', function() {
 
         describe('when all players have chosen and have cards left in hand', function() {
             beforeEach(function() {
+                this.draftingTable.rotateClockwise = true;
+
                 this.player1.receiveNewHand(['cardA', 'cardB']);
                 this.player2.receiveNewHand(['cardC', 'cardD']);
                 this.player3.receiveNewHand(['cardE', 'cardF']);
@@ -138,6 +151,8 @@ describe('DraftingTable', function() {
 
         describe('when all players choose the last card in hand and there are more drafting rounds', function() {
             beforeEach(function() {
+                this.draftingTable.rotateClockwise = true;
+
                 this.player1.receiveNewHand(['cardA']);
                 this.player2.receiveNewHand(['cardC']);
                 this.player3.receiveNewHand(['cardE']);
@@ -166,8 +181,9 @@ describe('DraftingTable', function() {
 
         describe('when all players choose the last card in hand and it is the last drafting round', function() {
             beforeEach(function() {
+                this.draftingTable.startRound();
+
                 // Round 1
-                this.draftingTable.drawHands();
                 this.draftingTable.chooseCard('player1', 'card1');
                 this.draftingTable.chooseCard('player2', 'card3');
                 this.draftingTable.chooseCard('player3', 'card5');
@@ -188,7 +204,7 @@ describe('DraftingTable', function() {
 
             it('saves the final decks for each player', function() {
                 expect(this.saveDeckSpy).toHaveBeenCalledWith({
-                    name: 'Event 2021: Drafted Deck',
+                    deckName: 'Event 2021: Drafted Deck',
                     bannerCards: [],
                     draftedCards: [
                         { count: 1, code: 'starter1' },
@@ -199,14 +215,16 @@ describe('DraftingTable', function() {
                         { count: 1, code: 'card7' },
                         { count: 1, code: 'card10' }
                     ],
+                    draftCubeId: 'draft-cube-id',
                     drawCards: [],
                     eventId: 'event-id',
                     faction: { value: 'baratheon' },
+                    format: 'draft',
                     plotCards: [],
                     username: 'player1'
                 });
                 expect(this.saveDeckSpy).toHaveBeenCalledWith({
-                    name: 'Event 2021: Drafted Deck',
+                    deckName: 'Event 2021: Drafted Deck',
                     bannerCards: [],
                     draftedCards: [
                         { count: 1, code: 'starter1' },
@@ -217,14 +235,16 @@ describe('DraftingTable', function() {
                         { count: 1, code: 'card9' },
                         { count: 1, code: 'card12' }
                     ],
+                    draftCubeId: 'draft-cube-id',
                     drawCards: [],
                     eventId: 'event-id',
                     faction: { value: 'baratheon' },
+                    format: 'draft',
                     plotCards: [],
                     username: 'player2'
                 });
                 expect(this.saveDeckSpy).toHaveBeenCalledWith({
-                    name: 'Event 2021: Drafted Deck',
+                    deckName: 'Event 2021: Drafted Deck',
                     bannerCards: [],
                     draftedCards: [
                         { count: 1, code: 'starter1' },
@@ -235,9 +255,11 @@ describe('DraftingTable', function() {
                         { count: 1, code: 'card11' },
                         { count: 1, code: 'card8' }
                     ],
+                    draftCubeId: 'draft-cube-id',
                     drawCards: [],
                     eventId: 'event-id',
                     faction: { value: 'baratheon' },
+                    format: 'draft',
                     plotCards: [],
                     username: 'player3'
                 });
