@@ -3,6 +3,7 @@ const DisconnectCardTimeoutInSeconds = 120;
 class DraftingTable {
     constructor({ draftCube, event, gameLog, messageBus, numOfRounds, players, saveDeck }) {
         this.currentRound = 0;
+        this.draftFinished = false;
         this.event = event;
         this.gameLog = gameLog;
         this.messageBus = messageBus;
@@ -11,7 +12,6 @@ class DraftingTable {
         this.players = players;
         this.rotateClockwise = false;
         this.saveDeck = saveDeck;
-        this.draftFinished = false;
     }
 
     startRound() {
@@ -100,8 +100,6 @@ class DraftingTable {
 
         if(this.players[0].hand.length === 0 && this.currentRound === this.numOfRounds) {
             this.saveDraftedDecks();
-            this.draftFinished = true;
-            this.gameLog.addAlert('success', 'Drafting complete!');
         } else if(this.players[0].hand.length === 0) {
             this.startRound();
         } else {
@@ -134,6 +132,9 @@ class DraftingTable {
         for(const player of this.players) {
             this.saveDeck(player.formatDeck(this.event));
         }
+
+        this.draftFinished = true;
+        this.gameLog.addAlert('success', 'Drafting complete!');
     }
 
     getState(playerName) {

@@ -173,7 +173,7 @@ class DraftingTableGame extends EventEmitter {
 
             this.draftingTable.handleLeftPlayer(playerName);
 
-            if(!this.finishedAt) {
+            if(this.isEmpty()) {
                 this.finishedAt = new Date();
             }
         }
@@ -212,7 +212,7 @@ class DraftingTableGame extends EventEmitter {
 
             player.disconnectedAt = new Date();
 
-            if(!this.finishedAt) {
+            if(this.isEmpty()) {
                 this.finishedAt = new Date();
             }
         }
@@ -233,6 +233,9 @@ class DraftingTableGame extends EventEmitter {
 
     chooseCard(playerName, card) {
         this.draftingTable.chooseCard(playerName, card);
+        if(this.draftingTable.draftFinished) {
+            this.finishedAt = new Date();
+        }
     }
 
     continue() {
