@@ -28,7 +28,7 @@ export function stopAbilityTimer() {
 export function expireAbilityTimer(timerProps) {
     return dispatch => {
         dispatch(stopAbilityTimer());
-        dispatch(sendGameMessage('menuButton', timerProps.arg, timerProps.method));
+        dispatch(sendGameMessage('menuButton', timerProps.arg, timerProps.method, timerProps.promptId));
     };
 }
 
