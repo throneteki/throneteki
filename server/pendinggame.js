@@ -16,6 +16,7 @@ class PendingGame {
         this.restrictedList = details.restrictedList;
         this.allowSpectators = details.spectators;
         this.showHand = details.showHand;
+        this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;
         this.isMelee = details.isMelee;
         this.useRookery = details.useRookery;
@@ -309,10 +310,6 @@ class PendingGame {
             return true;
         }
 
-        if(this.gamePrivate && !this.started) {
-            return user.permissions && user.permissions.canManageTournaments && this.tournament;
-        }
-
         let players = Object.values(this.players);
         return (
             !this.owner.hasUserBlocked(user) &&
@@ -353,6 +350,7 @@ class PendingGame {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            gamePrivate: this.gamePrivate,
             gameType: this.gameType,
             event: this.event,
             id: this.id,
@@ -407,6 +405,7 @@ class PendingGame {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             event: this.event,
+            gamePrivate: this.gamePrivate,
             gameType: this.gameType,
             id: this.id,
             isMelee: this.isMelee,

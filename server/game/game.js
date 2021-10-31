@@ -72,6 +72,7 @@ class Game extends EventEmitter {
         this.clockPaused = false;
         this.timeLimit = new TimeLimit(this);
         this.savedGameId = details.savedGameId;
+        this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
@@ -1350,6 +1351,7 @@ class Game extends EventEmitter {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            gamePrivate: this.gamePrivate,
             gameType: this.gameType,
             id: this.id,
             isMelee: this.isMelee,
