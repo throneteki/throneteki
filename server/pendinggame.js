@@ -178,6 +178,13 @@ class PendingGame {
             }
         }
 
+        //check if the game has an event selected that restricts spectators
+        if(this.event && this.event.restrictSpectators && this.event.validSpectators) {
+            if(!this.event.validSpectators.includes(user.username.toLowerCase())) {
+                return 'You are not a valid spectator for this event';
+            }
+        }
+
         this.addSpectator(id, user);
         this.addMessage('{0} has joined the game as a spectator', user.username);
     }

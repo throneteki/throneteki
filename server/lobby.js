@@ -434,7 +434,6 @@ class Lobby {
                 (game) =>
                     !game.started &&
                     game.gameType === gameDetails.gameType &&
-                    game.gameFormat === gameDetails.gameFormat &&
                     Object.values(game.players).length < 2 &&
                     !game.password &&
                     !game.gamePrivate
