@@ -4,10 +4,16 @@ class SelectPlotPrompt extends AllPlayerPrompt {
     completionCondition(player) {
         if(player.mustRevealPlot) {
             player.selectedPlot = player.mustRevealPlot;
+            //explicitly call clearSelectableCards so the selectable cards
+            //get reset for the next plot phase after cards are recycled
+            player.clearSelectableCards();
         } else {
             let selectableCards = player.getSelectableCards();
             if(selectableCards.length === 1) {
                 player.selectedPlot = selectableCards[0];
+                //explicitly call clearSelectableCards so the selectable cards
+                //get reset for the next plot phase after cards are recycled
+                player.clearSelectableCards();
             }
         }
 
