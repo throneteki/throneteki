@@ -238,6 +238,10 @@ class DraftingTableGame extends EventEmitter {
         }
     }
 
+    cancelChosenCard(playerName) {
+        this.draftingTable.cancelChosenCard(playerName);
+    }
+
     continue() {
     }
 

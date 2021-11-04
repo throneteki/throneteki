@@ -16,9 +16,11 @@ class DraftingTable {
 
     startRound() {
         this.gameLog.addAlert('startofround', 'Round {0} / {1}', this.currentRound + 1, this.numOfRounds);
-        this.drawHands();
+        //first increase the round counter, then draw new hands to prevent a stale game with only left players from
+        //creating an endless loop
         this.currentRound += 1;
         this.rotateClockwise = !this.rotateClockwise;
+        this.drawHands();
     }
 
     getPlayer(name) {
@@ -29,8 +31,8 @@ class DraftingTable {
         for(const player of this.players) {
             const hand = this.packs.shift();
             player.receiveNewHand(hand);
+            this.setSelectCardPrompt(player);
         }
-
         this.handleInactivePlayers();
     }
 
@@ -85,10 +87,22 @@ class DraftingTable {
     chooseCard(playerName, card) {
         const player = this.getPlayer(playerName);
 
-        if(!player.hasChosen) {
+        if(!player.hasChosen && card) {
             player.chooseCard(card);
             this.gameLog.addMessage('{0} chooses a card', player);
         }
+        this.setSelectCardPrompt(player);
+
+        this.executeNextDraftStep();
+    }
+
+    cancelChosenCard(playerName) {
+        const player = this.getPlayer(playerName);
+        if(player.hasChosen) {
+            player.cancelChosenCard();
+            this.gameLog.addMessage('{0} cancels their chosen card', player);
+        }
+        this.setSelectCardPrompt(player);
 
         this.executeNextDraftStep();
     }
@@ -97,7 +111,9 @@ class DraftingTable {
         if(!this.players.every(player => player.hasChosen)) {
             return;
         }
-
+        for(const player of this.players) {
+            player.confirmChosenCard();
+        }
         if(this.players[0].hand.length === 0 && this.currentRound === this.numOfRounds) {
             this.saveDraftedDecks();
         } else if(this.players[0].hand.length === 0) {
@@ -111,6 +127,7 @@ class DraftingTable {
         const rotatedHands = this.getRotatedHands();
         for(let i = 0; i < rotatedHands.length; ++i) {
             this.players[i].receiveNewHand(rotatedHands[i]);
+            this.setSelectCardPrompt(this.players[i]);
         }
 
         this.gameLog.addMessage('Each player passes their hands {0} ({1} cards remaining)', this.rotateClockwise ? 'clockwise' : 'counter-clockwise', this.players[0].hand.length);
@@ -137,15 +154,31 @@ class DraftingTable {
         this.gameLog.addAlert('success', 'Drafting complete!');
     }
 
+    setSelectCardPrompt(player) {
+        let menuTitle = 'Select a card to pick';
+        let buttonText = 'Confirm selection';
+        let buttonCommand = 'chooseCard';
+        if(player.hasChosen) {
+            menuTitle = 'Waiting for opponents';
+            buttonText = 'Cancel selection';
+            buttonCommand = 'cancelChosenCard';
+        }
+        let draftPrompt = {
+            menuTitle: menuTitle,
+            promptTitle: 'Draft',
+            buttons: [
+                { text: buttonText, command: buttonCommand }
+            ]
+        };
+        player.setPrompt(draftPrompt);
+    }
+
     getState(playerName) {
         const activePlayer = this.getPlayer(playerName);
         return {
-            activePlayer: activePlayer && activePlayer.getCardState(),
+            activePlayer: activePlayer && activePlayer.getPlayerState(),
             currentRound: this.currentRound,
             draftFinished: this.draftFinished,
-            players: this.players.map(player => ({
-                hasChosen: player.hasChosen
-            })),
             rotateClockwise: this.rotateClockwise
         };
     }

@@ -1,5 +1,6 @@
 const sample = require('lodash.sample');
 const Spectator = require('./game/spectator');
+const PlayerPromptState = require('./game/playerpromptstate.js');
 
 class DraftingPlayer extends Spectator {
     constructor({ id, user, starterCards = [] }) {
@@ -11,6 +12,8 @@ class DraftingPlayer extends Spectator {
         this.hasChosen = false;
         this.left = false;
         this.starterCards = starterCards.map(cardQuantity => ({ count: cardQuantity.count, code: cardQuantity.cardCode }));
+        this.chosenCardIndex = null;
+        this.promptState = new PlayerPromptState();
     }
 
     get deck() {
@@ -36,15 +39,24 @@ class DraftingPlayer extends Spectator {
         if(index === -1) {
             return;
         }
+        this.chosenCardIndex = index;
 
-        this.hand.splice(index, 1);
-        const existingCardQuantity = this.chosenCards.find(cardQuantity => cardQuantity.code === card);
+        this.hasChosen = true;
+    }
+
+    confirmChosenCard() {
+        if(!(this.chosenCardIndex >= 0)) {
+            return;
+        }
+
+        //splice returns an array containing the removed item, therefore select [0]
+        let chosenCard = this.hand.splice(this.chosenCardIndex, 1)[0];
+        const existingCardQuantity = this.chosenCards.find(cardQuantity => cardQuantity.code === chosenCard);
         if(existingCardQuantity) {
             existingCardQuantity.count += 1;
         } else {
-            this.chosenCards.push({ count: 1, code: card });
+            this.chosenCards.push({ count: 1, code: chosenCard });
         }
-        this.hasChosen = true;
     }
 
     chooseRandomCard() {
@@ -54,6 +66,14 @@ class DraftingPlayer extends Spectator {
 
         const card = sample(this.hand);
         this.chooseCard(card);
+    }
+
+    cancelChosenCard() {
+        if(!this.hasChosen) {
+            return;
+        }
+        this.chosenCardIndex = null;
+        this.hasChosen = false;
     }
 
     receiveNewHand(hand) {
@@ -89,6 +109,18 @@ class DraftingPlayer extends Spectator {
         return false;
     }
 
+    currentPrompt() {
+        return this.promptState.getState();
+    }
+
+    setPrompt(prompt) {
+        this.promptState.setPrompt(prompt);
+    }
+
+    cancelPrompt() {
+        this.promptState.cancelPrompt();
+    }
+
     getConnectionState({ fullData = false }) {
         const user = fullData ? this.user : { username: this.user.username };
         return {
@@ -100,11 +132,14 @@ class DraftingPlayer extends Spectator {
         };
     }
 
-    getCardState() {
-        return {
+    getPlayerState() {
+        let promptState = this.promptState.getState();
+        let state = {
             deck: this.deck,
-            hand: this.hand
+            hand: this.hand,
+            hasChosen: this.hasChosen
         };
+        return Object.assign(state, promptState);
     }
 }
 
