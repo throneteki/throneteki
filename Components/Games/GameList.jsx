@@ -53,6 +53,8 @@ class GameList extends React.Component {
     getGames(games) {
         let gamesToReturn = [];
 
+        let isAdmin = this.props.user && this.props.user.permissions.canManageGames;
+
         for(const game of games) {
             if(this.props.gameFilter.showOnlyNewGames && game.started) {
                 continue;
@@ -62,7 +64,9 @@ class GameList extends React.Component {
                 continue;
             }
 
-            let isAdmin = this.props.user && this.props.user.permissions.canManageGames;
+            if(!game.started && game.gamePrivate && !isAdmin) {
+                continue;
+            }
 
             gamesToReturn.push((
                 <Game key={ game.id }

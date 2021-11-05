@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import ReactClipboard from 'react-clipboardjs-copy';
 import $ from 'jquery';
 
 import Panel from '../Site/Panel';
@@ -239,6 +240,15 @@ class PendingGame extends React.Component {
                     <div className='btn-group'>
                         <button className='btn btn-primary' disabled={ !this.isGameReady() || this.props.connecting || this.state.waiting } onClick={ this.onStartClick }>Start</button>
                         <button className='btn btn-primary' onClick={ this.onLeaveClick }>Leave</button>
+                    </div>
+                    <div className='pull-right'>
+                        <ReactClipboard
+                            text={ `${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}` }
+                        >
+                            <button className='btn btn-primary'>
+                                Copy Game Link
+                            </button>
+                        </ReactClipboard>
                     </div>
                     <div className='game-status'>{ this.getGameStatus() }</div>
                 </Panel>
