@@ -367,6 +367,7 @@ class Lobby {
         this.broadcastUserMessage(user, 'newuser');
         this.sendFilteredMessages(socket);
         this.sendUserListFilteredWithBlockList(socket, this.getUserList());
+        this.broadcastGameList(socket);
 
         let game = this.findGameForUser(user.username);
         if(game && game.started) {
