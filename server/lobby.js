@@ -367,6 +367,7 @@ class Lobby {
         this.broadcastUserMessage(user, 'newuser');
         this.sendFilteredMessages(socket);
         this.sendUserListFilteredWithBlockList(socket, this.getUserList());
+        this.broadcastGameList(socket);
 
         let game = this.findGameForUser(user.username);
         if(game && game.started) {
@@ -430,7 +431,14 @@ class Lobby {
 
         if(gameDetails.quickJoin) {
             let sortedGames = sortBy(Object.values(this.games), game => game.createdAt);
-            let gameToJoin = sortedGames.find(game => !game.started && game.gameType === gameDetails.gameType && Object.values(game.players).length < 2 && !game.password);
+            let gameToJoin = sortedGames.find(
+                (game) =>
+                    !game.started &&
+                    game.gameType === gameDetails.gameType &&
+                    Object.values(game.players).length < 2 &&
+                    !game.password &&
+                    !game.gamePrivate
+            );
 
             if(gameToJoin) {
                 let message = gameToJoin.join(socket.id, socket.user);
@@ -443,7 +451,6 @@ class Lobby {
                 socket.joinChannel(gameToJoin.id);
 
                 this.sendGameState(gameToJoin);
-
                 this.broadcastGameMessage('updategame', gameToJoin);
 
                 return;
@@ -451,7 +458,7 @@ class Lobby {
         }
 
         const restrictedListsResult = this.cardService.getRestrictedList();
-        const eventResult = gameDetails.eventId === 'none' ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
+        const eventResult = (!gameDetails.eventId || gameDetails.eventId === 'none') ? Promise.resolve({ _id: 'none' }) : this.eventService.getEventById(gameDetails.eventId);
 
         return Promise.all([eventResult, restrictedListsResult]).then(([event, restrictedLists]) => {
             const defaultRestrictedList = restrictedLists[0];
@@ -470,7 +477,7 @@ class Lobby {
             }
 
             let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
-            game.newGame(socket.id, socket.user, gameDetails.password);
+            game.newGame(socket.id, socket.user, gameDetails.password, true);
 
             socket.joinChannel(game.id);
             this.sendGameState(game);
@@ -522,6 +529,7 @@ class Lobby {
 
         let gameNode = this.router.startGame(game);
         if(!gameNode) {
+            socket.send('gameerror', 'No game nodes available. Try again later.');
             return;
         }
 

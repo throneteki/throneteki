@@ -16,6 +16,7 @@ class PendingGame {
         this.restrictedList = details.restrictedList;
         this.allowSpectators = details.spectators;
         this.showHand = details.showHand;
+        this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;
         this.isMelee = details.isMelee;
         this.useRookery = details.useRookery;
@@ -26,6 +27,8 @@ class PendingGame {
         this.muteSpectators = details.muteSpectators;
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
+        this.started = false;
+        this.maxPlayers = 2;
     }
 
     // Getters
@@ -111,12 +114,14 @@ class PendingGame {
         };
     }
 
-    newGame(id, user, password) {
+    newGame(id, user, password, join) {
         if(password) {
             this.password = crypto.createHash('md5').update(password).digest('hex');
         }
 
-        this.addPlayer(id, user);
+        if(join) {
+            this.addPlayer(id, user);
+        }
     }
 
     isUserBlocked(user) {
@@ -125,11 +130,11 @@ class PendingGame {
 
     join(id, user, password) {
         if(_.size(this.players) === 2 || this.started) {
-            return;
+            return 'Game full';
         }
 
         if(this.isUserBlocked(user)) {
-            return;
+            return 'Cannot join game';
         }
 
         if(this.password) {
@@ -138,19 +143,35 @@ class PendingGame {
             }
         }
 
-        this.addPlayer(id, user);
         this.addMessage('{0} has joined the game', user.username);
+        this.addPlayer(id, user);
+
+        if(!this.isOwner(this.owner.username)) {
+            let otherPlayer = Object.values(this.players).find(
+                (player) => player.name !== this.owner.username
+            );
+
+            if(otherPlayer) {
+                this.owner = otherPlayer.user;
+                otherPlayer.owner = true;
+            }
+        }
     }
 
-    watch(id, user, password, callback) {
-        if(!this.allowSpectators) {
-            callback(new Error('Join not permitted'));
+    watch(id, user, password) {
+        if(user && user.permissions && user.permissions.canManageGames) {
+            this.addSpectator(id, user);
+            this.addMessage('{0} has joined the game as a spectator', user.username);
 
             return;
         }
 
+        if(!this.allowSpectators) {
+            return 'Join not permitted';
+        }
+
         if(this.isUserBlocked(user)) {
-            return;
+            return 'Cannot join game';
         }
 
         if(this.password) {
@@ -171,7 +192,7 @@ class PendingGame {
     }
 
     leave(playerName) {
-        var player = this.getPlayerOrSpectator(playerName);
+        let player = this.getPlayerOrSpectator(playerName);
         if(!player) {
             return;
         }
@@ -196,7 +217,7 @@ class PendingGame {
     }
 
     disconnect(playerName) {
-        var player = this.getPlayerOrSpectator(playerName);
+        let player = this.getPlayerOrSpectator(playerName);
         if(!player) {
             return;
         }
@@ -217,7 +238,7 @@ class PendingGame {
     }
 
     chat(playerName, message) {
-        var player = this.getPlayerOrSpectator(playerName);
+        let player = this.getPlayerOrSpectator(playerName);
         if(!player) {
             return;
         }
@@ -246,11 +267,13 @@ class PendingGame {
 
     // interrogators
     isEmpty() {
-        return !_.any(this.getPlayersAndSpectators(), player => this.hasActivePlayer(player.name));
+        return !_.any(this.getPlayersAndSpectators(), (player) =>
+            this.hasActivePlayer(player.name)
+        );
     }
 
     isOwner(playerName) {
-        var player = this.players[playerName];
+        let player = this.players[playerName];
 
         if(!player || !player.owner) {
             return false;
@@ -261,7 +284,8 @@ class PendingGame {
 
     removeAndResetOwner(playerName) {
         if(this.isOwner(playerName)) {
-            let otherPlayer = _.find(this.players, player => player.name !== playerName);
+            let otherPlayer = _.find(this.players, (player) => player.name !== playerName);
+
             if(otherPlayer) {
                 this.owner = otherPlayer.user;
                 otherPlayer.owner = true;
@@ -269,17 +293,30 @@ class PendingGame {
         }
     }
 
+    hasActivePlayer(playerName) {
+        return (
+            (this.players[playerName] &&
+                !this.players[playerName].left &&
+                !this.players[playerName].disconnected) ||
+            this.spectators[playerName]
+        );
+    }
+
     isVisibleFor(user) {
         if(!user) {
             return true;
         }
 
-        let players = Object.values(this.players);
-        return !this.owner.hasUserBlocked(user) && !user.hasUserBlocked(this.owner) && players.every(player => !player.user.hasUserBlocked(user));
-    }
+        if(user.permissions && user.permissions.canManageGames) {
+            return true;
+        }
 
-    hasActivePlayer(playerName) {
-        return this.players[playerName] && !this.players[playerName].left && !this.players[playerName].disconnected || this.spectators[playerName];
+        let players = Object.values(this.players);
+        return (
+            !this.owner.hasUserBlocked(user) &&
+            !user.hasUserBlocked(this.owner) &&
+            players.every((player) => !player.user.hasUserBlocked(user))
+        );
     }
 
     // Summary
@@ -314,8 +351,10 @@ class PendingGame {
         return {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
+            gamePrivate: this.gamePrivate,
             gameType: this.gameType,
             event: this.event,
+            full: Object.values(this.players).length >= this.maxPlayers,
             id: this.id,
             messages: activePlayer ? this.gameChat.messages : undefined,
             name: this.name,
@@ -368,6 +407,7 @@ class PendingGame {
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             event: this.event,
+            gamePrivate: this.gamePrivate,
             gameType: this.gameType,
             id: this.id,
             isMelee: this.isMelee,
