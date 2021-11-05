@@ -28,6 +28,7 @@ class PendingGame {
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
         this.started = false;
+        this.maxPlayers = 2;
     }
 
     // Getters
@@ -353,6 +354,7 @@ class PendingGame {
             gamePrivate: this.gamePrivate,
             gameType: this.gameType,
             event: this.event,
+            full: Object.values(this.players).length >= this.maxPlayers,
             id: this.id,
             messages: activePlayer ? this.gameChat.messages : undefined,
             name: this.name,
