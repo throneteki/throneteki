@@ -85,6 +85,10 @@ describe('DraftingTable', function() {
                 it('does not add to deck', function() {
                     expect(this.player1.deck).not.toContain({ count: 1, code: 'cardC' });
                 });
+
+                it('does not set the chosen flag', function() {
+                    expect(this.player1.hasChosen).toBeFalse;
+                });
             });
 
             describe('when the card is in hand', function() {
@@ -94,31 +98,56 @@ describe('DraftingTable', function() {
                     this.draftingTable.chooseCard('player1', 'cardA');
                 });
 
-                it('removes the single card from the hand', function() {
-                    expect(this.player1.hand).toEqual(['cardA', 'cardB']);
-                });
-
-                it('adds the card to the player\'s deck', function() {
-                    expect(this.player1.deck).toContain({ count: 1, code: 'cardA' });
+                it('sets the hasChosen flag', function() {
+                    expect(this.player1.hasChosen).toBe(true);
                 });
             });
 
-            describe('when the player has already chosen a card this round', function() {
+            describe('when the player cancels their selection', function() {
                 beforeEach(function() {
                     this.player1.receiveNewHand(['cardA', 'cardA', 'cardB']);
 
                     this.draftingTable.chooseCard('player1', 'cardA');
-                    // Choose again
+                    this.draftingTable.cancelChosenCard('player1');
+                });
+
+                it('resets the hasChosen flag', function() {
+                    expect(this.player1.hasChosen).toBe(false);
+                });
+
+                it('allows the player to choose another card', function() {
                     this.draftingTable.chooseCard('player1', 'cardB');
+                    expect(this.player1.hasChosen).toBe(true);
                 });
+            });
+        });
 
-                it('does not remove the second card from hand', function() {
-                    expect(this.player1.hand).toEqual(['cardA', 'cardB']);
-                });
+        describe('when not all players have chosen a card', function() {
+            beforeEach(function() {
+                this.draftingTable.rotateClockwise = true;
 
-                it('does not add the second card to the player\'s deck', function() {
-                    expect(this.player1.deck).not.toContain({ count: 1, code: 'cardB' });
-                });
+                this.player1.receiveNewHand(['cardA', 'cardB']);
+                this.player2.receiveNewHand(['cardC', 'cardD']);
+                this.player3.receiveNewHand(['cardE', 'cardF']);
+
+                this.draftingTable.chooseCard('player1', 'cardA');
+                this.draftingTable.chooseCard('player2', 'cardC');
+            });
+
+            it('it does not pick the cards until the last player also chooses their card', function() {
+                expect(this.player1.chosenCards).toEqual([]);
+                expect(this.player2.chosenCards).toEqual([]);
+                expect(this.player3.chosenCards).toEqual([]);
+
+                expect(this.player1.hasChosen).toBe(true);
+                expect(this.player2.hasChosen).toBe(true);
+                expect(this.player3.hasChosen).toBe(false);
+
+                this.draftingTable.chooseCard('player3', 'cardE');
+
+                expect(this.player1.hand).toEqual(['cardF']);
+                expect(this.player2.hand).toEqual(['cardB']);
+                expect(this.player3.hand).toEqual(['cardD']);
             });
         });
 
@@ -143,8 +172,9 @@ describe('DraftingTable', function() {
 
             it('allows players to choose the next card', function() {
                 this.draftingTable.chooseCard('player1', 'cardF');
+                this.draftingTable.chooseCard('player2', 'cardB');
+                this.draftingTable.chooseCard('player3', 'cardD');
 
-                expect(this.player1.hand).toEqual([]);
                 expect(this.player1.deck).toContain({ count: 1, code: 'cardF' });
             });
         });
