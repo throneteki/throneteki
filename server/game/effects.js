@@ -767,6 +767,7 @@ const Effects = {
         };
     },
     cannotTarget: cannotEffect('target'),
+    cannotAssault: cannotEffect('assault'),
     setMaxGoldGain: function(max) {
         return {
             targetType: 'player',
@@ -1049,6 +1050,18 @@ const Effects = {
             }
         };
     },
+    canAmbush: function(predicate) {
+        let playableLocation = new PlayableLocation('ambush', CardMatcher.createMatcher(predicate));
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.playableLocations.push(playableLocation);
+            },
+            unapply: function(player) {
+                player.playableLocations = player.playableLocations.filter(l => l !== playableLocation);
+            }
+        };
+    },
     canSelectAsFirstPlayer: function(condition) {
         return {
             targetType: 'player',
@@ -1174,6 +1187,9 @@ const Effects = {
     },
     reduceFirstPlayedCardCostEachPhase: function(amount, match) {
         return this.reduceFirstCardCostEachPhase('play', amount, match);
+    },
+    reduceFirstMarshalledAmbushedOrOutOfShadowsCardCostEachPhase: function(amount, match) {
+        return this.reduceFirstCardCostEachPhase(['marshal', 'ambush', 'outOfShadows'], amount, match);
     },
     reduceAmbushCardCost: function(amount, match) {
         return this.reduceCost({

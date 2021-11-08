@@ -21,6 +21,7 @@ class CrownRegent extends TitleCard {
                     onSelect: opponent => {
                         challenge.defendingPlayer = opponent;
                         challenge.clearStealthChoices();
+                        challenge.clearAssaultChoices();
                         const stealthAttackers = challenge.declaredAttackers.filter(card => card.isStealth());
                         this.game.queueStep(new ChooseStealthTargets(this.game, challenge, stealthAttackers));
                     },

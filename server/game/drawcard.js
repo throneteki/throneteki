@@ -135,6 +135,10 @@ class DrawCard extends BaseCard {
         return this.hasKeyword('Stealth');
     }
 
+    isAssault() {
+        return this.hasKeyword('Assault') && this.allowGameAction('assault');
+    }
+
     isTerminal() {
         return this.hasKeyword('Terminal');
     }

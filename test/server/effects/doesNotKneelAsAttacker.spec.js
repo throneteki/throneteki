@@ -33,7 +33,7 @@ describe('doesNotKneelAsAttacker', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'The Blackfish', 'The Wolf King'
+                    'The Blackfish (WotN)', 'The Wolf King'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
