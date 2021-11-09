@@ -12,14 +12,18 @@ class Goldengrove extends DrawCard {
             },
             message: '{player} uses {source} and kneels {costs.kneel} to stand and take control of {target}',
             handler: context => {
-                if(context.target.kneeled) {
-                    context.target.controller.standCard(context.target);
-                }
-                this.game.resolveGameAction(
+                let gameActions = [];
+                gameActions.push(
+                    GameActions.standCard({ card: context.target })
+                );
+                gameActions.push(
                     GameActions.takeControl(context => ({
                         player: context.player,
                         card: context.target
-                    })),
+                    }))
+                );
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(gameActions),
                     context
                 );
             }
