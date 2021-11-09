@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class BastardsBoys extends DrawCard {
+class BryndensOutriders extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.controller.anyCardsInPlay(card => card.hasTrait('Commander')),
@@ -16,6 +16,6 @@ class BastardsBoys extends DrawCard {
     }
 }
 
-BastardsBoys.code = '21017';
+BryndensOutriders.code = '21017';
 
-module.exports = BastardsBoys;
+module.exports = BryndensOutriders;
