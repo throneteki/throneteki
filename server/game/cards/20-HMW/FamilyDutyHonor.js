@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class FamilyDutyHonor extends DrawCard {
     setupCardAbilities(ability) {
-        let leftPlayCondition = event => event.allowSave && event.card.canBeSaved && event.card.canBeSaved() && event.card.hasTrait('House Tully') && event.card.controller === this.controller && event.card.getPower() > 0;
+        let leftPlayCondition = event => event.allowSave && event.card.canBeSaved() && event.card.hasTrait('House Tully') && event.card.controller === this.controller && event.card.getPower() > 0;
         this.interrupt({
             when: {
                 onCharacterKilled: leftPlayCondition,
