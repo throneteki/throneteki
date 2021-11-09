@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class TheIronFleet extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,9 +18,15 @@ class TheIronFleet extends DrawCard {
             },
             handler: (context) => {
                 this.game.addMessage('{0} uses {1} to discard the top card from each opponent\'s deck', context.player, this);
-                for(let opponent of this.game.getOpponents(context.player)) {
-                    opponent.discardFromDraw(1);
-                }
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        this.game.getOpponents(context.player).map(opponent => GameActions.discardTopCards({ 
+                            player: opponent,
+                            amount: 1
+                        }))
+                    ),
+                    context
+                );
             }
         });
     }
