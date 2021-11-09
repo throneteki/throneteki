@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class JacelynBywater extends DrawCard {
+class SerJacelynBywater extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'current',
@@ -14,6 +14,6 @@ class JacelynBywater extends DrawCard {
     }
 }
 
-JacelynBywater.code = '21008';
+SerJacelynBywater.code = '21008';
 
-module.exports = JacelynBywater;
+module.exports = SerJacelynBywater;
