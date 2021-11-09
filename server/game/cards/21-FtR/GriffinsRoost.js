@@ -18,7 +18,7 @@ class GriffinsRoost extends DrawCard {
             cost: ability.costs.kneelFactionCard(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: card => card.location === 'hand' && card.controller === this.controller,
+                cardCondition: (card, context) => card.location === 'hand' && card.controller === context.player,
                 // Even though the card text uses the word 'choose', use a non
                 // targeting prompt to prevent the card from being revealed
                 // when the opponent is prompted to cancel the ability.
