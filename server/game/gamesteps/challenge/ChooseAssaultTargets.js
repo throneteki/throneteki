@@ -16,14 +16,9 @@ class ChooseAssaultTargets extends BaseStep {
     continue() {
         //as soon as one assault target has been chosen, stop asking for targets even when multiple assault characters are in the challenge
         if(this.assaultCharacters.length > 0 && !this.assaultTargetChosen) {
-            let highestPrintedCost = this.assaultCharacters.map(character => character.getPrintedCost()).reduce((highestPrintedCost, printedCost) => {
-                if(printedCost > highestPrintedCost) {
-                    highestPrintedCost = printedCost;
-                }
-                return highestPrintedCost;
-            }, 0);
-            let characterWithHighestPrintedCost = this.assaultCharacters.filter(character => character.getPrintedCost() === highestPrintedCost)[0];
-
+            let highestPrintedCost = Math.max(...this.assaultCharacters.map(character => character.getPrintedCost()));
+            let characterWithHighestPrintedCost = this.assaultCharacters.find(character => character.getPrintedCost() === highestPrintedCost);
+            
             let title = 'Select assault target for ' + characterWithHighestPrintedCost.name;
             this.game.promptForSelect(characterWithHighestPrintedCost.controller, {
                 numCards: 1,
