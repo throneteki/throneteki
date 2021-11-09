@@ -4,7 +4,7 @@ class HarmaDogshead extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardDiscarded: event => event.isPillage && event.source.controller === this.controller && event.source.hasTrait('Wildling')
+                onCardDiscarded: (event, context) => event.isPillage && event.source.controller === context.player && event.source.hasTrait('Wildling')
             },
             limit: ability.limit.perPhase(2),
             handler: context => {

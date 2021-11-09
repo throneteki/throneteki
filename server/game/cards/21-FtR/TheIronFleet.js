@@ -13,7 +13,7 @@ class TheIronFleet extends DrawCard {
         
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller && this.hasAttackingRaider()
+                onChallengeInitiated: (event, context) => event.challenge.attackingPlayer === context.player && this.hasAttackingRaider(context.player)
             },
             handler: (context) => {
                 this.game.addMessage('{0} uses {1} to discard the top card from each opponent\'s deck', context.player, this);
@@ -24,8 +24,8 @@ class TheIronFleet extends DrawCard {
         });
     }
 
-    hasAttackingRaider() {
-        return this.controller.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character');
+    hasAttackingRaider(player) {
+        return player.anyCardsInPlay(card => card.isAttacking() && card.hasTrait('Raider') && card.getType() === 'character');
     }
 }
 

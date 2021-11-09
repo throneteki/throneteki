@@ -9,7 +9,7 @@ class LordTywinsHost extends DrawCard {
                 
         this.reaction({
             when: {
-                onCardDiscarded: event => event.isPillage && event.source.controller === this.controller && event.source.isFaction('lannister')
+                onCardDiscarded: (event, context) => event.isPillage && event.source.controller === context.player && event.source.isFaction('lannister')
             },
             limit: ability.limit.perRound(3),
             handler: context => {

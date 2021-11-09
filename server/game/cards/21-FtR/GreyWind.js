@@ -10,8 +10,8 @@ class GreyWind extends DrawCard {
             canCancel: true,
             when: {
                 //Restrict triggering on own character abilities to forced triggered abilities
-                onCardAbilityInitiated: event => event.source.getType() === 'character' && event.ability.isTriggeredAbility() &&
-                                                 (event.ability.isForcedAbility() || event.source.controller !== this.controller)
+                onCardAbilityInitiated: (event, context) => event.source.getType() === 'character' && event.ability.isTriggeredAbility() &&
+                                                            (event.ability.isForcedAbility() || event.source.controller !== context.player)
             },
             cost: ability.costs.returnToHand(card => card.hasTrait('Direwolf')),
             limit: ability.limit.perPhase(1),

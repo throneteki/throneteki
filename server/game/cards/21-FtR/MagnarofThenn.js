@@ -19,7 +19,7 @@ class MagnarofThenn extends DrawCard {
             handler: context => {
                 let parent = context.cardStateWhenInitiated.parent;
                 context.event.saveCard();
-                this.game.addMessage('{0} uses {1} and sacrifices {2} to save {3}', this.controller, this, context.costs.sacrifice, parent);
+                this.game.addMessage('{0} uses {1} and sacrifices {2} to save {3}', context.player, this, context.costs.sacrifice, parent);
             }
         });
     }

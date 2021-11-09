@@ -7,10 +7,10 @@ class LordAndersHost extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardEntersPlay: event =>
+                onCardEntersPlay: (event, context) =>
                     this.game.isDuringChallenge() &&
                     this.game.currentPhase === 'challenge' &&
-                    event.card.controller === this.controller &&
+                    event.card.controller === context.player &&
                     (event.originalLocation === 'hand' || event.originalLocation === 'shadows')
             },
             limit: ability.limit.perRound(1),

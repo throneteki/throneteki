@@ -4,7 +4,7 @@ class Windblown extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
+                afterChallenge: (event, context) => event.challenge.winner === context.player && this.isParticipating()
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {

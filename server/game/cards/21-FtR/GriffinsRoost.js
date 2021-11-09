@@ -13,7 +13,7 @@ class GriffinsRoost extends DrawCard {
       
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, challengeType: 'power' })
+                afterChallenge: (event, context) => event.challenge.isMatch({ winner: context.player, challengeType: 'power' })
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
