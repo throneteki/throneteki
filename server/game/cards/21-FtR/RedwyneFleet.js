@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class RedwyneFleet extends DrawCard {
     setupCardAbilities(ability) {
@@ -17,10 +18,11 @@ class RedwyneFleet extends DrawCard {
             },
             limit: ability.limit.perRound(3),
             condition: context => context.player.canGainGold(),
-            handler: context => {
-                this.game.addGold(context.player, 1);
-                this.game.addMessage('{0} uses {1} to gain 1 gold', context.player, this);
-            }
+            gameAction: GameActions.gainGold(context => ({
+                player: context.player,
+                amount: 1
+            })),
+            message: '{player} uses {source} to gain 1 gold'
         });
     }
 }
