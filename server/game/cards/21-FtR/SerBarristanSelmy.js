@@ -11,9 +11,9 @@ class SerBarristanSelmy extends DrawCard {
             limit: ability.limit.perPhase(2),
             choices: {
                 'Stand each defending Knight': context => {
-                    let affectedCharacters = context.player.filterCardsInPlay(card => card.isDefending() &&
-                                                                                      card.hasTrait('Knight') &&
-                                                                                      card.getType() === 'character');
+                    let affectedCharacters = this.game.filterCardsInPlay(card => card.isDefending() &&
+                                                                                 card.hasTrait('Knight') &&
+                                                                                 card.getType() === 'character');
                     this.game.resolveGameAction(
                         GameActions.simultaneously(
                             affectedCharacters.map(character => GameActions.standCard({ card: character }))
