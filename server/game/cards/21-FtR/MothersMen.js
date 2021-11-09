@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class MothersMen extends DrawCard {
     setupCardAbilities() {
@@ -7,10 +8,11 @@ class MothersMen extends DrawCard {
                 onCharacterKilled: event => !this.game.claim.isApplying && event.card.controller !== this.controller && this.controller.canPutIntoPlay(this)
             },
             location: 'discard pile',
-            handler: context => {
-                this.controller.putIntoPlay(this);
-                this.game.addMessage('{0} puts {1} into play from their discard pile', context.player, this);
-            }
+            gameAction: GameActions.putIntoPlay(context => ({
+                player: context.player,
+                card: this
+            })),
+            message: '{player} puts {source} into play from their discard pile'
         });
     }
 }
