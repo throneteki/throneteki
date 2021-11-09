@@ -6,10 +6,6 @@ class GreyWind extends DrawCard {
         this.whileAttached({
             effect: ability.effects.addKeyword('stealth')
         });
-        this.whileAttached({
-            condition: () => this.parent && this.parent.hasTrait('King'),
-            effect: ability.effects.addKeyword('intimidate')
-        });
         this.interrupt({
             canCancel: true,
             when: {
