@@ -24,7 +24,7 @@ describe('The Rains of Castamere', function() {
         this.scheme1 = scheme('3333');
         this.scheme2 = scheme('4444');
 
-        this.player = jasmine.createSpyObj('player', ['kneelCard', 'moveCard']);
+        this.player = jasmine.createSpyObj('player', ['kneelCard', 'moveCard', 'hasFlag']);
         this.player.game = this.gameSpy;
         this.player.faction = {};
 
