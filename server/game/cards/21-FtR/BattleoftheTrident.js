@@ -9,7 +9,8 @@ class BattleoftheTrident extends AgendaCard {
                 onClaimApplied: event => 
                     event.challenge.winner === this.owner &&
                     event.challenge.attackingPlayer === this.owner &&
-                    event.challenge.attackers.some(attacker => attacker.hasTrait('Army') || attacker.hasTrait('Commander'))
+                    event.challenge.attackers.some(attacker => attacker.hasTrait('Army') || attacker.hasTrait('Commander')) &&
+                    !this.owner.hasFlag('cannotRevealPlot')
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
@@ -27,6 +28,7 @@ class BattleoftheTrident extends AgendaCard {
         this.action({
             title: 'Manually trigger',
             cost: ability.costs.kneelFactionCard(),
+            condition: () => !this.owner.hasFlag('cannotRevealPlot'),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
