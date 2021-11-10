@@ -428,6 +428,10 @@ class BaseCard {
         return !!this.cardData.loyal;
     }
 
+    canBeSaved() {
+        return this.allowGameAction('save');
+    }
+
     canGainPower() {
         return this.allowGameAction('gainPower');
     }
