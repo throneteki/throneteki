@@ -35,7 +35,6 @@ class Summerhall extends DrawCard {
                 !this.kneeled &&
                 this.game.isDuringChallenge({ challengeType: 'power' })
             ),
-            match: player => true,
             effect: ability.effects.cannotRevealPlot()
         });
     }
