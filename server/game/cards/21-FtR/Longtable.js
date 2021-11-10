@@ -9,7 +9,7 @@ class Longtable extends DrawCard {
       
         this.persistentEffect({
             targetController: 'current',
-            effect: ability.effects.reduceFirstMarshalledAmbushedOrOutOfShadowsCardCostEachPhase(1, card => card.hasTrait('Small Council') || card.hasTrait('Spy'))
+            effect: ability.effects.reduceFirstCardCostEachPhase(['marshal', 'ambush', 'outOfShadows'], 1, card => card.hasTrait('Small Council') || card.hasTrait('Spy'))
         });
     }
 }

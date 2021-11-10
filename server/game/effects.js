@@ -1188,9 +1188,6 @@ const Effects = {
     reduceFirstPlayedCardCostEachPhase: function(amount, match) {
         return this.reduceFirstCardCostEachPhase('play', amount, match);
     },
-    reduceFirstMarshalledAmbushedOrOutOfShadowsCardCostEachPhase: function(amount, match) {
-        return this.reduceFirstCardCostEachPhase(['marshal', 'ambush', 'outOfShadows'], amount, match);
-    },
     reduceAmbushCardCost: function(amount, match) {
         return this.reduceCost({
             playingTypes: 'ambush',
