@@ -8,7 +8,7 @@ class Summerhall extends DrawCard {
                 !this.kneeled &&
                 this.game.isDuringChallenge({ challengeType: 'power' })
             ),
-            effect: ability.effects.cannotPutIntoPlay((card, playingType) => card.getType() !== 'event')
+            effect: ability.effects.cannotPutIntoPlay(card => card.getType() !== 'event')
         });
 
         this.persistentEffect({

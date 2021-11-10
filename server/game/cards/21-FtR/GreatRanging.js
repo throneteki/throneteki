@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 
 class GreatRanging extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.plotModifiers({
             reserve: 1
         });
@@ -32,7 +32,6 @@ class GreatRanging extends DrawCard {
         this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into play', player, this);
     }
 }
-
 
 GreatRanging.code = '21013';
 
