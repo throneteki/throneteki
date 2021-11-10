@@ -464,10 +464,10 @@ const Effects = {
     },
     burn: {
         apply: function(card) {
-            card.isBurning = true;
+            card.setIsBurning(true);
         },
         unapply: function(card) {
-            card.isBurning = false;
+            card.setIsBurning(false);
         }
     },
     killByStrength: function(value) {

@@ -444,6 +444,24 @@ class DrawCard extends BaseCard {
         this.saved = false;
     }
 
+    setIsBurning(burning) {
+        this.isBurning = burning;
+        //register/unregister onChallengeFinished event so when the challenge is finished
+        //the burn effect gets evaluated again
+        if(burning) {
+            this.events.register(['onChallengeFinished']);
+        } else {
+            this.events.unregisterHandlerForEventName('onChallengeFinished');
+        }
+    }
+
+    //evaluate the burn effect again when the challenge is finished
+    onChallengeFinished() {
+        if(this.isBurning && this.getStrength() <= 0) {
+            this.game.killCharacter(this, { allowSave: false, isBurn: true });
+        }
+    }
+
     getSummary(activePlayer) {
         let baseSummary = super.getSummary(activePlayer);
 
