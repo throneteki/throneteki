@@ -42,6 +42,7 @@ class BattleoftheTrident extends AgendaCard {
         });
 
         //this reaction is not intended to trigger, only to be used directly by the trigger() function
+        //TODO convert revealing a plot into a game action so this fake reaction can be put into a then part of a game action
         this.reaction({
             title: 'removeFromGameMarker',
             when: {
