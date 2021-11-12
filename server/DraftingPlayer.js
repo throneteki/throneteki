@@ -60,7 +60,7 @@ class DraftingPlayer extends Spectator {
     }
 
     chooseRandomCard() {
-        if(this.hand.length === 0) {
+        if(!this.hand || this.hand.length === 0) {
             return;
         }
 
