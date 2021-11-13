@@ -123,7 +123,7 @@ describe('nested ability sequences', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Song of Summer',
-                    'The Blackfish', 'Put to the Torch', 'Heart Tree Grove'
+                    'The Blackfish (WotN)', 'Put to the Torch', 'Heart Tree Grove'
                 ]);
 
                 this.player1.selectDeck(deck);

@@ -16,6 +16,7 @@ const {Tokens} = require('./Constants');
 
 const ValidKeywords = [
     'ambush',
+    'assault',
     'bestow',
     'insight',
     'intimidate',

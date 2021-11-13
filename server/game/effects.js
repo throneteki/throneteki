@@ -464,10 +464,10 @@ const Effects = {
     },
     burn: {
         apply: function(card) {
-            card.isBurning = true;
+            card.setIsBurning(true);
         },
         unapply: function(card) {
-            card.isBurning = false;
+            card.setIsBurning(false);
         }
     },
     killByStrength: function(value) {
@@ -767,6 +767,7 @@ const Effects = {
         };
     },
     cannotTarget: cannotEffect('target'),
+    cannotAssault: cannotEffect('assault'),
     setMaxGoldGain: function(max) {
         return {
             targetType: 'player',
@@ -1046,6 +1047,18 @@ const Effects = {
             unapply: function(player, context) {
                 player.playableLocations = player.playableLocations.filter(l => l !== context.canPlayFromOwn[player.name]);
                 delete context.canPlayFromOwn[player.name];
+            }
+        };
+    },
+    canAmbush: function(predicate) {
+        let playableLocation = new PlayableLocation('ambush', CardMatcher.createMatcher(predicate));
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.playableLocations.push(playableLocation);
+            },
+            unapply: function(player) {
+                player.playableLocations = player.playableLocations.filter(l => l !== playableLocation);
             }
         };
     },

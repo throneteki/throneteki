@@ -66,6 +66,13 @@ class EventRegistrar {
         }
         this.events = [];
     }
+
+    unregisterHandlerForEventName(eventName) {
+        let event = this.events.find(event => event.name === eventName);
+        if(event) {
+            this.game.removeListener(eventName, event.handler);
+        }
+    }
 }
 
 module.exports = EventRegistrar;
