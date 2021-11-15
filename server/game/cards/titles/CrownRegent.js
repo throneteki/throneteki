@@ -1,5 +1,5 @@
 const TitleCard = require('../../TitleCard.js');
-const ChooseStealthTargets = require('../../gamesteps/challenge/choosestealthtargets');
+const ChooseStealthTargets = require('../../gamesteps/challenge/ChooseStealthTargets');
 
 class CrownRegent extends TitleCard {
     setupCardAbilities(ability) {
