@@ -476,8 +476,10 @@ class Lobby {
                 gameDetails.draftCube = draftCubes.find(draftCube => draftCube._id.toHexString() === event.draftOptions.draftCubeId);
             }
 
+            const startedByEventOrganizer = event.restrictTableCreators && event.validTableCreators && event.validTableCreators.includes(socket.user.username);
+
             let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
-            game.newGame(socket.id, socket.user, gameDetails.password);
+            game.newGame(socket.id, socket.user, gameDetails.password, !startedByEventOrganizer);
 
             socket.joinChannel(game.id);
             this.sendGameState(game);
