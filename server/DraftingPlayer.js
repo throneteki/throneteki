@@ -135,6 +135,7 @@ class DraftingPlayer extends Spectator {
     getPlayerState() {
         let promptState = this.promptState.getState();
         let state = {
+            chosenCardIndex: this.chosenCardIndex,
             deck: this.deck,
             hand: this.hand,
             hasChosen: this.hasChosen
