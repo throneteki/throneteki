@@ -18,8 +18,9 @@ class DiscardTokenCost {
             if(typeof(this.amount) === 'function') {
                 let amount = this.amount(card);
                 card.modifyToken(this.token, -amount);
-            }
-            card.modifyToken(this.token, -this.amount);
+            } else {
+                card.modifyToken(this.token, -this.amount);
+            }            
         }
     }
 }
