@@ -69,6 +69,8 @@ class CardService {
                 });
 
                 this.events.find({}).then(events => {
+                    //cast event._id to string so it is comparable in throneteki-deck-helper
+                    events.forEach(event => event._id = event._id.toHexString());
                     resolve(officialLists.concat(events));
                 }).catch(err => {
                     logger.info(`Unable to load events: ${err}`);
