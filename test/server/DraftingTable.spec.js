@@ -70,12 +70,17 @@ describe('DraftingTable', function() {
     });
 
     describe('chooseCard', function() {
+        const chooseCard = (draftingTable, playerName, card) => {
+            draftingTable.chooseCard(playerName, card);
+            draftingTable.confirmChosenCard(playerName);
+        };
+
         describe('while a single player is choosing', function() {
             describe('when the card is not in hand', function() {
                 beforeEach(function() {
                     this.player1.receiveNewHand(['cardA', 'cardA', 'cardB']);
 
-                    this.draftingTable.chooseCard('player1', 'cardC');
+                    chooseCard(this.draftingTable, 'player1', 'cardC');
                 });
 
                 it('does not modify the hand', function() {
@@ -95,7 +100,7 @@ describe('DraftingTable', function() {
                 beforeEach(function() {
                     this.player1.receiveNewHand(['cardA', 'cardA', 'cardB']);
 
-                    this.draftingTable.chooseCard('player1', 'cardA');
+                    chooseCard(this.draftingTable, 'player1', 'cardA');
                 });
 
                 it('sets the hasChosen flag', function() {
@@ -107,7 +112,7 @@ describe('DraftingTable', function() {
                 beforeEach(function() {
                     this.player1.receiveNewHand(['cardA', 'cardA', 'cardB']);
 
-                    this.draftingTable.chooseCard('player1', 'cardA');
+                    chooseCard(this.draftingTable, 'player1', 'cardA');
                     this.draftingTable.cancelChosenCard('player1');
                 });
 
@@ -116,7 +121,7 @@ describe('DraftingTable', function() {
                 });
 
                 it('allows the player to choose another card', function() {
-                    this.draftingTable.chooseCard('player1', 'cardB');
+                    chooseCard(this.draftingTable, 'player1', 'cardB');
                     expect(this.player1.hasChosen).toBe(true);
                 });
             });
@@ -130,8 +135,8 @@ describe('DraftingTable', function() {
                 this.player2.receiveNewHand(['cardC', 'cardD']);
                 this.player3.receiveNewHand(['cardE', 'cardF']);
 
-                this.draftingTable.chooseCard('player1', 'cardA');
-                this.draftingTable.chooseCard('player2', 'cardC');
+                chooseCard(this.draftingTable, 'player1', 'cardA');
+                chooseCard(this.draftingTable, 'player2', 'cardC');
             });
 
             it('it does not pick the cards until the last player also chooses their card', function() {
@@ -143,7 +148,7 @@ describe('DraftingTable', function() {
                 expect(this.player2.hasChosen).toBe(true);
                 expect(this.player3.hasChosen).toBe(false);
 
-                this.draftingTable.chooseCard('player3', 'cardE');
+                chooseCard(this.draftingTable, 'player3', 'cardE');
 
                 expect(this.player1.hand).toEqual(['cardF']);
                 expect(this.player2.hand).toEqual(['cardB']);
@@ -159,9 +164,9 @@ describe('DraftingTable', function() {
                 this.player2.receiveNewHand(['cardC', 'cardD']);
                 this.player3.receiveNewHand(['cardE', 'cardF']);
 
-                this.draftingTable.chooseCard('player1', 'cardA');
-                this.draftingTable.chooseCard('player2', 'cardC');
-                this.draftingTable.chooseCard('player3', 'cardE');
+                chooseCard(this.draftingTable, 'player1', 'cardA');
+                chooseCard(this.draftingTable, 'player2', 'cardC');
+                chooseCard(this.draftingTable, 'player3', 'cardE');
             });
 
             it('rotates hands clockwise', function() {
@@ -171,9 +176,9 @@ describe('DraftingTable', function() {
             });
 
             it('allows players to choose the next card', function() {
-                this.draftingTable.chooseCard('player1', 'cardF');
-                this.draftingTable.chooseCard('player2', 'cardB');
-                this.draftingTable.chooseCard('player3', 'cardD');
+                chooseCard(this.draftingTable, 'player1', 'cardF');
+                chooseCard(this.draftingTable, 'player2', 'cardB');
+                chooseCard(this.draftingTable, 'player3', 'cardD');
 
                 expect(this.player1.deck).toContain({ count: 1, code: 'cardF' });
             });
@@ -187,9 +192,9 @@ describe('DraftingTable', function() {
                 this.player2.receiveNewHand(['cardC']);
                 this.player3.receiveNewHand(['cardE']);
 
-                this.draftingTable.chooseCard('player1', 'cardA');
-                this.draftingTable.chooseCard('player2', 'cardC');
-                this.draftingTable.chooseCard('player3', 'cardE');
+                chooseCard(this.draftingTable, 'player1', 'cardA');
+                chooseCard(this.draftingTable, 'player2', 'cardC');
+                chooseCard(this.draftingTable, 'player3', 'cardE');
             });
 
             it('draws new cards to hand', function() {
@@ -199,9 +204,9 @@ describe('DraftingTable', function() {
             });
 
             it('switches passing direction', function() {
-                this.draftingTable.chooseCard('player1', 'card1');
-                this.draftingTable.chooseCard('player2', 'card3');
-                this.draftingTable.chooseCard('player3', 'card5');
+                chooseCard(this.draftingTable, 'player1', 'card1');
+                chooseCard(this.draftingTable, 'player2', 'card3');
+                chooseCard(this.draftingTable, 'player3', 'card5');
 
                 expect(this.player1.hand).toEqual(['card4']);
                 expect(this.player2.hand).toEqual(['card6']);
@@ -214,22 +219,22 @@ describe('DraftingTable', function() {
                 this.draftingTable.startRound();
 
                 // Round 1
-                this.draftingTable.chooseCard('player1', 'card1');
-                this.draftingTable.chooseCard('player2', 'card3');
-                this.draftingTable.chooseCard('player3', 'card5');
+                chooseCard(this.draftingTable, 'player1', 'card1');
+                chooseCard(this.draftingTable, 'player2', 'card3');
+                chooseCard(this.draftingTable, 'player3', 'card5');
 
-                this.draftingTable.chooseCard('player1', 'card6');
-                this.draftingTable.chooseCard('player2', 'card2');
-                this.draftingTable.chooseCard('player3', 'card4');
+                chooseCard(this.draftingTable, 'player1', 'card6');
+                chooseCard(this.draftingTable, 'player2', 'card2');
+                chooseCard(this.draftingTable, 'player3', 'card4');
 
                 // Round 2
-                this.draftingTable.chooseCard('player1', 'card7');
-                this.draftingTable.chooseCard('player2', 'card9');
-                this.draftingTable.chooseCard('player3', 'card11');
+                chooseCard(this.draftingTable, 'player1', 'card7');
+                chooseCard(this.draftingTable, 'player2', 'card9');
+                chooseCard(this.draftingTable, 'player3', 'card11');
 
-                this.draftingTable.chooseCard('player1', 'card10');
-                this.draftingTable.chooseCard('player2', 'card12');
-                this.draftingTable.chooseCard('player3', 'card8');
+                chooseCard(this.draftingTable, 'player1', 'card10');
+                chooseCard(this.draftingTable, 'player2', 'card12');
+                chooseCard(this.draftingTable, 'player3', 'card8');
             });
 
             it('saves the final decks for each player', function() {

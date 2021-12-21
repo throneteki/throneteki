@@ -233,6 +233,10 @@ class DraftingTableGame extends EventEmitter {
 
     chooseCard(playerName, card) {
         this.draftingTable.chooseCard(playerName, card);
+    }
+
+    confirmChosenCard(playerName) {
+        this.draftingTable.confirmChosenCard(playerName);
         if(this.draftingTable.draftFinished) {
             this.finishedAt = new Date();
         }

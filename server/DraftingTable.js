@@ -89,9 +89,21 @@ class DraftingTable {
 
         if(!player.hasChosen && card) {
             player.chooseCard(card);
-            this.gameLog.addMessage('{0} chooses a card', player);
         }
         this.setSelectCardPrompt(player);
+
+        this.executeNextDraftStep();
+    }
+
+    confirmChosenCard(playerName) {
+        const player = this.getPlayer(playerName);
+
+        player.confirmChosenCard();
+        this.setSelectCardPrompt(player);
+
+        if(player.hasChosen) {
+            this.gameLog.addMessage('{0} chooses a card', player);
+        }
 
         this.executeNextDraftStep();
     }
@@ -111,9 +123,11 @@ class DraftingTable {
         if(!this.players.every(player => player.hasChosen)) {
             return;
         }
+
         for(const player of this.players) {
-            player.confirmChosenCard();
+            player.addChosenCardToDeck();
         }
+
         if(this.players[0].hand.length === 0 && this.currentRound === this.numOfRounds) {
             this.saveDraftedDecks();
         } else if(this.players[0].hand.length === 0) {
@@ -157,7 +171,7 @@ class DraftingTable {
     setSelectCardPrompt(player) {
         let menuTitle = 'Select a card to pick';
         let buttonText = 'Confirm selection';
-        let buttonCommand = 'chooseCard';
+        let buttonCommand = 'confirmChosenCard';
         if(player.hasChosen) {
             menuTitle = 'Waiting for opponents';
             buttonText = 'Cancel selection';

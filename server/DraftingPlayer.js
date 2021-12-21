@@ -12,7 +12,7 @@ class DraftingPlayer extends Spectator {
         this.hasChosen = false;
         this.left = false;
         this.starterCards = starterCards.map(cardQuantity => ({ count: cardQuantity.count, code: cardQuantity.cardCode }));
-        this.chosenCardIndex = null;
+        this.chosenCardIndex = -1;
         this.promptState = new PlayerPromptState();
     }
 
@@ -35,17 +35,19 @@ class DraftingPlayer extends Spectator {
             return;
         }
 
-        const index = this.hand.indexOf(card);
-        if(index === -1) {
+        this.chosenCardIndex = this.hand.indexOf(card);
+    }
+
+    confirmChosenCard() {
+        if(this.chosenCardIndex < 0) {
             return;
         }
-        this.chosenCardIndex = index;
 
         this.hasChosen = true;
     }
 
-    confirmChosenCard() {
-        if(!(this.chosenCardIndex >= 0)) {
+    addChosenCardToDeck() {
+        if(this.chosenCardIndex < 0) {
             return;
         }
 
@@ -66,18 +68,20 @@ class DraftingPlayer extends Spectator {
 
         const card = sample(this.hand);
         this.chooseCard(card);
+        this.confirmChosenCard();
     }
 
     cancelChosenCard() {
         if(!this.hasChosen) {
             return;
         }
-        this.chosenCardIndex = null;
+        this.chosenCardIndex = -1;
         this.hasChosen = false;
     }
 
     receiveNewHand(hand) {
         this.hand = hand;
+        this.chosenCardIndex = -1;
         this.hasChosen = false;
     }
 
