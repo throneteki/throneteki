@@ -87,19 +87,19 @@ class GameLobby extends React.Component {
             } else {
                 if(!game.started && !game.full) {
                     if(game.needsPassword) {
-                        dispatch(joinPasswordGame(game, 'Join'));
+                        joinPasswordGame(game, 'Join');
                     } else {
-                        dispatch(sendSocketMessage('joingame', gameId));
+                        sendSocketMessage('joingame', gameId);
                     }
                 } else {
                     if(game.needsPassword) {
-                        dispatch(joinPasswordGame(game, 'Watch'));
+                        joinPasswordGame(game, 'Watch');
                     } else {
-                        dispatch(sendSocketMessage('watchgame', game.id));
+                        sendSocketMessage('watchgame', game.id);
                     }
                 }
             }
-            dispatch(setUrl('/play'));
+            setUrl('/play');
         }
     }
 
