@@ -42,7 +42,8 @@ class WombOfTheWorld extends DrawCard {
     lowestPrintedCost(revealedCards, context) {
         let filteredCards = revealedCards.filter(card => card.isMatch({ trait: 'Dothraki', type: 'character' }) && context.player.canPutIntoPlay(card));
         let costs = filteredCards.map(card => card.getPrintedCost());
-        return costs.reduce((lowest, cost) => Math.min(lowest, cost));
+        //reduce on empty array crashes so handle empty costs array
+        return costs.length === 0 ? -1 : costs.reduce((lowest, cost) => Math.min(lowest, cost));
     }
    
     putCharacterIntoPlay(player, card) {
