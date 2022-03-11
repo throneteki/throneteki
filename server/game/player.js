@@ -496,7 +496,7 @@ class Player extends Spectator {
     }
 
     isCharacterDead(card) {
-        return card.getPrintedType() === 'character' && card.isUnique() && this.deadPile.some(c => c.name === card.name);
+        return card.isUnique() && this.deadPile.some(c => c.name === card.name);
     }
 
     playCard(card) {
