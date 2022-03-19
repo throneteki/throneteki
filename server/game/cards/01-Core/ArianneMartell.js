@@ -19,7 +19,7 @@ class ArianneMartell extends DrawCard {
                         // If the card is in the "dupe" location, then a "character" wasn't put into play
                         condition: () => preThenContext.target.location === 'play area',
                         message: 'Then {player} returns {source} to hand',
-                        gameAction: GameActions.returnCardToHand(context => ({ card: context.source }))
+                        gameAction: GameActions.returnCardToHand(context => ({ card: context.source, allowSave: false }))
                     })),
                     context
                 );
