@@ -33,7 +33,7 @@ class HaldonHalfmaester extends DrawCard {
 
     onCardSelectedForGold(goldCard, topCard, context) {
         goldCard.modifyToken(Tokens.gold, 1);
-        this.msgExtension = this.msgExtension + ` and have {3} gain 1 gold`;
+        this.msgExtension = this.msgExtension + ' and have {3} gain 1 gold';
         this.continueHandler(goldCard, topCard, context);
         return true;                
     }
@@ -52,7 +52,7 @@ class HaldonHalfmaester extends DrawCard {
                 })),
                 context
             );
-            this.msgExtension = this.msgExtension + ` and put {2} into play`;
+            this.msgExtension = this.msgExtension + ' and put {2} into play';
         }
 
         this.game.addMessage('{0} uses {1} to reveal {2} as the top card of their deck' + this.msgExtension,
