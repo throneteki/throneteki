@@ -22,23 +22,23 @@ class HaldonHalfmaester extends DrawCard {
                             onSelect: (player, card) => this.onCardSelectedForGold(card, topCard, context)
                         });
                     } else {
-                        this.continueHandler(topCard, context);
+                        this.continueHandler(null, topCard, context);
                     }
                 } else {
-                    this.continueHandler(topCard, context);
+                    this.continueHandler(null, topCard, context);
                 }
             }
         });
     }
 
-    onCardSelectedForGold(card, topCard, context) {
-        card.modifyToken(Tokens.gold, 1);
-        this.msgExtension = this.msgExtension + ` and have ${card} gain 1 gold`;
-        this.continueHandler(topCard, context);
+    onCardSelectedForGold(goldCard, topCard, context) {
+        goldCard.modifyToken(Tokens.gold, 1);
+        this.msgExtension = this.msgExtension + ' and have {3} gain 1 gold';
+        this.continueHandler(goldCard, topCard, context);
         return true;                
     }
 
-    continueHandler(topCard, context) {
+    continueHandler(goldCard, topCard, context) {
         if(topCard.getType() === 'event') {
             if(context.player.canDraw()) {
                 context.player.drawCardsToHand(1);
@@ -52,11 +52,11 @@ class HaldonHalfmaester extends DrawCard {
                 })),
                 context
             );
-            this.msgExtension = this.msgExtension + ` and put ${topCard} into play`;
+            this.msgExtension = this.msgExtension + ' and put {2} into play';
         }
 
         this.game.addMessage('{0} uses {1} to reveal {2} as the top card of their deck' + this.msgExtension,
-            context.player, this, topCard);
+            context.player, this, topCard, goldCard);
     }
 }
 
