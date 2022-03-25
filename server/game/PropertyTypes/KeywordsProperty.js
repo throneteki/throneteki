@@ -24,6 +24,10 @@ class KeywordsProperty {
         return this.data.contains(value);
     }
 
+    getCount(value) {
+        return this.data.getCountForReference(value);
+    }
+
     getValues() {
         return this.data.getValues();
     }
