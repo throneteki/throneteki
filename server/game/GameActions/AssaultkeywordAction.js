@@ -34,7 +34,7 @@ class AssaultKeywordAction extends GameAction {
             challenge.game.once('afterChallenge', event => {
                 if(event.challenge.winner === source.controller && target.allowGameAction('kneel')) {
                     challenge.game.addMessage('{0} kneels {1} due to assault', source.controller, target);
-                    challenge.game.resolveGameAction(GameActions.kneelCard({ card: target }));
+                    challenge.game.resolveGameAction(GameActions.kneelCard({ card: target, source: source, cause: 'assault' }));
                 }
             });
         });

@@ -29,22 +29,25 @@ class MarshalDuplicateAction extends BaseAbility {
             card: context.source,
             originalController: context.source.controller,
             originalLocation: context.source.location,
+            originalParent: context.source.parent,
+            wasFacedownAttachment: context.source.facedown && context.source.getType() === 'attachment',
             player: context.player,
             type: 'dupe'
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
-            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalController, params.originalLocation, context.costs.gold);
             context.player.putIntoPlay(context.source, 'marshal');
+            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalLocation, params.originalParent);
         });
     }
 
     getMessageFormat(params) {
         const messages = {
             'hand': '{0} duplicates {1} for free',
-            'other': '{0} duplicates {1} from their {3} for free'
+            'underneath': '{0} duplicates {1} from underneath {3} for free',
+            'other': '{0} duplicates {1} from their {2} for free'
         };
-        let hand = params.originalLocation === 'hand' ? 'hand' : 'other';
-        return messages[hand];
+        let marshalLocation = params.originalLocation === 'hand' ? 'hand' : params.originalLocation === 'underneath' || params.wasFacedownAttachment ? 'underneath' : 'other';
+        return messages[marshalLocation] || messages['hand'];
     }
 }
 

@@ -25,6 +25,7 @@ class ChatCommands {
             '/kill': this.kill,
             '/move-bottom': this.moveBottom,
             '/move-shadows': this.moveShadows,
+            '/place-under': this.placeUnder,
             '/pillage': this.pillage,
             '/power': this.power,
             '/rematch': this.rematch,
@@ -424,6 +425,34 @@ class ChatCommands {
             onSelect: (p, card) => {
                 player.moveCard(card, 'shadows');
                 this.game.addAlert('danger', '{0} uses the /move-shadows command to move a card to their shadows area', p);
+                return true;
+            }
+        });
+    }
+
+    placeUnder(player) {
+        this.game.promptForSelect(player, {
+            activePromptTitle: 'Select a card to place',
+            waitingPromptTitle: 'Waiting for opponent to select a card to place',
+            cardCondition: card => card.controller === player && card.owner === player,
+            onSelect: (p, card) => {
+                this.game.promptForSelect(player, {
+                    activePromptTitle: 'Select a card to place the chosen card under',
+                    waitingPromptTitle: 'Waiting for opponent to select a card to place the selected card under',
+                    cardCondition: card => card.controller === player && card.owner === player,
+                    onSelect: (pInner, cardInner) => {
+                        cardInner.lastingEffect(ability => ({
+                            until: {
+                                onCardLeftPlay: event => event.card === cardInner
+                            },
+                            targetLocation: 'any',
+                            match: card,
+                            effect: ability.effects.placeCardUnderneath()
+                        }));
+                        this.game.addAlert('danger', '{0} uses the /place-under command to place a card under {1}', p, cardInner);
+                        return true;
+                    }
+                });
                 return true;
             }
         });

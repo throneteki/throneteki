@@ -1,0 +1,35 @@
+const DrawCard = require('../../drawcard.js');
+const {flatten} = require('../../../Array');
+
+class Gendry extends DrawCard {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => !this.controller.anyCardsInPlay(card => card.getType() === 'character' && card.isLoyal()),
+            match: this,
+            effect: ability.effects.addKeyword('Renown')
+        });
+        this.reaction({
+            when: {
+                onPhaseStarted: event => event.phase === 'challenge'
+            },
+            target: {
+                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && !card.isLoyal()
+                                                        && card.attachments.some(attachment => attachment.hasTrait('Weapon'))
+            },
+            handler: context => {
+                this.untilEndOfPhase(ability => ({
+                    match: context.target,
+                    effect: [
+                        ability.effects.modifyStrength(2),
+                        flatten(this.getKeywords().map(keyword => ability.effects.addKeyword(keyword)))
+                    ]
+                }));
+                this.game.addMessage('{0} uses {1} to have {2} gain +2 STR and each of {1}\'s keywords', context.player, this, context.target);
+            }
+        });
+    }
+}
+
+Gendry.code = '22001';
+
+module.exports = Gendry;

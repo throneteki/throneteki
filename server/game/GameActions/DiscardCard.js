@@ -12,7 +12,7 @@ class DiscardCard extends GameAction {
             return false;
         }
 
-        return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate'].includes(card.location);
+        return ['draw deck', 'hand', 'play area', 'shadows', 'duplicate', 'underneath'].includes(card.location);
     }
 
     createEvent({ card, allowSave = true, isPillage = false, source }) {

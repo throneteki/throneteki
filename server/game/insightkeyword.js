@@ -13,11 +13,11 @@ class InsightKeyword extends BaseAbility {
 
     executeHandler(context) {
         let {game, challenge, source} = context;
-        game.addMessage('{0} draws a card from Insight on {1}', challenge.winner, source);
+        game.addMessage('{0} draws {1} from Insight on {2}', challenge.winner, source.insightLimit > 1 ? source.insightLimit + ' cards' : 'a card', source);
         game.resolveGameAction(
             GameActions.drawCards({
                 player: challenge.winner,
-                amount: 1,
+                amount: source.insightLimit,
                 reason: 'insight',
                 source
             })

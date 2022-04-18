@@ -318,13 +318,23 @@ const Effects = {
             }
         };
     },
+    addInsightLimit: function(value) {
+        return {
+            apply: function(card) {
+                card.insightLimit += value;
+            },
+            unapply: function(card) {
+                card.insightLimit -= value;
+            }
+        };
+    },
     addIcon: function(icon) {
         return {
             apply: function(card) {
-                card.addIcon(icon);
+                card.addIcon(icon, true);
             },
             unapply: function(card) {
-                card.removeIcon(icon);
+                card.removeIcon(icon, false);
             }
         };
     },
@@ -334,21 +344,25 @@ const Effects = {
                 context.dynamicIcons = context.dynamicIcons || {};
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context) || [];
                 for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.addIcon(icon);
+                    card.addIcon(icon, true);
                 }
             },
             reapply: function(card, context) {
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.removeIcon(icon);
-                }
+                let currentIcons = context.dynamicIcons[card.uuid];
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context);
+
+                for(let icon of currentIcons) {
+                    card.removeIcon(icon, false);
+                }
+
                 for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.addIcon(icon);
+                    let wasApplied = currentIcons.includes(i => i === icon);
+                    card.addIcon(icon, !wasApplied); // Should only count as applied if it wasn't previously applied
                 }
             },
             unapply: function(card, context) {
                 for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.removeIcon(icon);
+                    card.removeIcon(icon, false);
                 }
                 delete context.dynamicIcons[card.uuid];
             },
@@ -358,10 +372,10 @@ const Effects = {
     removeIcon: function(icon) {
         return {
             apply: function(card) {
-                card.removeIcon(icon);
+                card.removeIcon(icon, true);
             },
             unapply: function(card) {
-                card.addIcon(icon);
+                card.addIcon(icon, false);
             }
         };
     },
@@ -585,6 +599,23 @@ const Effects = {
                         GameActions.returnCardToDeck({ card, allowSave, bottom: true })
                     );
                     context.game.addMessage('{0} moves {1} to the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
+                }
+            }
+        };
+    },
+    moveToTopOfDeckIfStillInPlay: function(allowSave = true) {
+        return {
+            apply: function(card, context) {
+                context.moveToTopOfDeckIfStillInPlay = context.moveToTopOfDeckIfStillInPlay || [];
+                context.moveToTopOfDeckIfStillInPlay.push(card);
+            },
+            unapply: function(card, context) {
+                if(['play area', 'duplicate'].includes(card.location) && context.moveToTopOfDeckIfStillInPlay.includes(card)) {
+                    context.moveToTopOfDeckIfStillInPlay = context.moveToTopOfDeckIfStillInPlay.filter(c => c !== card);
+                    context.game.resolveGameAction(
+                        GameActions.returnCardToDeck({ card, allowSave })
+                    );
+                    context.game.addMessage('{0} moves {1} to the top of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
             }
         };
@@ -1363,6 +1394,30 @@ const Effects = {
                 }
                 context.game.addMessage('{0} discards their hand and returns each card under {1} to their hand',
                     player, context.source);
+            }
+        };
+    },
+    placeCardUnderneath: function(unapplyFunc = null) {
+        return {
+            apply: function(card, context) {
+                context.source.controller.removeCardFromPile(card);
+                context.source.addChildCard(card, 'underneath');
+                card.facedown = true;
+            },
+            unapply: function(card, context) {
+                card.facedown = false;
+
+                if(unapplyFunc) {
+                    unapplyFunc(card, context);
+                    return;
+                }
+
+                if(card.location === 'underneath' && context.source.childCards.some(childCard => childCard === card)) {
+                    context.source.controller.discardCard(card);
+
+                    context.game.addMessage('{0} discards {1} from under {2}',
+                        context.source.controller, card, context.source);
+                }
             }
         };
     }

@@ -10,7 +10,7 @@ class KillCharacters extends BaseStep {
 
     continue() {
         let cardsInPlay = this.cards.filter(card => card.location === 'play area');
-        this.game.applyGameAction('kill', cardsInPlay, killable => {
+        this.game.applyGameAction('killed', cardsInPlay, killable => {
             for(let card of killable) {
                 card.markAsInDanger();
             }

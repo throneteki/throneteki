@@ -10,6 +10,7 @@ class AbilityChoiceSelection {
         this.resolved = false;
         this.cancelled = false;
         this.value = null;
+        this.numValues = null;
     }
 
     hasNoChoices() {
@@ -31,11 +32,13 @@ class AbilityChoiceSelection {
     resolve(value) {
         this.resolved = true;
         this.value = value;
+        this.numValues = Array.isArray(this.value) ? this.value.length : this.value ? 1 : 0;
     }
 
     reject() {
         this.resolved = true;
         this.value = null;
+        this.numValues = null;
     }
 
     cancel() {

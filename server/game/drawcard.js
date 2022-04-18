@@ -23,6 +23,7 @@ class DrawCard extends BaseCard {
         this.saved = false;
         this.challengeOptions = new ReferenceCountedSetProperty();
         this.stealthLimit = 1;
+        this.insightLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
     }
@@ -286,12 +287,26 @@ class DrawCard extends BaseCard {
         return this.icons.size();
     }
 
-    addIcon(icon) {
-        this.icons.add(icon);
+    addIcon(icon, applying = true) {
+        if(this.icons.add(icon)) {
+            let params = {
+                card: this,
+                icon: icon,
+                applying: applying
+            };
+            this.game.raiseEvent('onIconAdded', params);
+        }
     }
 
-    removeIcon(icon) {
-        this.icons.remove(icon);
+    removeIcon(icon, applying = true) {
+        if(this.icons.remove(icon)) {
+            let params = {
+                card: this,
+                icon: icon,
+                applying: applying
+            };
+            this.game.raiseEvent('onIconRemoved', params);
+        }
     }
 
     /**

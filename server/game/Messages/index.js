@@ -14,7 +14,7 @@ function createEachPlayerTargetingForCardType(cardType) {
 function createEachPlayerSecretTargetingForCardType(cardType) {
     let result = createEachPlayerTargetingForCardType(cardType);
     return Object.assign(result, {
-        selected: `{targetSelection.choosingPlayer} chooses ${cardType} for {source}`
+        selected: `{targetSelection.choosingPlayer} chooses {targetSelection.numValues} ${cardType} for {source}`
     });
 }
 

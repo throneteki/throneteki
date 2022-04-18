@@ -6,6 +6,7 @@ const DiscardPowerCost = require('./DiscardPowerCost');
 const DiscardTokenCost = require('./DiscardTokenCost');
 const KillCost = require('./KillCost');
 const KneelCost = require('./KneelCost');
+const MovePowerToOppFactionCost = require('./MovePowerToOppFactionCost');
 const PlaceInDeadPileFromHandCost = require('./PlaceInDeadPileFromHandCost');
 const PutIntoPlayCost = require('./PutIntoPlayCost');
 const PutIntoShadowsCost = require('./PutIntoShadowsCost');
@@ -51,6 +52,12 @@ const CostBuilders = {
         selectMultiple: number => `Select ${number} cards to kneel`,
         selectAny: 'Select any number of cards to kneel'
     }),
+    movePowerToOppFaction: function(opponent, amount = 1) {
+        return new CostBuilder(new MovePowerToOppFactionCost(opponent, amount), {
+            select: `Select card to move ${amount} power from`,
+            selectMultiple: number => `Select ${number} cards to move ${amount} power from`
+        });
+    },
     placeInDeadPileFromHand: new CostBuilder(new PlaceInDeadPileFromHandCost(), {
         select: 'Select card to place into dead pile',
         selectMultiple: number => `Select ${number} cards to place into dead pile`
@@ -77,7 +84,8 @@ const CostBuilders = {
     }),
     reveal: new CostBuilder(new RevealCost(), {
         select: 'Select card to reveal',
-        selectMultiple: number => `Select ${number} cards to reveal`
+        selectMultiple: number => `Select ${number} cards to reveal`,
+        selectUpTo: number => `Select up to ${number} cards to reveal`
     }),
     sacrifice: new CostBuilder(new SacrificeCost(), {
         select: 'Select card to sacrifice',
