@@ -229,11 +229,6 @@ const Costs = {
      */
     movePowerFromFaction: ({amount, condition}) => new MovePowerFromFactionCost({amount, condition }),
     /**
-     * Cost that will move a fixed amount of power from the player's faction card to a
-     * destination card matching the passed condition predicate function.
-     */
-    movePowerFromCardToOppFaction: (opponent, amount, condition) => CostBuilders.movePowerToOppFaction(opponent, amount).select(condition),
-    /**
      * Cost that will discard faction power matching the passed amount.
      */
     discardFactionPower: amount => CostBuilders.discardPower(amount).faction(),

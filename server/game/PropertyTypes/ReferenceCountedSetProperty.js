@@ -6,17 +6,13 @@ class ReferenceCountedSetProperty {
     add(value) {
         let lowerCaseValue = value.toLowerCase();
         let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
-        let newCount = currentCount + 1;
-        this.referenceCounts.set(lowerCaseValue, newCount);
-        return currentCount <= 0 && newCount > 0;
+        this.referenceCounts.set(lowerCaseValue, currentCount + 1);
     }
 
     remove(value) {
         let lowerCaseValue = value.toLowerCase();
         let currentCount = this.referenceCounts.get(lowerCaseValue) || 0;
-        let newCount = currentCount - 1;
-        this.referenceCounts.set(lowerCaseValue, newCount);
-        return currentCount > 0 && newCount <= 0;
+        this.referenceCounts.set(lowerCaseValue, currentCount - 1);
     }
 
     contains(value) {

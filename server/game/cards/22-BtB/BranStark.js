@@ -10,31 +10,31 @@ class BranStark extends DrawCard {
         this.interrupt({
             when: {
                 onClaimApplied: event => event.challenge.isMatch({ challengeType: 'intrigue' }) 
-                                            && event.challenge.loser.hand.length !== 0
+                                            && event.challenge.defendingPlayer.hand.length !== 0
                                             && event.challenge.getParticipants().some(card => card.controller === this.controller && card.hasTrait('Old Gods'))
             },
             handler: context => {
-                let losingPlayer = this.game.currentChallenge.loser;
-                let xValue = Math.min(this.game.currentChallenge.winner.getClaim(), losingPlayer.hand.length);
+                let defendingPlayer = this.game.currentChallenge.defendingPlayer;
+                let xValue = Math.min(this.game.currentChallenge.winner.getClaim(), defendingPlayer.hand.length);
                 context.replaceHandler(() => {
-                    this.game.addMessage('{0} uses {1} to look at {2}\'s hand', context.player, this, losingPlayer);
+                    this.game.addMessage('{0} uses {1} to look at {2}\'s hand instead of the normal claim effects', context.player, this, defendingPlayer);
                     this.game.promptForSelect(context.player, {
                         mode: 'exactly',
                         activePromptTitle: `Select ${TextHelper.count(xValue, 'card')}`,
                         numCards: xValue,
                         source: this,
                         revealTargets: true,
-                        cardCondition: card => card.location === 'hand' && card.controller === losingPlayer,
-                        onSelect: (player, cards) => this.cardsSelected(player, losingPlayer, cards)
+                        cardCondition: card => card.location === 'hand' && card.controller === defendingPlayer,
+                        onSelect: (player, cards) => this.cardsSelected(player, defendingPlayer, cards)
                     });
                 });
             }
         });
     }
 
-    cardsSelected(player, losingPlayer, cards) {
-        losingPlayer.discardCards(cards);
-        this.game.addMessage('{0} then uses {1} to discard {2} from {3}\'s hand instead of the normal claim effects', player, this, cards, losingPlayer);
+    cardsSelected(player, defendingPlayer, cards) {
+        defendingPlayer.discardCards(cards);
+        this.game.addMessage('{0} then uses {1} to discard {2} from {3}\'s hand', player, this, cards, defendingPlayer);
         return true;
     }
 }

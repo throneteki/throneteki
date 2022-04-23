@@ -10,8 +10,8 @@ class StormsEnd extends DrawCard {
         });
         this.reaction({
             when:{
-                onChallengeInitiated: event => ['military', 'intrigue'].includes(event.challenge.challengeType) 
-                    && (event.challenge.attackingPlayer === this.controller || event.challenge.defendingPlayer === this.controller)
+                onChallengeInitiated: event => ['military', 'intrigue'].includes(event.challenge.initiatedChallengeType) 
+                    && [event.challenge.initiatingPlayer, event.challenge.initiatedAgainstPlayer].includes(this.controller)
             },
             cost: ability.costs.kneelSelf(),
             handler: (context) => {

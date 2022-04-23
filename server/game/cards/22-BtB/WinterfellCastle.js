@@ -22,12 +22,8 @@ class WinterfellCastle extends DrawCard {
             limit: ability.limit.perPhase(1),
             cost: ability.costs.kneelSpecific(context => context.event.card),
             handler: context => {
-                let message = '{0} uses {1} and kneels {2} to save {2}';
-                let toSave = context.event.card;
-
                 context.event.saveCard();
-                
-                this.game.addMessage(message, context.player, this, toSave);
+                this.game.addMessage('{0} uses {1} and kneels {2} to save {2}', context.player, this, context.event.card);
             }
         });
     }

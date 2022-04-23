@@ -4,7 +4,7 @@ class Pyke extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'hand',
-            match: card => card.isFaction('greyjoy') && card.hasTrait('Warship'),
+            match: card => card.hasTrait('Warship'),
             effect: ability.effects.gainAmbush(-1)
         });
         this.reaction({
@@ -24,12 +24,10 @@ class Pyke extends DrawCard {
                 this.game.addMessage('{0} kneels {1} to move {2} to the top of {3}\'s deck', context.player, this, context.target, context.target.owner);
                 
                 this.game.once('onAtEndOfPhase', () => {
-                    if(!context.target.owner.canDraw()) {
-                        return;
+                    if(context.target.owner.canDraw()) {
+                        context.target.owner.drawCardsToHand(1);
+                        this.game.addMessage('{0} draws 1 card for {1}', context.target.owner, this);
                     }
-
-                    this.game.addMessage('Then {0} draws 1 card for {1}', context.target.owner, this);
-                    context.target.owner.drawCardsToHand(1);
                 });
             }
         });

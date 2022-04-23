@@ -5,7 +5,7 @@ class TheKingsPeace extends PlotCard {
         this.reaction({
             when: {
                 onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller &&
-                                               (event.challenge.challengeType === 'military' || event.challenge.challengeType === 'power')
+                                               (event.challenge.initiatedChallengeType === 'military' || event.challenge.initiatedChallengeType === 'power')
             },
             handler: () => {
                 let otherPlayer = this.game.currentChallenge.attackingPlayer;

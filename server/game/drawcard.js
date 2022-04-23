@@ -288,25 +288,13 @@ class DrawCard extends BaseCard {
     }
 
     addIcon(icon, applying = true) {
-        if(this.icons.add(icon)) {
-            let params = {
-                card: this,
-                icon: icon,
-                applying: applying
-            };
-            this.game.raiseEvent('onIconAdded', params);
-        }
+        this.icons.add(icon);
+        this.game.raiseEvent('onIconAdded', { card: this, icon: icon, applying: applying });
     }
 
     removeIcon(icon, applying = true) {
-        if(this.icons.remove(icon)) {
-            let params = {
-                card: this,
-                icon: icon,
-                applying: applying
-            };
-            this.game.raiseEvent('onIconRemoved', params);
-        }
+        this.icons.remove(icon);
+        this.game.raiseEvent('onIconRemoved', { card: this, icon: icon, applying: applying });
     }
 
     /**

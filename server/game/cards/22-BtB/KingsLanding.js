@@ -28,7 +28,7 @@ class KingsLanding extends DrawCard {
             cost: ability.costs.kneelSpecific(context => context.event.card),
             handler: context => {
                 context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} and kneels {2} to draw 1 card', context.player, this, context.card);
+                this.game.addMessage('{0} uses {1} and kneels {2} to draw 1 card', context.player, this, context.event.card);
             }
         });
     }

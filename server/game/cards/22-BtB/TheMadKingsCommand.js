@@ -104,6 +104,9 @@ class TheMadKingsCommand extends PlotCard {
 
             if(cardsOwnedByPlayer.length !== 0) {
                 for(let card of cardsOwnedByPlayer) {
+                    // Detach any moving attachments first, so they dont get re-added to owners hand
+                    card.attachments = card.attachments.filter(attachment => !toMove.includes(attachment));
+                    
                     gameActions.push(GameActions.returnCardToDeck({ card, bottom: true, allowSave: false }));
                 }
 

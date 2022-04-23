@@ -17,14 +17,15 @@ class Gendry extends DrawCard {
                                                         && card.attachments.some(attachment => attachment.hasTrait('Weapon'))
             },
             handler: context => {
+                let keywords = this.getKeywords();
                 this.untilEndOfPhase(ability => ({
                     match: context.target,
                     effect: [
                         ability.effects.modifyStrength(2),
-                        flatten(this.getKeywords().map(keyword => ability.effects.addKeyword(keyword)))
+                        flatten(keywords.map(keyword => ability.effects.addKeyword(keyword)))
                     ]
                 }));
-                this.game.addMessage('{0} uses {1} to have {2} gain +2 STR and each of {1}\'s keywords', context.player, this, context.target);
+                this.game.addMessage('{0} uses {1} to have {2} gain +2 STR and each of {1}\'s keywords: {2}', context.player, this, context.target, keywords);
             }
         });
     }

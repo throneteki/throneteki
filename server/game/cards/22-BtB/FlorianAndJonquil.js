@@ -16,9 +16,8 @@ class FlorianAndJonquil extends DrawCard {
                     effect: ability.effects.addKeyword('renown')
                 }));
 
-                this.game.addMessage('{0} plays {1} to have {2} gain {3} until the end of the phase',
-                    context.player, this, context.target, 'renown');
-
+                this.game.addMessage('{0} plays {1} to have {2} gain renown until the end of the phase',
+                    context.player, this, context.target);
                 if(this.controller.canAttach(this, context.target)) {
                     this.controller.attach(this.controller, this, context.target, 'play');
                     this.lastingEffect(ability => ({
@@ -27,8 +26,7 @@ class FlorianAndJonquil extends DrawCard {
                         match: this,
                         effect: [
                             ability.effects.setCardType('attachment'),
-                            ability.effects.addKeyword('Terminal'),
-                            ability.effects.addTrait('Condition')
+                            ability.effects.addKeyword('Terminal')
                         ]
                     }));
                     

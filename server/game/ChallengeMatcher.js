@@ -3,6 +3,7 @@ const Matcher = require('./Matcher');
 class ChallengeMatcher {
     static isMatch(challenge, matchers) {
         return (
+            Matcher.containsValue(matchers.initiatedChallengeType, challenge.initiatedChallengeType) &&
             Matcher.containsValue(matchers.challengeType, challenge.challengeType) &&
             Matcher.containsValue(matchers.attackingPlayer, challenge.attackingPlayer) &&
             Matcher.containsValue(matchers.defendingPlayer, challenge.defendingPlayer) &&

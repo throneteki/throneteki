@@ -318,16 +318,6 @@ const Effects = {
             }
         };
     },
-    addInsightLimit: function(value) {
-        return {
-            apply: function(card) {
-                card.insightLimit += value;
-            },
-            unapply: function(card) {
-                card.insightLimit -= value;
-            }
-        };
-    },
     addIcon: function(icon) {
         return {
             apply: function(card) {
@@ -599,23 +589,6 @@ const Effects = {
                         GameActions.returnCardToDeck({ card, allowSave, bottom: true })
                     );
                     context.game.addMessage('{0} moves {1} to the bottom of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
-                }
-            }
-        };
-    },
-    moveToTopOfDeckIfStillInPlay: function(allowSave = true) {
-        return {
-            apply: function(card, context) {
-                context.moveToTopOfDeckIfStillInPlay = context.moveToTopOfDeckIfStillInPlay || [];
-                context.moveToTopOfDeckIfStillInPlay.push(card);
-            },
-            unapply: function(card, context) {
-                if(['play area', 'duplicate'].includes(card.location) && context.moveToTopOfDeckIfStillInPlay.includes(card)) {
-                    context.moveToTopOfDeckIfStillInPlay = context.moveToTopOfDeckIfStillInPlay.filter(c => c !== card);
-                    context.game.resolveGameAction(
-                        GameActions.returnCardToDeck({ card, allowSave })
-                    );
-                    context.game.addMessage('{0} moves {1} to the top of its owner\'s deck at the end of the phase because of {2}', context.source.controller, card, context.source);
                 }
             }
         };

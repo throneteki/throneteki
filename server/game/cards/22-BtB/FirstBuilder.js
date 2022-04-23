@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class FirstBuilder extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ unique: true });
+        this.attachmentRestriction({ unique: true, controller: 'current' });
         this.whileAttached({
             effect: [
                 ability.effects.addIcon('power'),

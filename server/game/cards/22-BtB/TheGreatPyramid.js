@@ -28,8 +28,7 @@ class TheGreatPyramid extends DrawCard {
             limit: ability.limit.perRound(2),
             handler: context => {
                 let discardedCards = context.event.events.map(discardEvent => discardEvent.card).filter(card => card.location === 'discard pile');
-                this.game.addMessage('{0} places {1} under {2}',
-                    context.player, discardedCards, this);
+                this.game.addMessage('{0} places {1} under {2}', context.player, discardedCards, this);
 
                 this.lastingEffect(ability => ({
                     until: {

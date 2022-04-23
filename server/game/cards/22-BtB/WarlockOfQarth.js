@@ -24,7 +24,7 @@ class WarlockOfQarth extends DrawCard {
                     effect: ability.effects.moveToDeadPileIfStillInPlay()
                 }));
 
-                this.game.addMessage('{0} sacrifices {1} to put {2} into play under their control', this.controller, this, context.event.card);
+                this.game.addMessage('{0} sacrifices {1} to put {2} into play under their control and have it gain insight until the end of the phase', this.controller, this, context.event.card);
             }
         });
     }

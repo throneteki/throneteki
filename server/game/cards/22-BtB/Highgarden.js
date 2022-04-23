@@ -1,22 +1,11 @@
 const DrawCard = require('../../drawcard.js');
+const Message = require('../../Message');
+const range = require('lodash.range');
 
 class Highgarden extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Return character to hand',
-            phase: 'challenge',
-            cost: ability.costs.returnToHand(card => card.getType() === 'character' && card.isFaction('tyrell') && card.isUnique()),
-            handler: context => {
-                this.game.addMessage('{0} uses {1} and returns {2} to their hand to reveal the top card of each players deck', this.controller, this, context.costs.returnToHand);
-                for(let player of this.game.getPlayers()) {
-                    let topCard = player.drawDeck[0];
-                    this.game.addMessage('{0} reveals {1} as the top card of {2}\'s deck', this.controller, topCard, player);
-                }
-            }
-        });
-        this.action({
-            title: 'Give characters STR',
-            phase: 'challenge',
+            title: 'Give characters +STR',
             condition: () => this.controller.hand.length > 0,
             cost: ability.costs.kneelSelf(),
             handler: () => {
@@ -31,20 +20,35 @@ class Highgarden extends DrawCard {
                 });
             }
         });
+        this.action({
+            title: 'Return character to hand',
+            phase: 'challenge',
+            limit: ability.limit.perPhase(1),
+            target: {
+                cardCondition: card => card.location === 'play area' && card.controller === this.controller && 
+                    card.getType() === 'character' && card.isFaction('tyrell') && card.isUnique()
+            },
+            handler: context => {
+                context.target.owner.returnCardToHand(context.target);
+                this.game.addMessage('{0} uses {1} to return {2} to their hand', this.controller, this, context.target);
+            }
+        });
     }
 
-    revealSelect(player, cards) {
-        this.game.addMessage('{0} kneels {1} to reveal {2} from their hand', player, this, cards);
+    revealSelect(player, revealed) {
+        this.game.addMessage('{0} kneels {1} to reveal {2} from their hand', player, this, revealed);
 
-        for(let index in cards) {
-            this.game.promptForSelect(this.controller, {
-                activePromptTitle: `Select a character for +2 STR (${index + 1}/${cards.length})`,
-                source: this,
-                cardCondition: card => card.getType() === 'character' && card.location === 'play area',
-                onSelect: (player, card) => this.characterSelect(player, card),
-                onCancel: (player) => this.characterCancel(player)
-            });
-        }
+        let numRevealed = revealed.length;
+
+        this.game.promptForSelect(this.controller, {
+            activePromptTitle: `Select up to ${numRevealed} characters`,
+            source: this,
+            numCards: numRevealed,
+            mode: 'upTo',
+            cardCondition: card => card.getType() === 'character' && card.location === 'play area',
+            onSelect: (player, cards) => this.charactersSelect(player, cards, numRevealed),
+            onCancel: (player) => this.charactersCancel(player)
+        });
         return true;
     }
 
@@ -54,19 +58,73 @@ class Highgarden extends DrawCard {
         return true;
     }
 
-    characterSelect(player, card) {
-        this.game.addMessage('{0} then uses {1} to give {2} +2 STR until the end of the phase', player, this, card);
+    charactersSelect(player, cards, numRevealed) {
+        this.strCharacterMap = new Map();
+        this.remainingCards = cards;
+        this.remainingStr = numRevealed * 2;
+        
+        this.game.queueSimpleStep(() => this.calculateNextCharacter(player));
+        
+        this.game.queueSimpleStep(() => {
+            for(let [str, cards] of this.strCharacterMap) {
+                for(let card of cards) {
+                    this.untilEndOfPhase(ability => ({
+                        match: card,
+                        effect: ability.effects.modifyStrength(str)
+                    }));
+                }
+            }
+            // Groups chat messages by STR's given. eg. "give A, B and C +2 STR", or "give A +4 STR and B +2 STR"
+            let strMessages = Array.from(this.strCharacterMap, ([str, cards]) => Message.fragment('{cards} +{str} STR', { cards, str }));
 
-        this.untilEndOfPhase(ability => ({
-            match: card,
-            effect: ability.effects.modifyStrength(2)
-        }));
+            this.game.addMessage('{0} then uses {1} to give {2} until the end of the phase', player, this, strMessages);
+
+            return true;
+        });
+        return true;
+    }
+
+    calculateNextCharacter(player) {
+        let difference = (this.remainingStr / 2) - this.remainingCards.length;
+        if(this.remainingCards.length === 1 && this.remainingStr > 0) {
+            // If one character remaining, give this character the remaining STR
+            this.addCharacterToStrMap(player, this.remainingStr);
+        } else if(difference === 0) {
+            // If STR can only be spread evenly, give this character +2 STR. This will be hit for remaining characters
+            this.addCharacterToStrMap(player, 2);
+        } else {
+            // Otherwise, ask how much STR to give this character
+            let buttons = range(1, 2 + difference).reverse().map(amount => {
+                let str = amount * 2;
+                return { text: str.toString(), method: 'addCharacterToStrMap', arg: str };
+            });
+            this.game.promptWithMenu(player, this, {
+                activePrompt: {
+                    menuTitle: `Select +STR for ${this.remainingCards[0].name}`,
+                    buttons: buttons
+                },
+                source: this
+            });
+        }
+        return true;
+    }
+
+    addCharacterToStrMap(player, str) {
+        let characters = this.strCharacterMap.get(str) || [];
+        characters.push(this.remainingCards.shift());
+        this.strCharacterMap.set(str, characters);
+
+        this.remainingStr -= str;
+
+        if(this.remainingCards.length > 0) {
+            this.calculateNextCharacter(player);
+        }
 
         return true;
     }
 
-    characterCancel(player) {
-        this.game.addAlert('danger', '{0} did not select a character for {1}', player, this);
+    charactersCancel(player) {
+        this.game.addAlert('danger', '{0} did not select any characters for {1}', player, this);
 
         return true;
     }
