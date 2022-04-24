@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
-const { Tokens } = require('../../Constants')
+const { Tokens } = require('../../Constants');
 
 class Sunspear extends DrawCard {
     setupCardAbilities(ability) {
