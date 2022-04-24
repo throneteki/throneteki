@@ -1,4 +1,6 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const { Tokens } = require('../../Constants')
 
 class Sunspear extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,16 +9,25 @@ class Sunspear extends DrawCard {
             match: this,
             effect: ability.effects.canSpendGold(spendParams => spendParams.activePlayer === this.controller)
         });
+
+        const amountGained = (context) => {
+            return context.event.card.hasTrait('Lord') || context.event.card.hasTrait('Lady') ? 2 : 1;
+        };
+
         this.reaction({
             when: {
                 onCardEntersPlay: event => event.card.isFaction('martell') && event.card.controller === this.controller
             },
             limit: ability.limit.perPhase(1),
-            handler: context => {
-                let amount = context.event.card.hasTrait('Lord') || context.event.card.hasTrait('Lady') ? 2 : 1;
-                this.modifyGold(amount);
-                this.game.addMessage('{0} uses {1} to place {2} gold from the treasury on {1}', this.controller, this, amount);
-            }
+            message: {
+                format: '{player} uses {source} to place {amountGained} gold from the treasury on {source}',
+                args: { amountGained: context => amountGained(context) }
+            },
+            gameAction: GameActions.placeToken(context => ({
+                card: context.source,
+                token: Tokens.gold,
+                amount: amountGained(context)
+            }))
         });
     }
 }

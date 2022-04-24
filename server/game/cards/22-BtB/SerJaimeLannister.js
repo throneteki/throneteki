@@ -7,15 +7,18 @@ class SerJaimeLannister extends DrawCard {
             when: {
                 onCardEntersPlay: event => this.kneeled && this.game.currentPhase === 'challenge' && event.card.getType() === 'character'
             },
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.standCard({ card: this }), 
-                    context
-                ).thenExecute(() => {
-                    context.event.card.controller.discardCard(context.event.card);
-                    this.game.addMessage('{0} stands {1} and discards {2} from play', this.controller, this, context.event.card);
-                });
-            }
+            message: '{player} uses {source} to stand {source}',
+            gameAction: GameActions.standCard(context => ({
+                card: context.source
+            })).then(preThenContext => ({
+                message: {
+                    format: 'Then {player} discards {enteredPlay} from play',
+                    args: { enteredPlay: preThenContext.event.card }
+                },
+                gameAction: GameActions.discardCard({
+                    card: preThenContext.event.card
+                })
+            }))
         });
     }
 }

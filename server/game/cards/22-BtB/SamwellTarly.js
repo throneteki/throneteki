@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 const Message = require('../../Message');
 
 class SamwellTarly extends DrawCard {
@@ -45,23 +46,25 @@ class SamwellTarly extends DrawCard {
 
     activateBonuses(bonuses, otherCharacter) {
         let bonusMessages = [];
+        let gameActions = [];
 
         if(bonuses.includes('draw')) {
-            this.controller.drawCardsToHand(1);
+            gameActions.push(GameActions.drawCards({ player: this.controller, amount: 1 }));
             bonusMessages.push('draw 1 card');
         }
 
         if(bonuses.includes('power')) {
-            this.game.addPower(this.controller, 1);
+            gameActions.push(GameActions.gainPower({ card: this.controller.faction, amount: 1 }));
             bonusMessages.push('gain 1 power for their faction');
         }
 
         if(bonuses.includes('stand') && otherCharacter) {
-            this.controller.standCard(otherCharacter);
+            gameActions.push(GameActions.standCard({ card: otherCharacter }));
             bonusMessages.push(Message.fragment('stand {card}', { card: otherCharacter }));
         }
 
         this.game.addMessage('{0} uses {1} to {2}', this.controller, this, bonusMessages);
+        this.game.resolveGameAction(GameActions.simultaneously(gameActions));
         return true;
     }
 }

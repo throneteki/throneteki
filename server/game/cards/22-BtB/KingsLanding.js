@@ -1,35 +1,36 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class KingsLanding extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Gain 1 gold',
             phase: 'marshal',
-            condition: () => this.controller.canGainGold(),
             limit: ability.limit.perPhase(2),
-            cost: ability.costs.kneel(card => card.location === 'play area' && 
+            cost: ability.costs.kneel(card => card.location === 'play area' &&
                 card.controller === this.controller &&
-                card.getType() === 'location' && 
+                card.getType() === 'location' &&
                 card.hasTrait('King\'s Landing')),
-            handler: context => {
-                this.game.addGold(context.player, 1);
-                this.game.addMessage('{0} uses {1} and kneels {2} to gain 1 gold', context.player, this, context.costs.kneel);
-            }
+            message: {
+                format: '{player} uses {source} and kneels {kneeled} to gain 1 gold',
+                args: { kneeled: context => context.costs.kneel }
+            },
+            gameAction: GameActions.gainGold(context => ({ player: context.player, amount: 1 }))
         });
-        
+
         this.reaction({
             when: {
-                onCardEntersPlay: event => this.controller.canDraw() && 
-                    event.card.controller === this.controller && 
-                    event.card.getType() === 'location' && 
+                onCardEntersPlay: event => event.card.controller === this.controller &&
+                    event.card.getType() === 'location' &&
                     event.card.hasTrait('King\'s Landing')
             },
             limit: ability.limit.perRound(2),
             cost: ability.costs.kneelSpecific(context => context.event.card),
-            handler: context => {
-                context.player.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} and kneels {2} to draw 1 card', context.player, this, context.event.card);
-            }
+            message: {
+                format: '{player} uses {source} and kneels {kneeled} to draw 1 card',
+                args: { kneeled: context => context.costs.kneel }
+            },
+            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: 1 }))
         });
     }
 }
