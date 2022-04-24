@@ -23,7 +23,6 @@ class DrawCard extends BaseCard {
         this.saved = false;
         this.challengeOptions = new ReferenceCountedSetProperty();
         this.stealthLimit = 1;
-        this.insightLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
     }
