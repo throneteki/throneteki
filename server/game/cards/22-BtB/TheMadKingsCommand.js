@@ -36,7 +36,7 @@ class TheMadKingsCommand extends PlotCard {
                     activePromptTitle: 'Select up to 3 locations',
                     cardCondition: card => card.location === 'play area' && card.getType() === 'location'
                 },
-                hand_shadows: {
+                handShadows: {
                     choosingPlayer: 'each',
                     optional: true,
                     ifAble: true,
@@ -53,24 +53,16 @@ class TheMadKingsCommand extends PlotCard {
     }
 
     promptPlayersForOrder(selections) {
-        let toMove = [];
-        let validInPlayTypes = ['character', 'attachment', 'location'];
-
-        for(let selection of selections) {
-            let player = selection.choosingPlayer;
-            let selectedCards = selection.value || [];
-            let selectionTargets = selection.name.split('_');
-            // Selections (above) can be grouped by underscores. This splits those groups into their own comparisons
-            for(let selectionTarget of selectionTargets) {
-                let targetLocation = validInPlayTypes.includes(selectionTarget) ? 'play area' : selectionTarget;
-                let cardsInLocation = this.game.allCards.filter(card => card.controller === player 
-                    && card.location === targetLocation // checking location
-                    && (validInPlayTypes.includes(selectionTarget) ? card.getType() === selectionTarget : true) // checking type, if applicable
-                    && card.allowGameAction('returnCardToDeck')); // checking return to deck
-                let playerSpecificToMove = cardsInLocation.filter(card => !selectedCards.includes(card));
-                toMove = toMove.concat(playerSpecificToMove);
-            }
-        }
+        let potentialCards = this.game.allCards.filter(card => (
+            card.allowGameAction('returnCardToDeck') && (
+                ['hand', 'shadows'].includes(card.location) || 
+                (card.location === 'play area' && ['character', 'location', 'attachment'].includes(card.getType()))
+            )
+        ));
+        let selectedCards = selections.reduce((selectedCards, selection) => {
+            return selectedCards.concat(selection.value || []);
+        }, []);
+        let toMove = potentialCards.filter(card => !selectedCards.includes(card));
 
         for(let player of this.game.getPlayersInFirstPlayerOrder()) {
             let cardsOwnedByPlayer = toMove.filter(card => card.owner === player);
