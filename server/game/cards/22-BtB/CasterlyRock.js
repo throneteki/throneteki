@@ -25,7 +25,7 @@ class CasterlyRock extends DrawCard {
                     GameActions.simultaneously(context.target.map(card => 
                         GameActions.placeToken({ card, token: Tokens.gold, amount: 1 })
                     ))
-                )
+                );
             }
         });
     }

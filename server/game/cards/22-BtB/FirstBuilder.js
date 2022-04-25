@@ -21,7 +21,7 @@ class FirstBuilder extends DrawCard {
                 topCards: 10,
                 match: {
                     type: ['attachment', 'location'],
-                    condition: card => card.hasPrintedCost() && card.getPrintedCost() <= this.getNumberOfBuilders(this.controller),
+                    condition: card => card.hasPrintedCost() && card.getPrintedCost() <= this.getNumberOfBuilders(this.controller)
                 },
                 message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
                 gameAction: GameActions.addToHand(context => ({
