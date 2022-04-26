@@ -22,10 +22,10 @@ class Gendry extends DrawCard {
                     match: context.target,
                     effect: [
                         ability.effects.modifyStrength(2),
-                        flatten(keywords.map(keyword => ability.effects.addKeyword(keyword)))
+                        ...keywords.map(keyword => ability.effects.addKeyword(keyword))
                     ]
                 }));
-                this.game.addMessage('{0} uses {1} to have {2} gain +2 STR and each of {1}\'s keywords: {2}', context.player, this, context.target, keywords);
+                this.game.addMessage('{0} uses {1} to have {2} gain +2 STR and each of {1}\'s keywords: {3}', context.player, this, context.target, keywords);
             }
         });
     }
