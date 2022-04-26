@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class TenTowersHost extends DrawCard {
+class FleetFromTenTowers extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => (
@@ -15,6 +15,6 @@ class TenTowersHost extends DrawCard {
     }
 }
 
-TenTowersHost.code = '22005';
+FleetFromTenTowers.code = '22005';
 
-module.exports = TenTowersHost;
+module.exports = FleetFromTenTowers;
