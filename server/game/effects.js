@@ -320,11 +320,15 @@ const Effects = {
     },
     addIcon: function(icon) {
         return {
-            apply: function(card) {
-                card.addIcon(icon, true);
+            apply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.gainIcon({ card, icon, applying: true })
+                );
             },
-            unapply: function(card) {
-                card.removeIcon(icon, false);
+            unapply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.loseIcon({ card, icon, applying: false })
+                );
             }
         };
     },
@@ -333,27 +337,30 @@ const Effects = {
             apply: function(card, context) {
                 context.dynamicIcons = context.dynamicIcons || {};
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context) || [];
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.addIcon(icon, true);
-                }
+                context.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        context.dynamicIcons[card.uuid].map(icon => GameActions.gainIcon({ card, icon, applying: true }))
+                    )
+                );
             },
             reapply: function(card, context) {
                 let currentIcons = context.dynamicIcons[card.uuid];
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context);
 
-                for(let icon of currentIcons) {
-                    card.removeIcon(icon, false);
-                }
+                let iconsGained = context.dynamicIcons[card.uuid].filter(icon => !currentIcons.includes(icon));
+                let iconsLost = currentIcons.filter(icon => !context.dynamicIcons[card.uuid].includes(icon));
 
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    let wasApplied = currentIcons.includes(i => i === icon);
-                    card.addIcon(icon, !wasApplied); // Should only count as applied if it wasn't previously applied
-                }
+                let actions = iconsGained.map(icon => GameActions.gainIcon({ card, icon, applying: true }));
+                actions = actions.concat(iconsLost.map(icon => GameActions.loseIcon({ card, icon, applying: false })));
+
+                context.game.resolveGameAction(GameActions.simultaneously(actions));
             },
             unapply: function(card, context) {
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.removeIcon(icon, false);
-                }
+                context.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        context.dynamicIcons[card.uuid].map(icon => GameActions.removeIcon({ card, icon, applying: false }))
+                    )
+                );
                 delete context.dynamicIcons[card.uuid];
             },
             isStateDependent: true
@@ -361,11 +368,15 @@ const Effects = {
     },
     removeIcon: function(icon) {
         return {
-            apply: function(card) {
-                card.removeIcon(icon, true);
+            apply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.loseIcon({ card, icon, applying: true })
+                );
             },
-            unapply: function(card) {
-                card.addIcon(icon, false);
+            unapply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.gainIcon({ card, icon, applying: false })
+                );
             }
         };
     },

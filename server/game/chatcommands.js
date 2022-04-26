@@ -1,6 +1,7 @@
 const TextHelper = require('./TextHelper');
 const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
 const Deck = require('./Deck');
+const GameActions = require('./GameActions');
 const RematchPrompt = require('./gamesteps/RematchPrompt');
 const {Tokens} = require('./Constants');
 
@@ -252,6 +253,9 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to give icon',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
+                this.game.resolveGameAction(
+                    GameActions.gainIcon({ card, icon, applying: true })
+                );
                 card.addIcon(icon);
                 this.game.addAlert('danger', '{0} uses the /give-icon command to give {1} a {2} icon', p, card, icon);
 
@@ -272,7 +276,9 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to remove icon',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
-                card.removeIcon(icon);
+                this.game.resolveGameAction(
+                    GameActions.loseIcon({ card, icon, applying: true })
+                );
                 this.game.addAlert('danger', '{0} uses the /take-icon command to remove a {1} icon from {2}', p, icon, card);
 
                 return true;

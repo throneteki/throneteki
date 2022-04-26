@@ -286,14 +286,12 @@ class DrawCard extends BaseCard {
         return this.icons.size();
     }
 
-    addIcon(icon, applying = true) {
+    addIcon(icon) {
         this.icons.add(icon);
-        this.game.raiseEvent('onIconAdded', { card: this, icon: icon, applying: applying });
     }
 
-    removeIcon(icon, applying = true) {
+    removeIcon(icon) {
         this.icons.remove(icon);
-        this.game.raiseEvent('onIconRemoved', { card: this, icon: icon, applying: applying });
     }
 
     /**
