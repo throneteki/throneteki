@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 const Message = require('../../Message');
 const range = require('lodash.range');
 
@@ -37,6 +38,10 @@ class Highgarden extends DrawCard {
 
     revealSelect(player, revealed) {
         this.game.addMessage('{0} kneels {1} to reveal {2} from their hand', player, this, revealed);
+
+        this.game.resolveGameAction(GameActions.simultaneously(
+            revealed.map(card => GameActions.revealCard({ card }))
+        ));
 
         let numRevealed = revealed.length;
 
