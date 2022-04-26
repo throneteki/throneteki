@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const {flatten} = require('../../../Array');
 
 class Gendry extends DrawCard {
     setupCardAbilities(ability) {
