@@ -1370,6 +1370,7 @@ class Game extends EventEmitter {
                 };
             }),
             muteSpectators: this.muteSpectators,
+            restrictedList: this.restrictedList,
             useChessClocks: this.useChessClocks
         };
     }
