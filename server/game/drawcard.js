@@ -330,7 +330,7 @@ class DrawCard extends BaseCard {
             return false;
         }
 
-        if(!this.attachmentRestrictions || this.isAnyBlank()) {
+        if(!this.attachmentRestrictions || this.isAnyBlank() || this.facedown) {
             return card.getType() === 'character';
         }
 
