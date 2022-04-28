@@ -3,6 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class BrienneTheBlue extends DrawCard {
     setupCardAbilities() {
         this.action({
+            title: 'Select a character',
             target: {
                 cardCondition: card => this.game.isDuringChallenge({ attackingAlone: card }) || this.game.isDuringChallenge({ defendingAlone: card })
             },
