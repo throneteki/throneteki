@@ -214,7 +214,7 @@ class AbilityResolver extends BaseStep {
                 this.context.source.owner.moveCard(this.context.source, this.context.source.eventPlacementLocation);
             }
 
-            let event = new Event('onCardPlayed', { player: this.context.player, card: this.context.source, originalLocation: this.context.originalLocation });
+            let event = new Event('onCardPlayed', { player: this.context.player, card: this.context.source, originalLocation: this.context.originalLocation, originalParent: this.context.originalParent });
             if(this.needsOutOfShadowEvent) {
                 event.addChildEvent(new Event('onCardOutOfShadows', { player: this.context.player, card: this.context.source, type: 'card' }));
             }

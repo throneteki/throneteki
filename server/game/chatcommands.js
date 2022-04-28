@@ -1,6 +1,7 @@
 const TextHelper = require('./TextHelper');
 const CancelChallengePrompt = require('./gamesteps/CancelChallengePrompt');
 const Deck = require('./Deck');
+const GameActions = require('./GameActions');
 const RematchPrompt = require('./gamesteps/RematchPrompt');
 const {Tokens} = require('./Constants');
 
@@ -25,6 +26,7 @@ class ChatCommands {
             '/kill': this.kill,
             '/move-bottom': this.moveBottom,
             '/move-shadows': this.moveShadows,
+            '/place-under': this.placeUnder,
             '/pillage': this.pillage,
             '/power': this.power,
             '/rematch': this.rematch,
@@ -251,6 +253,9 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to give icon',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
+                this.game.resolveGameAction(
+                    GameActions.gainIcon({ card, icon, applying: true })
+                );
                 card.addIcon(icon);
                 this.game.addAlert('danger', '{0} uses the /give-icon command to give {1} a {2} icon', p, card, icon);
 
@@ -271,7 +276,9 @@ class ChatCommands {
             waitingPromptTitle: 'Waiting for opponent to remove icon',
             cardCondition: card => card.location === 'play area' && card.controller === player && card.getType() === 'character',
             onSelect: (p, card) => {
-                card.removeIcon(icon);
+                this.game.resolveGameAction(
+                    GameActions.loseIcon({ card, icon, applying: true })
+                );
                 this.game.addAlert('danger', '{0} uses the /take-icon command to remove a {1} icon from {2}', p, icon, card);
 
                 return true;
@@ -424,6 +431,34 @@ class ChatCommands {
             onSelect: (p, card) => {
                 player.moveCard(card, 'shadows');
                 this.game.addAlert('danger', '{0} uses the /move-shadows command to move a card to their shadows area', p);
+                return true;
+            }
+        });
+    }
+
+    placeUnder(player) {
+        this.game.promptForSelect(player, {
+            activePromptTitle: 'Select a card to place',
+            waitingPromptTitle: 'Waiting for opponent to select a card to place',
+            cardCondition: card => card.controller === player && card.owner === player,
+            onSelect: (p, card) => {
+                this.game.promptForSelect(player, {
+                    activePromptTitle: 'Select a card to place the chosen card under',
+                    waitingPromptTitle: 'Waiting for opponent to select a card to place the selected card under',
+                    cardCondition: card => card.controller === player && card.owner === player,
+                    onSelect: (pInner, cardInner) => {
+                        cardInner.lastingEffect(ability => ({
+                            until: {
+                                onCardLeftPlay: event => event.card === cardInner
+                            },
+                            targetLocation: 'any',
+                            match: card,
+                            effect: ability.effects.placeCardUnderneath()
+                        }));
+                        this.game.addAlert('danger', '{0} uses the /place-under command to place a card under {1}', p, cardInner);
+                        return true;
+                    }
+                });
                 return true;
             }
         });

@@ -320,11 +320,15 @@ const Effects = {
     },
     addIcon: function(icon) {
         return {
-            apply: function(card) {
-                card.addIcon(icon);
+            apply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.gainIcon({ card, icon, applying: true })
+                );
             },
-            unapply: function(card) {
-                card.removeIcon(icon);
+            unapply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.loseIcon({ card, icon, applying: false })
+                );
             }
         };
     },
@@ -333,23 +337,30 @@ const Effects = {
             apply: function(card, context) {
                 context.dynamicIcons = context.dynamicIcons || {};
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context) || [];
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.addIcon(icon);
-                }
+                context.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        context.dynamicIcons[card.uuid].map(icon => GameActions.gainIcon({ card, icon, applying: true }))
+                    )
+                );
             },
             reapply: function(card, context) {
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.removeIcon(icon);
-                }
+                let currentIcons = context.dynamicIcons[card.uuid];
                 context.dynamicIcons[card.uuid] = iconsFunc(card, context);
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.addIcon(icon);
-                }
+
+                let iconsGained = context.dynamicIcons[card.uuid].filter(icon => !currentIcons.includes(icon));
+                let iconsLost = currentIcons.filter(icon => !context.dynamicIcons[card.uuid].includes(icon));
+
+                let actions = iconsGained.map(icon => GameActions.gainIcon({ card, icon, applying: true }));
+                actions = actions.concat(iconsLost.map(icon => GameActions.loseIcon({ card, icon, applying: false })));
+
+                context.game.resolveGameAction(GameActions.simultaneously(actions));
             },
             unapply: function(card, context) {
-                for(let icon of context.dynamicIcons[card.uuid]) {
-                    card.removeIcon(icon);
-                }
+                context.game.resolveGameAction(
+                    GameActions.simultaneously(
+                        context.dynamicIcons[card.uuid].map(icon => GameActions.removeIcon({ card, icon, applying: false }))
+                    )
+                );
                 delete context.dynamicIcons[card.uuid];
             },
             isStateDependent: true
@@ -357,11 +368,15 @@ const Effects = {
     },
     removeIcon: function(icon) {
         return {
-            apply: function(card) {
-                card.removeIcon(icon);
+            apply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.loseIcon({ card, icon, applying: true })
+                );
             },
-            unapply: function(card) {
-                card.addIcon(icon);
+            unapply: function(card, context) {
+                context.game.resolveGameAction(
+                    GameActions.gainIcon({ card, icon, applying: false })
+                );
             }
         };
     },
@@ -1363,6 +1378,30 @@ const Effects = {
                 }
                 context.game.addMessage('{0} discards their hand and returns each card under {1} to their hand',
                     player, context.source);
+            }
+        };
+    },
+    placeCardUnderneath: function(unapplyFunc = null) {
+        return {
+            apply: function(card, context) {
+                context.source.controller.removeCardFromPile(card);
+                context.source.addChildCard(card, 'underneath');
+                card.facedown = true;
+            },
+            unapply: function(card, context) {
+                card.facedown = false;
+
+                if(unapplyFunc) {
+                    unapplyFunc(card, context);
+                    return;
+                }
+
+                if(card.location === 'underneath' && context.source.childCards.some(childCard => childCard === card)) {
+                    context.source.controller.discardCard(card);
+
+                    context.game.addMessage('{0} discards {1} from under {2}',
+                        context.source.controller, card, context.source);
+                }
             }
         };
     }

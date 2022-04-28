@@ -117,6 +117,11 @@ const Costs = {
      */
     revealCards: (number, condition) => CostBuilders.reveal.selectMultiple(number, condition),
     /**
+     * Cost that requires revealing up to a number of cards in hand that match
+     * the passed condition predicate function.
+     */
+    revealUpTo: (number, condition, zeroAllowed) => CostBuilders.reveal.selectUpTo(number, condition, zeroAllowed),
+    /**
      * Cost that will stand the card that initiated the ability (e.g.,
      * Barristan Selmy (TS)).
      */
@@ -148,6 +153,8 @@ const Costs = {
                 // of their effects.
                 // Ruling: http://www.cardgamedb.com/forums/index.php?/topic/35981-the-annals-of-castle-black/
                 context.originalLocation = context.source.location;
+                // For events being played from underneath another card
+                context.originalParent = context.source.parent;
                 context.source.controller.moveCard(context.source, 'being played');
             }
         };
