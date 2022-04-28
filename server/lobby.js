@@ -912,6 +912,7 @@ class Lobby {
             syncGame.started = game.started;
             syncGame.gameType = game.gameType;
             syncGame.password = game.password;
+            syncGame.restrictedList = game.restrictedList;
 
             for(let player of Object.values(game.players)) {
                 syncGame.players[player.name] = {
