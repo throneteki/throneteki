@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class FlorianAndJonquil extends DrawCard {
     setupCardAbilities() {
         this.action({
-            title: 'Choose a character',
+            title: 'Select a character',
             target: {
                 cardCondition: card => card.location === 'play area' && 
                                 card.getType() === 'character' && 

@@ -10,7 +10,7 @@ class BranTheBuilder extends PlotCard {
             limit: ability.limit.perPhase(2),
             gameAction: GameActions.search({
                 topCards: 10,
-                title: 'Select a character',
+                title: 'Select a card',
                 match: { type: 'location' },
                 message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
                 gameAction: GameActions.addToHand(context => ({
