@@ -28,7 +28,7 @@ describe('Pleasure Barge', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('Tyrell', [
                     'A Noble Cause', 'Political Disaster',
-                    'Pleasure Barge', 'The Roseroad', 'Highgarden'
+                    'Pleasure Barge', 'The Roseroad', 'Highgarden (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

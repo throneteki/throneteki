@@ -4,7 +4,7 @@ describe('Bran Stark (Core)', function() {
             const deck1 = this.buildDeck('stark', [
                 'Sneak Attack',
                 'Bran Stark (Core)',
-                'Lady'
+                'Lady (TtB)'
             ]);
             const deck2 = this.buildDeck('baratheon', [
                 'A Feast for Crows',

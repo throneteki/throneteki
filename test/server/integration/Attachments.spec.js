@@ -73,7 +73,7 @@ describe('attachments', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Catelyn Stark (Core)', 'Brother\'s Robes', 'Winterfell Castle', 'Frozen Solid'
+                    'Catelyn Stark (Core)', 'Brother\'s Robes', 'Winterfell Castle (TRtW)', 'Frozen Solid'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
