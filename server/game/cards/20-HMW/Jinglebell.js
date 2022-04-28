@@ -11,7 +11,7 @@ class Jinglebell extends DrawCard {
                 title: 'Select a card',
                 match: {
                     type: 'character',
-                    trait: this.getTraits()
+                    condition: card => card.getTraits().some(trait => this.hasTrait(trait))
                 },
                 message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
                 cancelMessage: '{player} uses {source} to search their deck but does not find a card',

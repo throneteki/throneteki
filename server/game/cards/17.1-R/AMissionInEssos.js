@@ -14,13 +14,13 @@ class AMissionInEssos extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.returnCardToHand(context => ({ card: context.target }))
-                        .then(preThenContext => ({
+                        .then((preThenContext, preThenEvent) => ({
                             gameAction: GameActions.search({
                                 title: 'Select a character',
                                 match: {
                                     type: 'character',
-                                    trait: preThenContext.target.getTraits(),
-                                    printedCostOrLower: preThenContext.target.getPrintedCost() - 1
+                                    printedCostOrLower: preThenEvent.cardStateWhenReturned.getPrintedCost() - 1,
+                                    condition: card => card.getTraits().some(trait => preThenEvent.cardStateWhenReturned.hasTrait(trait))
                                 },
                                 message: 'Then {player} uses {source} to search their deck and put {searchTarget} into play',
                                 cancelMessage: 'Then {player} uses {source} to search their deck but does not find a card',
