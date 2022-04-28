@@ -4,7 +4,7 @@ describe('Grand Melee', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('tyrell', [
                     'Grand Melee', 'A Noble Cause',
-                    'Garden Caretaker', 'Garden Caretaker', 'Renly Baratheon (FFH)', 'Highgarden'
+                    'Garden Caretaker', 'Garden Caretaker', 'Renly Baratheon (FFH)', 'Highgarden (Core)'
                 ]);
 
                 this.player1.selectDeck(deck);

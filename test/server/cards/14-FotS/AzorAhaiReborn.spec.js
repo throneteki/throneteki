@@ -4,7 +4,7 @@ describe('Azor Ahai Reborn', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('baratheon', [
                     'A Noble Cause',
-                    'Fiery Followers', 'Maester Wendamyr', 'Azor Ahai Reborn', 'Highgarden'
+                    'Fiery Followers', 'Maester Wendamyr', 'Azor Ahai Reborn', 'Highgarden (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -51,7 +51,7 @@ describe('Azor Ahai Reborn', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('baratheon', [
                     'A Noble Cause',
-                    'R\'hllor Infiltrator', 'Selyse Baratheon (Core)', 'Azor Ahai Reborn', 'Highgarden'
+                    'R\'hllor Infiltrator', 'Selyse Baratheon (Core)', 'Azor Ahai Reborn', 'Highgarden (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
