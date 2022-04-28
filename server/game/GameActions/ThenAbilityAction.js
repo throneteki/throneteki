@@ -18,7 +18,7 @@ class ThenAbilityAction {
                 return;
             }
 
-            let abilityProperties = this.abilityPropertiesFactory(context);
+            let abilityProperties = this.abilityPropertiesFactory(context, event);
             let ability = new ThenClauseAbility(abilityProperties);
             let thenContext = ability.createContext(context, event);
 
