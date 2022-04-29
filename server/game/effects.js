@@ -358,7 +358,7 @@ const Effects = {
             unapply: function(card, context) {
                 context.game.resolveGameAction(
                     GameActions.simultaneously(
-                        context.dynamicIcons[card.uuid].map(icon => GameActions.removeIcon({ card, icon, applying: false }))
+                        context.dynamicIcons[card.uuid].map(icon => GameActions.loseIcon({ card, icon, applying: false }))
                     )
                 );
                 delete context.dynamicIcons[card.uuid];
