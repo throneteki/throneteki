@@ -25,7 +25,7 @@ const RemoveFromGame = require('./RemoveFromGame');
 const ReturnCardToDeck = require('./ReturnCardToDeck');
 const ReturnCardToHand = require('./ReturnCardToHand');
 const ReturnGoldToTreasury = require('./ReturnGoldToTreasury');
-const RevealCard = require('./RevealCard');
+const RevealCards = require('./RevealCards');
 const SacrificeCard = require('./SacrificeCard');
 const Search = require('./Search');
 const Shuffle = require('./Shuffle');
@@ -64,7 +64,10 @@ const GameActions = {
     returnCardToDeck: props => new AbilityAdapter(ReturnCardToDeck, props),
     returnCardToHand: props => new AbilityAdapter(ReturnCardToHand, props),
     returnGoldToTreasury: props => new AbilityAdapter(ReturnGoldToTreasury, props),
-    revealCard: props => new AbilityAdapter(RevealCard, props),
+    revealCards: props => new AbilityAdapter(
+        new RevealCards(props),
+        props
+    ),
     sacrificeCard: props => new AbilityAdapter(SacrificeCard, props),
     search: props => new AbilityAdapter(
         new Search(props),

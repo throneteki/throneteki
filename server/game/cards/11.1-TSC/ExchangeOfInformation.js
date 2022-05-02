@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions');
 const PlotCard = require('../../plotcard');
 
 class ExchangeOfInformation extends PlotCard {
@@ -10,15 +11,25 @@ class ExchangeOfInformation extends PlotCard {
                 this.selectedCards = [];
                 this.selectingOpponent = context.opponent;
                 this.initiatingPlayer = context.player;
-                this.game.addMessage('{0} uses {1} to choose {2} and reveals {3}', context.player, this, context.opponent, this.potentialCards);
 
-                let revealFunc = card => this.potentialCards.includes(card);
-                this.game.cardVisibility.addRule(revealFunc);
-                this.promptForNextCardType();
-                this.game.queueSimpleStep(() => {
-                    this.game.cardVisibility.removeRule(revealFunc);
-                    this.completeSelection();
-                });
+                this.game.resolveGameAction(
+                    GameActions.revealCards({
+                        match: {
+                            location: ['draw deck'],
+                            condition: card => this.potentialCards.includes(card)
+                        },
+                        whileRevealed: {
+                            handler: context => {
+                                this.potentialCards = context.revealed.filter(card => card.location === 'draw deck');
+                                this.promptForNextCardType();
+                                this.game.queueSimpleStep(() => {
+                                    this.completeSelection();
+                                });
+                            }
+                        }
+                    }),
+                    context
+                )
             }
         });
     }

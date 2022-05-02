@@ -13,7 +13,7 @@ class JonConnington extends DrawCard {
             message: '{player} uses {source} to reveal {target}',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.revealCard(context => ({ card: context.target })),
+                    GameActions.revealCards(context => ({ card: context.target })),
                     context
                 ).thenExecute(event => {
                     if(event.card.getType() !== 'event' && event.card.getPrintedCost() <= 4 && context.player.canPutIntoPlay(event.card)) {

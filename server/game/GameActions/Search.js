@@ -48,7 +48,7 @@ class Search extends GameAction {
                 },
                 source: context.source
             }));
-            context.game.queueSimpleStep(() => {
+            event.thenExecute(() => {
                 context.game.cardVisibility.removeRule(revealFunc);
                 event.thenAttachEvent(Shuffle.createEvent({ player: event.searchedPlayer }));
                 context.game.addMessage('{0} shuffles their deck', event.searchedPlayer);
