@@ -1,30 +1,24 @@
 const PlotCard = require('../../plotcard.js');
+const GameActions = require('../../GameActions');
 
 class Summons extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: context => {
-                this.game.promptForDeckSearch(context.player, {
-                    numCards: 10,
-                    activePromptTitle: 'Select a card',
-                    cardType: 'character',
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.search({
+                topCards: 10,
+                title: 'Select a character',
+                match: { type: 'character' },
+                // message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
+                gameAction: GameActions.revealCards({
+                    match: {
+                        condition: (card, context) => card === context.searchTarget
+                    },
+                    gameAction: GameActions.addToHand(context => ({
+                        card: context.cards[0]
+                    }))
+                })
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
-            player, this);
     }
 }
 
