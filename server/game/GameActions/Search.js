@@ -1,10 +1,12 @@
 const GameAction = require('./GameAction');
+const AbilityAdapter = require('./AbilityAdapter');
 const AbilityMessage = require('../AbilityMessage');
+const RevealCards = require('./RevealCards');
 const CardMatcher = require('../CardMatcher');
 const Shuffle = require('./Shuffle');
 
 class Search extends GameAction {
-    constructor({ gameAction, location, match, message, cancelMessage, topCards, numToSelect, player, searchedPlayer, title }) {
+    constructor({ gameAction, location, match, message, cancelMessage, topCards, numToSelect, player, searchedPlayer, title, reveal = true }) {
         super('search');
         this.gameAction = gameAction;
         this.match = match || {};
@@ -14,6 +16,7 @@ class Search extends GameAction {
         this.searchedPlayerFunc = searchedPlayer || this.playerFunc;
         this.title = title;
         this.location = location || ['draw deck'];
+        this.reveal = reveal;
         this.message = AbilityMessage.create(message);
         this.cancelMessage = AbilityMessage.create(cancelMessage || '{player} uses {source} to search their deck but does not find a card');
     }
@@ -38,7 +41,13 @@ class Search extends GameAction {
                 cardCondition: searchCondition,
                 onSelect: (player, result) => {
                     context.searchTarget = result;
+                    context.game.cardVisibility.removeRule(revealFunc);
                     this.message.output(context.game, context);
+                    if(this.reveal) {
+                        let revealProperties = { cards: context.searchTarget, player: context.player, context };
+                        this.revealGameAction = new AbilityAdapter(new RevealCards(revealProperties), revealProperties);
+                        event.thenAttachEvent(this.revealGameAction.createEvent(context));
+                    }
                     event.thenAttachEvent(this.gameAction.createEvent(context));
                     return true;
                 },
@@ -49,7 +58,6 @@ class Search extends GameAction {
                 source: context.source
             }));
             event.thenExecute(() => {
-                context.game.cardVisibility.removeRule(revealFunc);
                 event.thenAttachEvent(Shuffle.createEvent({ player: event.searchedPlayer }));
                 context.game.addMessage('{0} shuffles their deck', event.searchedPlayer);
             });

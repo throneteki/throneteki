@@ -1,99 +1,63 @@
 const GameAction = require('./GameAction');
+const ChooseGameAction = require('./ChooseGameAction');
+const HandlerGameActionWrapper = require('./HandlerGameActionWrapper');
 const AckowledgeRevealCardsPrompt = require('../gamesteps/AckowledgeRevealCardsPrompt');
-const CardMatcher = require('../CardMatcher');
 
 class RevealCards extends GameAction {
-    constructor({ match, revealingplayer, revealingTo, whileRevealed, gameAction }) {
+    constructor({ cards, player, whileRevealed }) {
         super('revealCards');
-        this.match = match ? CardMatcher.createMatcher(match) : () => true;
-        this.revealingPlayerFunc = revealingplayer || (context => context.player);
-        this.revealingToFunc = revealingTo || (context => context.game.getPlayers());
-        this.whileRevealed = whileRevealed || {};
-        this.gameAction = gameAction;
+        this.cards = Array.isArray(cards) ? cards : [cards];
+        this.player = player;
+        this.whileRevealedGameAction = this.buildGameAction(whileRevealed);
     }
 
-    canChangeGameState({ context }) {
-        const cards = this.filterRevealableCards(this.match, context);
-        const revealingTo = this.revealingToFunc(context);
-        return cards.length > 0 && revealingTo.length > 0;
+    canChangeGameState({ cards }) {
+        cards = Array.isArray(cards) ? cards : [cards];
+        return cards.length > 0 && cards.some(card => ['draw deck', 'hand', 'plot deck', 'shadows'].includes(card.location));
     }
 
-    createEvent({ context }) {
-        const revealingPlayer = this.revealingPlayerFunc(context); // TEST THIS WITH SINGLE PLAYER
-        const revealingTo = this.revealingToFunc(context); // TEST THIS WITH SINGLE PLAYER
-        const cards = this.filterRevealableCards(this.match, context);
+    createEvent({ cards, player, context }) {
         const eventParams = {
-            revealingPlayer,
-            revealingTo,
-            cards,
+            revealingPlayer: player,
+            cards: Array.isArray(cards) ? cards : [cards],
             source: context.source
         }
         return this.event('onCardsRevealed', eventParams, event => {
-            this.savePreviouslySelectedCards(event.revealingTo, event.cards);
+            // this.savePreviouslySelectedCards(context.game, event.cards);
             
             // Make the cards visible before their actual "reveal" event. This ensures any interrupts to 'onCardRevealed' will actually show the card (eg. Alla Tyrell)
-            this.revealFunc = (card, player) => event.revealingTo.includes(player) && event.cards.includes(card)
+            this.revealFunc = card => event.cards.includes(card);
             context.game.cardVisibility.addRule(this.revealFunc);
-
 
             for(let card of event.cards) {
                 const thenEventParams = {
                     card,
                     cardStateWhenRevealed: card.createSnapshot(),
-                    revealingPlayer,
-                    revealingTo,
+                    revealingPlayer: event.revealingPlayer,
                     source: event.source
                 }
-
+                
                 event.thenAttachEvent(
-                    this.event('onCardRevealed', thenEventParams, thenEvent => {
-                        // If the card has left the location which it was originally revealed in, then it should not be passed on
-                        if(thenEvent.card.location !== thenEvent.cardStateWhenRevealed.location) {
-                            event.cards = event.cards.filter(card => card !== thenEvent.card);
-                        }
-                    })
+                    this.event('onCardRevealed', thenEventParams, () => {})
                 );
             }
             // TODO: Open Window for all players to show whats being revealed
 
-            context = Object.assign({ cards: event.cards, revealedPlayer: revealingPlayer, revealedTo: revealingTo }, context);
-            if(this.whileRevealed.gameAction) {
-                event.thenAttachEvent(this.whileRevealed.gameAction.createEvent(context));
-            } else if (this.whileRevealed.handler) {
-                event.thenExecute(() => this.whileRevealed.handler(context));
-            } else {
-                event.thenExecute(event => {
-                    if(event.cards.length > 0) {
-                        event.game.queueStep(new AckowledgeRevealCardsPrompt(context));
-                    }
-                });
-            }
-
-            event.thenExecute(() => {
-                this.clearSelection(event.revealingTo);
-
+            context = Object.assign({ cards: event.cards, revealingPlayer: event.revealingPlayer }, context);
+            
+            event.thenAttachEvent(this.whileRevealedGameAction.createEvent(context));
+            
+            context.game.queueSimpleStep(() => {
+                // this.clearSelection(context.game);
                 context.game.cardVisibility.removeRule(this.revealFunc);
                 this.revealFunc = null;
             });
-                
-            if(this.gameAction) {
-                event.thenAttachEvent(this.gameAction.createEvent(context));
-            }
-
-            
-            // TODO: There's a theoretical future UI where we prominently display
-            // the revealed card, add a reveal effect and pause for all players
-            // to acknowledge it, etc. But until then, this event does nothing.
         });
     }
-    
-    filterRevealableCards(match, context) {
-        return context.game.allCards.filter(card => ['draw deck', 'hand', 'plot deck', 'shadows'].includes(card.location) && match(card, context));
-    }
 
-    savePreviouslySelectedCards(players, cards) {
+    savePreviouslySelectedCards(game, cards) {
         this.previousSelectCards = this.previousSelectCards || {};
-        for(let player of players) {
+        for(let player of game.getPlayers()) {
             this.previousSelectCards[player.uuid] = {};
             this.previousSelectCards[player.uuid].selectedCards = player.selectedCards;
             this.previousSelectCards[player.uuid].selectableCards = player.selectableCards;
@@ -103,8 +67,8 @@ class RevealCards extends GameAction {
         }
     }
 
-    clearSelection(players) {
-        for(let player of players) {
+    clearSelection(game) {
+        for(let player of game.getPlayers()) {
             player.clearSelectedCards();
             player.clearSelectableCards();
 
@@ -112,6 +76,25 @@ class RevealCards extends GameAction {
             player.setSelectableCards(this.previousSelectCards[player.uuid].selectableCards);
         }
         this.previousSelectCards = null;
+    }
+
+    buildGameAction(whileRevealed) {
+        if(!whileRevealed) {
+            return new HandlerGameActionWrapper({ handler: context => context.game.queueStep(new AckowledgeRevealCardsPrompt(context.game, context.cards, context.revealingPlayer)) });
+        }
+        if(whileRevealed.gameAction) {
+            return whileRevealed.gameAction;
+        }
+
+        if(whileRevealed.choices) {
+            return new ChooseGameAction(whileRevealed.choices);
+        }
+
+        if(whileRevealed.handler) {
+            return new HandlerGameActionWrapper({ handler: whileRevealed.handler });
+        }
+
+        throw new Error('Cannot use whileRevealed without specifying a gameAction, choices or handler');
     }
 }
 

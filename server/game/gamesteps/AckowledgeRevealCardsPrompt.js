@@ -2,11 +2,10 @@ const UiPrompt = require('./uiprompt');
 const TextHelper = require('../../game/TextHelper');
 
 class AckowledgeRevealCardsPrompt extends UiPrompt {
-    constructor(context) {
-        super(context.game);
-        this.cards = context.cards;
-        this.revealedPlayer = context.revealedPlayer;
-        this.revealedTo = context.revealedTo;
+    constructor(game, cards, player) {
+        super(game);
+        this.cards = cards;
+        this.revealingPlayer = player;
         this.clickedButton = {};
     }
     
@@ -17,7 +16,7 @@ class AckowledgeRevealCardsPrompt extends UiPrompt {
     activePrompt() {
         return {
             promptTitle: 'Revealing Card(s)',
-            menuTitle: `${this.revealedPlayer.name} is revealing ${TextHelper.count(this.cards.length, 'card')}`,
+            menuTitle: `${this.revealingPlayer.name} is revealing ${TextHelper.count(this.cards.length, 'card')}`,
             buttons: [
                 { text: 'Continue' },
             ]
@@ -39,9 +38,7 @@ class AckowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     isComplete() {
-        return this.revealedTo.every(player => {
-            return this.completionCondition(player);
-        });
+        return this.game.getPlayers().every(player => this.completionCondition(player));
     }
 }
 
