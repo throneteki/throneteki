@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class HightowerSpy extends DrawCard {
     setupCardAbilities() {
@@ -9,17 +10,26 @@ class HightowerSpy extends DrawCard {
             target: {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
+            message: '{player} uses {source} to choose {target} and reveal the top card of their deck',
             handler: context => {
-                let topCard = this.controller.drawDeck[0];
-                let increase = topCard.getPrintedCost();
-
-                this.untilEndOfPhase(ability => ({
-                    match: context.target,
-                    effect: ability.effects.modifyStrength(increase)
-                }));
-
-                this.game.addMessage('{0} uses {1} to reveal {2} and give {3} +{4} STR until the end of the phase',
-                    context.player, this, topCard, context.target, increase);
+                this.game.resolveGameAction(
+                    GameActions.revealTopCards(context => ({
+                        player: context.player
+                    })).then(preThenContext => ({
+                        handler: context => {
+                            const topCard = context.event.cards[0];
+                            if(topCard.hasPrintedCost()) {
+                                const increase = topCard.getPrintedCost();
+                                this.game.addMessage('{0} gives {1} +{2} STR until the end of the phase', context.player, preThenContext.target, increase);
+                                this.untilEndOfPhase(ability => ({
+                                    match: preThenContext.target,
+                                    effect: ability.effects.modifyStrength(increase)
+                                }));
+                            }
+                        }
+                    })),
+                    context
+                );
             }
         });
     }

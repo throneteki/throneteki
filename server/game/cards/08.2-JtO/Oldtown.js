@@ -1,11 +1,15 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class Oldtown extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top card of deck',
             cost: ability.costs.kneelSelf(),
-            handler: () => {
+            message: '{player} uses and kneels {source} to name a cardtype',
+            handler: context => {
+                this.context = context;
+
                 let cardTypes = ['Character', 'Location', 'Attachment', 'Event'];
 
                 let buttons = cardTypes.map(cardType => {
@@ -17,31 +21,36 @@ class Oldtown extends DrawCard {
                         menuTitle: 'Select a card type',
                         buttons: buttons
                     },
-                    source: this.card
+                    source: context.source
                 });
             }
         });
     }
 
     cardTypeSelected(player, cardType) {
-        this.game.addMessage('{0} kneels {1} to name the {2} card type', this.controller, this, cardType);
+        this.game.addMessage('{0} names the {1} cardtype', this.context.player, cardType);
 
-        let topCard = this.controller.drawDeck[0];
-        let message = '{0} then reveals {1} as the top card of their deck';
+        const revealAction = GameActions.revealTopCards(context => ({
+            player: context.player
+        })).then({
+            message: '{player} {gameAction}',
+            gameAction: GameActions.ifCondition({
+                condition: context => context.event.cards[0].getType() === cardType,
+                thenAction: GameActions.simultaneously([
+                    GameActions.drawCards(context => ({
+                        player: context.player,
+                        amount: 1
+                    })),
+                    GameActions.gainPower(context => ({
+                        card: context.player.faction,
+                        amount: 1
+                    }))
+                ])
+            })
+        });
 
-        if(topCard.getType() === cardType) {
-            if(this.controller.canDraw()) {
-                this.controller.drawCardsToHand(1);
-                message += ', draws it';
-            }
-
-            if(this.controller.canGainFactionPower()) {
-                this.game.addPower(this.controller, 1);
-                message += ', and gains 1 power for their faction';
-            }
-        }
-
-        this.game.addMessage(message, this.controller, topCard);
+        this.game.addMessage('Then {0} reveals the top card of their deck', this.context.player);
+        this.game.resolveGameAction(revealAction, this.context);
 
         return true;
     }

@@ -1,7 +1,4 @@
 const {flatten} = require('../Array');
-const BaseCard = require('./basecard');
-const Spectator = require('./spectator');
-
 class Message {
     static fragment(format, ...args) {
         if(args.length === 1 && !format.includes('{0}')) {
@@ -40,6 +37,9 @@ class Message {
     }
 
     formatArg(arg) {
+        const BaseCard = require('./basecard');
+        const Spectator = require('./spectator');
+
         if(Array.isArray(arg)) {
             return this.formatArray(arg);
         } else if(arg instanceof BaseCard) {
