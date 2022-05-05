@@ -64,10 +64,7 @@ const GameActions = {
     returnCardToDeck: props => new AbilityAdapter(ReturnCardToDeck, props),
     returnCardToHand: props => new AbilityAdapter(ReturnCardToHand, props),
     returnGoldToTreasury: props => new AbilityAdapter(ReturnGoldToTreasury, props),
-    revealCards: props => new AbilityAdapter(
-        new RevealCards(props),
-        props
-    ),
+    revealCards: props => new AbilityAdapter(RevealCards, props),
     sacrificeCard: props => new AbilityAdapter(SacrificeCard, props),
     search: props => new AbilityAdapter(
         new Search(props),
