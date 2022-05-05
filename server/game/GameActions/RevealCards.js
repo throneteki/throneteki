@@ -1,14 +1,11 @@
 const GameAction = require('./GameAction');
-const ChooseGameAction = require('./ChooseGameAction');
+const SimultaneousEvents = require('../SimultaneousEvents');
 const HandlerGameActionWrapper = require('./HandlerGameActionWrapper');
 const AckowledgeRevealCardsPrompt = require('../gamesteps/AckowledgeRevealCardsPrompt');
 
 class RevealCards extends GameAction {
-    constructor({ cards, player, whileRevealed }) {
+    constructor() {
         super('revealCards');
-        this.cards = Array.isArray(cards) ? cards : [cards];
-        this.player = player;
-        this.whileRevealedGameAction = this.buildGameAction(whileRevealed);
     }
 
     canChangeGameState({ cards }) {
@@ -16,7 +13,8 @@ class RevealCards extends GameAction {
         return cards.length > 0 && cards.some(card => ['draw deck', 'hand', 'plot deck', 'shadows'].includes(card.location));
     }
 
-    createEvent({ cards, player, context }) {
+    createEvent({ cards, player, whileRevealed, context }) {
+        this.whileRevealed = whileRevealed || new HandlerGameActionWrapper({ handler: context => context.game.queueStep(new AckowledgeRevealCardsPrompt(context.game, context.cards, context.revealingPlayer)) });
         const eventParams = {
             revealingPlayer: player,
             cards: Array.isArray(cards) ? cards : [cards],
@@ -45,7 +43,7 @@ class RevealCards extends GameAction {
 
             context = Object.assign({ cards: event.cards, revealingPlayer: event.revealingPlayer }, context);
             
-            event.thenAttachEvent(this.whileRevealedGameAction.createEvent(context));
+            event.thenAttachEvent(this.whileRevealed.createEvent(context));
             
             context.game.queueSimpleStep(() => {
                 // this.clearSelection(context.game);
@@ -77,25 +75,6 @@ class RevealCards extends GameAction {
         }
         this.previousSelectCards = null;
     }
-
-    buildGameAction(whileRevealed) {
-        if(!whileRevealed) {
-            return new HandlerGameActionWrapper({ handler: context => context.game.queueStep(new AckowledgeRevealCardsPrompt(context.game, context.cards, context.revealingPlayer)) });
-        }
-        if(whileRevealed.gameAction) {
-            return whileRevealed.gameAction;
-        }
-
-        if(whileRevealed.choices) {
-            return new ChooseGameAction(whileRevealed.choices);
-        }
-
-        if(whileRevealed.handler) {
-            return new HandlerGameActionWrapper({ handler: whileRevealed.handler });
-        }
-
-        throw new Error('Cannot use whileRevealed without specifying a gameAction, choices or handler');
-    }
 }
 
-module.exports = RevealCards;
+module.exports = new RevealCards();

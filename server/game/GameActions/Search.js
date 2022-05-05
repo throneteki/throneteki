@@ -44,8 +44,7 @@ class Search extends GameAction {
                     context.game.cardVisibility.removeRule(revealFunc);
                     this.message.output(context.game, context);
                     if(this.reveal) {
-                        let revealProperties = { cards: context.searchTarget, player: context.player, context };
-                        this.revealGameAction = new AbilityAdapter(new RevealCards(revealProperties), revealProperties);
+                        this.revealGameAction = new AbilityAdapter(RevealCards, context => ({ cards: context.searchTarget, player: context.player }));
                         event.thenAttachEvent(this.revealGameAction.createEvent(context));
                     }
                     event.thenAttachEvent(this.gameAction.createEvent(context));
