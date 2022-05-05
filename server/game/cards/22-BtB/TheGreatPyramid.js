@@ -1,5 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const GenericTracker = require('../../EventTrackers/GenericTracker');
+const GameActions = require('../../GameActions');
 
 class TheGreatPyramid extends DrawCard {
     setupCardAbilities(ability) {
@@ -64,7 +65,7 @@ class TheGreatPyramid extends DrawCard {
 
     removeCardsUnderneathFromGame(card, context) {
         if(card.location === 'underneath' && context.source.childCards.some(childCard => childCard === card)) {
-            context.source.controller.discardCard(card);
+            context.game.resolveGameAction(GameActions.removeFromGame({ card, player: this }));
 
             context.game.addMessage('{0} removes {1} from the game from under {2}',
                 context.source.controller, card, context.source);
