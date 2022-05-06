@@ -13,7 +13,7 @@ class SerJaimeLannister extends DrawCard {
             })).then(preThenContext => ({
                 message: {
                     format: 'Then {player} discards {enteredPlay} from play',
-                    args: { enteredPlay: preThenContext.event.card }
+                    args: { enteredPlay: () => preThenContext.event.card }
                 },
                 gameAction: GameActions.discardCard({
                     card: preThenContext.event.card
