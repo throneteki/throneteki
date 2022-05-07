@@ -37,7 +37,15 @@ class DeckService {
         return this.decks.find({ standaloneDeckId: { $exists: true } }, { sort: { lastUpdated: -1 } });
     }
 
-    create(deck) {
+    async create(deck) {
+        //if the eventId is set on a new deck, check if the user already has a deck with the same eventId
+        if(deck.eventId) {
+            //if a deck for the event already exists, do not create the new deck
+            if(this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
+                return () => Promise.resolve();
+            }
+        }
+        
         let properties = {
             username: deck.username,
             name: deck.deckName,
@@ -77,6 +85,15 @@ class DeckService {
         if(previousVersion.locked) {
             return () => Promise.resolve();
         }
+
+        //if the eventId is set on the deck, check if the user already has a deck with the same eventId
+        if(deck.eventId) {
+            //if a deck for the event already exists, do not update the deck
+            if(this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
+                return () => Promise.resolve();
+            }
+        }
+
         let properties = {
             name: deck.deckName,
             plotCards: deck.plotCards,
@@ -93,8 +110,19 @@ class DeckService {
         return this.decks.update({ _id: deck.id }, { '$set': properties });
     }
 
-    delete(id) {
+    async delete(id) {
+        let previousVersion = await this.getById(id);
+        //do not delete the deck if the deck is locked
+        if(previousVersion.locked) {
+            return () => Promise.resolve();
+        }
         return this.decks.remove({ _id: id });
+    }
+
+    async userAlreadyHasDeckForEvent(userName, eventId) {
+        let otherDecksForThisUser = await this.findByUserName(userName);
+        let deckForEventAlreadyExists = otherDecksForThisUser.some(d => d.eventId === eventId);
+        return deckForEventAlreadyExists;
     }
 }
 
