@@ -12,7 +12,7 @@ class AMummersFarce extends AgendaCard {
 
         this.forcedReaction({
             when: {
-                onCardStood: event => event.card.controller === this.controller && event.card.hasTrait('Fool')
+                onCardStood: event => event.card.controller === this.controller && event.card.hasTrait('Fool') && this.isCardEligibleToHaveFacedownWeaponAttachments(event.card)
             },
             handler: context => {
                 let topCard = context.player.drawDeck[0];
@@ -45,6 +45,12 @@ class AMummersFarce extends AgendaCard {
 
     isFacedownAttachment(card) {
         return card.facedown && card.controller === this.controller && card.getType() === 'attachment' && card.parent.hasTrait('Fool');
+    }
+
+    isCardEligibleToHaveFacedownWeaponAttachments(card) {
+        let noAttachmentKeywords = card.getKeywords().filter(keyword => keyword.startsWith('no attachments'));
+        return noAttachmentKeywords.length === 0 || 
+            (noAttachmentKeywords.length === 1 && noAttachmentKeywords[0] === 'no attachments except <i>weapon</i>');
     }
 }
 
