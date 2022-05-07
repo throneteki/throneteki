@@ -45,6 +45,7 @@ class DeckService {
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
             eventId: deck.eventId,
+            locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
             faction: deck.faction,
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
@@ -72,8 +73,8 @@ class DeckService {
 
     async update(deck) {
         let previousVersion = await this.getById(deck.id);
-        //do not save the deck if the eventId is already set
-        if(previousVersion.eventId) {
+        //do not save the deck if the deck is locked
+        if(previousVersion.locked) {
             return () => Promise.resolve();
         }
         let properties = {
@@ -83,6 +84,7 @@ class DeckService {
             bannerCards: deck.bannerCards,
             faction: deck.faction,
             eventId: deck.eventId,
+            locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
