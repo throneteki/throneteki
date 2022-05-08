@@ -21,6 +21,7 @@ class Glamor extends DrawCard {
                 cardCondition: (card, context) => (
                     card.controller === context.player &&
                     card.location === 'dead pile' &&
+                    card !== context.costs.kill &&
                     this.tracker.wasKilledThisPhase(card) &&
                     context.player.canPutIntoPlay(card)
                 )
