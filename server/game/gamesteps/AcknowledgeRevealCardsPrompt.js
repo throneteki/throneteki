@@ -1,16 +1,17 @@
 const UiPrompt = require('./uiprompt');
-const TextHelper = require('../../game/TextHelper');
+const TextHelper = require('../TextHelper');
 
-class AckowledgeRevealCardsPrompt extends UiPrompt {
+class AcknowledgeRevealCardsPrompt extends UiPrompt {
     constructor(game, cards, player) {
         super(game);
         this.cards = cards;
         this.revealingPlayer = player;
-        this.clickedButton = {};
+        this.opponents = this.game.getPlayers().filter(player => player !== this.revealingPlayer)
+        this.clickedButton = { };
     }
     
     activeCondition(player) {
-        return !this.completionCondition(player);
+        return this.opponents.includes(player) && !this.completionCondition(player);
     }
 
     activePrompt() {
@@ -24,7 +25,7 @@ class AckowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     waitingPrompt() {
-        return { menuTitle: 'Waiting for opponent(s) to choose to continue' };
+        return { menuTitle: `Waiting for opponent${this.opponents.length > 1 ? 's' : ''} to acknowledge revealed card${this.cards.length > 1 ? 's' : ''}` };
     }
 
     onMenuCommand(player) {
@@ -38,8 +39,8 @@ class AckowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     isComplete() {
-        return this.game.getPlayers().every(player => this.completionCondition(player));
+        return this.opponents.every(opponent => this.completionCondition(opponent));
     }
 }
 
-module.exports = AckowledgeRevealCardsPrompt;
+module.exports = AcknowledgeRevealCardsPrompt;

@@ -16,7 +16,7 @@ class Search extends GameAction {
         this.searchedPlayerFunc = searchedPlayer || this.playerFunc;
         this.title = title;
         this.location = location || ['draw deck'];
-        this.reveal = reveal;
+        this.revealGameAction = reveal ? new AbilityAdapter(RevealCards, context => ({ cards: context.searchTarget, player: context.player })) : null;
         this.message = AbilityMessage.create(message);
         this.cancelMessage = AbilityMessage.create(cancelMessage || '{player} uses {source} to search their deck but does not find a card');
     }
@@ -43,9 +43,13 @@ class Search extends GameAction {
                     context.searchTarget = result;
                     context.game.cardVisibility.removeRule(revealFunc);
                     this.message.output(context.game, context);
-                    if(this.reveal) {
-                        this.revealGameAction = new AbilityAdapter(RevealCards, context => ({ cards: context.searchTarget, player: context.player }));
-                        event.thenAttachEvent(this.revealGameAction.createEvent(context));
+                    if(this.revealGameAction) {
+                        let revealEvent = this.revealGameAction.createEvent(context);
+                        event.thenAttachEvent(revealEvent);
+                        revealEvent.thenExecute(() => {
+                            this.attachGameActionEvent(revealEvent, context);
+                        });
+                        return true;
                     }
                     event.thenAttachEvent(this.gameAction.createEvent(context));
                     return true;
@@ -100,6 +104,23 @@ class Search extends GameAction {
             context.searchTarget = null;
             return isActionAllowed;
         };
+    }
+
+    attachGameActionEvent(event, context) {
+        // Do not attach gameAction if no searchTargets are left in search location
+        if(this.numToSelect) {
+            context.searchTarget = context.searchTarget.filter(card => card.location === this.location);
+            if(context.searchTarget.length === 0) {
+                return;
+            }
+        }
+        // Do not attach gameAction if single searchTarget is not in search location
+        else if(!this.location.includes(context.searchTarget.location)) {
+            context.searchTarget = null;
+            return;
+        }
+
+        event.thenAttachEvent(this.gameAction.createEvent(context));
     }
 }
 

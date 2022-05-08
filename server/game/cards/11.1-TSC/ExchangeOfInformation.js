@@ -1,4 +1,5 @@
 const GameActions = require('../../GameActions');
+const HandlerGameActionWrapper = require('../../GameActions/HandlerGameActionWrapper');
 const PlotCard = require('../../plotcard');
 
 class ExchangeOfInformation extends PlotCard {
@@ -14,19 +15,15 @@ class ExchangeOfInformation extends PlotCard {
 
                 this.game.resolveGameAction(
                     GameActions.revealCards({
-                        match: {
-                            location: ['draw deck'],
-                            condition: card => this.potentialCards.includes(card)
-                        },
-                        whileRevealed: {
-                            handler: context => {
-                                this.potentialCards = context.revealed.filter(card => card.location === 'draw deck');
+                        cards: this.potentialCards,
+                        player: this.controller,
+                        whileRevealed: new HandlerGameActionWrapper({ handler: context => {
+                                this.potentialCards = context.revealed;
                                 this.promptForNextCardType();
-                                this.game.queueSimpleStep(() => {
-                                    this.completeSelection();
-                                });
+                                this.game.queueSimpleStep(() => this.completeSelection());
                             }
-                        }
+                        }),
+                        context
                     }),
                     context
                 )
