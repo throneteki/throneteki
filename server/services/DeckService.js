@@ -41,8 +41,9 @@ class DeckService {
         //if the eventId is set on a new deck, check if the user already has a deck with the same eventId
         if(deck.eventId) {
             //if a deck for the event already exists, do not create the new deck
-            if(this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
-                return () => Promise.resolve();
+            if(await this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
+                logger.error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
+                throw new Error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
             }
         }
         
@@ -53,7 +54,7 @@ class DeckService {
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
             eventId: deck.eventId,
-            locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
+            //locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
             faction: deck.faction,
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
@@ -83,14 +84,16 @@ class DeckService {
         let previousVersion = await this.getById(deck.id);
         //do not save the deck if the deck is locked
         if(previousVersion.locked) {
-            return () => Promise.resolve();
+            logger.error('Locked decks can not be updated');
+            throw new Error('Locked decks can not be updated');
         }
 
         //if the eventId is set on the deck, check if the user already has a deck with the same eventId
         if(deck.eventId) {
             //if a deck for the event already exists, do not update the deck
-            if(this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
-                return () => Promise.resolve();
+            if(await this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
+                logger.error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
+                throw new Error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
             }
         }
 
@@ -101,7 +104,7 @@ class DeckService {
             bannerCards: deck.bannerCards,
             faction: deck.faction,
             eventId: deck.eventId,
-            locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
+            //locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
@@ -114,15 +117,19 @@ class DeckService {
         let previousVersion = await this.getById(id);
         //do not delete the deck if the deck is locked
         if(previousVersion.locked) {
-            return () => Promise.resolve();
+            logger.error('Can not delete a locked deck');
+            throw new Error('Can not delete a locked deck');
         }
         return this.decks.remove({ _id: id });
     }
 
-    async userAlreadyHasDeckForEvent(userName, eventId) {
-        let otherDecksForThisUser = await this.findByUserName(userName);
-        let deckForEventAlreadyExists = otherDecksForThisUser.some(d => d.eventId === eventId);
-        return deckForEventAlreadyExists;
+    async userAlreadyHasDeckForEvent(username, eventId) {
+        let deckForEventAlreadyExists = this.decks.findOne({ username, eventId })
+            .catch(err => {
+                logger.error('Unable to fetch deck', err);
+                throw new Error('Unable to fetch deck ' + username + ' ' + eventId);
+            });
+        return !!deckForEventAlreadyExists;
     }
 }
 
