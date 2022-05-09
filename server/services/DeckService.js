@@ -7,6 +7,10 @@ class DeckService {
 
     getById(id) {
         return this.decks.findOne({ _id: id })
+            .then(deck => {
+                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set
+                return deck;
+            })
             .catch(err => {
                 logger.error('Unable to fetch deck', err);
                 throw new Error('Unable to fetch deck ' + id);
@@ -15,6 +19,10 @@ class DeckService {
 
     getByName(name) {
         return this.decks.findOne({ name })
+            .then(deck => {
+                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set
+                return deck;
+            })
             .catch(err => {
                 logger.error('Unable to fetch deck', err);
                 throw new Error('Unable to fetch deck ' + name);
@@ -29,8 +37,12 @@ class DeckService {
             });
     }
 
-    findByUserName(userName) {
-        return this.decks.find({ username: userName }, { sort: { lastUpdated: -1 } });
+    findByUserName(username) {
+        return this.decks.find({ username: username }, { sort: { lastUpdated: -1 } })
+            .then(decks => {
+                decks.forEach(d => d.locked = d.eventId ? true : false);
+                return decks;
+            });
     }
 
     getStandaloneDecks() {
@@ -41,9 +53,9 @@ class DeckService {
         //if the eventId is set on a new deck, check if the user already has a deck with the same eventId
         if(deck.eventId) {
             //if a deck for the event already exists, do not create the new deck
-            if(await this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
-                logger.error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
-                throw new Error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
+            if(await this.userAlreadyHasDeckForEvent(deck.username, deck.eventId)) {
+                logger.error('User ' + deck.username + ' already has a deck configured for event ' + deck.eventId);
+                throw new Error('User ' + deck.username + ' already has a deck configured for event ' + deck.eventId);
             }
         }
         
@@ -54,7 +66,6 @@ class DeckService {
             bannerCards: deck.bannerCards,
             drawCards: deck.drawCards,
             eventId: deck.eventId,
-            //locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
             faction: deck.faction,
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
@@ -91,9 +102,9 @@ class DeckService {
         //if the eventId is set on the deck, check if the user already has a deck with the same eventId
         if(deck.eventId) {
             //if a deck for the event already exists, do not update the deck
-            if(await this.userAlreadyHasDeckForEvent(deck.userName, deck.eventId)) {
-                logger.error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
-                throw new Error('User ' + deck.userName + ' already has a deck configured for event ' + deck.eventId);
+            if(await this.userAlreadyHasDeckForEvent(previousVersion.username, deck.eventId)) {
+                logger.error('User ' + previousVersion.username + ' already has a deck configured for event ' + deck.eventId);
+                throw new Error('User ' + previousVersion.username + ' already has a deck configured for event ' + deck.eventId);
             }
         }
 
@@ -104,7 +115,6 @@ class DeckService {
             bannerCards: deck.bannerCards,
             faction: deck.faction,
             eventId: deck.eventId,
-            //locked: deck.eventId ? true : false, // lock the deck from further changes if the eventId is set
             agenda: deck.agenda,
             rookeryCards: deck.rookeryCards || [],
             lastUpdated: new Date()
@@ -124,7 +134,7 @@ class DeckService {
     }
 
     async userAlreadyHasDeckForEvent(username, eventId) {
-        let deckForEventAlreadyExists = this.decks.findOne({ username, eventId })
+        let deckForEventAlreadyExists = await this.decks.findOne({ username: username, eventId: eventId })
             .catch(err => {
                 logger.error('Unable to fetch deck', err);
                 throw new Error('Unable to fetch deck ' + username + ' ' + eventId);
