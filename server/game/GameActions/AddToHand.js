@@ -5,13 +5,13 @@ class AddToHand extends GameAction {
         super('addToHand');
     }
 
-    canChangeGameState({ card, fromLocation }) {
-        return card.location !== 'hand' && (!fromLocation || fromLocation === card.location );
+    canChangeGameState({ card }) {
+        return card.location !== 'hand';
     }
 
-    createEvent({ card, fromLocation }) {
-        return this.event('onCardAddedToHand', { card, fromLocation }, event => {
-            event.card.owner.placeCardInPile({ card: event.card, location: 'hand', fromLocation: event.fromLocation });
+    createEvent({ card }) {
+        return this.event('onCardAddedToHand', { card }, event => {
+            event.card.owner.placeCardInPile({ card: event.card, location: 'hand' });
         });
     }
 }

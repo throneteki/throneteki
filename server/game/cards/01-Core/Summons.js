@@ -7,13 +7,20 @@ class Summons extends PlotCard {
         this.whenRevealed({
             gameAction: GameActions.search({
                 topCards: 10,
-                title: 'Selet a character',
+                title: 'Select a character',
                 match: { type: 'character' },
                 gameAction: GameActions.addToHand(context => ({
-                    card: context.searchTarget,
-                    fromLocation: 'draw deck'
+                    card: context.searchTarget
                 }))
             })
+            // .then(() => ({
+            //     format: '{player} uses {source} to {performedActions}',
+            //     gameActions: {
+            //         search: 'search their deck for {searchTarget}',
+            //         reveal: 'reveal it',
+            //         addToHand: 'add it to their hand'
+            //     })
+            // )
             // gameAction: GameActions.search({
             //     topCards: 10,
             //     title: 'Select a character',
