@@ -5,6 +5,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     constructor(game, cards, player) {
         super(game);
         this.cards = cards;
+        this.revealLocations = cards.map(card => card.location).filter((location, index, locations) => locations.indexOf(location) === index);
         this.revealingPlayer = player;
         this.opponents = this.game.getPlayers().filter(player => player !== this.revealingPlayer)
         this.clickedButton = { };
@@ -16,8 +17,8 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
 
     activePrompt() {
         return {
-            promptTitle: 'Revealing Card(s)',
-            menuTitle: `${this.revealingPlayer.name} is revealing ${TextHelper.count(this.cards.length, 'card')}`,
+            promptTitle: `Acknowledge Revealed Card${this.cards.length > 1 ? 's' : ''}`,
+            menuTitle: `${this.revealingPlayer.name} is revealing ${TextHelper.count(this.cards.length, 'card')} from their ${this.revealLocations}`,
             buttons: [
                 { text: 'Continue' },
             ]

@@ -19,7 +19,7 @@ class RenlyBaratheon extends DrawCard {
             cost: ability.costs.revealSpecific(context => context.event.cards[0]),
             handler: context => {
                 this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
+                this.game.addMessage('{0} uses {1} and reveals {2} to draw 1 card', context.player, this, context.costs.reveal);
             }
         });
     }

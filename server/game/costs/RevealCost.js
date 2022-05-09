@@ -1,14 +1,16 @@
+const GameActions = require('../GameActions');
+
 class RevealCost {
     constructor() {
         this.name = 'reveal';
     }
 
     isEligible(card) {
-        return card.location === 'hand';
+        return ['hand', 'plot deck', 'shadows'].includes(card.location);
     }
 
     pay(cards, context) {
-        context.game.addMessage('{0} reveals {1} from their hand', context.player, cards);
+        context.game.resolveGameAction(GameActions.revealCards({ cards, player: context.player, context }));
     }
 }
 
