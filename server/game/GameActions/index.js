@@ -76,7 +76,7 @@ const GameActions = {
         return new SimultaneousAction(actions);
     },
     standCard: props => new AbilityAdapter(StandCard, props),
-    takeControl: props => new AbilityAdapter(TakeControl, props)    
+    takeControl: props => new AbilityAdapter(TakeControl, props)
 };
 
 module.exports = GameActions;

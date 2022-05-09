@@ -55,6 +55,7 @@ class Search extends GameAction {
                     return true;
                 },
                 onCancel: () => {
+                    context.game.cardVisibility.removeRule(revealFunc);
                     this.cancelMessage.output(context.game, context);
                     return true;
                 },

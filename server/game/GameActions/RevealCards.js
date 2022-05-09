@@ -57,7 +57,6 @@ class RevealCards extends GameAction {
                     if(context.revealed.length > 0) {
                         context.game.cardVisibility.addRule(this.allPlayersRevealFunc);
                         this.highlightRevealedCards(context.revealed);
-                        
                     }
                 }
             });
@@ -67,8 +66,10 @@ class RevealCards extends GameAction {
             event.thenAttachEvent(whileRevealedEvent);
             
             whileRevealedEvent.thenExecute(() => {
-                this.hideRevealedCards(context.game.getPlayers());
-                context.game.cardVisibility.removeRule(this.allPlayersRevealFunc);
+                if(context.revealed.length > 0) {
+                    this.hideRevealedCards(context.game.getPlayers());
+                    context.game.cardVisibility.removeRule(this.allPlayersRevealFunc);
+                }
                 this.allPlayersRevealFunc = null;
             });
         });
