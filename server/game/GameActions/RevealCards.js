@@ -19,26 +19,27 @@ class RevealCards extends GameAction {
     }
 
     createEvent({ cards, player, whileRevealed, context }) {
+        const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
+            opponents: allPlayers.filter(p => p !== player),
             cards: Array.isArray(cards) ? cards : [cards],
             source: context.source
         }
         return this.event('onCardsRevealed', eventParams, event => {
-            this.whileRevealed = whileRevealed || this.defaultWhileRevealed;
-            this.playerRevealFunc = (card, player) => event.cards.includes(card) && player === event.player;
-            this.allPlayersRevealFunc = card => event.cards.includes(card);
-            this.revealingTo = context.game.getPlayers();
-            event.opponents = this.revealingTo.filter(player => player !== event.player);
+            const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
+            const playerRevealFunc = (card, player) => event.cards.includes(card) && player === event.player;
+            const allPlayersRevealFunc = card => event.cards.includes(card);
 
             // Initially make cards visible to the revealing player before the actual "reveal" event. This ensures any interrupts to 'onCardRevealed' will actually show the card (eg. Alla Tyrell)
-            context.game.cardVisibility.addRule(this.playerRevealFunc);
+            context.game.cardVisibility.addRule(playerRevealFunc);
             
             for(let card of event.cards) {
                 const revealEventParams = {
                     card,
                     cardStateWhenRevealed: card.createSnapshot(),
                     player: event.player,
+                    opponents: event.opponents,
                     source: event.source
                 }
                 
@@ -49,35 +50,33 @@ class RevealCards extends GameAction {
             // Highlight & reveal cards simultaneously with onCardRevealed (after interrupts)
             let prepareRevealCards = new HandlerGameActionWrapper({ handler: context => {
                     // Remove visibility for revealing player
-                    context.game.cardVisibility.removeRule(this.playerRevealFunc);
-                    this.playerRevealFunc = null;
+                    context.game.cardVisibility.removeRule(playerRevealFunc);
                     // Filter out any cards that are no longer hidden (eg. Alla Tyrell)
                     context.revealed = context.revealed.filter(card => this.isInHiddenArea(card));
                     // Reveal all remaining cards to all players
                     if(context.revealed.length > 0) {
-                        context.game.cardVisibility.addRule(this.allPlayersRevealFunc);
-                        this.highlightRevealedCards(context.revealed);
+                        context.game.cardVisibility.addRule(allPlayersRevealFunc);
+                        this.highlightRevealedCards(context.revealed, allPlayers);
                     }
                 }
             });
             event.thenAttachEvent(prepareRevealCards.createEvent(context));
 
-            let whileRevealedEvent = this.whileRevealed.createEvent(context);
+            let whileRevealedEvent = whileRevealedGameAction.createEvent(context);
             event.thenAttachEvent(whileRevealedEvent);
             
             whileRevealedEvent.thenExecute(() => {
                 if(context.revealed.length > 0) {
-                    this.hideRevealedCards(context.game.getPlayers());
-                    context.game.cardVisibility.removeRule(this.allPlayersRevealFunc);
+                    this.hideRevealedCards(allPlayers);
+                    context.game.cardVisibility.removeRule(allPlayersRevealFunc);
                 }
-                this.allPlayersRevealFunc = null;
             });
         });
     }
 
-    highlightRevealedCards(cards) {
+    highlightRevealedCards(cards, players) {
         this.previousSelectCards = {};
-        for(let player of this.revealingTo) {
+        for(let player of players) {
             this.previousSelectCards[player.uuid] = {};
             this.previousSelectCards[player.uuid].selectedCards = player.selectedCards;
             this.previousSelectCards[player.uuid].selectableCards = player.selectableCards;
@@ -87,8 +86,8 @@ class RevealCards extends GameAction {
         }
     }
 
-    hideRevealedCards() {
-        for(let player of this.revealingTo) {
+    hideRevealedCards(players) {
+        for(let player of players) {
             player.clearSelectedCards();
             player.clearSelectableCards();
 

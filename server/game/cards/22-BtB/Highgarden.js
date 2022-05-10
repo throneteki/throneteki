@@ -20,7 +20,7 @@ class Highgarden extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        context.target.map(card => GameActions.revealCards({ card }))
+                        context.target.map(card => GameActions.revealCard({ card }))
                     ).then(preThenContext => ({
                         target: {
                             cardCondition: card => card.getType() === 'character' && card.location === 'play area',
