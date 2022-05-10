@@ -56,7 +56,7 @@ class RevealCards extends GameAction {
                     // Reveal all remaining cards to all players
                     if(context.revealed.length > 0) {
                         context.game.cardVisibility.addRule(allPlayersRevealFunc);
-                        this.highlightRevealedCards(context.revealed, allPlayers);
+                        this.highlightRevealedCards(event, context.revealed, allPlayers);
                     }
                 }
             });
@@ -67,7 +67,7 @@ class RevealCards extends GameAction {
             
             whileRevealedEvent.thenExecute(() => {
                 if(context.revealed.length > 0) {
-                    this.hideRevealedCards(allPlayers);
+                    this.hideRevealedCards(event, allPlayers);
                     context.game.cardVisibility.removeRule(allPlayersRevealFunc);
                 }
             });
@@ -75,15 +75,13 @@ class RevealCards extends GameAction {
     }
 
     highlightRevealedCards(event, cards, players) {
+        event.preRevealSelections = {};
         for(let player of players) {
-            // Set up previousSelections & Save to event uuid
-            player.previousSelections = player.previousSelections || {};
-            player.previousSelections[event.uuid] = {
+            event.preRevealSelections[player.id] = {
                 selectedCards: player.selectedCards,
                 selectableCards: player.selectableCards
             }
 
-            // Clear & Set
             player.clearSelectedCards();
             player.clearSelectableCards();
             player.setSelectableCards(cards);
@@ -92,18 +90,12 @@ class RevealCards extends GameAction {
 
     hideRevealedCards(event, players) {
         for(let player of players) {
-            // Clear & Set
             player.clearSelectedCards();
             player.clearSelectableCards();
-            player.setSelectedCards(player.previousSelections[event.uuid].selectedCards);
-            player.setSelectableCards(player.previousSelections[event.uuid].selectableCards);
-
-            // Clean up
-            player.previousSelections[event.uuid] = null;
-            if(Object.keys(player.previousSelections).length === 0) {
-                player.previousSelections = null;
-            }
+            player.setSelectedCards(event.preRevealSelections[player.id].selectedCards);
+            player.setSelectableCards(event.preRevealSelections[player.id].selectableCards);
         }
+        event.preRevealSelections = null;
     }
 
     isInHiddenArea(card) {
