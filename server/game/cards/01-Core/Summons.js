@@ -21,20 +21,6 @@ class Summons extends PlotCard {
             //         addToHand: 'add it to their hand'
             //     })
             // )
-            // gameAction: GameActions.search({
-            //     topCards: 10,
-            //     title: 'Select a character',
-            //     match: { type: 'character' },
-            //     gameAction: GameActions.revealCards(context =>({
-            //         cards: context.searchTarget,
-            //         player: context.player
-            //     })).then((revealContext, revealEvent) => ({
-            //         gameAction: GameActions.addToHand({
-            //             card: revealEvent.cards[0]//,
-            //             // fromLocation: 'draw deck'
-            //         })
-            //     }))
-            // })
         });
     }
 }
