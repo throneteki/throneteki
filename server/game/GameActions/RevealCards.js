@@ -74,27 +74,36 @@ class RevealCards extends GameAction {
         });
     }
 
-    highlightRevealedCards(cards, players) {
-        this.previousSelectCards = {};
+    highlightRevealedCards(event, cards, players) {
         for(let player of players) {
-            this.previousSelectCards[player.uuid] = {};
-            this.previousSelectCards[player.uuid].selectedCards = player.selectedCards;
-            this.previousSelectCards[player.uuid].selectableCards = player.selectableCards;
+            // Set up previousSelections & Save to event uuid
+            player.previousSelections = player.previousSelections || {};
+            player.previousSelections[event.uuid] = {
+                selectedCards: player.selectedCards,
+                selectableCards: player.selectableCards
+            }
+
+            // Clear & Set
             player.clearSelectedCards();
             player.clearSelectableCards();
             player.setSelectableCards(cards);
         }
     }
 
-    hideRevealedCards(players) {
+    hideRevealedCards(event, players) {
         for(let player of players) {
+            // Clear & Set
             player.clearSelectedCards();
             player.clearSelectableCards();
+            player.setSelectedCards(player.previousSelections[event.uuid].selectedCards);
+            player.setSelectableCards(player.previousSelections[event.uuid].selectableCards);
 
-            player.setSelectedCards(this.previousSelectCards[player.uuid].selectedCards);
-            player.setSelectableCards(this.previousSelectCards[player.uuid].selectableCards);
+            // Clean up
+            player.previousSelections[event.uuid] = null;
+            if(Object.keys(player.previousSelections).length === 0) {
+                player.previousSelections = null;
+            }
         }
-        this.previousSelectCards = null;
     }
 
     isInHiddenArea(card) {
