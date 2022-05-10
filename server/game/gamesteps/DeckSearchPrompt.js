@@ -103,7 +103,6 @@ class DeckSearchPrompt extends BaseStep {
         }
         // Do not continue to onSelect if single result is not in draw deck
         else if(result.location !== 'draw deck') {
-            result = null;
             return;
         }
 
