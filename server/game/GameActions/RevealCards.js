@@ -53,6 +53,7 @@ class RevealCards extends GameAction {
                     context.game.cardVisibility.removeRule(playerRevealFunc);
                     // Filter out any cards that are no longer hidden (eg. Alla Tyrell)
                     context.revealed = context.revealed.filter(card => this.isInHiddenArea(card));
+                    event.revealed = context.revealed;
                     // Reveal all remaining cards to all players
                     if(context.revealed.length > 0) {
                         context.game.cardVisibility.addRule(allPlayersRevealFunc);
