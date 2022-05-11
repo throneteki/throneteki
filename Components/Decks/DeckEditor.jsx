@@ -29,7 +29,8 @@ class DeckEditor extends React.Component {
             validation: {
                 deckname: '',
                 cardToAdd: ''
-            }
+            },
+            eventId: undefined
         };
 
         if(props.deck) {
@@ -42,6 +43,7 @@ class DeckEditor extends React.Component {
             this.state.agenda = props.deck.agenda;
             this.state.showBanners = this.isAllianceAgenda(props.deck.agenda);
             this.state.status = props.deck.status;
+            this.state.eventId = props.deck.eventId;
 
             let cardList = '';
             for(const card of props.deck.drawCards) {
@@ -74,7 +76,8 @@ class DeckEditor extends React.Component {
             agenda: this.state.agenda,
             bannerCards: this.state.bannerCards,
             plotCards: this.state.plotCards,
-            drawCards: this.state.drawCards
+            drawCards: this.state.drawCards,
+            eventId: this.state.eventId
         };
 
         if(!this.props.restrictedList && !this.props.currentRestrictedList) {
@@ -323,6 +326,14 @@ class DeckEditor extends React.Component {
         this.props.navigate('/decks');
     }
 
+    onEventChange(selectedEvent) {
+        this.setState({ eventId: selectedEvent ? selectedEvent._id : undefined }, this.triggerDeckUpdated);
+    }
+
+    getLockedDecksEvents() {
+        return this.props.events.filter(e => e.lockDecks);
+    }
+
     render() {
         if(!this.props.factions || !this.props.agendas || !this.props.cards || !this.props.restrictedList) {
             return <div>Please wait while loading from the server...</div>;
@@ -330,6 +341,8 @@ class DeckEditor extends React.Component {
 
         let banners = this.getBannerList();
         const cardsExcludingAgendas = Object.values(this.props.cards).filter(card => !this.props.agendas[card.code]);
+
+        let lockedDecksEvents = this.getLockedDecksEvents();
 
         return (
             <div>
@@ -388,7 +401,14 @@ class DeckEditor extends React.Component {
                     </Typeahead>
                     <TextArea label='Cards' labelClass='col-sm-3' fieldClass='col-sm-9' rows='10' value={ this.state.cardList }
                         onChange={ this.onCardListChange.bind(this) } />
-
+                    { this.state.eventId && 
+                        <h4>Please be aware: Assigning this deck to an event will mean that you will be unable to modify or delete this deck for the duration of the event!</h4>
+                    }
+                    { lockedDecksEvents.length > 0 && 
+                        <Select name='event' label='Event' labelClass='col-sm-3' fieldClass='col-sm-9' options={ lockedDecksEvents }
+                            onChange={ this.onEventChange.bind(this) } value={ this.state.eventId ? this.state.eventId : undefined } 
+                            valueKey='_id' nameKey='name' blankOption={ { label: '- Select -', name: '', value: undefined } }/>
+                    }
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
                             <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save { this.props.apiState && this.props.apiState.loading && <span className='spinner button-spinner' /> }</button>
@@ -408,6 +428,7 @@ DeckEditor.propTypes = {
     cards: PropTypes.object,
     currentRestrictedList: PropTypes.object,
     deck: PropTypes.object,
+    events: PropTypes.array,
     factions: PropTypes.object,
     navigate: PropTypes.func,
     onDeckSave: PropTypes.func,
@@ -426,6 +447,7 @@ function mapStateToProps(state) {
         cards: state.cards.cards,
         currentRestrictedList: state.cards.currentRestrictedList,
         decks: state.cards.decks,
+        events: state.events.events,
         factions: state.cards.factions,
         loading: state.api.loading,
         packs: state.cards.packs,

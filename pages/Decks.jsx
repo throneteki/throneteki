@@ -19,6 +19,7 @@ class Decks extends React.Component {
     }
 
     componentWillMount() {
+        this.props.loadEvents();
         this.props.loadDecks();
     }
 
@@ -62,7 +63,7 @@ class Decks extends React.Component {
                             <div>
                                 <RestrictedListDropdown currentRestrictedList={ this.props.currentRestrictedList } restrictedLists={ this.props.restrictedLists } setCurrentRestrictedList={ this.props.setCurrentRestrictedList } />
                             </div>
-                            <DeckList className='deck-list' activeDeck={ this.props.selectedDeck } decks={ this.props.decks } onSelectDeck={ this.props.selectDeck } />
+                            <DeckList className='deck-list' activeDeck={ this.props.selectedDeck } decks={ this.props.decks } onSelectDeck={ this.props.selectDeck } events={ this.props.events } />
                         </Panel>
                     </div>
                     { !!this.props.selectedDeck &&
@@ -86,7 +87,9 @@ Decks.propTypes = {
     deckDeleted: PropTypes.bool,
     decks: PropTypes.array,
     deleteDeck: PropTypes.func,
+    events: PropTypes.array,
     loadDecks: PropTypes.func,
+    loadEvents: PropTypes.func,
     loading: PropTypes.bool,
     navigate: PropTypes.func,
     restrictedLists: PropTypes.array,
@@ -104,6 +107,7 @@ function mapStateToProps(state) {
         currentRestrictedList: state.cards.currentRestrictedList,
         deckDeleted: state.cards.deckDeleted,
         decks: state.cards.decks,
+        events: state.events.events,
         loading: state.api.loading,
         restrictedLists: state.cards.restrictedList,
         selectedDeck: state.cards.selectedDeck

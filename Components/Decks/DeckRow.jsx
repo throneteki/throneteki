@@ -16,6 +16,16 @@ class DeckRow extends React.Component {
         }
     }
 
+    displayNameForDeck(deck) {
+        if(deck.eventId) {
+            let deckEvent = this.props.events.find(e => e._id === deck.eventId);
+            if(deckEvent) {
+                return `(${deckEvent.name}) ${deck.name}`;
+            }
+        }
+        return deck.name;
+    }
+
     render() {
         const { deck } = this.props;
 
@@ -24,7 +34,7 @@ class DeckRow extends React.Component {
                 <div className='col-xs-1 deck-image'><img className='card-small' src={ '/img/cards/' + this.props.deck.faction.value + '.png' } /></div>
                 { deck.agenda && (<div className='col-xs-1 deck-image'><img className='card-small' src={ '/img/cards/' + this.props.deck.agenda.code + '.png' } /></div>) }
                 <span className='col-xs-9 col-md-9 col-lg-10 deck-name'>
-                    <span>{ this.props.deck.name }</span>
+                    <span>{ this.displayNameForDeck(this.props.deck) }</span>
                     <DeckStatusLabel className='pull-right text-shadow' status={ this.props.deck.status } />
                 </span>
                 <div className='row small'>
@@ -39,7 +49,8 @@ DeckRow.displayName = 'DeckRow';
 DeckRow.propTypes = {
     active: PropTypes.bool,
     deck: PropTypes.object.isRequired,
-    onSelect: PropTypes.func
+    events: PropTypes.array,
+    onSelect: PropTypes.func    
 };
 
 export default DeckRow;

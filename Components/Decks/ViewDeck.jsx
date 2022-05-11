@@ -30,8 +30,8 @@ class ViewDeck extends React.Component {
             <div className='col-sm-7'>
                 <Panel title={ deck.name }>
                     <div className='btn-group col-xs-12'>
-                        <button className='btn btn-primary' onClick={ this.handleEditClick }>Edit</button>
-                        <ConfirmedButton onClick={ this.handleDeleteClick }>Delete</ConfirmedButton>
+                        <button className='btn btn-primary' onClick={ this.handleEditClick } disabled={ this.props.deck.locked }>Edit</button>
+                        <ConfirmedButton onClick={ this.handleDeleteClick } disabled={ this.props.deck.locked }>Delete</ConfirmedButton>
                     </div>
                     <DeckSummary deck={ deck } cards={ cards } />
                 </Panel>

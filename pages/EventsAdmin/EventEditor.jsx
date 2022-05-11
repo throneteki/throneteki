@@ -24,7 +24,8 @@ class EventEditor extends React.Component {
             restricted: [],
             banned: [],
             restrictSpectators: false,
-            validSpectators: []
+            validSpectators: [],
+            lockDecks: false
         }, props.event);
         this.state = {
             eventId: event._id,
@@ -39,7 +40,8 @@ class EventEditor extends React.Component {
             eventGameOptions: event.eventGameOptions,
             restrictSpectators: event.restrictSpectators,
             validSpectators: event.validSpectators,
-            validSpectatorsText: this.formatListTextForUsers(event.validSpectators)
+            validSpectatorsText: this.formatListTextForUsers(event.validSpectators),
+            lockDecks: event.lockDecks
         };
     }
 
@@ -63,7 +65,8 @@ class EventEditor extends React.Component {
             restricted: this.state.restricted,
             banned: this.state.banned,
             restrictSpectators: this.state.restrictSpectators,
-            validSpectators: this.state.validSpectators
+            validSpectators: this.state.validSpectators,
+            lockDecks: this.state.lockDecks
         };
     }
 
@@ -268,6 +271,9 @@ class EventEditor extends React.Component {
                         options={ formats }
                         value={ this.state.format }
                         onChange={ this.onChange.bind(this, 'format') } />
+
+                    <Checkbox name='lockDecks' label='Prevent users from making changes to their decks for the duration of the event' labelClass='col-sm-4' fieldClass='col-sm-offset-3 col-sm-8'
+                        onChange={ this.onCheckboxChange.bind(this, 'lockDecks') } checked={ this.state.lockDecks } />
 
                     <div className='form-group'>
                         <label className='col-sm-3 col-xs-2 control-label'>Event Game Options</label>
