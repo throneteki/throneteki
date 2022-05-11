@@ -45,6 +45,16 @@ class DeckService {
             });
     }
 
+    removeEventIdAndUnlockDecks(eventId) {
+        return this.decks.find({ eventId: eventId })
+            .then(eventDecks => eventDecks.forEach(deck => {
+                let properties = {
+                    eventId: undefined
+                };
+                this.decks.update({ _id: deck._id }, { '$set': properties });
+            }));
+    }
+
     getStandaloneDecks() {
         return this.decks.find({ standaloneDeckId: { $exists: true } }, { sort: { lastUpdated: -1 } });
     }
@@ -54,8 +64,7 @@ class DeckService {
         if(deck.eventId) {
             //if a deck for the event already exists, do not create the new deck
             if(await this.userAlreadyHasDeckForEvent(deck.username, deck.eventId)) {
-                logger.error('User ' + deck.username + ' already has a deck configured for event ' + deck.eventId);
-                throw new Error('User ' + deck.username + ' already has a deck configured for event ' + deck.eventId);
+                throw new Error(`User ${deck.username} already has a deck configured for event ${deck.eventId}`);
             }
         }
         
@@ -95,7 +104,6 @@ class DeckService {
         let previousVersion = await this.getById(deck.id);
         //do not save the deck if the deck is locked
         if(previousVersion.locked) {
-            logger.error('Locked decks can not be updated');
             throw new Error('Locked decks can not be updated');
         }
 
@@ -103,8 +111,7 @@ class DeckService {
         if(deck.eventId) {
             //if a deck for the event already exists, do not update the deck
             if(await this.userAlreadyHasDeckForEvent(previousVersion.username, deck.eventId)) {
-                logger.error('User ' + previousVersion.username + ' already has a deck configured for event ' + deck.eventId);
-                throw new Error('User ' + previousVersion.username + ' already has a deck configured for event ' + deck.eventId);
+                throw new Error(`User ${previousVersion.username } already has a deck configured for event ${deck.eventId}`);
             }
         }
 
@@ -127,7 +134,6 @@ class DeckService {
         let previousVersion = await this.getById(id);
         //do not delete the deck if the deck is locked
         if(previousVersion.locked) {
-            logger.error('Can not delete a locked deck');
             throw new Error('Can not delete a locked deck');
         }
         return this.decks.remove({ _id: id });
@@ -135,9 +141,8 @@ class DeckService {
 
     async userAlreadyHasDeckForEvent(username, eventId) {
         let deckForEventAlreadyExists = await this.decks.findOne({ username: username, eventId: eventId })
-            .catch(err => {
-                logger.error('Unable to fetch deck', err);
-                throw new Error('Unable to fetch deck ' + username + ' ' + eventId);
+            .catch(() => {
+                throw new Error(`Unable to fetch deck with parameters ${username} and ${eventId}`);
             });
         return !!deckForEventAlreadyExists;
     }
