@@ -15,7 +15,8 @@ function extractEventFromRequest(req) {
         restrictSpectators,
         useDefaultRestrictedList,
         useEventGameOptions,
-        validSpectators
+        validSpectators,
+        lockDecks
     } = req.body.event;
     return {
         id: req.params.id,
@@ -30,7 +31,8 @@ function extractEventFromRequest(req) {
         restrictSpectators,
         useDefaultRestrictedList,
         useEventGameOptions,
-        validSpectators
+        validSpectators,
+        lockDecks
     };
 }
 
