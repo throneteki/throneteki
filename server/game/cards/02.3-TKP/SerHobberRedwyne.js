@@ -10,7 +10,7 @@ class SerHobberRedwyne extends DrawCard {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'character' && card.hasTrait('Lady'),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -18,10 +18,14 @@ class SerHobberRedwyne extends DrawCard {
         });
     }
 
-    cardSelected(player, card) {
+    cardSelected(player, card, valid) {
+        if(!valid) {
+            this.game.addMessage('{0} uses {1} to search their deck for {2}', player, this, card);
+            return;
+        }
+        
         player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
+        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, card);
     }
 
     doneSelecting(player) {

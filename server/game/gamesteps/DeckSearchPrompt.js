@@ -70,9 +70,12 @@ class DeckSearchPrompt extends BaseStep {
                 this.game.cardVisibility.removeRule(revealFunc);
                 if(revealGameAction) {
                     context = Object.assign({ result, player: this.choosingPlayer }, context);
-                    let revealEvent = this.game.resolveGameAction(revealGameAction, context);
-                    revealEvent.thenExecute(() => this.evaluateOnSelect(player, result));
+                    this.game.resolveGameAction(revealGameAction, context)
+                        .thenExecute(revealEvent => this.evaluateOnSelect(player, result, revealEvent.revealed))
+                        .thenExecute(() => this.queueShuffle());
+                    return true;
                 }
+                this.properties.onSelect(player, result, result);
                 this.queueShuffle();
                 return true;
             },
@@ -93,20 +96,13 @@ class DeckSearchPrompt extends BaseStep {
         });
     }
 
-    evaluateOnSelect(player, result) {
-        // Do not continue to onSelect if no results are left in draw deck
-        if(this.properties.numToSelect) {
-            result = result.filter(card => card.location === 'draw deck');
-            if(result.length === 0) {
-                return;
-            }
-        }
-        // Do not continue to onSelect if single result is not in draw deck
-        else if(result.location !== 'draw deck') {
-            return;
-        }
+    evaluateOnSelect(player, searched, revealed) {
+        // Filtering valid cards to those which were successfully revealed & are still in search locations
+        let valid = revealed.filter(card => card.location === 'draw deck' || this.inAdditionalLocation(card));
+        // Converting valid to be same format as to what onSelect expects (Array or single object)
+        valid = this.properties.numToSelect ? valid : (valid.length > 0 ? valid[0] : null);
 
-        this.properties.onSelect(player, result);
+        this.properties.onSelect(player, searched, valid);
     }
 
     revealDrawDeckCards(card, player) {
