@@ -8,7 +8,7 @@ class DeckService {
     getById(id) {
         return this.decks.findOne({ _id: id })
             .then(deck => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set
+                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
                 return deck;
             })
             .catch(err => {
@@ -20,7 +20,7 @@ class DeckService {
     getByName(name) {
         return this.decks.findOne({ name })
             .then(deck => {
-                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set
+                deck.locked = deck.eventId ? true : false; // lock the deck from further changes if the eventId is set //TODO refactor this when draft is finished
                 return deck;
             })
             .catch(err => {
