@@ -15,10 +15,10 @@ class RevealCards extends GameAction {
     }
 
     allow({ cards, context }) {
-        return cards.length > 0 && cards.some(card => this.isInHiddenArea(card) && !this.isImmune({ card, context }))
+        return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }))
     }
 
-    createEvent({ cards, player, whileRevealed, context }) {
+    createEvent({ cards, player, whileRevealed, context,  }) {
         context.player = player;
         const allPlayers = context.game.getPlayers();
         const eventParams = {
@@ -28,15 +28,15 @@ class RevealCards extends GameAction {
         }
         return this.event('onCardsRevealed', eventParams, event => {
             const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
-            const revealFunc = card => event.cards.includes(card) && this.isInHiddenArea(card) && !this.isImmune({ card, context });
+            const revealFunc = card => context.revealed.includes(card) && !this.isImmune({ card, context });
 
+            context.revealed = event.cards;
+            
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
             this.highlightRevealedCards(event, context.revealed, allPlayers);
             context.game.addMessage("{0} reveals {1} from their {2}", event.player, event.cards, [...new Set(event.cards.map(card => card.location))]);
             
-            context.revealed = [];
-            event.revealed = []; // TODO: Remove when DeckSearchPrompt is finally replaced by GameActions.Search
             for(let card of event.cards) {
                 const revealEventParams = {
                     card,
@@ -46,9 +46,8 @@ class RevealCards extends GameAction {
                 }
                 
                 event.thenAttachEvent(this.event('onCardRevealed', revealEventParams, revealEvent => {
-                    if(this.isInHiddenArea(revealEvent.card)) {
-                        context.revealed.push(revealEvent.card);
-                        event.revealed.push(revealEvent.card); // TODO: Remove when DeckSearchPrompt is finally replaced by GameActions.Search
+                    if(revealEvent.card.location !== revealEvent.cardStateWhenRevealed.location) {
+                        this.removeInvalidReveal(context, revealEvent.card, allPlayers);
                     }
                 }));
             }
@@ -57,7 +56,9 @@ class RevealCards extends GameAction {
             event.thenAttachEvent(whileRevealedEvent);
             
             whileRevealedEvent.thenExecute(() => {
+                this.hideRevealedCards(event, allPlayers);
                 context.game.cardVisibility.removeRule(revealFunc);
+                event.revealed = context.revealed; // TODO: Remove when DeckSearchPrompt is finally replaced by GameActions.Search
             });
         });
     }
@@ -66,8 +67,8 @@ class RevealCards extends GameAction {
         event.preRevealSelections = {};
         for(let player of players) {
             event.preRevealSelections[player.id] = {
-                selectedCards: player.selectedCards,
-                selectableCards: player.selectableCards
+                selectedCards: player.getSelectedCards(),
+                selectableCards: player.getSelectableCards()
             }
 
             player.clearSelectedCards();
@@ -86,8 +87,11 @@ class RevealCards extends GameAction {
         event.preRevealSelections = null;
     }
 
-    isInHiddenArea(card) {
-        return ['draw deck', 'hand', 'plot deck', 'shadows'].includes(card.location);
+    removeInvalidReveal(context, card, players) {
+        context.revealed = context.revealed.filter(reveal => reveal !== card);
+        for(let player of players) {
+            player.setSelectableCards(context.revealed);
+        }
     }
 }
 
