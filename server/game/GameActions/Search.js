@@ -16,7 +16,7 @@ class Search extends GameAction {
         this.searchedPlayerFunc = searchedPlayer || this.playerFunc;
         this.title = title;
         this.location = location || ['draw deck'];
-        this.revealGameAction = reveal ? new AbilityAdapter(RevealCards, context => ({ cards: context.searchTarget, player: context.player })) : null;
+        this.revealGameAction = reveal ? new AbilityAdapter(RevealCards, context => ({ cards: Array.isArray(context.searchTarget) ? context.searchTarget : [context.searchTarget], player: context.player })) : null;
         this.message = AbilityMessage.create(message);
         this.cancelMessage = AbilityMessage.create(cancelMessage || '{player} uses {source} to search their deck but does not find a card');
     }

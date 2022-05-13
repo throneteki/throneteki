@@ -59,7 +59,7 @@ class DeckSearchPrompt extends BaseStep {
         let validCards = this.searchCards(context);
         let revealFunc = this.revealDrawDeckCards.bind(this);
         let modeProps = this.properties.numToSelect ? { mode: 'upTo', numCards: this.properties.numToSelect } : {};
-        let revealGameAction = this.properties.reveal ? new AbilityAdapter(RevealCards, context => ({ cards: context.result, player: context.player })) : null;
+        let revealGameAction = this.properties.reveal ? new AbilityAdapter(RevealCards, context => ({ cards: Array.isArray(context.result) ? context.result : [context.result], player: context.player })) : null;
 
         this.game.cardVisibility.addRule(revealFunc);
         this.game.promptForSelect(this.choosingPlayer, Object.assign(modeProps, {
@@ -69,7 +69,8 @@ class DeckSearchPrompt extends BaseStep {
             onSelect: (player, result) => {
                 this.game.cardVisibility.removeRule(revealFunc);
                 if(revealGameAction) {
-                    context = Object.assign({ result, player: this.choosingPlayer }, context);
+                    context.result = result;
+                    context.player = this.choosingPlayer;
                     this.game.resolveGameAction(revealGameAction, context)
                         .thenExecute(revealEvent => this.evaluateOnSelect(player, result, revealEvent.revealed))
                         .thenExecute(() => this.queueShuffle());

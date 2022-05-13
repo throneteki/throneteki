@@ -5,7 +5,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     constructor(game, cards, player) {
         super(game);
         this.cards = cards;
-        this.revealLocations = cards.map(card => card.location).filter((location, index, locations) => locations.indexOf(location) === index);
+        this.revealLocations = [...new Set(cards.map(card => card.location))];
         this.revealingPlayer = player;
         this.opponents = this.game.getPlayers().filter(player => player !== this.revealingPlayer)
         this.clickedButton = { };

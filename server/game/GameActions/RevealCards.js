@@ -7,6 +7,7 @@ class RevealCards extends GameAction {
         super('revealCards');
         this.defaultWhileRevealed = new HandlerGameActionWrapper({ handler: context => {
                 if(context.revealed.length > 0) {
+                    // TODO: Replace the below with a separate Card Reveal UI (and don't show the cards in their respective locations). This would clean up effects which simply reveal a single card.
                     context.game.queueStep(new AcknowledgeRevealCardsPrompt(context.game, context.revealed, context.player))
                 }
             }
@@ -14,63 +15,49 @@ class RevealCards extends GameAction {
     }
 
     canChangeGameState({ cards }) {
-        cards = Array.isArray(cards) ? cards : [cards];
         return cards.length > 0 && cards.some(card => this.isInHiddenArea(card));
     }
 
     createEvent({ cards, player, whileRevealed, context }) {
+        context.player = player;
         const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
-            opponents: allPlayers.filter(p => p !== player),
-            cards: Array.isArray(cards) ? cards : [cards],
+            cards,
             source: context.source
         }
         return this.event('onCardsRevealed', eventParams, event => {
             const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
-            const playerRevealFunc = (card, player) => event.cards.includes(card) && player === event.player;
-            const allPlayersRevealFunc = card => event.cards.includes(card);
+            const revealFunc = card => event.cards.includes(card) && this.isInHiddenArea(card);
 
-            // Initially make cards visible to the revealing player before the actual "reveal" event. This ensures any interrupts to 'onCardRevealed' will actually show the card (eg. Alla Tyrell)
-            context.game.cardVisibility.addRule(playerRevealFunc);
+            // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
+            context.game.cardVisibility.addRule(revealFunc);
+            this.highlightRevealedCards(event, context.revealed, allPlayers);
+            context.game.addMessage("{0} reveals {1} from their {2}", event.player, event.cards, [...new Set(event.cards.map(card => card.location))]);
             
+            context.revealed = [];
+            event.revealed = []; // TODO: Remove when DeckSearchPrompt is finally replaced by GameActions.Search
             for(let card of event.cards) {
                 const revealEventParams = {
                     card,
                     cardStateWhenRevealed: card.createSnapshot(),
                     player: event.player,
-                    opponents: event.opponents,
                     source: event.source
                 }
                 
-                event.thenAttachEvent(this.event('onCardRevealed', revealEventParams, () => {}));
-            }
-            context = Object.assign({ revealed: event.cards, player: event.player, opponents: event.opponents }, context);
-
-            // Highlight & reveal cards simultaneously with onCardRevealed (after interrupts)
-            let prepareRevealCards = new HandlerGameActionWrapper({ handler: context => {
-                    // Remove visibility for revealing player
-                    context.game.cardVisibility.removeRule(playerRevealFunc);
-                    // Filter out any cards that are no longer hidden (eg. Alla Tyrell)
-                    context.revealed = context.revealed.filter(card => this.isInHiddenArea(card));
-                    event.revealed = context.revealed;
-                    // Reveal all remaining cards to all players
-                    if(context.revealed.length > 0) {
-                        context.game.cardVisibility.addRule(allPlayersRevealFunc);
-                        this.highlightRevealedCards(event, context.revealed, allPlayers);
+                event.thenAttachEvent(this.event('onCardRevealed', revealEventParams, revealEvent => {
+                    if(this.isInHiddenArea(revealEvent.card)) {
+                        context.revealed.push(revealEvent.card);
+                        event.revealed.push(revealEvent.card); // TODO: Remove when DeckSearchPrompt is finally replaced by GameActions.Search
                     }
-                }
-            });
-            event.thenAttachEvent(prepareRevealCards.createEvent(context));
-
+                }));
+            }
+            
             let whileRevealedEvent = whileRevealedGameAction.createEvent(context);
             event.thenAttachEvent(whileRevealedEvent);
             
             whileRevealedEvent.thenExecute(() => {
-                if(context.revealed.length > 0) {
-                    this.hideRevealedCards(event, allPlayers);
-                    context.game.cardVisibility.removeRule(allPlayersRevealFunc);
-                }
+                context.game.cardVisibility.removeRule(revealFunc);
             });
         });
     }
