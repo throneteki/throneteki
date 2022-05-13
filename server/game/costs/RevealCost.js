@@ -1,12 +1,13 @@
 const GameActions = require('../GameActions');
+const RevealCards = require('../GameActions/RevealCards');
 
 class RevealCost {
     constructor() {
         this.name = 'reveal';
     }
 
-    isEligible(card) {
-        return ['hand', 'plot deck', 'shadows'].includes(card.location);
+    isEligible(card, context) {
+        return RevealCards.allow({ cards: [card], context });
     }
 
     pay(cards, context) {

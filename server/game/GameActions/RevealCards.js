@@ -14,8 +14,8 @@ class RevealCards extends GameAction {
         });
     }
 
-    canChangeGameState({ cards }) {
-        return cards.length > 0 && cards.some(card => this.isInHiddenArea(card));
+    allow({ cards, context }) {
+        return cards.length > 0 && cards.some(card => this.isInHiddenArea(card) && !this.isImmune({ card, context }))
     }
 
     createEvent({ cards, player, whileRevealed, context }) {
@@ -28,7 +28,7 @@ class RevealCards extends GameAction {
         }
         return this.event('onCardsRevealed', eventParams, event => {
             const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
-            const revealFunc = card => event.cards.includes(card) && this.isInHiddenArea(card);
+            const revealFunc = card => event.cards.includes(card) && this.isInHiddenArea(card) && !this.isImmune({ card, context });
 
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
