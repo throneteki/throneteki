@@ -60,7 +60,7 @@ class GameLobby extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        const { currentGame, dispatch, gameId, games, joinPasswordGame, sendSocketMessage, setUrl } = props;
+        const { currentGame, gameId, games, joinPasswordGame, sendSocketMessage, setUrl } = props;
 
         if(!props.currentGame) {
             this.props.setContextMenu([]);

@@ -37,10 +37,10 @@ class Patreon extends React.Component {
             return <AlertPanel type='error' message='This page is not intended to be viewed directly.  Please click on one of the links at the top of the page or your browser back button to return to the site.' />;
         }
         
-        return <div>                    
+        return (<div>                    
             <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
             { this.props.apiState.loading && <div>Please wait while we verify your details..</div> }
-        </div>;
+        </div>);
     }
 }
 

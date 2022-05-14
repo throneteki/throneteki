@@ -334,6 +334,7 @@ Profile.propTypes = {
     refreshUser: PropTypes.func,
     saveProfile: PropTypes.func,
     socket: PropTypes.object,
+    unlinkPatreon: PropTypes.func,
     updateAvatar: PropTypes.func,
     user: PropTypes.object
 };
