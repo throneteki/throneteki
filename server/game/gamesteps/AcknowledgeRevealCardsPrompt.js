@@ -10,7 +10,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
         this.opponents = this.game.getPlayers().filter(player => player !== this.revealingPlayer)
         this.clickedButton = { };
     }
-    
+
     activeCondition(player) {
         return this.opponents.includes(player) && !this.completionCondition(player);
     }
@@ -40,7 +40,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     isComplete() {
-        return this.opponents.every(opponent => this.completionCondition(opponent));
+        return this.game.disableRevealAcknowledgement || this.opponents.every(opponent => this.completionCondition(opponent));
     }
 }
 
