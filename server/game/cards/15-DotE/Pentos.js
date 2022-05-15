@@ -15,8 +15,8 @@ class Pentos extends DrawCard {
                 format: '{player} kneels {source} to reveal {drawnCard} and put it into play',
                 args: { drawnCard: context => context.event.card }
             },
-            gameAction: GameActions.revealCard(context => ({
-                card: context.event.card
+            gameAction: GameActions.revealCards(context => ({
+                cards: [context.event.card]
             })).then({
                 gameAction: GameActions.putIntoPlay(context => ({
                     card: context.event.card

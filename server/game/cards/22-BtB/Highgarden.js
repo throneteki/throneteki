@@ -20,7 +20,7 @@ class Highgarden extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(
-                        context.target.map(card => GameActions.revealCard({ card }))
+                        context.target.map(card => GameActions.revealCards({ cards: [card] }))
                     ).then(preThenContext => ({
                         target: {
                             cardCondition: card => card.getType() === 'character' && card.location === 'play area',
@@ -35,7 +35,7 @@ class Highgarden extends DrawCard {
                             this.remainingCards = thenContext.target;
                             this.remainingStr = thenContext.parentContext.target.length * 2;
                             this.game.queueSimpleStep(() => this.calculateNextCharacter(thenContext.player));
-                            
+
                             this.game.queueSimpleStep(() => {
                                 let strMessages = [];
                                 for(let group in this.groups) {
@@ -66,7 +66,7 @@ class Highgarden extends DrawCard {
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
             target: {
-                cardCondition: card => card.location === 'play area' && card.controller === this.controller && 
+                cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                     card.getType() === 'character' && card.isFaction('tyrell') && card.isUnique()
             },
             handler: context => {

@@ -12,7 +12,7 @@ class JonConnington extends DrawCard {
             },
             message: '{player} uses {source} to reveal {target}',
             handler: context => {
-                const gameAction = GameActions.revealCard(context => ({ card: context.target })).then({
+                const gameAction = GameActions.revealCards(context => ({ cards: [context.target] })).then({
                     message: 'Then {player} {gameAction}',
                     gameAction: GameActions.ifCondition({
                         condition: context => context.event.card.isMatch({
