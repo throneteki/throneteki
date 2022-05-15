@@ -210,7 +210,7 @@ class PendingGame extends React.Component {
     }
 
     isCurrentEventALockedDeckEvent() {
-        return this.props.currentGame.event && this.props.currentGame.event._id !== 'none'; //&& this.props.currentGame.event.lockedDecks;
+        return this.props.currentGame.event && this.props.currentGame.event._id !== 'none' && this.props.currentGame.event.lockDecks;
     }
 
     filterDecksForCurrentEvent() {
