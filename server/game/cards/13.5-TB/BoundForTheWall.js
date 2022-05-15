@@ -1,5 +1,6 @@
 const DrawCard = require('../../drawcard');
 const shuffle = require('lodash.shuffle');
+const GameActions = require('../../GameActions');
 
 class BoundForTheWall extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,25 +8,24 @@ class BoundForTheWall extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller })
             },
-            handler: context => {
-                const loser = context.event.challenge.loser;
-                const topCards = loser.drawDeck.slice(0, 5);
-                const revealFunc = card => topCards.includes(card);
-                this.game.addMessage('{0} plays {1} to reveal {2} on top of {3}\'s deck', context.player, this, topCards, loser);
-
-                this.game.queueSimpleStep(() => {
-                    this.game.cardVisibility.addRule(revealFunc);
-                });
-                this.game.promptForSelect(context.player, {
-                    cardCondition: card => topCards.includes(card) && card.controller === loser && card.location === 'draw deck' && card.getType() === 'character' && context.player.canPutIntoPlay(card),
-                    onSelect: (player, card) => this.handleSelect({ player, card, loser, topCards }),
-                    onCancel: (player) => this.handleCancel({player, loser, topCards}),
-                    source: this
-                });
-                this.game.queueSimpleStep(() => {
-                    this.game.cardVisibility.removeRule(revealFunc);
-                });
+            message: {
+                format: '{player} plays {source} to reveal the top 5 cards of {loser}\'s deck',
+                args: { loser: context => context.event.challenge.loser }
             },
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.event.challenge.loser,
+                amount: 5,
+                whileRevealed: GameActions.genericHandler(context => {
+                    const loser = context.event.challenge.loser;
+                    const topCards = context.revealed;
+                    this.game.promptForSelect(context.player, {
+                        cardCondition: card => topCards.includes(card) && card.controller === loser && card.location === 'draw deck' && card.getType() === 'character' && context.player.canPutIntoPlay(card),
+                        onSelect: (player, card) => this.handleSelect({ player, card, loser, topCards }),
+                        onCancel: (player) => this.handleCancel({player, loser, topCards}),
+                        source: this
+                    });
+                })
+            })),
             max: ability.limit.perChallenge(1)
         });
     }
