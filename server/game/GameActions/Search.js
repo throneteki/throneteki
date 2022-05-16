@@ -108,15 +108,14 @@ class Search extends GameAction {
     }
 
     attachGameActionEvent(event, context) {
-        // Do not attach gameAction if no searchTargets are left in search location
         if(this.numToSelect) {
+            // Do not attach gameAction if no searchTargets are left in search location
             context.searchTarget = context.searchTarget.filter(card => card.location === this.location);
             if(context.searchTarget.length === 0) {
                 return;
             }
-        }
-        // Do not attach gameAction if single searchTarget is not in search location
-        else if(!this.location.includes(context.searchTarget.location)) {
+        } else if(!this.location.includes(context.searchTarget.location)) {
+            // Do not attach gameAction if single searchTarget is not in search location
             context.searchTarget = null;
             return;
         }

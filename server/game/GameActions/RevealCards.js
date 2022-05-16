@@ -1,6 +1,7 @@
 const GameAction = require('./GameAction');
 const HandlerGameActionWrapper = require('./HandlerGameActionWrapper');
 const AcknowledgeRevealCardsPrompt = require('../gamesteps/AcknowledgeRevealCardsPrompt');
+const Message = require('../Message');
 
 class RevealCards extends GameAction {
     constructor() {
@@ -16,7 +17,7 @@ class RevealCards extends GameAction {
     }
 
     allow({ cards, context }) {
-        return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }))
+        return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }));
     }
 
     createEvent({ cards, player, whileRevealed, context }) {
@@ -36,7 +37,7 @@ class RevealCards extends GameAction {
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
             this.highlightRevealedCards(event, context.revealed, allPlayers);
-            context.game.addMessage('{0} reveals {1} from their {2}', event.player, event.cards, [...new Set(event.cards.map(card => card.location))]);
+            context.game.addMessage('{0} reveals {1}', event.player, this.playerGroupedMessageFragments(context.revealed, context.player));
 
             for(let card of event.cards) {
                 const revealEventParams = {
@@ -93,6 +94,18 @@ class RevealCards extends GameAction {
         for(let player of players) {
             player.setSelectableCards(context.revealed);
         }
+    }
+
+    playerGroupedMessageFragments(revealed, player) {
+        let messageFragments = [];
+        let cardControllers = [...new Set(revealed.map(card => card.controller))];
+        for(let controller of cardControllers) {
+            let cards = revealed.filter(card => card.controller === controller);
+            let locations = [...new Set(cards.map(card => card.location))];
+
+            messageFragments.push(Message.fragment(`{cards} from ${controller === player ? 'their' : '{controller}\'s'} {locations}`, { cards, controller, locations }));
+        }
+        return messageFragments;
     }
 }
 
