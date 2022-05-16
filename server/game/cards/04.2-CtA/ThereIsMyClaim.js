@@ -8,14 +8,12 @@ class ThereIsMyClaim extends DrawCard {
             phase: 'challenge',
             condition: () => this.game.isDuringChallenge(),
             cost: ability.costs.revealCards(4, card => card.getType() === 'character' && card.isFaction('tyrell') && card.location === 'hand'),
-            handler: context => {
+            message: '{player} uses {source} and reveals 4 characters to raise the claim value on their revealed plot card by 1 until the end of the challenge',
+            handler: () => {
                 this.untilEndOfChallenge(ability => ({
                     match: card => card === this.controller.activePlot,
                     effect: ability.effects.modifyClaim(1)
                 }));
-
-                this.game.addMessage('{0} uses {1} and reveals {2} from their hand to raise the claim value on their revealed plot card by 1 until the end of the challenge',
-                    this.controller, this, context.costs.reveal);
             }
         });
     }
