@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class GatesOfWinterfell extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,17 +7,19 @@ class GatesOfWinterfell extends DrawCard {
             title: 'Reveal top card of deck',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            handler: () => {
-                let topCard = this.controller.drawDeck[0];
-                let message = '{0} kneels {1} to reveal {2} as the top card of their deck';
-
-                if(topCard.isFaction('stark') && this.controller.canDraw()) {
-                    this.controller.drawCardsToHand(1);
-                    message += ' and draw it';
-                }
-
-                this.game.addMessage(message, this.controller, this, topCard);
-            }
+            message: '{player} kneels {source} to reveal the top card of their deck',
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.player
+            })).then({
+                message: '{player} {gameAction}',
+                gameAction: GameActions.ifCondition({
+                    condition: context => context.event.cards[0].isFaction('stark'),
+                    thenAction: GameActions.drawCards(context => ({
+                        player: context.player,
+                        amount: 1
+                    }))
+                })
+            })
         });
     }
 }

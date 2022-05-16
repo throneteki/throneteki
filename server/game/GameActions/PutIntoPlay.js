@@ -1,8 +1,13 @@
 const GameAction = require('./GameAction');
+const Message = require('../Message');
 
 class PutIntoPlay extends GameAction {
     constructor() {
         super('putIntoPlay');
+    }
+
+    message({ card }) {
+        return Message.fragment('puts {card} into play', { card });
     }
 
     canChangeGameState({ player, card }) {

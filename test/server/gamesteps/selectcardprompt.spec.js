@@ -16,7 +16,7 @@ describe('the SelectCardPrompt', function() {
         this.game = jasmine.createSpyObj('game', ['getPlayers', 'getNumberOfPlayers']);
         this.game.getPlayers.and.returnValue([]);
 
-        this.player = jasmine.createSpyObj('player1', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards', 'startClock', 'stopClock']);
+        this.player = jasmine.createSpyObj('player1', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'getSelectableCards', 'getSelectedCards', 'setSelectableCards', 'setSelectedCards', 'startClock', 'stopClock']);
         this.player.cardsInPlay = [];
         this.otherPlayer = jasmine.createSpyObj('player2', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards', 'startClock', 'stopClock']);
         this.card = createCardSpy({ name: 'card', controller: this.player });
@@ -24,7 +24,7 @@ describe('the SelectCardPrompt', function() {
         this.player.cardsInPlay.push(this.card);
 
         this.previousCard = createCardSpy({ selected: true, controller: this.player });
-        this.player.selectedCards = [this.previousCard];
+        this.player.getSelectedCards.and.returnValue([this.previousCard]);
 
         this.properties = {
             cardCondition: function() {

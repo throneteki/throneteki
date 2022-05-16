@@ -9,6 +9,11 @@ class SimultaneousAction extends GameAction {
         this.actionFactory = actionFactory;
     }
 
+    message(context) {
+        const actions = this.resolveActions(context);
+        return actions.filter(action => action.allow(context)).map(action => action.message(context));
+    }
+
     allow(context) {
         const actions = this.resolveActions(context);
         return actions.length > 0 && actions.some(action => action.allow(context));

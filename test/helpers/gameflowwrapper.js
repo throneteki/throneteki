@@ -36,6 +36,7 @@ class GameFlowWrapper {
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
         this.game.started = true;
         this.game.disableWonPrompt = true;
+        this.game.disableRevealAcknowledgement = true;
 
         this.allPlayers = this.game.getPlayers().map(player => new PlayerInteractionWrapper(this.game, player));
         this.playerToPlayerWrapperIndex = this.allPlayers.reduce((index, playerWrapper) => {
