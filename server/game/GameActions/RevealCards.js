@@ -20,12 +20,13 @@ class RevealCards extends GameAction {
         return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }));
     }
 
-    createEvent({ cards, player, whileRevealed, context }) {
+    createEvent({ cards, player, whileRevealed, isCost, context }) {
         context.player = player;
         const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
             cards,
+            isCost,
             source: context.source
         };
         return this.event('onCardsRevealed', eventParams, event => {
@@ -37,7 +38,7 @@ class RevealCards extends GameAction {
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
             this.highlightRevealedCards(event, context.revealed, allPlayers);
-            context.game.addMessage('{0} reveals {1}', event.player, this.playerGroupedMessageFragments(context.revealed, context.player));
+            context.game.addMessage(`{0} reveals {1}${event.isCost && event.source ? ' for {2}' : ''}`, event.player, this.playerGroupedMessageFragments(context.revealed, context.player), event.source);
 
             for(let card of event.cards) {
                 const revealEventParams = {
