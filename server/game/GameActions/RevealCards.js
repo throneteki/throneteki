@@ -8,9 +8,9 @@ class RevealCards extends GameAction {
         super('revealCards');
         this.defaultWhileRevealed = new HandlerGameActionWrapper({
             handler: context => {
-                if(context.revealed.length > 0) {
+                if(context.event.revealed.length > 0) {
                     // TODO: Replace the below with a separate Card Reveal UI (and don't show the cards in their respective locations). This would clean up effects which simply reveal a single card.
-                    context.game.queueStep(new AcknowledgeRevealCardsPrompt(context.game, context.revealed, context.player));
+                    context.parentContext.game.queueStep(new AcknowledgeRevealCardsPrompt(context.parentContext.game, context.event.revealed, context.event.player));
                 }
             }
         });
@@ -20,26 +20,25 @@ class RevealCards extends GameAction {
         return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }));
     }
 
-    createEvent({ cards, player, whileRevealed, isCost, context }) {
-        context.player = player;
+    createEvent({ cards, player, whileRevealed, isCost, source, context }) {
         const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
             cards,
             isCost,
-            source: context.source
+            source: source || context.source
         };
         return this.event('onCardsRevealed', eventParams, event => {
             const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
-            const revealFunc = card => context.revealed.includes(card) && !this.isImmune({ card, context });
+            const revealFunc = card => event.revealed.includes(card) && !this.isImmune({ card, context });
 
-            context.revealed = event.cards;
+            event.revealed = event.cards;
 
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
-            this.highlightRevealedCards(event, context.revealed, allPlayers);
-            context.game.addMessage(`{0} reveals {1}${event.isCost && event.source ? ' for {2}' : ''}`, event.player, this.playerGroupedMessageFragments(context.revealed, context.player), event.source);
-
+            this.highlightRevealedCards(event, event.revealed, allPlayers);
+            this.addRevealMessages(context.game, event);
+            
             for(let card of event.cards) {
                 const revealEventParams = {
                     card,
@@ -50,18 +49,20 @@ class RevealCards extends GameAction {
 
                 event.thenAttachEvent(this.event('onCardRevealed', revealEventParams, revealEvent => {
                     if(revealEvent.card.location !== revealEvent.cardStateWhenRevealed.location) {
-                        this.removeInvalidReveal(context, revealEvent.card, allPlayers);
+                        event.revealed = event.revealed.filter(reveal => reveal !== card);
+                        for(let player of allPlayers) {
+                            player.setSelectableCards(event.revealed);
+                        }
                     }
                 }));
             }
-
-            let whileRevealedEvent = whileRevealedGameAction.createEvent(context);
+            const whileRevealedContext = { parentContext: context, event };
+            let whileRevealedEvent = whileRevealedGameAction.createEvent(whileRevealedContext);
             event.thenAttachEvent(whileRevealedEvent);
 
             whileRevealedEvent.thenExecute(() => {
                 this.hideRevealedCards(event, allPlayers);
                 context.game.cardVisibility.removeRule(revealFunc);
-                event.revealed = context.revealed; // TODO: Remove when DeckSearchPrompt is finally replaced by GameActions.Search
             });
         });
     }
@@ -97,16 +98,24 @@ class RevealCards extends GameAction {
         }
     }
 
-    playerGroupedMessageFragments(revealed, player) {
-        let messageFragments = [];
-        let cardControllers = [...new Set(revealed.map(card => card.controller))];
-        for(let controller of cardControllers) {
-            let cards = revealed.filter(card => card.controller === controller);
-            let locations = [...new Set(cards.map(card => card.location))];
+    addRevealMessages(game, event) {
+        let controllers = [...new Set(event.revealed.map(card => card.controller))];
+        let controllerGroups = controllers.map(controller => ({ 
+            player: controller, 
+            cards: event.revealed.filter(card => card.controller === controller),
+            locations: [...new Set(event.revealed.filter(card => card.controller === controller).map(card => card.location))]
+        }));
 
-            messageFragments.push(Message.fragment(`{cards} from ${controller === player ? 'their' : '{controller}\'s'} {locations}`, { cards, controller, locations }));
+        if(event.player) {
+            // Single player revealing all of the cards (theirs & opponents)
+            let messageFragments = controllerGroups.map(group => Message.fragment(`{cards} from ${group.player === event.player ? 'their' : '{player}\'s'} {locations}`, group));
+            game.addMessage(`{0} reveals {1}${event.isCost && event.source ? ' for {2}' : ''}`, event.player, messageFragments, event.source);
+        } else {
+            // Each player reveals their own cards individually
+            for(let group of controllerGroups) {
+                game.addMessage('{0} reveals {1} from their {2}', group.player, group.cards, group.locations);
+            }
         }
-        return messageFragments;
     }
 }
 
