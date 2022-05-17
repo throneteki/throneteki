@@ -8,9 +8,9 @@ class RevealCards extends GameAction {
         super('revealCards');
         this.defaultWhileRevealed = new HandlerGameActionWrapper({
             handler: context => {
-                if(context.event.revealed.length > 0) {
+                if(context.revealed.length > 0) {
                     // TODO: Replace the below with a separate Card Reveal UI (and don't show the cards in their respective locations). This would clean up effects which simply reveal a single card.
-                    context.parentContext.game.queueStep(new AcknowledgeRevealCardsPrompt(context.parentContext.game, context.event.revealed, context.event.player));
+                    context.game.queueStep(new AcknowledgeRevealCardsPrompt(context.game, context.revealed, context.revealingPlayer));
                 }
             }
         });
@@ -21,6 +21,8 @@ class RevealCards extends GameAction {
     }
 
     createEvent({ cards, player, whileRevealed, isCost, source, context }) {
+        context.revealing = cards;
+        context.revealingPlayer = player;
         const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
@@ -32,7 +34,7 @@ class RevealCards extends GameAction {
             const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
             const revealFunc = card => event.revealed.includes(card) && !this.isImmune({ card, context });
 
-            event.revealed = event.cards;
+            event.revealed = context.revealed = event.cards;
 
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
@@ -49,15 +51,14 @@ class RevealCards extends GameAction {
 
                 event.thenAttachEvent(this.event('onCardRevealed', revealEventParams, revealEvent => {
                     if(revealEvent.card.location !== revealEvent.cardStateWhenRevealed.location) {
-                        event.revealed = event.revealed.filter(reveal => reveal !== card);
+                        event.revealed = context.revealed = context.revealed.filter(reveal => reveal !== card);
                         for(let player of allPlayers) {
                             player.setSelectableCards(event.revealed);
                         }
                     }
                 }));
             }
-            const whileRevealedContext = { parentContext: context, event };
-            let whileRevealedEvent = whileRevealedGameAction.createEvent(whileRevealedContext);
+            let whileRevealedEvent = whileRevealedGameAction.createEvent(context);
             event.thenAttachEvent(whileRevealedEvent);
 
             whileRevealedEvent.thenExecute(() => {
