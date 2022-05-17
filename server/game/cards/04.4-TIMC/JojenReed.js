@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class JojenReed extends DrawCard {
     setupCardAbilities() {
@@ -6,23 +7,19 @@ class JojenReed extends DrawCard {
             when: {
                 onCardStood: event => event.card === this
             },
-            handler: () => {
-                for(let player of this.game.getPlayers()) {
-                    let card = player.drawDeck[0];
-                    this.game.addMessage('{0} uses {1} to reveal {2} from {3}\'s deck', this.controller, this, card, player);
-                }
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Draw or discard revealed cards?',
-                        buttons: [
-                            { text: 'Draw', method: 'draw' },
-                            { text: 'Discard', method: 'discard' }
-                        ]
+            message: '{player} uses {source} to reveal the top cards of each player\'s deck',
+            gameAction: GameActions.revealCards(context => ({
+                cards: context.game.getPlayers().map(player => player.drawDeck[0]),
+                player: context.player,
+                whileRevealed: GameActions.choose({
+                    'Draw revealed cards': () => {
+                        this.draw();
                     },
-                    source: this
-                });
-            }
+                    'Discard revealed cards': () => {
+                        this.discard();
+                    }
+                })
+            }))
         });
     }
 
@@ -34,18 +31,16 @@ class JojenReed extends DrawCard {
         }
 
         this.game.addMessage('{0} uses {1} to have revealed cards drawn', this.controller, this);
-
-        return true;
     }
 
     discard() {
+        // TODO: This cannot be re-implemented as simultaneous game actions until Tywin LoCR is re-implemented to
+        // look at cards discard from a specific player's deck.
         for(let player of this.game.getPlayers()) {
             player.discardFromDraw(1);
         }
 
         this.game.addMessage('{0} uses {1} to have revealed cards discarded', this.controller, this);
-
-        return true;
     }
 }
 

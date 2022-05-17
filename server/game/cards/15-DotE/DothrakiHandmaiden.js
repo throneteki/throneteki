@@ -21,6 +21,7 @@ class DothrakiHandmaiden extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.revealCards(context => ({
+                        player: context.player,
                         cards: [context.target]
                     })).then({
                         handler: context => {
@@ -28,7 +29,7 @@ class DothrakiHandmaiden extends DrawCard {
                             this.lastingEffect(() => ({
                                 condition: () => context.event.cards[0].parent === context.source,
                                 targetLocation: 'any',
-                                match: context.target,
+                                match: context.event.cards[0],
                                 effect: ability.effects.setCardType('attachment')
                             }));
                         }

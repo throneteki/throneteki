@@ -10,12 +10,9 @@ class RevealTopCards extends GameAction {
         return amount > 0 && player.drawDeck.length >= amount;
     }
 
-    createEvent({ player, amount = 1, context }) {
-        if(amount > 1) {
-            throw 'Not implemented yet';
-        }
-
-        return RevealCards.createEvent({ cards: [player.drawDeck[0]], context, player: context.player });
+    createEvent({ player, amount = 1, context, whileRevealed }) {
+        const cards = player.drawDeck.slice(0, amount);
+        return RevealCards.createEvent({ cards, context, player: context.player, whileRevealed });
     }
 }
 

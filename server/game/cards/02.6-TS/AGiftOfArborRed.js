@@ -1,63 +1,41 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
+const Message = require('../../Message');
+const {flatMap} = require('../../../Array');
 
 class AGiftOfArborRed extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
             title: 'Reveal top 4 cards of each deck',
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                let opponents = this.game.getOpponents(this.controller);
-                let opponentCards = opponents.map(opponent => {
-                    return { player: opponent, cards: opponent.searchDrawDeck(4) };
-                });
-
-                this.revealedCards = [
-                    { player: this.controller, cards: this.controller.searchDrawDeck(4) }
-                ].concat(opponentCards);
-
-                for(let revealed of this.revealedCards) {
-                    this.game.addMessage('{0} uses {1} and kneels their faction card to reveal the top 4 cards of {2}\'s deck as: {3}', this.controller, this, revealed.player, revealed.cards);
+            messages: '{player} plays {source} and kneels their faction card to reveal the top 4 cards of each player\'s deck',
+            gameAction: GameActions.revealCards(context => ({
+                cards: flatMap(context.game.getPlayers(), player => player.searchDrawDeck(4)),
+                player: context.player
+            })).then({
+                target: {
+                    activePromptTitle: 'Select a card for each player',
+                    mode: 'eachPlayer',
+                    cardCondition: (card, context) => context.event.cards.includes(card),
+                    revealTargets: true
+                },
+                message: {
+                    format: '{player} {chosenCards}. Each player shuffles their deck.',
+                    args: {
+                        chosenCards: context => context.target.map(card => Message.fragment('adds {card} to {owner}\'s hand', { card, owner: card.owner }))
+                    }
+                },
+                handler: context => {
+                    this.game.resolveGameAction(
+                        GameActions.simultaneously(context => [
+                            ...context.target.map(card => GameActions.addToHand({ card, player: card.owner })),
+                            ...context.game.getPlayers().map(player => GameActions.shuffle({ player }))
+                        ]),
+                        context
+                    );
                 }
-
-                this.promptToAddToHand();
-            }
+            })
         });
-    }
-
-    promptToAddToHand() {
-        if(this.revealedCards.length === 0) {
-            return;
-        }
-
-        let currentRevealed = this.revealedCards[0];
-
-        let title = currentRevealed.player === this.controller ? 'Choose a card to add to your hand' : `Choose a card to add to ${currentRevealed.player.name}'s hand`;
-        let buttons = currentRevealed.cards.map(card => ({
-            method: 'selectCardForHand', card: card
-        }));
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: title,
-                buttons: buttons
-            },
-            source: this
-        });
-    }
-
-    selectCardForHand(player, cardId) {
-        let current = this.revealedCards.shift();
-        let card = current.cards.find(card => card.uuid === cardId);
-
-        current.player.moveCard(card, 'hand');
-        current.player.shuffleDrawDeck();
-
-        this.game.addMessage('{0} adds {1} to {2}\'s hand and shuffles their deck',
-            this.controller, card, current.player);
-
-        this.promptToAddToHand();
-
-        return true;
     }
 }
 
