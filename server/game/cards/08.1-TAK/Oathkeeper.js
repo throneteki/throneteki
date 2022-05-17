@@ -14,11 +14,12 @@ class Oathkeeper extends DrawCard {
                     event.challenge.isParticipating(this.parent)
             },
             cost: ability.costs.sacrificeSelf(),
+            message: '{player} sacrifices {costs.sacrifice} to search their deck for a non-Tyrell character',
             handler: context => {
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => !card.isFaction('tyrell') && card.getType() === 'character',
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -26,15 +27,17 @@ class Oathkeeper extends DrawCard {
         });
     }
 
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} sacrifices {1} to search their deck and add {2} to their hand',
-            player, this, card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.moveCard(card, 'hand');
+            this.game.addMessage('{0} adds {1} to their hand',
+                player, card);
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} sacrifices {1} to search their deck, but does not add any card to their hand',
-            player, this);
+        this.game.addMessage('{0} does not add any card to their hand',
+            player);
     }
 }
 

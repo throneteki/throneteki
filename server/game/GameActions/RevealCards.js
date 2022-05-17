@@ -39,7 +39,9 @@ class RevealCards extends GameAction {
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
             this.highlightRevealedCards(event, event.revealed, allPlayers);
-            this.addRevealMessages(context.game, event);
+            if(!isCost) {
+                this.addRevealMessages(context.game, event);
+            }
             
             for(let card of event.cards) {
                 const revealEventParams = {
@@ -110,7 +112,7 @@ class RevealCards extends GameAction {
         if(event.player) {
             // Single player revealing all of the cards (theirs & opponents)
             let messageFragments = controllerGroups.map(group => Message.fragment(`{cards} from ${group.player === event.player ? 'their' : '{player}\'s'} {locations}`, group));
-            game.addMessage(`{0} reveals {1}${event.isCost && event.source ? ' for {2}' : ''}`, event.player, messageFragments, event.source);
+            game.addMessage('{0} reveals {1}', event.player, messageFragments, event.source);
         } else {
             // Each player reveals their own cards individually
             for(let group of controllerGroups) {

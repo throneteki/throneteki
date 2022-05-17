@@ -17,7 +17,7 @@ class RenlyBaratheon extends DrawCard {
                     event.cards[0].isLoyal()
             },
             cost: ability.costs.revealSpecific(context => context.event.cards[0]),
-            message: '{player} uses {source} and reveals a card to draw 1 card',
+            message: '{player} uses {source} and reveals {costs.reveal} from their hand to draw 1 card',
             gameAction: GameActions.drawCards(context => ({
                 player: context.player,
                 amount: 1

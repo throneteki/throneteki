@@ -17,8 +17,12 @@ class Search extends GameAction {
         this.title = title;
         this.location = location || ['draw deck'];
         this.revealGameAction = reveal ? new AbilityAdapter(RevealCards, context => ({ cards: Array.isArray(context.searchTarget) ? context.searchTarget : [context.searchTarget], player: context.player })) : null;
-        this.message = AbilityMessage.create(message);
-        this.cancelMessage = AbilityMessage.create(cancelMessage || '{player} uses {source} to search their deck but does not find a card');
+        this.abilityMessage = AbilityMessage.create(message);
+        this.abilityCancelMessage = AbilityMessage.create(cancelMessage || '{player} does not find any cards');
+    }
+
+    message({ context }) {
+        return this.gameAction.message(context);
     }
 
     canChangeGameState({ context }) {
@@ -42,7 +46,6 @@ class Search extends GameAction {
                 onSelect: (player, result) => {
                     context.searchTarget = result;
                     context.game.cardVisibility.removeRule(revealFunc);
-                    this.message.output(context.game, context);
                     if(this.revealGameAction) {
                         let revealEvent = this.revealGameAction.createEvent(context);
                         event.thenAttachEvent(revealEvent);
@@ -51,12 +54,13 @@ class Search extends GameAction {
                         });
                         return true;
                     }
+                    this.abilityMessage.output(context.game, { ...context, card: context.searchTarget });
                     event.thenAttachEvent(this.gameAction.createEvent(context));
                     return true;
                 },
                 onCancel: () => {
                     context.game.cardVisibility.removeRule(revealFunc);
-                    this.cancelMessage.output(context.game, context);
+                    this.abilityCancelMessage.output(context.game, context);
                     return true;
                 },
                 source: context.source
@@ -120,6 +124,7 @@ class Search extends GameAction {
             return;
         }
 
+        this.abilityMessage.output(context.game, { ...context, card: context.searchTarget });
         event.thenAttachEvent(this.gameAction.createEvent(context));
     }
 }

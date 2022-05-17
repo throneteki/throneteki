@@ -81,9 +81,10 @@ class AbilityMessage {
         ];
         const optionalArgs = this.getOptionalArgs(format);
         const targetSelectionArgs = this.getTargetSelectionArgs(format);
+        const costArgs = this.getCostArgs(format);
         const customArgs = Object.entries(customArgsHash).map(([name, getValue]) => ({ name, getValue }));
 
-        return standardArgs.concat(optionalArgs).concat(targetSelectionArgs).concat(customArgs);
+        return standardArgs.concat(optionalArgs).concat(targetSelectionArgs).concat(costArgs).concat(customArgs);
     }
 
     getOptionalArgs(format) {
@@ -106,6 +107,21 @@ class AbilityMessage {
             args.push({
                 name: `targetSelection.${property}`,
                 getValue: context => context.currentTargetSelection && context.currentTargetSelection[property]
+            });
+        }
+
+        return args;
+    }
+
+    getCostArgs(format) {
+        let args = [];
+        let regex = /{costs\.(\w+)}/g;
+        let match;
+        while((match = regex.exec(format)) !== null) {
+            let property = match[1];
+            args.push({
+                name: `costs.${property}`,
+                getValue: context => context.costs && context.costs[property]
             });
         }
 

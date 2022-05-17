@@ -7,7 +7,7 @@ class Queenscrown extends DrawCard {
             title: 'Reveal top 3 cards of opponent\'s deck',
             cost: ability.costs.kneelSelf(),
             chooseOpponent: true,
-            message: '{player} kneels {source} to reveal the top 3 cards of {opponent}\'s deck',
+            message: '{player} kneels {costs.kneel} to reveal the top 3 cards of {opponent}\'s deck',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.revealTopCards(context => ({
@@ -28,18 +28,20 @@ class Queenscrown extends DrawCard {
                                 );
                             }
 
-                            this.game.addMessage('{0} places {1} cards on the bottom of {2}\'s draw deck', context.player, context.orderedBottomCards.length, context.opponent);
-                            this.game.resolveGameAction(
-                                GameActions.simultaneously(context => context.orderedBottomCards.map(card => (
-                                    GameActions.placeCard({
-                                        card,
-                                        player: context.opponent,
-                                        location: 'draw deck',
-                                        bottom: true
-                                    })
-                                ))),
-                                context
-                            );
+                            if(context.orderedBottomCards.length > 0) {
+                                this.game.addMessage('{0} places {1} cards on the bottom of {2}\'s draw deck', context.player, context.orderedBottomCards.length, context.opponent);
+                                this.game.resolveGameAction(
+                                    GameActions.simultaneously(context => context.orderedBottomCards.map(card => (
+                                        GameActions.placeCard({
+                                            card,
+                                            player: context.opponent,
+                                            location: 'draw deck',
+                                            bottom: true
+                                        })
+                                    ))),
+                                    context
+                                );
+                            }
                         }
                     })),
                     context

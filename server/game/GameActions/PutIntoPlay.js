@@ -13,7 +13,7 @@ class PutIntoPlay extends GameAction {
 
     canChangeGameState({ player, card }) {
         player = player || card.controller;
-        return player.canPutIntoPlay(card);
+        return card.location !== 'play area' && player.canPutIntoPlay(card);
     }
 
     createEvent({ player, card, kneeled, playingType }) {
