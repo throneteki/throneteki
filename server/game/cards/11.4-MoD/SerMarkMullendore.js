@@ -12,7 +12,7 @@ class SerMarkMullendore extends DrawCard {
                 player: context.player
             })).then({
                 gameAction: GameActions.may({
-                    title: context => `Put ${context.event.card.name} into play?`,
+                    title: context => `Put ${context.event.cards[0].name} into play?`,
                     message: {
                         format: '{player} puts {topCard} into play',
                         args: { topCard: context => context.event.cards[0] }

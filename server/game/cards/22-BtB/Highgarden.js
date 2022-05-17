@@ -16,12 +16,13 @@ class Highgarden extends DrawCard {
                 numCards: 3,
                 gameAction: 'reveal'
             },
-            message: '{player} kneels {source} to reveal {target} from their hand',
+            message: '{player} kneels {source} to reveal cards from their hand',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.target.map(card => GameActions.revealCards({ cards: [card] }))
-                    ).then(preThenContext => ({
+                    GameActions.revealCards(context => ({
+                        player: context.player,
+                        cards: context.target
+                    })).then(preThenContext => ({
                         target: {
                             cardCondition: card => card.getType() === 'character' && card.location === 'play area',
                             activePromptTitle: `Select up to ${preThenContext.target.length} characters`,
@@ -51,7 +52,7 @@ class Highgarden extends DrawCard {
                                     strMessages.push(Message.fragment('{characters} +{strength} STR', { characters, strength }));
                                 }
 
-                                this.game.addMessage('{0} then uses {1} to give {2} until the end of the phase', thenContext.player, this, strMessages);
+                                this.game.addMessage('{0} uses {1} to give {2} until the end of the phase', thenContext.player, this, strMessages);
 
                                 return true;
                             });
