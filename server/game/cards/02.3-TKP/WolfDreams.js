@@ -5,11 +5,12 @@ class WolfDreams extends DrawCard {
         this.action({
             title: 'Search for a Direwolf',
             cost: ability.costs.kneelFactionCard(),
+            message: '{player} plays {source} and kneels their faction card to search their deck for a Direwolf card',
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Direwolf'),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -17,15 +18,17 @@ class WolfDreams extends DrawCard {
         });
     }
 
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.moveCard(card, 'hand');
+            this.game.addMessage('{0} add {1} to their hand',
+                player, card);
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
-            player, this);
+        this.game.addMessage('{0} does not add any card to their hand',
+            player);
     }
 }
 

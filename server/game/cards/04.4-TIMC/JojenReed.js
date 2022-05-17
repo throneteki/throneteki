@@ -12,11 +12,11 @@ class JojenReed extends DrawCard {
                 cards: context.game.getPlayers().map(player => player.drawDeck[0]),
                 player: context.player,
                 whileRevealed: GameActions.choose({
-                    'Draw revealed cards': () => {
+                    'Draw top cards': () => {
                         this.draw();
                     },
-                    'Discard revealed cards': () => {
-                        this.discard();
+                    'Discard revealed cards': context => {
+                        this.discard(context.revealed);
                     }
                 })
             }))
@@ -30,17 +30,17 @@ class JojenReed extends DrawCard {
             }
         }
 
-        this.game.addMessage('{0} uses {1} to have revealed cards drawn', this.controller, this);
+        this.game.addMessage('{0} uses {1} to have each player draw 1 card', this.controller, this);
     }
 
-    discard() {
+    discard(cards) {
         // TODO: This cannot be re-implemented as simultaneous game actions until Tywin LoCR is re-implemented to
         // look at cards discard from a specific player's deck.
         for(let player of this.game.getPlayers()) {
-            player.discardFromDraw(1);
+            player.discardCards(cards.filter(card => card.owner === player));
         }
 
-        this.game.addMessage('{0} uses {1} to have revealed cards discarded', this.controller, this);
+        this.game.addMessage('{0} uses {1} to have the revealed cards discarded', this.controller, this);
     }
 }
 

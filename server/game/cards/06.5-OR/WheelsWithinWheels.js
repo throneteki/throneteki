@@ -3,6 +3,7 @@ const PlotCard = require('../../plotcard.js');
 class WheelsWithinWheels extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            message: '{player} uses {source} to search the top 10 cards of their deck for any number of events',
             handler: context => {
                 this.cards = undefined;
 
@@ -11,7 +12,7 @@ class WheelsWithinWheels extends PlotCard {
                     numToSelect: 10,
                     activePromptTitle: 'Select any number of events',
                     cardType: 'event',
-                    onSelect: (player, cards) => this.revealSelectedCards(player, cards),
+                    onSelect: (player, cards, valids) => this.revealSelectedCards(player, cards, valids),
                     onCancel: player => this.cancelSelecting(player),
                     source: this
                 });
@@ -19,36 +20,38 @@ class WheelsWithinWheels extends PlotCard {
         });
     }
 
-    revealSelectedCards(player, cards) {
-        this.cards = cards;
-
-        if(cards.length === 1) {
-            this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-                player, this, cards[0]);
-
-            player.moveCard(cards[0], 'hand');
-
-            return;
+    revealSelectedCards(player, cards, valids) {
+        if(valids.length > 0) {
+            this.cards = valids;
+    
+            if(valids.length === 1) {
+                this.game.addMessage('{0} adds {1} to their hand',
+                    player, valids[0]);
+    
+                player.moveCard(valids[0], 'hand');
+    
+                return;
+            }
+    
+            let buttons = valids.map(card => {
+                return { card: card, method: 'resolve', mapCard: true };
+            });
+    
+            this.game.promptWithMenu(player, this, {
+                activePrompt: {
+                    menuTitle: 'Select a card to draw',
+                    buttons: buttons
+                },
+                source: this
+            });
         }
-
-        let buttons = cards.map(card => {
-            return { card: card, method: 'resolve', mapCard: true };
-        });
-
-        this.game.promptWithMenu(player, this, {
-            activePrompt: {
-                menuTitle: 'Select a card to draw',
-                buttons: buttons
-            },
-            source: this
-        });
 
         return true;
     }
 
     cancelSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards',
-            player, this);
+        this.game.addMessage('{0} does not retrieve any cards',
+            player);
     }
 
     resolve(player, cardToHand) {
@@ -59,8 +62,8 @@ class WheelsWithinWheels extends PlotCard {
             player.moveCard(card, 'discard pile');
         }
 
-        this.game.addMessage('{0} uses {1} to add {2} to their hand and place {3} in their discard pile',
-            player, this, cardToHand, this.cards);
+        this.game.addMessage('{0} adds {1} to their hand and places {2} in their discard pile',
+            player, cardToHand, this.cards);
 
         return true;
     }

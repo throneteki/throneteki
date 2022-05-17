@@ -6,11 +6,12 @@ class Muster extends DrawCard {
             title: 'Search deck for Knight',
             phase: 'marshal',
             cost: ability.costs.kneel(card => card.hasTrait('Knight') && card.getType() === 'character'),
-            handler: context => {
+            message: '{player} plays {source} and kneels {costs.kneel} to search their deck for a Knight character',
+            handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Knight'),
-                    onSelect: (player, card) => this.cardSelected(player, card, context.costs.kneel),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -18,15 +19,17 @@ class Muster extends DrawCard {
         });
     }
 
-    cardSelected(player, card, kneelCard) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} and kneels {2} to search their deck and add {2} to their hand',
-            player, this, card, kneelCard);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.moveCard(card, 'hand');
+            this.game.addMessage('{0} adds {1} to their hand',
+                player, card);
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
-            player, this);
+        this.game.addMessage('{0} does not add any card to their hand',
+            player);
     }
 }
 

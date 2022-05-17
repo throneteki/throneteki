@@ -3,11 +3,12 @@ const PlotCard = require('../../plotcard.js');
 class ATimeForWolves extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            message: '{player} uses {source} to search their deck for a Direwolf card',
             handler: context => {
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.hasTrait('Direwolf'),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -15,30 +16,32 @@ class ATimeForWolves extends PlotCard {
         });
     }
 
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-
-        if(card.getPrintedCost() > 3 || !player.canPutIntoPlay(card)) {
-            this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-                player, this, card);
-            return;
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.moveCard(card, 'hand');
+    
+            if(card.getPrintedCost() > 3 || !player.canPutIntoPlay(card)) {
+                this.game.addMessage('{0} adds {1} to their hand',
+                    player, card);
+                return;
+            }
+    
+            this.revealedCard = card;
+    
+            let buttons = [
+                { text: 'Keep in hand', method: 'keepInHand' },
+                { text: 'Put in play', method: 'putInPlay' }
+            ];
+    
+            this.game.promptWithMenu(player, this, {
+                activePrompt: {
+                    menuTitle: 'Put card into play?',
+                    buttons: buttons
+                },
+    
+                source: this
+            });
         }
-
-        this.revealedCard = card;
-
-        let buttons = [
-            { text: 'Keep in hand', method: 'keepInHand' },
-            { text: 'Put in play', method: 'putInPlay' }
-        ];
-
-        this.game.promptWithMenu(player, this, {
-            activePrompt: {
-                menuTitle: 'Put card into play?',
-                buttons: buttons
-            },
-
-            source: this
-        });
     }
 
     keepInHand(player) {
@@ -46,8 +49,8 @@ class ATimeForWolves extends PlotCard {
             return false;
         }
 
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, this.revealedCard);
+        this.game.addMessage('{0} adds {1} to their hand',
+            player, this.revealedCard);
         this.revealedCard = null;
 
         return true;
@@ -58,8 +61,8 @@ class ATimeForWolves extends PlotCard {
             return false;
         }
 
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play',
-            player, this, this.revealedCard);
+        this.game.addMessage('{0} puts {1} into play',
+            player, this.revealedCard);
         player.putIntoPlay(this.revealedCard);
         this.revealedCard = null;
 
@@ -67,7 +70,7 @@ class ATimeForWolves extends PlotCard {
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any card',
+        this.game.addMessage('{0} does not retrieve any card',
             player, this);
     }
 }

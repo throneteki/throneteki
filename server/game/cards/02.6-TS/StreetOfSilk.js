@@ -7,12 +7,13 @@ class StreetOfSilk extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingLordOrLady()
             },
             cost: ability.costs.kneelFactionCard(),
+            message: '{player} uses {source} and kneels their faction card to search the top 5 cards of their deck for an Ally or Companion card',
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 5,
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'character' && (card.hasTrait('Ally') || card.hasTrait('Companion')),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -30,15 +31,17 @@ class StreetOfSilk extends DrawCard {
         return ourCards.some(card => card.hasTrait('Lord') || card.hasTrait('Lady'));
     }
 
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.moveCard(card, 'hand');
+            this.game.addMessage('{0} adds {1} to their hand',
+                player, card);
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
-            player, this);
+        this.game.addMessage('{0} does not add any card to their hand',
+            player);
     }
 }
 

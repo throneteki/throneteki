@@ -1,8 +1,13 @@
 const GameAction = require('./GameAction');
+const Message = require('../Message');
 
 class AddToHand extends GameAction {
     constructor() {
         super('addToHand');
+    }
+
+    message({ card }) {
+        return Message.fragment('adds {card} to their hand', { card });
     }
 
     canChangeGameState({ card }) {

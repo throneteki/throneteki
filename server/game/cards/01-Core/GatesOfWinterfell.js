@@ -7,7 +7,7 @@ class GatesOfWinterfell extends DrawCard {
             title: 'Reveal top card of deck',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            message: '{player} kneels {source} to reveal the top card of their deck',
+            message: '{player} kneels {costs.kneel} to reveal the top card of their deck',
             gameAction: GameActions.revealTopCards(context => ({
                 player: context.player
             })).then({

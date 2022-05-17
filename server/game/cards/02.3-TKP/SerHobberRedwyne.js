@@ -6,6 +6,7 @@ class SerHobberRedwyne extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
+            message: '{player} uses {source} to search their deck for a Lady character',
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
@@ -19,18 +20,16 @@ class SerHobberRedwyne extends DrawCard {
     }
 
     cardSelected(player, card, valid) {
-        if(!valid) {
-            this.game.addMessage('{0} uses {1} to search their deck for {2}', player, this, card);
-            return;
+        if(valid) {
+            player.moveCard(card, 'hand');
+            this.game.addMessage('{0} adds {1} to their hand',
+                player, card);
         }
-        
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, card);
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
-            player, this);
+        this.game.addMessage('{0} does not add any card to their hand',
+            player);
     }
 }
 

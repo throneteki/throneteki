@@ -7,7 +7,7 @@ class INeverBetAgainstMyFamily extends DrawCard {
             title: 'Put character in play from bottom of your deck',
             phase: 'challenge',
             cost: ability.costs.kneelFactionCard(),
-            message: '{player} plays {source} to reveal the bottom 5 cards of their deck',
+            message: '{player} plays {source} and kneels their faction card to reveal the bottom 5 cards of their deck',
             gameAction: GameActions.revealCards(context => ({
                 cards: context.player.searchDrawDeck(-5),
                 player: context.player,

@@ -8,33 +8,37 @@ class AGiftOfArborRed extends DrawCard {
         this.action({
             title: 'Reveal top 4 cards of each deck',
             cost: ability.costs.kneelFactionCard(),
-            messages: '{player} plays {source} and kneels their faction card to reveal the top 4 cards of each player\'s deck',
+            message: '{player} plays {source} and kneels their faction card to reveal the top 4 cards of each player\'s deck',
             gameAction: GameActions.revealCards(context => ({
                 cards: flatMap(context.game.getPlayers(), player => player.searchDrawDeck(4)),
-                player: context.player
-            })).then({
-                target: {
-                    activePromptTitle: 'Select a card for each player',
-                    mode: 'eachPlayer',
-                    cardCondition: (card, context) => context.event.cards.includes(card),
-                    revealTargets: true
-                },
-                message: {
-                    format: '{player} {chosenCards}. Each player shuffles their deck.',
-                    args: {
-                        chosenCards: context => context.target.map(card => Message.fragment('adds {card} to {owner}\'s hand', { card, owner: card.owner }))
-                    }
-                },
-                handler: context => {
-                    this.game.resolveGameAction(
-                        GameActions.simultaneously(context => [
-                            ...context.target.map(card => GameActions.addToHand({ card, player: card.owner })),
-                            ...context.game.getPlayers().map(player => GameActions.shuffle({ player }))
-                        ]),
-                        context
-                    );
-                }
-            })
+                whileRevealed: GameActions.genericHandler(context => {
+                    this.chooseToAddToHand(context);
+                })
+            }))
+        });
+    }
+
+    chooseToAddToHand(context) {
+        this.game.promptForSelect(context.player, {
+            activePromptTitle: 'Select a card for each player',
+            cardCondition: card => context.revealed.includes(card),
+            mode: 'eachPlayer',
+            onSelect: (player, cards) => {
+                this.game.addMessage('{0} {1}. Each player shuffles their deck', player, cards.map(card => Message.fragment(`adds {card} to ${ player === card.owner ? 'their': '{owner}\'s' } hand`, { card, owner: card.owner })));
+                context.cards = cards;
+                this.game.resolveGameAction(
+                    GameActions.simultaneously(context => [
+                        ...context.cards.map(card => GameActions.addToHand({ card, player: card.owner })),
+                        ...context.game.getPlayers().map(player => GameActions.shuffle({ player }))
+                    ]),
+                    context
+                );
+                return true;
+            },
+            onCancel: (player) => {
+                this.game.addAlert('danger', '{0} does not select any cards for {1}', player, this);
+                return true;
+            }
         });
     }
 }

@@ -6,12 +6,16 @@ class PyatPree extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
+            message: {
+                format: '{player} uses {source} to search the top {numCards} cards of their deck for a Targaryen attachment',
+                args: { numCards: context => context.game.currentChallenge.strengthDifference }
+            },
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: this.game.currentChallenge.strengthDifference,
                     activePromptTitle: 'Select a card',
                     cardCondition: card => (card.getType() === 'attachment' || card.getType() === 'event') && card.isFaction('targaryen'),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -19,15 +23,17 @@ class PyatPree extends DrawCard {
         });
     }
 
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.moveCard(card, 'hand');
+            this.game.addMessage('{0} adds {1} to their hand',
+                player, card);
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not add any card to their hand',
-            player, this);
+        this.game.addMessage('{0} does not add any card to their hand',
+            player);
     }
 }
 
