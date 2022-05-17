@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class LordTywinsHost extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,10 +7,14 @@ class LordTywinsHost extends DrawCard {
             match: card => card.name === 'Tywin Lannister',
             effect: ability.effects.addIcon('military')
         });
-                
+
         this.reaction({
             when: {
                 onCardDiscarded: (event, context) => event.isPillage && event.source.controller === context.player && event.source.isFaction('lannister')
+            },
+            message: {
+                format: '{player} uses {source} to have the opponent discard a {type} card from hand',
+                args: { type: context => context.event.card.getType() }
             },
             limit: ability.limit.perRound(3),
             handler: context => {
@@ -26,6 +31,7 @@ class LordTywinsHost extends DrawCard {
     promptForCardDiscard(context) {
         this.game.promptForSelect(this.game.currentChallenge.loser, {
             source: this,
+            activePromptTitle: `Select a ${context.event.card.getType()}`,
             cardCondition: card => card.location === 'hand' && card.controller === this.game.currentChallenge.loser && card.getType() === context.event.card.getType(),
             onSelect: (player, card) => this.onCardSelected(context, player, card),
             onCancel: player => this.onCancel(player)
@@ -34,8 +40,7 @@ class LordTywinsHost extends DrawCard {
 
     onCardSelected(context, player, card) {
         player.discardCard(card);
-        this.game.addMessage('{0} uses {1} to have {2} discard {3} from their hand',
-            context.player, this, this.game.currentChallenge.loser, card);
+        this.game.addMessage('{0} discards {1} from their hand', this.game.currentChallenge.loser, card);
 
         return true;
     }
@@ -48,8 +53,13 @@ class LordTywinsHost extends DrawCard {
     }
 
     revealHand(context) {
-        this.game.addMessage('{0} uses {1} to have {2} reveal {3} as their hand',
-            context.player, this, this.game.currentChallenge.loser, this.game.currentChallenge.loser.hand);
+        this.game.resolveGameAction(
+            GameActions.revealCards(() => ({
+                player: this.game.currentChallenge.loser,
+                cards: this.game.currentChallenge.loser.hand
+            })),
+            context
+        );
     }
 }
 
