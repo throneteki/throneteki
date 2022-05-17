@@ -1,24 +1,24 @@
 const UiPrompt = require('./uiprompt');
-const TextHelper = require('../TextHelper');
 
 class AcknowledgeRevealCardsPrompt extends UiPrompt {
-    constructor(game, cards, player) {
+    constructor(game, cards, player, source) {
         super(game);
         this.cards = cards;
         this.revealLocations = [...new Set(cards.map(card => card.location))];
-        this.revealingPlayer = player;
-        this.opponents = this.game.getPlayers().filter(player => player !== this.revealingPlayer);
+        this.revealers = player ? [player] : [...new Set(cards.map(card => card.controller))];
+        this.acknowledgers = this.game.getPlayers().filter(player => cards.some(card => card.controller !== player));
+        this.source = source;
         this.clickedButton = { };
     }
 
     activeCondition(player) {
-        return this.opponents.includes(player) && !this.completionCondition(player);
+        return this.acknowledgers.includes(player) && !this.completionCondition(player);
     }
 
     activePrompt() {
         return {
             promptTitle: `Acknowledge Revealed Card${this.cards.length > 1 ? 's' : ''}`,
-            menuTitle: `${this.revealingPlayer.name} is revealing ${TextHelper.count(this.cards.length, 'card')} from their ${this.revealLocations}`,
+            menuTitle: `${this.revealers.length === 1 ? `${this.revealers[0].name} is` : `${this.revealers.length} players are`} revealing ${this.cards.length > 1 ? 'cards' : 'a card'}${this.source ? `for ${this.source.name}` : ''}`,
             buttons: [
                 { text: 'Continue' }
             ]
@@ -26,7 +26,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     waitingPrompt() {
-        return { menuTitle: `Waiting for opponent${this.opponents.length > 1 ? 's' : ''} to acknowledge revealed card${this.cards.length > 1 ? 's' : ''}` };
+        return { menuTitle: `Waiting for other player(s) to acknowledge revealed card${this.cards.length > 1 ? 's' : ''}` };
     }
 
     onMenuCommand(player) {
@@ -40,7 +40,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     }
 
     isComplete() {
-        return this.game.disableRevealAcknowledgement || this.opponents.every(opponent => this.completionCondition(opponent));
+        return this.game.disableRevealAcknowledgement || this.acknowledgers.every(acknowledger => this.completionCondition(acknowledger));
     }
 }
 
