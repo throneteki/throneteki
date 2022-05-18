@@ -73,7 +73,7 @@ class RevealCards extends GameAction {
     highlightRevealedCards(event, cards, players) {
         event.preRevealSelections = {};
         for(let player of players) {
-            event.preRevealSelections[player.id] = {
+            event.preRevealSelections[player.name] = {
                 selectedCards: player.getSelectedCards(),
                 selectableCards: player.getSelectableCards()
             };
@@ -88,8 +88,8 @@ class RevealCards extends GameAction {
         for(let player of players) {
             player.clearSelectedCards();
             player.clearSelectableCards();
-            player.setSelectedCards(event.preRevealSelections[player.id].selectedCards);
-            player.setSelectableCards(event.preRevealSelections[player.id].selectableCards);
+            player.setSelectedCards(event.preRevealSelections[player.name].selectedCards);
+            player.setSelectableCards(event.preRevealSelections[player.name].selectableCards);
         }
         event.preRevealSelections = null;
     }

@@ -5,6 +5,7 @@ class ExchangeOfInformation extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             chooseOpponent: true,
+            message: '{player} uses {source} to choose an opponent and reveal the top 10 cards of their deck',
             handler: context => {
                 this.remainingCardTypes = ['character', 'location', 'attachment', 'event'];
                 this.selectedCards = [];

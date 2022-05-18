@@ -13,7 +13,10 @@ class CalledIntoService extends PlotCard {
                     condition: context => context.event.cards[0].getType() === 'character',
                     thenAction: GameActions.putIntoPlay(context => ({ card: context.event.cards[0] })),
                     elseAction: GameActions.simultaneously(context => [
-                        GameActions.drawCards({ player: context.player, amount: 1 }),
+                        GameActions.drawSpecific(context => ({
+                            player: context.player,
+                            cards: context.event.revealed
+                        })),
                         GameActions.gainGold({ player: context.player, amount: 2 })
                     ])
                 })

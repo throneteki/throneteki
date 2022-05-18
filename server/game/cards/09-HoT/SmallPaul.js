@@ -6,6 +6,10 @@ class SmallPaul extends DrawCard {
             when: {
                 onCharacterKilled: event => event.card === this
             },
+            message: {
+                format: '{player} uses {source} to search the top {reserve} cards of their deck for any number of Steward characters',
+                args: { reserve: () => this.controller.getTotalReserve() }
+            },
             handler: () => {
                 let reserve = this.controller.getTotalReserve();
                 this.game.promptForDeckSearch(this.controller, {
@@ -13,7 +17,7 @@ class SmallPaul extends DrawCard {
                     numToSelect: reserve,
                     activePromptTitle: 'Select any number of Stewards',
                     cardCondition: card => card.hasTrait('Steward') && card.getType() === 'character',
-                    onSelect: (player, card) => this.selectCards(player, card),
+                    onSelect: (player, cards, valids) => this.selectCards(player, cards, valids),
                     onCancel: player => this.cancelSelecting(player),
                     source: this
                 });
@@ -21,15 +25,17 @@ class SmallPaul extends DrawCard {
         });
     }
 
-    selectCards(player, cards) {
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, cards);
-        for(let card of cards) {
-            player.moveCard(card, 'hand');
+    selectCards(player, cards, valids) {
+        if(valids.length > 0) {
+            this.game.addMessage('{0} adds {1} to their hand', player, valids);
+            for(let card of valids) {
+                player.moveCard(card, 'hand');
+            }
         }
     }
 
     cancelSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards', player, this);
+        this.game.addMessage('{0} does not add any cards to their hand', player);
     }
 }
 

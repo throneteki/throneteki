@@ -7,6 +7,7 @@ class RandyllTarly extends DrawCard {
             title: 'Stand Army or reveal top card',
             limit: ability.limit.perPhase(2),
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.hasTrait('The Reach')),
+            message: '{player} uses {source} and kneels {costs.kneel} to either stand an Army character, or reveal the top card of their deck',
             handler: context => {
                 this.context = context;
 
@@ -57,9 +58,9 @@ class RandyllTarly extends DrawCard {
                         type: 'location',
                         not: { trait: 'The Reach' }
                     }),
-                    thenAction: GameActions.drawCards(context => ({
+                    thenAction: GameActions.drawSpecific(context => ({
                         player: context.player,
-                        amount: 1
+                        cards: context.event.revealed
                     }))
                 })
             ])

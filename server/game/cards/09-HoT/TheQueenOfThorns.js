@@ -7,11 +7,12 @@ class TheQueenOfThorns extends DrawCard {
                 onCardKneeled: event => event.card === this
             },
             cost: ability.costs.discardFromHand(card => card.getType() === 'event'),
+            message: '{player} uses {source} and discards {costs.discardFromHand} from their hand to search their deck for an event',
             handler: context => {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'event',
-                    onSelect: (player, card) => this.cardSelected(player, card, context.costs.discardFromHand),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -19,15 +20,17 @@ class TheQueenOfThorns extends DrawCard {
         });
     }
 
-    cardSelected(player, card, discardedCard) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} and discards {2} from their hand to search their deck and add {3} to their hand',
-            player, this, discardedCard, card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.moveCard(card, 'hand');
+            this.game.addMessage('{0} adds {1} to their hand',
+                player, card);
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} and discards {2} from their hand to search their deck but does not add any card to their hand',
-            player, this);
+        this.game.addMessage('{0} does not add any card to their hand',
+            player);
     }
 }
 

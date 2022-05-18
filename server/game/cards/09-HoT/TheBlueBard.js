@@ -6,6 +6,7 @@ class TheBlueBard extends DrawCard {
             when: {
                 onCardLeftPlay: event => event.card === this
             },
+            message: '{player} uses {source} to search the top 10 cards of their deck for any number of Song events',
             handler: () => {
                 this.selectedCards = [];
                 this.game.promptForDeckSearch(this.controller, {
@@ -13,7 +14,7 @@ class TheBlueBard extends DrawCard {
                     numToSelect: 10,
                     activePromptTitle: 'Select any number of events',
                     cardCondition: card => card.hasTrait('Song') && card.getType() === 'event',
-                    onSelect: (player, cards) => this.selectCards(player, cards),
+                    onSelect: (player, cards, valids) => this.selectCards(player, cards, valids),
                     onCancel: player => this.cancelSelecting(player),
                     source: this
                 });
@@ -21,15 +22,17 @@ class TheBlueBard extends DrawCard {
         });
     }
 
-    selectCards(player, cards) {
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, cards);
-        for(let card of cards) {
-            player.moveCard(card, 'hand');
+    selectCards(player, cards, valids) {
+        if(valids.length > 0) {
+            this.game.addMessage('{0} adds {1} to their hand', player, valids);
+            for(let card of valids) {
+                player.moveCard(card, 'hand');
+            }
         }
     }
 
     cancelSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards', player, this);
+        this.game.addMessage('{0} does not add any cards to their hand', player);
     }
 }
 

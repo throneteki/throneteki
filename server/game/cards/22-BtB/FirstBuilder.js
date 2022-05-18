@@ -16,6 +16,10 @@ class FirstBuilder extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'power' && this.isBuilderParticipatingInChallenge(this.controller)
             },
             limit: ability.limit.perPhase(1),
+            message: {
+                format: '{player} uses {source} to search the top 10 cards of their deck for an attachment or location with printed cost {builders} or lower',
+                args: { builders: () => this.getNumberOfBuilders(this.controller) }
+            },
             gameAction: GameActions.search({
                 title: 'Select a card',
                 topCards: 10,
@@ -23,7 +27,7 @@ class FirstBuilder extends DrawCard {
                     type: ['attachment', 'location'],
                     condition: card => card.hasPrintedCost() && card.getPrintedCost() <= this.getNumberOfBuilders(this.controller)
                 },
-                message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
+                message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand(context => ({
                     card: context.searchTarget
                 }))

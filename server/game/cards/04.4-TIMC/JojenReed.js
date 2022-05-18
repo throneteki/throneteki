@@ -16,7 +16,7 @@ class JojenReed extends DrawCard {
                         this.draw();
                     },
                     'Discard revealed cards': context => {
-                        this.discard(context.revealed);
+                        this.discard(context.context.revealed);
                     }
                 })
             }))
