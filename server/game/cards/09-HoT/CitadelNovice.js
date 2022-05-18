@@ -19,9 +19,9 @@ class CitadelNovice extends DrawCard {
                 message: '{player} {gameAction}',
                 gameAction: GameActions.ifCondition({
                     condition: context => isAttachmentOrMaester(context.event.cards[0]),
-                    thenAction: GameActions.drawCards(context => ({
+                    thenAction: GameActions.drawSpecific(context => ({
                         player: context.player,
-                        amount: 1
+                        cards: context.event.revealed
                     }))
                 })
             })

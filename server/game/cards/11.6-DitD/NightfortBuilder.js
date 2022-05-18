@@ -17,9 +17,9 @@ class NightfortBuilder extends DrawCard {
                         faction: 'thenightswatch',
                         type: ['attachment', 'location']
                     }),
-                    thenAction: GameActions.drawCards(context => ({
+                    thenAction: GameActions.drawSpecific(context => ({
                         player: context.player,
-                        amount: 1
+                        cards: context.event.revealed
                     }))
                 })
             })

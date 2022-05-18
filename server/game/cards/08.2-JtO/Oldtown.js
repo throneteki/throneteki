@@ -37,9 +37,9 @@ class Oldtown extends DrawCard {
             gameAction: GameActions.ifCondition({
                 condition: context => context.event.cards[0].getType() === cardType,
                 thenAction: GameActions.simultaneously([
-                    GameActions.drawCards(context => ({
+                    GameActions.drawSpecific(context => ({
                         player: context.player,
-                        amount: 1
+                        cards: context.event.revealed
                     })),
                     GameActions.gainPower(context => ({
                         card: context.player.faction,
@@ -49,7 +49,6 @@ class Oldtown extends DrawCard {
             })
         });
 
-        this.game.addMessage('Then {0} reveals the top card of their deck', this.context.player);
         this.game.resolveGameAction(revealAction, this.context);
 
         return true;

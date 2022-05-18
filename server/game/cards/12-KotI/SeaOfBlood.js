@@ -34,7 +34,7 @@ class SeaOfBlood extends AgendaCard {
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select an event',
                     cardCondition: card => card.getType() === 'event',
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -42,13 +42,15 @@ class SeaOfBlood extends AgendaCard {
         });
     }
 
-    cardSelected(player, card) {
-        this.game.addMessage('Then {0} uses {1} to search their deck and add {2} to their hand', player, this, card);
-        player.moveCard(card, 'hand');
+    cardSelected(player, card, valid) {
+        if(valid) {
+            this.game.addMessage('Then {0} searches their deck and adds {1} to their hand', player, card);
+            player.moveCard(card, 'hand');
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('Then {0} uses {1} to search their deck, but does not add any card to their hand', player, this);
+        this.game.addMessage('Then {0} searches their deck, but does not add any card to their hand', player);
     }
 }
 

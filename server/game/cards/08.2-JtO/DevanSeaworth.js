@@ -7,28 +7,33 @@ class DevanSeaworth extends DrawCard {
                 onDominanceDetermined: event => event.winner === this.controller
             },
             cost: ability.costs.discardXGold(() => 1, () => 99),
+            message: {
+                format: '{player} discards {discardedGold} gold from {source} to search their deck for a non-limited location',
+                args: { discardedGold: context => context.xValue }
+            },
             handler: context => {
-                let xValue = context.xValue;
                 this.game.promptForDeckSearch(this.controller, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.getType() === 'location' && !card.isLimited() && card.getPrintedCost() <= context.xValue && this.controller.canPutIntoPlay(card),
-                    onSelect: (player, card) => this.cardSelected(player, card, xValue),
-                    onCancel: player => this.doneSelecting(player, xValue),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
+                    onCancel: player => this.doneSelecting(player),
                     source: this
                 });
             }
         });
     }
 
-    cardSelected(player, card, xValue) {
-        player.putIntoPlay(card, 'hand');
-        this.game.addMessage('{0} discards {1} gold from {2} to search their deck and put {3} into play',
-            player, xValue, this, card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.putIntoPlay(card, 'hand');
+            this.game.addMessage('{0} puts {1} into play',
+                player, card);
+        }
     }
 
-    doneSelecting(player, xValue) {
-        this.game.addMessage('{0} discards {1} gold from {2} to search their deck, but does not put any card into play',
-            player, xValue, this);
+    doneSelecting(player) {
+        this.game.addMessage('{0} does not put any card into play',
+            player);
     }
 }
 

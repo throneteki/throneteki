@@ -114,7 +114,7 @@ class Search extends GameAction {
     attachGameActionEvent(event, context) {
         if(this.numToSelect) {
             // Do not attach gameAction if no searchTargets are left in search location
-            context.searchTarget = context.searchTarget.filter(card => card.location === this.location);
+            context.searchTarget = context.searchTarget.filter(card => this.location.includes(card.location));
             if(context.searchTarget.length === 0) {
                 return;
             }

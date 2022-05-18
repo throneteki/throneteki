@@ -16,7 +16,7 @@ class Highgarden extends DrawCard {
                 numCards: 3,
                 gameAction: 'reveal'
             },
-            message: '{player} kneels {source} to reveal cards from their hand',
+            message: '{player} kneels {costs.kneel} to reveal up to 3 Tyrell characters from their hand',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.revealCards(context => ({
@@ -52,7 +52,7 @@ class Highgarden extends DrawCard {
                                     strMessages.push(Message.fragment('{characters} +{strength} STR', { characters, strength }));
                                 }
 
-                                this.game.addMessage('{0} uses {1} to give {2} until the end of the phase', thenContext.player, this, strMessages);
+                                this.game.addMessage('{0} gives {1} until the end of the phase', thenContext.player, strMessages);
 
                                 return true;
                             });
@@ -70,9 +70,10 @@ class Highgarden extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                     card.getType() === 'character' && card.isFaction('tyrell') && card.isUnique()
             },
+            message: '{player} uses {source} to return a unique Tyrell character to their hand',
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage('{0} uses {1} to return {2} to their hand', this.controller, this, context.target);
+                this.game.addMessage('{0} returns {1} to their hand', this.controller, context.target);
             }
         });
     }

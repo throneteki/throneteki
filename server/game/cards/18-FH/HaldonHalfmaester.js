@@ -39,9 +39,9 @@ class HaldonHalfmaester extends DrawCard {
         const gameAction = GameActions.simultaneously([
             GameActions.ifCondition({
                 condition: context => context.event.cards[0].isMatch({ type: 'event' }),
-                thenAction: GameActions.drawCards(context => ({
+                thenAction: GameActions.drawSpecific(context => ({
                     player: context.player,
-                    amount: 1
+                    cards: context.event.revealed
                 }))
             }),
             GameActions.ifCondition({

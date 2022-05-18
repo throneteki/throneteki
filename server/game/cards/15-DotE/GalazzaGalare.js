@@ -7,6 +7,7 @@ class GalazzaGalare extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.playingType === 'marshal' && event.card === this
             },
+            message: '{player} uses {source} to search the top 10 cards of their deck for one or more Targaryen characters',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.search({
@@ -17,8 +18,7 @@ class GalazzaGalare extends DrawCard {
                             faction: 'targaryen', type: 'character',
                             condition: (card, context) => this.hasValidPrintedCost(card, context)
                         },
-                        message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
-                        cancelMessage: '{player} uses {source} to search their deck but does not find a card',
+                        message: '{player} adds {searchTarget} to their hand',
                         gameAction: GameActions.simultaneously(context => (
                             context.searchTarget.map(card => GameActions.addToHand({ card }))
                         ))

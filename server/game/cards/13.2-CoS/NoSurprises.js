@@ -12,7 +12,7 @@ class NoSurprises extends DrawCard {
                 cards: context.player.hand
             })).then({
                 message: {
-                    format: 'Then {opponents} cannot play events or bring cards out of shadows',
+                    format: 'Then, until the end of the phase, {opponents} cannot play events or bring cards out of shadows',
                     args: { opponents: context => context.game.getOpponents(context.player) }
                 },
                 handler: context => {

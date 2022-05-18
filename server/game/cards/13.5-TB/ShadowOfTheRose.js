@@ -3,12 +3,13 @@ const DrawCard = require('../../drawcard.js');
 class ShadowOfTheRose extends DrawCard {
     setupCardAbilities() {
         this.action({
+            message: '{player} plays {source} to search the top 10 cards of their deck for a card with shadow',
             handler: () => {
                 this.game.promptForDeckSearch(this.controller, {
                     numCards: 10,
                     activePromptTitle: 'Select a card with shadow',
                     cardCondition: card => card.isShadow(),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -16,16 +17,18 @@ class ShadowOfTheRose extends DrawCard {
         });
     }
 
-    cardSelected(player, card) {
-        player.putIntoShadows(card);
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into shadows',
-            player, this, card);
-        this.returnToHandInsteadOfDiscardPile(player);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            player.putIntoShadows(card);
+            this.game.addMessage('{0} puts {1} into shadows',
+                player, card);
+            this.returnToHandInsteadOfDiscardPile(player);
+        }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into shadows',
-            player, this);
+        this.game.addMessage('{0} does not put any card into shadows',
+            player);
         this.returnToHandInsteadOfDiscardPile(player);
     }
 
