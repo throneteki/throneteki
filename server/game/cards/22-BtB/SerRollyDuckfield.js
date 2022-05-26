@@ -9,7 +9,7 @@ class SerRollyDuckfield extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && event.card !== this && (event.card.hasTrait('Lord') || event.card.hasTrait('King'))
+                onCharacterKilled: event => event.allowSave && event.card.canBeSaved() && (event.card.hasTrait('Lord') || event.card.hasTrait('King'))
             },
             cost: ability.costs.discardFromHand(),
             limit: ability.limit.perRound(1),
