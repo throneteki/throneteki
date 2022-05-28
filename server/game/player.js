@@ -81,6 +81,7 @@ class Player extends Spectator {
         this.mustRevealPlot = undefined;
         this.promptedActionWindows = user.promptedActionWindows;
         this.promptDupes = user.settings.promptDupes;
+        this.hideSpectatorInfoMessages = user.settings.hideSpectatorInfoMessages;
         this.timerSettings = user.settings.timerSettings || {};
         this.timerSettings.windowTimer = user.settings.windowTimer;
         this.keywordSettings = user.settings.keywordSettings;
@@ -1303,6 +1304,7 @@ class Player extends Spectator {
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
+            hideSpectatorInfoMessages: this.hideSpectatorInfoMessages,
             revealTopCard: this.flags.contains('revealTopCard'),
             showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
