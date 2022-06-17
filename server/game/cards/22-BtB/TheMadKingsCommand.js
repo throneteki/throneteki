@@ -1,6 +1,5 @@
 const PlotCard = require('../../plotcard.js');
 const GameActions = require('../../GameActions');
-const Messages = require('../../Messages');
 
 class TheMadKingsCommand extends PlotCard {
     setupCardAbilities() {
@@ -8,42 +7,49 @@ class TheMadKingsCommand extends PlotCard {
             when: {
                 onPhaseStarted: event => event.phase === 'challenge'
             },
-            targets: {
-                character: {
-                    choosingPlayer: 'each',
-                    optional: true,
-                    ifAble: true,
-                    messages: Messages.eachPlayerTargetingForCardType('characters'),
-                    numCards: 3,
-                    activePromptTitle: 'Select up to 3 characters',
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+            target: {
+                choosingPlayer: 'each',
+                subTargets: {
+                    character: {
+                        optional: true,
+                        ifAble: true,
+                        numCards: 3,
+                        activePromptTitle: 'Select up to 3 characters',
+                        cardCondition: card => card.location === 'play area' && card.getType() === 'character'
+                    },
+                    attachment: {
+                        optional: true,
+                        ifAble: true,
+                        numCards: 3,
+                        activePromptTitle: 'Select up to 3 attachments',
+                        cardCondition: card => card.location === 'play area' && card.getType() === 'attachment'
+                    },
+                    location: {
+                        optional: true,
+                        ifAble: true,
+                        numCards: 3,
+                        activePromptTitle: 'Select up to 3 locations',
+                        cardCondition: card => card.location === 'play area' && card.getType() === 'location'
+                    },
+                    handShadows: {
+                        optional: true,
+                        ifAble: true,
+                        numCards: 3,
+                        activePromptTitle: 'Select up to 3 cards',
+                        cardCondition: (card, context) => (card.location === 'hand' || card.location === 'shadows') && card.controller === context.choosingPlayer
+                    }
                 },
-                attachment: {
-                    choosingPlayer: 'each',
-                    optional: true,
-                    ifAble: true,
-                    messages: Messages.eachPlayerTargetingForCardType('attachments'),
-                    numCards: 3,
-                    activePromptTitle: 'Select up to 3 attachments',
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'attachment'
-                },
-                location: {
-                    choosingPlayer: 'each',
-                    optional: true,
-                    ifAble: true,
-                    messages: Messages.eachPlayerTargetingForCardType('locations'),
-                    numCards: 3,
-                    activePromptTitle: 'Select up to 3 locations',
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'location'
-                },
-                handShadows: {
-                    choosingPlayer: 'each',
-                    optional: true,
-                    ifAble: true,
-                    messages: Messages.eachPlayerSecretTargetingForCardType('cards in hand and/or shadows'),
-                    numCards: 3,
-                    activePromptTitle: 'Select up to 3 cards',
-                    cardCondition: (card, context) => (card.location === 'hand' || card.location === 'shadows') && card.controller === context.choosingPlayer
+                messages: {
+                    selected: {
+                        format: '{targetSelection.choosingPlayer} chooses {formattedCards} for {source}',
+                        args: { formattedCards: context => this.buildCardMessages(context.currentTargetSelection.value) }
+                    },
+                    unable: '{targetSelection.choosingPlayer} has no cards for {source}',
+                    noneSelected: '{targetSelection.choosingPlayer} chooses no cards for {source}',
+                    skipped: {
+                        type: 'danger',
+                        format: '{targetSelection.choosingPlayer} has cards to choose for {source} but did not choose any'
+                    }
                 }
             },
             handler: context => {
@@ -102,23 +108,7 @@ class TheMadKingsCommand extends PlotCard {
                     gameActions.push(GameActions.returnCardToDeck({ card, bottom: true, allowSave: false }));
                 }
 
-                let cardsFromPlay = cardsOwnedByPlayer.filter(card => card.location === 'play area' && !card.facedown);
-                let cardsMoved = [];
-                if(cardsFromPlay.length !== 0) {
-                    cardsMoved.push(...cardsFromPlay);
-                }
-
-                let facedownAttachments = cardsOwnedByPlayer.filter(card => card.location === 'play area' && card.getType() === 'attachment' && card.facedown);
-                if(facedownAttachments.length !== 0) {
-                    cardsMoved.push(`${facedownAttachments.length} facedown attachment${facedownAttachments.length > 1 ? 's' : ''}`);
-                }
-
-                let cardsFromHandOrShadows = cardsOwnedByPlayer.filter(card => card.location === 'hand' || card.location === 'shadows');
-                if(cardsFromHandOrShadows.length !== 0) {
-                    cardsMoved.push(`${cardsFromHandOrShadows.length} cards from their hand and/or shadows area`);
-                }
-
-                this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}', player, cardsMoved, this);
+                this.game.addMessage('{0} moves {1} to the bottom of their deck for {2}', player, this.buildCardMessages(cardsOwnedByPlayer), this);
             } else {
                 this.game.addMessage('{0} does not have any cards moved to the bottom of their deck for {1}',
                     player, this);
@@ -126,6 +116,26 @@ class TheMadKingsCommand extends PlotCard {
         }
 
         this.game.resolveGameAction(GameActions.simultaneously(gameActions));
+    }
+
+    buildCardMessages(cards) {
+        let messageArray = [];
+        let cardsFromPlay = cards.filter(card => card.location === 'play area' && !card.facedown);
+        if(cardsFromPlay.length !== 0) {
+            messageArray.push(...cardsFromPlay);
+        }
+
+        let facedownAttachments = cards.filter(card => card.location === 'play area' && card.getType() === 'attachment' && card.facedown);
+        if(facedownAttachments.length !== 0) {
+            messageArray.push(`${facedownAttachments.length} facedown attachment${facedownAttachments.length > 1 ? 's' : ''}`);
+        }
+
+        let cardsFromHandOrShadows = cards.filter(card => card.location === 'hand' || card.location === 'shadows');
+        if(cardsFromHandOrShadows.length !== 0) {
+            messageArray.push(`${cardsFromHandOrShadows.length} cards from their hand and/or shadows area`);
+        }
+
+        return messageArray;
     }
 }
 

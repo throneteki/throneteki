@@ -7,6 +7,7 @@ class AbilityChoiceSelection {
         this.eligibleChoices = options.eligibleChoices;
         this.targetingType = options.targetingType;
         this.name = options.name;
+        this.subResults = options.subResults;
         this.resolved = false;
         this.cancelled = false;
         this.value = null;
