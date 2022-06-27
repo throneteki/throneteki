@@ -15,7 +15,7 @@ class EuronCrowsEye extends DrawCard {
             choices: {
                 'Put Warship into play': context => {
                     this.game.promptForSelect(context.player, {
-                        cardCondition: card => card.getType() === 'location' && card.location === 'hand' && card.hasTrait('Warship') && this.controller.canPutIntoPlay(card),
+                        cardCondition: card => card.getType() === 'location' && card.location === 'hand' && context.player === card.controller && card.hasTrait('Warship') && this.controller.canPutIntoPlay(card),
                         source: this,
                         onSelect: (player, card) => this.warshipSelected(player, card)
                     });
