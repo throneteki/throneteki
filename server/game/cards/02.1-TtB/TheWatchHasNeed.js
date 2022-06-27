@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class TheWatchHasNeed extends DrawCard {
     setupCardAbilities() {
@@ -9,63 +10,35 @@ class TheWatchHasNeed extends DrawCard {
                 format: '{player} plays {source} to name a trait and search the top {reserve} cards of their deck',
                 args: { reserve: context => context.player.getTotalReserve() }
             },
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a trait',
-                        buttons: [
-                            { text: 'Builder', method: 'setTrait', arg: 'Builder' },
-                            { text: 'Ranger', method: 'setTrait', arg: 'Ranger' },
-                            { text: 'Steward', method: 'setTrait', arg: 'Steward' },
-                            { text: 'Cancel', method: 'cancelTraitSelection' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.choose({
+                player: () => this.controller,
+                title: 'Select a trait',
+                message: '{choosingPlayer} names the {choice} trait',
+                choices: {
+                    'Builder': this.gameActionForTrait('Builder'),
+                    'Ranger': this.gameActionForTrait('Ranger'),
+                    'Steward': this.gameActionForTrait('Steward')
+                }
+            })
         });
     }
 
-    setTrait(player, trait) {
-        let reserve = player.getTotalReserve();
+    gameActionForTrait(trait) {
+        return GameActions.genericHandler(context => {
+            let reserve = context.player.getTotalReserve();
 
-        this.game.addMessage('{0} names the {1} trait', player, trait);
-        this.game.promptForDeckSearch(this.controller, {
-            numCards: reserve,
-            numToSelect: reserve, // player can stop earlier clicking Done when happy
-            activePromptTitle: 'Select a card',
-            cardCondition: card => card.getType() === 'character' && card.hasTrait(trait),
-            onSelect: (player, cards, valids) => this.cardsSelected(player, cards, valids),
-            onCancel: player => this.doneSelecting(player),
-            source: this
+            this.game.resolveGameAction(
+                GameActions.search({
+                    title: 'Select a character',
+                    match: { trait: trait },
+                    numToSelect: reserve,
+                    topCards: reserve,
+                    message: '{player} adds {searchTarget} to their hand',
+                    gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
+                }), 
+                context
+            );
         });
-
-        return true;
-    }
-
-    cardsSelected(player, cards, valids) {
-        if(valids.length > 0) {
-            for(let valid of valids) {
-                player.moveCard(valid, 'hand');
-            }
-            this.game.addMessage('{0} adds {1} to their hand',
-                player, valids);
-    
-        }
-        return true;
-    }
-
-    cancelTraitSelection(player) {
-        this.game.addAlert('danger', '{0} cancels the effect of {1}', player, this);
-
-        return true;
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand',
-            player);
-
-        return true;
     }
 }
 

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class OlennasCunning extends DrawCard {
     setupCardAbilities() {
@@ -7,49 +8,31 @@ class OlennasCunning extends DrawCard {
                 afterChallenge: event => ['intrigue', 'power'].includes(event.challenge.challengeType) && event.challenge.winner === this.controller
             },
             message: '{player} plays {source} to have the losing opponent name a cardtype and search their deck',
-            handler: () => {
-                let buttons = [
-                    { text: 'Character', method: 'typeSelected', arg: 'character' },
-                    { text: 'Location', method: 'typeSelected', arg: 'location' },
-                    { text: 'Attachment', method: 'typeSelected', arg: 'attachment' },
-                    { text: 'Event', method: 'typeSelected', arg: 'event' }
-                ];
-
-                this.game.promptWithMenu(this.game.currentChallenge.loser, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a card type',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            gameAction: GameActions.choose({
+                player: () => this.game.currentChallenge.loser,
+                title: 'Select a card type',
+                message: {
+                    format: '{choosingPlayer} names the {choice} cardtype'
+                },
+                choices: {
+                    'Character': this.searchGameActionForCardtype('Character'),
+                    'Location': this.searchGameActionForCardtype('Location'),
+                    'Attachment': this.searchGameActionForCardtype('Attachment'),
+                    'Event': this.searchGameActionForCardtype('Event')
+                }
+            })
         });
     }
 
-    typeSelected(player, type) {
-        this.game.addMessage('{0} names the {1} cardtype', this.game.currentChallenge.loser, type);
-        this.game.promptForDeckSearch(this.controller, {
-            activePromptTitle: 'Select a card',
-            cardCondition: card => card.getType() !== type,
-            onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-            onCancel: player => this.doneSelecting(player),
-            source: this
+    searchGameActionForCardtype(cardType) {
+        return GameActions.search({
+            title: `Select a non-${cardType}`,
+            match: { condition: card => card.getType() !== cardType.toLowerCase() },
+            message: '{player} {gameAction}',
+            gameAction: GameActions.addToHand(context => ({
+                card: context.searchTarget
+            }))
         });
-
-        return true;
-    }
-
-    cardSelected(player, card, valid) {
-        if(valid) {
-            player.moveCard(card, 'hand');
-            this.game.addMessage('{0} adds {1} to their hand',
-                player, card);
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand',
-            player);
     }
 }
 

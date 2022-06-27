@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class SerHobberRedwyne extends DrawCard {
     setupCardAbilities() {
@@ -7,29 +8,18 @@ class SerHobberRedwyne extends DrawCard {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
             message: '{player} uses {source} to search their deck for a Lady character',
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'character' && card.hasTrait('Lady'),
-                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameActions: GameActions.search({
+                title: 'Select a character',
+                match: {
+                    type: 'character',
+                    trait: 'Lady'
+                },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card, valid) {
-        if(valid) {
-            player.moveCard(card, 'hand');
-            this.game.addMessage('{0} adds {1} to their hand',
-                player, card);
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand',
-            player);
     }
 }
 

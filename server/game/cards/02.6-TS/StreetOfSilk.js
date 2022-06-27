@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class StreetOfSilk extends DrawCard {
     setupCardAbilities(ability) {
@@ -8,16 +9,18 @@ class StreetOfSilk extends DrawCard {
             },
             cost: ability.costs.kneelFactionCard(),
             message: '{player} uses {source} and kneels their faction card to search the top 5 cards of their deck for an Ally or Companion card',
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 5,
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'character' && (card.hasTrait('Ally') || card.hasTrait('Companion')),
-                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.search({
+                topCards: 5,
+                title: 'Select a card',
+                match: {
+                    type: 'character',
+                    trait: ['Ally', 'Companion']
+                },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
     }
 
@@ -29,19 +32,6 @@ class StreetOfSilk extends DrawCard {
 
         let ourCards = challenge.attackingPlayer === this.controller ? challenge.attackers : challenge.defenders;
         return ourCards.some(card => card.hasTrait('Lord') || card.hasTrait('Lady'));
-    }
-
-    cardSelected(player, card, valid) {
-        if(valid) {
-            player.moveCard(card, 'hand');
-            this.game.addMessage('{0} adds {1} to their hand',
-                player, card);
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand',
-            player);
     }
 }
 

@@ -1,33 +1,20 @@
 const PlotCard = require('../../plotcard.js');
+const GameActions = require('../../GameActions');
 
 class SummonedByTheConclave extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
             message: '{player} uses {source} to search their deck for an in-faction card',
-            handler: context => {
-                this.game.promptForDeckSearch(context.player, {
-                    numCards: 10,
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.isFaction(context.player.getFaction()),
-                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.search({
+                topCards: 10,
+                title: 'Select a card',
+                match: { condition: card => card.isFaction(this.controller.getFaction()) },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card, valid) {
-        if(valid) {
-            player.moveCard(card, 'hand');
-            this.game.addMessage('{0} adds {1} to their hand',
-                player, card);
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand',
-            player);
     }
 }
 

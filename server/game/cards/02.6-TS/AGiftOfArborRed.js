@@ -24,7 +24,7 @@ class AGiftOfArborRed extends DrawCard {
             cardCondition: card => context.revealed.includes(card),
             mode: 'eachPlayer',
             onSelect: (player, cards) => {
-                this.game.addMessage('{0} {1}. Each player shuffles their deck', player, cards.map(card => Message.fragment(`adds {card} to ${ player === card.owner ? 'their': '{owner}\'s' } hand`, { card, owner: card.owner })));
+                this.game.addMessage('{0} {1}. Each player shuffles their deck', player, cards.map(card => Message.fragment(`adds {card} to ${ player === card.owner ? 'their' : '{owner}\'s' } hand`, { card, owner: card.owner })));
                 context.cards = cards;
                 this.game.resolveGameAction(
                     GameActions.simultaneously(context => [
