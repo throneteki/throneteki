@@ -1,37 +1,47 @@
 const GameAction = require('./GameAction');
 const NullableGameAction = require('./NullableGameAction');
+const AbilityMessage = require('../AbilityMessage');
 
 class IfGameAction extends GameAction {
     constructor({ condition, thenAction, elseAction = NullableGameAction }) {
         super('if');
 
         this.condition = condition;
-        this.thenAction = thenAction;
-        this.elseAction = elseAction;
+        this.thenAction = this.buildAction(thenAction);
+        this.elseAction = this.buildAction(elseAction);
+    }
+
+    buildAction(action) {
+        if(!action.gameAction) {
+            return {
+                gameAction: action,
+                message: AbilityMessage.create(null)
+            };
+        }
+        return {
+            gameAction: action.gameAction,
+            message: AbilityMessage.create(action.message)
+        };
     }
 
     message(context) {
-        if(this.condition(context)) {
-            return this.thenAction.message(context);
-        }
-
-        return this.elseAction.message(context);
+        const action = this.getAction(context);
+        return action.gameAction.message(context);
     }
 
     allow(context) {
-        if(this.condition(context)) {
-            return this.thenAction.allow(context);
-        }
-
-        return this.elseAction.allow(context);
+        const action = this.getAction(context);
+        return action.gameAction.allow(context);
     }
 
     createEvent(context) {
-        if(this.condition(context)) {
-            return this.thenAction.createEvent(context);
-        }
+        const action = this.getAction(context);
+        action.message.output(context.game, { ...context, gameAction: action.gameAction });
+        return action.gameAction.createEvent(context);
+    }
 
-        return this.elseAction.createEvent(context);
+    getAction(context) {
+        return this.condition(context) ? this.thenAction : this.elseAction;
     }
 }
 

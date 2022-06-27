@@ -1,6 +1,5 @@
 const GameAction = require('./GameAction');
 const Message = require('../Message');
-const TextHelper = require('../TextHelper');
 
 class DrawSpecific extends GameAction {
     constructor() {
