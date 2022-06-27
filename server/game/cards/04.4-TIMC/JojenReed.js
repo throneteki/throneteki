@@ -12,11 +12,13 @@ class JojenReed extends DrawCard {
                 cards: context.game.getPlayers().map(player => player.drawDeck[0]),
                 player: context.player,
                 whileRevealed: GameActions.choose({
-                    'Draw top cards': () => {
-                        this.draw();
-                    },
-                    'Discard revealed cards': context => {
-                        this.discard(context.context.revealed);
+                    choices: {
+                        'Draw top cards': GameActions.genericHandler(() => {
+                            this.draw();
+                        }),
+                        'Discard revealed cards': GameActions.genericHandler(context => {
+                            this.discard(context.revealed);
+                        })
                     }
                 })
             }))
