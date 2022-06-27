@@ -1,5 +1,5 @@
 class AbilityMessage {
-    static create(formatOrProperties) {
+    static create(formatOrProperties, specialArgs = null) {
         class NullValue {
             output() {
                 // no-op.
@@ -25,9 +25,10 @@ class AbilityMessage {
         }
 
         if(typeof(formatOrProperties) === 'string') {
-            return new AbilityMessage({ format: formatOrProperties });
+            return new AbilityMessage({ format: formatOrProperties, args: specialArgs });
         }
 
+        formatOrProperties.args = { ...formatOrProperties.args, ...specialArgs };
         return new AbilityMessage(formatOrProperties);
     }
 
