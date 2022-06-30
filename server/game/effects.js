@@ -1521,7 +1521,7 @@ const Effects = {
                 }
             }
         };
-    }
+    },
 };
 
 module.exports = Effects;
