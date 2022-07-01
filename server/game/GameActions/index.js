@@ -43,10 +43,7 @@ const GameActions = {
     addToHand: props => new AbilityAdapter(AddToHand, props),
     cancelEffects: props => new AbilityAdapter(CancelEffects, props),
     checkReserve: props => new AbilityAdapter(CheckReserve, props),
-    choose: props => new AbilityAdapter(
-        new ChooseGameAction(props),
-        context => context
-    ),
+    choose: props => new ChooseGameAction(props),
     discardAtRandom: props => new AbilityAdapter(DiscardAtRandom, props),
     discardCard: props => new AbilityAdapter(DiscardCard, props),
     discardToken: props => new AbilityAdapter(DiscardToken, props),
