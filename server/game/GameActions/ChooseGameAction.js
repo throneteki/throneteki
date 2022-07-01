@@ -64,19 +64,19 @@ class ChooseGameAction extends GameAction {
     }
 
     createEvent(context) {
-        const choosingPlayer = this.playerFunc(context);
-        const title = this.title instanceof Function ? this.title(context) : this.title;
-        const choices = this.choices.filter(choice => choice.condition(context)/* && choice.gameAction.allow(context)*/); // Allow check disabled due to affecting various tests
-        return this.event('onChoose', { choosingPlayer, title, choices }, event => {
-            context.choosingPlayer = event.choosingPlayer;
-            if(event.choices.length === 1) {
-                context.selectedChoice = event.choices[0];
+        return this.event('onChoose', {}, () => {
+            const choosingPlayer = this.playerFunc(context);
+            const title = this.title instanceof Function ? this.title(context) : this.title;
+            const choices = this.choices.filter(choice => choice.condition(context)/* && choice.gameAction.allow(context)*/); // Allow check disabled due to affecting various tests
+            context.choosingPlayer = choosingPlayer;
+            if(choices.length === 1) {
+                context.selectedChoice = choices[0];
                 context.selectedChoice.message.output(context.game, context);
                 context.game.resolveGameAction(context.selectedChoice.gameAction, context);
                 return;
             }
 
-            context.game.queueStep(new AbilityChoicePrompt(context.game, context, event.title, event.choices));
+            context.game.queueStep(new AbilityChoicePrompt(context.game, context, title, choices));
         });
     }
 }
