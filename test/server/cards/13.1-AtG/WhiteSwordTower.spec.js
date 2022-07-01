@@ -73,5 +73,48 @@ describe('White Sword Tower', function() {
                 });
             });
         });
+
+        describe('vs discard pile event abilities', function() {
+            beforeEach(function() {
+                const deck = this.buildDeck('lannister', [
+                    'A Noble Cause',
+                    'White Sword Tower', 'Ser Jaime Lannister (LoCR)', 'Viserion (Core)', 'A Dragon Is No Slave', 'Nightmares'
+                ]);
+                this.player1.selectDeck(deck);
+                this.player2.selectDeck(deck);
+                this.startGame();
+                this.keepStartingHands();
+
+                this.discardEvent = this.player2.findCardByName('A Dragon Is No Slave', 'hand');
+                this.event = this.player2.findCardByName('Nightmares', 'hand');
+
+                this.player1.clickCard('Ser Jaime Lannister', 'hand');
+                this.player1.clickCard('White Sword Tower', 'hand');
+
+                this.player2.clickCard('Viserion', 'hand');
+
+                this.completeSetup();
+
+                this.selectFirstPlayer(this.player2);
+                this.completeMarshalPhase();
+
+                this.player2.dragCard(this.discardEvent, 'discard pile');
+            });
+
+            it('does not count the discard pile event ability as playing a card', function() {
+                let character = this.player2.findCardByName('Viserion', 'play area');
+                this.unopposedChallenge(this.player2, 'Power', character);
+
+                expect(this.player2).toAllowAbilityTrigger(this.discardEvent);
+
+                this.player2.triggerAbility(this.discardEvent);
+
+                // Play event
+                this.player2.clickCard('Nightmares', 'hand');
+                this.player2.clickCard(character);
+
+                expect(character.isAnyBlank()).toBe(true);
+            });
+        });
     });
 });
