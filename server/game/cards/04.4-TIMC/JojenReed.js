@@ -13,36 +13,18 @@ class JojenReed extends DrawCard {
                 player: context.player,
                 whileRevealed: GameActions.choose({
                     choices: {
-                        'Discard revealed cards': context => {
-                            this.discard(context.revealed);
+                        'Discard revealed cards': {
+                            message: '{player} chooses to have the revealed cards discarded',
+                            gameAction: GameActions.simultaneously(context => context.revealed.map(card => GameActions.discardCard({ card, source: this })))
                         },
-                        'Each player draw 1 card': () => {
-                            this.draw();
+                        'Each player draw 1 card': {
+                            message: '{player} chooses to have each player draw 1 card',
+                            gameAction: GameActions.simultaneously(this.game.getPlayers().map(player => GameActions.drawCards({ player: player, amount: 1 })))
                         }
                     }
                 })
             }))
         });
-    }
-
-    draw() {
-        for(let player of this.game.getPlayers()) {
-            if(player.canDraw()) {
-                player.drawCardsToHand(1);
-            }
-        }
-
-        this.game.addMessage('{0} uses {1} to have each player draw 1 card', this.controller, this);
-    }
-
-    discard(cards) {
-        // TODO: This cannot be re-implemented as simultaneous game actions until Tywin LoCR is re-implemented to
-        // look at cards discard from a specific player's deck.
-        for(let player of this.game.getPlayers()) {
-            player.discardCards(cards.filter(card => card.owner === player));
-        }
-
-        this.game.addMessage('{0} uses {1} to have the revealed cards discarded', this.controller, this);
     }
 }
 
