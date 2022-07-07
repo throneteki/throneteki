@@ -1,6 +1,5 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
-const NullEvent = require('../../NullEvent.js');
 
 class JonArryn extends DrawCard {
     setupCardAbilities(ability) {
@@ -26,14 +25,14 @@ class JonArryn extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously(context => context.targets.selections.filter(selection => selection.value).map(selection => GameActions.standCard({ card: selection.value }))
-                ),
-                context);
+                    ), context
+                );
                 // This isn't ".then" as, technically with how it's worded, the "then" part of the ability should work even if no characters are chosen to stand.
                 this.game.queueSimpleStep(() => {
                     this.game.addPhaseAfter('challenge', 'challenge');
                 });
             }
-        })
+        });
     }
 }
 
