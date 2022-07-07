@@ -1,8 +1,8 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
+const GameActions = require('../../GameActions')
 
 class ATraitorsWhisper extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.action({
             condition: context => context.player.discardPile.some(card => card.isShadow()),
             target: {
@@ -14,21 +14,21 @@ class ATraitorsWhisper extends DrawCard {
             message: '{player} plays {source} to reveal 1 card in each players shadow area, if able',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.simultaneously(context => context.targets.getTargets().map(card => GameActions.revealCard({ card }))),
+                    GameActions.simultaneously(context => context.target.map(card => GameActions.revealCard({ card }))),
                     context
                 ).thenExecute(event => {
-                    this.revealed = event.childEvents.map(childEvent => childEvent.card);
-                    this.game.promptWithMenu(context.player, this, {
-                        activePrompt: {
-                            menuTitle: 'Put revealed cards into play?',
-                            buttons: [
-                                { text: 'Yes', method: 'putIntoPlay' },
-                                { text: 'No', method: 'pass' }
-                            ]
-                        },
-                        source: this
-                    });
-                });
+                        this.revealed = event.childEvents.map(childEvent => childEvent.card);
+                        this.game.promptWithMenu(context.player, this, {
+                            activePrompt: {
+                                menuTitle: 'Put revealed cards into play?',
+                                buttons: [
+                                    { text: 'Yes', method: 'putIntoPlay' },
+                                    { text: 'No', method: 'pass' }
+                                ]
+                            },
+                            source: this
+                        });
+                    })
             } 
         });
     }
