@@ -25,7 +25,7 @@ class TheKingInTheNarrowSea extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(GameActions.kneelCard({ card: context.target }), context);
             }
-        })
+        });
     }
 }
 
