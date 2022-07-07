@@ -827,6 +827,14 @@ class Game extends EventEmitter {
         this.remainingPhases.unshift(phase);
     }
 
+    addPhaseAfter(phase, after) {
+        if(this.currentPhase === after) {
+            this.addPhase(phase);
+        } else {
+            this.remainingPhases.splice(this.remainingPhases.indexOf(after), 0, phase);
+        }
+    }
+
     queueStep(step) {
         this.pipeline.queueStep(step);
     }
