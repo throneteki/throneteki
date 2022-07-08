@@ -10,7 +10,8 @@ class Crannogmen extends DrawCard {
             },
             cost: ability.costs.putSelfIntoShadows(),
             target: {
-                choosingPlayer: (player, context) => player === context.event.challenge.winner,
+                title: 'Select a character to kill',
+                choosingPlayer: (player, context) => player === context.event.challenge.loser,
                 cardCondition: (card, context) => card.location === 'play area' &&
                     card.controller === context.event.challenge.loser &&
                     card.getType() === 'character' &&
