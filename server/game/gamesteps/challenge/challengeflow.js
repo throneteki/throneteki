@@ -18,6 +18,8 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.resetCards()),
             new SimpleStep(this.game, () => this.recalculateEffects()),
             new SimpleStep(this.game, () => this.announceChallenge()),
+            new SimpleStep(this.game, () => this.promptForDefenders(false)), // TODO: Reapproach this once Lysono Maar ability is refined & confirmed
+            new SimpleStep(this.game, () => this.announceDefenderStrength(false)), // TODO: Reapproach this once Lysono Maar ability is refined & confirmed
             new SimpleStep(this.game, () => this.promptForAttackers()),
             new SimpleStep(this.game, () => this.recalculateEffects()),
             new SimpleStep(this.game, () => this.chooseStealthTargets()),
@@ -25,8 +27,8 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.initiateChallenge()),
             new SimpleStep(this.game, () => this.announceAttackerStrength()),
             new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
-            new SimpleStep(this.game, () => this.promptForDefenders()),
-            new SimpleStep(this.game, () => this.announceDefenderStrength()),
+            new SimpleStep(this.game, () => this.promptForDefenders(true)),
+            new SimpleStep(this.game, () => this.announceDefenderStrength(true)),
             new ActionWindow(this.game, 'After defenders declared', 'defendersDeclared'),
             new SimpleStep(this.game, () => this.determineWinner()),
             new SimpleStep(this.game, () => this.challengeBonusPower()),
@@ -50,6 +52,9 @@ class ChallengeFlow extends BaseStep {
 
     announceChallenge() {
         this.game.addMessage('{0} is initiating a {1} challenge', this.challenge.attackingPlayer, this.challenge.challengeType);
+        if(this.challenge.defendersDeclaredBeforeAttackers) {
+            this.game.addMessage('{0} may declare defenders before {1} has declared attackers, and cannot declare defenders after attackers are declared', this.challenge.defendingPlayer, this.challenge.attackingPlayer);
+        }
     }
 
     promptForAttackers() {
@@ -103,7 +108,10 @@ class ChallengeFlow extends BaseStep {
             this.challenge.challengeType, this.challenge.defendingPlayer, this.challenge.attackerStrength);
     }
 
-    promptForDefenders() {
+    promptForDefenders(afterAttackers) {
+        if((this.challenge.defendersDeclaredBeforeAttackers && afterAttackers) || (!this.challenge.defendersDeclaredBeforeAttackers && !afterAttackers)) {
+            return;
+        }
         if(this.challenge.isSinglePlayer) {
             return;
         }
@@ -156,7 +164,10 @@ class ChallengeFlow extends BaseStep {
         return true;
     }
 
-    announceDefenderStrength() {
+    announceDefenderStrength(afterAttackers) {
+        if((this.challenge.defendersDeclaredBeforeAttackers && afterAttackers) || (!this.challenge.defendersDeclaredBeforeAttackers && !afterAttackers)) {
+            return;
+        }
         // Explicitly recalculate strength in case an effect has modified character strength.
         this.challenge.calculateStrength();
         if(this.challenge.defenderStrength > 0 || this.challenge.defenders.length > 0) {
