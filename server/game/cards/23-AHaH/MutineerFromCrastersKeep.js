@@ -1,4 +1,3 @@
-const { context } = require('raven');
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
 
@@ -19,7 +18,7 @@ class MutineerFromCrastersKeep extends DrawCard {
             handler: context => {
                 this.game.resolveGameAction(GameActions.discardCard({ card: context.target }), context);
             }
-        })
+        });
     }
 }
 
