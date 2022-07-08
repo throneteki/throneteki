@@ -4,11 +4,6 @@ const GameActions = require('../../GameActions');
 class TheWardenOfTheWest extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ faction: 'lannister', trait: 'Lord' });
-
-        this.whileAttached({
-            effect: ability.effects.addTrait('Commander')
-        });
-        
         this.reaction({
             when: {
                 // TODO: Implement player-aggregate so it only looks at cards being discarded from an individuals hands rather than aggregating all cards being discarded at once
@@ -24,10 +19,10 @@ class TheWardenOfTheWest extends DrawCard {
     }
 
     getNumberToDraw(event) {
-        return Math.min(event.events.filter(discardEvent => (
+        return event.events.filter(discardEvent => (
             discardEvent.cardStateWhenDiscarded.controller !== this.controller &&
             discardEvent.cardStateWhenDiscarded.location === 'hand'
-        )).length, 3);
+        )).length;
     }
 }
 
