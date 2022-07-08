@@ -195,10 +195,11 @@ describe('Event', function() {
             });
         });
 
-        describe('when the amount is not equal to the desired amount', function() {
+        describe('when the custom isFullyResolved function returns false', function() {
             beforeEach(function() {
-                this.event.amount = 1;
-                this.event.desiredAmount = 2;
+                const isFullyResolved = jasmine.createSpy('isFullyResolved');
+                isFullyResolved.and.returnValue(false);
+                this.event = new Event('onEvent', { isFullyResolved });
             });
 
             it('returns false', function() {
@@ -206,10 +207,11 @@ describe('Event', function() {
             });
         });
 
-        describe('when the amount is equal to the desired amount', function() {
+        describe('when the custom isFullyResolved function returns true', function() {
             beforeEach(function() {
-                this.event.amount = 2;
-                this.event.desiredAmount = 2;
+                const isFullyResolved = jasmine.createSpy('isFullyResolved');
+                isFullyResolved.and.returnValue(true);
+                this.event = new Event('onEvent', { isFullyResolved });
             });
 
             it('returns true', function() {
@@ -217,8 +219,9 @@ describe('Event', function() {
             });
         });
 
-        describe('when there are no amounts', function() {
+        describe('when there is no custom isFullyResolved param', function() {
             it('returns true', function() {
+                this.event = new Event('onEvent', {});
                 expect(this.event.resolved).toBe(true);
             });
         });
