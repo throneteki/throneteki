@@ -24,7 +24,8 @@ class CardMatcher {
             Matcher.containsValue(properties.facedown, card.facedown) &&
             Matcher.containsValue(properties.parent, card.parent) &&
             Matcher.anyValue(properties.not, notProperties => !CardMatcher.isMatch(card, notProperties)) &&
-            Matcher.anyValue(properties.or, orProperties => CardMatcher.isMatch(card, orProperties))
+            Matcher.anyValue(properties.or, orProperties => CardMatcher.isMatch(card, orProperties)) &&
+            Matcher.containsValue(properties.controller, card.controller)
         );
     }
 
