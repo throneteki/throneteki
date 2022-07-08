@@ -178,6 +178,21 @@ const Effects = {
     canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
     mustBeDeclaredAsAttacker: challengeOptionEffect('mustBeDeclaredAsAttacker'),
     mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
+    defendersDeclaredBeforeAttackers: function() {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                if(context.game.currentChallenge) {
+                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = true;
+                }
+            },
+            unapply: function(player, context) {
+                if(context.game.currentChallenge) {
+                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = false;
+                }
+            }
+        };
+    },
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
