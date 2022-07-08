@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+const GameActions = require('../../GameActions');
 
 class FleaBottomAlley extends DrawCard {
     setupCardAbilities(ability) {
@@ -20,11 +20,21 @@ class FleaBottomAlley extends DrawCard {
                 ability.costs.kneelSelf(),
                 ability.costs.sacrificeSelf()
             ],
+            message: '{player} kneels and sacrifices {source} to put {target} into play',
             handler: context => {
-                context.player.putIntoPlay(context.target);
-                let cards = context.player.drawCardsToHand(1).length;
-                this.game.addMessage('{0} kneels and sacrifice {1} to put {2} into play from their hand and to draw {3} to hand',
-                    context.player, this, context.target, TextHelper.count(cards, 'card'));
+                this.game.resolveGameAction(
+                    GameActions.putIntoPlay(context => ({
+                        player: context.player,
+                        card: context.target
+                    })).then({
+                        message: 'Then {player} draws 1 card',
+                        gameAction: GameActions.drawCards(context => ({
+                            player: context.player,
+                            amount: 1
+                        }))
+                    }),
+                    context
+                );
             }
         });
     }
