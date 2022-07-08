@@ -5,8 +5,8 @@ class TheWolfsDen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                'onSacrificed': event => event.card.getType() === 'character' && event.card.controller === this.controller,
-                'onCharacterKilled': event => event.card.controller === this.controller
+                'onSacrificed': event => event.card.isMatch({ controller: this.controller, type: 'character' }),
+                'onCharacterKilled': event => event.card.isMatch({ controller: this.controller })
             },
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {source} to put the bottom card of their deck into shadow',
