@@ -23,8 +23,9 @@ class CardMatcher {
             Matcher.anyValue(properties.participating, participating => card.isParticipating() === participating) &&
             Matcher.containsValue(properties.facedown, card.facedown) &&
             Matcher.containsValue(properties.parent, card.parent) &&
-            Matcher.anyValue(properties.not, notProperties => !CardMatcher.isMatch(card, notProperties)) &&
-            Matcher.containsValue(properties.controller, card.controller)
+            Matcher.anyValue(properties.not, notProperties => !CardMatcher.isMatch(card, notProperties)) //&&
+            //if this line is active, it breaks a lot of tests. we will have to revise this
+            //Matcher.containsValue(properties.controller, card.controller)
         );
     }
 
