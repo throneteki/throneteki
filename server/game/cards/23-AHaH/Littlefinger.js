@@ -1,62 +1,30 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
-const Messages = require('../../Messages');
 
 class Littlefinger extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
-            },
-            message: {
-                format: '{player} uses {source} to have each player choose and reveal 1 card from their hand or shadows area'
+                onDeclaredAsDefender: event => event.card.controller === this.controller && event.card !== this && event.card.isUnique() && event.card.hasTrait('House Arryn')
             },
             target: {
+                title: 'Select a character',
                 choosingPlayer: 'each',
                 ifAble: true,
-                activePromptTitle: 'Select a card',
-                cardCondition: (card, context) => ['hand', 'shadows'].includes(card.location) && card.controller === context.choosingPlayer,
-                gameAction: 'reveal',
-                messages: Messages.eachPlayerSecretTargetingForCardType('cards in hand/shadows')
+                cardCondition: { participating: true, condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() <= context.choosingPlayer.getTotalInitiative() }
             },
-            limit: ability.limit.perPhase(1),
+            message: {
+                format: '{player} uses {source} to have each player choose and return {cards} to its owners hands',
+                args: { cards: context => context.targets.selections.filter(selection => selection.value).map(selection => selection.value) }
+            },
             handler: context => {
-                let cards = context.targets.selections.map(selection => selection.value).filter(card => !!card);
+                let cards = context.targets.selections.filter(selection => selection.value).map(selection => selection.value);
                 this.game.resolveGameAction(
-                    GameActions.simultaneously(cards.map(card => GameActions.revealCard({ card })))
+                    GameActions.simultaneously(cards.map(card => GameActions.returnCardToHand({ card }))),
+                    context
                 );
-                let playerCardType = cards.filter(card => card.owner === context.player)[0].getPrintedType();
-                let otherCardTypes = cards.filter(card => card.owner !== context.player).map(card => card.getPrintedType());
-                if(!otherCardTypes.includes(playerCardType)) {
-                    this.game.promptForSelect(context.player, {
-                        activePromptTitle: 'Select a card',
-                        source: this,
-                        cardCondition: card => card.getPower() > 0,
-                        cardType: ['attachment', 'character', 'faction', 'location'],
-                        gameAction: 'movePower',
-                        onSelect: (player, card) => this.onSelectCard(player, card),
-                        onCancel: (player) => this.onSelectCard(player, null)
-                    });
-                }
             }
         });
-    }
-
-    onSelectCard(player, card) {
-        if(card === null) {
-            this.game.addAlert('danger', '{0} does not choose any card for {1}', player, this);
-            return true;
-        }
-
-        this.game.resolveGameAction(
-            GameActions.movePower({
-                from: card,
-                to: this,
-                amount: 1
-            })
-        );
-        this.game.addMessage('{0} uses {1} to move 1 power from {2} to {1}', player, this, card);
-        return true;
     }
 }
 
