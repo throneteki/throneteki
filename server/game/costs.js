@@ -122,6 +122,21 @@ const Costs = {
      */
     revealUpTo: (number, condition, zeroAllowed) => CostBuilders.reveal.selectUpTo(number, condition, zeroAllowed),
     /**
+     * Cost that requires revealing a players hand. 
+     * 
+     * TODO: Ensure this is updated properly when Alla Reveal implementation is applied.
+     */
+    revealHand: function() {
+        return {
+            canPay: function(context) {
+                return context.player.hand.length > 0;
+            },
+            pay: function(context) {
+                context.game.addMessage('{0} reveals {1} from their hand', context.player, context.player.hand);
+            }
+        };
+    },
+    /**
      * Cost that will stand the card that initiated the ability (e.g.,
      * Barristan Selmy (TS)).
      */
