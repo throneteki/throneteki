@@ -21,7 +21,7 @@ class TheBalerion extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 title: 'Select a character',
-                cardCondition: card => card.isMatch({ trait: ['Army', 'Stormborn'], controller: this.controller } && this.isCardEligibleToHaveWeaponAttachments(card))
+                cardCondition: { controller: 'current', trait: ['Army', 'Stormborn'], condition: card => this.isCardEligibleToHaveWeaponAttachments(card) }
             },
             phase: 'challenge',
             message: '{player} kneels {source} to attach it to {target} as a Weapon attachment, with it gaining assault during power challenges',

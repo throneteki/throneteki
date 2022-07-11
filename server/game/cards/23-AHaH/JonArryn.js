@@ -12,7 +12,7 @@ class JonArryn extends DrawCard {
                 choosingPlayer: player => player.getTotalInitiative() <= this.controller.getTotalInitiative(),
                 activePromptTitle: 'Select a character',
                 ifAble: true,
-                cardCondition: (card, context) => card.isMatch({ kneeled: true, location: 'play area', type: 'character', trait: ['King', 'Small Council'], controller: context.choosingPlayer }),
+                cardCondition: { kneeled: true, location: 'play area', type: 'character', trait: ['King', 'Small Council'], controller: 'choosingPlayer' },
                 gameAction: 'stand'
             },
             message: {

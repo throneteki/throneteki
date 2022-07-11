@@ -12,10 +12,7 @@ class Crannogmen extends DrawCard {
             target: {
                 title: 'Select a character to kill',
                 choosingPlayer: (player, context) => player === context.event.challenge.loser,
-                cardCondition: (card, context) => card.location === 'play area' &&
-                    card.controller === context.event.challenge.loser &&
-                    card.getType() === 'character' &&
-                    card.isParticipating()
+                cardCondition: { location: 'play area', controller: 'choosingPlayer', type: 'character', participating: true }
             },
             message: {
                 format: '{player} uses {source} to have {loser} choose and kill {target}',
