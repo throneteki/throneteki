@@ -14,8 +14,8 @@ class TheKingInTheNarrowSea extends DrawCard {
             },
             cost: ability.costs.returnToHand(card => card.isMatch({ trait: ['Mercenary', 'Smuggler'], type: 'character' })),
             target: {
-                cardCondition: (card, context) => card.isMatch({ type: 'location', location: 'play area' }) && (!context.costs.returnToHand || card.getPrintedCost() < context.costs.returnToHand.getPrintedCost()),
                 activePromptTitle: 'Select a location',
+                cardCondition: { type: 'location', location: 'play area', condition: (card, context) => !context.costs.returnToHand || card.getPrintedCost() < context.costs.returnToHand.getPrintedCost() },
                 gameAction: 'kneel'
             },
             message: {

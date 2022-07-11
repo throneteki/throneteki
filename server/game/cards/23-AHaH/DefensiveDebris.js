@@ -7,7 +7,7 @@ class DefensiveDebris extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             target: {
                 title: 'Select a card',
-                cardCondition: (card, context) => card.isMatch({ not: { controller: context.player }, location: 'discard pile' })
+                cardCondition: { location: 'discard pile', controller: 'opponent' }
             },
             phase: 'challenge',
             message: {
