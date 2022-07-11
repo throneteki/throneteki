@@ -2,6 +2,11 @@ const DrawCard = require('../../drawcard.js');
 
 class WingedKnight extends DrawCard {
     setupCardAbilities(ability) {
+        this.persistentEffect({
+            match: card => card.hasTrait('House Arryn') && card.getType() === 'character',
+            effect: ability.effects.modifyStrength(1)
+        });
+
         this.interrupt({
             when: {
                 onCharacterKilled: event => event.card.isMatch({ trait: ['Lord', 'Lady']}) && event.card.canBeSaved() && event.allowSave
