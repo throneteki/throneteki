@@ -77,6 +77,13 @@ class Challenge {
         if(!this.isParticipating(card)) {
             return;
         }
+        const eventProps = {
+            card,
+            challenge: this,
+            isAttacking: this.isAttacking(card),
+            isDeclared: this.isDeclared(card),
+            isDefending: this.isDefending(card)
+        };
 
         this.attackers = this.attackers.filter(c => c !== card);
         this.declaredAttackers = this.declaredAttackers.filter(c => c !== card);
@@ -86,7 +93,7 @@ class Challenge {
 
         this.calculateStrength();
 
-        this.game.raiseEvent('onRemovedFromChallenge', { card: card });
+        this.game.raiseEvent('onRemovedFromChallenge', eventProps);
     }
 
     markAsParticipating(cards) {
