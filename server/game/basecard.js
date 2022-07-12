@@ -258,13 +258,22 @@ class BaseCard {
         var properties = propertyFactory(AbilityDsl);
         this.game.addEffect(this, Object.assign({ duration: 'atEndOfPhase', location: 'any' }, properties));
     }
-
+    
     /**
      * Applies an immediate effect which lasts until the end of the round.
      */
     untilEndOfRound(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
         this.game.addEffect(this, Object.assign({ duration: 'untilEndOfRound', location: 'any' }, properties));
+    }
+
+    /**
+     * Applies an immediate effect which expires at the end of the round. Per
+     * game rules this duration is outside of the round.
+     */
+    atEndOfRound(propertyFactory) {
+        var properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, Object.assign({ duration: 'atEndOfRound', location: 'any' }, properties));
     }
 
     /**

@@ -35,6 +35,7 @@ const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
 const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 const GameActions = require('./GameActions');
+const EndRound = require('./GameActions/EndRound');
 const TimeLimit = require('./timeLimit.js');
 const PrizedKeywordListener = require('./PrizedKeywordListener');
 const GameWonPrompt = require('./gamesteps/GameWonPrompt');
@@ -820,6 +821,7 @@ class Game extends EventEmitter {
                 return false;
             }
         });
+        this.queueStep(new SimpleStep(this, () => this.resolveGameAction(EndRound, { game: this })));
         this.queueStep(new SimpleStep(this, () => this.beginRound()));
     }
 
