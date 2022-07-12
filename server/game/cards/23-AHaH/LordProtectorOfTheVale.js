@@ -1,38 +1,41 @@
 const DrawCard = require('../../drawcard.js');
 
-class LordProtectorOfTheVale extends DrawCard {
+class DefensiveDebris extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ trait: 'Lord' });
+        this.attachmentRestriction({ trait: 'Lord', printedCostOrHigher: 6 });
+
+        this.plotModifiers({
+            initiative: 1
+        });
+
+        this.whileAttached({
+            effect: ability.effects.addTrait('House Arryn')
+        });
 
         this.whileAttached({
             match: card => card.name === 'Littlefinger',
-            effect: ability.effects.modifyStrength(2)
+            effect: ability.effects.addKeyword('Renown')
         });
 
-        this.action({
-            title: 'Contribute attached STR',
-            phase: 'challenge',
-            cost: ability.costs.kneelSelf(),
-            condition: () => this.game.isDuringChallenge() && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true }),
-            message: {
-                format: '{player} kneels {source} to have {parent} contribute its STR (currently {STR}) to {player}\'s side until the end of the challenge',
-                args: { 
-                    parent: () => this.parent,
-                    STR: () => this.parent.getStrength()
-                }
+        this.reaction({
+            when: {
+                onCardDrawn: event =>
+                    event.player === this.controller &&
+                    event.card.hasTrait('House Arryn') &&
+                    event.player.canGainGold()
             },
-            handler: () => {
-                this.untilEndOfChallenge(ability => ({
-                    // Force the effect to recalculate mid-challenge in case the character STR changes
-                    condition: () => true,
-                    targetController: 'current',
-                    effect: ability.effects.contributeChallengeStrength(() => this.parent.getStrength())
-                }));
+            cost: ability.costs.revealSpecific(context => context.event.card),
+            message: {
+                format: '{player} reveals {drawnCard} to gain 1 gold',
+                args: { drawnCard: context => context.event.card }
+            },
+            handler: context => {
+                this.game.addGold(context.player, 1);
             }
         });
     }
 }
 
-LordProtectorOfTheVale.code = '23035';
+DefensiveDebris.code = '23035';
 
-module.exports = LordProtectorOfTheVale;
+module.exports = DefensiveDebris;
