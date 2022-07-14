@@ -1,11 +1,11 @@
 const DrawCard = require('../../drawcard.js');
 
-class DefensiveDebris extends DrawCard {
+class LordProtectorOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ trait: 'Lord', printedCostOrHigher: 6 });
 
         this.plotModifiers({
-            initiative: 1
+            initiative: -1
         });
 
         this.whileAttached({
@@ -36,6 +36,6 @@ class DefensiveDebris extends DrawCard {
     }
 }
 
-DefensiveDebris.code = '23035';
+LordProtectorOfTheVale.code = '23035';
 
-module.exports = DefensiveDebris;
+module.exports = LordProtectorOfTheVale;
