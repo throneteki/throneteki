@@ -223,7 +223,7 @@ class SelectCardPrompt extends UiPrompt {
             return;
         }
 
-        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers)) {
+        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
             this.fireOnSelect();
         } else if(this.selectedCards.length === 0) {
             this.properties.onCancel(player);

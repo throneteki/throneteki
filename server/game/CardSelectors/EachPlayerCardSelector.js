@@ -20,12 +20,20 @@ class EachPlayerCardSelector extends BaseCardSelector {
             `Select ${this.numCardsPerPlayer} characters controlled by each player`;
     }
 
-    hasEnoughSelected(selectedCards, numPlayers) {
-        return selectedCards.length === 0 && this.optional || selectedCards.length === (numPlayers * this.numCardsPerPlayer);
+    hasEnoughSelected(selectedCards, numPlayers, context) {
+        return selectedCards.length === 0 && this.optional 
+            || selectedCards.length === (numPlayers * this.numCardsPerPlayer)
+            || this.ifAble && selectedCards.length === (this.getSelectablePlayers(context).length * this.numCardsPerPlayer);
     }
 
     hasEnoughTargets(context) {
-        return this.optional || context.game.getPlayers().every(player => {
+        let numPlayers = context.game.getPlayers();
+        let selectablePlayers = this.getSelectablePlayers(context);
+        return this.optional || selectablePlayers.length === numPlayers || this.ifAble && selectablePlayers.length > 0;
+    }
+
+    getSelectablePlayers(context) {
+        return context.game.getPlayers().filter(player => {
             let playerCards = context.game.allCards.filter(card => card.controller === player);
             let matchingCards = playerCards.filter(card => super.canTarget(card, context));
             return matchingCards.length >= this.numCardsPerPlayer;
@@ -34,6 +42,18 @@ class EachPlayerCardSelector extends BaseCardSelector {
 
     hasReachedLimit(selectedCards, numPlayers) {
         return selectedCards.length >= (numPlayers * this.numCardsPerPlayer);
+    }
+
+    canStartSelection(context, choosingPlayers) {
+        let validChoosingPlayers = choosingPlayers.filter(choosingPlayer => {
+            context.choosingPlayer = choosingPlayer;
+            return this.hasEnoughTargets(context);
+        });
+        return choosingPlayers.length > 0 && validChoosingPlayers.length === choosingPlayers.length 
+            || this.ifAble && validChoosingPlayers.length > 0;
+    }
+    rejectAllowed(context) {
+        return this.ifAble && this.getSelectablePlayers(context).length === 0
     }
 }
 

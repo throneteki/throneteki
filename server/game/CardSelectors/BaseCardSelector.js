@@ -28,6 +28,7 @@ class BaseCardSelector {
         this.singleController = properties.singleController;
         this.isCardEffect = properties.isCardEffect;
         this.optional = !!properties.optional;
+        this.ifAble = !!properties.ifAble;
 
         if(!Array.isArray(properties.cardType)) {
             this.cardType = [properties.cardType];
@@ -73,6 +74,8 @@ class BaseCardSelector {
      * the currently selected cards
      * @param {integer} numPlayers
      * the number of players in the game
+     * @param {AbilityContext} context
+     * the context of the prompt, if able
      * @returns {boolean}
      */
     hasEnoughSelected(selectedCards) {
@@ -154,6 +157,31 @@ class BaseCardSelector {
         }
 
         return card.controller === selectedCards[0].controller;
+    }
+
+    /**
+     * Returns whether the selection meets the conditions to actually begin. This is
+     * primarily used by AbilityTarget to check whether it can resolve with the 
+     * available selection.
+     * @param {AbilityContext} context
+     * @param {Player[]} choosingPlayers
+     * @returns {boolean}
+     */
+    canStartSelection(context, choosingPlayers) {
+        return this.ifAble || choosingPlayers.length > 0 && choosingPlayers.every(choosingPlayer => {
+            context.choosingPlayer = choosingPlayer;
+            return this.hasEnoughTargets(context);
+        })
+    }
+
+    /**
+     * Returns whether this selection can be rejected when the choosing player decides 
+     * to cancel the selection entirely.
+     * @param {AbilityContext} context
+     * @returns {boolean}
+     */
+     rejectAllowed() {
+        return this.ifAble;
     }
 }
 
