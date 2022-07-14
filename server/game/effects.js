@@ -1092,6 +1092,17 @@ const Effects = {
             }
         };
     },
+    cannotBeFirstPlayer: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('cannotBeFirstPlayer');
+            },
+            unapply: function(player) {
+                player.flags.remove('cannotBeFirstPlayer');
+            }
+        }
+    },
     canSelectAsFirstPlayer: function(condition) {
         return {
             targetType: 'player',
