@@ -33,7 +33,10 @@ class AbilityTarget {
 
     canResolve(context) {
         const players = this.getChoosingPlayers(context);
-        return this.selector.canStartSelection(context, players) && this.subTargets.every(subTarget => subTarget.canResolve(context));
+        return this.ifAble || players.length > 0 && players.every(choosingPlayer => {
+            context.choosingPlayer = choosingPlayer;
+            return this.selector.hasEnoughTargets(context);
+        }) && this.subTargets.every(subTarget => subTarget.canResolve(context));
     }
 
     buildPlayerSelection(context) {
