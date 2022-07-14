@@ -3,7 +3,7 @@ const DrawCard = require('../../drawcard.js');
 class KnightOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
         this.plotModifiers({
-            initiative: 1
+            initiative: -1
         });
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
