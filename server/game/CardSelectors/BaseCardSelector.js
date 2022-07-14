@@ -160,12 +160,27 @@ class BaseCardSelector {
     }
 
     /**
+     * Returns whether the selection meets the conditions to actually begin. This is
+     * primarily used by AbilityTarget to check whether it can resolve with the 
+     * available selection.
+     * @param {AbilityContext} context
+     * @param {Player[]} choosingPlayers
+     * @returns {boolean}
+     */
+    canStartSelection(context, choosingPlayers) {
+        return this.ifAble || choosingPlayers.length > 0 && choosingPlayers.every(choosingPlayer => {
+            context.choosingPlayer = choosingPlayer;
+            return this.hasEnoughTargets(context);
+        })
+    }
+
+    /**
      * Returns whether this selection can be rejected when the choosing player decides 
      * to cancel the selection entirely.
      * @param {AbilityContext} context
      * @returns {boolean}
      */
-    rejectAllowed() {
+     rejectAllowed() {
         return this.ifAble;
     }
 }

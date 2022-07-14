@@ -23,32 +23,37 @@ class EachPlayerCardSelector extends BaseCardSelector {
     hasEnoughSelected(selectedCards, numPlayers, context) {
         return selectedCards.length === 0 && this.optional 
             || selectedCards.length === (numPlayers * this.numCardsPerPlayer)
-            || this.ifAble && selectedCards.length === this.getMaximumSelectable(context);
-    }
-
-    getMaximumSelectable(context) {
-        return context.game.getPlayers().reduce((numSelectable, player) => {
-            return numSelectable + Math.min(this.getMatchingCardsForPlayer(context, player).length, this.numCardsPerPlayer);
-        }, 0);
+            || this.ifAble && selectedCards.length === (this.getSelectablePlayers(context).length * this.numCardsPerPlayer);
     }
 
     hasEnoughTargets(context) {
-        return this.optional || this.ifAble || context.game.getPlayers().every(player => {
-            return this.getMatchingCardsForPlayer(context, player).length >= this.numCardsPerPlayer;
-        });
+        let numPlayers = context.game.getPlayers();
+        let selectablePlayers = this.getSelectablePlayers(context);
+        return this.optional || selectablePlayers.length === numPlayers || this.ifAble && selectablePlayers.length > 0;
     }
 
-    getMatchingCardsForPlayer(context, player) {
-        let playerCards = context.game.allCards.filter(card => card.controller === player);
-        return playerCards.filter(card => super.canTarget(card, context));
+    getSelectablePlayers(context) {
+        return context.game.getPlayers().filter(player => {
+            let playerCards = context.game.allCards.filter(card => card.controller === player);
+            let matchingCards = playerCards.filter(card => super.canTarget(card, context));
+            return matchingCards.length >= this.numCardsPerPlayer;
+        });
     }
 
     hasReachedLimit(selectedCards, numPlayers) {
         return selectedCards.length >= (numPlayers * this.numCardsPerPlayer);
     }
 
+    canStartSelection(context, choosingPlayers) {
+        let validChoosingPlayers = choosingPlayers.filter(choosingPlayer => {
+            context.choosingPlayer = choosingPlayer;
+            return this.hasEnoughTargets(context);
+        });
+        return choosingPlayers.length > 0 && validChoosingPlayers.length === choosingPlayers.length 
+            || this.ifAble && validChoosingPlayers.length > 0;
+    }
     rejectAllowed(context) {
-        return this.ifAble && this.getMaximumSelectable(context) === 0;
+        return this.ifAble && this.getSelectablePlayers(context).length === 0
     }
 }
 
