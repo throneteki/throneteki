@@ -23,6 +23,7 @@ class CondemnedToTheMoonDoor extends PlotCard {
 
         this.game.addMessage('{0} chooses {1} for {2}',
             player, card, this);
+        return true;
     }
 }
 
