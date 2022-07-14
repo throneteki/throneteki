@@ -3,11 +3,25 @@ const PlotCard = require('../../plotcard');
 class WardensOfTheEast extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            targetController: 'any',
-            effect: [
-                ability.effects.cannotPlay(card => card.getPrintedType() === 'event' && card.isFaction(card.controller.faction.getPrintedFaction())),
-                ability.effects.revealCards(card => card.location === 'shadows')
-            ]
+            condition: () => !this.game.getOpponents(this.controller).some(opponent => opponent.activePlot && opponent.activePlot.hasTrait('Siege')),
+            effect: ability.effects.cannotBeFirstPlayer()
+        });
+
+        this.reaction({
+            when: {
+                afterChallenge: event => (
+                    event.challenge.winner === this.controller &&
+                    event.challenge.defenders.some(defender => defender.hasTrait('House Arryn')) &&
+                    this.controller.activePlot.getClaim() < 3
+                )
+            },
+            message: '{player} uses {source} to raise the claim on their revealed plot by 1',
+            handler: () => {
+                this.untilEndOfPhase(ability => ({
+                    match: this,
+                    effect: ability.effects.modifyClaim(1)
+                }));
+            }
         });
     }
 }
