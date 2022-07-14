@@ -5,6 +5,7 @@ const Tokens = {
     ear: 'ear',
     gold: 'gold',
     ghost: 'ghost',
+    jail: 'jail',
     journey: 'journey',
     kiss: 'kiss',
     poison: 'poison',
