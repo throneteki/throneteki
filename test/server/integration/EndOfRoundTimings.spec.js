@@ -17,9 +17,7 @@ describe('end of round timings', function () {
                 this.selectFirstPlayer(this.player1);
                 this.player1.clickPrompt('player1 - Condemned to the Moon Door');
                 this.player1.clickCard(this.steward);
-                this.player1.clickPrompt('Done');
                 this.player2.clickCard(this.steward);
-                this.player2.clickPrompt('Done');
                 this.completeMarshalPhase();
             });
 
