@@ -1,31 +1,27 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
 
 class HarryTheHeir extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.name === 'Anya Waynwood' && card.controller === this.controller,
-            effect: ability.effects.dynamicStrength(() => this.power)
+            condition: () => this.controller.getNumberOfCardsInPlay(card => card.hasTrait('House Arryn') && card.hasTrait('Lady')),
+            match: this,
+            effect: [
+                ability.effects.addIcon('power'),
+                ability.effects.addKeyword('Stealth')
+            ]
         });
-
-        this.reaction({
-            when: {
-                afterChallenge: event => this.isAttacking() && event.challenge.isMatch({ winner: this.controller })
-            },
+        this.action({
+            title: 'Add participating defender',
+            phase: 'challenge',
+            condition: context => this.game.isDuringChallenge({ defendingPlayer: context.player }),
             target: {
-                activePromptTitle: 'Select a location',
-                cardCondition: { location: 'play area', kneeled: true, type: 'location', faction: 'neutral', controller: 'current' }
+                title: 'Select a character',
+                cardCondition: { participating: false, kneeled: true, condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() >= context.choosingPlayer.getTotalInitiative() }
             },
-            message:'{player} uses {source} to stand {target}',
+            message: '{player} uses {source} to have {target} participate as a defender on their side of the challenge',
             handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.standCard(context => ({
-                        card: context.target
-                    })),
-                    context
-                );
-            },
-            limit: ability.limit.perRound(1)
+                this.game.currentChallenge.addParticipantToSide(context.player, context.target);
+            }
         });
     }
 }
