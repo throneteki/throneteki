@@ -1,7 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
 
-class MutineerFromCrastersKeep extends DrawCard {
+class CrastersKeepMutineer extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
@@ -22,6 +22,6 @@ class MutineerFromCrastersKeep extends DrawCard {
     }
 }
 
-MutineerFromCrastersKeep.code = '23009';
+CrastersKeepMutineer.code = '23009';
 
-module.exports = MutineerFromCrastersKeep;
+module.exports = CrastersKeepMutineer;
