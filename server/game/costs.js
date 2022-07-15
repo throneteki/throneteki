@@ -108,6 +108,10 @@ const Costs = {
      */
     placeSelfInDeadPileFromHand: () => CostBuilders.placeInDeadPileFromHand.self(),
     /**
+     * Cost that will place in the dead pile from hand the card that initiated the ability.
+     */
+    placeOnBottomFromHand: condition => CostBuilders.placeOnBottomFromHand.select(condition),
+    /**
      * Cost that reveals a specific card passed into the function
      */
     revealSpecific: cardFunc => CostBuilders.reveal.specific(cardFunc),
