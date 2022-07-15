@@ -1101,7 +1101,7 @@ const Effects = {
             unapply: function(player) {
                 player.flags.remove('cannotBeFirstPlayer');
             }
-        }
+        };
     },
     canSelectAsFirstPlayer: function(condition) {
         return {
