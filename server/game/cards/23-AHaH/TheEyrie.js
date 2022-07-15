@@ -1,34 +1,41 @@
 const DrawCard = require('../../drawcard');
-const {ChallengeTracker} = require('../../EventTrackers');
 
 class TheEyrie extends DrawCard {
     setupCardAbilities(ability) {
-        this.challengeTracker = ChallengeTracker.forPhase(this.game);
-
         this.plotModifiers({
             initiative: -2,
-            reserve: 1
+            reserve: 2
         });
 
         this.persistentEffect({
-            condition: () => !this.kneeled,
-            targetController: 'opponent',
-            match: opponent => (
-                opponent.getTotalPower() > this.controller.getTotalPower() &&
-                this.challengeTracker.count({ initiatingPlayer: opponent, initiatedAgainstPlayer: this.controller }) >= 2
-            ),
-            effect: ability.effects.cannotInitiateChallengeType('any', opponent => opponent === this.controller)
+            condition: () => !this.kneeled && this.controller.getTotalInitiative() !== 0,
+            targetController: 'any',
+            effect: ability.effects.increaseCost({
+                amount: 1,
+                playingTypes: ['marshal', 'ambush', 'play'],
+                match: card => card.isFaction(card.controller.faction.getPrintedFaction()),
+                limit: ability.limit.perPhase(1)
+            })
+        });
+        this.persistentEffect({
+            condition: () => !this.kneeled && this.controller.getTotalInitiative() === 0,
+            targetController: 'any',
+            effect: ability.effects.increaseCost({
+                amount: 2,
+                playingTypes: ['marshal', 'ambush', 'play'],
+                match: card => card.isFaction(card.controller.faction.getPrintedFaction()),
+                limit: ability.limit.perPhase(1)
+            })
         });
 
-        this.reaction({
+        this.interrupt({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge'
+                onInitiativeDetermined: event => event.winner !== this.controller
             },
             cost: ability.costs.kneelSelf(),
-            chooseOpponent: opponent => !opponent.firstPlayer,
-            message: '{player} kneels {source} to have {opponent} become first player',
+            message: '{player} uses and kneels {source} to win initiative',
             handler: context => {
-                this.game.setFirstPlayer(context.opponent);
+                context.event.winner = context.player;
             }
         });
     }
