@@ -1,38 +1,48 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class NestorRoyce extends DrawCard {
     setupCardAbilities(ability) {
+        const kneelingDefender = { location: 'play area', type: 'character', faction: 'neutral', kneeled: true, defending: true };
+        const minimumKneltCost = () => {
+            if(!this.game.currentChallenge) {
+                return 99;
+            }
+
+            const costs = this.game.currentChallenge.defenders.filter(card => card.isMatch(kneelingDefender)).map(card => card.getPrintedCost());
+            if(costs.length === 0) {
+                return 99;
+            }
+            return Math.min(...costs);
+        };
+
         this.reaction({
             when: {
-                afterChallenge: event => this.isAttacking() && event.challenge.isMatch({ winner: this.controller })
+                afterChallenge: event => this.isDefending() && event.challenge.isMatch({ winner: this.controller })
             },
-            cost: ability.costs.kneel({ type: 'location', faction: 'neutral', printedCostOrHigher: 1 }),
+            cost: [
+                ability.costs.placeOnBottomFromHand(card => card.getPrintedCost() >= minimumKneltCost())
+            ],
+            target: {
+                type: 'select',
+                cardCondition: (card, context) => card.isMatch({
+                    printedCostOrLower: context.costs.placeBottom ? context.costs.placeBottom.getPrintedCost() : 99,
+                    ...kneelingDefender
+                })
+            },
             message: {
-                format: '{player} uses {source} and kneels {kneel} to give {source} a keyword',
-                args: { kneel: context => context.costs.kneel }
+                format: '{player} uses {source}, reveals and places {placeBottom} on the bottom of their deck to stand {target}',
+                args: { placeBottom: context => context.costs.placeBottom }
             },
             handler: context => {
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: `Gain keyword for ${context.source.name}`,
-                        buttons: [
-                            { text: 'Renown', arg: 'renown', method: 'gainKeyword' },
-                            { text: 'Intimidate', arg: 'intimidate', method: 'gainKeyword' }
-                        ]
-                    },
-                    source: context.source
-                });
+                this.game.resolveGameAction(
+                    GameActions.standCard(context => ({
+                        card: context.target
+                    })),
+                    context
+                );
             }
         });
-    }
-
-    gainKeyword(player, keyword) {
-        this.game.addMessage('{0} gains {1}', this, keyword);
-        this.untilEndOfChallenge(ability => ({
-            match: this,
-            effect: ability.effects.addKeyword(keyword)
-        }));
-        return true;
     }
 }
 
