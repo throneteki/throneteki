@@ -95,8 +95,9 @@ class RevealPlots extends BaseStep {
             this.game.addMessage('{0} won initiative', initiativeWinner);
         }
 
-        this.initiativeWinner = initiativeWinner;
-        this.game.raiseEvent('onInitiativeDetermined', { winner: initiativeWinner });
+        this.game.raiseEvent('onInitiativeDetermined', { winner: initiativeWinner }, event => {
+            this.initiativeWinner = event.winner;
+        });
     }
 
     getInitiativeResult(sampleFunc = sample) {
