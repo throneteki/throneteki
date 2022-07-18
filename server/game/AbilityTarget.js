@@ -139,7 +139,7 @@ class AbilityTarget {
                 return true;
             },
             onCancel: () => {
-                if(this.ifAble) {
+                if(this.selector.rejectAllowed(context)) {
                     result.reject();
                 } else {
                     result.cancel();
