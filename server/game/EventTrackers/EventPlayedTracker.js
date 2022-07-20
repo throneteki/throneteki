@@ -14,7 +14,7 @@ class EventPlayedTracker {
     }
 
     trackEvent(event) {
-        if(event.source.getType() !== 'event' || this.events.includes(event)) {
+        if(event.source.getType() !== 'event' || this.events.includes(event) || !event.ability.isPlayableEventAbility()) {
             return;
         }
 

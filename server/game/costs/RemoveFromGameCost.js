@@ -1,10 +1,12 @@
+const GameActions = require('../GameActions');
+
 class RemoveFromGameCost {
     constructor() {
         this.name = 'removeFromGame';
     }
 
     isEligible(card) {
-        return card.location !== 'out of game';
+        return card.location !== 'out of game' && GameActions.removeFromGame({ card }).allow();
     }
 
     pay(cards) {
