@@ -19,7 +19,7 @@ class JojenReed extends DrawCard {
                         },
                         'Each player draw 1 card': {
                             message: '{player} chooses to have each player draw 1 card',
-                            gameAction: GameActions.simultaneously(this.game.getPlayers().map(player => GameActions.drawCards({ player: player, amount: 1 })))
+                            gameAction: GameActions.simultaneously(this.game.getPlayers().map(player => GameActions.drawCards({ player: player, amount: 1, source: this })))
                         }
                     }
                 })

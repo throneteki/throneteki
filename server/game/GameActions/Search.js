@@ -10,8 +10,8 @@ class Search extends GameAction {
         super('search');
         this.gameAction = gameAction;
         this.match = match || {};
-        this.topCards = topCards;
-        this.numToSelect = numToSelect;
+        this.topCardsFunc = (typeof topCards === 'function') ? topCards : () => topCards;
+        this.numToSelectFunc = (typeof numToSelect === 'function') ? numToSelect : () => numToSelect;
         this.playerFunc = player || (context => context.player);
         this.searchedPlayerFunc = searchedPlayer || this.playerFunc;
         this.title = title;
@@ -33,10 +33,12 @@ class Search extends GameAction {
     createEvent({ context }) {
         const player = this.playerFunc(context);
         const searchedPlayer = this.searchedPlayerFunc(context);
-        return this.event('onDeckSearched', { player, searchedPlayer }, event => {
-            const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, searchedPlayer: event.searchedPlayer, numCards: this.topCards });
-            const searchCondition = this.createSearchCondition(event.searchedPlayer);
-            const modeProps = this.numToSelect ? { mode: 'upTo', numCards: this.numToSelect } : {};
+        const topCards = this.topCardsFunc(context);
+        const numToSelect = this.numToSelectFunc(context);
+        return this.event('onDeckSearched', { player, searchedPlayer, topCards, numToSelect }, event => {
+            const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, searchedPlayer: event.searchedPlayer, numCards: event.topCards });
+            const searchCondition = this.createSearchCondition(event.searchedPlayer, event.topCards, event.numToSelect);
+            const modeProps = event.numToSelect ? { mode: 'upTo', numCards: event.numToSelect } : {};
 
             context.game.cardVisibility.addRule(revealFunc);
             context.game.promptForSelect(event.player, Object.assign(modeProps, {
@@ -88,21 +90,21 @@ class Search extends GameAction {
         };
     }
 
-    createSearchCondition(player) {
+    createSearchCondition(player, topCards, numToSelect) {
         const match = Object.assign({ location: this.location, controller: player }, this.match);
         const baseMatcher = CardMatcher.createMatcher(match);
-        const topCards = this.topCards ? player.searchDrawDeck(this.topCards) : [];
+        const topCardsList = topCards ? player.searchDrawDeck(topCards) : [];
 
         return (card, context) => {
             if(!baseMatcher(card, context)) {
                 return false;
             }
 
-            if(this.topCards && !topCards.includes(card)) {
+            if(topCards && !topCardsList.includes(card)) {
                 return false;
             }
 
-            const result = this.numToSelect ? [card] : card;
+            const result = numToSelect ? [card] : card;
 
             context.searchTarget = result;
             const isActionAllowed = this.gameAction.allow(context);
@@ -111,8 +113,8 @@ class Search extends GameAction {
         };
     }
 
-    attachGameActionEvent(event, context) {
-        if(this.numToSelect) {
+    attachGameActionEvent(revealEvent, context) {
+        if(revealEvent.parent.numToSelect) {
             // Do not attach gameAction if no searchTargets are left in search location
             context.searchTarget = context.searchTarget.filter(card => this.location.includes(card.location));
             if(context.searchTarget.length === 0) {
@@ -125,7 +127,7 @@ class Search extends GameAction {
         }
 
         this.abilityMessage.output(context.game, { ...context, card: context.searchTarget });
-        event.thenAttachEvent(this.gameAction.createEvent(context));
+        revealEvent.thenAttachEvent(this.gameAction.createEvent(context));
     }
 }
 

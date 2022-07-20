@@ -7,35 +7,26 @@ class Oldtown extends DrawCard {
             title: 'Reveal top card of deck',
             cost: ability.costs.kneelSelf(),
             message: '{player} uses and kneels {source} to name a cardtype',
-            handler: context => {
-                this.context = context;
-
-                let cardTypes = ['Character', 'Location', 'Attachment', 'Event'];
-
-                let buttons = cardTypes.map(cardType => {
-                    return { text: cardType, method: 'cardTypeSelected', arg: cardType.toLowerCase() };
-                });
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a card type',
-                        buttons: buttons
-                    },
-                    source: context.source
-                });
-            }
+            gameAction: GameActions.choose({
+                title: 'Select a card type',
+                message: '{choosingPlayer} names the {choice} cardtype',
+                choices: {
+                    'Character': this.revealGameActionForCardtype('Character'),
+                    'Location': this.revealGameActionForCardtype('Location'),
+                    'Attachment': this.revealGameActionForCardtype('Attachment'),
+                    'Event': this.revealGameActionForCardtype('Event')
+                }
+            })
         });
     }
 
-    cardTypeSelected(player, cardType) {
-        this.game.addMessage('{0} names the {1} cardtype', this.context.player, cardType);
-
-        const revealAction = GameActions.revealTopCards(context => ({
+    revealGameActionForCardtype(cardType) {
+        return GameActions.revealTopCards(context => ({
             player: context.player
         })).then({
             message: '{player} {gameAction}',
             gameAction: GameActions.ifCondition({
-                condition: context => context.event.cards[0].getType() === cardType,
+                condition: context => context.event.cards[0].getType() === cardType.toLowerCase(),
                 thenAction: GameActions.simultaneously([
                     GameActions.drawSpecific(context => ({
                         player: context.player,
@@ -48,10 +39,6 @@ class Oldtown extends DrawCard {
                 ])
             })
         });
-
-        this.game.resolveGameAction(revealAction, this.context);
-
-        return true;
     }
 }
 

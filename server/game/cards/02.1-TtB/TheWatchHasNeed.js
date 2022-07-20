@@ -24,20 +24,13 @@ class TheWatchHasNeed extends DrawCard {
     }
 
     gameActionForTrait(trait) {
-        return GameActions.genericHandler(context => {
-            let reserve = context.player.getTotalReserve();
-
-            this.game.resolveGameAction(
-                GameActions.search({
-                    title: 'Select a character',
-                    match: { trait: trait },
-                    numToSelect: reserve,
-                    topCards: reserve,
-                    message: '{player} adds {searchTarget} to their hand',
-                    gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
-                }), 
-                context
-            );
+        return GameActions.search({
+            title: 'Select a character',
+            match: { trait: trait },
+            numToSelect: context => context.player.getTotalReserve(),
+            topCards: context => context.player.getTotalReserve(),
+            message: '{player} adds {searchTarget} to their hand',
+            gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
         });
     }
 }
