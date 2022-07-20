@@ -15,23 +15,17 @@ class Greensight extends AgendaCard {
                     gameAction: GameActions.kneelCard(context => ({
                         card: context.player.faction
                     })).then({
-                        handler: context => {
-                            this.discard(context.parentContext.revealed);
-                        }
+                        message: {
+                            format: '{player} kneels their faction card to discard {revealed}',
+                            args: { revealed: context => context.parentContext.revealed }
+                        },
+                        gameAction: GameActions.simultaneously(context => 
+                            context.parentContext.revealed.map(card => GameActions.discardCard({ card, source: this }))
+                        )
                     })
                 })
             }))
         });
-    }
-
-    discard(cards) {
-        // TODO: This cannot be re-implemented as simultaneous game actions until Tywin LoCR is re-implemented to
-        // look at cards discard from a specific player's deck.
-        for(let player of this.game.getPlayers()) {
-            player.discardCards(cards.filter(card => card.owner === player));
-        }
-
-        this.game.addMessage('{0} kneels their faction card to discard the revealed cards', this.controller, this);
     }
 }
 

@@ -7,6 +7,7 @@ class BuildingOrders extends PlotCard {
             message: '{player} uses {source} to search the top 10 cards of their deck for an attachment or location',
             gameAction: GameActions.search({
                 title: 'Select a card',
+                topCards: 10,
                 match: { type: ['attachment', 'location'] },
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand(context => ({

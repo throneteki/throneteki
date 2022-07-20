@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class Oathkeeper extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,29 +16,15 @@ class Oathkeeper extends DrawCard {
             },
             cost: ability.costs.sacrificeSelf(),
             message: '{player} sacrifices {costs.sacrifice} to search their deck for a non-Tyrell character',
-            handler: context => {
-                this.game.promptForDeckSearch(context.player, {
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => !card.isFaction('tyrell') && card.getType() === 'character',
-                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { type: 'character', not: { faction: 'tyrell' } },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card, valid) {
-        if(valid) {
-            player.moveCard(card, 'hand');
-            this.game.addMessage('{0} adds {1} to their hand',
-                player, card);
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand',
-            player);
     }
 }
 

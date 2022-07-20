@@ -11,9 +11,7 @@ class OlennasCunning extends DrawCard {
             gameAction: GameActions.choose({
                 player: () => this.game.currentChallenge.loser,
                 title: 'Select a card type',
-                message: {
-                    format: '{choosingPlayer} names the {choice} cardtype'
-                },
+                message: '{choosingPlayer} names the {choice} cardtype',
                 choices: {
                     'Character': this.searchGameActionForCardtype('Character'),
                     'Location': this.searchGameActionForCardtype('Location'),

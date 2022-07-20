@@ -10,6 +10,9 @@ class AbilityChoicePrompt extends BaseStep {
 
     continue() {
         let buttons = this.choices.map(choice => {
+            if(choice.card) {
+                return { card: choice.card, mapCard: true, method: 'chooseAbilityChoice' };
+            }
             return { text: choice.text, arg: choice.text, method: 'chooseAbilityChoice' };
         });
 
@@ -24,8 +27,8 @@ class AbilityChoicePrompt extends BaseStep {
         });
     }
 
-    chooseAbilityChoice(player, choiceText) {
-        let choice = this.choices.find(choice => choice.text === choiceText);
+    chooseAbilityChoice(player, choiceArg) {
+        let choice = this.choices.find(choice => choiceArg === choice.card || choiceArg === choice.text);
         if(choice) {
             this.context.selectedChoice = choice;
             choice.message.output(this.game, this.context);
