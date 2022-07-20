@@ -71,7 +71,7 @@ class BaseAbility {
         }
 
         if(properties.choices) {
-            return new ChooseGameAction(properties.choices);
+            return new ChooseGameAction({ choices: properties.choices });
         }
 
         if(properties.handler) {

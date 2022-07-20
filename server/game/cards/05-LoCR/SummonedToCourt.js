@@ -1,4 +1,6 @@
 const PlotCard = require('../../plotcard.js');
+const GameActions = require('../../GameActions/index.js');
+const { flatMap } = require('../../../Array.js');
 
 class SummonedToCourt extends PlotCard {
     setupCardAbilities() {
@@ -11,63 +13,47 @@ class SummonedToCourt extends PlotCard {
                 ifAble: true,
                 activePromptTitle: 'Choose a card to reveal',
                 cardCondition: (card, context) => card.controller === context.choosingPlayer && card.location === 'hand',
-                message: '{targetSelection.choosingPlayer} chooses a card in hand to reveal for {source}'
+                messages: {
+                    selected: '{targetSelection.choosingPlayer} chooses a card in hand to reveal for {source}',
+                    unable: '{targetSelection.choosingPlayer} has no card to choose for {source}',
+                    noneSelected: '{targetSelection.choosingPlayer} chooses no card for {source}',
+                    skipped: {
+                        type: 'danger',
+                        format: '{targetSelection.choosingPlayer} has a card to choose for {source} but did not choose any'
+                    }
+                }
             },
             handler: context => {
                 let selections = context.targets.selections.filter(selection => !!selection.value);
-                this.revealPlayerChoices(selections);
-                this.validChoices = this.getLowestCostChoices(selections);
-                this.promptNextPlayerToPutIntoPlay();
+                this.game.resolveGameAction(
+                    GameActions.revealCards({
+                        cards: flatMap(selections, selection => selection.value)
+                    }).then({
+                        handler: context => {
+                            let characters = context.event.revealed.filter(card => card.getType() === 'character');
+                            let minCost = Math.min(...characters.map(character => character.getPrintedCost()));
+                            let lowestRevealed = characters.filter(card => card.getPrintedCost() === minCost);
+
+                            for(let character of lowestRevealed) {
+                                let mayContext = {...context, player: character.controller, card: character };
+                                this.game.resolveGameAction(GameActions.may({
+                                    title: context => `Put ${context.card.name} into play?`,
+                                    message: {
+                                        format: '{player} puts {card} into play',
+                                        args: { card: context => context.card }
+                                    },
+                                    gameAction: GameActions.putIntoPlay(context => ({
+                                        player: context.player,
+                                        card: context.card
+                                    }))
+                                }), mayContext);
+                            }
+                        }
+                    }),
+                    context
+                );
             }
         });
-    }
-
-    revealPlayerChoices(selections) {
-        for(let selection of selections) {
-            this.game.addMessage('{0} reveals {1} as their choice for {2}', selection.choosingPlayer, selection.value, this);
-        }
-    }
-
-    getLowestCostChoices(selections) {
-        let characterChoices = selections.filter(selection => selection.value.getType() === 'character');
-        let costs = characterChoices.map(selection => selection.value.getPrintedCost());
-        let minCost = Math.min(...costs);
-        return selections.filter(selection => selection.value.getPrintedCost() === minCost);
-    }
-
-    promptNextPlayerToPutIntoPlay() {
-        if(this.validChoices.length === 0) {
-            return;
-        }
-
-        let choice = this.validChoices.shift();
-        this.promptPlayerToPutIntoPlay(choice.choosingPlayer, choice.value);
-    }
-
-    promptPlayerToPutIntoPlay(player, card) {
-        this.game.promptWithMenu(player, this, {
-            activePrompt: {
-                menuTitle: 'Put ' + card.name + ' into play?',
-                buttons: [
-                    { text: 'Yes', method: 'putChoiceIntoPlay', card: card, mapCard: true },
-                    { text: 'No', method: 'declinePutIntoPlay', card: card, mapCard: true }
-                ]
-            },
-            source: this
-        });
-    }
-
-    putChoiceIntoPlay(player, card) {
-        player.putIntoPlay(card);
-        this.game.addMessage('{0} chooses to put {1} into play using {2}', player, card, this);
-        this.promptNextPlayerToPutIntoPlay();
-        return true;
-    }
-
-    declinePutIntoPlay(player, card) {
-        this.game.addMessage('{0} declines to put {1} into play using {2}', player, card, this);
-        this.promptNextPlayerToPutIntoPlay();
-        return true;
     }
 }
 

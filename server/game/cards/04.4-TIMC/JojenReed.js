@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class JojenReed extends DrawCard {
     setupCardAbilities() {
@@ -6,46 +7,24 @@ class JojenReed extends DrawCard {
             when: {
                 onCardStood: event => event.card === this
             },
-            handler: () => {
-                for(let player of this.game.getPlayers()) {
-                    let card = player.drawDeck[0];
-                    this.game.addMessage('{0} uses {1} to reveal {2} from {3}\'s deck', this.controller, this, card, player);
-                }
-
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Draw or discard revealed cards?',
-                        buttons: [
-                            { text: 'Draw', method: 'draw' },
-                            { text: 'Discard', method: 'discard' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to reveal the top cards of each player\'s deck',
+            gameAction: GameActions.revealCards(context => ({
+                cards: context.game.getPlayers().map(player => player.drawDeck[0]),
+                player: context.player,
+                whileRevealed: GameActions.choose({
+                    choices: {
+                        'Discard revealed cards': {
+                            message: '{player} chooses to have the revealed cards discarded',
+                            gameAction: GameActions.simultaneously(context => context.revealed.map(card => GameActions.discardCard({ card, source: this })))
+                        },
+                        'Each player draw 1 card': {
+                            message: '{player} chooses to have each player draw 1 card',
+                            gameAction: GameActions.simultaneously(this.game.getPlayers().map(player => GameActions.drawCards({ player: player, amount: 1, source: this })))
+                        }
+                    }
+                })
+            }))
         });
-    }
-
-    draw() {
-        for(let player of this.game.getPlayers()) {
-            if(player.canDraw()) {
-                player.drawCardsToHand(1);
-            }
-        }
-
-        this.game.addMessage('{0} uses {1} to have revealed cards drawn', this.controller, this);
-
-        return true;
-    }
-
-    discard() {
-        for(let player of this.game.getPlayers()) {
-            player.discardFromDraw(1);
-        }
-
-        this.game.addMessage('{0} uses {1} to have revealed cards discarded', this.controller, this);
-
-        return true;
     }
 }
 

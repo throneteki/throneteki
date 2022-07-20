@@ -1,34 +1,27 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class ShadowblackLane extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge:event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue'
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'intrigue'
             },
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 10,
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'event' && card.isFaction(this.controller.faction.getPrintedFaction()),
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} uses {source} and kneels their faction card to search the top 10 cards of their deck for an in-faction event',
+            gameAction: GameActions.search({
+                topCards: 10,
+                title: 'Select an event',
+                match: { 
+                    type: 'event',
+                    condition: card => card.isFaction(this.controller.getFaction()) 
+                },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck but does not add any card to their hand',
-            player, this);
     }
 }
 

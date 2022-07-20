@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class RenlyBaratheon extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,14 +14,14 @@ class RenlyBaratheon extends DrawCard {
                 onCardsDrawn: event =>
                     event.reason === 'insight' &&
                     event.source.controller === this.controller &&
-                    event.cards[0].isLoyal() &&
-                    this.controller.canDraw()
+                    event.cards[0].isLoyal()
             },
             cost: ability.costs.revealSpecific(context => context.event.cards[0]),
-            handler: context => {
-                this.controller.drawCardsToHand(1);
-                this.game.addMessage('{0} uses {1} to draw 1 card', context.player, this);
-            }
+            message: '{player} uses {source} and reveals {costs.reveal} from their hand to draw 1 card',
+            gameAction: GameActions.drawCards(context => ({
+                player: context.player,
+                amount: 1
+            }))
         });
     }
 

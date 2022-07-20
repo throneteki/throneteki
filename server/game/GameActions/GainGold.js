@@ -1,8 +1,14 @@
 const GameAction = require('./GameAction');
+const Message = require('../Message');
 
 class GainGold extends GameAction {
     constructor() {
         super('gainGold');
+    }
+
+    message({ player, amount }) {
+        const actualAmount = player.getGoldToGain(amount);
+        return Message.fragment('gains {actualAmount} gold', { actualAmount});
     }
 
     canChangeGameState({ player, amount }) {

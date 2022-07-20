@@ -23,13 +23,16 @@ class Meadowlark extends DrawCard {
         this.action({
             title: 'Search the deck',
             cost: ability.costs.sacrificeSelf(),
-            message: '{player} sacrifices {source} to search their deck',
+            message: {
+                format: '{player} sacrifices {costs.sacrifice} to search their deck for a character with printed cost {tokens} or lower',
+                args: { tokens: context => context.cardStateWhenInitiated.tokens[Tokens.journey] || 0 }
+            },
             handler: context => {
                 const journeyTokens = context.cardStateWhenInitiated.tokens[Tokens.journey] || 0;
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a character',
                     cardCondition: card => card.getType() === 'character' && card.getPrintedCost() <= journeyTokens && context.player.canPutIntoPlay(card),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -37,9 +40,11 @@ class Meadowlark extends DrawCard {
         });
     }
 
-    cardSelected(player, card) {
-        this.game.addMessage('{0} puts {1} into play for {2}', player, card, this);
-        player.putIntoPlay(card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            this.game.addMessage('{0} puts {1} into play for {2}', player, card, this);
+            player.putIntoPlay(card);
+        }
     }
 
     doneSelecting(player) {

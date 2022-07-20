@@ -1,14 +1,19 @@
 const GameAction = require('./GameAction');
 const MoveCardEventGenerator = require('./MoveCardEventGenerator');
+const Message = require('../Message');
 
 class PutIntoPlay extends GameAction {
     constructor() {
         super('putIntoPlay');
     }
 
+    message({ card }) {
+        return Message.fragment('puts {card} into play', { card });
+    }
+
     canChangeGameState({ player, card }) {
         player = player || card.controller;
-        return player.canPutIntoPlay(card);
+        return card.location !== 'play area' && player.canPutIntoPlay(card);
     }
 
     createEvent({ player, card, kneeled, playingType }) {

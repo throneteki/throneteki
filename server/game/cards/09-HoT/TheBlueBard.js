@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class TheBlueBard extends DrawCard {
     setupCardAbilities() {
@@ -6,30 +7,16 @@ class TheBlueBard extends DrawCard {
             when: {
                 onCardLeftPlay: event => event.card === this
             },
-            handler: () => {
-                this.selectedCards = [];
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 10,
-                    numToSelect: 10,
-                    activePromptTitle: 'Select any number of events',
-                    cardCondition: card => card.hasTrait('Song') && card.getType() === 'event',
-                    onSelect: (player, cards) => this.selectCards(player, cards),
-                    onCancel: player => this.cancelSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to search the top 10 cards of their deck for any number of Song events',
+            gameAction: GameActions.search({
+                title: 'Select any number of events',
+                match: { type: 'event', trait: 'Song' },
+                topCards: 10,
+                numToSelect: 10,
+                message: '{player} adds {searchTarget} to their hand',
+                gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
+            })
         });
-    }
-
-    selectCards(player, cards) {
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, cards);
-        for(let card of cards) {
-            player.moveCard(card, 'hand');
-        }
-    }
-
-    cancelSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards', player, this);
     }
 }
 

@@ -1157,6 +1157,10 @@ class Player extends Spectator {
         return this.multipleOpponentClaim.includes(claimType);
     }
 
+    getSelectedCards() {
+        return this.promptState.selectedCards;
+    }
+
     setSelectedCards(cards) {
         this.promptState.setSelectedCards(cards);
     }

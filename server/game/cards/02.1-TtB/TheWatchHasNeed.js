@@ -1,64 +1,37 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class TheWatchHasNeed extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Search for a character',
             condition: () => this.controller.getTotalReserve() > 0,
-            handler: () => {
-                this.game.promptWithMenu(this.controller, this, {
-                    activePrompt: {
-                        menuTitle: 'Select a trait',
-                        buttons: [
-                            { text: 'Builder', method: 'setTrait', arg: 'Builder' },
-                            { text: 'Ranger', method: 'setTrait', arg: 'Ranger' },
-                            { text: 'Steward', method: 'setTrait', arg: 'Steward' },
-                            { text: 'Cancel', method: 'cancelTraitSelection' }
-                        ]
-                    },
-                    source: this
-                });
-            }
+            message: {
+                format: '{player} plays {source} to name a trait and search the top {reserve} cards of their deck',
+                args: { reserve: context => context.player.getTotalReserve() }
+            },
+            gameAction: GameActions.choose({
+                player: () => this.controller,
+                title: 'Select a trait',
+                message: '{choosingPlayer} names the {choice} trait',
+                choices: {
+                    'Builder': this.gameActionForTrait('Builder'),
+                    'Ranger': this.gameActionForTrait('Ranger'),
+                    'Steward': this.gameActionForTrait('Steward')
+                }
+            })
         });
     }
 
-    setTrait(player, trait) {
-        let reserve = player.getTotalReserve();
-
-        this.game.promptForDeckSearch(this.controller, {
-            numCards: reserve,
-            numToSelect: reserve, // player can stop earlier clicking Done when happy
-            activePromptTitle: 'Select a card',
-            cardCondition: card => card.getType() === 'character' && card.hasTrait(trait),
-            onSelect: (player, cards) => this.cardsSelected(player, trait, cards),
-            onCancel: player => this.doneSelecting(player, trait),
-            source: this
+    gameActionForTrait(trait) {
+        return GameActions.search({
+            title: 'Select a character',
+            match: { trait: trait },
+            numToSelect: context => context.player.getTotalReserve(),
+            topCards: context => context.player.getTotalReserve(),
+            message: '{player} adds {searchTarget} to their hand',
+            gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
         });
-
-        return true;
-    }
-
-    cardsSelected(player, trait, cards) {
-        for(let card of cards) {
-            player.moveCard(card, 'hand');
-        }
-        this.game.addMessage('{0} uses {1} to search their deck for a {2} and add {3} to their hand',
-            player, this, trait, cards);
-
-        return true;
-    }
-
-    cancelTraitSelection(player) {
-        this.game.addAlert('danger', '{0} cancels the effect of {1}', player, this);
-
-        return true;
-    }
-
-    doneSelecting(player, trait) {
-        this.game.addMessage('{0} uses {1} to search their deck for a {2}, but does not add any card to their hand',
-            player, this, trait);
-
-        return true;
     }
 }
 

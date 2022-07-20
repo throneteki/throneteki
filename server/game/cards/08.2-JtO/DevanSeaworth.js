@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class DevanSeaworth extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,28 +8,19 @@ class DevanSeaworth extends DrawCard {
                 onDominanceDetermined: event => event.winner === this.controller
             },
             cost: ability.costs.discardXGold(() => 1, () => 99),
-            handler: context => {
-                let xValue = context.xValue;
-                this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'location' && !card.isLimited() && card.getPrintedCost() <= context.xValue && this.controller.canPutIntoPlay(card),
-                    onSelect: (player, card) => this.cardSelected(player, card, xValue),
-                    onCancel: player => this.doneSelecting(player, xValue),
-                    source: this
-                });
-            }
+            message: {
+                format: '{player} discards {discardedGold} gold from {source} to search their deck for a non-limited location',
+                args: { discardedGold: context => context.xValue }
+            },
+            gameAction: GameActions.search({
+                title: 'Select a location',
+                match: { type: 'location', limited: false, condition: (card, context) => card.getPrintedCost() <= context.xValue },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card, xValue) {
-        player.putIntoPlay(card, 'hand');
-        this.game.addMessage('{0} discards {1} gold from {2} to search their deck and put {3} into play',
-            player, xValue, this, card);
-    }
-
-    doneSelecting(player, xValue) {
-        this.game.addMessage('{0} discards {1} gold from {2} to search their deck, but does not put any card into play',
-            player, xValue, this);
     }
 }
 

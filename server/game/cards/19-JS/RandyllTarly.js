@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class RandyllTarly extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,6 +7,7 @@ class RandyllTarly extends DrawCard {
             title: 'Stand Army or reveal top card',
             limit: ability.limit.perPhase(2),
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.hasTrait('The Reach')),
+            message: '{player} uses {source} and kneels {costs.kneel} to either stand an Army character, or reveal the top card of their deck',
             handler: context => {
                 this.context = context;
 
@@ -37,19 +39,35 @@ class RandyllTarly extends DrawCard {
     }
 
     revealtopcard() {
-        let topCard = this.context.player.drawDeck[0];
-        let msg = '{0} uses {1} to reveal {2} as the top card of their deck';
+        const gameAction = GameActions.revealTopCards(context => ({
+            player: context.player
+        })).then({
+            message: '{player} {gameAction}',
+            gameAction: GameActions.simultaneously([
+                GameActions.ifCondition({
+                    condition: context => context.event.cards[0].isMatch({
+                        type: 'location',
+                        trait: 'The Reach'
+                    }),
+                    thenAction: GameActions.putIntoPlay(context => ({
+                        card: context.event.cards[0]
+                    }))
+                }),
+                GameActions.ifCondition({
+                    condition: context => context.event.cards[0].isMatch({
+                        type: 'location',
+                        not: { trait: 'The Reach' }
+                    }),
+                    thenAction: GameActions.drawSpecific(context => ({
+                        player: context.player,
+                        cards: context.event.revealed
+                    }))
+                })
+            ])
+        });
 
-        if(topCard.getType() === 'location' && topCard.hasTrait('The Reach')) {
-            this.context.player.putIntoPlay(topCard);
-            msg += 'and puts it into play';
-        } if(topCard.getType() === 'location' && !topCard.hasTrait('The Reach')) {
-            if(this.context.player.canDraw()) {
-                this.context.player.drawCardsToHand(1);
-                msg += ' and draws it';
-            }
-        }
-        this.game.addMessage(msg, this.context.player, this, topCard);
+        this.game.addMessage('{0} uses {1} and kneels {2} to reveal the top card of their deck', this.context.player, this.context.source, this.context.costs.kneel);
+        this.game.resolveGameAction(gameAction, this.context);
         return true;
     }
 

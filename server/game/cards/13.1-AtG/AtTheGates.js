@@ -3,11 +3,12 @@ const PlotCard = require('../../plotcard.js');
 class AtTheGates extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            message: '{player} uses {source} to search their deck for a limited location with printed cost 1 or lower',
             handler: context => {
                 this.game.promptForDeckSearch(context.player, {
                     activePromptTitle: 'Select a card',
                     cardCondition: card => card.getPrintedCost() <= 1 && card.isLimited(),
-                    onSelect: (player, card) => this.cardSelected(player, card),
+                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
                     onCancel: player => this.doneSelecting(player),
                     source: this
                 });
@@ -19,19 +20,21 @@ class AtTheGates extends PlotCard {
         return player.getNumberOfUsedPlotsByTrait('City') > 0;
     }
 
-    cardSelected(player, card) {
-        if(this.hasUsedCityPlot(player)) {
-            this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-                player, this, card);
-            player.moveCard(card, 'hand');
-        } else {
-            this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
-            player.putIntoPlay(card);
+    cardSelected(player, card, valid) {
+        if(valid) {
+            if(this.hasUsedCityPlot(player)) {
+                this.game.addMessage('{0} adds {1} to their hand',
+                    player, card);
+                player.moveCard(card, 'hand');
+            } else {
+                this.game.addMessage('{0} puts {1} into play', player, card);
+                player.putIntoPlay(card);
+            }
         }
     }
 
     doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any card',
+        this.game.addMessage('{0} does not retrieve any card',
             player, this);
     }
 }

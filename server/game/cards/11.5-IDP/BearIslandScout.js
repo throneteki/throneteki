@@ -8,11 +8,11 @@ class BearIslandScout extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal' && Conditions.allCharactersAreStark({ player: this.controller })
             },
+            message: '{player} uses {source} to search their deck for a House Mormont card',
             gameAction: GameActions.search({
                 title: 'Select a card',
                 match: { trait: 'House Mormont' },
-                message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
-                cancelMessage: '{player} uses {source} to search their deck but does not find a card',
+                message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand(context => ({
                     card: context.searchTarget
                 }))

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class INeverBetAgainstMyFamily extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,96 +7,94 @@ class INeverBetAgainstMyFamily extends DrawCard {
             title: 'Put character in play from bottom of your deck',
             phase: 'challenge',
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                this.remainingCards = this.controller.searchDrawDeck(-5);
+            message: '{player} plays {source} and kneels their faction card to reveal the bottom 5 cards of their deck',
+            gameAction: GameActions.revealCards(context => ({
+                cards: context.player.searchDrawDeck(-5),
+                player: context.player,
+                whileRevealed: GameActions.genericHandler(context => {
+                    this.choosePutIntoPlay(context);
+                })
+            })).then(context => ({
+                handler: () => {
+                    if(context.target) {
+                        this.game.addMessage('{0} puts {1} into play', context.player, context.target);
+                        this.game.resolveGameAction(
+                            GameActions.putIntoPlay(context => ({
+                                card: context.target
+                            })).then({
+                                handler: context => {
+                                    this.atEndOfPhase(ability => ({
+                                        match: context.parentContext.target,
+                                        condition: () => ['play area', 'duplicate'].includes(context.parentContext.target.location),
+                                        targetLocation: 'any',
+                                        effect: ability.effects.discardIfStillInPlay(false)
+                                    }));
+                                }
+                            }),
+                            context
+                        );
+                    }
 
-                this.game.addMessage('{0} uses {1} to reveal from the bottom of their deck: {2}', this.controller, this, this.remainingCards);
-
-                this.uniqueCharacters = this.remainingCards.filter(card => card.isUnique() && card.getType() === 'character' && card.isFaction('lannister'));
-
-                if(this.uniqueCharacters.length > 0) {
-                    this.promptToChooseCharacter();
-                } else {
-                    this.promptToPlaceNextCard();
+                    this.game.addMessage('{0} places {1} cards on the bottom of their draw deck', context.player, context.orderedBottomCards.length);
+                    this.game.resolveGameAction(
+                        GameActions.simultaneously(context => context.orderedBottomCards.map(card => (
+                            GameActions.placeCard({
+                                card,
+                                player: card.owner,
+                                location: 'draw deck',
+                                bottom: true
+                            })
+                        ))),
+                        context
+                    );
                 }
-            }
+            }))
         });
     }
 
-    promptToChooseCharacter() {
-        let buttons = this.uniqueCharacters.map(card => ({
-            method: 'selectCharacter', card: card
-        }));
+    choosePutIntoPlay(context) {
+        const isUniqueLannister = card => card.isMatch({ type: 'character', unique: true, faction: 'lannister' });
 
-        buttons.push({ text: 'None', method: 'promptToPlaceNextCard' });
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Choose a unique character to put in play',
-                buttons: buttons
-            },
-            source: this
-        });
-
-        return true;
-    }
-
-    selectCharacter(player, cardId) {
-        let card = this.remainingCards.find(card => card.uuid === cardId);
-        if(!card) {
-            return false;
-        }
-
-        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
-        this.controller.putIntoPlay(card);
-        this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, card);
-        this.atEndOfPhase(ability => ({
-            match: card,
-            condition: () => ['play area', 'duplicate'].includes(card.location),
-            targetLocation: 'any',
-            effect: ability.effects.discardIfStillInPlay(false)
-        }));
-        this.promptToPlaceNextCard();
-
-        return true;
-    }
-
-    promptToPlaceNextCard() {
-        if(this.remainingCards.length === 0) {
-            return true;
-        }
-
-        let buttons = this.remainingCards.map(card => ({
-            method: 'selectCardForBottom', card: card
-        }));
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Choose card to place on bottom of deck',
-                buttons: buttons
-            },
-            source: this
-        });
-
-        return true;
-    }
-
-    selectCardForBottom(player, cardId) {
-        let card = this.remainingCards.find(card => card.uuid === cardId);
-        if(!card) {
-            return false;
-        }
-
-        this.remainingCards = this.remainingCards.filter(card => card.uuid !== cardId);
-        this.controller.moveCard(card, 'draw deck', { bottom: true });
-
-        if(this.remainingCards.length > 0) {
-            this.promptToPlaceNextCard();
+        if(context.revealed.some(isUniqueLannister)) {
+            this.game.promptForSelect(context.player, {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => context.revealed.includes(card) && isUniqueLannister(card),
+                onSelect: (player, card) => {
+                    context.target = card;
+                    this.chooseBottomOrder(context);
+                    return true;
+                },
+                onCancel: () => {
+                    this.chooseBottomOrder(context);
+                    return true;
+                }
+            });
         } else {
-            this.game.addMessage('{0} placed the remaining cards on the bottom of their deck', this.controller);
+            this.chooseBottomOrder(context);
         }
+    }
 
-        return true;
+    chooseBottomOrder(context) {
+        const remainingCards = context.revealed.filter(card => card !== context.target);
+        if(remainingCards.length > 0) {
+            this.game.promptForSelect(context.player, {
+                ordered: true,
+                mode: 'exactly',
+                numCards: remainingCards.length,
+                activePromptTitle: 'Select order to place cards on bottom (bottom card last)',
+                cardCondition: card => remainingCards.includes(card),
+                onSelect: (player, selectedCards) => {
+                    context.orderedBottomCards = selectedCards;
+                    return true;
+                },
+                onCancel: () => {
+                    context.orderedBottomCards = remainingCards;
+                    return true;
+                }
+            });
+        } else {
+            context.orderedBottomCards = [];
+        }
     }
 }
 
