@@ -5,7 +5,7 @@ class Benjicot extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardStood: event => event.card === this
+                afterChallenge: event => event.challenge.isMatch({ winner: this.controller }) && this.isParticipating()
             },
             message: '{player} is forced by {source} to reveal the bottom card of each player\'s deck',
             // TODO: This will need to be re-implemented when the Alla reveal cards branch is merged
@@ -15,7 +15,7 @@ class Benjicot extends DrawCard {
                 })
             )).then({
                 handler: context => {
-                    const cards = context.event.getConcurrentEvents().map(event => event.card);
+                    const cards = context.event.getConcurrentEvents().map(event => event.card).filter(card => !card.isFaction('neutral'));
                     const gameActions = [];
                     const traits = this.getTraits();
                     for(const card of cards) {
