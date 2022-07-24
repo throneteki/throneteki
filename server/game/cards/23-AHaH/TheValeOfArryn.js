@@ -1,27 +1,22 @@
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions/index.js');
-const TextHelper = require('../../TextHelper');
 
 class TheValeOfArryn extends DrawCard {
     setupCardAbilities() {
-        this.plotModifiers({
-            initiative: -1
-        });
-
         this.reaction({
             when: {                
-                afterChallenge: event => event.challenge.winner === this.controller && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true })
+                afterChallenge: event => event.challenge.winner === this.controller && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', defending: true })
             },
             message: {
-                format: '{player} uses {source} to draw {numberToDraw}',
-                args: { numberToDraw: () => TextHelper.count(this.getNumberToDraw(), 'card') }
+                format: '{player} uses {source} to draw {numberToDraw} cards',
+                args: { numberToDraw: () => this.getNumberToDraw() }
             },
             gameAction: GameActions.drawCards(context => ({ player: context.player, amount: this.getNumberToDraw() }))
         });
     }
 
     getNumberToDraw() {
-        return this.kneeled ? 2 : 1;
+        return Math.min(this.controller.getNumberOfCardsInPlay({ trait: 'House Arryn', type: 'character', defending: true }), 5);
     }
 }
 
