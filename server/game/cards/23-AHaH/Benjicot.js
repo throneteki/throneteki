@@ -15,14 +15,14 @@ class Benjicot extends DrawCard {
                 })
             )).then({
                 handler: context => {
-                    const cards = context.event.getConcurrentEvents().map(event => event.card).filter(card => !card.isFaction('neutral'));
+                    const cards = context.event.getConcurrentEvents().map(event => event.card);
                     const gameActions = [];
                     const traits = this.getTraits();
                     for(const card of cards) {
                         if(traits.some(trait => card.hasTrait(trait))) {
                             this.game.addMessage('{0} adds {1} to their hand', card.owner, card);
                             gameActions.push(GameActions.addToHand({ card }));
-                        } else {
+                        } else if (!card.isFaction('neutral')) {
                             this.game.addMessage('{0} discards {1}', card.controller, card);
                             gameActions.push(GameActions.discardCard({ card }));
                         }
