@@ -6,31 +6,28 @@ class TorrhensSquare extends DrawCard {
         this.plotModifiers({
             initiative: -2
         });
-
-        this.persistentEffect({
-            match: card => card.name === 'Dagmer Cleftjaw' && card.controller === this.controller,
-            effect: [
-                ability.effects.modifyStrength(2),
-                ability.effects.doesNotKneelAsDefender()
-            ]
-        });
-
         this.reaction({
             when: {
-                onInitiativeDetermined: event => event.winner !== this.controller
+                onCardOutOfShadows: event => event.card.controller === this.controller && event.card.isFaction('greyjoy')
             },
+            cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} uses {source} to discard the top {amount} cards from each opponents deck',
-                args: { amount: context => this.getNumberOfRaiders(context.player) }
+                format: '{player} kneels {source} to discard the top {amount} cards from {opponents} deck',
+                args: { 
+                    amount: context => this.getNumberOfRaiders(context.player),
+                    opponents: context => this.getOpponentsToDiscard(context)
+                }
             },
             gameAction: GameActions.simultaneously(context => 
-                context.game.getOpponentsInFirstPlayerOrder(context.player).map(player => GameActions.discardTopCards({ player: player, amount: this.getNumberOfRaiders(context.player) }))
+                this.getOpponentsToDiscard(context).map(player => GameActions.discardTopCards({ player: player, amount: this.getNumberOfRaiders(context.player) }))
             )
         });
     }
-
+    getOpponentsToDiscard(context) {
+        return context.game.getOpponentsInFirstPlayerOrder(context.player).filter(player => player.getTotalInitiative() >= context.player.getTotalInitiative());
+    }
     getNumberOfRaiders(player) {
-        return player.filterCardsInPlay(card => card.hasTrait('Raider')).length;
+        return player.getNumberOfCardsInPlay({ type: 'character', trait: 'Raider' });
     }
 }
 
