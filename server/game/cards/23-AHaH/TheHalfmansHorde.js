@@ -2,13 +2,7 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
 
 class TheHalfmansHorde extends DrawCard {
-    setupCardAbilities(ability) {
-        this.persistentEffect({
-            condition: () => this.game.currentChallenge && this.game.currentChallenge.defendingPlayer.getNumberOfCardsInPlay(card => card.getType() === 'character') > this.controller.getNumberOfCardsInPlay(card => card.getType() === 'character'),
-            match: this,
-            effect: ability.effects.doesNotKneelAsAttacker()
-        });
-
+    setupCardAbilities() {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
