@@ -165,7 +165,7 @@ class BaseCardSelector {
      * @param {AbilityContext} context
      * @returns {boolean}
      */
-     rejectAllowed() {
+    rejectAllowed() {
         return this.ifAble;
     }
 }

@@ -4,7 +4,7 @@ const GameActions = require('../../GameActions');
 class TheKingInTheNarrowSea extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction(
-            { faction: 'baratheon', unique: true },
+            { faction: 'baratheon', unique: true }
         );
         this.plotModifiers({
             initiative: -1

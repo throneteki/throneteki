@@ -38,7 +38,6 @@ class EachPlayerCardSelector extends BaseCardSelector {
         });
     }
 
-
     getMatchingCardsForPlayer(context, player) {
         let playerCards = context.game.allCards.filter(card => card.controller === player);
         return playerCards.filter(card => super.canTarget(card, context));
@@ -49,7 +48,7 @@ class EachPlayerCardSelector extends BaseCardSelector {
     }
 
     rejectAllowed(context) {
-        return this.ifAble && this.getMaximumSelectable(context) === 0
+        return this.ifAble && this.getMaximumSelectable(context) === 0;
     }
 }
 
