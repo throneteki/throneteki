@@ -14,7 +14,7 @@ class SerVardisEgen extends DrawCard {
                     effect: ability.effects.mayInitiateAdditionalChallenge('power')
                 }));
             }
-        })
+        });
     }
 }
 
