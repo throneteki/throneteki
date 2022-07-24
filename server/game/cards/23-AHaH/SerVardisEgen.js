@@ -1,34 +1,20 @@
 const DrawCard = require('../../drawcard.js');
-const {Tokens} = require('../../Constants');
 
 class SerVardisEgen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {                
-                afterChallenge: event => this.isDefending() && event.challenge.isMatch({ loser: this.controller })
+                afterChallenge: event => this.isDefending() && event.challenge.isMatch({ winner: this.controller, challengeType: 'military' })
             },
             cost: ability.costs.sacrificeSelf(),
-            target: {
-                type: 'select',
-                cardCondition: { type: 'character', attacking: true, not: { trait: 'Army' } }
-            },
-            message: {
-                format: '{player} sacrifices {source} to place {target} in shadows with a shadow token on it',
-                args: { owner: context => context.target.owner }
-            },
-            handler: context => {
-                context.player.putIntoShadows(context.target, false, () => {
-                    context.target.modifyToken(Tokens.shadow, 1);
-                    
-                    this.lastingEffect(ability => ({
-                        condition: () => context.target.location === 'shadows',
-                        targetLocation: 'any',
-                        match: context.target,
-                        effect: ability.effects.addKeyword(`Shadow (${context.target.getPrintedCost()})`)
-                    }));
-                });
+            message: '{player} sacrifices {source} to be able to initiate an additional power challenge this phase',
+            handler: () => {
+                this.untilEndOfPhase(ability => ({
+                    targetController: 'current',
+                    effect: ability.effects.mayInitiateAdditionalChallenge('power')
+                }));
             }
-        });
+        })
     }
 }
 
