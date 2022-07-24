@@ -3,13 +3,12 @@ const range = require('lodash.range');
 const BaseStep = require('../gamesteps/basestep');
 
 class XValuePrompt extends BaseStep {
-    constructor(min, max, context, reduction = 0) {
+    constructor(min, max, context) {
         super();
 
         this.min = min;
         this.max = max;
         this.context = context;
-        this.reduction = reduction;
     }
 
     continue() {
@@ -44,7 +43,6 @@ class XValuePrompt extends BaseStep {
         }
 
         this.context.xValue = xValue;
-        this.context.goldCost = Math.max(xValue - this.reduction, 0);
 
         return true;
     }

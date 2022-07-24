@@ -2,11 +2,15 @@ const DrawCard = require('../../drawcard.js');
 const TextHelper = require('../../TextHelper');
 
 class MeleeAtBitterbridge extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({
+            min: () => 1,
+            max: () => this.game.currentChallenge.getNumberOfParticipants()
+        });
+
         this.action({
             title: 'Give character renown',
             condition: () => this.game.currentChallenge && this.game.currentChallenge.getNumberOfParticipants() > 0,
-            cost: ability.costs.payXGold(() => 1, () => this.game.currentChallenge.getNumberOfParticipants()),
             handler: context => {
                 let xValue = context.xValue;
                 this.game.promptForSelect(this.controller, {
@@ -15,7 +19,7 @@ class MeleeAtBitterbridge extends DrawCard {
                     activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
                     cardCondition: card => card.location === 'play area' && card.isParticipating(),
-                    onSelect: (player, cards) => this.targetsSelected(player, cards, context.goldCost)
+                    onSelect: (player, cards) => this.targetsSelected(player, cards, context.costs.gold)
                 });
             }
         });

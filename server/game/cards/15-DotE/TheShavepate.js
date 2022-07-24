@@ -22,7 +22,7 @@ class TheShavepate extends DrawCard {
                     context
                 );
                 this.game.addMessage('{0} uses {1} and pays {2} gold to put {3} into play from their discard pile',
-                    context.player, this, context.goldCost, context.target);
+                    context.player, this, context.costs.gold, context.target);
             },
             limit: ability.limit.perPhase(1)
         });

@@ -168,7 +168,7 @@ class DrawCard extends BaseCard {
     }
 
     getCost() {
-        return this.getPrintedCost();
+        return this.cardData.cost;
     }
 
     getMinCost() {

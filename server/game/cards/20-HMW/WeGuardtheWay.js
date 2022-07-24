@@ -2,9 +2,13 @@ const DrawCard = require('../../drawcard.js');
 const TextHelper = require('../../TextHelper');
 
 class WeGuardtheWay extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({
+            min: () => 1,
+            max: () => this.game.getNumberOfCardsInPlay(card => card.getType() === 'character' && (card.hasTrait('Guard') || card.hasTrait('House Yronwood')))
+        });
+
         this.action({
-            cost: ability.costs.payXGold(() => 1, () => this.game.getNumberOfCardsInPlay(card => card.getType() === 'character' && (card.hasTrait('Guard') || card.hasTrait('House Yronwood')))),
             handler: context => {
                 let xValue = context.xValue;
                 this.game.promptForSelect(context.player, {

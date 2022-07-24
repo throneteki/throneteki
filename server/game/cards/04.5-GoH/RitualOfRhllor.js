@@ -2,12 +2,16 @@ const DrawCard = require('../../drawcard.js');
 const TextHelper = require('../../TextHelper');
 
 class RitualOfRhllor extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
+        this.xValue({
+            min: () => 1,
+            max: () => this.getNumberOfStandingRhllor()
+        });
+
         this.reaction({
             when: {
                 onDominanceDetermined: event => this.controller === event.winner && this.getNumberOfStandingRhllor() >= 1
             },
-            cost: ability.costs.payXGold(() => 1, () => this.getNumberOfStandingRhllor()),
             handler: context => {
                 let xValue = context.xValue;
                 this.game.promptForSelect(this.controller, {
@@ -17,7 +21,7 @@ class RitualOfRhllor extends DrawCard {
                     activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
                     source: this,
                     cardCondition: card => card.location === 'play area' && !card.kneeled && card.hasTrait('R\'hllor') && card.getType() === 'character',
-                    onSelect: (player, cards) => this.targetsSelected(player, cards, context.goldCost)
+                    onSelect: (player, cards) => this.targetsSelected(player, cards, context.costs.gold)
                 });
             }
         });
