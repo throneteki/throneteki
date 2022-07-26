@@ -19,9 +19,7 @@ class FreshRecruits extends DrawCard {
                     && Array.availableToPair(selectableTraits, context.selectedCards, (trait, card) => card.hasTrait(trait)).some(trait => card.hasTrait(trait))
                 },
                 message: '{player} adds {searchTarget} to their hand',
-                gameAction: GameActions.simultaneously(context => (
-                    context.searchTarget.map(card => GameActions.addToHand({ card }))
-                ))
+                gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
             })
         });
     }

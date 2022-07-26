@@ -11,6 +11,7 @@ class WhiteHarbor extends DrawCard {
             gameAction: GameActions.revealTopCards(context => ({
                 player: context.player,
                 amount: 2,
+                //TODO: When a SelectCards GameAction is implemented, update the below
                 whileRevealed: GameActions.genericHandler(context => {
                     this.game.promptForSelect(context.event.challenge.loser, {
                         activePromptTitle: `Select a card to add to ${context.player.name}'s hand`,

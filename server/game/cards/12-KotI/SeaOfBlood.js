@@ -26,31 +26,20 @@ class SeaOfBlood extends AgendaCard {
             },
             cost: ability.costs.kneelFactionCard(),
             message: '{player} uses {source} and kneels their faction card to place 1 blood token on {source}',
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken(() => ({ card: this, token: Tokens.blood })),
-                    context
-                );
-                this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select an event',
-                    cardCondition: card => card.getType() === 'event',
-                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.placeToken(() => ({ 
+                card: this, token: Tokens.blood 
+            })).then({
+                message: 'Then, {player} searches their deck for an event',
+                gameAction: GameActions.search({
+                    title: 'Select an event',
+                    match: { type: 'event' },
+                    message: '{player} {gameAction}',
+                    gameAction: GameActions.addToHand(context => ({
+                        card: context.searchTarget
+                    }))
+                })
+            })
         });
-    }
-
-    cardSelected(player, card, valid) {
-        if(valid) {
-            this.game.addMessage('Then {0} searches their deck and adds {1} to their hand', player, card);
-            player.moveCard(card, 'hand');
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('Then {0} searches their deck, but does not add any card to their hand', player);
     }
 }
 
