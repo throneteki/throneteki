@@ -10,6 +10,7 @@ class WheelsWithinWheels extends PlotCard {
                 match: { type: 'event' },
                 topCards: 10,
                 numToSelect: 10,
+                //TODO: When a SelectCards GameAction is implemented, update the below to reveal action (reveal=false on search), and select while revealed
                 gameAction: GameActions.choose({
                     title: 'Select event to draw',
                     message: {

@@ -9,15 +9,10 @@ class Meadowlark extends DrawCard {
                 onPlotRevealed: event => event.plot.controller === this.controller
             },
             message: '{player} uses {source} to place 1 journey token on {source}',
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken({
-                        card: this,
-                        token: Tokens.journey
-                    }),
-                    context
-                );
-            }
+            gameAction: GameActions.placeToken({
+                card: this,
+                token: Tokens.journey
+            })
         });
 
         this.action({
@@ -25,30 +20,22 @@ class Meadowlark extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             message: {
                 format: '{player} sacrifices {costs.sacrifice} to search their deck for a character with printed cost {tokens} or lower',
-                args: { tokens: context => context.cardStateWhenInitiated.tokens[Tokens.journey] || 0 }
+                args: { tokens: context => this.numberOfJourneyTokens(context) }
             },
-            handler: context => {
-                const journeyTokens = context.cardStateWhenInitiated.tokens[Tokens.journey] || 0;
-                this.game.promptForDeckSearch(context.player, {
-                    activePromptTitle: 'Select a character',
-                    cardCondition: card => card.getType() === 'character' && card.getPrintedCost() <= journeyTokens && context.player.canPutIntoPlay(card),
-                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { type: 'character', condition: (card, context) => card.getPrintedCost() <= this.numberOfJourneyTokens(context) },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
     }
 
-    cardSelected(player, card, valid) {
-        if(valid) {
-            this.game.addMessage('{0} puts {1} into play for {2}', player, card, this);
-            player.putIntoPlay(card);
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not put a character into play for {1}', player, this);
+    numberOfJourneyTokens(context) {
+        return context.cardStateWhenInitiated.tokens[Tokens.journey] || 0;
     }
 }
 

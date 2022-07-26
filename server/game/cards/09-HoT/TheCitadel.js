@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class TheCitadel extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,29 +7,16 @@ class TheCitadel extends DrawCard {
             title: 'Search for Maesters',
             cost: ability.costs.kneelSelf(),
             message: '{player} kneels {costs.kneel} to search the top 10 cards of their deck for a Maester character',
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 10,
-                    cardCondition: card => card.getType() === 'character' && card.hasTrait('Maester'),
-                    onSelect: (player, card, valid) => this.selectCard(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.search({
+                title: 'Select a card',
+                topCards: 10,
+                match: { type: 'character', trait: 'Maester' },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    selectCard(player, card, valid) {
-        if(valid) {
-            this.game.addMessage('{0} adds {1} to their hand', player, card);
-            player.moveCard(card, 'hand');
-        }
-        return true;
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand', player);
-        return true;
     }
 }
 
