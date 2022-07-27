@@ -24,8 +24,8 @@ class LysasLetter extends DrawCard {
 
     setChallengeType(player, challengeType) {
         this.game.addMessage('{0} uses {1} to choose {2} and name {3} challenges', player, this, this.chosenPlayer, challengeType);
-
-        this.lastingEffect(ability => ({
+        
+        this.untilEndOfPhase(ability => ({
             condition: () => !this.challengeTypesInitiated(this.chosenPlayer).includes(challengeType),
             match: card => card === this.chosenPlayer.activePlot,
             targetController: this.chosenPlayer,

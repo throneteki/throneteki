@@ -13,7 +13,7 @@ class Sweetrobin extends DrawCard {
             },
             message: '{player} is forced by {source} to either reveal their hand/shadows, or reduce the claim on their revealed plot card by 1 until the end of the challenge',
             handler: context => {
-                this.game.promptWithMenu(context.player, this, {
+                this.game.promptWithMenu(context.event.challenge.initiatingPlayer, this, {
                     activePrompt: {
                         menuTitle: `Choose one for ${this.name}`,
                         buttons: [
@@ -36,6 +36,7 @@ class Sweetrobin extends DrawCard {
     reduce(player) {
         this.untilEndOfChallenge(ability => ({
             match: card => card === player.activePlot,
+            targetController: 'any',
             effect: ability.effects.modifyClaim(-1)
         }));
         this.game.addMessage('{0} chooses to reduce the claim on their revealed plot card by 1 until the end of the challenge', player);
