@@ -1,26 +1,34 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
+const {Tokens} = require('../../Constants');
 
 class Crannogmen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: (event, context) => event.challenge.winner === context.player && this.isParticipating() &&
-                    event.challenge.loser.getTotalInitiative() > this.controller.getTotalInitiative()
+                onCardEntersPlay: event => event.card.hasTrait('House Reed')
             },
-            cost: ability.costs.putSelfIntoShadows(),
             target: {
-                title: 'Select a character to kill',
-                choosingPlayer: (player, context) => player === context.event.challenge.loser,
-                cardCondition: { location: 'play area', controller: 'choosingPlayer', type: 'character', participating: true }
-            },
-            message: {
-                format: '{player} uses {source} to have {loser} choose and kill {target}',
-                args: { loser: context => context.event.challenge.loser }
+                type: 'select',
+                cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
+                                       card.getType() === 'character'
             },
             handler: context => {
+                this.game.addMessage('{0} uses {1} to place a Poison token on {2}', context.player, this, context.target);
                 this.game.resolveGameAction(
-                    GameActions.kill({ card: context.target, player: context.choosingPlayer }),
+                    GameActions.placeToken({
+                        card: context.target, token: Tokens.poison
+                    }).then({
+                        condition: () => context.target.getStrength() <= context.target.tokens[Tokens.poison],
+                        cost: ability.costs.putSelfIntoShadows(),
+                        message: {
+                            format: 'Then {player} uses {source} to kill {poisonedCharacter}',
+                            args: { poisonedCharacter: () => context.target }
+                        },
+                        handler: () => {
+                            this.game.killCharacter(context.target);
+                        }
+                    }),
                     context
                 );
             }
