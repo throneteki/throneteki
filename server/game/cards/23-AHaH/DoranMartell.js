@@ -4,7 +4,8 @@ class DoranMartell extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetLocation: 'shadows',
-            effect: ability.effects.dynamicKeywords(card => [`Shadow (${card.getPrintedCost()})`])
+            match: card => !card.hasPrintedKeyword('shadow', true),
+            effect: ability.effects.addKeyword('Shadow (3)')
         });
 
         this.reaction({
