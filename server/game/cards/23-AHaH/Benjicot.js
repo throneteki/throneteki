@@ -5,7 +5,7 @@ class Benjicot extends DrawCard {
     setupCardAbilities() {
         this.forcedReaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller }) && this.isParticipating()
+                onCardStood: event => event.card === this
             },
             message: '{player} is forced by {source} to reveal the bottom card of each player\'s deck',
             // TODO: This will need to be re-implemented when the Alla reveal cards branch is merged
@@ -22,7 +22,7 @@ class Benjicot extends DrawCard {
                         if(traits.some(trait => card.hasTrait(trait))) {
                             this.game.addMessage('{0} adds {1} to their hand', card.owner, card);
                             gameActions.push(GameActions.addToHand({ card }));
-                        } else if(!card.isFaction('neutral')) {
+                        } else {
                             this.game.addMessage('{0} discards {1}', card.controller, card);
                             gameActions.push(GameActions.discardCard({ card }));
                         }
