@@ -3,32 +3,20 @@ const GameActions = require('../../GameActions');
 
 class MaesterColemon extends DrawCard {
     setupCardAbilities(ability) {
-        this.persistentEffect({
-            condition: () => this.kneeled,
-            match: card => card.name === 'Sweetrobin',
-            effect: ability.effects.blankExcludingTraits
-        });
-
         this.action({
             title: 'Take control and move attachment',
             phase: 'dominance',
-            cost: [
-                ability.costs.kneelSelf(),
-                ability.costs.payXGold(() => 0, () => 99)
-            ],
+            cost: ability.costs.kneel(card => card.getType() === 'character' && card.hasTrait('Maester') && card.isUnique()),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: (card, context) => (
-                    card.isMatch({
-                        location: 'play area',
-                        trait: 'Condition',
-                        type: 'attachment',
-                        printedCostOrLower: context.xValue
-                    }) ||
-                    card.name === 'Sweetsleep'
-                )
+                cardCondition: {
+                    location: 'play area',
+                    trait: ['Condition', 'Item'],
+                    type: 'attachment',
+                    condition: (card, context) => !context.costs.kneel || card.getPrintedCost() < context.costs.kneel.getPrintedCost()
+                }
             },
-            message: { format: '{player} kneels {source} and pays {goldCost} gold to move and take control of {target}', args: { goldCost: context => context.goldCost } },
+            message: { format: '{player} kneels {kneel} to move and take control of {target}', args: { kneel: context => context.costs.kneel } },
             handler: context => {
                 const attachment = context.target;
 
