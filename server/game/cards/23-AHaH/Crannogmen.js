@@ -13,8 +13,8 @@ class Crannogmen extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
                                        card.getType() === 'character'
             },
+            message: '{player} uses {source} to place a Poison token on {target}',
             handler: context => {
-                this.game.addMessage('{0} uses {1} to place a Poison token on {2}', context.player, this, context.target);
                 this.game.resolveGameAction(
                     GameActions.placeToken({
                         card: context.target, token: Tokens.poison
@@ -22,7 +22,7 @@ class Crannogmen extends DrawCard {
                         condition: () => context.target.getStrength() <= context.target.tokens[Tokens.poison],
                         cost: ability.costs.putSelfIntoShadows(),
                         message: {
-                            format: 'Then {player} uses {source} to kill {poisonedCharacter}',
+                            format: 'Then, {player} returns {source} to shadows to kill {poisonedCharacter}',
                             args: { poisonedCharacter: () => context.target }
                         },
                         handler: () => {
