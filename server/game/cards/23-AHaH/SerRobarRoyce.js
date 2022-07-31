@@ -6,7 +6,7 @@ class SerRobarRoyce extends DrawCard {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
         this.plotModifiers({
-            initiative: -1,
+            initiative: -1
         });
 
         this.persistentEffect({
