@@ -1,46 +1,33 @@
 const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions/index.js');
+const GenericTracker = require('../../EventTrackers/GenericTracker');
 
 class TheBloodyGate extends DrawCard {
     setupCardAbilities(ability) {
+        this.tracker = GenericTracker.forPhase(this.game, 'onCardEntersPlay');
+
+        this.plotModifiers({
+            initiative: -1,
+            reserve: 1
+        });
+
         this.persistentEffect({
-            condition: () => (
-                !this.kneeled &&
-                this.game.isDuringChallenge({
-                    defendingPlayer: this.controller,
-                    match: challenge => challenge.defenders.some(defender => defender.hasTrait('House Arryn'))
-                })
-            ),
+            condition: () => !this.kneeled,
             targetController: 'any',
-            match: card => card === this.game.currentChallenge.attackingPlayer.activePlot,
-            effect: ability.effects.modifyClaim(-1)
+            match: player => this.tracker.some(event => event.card.controller === player && event.card.getType() === 'character' && event.playingType !== 'marshal'),
+            effect: ability.effects.cannotPutIntoPlay((card, playingType) => card.getType() === 'character' && playingType !== 'marshal')
         });
 
         this.forcedReaction({
             when: {
-                onPhaseStarted: event => event.phase === 'challenge'
+                onInitiativeDetermined: event => event.winner === this.controller
             },
-            message: '{player} is forced by {source} to choose whether to kneel {source}',
-            choices: {
-                'Kneel The Bloody Gate': context => {
-                    this.game.addMessage('{0} chooses to kneel {1}', context.player, context.source);
-                    this.game.resolveGameAction(
-                        GameActions.kneelCard(context => ({
-                            card: context.source
-                        })),
-                        context
-                    );
-                },
-                'Disallow challenges': context => {
-                    this.game.addMessage('{0} choose not to kneel {1}', context.player, context.source);
-                    this.untilEndOfPhase(ability => ({
-                        targetController: 'current',
-                        effect: [
-                            ability.effects.cannotInitiateChallengeType('military'),
-                            ability.effects.cannotInitiateChallengeType('power')
-                        ]
-                    }));
-                }
+            target: {
+                activePromptTitle: 'Select card to kneel',
+                cardCondition: (card, context) => card === this || (card.controller === context.player && card.type === 'character' && card.hasTrait('Guard'))
+            },
+            message: '{player} is forced to kneel {target} for {source}',
+            handler: context => {
+                this.controller.kneelCard(context.target);
             }
         });
     }

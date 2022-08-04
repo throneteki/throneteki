@@ -10,9 +10,9 @@ class TorrhensSquare extends DrawCard {
             when: {
                 onCardOutOfShadows: event => event.card.controller === this.controller && event.card.isFaction('greyjoy')
             },
-            cost: ability.costs.kneelSelf(),
+            cost: ability.costs.kneelFactionCard(),
             message: {
-                format: '{player} kneels {source} to discard the top {amount} cards from {opponents} deck',
+                format: '{player} kneels their faction card to discard the top {amount} cards from {opponents} deck',
                 args: { 
                     amount: context => this.getNumberOfRaiders(context.player),
                     opponents: context => this.getOpponentsToDiscard(context)
