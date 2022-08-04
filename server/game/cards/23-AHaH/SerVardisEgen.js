@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
+const {Tokens} = require('../../Constants');
 
 class SerVardisEgen extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,11 +13,20 @@ class SerVardisEgen extends DrawCard {
                 cardCondition: { type: 'character', attacking: true, not: { trait: 'Army' } }
             },
             message: {
-                format: '{player} sacrifices {source} to return {target} to {owner}\'s hand',
+                format: '{player} sacrifices {source} to place {target} in shadows with a shadow token on it',
                 args: { owner: context => context.target.owner }
             },
             handler: context => {
-                this.game.resolveGameAction(GameActions.returnCardToHand(context => ({ card: context.target })), context);
+                context.player.putIntoShadows(context.target, false, () => {
+                    context.target.modifyToken(Tokens.shadow, 1);
+                    
+                    this.lastingEffect(ability => ({
+                        condition: () => context.target.location === 'shadows',
+                        targetLocation: 'any',
+                        match: context.target,
+                        effect: ability.effects.addKeyword(`Shadow (${context.target.getPrintedCost()})`)
+                    }));
+                });
             }
         });
     }

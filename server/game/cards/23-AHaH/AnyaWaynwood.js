@@ -3,6 +3,11 @@ const GameActions = require('../../GameActions/index.js');
 
 class AnyaWaynwood extends DrawCard {
     setupCardAbilities(ability) {
+        this.persistentEffect({
+            match: card => card.name === 'Harry the Heir' && card.controller === this.controller,
+            effect: ability.effects.addKeyword('Renown')
+        });
+
         this.reaction({
             when: {
                 onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller

@@ -1,27 +1,31 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class HarryTheHeir extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.getNumberOfCardsInPlay(card => card.hasTrait('House Arryn') && card.hasTrait('Lady')),
-            match: this,
-            effect: [
-                ability.effects.addIcon('power'),
-                ability.effects.addKeyword('Stealth')
-            ]
+            match: card => card.name === 'Anya Waynwood' && card.controller === this.controller,
+            effect: ability.effects.dynamicStrength(() => this.power)
         });
-        this.action({
-            title: 'Add participating defender',
-            phase: 'challenge',
-            condition: context => this.game.isDuringChallenge({ defendingPlayer: context.player }),
-            target: {
-                title: 'Select a character',
-                cardCondition: { participating: false, kneeled: true, condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() >= context.choosingPlayer.getTotalInitiative() }
+
+        this.reaction({
+            when: {
+                // TODO: Add 'source' to all kneel effects & costs, and add event.source.controller === this.controller to below conditions
+                onCardKneeled: event => this.game.currentChallenge
+                    && event.card.controller === this.controller 
+                    && event.card.isMatch({ type: 'location', faction: 'neutral' })
             },
-            message: '{player} uses {source} to have {target} participate as a defender on their side of the challenge',
-            handler: context => {
-                this.game.currentChallenge.addParticipantToSide(context.player, context.target);
-            }
+            message: {
+                format: '{player} uses {source} to stand {location}',
+                args: { location: context => context.event.card }
+            },
+            gameAction: GameActions.standCard(context => ({ card: context.event.card }))
+                .thenExecute(thenContext => {
+                    if(thenContext.card.hasTrait('House Arryn')) {
+                        this.game.addMessage('Then, {0} stands {1}', this.controller, this);
+                        this.game.resolveGameAction(GameActions.standCard({ card: this }), thenContext);
+                    }
+                })
         });
     }
 }
