@@ -85,8 +85,9 @@ class MoveCardEventGenerator {
 
         player = player || card.controller;
         const game = player.game;
+        const isFullyResolved = event => event.card.location === 'play area';
 
-        return this.event('onCardEntersPlay', { card, playingType, originalLocation }, event => {
+        return this.event('onCardEntersPlay', { card, playingType, originalLocation, isFullyResolved }, event => {
             // Attachments placed in setup should not be considered to be 'played',
             // as it will cause then to double their effects when attached later.
             let isSetupAttachment = playingType === 'setup' && event.card.getPrintedType() === 'attachment';

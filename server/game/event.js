@@ -11,15 +11,18 @@ const ReservedEventParamKeys = [
 
 class Event {
     constructor(name, params = {}, handler = () => true, postHandler = () => true) {
+        const {isFullyResolved, ...otherParams} = params;
+
         this.name = name;
         this.cancelled = false;
         this.handler = handler;
         this.postHandlers = [postHandler];
         this.childEvents = [];
         this.attachedEvents = [];
-        this.params = params;
+        this.params = otherParams;
+        this.isFullyResolved = isFullyResolved || (() => true);
 
-        this.assignParamProperties(params);
+        this.assignParamProperties(otherParams);
     }
 
     assignParamProperties(params) {
@@ -32,7 +35,7 @@ class Event {
     }
 
     get resolved() {
-        return !this.cancelled && this.amount === this.desiredAmount;
+        return !this.cancelled && this.isFullyResolved(this);
     }
 
     addChildEvent(event) {

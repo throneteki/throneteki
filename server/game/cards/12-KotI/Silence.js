@@ -1,10 +1,14 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class Silence extends DrawCard {
     setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: 2
         });
+
+        const getEuron = (player) => player.cardsInPlay.find(card => card.name === 'Euron Crow\'s Eye');
+
         this.action({
             title:'Put card into play',
             phase: 'challenge',
@@ -16,20 +20,21 @@ class Silence extends DrawCard {
                 cardCondition: card => card.getType() === 'location' && card.location === 'hand' && card.hasTrait('Warship') && this.controller.canPutIntoPlay(card)
 
             },
+            message: '{player} uses and kneels {source} to put {target} into play',
             handler: context => {
-                var wasStand = false;
-                var euron = this.controller.cardsInPlay.find(card => card.name === 'Euron Crow\'s Eye');
-                context.player.putIntoPlay(context.target);
-                if(euron && euron.kneeled && euron.allowGameAction('stand')) {
-                    this.controller.standCard(euron);
-                    wasStand = true;
-                }
-                if(wasStand === true) {
-                    this.game.addMessage('{0} uses {1} to put {2} into play and stand {3}', this.controller, this, context.target, euron);
-                    return;
-                }
-
-                this.game.addMessage('{0} uses {1} to put {2} into play', this.controller, this, context.target);
+                this.game.resolveGameAction(
+                    GameActions.putIntoPlay(context => ({
+                        player: context.player,
+                        card: context.target
+                    })).then({
+                        condition: context => !!getEuron(context.player),
+                        message: { format: 'Then {player} stands {euron}', args: { euron: context => getEuron(context.player) } },
+                        gameAction: GameActions.standCard(context => ({
+                            card: getEuron(context.player)
+                        }))
+                    }),
+                    context
+                );
             }
         });
     }
