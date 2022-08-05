@@ -1206,6 +1206,7 @@ class Player extends Spectator {
     getStats(isActivePlayer) {
         return {
             claim: this.getClaim(),
+            initiative: this.getTotalInitiative(),
             gold: !isActivePlayer && this.game.currentPhase === 'setup' ? 0 : this.gold,
             reserve: this.getTotalReserve(),
             totalPower: this.getTotalPower()
