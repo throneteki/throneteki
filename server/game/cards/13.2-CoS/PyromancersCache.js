@@ -15,6 +15,7 @@ class PyromancersCache extends DrawCard {
             effect: ability.effects.gainText(text => {
                 text.action({
                     title: 'Draw 1 card',
+                    gainedByOtherCard: true,
                     cost: ability.costs.kneelSelf(),
                     message: '{player} kneels {source} to draw 1 card',
                     gameAction: GameActions.drawCards(context => ({
