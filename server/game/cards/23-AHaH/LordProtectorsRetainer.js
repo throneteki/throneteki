@@ -1,21 +1,27 @@
 const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
 
 class LordProtectorsRetainer extends DrawCard {
-    setupCardAbilities() {
-        // TODO: Requires a significant rework of X cost abilities / cards, as right now
-        // Ambush (X) counts as Ambush (0), and will alway default to the lowest cost
-        // even if the right Ambush cost is also on the card.
-        // See: https://github.com/throneteki/throneteki/pull/3189
-
-        this.forcedReaction({
+    setupCardAbilities(ability) {
+        this.interrupt({
+            max: ability.limit.perPhase(1),
             when: {
-                onChallengeInitiated: () => true
+                onTargetsChosen: event => (
+                    event.ability.isTriggeredAbility() &&
+                    event.targets.hasSingleTarget() &&
+                    event.targets.anySelection(selection => (
+                        selection.choosingPlayer !== this.controller &&
+                        selection.value.controller === this.controller &&
+                        selection.value.isMatch({ trait: ['Lord', 'Lady'], type: 'character' })
+                    ))
+                )
             },
-            message: '{player} is foced by {source} to return {source} to hand',
-            gameAction: GameActions.returnCardToHand(context => ({
-                card: context.source
-            }))
+            message: {
+                format: '{player} uses {source} to choose itself as the target for {originalTarget} instead',
+                args: { originalTarget: context => context.event.ability.card }
+            },
+            handler: context => {
+                context.event.targets.selections[0].resolve(this);
+            }
         });
     }
 }
