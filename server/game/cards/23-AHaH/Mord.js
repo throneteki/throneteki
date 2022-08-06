@@ -1,36 +1,41 @@
 const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
-const {Tokens} = require('../../Constants');
+const Message = require('../../Message');
 
 class Mord extends DrawCard {
     setupCardAbilities(ability) {
-        this.persistentEffect({
-            // TODO: Handle placing a jail token on Mord. Currently it results in a infinite loop that crashes the game.
-            condition: () => !this.kneeled && !this.hasToken(Tokens.jail),
-            match: card => card.hasToken(Tokens.jail),
-            effect: ability.effects.blankExcludingTraits
-        });
-
-        this.reaction({
-            when: {
-                onCardEntersPlay: event => event.card === this
-            },
+        this.action({
+            title: 'Kneel to blank card',
+            cost: ability.costs.kneelSelf(),
             target: {
-                type: 'select',
-                cardCondition: { type: 'character', location: 'play area' }
+                cardCondition: card => card.isMatch({ location: 'play area', type: 'character' }) || card.isMatch({ location: 'shadows' })
             },
-            message: '{player} uses {source} to place a jail token on {target}',
+            message: {
+                format: '{player} kneels {source} to treat the text box of {card} as blank until {source} stands or leaves play',
+                args: { card: context => this.getCardOrPosition(context.target) }
+            },
             handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken({
-                        card: context.target,
-                        token: Tokens.jail,
-                        amount: 1
-                    }),
-                    context
-                );
+                this.lastingEffect(ability => ({
+                    until: {
+                        onCardStood: event => event.card === this,
+                        onCardLeftPlay: event => event.card === this || event.card === context.target
+                    },
+                    targetLocation: 'any',
+                    match: context.target,
+                    effect: ability.effects.blankExcludingTraits
+                }));
             }
         });
+    }
+
+    getCardOrPosition(card) {
+        if(card.location === 'shadows') {
+            const position = card.controller.shadows.indexOf(card) + 1;
+            return Message.fragment('card #{position} in {player}\'s shadow area', {
+                position,
+                player: card.controller
+            });
+        }
+        return Message.fragment('{card}', { card });
     }
 }
 
