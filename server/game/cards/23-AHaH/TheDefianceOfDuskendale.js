@@ -5,7 +5,7 @@ class TheDefianceOfDuskendale extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge(),
-            match: card => card.getType() === 'location' && !card.hasTrait('Stronghold'),
+            match: card => card.getType() === 'location' && !card.hasTrait('Stronghold') && card.controller === this.game.currentChallenge.defendingPlayer,
             targetController: 'any',
             effect: ability.effects.addTrait('Contested')
         });
@@ -15,6 +15,7 @@ class TheDefianceOfDuskendale extends PlotCard {
                 onCardKneeled: event => event.card.getType() === 'location'
                     && !event.card.isLimited()
                     && event.card.hasTrait('Contested')
+                    && event.source && (event.source.getType() === 'character' || event.cause === 'assault')
             },
             message: {
                 format: '{player} is forced to discard {discard} from play for {source}',
