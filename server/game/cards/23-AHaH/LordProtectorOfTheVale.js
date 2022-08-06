@@ -1,12 +1,12 @@
 const DrawCard = require('../../drawcard.js');
+const {ChallengeTracker} = require('../../EventTrackers');
+const GameActions = require('../../GameActions/index.js');
 
 class LordProtectorOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ trait: 'Lord', printedCostOrHigher: 6 });
+        this.tracker = ChallengeTracker.forPhase(this.game);
 
-        this.plotModifiers({
-            initiative: -1
-        });
+        this.attachmentRestriction({ trait: 'Lord', loyal: false });
 
         this.whileAttached({
             effect: ability.effects.addTrait('House Arryn')
@@ -14,24 +14,19 @@ class LordProtectorOfTheVale extends DrawCard {
 
         this.whileAttached({
             match: card => card.name === 'Littlefinger',
-            effect: ability.effects.addKeyword('Renown')
+            effect: ability.effects.addKeyword('Stealth')
         });
 
-        this.reaction({
+        this.interrupt({
             when: {
-                onCardDrawn: event =>
-                    event.player === this.controller &&
-                    event.card.hasTrait('House Arryn') &&
-                    event.player.canGainGold()
+                onPhaseEnded: event => event.phase === 'challenge' &&
+                    this.tracker.some({ not: { loser: this.controller } })
             },
-            cost: ability.costs.revealSpecific(context => context.event.card),
             message: {
-                format: '{player} reveals {drawnCard} to gain 1 gold',
-                args: { drawnCard: context => context.event.card }
+                format: '{player} uses {source} to draw {amount} cards',
+                args: { amount: () => this.tracker.count({ not: { loser: this.controller } }) }
             },
-            handler: context => {
-                this.game.addGold(context.player, 1);
-            }
+            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: this.tracker.count({ not: { loser: this.controller } }), source: this }))
         });
     }
 }
