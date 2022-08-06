@@ -1,3 +1,5 @@
+const CardMatcher = require('../CardMatcher');
+
 class CardEntersPlayTracker {
     static forPhase(game) {
         return new CardEntersPlayTracker(game, 'onPhaseEnded');
@@ -30,6 +32,20 @@ class CardEntersPlayTracker {
 
     hasComeOutOfShadows(card) {
         return this.events.some(event => event.card === card && event.playingType === 'outOfShadows');
+    }
+
+    hasPlayerAmbushedAnyCardWithPredicate(player, cardPredicateOrMatcher) {
+        const predicate = typeof(cardPredicateOrMatcher) === 'function'
+            ? cardPredicateOrMatcher
+            : card => CardMatcher.isMatch(card, cardPredicateOrMatcher);
+        return this.events.some(event => event.player === player && event.playingType === 'ambush' && predicate(event.source));
+    }
+
+    hasPlayerBroughtOutOfShadowsAnyCardWithPredicate(player, cardPredicateOrMatcher) {
+        const predicate = typeof(cardPredicateOrMatcher) === 'function'
+            ? cardPredicateOrMatcher
+            : card => CardMatcher.isMatch(card, cardPredicateOrMatcher);
+        return this.events.some(event => event.player === player && event.playingType === 'outOfShadows' && predicate(event.source));
     }
 }
 

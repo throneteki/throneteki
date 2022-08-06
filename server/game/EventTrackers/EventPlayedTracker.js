@@ -1,6 +1,11 @@
+const CardMatcher = require('../CardMatcher');
+
 class EventPlayedTracker {
     static forPhase(game) {
         return new EventPlayedTracker(game, 'onPhaseEnded');
+    }
+    static forRound(game) {
+        return new EventPlayedTracker(game, 'onRoundEnded');
     }
 
     constructor(game, endingEvent) {
@@ -29,6 +34,13 @@ class EventPlayedTracker {
         return this.events.reduce((count, event) => {
             return event.player === player && (!playedFromLocation || playedFromLocation === event.originalLocation) ? count + 1 : count;
         }, 0);
+    }
+
+    hasPlayedEvent(player, eventCardPredicateOrMatcher) {
+        const predicate = typeof(eventCardPredicateOrMatcher) === 'function'
+            ? eventCardPredicateOrMatcher
+            : card => CardMatcher.isMatch(card, eventCardPredicateOrMatcher);
+        return this.events.some(event => event.player === player && predicate(event.source));
     }
 }
 
