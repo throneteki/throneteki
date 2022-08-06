@@ -9,6 +9,7 @@ const MoveTokenFromSelfCost = require('./costs/MoveTokenFromSelfCost.js');
 const MovePowerFromFactionCost = require('./costs/MovePowerFromFactionCost');
 const DiscardFromDeckCost = require('./costs/DiscardFromDeckCost');
 const {Tokens} = require('./Constants');
+const MovePowerFromCardCost = require('./costs/MovePowerFromCardCost');
 
 const Costs = {
     /**
@@ -247,6 +248,11 @@ const Costs = {
      * destination card matching the passed condition predicate function.
      */
     movePowerFromFaction: ({amount, condition}) => new MovePowerFromFactionCost({amount, condition }),
+    /**
+     * Cost that will move a fixed amount of a power from a card matching the passed condition predicate function
+     * to a fixed target card
+     */
+    movePowerFromCardToFixedTarget: ({target, amount, condition}) => new MovePowerFromCardCost({target, amount, condition}),
     /**
      * Cost that will discard faction power matching the passed amount.
      */

@@ -8,34 +8,42 @@ class TheEyrie extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => !this.kneeled && this.controller.getTotalInitiative() !== 0,
-            targetController: 'any',
-            effect: ability.effects.increaseCost({
-                amount: 1,
-                playingTypes: ['marshal', 'ambush', 'play'],
-                match: card => card.isFaction(card.controller.faction.getPrintedFaction()),
-                limit: ability.limit.perPhase(1)
-            })
+            condition: () => !this.kneeled,
+            targetController: 'current',
+            match: card => card.controller === this.controller && card.hasTrait('House Arryn') && card.isUnique(),
+            effect: ability.effects.dynamicStrength(() => this.power)
         });
-        this.persistentEffect({
-            condition: () => !this.kneeled && this.controller.getTotalInitiative() === 0,
-            targetController: 'any',
-            effect: ability.effects.increaseCost({
-                amount: 2,
-                playingTypes: ['marshal', 'ambush', 'play'],
-                match: card => card.isFaction(card.controller.faction.getPrintedFaction()),
-                limit: ability.limit.perPhase(1)
-            })
+
+        this.reaction({
+            when: {
+                onPhaseStarted: event => event.phase === 'challenge'
+            },
+            cost: ability.costs.kneelSelf(),
+            choosePlayer: true,
+            handler: context => {
+                this.game.setFirstPlayer(context.chosenPlayer);
+                this.game.addMessage('{0} kneels {1} to have {2} become first player', context.player, this, context.chosenPlayer);
+            }
         });
 
         this.interrupt({
+            //limit once per round so you can´t cancel the cancel with another power
+            limit: ability.limit.perRound(1),
+            //TODO this only works in joust, not in meelee
+            player: () => this.game.getOpponents(this.controller)[0],
             when: {
-                onInitiativeDetermined: event => event.winner !== this.controller
+                onCardAbilityInitiated: event => event.ability.isTriggeredAbility() &&
+                                                 event.source === this &&
+                                                 event.source.controller === this.controller
             },
-            cost: ability.costs.kneelSelf(),
-            message: '{player} uses and kneels {source} to win initiative',
+            cost: ability.costs.movePowerFromCardToFixedTarget({
+                target: this,
+                amount: 1,
+                condition: (card, context) => ((card.controller === context.player && card.location === 'play area') || card === context.player.faction) && card.power > 0
+            }),
             handler: context => {
-                context.event.winner = context.player;
+                context.event.cancel();
+                this.game.addMessage('{0} moves 1 power from {1} to {2} to cancel {2}', context.player, context.costs.movePowerFromCard, this, context.event.source);
             }
         });
     }
