@@ -3,7 +3,7 @@ const GameActions = require('../../GameActions/index.js');
 const Messages = require('../../Messages');
 
 class Littlefinger extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller
@@ -19,6 +19,7 @@ class Littlefinger extends DrawCard {
                 gameAction: 'reveal',
                 messages: Messages.eachPlayerSecretTargetingForCardType('cards in hand/shadows')
             },
+            limit: ability.limit.perPhase(1),
             handler: context => {
                 let cards = context.targets.selections.map(selection => selection.value).filter(card => !!card);
                 this.game.resolveGameAction(
