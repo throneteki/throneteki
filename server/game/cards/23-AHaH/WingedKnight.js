@@ -3,8 +3,10 @@ const DrawCard = require('../../drawcard.js');
 class WingedKnight extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.hasTrait('House Arryn') && card.getType() === 'character',
-            effect: ability.effects.modifyStrength(1)
+            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
+                this.game.currentChallenge.attackingPlayer.getTotalInitiative() > this.controller.getTotalInitiative(),
+            match: this,
+            effect: ability.effects.doesNotKneelAsDefender()
         });
 
         this.interrupt({
