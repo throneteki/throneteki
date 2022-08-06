@@ -15,6 +15,7 @@ class DiscardTopCards extends GameAction {
         let params = {
             amount: actualAmount,
             desiredAmount: amount,
+            isFullyResolved: event => event.amount === event.desiredAmount,
             player
         };
         return this.event('onTopCardsDiscarded', params, event => {

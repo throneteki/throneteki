@@ -28,8 +28,9 @@ class PutIntoPlay extends GameAction {
         }
 
         if(dupeCard && playingType !== 'setup') {
+            const isFullyResolved = event => event.card.location === 'play area';
             return this.atomic(
-                this.event('onDupeEntersPlay', { card, target: dupeCard }, event => {
+                this.event('onDupeEntersPlay', { card, isFullyResolved, target: dupeCard }, event => {
                     event.card.controller.removeCardFromPile(event.card);
                     event.target.addDuplicate(event.card);
                 }),

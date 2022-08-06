@@ -26,6 +26,7 @@ class DrawCards extends GameAction {
             amount: actualAmount,
             cards: [],
             desiredAmount: amount,
+            isFullyResolved: event => event.amount === event.desiredAmount,
             length: actualAmount, // Needed for legacy reason
             player,
             reason,

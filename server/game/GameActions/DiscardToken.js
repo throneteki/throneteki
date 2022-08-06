@@ -11,7 +11,8 @@ class DiscardToken extends GameAction {
 
     createEvent({ card, token, amount = 1 }) {
         const actualAmount = Math.min(amount, card.tokens[token]);
-        return this.event('onTokenDiscarded', { card, token, amount: actualAmount, desiredAmount: amount }, event => {
+        const isFullyResolved = event => event.amount === event.desiredAmount;
+        return this.event('onTokenDiscarded', { card, token, amount: actualAmount, desiredAmount: amount, isFullyResolved }, event => {
             event.card.modifyToken(event.token, -event.amount);
         });
     }
