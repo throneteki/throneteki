@@ -5,6 +5,7 @@ class Sweetrobin extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
+                // TODO: As this currently isn't properly implemented, confirm this works after Alla Implementation is added
                 onCardRevealed: event => event.card.hasPrintedCost() && event.card.getPrintedCost() <= event.card.owner.getTotalInitiative()
             },
             limit: ability.limit.perPhase(1),
