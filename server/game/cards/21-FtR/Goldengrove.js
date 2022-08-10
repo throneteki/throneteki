@@ -10,7 +10,10 @@ class Goldengrove extends DrawCard {
             target: {
                 cardCondition: (card, context) => card.location === 'play area' && card.owner === context.player && (!context.costs.kneel || card.getPrintedCost() <= context.costs.kneel.getPrintedCost())
             },
-            message: '{player} uses {source} and kneels {costs.kneel} to stand and take control of {target}',
+            message: {
+                format: '{player} uses {source} and kneels {kneltCard} to stand and take control of {target}',
+                args: { kneltCard: context => context.costs.kneel }
+            },
             handler: context => {
                 let gameActions = [];
                 gameActions.push(
