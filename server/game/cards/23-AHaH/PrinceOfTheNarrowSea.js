@@ -1,19 +1,27 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
 
-class TheKingInTheNarrowSea extends DrawCard {
+class PrinceOfTheNarrowSea extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction(
             { faction: 'baratheon', unique: true }
         );
+        this.whileAttached({
+            match: card => card.name === 'Salladhor Saan',
+            effect: [
+                ability.effects.addKeyword('Renown'),
+                ability.effects.addTrait('Commander')
+            ]
+        });
         this.plotModifiers({
             initiative: -1
         });
+        
         this.reaction({
             when: {
                 onInitiativeDetermined: event => event.winner !== this.controller
             },
-            cost: ability.costs.returnToHand(card => card.isMatch({ trait: ['Mercenary', 'Smuggler'], type: 'character' })),
+            cost: ability.costs.returnToHand(card => card.isMatch({ trait: 'Smuggler', type: 'character' })),
             targets: {
                 character: {
                     activePromptTitle: 'Select a character',
@@ -42,6 +50,6 @@ class TheKingInTheNarrowSea extends DrawCard {
     }
 }
 
-TheKingInTheNarrowSea.code = '23002';
+PrinceOfTheNarrowSea.code = '23002';
 
-module.exports = TheKingInTheNarrowSea;
+module.exports = PrinceOfTheNarrowSea;

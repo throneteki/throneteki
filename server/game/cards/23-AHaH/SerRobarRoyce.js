@@ -10,8 +10,8 @@ class SerRobarRoyce extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ initiatingPlayer: this.controller }) && !this.tracker.some({ initiatingPlayer: this.controller })
-                || this.game.isDuringChallenge({ initiatedAgainstPlayer: this.controller }) && !this.tracker.some({ initiatedAgainstPlayer: this.controller }),
+            condition: () => this.game.isDuringChallenge({ initiatingPlayer: this.controller }) && !this.tracker.some({ initiatingPlayer: this.controller, match: challenge => challenge !== this.game.currentChallenge })
+                || this.game.isDuringChallenge({ initiatedAgainstPlayer: this.controller }) && !this.tracker.some({ initiatedAgainstPlayer: this.controller, match: challenge => challenge !== this.game.currentChallenge }),
             match: this,
             effect: [
                 ability.effects.cannotBeDeclaredAsAttacker(),
