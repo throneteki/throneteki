@@ -21,7 +21,10 @@ class Mord extends DrawCard {
                     },
                     targetLocation: 'any',
                     match: context.target,
-                    effect: ability.effects.blankExcludingTraits
+                    effect: [
+                        ability.effects.blankExcludingTraits,
+                        ability.effects.losesAllKeywords()
+                    ]
                 }));
             }
         });

@@ -13,6 +13,7 @@ class Crannogmen extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
                                        card.getType() === 'character'
             },
+            limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to place a Poison token on {target}',
             handler: context => {
                 this.game.resolveGameAction(

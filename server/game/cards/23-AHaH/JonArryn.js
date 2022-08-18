@@ -2,37 +2,67 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
 
 class JonArryn extends DrawCard {
-    setupCardAbilities(ability) {
-        this.interrupt({
+    setupCardAbilities() {
+        this.forcedInterrupt({
             when: {
                 onCharacterKilled: event => event.card === this
             },
-            cost: ability.costs.kneelFactionCard(),
-            target: {
-                choosingPlayer: player => player.getTotalInitiative() <= this.controller.getTotalInitiative(),
-                activePromptTitle: 'Select a character',
-                ifAble: true,
-                cardCondition: { kneeled: true, location: 'play area', type: 'character', trait: ['King', 'Small Council'], controller: 'choosingPlayer' },
-                gameAction: 'stand'
-            },
-            message: {
-                format: '{player} kneels their faction card and uses {source} to stand {standing} and have an additional challenges phase this round',
-                args: { standing: context => {
-                    let selections = context.targets.selections.filter(selection => selection.value);
-                    return selections.length > 0 ? selections.map(selection => selection.value) : 'no characters';
-                }}
-            },
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously(context => context.targets.selections.filter(selection => selection.value).map(selection => GameActions.standCard({ card: selection.value }))
-                    ), context
-                );
-                // This isn't ".then" as, technically with how it's worded, the "then" part of the ability should work even if no characters are chosen to stand.
-                this.game.queueSimpleStep(() => {
-                    this.game.addPhaseAfter('challenge', 'challenge');
-                });
+            message: '{player} is forced to allow each player to either draw 2 cards or gain 1 power',
+            handler: () => {
+                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
+                this.proceedToNextStep();
             }
         });
+    }
+
+    proceedToNextStep() {
+        if(this.remainingPlayers.length > 0) {
+            let currentPlayer = this.remainingPlayers.shift();
+            let options = [];
+
+            if(currentPlayer.canDraw()) {
+                options.push({ text: 'Draw 2 cards', method: 'drawCards' });
+            }
+
+            if(currentPlayer.canGainFactionPower()) {
+                options.push({ text: 'Gain 1 power', method: 'gainPower' });
+            }
+            options.push({ text: 'None', method: 'cancel' });
+
+            if(options.length === 1) {
+                this.game.addMessage('{0} cannot draw 2 cards or gain 1 power', currentPlayer);
+                this.proceedToNextStep();
+                return true;
+            }
+
+            this.game.promptWithMenu(currentPlayer, this, {
+                activePrompt: {
+                    menuTitle: `Choose for ${this.name}`,
+                    buttons: options
+                },
+                source: this
+            });
+        }
+    }
+
+    drawCards(player) {
+        this.game.addMessage('{0} chooses to draw 2 cards', player);
+        this.game.resolveGameAction(GameActions.drawCards({ player: player, amount: 2, source: this }));
+        this.proceedToNextStep();
+        return true;
+    }
+
+    gainPower(player) {
+        this.game.addMessage('{0} chooses to gain 1 power', player);
+        this.game.resolveGameAction(GameActions.gainPower({ card: player.faction, amount: 1 }));
+        this.proceedToNextStep();
+        return true;
+    }
+
+    cancel(player) {
+        this.game.addMessage('{0} does not choose to draw 2 cards or gain 1 power', player);
+        this.proceedToNextStep();
+        return true;
     }
 }
 

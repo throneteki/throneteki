@@ -5,7 +5,7 @@ class NestorRoyce extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.getOpponents(this.controller).every(player => player.getTotalInitiative() > this.controller.getTotalInitiative()),
-            match: () => this,
+            match: this,
             effect: ability.effects.addKeyword('Renown')
         });
 

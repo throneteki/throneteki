@@ -9,7 +9,7 @@ class CrastersKeepMutineer extends DrawCard {
             },
             target: {
                 title: 'Select a duplicate',
-                cardCondition: card => card.location === 'duplicate'
+                cardCondition: card => card.location === 'duplicate' && card.parent.getType() === 'character'
             },
             message: {
                 format: '{player} uses {source} to discard a duplicate on {duplicateParent}',

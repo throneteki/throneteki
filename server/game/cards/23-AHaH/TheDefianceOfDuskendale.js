@@ -12,10 +12,11 @@ class TheDefianceOfDuskendale extends PlotCard {
 
         this.forcedReaction({
             when: {
+                // TODO: ALL kneel effects need to be given a valid source (once done, remove the '!event.source')
                 onCardKneeled: event => event.card.getType() === 'location'
                     && !event.card.isLimited()
                     && event.card.hasTrait('Contested')
-                    && event.source && (event.source.getType() === 'character' || event.cause === 'assault')
+                    && (!event.source || (event.source.getType() === 'character' || event.cause === 'assault'))
             },
             message: {
                 format: '{player} is forced to discard {discard} from play for {source}',
