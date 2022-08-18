@@ -420,6 +420,7 @@ const Costs = {
             }
         };
     },
+    shuffleSelfIntoDeck: () => CostBuilders.shuffleCardIntoDeck.self(),
     shuffleCardIntoDeck: condition => CostBuilders.shuffleCardIntoDeck.select(condition),
     giveControl: function(card, opponentFunc) {
         return {
