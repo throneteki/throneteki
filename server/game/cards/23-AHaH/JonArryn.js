@@ -2,7 +2,12 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
 
 class JonArryn extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            match: this,
+            effect: ability.effects.cannotBeSaved()
+        });
+
         this.forcedInterrupt({
             when: {
                 onCharacterKilled: event => event.card === this
