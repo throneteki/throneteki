@@ -10,12 +10,13 @@ class TorrhensSquare extends DrawCard {
             when: {
                 onCardOutOfShadows: event => event.card.controller === this.controller && event.card.isFaction('greyjoy')
             },
-            cost: ability.costs.kneelFactionCard(),
+            cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} kneels their faction card to discard the top {amount} cards from {opponents} deck',
+                format: '{player} kneels {this} to discard the top {amount} cards from {opponents} deck',
                 args: { 
                     amount: context => this.getNumberOfRaiders(context.player),
-                    opponents: context => this.getOpponentsToDiscard(context)
+                    opponents: context => this.getOpponentsToDiscard(context),
+                    this: () => this
                 }
             },
             gameAction: GameActions.simultaneously(context => 
@@ -27,7 +28,7 @@ class TorrhensSquare extends DrawCard {
         return context.game.getOpponentsInFirstPlayerOrder(context.player).filter(player => player.getTotalInitiative() >= context.player.getTotalInitiative());
     }
     getNumberOfRaiders(player) {
-        return player.getNumberOfCardsInPlay({ type: 'character', trait: 'Raider' });
+        return Math.min(player.getNumberOfCardsInPlay({ type: 'character', trait: 'Raider' }), 3);
     }
 }
 
