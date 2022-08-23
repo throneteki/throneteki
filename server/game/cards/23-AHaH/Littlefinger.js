@@ -6,7 +6,7 @@ class Littlefinger extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller
+                afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
             message: {
                 format: '{player} uses {source} to have each player choose and reveal 1 card from their hand or shadows area'
@@ -28,12 +28,35 @@ class Littlefinger extends DrawCard {
                 let playerCardType = cards.filter(card => card.owner === context.player)[0].getPrintedType();
                 let otherCardTypes = cards.filter(card => card.owner !== context.player).map(card => card.getPrintedType());
                 if(!otherCardTypes.includes(playerCardType)) {
-                    this.game.addMessage('{0} uses {1} to stand {1} and have him gain 1 power', context.player, this);
-                    context.player.standCard(this);
-                    this.modifyPower(1);
+                    this.game.promptForSelect(context.player, {
+                        activePromptTitle: 'Select a card',
+                        source: this,
+                        cardCondition: card => card.getPower() > 0,
+                        cardType: ['attachment', 'character', 'faction', 'location'],
+                        gameAction: 'movePower',
+                        onSelect: (player, card) => this.onSelectCard(player, card),
+                        onCancel: (player) => this.onSelectCard(player, null)
+                    });
                 }
             }
         });
+    }
+
+    onSelectCard(player, card) {
+        if(card === null) {
+            this.game.addAlert('danger', '{0} does not choose any card for {1}', player, this);
+            return true;
+        }
+
+        this.game.resolveGameAction(
+            GameActions.movePower({
+                from: card,
+                to: this,
+                amount: 1
+            })
+        );
+        this.game.addMessage('{0} uses {1} to move 1 power from {2} to {1}', player, this, card);
+        return true;
     }
 }
 
