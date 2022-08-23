@@ -2,13 +2,6 @@ const DrawCard = require('../../drawcard.js');
 
 class WingedKnight extends DrawCard {
     setupCardAbilities(ability) {
-        this.persistentEffect({
-            condition: () => this.game.isDuringChallenge({ defendingPlayer: this.controller }) &&
-                this.game.currentChallenge.attackingPlayer.getTotalInitiative() > this.controller.getTotalInitiative(),
-            match: this,
-            effect: ability.effects.doesNotKneelAsDefender()
-        });
-
         this.interrupt({
             when: {
                 onCharacterKilled: event => event.card.isMatch({ trait: ['Lord', 'Lady']}) && event.card.canBeSaved() && event.allowSave
