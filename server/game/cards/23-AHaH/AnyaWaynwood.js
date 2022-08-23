@@ -8,25 +8,34 @@ class AnyaWaynwood extends DrawCard {
             effect: ability.effects.addKeyword('Renown')
         });
 
-        this.reaction({
-            when: {
-                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller
-            },
+        this.action({
+            title: 'Kneel character',
+            phase: 'challenge',
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.isFaction('neutral')),
             target: {
                 title: 'Select a character',
-                cardCondition: { attacking: true, condition: (card, context) => !context.costs.kneel || card.getPrintedCost() <= context.costs.kneel.getPrintedCost() }
+                cardCondition: {
+                    location: 'play area',
+                    type: 'character',
+                    participating: false,
+                    kneeled: false,
+                    condition: (card, context) => !context.costs.kneel || card.getPrintedCost() <= context.costs.kneel.getPrintedCost()
+                }
             },
             message: {
-                format: '{player} uses {source} and kneels {kneel} to kneel and take control of {target} until the end of the challenge',
+                format: '{player} uses {source} and kneels {kneel} to kneel and have it contribute its STR to {player}',
                 args: { kneel: context => context.costs.kneel }
             },
             handler: context => {
                 this.game.resolveGameAction(GameActions.kneelCard({ card: context.target }), context);
-                this.untilEndOfChallenge(ability => ({
-                    match: context.target,
-                    effect: ability.effects.takeControl(this.controller)
-                }));
+                if(this.game.isDuringChallenge()) {
+                    this.untilEndOfChallenge(ability => ({
+                        // Force the effect to recalculate mid-challenge in case the character STR changes
+                        condition: () => true,
+                        targetController: 'current',
+                        effect: ability.effects.contributeChallengeStrength(() => context.target.getStrength())
+                    }));
+                }
             }
         });
     }
