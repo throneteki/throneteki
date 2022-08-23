@@ -573,15 +573,27 @@ class BaseCard {
     }
 
     isAttacking() {
-        return this.game.currentChallenge && this.game.currentChallenge.isAttacking(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isAttacking(this);
     }
 
     isDefending() {
-        return this.game.currentChallenge && this.game.currentChallenge.isDefending(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isDefending(this);
     }
 
     isParticipating() {
-        return this.game.currentChallenge && this.game.currentChallenge.isParticipating(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isParticipating(this);
     }
 
     setCardType(cardType) {
