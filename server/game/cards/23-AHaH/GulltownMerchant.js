@@ -7,14 +7,14 @@ class GulltownMerchant extends DrawCard {
             clickToActivate: true,
             phase: 'marshal',
             cost: ability.costs.kneelSelf(),
-            message: '{player} kneels {source} to reduce to cost of the next House Arryn card they marshal or play by 1',
+            message: '{player} kneels {source} to reduce to cost of the next House Arryn character they marshal by 1',
             handler: context => {
                 this.untilEndOfPhase(ability => ({
                     condition: () => !context.abilityDeactivated,
                     targetController: 'current',
-                    effect: ability.effects.reduceNextMarshalledOrPlayedCardCost(
+                    effect: ability.effects.reduceNextMarshalledCardCost(
                         1,
-                        card => card.hasTrait('House Arryn')
+                        card => card.hasTrait('House Arryn') && card.getType() === 'character'
                     )
                 }));
             }
