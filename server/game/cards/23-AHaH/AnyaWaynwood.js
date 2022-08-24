@@ -9,33 +9,33 @@ class AnyaWaynwood extends DrawCard {
         });
 
         this.action({
-            title: 'Kneel character',
+            title: 'Contribute STR and kneel',
             phase: 'challenge',
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.isFaction('neutral')),
+            condition: () => this.game.isDuringChallenge({ match: challenge => [challenge.attackingPlayer, challenge.defendingPlayer].includes(this.controller) }),
             target: {
                 title: 'Select a character',
                 cardCondition: {
                     location: 'play area',
                     type: 'character',
                     participating: false,
-                    kneeled: false,
                     condition: (card, context) => !context.costs.kneel || card.getPrintedCost() <= context.costs.kneel.getPrintedCost()
                 }
             },
             message: {
-                format: '{player} uses {source} and kneels {kneel} to kneel and have it contribute its STR to {player}',
+                format: '{player} uses {source} and kneels {kneel} to have {target} contribute its STR to {player}\'s side until the end of the challenge',
                 args: { kneel: context => context.costs.kneel }
             },
             handler: context => {
+                this.untilEndOfChallenge(ability => ({
+                    // Force the effect to recalculate mid-challenge in case the character STR changes
+                    condition: () => true,
+                    targetController: 'current',
+                    effect: ability.effects.contributeChallengeStrength(() => context.target.getStrength())
+                }));
+
+                this.game.addMessage('Then, {0} kneels {1}', context.player, context.target);
                 this.game.resolveGameAction(GameActions.kneelCard({ card: context.target }), context);
-                if(this.game.isDuringChallenge()) {
-                    this.untilEndOfChallenge(ability => ({
-                        // Force the effect to recalculate mid-challenge in case the character STR changes
-                        condition: () => true,
-                        targetController: 'current',
-                        effect: ability.effects.contributeChallengeStrength(() => context.target.getStrength())
-                    }));
-                }
             }
         });
     }
