@@ -10,22 +10,22 @@ class HarryTheHeir extends DrawCard {
 
         this.reaction({
             when: {
-                // TODO: Add 'source' to all kneel effects & costs, and add event.source.controller === this.controller to below conditions
-                onCardKneeled: event => this.game.currentChallenge
-                    && event.card.controller === this.controller 
-                    && event.card.isMatch({ type: 'location', faction: 'neutral' })
+                afterChallenge: event => this.isAttacking() && event.challenge.isMatch({ winner: this.controller })
             },
-            message: {
-                format: '{player} uses {source} to stand {location}',
-                args: { location: context => context.event.card }
+            target: {
+                activePromptTitle: 'Select a location',
+                cardCondition: { location: 'play area', kneeled: true, type: 'location', faction: 'neutral', controller: 'current' }
             },
-            gameAction: GameActions.standCard(context => ({ card: context.event.card }))
-                .thenExecute(thenContext => {
-                    if(thenContext.card.hasTrait('House Arryn')) {
-                        this.game.addMessage('Then, {0} stands {1}', this.controller, this);
-                        this.game.resolveGameAction(GameActions.standCard({ card: this }), thenContext);
-                    }
-                })
+            message:'{player} uses {source} to stand {target}',
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.standCard(context => ({
+                        card: context.target
+                    })),
+                    context
+                );
+            },
+            limit: ability.limit.perRound(1)
         });
     }
 }
