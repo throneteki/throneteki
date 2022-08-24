@@ -12,11 +12,10 @@ class TorrhensSquare extends DrawCard {
             },
             cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} kneels {this} to discard the top {amount} cards from {opponents} deck',
+                format: '{player} kneels {source} to discard the top {amount} cards from {opponents} deck',
                 args: { 
                     amount: context => this.getNumberOfRaiders(context.player),
-                    opponents: context => this.getOpponentsToDiscard(context),
-                    this: () => this
+                    opponents: context => this.getOpponentsToDiscard(context)
                 }
             },
             gameAction: GameActions.simultaneously(context => 

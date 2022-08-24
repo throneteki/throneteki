@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard');
-const {ChallengeTracker} = require('../../EventTrackers')
+const {ChallengeTracker} = require('../../EventTrackers');
 
 class TheEyrie extends DrawCard {
     setupCardAbilities(ability) {
