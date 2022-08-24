@@ -954,7 +954,8 @@ const Effects = {
             }
         };
     },
-    contributeChallengeStrength: function(value) {
+    contributeChallengeStrength: function(valueOrCalculate) {
+        const calculate = (typeof valueOrCalculate === 'function') ? valueOrCalculate : () => valueOrCalculate;
         return {
             targetType: 'player',
             apply: function(player, context) {
@@ -963,12 +964,30 @@ const Effects = {
                     return;
                 }
 
+                const value = calculate(context);
+                context.contributeChallengeStrength = context.contributeChallengeStrength || {};
+                context.contributeChallengeStrength[player.name] = value;
                 if(challenge.attackingPlayer === player) {
                     challenge.modifyAttackerStrength(value);
-                    context.game.addMessage('{0} uses {1} to add {2} to the strength of this challenge for a total of {3}', player, context.source, value, challenge.attackerStrength);
                 } else if(challenge.defendingPlayer === player) {
                     challenge.modifyDefenderStrength(value);
-                    context.game.addMessage('{0} uses {1} to add {2} to the strength of this challenge for a total of {3}', player, context.source, value, challenge.defenderStrength);
+                }
+            },
+            reapply: function(player, context) {
+                let challenge = context.game.currentChallenge;
+                if(!challenge) {
+                    return;
+                }
+
+                context.contributeChallengeStrength = context.contributeChallengeStrength || {};
+                const origValue = context.contributeChallengeStrength[player.name];
+                const newValue = calculate(context);
+                const diff = newValue - origValue;
+                context.contributeChallengeStrength[player.name] = newValue;
+                if(challenge.attackingPlayer === player) {
+                    challenge.modifyAttackerStrength(diff);
+                } else if(challenge.defendingPlayer === player) {
+                    challenge.modifyDefenderStrength(diff);
                 }
             },
             unapply: function(player, context) {
@@ -977,12 +996,16 @@ const Effects = {
                     return;
                 }
 
+                const value = calculate(context);
+                context.contributeChallengeStrength = context.contributeChallengeStrength || {};
+                delete context.contributeChallengeStrength[player.name];
                 if(challenge.attackingPlayer === player) {
                     challenge.modifyAttackerStrength(-value);
                 } else if(challenge.defendingPlayer === player) {
                     challenge.modifyDefenderStrength(-value);
                 }
-            }
+            },
+            isStateDependent: true
         };
     },
     setAttackerMaximum: function(value) {
