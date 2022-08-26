@@ -3,48 +3,32 @@ const GameActions = require('../../GameActions/index.js');
 const TextHelper = require('../../TextHelper');
 
 class AWallOfRoses extends DrawCard {
-    setupCardAbilities(ability) {
-        this.interrupt({
+    setupCardAbilities() {
+        this.reaction({
             when: {
-                onRemovedFromChallenge: event => event.isAttacking
+                onRemovedFromChallenge: event => event.card.getStrength() > 0
             },
-            cost: ability.costs.payXGold(() => 1, context => context.event.challenge.defenders.length),
             message: {
-                format: '{player} uses {source} to choose {xValue} characters',
-                args: { xValue: context => context.xValue }
+                format: '{player} uses {source} to stand up to {STR} characters',
+                args: { STR: context => context.event.card.getStrength() }
             },
             handler: context => {
-                let xValue = context.xValue;
                 this.game.promptForSelect(context.player, {
-                    mode: 'exactly',
-                    numCards: xValue,
-                    activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
+                    mode: 'upTo',
+                    numCards: context.event.card.getStrength(),
+                    activePromptTitle: `Select up to ${TextHelper.count(context.event.card.getStrength(), 'character')}`,
                     source: this,
-                    cardCondition: { defending: true },
-                    onSelect: (player, cards) => this.targetsSelected(context, player, cards)
+                    cardCondition: { printedStrengthOrLower: 1, kneeled: true },
+                    onSelect: (player, cards) => {
+                        this.game.addMessage('{0} stands {1}', player, cards);
+                        this.game.resolveGameAction(
+                            GameActions.simultaneously(cards.map(card => GameActions.standCard({ card })))
+                        , context);
+                        return true;
+                    }
                 });
             } 
         });
-    }
-
-    targetsSelected(context, player, cards) {
-        this.game.addMessage('{0} chooses {1} for {2}', player, cards, this);
-
-        this.game.once('afterChallenge:interrupt', event => this.resolveIfWin(context, player, event.challenge, cards));
-
-        return true;
-    }
-
-    resolveIfWin(context, player, challenge, cards) {
-        if(challenge.winner !== player) {
-            return;
-        }
-
-        let gameActions = [GameActions.gainPower({ card: player.faction, amount: 2 })];
-        gameActions.concat(cards.map(card => GameActions.standCard({ card: card })));
-        
-        this.game.addMessage('{0} then uses {1} to gain 2 power and stand {2}', player, this, cards);
-        this.game.resolveGameAction(GameActions.simultaneously(gameActions), context);
     }
 }
 

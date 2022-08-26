@@ -1,32 +1,34 @@
 const DrawCard = require('../../drawcard.js');
-const {ChallengeTracker} = require('../../EventTrackers');
-const GameActions = require('../../GameActions/index.js');
 
 class LordProtectorOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
-        this.tracker = ChallengeTracker.forPhase(this.game);
-
-        this.attachmentRestriction({ trait: 'Lord', loyal: false });
-
-        this.whileAttached({
-            effect: ability.effects.addTrait('House Arryn')
-        });
+        this.attachmentRestriction({ trait: 'Lord' });
 
         this.whileAttached({
             match: card => card.name === 'Littlefinger',
-            effect: ability.effects.addKeyword('Stealth')
+            effect: ability.effects.modifyStrength(2)
         });
 
-        this.interrupt({
-            when: {
-                onPhaseEnded: event => event.phase === 'challenge' &&
-                    this.tracker.some({ not: { loser: this.controller } })
-            },
+        this.action({
+            title: 'Contribute attached STR',
+            phase: 'challenge',
+            cost: ability.costs.kneelSelf(),
+            condition: () => this.game.isDuringChallenge() && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true }),
             message: {
-                format: '{player} uses {source} to draw {amount} cards',
-                args: { amount: () => this.tracker.count({ not: { loser: this.controller } }) }
+                format: '{player} kneels {source} to have {parent} contribute its STR (currently {STR}) to {player}\'s side until the end of the challenge',
+                args: { 
+                    parent: () => this.parent,
+                    STR: () => this.parent.getStrength()
+                }
             },
-            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: this.tracker.count({ not: { loser: this.controller } }), source: this }))
+            handler: () => {
+                this.untilEndOfChallenge(ability => ({
+                    // Force the effect to recalculate mid-challenge in case the character STR changes
+                    condition: () => true,
+                    targetController: 'current',
+                    effect: ability.effects.contributeChallengeStrength(() => this.parent.getStrength())
+                }));
+            }
         });
     }
 }
