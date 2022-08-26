@@ -23,7 +23,7 @@ class AWallOfRoses extends DrawCard {
                         this.game.addMessage('{0} stands {1}', player, cards);
                         this.game.resolveGameAction(
                             GameActions.simultaneously(cards.map(card => GameActions.standCard({ card })))
-                        , context);
+                            , context);
                         return true;
                     }
                 });
