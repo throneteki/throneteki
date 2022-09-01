@@ -1,4 +1,5 @@
 const AgendaCard = require('../../agendacard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class TradingWithQohor extends AgendaCard {
     setupCardAbilities(ability) {
@@ -14,28 +15,20 @@ class TradingWithQohor extends AgendaCard {
                 onClaimApplied: event => event.player === this.controller
             },
             cost: ability.costs.sacrifice(card => card.getType() === 'attachment' && card.hasPrintedCost()),
-            handler: context => {
-                this.game.promptForDeckSearch(context.player, {
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'attachment' && card.hasPrintedCost() && card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost() &&
-                                           card.name !== context.costs.sacrifice.name,
-                    onSelect: (player, card) => this.cardSelected(player, card, context.costs.sacrifice),
-                    onCancel: player => this.doneSelecting(player, context.costs.sacrifice),
-                    source: this
-                });
-            }
+            message: {
+                format: '{player} uses {source} to search their deck for another attachment with printed cost {sacrificeCost} or lower',
+                args: { sacrificeCost: context => context.costs.sacrifice.getPrintedCost() }
+            },
+            gameAction: GameActions.search({
+                title: 'Select an attachment',
+                match: { type: 'attachment', condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() <= context.costs.sacrifice.getPrintedCost() && card.name !== context.costs.sacrifice.name },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card, costCard) {
-        player.putIntoPlay(card);
-        this.game.addMessage('{0} uses {1} and sacrifices {2} to search their deck and put {3} into play',
-            player, this, costCard, card);
-    }
-
-    doneSelecting(player, costCard) {
-        this.game.addMessage('{0} uses {1} and sacrifices {2} to search their deck, but does not put any card into play',
-            player, this, costCard);
     }
 }
 

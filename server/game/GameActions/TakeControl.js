@@ -1,8 +1,13 @@
 const GameAction = require('./GameAction');
+const Message = require('../Message');
 
 class TakeControl extends GameAction {
     constructor() {
         super('takeControl');
+    }
+
+    message({ card }) {
+        return Message.fragment('takes control of {card}', { card });
     }
 
     canChangeGameState({ player, card }) {

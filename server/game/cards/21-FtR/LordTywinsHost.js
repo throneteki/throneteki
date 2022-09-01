@@ -13,34 +13,32 @@ class LordTywinsHost extends DrawCard {
                 onCardDiscarded: (event, context) => event.isPillage && event.source.controller === context.player && event.source.isFaction('lannister')
             },
             message: {
-                format: '{player} uses {source} to have the opponent discard a {type} card from hand',
+                format: '{player} uses {source} to have the opponent discard a {type} card from hand, or reveal their hand',
                 args: { type: context => context.event.card.getType() }
             },
             limit: ability.limit.perRound(3),
-            handler: context => {
-                if(this.game.currentChallenge.loser.hand.some(card => card.getType() === context.event.card.getType())) {
-                    this.promptForCardDiscard(context);
-                    return;
-                }
-
-                this.revealHand(context);
-            }
-        });
-    }
-
-    promptForCardDiscard(context) {
-        this.game.promptForSelect(this.game.currentChallenge.loser, {
-            source: this,
-            activePromptTitle: `Select a ${context.event.card.getType()}`,
-            cardCondition: card => card.location === 'hand' && card.controller === this.game.currentChallenge.loser && card.getType() === context.event.card.getType(),
-            onSelect: (player, card) => this.onCardSelected(context, player, card),
-            onCancel: player => this.onCancel(player)
+            gameAction: GameActions.ifCondition({
+                condition: context => context.game.currentChallenge.loser.hand.some(card => card.getType() === context.event.card.getType()),
+                thenAction: GameActions.genericHandler(context => {
+                    this.game.promptForSelect(this.game.currentChallenge.loser, {
+                        source: this,
+                        activePromptTitle: `Select a ${context.event.card.getType()}`,
+                        cardCondition: card => card.location === 'hand' && card.controller === this.game.currentChallenge.loser && card.getType() === context.event.card.getType(),
+                        onSelect: (player, card) => this.onCardSelected(context, player, card),
+                        onCancel: player => this.onCancel(player)
+                    });
+                }),
+                elseAction: GameActions.revealCards(() => ({
+                    player: this.game.currentChallenge.loser,
+                    cards: this.game.currentChallenge.loser.hand
+                }))
+            })
         });
     }
 
     onCardSelected(context, player, card) {
-        player.discardCard(card);
         this.game.addMessage('{0} discards {1} from their hand', this.game.currentChallenge.loser, card);
+        context.game.resolveGameAction(GameActions.discardCard({ card }), context);
 
         return true;
     }
@@ -50,16 +48,6 @@ class LordTywinsHost extends DrawCard {
             player, this);
 
         return true;
-    }
-
-    revealHand(context) {
-        this.game.resolveGameAction(
-            GameActions.revealCards(() => ({
-                player: this.game.currentChallenge.loser,
-                cards: this.game.currentChallenge.loser.hand
-            })),
-            context
-        );
     }
 }
 

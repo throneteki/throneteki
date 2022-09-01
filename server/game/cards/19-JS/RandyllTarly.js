@@ -8,72 +8,52 @@ class RandyllTarly extends DrawCard {
             limit: ability.limit.perPhase(2),
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.hasTrait('The Reach')),
             message: '{player} uses {source} and kneels {costs.kneel} to either stand an Army character, or reveal the top card of their deck',
-            handler: context => {
-                this.context = context;
-
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Choose one',
-                        buttons: [
-                            { text: 'Stand an Army', method: 'standArmy' },
-                            { text: 'Reveal top card', method: 'revealtopcard' }
-                        ]
+            gameAction: GameActions.choose({
+                choices: {
+                    'Stand an Army': {
+                        gameAction: GameActions.genericHandler(context => {
+                            this.game.promptForSelect(context.player, {
+                                activePromptTitle: 'Select an Army',
+                                source: this,
+                                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Army') && card.kneeled,
+                                gameAction: 'stand',
+                                onSelect: (player, card) => this.onArmySelected(player, card),
+                                onCancel: (player) => this.cancelSelection(player)
+                            });
+                        })
                     },
-                    source: this
-                });
-            }
+                    'Reveal top card': {
+                        message: '{player} chooses, and {gameAction}',
+                        gameAction: GameActions.revealTopCards(context => ({
+                            player: context.player,
+                            revealWithMessage: false
+                        })).then({
+                            gameAction: GameActions.ifCondition({
+                                condition: context => context.event.revealed.length > 0 && context.event.revealed[0].isMatch({ type: 'location' }),
+                                thenAction: {
+                                    message: '{player} {gameAction}',
+                                    gameAction: GameActions.ifCondition({
+                                        condition: context => context.event.revealed[0].isMatch({ trait: 'The Reach' }),
+                                        thenAction: GameActions.putIntoPlay(context => ({
+                                            card: context.event.revealed[0]
+                                        })),
+                                        elseAction: GameActions.drawSpecific(context => ({
+                                            player: context.player,
+                                            cards: context.event.revealed
+                                        }))
+                                    })
+                                }
+                            })
+                        })
+                    }
+                }
+            })
         });
-    }
-
-    standArmy() {
-        this.game.promptForSelect(this.context.player, {
-            activePromptTitle: 'Select an Army',
-            source: this,
-            cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.hasTrait('Army') && card.kneeled,
-            gameAction: 'stand',
-            onSelect: (player, card) => this.onArmySelected(player, card),
-            onCancel: (player) => this.cancelSelection(player)
-        });
-
-        return true;
-    }
-
-    revealtopcard() {
-        const gameAction = GameActions.revealTopCards(context => ({
-            player: context.player
-        })).then({
-            message: '{player} {gameAction}',
-            gameAction: GameActions.simultaneously([
-                GameActions.ifCondition({
-                    condition: context => context.event.cards[0].isMatch({
-                        type: 'location',
-                        trait: 'The Reach'
-                    }),
-                    thenAction: GameActions.putIntoPlay(context => ({
-                        card: context.event.cards[0]
-                    }))
-                }),
-                GameActions.ifCondition({
-                    condition: context => context.event.cards[0].isMatch({
-                        type: 'location',
-                        not: { trait: 'The Reach' }
-                    }),
-                    thenAction: GameActions.drawSpecific(context => ({
-                        player: context.player,
-                        cards: context.event.revealed
-                    }))
-                })
-            ])
-        });
-
-        this.game.addMessage('{0} uses {1} and kneels {2} to reveal the top card of their deck', this.context.player, this.context.source, this.context.costs.kneel);
-        this.game.resolveGameAction(gameAction, this.context);
-        return true;
     }
 
     onArmySelected(player, card) {
-        card.controller.standCard(card);
-        this.game.addMessage('{0} uses {1} to kneel {2} and stand {3}', player, this, this.context.costs.kneel, card);
+        this.game.addMessage('{0} chooses to stand {1}', player, card);
+        this.game.resolveGameAction(GameActions.standCard({ card }));
 
         return true;
     }

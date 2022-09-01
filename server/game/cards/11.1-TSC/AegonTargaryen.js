@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class AegonTargaryen extends DrawCard {
     setupCardAbilities() {
@@ -6,32 +7,24 @@ class AegonTargaryen extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a character',
-                    cardCondition: card => card.getType() === 'character' && (card.hasTrait('Mercenary') || card.hasTrait('Army')),
-                    onSelect: (player, card) => this.cardSelected(card),
-                    onCancel: () => this.doneSelecting(),
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to search their deck for an Army or Mercenary character',
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { type: 'character', trait: ['Army', 'Mercenary'] },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                })).thenExecute(event => {
+                    this.atEndOfPhase(ability => ({
+                        match: event.card,
+                        condition: () => ['play area', 'duplicate'].includes(event.card.location),
+                        targetLocation: 'any',
+                        effect: ability.effects.returnToHandIfStillInPlay(true)
+                    }));
+                })
+            })
         });
-    }
-
-    cardSelected(card) {
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', this.controller, this, card);
-        this.controller.putIntoPlay(card);
-        this.atEndOfPhase(ability => ({
-            match: card,
-            condition: () => ['play area', 'duplicate'].includes(card.location),
-            targetLocation: 'any',
-            effect: ability.effects.returnToHandIfStillInPlay(true)
-        }));
-    }
-
-    doneSelecting() {
-        this.game.addMessage('{0} uses {1} to search their deck but does not put a card into play', this.controller, this);
-        return true;
     }
 }
 

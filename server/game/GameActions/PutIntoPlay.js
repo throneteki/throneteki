@@ -7,8 +7,15 @@ class PutIntoPlay extends GameAction {
         super('putIntoPlay');
     }
 
-    message({ card }) {
-        return Message.fragment('puts {card} into play', { card });
+    message({ player, card, kneeled, context }) {
+        player = player || card.controller;
+
+        // Only show where the card came from if it is not already revealed
+        let message = 'puts {card} into play'
+            + (kneeled ? ' knelt' : '')
+            + (context.revealed && context.revealed.includes(card) ? '' : (player === card.controller ? ' from their {originalLocation}' : ' from {controller}\'s {originalLocation} under their control'));
+
+        return Message.fragment(message, { card, controller: card.controller, originalLocation: card.location });
     }
 
     canChangeGameState({ player, card }) {

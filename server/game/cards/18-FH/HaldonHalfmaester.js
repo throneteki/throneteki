@@ -13,10 +13,10 @@ class HaldonHalfmaester extends DrawCard {
                 player: context.player
             })).then({
                 handler: context => {
-                    let topCard = context.event.cards[0];
+                    let topCard = context.event.revealed.length > 0 ? context.event.revealed[0] : null;
 
                     //place 1 gold on card of the same type
-                    if(['character', 'location', 'attachment'].includes(topCard.getType()) &&
+                    if(topCard && ['character', 'location', 'attachment'].includes(topCard.getType()) &&
                         this.game.anyCardsInPlay(card => card.getType() === topCard.getType())) {
                         this.game.promptForSelect(context.player, {
                             activePromptTitle: 'Select card to gain 1 gold',
@@ -38,16 +38,16 @@ class HaldonHalfmaester extends DrawCard {
     continueHandler(goldCard, context) {
         const gameAction = GameActions.simultaneously([
             GameActions.ifCondition({
-                condition: context => context.event.cards[0].isMatch({ type: 'event' }),
+                condition: context => context.event.revealed.some(card => card.isMatch({ type: 'event' })),
                 thenAction: GameActions.drawSpecific(context => ({
                     player: context.player,
                     cards: context.event.revealed
                 }))
             }),
             GameActions.ifCondition({
-                condition: context => context.event.cards[0].isMatch({ name: 'Aegon Targaryen' }),
+                condition: context => context.event.revealed.some(card => card.isMatch({ name: 'Aegon Targaryen' })),
                 thenAction: GameActions.putIntoPlay(context => ({
-                    card: context.event.cards[0]
+                    card: context.event.revealed.filter(card => card.isMatch({ name: 'Aegon Targaryen' }))[0]
                 }))
             }),
             GameActions.ifCondition({

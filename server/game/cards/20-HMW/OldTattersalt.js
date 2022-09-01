@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class OldTattersalt extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,9 +7,7 @@ class OldTattersalt extends DrawCard {
             title: 'Return to shadows',
             cost: ability.costs.kneel(card => card.name === 'Blackbird'),
             message: '{player} kneels {costs.kneel} to return {source} to shadows',
-            handler: context => {
-                context.player.putIntoShadows(this);
-            }
+            gameAction: GameActions.putIntoShadows({ card: this })
         });
         
         this.reaction({
@@ -19,29 +18,16 @@ class OldTattersalt extends DrawCard {
                 format: '{player} uses {source} to search the top {reserve} cards of their deck for a card with printed cost 1 or lower',
                 args: { reserve: context => context.player.getTotalReserve() }
             },
-            handler: context => {
-                this.game.promptForDeckSearch(context.player, {
-                    numCards: context.player.getTotalReserve(),
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getPrintedCost() <= 1,
-                    onSelect: (player, card, valid) => this.cardSelected(player, card, valid),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            gameAction: GameActions.search({
+                title: 'Select a card',
+                topCards: context => context.player.getTotalReserve(),
+                match: { printedCostOrLower: 1 },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card, valid) {
-        if(valid) {
-            this.game.addMessage('{0} adds {1} to their hand', player, card);
-            player.moveCard(card, 'hand');
-        }
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} does not add any card to their hand',
-            player);
     }
 }
 

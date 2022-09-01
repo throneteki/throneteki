@@ -14,16 +14,12 @@ class IronVictorysCrew extends DrawCard {
                 message: '{player} {gameAction}',
                 gameAction: GameActions.ifCondition({
                     condition: context => context.searchTarget.name === 'Iron Victory',
-                    thenAction: {
-                        gameAction: GameActions.putIntoPlay(context => ({ 
-                            card: context.searchTarget
-                        }))
-                    },
-                    elseAction: {
-                        gameAction: GameActions.addToHand(context => ({
-                            card: context.searchTarget
-                        }))
-                    }
+                    thenAction: GameActions.putIntoPlay(context => ({ 
+                        card: context.searchTarget
+                    })),
+                    elseAction: GameActions.addToHand(context => ({
+                        card: context.searchTarget
+                    }))
                 })
             })
         });

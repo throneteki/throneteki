@@ -1,5 +1,6 @@
 const GameAction = require('./GameAction');
 const HandlerGameActionWrapper = require('./HandlerGameActionWrapper');
+const AbilityMessage = require('../AbilityMessage');
 const AcknowledgeRevealCardsPrompt = require('../gamesteps/AcknowledgeRevealCardsPrompt');
 const Message = require('../Message');
 
@@ -16,18 +17,39 @@ class RevealCards extends GameAction {
         });
     }
 
+    message({ player, context }) {
+        player = player || context.player;
+        if(context.revealed) {
+            let controllers = [...new Set(context.revealed.map(card => card.controller))];
+            let controllerGroups = controllers.map(controller => ({ 
+                player: controller, 
+                cards: context.revealed.filter(card => card.controller === controller),
+                locations: [...new Set(context.revealed.filter(card => card.controller === controller).map(card => card.location))]
+            }));
+
+            if(player) {
+                // Single player revealing all of the cards (theirs & opponents)
+                let messageFragments = controllerGroups.map(group => Message.fragment(`{cards} from ${group.player === player ? 'their' : '{player}\'s'} {locations}`, group));
+                return Message.fragment('reveals {messageFragments}', { messageFragments });
+            }
+            // Each player reveals their own cards individually
+            return controllerGroups.map(group => Message.fragment('reveals {cards} from their {locations}', { cards: group.cards, locations: group.locations }));
+        }
+        return '';
+    }
+
     allow({ cards, context }) {
         return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }));
     }
 
-    createEvent({ cards, player, whileRevealed, isCost, source, context }) {
+    createEvent({ cards, player, whileRevealed, revealWithMessage = true, source, context }) {
         context.revealing = cards;
         context.revealingPlayer = player;
         const allPlayers = context.game.getPlayers();
         const eventParams = {
             player,
             cards,
-            isCost,
+            revealWithMessage,
             source: source || context.source
         };
         return this.event('onCardsRevealed', eventParams, event => {
@@ -39,8 +61,13 @@ class RevealCards extends GameAction {
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
             this.highlightRevealedCards(event, event.revealed, allPlayers);
-            if(!isCost) {
-                this.addRevealMessages(context.game, event);
+            // TODO: Maybe remove these messages entirely, and ensure that reveal messages is only handled by the message function. Search GameAction likely needs edits for that
+            if(event.revealWithMessage) {
+                let abilityMessage = AbilityMessage.create({
+                    format: '{player} {revealAction}',
+                    args: { revealAction: context => this.message({ player: event.player, context }) }
+                });
+                abilityMessage.output(context.game, context);
             }
             
             for(let card of event.cards) {
@@ -92,13 +119,6 @@ class RevealCards extends GameAction {
             player.setSelectableCards(event.preRevealSelections[player.name].selectableCards);
         }
         event.preRevealSelections = null;
-    }
-
-    removeInvalidReveal(context, card, players) {
-        context.revealed = context.revealed.filter(reveal => reveal !== card);
-        for(let player of players) {
-            player.setSelectableCards(context.revealed);
-        }
     }
 
     addRevealMessages(game, event) {

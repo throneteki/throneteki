@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class AshaGreyjoy extends DrawCard {
     setupCardAbilities() {
@@ -6,29 +7,21 @@ class AshaGreyjoy extends DrawCard {
             when: {
                 onCardDiscarded: event => event.isPillage && event.source === this && this.game.currentChallenge.loser.discardPile.length >= 1
             },
-            handler: () => {
-                let amount = this.game.currentChallenge.loser.discardPile.length;
-
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: amount,
-                    activePromptTitle: 'Select a card',
-                    onSelect: (player, card) => this.cardSelected(player, card, amount),
-                    onCancel: player => this.doneSelecting(player, amount),
-                    source: this
-                });
-            }
+            message: {
+                format: '{player} uses {source} to search the top {amount} cards of their deck for a card',
+                args: { amount: context => context.game.currentChallenge.loser.discardPile.length }
+            },
+            gameAction: GameActions.search({
+                title: 'Select a card',
+                topCards: context => context.game.currentChallenge.loser.discardPile.length,
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget,
+                    reveal: false
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card, amount) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search the top {2} cards of their deck and add 1 to their hand',
-            player, this, amount);
-    }
-
-    doneSelecting(player, amount) {
-        this.game.addMessage('{0} uses {1} to search the top {2} cards of their deck, but does not add any card to their hand',
-            player, this, amount);
     }
 }
 

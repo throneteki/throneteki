@@ -15,6 +15,7 @@ describe('Trading With Qohor', function() {
 
                     this.character = this.player1.findCardByName('Hedge Knight');
                     this.origAttachment = this.player1.findCardByName('Little Bird');
+                    this.deckAttachment = this.player1.findCardByName('Noble Lineage');
 
                     this.player1.clickCard(this.character);
                     this.player1.clickCard(this.origAttachment);
@@ -27,6 +28,9 @@ describe('Trading With Qohor', function() {
                     this.selectFirstPlayer(this.player1);
 
                     this.completeMarshalPhase();
+                    
+                    // Search effect requires card in deck to actually trigger
+                    this.player1.dragCard(this.deckAttachment, 'draw deck');
                 });
 
                 it('should allow Trading with Qohor to trigger', function() {
