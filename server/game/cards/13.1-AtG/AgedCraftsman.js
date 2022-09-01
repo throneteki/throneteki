@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class AgedCraftsman extends DrawCard {
     setupCardAbilities() {
@@ -6,27 +7,18 @@ class AgedCraftsman extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this
             },
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 10,
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'location' && card.isFaction('thenightswatch') && card.getPrintedCost() <= 2,
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to search the top 10 cards of their deck for a location',
+            gameAction: GameActions.search({
+                title: 'Select a location',
+                topCards: 10,
+                match: { type: 'location', printedCostOrLower: 2, faction: 'thenightswatch' },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', this.controller, this, card);
-        this.controller.putIntoPlay(card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into play',
-            player, this);
     }
 }
 

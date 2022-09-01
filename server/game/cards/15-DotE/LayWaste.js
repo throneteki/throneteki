@@ -21,31 +21,27 @@ class LayWaste extends DrawCard {
                     GameActions.discardCard(context => ({
                         card: context.target
                     })).then({
-                        handler: thenContext => {
-                            this.game.resolveGameAction(
-                                GameActions.search({
-                                    player: thenContext => thenContext.parentContext.target.owner,
-                                    title: 'Select a card',
-                                    match: {
-                                        type: ['attachment', 'location'],
-                                        printedCostOrLower: context.target.getPrintedCost() - 1
-                                    },
-                                    message: {
-                                        format: 'Then {targetOwner} uses {source} to search their deck and put {searchTarget} into play',
-                                        args: { targetOwner: thenContext => thenContext.parentContext.target.owner }
-                                    },
-                                    cancelMessage: {
-                                        format: 'Then {targetOwner} uses {source} to search their deck but does not find a card',
-                                        args: { targetOwner: thenContext => thenContext.parentContext.target.owner }
-                                    },
-                                    gameAction: GameActions.putIntoPlay(thenContext => ({
-                                        player: thenContext.parentContext.target.owner,
-                                        card: thenContext.searchTarget
-                                    }))
-                                }),
-                                thenContext
-                            );
-                        }
+                        message: {
+                            format: 'Then, {targetOwner} searches their deck for an attachment or location with a lower printed cost',
+                            args: { targetOwner: context => context.parentContext.target.owner }
+                        },
+                        gameAction: GameActions.search({
+                            player: context => context.parentContext.target.owner,
+                            title: 'Select a card',
+                            match: {
+                                type: ['attachment', 'location'],
+                                printedCostOrLower: context.target.getPrintedCost() - 1
+                            },
+                            reveal: false,
+                            message: {
+                                format: '{targetOwner} {gameAction}',
+                                args: { targetOwner: context => context.parentContext.target.owner }
+                            },
+                            gameAction: GameActions.putIntoPlay(context => ({
+                                player: context.parentContext.target.owner,
+                                card: context.searchTarget
+                            }))
+                        })
                     }),
                     context
                 );

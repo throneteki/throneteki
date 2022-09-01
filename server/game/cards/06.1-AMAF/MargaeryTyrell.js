@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class MargaeryTyrell extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,32 +7,22 @@ class MargaeryTyrell extends DrawCard {
             when: {
                 onCharacterKilled: event => (
                     event.card.isUnique() &&
-                    (event.cardStateWhenKilled.hasTrait('king') || event.cardStateWhenKilled.hasTrait('lord')) &&
+                    (event.cardStateWhenKilled.hasTrait('King') || event.cardStateWhenKilled.hasTrait('Lord')) &&
                     event.cardStateWhenKilled.controller === this.controller
                 )
             },
             limit: ability.limit.perRound(1),
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.isUnique() && (card.hasTrait('king') || card.hasTrait('lord')) && this.controller.canPutIntoPlay(card),
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to search their deck for a King or Lord character',
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { type: 'character', unique: true, trait: ['King', 'Lord'] },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.putIntoPlay(card);
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play',
-            player, this, card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into play',
-            player, this);
     }
 }
 

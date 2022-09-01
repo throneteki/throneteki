@@ -13,18 +13,20 @@ class WhiteHarbor extends DrawCard {
                 amount: 2,
                 //TODO: When a SelectCards GameAction is implemented, update the below
                 whileRevealed: GameActions.genericHandler(context => {
-                    this.game.promptForSelect(context.event.challenge.loser, {
-                        activePromptTitle: `Select a card to add to ${context.player.name}'s hand`,
-                        cardCondition: card => context.revealed.includes(card),
-                        onSelect: (player, card) => {
-                            context.target = card;
-                            return true;
-                        },
-                        onCancel: (player) => {
-                            this.game.addAlert('danger', '{0} does not select a card for {1}', player, this);
-                            return true;
-                        }
-                    });
+                    if(context.revealed.length > 0) {
+                        this.game.promptForSelect(context.event.challenge.loser, {
+                            activePromptTitle: `Select a card to add to ${context.player.name}'s hand`,
+                            cardCondition: card => context.revealed.includes(card),
+                            onSelect: (player, card) => {
+                                context.target = card;
+                                return true;
+                            },
+                            onCancel: (player) => {
+                                this.game.addAlert('danger', '{0} does not select a card for {1}', player, this);
+                                return true;
+                            }
+                        });
+                    }
                 })
             })).then(preThenContext => ({
                 condition: () => !!preThenContext.target,
@@ -40,12 +42,7 @@ class WhiteHarbor extends DrawCard {
                         card: preThenContext.target,
                         player: preThenContext.player
                     }),
-                    GameActions.placeCard({
-                        card: preThenContext.revealed.find(card => card !== preThenContext.target),
-                        player: preThenContext.player,
-                        location: 'draw deck',
-                        bottom: true
-                    })
+                    ...preThenContext.revealed.filter(card => card !== preThenContext.target).map(card => GameActions.placeCard({ card, player: preThenContext.player, location: 'draw deck', bottom: true }))
                 ])
             }))
         });

@@ -1,10 +1,15 @@
 const GameAction = require('./GameAction');
+const Message = require('../Message');
 const LeavePlay = require('./LeavePlay');
 const PlaceCard = require('./PlaceCard');
 
 class SacrificeCard extends GameAction {
     constructor() {
         super('sacrifice');
+    }
+
+    message({ card }) {
+        return Message.fragment('sacrifices {card}', { card });
     }
 
     canChangeGameState({ card }) {

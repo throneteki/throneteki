@@ -1,6 +1,7 @@
   
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions');
+const TextHelper = require('../../TextHelper');
 
 class AMissionInEssos extends DrawCard {
     setupCardAbilities() {
@@ -15,6 +16,14 @@ class AMissionInEssos extends DrawCard {
                 this.game.resolveGameAction(
                     GameActions.returnCardToHand(context => ({ card: context.target }))
                         .then((preThenContext, preThenEvent) => ({
+                            condition: () => preThenEvent.cardStateWhenReturned.hasPrintedCost() && preThenEvent.cardStateWhenReturned.getPrintedCost() >= 0,
+                            message: {
+                                format: 'Then, {player} searches their deck for a {traits} character with printed cost {printedCost} or lower',
+                                args: {
+                                    traits: () => TextHelper.formatList(preThenEvent.cardStateWhenReturned.getTraits().map(trait => TextHelper.capitalizeFirst(trait)), 'or'),
+                                    printedCost: () => preThenEvent.cardStateWhenReturned.getPrintedCost() - 1
+                                }
+                            },
                             gameAction: GameActions.search({
                                 title: 'Select a character',
                                 match: {
@@ -22,8 +31,8 @@ class AMissionInEssos extends DrawCard {
                                     printedCostOrLower: preThenEvent.cardStateWhenReturned.getPrintedCost() - 1,
                                     condition: card => card.getTraits().some(trait => preThenEvent.cardStateWhenReturned.hasTrait(trait))
                                 },
-                                message: 'Then {player} uses {source} to search their deck and put {searchTarget} into play',
-                                cancelMessage: 'Then {player} uses {source} to search their deck but does not find a card',
+                                reveal: false,
+                                message: '{player} {gameAction}',
                                 gameAction: GameActions.putIntoPlay(context => ({
                                     player: context.player,
                                     card: context.searchTarget

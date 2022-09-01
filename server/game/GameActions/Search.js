@@ -14,7 +14,7 @@ class Search extends GameAction {
         this.numToSelectFunc = (typeof numToSelect === 'function') ? numToSelect : () => numToSelect;
         this.playerFunc = player || (context => context.player);
         this.searchedPlayerFunc = searchedPlayer || this.playerFunc;
-        this.title = title;
+        this.titleFunc = (typeof title === 'function') ? title : () => title;
         this.location = location || ['draw deck'];
         this.revealGameAction = reveal ? new AbilityAdapter(RevealCards, context => ({ cards: Array.isArray(context.searchTarget) ? context.searchTarget : [context.searchTarget], player: context.player })) : null;
         this.abilityMessage = AbilityMessage.create(message);
@@ -33,19 +33,21 @@ class Search extends GameAction {
     createEvent({ context }) {
         const player = this.playerFunc(context);
         const searchedPlayer = this.searchedPlayerFunc(context);
+        const title = this.titleFunc(context);
         const topCards = this.topCardsFunc(context);
         const numToSelect = this.numToSelectFunc(context);
-        return this.event('onDeckSearched', { player, searchedPlayer, topCards, numToSelect }, event => {
+        return this.event('onDeckSearched', { player, searchedPlayer, title, topCards, numToSelect }, event => {
             const revealFunc = this.createRevealDrawDeckCards({ choosingPlayer: event.player, searchedPlayer: event.searchedPlayer, numCards: event.topCards });
             const searchCondition = this.createSearchCondition(event.searchedPlayer, event.topCards, event.numToSelect);
             const modeProps = event.numToSelect ? { mode: 'upTo', numCards: event.numToSelect } : {};
 
             context.game.cardVisibility.addRule(revealFunc);
             context.game.promptForSelect(event.player, Object.assign(modeProps, {
-                activePromptTitle: this.title,
+                activePromptTitle: event.title,
                 context: context,
                 cardCondition: searchCondition,
                 onSelect: (player, result) => {
+                    context.gameAction = this.gameAction;
                     context.searchTarget = result;
                     context.game.cardVisibility.removeRule(revealFunc);
                     if(this.revealGameAction) {
@@ -125,7 +127,7 @@ class Search extends GameAction {
             context.searchTarget = null;
             return;
         }
-
+        // TODO: change 'this.gameAction' below into SimultanousGameAction (with gameAction + revealACtion)
         this.abilityMessage.output(context.game, { ...context, card: context.searchTarget });
         revealEvent.thenAttachEvent(this.gameAction.createEvent(context));
     }

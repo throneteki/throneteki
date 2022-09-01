@@ -32,7 +32,7 @@ describe('Cragorn', function() {
             it('it should search for an attachment', function() {
                 expect(this.player1).toHavePrompt('Select card to discard 1 gold');
                 this.player1.clickCard(this.cragorn);
-                expect(this.player1).toHavePrompt('Select Weapon or Item attachment');
+                expect(this.player1).toHavePrompt('Select an attachment');
                 this.player1.clickCard(this.attachment);
                 expect(this.player1).toHavePrompt('Select target for attachment');
                 this.player1.clickCard(this.raider);

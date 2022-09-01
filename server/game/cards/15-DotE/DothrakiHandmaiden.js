@@ -17,6 +17,7 @@ class DothrakiHandmaiden extends DrawCard {
                 activePromptTitle: 'Select an attachment',
                 cardCondition: (card, context) => card.isMatch({ type: 'attachment', location: 'hand' }) && card.controller === context.player
             },
+            phase: 'marshal',
             message: '{player} uses {source} to reveal an attachment from their hand',
             handler: context => {
                 this.game.resolveGameAction(

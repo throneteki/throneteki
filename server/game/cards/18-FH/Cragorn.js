@@ -8,45 +8,18 @@ class Cragorn extends DrawCard {
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
             cost: ability.costs.discardGoldFromCard(1, card => card.getType() === 'character' && card.hasTrait('Raider') && card.controller === this.controller),
-            handler: context => {
-                this.game.promptForDeckSearch(context.player, {
-                    numCards: 10,
-                    activePromptTitle: 'Select Weapon or Item attachment',
-                    cardCondition: card => 
-                        card.getType() === 'attachment' &&
-                        card.hasPrintedCost() && 
-                        card.getPrintedCost() <= 3 && 
-                        this.canAttachToCardInPlay(context.player, card) &&
-                        this.controller.canPutIntoPlay(card) && 
-                        (card.hasTrait('Weapon') || card.hasTrait('Item')),
-                    onSelect: (player, card) => this.cardSelected(player, card, context),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} discards 1 gold from {costs.discardToken} to search the top 10 cards of their deck for an Item or Weapon attachment',
+            gameAction: GameActions.search({
+                title: 'Select an attachment',
+                topCards: 10,
+                match: { type: 'attachment', printedCostOrLower: 3, trait: ['Item', 'Weapon'] },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    canAttachToCardInPlay(player, card) {
-        return this.game.anyCardsInPlay(cardInPlay => player.canAttach(card, cardInPlay));
-    }
-
-    cardSelected(player, card, context) {
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
-        this.game.resolveGameAction(
-            GameActions.putIntoPlay(() => ({
-                card: card
-            })),
-            context
-        );
-        return true;
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not put any cards in play',
-            player, this);
-
-        return true;
     }
 }
 

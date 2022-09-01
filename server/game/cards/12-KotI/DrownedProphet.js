@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class DrownedProphet extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,26 +8,20 @@ class DrownedProphet extends DrawCard {
                 onCharacterKilled: event => event.card === this
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 5,
-                    cardCondition: card => card.isFaction('greyjoy') && card.getType() === 'character',
-                    activePromptTitle: 'Select a card',
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to search the top 5 cards of their deck for a Greyjoy character',
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                topCards: 5,
+                match: { type: 'character', faction: 'greyjoy' },
+                reveal: false,
+                message: '{player} places {searchTarget} in their dead pile',
+                gameAction: GameActions.placeCard(context => ({
+                    card: context.searchTarget,
+                    player: context.player,
+                    location: 'dead pile'
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.moveCard(card, 'dead pile');
-        this.game.addMessage('{0} plays {1} to search their deck and places {2} in their dead pile', player, this, card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} plays {1} to search their deck but does not add any card to their dead pile', player, this);
     }
 }
 

@@ -6,8 +6,13 @@ class AddToHand extends GameAction {
         super('addToHand');
     }
 
-    message({ card }) {
-        return Message.fragment('adds {card} to their hand', { card });
+    message({ card, context }) {
+        return Message.fragment('adds {card}{from} to their hand', 
+            { 
+                card: context.revealed && context.revealed.includes(card) ? card : 'a card',
+                from: context.revealed && context.revealed.includes(card) ? '' : Message.fragment(' from their {originalLocation}', { originalLocation: card.location })
+            }
+        );
     }
 
     canChangeGameState({ card }) {

@@ -5,14 +5,21 @@ class RevealTopCards extends GameAction {
     constructor() {
         super('revealTopCards');
     }
+    message({ amount = 1, player, context }) {
+        player = player || context.player;
+        const cards = player.drawDeck.slice(0, amount);
+        return RevealCards.message({ player, context: {...context, revealed: cards } });
+    }
 
-    canChangeGameState({ player, amount = 1 }) {
+    canChangeGameState({ amount = 1, player, context }) {
+        player = player || context.player;
         return amount > 0 && player.drawDeck.length >= amount;
     }
 
-    createEvent({ player, amount = 1, context, whileRevealed }) {
+    createEvent({ amount = 1, player, whileRevealed, revealWithMessage = true, source, context }) {
+        player = player || context.player;
         const cards = player.drawDeck.slice(0, amount);
-        return RevealCards.createEvent({ cards, context, player: context.player, whileRevealed });
+        return RevealCards.createEvent({ cards, player, whileRevealed, revealWithMessage, source, context });
     }
 }
 
