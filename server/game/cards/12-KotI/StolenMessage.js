@@ -5,7 +5,7 @@ class StolenMessage extends PlotCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'opponent',
-            effect: ability.effects.revealTopCard()
+            effect: ability.effects.revealTopCards(1)
         });
 
         this.action({
