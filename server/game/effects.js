@@ -1333,20 +1333,48 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function(player, context) {
-                let revealFunc = (card) => player.drawDeck.length > 0 && player.drawDeck[0] === card;
-
-                context.revealTopCard = context.revealTopCard || {};
-                context.revealTopCard[player.name] = revealFunc;
-                context.game.cardVisibility.addRule(revealFunc);
-                player.flags.add('revealTopCard');
+                context.game.resolveGameAction(GameActions.revealTopCards({
+                    amount: 1,
+                    player,
+                    whileRevealed: GameActions.genericHandler(context => {
+                        let player = context.revealingPlayer;
+                        context.revealTopCard = context.revealTopCard || {};
+                        context.revealTopCard[player.name] = { 
+                            revealFunc: (card) => player.drawDeck.length > 0 && player.drawDeck[0] === card,
+                            latestReveal: player.drawDeck.length > 0 ? player.drawDeck[0] : null
+                        };
+                        player.flags.add('revealTopCard');
+                        // Add overriding rule to ensure top card stays revealed until this effect unapplies
+                        context.game.cardVisibility.addRule(context.revealTopCard[player.name].revealFunc);
+                    }),
+                    revealWithMessage: false,
+                    highlight: false,
+                    source: context.source
+                }), context);
+            },
+            reapply: function(player, context) {
+                let latestReveal = context.revealTopCard[player.name].latestReveal;
+                if(latestReveal !== player.drawDeck[0]) {
+                    context.game.resolveGameAction(GameActions.revealTopCards({
+                        amount: 1,
+                        player,
+                        whileRevealed: GameActions.genericHandler(context => {
+                            let player = context.revealingPlayer;
+                            context.revealTopCard[player.name].latestReveal = player.drawDeck.length > 0 ? player.drawDeck[0] : null;
+                        }),
+                        revealWithMessage: false,
+                        highlight: false,
+                        source: context.source
+                    }), context);
+                }
             },
             unapply: function(player, context) {
-                let revealFunc = context.revealTopCard[player.name];
-
+                let revealFunc = context.revealTopCard[player.name].revealFunc;
                 context.game.cardVisibility.removeRule(revealFunc);
                 player.flags.remove('revealTopCard');
                 delete context.revealTopCard[player.name];
-            }
+            },
+            isStateDependent: true
         };
     },
     cannotRevealPlot: function() {

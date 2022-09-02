@@ -42,7 +42,7 @@ class RevealCards extends GameAction {
         return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }));
     }
 
-    createEvent({ cards, player, whileRevealed, revealWithMessage = true, source, context }) {
+    createEvent({ cards, player, whileRevealed, revealWithMessage = true, highlight = false, source, context }) {
         context.revealing = cards;
         context.revealingPlayer = player;
         const allPlayers = context.game.getPlayers();
@@ -50,6 +50,7 @@ class RevealCards extends GameAction {
             player,
             cards,
             revealWithMessage,
+            highlight,
             source: source || context.source
         };
         return this.event('onCardsRevealed', eventParams, event => {
@@ -98,46 +99,30 @@ class RevealCards extends GameAction {
     }
 
     highlightRevealedCards(event, cards, players) {
-        event.preRevealSelections = {};
-        for(let player of players) {
-            event.preRevealSelections[player.name] = {
-                selectedCards: player.getSelectedCards(),
-                selectableCards: player.getSelectableCards()
-            };
-
-            player.clearSelectedCards();
-            player.clearSelectableCards();
-            player.setSelectableCards(cards);
+        if(event.highlight) {
+            event.preRevealSelections = {};
+            for(let player of players) {
+                event.preRevealSelections[player.name] = {
+                    selectedCards: player.getSelectedCards(),
+                    selectableCards: player.getSelectableCards()
+                };
+    
+                player.clearSelectedCards();
+                player.clearSelectableCards();
+                player.setSelectableCards(cards);
+            }
         }
     }
 
     hideRevealedCards(event, players) {
-        for(let player of players) {
-            player.clearSelectedCards();
-            player.clearSelectableCards();
-            player.setSelectedCards(event.preRevealSelections[player.name].selectedCards);
-            player.setSelectableCards(event.preRevealSelections[player.name].selectableCards);
-        }
-        event.preRevealSelections = null;
-    }
-
-    addRevealMessages(game, event) {
-        let controllers = [...new Set(event.revealed.map(card => card.controller))];
-        let controllerGroups = controllers.map(controller => ({ 
-            player: controller, 
-            cards: event.revealed.filter(card => card.controller === controller),
-            locations: [...new Set(event.revealed.filter(card => card.controller === controller).map(card => card.location))]
-        }));
-
-        if(event.player) {
-            // Single player revealing all of the cards (theirs & opponents)
-            let messageFragments = controllerGroups.map(group => Message.fragment(`{cards} from ${group.player === event.player ? 'their' : '{player}\'s'} {locations}`, group));
-            game.addMessage('{0} reveals {1}', event.player, messageFragments, event.source);
-        } else {
-            // Each player reveals their own cards individually
-            for(let group of controllerGroups) {
-                game.addMessage('{0} reveals {1} from their {2}', group.player, group.cards, group.locations);
+        if(event.highlight) {
+            for(let player of players) {
+                player.clearSelectedCards();
+                player.clearSelectableCards();
+                player.setSelectedCards(event.preRevealSelections[player.name].selectedCards);
+                player.setSelectableCards(event.preRevealSelections[player.name].selectableCards);
             }
+            event.preRevealSelections = null;
         }
     }
 }
