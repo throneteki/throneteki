@@ -13,19 +13,17 @@ class SerMarkMullendore extends DrawCard {
             })).then({
                 gameAction: GameActions.may({
                     title: context => `Put ${context.event.cards[0].name} into play?`,
-                    message: {
-                        format: '{player} puts {topCard} into play',
-                        args: { topCard: context => context.event.cards[0] }
-                    },
-                    gameAction: GameActions.putIntoPlay(context => ({
-                        player: context.player,
-                        card: context.event.cards[0]
-                    })).then({
-                        message: '{player} returns {source} to the top of their deck',
-                        gameAction: GameActions.returnCardToDeck(context => ({
+                    message: '{player} {gameAction}',
+                    gameAction: GameActions.simultaneously([
+                        GameActions.putIntoPlay(context => ({
+                            player: context.player,
+                            card: context.event.cards[0]
+                        })),
+                        GameActions.returnCardToDeck(context => ({
+                            allowSave: false,
                             card: context.source
                         }))
-                    })
+                    ])
                 })
             })
         });
