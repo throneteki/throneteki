@@ -1329,19 +1329,19 @@ const Effects = {
             }
         };
     },
-    revealTopCard: function() {
+    revealTopCards: function(amount) {
         return {
             targetType: 'player',
             apply: function(player, context) {
                 context.game.resolveGameAction(GameActions.revealTopCards({
-                    amount: 1,
+                    amount,
                     player,
                     whileRevealed: GameActions.genericHandler(context => {
                         let player = context.revealingPlayer;
                         context.revealTopCard = context.revealTopCard || {};
                         context.revealTopCard[player.name] = { 
-                            revealFunc: (card) => player.drawDeck.length > 0 && player.drawDeck[0] === card,
-                            latestReveal: player.drawDeck.length > 0 ? player.drawDeck[0] : null
+                            revealFunc: (card) => player.drawDeck.slice(0, amount).includes(card),
+                            currentlyRevealed: context.revealed
                         };
                         player.flags.add('revealTopCard');
                         // Add overriding rule to ensure top card stays revealed until this effect unapplies
@@ -1353,14 +1353,18 @@ const Effects = {
                 }), context);
             },
             reapply: function(player, context) {
-                let latestReveal = context.revealTopCard[player.name].latestReveal;
-                if(latestReveal !== player.drawDeck[0]) {
-                    context.game.resolveGameAction(GameActions.revealTopCards({
-                        amount: 1,
+                let topCards = player.drawDeck.slice(0, amount);
+                let currentlyRevealed = context.revealTopCard[player.name].currentlyRevealed;
+                let unRevealed = topCards.filter(card => !currentlyRevealed.includes(card));
+                // Only trigger reveal event for newly revealed cards
+                if(unRevealed.length > 0) {
+                    context.game.resolveGameAction(GameActions.revealCards({
+                        cards: unRevealed,
                         player,
                         whileRevealed: GameActions.genericHandler(context => {
                             let player = context.revealingPlayer;
-                            context.revealTopCard[player.name].latestReveal = player.drawDeck.length > 0 ? player.drawDeck[0] : null;
+                            let stillRevealed = topCards.filter(card => currentlyRevealed.includes(card));
+                            context.revealTopCard[player.name].currentlyRevealed = [...stillRevealed, ...context.revealed];
                         }),
                         revealWithMessage: false,
                         highlight: false,
