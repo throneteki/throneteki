@@ -2,11 +2,12 @@ const GameAction = require('./GameAction');
 const AbilityMessage = require('../AbilityMessage');
 
 class MayGameAction extends GameAction {
-    constructor({ gameAction, message, title }) {
+    constructor({ player, gameAction, message, title }) {
         super('may');
 
+        this.player = player;
         this.gameAction = gameAction;
-        this.message = AbilityMessage.create(message);
+        this.abilityMessage = AbilityMessage.create(message);
         this.title = title;
     }
 
@@ -25,7 +26,7 @@ class MayGameAction extends GameAction {
             const handler = new MayPromptHandler({
                 yesHandler: () => {
                     if(this.gameAction.allow(context)) {
-                        this.message.output(context.game, context);
+                        this.abilityMessage.output(context.game, { ...context, gameAction: this.gameAction });
                         event.thenAttachEvent(this.gameAction.createEvent(context));
                     }
                     return true;
@@ -33,7 +34,7 @@ class MayGameAction extends GameAction {
             });
             handler.prompt({
                 game: context.game,
-                player: context.player,
+                player: this.player || context.player,
                 title: titleString,
                 source: context.source
             });
