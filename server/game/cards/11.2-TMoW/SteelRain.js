@@ -1,5 +1,7 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
+const Array = require('../../../Array');
+const TextHelper = require('../../TextHelper');
 
 class SteelRain extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,53 +9,27 @@ class SteelRain extends DrawCard {
             title: 'Search deck for GJ locations',
             cost: ability.costs.sacrificeAny(card => card.isFaction('greyjoy') && card.getType() === 'location', false),
             message: {
-                format: '{player} plays {source} to sacrifice {costs.sacrifice} and search their deck for {amount} Greyjoy locations',
+                format: '{player} plays {source} to sacrifice {costs.sacrifice} and search their deck for up to {amount} Greyjoy locations',
                 args: { amount: context => context.costs.sacrifice.length }
             },
-            handler: context => {
-                context.fetchedCards = [];
-                for(let costCard of context.costs.sacrifice) {
-                    this.game.resolveGameAction(GameActions.search({
-                        title: `Select a location for ${costCard.name} (printed cost ${costCard.getPrintedCost()} or less)`,
-                        match: {
-                            faction: 'greyjoy',
-                            type: 'location',
-                            printedCostOrLower: costCard.getPrintedCost(),
-                            condition: (card, context) => !context.fetchedCards.includes(card) && card.name !== costCard.name && context.player.canPutIntoPlay(card)
-                        },
-                        reveal: false,
-                        gameAction: GameActions.genericHandler(context => {
-                            context.fetchedCards.push(context.searchTarget);
-                        })
-                    }), 
-                    context);
-                }
-                this.game.queueSimpleStep(() => {
-                    if(context.fetchedCards.length === 0) {
-                        this.game.addMessage('{0} does not put any cards into play', context.player);
-                    } else {
-                        this.game.addMessage('{0} puts {1} into play', context.player, context.fetchedCards);
-                    }
-
-                    this.game.resolveGameAction(GameActions.simultaneously(context => 
-                        context.fetchedCards.map(card => GameActions.putIntoPlay({ card }))    
-                    ), context);
-
-                    this.fetchedCards = [];
-                });
-            }
+            gameAction: GameActions.search({
+                title: context => `Select locations for ${TextHelper.formatList(context.costs.sacrifice.map(card => card.name), 'and')}`,
+                numToSelect: context => context.costs.sacrifice.length,
+                match: {
+                    faction: 'greyjoy',
+                    type: 'location',
+                    condition: (card, context) => Array.availableToPair(context.costs.sacrifice || [], context.selectedCards, (sacrificed, card) => this.isSelectableLocationFor(sacrificed, card))
+                        .some(available => this.isSelectableLocationFor(available, card))
+                },
+                reveal: false,
+                message: '{player} puts {searchTarget} into play from their draw deck',
+                gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.putIntoPlay({ card })))
+            })
         });
     }
 
-    cardSelected(player, card) {
-        this.fetchedCards = this.fetchedCards || [];
-        this.fetchedCards.push(card);
-        return true;
-    }
-
-    doneSelecting() {
-        this.fetchedCards = this.fetchedCards || [];
-        return true;
+    isSelectableLocationFor(sacrificed, card) {
+        return card.name !== sacrificed.name && card.hasPrintedCost() && sacrificed.hasPrintedCost() && card.getPrintedCost() <= sacrificed.getPrintedCost();
     }
 }
 
