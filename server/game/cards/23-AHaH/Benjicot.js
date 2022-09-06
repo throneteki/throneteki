@@ -12,7 +12,7 @@ class Benjicot extends DrawCard {
                 cards: context.game.getPlayers().map(player => player.drawDeck[player.drawDeck.length - 1])
             })).then({
                 message: '{player} {gameAction}',
-                gameAction: GameActions.simultaneously(context => this.buildGameActions(context.revealed))
+                gameAction: GameActions.simultaneously(context => this.buildGameActions(context.parentContext.revealed))
             })
         });
     }

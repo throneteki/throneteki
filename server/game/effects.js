@@ -1379,11 +1379,12 @@ const Effects = {
         };
     },
     revealTopCards: function(amount) {
+        let topCardsFunc = player => player.drawDeck.slice(0, amount);
         return {
             targetType: 'player',
             apply: function(player, context) {
-                const topCards = player.drawDeck.slice(0, amount);
-                const revealFunc = reveal => topCards.includes(reveal);
+                const topCards = topCardsFunc(player);
+                let revealFunc = reveal => topCardsFunc(player).includes(reveal);
 
                 context.revealTopCards = context.revealTopCards || {};
                 context.revealTopCards[player.name] = {
@@ -1401,7 +1402,7 @@ const Effects = {
                 }), context);
             },
             reapply: function(player, context) {
-                const topCards = player.drawDeck.slice(0, amount);
+                const topCards = topCardsFunc(player);
                 const newReveals = topCards.filter(card => !context.revealTopCards[player.name].revealed.includes(card));
 
                 context.revealTopCards[player.name].revealed = topCards;

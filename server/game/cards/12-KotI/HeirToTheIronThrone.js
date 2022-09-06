@@ -8,6 +8,7 @@ class HeirToTheIronThrone extends PlotCard {
             gameAction: GameActions.search({
                 title: 'Select a character',
                 match: { type: 'character', trait: ['Lord', 'Lady'] },
+                topCards: 10,
                 reveal: false,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay(context => ({
@@ -16,7 +17,8 @@ class HeirToTheIronThrone extends PlotCard {
                     condition: context => context.parentContext.searchTarget.location === 'play area',
                     activePromptTitle: 'Select character to sacrifice',
                     target: {
-                        cardCondition: { type: 'character', trait: ['Lord', 'Lady'] }
+                        cardCondition: { type: 'character', trait: ['Lord', 'Lady'], location: 'play area', controller: 'current' },
+                        gameAction: 'sacrifice'
                     },
                     message: 'Then, {player} sacrifices {target}',
                     handler: context => {
