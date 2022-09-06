@@ -13,6 +13,7 @@ class AnyaWaynwood extends DrawCard {
             phase: 'challenge',
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.isFaction('neutral')),
             condition: () => this.game.isDuringChallenge({ match: challenge => [challenge.attackingPlayer, challenge.defendingPlayer].includes(this.controller) }),
+            limit: ability.limit.perPhase(1),
             target: {
                 title: 'Select a character',
                 cardCondition: {

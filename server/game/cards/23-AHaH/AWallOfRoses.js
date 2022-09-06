@@ -1,33 +1,25 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
-const TextHelper = require('../../TextHelper');
+const GameActions = require('../../GameActions');
+const {flatten} = require('../../../Array');
 
 class AWallOfRoses extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onRemovedFromChallenge: event => event.card.getStrength() > 0
+                onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller
             },
-            message: {
-                format: '{player} uses {source} to stand up to {STR} characters',
-                args: { STR: context => context.event.card.getStrength() }
-            },
-            handler: context => {
-                this.game.promptForSelect(context.player, {
-                    mode: 'upTo',
-                    numCards: context.event.card.getStrength(),
-                    activePromptTitle: `Select up to ${TextHelper.count(context.event.card.getStrength(), 'character')}`,
-                    source: this,
-                    cardCondition: { printedStrengthOrLower: 1, kneeled: true },
-                    onSelect: (player, cards) => {
-                        this.game.addMessage('{0} stands {1}', player, cards);
-                        this.game.resolveGameAction(
-                            GameActions.simultaneously(cards.map(card => GameActions.standCard({ card })))
-                            , context);
-                        return true;
-                    }
-                });
-            } 
+            message: '{player} plays {source} to reveal their hand',
+            gameAction: GameActions.revealCards(context => ({
+                cards: context.player.hand
+            })).then({
+                message: {
+                    format: 'Then, {player} stands and removes {attackers} from the challenge',
+                    args: { attackers: context => context.parentContext.event.challenge.attackers }
+                },
+                gameAction: GameActions.simultaneously(context => 
+                    flatten(context.parentContext.event.challenge.attackers.map(attacker => [GameActions.standCard({ card: attacker }), GameActions.removeFromChallenge({ card: attacker })]))
+                )
+            })
         });
     }
 }
