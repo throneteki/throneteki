@@ -8,36 +8,38 @@ class Littlefinger extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isParticipating()
             },
-            message: {
-                format: '{player} uses {source} to have each player choose and reveal 1 card from their hand or shadows area'
-            },
+            message: '{player} uses {source} to have each player choose and reveal 1 card from their hand or shadows area',
             target: {
                 choosingPlayer: 'each',
                 ifAble: true,
                 activePromptTitle: 'Select a card',
                 cardCondition: (card, context) => ['hand', 'shadows'].includes(card.location) && card.controller === context.choosingPlayer,
                 gameAction: 'reveal',
-                messages: Messages.eachPlayerSecretTargetingForCardType('cards in hand/shadows')
+                messages: Messages.eachPlayerSecretTargetingForCardType('card in hand/shadows')
             },
             limit: ability.limit.perPhase(1),
             handler: context => {
-                let cards = context.targets.selections.map(selection => selection.value).filter(card => !!card);
                 this.game.resolveGameAction(
-                    GameActions.simultaneously(cards.map(card => GameActions.revealCard({ card })))
-                );
-                let playerCardType = cards.filter(card => card.owner === context.player)[0].getPrintedType();
-                let otherCardTypes = cards.filter(card => card.owner !== context.player).map(card => card.getPrintedType());
-                if(!otherCardTypes.includes(playerCardType)) {
-                    this.game.promptForSelect(context.player, {
-                        activePromptTitle: 'Select a card',
-                        source: this,
-                        cardCondition: card => card.getPower() > 0,
-                        cardType: ['attachment', 'character', 'faction', 'location'],
-                        gameAction: 'movePower',
-                        onSelect: (player, card) => this.onSelectCard(player, card),
-                        onCancel: (player) => this.onSelectCard(player, null)
-                    });
-                }
+                    GameActions.revealCards(context => ({
+                        cards: context.targets.getTargets()
+                    })).then({
+                        gameAction: GameActions.ifCondition({
+                            condition: context => this.noOpponentRevealedSameCardtype(context.player, context.parentContext.revealed),
+                            thenAction: GameActions.genericHandler(context => {
+                                this.game.promptForSelect(context.player, {
+                                    activePromptTitle: 'Select a card',
+                                    source: this,
+                                    cardCondition: card => card.getPower() > 0,
+                                    cardType: ['attachment', 'character', 'faction', 'location'],
+                                    gameAction: 'movePower',
+                                    onSelect: (player, card) => this.onSelectCard(player, card),
+                                    onCancel: (player) => this.onSelectCard(player, null)
+                                });
+                            })
+                        })
+                    }),
+                    context
+                )
             }
         });
     }
@@ -55,8 +57,12 @@ class Littlefinger extends DrawCard {
                 amount: 1
             })
         );
-        this.game.addMessage('{0} uses {1} to move 1 power from {2} to {1}', player, this, card);
+        this.game.addMessage('{0} moves 1 power from {1} to {2}', player, card, this);
         return true;
+    }
+
+    noOpponentRevealedSameCardtype(player, revealed) {
+        return revealed.every(card1 => card1.controller === player || revealed.every(card2 => card1 === card2 || card1.getType() !== card2.getType()));
     }
 }
 

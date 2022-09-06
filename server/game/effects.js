@@ -1382,39 +1382,35 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function(player, context) {
+                const topCards = player.drawDeck.slice(0, amount);
+                const revealFunc = reveal => topCards.includes(reveal);
+
+                context.revealTopCards = context.revealTopCards || {};
+                context.revealTopCards[player.name] = {
+                    revealFunc,
+                    revealed: topCards
+                };
+                context.game.cardVisibility.addRule(revealFunc);
+
                 context.game.resolveGameAction(GameActions.revealTopCards({
                     amount,
                     player,
-                    whileRevealed: GameActions.genericHandler(context => {
-                        let player = context.revealingPlayer;
-                        context.revealTopCard = context.revealTopCard || {};
-                        context.revealTopCard[player.name] = { 
-                            revealFunc: (card) => player.drawDeck.slice(0, amount).includes(card),
-                            currentlyRevealed: context.revealed
-                        };
-                        player.flags.add('revealTopCard');
-                        // Add overriding rule to ensure top card stays revealed until this effect unapplies
-                        context.game.cardVisibility.addRule(context.revealTopCard[player.name].revealFunc);
-                    }),
                     revealWithMessage: false,
                     highlight: false,
                     source: context.source
                 }), context);
             },
             reapply: function(player, context) {
-                let topCards = player.drawDeck.slice(0, amount);
-                let currentlyRevealed = context.revealTopCard[player.name].currentlyRevealed;
-                let unRevealed = topCards.filter(card => !currentlyRevealed.includes(card));
+                const topCards = player.drawDeck.slice(0, amount);
+                const newReveals = topCards.filter(card => !context.revealTopCards[player.name].revealed.includes(card));
+
+                context.revealTopCards[player.name].revealed = topCards;
+
                 // Only trigger reveal event for newly revealed cards
-                if(unRevealed.length > 0) {
+                if(newReveals.length > 0) {
                     context.game.resolveGameAction(GameActions.revealCards({
-                        cards: unRevealed,
+                        cards: newReveals,
                         player,
-                        whileRevealed: GameActions.genericHandler(context => {
-                            let player = context.revealingPlayer;
-                            let stillRevealed = topCards.filter(card => currentlyRevealed.includes(card));
-                            context.revealTopCard[player.name].currentlyRevealed = [...stillRevealed, ...context.revealed];
-                        }),
                         revealWithMessage: false,
                         highlight: false,
                         source: context.source
@@ -1422,30 +1418,60 @@ const Effects = {
                 }
             },
             unapply: function(player, context) {
-                let revealFunc = context.revealTopCard[player.name].revealFunc;
+                const revealFunc = context.revealTopCards[player.name].revealFunc;
+
                 context.game.cardVisibility.removeRule(revealFunc);
-                player.flags.remove('revealTopCard');
-                delete context.revealTopCard[player.name];
+                delete context.revealTopCards[player.name];
             },
             isStateDependent: true
         };
     },
-    revealCards: function(revealFunc) {
+    revealShadows: function() {
         return {
             targetType: 'player',
             apply: function(player, context) {
-                let visibleRevealFunc = (card) => card.controller === player && revealFunc(card, context);
+                const shadows = player.shadows;
+                const revealFunc = reveal => shadows.includes(reveal);
 
-                context.revealCards = context.revealCards || {};
-                context.revealCards[player.name] = visibleRevealFunc;
-                context.game.cardVisibility.addRule(visibleRevealFunc);
+                context.revealShadows = context.revealShadows || {};
+                context.revealShadows[player.name] = {
+                    revealFunc,
+                    revealed: shadows
+                };
+                context.game.cardVisibility.addRule(revealFunc);
+
+                context.game.resolveGameAction(GameActions.revealCards({
+                    cards: shadows,
+                    player,
+                    revealWithMessage: false,
+                    highlight: false,
+                    source: context.source
+                }), context);
+            },
+            reapply: function(player, context) {
+                const shadows = player.shadows;
+                const newReveals = shadows.filter(card => !context.revealShadows[player.name].revealed.includes(card));
+
+                context.revealShadows[player.name].revealed = shadows;
+
+                // Only trigger reveal event for newly revealed cards
+                if(newReveals.length > 0) {
+                    context.game.resolveGameAction(GameActions.revealCards({
+                        cards: newReveals,
+                        player,
+                        revealWithMessage: false,
+                        highlight: false,
+                        source: context.source
+                    }), context);
+                }
             },
             unapply: function(player, context) {
-                let visibleRevealFunc = context.revealCards[player.name];
+                const revealFunc = context.revealShadows[player.name].revealFunc;
 
-                context.game.cardVisibility.removeRule(visibleRevealFunc);
-                delete context.revealCards[player.name];
-            }
+                context.game.cardVisibility.removeRule(revealFunc);
+                delete context.revealShadows[player.name];
+            },
+            isStateDependent: true
         };
     },
     cannotRevealPlot: function() {

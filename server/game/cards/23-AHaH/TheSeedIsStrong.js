@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class TheSeedIsStrong extends DrawCard {
     setupCardAbilities() {
@@ -10,14 +11,25 @@ class TheSeedIsStrong extends DrawCard {
                 format: '{player} uses {source} to have {winner} discard a Lord or Lady from their hand or shadows area, or reveal their hand and shadows area',
                 args: { winner: context => context.event.winner }
             },
-            handler: context => {
-                if(context.event.winner.hand.some(card => this.isLordOrLady(card)) || context.event.winner.shadows.some(card => this.isLordOrLady(card))) {
-                    this.promptForCardDiscard(context);
-                    return;
+            gameAction: GameActions.ifCondition({
+                condition: context => context.event.winner.hand.some(card => card.isMatch({ trait: ['Lord', 'Lady'] }))
+                    || context.event.winner.shadows.some(card => card.isMatch({ trait: ['Lord', 'Lady'] })),
+                thenAction: GameActions.genericHandler(context => {
+                    this.game.promptForSelect(context.event.winner, {
+                        source: this,
+                        cardCondition: { location: ['hand', 'shadows'], trait: ['Lord', 'Lady'], controller: context.event.winner },
+                        onSelect: (player, card) => this.onCardSelected(context, card),
+                        onCancel: () => this.onCancel(context)
+                    });
+                }),
+                elseAction: {
+                    message: '{player} {gameAction}, containing no Lord or Lady characters',
+                    gameAction: GameActions.revealCards(context => ({
+                        cards: [...context.event.winner.hand, ...context.event.winner.shadows],
+                        revealWithMessage: false
+                    }))
                 }
-
-                this.revealHandAndShadows(context);
-            }
+            })
         });
     }
 
@@ -30,28 +42,16 @@ class TheSeedIsStrong extends DrawCard {
         });
     }
 
-    onCardSelected(context, player, card) {
-        player.discardCard(card);
-        this.game.addMessage('{0} uses {1} to have {2} discard {3} from their {4}',
-            context.player, this, context.event.winner, card, card.location);
-
+    onCardSelected(context, card) {
+        this.game.addMessage('{0} discards {1} from their {2}', context.event.winner, card, card.location);
+        GameActions.discardCard({ card });
         return true;
     }
 
-    onCancel(player) {
-        this.game.addAlert('danger', '{0} did not select a card to discard for {1}',
-            player, this);
+    onCancel(context) {
+        this.game.addAlert('danger', '{0} did not select a card to discard', context.event.winner);
 
         return true;
-    }
-
-    revealHandAndShadows(context) {
-        this.game.addMessage('{0} uses {1} to have {2} reveal {3} as their hand and {4} as their shadows area',
-            context.player, this, context.event.winner, context.event.winner.hand, context.event.winner.shadows);
-    }
-
-    isLordOrLady(card) {
-        return card.isMatch({ trait: ['Lord', 'Lady']});
     }
 }
 

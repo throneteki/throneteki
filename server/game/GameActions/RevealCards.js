@@ -42,7 +42,7 @@ class RevealCards extends GameAction {
         return cards.length > 0 && cards.some(card => !this.isImmune({ card, context }));
     }
 
-    createEvent({ cards, player, whileRevealed, revealWithMessage = true, highlight = false, source, context }) {
+    createEvent({ cards, player, whileRevealed, revealWithMessage = true, highlight = true, source, context }) {
         context.revealing = cards;
         context.revealingPlayer = player;
         const allPlayers = context.game.getPlayers();
@@ -62,7 +62,8 @@ class RevealCards extends GameAction {
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
             this.highlightRevealedCards(event, event.revealed, allPlayers);
-            // TODO: Maybe remove these messages entirely, and ensure that reveal messages is only handled by the message function. Search GameAction likely needs edits for that
+            // TODO: Maybe remove these messages entirely, and ensure that reveal messages is only handled by the message function (eg. '{player} {gameAction}').
+            //       Search GameAction likely needs edits for that. Once done, remove 'revealWithMessage'
             if(event.revealWithMessage) {
                 let abilityMessage = AbilityMessage.create({
                     format: '{player} {revealAction}',
@@ -88,10 +89,14 @@ class RevealCards extends GameAction {
                     }
                 }));
             }
-            let whileRevealedEvent = whileRevealedGameAction.createEvent(context);
-            event.thenAttachEvent(whileRevealedEvent);
+            let finalEvent = event;
+            // Only create whileRevealed if cards are being highlighted. Otherwise, they are likely passively revealed
+            if(event.highlight) {
+                finalEvent = whileRevealedGameAction.createEvent(context);
+                event.thenAttachEvent(finalEvent);
+            }
 
-            whileRevealedEvent.thenExecute(() => {
+            finalEvent.thenExecute(() => {
                 this.hideRevealedCards(event, allPlayers);
                 context.game.cardVisibility.removeRule(revealFunc);
             });
