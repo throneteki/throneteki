@@ -6,7 +6,8 @@ class KnightsOfTheVale extends DrawCard {
         this.action({
             title: 'Give character +STR',
             phase: 'challenge',
-            cost: ability.costs.kneelFactionCard(),
+            cost: ability.costs.kneel({ type: 'location', faction: 'neutral', printedCostOrHigher: 1 }),
+            limit: ability.limit.perPhase(1),
             target: {
                 activePromptTitle: 'Select a character',
                 cardCondition: { type: 'character', defending: true, trait: 'House Arryn', controller: this.controller }

@@ -5,7 +5,7 @@ class TheSeedIsStrong extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onInitiativeDetermined: event => event.winner !== this.controller && this.controller.anyCardsInPlay(card => card.isMatch({ type: 'character', unique: true, trait: 'House Arryn' }) || card.name === 'Stannis Baratheon')
+                onInitiativeDetermined: event => event.winner !== this.controller
             },
             message: {
                 format: '{player} uses {source} to have {winner} discard a Lord or Lady from their hand or shadows area, or reveal their hand and shadows area',
