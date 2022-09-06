@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 
 class LordProtectorOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
-        this.attachmentRestriction({ trait: 'Lord' });
+        this.attachmentRestriction({ trait: 'Lord', controller: 'current' });
 
         this.whileAttached({
             match: card => card.name === 'Littlefinger',
