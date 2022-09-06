@@ -39,7 +39,7 @@ class Littlefinger extends DrawCard {
                         })
                     }),
                     context
-                )
+                );
             }
         });
     }
