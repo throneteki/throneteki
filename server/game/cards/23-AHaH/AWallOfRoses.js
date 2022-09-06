@@ -12,9 +12,12 @@ class AWallOfRoses extends DrawCard {
             gameAction: GameActions.revealCards(context => ({
                 cards: context.player.hand
             })).then({
-                message: 'Then, {player} stands and removes {attackers} from the challenge',
-                gameActions: GameActions.simultaneously(context => 
-                    flatten(context.event.challenge.attackers.map(attacker => [GameActions.standCard({ card: attacker }), GameActions.removeFromChallenge({ card: attacker })]))
+                message: {
+                    format: 'Then, {player} stands and removes {attackers} from the challenge',
+                    args: { attackers: context => context.parentContext.event.challenge.attackers }
+                },
+                gameAction: GameActions.simultaneously(context => 
+                    flatten(context.parentContext.event.challenge.attackers.map(attacker => [GameActions.standCard({ card: attacker }), GameActions.removeFromChallenge({ card: attacker })]))
                 )
             })
         });

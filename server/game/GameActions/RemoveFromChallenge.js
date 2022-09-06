@@ -15,7 +15,7 @@ class RemoveFromChallenge extends GameAction {
     }
 
     createEvent({ card }) {
-        const challenge = this.game.currentChallenge;
+        const challenge = card.game.currentChallenge;
         const eventProps = {
             card,
             challenge: challenge,
