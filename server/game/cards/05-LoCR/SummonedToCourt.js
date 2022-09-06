@@ -13,7 +13,7 @@ class SummonedToCourt extends PlotCard {
                 ifAble: true,
                 activePromptTitle: 'Choose a card to reveal',
                 cardCondition: (card, context) => card.controller === context.choosingPlayer && card.location === 'hand',
-                messages: { ...Messages.eachPlayerTargeting, selected: '{targetSelection.choosingPlayer} chooses a card in hand to reveal for {source}' }
+                messages: Messages.eachPlayerSecretTargetingForCardType('card in hand')
             },
             handler: context => {
                 this.game.resolveGameAction(
