@@ -1,3 +1,4 @@
+const TextHelper = require('../TextHelper');
 const UiPrompt = require('./uiprompt');
 
 class AcknowledgeRevealCardsPrompt extends UiPrompt {
@@ -18,7 +19,7 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
     activePrompt() {
         return {
             promptTitle: `Acknowledge Revealed Card${this.cards.length > 1 ? 's' : ''}`,
-            menuTitle: `${this.revealers.length === 1 ? `${this.revealers[0].name} is` : `${this.revealers.length} players are`} revealing ${this.cards.length > 1 ? 'cards' : 'a card'}${this.source ? `for ${this.source.name}` : ''}`,
+            menuTitle: this.buildTitle(),
             buttons: [
                 { text: 'Continue' }
             ]
@@ -41,6 +42,25 @@ class AcknowledgeRevealCardsPrompt extends UiPrompt {
 
     isComplete() {
         return this.game.disableRevealAcknowledgement || this.acknowledgers.every(acknowledger => this.completionCondition(acknowledger));
+    }
+
+    buildTitle() {
+        if(this.revealers.length > 1) {
+            return 'Multiple players are revealing cards';
+        }
+
+        let elements = [
+            this.revealers[0].name,
+            'is revealing',
+            this.cards.length === 1 ? this.cards[0].name : 'cards',
+            'from their',
+            TextHelper.formatList(this.revealLocations, 'and')
+        ];
+
+        if(this.source) {
+            elements.push(`for ${this.source.name}`);
+        }
+        return elements.join(' ');
     }
 }
 

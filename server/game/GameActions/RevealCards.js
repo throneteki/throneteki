@@ -11,7 +11,7 @@ class RevealCards extends GameAction {
             handler: context => {
                 if(context.revealed.length > 0) {
                     // TODO: Replace the below with a separate Card Reveal UI (and don't show the cards in their respective locations). This would clean up effects which simply reveal a single card.
-                    context.game.queueStep(new AcknowledgeRevealCardsPrompt(context.game, context.revealed, context.revealingPlayer));
+                    context.game.queueStep(new AcknowledgeRevealCardsPrompt(context.game, context.revealed, context.revealingPlayer, context.source));
                 }
             }
         });
