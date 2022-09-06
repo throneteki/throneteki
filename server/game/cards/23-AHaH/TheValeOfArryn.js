@@ -3,7 +3,7 @@ const GameActions = require('../../GameActions/index.js');
 const TextHelper = require('../../TextHelper');
 
 class TheValeOfArryn extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.plotModifiers({
             initiative: -1
         });
@@ -16,6 +16,7 @@ class TheValeOfArryn extends DrawCard {
                 format: '{player} uses {source} to draw {numberToDraw}',
                 args: { numberToDraw: () => TextHelper.count(this.getNumberToDraw(), 'card') }
             },
+            limit: ability.limit.perPhase(1),
             gameAction: GameActions.drawCards(context => ({ player: context.player, amount: this.getNumberToDraw() }))
         });
     }
