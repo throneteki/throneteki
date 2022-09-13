@@ -88,8 +88,8 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     savePreviouslySelectedCards() {
-        this.previouslySelectedCards = this.choosingPlayer.getSelectedCards();
-        this.previouslySelectableCards = this.choosingPlayer.getSelectableCards();
+        // TODO: This never actually saves the previously selected cards, as this.choosingPlayer.selectedCards is undefined
+        this.previouslySelectedCards = this.choosingPlayer.selectedCards;
         this.choosingPlayer.clearSelectedCards();
         this.choosingPlayer.setSelectedCards(this.selectedCards);
     }
@@ -248,7 +248,6 @@ class SelectCardPrompt extends UiPrompt {
 
         // Restore previous selections.
         this.choosingPlayer.setSelectedCards(this.previouslySelectedCards);
-        this.choosingPlayer.setSelectableCards(this.previouslySelectableCards);
 
         if(this.revealTargets && this.revealFunc) {
             this.game.cardVisibility.removeRule(this.revealFunc);

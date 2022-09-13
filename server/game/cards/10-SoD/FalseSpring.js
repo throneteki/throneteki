@@ -23,7 +23,7 @@ class FalseSpring extends PlotCard {
                                 context.revealing = context.revealing.concat(cards);
                                 return true;
                             }
-                        })
+                        });
                     }))
             ).then({
                 condition: context => !!context.parentContext.revealing,
