@@ -14,7 +14,7 @@ class PutIntoShadows extends GameAction {
 
     canChangeGameState({ player, card }) {
         player = player || card.controller;
-        return card.location !== 'shadows' && player.canPutIntoShadows(card, this.game.currentPhase === 'setup' ? 'setup' : 'put');
+        return card.location !== 'shadows' && player.canPutIntoShadows(card, card.game.currentPhase === 'setup' ? 'setup' : 'put');
     }
 
     createEvent({ player, card, allowSave = true }) {
