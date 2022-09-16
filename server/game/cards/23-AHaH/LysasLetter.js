@@ -6,8 +6,10 @@ class LysasLetter extends DrawCard {
     setupCardAbilities() {
         this.tracker = ChallengeTracker.forPhase(this.game);
 
-        this.action({
-            phase: 'challenge',
+        this.reaction({
+            when: {
+                onPhaseStarted: event => event.phase === 'challenge'
+            },
             choosePlayer: () => true,
             handler: context => {
                 this.chosenPlayer = context.chosenPlayer;
