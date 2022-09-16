@@ -33,17 +33,16 @@ class ExchangeOfInformation extends PlotCard {
                                     });
                                 })
                             }))
-                        ).then({
-                            message: {
-                                format: '{player} adds {selectedCards} chosen by {parentOpponent} to their hand',
-                                args: {
-                                    selectedCards: () => this.selectedCards,
-                                    parentOpponent: context => context.parentContext.opponent
-                                }
-                            },
-                            gameAction: GameActions.simultaneously(() => this.selectedCards.map(card => GameActions.addToHand({ card })))
-                        }),
-                        context
+                        )
+                    }).then({
+                        message: {
+                            format: '{player} adds {selectedCards} chosen by {parentOpponent} to their hand',
+                            args: {
+                                selectedCards: () => this.selectedCards,
+                                parentOpponent: context => context.parentContext.opponent
+                            }
+                        },
+                        gameAction: GameActions.simultaneously(() => this.selectedCards.map(card => GameActions.addToHand({ card })))
                     }).then({
                         message: '{player} {gameAction}',
                         gameAction: GameActions.shuffle(context => ({ player: context.player }))
