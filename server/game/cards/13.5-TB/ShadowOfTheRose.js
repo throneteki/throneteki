@@ -14,10 +14,7 @@ class ShadowOfTheRose extends DrawCard {
                     GameActions.putIntoShadows(context => ({ card: context.searchTarget })),
                     GameActions.ifCondition({
                         condition: context => context.game.anyPlotHasTrait('Summer'),
-                        thenAction: {
-                            message: '{player} uses {source} to return {source} to their hand instead of their discard pile',
-                            gameAction: GameActions.returnCardToHand({ card: this })
-                        }
+                        thenAction: GameActions.returnCardToHand({ card: this })
                     })
                 ])
             })
