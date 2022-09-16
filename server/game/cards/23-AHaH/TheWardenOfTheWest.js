@@ -24,10 +24,10 @@ class TheWardenOfTheWest extends DrawCard {
     }
 
     getNumberToDraw(event) {
-        return Math.min(event.events.filter(discardEvent => (
+        return event.events.filter(discardEvent => (
             discardEvent.cardStateWhenDiscarded.controller !== this.controller &&
             discardEvent.cardStateWhenDiscarded.location === 'hand'
-        )).length, 3);
+        )).length;
     }
 }
 
