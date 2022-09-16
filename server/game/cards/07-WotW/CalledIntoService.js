@@ -9,9 +9,9 @@ class CalledIntoService extends PlotCard {
                 player: context.player
             })).then({
                 message: '{player} {gameAction}',
-                gameAction:GameActions.ifCondition({
+                gameAction: GameActions.ifCondition({
                     condition: context => context.event.cards[0].getType() === 'character',
-                    thenAction: GameActions.putIntoPlay(context => ({ card: context.event.cards[0] })),
+                    thenAction: GameActions.simultaneously(context => context.event.revealed.map(card => GameActions.putIntoPlay({ card }))),
                     elseAction: GameActions.simultaneously(context => [
                         GameActions.drawSpecific(context => ({
                             player: context.player,

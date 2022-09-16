@@ -16,7 +16,6 @@ class TheBalerion extends DrawCard {
                 ability.costs.shuffleSelfIntoDeck()
             ],
             target: {
-                title: 'Select a character',
                 cardCondition: { faction: 'targaryen', type: 'character', location: 'play area' }
             },
             phase: 'challenge',

@@ -12,10 +12,7 @@ class TheHigherMysteries extends DrawCard {
                 player: context.player
             })).then({
                 condition: context => context.event.revealed.length > 0,
-                message: {
-                    format: '{player} puts {topCard} into play',
-                    args: { topCard: context => context.event.revealed[0] }
-                },
+                message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay(context => ({
                     player: context.player,
                     card: context.event.revealed[0]

@@ -43,7 +43,6 @@ class RevealCards extends GameAction {
     }
 
     createEvent({ cards, player, whileRevealed, revealWithMessage = true, highlight = true, source, context }) {
-        context.revealing = cards;
         context.revealingPlayer = player;
         const allPlayers = context.game.getPlayers();
         const eventParams = {

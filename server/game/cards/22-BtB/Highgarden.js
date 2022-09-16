@@ -31,11 +31,11 @@ class Highgarden extends DrawCard {
                             numCards: preThenContext.target.length,
                             gameAction: 'increaseStrength'
                         },
-                        handler: thenContext => {
+                        handler: context => {
                             this.groups = {};
-                            this.remainingCards = thenContext.target;
-                            this.remainingStr = thenContext.parentContext.target.length * 2;
-                            this.game.queueSimpleStep(() => this.calculateNextCharacter(thenContext.player));
+                            this.remainingCards = context.target;
+                            this.remainingStr = context.event.cards.length * 2;
+                            this.game.queueSimpleStep(() => this.calculateNextCharacter(context.player));
 
                             this.game.queueSimpleStep(() => {
                                 let strMessages = [];
@@ -52,7 +52,7 @@ class Highgarden extends DrawCard {
                                     strMessages.push(Message.fragment('{characters} +{strength} STR', { characters, strength }));
                                 }
 
-                                this.game.addMessage('{0} gives {1} until the end of the phase', thenContext.player, strMessages);
+                                this.game.addMessage('{0} gives {1} until the end of the phase', context.player, strMessages);
 
                                 return true;
                             });

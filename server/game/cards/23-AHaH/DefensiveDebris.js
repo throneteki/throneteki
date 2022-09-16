@@ -9,7 +9,7 @@ class DefensiveDebris extends DrawCard {
             title: 'Discard gold to choose a discarded card',
             cost: ability.costs.discardGold(),
             target: {
-                title: 'Select a card',
+                activePromptTitle: 'Select a card',
                 cardCondition: { location: 'discard pile', controller: 'opponent' }
             },
             phase: 'challenge',

@@ -25,12 +25,13 @@ class DothrakiHandmaiden extends DrawCard {
                         player: context.player,
                         cards: [context.target]
                     })).then({
+                        condition: context => context.event.revealed.length > 0,
                         handler: context => {
-                            context.player.attach(context.player, context.event.cards[0], this, 'play', true);
+                            context.player.attach(context.player, context.event.revealed[0], this, 'play', true);
                             this.lastingEffect(() => ({
-                                condition: () => context.event.cards[0].parent === context.source,
+                                condition: () => context.event.revealed[0].parent === context.source,
                                 targetLocation: 'any',
-                                match: context.event.cards[0],
+                                match: context.event.revealed[0],
                                 effect: ability.effects.setCardType('attachment')
                             }));
                         }
