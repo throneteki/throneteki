@@ -12,7 +12,7 @@ class AnyaWaynwood extends DrawCard {
             title: 'Contribute STR and kneel',
             phase: 'challenge',
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.isFaction('neutral')),
-            condition: () => this.game.isDuringChallenge({ match: challenge => [challenge.attackingPlayer, challenge.defendingPlayer].includes(this.controller) }),
+            condition: () => this.game.isDuringChallenge(),
             limit: ability.limit.perPhase(1),
             target: {
                 title: 'Select a character',
@@ -37,9 +37,6 @@ class AnyaWaynwood extends DrawCard {
                     targetController: 'current',
                     effect: ability.effects.contributeChallengeStrength(() => context.target.getStrength())
                 }));
-
-                this.game.addMessage('Then, {0} kneels {1}', context.player, context.target);
-                this.game.resolveGameAction(GameActions.kneelCard({ card: context.target }), context);
             }
         });
     }
