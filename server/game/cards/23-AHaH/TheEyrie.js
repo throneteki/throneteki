@@ -11,24 +11,36 @@ class TheEyrie extends DrawCard {
         });
 
         this.persistentEffect({
-            condition: () => !this.kneeled,
-            targetController: 'opponent',
-            match: opponent => (
-                opponent.getTotalPower() > this.controller.getTotalPower() &&
-                this.challengeTracker.count({ initiatingPlayer: opponent, initiatedAgainstPlayer: this.controller }) >= 2
-            ),
-            effect: ability.effects.cannotInitiateChallengeType('any', opponent => opponent === this.controller)
+            condition: () => this.controller.getTotalInitiative() === 0 && this.game.isDuringChallenge({ initiated: true }),
+            targetController: 'any',
+            match: card => card.getType() === 'character' && !card.isParticipating(),
+            effect: ability.effects.modifyStrength(2)
         });
 
-        this.reaction({
-            when: {
-                onPhaseStarted: event => event.phase === 'challenge'
+        this.action({
+            title: 'Contribute STR to challenge',
+            phase: 'challenge',
+            cost: ability.costs.kneelFactionCard(),
+            condition: () => this.game.isDuringChallenge(),
+            target: {
+                cardCondition: {
+                    location: 'play area',
+                    type: 'character',
+                    participating: false, // TODO: Remove this once contributeSTR properly prevents a participating character also contributing (adding STR twice)
+                    controller: 'current'
+                }
             },
-            cost: ability.costs.kneelSelf(),
-            chooseOpponent: opponent => !opponent.firstPlayer,
-            message: '{player} kneels {source} to have {opponent} become first player',
+            message: {
+                format: '{player} uses {source} and kneels their faction card to have {target} contribute its STR (currently {STR}) to {player}\'s this challenge',
+                args: { STR: context => context.target.getStrength() }
+            },
             handler: context => {
-                this.game.setFirstPlayer(context.opponent);
+                this.untilEndOfChallenge(ability => ({
+                    // Force the effect to recalculate mid-challenge in case the character STR changes
+                    condition: () => true,
+                    targetController: 'current',
+                    effect: ability.effects.contributeChallengeStrength(() => context.target.getStrength())
+                }));
             }
         });
     }
