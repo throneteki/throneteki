@@ -23,9 +23,9 @@ class Pentos extends DrawCard {
                 gameAction: GameActions.putIntoPlay(context => ({
                     card: context.event.revealed[0]
                 })).then({
-                    message: 'Then {player} draws 1 card',
-                    gameAction: GameActions.drawCards(thenContext => ({
-                        player: thenContext.player,
+                    message: 'Then, {player} draws 1 card',
+                    gameAction: GameActions.drawCards(context => ({
+                        player: context.player,
                         amount: 1
                     }))
                 })
