@@ -18,7 +18,7 @@ class TheBloodyGate extends DrawCard {
                     })
             },
             message: {
-                format: `{player} uses {source} to {potentialAction}`,
+                format: '{player} uses {source} to {potentialAction}',
                 args: { 
                     potentialAction: context => {
                         let message = this.kneeled ? 'discard a card at random from {winner}\'s hand' : 'have {winner} choose and discard a card from their hand';

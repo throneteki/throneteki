@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
 
 class AnyaWaynwood extends DrawCard {
     setupCardAbilities(ability) {

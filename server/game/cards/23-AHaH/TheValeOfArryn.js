@@ -1,6 +1,5 @@
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions/index.js');
-const TextHelper = require('../../TextHelper');
 
 class TheValeOfArryn extends DrawCard {
     setupCardAbilities(ability) {
