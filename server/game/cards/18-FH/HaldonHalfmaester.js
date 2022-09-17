@@ -12,11 +12,11 @@ class HaldonHalfmaester extends DrawCard {
             gameAction: GameActions.revealTopCards(context => ({
                 player: context.player
             })).then({
+                condition: context => context.event.revealed.length > 0,
                 handler: context => {
-                    let topCard = context.event.revealed.length > 0 ? context.event.revealed[0] : null;
-
+                    let topCard = context.event.revealed[0];
                     //place 1 gold on card of the same type
-                    if(topCard && ['character', 'location', 'attachment'].includes(topCard.getType()) &&
+                    if(['character', 'location', 'attachment'].includes(topCard.getType()) &&
                         this.game.anyCardsInPlay(card => card.getType() === topCard.getType())) {
                         this.game.promptForSelect(context.player, {
                             activePromptTitle: 'Select card to gain 1 gold',

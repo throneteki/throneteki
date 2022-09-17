@@ -17,30 +17,32 @@ class SummonedToCourt extends PlotCard {
             },
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.revealCards(context => ({ cards: context.targets.getTargets() }))
-                        .then(context => ({
-                            gameAction: GameActions.simultaneously(
-                                this.getLowestCostCharacters(context.revealed).map(character => 
-                                    GameActions.may({
-                                        player: character.controller,
-                                        title: `Put ${character.name} into play?`,
-                                        message: {
-                                            format: '{controller} {gameAction}',
-                                            args: { controller: () => character.controller }
-                                        },
-                                        gameAction: GameActions.putIntoPlay({ player: character.controller, card: character })
-                                    })
-                                )
+                    GameActions.revealCards(context => ({
+                        cards: context.targets.getTargets()
+                    })).then({
+                        gameAction: GameActions.simultaneously(context =>
+                            // Get the lowest cost characters that were revealed, but filter out any characters who are not still in reveal location (eg. Alla Tyrell or Sweetrobin)
+                            this.getLowestCostCharacters(context.event.cards).filter(card => context.event.revealed.includes(card)).map(character => 
+                                GameActions.may({
+                                    player: character.controller,
+                                    title: `Put ${character.name} into play?`,
+                                    message: {
+                                        format: '{controller} {gameAction}',
+                                        args: { controller: () => character.controller }
+                                    },
+                                    gameAction: GameActions.putIntoPlay({ player: character.controller, card: character })
+                                })
                             )
-                        })),
+                        )
+                    }),
                     context
                 );
             }
         });
     }
 
-    getLowestCostCharacters(revealed) {
-        let characters = revealed.filter(card => card.getType() === 'character');
+    getLowestCostCharacters(cards) {
+        let characters = cards.filter(card => card.getType() === 'character');
         let minCost = Math.min(...characters.map(character => character.getPrintedCost()));
         return characters.filter(card => card.getPrintedCost() === minCost);
     }

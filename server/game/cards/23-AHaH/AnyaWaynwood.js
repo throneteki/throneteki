@@ -14,7 +14,6 @@ class AnyaWaynwood extends DrawCard {
             condition: () => this.game.isDuringChallenge(),
             limit: ability.limit.perPhase(1),
             target: {
-                title: 'Select a character',
                 cardCondition: {
                     location: 'play area',
                     type: 'character',

@@ -7,6 +7,7 @@ class Mord extends DrawCard {
             title: 'Kneel to blank card',
             cost: ability.costs.kneelSelf(),
             target: {
+                activePromptTitle: 'Select a card',
                 cardCondition: card => card.isMatch({ location: 'play area', type: 'character' }) || card.isMatch({ location: 'shadows' })
             },
             message: {

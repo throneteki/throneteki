@@ -28,21 +28,17 @@ class RandyllTarly extends DrawCard {
                             player: context.player,
                             revealWithMessage: false
                         })).then({
+                            condition: context => context.event.cards[0].isMatch({ type: 'location' }) && context.event.revealed.length > 0,
+                            message: '{player} {gameAction}',
                             gameAction: GameActions.ifCondition({
-                                condition: context => context.event.revealed.length > 0 && context.event.revealed[0].isMatch({ type: 'location' }),
-                                thenAction: {
-                                    message: '{player} {gameAction}',
-                                    gameAction: GameActions.ifCondition({
-                                        condition: context => context.event.revealed[0].isMatch({ trait: 'The Reach' }),
-                                        thenAction: GameActions.putIntoPlay(context => ({
-                                            card: context.event.revealed[0]
-                                        })),
-                                        elseAction: GameActions.drawSpecific(context => ({
-                                            player: context.player,
-                                            cards: context.event.revealed
-                                        }))
-                                    })
-                                }
+                                condition: context => context.event.cards[0].isMatch({ trait: 'The Reach' }),
+                                thenAction: GameActions.putIntoPlay(context => ({
+                                    card: context.event.revealed[0]
+                                })),
+                                elseAction: GameActions.drawSpecific(context => ({
+                                    player: context.player,
+                                    cards: context.event.revealed
+                                }))
                             })
                         })
                     }
