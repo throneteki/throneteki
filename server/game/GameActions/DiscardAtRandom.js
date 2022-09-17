@@ -30,6 +30,11 @@ class DiscardAtRandom extends GameAction {
             event.addChildEvent(childEvent);
         }
 
+        // Need to print the message here as the cards being discarded (at random) aren't determined before the event is created; which is when GameAction.message() is called
+        event.thenExecute(() => {
+            player.game.addMessage('{0} discards {1} at random from their hand', player, cards);
+        });
+
         return event;
     }
 }
