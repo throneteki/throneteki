@@ -19,8 +19,8 @@ class SummonedToCourt extends PlotCard {
                 this.game.resolveGameAction(
                     GameActions.revealCards(context => ({
                         cards: context.targets.getTargets()
-                    })).then(context => ({
-                        gameAction: GameActions.simultaneously(
+                    })).then({
+                        gameAction: GameActions.simultaneously(context =>
                             // Get the lowest cost characters that were revealed, but filter out any characters who are not still in reveal location (eg. Alla Tyrell or Sweetrobin)
                             this.getLowestCostCharacters(context.event.cards).filter(card => context.event.revealed.includes(card)).map(character => 
                                 GameActions.may({
@@ -34,15 +34,15 @@ class SummonedToCourt extends PlotCard {
                                 })
                             )
                         )
-                    })),
+                    }),
                     context
                 );
             }
         });
     }
 
-    getLowestCostCharacters(revealTargets) {
-        let characters = revealTargets.filter(card => card.getType() === 'character');
+    getLowestCostCharacters(cards) {
+        let characters = cards.filter(card => card.getType() === 'character');
         let minCost = Math.min(...characters.map(character => character.getPrintedCost()));
         return characters.filter(card => card.getPrintedCost() === minCost);
     }

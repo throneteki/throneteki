@@ -1,7 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const {Tokens} = require('../../Constants');
 const GameActions = require('../../GameActions');
-const { context } = require('raven');
 
 class HaldonHalfmaester extends DrawCard {
     setupCardAbilities() {

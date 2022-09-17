@@ -1,4 +1,3 @@
-const { context } = require('raven');
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions');
 

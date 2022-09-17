@@ -26,13 +26,13 @@ class Littlefinger extends DrawCard {
                         condition: context => this.noOpponentRevealedSameCardtype(context.player, context.event.cards),
                         target: {
                             activePromptTitle: 'Select a card',
-                            cardCondition: card => card.getPower() > 0,
+                            cardCondition: card => card.getPower() > 0 && card !== this,
                             cardType: ['attachment', 'character', 'faction', 'location']
                         },
                         message: '{player} moves 1 power from {target} to {source}',
                         handler: context => {
                             this.game.resolveGameAction(
-                                GameActions.movePower({ from: card, to: this, amount: 1 }),
+                                GameActions.movePower({ from: context.target, to: this, amount: 1 }),
                                 context
                             );
                         }
