@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
 
 class TorrhensSquare extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,24 +9,23 @@ class TorrhensSquare extends DrawCard {
             when: {
                 onCardOutOfShadows: event => event.card.controller === this.controller && event.card.isFaction('greyjoy')
             },
-            cost: ability.costs.kneelSelf(),
-            message: {
-                format: '{player} kneels {source} to discard the top {amount} cards from {opponents} deck',
-                args: { 
-                    amount: context => this.getNumberOfRaiders(context.player),
-                    opponents: context => this.getOpponentsToDiscard(context)
-                }
+            target: {
+                mode: 'upTo',
+                numCards: 3,
+                activePromptTitle: 'Select up to 3 characters',
+                cardCondition: { type: 'character', trait: 'Raider', location: 'play area', condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() > context.player.getTotalInitiative() }
             },
-            gameAction: GameActions.simultaneously(context => 
-                this.getOpponentsToDiscard(context).map(player => GameActions.discardTopCards({ player: player, amount: this.getNumberOfRaiders(context.player) }))
-            )
+            cost: ability.costs.kneelSelf(),
+            message: '{player} kneels {source} to have {target} discard an additional card from pillage until the end of the phase',
+            handler: context => {
+                for(let card of context.target) {
+                    card.untilEndOfPhase(ability => ({
+                        match: card,
+                        effect: ability.effects.addPillageLimit(1)
+                    }));
+                }
+            }
         });
-    }
-    getOpponentsToDiscard(context) {
-        return context.game.getOpponentsInFirstPlayerOrder(context.player).filter(player => player.getTotalInitiative() >= context.player.getTotalInitiative());
-    }
-    getNumberOfRaiders(player) {
-        return Math.min(player.getNumberOfCardsInPlay({ type: 'character', trait: 'Raider' }), 3);
     }
 }
 
