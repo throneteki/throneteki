@@ -333,6 +333,16 @@ const Effects = {
             }
         };
     },
+    addPillageLimit: function(value) {
+        return {
+            apply: function(card) {
+                card.pillageLimit += value;
+            },
+            unapply: function(card) {
+                card.pillageLimit -= value;
+            }
+        };
+    },
     addIcon: function(icon) {
         return {
             apply: function(card, context) {
