@@ -2,23 +2,14 @@ const GameActions = require('../../GameActions/index.js');
 const PlotCard = require('../../plotcard.js');
 
 class TheDefianceOfDuskendale extends PlotCard {
-    setupCardAbilities(ability) {
-        this.persistentEffect({
-            condition: () => this.game.isDuringChallenge(),
-            match: card => card.getType() === 'location' && !card.hasTrait('Stronghold'),
-            targetController: 'any',
-            effect: ability.effects.addTrait('Contested')
-        });
-
+    setupCardAbilities() {
         this.forcedReaction({
             when: {
-                onCardKneeled: event => event.card.getType() === 'location'
-                    && !event.card.isLimited()
-                    && event.card.hasTrait('Contested')
+                onCardKneeled: event => event.card.getType() === 'location' && event.cause === 'assault'
             },
             message: {
-                format: '{player} is forced to discard {discard} from play for {source}',
-                args: { discard: context => context.event.card }
+                format: '{controller} is forced to discard {discard} from play for {source}',
+                args: { controller: context => context.event.card.controller }
             },
             gameAction: GameActions.discardCard(context => ({ card: context.event.card }))
         });
