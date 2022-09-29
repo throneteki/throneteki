@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard');
-const Message = require('../../Message');
 
 class Mord extends DrawCard {
     setupCardAbilities(ability) {
