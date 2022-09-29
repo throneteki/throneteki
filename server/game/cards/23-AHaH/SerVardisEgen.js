@@ -10,12 +10,9 @@ class SerVardisEgen extends DrawCard {
             cost: ability.costs.sacrificeSelf(),
             target: {
                 type: 'select',
-                cardCondition: { type: 'character', attacking: true, not: { trait: 'Army' } }
+                cardCondition: { type: 'character', attacking: true }
             },
-            message: {
-                format: '{player} sacrifices {source} to place {target} in shadows with a shadow token on it',
-                args: { owner: context => context.target.owner }
-            },
+            message: '{player} sacrifices {source} to place {target} in shadows with a shadow token on it',
             handler: context => {
                 context.player.putIntoShadows(context.target, false, () => {
                     context.target.modifyToken(Tokens.shadow, 1);
