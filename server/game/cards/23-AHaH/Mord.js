@@ -1,19 +1,15 @@
 const DrawCard = require('../../drawcard');
-const Message = require('../../Message');
 
 class Mord extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Kneel to blank card',
+            title: 'Kneel to blank character',
             cost: ability.costs.kneelSelf(),
             target: {
-                activePromptTitle: 'Select a card',
-                cardCondition: card => card.isMatch({ location: 'play area', type: 'character' }) || card.isMatch({ location: 'shadows' })
+                activePromptTitle: 'Select a character',
+                cardCondition: { location: 'play area', type: 'character', condition: (card, context) => card.controller.getTotalInitiative() >= context.player.getTotalInitiative() }
             },
-            message: {
-                format: '{player} kneels {source} to treat the text box of {card} as blank until {source} stands or leaves play',
-                args: { card: context => this.getCardOrPosition(context.target) }
-            },
+            message: '{player} kneels {source} to treat the text box of {target} as blank until {source} stands or leaves play',
             handler: context => {
                 this.lastingEffect(ability => ({
                     until: {
@@ -22,24 +18,10 @@ class Mord extends DrawCard {
                     },
                     targetLocation: 'any',
                     match: context.target,
-                    effect: [
-                        ability.effects.blankExcludingTraits,
-                        ability.effects.losesAllKeywords()
-                    ]
+                    effect: ability.effects.blankExcludingTraits
                 }));
             }
         });
-    }
-
-    getCardOrPosition(card) {
-        if(card.location === 'shadows') {
-            const position = card.controller.shadows.indexOf(card) + 1;
-            return Message.fragment('card #{position} in {player}\'s shadow area', {
-                position,
-                player: card.controller
-            });
-        }
-        return Message.fragment('{card}', { card });
     }
 }
 
