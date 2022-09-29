@@ -54,9 +54,9 @@ class RevealCards extends GameAction {
         };
         return this.event('onCardsRevealed', eventParams, event => {
             const whileRevealedGameAction = whileRevealed || this.defaultWhileRevealed;
-            const revealFunc = card => event.revealed.includes(card) && !this.isImmune({ card, context });
+            const revealFunc = card => event.revealed.includes(card);
 
-            event.revealed = context.revealed = event.cards;
+            event.revealed = context.revealed = event.cards.filter(card => !this.isImmune({ card, context }));
 
             // Make cards visible & print reveal message before 'onCardRevealed' to account for any reveal interrupts (eg. Alla Tyrell)
             context.game.cardVisibility.addRule(revealFunc);
@@ -71,7 +71,7 @@ class RevealCards extends GameAction {
                 abilityMessage.output(context.game, context);
             }
             
-            for(let card of event.cards) {
+            for(let card of event.revealed) {
                 const revealEventParams = {
                     card,
                     cardStateWhenRevealed: card.createSnapshot(),
