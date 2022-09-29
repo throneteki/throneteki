@@ -9,7 +9,10 @@ class TheDefianceOfDuskendale extends PlotCard {
             },
             message: {
                 format: '{controller} is forced to discard {discard} from play for {source}',
-                args: { controller: context => context.event.card.controller }
+                args: {
+                    controller: context => context.event.card.controller,
+                    discard: context => context.event.card
+                }
             },
             gameAction: GameActions.discardCard(context => ({ card: context.event.card }))
         });
