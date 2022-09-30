@@ -175,7 +175,7 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.game.raiseEvent(DeclareDefenders.createEvent({ cards: this.challenge.defenders, challenge: this.challenge }));
+        this.game.resolveGameAction(DeclareDefenders, { cards: this.challenge.defenders, challenge: this.challenge });
     }
 
     announceDefenderStrength() {

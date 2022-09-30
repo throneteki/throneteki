@@ -7,23 +7,11 @@ class DeclareAttackers extends GameAction {
     }
 
     canChangeGameState({ cards, challenge }) {
-        return cards.some(card => {
-            let canKneelForChallenge =
-                !card.kneeled && !card.kneelsAsAttacker(challenge.challengeType) ||
-                !card.kneeled && card.allowGameAction('kneel') ||
-                card.kneeled && card.challengeOptions.contains('canBeDeclaredWhileKneeling');
-
-            return (
-                card.canParticipateInChallenge() &&
-                card.location === 'play area' &&
-                !card.stealth &&
-                canKneelForChallenge &&
-                (card.hasIcon(challenge.challengeType) || card.challengeOptions.contains('canBeDeclaredWithoutIcon'))
-            );
-        });
+        return cards.some(card => this.canBeDeclaredAsAttacker(card, challenge));
     }
 
     createEvent({ cards, challenge }) {
+        cards = cards.filter(card => this.canBeDeclaredAsAttacker(card, challenge));
         const eventParams = {
             cards,
             challenge,
@@ -32,7 +20,7 @@ class DeclareAttackers extends GameAction {
         };
         return this.event('onAttackersDeclared', eventParams, event => {
             for(let card of event.cards) {
-                const attackEventParams = { card, challenge };
+                const attackEventParams = { card, challenge: event.challenge };
                 event.thenAttachEvent(this.event('onDeclaredAsAttacker', attackEventParams, attackEvent => {
                     if(!attackEvent.card.kneeled && attackEvent.card.kneelsAsAttacker(attackEvent.challenge.challengeType)) {
                         attackEvent.thenAttachEvent(KneelCard.createEvent({ card: attackEvent.card }));
@@ -40,6 +28,21 @@ class DeclareAttackers extends GameAction {
                 }));
             }
         });
+    }
+
+    canBeDeclaredAsAttacker(card, challenge) {
+        let canKneelForChallenge =
+            !card.kneeled && !card.kneelsAsAttacker(challenge.challengeType) ||
+            !card.kneeled && card.allowGameAction('kneel') ||
+            card.kneeled && card.challengeOptions.contains('canBeDeclaredWhileKneeling');
+
+        return (
+            card.canParticipateInChallenge() &&
+            card.location === 'play area' &&
+            !card.stealth &&
+            canKneelForChallenge &&
+            (card.hasIcon(challenge.challengeType) || card.challengeOptions.contains('canBeDeclaredWithoutIcon'))
+        );
     }
 }
 

@@ -13,10 +13,12 @@ class InitiateChallenge extends GameAction {
         return this.event('onChallengeInitiated', { challenge }, event => {
             event.challenge.initiateChallenge();
 
-            // Lysono Maar: When defenders are declared before attackers, they are knelt & considered "declared" within challenge initiation; same as declaring attackers
-            event.thenAttachEvent(DeclareDefenders.createEvent({ cards: event.challenge.defenders, challenge: event.challenge }));
-            
+            if(event.challenge.declareDefendersFirst) {
+                // Lysono Maar: When defenders are declared before attackers, they are knelt & considered "declared" within challenge initiation; same as declaring attackers
+                event.thenAttachEvent(DeclareDefenders.createEvent({ cards: event.challenge.defenders, challenge: event.challenge }));
+            }
             event.thenAttachEvent(DeclareAttackers.createEvent({ cards: event.challenge.declaredAttackers, challenge: event.challenge }));
+            
             challenge.stealthData.forEach(stealthChoice => event.thenAttachEvent(BypassByStealth.createEvent({ challenge, source: stealthChoice.source, target: stealthChoice.target })));
             challenge.assaultData.forEach(assaultChoice => event.thenAttachEvent(AssaultKeywordAction.createEvent({ challenge, source: assaultChoice.source, target: assaultChoice.target })));
 
