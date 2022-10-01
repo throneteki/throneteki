@@ -2,9 +2,9 @@ const DrawCard = require('../../drawcard.js');
 
 class Crannogmen extends DrawCard {
     setupCardAbilities(ability) {
-        this.reaction({
+        this.interrupt({
             when: {
-                onClaimApplied: event => event.challenge.isMatch({ winner: this.controller, attackingAlone: this })
+                onClaimApplied: event => event.challenge.isMatch({ winner: this.controller }) && this.isAttacking()
             },
             target: {
                 cardCondition: { type: 'character', unique: false, location: 'play area' },
