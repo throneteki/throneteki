@@ -1,37 +1,21 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions');
-const {Tokens} = require('../../Constants');
 
 class Crannogmen extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardEntersPlay: event => event.card.hasTrait('House Reed')
+                onClaimApplied: event => event.challenge.isMatch({ winner: this.controller, attackingAlone: this })
             },
             target: {
-                type: 'select',
-                cardCondition: card => card.location === 'play area' && card.controller !== this.controller &&
-                                       card.getType() === 'character'
+                cardCondition: { type: 'character', unique: false, location: 'play area' },
+                gameAction: 'kill'
             },
-            limit: ability.limit.perPhase(1),
-            message: '{player} uses {source} to place a Poison token on {target}',
+            cost: ability.costs.putSelfIntoShadows(),
+            message: '{player} returns {source} to shadows to kill {target} instead of the normal claim effects',
             handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.placeToken({
-                        card: context.target, token: Tokens.poison
-                    }).then({
-                        condition: () => context.target.getStrength() <= context.target.tokens[Tokens.poison],
-                        cost: ability.costs.putSelfIntoShadows(),
-                        message: {
-                            format: 'Then, {player} returns {source} to shadows to kill {poisonedCharacter}',
-                            args: { poisonedCharacter: () => context.target }
-                        },
-                        handler: () => {
-                            this.game.killCharacter(context.target);
-                        }
-                    }),
-                    context
-                );
+                context.replaceHandler(() => {
+                    this.game.killCharacter(context.target);
+                });
             }
         });
     }
