@@ -906,6 +906,10 @@ class Player extends Spectator {
         return this.game.resolveGameAction(RemoveFromGame, { allowSave, card, player: this });
     }
 
+    isRevealingTopOfDeck() {
+        return this.drawDeck.length > 0 && this.game.getPlayers().every(player => this.game.isCardVisible(this.drawDeck[0], player));
+    }
+
     moveCardToTopOfDeck(card, allowSave = true) {
         return this.game.resolveGameAction(GameActions.returnCardToDeck({ card, allowSave }));
     }
@@ -1157,6 +1161,10 @@ class Player extends Spectator {
         return this.multipleOpponentClaim.includes(claimType);
     }
 
+    getSelectedCards() {
+        return this.promptState.selectedCards;
+    }
+
     setSelectedCards(cards) {
         this.promptState.setSelectedCards(cards);
     }
@@ -1206,6 +1214,7 @@ class Player extends Spectator {
     getStats(isActivePlayer) {
         return {
             claim: this.getClaim(),
+            initiative: this.getTotalInitiative(),
             gold: !isActivePlayer && this.game.currentPhase === 'setup' ? 0 : this.gold,
             reserve: this.getTotalReserve(),
             totalPower: this.getTotalPower()
@@ -1303,7 +1312,7 @@ class Player extends Spectator {
             plotSelected: !!this.selectedPlot,
             promptedActionWindows: this.promptedActionWindows,
             promptDupes: this.promptDupes,
-            revealTopCard: this.flags.contains('revealTopCard'),
+            revealTopCard: this.isRevealingTopOfDeck(),
             showDeck: this.showDeck,
             stats: this.getStats(isActivePlayer),
             timerSettings: this.timerSettings,

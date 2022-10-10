@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class StreetOfSteel extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,28 +8,20 @@ class StreetOfSteel extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.challengeType === 'military'
             },
             cost: ability.costs.kneelFactionCard(),
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 10,
-                    activePromptTitle: 'Select a card',
-                    cardCondition: card => card.getType() === 'attachment' && (card.hasTrait('Weapon') || card.hasTrait('Item')),
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} uses {source} and kneels their faction card to search the top 10 cards of their deck for a Weapon or Item attachment',
+            gameAction: GameActions.search({
+                topCards: 10,
+                title: 'Select an attachment',
+                match: {
+                    type: 'attachment',
+                    trait: ['Weapon', 'Item']
+                },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck but does not add any card to their hand',
-            player, this);
     }
 }
 

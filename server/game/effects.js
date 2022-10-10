@@ -178,6 +178,21 @@ const Effects = {
     canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
     mustBeDeclaredAsAttacker: challengeOptionEffect('mustBeDeclaredAsAttacker'),
     mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
+    defendersDeclaredBeforeAttackers: function() {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                if(context.game.currentChallenge) {
+                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = true;
+                }
+            },
+            unapply: function(player, context) {
+                if(context.game.currentChallenge) {
+                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = false;
+                }
+            }
+        };
+    },
     restrictAttachmentsTo: function(trait) {
         return Effects.addKeyword(`No attachments except <i>${trait}</i>`);
     },
@@ -315,6 +330,16 @@ const Effects = {
             },
             unapply: function(card) {
                 card.stealthLimit -= value;
+            }
+        };
+    },
+    addPillageLimit: function(value) {
+        return {
+            apply: function(card) {
+                card.pillageLimit += value;
+            },
+            unapply: function(card) {
+                card.pillageLimit -= value;
             }
         };
     },
@@ -939,7 +964,8 @@ const Effects = {
             }
         };
     },
-    contributeChallengeStrength: function(value) {
+    contributeChallengeStrength: function(valueOrCalculate) {
+        const calculate = (typeof valueOrCalculate === 'function') ? valueOrCalculate : () => valueOrCalculate;
         return {
             targetType: 'player',
             apply: function(player, context) {
@@ -948,12 +974,30 @@ const Effects = {
                     return;
                 }
 
+                const value = calculate(context);
+                context.contributeChallengeStrength = context.contributeChallengeStrength || {};
+                context.contributeChallengeStrength[player.name] = value;
                 if(challenge.attackingPlayer === player) {
                     challenge.modifyAttackerStrength(value);
-                    context.game.addMessage('{0} uses {1} to add {2} to the strength of this challenge for a total of {3}', player, context.source, value, challenge.attackerStrength);
                 } else if(challenge.defendingPlayer === player) {
                     challenge.modifyDefenderStrength(value);
-                    context.game.addMessage('{0} uses {1} to add {2} to the strength of this challenge for a total of {3}', player, context.source, value, challenge.defenderStrength);
+                }
+            },
+            reapply: function(player, context) {
+                let challenge = context.game.currentChallenge;
+                if(!challenge) {
+                    return;
+                }
+
+                context.contributeChallengeStrength = context.contributeChallengeStrength || {};
+                const origValue = context.contributeChallengeStrength[player.name];
+                const newValue = calculate(context);
+                const diff = newValue - origValue;
+                context.contributeChallengeStrength[player.name] = newValue;
+                if(challenge.attackingPlayer === player) {
+                    challenge.modifyAttackerStrength(diff);
+                } else if(challenge.defendingPlayer === player) {
+                    challenge.modifyDefenderStrength(diff);
                 }
             },
             unapply: function(player, context) {
@@ -962,12 +1006,16 @@ const Effects = {
                     return;
                 }
 
+                const value = calculate(context);
+                context.contributeChallengeStrength = context.contributeChallengeStrength || {};
+                delete context.contributeChallengeStrength[player.name];
                 if(challenge.attackingPlayer === player) {
                     challenge.modifyAttackerStrength(-value);
                 } else if(challenge.defendingPlayer === player) {
                     challenge.modifyDefenderStrength(-value);
                 }
-            }
+            },
+            isStateDependent: true
         };
     },
     setAttackerMaximum: function(value) {
@@ -1074,6 +1122,17 @@ const Effects = {
             },
             unapply: function(player) {
                 player.playableLocations = player.playableLocations.filter(l => l !== playableLocation);
+            }
+        };
+    },
+    cannotBeFirstPlayer: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('cannotBeFirstPlayer');
+            },
+            unapply: function(player) {
+                player.flags.remove('cannotBeFirstPlayer');
             }
         };
     },
@@ -1329,24 +1388,101 @@ const Effects = {
             }
         };
     },
-    revealTopCard: function() {
+    revealTopCards: function(amount) {
+        let topCardsFunc = player => player.drawDeck.slice(0, amount);
         return {
             targetType: 'player',
             apply: function(player, context) {
-                let revealFunc = (card) => player.drawDeck.length > 0 && player.drawDeck[0] === card;
+                const topCards = topCardsFunc(player);
+                let revealFunc = reveal => topCardsFunc(player).includes(reveal);
 
-                context.revealTopCard = context.revealTopCard || {};
-                context.revealTopCard[player.name] = revealFunc;
+                context.revealTopCards = context.revealTopCards || {};
+                context.revealTopCards[player.name] = {
+                    revealFunc,
+                    revealed: topCards
+                };
                 context.game.cardVisibility.addRule(revealFunc);
-                player.flags.add('revealTopCard');
+
+                context.game.resolveGameAction(GameActions.revealTopCards({
+                    amount,
+                    player,
+                    revealWithMessage: false,
+                    highlight: false,
+                    source: context.source
+                }), context);
+            },
+            reapply: function(player, context) {
+                const topCards = topCardsFunc(player);
+                const newReveals = topCards.filter(card => !context.revealTopCards[player.name].revealed.includes(card));
+
+                context.revealTopCards[player.name].revealed = topCards;
+
+                // Only trigger reveal event for newly revealed cards
+                if(newReveals.length > 0) {
+                    context.game.resolveGameAction(GameActions.revealCards({
+                        cards: newReveals,
+                        player,
+                        revealWithMessage: false,
+                        highlight: false,
+                        source: context.source
+                    }), context);
+                }
             },
             unapply: function(player, context) {
-                let revealFunc = context.revealTopCard[player.name];
+                const revealFunc = context.revealTopCards[player.name].revealFunc;
 
                 context.game.cardVisibility.removeRule(revealFunc);
-                player.flags.remove('revealTopCard');
-                delete context.revealTopCard[player.name];
-            }
+                delete context.revealTopCards[player.name];
+            },
+            isStateDependent: true
+        };
+    },
+    revealShadows: function() {
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                const shadows = player.shadows;
+                const revealFunc = reveal => shadows.includes(reveal);
+
+                context.revealShadows = context.revealShadows || {};
+                context.revealShadows[player.name] = {
+                    revealFunc,
+                    revealed: shadows
+                };
+                context.game.cardVisibility.addRule(revealFunc);
+
+                context.game.resolveGameAction(GameActions.revealCards({
+                    cards: shadows,
+                    player,
+                    revealWithMessage: false,
+                    highlight: false,
+                    source: context.source
+                }), context);
+            },
+            reapply: function(player, context) {
+                const shadows = player.shadows;
+                const newReveals = shadows.filter(card => !context.revealShadows[player.name].revealed.includes(card));
+
+                context.revealShadows[player.name].revealed = shadows;
+
+                // Only trigger reveal event for newly revealed cards
+                if(newReveals.length > 0) {
+                    context.game.resolveGameAction(GameActions.revealCards({
+                        cards: newReveals,
+                        player,
+                        revealWithMessage: false,
+                        highlight: false,
+                        source: context.source
+                    }), context);
+                }
+            },
+            unapply: function(player, context) {
+                const revealFunc = context.revealShadows[player.name].revealFunc;
+
+                context.game.cardVisibility.removeRule(revealFunc);
+                delete context.revealShadows[player.name];
+            },
+            isStateDependent: true
         };
     },
     cannotRevealPlot: function() {
@@ -1401,6 +1537,24 @@ const Effects = {
 
                     context.game.addMessage('{0} discards {1} from under {2}',
                         context.source.controller, card, context.source);
+                }
+            }
+        };
+    },
+    killIfStillInPlayAndKneelFactionCard: function(initiator, allowSave = false) {
+        return {
+            apply: function(card, context) {
+                context.killIfStillInPlay = context.killIfStillInPlay || [];
+                context.killIfStillInPlay.push(card);
+            },
+            unapply: function(card, context) {
+                if(card.location === 'play area' && context.killIfStillInPlay.includes(card) && !initiator.faction.kneeled) {
+                    context.killIfStillInPlay = context.killIfStillInPlay.filter(c => c !== card);
+                    if(GameActions.kneelCard({ card: initiator.faction }).allow()) {
+                        context.game.resolveGameAction(GameActions.kneelCard({ card: initiator.faction }));
+                        card.controller.killCharacter(card, allowSave);
+                        context.game.addMessage('{0} kneels their faction card to kill {1} at the end of the round because of {2}', initiator, card, context.source);
+                    }                    
                 }
             }
         };

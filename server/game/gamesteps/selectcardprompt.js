@@ -88,6 +88,7 @@ class SelectCardPrompt extends UiPrompt {
     }
 
     savePreviouslySelectedCards() {
+        // TODO: This never actually saves the previously selected cards, as this.choosingPlayer.selectedCards is undefined
         this.previouslySelectedCards = this.choosingPlayer.selectedCards;
         this.choosingPlayer.clearSelectedCards();
         this.choosingPlayer.setSelectedCards(this.selectedCards);
@@ -223,7 +224,7 @@ class SelectCardPrompt extends UiPrompt {
             return;
         }
 
-        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers)) {
+        if(this.selector.hasEnoughSelected(this.selectedCards, this.numPlayers, this.context)) {
             this.fireOnSelect();
         } else if(this.selectedCards.length === 0) {
             this.properties.onCancel(player);

@@ -23,7 +23,19 @@ class FirstPlayerPrompt extends UIPrompt {
     getFirstPlayerChoices() {
         let opponents = this.game.getPlayers().filter(player => player !== this.player);
         let firstPlayerChoices = [this.player].concat(opponents);
-        return firstPlayerChoices.filter(player => this.player.canSelectAsFirstPlayer(player));
+        let validChoices = firstPlayerChoices.filter(player => !player.hasFlag('cannotBeFirstPlayer'));
+
+        if(validChoices.length === 0) {
+            validChoices = firstPlayerChoices;
+        }
+
+        let selectableChoices = validChoices.filter(player => this.player.canSelectAsFirstPlayer(player));
+
+        if(selectableChoices.length === 0) {
+            selectableChoices = validChoices;
+        }
+
+        return selectableChoices;
     }
 
     onMenuCommand(player, playerName) {

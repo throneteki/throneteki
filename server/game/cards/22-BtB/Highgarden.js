@@ -16,12 +16,13 @@ class Highgarden extends DrawCard {
                 numCards: 3,
                 gameAction: 'reveal'
             },
-            message: '{player} kneels {source} to reveal {target} from their hand',
+            message: '{player} kneels {costs.kneel} to reveal up to 3 Tyrell characters from their hand',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.simultaneously(
-                        context.target.map(card => GameActions.revealCard({ card }))
-                    ).then(preThenContext => ({
+                    GameActions.revealCards(context => ({
+                        player: context.player,
+                        cards: context.target
+                    })).then(preThenContext => ({
                         target: {
                             cardCondition: card => card.getType() === 'character' && card.location === 'play area',
                             activePromptTitle: `Select up to ${preThenContext.target.length} characters`,
@@ -30,12 +31,12 @@ class Highgarden extends DrawCard {
                             numCards: preThenContext.target.length,
                             gameAction: 'increaseStrength'
                         },
-                        handler: thenContext => {
+                        handler: context => {
                             this.groups = {};
-                            this.remainingCards = thenContext.target;
-                            this.remainingStr = thenContext.parentContext.target.length * 2;
-                            this.game.queueSimpleStep(() => this.calculateNextCharacter(thenContext.player));
-                            
+                            this.remainingCards = context.target;
+                            this.remainingStr = context.event.cards.length * 2;
+                            this.game.queueSimpleStep(() => this.calculateNextCharacter(context.player));
+
                             this.game.queueSimpleStep(() => {
                                 let strMessages = [];
                                 for(let group in this.groups) {
@@ -51,7 +52,7 @@ class Highgarden extends DrawCard {
                                     strMessages.push(Message.fragment('{characters} +{strength} STR', { characters, strength }));
                                 }
 
-                                this.game.addMessage('{0} then uses {1} to give {2} until the end of the phase', thenContext.player, this, strMessages);
+                                this.game.addMessage('{0} gives {1} until the end of the phase', context.player, strMessages);
 
                                 return true;
                             });
@@ -66,12 +67,13 @@ class Highgarden extends DrawCard {
             phase: 'challenge',
             limit: ability.limit.perPhase(1),
             target: {
-                cardCondition: card => card.location === 'play area' && card.controller === this.controller && 
+                cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                     card.getType() === 'character' && card.isFaction('tyrell') && card.isUnique()
             },
+            message: '{player} uses {source} to return a unique Tyrell character to their hand',
             handler: context => {
                 context.target.owner.returnCardToHand(context.target);
-                this.game.addMessage('{0} uses {1} to return {2} to their hand', this.controller, this, context.target);
+                this.game.addMessage('{0} returns {1} to their hand', this.controller, context.target);
             }
         });
     }

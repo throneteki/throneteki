@@ -1,3 +1,4 @@
+const Message = require('../Message');
 const GameAction = require('./GameAction');
 const MoveCardEventGenerator = require('./MoveCardEventGenerator');
 
@@ -6,8 +7,22 @@ class ReturnCardToHand extends GameAction {
         super('returnToHand');
     }
 
+    message({ card, context }) {
+        let controller = card.controller === context.player ? 'their' : Message.fragment('{c}\'s', { c: card.controller });
+        switch(card.location) {
+            case 'dead pile':
+            case 'discard pile':
+            case 'shadows':
+                return Message.fragment('returns {card} from {controller} {location} to {controller} hand', { card, controller, location: card.location });
+            case 'being played':
+                return Message.fragment('returns {card} to {controller} hand instead of placing it in {controller} discard pile', { card, controller });
+            default:
+                return Message.fragment('returns {card} to {controller} hand', { card, controller });
+        }
+    }
+
     canChangeGameState({ card }) {
-        return ['dead pile', 'discard pile', 'play area', 'shadows', 'duplicate'].includes(card.location);
+        return ['dead pile', 'discard pile', 'play area', 'shadows', 'duplicate', 'being played'].includes(card.location);
     }
 
     createEvent({ card, allowSave = true }) {

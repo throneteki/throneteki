@@ -49,7 +49,7 @@ describe('manual actions', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Hedge Knight', 'The Eyrie'
+                    'Hedge Knight', 'The Eyrie (CoW)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);

@@ -8,7 +8,9 @@
     "jasmine": "cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine",
     "cover": "cross-env JASMINE_CONFIG_PATH=./jasmine.json istanbul cover --include-all-sources jasmine",
     "lint": "eslint server/ test/server/ --ext=js",
-    "pack-lobby": "node ./pack.js"
+    "pack-lobby": "node ./pack.js",
+    "start": "node ./index.js",
+    "gamenode": "node ./server/gamenode/index.js"	
   },
   "repository": {
     "type": "git",

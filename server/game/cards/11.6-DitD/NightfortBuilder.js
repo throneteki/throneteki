@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class NightfortBuilder extends DrawCard {
     setupCardAbilities() {
@@ -6,19 +7,20 @@ class NightfortBuilder extends DrawCard {
             when: {
                 onCardKneeled: event => event.card === this
             },
-            handler: () => {
-                let topCard = this.controller.drawDeck[0];
-                let message = '{0} uses {1} to reveal {2} as the top card of their deck';
-
-                if(this.controller.canDraw() && 
-                   ((topCard.isFaction('thenightswatch') && topCard.getType() === 'attachment') ||
-                    (topCard.isFaction('thenightswatch') && topCard.getType() === 'location'))) {
-                    this.controller.drawCardsToHand(1);
-                    message += ' and draw it';
-                }
-
-                this.game.addMessage(message, this.controller, this, topCard);
-            }
+            message: '{player} uses {source} to reveal the top card of their deck',
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.player
+            })).then({
+                condition: context => context.event.cards[0].isMatch({
+                    faction: 'thenightswatch',
+                    type: ['attachment', 'location']
+                }),
+                message: '{player} {gameAction}',
+                gameAction: GameActions.drawSpecific(context => ({
+                    player: context.player,
+                    cards: context.event.revealed
+                }))
+            })
         });
     }
 }

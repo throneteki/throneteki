@@ -3,7 +3,8 @@ describe('Womb of the World', function() {
         beforeEach(function() {
             const deck = this.buildDeck('targaryen', [
                 'Trading with the Pentoshi',
-                'Womb of the World (R)', 'Qotho (HoT)', 'Qotho (HoT)', 'Rakharo (DotE)', 'Rakharo (DotE)'
+                'Womb of the World (R)', 'Qotho (HoT)', 'Qotho (HoT)', 'Rakharo (DotE)', 'Rakharo (DotE)',
+                { name: 'Hedge Knight', count: 50 }
             ]);
 
             this.player1.selectDeck(deck);
@@ -11,9 +12,15 @@ describe('Womb of the World', function() {
             this.startGame();
             this.keepStartingHands();
 
-            [this.character, this.dupe] = this.player1.filterCardsByName('Qotho', 'hand');
-            [this.characterR, this.dupeR] = this.player1.filterCardsByName('Rakharo', 'hand');
-            this.womb = this.player1.findCardByName('Womb of the World', 'hand');
+            [this.character, this.dupe] = this.player1.filterCardsByName('Qotho');
+            [this.characterR, this.dupeR] = this.player1.filterCardsByName('Rakharo');
+            this.womb = this.player1.findCardByName('Womb of the World');
+
+            this.player1.dragCard(this.character, 'hand');
+            this.player1.dragCard(this.characterR, 'hand');
+            this.player1.dragCard(this.dupe, 'hand');
+            this.player1.dragCard(this.dupeR, 'hand');
+            this.player1.dragCard(this.womb, 'hand');
             this.player1.clickCard(this.womb);
 
             this.completeSetup();

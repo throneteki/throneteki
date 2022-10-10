@@ -1,3 +1,4 @@
+const Message = require('../Message');
 const GameAction = require('./GameAction');
 
 class StandCard extends GameAction {
@@ -5,8 +6,12 @@ class StandCard extends GameAction {
         super('stand');
     }
 
+    message({ card }) {
+        return Message.fragment('stands {card}', { card });
+    }
+
     canChangeGameState({ card }) {
-        return ['faction', 'play area'].includes(card.location) && card.kneeled;
+        return card && ['faction', 'play area'].includes(card.location) && card.kneeled;
     }
 
     createEvent({ card }) {

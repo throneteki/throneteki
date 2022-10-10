@@ -6,6 +6,10 @@ class ThenAbilityAction {
         this.abilityPropertiesFactory = typeof(abilityPropertiesFactory) === 'function' ? abilityPropertiesFactory : () => abilityPropertiesFactory;
     }
 
+    message(context) {
+        return this.preThenAction.message(context);
+    }
+
     allow(context) {
         return this.preThenAction.allow(context);
     }

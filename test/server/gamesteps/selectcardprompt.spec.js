@@ -595,4 +595,5 @@ describe('the SelectCardPrompt', function() {
             });
         });
     });
+    // TODO: Add test for 'eachPlayer' selection
 });

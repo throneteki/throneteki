@@ -1,39 +1,50 @@
 const DrawCard = require('../../drawcard.js');
-const TextHelper = require('../../TextHelper');
+const GameActions = require('../../GameActions/index.js');
 
 class WhiteHarbor extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && this.controller.drawDeck.length >= 2
+                afterChallenge: event => event.challenge.winner === this.controller
             },
-            handler: context => {
-                this.top2Cards = this.controller.drawDeck.slice(0, Math.min(2, this.controller.drawDeck.length));
-                this.game.addMessage('{0} uses {1} to reveal {2} as the top {3} of their deck',
-                    context.player, this, this.top2Cards, TextHelper.count(this.top2Cards.length, 'card'));
-
-                let buttons = this.top2Cards.map(card => {
-                    return { method: 'cardSelected', card: card, mapCard: true };
-                });
-
-                this.game.promptWithMenu(context.event.challenge.loser, this, {
-                    activePrompt: {
-                        menuTitle: `Select card to add to ${context.player.name}'s hand`,
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to reveal the top 2 cards of their deck',
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.player,
+                amount: 2,
+                whileRevealed: GameActions.genericHandler(context => {
+                    if(context.revealed.length > 0) {
+                        this.game.promptForSelect(context.event.challenge.loser, {
+                            activePromptTitle: `Select a card to add to ${context.player.name}'s hand`,
+                            cardCondition: card => context.revealed.includes(card),
+                            onSelect: (player, card) => {
+                                context.target = card;
+                                return true;
+                            },
+                            onCancel: (player) => {
+                                this.game.addAlert('danger', '{0} does not select a card for {1}', player, this);
+                                return true;
+                            }
+                        });
+                    }
+                })
+            })).then(preThenContext => ({
+                condition: () => !!preThenContext.target,
+                message: {
+                    format: '{loser} chooses to add {card} to {player}\'s hand',
+                    args: {
+                        loser: () => preThenContext.event.challenge.loser,
+                        card: () => preThenContext.target
+                    }
+                },
+                gameAction: GameActions.simultaneously([
+                    GameActions.addToHand({
+                        card: preThenContext.target,
+                        player: preThenContext.player
+                    }),
+                    ...preThenContext.revealed.filter(card => card !== preThenContext.target).map(card => GameActions.placeCard({ card, player: preThenContext.player, location: 'draw deck', bottom: true }))
+                ])
+            }))
         });
-    }
-
-    cardSelected(player, card) {
-        this.controller.moveCard(card, 'hand');
-        this.controller.moveFromTopToBottomOfDrawDeck(1);
-
-        this.game.addMessage('{0} chooses {1} to add to {2}\'s hand', player, card, this.controller);
-
-        return true;
     }
 }
 

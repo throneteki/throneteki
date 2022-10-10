@@ -7,6 +7,7 @@ class FreshRecruits extends DrawCard {
         const selectableTraits = ['Ranger', 'Builder', 'Steward'];
         this.action({
             title: 'Search deck',
+            message: '{player} plays {source} to search their deck for a Ranger character, a Builder character and a Steward character',
             gameAction: GameActions.search({
                 title: 'Select cards',
                 numToSelect: 3,
@@ -17,11 +18,8 @@ class FreshRecruits extends DrawCard {
                     || selectableTraits.some(trait => card.hasTrait(trait)) 
                     && Array.availableToPair(selectableTraits, context.selectedCards, (trait, card) => card.hasTrait(trait)).some(trait => card.hasTrait(trait))
                 },
-                message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
-                cancelMessage: '{player} uses {source} to search their deck but does not find a card',
-                gameAction: GameActions.simultaneously(context => (
-                    context.searchTarget.map(card => GameActions.addToHand({ card }))
-                ))
+                message: '{player} adds {searchTarget} to their hand',
+                gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
             })
         });
     }

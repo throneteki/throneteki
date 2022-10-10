@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class Queenscrown extends DrawCard {
     setupCardAbilities(ability) {
@@ -6,82 +7,91 @@ class Queenscrown extends DrawCard {
             title: 'Reveal top 3 cards of opponent\'s deck',
             cost: ability.costs.kneelSelf(),
             chooseOpponent: true,
+            message: '{player} kneels {costs.kneel} to reveal the top 3 cards of {opponent}\'s deck',
             handler: context => {
-                let opponent = context.opponent;
+                this.game.resolveGameAction(
+                    GameActions.revealTopCards(context => ({
+                        player: context.opponent,
+                        amount: 3,
+                        whileRevealed: GameActions.genericHandler(context => {
+                            this.chooseDiscard(context);
+                        })
+                    })).then(context => ({
+                        handler: () => {
+                            if(context.target) {
+                                this.game.addMessage('{0} discards {1} from {2}\'s deck', context.player, context.target, context.opponent);
+                                this.game.resolveGameAction(
+                                    GameActions.discardCard(context => ({
+                                        card: context.target
+                                    })),
+                                    context
+                                );
+                            }
 
-                this.remainingCards = opponent.drawDeck.slice(0, 3);
-                this.game.addMessage('{0} kneels {1} to reveal {2} from the top of {3}\'s deck', this.controller, this, this.remainingCards, opponent);
-
-                let characters = this.remainingCards.filter(card => card.getType() === 'character');
-                if(characters.length > 0) {
-                    this.promptToDiscardCharacter(characters);
-                } else {
-                    this.promptToPlaceOnBottom();
-                }
+                            if(context.orderedBottomCards.length > 0) {
+                                this.game.addMessage('{0} places {1} cards on the bottom of {2}\'s draw deck', context.player, context.orderedBottomCards.length, context.opponent);
+                                this.game.resolveGameAction(
+                                    GameActions.simultaneously(context => context.orderedBottomCards.map(card => (
+                                        GameActions.placeCard({
+                                            card,
+                                            player: context.opponent,
+                                            location: 'draw deck',
+                                            bottom: true
+                                        })
+                                    ))),
+                                    context
+                                );
+                            }
+                        }
+                    })),
+                    context
+                );
             }
         });
     }
 
-    promptToDiscardCharacter(characters) {
-        let buttons = characters.map(card => {
-            return { method: 'placeCharacterInDiscard', card: card };
-        });
-        buttons.push({ text: 'Done', method: 'promptToPlaceOnBottom' });
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Place a character in discard?',
-                buttons: buttons
-            },
-            source: this
-        });
+    chooseDiscard(context) {
+        const isCharacter = card => card.getType() === 'character';
+        if(context.revealed.some(isCharacter)) {
+            this.game.promptForSelect(context.player, {
+                activePromptTitle: 'Select a character',
+                cardCondition: card => context.revealed.includes(card) && isCharacter(card),
+                onSelect: (player, card) => {
+                    context.target = card;
+                    this.chooseBottomOrder(context);
+                    return true;
+                },
+                onCancel: () => {
+                    this.chooseBottomOrder(context);
+                    return true;
+                }
+            });
+        } else {
+            this.chooseBottomOrder(context);
+        }
     }
 
-    placeCharacterInDiscard(player, cardId) {
-        let card = this.remainingCards.find(card => card.uuid === cardId);
-        card.controller.moveCard(card, 'discard pile');
-        this.game.addMessage('{0} uses {1} to place {2} in {3}\'s discard pile', player, this, card, card.controller);
-        this.remainingCards = this.remainingCards.filter(c => c !== card);
-        this.promptToPlaceOnBottom();
-        return true;
-    }
-
-    promptToPlaceOnBottom() {
-        if(this.remainingCards.length === 0) {
-            return;
+    chooseBottomOrder(context) {
+        const remainingCards = context.revealed.filter(card => card !== context.target);
+        if(remainingCards.length > 0) {
+            this.game.promptForSelect(context.player, {
+                ordered: true,
+                mode: 'exactly',
+                numCards: remainingCards.length,
+                activePromptTitle: 'Select order to place cards on bottom (bottom card last)',
+                cardCondition: card => remainingCards.includes(card),
+                onSelect: (player, selectedCards) => {
+                    context.orderedBottomCards = selectedCards;
+                    return true;
+                },
+                onCancel: () => {
+                    context.orderedBottomCards = remainingCards;
+                    return true;
+                }
+            });
+        } else {
+            context.orderedBottomCards = [];
         }
-
-        if(this.remainingCards.length === 1) {
-            let card = this.remainingCards.shift();
-            card.controller.moveCard(card, 'draw deck', { bottom: true });
-            this.game.addMessage('{0} places the remaining cards at the bottom of {1}\'s deck', this.controller, card.controller);
-            return;
-        }
-
-        let buttons = this.remainingCards.map(card => {
-            return { method: 'placeCardOnBottom', card: card };
-        });
-
-        this.game.promptWithMenu(this.controller, this, {
-            activePrompt: {
-                menuTitle: 'Choose card to place on bottom of deck',
-                buttons: buttons
-            },
-            source: this
-        });
-        return true;
-    }
-
-    placeCardOnBottom(player, cardId) {
-        let card = this.remainingCards.find(card => card.uuid === cardId);
-
-        if(!card) {
-            return false;
-        }
-
-        card.controller.moveCard(card, 'draw deck', { bottom: true });
-        this.remainingCards = this.remainingCards.filter(c => c !== card);
-        this.promptToPlaceOnBottom();
-        return true;
     }
 }
 

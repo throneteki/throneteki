@@ -39,8 +39,7 @@ class CardgameDbImageSource {
                 console.log(`Unable to fetch image for ${card.code} from ${url}`);
                 return;
             }
-
-            console.log('Downloading image for ' + card.code);
+            console.log('Downloading ' + (pack.workInProgress ? 'latest Work in Progress ' : '') + 'image for ' + card.code);
             jimp.read(body).then(lenna => {
                 lenna.write(imagePath);
             }).catch(err => {
