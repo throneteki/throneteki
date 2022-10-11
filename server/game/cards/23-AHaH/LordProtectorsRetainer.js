@@ -1,27 +1,22 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class LordProtectorsRetainer extends DrawCard {
     setupCardAbilities(ability) {
+        //TODO: needs to be able to cancel stealth (along with FearCutsDeeperThanSwords)
         this.interrupt({
-            max: ability.limit.perPhase(1),
+            canCancel: true,
             when: {
-                onTargetsChosen: event => (
-                    event.ability.isTriggeredAbility() &&
-                    event.targets.hasSingleTarget() &&
-                    event.targets.anySelection(selection => (
-                        selection.choosingPlayer !== this.controller &&
-                        selection.value.controller === this.controller &&
-                        selection.value.isMatch({ trait: ['Lord', 'Lady'], type: 'character' })
-                    ))
-                )
+                onCardAbilityInitiated: event => event.ability.targets.some(target => target.type === 'choose') &&
+                                                event.targets.hasSingleTarget() &&
+                                                event.targets.anySelection(selection => (
+                                                    selection.choosingPlayer !== this.controller &&
+                                                    selection.value.controller === this.controller &&
+                                                    selection.value.isMatch({ trait: ['Lord', 'Lady'], type: 'character' })
+                                                ))
             },
-            message: {
-                format: '{player} uses {source} to choose itself as the target for {originalTarget} instead',
-                args: { originalTarget: context => context.event.ability.card }
-            },
-            handler: context => {
-                context.event.targets.selections[0].resolve(this);
-            }
+            max: ability.limit.perPhase(1),
+            gameAction: GameActions.cancelEffects(context => ({ event: context.event }))
         });
     }
 }
