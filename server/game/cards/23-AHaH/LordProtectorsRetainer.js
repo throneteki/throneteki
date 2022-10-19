@@ -7,11 +7,11 @@ class LordProtectorsRetainer extends DrawCard {
         this.interrupt({
             canCancel: true,
             when: {
-                onCardAbilityInitiated: event =>    event.targets.hasSingleTarget() &&
-                                                    event.targets.anySelection(selection => (
-                                                        selection.value.controller === this.controller &&
-                                                        selection.value.isMatch({ trait: ['Lord', 'Lady'], type: 'character' })
-                                                    ))
+                onCardAbilityInitiated: event => event.targets.hasSingleTarget() &&
+                                                event.targets.anySelection(selection => (
+                                                    selection.value.controller === this.controller &&
+                                                    selection.value.isMatch({ trait: ['Lord', 'Lady'], type: 'character' })
+                                                ))
             },
             max: ability.limit.perPhase(1),
             gameAction: GameActions.cancelEffects(context => ({ event: context.event }))
