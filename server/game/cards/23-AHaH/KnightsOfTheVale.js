@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const Message = require('../../Message');
 
 class KnightsOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,20 +9,24 @@ class KnightsOfTheVale extends DrawCard {
             limit: ability.limit.perPhase(1),
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: { type: 'character', defending: true, trait: 'House Arryn', controller: this.controller }
+                cardCondition: { type: 'character', defending: true, controller: this.controller, condition: card => card.getTraits().some(trait => this.hasTrait(trait)) }
             },
             message: {
-                format: '{player} uses {source} and kneels their faction card to {strengthMessage} until the end of the challenge',
-                args: { strengthMessage: context => Message.fragment(context.player.getTotalInitiative() === 0 ? 'double {target}\'s STR' : 'give {target} +3 STR', { target: context.target }) }
+                format: '{player} uses {source} and kneels {costs.kneel} to give {target} +{amount} STR until the end of the challenge',
+                args: { amount: context => this.calculateSTR(context) }
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
                     match: context.target,
-                    effect: context.player.getTotalInitiative() === 0 ? ability.effects.modifyStrengthMultiplier(2) : ability.effects.modifyStrength(3)
+                    effect: ability.effects.modifyStrength(this.calculateSTR(context))
                 }));
             }
         });
     }
+
+    calculateSTR(context) {
+        return context.player.getTotalInitiative() === 0 ? 4 : 2;
+    } 
 }
 
 KnightsOfTheVale.code = '23017';

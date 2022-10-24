@@ -5,10 +5,10 @@ class TheValeOfArryn extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, by5: true }) && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true })
+                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, by5: true })
             },
             target: {
-                cardCondition: { type: 'character', participating: true, trait: 'House Arryn' },
+                cardCondition: { type: 'character', participating: true, or: [{ loyal: true }, { trait: 'House Arryn' }] },
                 gameAction: 'gainPower'
             },
             message: {

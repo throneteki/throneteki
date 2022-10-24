@@ -12,8 +12,7 @@ class TheBloodyGate extends DrawCard {
                         defendingPlayer: context.player,
                         loser: context.player,
                         challengeType: 'military',
-                        match: challenge => challenge.defenders.some(card => card.hasTrait('House Arryn')
-                            && card.controller === context.player)
+                        match: challenge => challenge.defenders.some(card => card.controller === context.player)
                             && challenge.winner.hand.length > 0
                     })
             },
