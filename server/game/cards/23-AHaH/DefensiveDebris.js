@@ -13,7 +13,7 @@ class DefensiveDebris extends DrawCard {
                 cardCondition: { location: 'discard pile', controller: 'opponent' }
             },
             phase: 'challenge',
-            max: ability.limit.perPhase(1),
+            limit: ability.limit.perPhase(1),
             message: {
                 format: '{player} discards 1 gold from {source} and chooses {target} to prevent cards with printed cost {printedCost} from being played or entering play until the end of the phase',
                 args: { printedCost: context => context.target.getPrintedCost() }
