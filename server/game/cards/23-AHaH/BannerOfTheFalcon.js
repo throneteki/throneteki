@@ -2,9 +2,14 @@ const AgendaCard = require('../../agendacard');
 
 class BannerOfTheFalcon extends AgendaCard {
     setupCardAbilities(ability) {
+        this.plotModifiers({
+            initiative: -2,
+            reserve: 1
+        });
+
         this.persistentEffect({
-            condition: () => this.game.getOpponents(this.controller).every(player => player.getTotalInitiative() > this.controller.getTotalInitiative()),
-            match: card => card.hasTrait('House Arryn') && card.getType() === 'character' && card.controller === this.controller,
+            condition: () => this.controller.filterCardsInPlay(card => card.getType() === 'character' && card.hasTrait('House Arryn')).length > this.controller.getTotalInitiative(),
+            match: card => card.controller === this.controller && card.getType() === 'character' && card.isLoyal(),
             effect: ability.effects.modifyStrength(1)
         });
     }
