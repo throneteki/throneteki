@@ -4,7 +4,7 @@ class LysonoMaar extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.game.isDuringChallenge({ attackingPlayer: this.controller, number: 1 }),
-            effect: ability.effects.defendersDeclaredBeforeAttackers()
+            effect: ability.effects.declareDefendersBeforeAttackers()
         });
     }
 }

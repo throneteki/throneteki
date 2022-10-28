@@ -178,17 +178,17 @@ const Effects = {
     canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
     mustBeDeclaredAsAttacker: challengeOptionEffect('mustBeDeclaredAsAttacker'),
     mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
-    defendersDeclaredBeforeAttackers: function() {
+    declareDefendersBeforeAttackers: function() {
         return {
             targetType: 'player',
             apply: function(player, context) {
                 if(context.game.currentChallenge) {
-                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = true;
+                    context.game.currentChallenge.declareDefendersFirst = true;
                 }
             },
             unapply: function(player, context) {
                 if(context.game.currentChallenge) {
-                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = false;
+                    context.game.currentChallenge.declareDefendersFirst = false;
                 }
             }
         };
