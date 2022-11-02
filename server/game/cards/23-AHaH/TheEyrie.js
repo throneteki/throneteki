@@ -10,24 +10,31 @@ class TheEyrie extends DrawCard {
         this.persistentEffect({
             condition: () => this.controller.getTotalInitiative() === 0,
             match: this,
-            effect: ability.effects.immuneTo(() => true)
+            effect: ability.effects.immuneTo(card => card.controller !== this.controller)
         });
 
         this.action({
-            title: 'Contribute 3 STR',
+            title: 'Contribute STR',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            condition: () => this.game.isDuringChallenge() && this.game.currentChallenge.anyParticipants(card => card.controller === this.controller),
-            message: '{player} kneels {source} to have it contribute 3 STR to {player}\'s side of the challenge',
+            condition: () => this.game.isDuringChallenge() && this.game.currentChallenge.anyParticipants(card => card.controller === this.controller && (card.isLoyal() || card.hasTrait('House Arryn'))),
+            message: {
+                format: '{player} kneels {source} to have it contribute {amount} STR to {player}\'s side of the challenge',
+                args: { amount: () => this.calculateAmount() }
+            },
             handler: () => {
                 // TODO: Update this (contribute strength) to a GameAction
                 this.untilEndOfChallenge(ability => ({
                     condition: () => true,
                     targetController: 'current',
-                    effect: ability.effects.contributeChallengeStrength(3)
+                    effect: ability.effects.contributeChallengeStrength(this.calculateAmount())
                 }));
             }
         });
+    }
+
+    calculateAmount() {
+        return this.game.currentChallenge.getNumberOfParticipants(card => card.controller === this.controller) * 2;
     }
 }
 

@@ -4,10 +4,10 @@ class Crannogmen extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onClaimApplied: event => event.challenge.isMatch({ winner: this.controller }) && this.isAttacking()
+                onClaimApplied: event => event.challenge.isMatch({ winner: this.controller, challengeType: 'intrigue' }) && this.isAttacking()
             },
             target: {
-                cardCondition: { type: 'character', unique: false, location: 'play area' },
+                cardCondition: { type: 'character', location: 'play area', printedCostOrLower: 3 },
                 gameAction: 'kill'
             },
             cost: ability.costs.putSelfIntoShadows(),

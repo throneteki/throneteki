@@ -3,16 +3,13 @@ const PlotCard = require('../../plotcard.js');
 
 class TheDefianceOfDuskendale extends PlotCard {
     setupCardAbilities() {
-        this.forcedReaction({
+        this.reaction({
             when: {
                 onCardKneeled: event => event.card.getType() === 'location' && event.cause === 'assault'
             },
             message: {
-                format: '{controller} is forced to discard {discard} from play for {source}',
-                args: {
-                    controller: context => context.event.card.controller,
-                    discard: context => context.event.card
-                }
+                format: '{player} uses {source} to discard {location}',
+                args: { location: context => context.event.card }
             },
             gameAction: GameActions.discardCard(context => ({ card: context.event.card }))
         });
