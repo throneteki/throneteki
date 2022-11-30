@@ -1,11 +1,15 @@
+const AbilityMessage = require('../AbilityMessage');
 const BaseStep = require('./basestep');
 
 class AbilityChoicePrompt extends BaseStep {
-    constructor(game, context, title, choices) {
+    constructor({ game, context, choosingPlayer, title, choices, cancelText, cancelMessage }) {
         super(game);
         this.context = context;
+        this.choosingPlayer = choosingPlayer || this.context.choosingPlayer;
         this.title = title;
         this.choices = choices;
+        this.cancelText = cancelText || 'Done';
+        this.cancelMessage = AbilityMessage.create(cancelMessage || '{choosingPlayer} cancels the resolution of {source} (costs were still paid)', { choosingPlayer: context => context.choosingPlayer });
     }
 
     continue() {
@@ -16,9 +20,9 @@ class AbilityChoicePrompt extends BaseStep {
             return { text: choice.text, arg: choice.text, method: 'chooseAbilityChoice' };
         });
 
-        buttons.push({ text: 'Done', method: 'skipResolution' });
+        buttons.push({ text: this.cancelText, method: 'skipResolution' });
 
-        this.game.promptWithMenu(this.context.choosingPlayer, this, {
+        this.game.promptWithMenu(this.choosingPlayer, this, {
             activePrompt: {
                 menuTitle: this.title,
                 buttons: buttons
@@ -30,6 +34,7 @@ class AbilityChoicePrompt extends BaseStep {
     chooseAbilityChoice(player, choiceArg) {
         let choice = this.choices.find(choice => choiceArg === choice.card || choiceArg === choice.text);
         if(choice) {
+            this.context.choosingPlayer = this.choosingPlayer;
             this.context.selectedChoice = choice;
             choice.message.output(this.game, this.context);
             this.game.resolveGameAction(choice.gameAction, this.context);
@@ -38,8 +43,8 @@ class AbilityChoicePrompt extends BaseStep {
         return true;
     }
 
-    skipResolution(player) {
-        this.game.addAlert('danger', '{0} cancels the resolution of {1} (costs were still paid)', player, this.context.source);
+    skipResolution() {
+        this.cancelMessage.output(this.game, this.context);
         return true;
     }
 }
