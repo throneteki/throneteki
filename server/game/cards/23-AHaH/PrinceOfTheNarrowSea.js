@@ -33,11 +33,8 @@ class PrinceOfTheNarrowSea extends DrawCard {
                 }
             },
             message: {
-                format: '{player} uses {source} and returns {returnedToHand} to its owners hand to kneel {knelt}',
-                args: { 
-                    returnedToHand: context => context.costs.returnToHand,
-                    knelt: context => context.targets.getTargets()
-                }
+                format: '{player} uses {source} and returns {costs.returnToHand} to its owners hand to kneel {knelt}',
+                args: { knelt: context => context.targets.getTargets() }
             },
             handler: context => {
                 this.game.resolveGameAction(
