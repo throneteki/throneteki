@@ -10,7 +10,7 @@ class TheEyrie extends DrawCard {
         this.persistentEffect({
             condition: () => this.controller.getTotalInitiative() === 0,
             match: this,
-            effect: ability.effects.immuneTo(card => card.controller !== this.controller)
+            effect: ability.effects.immuneTo(card => card.controller !== this.controller && card.getType() !== 'plot')
         });
 
         this.action({

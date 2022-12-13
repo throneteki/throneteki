@@ -1,22 +1,19 @@
 const DrawCard = require('../../drawcard');
-const GameActions = require('../../GameActions');
 
 class MaesterColemon extends DrawCard {
     setupCardAbilities(ability) {
         this.action({
-            title: 'Take control and move attachment',
+            title: 'Move attachment',
             phase: 'dominance',
-            cost: ability.costs.kneel(card => card.getType() === 'character' && card.hasTrait('Maester') && card.isUnique()),
+            cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: {
-                    location: 'play area',
-                    trait: ['Condition', 'Item'],
-                    type: 'attachment',
-                    condition: (card, context) => !context.costs.kneel || card.getPrintedCost() < context.costs.kneel.getPrintedCost()
-                }
+                cardCondition: { type: 'attachment', location: 'play area', trait: ['Condition', 'Item'], condition: card => this.game.anyCardsInPlay(c => c.getType() === 'character' && c !== card.parent && card.controller.canAttach(card, c)) }
             },
-            message: { format: '{player} kneels {kneel} to move and take control of {target}', args: { kneel: context => context.costs.kneel } },
+            message: {
+                format: '{player} kneels {costs.kneel} to move {target} from {parent} to another elibile character',
+                args: { parent: context => context.target.parent }
+            },
             handler: context => {
                 const attachment = context.target;
 
@@ -28,19 +25,10 @@ class MaesterColemon extends DrawCard {
                         newParent.location === 'play area'
                     ),
                     onSelect: (player, newParent) => {
-                        this.game.addMessage('{0} moves {1} from {2} to {3}', player, attachment, attachment.parent, newParent);
                         player.attach(player, attachment, newParent);
                         return true;
                     }
                 });
-
-                this.game.resolveGameAction(
-                    GameActions.takeControl(context => ({
-                        player: context.player,
-                        card: context.target
-                    })),
-                    context
-                );
             }
         });
     }

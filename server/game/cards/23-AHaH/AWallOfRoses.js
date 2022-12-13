@@ -3,12 +3,13 @@ const GameActions = require('../../GameActions');
 const {flatten} = require('../../../Array');
 
 class AWallOfRoses extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onChallengeInitiated: event => event.challenge.initiatedAgainstPlayer === this.controller
             },
             message: '{player} plays {source} to reveal their hand',
+            max: ability.limit.perChallenge(1),
             gameAction: GameActions.revealCards(context => ({
                 cards: context.player.hand
             })).then({

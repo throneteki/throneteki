@@ -25,7 +25,7 @@ class HarryTheHeir extends DrawCard {
                     context
                 );
             },
-            limit: ability.limit.perRound(1)
+            limit: ability.limit.perPhase(1)
         });
     }
 }
