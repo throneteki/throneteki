@@ -18,11 +18,12 @@ class Challenge {
         this.number = properties.number;
         this.attackers = [];
         this.declaredAttackers = [];
+        this.contributeStrengthAttacker = [];
+        // this.contributeStrengthTowardsAttacker = [[CHARACTER1, 5], CHARACTER1, [CARD1, 2], [CARD2, 6]];
         this.attackerStrength = 0;
-        this.attackerStrengthModifier = 0;
         this.defenders = [];
         this.defenderStrength = 0;
-        this.defenderStrengthModifier = 0;
+        this.contributeStrengthDefender = [];
         this.stealthData = [];
         this.assaultData = [];
         this.events = new EventRegistrar(game, this);
@@ -57,20 +58,88 @@ class Challenge {
         this.attackers = this.attackers.concat(attackers);
         this.markAsParticipating(attackers);
         this.calculateStrength();
+        for(let card of attackers) {
+            this.addContributeSTRToAttacker(card);
+        }
     }
 
     addAttacker(attacker) {
         this.addAttackers([attacker]);
     }
 
+    addContributeSTRToAttacker(card, value) {
+        let isCharacterStrength = !value;
+        if(isCharacterStrength) {
+            if(card.getType() !== 'character') {
+                return;
+            }
+            this.clearExistingCharacterStrength(card);
+        }
+
+        let contribution = isCharacterStrength ? card : [card, value];
+        this.contributeStrengthAttacker.push(contribution);
+
+        this.calculateStrength();
+    }
+
+    removeContributeSTRToAttacker(card, value) {
+        let isCharacterStrength = !value;
+        if(isCharacterStrength) {
+            if(card.getType() !== 'character') {
+                return;
+            }
+            this.contributeStrengthAttacker = this.contributeStrengthAttacker.filter(contribution => contribution !== card);
+        } else if(this.contributeStrengthAttacker.includes([card, value])) {
+            this.contributeStrengthAttacker.splice(this.contributeStrengthAttacker.indexOf([card, value], 1));
+        }
+
+        this.calculateStrength();
+    }
+
+    clearExistingCharacterStrength(card) {
+        this.contributeStrengthAttacker = this.contributeStrengthAttacker.filter(contribution => contribution !== card);
+        this.contributeStrengthDefender = this.contributeStrengthDefender.filter(contribution => contribution !== card);
+    }
+
     addDefenders(defenders) {
         this.defenders = this.defenders.concat(defenders);
         this.markAsParticipating(defenders);
-        this.calculateStrength();
+        for(let card of defenders) {
+            this.addContributeSTRToDefender(card);
+        }
     }
 
     addDefender(defender) {
         this.addDefenders([defender]);
+    }
+
+    addContributeSTRToDefender(card, value) {
+        let isCharacterStrength = !!value;
+        if(isCharacterStrength) {
+            if(card.getType() !== 'character') {
+                return;
+            }
+            this.clearExistingCharacterStrength(card);
+        }
+
+        let contribution = isCharacterStrength ? card : [card, value];
+        this.contributeStrengthDefender.push(contribution);
+
+        this.calculateStrength();
+    }
+
+    removeContributeSTRToDefender(card, value) {
+        let isCharacterStrength = !!value;
+        if(isCharacterStrength) {
+            if(card.getType() !== 'character') {
+                return;
+            }
+            this.contributeStrengthDefender = this.contributeStrengthDefender.filter(contribution => contribution !== card);
+        } else if(this.contributeStrengthDefender.includes([card, value])) {
+            this.contributeStrengthDefender.splice(this.contributeStrengthDefender.indexOf([card, value], 1));
+        }
+
+        this.calculateStrength();
     }
 
     removeFromChallenge(card) {
@@ -168,17 +237,20 @@ class Challenge {
             return;
         }
 
-        this.attackerStrength = this.calculateStrengthFor(this.attackers) + this.attackerStrengthModifier;
-        this.defenderStrength = this.calculateStrengthFor(this.defenders) + this.defenderStrengthModifier;
+
+        this.attackerStrength = this.calculateStrengthFor(this.contributeStrengthAttacker);
+        this.defenderStrength = this.calculateStrengthFor(this.contributeStrengthDefender);
     }
 
-    calculateStrengthFor(cards) {
-        return cards.reduce((sum, card) => {
+    calculateStrengthFor(contributions) {
+        return contributions.reduce((sum, contribution) => {
+            let card = Array.isArray(contribution) ? contribution[0] : contribution;
             if(card.challengeOptions.contains('doesNotContributeStrength')) {
                 return sum;
             }
 
-            return sum + card.getStrength();
+            let value = Array.isArray(contribution) ? contribution[1] : card.getStrength();
+            return sum + value;
         }, 0);
     }
 

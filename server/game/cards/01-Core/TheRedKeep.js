@@ -13,7 +13,7 @@ class TheRedKeep extends DrawCard {
                 this.game.currentChallenge.anyParticipants(card => card.controller === this.controller) &&
                 this.controller.canDraw(),
             targetController: 'current',
-            effect: ability.effects.contributeChallengeStrength(2)
+            effect: ability.effects.contributeChallengeStrength(this, 2)
         });
         this.interrupt({
             when: {

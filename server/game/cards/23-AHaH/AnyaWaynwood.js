@@ -30,10 +30,9 @@ class AnyaWaynwood extends DrawCard {
             },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
-                    // Force the effect to recalculate mid-challenge in case the character STR changes
                     condition: () => true,
                     targetController: 'current',
-                    effect: ability.effects.contributeChallengeStrength(() => context.target.getStrength())
+                    effect: ability.effects.contributeChallengeStrength(context.target)
                 }));
             }
         });
