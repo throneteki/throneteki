@@ -9,19 +9,16 @@ class PrinceOfTheNarrowSea extends DrawCard {
         this.whileAttached({
             match: card => card.name === 'Salladhor Saan',
             effect: [
-                ability.effects.addKeyword('Renown'),
-                ability.effects.addTrait('Commander')
+                ability.effects.addTrait('Commander'),
+                ability.effects.addKeyword('Renown')
             ]
-        });
-        this.plotModifiers({
-            initiative: -1
         });
         
         this.reaction({
             when: {
                 onInitiativeDetermined: event => event.winner !== this.controller
             },
-            cost: ability.costs.returnToHand(card => card.isMatch({ trait: 'Smuggler', type: 'character' })),
+            cost: ability.costs.returnToHand(card => card.isMatch({ trait: ['Captain', 'Smuggler'], type: 'character' })),
             targets: {
                 character: {
                     activePromptTitle: 'Select a character',
