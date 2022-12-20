@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class DoranMartell extends DrawCard {
     setupCardAbilities(ability) {
@@ -11,32 +12,34 @@ class DoranMartell extends DrawCard {
             when: {
                 onDominanceDetermined: event => event.winner && this.controller !== event.winner
             },
-            handler: context => {
-                this.game.addMessage('{0} uses {1} to look at the top 2 cards of their deck', context.player, this);
-                this.top2Cards = context.player.drawDeck.slice(0, 2);
-    
-                let buttons = this.top2Cards.map(card => {
-                    return { method: 'cardSelected', card: card, mapCard: true };
-                });
-    
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: 'Select card to place into shadows',
-                        buttons: buttons
-                    },
-                    source: this
-                });
-            }
+            message: '{player} uses {source} to look at the top 2 cards of their deck',
+            gameAction: GameActions.lookAtDeck(context => ({
+                player: context.player,
+                lookingAt: context.player,
+                // TODO: Add 'whileLooking' option & select instead of choosing with 'then'
+                amount: 2
+            })).then({
+                gameAction: GameActions.choose({
+                    title: 'Select card to place in shadows',
+                    message: '{choosingPlayer} places 1 card in shadows, and places the other on the bottom of their deck',
+                    choices: context => this.buildChoices(context.event.topCards)
+                })
+            })
         });
     }
 
-    cardSelected(player, card) {
-        player.moveCard(card, 'shadows');
-        player.moveFromTopToBottomOfDrawDeck(1);
+    buildChoices(topCards) {
+        return topCards.reduce((choices, card) => {
+            let actions = [GameActions.placeCard({ card, location: 'shadows' })];
+            
+            let otherCard = topCards.find(c => c !== card);
+            if(otherCard) {
+                actions.push(GameActions.placeCard({ card: otherCard, location: 'draw deck', bottom: true }));
+            }
 
-        this.game.addMessage('{0} places 1 card into shadows, and places the other on the bottom of their deck', player, this);
-
-        return true;
+            choices[card.uuid] = { card, gameAction: GameActions.simultaneously(actions) };
+            return choices;
+        }, {});
     }
 }
 

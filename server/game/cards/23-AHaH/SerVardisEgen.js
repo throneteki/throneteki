@@ -11,7 +11,7 @@ class SerVardisEgen extends DrawCard {
             target: {
                 cardCondition: { type: 'character', attacking: true }
             },
-            message: '{player} sacrifices {source} to place {target} in shadows with a shadow token on it',
+            message: '{player} sacrifices {source} to put {target} into shadows',
             handler: context => {
                 context.player.putIntoShadows(context.target, false, () => {
                     context.target.modifyToken(Tokens.shadow, 1);

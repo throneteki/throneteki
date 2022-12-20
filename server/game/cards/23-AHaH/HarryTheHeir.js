@@ -17,6 +17,7 @@ class HarryTheHeir extends DrawCard {
                 cardCondition: { location: 'play area', kneeled: true, type: 'location', faction: 'neutral', controller: 'current' }
             },
             message:'{player} uses {source} to stand {target}',
+            limit: ability.limit.perPhase(1),
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.standCard(context => ({
@@ -24,8 +25,7 @@ class HarryTheHeir extends DrawCard {
                     })),
                     context
                 );
-            },
-            limit: ability.limit.perPhase(1)
+            }
         });
     }
 }

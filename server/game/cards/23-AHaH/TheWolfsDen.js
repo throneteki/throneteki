@@ -1,5 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 const {Tokens} = require('../../Constants');
+const GameActions = require('../../GameActions/index.js');
 
 class TheWolfsDen extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,20 +10,21 @@ class TheWolfsDen extends DrawCard {
                 'onCharacterKilled': event => event.card.controller === this.controller
             },
             cost: ability.costs.kneelSelf(),
-            message: '{player} kneels {source} to put the bottom card of their deck into shadow',
-            handler: context => {
-                let bottomCard = context.player.drawDeck.slice(-1)[0];
-                context.player.putIntoShadows(bottomCard, false, () => {
-                    bottomCard.modifyToken(Tokens.shadow, 1);
-
-                    this.lastingEffect(ability => ({
-                        condition: () => bottomCard.location === 'shadows',
-                        targetLocation: 'any',
-                        match: bottomCard,
-                        effect: ability.effects.addKeyword(`Shadow (${bottomCard.getPrintedCost()})`)
-                    }));
-                });
-            }
+            message: '{player} kneels {source} to put the bottom card of their deck into shadows',
+            gameAction: GameActions.placeCard(context => ({ card: context.player.drawDeck.slice(-1)[0], location: 'shadows' }))
+                .then({
+                    gameAction: GameActions.simultaneously([
+                        GameActions.placeToken(context => ({ card: context.event.card, tokens: Tokens.shadow })),
+                        GameActions.genericHandler(context => {
+                            this.lastingEffect(ability => ({
+                                condition: () => context.event.card.location === 'shadows',
+                                targetLocation: 'any',
+                                match: context.event.card,
+                                effect: ability.effects.addKeyword(`Shadow (${context.event.card.getPrintedCost()})`)
+                            }));
+                        })
+                    ])
+                })
         });
     }
 }

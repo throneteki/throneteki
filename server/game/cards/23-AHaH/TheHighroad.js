@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class TheHighroad extends DrawCard {
     setupCardAbilities(ability) {
@@ -13,13 +14,13 @@ class TheHighroad extends DrawCard {
                 ability.costs.sacrificeSelf()
             ],
             message: '{player} kneels and sacrifices {source} to reduce the cost of the next non-character they marshal or play by 2',
-            handler: context => {
+            gameAction: GameActions.genericHandler(context => {
                 this.untilEndOfPhase(ability => ({
                     targetController: 'any',
                     match: player => player === context.player,
                     effect: ability.effects.reduceNextMarshalledOrPlayedCardCost(2, card => card.getType() !== 'character')
                 }));
-            }
+            })
         });
     }
 }

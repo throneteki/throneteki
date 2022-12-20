@@ -13,7 +13,7 @@ class WingedKnight extends DrawCard {
             },
             handler: context => {
                 context.replaceHandler(() => {
-                    context.event.cardStateWhenKilled = this.createSnapshot();
+                    context.event.cardStateWhenKilled = context.event.card.createSnapshot();
                     this.controller.moveCard(context.event.card, 'out of game');
                 });
             }

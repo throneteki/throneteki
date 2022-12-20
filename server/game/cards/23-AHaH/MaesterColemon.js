@@ -8,7 +8,7 @@ class MaesterColemon extends DrawCard {
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select an attachment',
-                cardCondition: { type: 'attachment', location: 'play area', trait: ['Condition', 'Item'], condition: card => this.game.anyCardsInPlay(c => c.getType() === 'character' && c !== card.parent && card.controller.canAttach(card, c)) }
+                cardCondition: { type: 'attachment', location: 'play area', trait: ['Condition', 'Item'], condition: card => this.game.anyCardsInPlay(c => c.getType() === 'character' && c !== card.parent && card.controller.canAttach(card, c))/* TODO: Remove this last condition once select gameAction implemented */ }
             },
             message: {
                 format: '{player} kneels {costs.kneel} to move {target} from {parent} to another elibile character',

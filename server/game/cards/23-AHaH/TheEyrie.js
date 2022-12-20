@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class TheEyrie extends DrawCard {
     setupCardAbilities(ability) {
@@ -22,14 +23,13 @@ class TheEyrie extends DrawCard {
                 format: '{player} kneels {source} to have it contribute {amount} STR to {player}\'s side of the challenge',
                 args: { amount: () => this.calculateAmount() }
             },
-            handler: () => {
-                // TODO: Update this (contribute strength) to a GameAction
+            gameAction: GameActions.genericHandler(() => {
                 this.untilEndOfChallenge(ability => ({
                     condition: () => true,
                     targetController: 'current',
                     effect: ability.effects.contributeChallengeStrength(this, this.calculateAmount())
                 }));
-            }
+            })
         });
     }
 
