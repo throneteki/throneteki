@@ -972,11 +972,18 @@ const Effects = {
                 if(!challenge) {
                     return;
                 }
+                challenge.addContributeSTRTowards(player, card, value);
+            },
+            reapply: function(player, context) {
+                let challenge = context.game.currentChallenge;
+                if(!challenge) {
+                    return;
+                }
 
-                if(challenge.attackingPlayer === player) {
-                    challenge.addContributeSTRToAttacker(card, value);
-                } else if(challenge.defendingPlayer === player) {
-                    challenge.addContributeSTRToDefender(card, value);
+                // To ensure participation isn't overridden by a effect when it was the most recent type of contribution
+                if(!challenge.isContributingSTR(card, 'participation')) {
+                    challenge.removeContributeSTRTowards(player, card, value);
+                    challenge.addContributeSTRTowards(player, card, value);
                 }
             },
             unapply: function(player, context) {
@@ -984,13 +991,9 @@ const Effects = {
                 if(!challenge) {
                     return;
                 }
-
-                if(challenge.attackingPlayer === player) {
-                    challenge.removeContributeStrToAttacker(card, value);
-                } else if(challenge.defendingPlayer === player) {
-                    challenge.removeContributeStrToDefender(card, value);
-                }
-            }
+                challenge.removeContributeSTRTowards(player, card, value);
+            },
+            isStateDependent: true
         };
     },
     setAttackerMaximum: function(value) {

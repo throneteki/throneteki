@@ -22,7 +22,7 @@ class AnyaWaynwood extends DrawCard {
                 }
             },
             message: {
-                format: '{player} uses {source} and kneels {kneel} to have {target} contribute its STR (currently {STR}) to {player}\'s side this challenge',
+                format: '{player} uses {source} and kneels {kneel} to have {target} contribute its STR to {player}\'s side this challenge',
                 args: {
                     kneel: context => context.costs.kneel,
                     STR: context => context.target.getStrength()

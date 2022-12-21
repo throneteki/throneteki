@@ -17,6 +17,7 @@ class ChatCommands {
             '/blank': this.blank,
             '/cancel-prompt': this.cancelPrompt,
             '/cancel-challenge': this.cancelChallenge,
+            '/challenge-str': this.currentChallengeStrength,
             '/discard': this.discard,
             '/disconnectme': this.disconnectMe,
             '/draw': this.draw,
@@ -328,6 +329,17 @@ class ChatCommands {
 
         this.game.addAlert('danger', '{0} uses /cancel-challenge to attempt to cancel the current challenge', player);
         this.game.queueStep(new CancelChallengePrompt(this.game, player));
+    }
+
+    currentChallengeStrength(player, args) {
+        if(!this.game.isDuringChallenge()) {
+            return;
+        }
+
+        let challenge = this.game.currentChallenge;
+        challenge.calculateStrength();
+
+        this.game.addAlert('info', '{0} is currently attacking with {1} STR, and {2} is currently defending with {3} STR', challenge.attackingPlayer, challenge.attackerStrength, challenge.defendingPlayer, challenge.defenderStrength);
     }
 
     setToken(player, args) {
