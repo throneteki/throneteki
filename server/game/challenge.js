@@ -21,8 +21,8 @@ class Challenge {
         this.attackerContributions = [];
         this.attackerStrength = 0;
         this.defenders = [];
-        this.defenderStrength = 0;
         this.defenderContributions = [];
+        this.defenderStrength = 0;
         this.stealthData = [];
         this.assaultData = [];
         this.events = new EventRegistrar(game, this);
