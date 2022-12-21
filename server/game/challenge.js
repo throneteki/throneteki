@@ -239,7 +239,7 @@ class Challenge {
     calculateStrengthFor(contributions) {
         return contributions.reduce((sum, contribution) => {
             let card = contribution.card;
-            if(card.challengeOptions && card.challengeOptions.contains('doesNotContributeStrength')) {
+            if(!contribution.amount && card.challengeOptions && card.challengeOptions.contains('doesNotContributeStrength')) {
                 return sum;
             }
 
