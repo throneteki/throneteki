@@ -331,7 +331,7 @@ class ChatCommands {
         this.game.queueStep(new CancelChallengePrompt(this.game, player));
     }
 
-    currentChallengeStrength(player, args) {
+    currentChallengeStrength() {
         if(!this.game.isDuringChallenge()) {
             return;
         }

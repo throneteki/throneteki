@@ -74,7 +74,7 @@ class Challenge {
     }
 
     removeContributionToAttack(card, type, amount) {
-        let contribution = this.attackerContributions.find(c => c.card === card, c.type === type, c.amount === amount);
+        let contribution = this.attackerContributions.find(c => c.card === card && c.type === type && c.amount === amount);
         if(contribution) {
             this.attackerContributions.splice(this.attackerContributions.indexOf(contribution), 1);
         }
@@ -101,7 +101,7 @@ class Challenge {
     }
 
     removeContributionToDefence(card, type, amount) {
-        let contribution = this.defenderContributions.find(c => c.card === card, c.type === type, c.amount === amount);
+        let contribution = this.defenderContributions.find(c => c.card === card && c.type === type && c.amount === amount);
         if(contribution) {
             this.defenderContributions.splice(this.defenderContributions.indexOf(contribution), 1);
         }
@@ -111,7 +111,7 @@ class Challenge {
         if(this.attackingPlayer === player) {
             this.addContributionToAttack(card, 'effect', amount);
         } else if(this.defendingPlayer === player) {
-            this.addContributionToDefend(card, 'effect', amount);
+            this.addContributionToDefence(card, 'effect', amount);
         }
         this.calculateStrength();
     }
@@ -120,7 +120,7 @@ class Challenge {
         if(this.attackingPlayer === player) {
             this.removeContributionToAttack(card, 'effect', amount);
         } else if(this.defendingPlayer === player) {
-            this.removeContributionToDefend(card, 'effect', amount);
+            this.removeContributionToDefence(card, 'effect', amount);
         }
         this.calculateStrength();
     }
@@ -231,7 +231,6 @@ class Challenge {
         if(this.winnerDetermined) {
             return;
         }
-
 
         this.attackerStrength = this.calculateStrengthFor(this.attackerContributions);
         this.defenderStrength = this.calculateStrengthFor(this.defenderContributions);
