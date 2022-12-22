@@ -36,7 +36,7 @@
     "cross-env": "^3.2.4",
     "express": "^4.15.5",
     "jimp": "^0.16.1",
-    "jsonwebtoken": "^8.2.2",
+    "jsonwebtoken": "^9.0.0",
     "lodash.range": "^3.2.0",
     "lodash.sample": "^4.2.1",
     "lodash.shuffle": "^4.2.0",
