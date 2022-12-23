@@ -33,15 +33,6 @@ class TheSeedIsStrong extends DrawCard {
         });
     }
 
-    promptForCardDiscard(context) {
-        this.game.promptForSelect(context.event.winner, {
-            source: this,
-            cardCondition: { location: ['hand', 'shadows'], trait: ['Lord', 'Lady'], controller: context.event.winner },
-            onSelect: (player, card) => this.onCardSelected(context, player, card),
-            onCancel: player => this.onCancel(player)
-        });
-    }
-
     onCardSelected(context, card) {
         this.game.addMessage('{0} discards {1} from their {2}', context.event.winner, card, card.location);
         GameActions.discardCard({ card });
