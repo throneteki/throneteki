@@ -54,8 +54,8 @@ describe('PlaceCard', function() {
                     this.props.bottom = false;
                 });
 
-                it('returns true', function() {
-                    expect(PlaceCard.allow(this.props)).toBe(true);
+                it('returns false', function() {
+                    expect(PlaceCard.allow(this.props)).toBe(false);
                 });
             });
 
@@ -92,8 +92,8 @@ describe('PlaceCard', function() {
                     this.props.bottom = true;
                 });
 
-                it('returns true', function() {
-                    expect(PlaceCard.allow(this.props)).toBe(true);
+                it('returns false', function() {
+                    expect(PlaceCard.allow(this.props)).toBe(false);
                 });
             });
         });
