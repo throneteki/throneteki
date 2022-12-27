@@ -375,8 +375,8 @@ class BaseCard {
         return this.keywords.getValues();
     }
 
-    hasPrintedKeyword(keyword, ignoreValue = false) {
-        return this.printedKeywords.some(printedKeyword => ignoreValue ? printedKeyword.includes(keyword) : printedKeyword === keyword);
+    hasPrintedKeyword(keyword) {
+        return this.printedKeywords.includes(keyword.toLowerCase());
     }
 
     getPrintedKeywords() {
