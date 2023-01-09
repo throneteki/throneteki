@@ -23,20 +23,19 @@ class Littlefinger extends DrawCard {
                     GameActions.revealCards(context => ({
                         cards: context.targets.getTargets()
                     })).then({
-                        gameAction: GameActions.ifCondition({
-                            condition: context => this.noOpponentRevealedSameCardtype(context.player, context.parentContext.revealed),
-                            thenAction: GameActions.genericHandler(context => {
-                                this.game.promptForSelect(context.player, {
-                                    activePromptTitle: 'Select a card',
-                                    source: this,
-                                    cardCondition: card => card.getPower() > 0,
-                                    cardType: ['attachment', 'character', 'faction', 'location'],
-                                    gameAction: 'movePower',
-                                    onSelect: (player, card) => this.onSelectCard(player, card),
-                                    onCancel: (player) => this.onSelectCard(player, null)
-                                });
-                            })
-                        })
+                        condition: context => this.noOpponentRevealedSameCardtype(context.player, context.event.cards),
+                        target: {
+                            activePromptTitle: 'Select a card',
+                            cardCondition: card => card.getPower() > 0 && card !== this,
+                            cardType: ['attachment', 'character', 'faction', 'location']
+                        },
+                        message: '{player} moves 1 power from {target} to {source}',
+                        handler: context => {
+                            this.game.resolveGameAction(
+                                GameActions.movePower({ from: context.target, to: this, amount: 1 }),
+                                context
+                            );
+                        }
                     }),
                     context
                 );
@@ -44,25 +43,8 @@ class Littlefinger extends DrawCard {
         });
     }
 
-    onSelectCard(player, card) {
-        if(card === null) {
-            this.game.addAlert('danger', '{0} does not choose any card for {1}', player, this);
-            return true;
-        }
-
-        this.game.resolveGameAction(
-            GameActions.movePower({
-                from: card,
-                to: this,
-                amount: 1
-            })
-        );
-        this.game.addMessage('{0} moves 1 power from {1} to {2}', player, card, this);
-        return true;
-    }
-
-    noOpponentRevealedSameCardtype(player, revealed) {
-        return revealed.every(card1 => card1.controller === player || revealed.every(card2 => card1 === card2 || card1.getType() !== card2.getType()));
+    noOpponentRevealedSameCardtype(player, cards) {
+        return cards.every(card1 => card1.controller === player || cards.every(card2 => card1 === card2 || card1.getType() !== card2.getType()));
     }
 }
 

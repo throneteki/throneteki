@@ -6,14 +6,14 @@ class WingedKnight extends DrawCard {
             when: {
                 onCharacterKilled: event => event.card.isMatch({ trait: ['Lord', 'Lady']}) && event.card.canBeSaved() && event.allowSave
             },
-            cost: ability.costs.killSelf(),
+            cost: ability.costs.sacrificeSelf(),
             message: {
-                format: '{player} kills {source} to remove {character} from the game instead of placing it in it\'s owners dead pile',
+                format: '{player} sacrifices {source} to remove {character} from the game instead of placing it in it\'s owners dead pile',
                 args: { character: context => context.event.card }
             },
             handler: context => {
                 context.replaceHandler(() => {
-                    context.event.cardStateWhenKilled = this.createSnapshot();
+                    context.event.cardStateWhenKilled = context.event.card.createSnapshot();
                     this.controller.moveCard(context.event.card, 'out of game');
                 });
             }

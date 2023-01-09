@@ -8,8 +8,8 @@ class ReturnCardToHand extends GameAction {
     }
 
     message({ card, context }) {
-        let controller = card.controller === context.player ? 'their' : Message.fragment('{c}\'s', { c: card.controller })
-        switch(card.location){
+        let controller = card.controller === context.player ? 'their' : Message.fragment('{c}\'s', { c: card.controller });
+        switch(card.location) {
             case 'dead pile':
             case 'discard pile':
             case 'shadows':

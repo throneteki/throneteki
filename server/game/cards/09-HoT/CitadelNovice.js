@@ -16,14 +16,12 @@ class CitadelNovice extends DrawCard {
             gameAction: GameActions.revealTopCards(context => ({
                 player: context.player
             })).then({
+                condition: context => isAttachmentOrMaester(context.event.cards[0]),
                 message: '{player} {gameAction}',
-                gameAction: GameActions.ifCondition({
-                    condition: context => isAttachmentOrMaester(context.event.cards[0]),
-                    thenAction: GameActions.drawSpecific(context => ({
-                        player: context.player,
-                        cards: context.event.revealed
-                    }))
-                })
+                gameAction: GameActions.drawSpecific(context => ({
+                    player: context.player,
+                    cards: context.event.revealed
+                }))
             })
         });
     }

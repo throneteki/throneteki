@@ -12,62 +12,26 @@ class JonArryn extends DrawCard {
             when: {
                 onCharacterKilled: event => event.card === this
             },
-            message: '{player} is forced to allow each player to either draw 2 cards or gain 1 power',
-            handler: () => {
-                this.remainingPlayers = this.game.getPlayersInFirstPlayerOrder();
-                this.proceedToNextStep();
-            }
+            message: '{player} is forced by {source} to allow each player to either draw 2 cards or gain 1 power for their faction',
+            gameAction: GameActions.simultaneously(context => 
+                context.game.getPlayersInFirstPlayerOrder().map(player =>
+                    GameActions.choose({
+                        player: () => player,
+                        choices: {
+                            'Draw 2 cards': {
+                                message: '{choosingPlayer} chooses to draw 2 cards',
+                                gameAction: GameActions.drawCards(context => ({ player: context.choosingPlayer, amount: 2, source: this }))
+                            },
+                            'Gain 1 power': {
+                                message: '{choosingPlayer} chooses to gain 1 power for their faction',
+                                gameAction: GameActions.gainPower(context => ({ card: context.choosingPlayer.faction, amount: 1 }))
+                            }
+                        },
+                        cancelMessage: '{player} chooses to not draw 2 cards or gain 1 power for their faction'
+                    })
+                )
+            )
         });
-    }
-
-    proceedToNextStep() {
-        if(this.remainingPlayers.length > 0) {
-            let currentPlayer = this.remainingPlayers.shift();
-            let options = [];
-
-            if(currentPlayer.canDraw()) {
-                options.push({ text: 'Draw 2 cards', method: 'drawCards' });
-            }
-
-            if(currentPlayer.canGainFactionPower()) {
-                options.push({ text: 'Gain 1 power', method: 'gainPower' });
-            }
-            options.push({ text: 'None', method: 'cancel' });
-
-            if(options.length === 1) {
-                this.game.addMessage('{0} cannot draw 2 cards or gain 1 power', currentPlayer);
-                this.proceedToNextStep();
-                return true;
-            }
-
-            this.game.promptWithMenu(currentPlayer, this, {
-                activePrompt: {
-                    menuTitle: `Choose for ${this.name}`,
-                    buttons: options
-                },
-                source: this
-            });
-        }
-    }
-
-    drawCards(player) {
-        this.game.addMessage('{0} chooses to draw 2 cards', player);
-        this.game.resolveGameAction(GameActions.drawCards({ player: player, amount: 2, source: this }));
-        this.proceedToNextStep();
-        return true;
-    }
-
-    gainPower(player) {
-        this.game.addMessage('{0} chooses to gain 1 power', player);
-        this.game.resolveGameAction(GameActions.gainPower({ card: player.faction, amount: 1 }));
-        this.proceedToNextStep();
-        return true;
-    }
-
-    cancel(player) {
-        this.game.addMessage('{0} does not choose to draw 2 cards or gain 1 power', player);
-        this.proceedToNextStep();
-        return true;
     }
 }
 

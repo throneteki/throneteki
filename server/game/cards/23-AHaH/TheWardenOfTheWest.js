@@ -6,13 +6,16 @@ class TheWardenOfTheWest extends DrawCard {
         this.attachmentRestriction({ faction: 'lannister', trait: 'Lord' });
 
         this.whileAttached({
-            effect: ability.effects.addTrait('Commander')
+            effect: [
+                ability.effects.addTrait('Commander'),
+                ability.effects.addKeyword('Renown')
+            ]
         });
         
         this.reaction({
             when: {
                 // TODO: Implement player-aggregate so it only looks at cards being discarded from an individuals hands rather than aggregating all cards being discarded at once
-                'onCardDiscarded:aggregate': event => this.getNumberToDraw(event) > 0 && this.allowGameAction('drawCards') && this.game.currentPhase === 'challenge'
+                'onCardDiscarded:aggregate': event => this.getNumberToDraw(event) > 0 && this.parent.isParticipating()
             },
             limit: ability.limit.perRound(1),
             message: {
@@ -26,7 +29,7 @@ class TheWardenOfTheWest extends DrawCard {
     getNumberToDraw(event) {
         return event.events.filter(discardEvent => (
             discardEvent.cardStateWhenDiscarded.controller !== this.controller &&
-            discardEvent.cardStateWhenDiscarded.location === 'hand'
+            ['hand', 'draw deck'].includes(discardEvent.cardStateWhenDiscarded.location)
         )).length;
     }
 }

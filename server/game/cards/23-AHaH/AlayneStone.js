@@ -26,7 +26,7 @@ class AlayneStone extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             targetController: 'any',
-            condition: () => !this.kneeled && this.game.currentPhase === 'challenge',
+            condition: () => this.kneeled && this.game.currentPhase === 'challenge',
             effect: ability.effects.cannotTriggerCardAbilities(ability => ability.card.isMatch({ trait: ['Lord', 'Lady'] }) && ability.card.isFaction(ability.card.controller.faction.getPrintedFaction()))
         });
     }

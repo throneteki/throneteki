@@ -11,17 +11,15 @@ class NightfortBuilder extends DrawCard {
             gameAction: GameActions.revealTopCards(context => ({
                 player: context.player
             })).then({
+                condition: context => context.event.cards[0].isMatch({
+                    faction: 'thenightswatch',
+                    type: ['attachment', 'location']
+                }),
                 message: '{player} {gameAction}',
-                gameAction: GameActions.ifCondition({
-                    condition: context => context.event.cards[0].isMatch({
-                        faction: 'thenightswatch',
-                        type: ['attachment', 'location']
-                    }),
-                    thenAction: GameActions.drawSpecific(context => ({
-                        player: context.player,
-                        cards: context.event.revealed
-                    }))
-                })
+                gameAction: GameActions.drawSpecific(context => ({
+                    player: context.player,
+                    cards: context.event.revealed
+                }))
             })
         });
     }

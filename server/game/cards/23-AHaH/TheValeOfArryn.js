@@ -1,27 +1,31 @@
 const DrawCard = require('../../drawcard');
 const GameActions = require('../../GameActions/index.js');
-const TextHelper = require('../../TextHelper');
 
 class TheValeOfArryn extends DrawCard {
     setupCardAbilities(ability) {
-        this.plotModifiers({
-            initiative: -1
-        });
-
         this.reaction({
-            when: {                
-                afterChallenge: event => event.challenge.winner === this.controller && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true })
+            when: {
+                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, by5: true })
+            },
+            target: {
+                cardCondition: { type: 'character', participating: true, or: [{ loyal: true }, { trait: 'House Arryn' }], controller: 'current' },
+                gameAction: 'gainPower'
             },
             message: {
-                format: '{player} uses {source} to draw {numberToDraw}',
-                args: { numberToDraw: () => TextHelper.count(this.getNumberToDraw(), 'card') }
+                format: '{player} uses {source} to have {target} gain {numberOfPower} power',
+                args: { numberOfPower: () => this.getNumberOfPower() }
             },
             limit: ability.limit.perPhase(1),
-            gameAction: GameActions.drawCards(context => ({ player: context.player, amount: this.getNumberToDraw() }))
+            handler: context => {
+                this.game.resolveGameAction(
+                    GameActions.gainPower(context => ({ card: context.target, amount: this.getNumberOfPower() }))
+                    , context
+                );
+            }
         });
     }
 
-    getNumberToDraw() {
+    getNumberOfPower() {
         return this.kneeled ? 2 : 1;
     }
 }

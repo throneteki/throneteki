@@ -1,5 +1,4 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
 
 class AnyaWaynwood extends DrawCard {
     setupCardAbilities(ability) {
@@ -9,13 +8,12 @@ class AnyaWaynwood extends DrawCard {
         });
 
         this.action({
-            title: 'Contribute STR and kneel',
+            title: 'Contribute STR to challenge',
             phase: 'challenge',
             cost: ability.costs.kneel(card => card.getType() === 'location' && card.isFaction('neutral')),
             condition: () => this.game.isDuringChallenge(),
             limit: ability.limit.perPhase(1),
             target: {
-                title: 'Select a character',
                 cardCondition: {
                     location: 'play area',
                     type: 'character',
@@ -24,7 +22,7 @@ class AnyaWaynwood extends DrawCard {
                 }
             },
             message: {
-                format: '{player} uses {source} and kneels {kneel} to have {target} contribute its STR (currently {STR}) to {player}\'s side until the end of the challenge',
+                format: '{player} uses {source} and kneels {kneel} to have {target} contribute its STR (currently {STR}) to {player}\'s side this challenge',
                 args: {
                     kneel: context => context.costs.kneel,
                     STR: context => context.target.getStrength()

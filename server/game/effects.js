@@ -178,17 +178,17 @@ const Effects = {
     canBeDeclaredWhileKneeling: challengeOptionEffect('canBeDeclaredWhileKneeling'),
     mustBeDeclaredAsAttacker: challengeOptionEffect('mustBeDeclaredAsAttacker'),
     mustBeDeclaredAsDefender: challengeOptionEffect('mustBeDeclaredAsDefender'),
-    defendersDeclaredBeforeAttackers: function() {
+    declareDefendersBeforeAttackers: function() {
         return {
             targetType: 'player',
             apply: function(player, context) {
                 if(context.game.currentChallenge) {
-                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = true;
+                    context.game.currentChallenge.declareDefendersFirst = true;
                 }
             },
             unapply: function(player, context) {
                 if(context.game.currentChallenge) {
-                    context.game.currentChallenge.defendersDeclaredBeforeAttackers = false;
+                    context.game.currentChallenge.declareDefendersFirst = false;
                 }
             }
         };
@@ -330,6 +330,16 @@ const Effects = {
             },
             unapply: function(card) {
                 card.stealthLimit -= value;
+            }
+        };
+    },
+    addPillageLimit: function(value) {
+        return {
+            apply: function(card) {
+                card.pillageLimit += value;
+            },
+            unapply: function(card) {
+                card.pillageLimit -= value;
             }
         };
     },

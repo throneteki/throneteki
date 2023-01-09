@@ -11,13 +11,14 @@ class SerMarkMullendore extends DrawCard {
             gameAction: GameActions.revealTopCards(context => ({
                 player: context.player
             })).then({
+                condition: context => context.event.revealed.length > 0,
                 gameAction: GameActions.may({
-                    title: context => `Put ${context.event.cards[0].name} into play?`,
+                    title: context => `Put ${context.event.revealed[0].name} into play?`,
                     message: '{player} {gameAction}',
                     gameAction: GameActions.simultaneously([
                         GameActions.putIntoPlay(context => ({
                             player: context.player,
-                            card: context.event.cards[0]
+                            card: context.event.revealed[0]
                         })),
                         GameActions.returnCardToDeck(context => ({
                             allowSave: false,

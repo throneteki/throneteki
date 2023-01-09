@@ -4,12 +4,14 @@ const AbilityMessage = require('../AbilityMessage');
 const HandlerGameActionWrapper = require('./HandlerGameActionWrapper');
 
 class ChooseGameAction extends GameAction {
-    constructor({ player, title, message, choices }) {
+    constructor({ player, title, message, choices, cancelText, cancelMessage }) {
         super('choose');
         this.playerFunc = player || (context => context.player);
         this.title = title || (context => `Choose one for ${context.source.name}`);
         this.defaultMessage = AbilityMessage.create(message, this.specialArgs());
         this.choicesFunc = choices instanceof Function ? choices : () => choices;
+        this.cancelText = cancelText;
+        this.cancelMessage = cancelMessage;
     }
 
     specialArgs() {
@@ -27,26 +29,23 @@ class ChooseGameAction extends GameAction {
     }
 
     allow(context) {
-        const choices = this.createChoices(this.choicesFunc(context));
-        const validChoices = choices.filter(choice => choice.condition(context)/* && choice.gameAction.allow(context)*/); // Allow check disabled due to affecting various tests
+        const choosingPlayer = this.playerFunc(context);
+        let tempContext = { ...context, choosingPlayer };
+        const choices = this.createChoices(this.choicesFunc(tempContext));
+        const validChoices = choices.filter(choice => choice.condition(tempContext) && choice.gameAction.allow(tempContext));
         return validChoices.length > 0;
     }
 
     createEvent(context) {
         return this.event('onChoose', {}, () => {
             const choosingPlayer = this.playerFunc(context);
-            const title = this.title instanceof Function ? this.title(context) : this.title;
-            const choices = this.createChoices(this.choicesFunc(context));
-            const validChoices = choices.filter(choice => choice.condition(context)/* && choice.gameAction.allow(context)*/); // Allow check disabled due to affecting various tests
-            context.choosingPlayer = choosingPlayer;
-            if(validChoices.length === 1) {
-                context.selectedChoice = validChoices[0];
-                context.selectedChoice.message.output(context.game, context);
-                context.game.resolveGameAction(context.selectedChoice.gameAction, context);
-                return;
-            }
+            let tempContext = { ...context, choosingPlayer };
+            const title = this.title instanceof Function ? this.title(tempContext) : this.title;
+            const choices = this.createChoices(this.choicesFunc(tempContext)); // If at least one choice is selectable (checked in 'allow'), then all should be selectable.
+            const cancelText = this.cancelText instanceof Function ? this.cancelText(tempContext) : this.cancelText;
+            const cancelMessage = this.cancelMessage instanceof Function ? this.cancelMessage(tempContext) : this.cancelMessage;
 
-            context.game.queueStep(new AbilityChoicePrompt(context.game, context, title, validChoices));
+            context.game.queueStep(new AbilityChoicePrompt({ game: context.game, context, choosingPlayer, title, choices, cancelText, cancelMessage }));
         });
     }
 

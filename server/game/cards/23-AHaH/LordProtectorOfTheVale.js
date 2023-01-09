@@ -13,9 +13,12 @@ class LordProtectorOfTheVale extends DrawCard {
             title: 'Contribute attached STR',
             phase: 'challenge',
             cost: ability.costs.kneelSelf(),
-            condition: () => this.game.isDuringChallenge() && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true }),
+            condition: () => this.game.isDuringChallenge()
+                && this.game.currentChallenge.challengeType === 'power'
+                && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true })
+                && !this.isParticipating(), // TODO: Remove this once contributeSTR properly prevents a participating character also contributing (adding STR twice)
             message: {
-                format: '{player} kneels {source} to have {parent} contribute its STR (currently {STR}) to {player}\'s side until the end of the challenge',
+                format: '{player} kneels {source} to have {parent} contribute its STR (currently {STR}) to {player}\'s side this challenge',
                 args: { 
                     parent: () => this.parent,
                     STR: () => this.parent.getStrength()

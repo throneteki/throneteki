@@ -14,7 +14,7 @@ class Challenge {
         this.isInitiated = false || properties.isInitiated;
         this.initiatedChallengeType = properties.challengeType;
         this.challengeType = properties.challengeType;
-        this.defendersDeclaredBeforeAttackers = false;
+        this.declareDefendersFirst = false;
         this.number = properties.number;
         this.attackers = [];
         this.declaredAttackers = [];

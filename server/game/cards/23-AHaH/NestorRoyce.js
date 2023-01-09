@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class NestorRoyce extends DrawCard {
     setupCardAbilities(ability) {
@@ -7,27 +8,22 @@ class NestorRoyce extends DrawCard {
                 afterChallenge: event => this.isAttacking() && event.challenge.isMatch({ winner: this.controller })
             },
             cost: ability.costs.kneel({ type: 'location', faction: 'neutral', printedCostOrHigher: 1 }),
-            message: {
-                format: '{player} uses {source} and kneels {kneel} to give {source} a keyword',
-                args: { kneel: context => context.costs.kneel }
-            },
-            handler: context => {
-                this.game.promptWithMenu(context.player, this, {
-                    activePrompt: {
-                        menuTitle: `Gain keyword for ${context.source.name}`,
-                        buttons: [
-                            { text: 'Renown', arg: 'renown', method: 'gainKeyword' },
-                            { text: 'Intimidate', arg: 'intimidate', method: 'gainKeyword' }
-                        ]
-                    },
-                    source: context.source
-                });
-            }
+            message: '{player} uses {source} and kneels {costs.kneel} to give {source} renown or intimidate',
+            gameAction: GameActions.choose({
+                title: context => `Choose keyword for ${context.source.name}`,
+                message: {
+                    format: '{player} chooses to have {source} gain {keyword} until the end of the challenge',
+                    args: { keyword: context => context.selectedChoice.text.toLowerCase() }
+                },
+                choices: {
+                    'Renown': GameActions.genericHandler(context => this.gainKeyword(context.selectedChoice.text.toLowerCase())),
+                    'Intimidate': GameActions.genericHandler(context => this.gainKeyword(context.selectedChoice.text.toLowerCase()))
+                }
+            })
         });
     }
 
-    gainKeyword(player, keyword) {
-        this.game.addMessage('{0} gains {1}', this, keyword);
+    gainKeyword(keyword) {
         this.untilEndOfChallenge(ability => ({
             match: this,
             effect: ability.effects.addKeyword(keyword)

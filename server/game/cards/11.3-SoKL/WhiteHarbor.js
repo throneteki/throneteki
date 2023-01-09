@@ -11,7 +11,6 @@ class WhiteHarbor extends DrawCard {
             gameAction: GameActions.revealTopCards(context => ({
                 player: context.player,
                 amount: 2,
-                //TODO: When a SelectCards GameAction is implemented, update the below
                 whileRevealed: GameActions.genericHandler(context => {
                     if(context.revealed.length > 0) {
                         this.game.promptForSelect(context.event.challenge.loser, {

@@ -52,6 +52,9 @@ class ChooseParticipantsPrompt extends BaseStep {
         let title = this.properties.activePromptTitle;
         let max = this.limits.getMax();
         let min = this.limits.getMin();
+        if(this.properties.cannotCancel) {
+            min = Math.max(min, 1);
+        }
         let restrictions = [];
 
         if(min !== 0) {
@@ -82,7 +85,10 @@ class ChooseParticipantsPrompt extends BaseStep {
 
     hasMetParticipantMinimum(participants) {
         let min = this.limits.getMin();
-
+        if(this.properties.cannotCancel) {
+            min = Math.max(min, 1);
+        }
+        
         if(min === 0) {
             return true;
         }

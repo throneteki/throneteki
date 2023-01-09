@@ -9,19 +9,16 @@ class PrinceOfTheNarrowSea extends DrawCard {
         this.whileAttached({
             match: card => card.name === 'Salladhor Saan',
             effect: [
-                ability.effects.addKeyword('Renown'),
-                ability.effects.addTrait('Commander')
+                ability.effects.addTrait('Commander'),
+                ability.effects.addKeyword('Renown')
             ]
-        });
-        this.plotModifiers({
-            initiative: -1
         });
         
         this.reaction({
             when: {
                 onInitiativeDetermined: event => event.winner !== this.controller
             },
-            cost: ability.costs.returnToHand(card => card.isMatch({ trait: 'Smuggler', type: 'character' })),
+            cost: ability.costs.returnToHand(card => card.isMatch({ trait: ['Captain', 'Smuggler'], type: 'character' })),
             targets: {
                 character: {
                     activePromptTitle: 'Select a character',
@@ -33,11 +30,8 @@ class PrinceOfTheNarrowSea extends DrawCard {
                 }
             },
             message: {
-                format: '{player} uses {source} and returns {returnedToHand} to its owners hand to kneel {knelt}',
-                args: { 
-                    returnedToHand: context => context.costs.returnToHand,
-                    knelt: context => context.targets.getTargets()
-                }
+                format: '{player} uses {source} and returns {costs.returnToHand} to its owners hand to kneel {knelt}',
+                args: { knelt: context => context.targets.getTargets() }
             },
             handler: context => {
                 this.game.resolveGameAction(

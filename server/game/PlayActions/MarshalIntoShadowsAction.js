@@ -39,7 +39,7 @@ class MarshalIntoShadowsAction extends BaseAbility {
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
             context.player.putIntoShadows(context.source);
-            context.game.queueSimpleStep(() => context.game.addMessage(this.getMessageFormat(params), context.player, params.originalLocation, params.originalParent, context.costs.gold));
+            context.game.addMessage(this.getMessageFormat(params), context.player, params.originalLocation, params.originalParent, context.costs.gold);
         });
     }
 

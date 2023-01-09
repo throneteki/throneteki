@@ -8,7 +8,7 @@ class CrastersKeepMutineer extends DrawCard {
                 onCardEntersPlay: event => event.card === this
             },
             target: {
-                title: 'Select a duplicate',
+                activePromptTitle: 'Select a duplicate',
                 cardCondition: card => card.location === 'duplicate' && card.parent.getType() === 'character'
             },
             message: {
