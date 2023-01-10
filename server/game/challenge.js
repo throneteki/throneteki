@@ -69,7 +69,8 @@ class Challenge {
         if(!amount) {
             this.clearDynamicContributions(card);
         }
-
+        
+        card.isContributing = true;
         this.attackerContributions.push({ card, type, amount });
     }
 
@@ -77,6 +78,7 @@ class Challenge {
         let contribution = this.attackerContributions.find(c => c.card === card && c.type === type && c.amount === amount);
         if(contribution) {
             this.attackerContributions.splice(this.attackerContributions.indexOf(contribution), 1);
+            card.isContributing = this.isContributingSTR(card);
         }
     }
 
@@ -97,6 +99,7 @@ class Challenge {
             this.clearDynamicContributions(card);
         }
 
+        card.isContributing = true;
         this.defenderContributions.push({ card, type, amount });
     }
 
@@ -104,6 +107,7 @@ class Challenge {
         let contribution = this.defenderContributions.find(c => c.card === card && c.type === type && c.amount === amount);
         if(contribution) {
             this.defenderContributions.splice(this.defenderContributions.indexOf(contribution), 1);
+            card.isContributing = this.isContributingSTR(card);
         }
     }
 
@@ -361,9 +365,11 @@ class Challenge {
     finish() {
         for(let card of this.attackers) {
             card.inChallenge = false;
+            card.isContributing = false;
         }
         for(let card of this.defenders) {
             card.inChallenge = false;
+            card.isContributing = false;
         }
         this.isInitiated = false;
     }
