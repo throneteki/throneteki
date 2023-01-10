@@ -23,6 +23,6 @@ class LordProtectorsRetainer extends DrawCard {
     }
 }
 
-LordProtectorsRetainer.code = '23028';
+LordProtectorsRetainer.code = '23022';
 
 module.exports = LordProtectorsRetainer;

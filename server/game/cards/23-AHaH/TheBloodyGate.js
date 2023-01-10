@@ -49,6 +49,6 @@ class TheBloodyGate extends DrawCard {
     }
 }
 
-TheBloodyGate.code = '23032';
+TheBloodyGate.code = '23033';
 
 module.exports = TheBloodyGate;

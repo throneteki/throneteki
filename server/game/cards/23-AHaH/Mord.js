@@ -25,6 +25,6 @@ class Mord extends DrawCard {
     }
 }
 
-Mord.code = '23023';
+Mord.code = '23025';
 
 module.exports = Mord;

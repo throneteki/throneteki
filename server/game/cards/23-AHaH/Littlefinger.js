@@ -48,6 +48,6 @@ class Littlefinger extends DrawCard {
     }
 }
 
-Littlefinger.code = '23018';
+Littlefinger.code = '23017';
 
 module.exports = Littlefinger;

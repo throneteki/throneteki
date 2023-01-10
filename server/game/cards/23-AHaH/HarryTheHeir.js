@@ -30,6 +30,6 @@ class HarryTheHeir extends DrawCard {
     }
 }
 
-HarryTheHeir.code = '23022';
+HarryTheHeir.code = '23021';
 
 module.exports = HarryTheHeir;
