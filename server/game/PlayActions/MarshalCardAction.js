@@ -42,7 +42,7 @@ class MarshalCardAction extends BaseAbility {
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
             context.player.putIntoPlay(context.source, 'marshal');
-            context.game.queueSimpleStep(() => context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalController, params.originalLocation, params.originalParent, context.costs.gold));
+            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalController, params.originalLocation, params.originalParent, context.costs.gold);
         });
     }
 

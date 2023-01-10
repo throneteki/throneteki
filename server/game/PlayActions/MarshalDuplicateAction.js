@@ -36,7 +36,7 @@ class MarshalDuplicateAction extends BaseAbility {
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
             context.player.putIntoPlay(context.source, 'marshal');
-            context.game.queueSimpleStep(() => context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalLocation, params.originalParent));
+            context.game.addMessage(this.getMessageFormat(params), context.player, context.source, params.originalLocation, params.originalParent);
         });
     }
 

@@ -11,7 +11,7 @@ class StandCard extends GameAction {
     }
 
     canChangeGameState({ card }) {
-        return card && ['faction', 'play area'].includes(card.location) && card.kneeled;
+        return ['faction', 'play area'].includes(card.location) && card.kneeled;
     }
 
     createEvent({ card }) {
