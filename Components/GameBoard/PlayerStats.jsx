@@ -25,7 +25,7 @@ export class PlayerStats extends React.Component {
     getButton(stat, name, statToSet = stat) {
         return (
             <div className='state'>
-                <span><img src={ '/img/' + name + '.png' } title={ name } alt={ name } /></span>
+                <span><img src={ '/img/' + name + '.png' } title={ name } alt={ name } style={ { width: '27px', height: '27px' } } /></span>
                 { this.props.showControls ? <button className='btn btn-stat' onClick={ this.sendUpdate.bind(this, statToSet, 'down') }>
                     <img src='/img/Minus.png' title='-' alt='-' />
                 </button> : null }
@@ -61,8 +61,9 @@ export class PlayerStats extends React.Component {
 
                 { this.getButton('gold', 'Gold') }
                 { this.getButton('totalPower', 'Power', 'power') }
-                { this.getButton('reserve', 'Reserve') }
+                { this.getButton('initiative', 'Initiative') }
                 { this.getButton('claim', 'Claim') }
+                { this.getButton('reserve', 'Reserve') }
 
                 { this.props.firstPlayer ? <div className='state'><div className='first-player'>First player</div></div> : null }
 
