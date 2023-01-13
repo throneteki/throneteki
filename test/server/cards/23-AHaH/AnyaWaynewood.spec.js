@@ -90,7 +90,7 @@ describe('Anya Waynewood', function() {
         });
 
         describe('when used twice on the same character', function() {
-            it('the effect is overridden by declaring the character', function() {
+            it('the last effect takes precedence', function() {
                 this.player1.clickPrompt('Power');
                 this.player1.clickCard(this.merchant1);
                 this.player1.clickPrompt('Done');
