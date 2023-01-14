@@ -1540,24 +1540,6 @@ const Effects = {
                 }
             }
         };
-    },
-    killIfStillInPlayAndKneelFactionCard: function(initiator, allowSave = false) {
-        return {
-            apply: function(card, context) {
-                context.killIfStillInPlay = context.killIfStillInPlay || [];
-                context.killIfStillInPlay.push(card);
-            },
-            unapply: function(card, context) {
-                if(card.location === 'play area' && context.killIfStillInPlay.includes(card) && !initiator.faction.kneeled) {
-                    context.killIfStillInPlay = context.killIfStillInPlay.filter(c => c !== card);
-                    if(GameActions.kneelCard({ card: initiator.faction }).allow()) {
-                        context.game.resolveGameAction(GameActions.kneelCard({ card: initiator.faction }));
-                        card.controller.killCharacter(card, allowSave);
-                        context.game.addMessage('{0} kneels their faction card to kill {1} at the end of the round because of {2}', initiator, card, context.source);
-                    }                    
-                }
-            }
-        };
     }
 };
 
