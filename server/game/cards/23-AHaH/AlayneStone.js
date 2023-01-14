@@ -32,6 +32,6 @@ class AlayneStone extends DrawCard {
     }
 }
 
-AlayneStone.code = '23021';
+AlayneStone.code = '23020';
 
 module.exports = AlayneStone;

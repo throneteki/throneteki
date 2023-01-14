@@ -30,6 +30,6 @@ class TheValeOfArryn extends DrawCard {
     }
 }
 
-TheValeOfArryn.code = '23033';
+TheValeOfArryn.code = '23032';
 
 module.exports = TheValeOfArryn;

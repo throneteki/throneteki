@@ -39,6 +39,6 @@ class AnyaWaynwood extends DrawCard {
     }
 }
 
-AnyaWaynwood.code = '23019';
+AnyaWaynwood.code = '23018';
 
 module.exports = AnyaWaynwood;

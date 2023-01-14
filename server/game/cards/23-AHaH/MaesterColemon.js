@@ -34,6 +34,6 @@ class MaesterColemon extends DrawCard {
     }
 }
 
-MaesterColemon.code = '23025';
+MaesterColemon.code = '23024';
 
 module.exports = MaesterColemon;

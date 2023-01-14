@@ -17,6 +17,6 @@ class Sweetrobin extends DrawCard {
     }
 }
 
-Sweetrobin.code = '23020';
+Sweetrobin.code = '23028';
 
 module.exports = Sweetrobin;

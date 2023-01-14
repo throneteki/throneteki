@@ -29,6 +29,6 @@ class KnightsOfTheVale extends DrawCard {
     } 
 }
 
-KnightsOfTheVale.code = '23017';
+KnightsOfTheVale.code = '23019';
 
 module.exports = KnightsOfTheVale;
