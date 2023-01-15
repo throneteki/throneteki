@@ -1,4 +1,4 @@
-describe('Anya Waynewood', function() {
+describe('Anya Waynwood', function() {
     integration(function() {
         beforeEach(function() {
             const deck = this.buildDeck('greyjoy', [
