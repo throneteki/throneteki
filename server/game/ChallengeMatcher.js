@@ -18,7 +18,8 @@ class ChallengeMatcher {
             Matcher.containsValue(matchers.unopposed, challenge.isUnopposed()) &&
             Matcher.anyValue(matchers.by5, value => (challenge.strengthDifference >= 5) === value) &&
             Matcher.anyValue(matchers.match, func => func(challenge)) &&
-            Matcher.anyValue(matchers.not, notProperties => !ChallengeMatcher.isMatch(challenge, notProperties))
+            Matcher.anyValue(matchers.not, notProperties => !ChallengeMatcher.isMatch(challenge, notProperties)) &&
+            Matcher.anyValue(matchers.or, orProperties => ChallengeMatcher.isMatch(challenge, orProperties))
         );
     }
 

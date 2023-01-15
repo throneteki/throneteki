@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class LordProtectorOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
@@ -15,23 +16,20 @@ class LordProtectorOfTheVale extends DrawCard {
             cost: ability.costs.kneelSelf(),
             condition: () => this.game.isDuringChallenge()
                 && this.game.currentChallenge.challengeType === 'power'
-                && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true })
-                && !this.isParticipating(), // TODO: Remove this once contributeSTR properly prevents a participating character also contributing (adding STR twice)
+                && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true }),
             message: {
-                format: '{player} kneels {source} to have {parent} contribute its STR (currently {STR}) to {player}\'s side this challenge',
-                args: { 
+                format: '{player} kneels {source} to have {parent} contribute its STR (currently {str}) to {player}\'s side of the challenge',
+                args: {
                     parent: () => this.parent,
-                    STR: () => this.parent.getStrength()
+                    str: () => this.parent.getStrength()
                 }
             },
-            handler: () => {
+            gameAction: GameActions.genericHandler(() => {
                 this.untilEndOfChallenge(ability => ({
-                    // Force the effect to recalculate mid-challenge in case the character STR changes
-                    condition: () => true,
                     targetController: 'current',
-                    effect: ability.effects.contributeChallengeStrength(() => this.parent.getStrength())
+                    effect: ability.effects.contributeCharacterStrength(this.parent)
                 }));
-            }
+            })
         });
     }
 }
