@@ -1,6 +1,7 @@
 const Challenge = require('../../../server/game/challenge.js');
 const Player = require('../../../server/game/player.js');
 const DrawCard = require('../../../server/game/drawcard.js');
+const {ValueContribution, CharacterStrengthContribution} = require('../../../server/game/ChallengeContributions.js');
 
 describe('Challenge', function() {
     beforeEach(function() {
@@ -27,7 +28,7 @@ describe('Challenge', function() {
         this.initialDefenderSTR = this.challenge.defenderStrength;
     });
 
-    describe('addContributeSTRTowards()', function() {
+    describe('addContribution()', function() {
         describe('when the target is controlled by the attacking player', function() {
             beforeEach(function() {
                 this.targetCard = new DrawCard(this.attackingPlayer, {});
@@ -35,7 +36,8 @@ describe('Challenge', function() {
 
             describe('and is contributing 2 STR towards the attacking player\'s side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.attackingPlayer, this.targetCard, 2);
+                    this.contribution1 = new ValueContribution(this.attackingPlayer, this.targetCard, 2);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 it('should result in attacker\'s total being raised by 2', function() {
@@ -48,7 +50,8 @@ describe('Challenge', function() {
 
                 describe('as well as 4 STR towards the defending player\'s side', function() {
                     beforeEach(function() {
-                        this.challenge.addContributeSTRTowards(this.defendingPlayer, this.targetCard, 4);
+                        this.contribution2 = new ValueContribution(this.defendingPlayer, this.targetCard, 4);
+                        this.challenge.addContribution(this.contribution2);
                     });
 
                     it('should result in attacker\'s total being raised by 2', function() {
@@ -63,7 +66,8 @@ describe('Challenge', function() {
 
             describe('and is contributing 2 STR towards the defending player\'s side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.defendingPlayer, this.targetCard, 2);
+                    this.contribution1 = new ValueContribution(this.defendingPlayer, this.targetCard, 2);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 it('should result in attacker\'s total being unchanged', function() {
@@ -76,7 +80,8 @@ describe('Challenge', function() {
 
                 describe('as well as 4 STR towards the attacking player\'s side', function() {
                     beforeEach(function() {
-                        this.challenge.addContributeSTRTowards(this.attackingPlayer, this.targetCard, 4);
+                        this.contribution2 = new ValueContribution(this.attackingPlayer, this.targetCard, 4);
+                        this.challenge.addContribution(this.contribution2);
                     });
 
                     it('should result in attacker\'s total STR being raised by 4', function() {
@@ -96,7 +101,8 @@ describe('Challenge', function() {
 
                 describe('towards the attacking player\'s side', function() {
                     beforeEach(function() {
-                        this.challenge.addContributeSTRTowards(this.attackingPlayer, this.targetCard);
+                        this.contribution1 = new CharacterStrengthContribution(this.attackingPlayer, this.targetCard);
+                        this.challenge.addContribution(this.contribution1);
                     });
 
                     it('should result in attacker\'s total STR being raised by that STR', function() {
@@ -109,7 +115,8 @@ describe('Challenge', function() {
 
                     describe('then towards the defending player\'s side', function() {
                         beforeEach(function() {
-                            this.challenge.addContributeSTRTowards(this.defendingPlayer, this.targetCard);
+                            this.contribution2 = new CharacterStrengthContribution(this.defendingPlayer, this.targetCard);
+                            this.challenge.addContribution(this.contribution2);
                         });
 
                         it('should result in attacker\'s total STR being unchanged', function() {
@@ -145,7 +152,8 @@ describe('Challenge', function() {
             });
             describe('and is contributing 2 STR towards the attacking player\'s side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.attackingPlayer, this.targetCard, 2);
+                    this.contribution1 = new ValueContribution(this.attackingPlayer, this.targetCard, 2);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 it('should result in attacker\'s total being raised by 2', function() {
@@ -171,7 +179,8 @@ describe('Challenge', function() {
 
             describe('and it contributes 3 STR towards the attacking player\'s side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.attackingPlayer, this.targetCard, 3);
+                    this.contribution1 = new ValueContribution(this.attackingPlayer, this.targetCard, 3);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 it('should result in attacker\'s total STR being raised by 3', function() {
@@ -185,7 +194,8 @@ describe('Challenge', function() {
 
             describe('and it contributes 3 STR towards the defending player\'s side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.defendingPlayer, this.targetCard, 3);
+                    this.contribution1 = new ValueContribution(this.defendingPlayer, this.targetCard, 3);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 it('should result in attacker\'s total STR being unchanged', function() {
@@ -199,7 +209,8 @@ describe('Challenge', function() {
 
             describe('and it contributes it\'s STR (5) towards the attacking player\'s side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.attackingPlayer, this.targetCard);
+                    this.contribution1 = new CharacterStrengthContribution(this.attackingPlayer, this.targetCard);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 it('should result in attacker\'s total STR being unchanged', function() {
@@ -227,7 +238,8 @@ describe('Challenge', function() {
 
             describe('and it contributes it\'s STR (5) towards the defending player\'s side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.defendingPlayer, this.targetCard);
+                    this.contribution1 = new CharacterStrengthContribution(this.defendingPlayer, this.targetCard);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 it('should result in attacker\'s total STR being reduced by that STR', function() {
@@ -240,7 +252,8 @@ describe('Challenge', function() {
 
                 describe('then contributes to the attacking player\'s side again', function() {
                     beforeEach(function() {
-                        this.challenge.addContributeSTRTowards(this.attackingPlayer, this.targetCard);
+                        this.contribution2 = new CharacterStrengthContribution(this.attackingPlayer, this.targetCard);
+                        this.challenge.addContribution(this.contribution2);
                     });
 
                     it('should result in attacker\'s total STR being unchanged', function() {
@@ -249,6 +262,20 @@ describe('Challenge', function() {
 
                     it('should result in defender\'s total STR being unchanged', function() {
                         expect(this.challenge.defenderStrength).toBe(this.initialDefenderSTR);
+                    });
+
+                    describe('then is removed from the challenge', function() {
+                        beforeEach(function() {
+                            this.challenge.removeFromChallenge(this.targetCard);
+                        });
+    
+                        it('should result in attacker\'s total STR being unchanged', function() {
+                            expect(this.challenge.attackerStrength).toBe(this.initialAttackerSTR);
+                        });
+        
+                        it('should result in defender\'s total STR being unchanged', function() {
+                            expect(this.challenge.defenderStrength).toBe(this.initialDefenderSTR);
+                        });
                     });
                 });
 
@@ -286,7 +313,7 @@ describe('Challenge', function() {
         });
     });
 
-    describe('removeContributeSTRTowards()', function() {
+    describe('removeContribution()', function() {
         describe('when the target is controlled by attacking player', function() {
             beforeEach(function() {
                 this.targetCard = new DrawCard(this.attackingPlayer, {});
@@ -294,12 +321,13 @@ describe('Challenge', function() {
 
             describe('then contributes it\'s STR to the defenders side', function() {
                 beforeEach(function() {
-                    this.challenge.addContributeSTRTowards(this.defendingPlayer, this.targetCard);
+                    this.contribution1 = new CharacterStrengthContribution(this.defendingPlayer, this.targetCard);
+                    this.challenge.addContribution(this.contribution1);
                 });
 
                 describe('then no longer contributes it\'s STR to the defenders side', function() {
                     beforeEach(function() {
-                        this.challenge.removeContributeSTRTowards(this.defendingPlayer, this.targetCard);
+                        this.challenge.removeContribution(this.contribution1);
                     });
 
                     it('should result in attacker\'s total STR being unchanged', function() {

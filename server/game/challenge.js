@@ -2,6 +2,7 @@ const Player = require('./player.js');
 const EventRegistrar = require('./eventregistrar.js');
 const Settings = require('../settings.js');
 const ChallengeMatcher = require('./ChallengeMatcher');
+const {ChallengeContributions} = require('./ChallengeContributions');
 
 class Challenge {
     constructor(game, properties) {
@@ -11,18 +12,17 @@ class Challenge {
         this.isSinglePlayer = !properties.defendingPlayer;
         this.defendingPlayer = properties.defendingPlayer || this.singlePlayerDefender();
         this.initiatedAgainstPlayer = this.defendingPlayer;
-        this.isInitiated = false || properties.isInitiated;
+        this.isInitiated = properties.isInitiated || false;
         this.initiatedChallengeType = properties.challengeType;
         this.challengeType = properties.challengeType;
         this.declareDefendersFirst = false;
         this.number = properties.number;
         this.attackers = [];
         this.declaredAttackers = [];
-        this.attackerContributions = [];
         this.attackerStrength = 0;
         this.defenders = [];
-        this.defenderContributions = [];
         this.defenderStrength = 0;
+        this.challengeContributions = new ChallengeContributions();
         this.stealthData = [];
         this.assaultData = [];
         this.events = new EventRegistrar(game, this);
@@ -55,7 +55,7 @@ class Challenge {
 
     addAttackers(attackers) {
         this.attackers = this.attackers.concat(attackers);
-        this.attackers.forEach(attacker => this.addContributionToAttack(attacker, 'participation'));
+        this.challengeContributions.addParticipants(attackers, this.attackingPlayer);
         this.markAsParticipating(attackers);
         this.calculateStrength();
     }
@@ -64,79 +64,15 @@ class Challenge {
         this.addAttackers([attacker]);
     }
 
-    addContributionToAttack(card, type, amount) {
-        // Clearing existing "its STR" contributions
-        if(!amount) {
-            this.clearDynamicContributions(card);
-        }
-        
-        card.isContributing = true;
-        this.attackerContributions.push({ card, type, amount });
-    }
-
-    removeContributionToAttack(card, type, amount) {
-        let contribution = this.attackerContributions.find(c => c.card === card && c.type === type && c.amount === amount);
-        if(contribution) {
-            this.attackerContributions.splice(this.attackerContributions.indexOf(contribution), 1);
-            card.isContributing = this.isContributingSTR(card);
-        }
-    }
-
     addDefenders(defenders) {
         this.defenders = this.defenders.concat(defenders);
-        this.defenders.forEach(defender => this.addContributionToDefence(defender, 'participation'));
+        this.challengeContributions.addParticipants(defenders, this.defendingPlayer);
         this.markAsParticipating(defenders);
         this.calculateStrength();
     }
 
     addDefender(defender) {
         this.addDefenders([defender]);
-    }
-
-    addContributionToDefence(card, type, amount) {
-        // Clearing existing "its STR" contributions
-        if(!amount) {
-            this.clearDynamicContributions(card);
-        }
-
-        card.isContributing = true;
-        this.defenderContributions.push({ card, type, amount });
-    }
-
-    removeContributionToDefence(card, type, amount) {
-        let contribution = this.defenderContributions.find(c => c.card === card && c.type === type && c.amount === amount);
-        if(contribution) {
-            this.defenderContributions.splice(this.defenderContributions.indexOf(contribution), 1);
-            card.isContributing = this.isContributingSTR(card);
-        }
-    }
-
-    addContributeSTRTowards(player, card, amount) {
-        if(this.attackingPlayer === player) {
-            this.addContributionToAttack(card, 'effect', amount);
-        } else if(this.defendingPlayer === player) {
-            this.addContributionToDefence(card, 'effect', amount);
-        }
-        this.calculateStrength();
-    }
-
-    removeContributeSTRTowards(player, card, amount) {
-        if(this.attackingPlayer === player) {
-            this.removeContributionToAttack(card, 'effect', amount);
-        } else if(this.defendingPlayer === player) {
-            this.removeContributionToDefence(card, 'effect', amount);
-        }
-        this.calculateStrength();
-    }
-
-    isContributingSTR(card, type) {
-        return this.attackerContributions.some(c => c.card === card && (!type || c.type === type))
-            || this.defenderContributions.some(c => c.card === card && (!type || c.type === type));
-    }
-
-    clearDynamicContributions(card) {
-        this.attackerContributions = this.attackerContributions.filter(ac => ac.card !== card || !!ac.amount);
-        this.defenderContributions = this.defenderContributions.filter(dc => dc.card !== card || !!dc.amount);
     }
 
     removeFromChallenge(card) {
@@ -153,11 +89,11 @@ class Challenge {
 
         this.attackers = this.attackers.filter(c => c !== card);
         this.declaredAttackers = this.declaredAttackers.filter(c => c !== card);
-        this.attackerContributions = this.attackerContributions.filter(c => c.card !== card || c.type !== 'participation');
         this.defenders = this.defenders.filter(c => c !== card);
-        this.defenderContributions = this.defenderContributions.filter(c => c.card !== card || c.type !== 'participation');
 
         card.inChallenge = false;
+
+        this.challengeContributions.removeParticipants([card]);
 
         this.calculateStrength();
 
@@ -185,6 +121,10 @@ class Challenge {
 
     isParticipating(card) {
         return this.isAttacking(card) || this.isDefending(card);
+    }
+
+    isContributing(card) {
+        return this.challengeContributions.isContributing(card);
     }
 
     getParticipants() {
@@ -236,20 +176,8 @@ class Challenge {
             return;
         }
 
-        this.attackerStrength = this.calculateStrengthFor(this.attackerContributions);
-        this.defenderStrength = this.calculateStrengthFor(this.defenderContributions);
-    }
-
-    calculateStrengthFor(contributions) {
-        return contributions.reduce((sum, contribution) => {
-            let card = contribution.card;
-            if(!contribution.amount && card.challengeOptions && card.challengeOptions.contains('doesNotContributeStrength')) {
-                return sum;
-            }
-
-            let amount = contribution.amount || card.getStrength();
-            return sum + amount;
-        }, 0);
+        this.attackerStrength = this.challengeContributions.getTotalFor(this.attackingPlayer);
+        this.defenderStrength = this.challengeContributions.getTotalFor(this.defendingPlayer);
     }
 
     addParticipantToSide(player, card) {
@@ -258,6 +186,16 @@ class Challenge {
         } else {
             this.addDefender(card);
         }
+    }
+
+    addContribution(contribution) {
+        this.challengeContributions.addContribution(contribution);
+        this.calculateStrength();
+    }
+
+    removeContribution(contribution) {
+        this.challengeContributions.removeContribution(contribution);
+        this.calculateStrength();
     }
 
     determineWinner() {
@@ -352,6 +290,7 @@ class Challenge {
 
     onCardLeftPlay(event) {
         this.removeFromChallenge(event.card);
+        this.challengeContributions.clear([event.card]);
     }
 
     registerEvents(events) {
@@ -363,14 +302,11 @@ class Challenge {
     }
 
     finish() {
-        for(let card of this.attackers) {
+        for(let card of this.attackers.concat(this.defenders)) {
             card.inChallenge = false;
-            card.isContributing = false;
         }
-        for(let card of this.defenders) {
-            card.inChallenge = false;
-            card.isContributing = false;
-        }
+        this.challengeContributions.clear();
+        
         this.isInitiated = false;
     }
 

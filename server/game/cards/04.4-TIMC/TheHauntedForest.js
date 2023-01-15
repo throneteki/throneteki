@@ -8,7 +8,7 @@ class TheHauntedForest extends DrawCard {
                 this.game.isDuringChallenge({ defendingPlayer: this.controller })
             ),
             targetController: 'current',
-            effect: ability.effects.contributeChallengeStrength(this, 1)
+            effect: ability.effects.contributeStrength(this, 1)
         });
         this.forcedReaction({
             when: {

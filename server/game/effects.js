@@ -2,6 +2,7 @@ const AbilityLimit = require('./abilitylimit.js');
 const AllowedChallenge = require('./AllowedChallenge');
 const CardMatcher = require('./CardMatcher');
 const CardTextDefinition = require('./CardTextDefinition');
+const {ValueContribution, CharacterStrengthContribution} = require('./ChallengeContributions');
 const CostReducer = require('./costreducer.js');
 const GameActions = require('./GameActions');
 const PlayableLocation = require('./playablelocation.js');
@@ -964,7 +965,8 @@ const Effects = {
             }
         };
     },
-    contributeChallengeStrength: function(card, value) {
+    contributeCharacterStrength: function(card) {
+        let contribution = null;
         return {
             targetType: 'player',
             apply: function(player, context) {
@@ -972,28 +974,41 @@ const Effects = {
                 if(!challenge) {
                     return;
                 }
-                challenge.addContributeSTRTowards(player, card, value);
-            },
-            reapply: function(player, context) {
-                let challenge = context.game.currentChallenge;
-                if(!challenge) {
-                    return;
-                }
 
-                // To ensure participation isn't overridden by a effect when it was the most recent type of contribution
-                if(!challenge.isContributingSTR(card, 'participation')) {
-                    challenge.removeContributeSTRTowards(player, card, value);
-                    challenge.addContributeSTRTowards(player, card, value);
-                }
+                contribution = new CharacterStrengthContribution(player, card);
+                challenge.addContribution(contribution);
             },
             unapply: function(player, context) {
                 let challenge = context.game.currentChallenge;
                 if(!challenge) {
                     return;
                 }
-                challenge.removeContributeSTRTowards(player, card, value);
+                
+                challenge.removeContribution(contribution);
+            }
+        };
+    },
+    contributeStrength: function(card, value) {
+        let contribution = null;
+        return {
+            targetType: 'player',
+            apply: function(player, context) {
+                let challenge = context.game.currentChallenge;
+                if(!challenge) {
+                    return;
+                }
+                
+                contribution = new ValueContribution(player, card, value);
+                challenge.addContribution(contribution);
             },
-            isStateDependent: true
+            unapply: function(player, context) {
+                let challenge = context.game.currentChallenge;
+                if(!challenge) {
+                    return;
+                }
+
+                challenge.removeContribution(contribution);
+            }
         };
     },
     setAttackerMaximum: function(value) {

@@ -21,7 +21,7 @@ class MasterOfShips extends TitleCard {
                 this.game.currentChallenge.anyParticipants(card => card.controller === this.controller)
             ),
             targetController: 'current',
-            effect: ability.effects.contributeChallengeStrength(this, 1)
+            effect: ability.effects.contributeStrength(this, 1)
         });
     }
 }

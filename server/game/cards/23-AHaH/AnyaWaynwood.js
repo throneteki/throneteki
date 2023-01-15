@@ -21,18 +21,11 @@ class AnyaWaynwood extends DrawCard {
                     condition: (card, context) => !context.costs.kneel || card.getPrintedCost() <= context.costs.kneel.getPrintedCost()
                 }
             },
-            message: {
-                format: '{player} uses {source} and kneels {kneel} to have {target} contribute its STR to {player}\'s side this challenge',
-                args: {
-                    kneel: context => context.costs.kneel,
-                    STR: context => context.target.getStrength()
-                }
-            },
+            message: '{player} uses {source} and kneels {costs.kneel} to have {target} contribute its STR to {player}\'s side this challenge',
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
-                    condition: () => true,
                     targetController: 'current',
-                    effect: ability.effects.contributeChallengeStrength(context.target)
+                    effect: ability.effects.contributeCharacterStrength(context.target)
                 }));
             }
         });

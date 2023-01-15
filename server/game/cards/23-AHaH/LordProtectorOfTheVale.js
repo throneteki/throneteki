@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class LordProtectorOfTheVale extends DrawCard {
     setupCardAbilities(ability) {
@@ -18,18 +19,14 @@ class LordProtectorOfTheVale extends DrawCard {
                 && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true }),
             message: {
                 format: '{player} kneels {source} to have {parent} contribute its STR to {player}\'s side this challenge',
-                args: { 
-                    parent: () => this.parent,
-                    STR: () => this.parent.getStrength()
-                }
+                args: { parent: () => this.parent }
             },
-            handler: () => {
+            gameAction: GameActions.genericHandler(() => {
                 this.untilEndOfChallenge(ability => ({
-                    condition: () => true,
                     targetController: 'current',
-                    effect: ability.effects.contributeChallengeStrength(this.parent)
+                    effect: ability.effects.contributeCharacterStrength(this.parent)
                 }));
-            }
+            })
         });
     }
 }
