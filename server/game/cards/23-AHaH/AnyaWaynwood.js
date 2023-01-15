@@ -21,7 +21,10 @@ class AnyaWaynwood extends DrawCard {
                     condition: (card, context) => !context.costs.kneel || card.getPrintedCost() <= context.costs.kneel.getPrintedCost()
                 }
             },
-            message: '{player} uses {source} and kneels {costs.kneel} to have {target} contribute its STR to {player}\'s side this challenge',
+            message: {
+                format: '{player} uses {source} and kneels {costs.kneel} to have {target} contribute its STR (currently {str}) to {player}\'s side of the challenge',
+                args: { str: context => context.target.getStrength() }
+            },
             handler: context => {
                 this.untilEndOfChallenge(ability => ({
                     targetController: 'current',

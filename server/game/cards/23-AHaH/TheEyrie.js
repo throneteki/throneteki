@@ -26,7 +26,7 @@ class TheEyrie extends DrawCard {
             gameAction: GameActions.genericHandler(() => {
                 this.untilEndOfChallenge(ability => ({
                     targetController: 'current',
-                    effect: ability.effects.contributeChallengeStrength(this, this.calculateAmount())
+                    effect: ability.effects.contributeStrength(this, this.calculateAmount())
                 }));
             })
         });

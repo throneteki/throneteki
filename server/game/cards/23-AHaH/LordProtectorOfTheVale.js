@@ -18,8 +18,11 @@ class LordProtectorOfTheVale extends DrawCard {
                 && this.game.currentChallenge.challengeType === 'power'
                 && this.controller.anyCardsInPlay({ trait: 'House Arryn', type: 'character', participating: true }),
             message: {
-                format: '{player} kneels {source} to have {parent} contribute its STR to {player}\'s side this challenge',
-                args: { parent: () => this.parent }
+                format: '{player} kneels {source} to have {parent} contribute its STR (currently {str}) to {player}\'s side of the challenge',
+                args: {
+                    parent: () => this.parent,
+                    str: () => this.parent.getStrength()
+                }
             },
             gameAction: GameActions.genericHandler(() => {
                 this.untilEndOfChallenge(ability => ({
