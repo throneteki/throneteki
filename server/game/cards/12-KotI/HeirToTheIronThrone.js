@@ -4,28 +4,25 @@ const GameActions = require('../../GameActions');
 class HeirToTheIronThrone extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
+            message: '{player} uses {source} to search the top 10 cards of their deck for a Lord or Lady character',
             gameAction: GameActions.search({
                 title: 'Select a character',
-                topCards: 10,
                 match: { type: 'character', trait: ['Lord', 'Lady'] },
-                message: '{player} uses {source} to search their deck and put {searchTarget} into play',
+                topCards: 10,
+                reveal: false,
+                message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay(context => ({
-                    player: context.player,
                     card: context.searchTarget
                 })).then({
+                    condition: context => context.parentContext.searchTarget.location === 'play area',
+                    activePromptTitle: 'Select character to sacrifice',
                     target: {
-                        cardCondition: { type: 'character', trait: ['Lord', 'Lady'], controller: 'current' },
+                        cardCondition: { type: 'character', trait: ['Lord', 'Lady'], location: 'play area', controller: 'current' },
                         gameAction: 'sacrifice'
                     },
-                    message: 'Then {player} sacrifices {target}',
+                    message: 'Then, {player} sacrifices {target}',
                     handler: context => {
-                        this.game.resolveGameAction(
-                            GameActions.sacrificeCard(context => ({
-                                player: context.player,
-                                card: context.target
-                            })),
-                            context
-                        );
+                        this.game.resolveGameAction(GameActions.sacrificeCard(context => ({ card: context.target })), context);
                     }
                 })
             })

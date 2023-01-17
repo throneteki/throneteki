@@ -5,6 +5,10 @@ class Shuffle extends GameAction {
         super('shuffle');
     }
 
+    message() {
+        return 'shuffles their deck';
+    }
+
     canChangeGameState({ player }) {
         return player.drawDeck.length > 0;
     }

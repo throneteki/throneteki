@@ -1,14 +1,26 @@
 const GameAction = require('./GameAction');
 const MoveCardEventGenerator = require('./MoveCardEventGenerator');
+const Message = require('../Message');
 
 class PutIntoPlay extends GameAction {
     constructor() {
         super('putIntoPlay');
     }
 
+    message({ player, card, kneeled, context }) {
+        player = player || card.controller;
+
+        // Only show where the card came from if it is not already revealed
+        let message = 'puts {card} into play'
+            + (kneeled ? ' knelt' : '')
+            + (context.revealed && context.revealed.includes(card) ? '' : (player === card.controller ? ' from their {originalLocation}' : ' from {controller}\'s {originalLocation} under their control'));
+
+        return Message.fragment(message, { card, controller: card.controller, originalLocation: card.location });
+    }
+
     canChangeGameState({ player, card }) {
         player = player || card.controller;
-        return player.canPutIntoPlay(card);
+        return card.location !== 'play area' && player.canPutIntoPlay(card);
     }
 
     createEvent({ player, card, kneeled, playingType }) {

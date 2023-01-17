@@ -6,6 +6,7 @@ const ChatCommands = require('./chatcommands.js');
 const GameChat = require('./gamechat.js');
 const EffectEngine = require('./effectengine.js');
 const Effect = require('./effect.js');
+const Effects = require('./effects');
 const Player = require('./player.js');
 const Spectator = require('./spectator.js');
 const AnonymousSpectator = require('./anonymousspectator.js');
@@ -35,6 +36,7 @@ const DropCommand = require('./ServerCommands/DropCommand');
 const CardVisibility = require('./CardVisibility');
 const PlainTextGameChatFormatter = require('./PlainTextGameChatFormatter');
 const GameActions = require('./GameActions');
+const EndRound = require('./GameActions/EndRound');
 const TimeLimit = require('./timeLimit.js');
 const PrizedKeywordListener = require('./PrizedKeywordListener');
 const GameWonPrompt = require('./gamesteps/GameWonPrompt');
@@ -571,27 +573,45 @@ class Game extends EventEmitter {
 
         if(stat === 'power') {
             target = player.faction;
-        } else if(stat === 'reserve' || stat === 'claim') {
+        } else if(stat === 'reserve' || stat === 'claim' || stat === 'initiative') {
             if(!player.activePlot) {
                 return;
             }
 
-            target = player.activePlot.cardData.plotStats;
-        }
+            target = player.activePlot;
 
-        // Ensure that manually setting reserve isn't limited by any min reserve effects
-        if(stat === 'reserve') {
-            player.minReserve = 0;
-        }
-
-        if(stat === 'claim' && typeof (player.activePlot.claimSet) === 'number') {
-            player.activePlot.claimSet += value;
-
-            if(player.activePlot.claimSet < 0) {
-                player.activePlot.claimSet = 0;
-            } else {
-                this.addAlert('danger', '{0} changes the set claim value to be {1} ({2})', player, player.activePlot.claimSet, (value > 0 ? '+' : '') + value);
+            let effect;
+            let valueGetter;
+            switch(stat) {
+                case 'claim':
+                    if(typeof (player.activePlot.claimSet) === 'number') {
+                        effect = Effects.setClaim(Math.max(player.getClaim() + value, 0));
+                    } else {
+                        effect = Effects.modifyClaim(value);
+                    }
+                    valueGetter = () => player.getClaim();
+                    break;
+                case 'initiative':
+                    effect = Effects.modifyInitiative(value);
+                    valueGetter = () => player.getTotalInitiative();
+                    break;
+                case 'reserve':
+                    effect = Effects.modifyReserve(value);
+                    valueGetter = () => player.getTotalReserve();
+                    break;
             }
+
+            if(valueGetter() <= 0 && value < 0) {
+                return;
+            }
+
+            target.lastingEffect(() => ({
+                condition: () => target.location === 'active plot',
+                match: target,
+                effect: effect
+            }));
+            this.postEventCalculations();
+            this.addAlert('danger', '{0} sets {1} to {2} ({3})', player, stat, valueGetter(), (value > 0 ? '+' : '') + value);
             return;
         }
 
@@ -820,11 +840,20 @@ class Game extends EventEmitter {
                 return false;
             }
         });
+        this.queueStep(new SimpleStep(this, () => this.resolveGameAction(EndRound, { game: this })));
         this.queueStep(new SimpleStep(this, () => this.beginRound()));
     }
 
     addPhase(phase) {
         this.remainingPhases.unshift(phase);
+    }
+
+    addPhaseAfter(phase, after) {
+        if(this.currentPhase === after) {
+            this.addPhase(phase);
+        } else {
+            this.remainingPhases.splice(this.remainingPhases.indexOf(after), 0, phase);
+        }
     }
 
     queueStep(step) {

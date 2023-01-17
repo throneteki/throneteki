@@ -8,7 +8,6 @@ class PlaceCard extends GameAction {
 
     canChangeGameState({ player, card, location, bottom = false }) {
         player = location === 'play area' ? player || card.controller : card.owner;
-
         if(location === 'draw deck') {
             return (
                 player.drawDeck[0] !== card && !bottom ||

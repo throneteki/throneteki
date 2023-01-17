@@ -1,25 +1,28 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class CitadelNovice extends DrawCard {
     setupCardAbilities(ability) {
+        const isAttachmentOrMaester = card => (
+            card.isMatch({ type: 'attachment' }) ||
+            card.isMatch({ type: 'character', trait: 'Maester' })
+        );
         this.reaction({
             when: {
                 onCardKneeled: event => event.card === this
             },
             limit: ability.limit.perPhase(1),
-            handler: () => {
-                let topCard = this.controller.drawDeck[0];
-                let message = '{0} uses {1} to reveal {2} as the top card of their deck';
-
-                if(this.controller.canDraw() &&
-                   (topCard.getType() === 'attachment' ||
-                    (topCard.hasTrait('Maester') && topCard.getType() === 'character'))) {
-                    this.controller.drawCardsToHand(1);
-                    message += ' and draw it';
-                }
-
-                this.game.addMessage(message, this.controller, this, topCard);
-            }
+            message: '{player} uses {source} to reveal the top card of their deck',
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.player
+            })).then({
+                condition: context => isAttachmentOrMaester(context.event.cards[0]),
+                message: '{player} {gameAction}',
+                gameAction: GameActions.drawSpecific(context => ({
+                    player: context.player,
+                    cards: context.event.revealed
+                }))
+            })
         });
     }
 }

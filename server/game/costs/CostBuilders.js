@@ -7,6 +7,7 @@ const DiscardTokenCost = require('./DiscardTokenCost');
 const KillCost = require('./KillCost');
 const KneelCost = require('./KneelCost');
 const PlaceInDeadPileFromHandCost = require('./PlaceInDeadPileFromHandCost');
+const PlaceOnBottomCost = require('./PlaceOnBottomCost');
 const PutIntoPlayCost = require('./PutIntoPlayCost');
 const PutIntoShadowsCost = require('./PutIntoShadowsCost');
 const RemoveFromChallengeCost = require('./RemoveFromChallengeCost');
@@ -54,6 +55,10 @@ const CostBuilders = {
     placeInDeadPileFromHand: new CostBuilder(new PlaceInDeadPileFromHandCost(), {
         select: 'Select card to place into dead pile',
         selectMultiple: number => `Select ${number} cards to place into dead pile`
+    }),
+    placeOnBottomFromHand: new CostBuilder(new PlaceOnBottomCost(), {
+        select: 'Select card to place on bottom',
+        selectMultiple: number => `Select ${number} cards to place on bottom`
     }),
     putIntoPlay: new CostBuilder(new PutIntoPlayCost(), {
         select: 'Select card to put into play',

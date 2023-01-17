@@ -28,8 +28,8 @@ class PlotCard extends BaseCard {
     }
 
     getInitiative() {
-        var baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
-        return baseValue + this.initiativeModifier;
+        const baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
+        return Math.max(baseValue + this.initiativeModifier, 0);
     }
 
     getPrintedInitiative() {

@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class MaegeMormont extends DrawCard {
     setupCardAbilities() {
@@ -6,17 +7,17 @@ class MaegeMormont extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.hasParticipatingMormont()
             },
-            handler: context => {
-                let topCard = this.controller.drawDeck[0];
-                let message = '{0} uses {1} to reveal {2} as the top card of their deck';
-
-                if(topCard.isFaction('stark') && this.controller.canDraw()) {
-                    this.controller.drawCardsToHand(1);
-                    message += ' and draw it';
-                }
-
-                this.game.addMessage(message, context.player, this, topCard);
-            }
+            message: '{player} uses {source} to reveal the top card of their deck',
+            gameAction: GameActions.revealTopCards(context => ({
+                player: context.player
+            })).then({
+                condition: context => context.event.cards[0].isFaction('stark'),
+                message: '{player} {gameAction}',
+                gameAction: GameActions.drawSpecific(context => ({
+                    player: context.player,
+                    cards: context.event.revealed
+                }))
+            })
         });
     }
 

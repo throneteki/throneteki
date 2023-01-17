@@ -3,7 +3,7 @@ describe('Valyrian\'s Crew', function() {
         this.setupTopCardUnderCrew = function(cardName) {
             const deck1 = this.buildDeck('baratheon', [
                 'Trading with the Pentoshi', 'A Noble Cause', 'A Noble Cause',
-                'Valyrian\'s Crew'
+                'Valyrian\'s Crew', 'Dragonstone Faithful'
             ]);
             const deck2 = this.buildDeck('stark', [
                 'Trading with the Pentoshi', 'A Noble Cause', 'Blood of the Dragon',
@@ -25,6 +25,10 @@ describe('Valyrian\'s Crew', function() {
             this.selectFirstPlayer(this.player1);
             this.selectPlotOrder(this.player1);
             this.completeMarshalPhase();
+
+            // 1 or more cards required in deck to trigger any search effects (such as Olenna's Cunning)
+            this.faithful = this.player1.findCardByName('Dragonstone Faithful', 'hand');
+            this.player1.dragCard(this.faithful, 'draw deck');
 
             this.topCard = this.player2Object.drawDeck[0];
 

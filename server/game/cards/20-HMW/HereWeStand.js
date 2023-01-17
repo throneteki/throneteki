@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class HereWeStand extends DrawCard {
     setupCardAbilities() {
@@ -6,30 +7,16 @@ class HereWeStand extends DrawCard {
             title: 'Search for Mormont cards',
             phase: 'dominance',
             condition: () => this.hasStandingMormontCharacter(),
-            handler: context => {
-                this.selectedCards = [];
-                this.game.promptForDeckSearch(context.player, {
-                    numCards: 10,
-                    numToSelect: 10,
-                    activePromptTitle: 'Select any number of Mormont cards',
-                    cardCondition: card => card.hasTrait('House Mormont') || card.name === 'Bear Island' || card.name === 'Bearskin Cloak',
-                    onSelect: (player, cards) => this.selectCards(player, cards),
-                    onCancel: player => this.cancelSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} plays {source} to search the top 10 cards of their deck for any number of Bear Island, Bearskin Cloak, and House Mormont cards',
+            gameAction: GameActions.search({
+                title: 'Select any number of cards',
+                topCards: 10,
+                numToSelect: 10,
+                match: { condition: card => card.hasTrait('House Mormont') || card.name === 'Bear Island' || card.name === 'Bearskin Cloak' },
+                message: '{player} adds {searchTarget} to their hand',
+                gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
+            })
         });
-    }
-
-    selectCards(player, cards) {
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, cards);
-        for(let card of cards) {
-            player.moveCard(card, 'hand');
-        }
-    }
-
-    cancelSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not add any cards to their hand', player, this);
     }
     
     hasStandingMormontCharacter() {

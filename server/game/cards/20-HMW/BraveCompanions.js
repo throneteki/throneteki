@@ -15,6 +15,7 @@ class BraveCompanions extends DrawCard {
             when: {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
+            message: '{player} uses {source} to search the top 10 cards of their deck for an Army character, a Commander character and a Mercenary character',
             gameAction: GameActions.search({
                 title: 'Select cards',
                 topCards: 10,
@@ -26,8 +27,7 @@ class BraveCompanions extends DrawCard {
                         || selectableTraits.some(trait => card.hasTrait(trait)) 
                         && Array.availableToPair(selectableTraits, context.selectedCards, (trait, card) => card.hasTrait(trait)).some(trait => card.hasTrait(trait))
                 },
-                message: '{player} uses {source} to search their deck and add {searchTarget} to their hand',
-                cancelMessage: '{player} uses {source} to search their deck but does not find a card',
+                message: '{player} adds {searchTarget} to their hand',
                 gameAction: GameActions.simultaneously(context => (
                     context.searchTarget.map(card => GameActions.addToHand({ card }))
                 ))

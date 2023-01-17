@@ -17,6 +17,7 @@ class GameWonPrompt extends AllPlayerPrompt {
             promptTitle: 'Game Won',
             menuTitle: this.winner === null ? 'Game ends in a draw' : this.winner.name + ' has won the game!',
             buttons: [
+                { arg: 'review', text: 'Open card review page (external page)' },
                 { arg: 'continue', text: 'Continue Playing' },
                 { arg: 'rematch', text: 'Rematch' }
             ]

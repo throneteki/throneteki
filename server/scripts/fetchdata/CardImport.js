@@ -43,7 +43,7 @@ class CardImport {
         for(let card of cards) {
             let imagePath = path.join(this.imageDir, card.code + '.png');
 
-            if(!fs.existsSync(imagePath)) {
+            if(!fs.existsSync(imagePath) || this.isWorkInProgress(card)) {
                 setTimeout(() => {
                     this.imageSource.fetchImage(card, imagePath);
                 }, i++ * 200);
@@ -51,6 +51,10 @@ class CardImport {
         }
     }
 
+    isWorkInProgress(card) {
+        let pack = this.imageSource.packs.find(pack => pack.code === card.packCode);
+        return pack && pack.workInProgress;
+    }
     async importPacks() {
         let packs = await this.dataSource.getPacks();
 

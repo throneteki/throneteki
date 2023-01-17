@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class SmallPaul extends DrawCard {
     setupCardAbilities() {
@@ -6,30 +7,19 @@ class SmallPaul extends DrawCard {
             when: {
                 onCharacterKilled: event => event.card === this
             },
-            handler: () => {
-                let reserve = this.controller.getTotalReserve();
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: reserve,
-                    numToSelect: reserve,
-                    activePromptTitle: 'Select any number of Stewards',
-                    cardCondition: card => card.hasTrait('Steward') && card.getType() === 'character',
-                    onSelect: (player, card) => this.selectCards(player, card),
-                    onCancel: player => this.cancelSelecting(player),
-                    source: this
-                });
-            }
+            message: {
+                format: '{player} uses {source} to search the top {reserve} cards of their deck for any number of Steward characters',
+                args: { reserve: () => this.controller.getTotalReserve() }
+            },
+            gameAction: GameActions.search({
+                title: 'Select any number of characters',
+                numToSelect: context => context.player.getTotalReserve(),
+                topCards: context => context.player.getTotalReserve(),
+                match: { type: 'character', trait: 'Steward' },
+                message: '{player} adds {searchTarget} to their hand',
+                gameAction: GameActions.simultaneously(context => context.searchTarget.map(card => GameActions.addToHand({ card })))
+            })
         });
-    }
-
-    selectCards(player, cards) {
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand', player, this, cards);
-        for(let card of cards) {
-            player.moveCard(card, 'hand');
-        }
-    }
-
-    cancelSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not retrieve any cards', player, this);
     }
 }
 

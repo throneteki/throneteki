@@ -19,10 +19,12 @@ class DrawCard extends BaseCard {
         this.dominanceOptions = new ReferenceCountedSetProperty();
         this.kneeled = false;
         this.inChallenge = false;
+        this.isContributing = false;
         this.inDanger = false;
         this.saved = false;
         this.challengeOptions = new ReferenceCountedSetProperty();
         this.stealthLimit = 1;
+        this.pillageLimit = 1;
         this.minCost = 0;
         this.eventPlacementLocation = 'discard pile';
     }
@@ -373,6 +375,7 @@ class DrawCard extends BaseCard {
         this.stealth = false;
         this.stealthTarget = undefined;
         this.inChallenge = false;
+        this.isContributing = false;
     }
 
     kneelsAsAttacker(challengeType) {
@@ -488,6 +491,7 @@ class DrawCard extends BaseCard {
             iconsAdded: this.getIconsAdded(),
             iconsRemoved: this.getIconsRemoved(),
             inChallenge: this.inChallenge,
+            isContributing: this.isContributing,
             inDanger: this.inDanger,
             saved: this.saved,
             strength: this.getStrength(),
