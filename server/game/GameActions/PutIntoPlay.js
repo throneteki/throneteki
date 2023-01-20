@@ -23,14 +23,14 @@ class PutIntoPlay extends GameAction {
         return card.location !== 'play area' && player.canPutIntoPlay(card);
     }
 
-    createEvent({ player, card, kneeled, playingType }) {
+    createEvent({ player, card, kneeled, playingType, attachmentTargets }) {
         player = player || card.controller;
 
         let dupeCard = player.getDuplicateInPlay(card);
 
         if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             return this.event('__PLACEHOLDER_EVENT__', { player, card }, event => {
-                event.player.putIntoPlay(event.card, 'play', { kneeled });
+                event.player.putIntoPlay(event.card, 'play', { kneeled, attachmentTargets });
             });
         }
 

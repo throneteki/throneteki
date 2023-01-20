@@ -12,7 +12,8 @@ class GiftsForTheWidow extends DrawCard {
                 reveal: false,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay(context => ({
-                    card: context.searchTarget
+                    card: context.searchTarget,
+                    attachmentTargets: card => card.controller === context.player
                 }))
             })
         });
