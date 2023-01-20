@@ -34,7 +34,7 @@ describe('Storm\'s End (BtB)', function() {
             it('should have an initiated challenge type & current challenge type of Military', function() {
                 expect(this.game.currentChallenge.initiatedChallengeType).toBe('military');
                 expect(this.game.currentChallenge.challengeType).toBe('military');
-            })
+            });
 
             it('should allow the attacker to trigger Storm\'s End', function() {
                 expect(this.player1).toAllowAbilityTrigger(this.stormsEnd);
@@ -58,7 +58,6 @@ describe('Storm\'s End (BtB)', function() {
                     expect(this.game.currentChallenge.defenders).toContain(this.septon);
                 });
             });
-
         });
     });
 });
