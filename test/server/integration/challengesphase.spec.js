@@ -39,7 +39,7 @@ describe('challenges phase', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('thenightswatch', [
                     'A Noble Cause',
-                    'Steward at the Wall', 'The Haunted Forest', 'The Haunted Forest', 'The Shadow Tower'
+                    'Steward at the Wall', 'The Haunted Forest', 'The Haunted Forest', 'The Shadow Tower (WotN)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
