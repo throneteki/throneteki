@@ -8,7 +8,7 @@ class SerHobberRedwyne extends DrawCard {
                 onCardEntersPlay: event => event.card === this && event.playingType === 'marshal'
             },
             message: '{player} uses {source} to search their deck for a Lady character',
-            gameActions: GameActions.search({
+            gameAction: GameActions.search({
                 title: 'Select a character',
                 match: {
                     type: 'character',
