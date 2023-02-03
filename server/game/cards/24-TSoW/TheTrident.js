@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
 
 class TheTrident extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.plotModifiers({
             claim: 1
         });
