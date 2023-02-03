@@ -72,7 +72,8 @@ class BaseCard {
         this.canProvidePlotModifier = {
             gold: true,
             initiative: true,
-            reserve: true
+            reserve: true,
+            claim: true
         };
 
         this.abilityRestrictions = [];
@@ -149,6 +150,14 @@ class BaseCard {
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
+            });
+        }
+        if(modifiers.claim) {
+            this.persistentEffect({
+                condition: () => this.canProvidePlotModifier['claim'],
+                match: card => card.controller.activePlot === card,
+                targetController: 'current',
+                effect: AbilityDsl.effects.modifyClaim(modifiers.claim)
             });
         }
     }
