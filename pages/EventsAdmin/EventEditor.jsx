@@ -34,8 +34,10 @@ class EventEditor extends React.Component {
             format: event.format,
             restricted: event.restricted,
             banned: event.banned,
+            pods: event.pods,
             restrictedListText: this.formatListTextForCards(props.cards, event.restricted),
             bannedListText: this.formatListTextForCards(props.cards, event.banned),
+            podsText: event.pods ? JSON.stringify(event.pods) : '',
             useEventGameOptions: event.useEventGameOptions,
             eventGameOptions: event.eventGameOptions,
             restrictSpectators: event.restrictSpectators,
@@ -64,6 +66,7 @@ class EventEditor extends React.Component {
             eventGameOptions: this.state.eventGameOptions,
             restricted: this.state.restricted,
             banned: this.state.banned,
+            pods: this.state.pods,
             restrictSpectators: this.state.restrictSpectators,
             validSpectators: this.state.validSpectators,
             lockDecks: this.state.lockDecks
@@ -214,6 +217,18 @@ class EventEditor extends React.Component {
         return matchingCards[0];
     }
 
+    handlePodListChange({ event, textProperty, arrayProperty }) {
+        let parsedPodObject = undefined;
+        try {
+            parsedPodObject = JSON.parse(event.target.value);
+        } finally {
+            this.setState({
+                [textProperty]: event.target.value,
+                [arrayProperty]: parsedPodObject ? parsedPodObject : []
+            });
+        }
+    }
+
     compareCardByReleaseDate(a, b) {
         let packA = this.props.packs.find(pack => pack.code === a.packCode);
         let packB = this.props.packs.find(pack => pack.code === b.packCode);
@@ -361,6 +376,8 @@ class EventEditor extends React.Component {
                             onChange={ event => this.handleCardListChange({ event, textProperty: 'restrictedListText', arrayProperty: 'restricted' }) } />
                         <TextArea label='Banned List' labelClass='col-sm-3' fieldClass='col-sm-9' rows='4' value={ this.state.bannedListText }
                             onChange={ event => this.handleCardListChange({ event, textProperty: 'bannedListText', arrayProperty: 'banned' }) } />
+                        <TextArea label='Banned Pods' labelClass='col-sm-3' fieldClass='col-sm-9' rows='4' value={ this.state.podsText }
+                            onChange={ event => this.handlePodListChange({ event, textProperty: 'podsText', arrayProperty: 'pods' }) } />
                     </div>) }
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
