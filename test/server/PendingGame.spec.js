@@ -4,7 +4,7 @@ const User = require('../../server/models/User');
 describe('PendingGame', function() {
     beforeEach(function() {
         this.owner = new User({ username: 'test1' });
-        this.game = new PendingGame(this.owner, { spectators: true });
+        this.game = new PendingGame(this.owner, 'development', { spectators: true });
     });
 
     describe('block list functionality', function() {
