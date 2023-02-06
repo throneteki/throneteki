@@ -18,7 +18,7 @@ class GameWonPrompt extends AllPlayerPrompt {
             { arg: 'rematch', text: 'Rematch' }
         ];
 
-        if(this.game.isPlaytesting) {
+        if(this.game.instance === 'playtesting') {
             buttons.unshift({ arg: 'review', text: 'Open card review page (external page)' });
         }
 

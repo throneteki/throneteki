@@ -45,7 +45,7 @@ class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
 
-        this.isPlaytesting = true; // TODO: Get this value from config
+        this.instance = details.instance;
         this.event = details.event;
         this.eventName = details.event && details.event.name;
         this.restrictedList = details.restrictedList;
