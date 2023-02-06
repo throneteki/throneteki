@@ -8,7 +8,9 @@ class Goldengrove extends DrawCard {
             limit: ability.limit.perRound(2),
             cost: ability.costs.kneel(card => card === this || (card.hasTrait('Small Council') && card.getType() === 'character')),
             target: {
-                cardCondition: (card, context) => card.location === 'play area' && card.owner === context.player && (!context.costs.kneel || card.getPrintedCost() <= context.costs.kneel.getPrintedCost())
+                cardCondition: (card, context) => card.location === 'play area'
+                                                    && card.owner === context.player
+                                                    && (!context.costs.kneel || (card !== context.costs.kneel && card.getPrintedCost() <= context.costs.kneel.getPrintedCost()))
             },
             message: {
                 format: '{player} uses {source} and kneels {kneltCard} to stand and take control of {target}',
