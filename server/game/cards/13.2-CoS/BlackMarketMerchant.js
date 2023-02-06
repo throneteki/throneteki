@@ -11,7 +11,7 @@ class BlackMarketMerchant extends DrawCard {
             gameAction: GameActions.search({
                 title: 'Select an attachment',
                 topCards: 10,
-                match: { type: 'attachment', printedCostOrLower: 3, controller: 'current', condition: (card, context) => this.canAttachToControlledCharacter(context.player, card) },
+                match: { type: 'attachment', printedCostOrLower: 3, controller: 'current' },
                 reveal: false,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay(context => ({
@@ -20,10 +20,6 @@ class BlackMarketMerchant extends DrawCard {
                 }))
             })
         });
-    }
-
-    canAttachToControlledCharacter(player, attachment) {
-        return player.anyCardsInPlay(card => card.getType() === 'character' && player.canAttach(attachment, card));
     }
 }
 

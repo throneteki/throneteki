@@ -18,9 +18,11 @@ class PutIntoPlay extends GameAction {
         return Message.fragment(message, { card, controller: card.controller, originalLocation: card.location });
     }
 
-    canChangeGameState({ player, card }) {
+    canChangeGameState({ player, card, attachmentTargets }) {
         player = player || card.controller;
-        return card.location !== 'play area' && player.canPutIntoPlay(card);
+        attachmentTargets = attachmentTargets || (() => true);
+        return card.location !== 'play area' && player.canPutIntoPlay(card) 
+            && (card.getType() !== 'attachment' || player.game.anyCardsInPlay(c => player.canAttach(card, c) && attachmentTargets(c)));
     }
 
     createEvent({ player, card, kneeled, playingType, attachmentTargets }) {
