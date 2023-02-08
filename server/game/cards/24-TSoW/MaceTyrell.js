@@ -29,7 +29,7 @@ class MaceTyrell extends DrawCard {
                                         this.game.currentChallenge.addParticipantToSide(this.controller, context.target);
                                     })
                                 ])
-                            , context);
+                                , context);
                         }
                     })
                     , context);
