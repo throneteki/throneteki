@@ -13,7 +13,7 @@ class SerAndreyDalt extends DrawCard {
             },
             choosePlayer: () => true,
             cost: ability.costs.discardFromShadows(),
-            message: '{player} uses {source} and discards {cost.discardFromShadows} from shadows to have {chosenPlayer} win dominance instead',
+            message: '{player} uses {source} and discards {costs.discardFromShadows} from shadows to have {chosenPlayer} win dominance instead',
             handler: context => {
                 context.event.winner = context.chosenPlayer;
             }
