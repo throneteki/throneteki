@@ -21,12 +21,16 @@ class MaceTyrell extends DrawCard {
                             cardCondition: (card, context) => card !== context.parentContext.target && !card.isParticipating() && this.isControlledArmy(card)
                         },
                         message: 'Then, {player} kneels {target} to have it participate in the challenge on their side',
-                        gameAction: GameActions.simultaneously([
-                            GameActions.kneelCard({ card: context.target }),
-                            GameActions.genericHandler(context => {
-                                this.game.currentChallenge.addParticipantToSide(this.controller, context.target);
-                            })
-                        ])
+                        handler: context => {
+                            this.game.resolveGameAction(
+                                GameActions.simultaneously([
+                                    GameActions.kneelCard({ card: context.target }),
+                                    GameActions.genericHandler(context => {
+                                        this.game.currentChallenge.addParticipantToSide(this.controller, context.target);
+                                    })
+                                ])
+                            , context);
+                        }
                     })
                     , context);
             }
