@@ -1,6 +1,6 @@
 {
     env: 'development',
-	instance: 'development',
+    instance: 'development',
 
     secret: 'somethingverysecret',
     hmacSecret: 'somethingevenmoresecret',
