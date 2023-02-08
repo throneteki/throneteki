@@ -14,7 +14,7 @@ class PyatPree extends DrawCard {
             gameAction: GameActions.search({
                 title: 'Select a card',
                 match: { type: ['attachment', 'event'], faction: 'targaryen' },
-                numToSelect: context => context.event.challenge.strengthDifference,
+                topCards: context => context.event.challenge.strengthDifference,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.addToHand(context => ({
                     card: context.searchTarget
