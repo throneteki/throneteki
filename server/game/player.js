@@ -549,6 +549,10 @@ class Player extends Spectator {
             return false;
         }
 
+        if(card.getPrintedType() === 'attachment' && options.attachmentTargets && !this.anyCardsInPlay(options.attachmentTargets)) {
+            return false;
+        }
+
         if(!options.isEffectExpiration && !this.canPlay(card, playingType)) {
             return false;
         }
@@ -598,7 +602,7 @@ class Player extends Spectator {
         var dupeCard = this.getDuplicateInPlay(card);
 
         if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
-            this.promptForAttachment(card, playingType);
+            this.promptForAttachment(card, playingType, options.attachmentTargets);
             return;
         }
 
@@ -842,9 +846,9 @@ class Player extends Spectator {
         }
     }
 
-    promptForAttachment(card, playingType) {
+    promptForAttachment(card, playingType, targets) {
         // TODO: Really want to move this out of here.
-        this.game.queueStep(new AttachmentPrompt(this.game, this, card, playingType));
+        this.game.queueStep(new AttachmentPrompt(this.game, this, card, playingType, targets));
     }
 
     resetChallengesPerformed() {
