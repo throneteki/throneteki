@@ -8,18 +8,15 @@ class GiftsForTheWidow extends DrawCard {
             cost: ability.costs.payXGold(() => 0, () => 99),
             gameAction: GameActions.search({
                 title: 'Select an attachment',
-                match: { type: 'attachment', condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() <= context.xValue && this.canAttachToControlledCharacter(context.player, card) },
+                match: { type: 'attachment', condition: (card, context) => card.hasPrintedCost() && card.getPrintedCost() <= context.xValue },
                 reveal: false,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay(context => ({
-                    card: context.searchTarget
+                    card: context.searchTarget,
+                    attachmentTargets: card => card.controller === context.player
                 }))
             })
         });
-    }
-
-    canAttachToControlledCharacter(player, attachment) {
-        return player.anyCardsInPlay(card => card.getType() === 'character' && player.canAttach(attachment, card));
     }
 }
 

@@ -18,19 +18,21 @@ class PutIntoPlay extends GameAction {
         return Message.fragment(message, { card, controller: card.controller, originalLocation: card.location });
     }
 
-    canChangeGameState({ player, card }) {
+    canChangeGameState({ player, card, attachmentTargets }) {
         player = player || card.controller;
-        return card.location !== 'play area' && player.canPutIntoPlay(card);
+        attachmentTargets = attachmentTargets || (() => true);
+        return card.location !== 'play area' && player.canPutIntoPlay(card) 
+            && (card.getType() !== 'attachment' || player.game.anyCardsInPlay(c => player.canAttach(card, c) && attachmentTargets(c)));
     }
 
-    createEvent({ player, card, kneeled, playingType }) {
+    createEvent({ player, card, kneeled, playingType, attachmentTargets }) {
         player = player || card.controller;
 
         let dupeCard = player.getDuplicateInPlay(card);
 
         if(card.getPrintedType() === 'attachment' && playingType !== 'setup' && !dupeCard) {
             return this.event('__PLACEHOLDER_EVENT__', { player, card }, event => {
-                event.player.putIntoPlay(event.card, 'play', { kneeled });
+                event.player.putIntoPlay(event.card, 'play', { kneeled, attachmentTargets });
             });
         }
 
