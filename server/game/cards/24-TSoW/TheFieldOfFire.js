@@ -33,7 +33,7 @@ class TheFieldOfFire extends DrawCard {
             this.untilEndOfPhase(ability => ({
                 match: reduceOne,
                 targetController: 'any',
-                effect: ability.effects.modifyStrength(dragons)
+                effect: ability.effects.modifyStrength(-dragons)
             }));
             reductionMessages.push(Message.fragment('{cards} by 1', { cards: reduceOne }));
         }
@@ -41,7 +41,7 @@ class TheFieldOfFire extends DrawCard {
             this.untilEndOfPhase(ability => ({
                 match: reduceThree,
                 targetController: 'any',
-                effect: ability.effects.modifyStrength(dragons * 3)
+                effect: ability.effects.modifyStrength(-dragons * 3)
             }));
             reductionMessages.push(Message.fragment('{cards} by 3', { cards: reduceThree }));
         }
