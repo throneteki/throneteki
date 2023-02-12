@@ -38,7 +38,7 @@ class MaceTyrell extends DrawCard {
     }
     
     isControlledArmy(card) {
-        return card.controller === this.controller && card.getType() === 'character' && card.hasTrait('Army');
+        return card.controller === this.controller && card.isMatch({ type: 'character', trait: 'Army', location: 'play area' });
     }
 }
 
