@@ -1309,14 +1309,14 @@ const Effects = {
             isStateDependent: true
         };
     },
-    mustChooseAsClaim: function(card) {
+    mustChooseAsClaim: function(cardFunc) {
         return {
             targetType: 'player',
             apply: function(player) {
-                player.mustChooseAsClaim.push(card);
+                player.mustChooseAsClaim.push(cardFunc);
             },
             unapply: function(player) {
-                player.mustChooseAsClaim = player.mustChooseAsClaim.filter(c => c !== card);
+                player.mustChooseAsClaim = player.mustChooseAsClaim.filter(c => c !== cardFunc);
             }
         };
     },
