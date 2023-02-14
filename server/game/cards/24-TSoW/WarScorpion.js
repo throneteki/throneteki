@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const Message = require('../../Message');
 const GameActions = require('../../GameActions/index.js');
 
 class WarScorpion extends DrawCard {
@@ -6,20 +7,38 @@ class WarScorpion extends DrawCard {
         this.whileAttached({
             effect: ability.effects.modifyStrength(2)
         });
-        this.reaction({
-            when: {
-                afterChallenge: event => event.challenge.winner === this.controller
-                                            && event.challenge.challengeType === 'military'
-                                            && event.challenge.isDefending(this.parent)
-            },
+        this.action({
+            title: 'Remove attacker from challenge',
             cost: ability.costs.sacrificeSelf(),
             target: {
-                type: 'select',
-                cardCondition: { attacking: true, trait: ['Army', 'Dragon'] }
+                cardCondition: { type: 'character', attacking: true }
             },
-            message: '{player} sacrifices {costs.sacrifice} to kill {target}',
+            message: {
+                format: '{player} sacrifices {source} to {options}',
+                args: { options: context => Message.fragment(!context.target.isMatch({ trait: ['Army', 'Dragon'] }) ? 'remove {target} from the challenge' : 'either kill {target} or remove it from the challenge', { target: context.target }) }
+            },
             handler: context => {
-                this.game.resolveGameAction(GameActions.kill(context => ({ card: context.target, player: context.player })), context);
+                this.game.resolveGameAction(
+                    GameActions.ifCondition({
+                        condition: context => !context.target.isMatch({ trait: ['Army', 'Dragon'] }),
+                        thenAction: {
+                            gameAction: GameActions.removeFromChallenge(context => ({ card: context.target }))
+                        },
+                        elseAction: GameActions.choose({
+                            title: context => `Kill ${context.target.name} instead?`,
+                            choices: {
+                                'Kill': {
+                                    message: '{player} chooses to kill {target}',
+                                    gameAction: GameActions.kill(context => ({ card: context.target }))
+                                },
+                                'Remove from challenge': {
+                                    message: '{player} chooses to remove {target} from the challenge',
+                                    gameAction: GameActions.removeFromChallenge(context => ({ card: context.target }))
+                                }
+                            }
+                        })
+                    })
+                    , context);
             }
         });
     }

@@ -12,7 +12,7 @@ class KingRobbsBannermen extends DrawCard {
             },
             target: {
                 activePromptTitle: 'Select a character',
-                cardCondition: { type: 'character', defending: true },
+                cardCondition: { type: 'character', participating: false, condition: (card, context) => card.controller === context.event.challenge.loser },
                 gameAction: 'kill'
             },
             message: '{player} uses {source} to kill {target}',

@@ -2,11 +2,6 @@ const DrawCard = require('../../drawcard.js');
 
 class SerAndreyDalt extends DrawCard {
     setupCardAbilities(ability) {
-        this.persistentEffect({
-            condition: () => this.game.allCards.filter(card => card.location === 'shadows').length <= 3,
-            match: this,
-            effect: ability.effects.addKeyword('Renown')
-        });
         this.interrupt({
             when: {
                 onDominanceDetermined: event => this.controller === event.winner
