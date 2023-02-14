@@ -8,7 +8,7 @@ class KingsLandingMob extends DrawCard {
             targetController: 'current',
             effect: [
                 ability.effects.reduceSelfCost('marshal', () => this.controller.getTotalReserve()),
-                ability.effects.setMinCost(1)
+                ability.effects.setMinCost(4)
             ]
         });
         this.reaction({

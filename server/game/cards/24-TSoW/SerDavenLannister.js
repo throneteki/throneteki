@@ -2,24 +2,20 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
 
 class SerDavenLannister extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({
-                    winner: this.controller,
-                    challengeType: 'power',
-                    match: challenge => challenge.anyParticipants(card => card.controller === this.controller && card.hasTrait('Army'))
-                })
+                onCardPowerGained: event => event.card === this
             },
-            cost: ability.costs.discardAnyPower(card => card === this),
-            message: {
-                format: '{player} discards {costs.discardPower} power from {source} to discard {costs.discardPower} card(s) from {loser}\'s hand and draw {costs.discardPower} card(s)',
-                args: { loser: context => context.event.challenge.loser }
-            },
-            gameAction: GameActions.simultaneously(context => [
-                GameActions.discardAtRandom({ amount: context.costs.discardPower, player: context.event.challenge.loser }),
-                GameActions.drawCards({ amount: context.costs.discardPower, player: context.player })
-            ])
+            message: '{player} uses {source} to discard 1 card at random from each opponents hand',
+            gameAction: GameActions.simultaneously(context => 
+                context.game.getOpponents(context.player).map(opponent => GameActions.discardAtRandom({ amount: 1, player: opponent }))
+            ).then({
+                condition: context => context.game.getOpponents(context.player).every(opponent => opponent.hand.length < context.player.hand.length),
+                message: 'Then, {player} draws 1 card',
+                gameAction: GameActions.drawCards(context => ({ amount: context.costs.discardPower, player: context.player }))
+            })
+            
         });
     }
 }

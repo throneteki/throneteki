@@ -7,30 +7,24 @@ class TheShadowTower extends DrawCard {
             match: card => card.getType() === 'character' && card.controller === this.controller && card.owner !== this.controller,
             effect: ability.effects.modifyStrength(1)
         });
-        this.reaction({
-            when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.defendingPlayer === this.controller
-            },
+        this.action({
+            title: 'Reveal card in shadows',
+            cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a card',
-                cardCondition: (card, context) => card.location === 'shadows' && card.controller === context.event.challenge.loser,
+                cardCondition: card => card.location === 'shadows' && card.controller !== this.controller,
                 gameAction: 'reveal'
             },
+            message: '{source} kneels {costs.kneel} to reveal a card in shadows',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.revealCards(context => ({ 
                         cards: [context.target], 
                         player: context.player
                     })).then({
-                        condition: context => context.event.cards[0].isMatch({ type: 'character' }) && context.event.revealed.length > 0,
-                        gameAction: GameActions.may({
-                            title: context => `Sacrifice to take control of ${context.event.revealed[0].name}?`,
-                            message: '{player} {gameAction}',
-                            gameAction: GameActions.putIntoPlay(context => ({
-                                player: context.player,
-                                card: context.event.revealed[0]
-                            }))
-                        })
+                        condition: context => context.event.cards[0].isMatch({ type: 'character', unique: false }) && context.event.revealed.length > 0,
+                        message: '{player} {gameAction}',
+                        gameAction: GameActions.putIntoPlay(context => ({ card: context.event.cards[0], player: context.player }))
                     })
                     , context
                 );

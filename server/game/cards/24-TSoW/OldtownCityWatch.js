@@ -1,6 +1,6 @@
 const DrawCard = require('../../drawcard.js');
 
-class CityWatchOfOldtown extends DrawCard {
+class OldtownCityWatch extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
@@ -18,6 +18,6 @@ class CityWatchOfOldtown extends DrawCard {
     }
 }
 
-CityWatchOfOldtown.code = '24023';
+OldtownCityWatch.code = '24023';
 
-module.exports = CityWatchOfOldtown;
+module.exports = OldtownCityWatch;
