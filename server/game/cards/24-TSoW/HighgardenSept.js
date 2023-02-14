@@ -1,8 +1,11 @@
 const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
 
-class HighgardenCastleSept extends DrawCard {
+class HighgardenSept extends DrawCard {
     setupCardAbilities(ability) {
+        this.plotModifiers({
+            reserve: 1
+        });
         this.persistentEffect({
             condition: () => this.controller.hand.length >= 7,
             targetController: 'any',
@@ -23,6 +26,6 @@ class HighgardenCastleSept extends DrawCard {
     }
 }
 
-HighgardenCastleSept.code = '24024';
+HighgardenSept.code = '24024';
 
-module.exports = HighgardenCastleSept;
+module.exports = HighgardenSept;
