@@ -16,6 +16,7 @@ class HighgardenSept extends DrawCard {
                 onCardPowerGained: event => this.isControlledCharacter(event.card),
                 onCardPowerMoved: event => this.isControlledCharacter(event.target)
             },
+            limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to draw 1 card',
             gameAction: GameActions.drawCards(context => ({ amount: 1, player: context.player, source: this }))
         });
