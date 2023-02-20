@@ -9,7 +9,7 @@ class HighgardenSept extends DrawCard {
         this.persistentEffect({
             condition: () => this.controller.hand.length >= 7,
             targetController: 'any',
-            effect: ability.effects.cannotPutIntoPlay((card, playingType) => !card.hasTrait('The Seven') && playingType !== 'marshal')
+            effect: ability.effects.cannotPutIntoPlay((card, playingType) => card.getType() !== 'event' && !card.hasTrait('The Seven') && playingType !== 'marshal')
         });
         this.reaction({
             when: {
