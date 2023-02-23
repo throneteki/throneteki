@@ -1,7 +1,8 @@
 const DrawCard = require('../../drawcard.js');
 
-class LeaderOfTheVanguard extends DrawCard {
+class VanguardLeader extends DrawCard {
     setupCardAbilities(ability) {
+        this.attachmentRestriction({ unique: true });
         this.whileAttached({
             effect: [
                 ability.effects.addTrait('Commander'),
@@ -11,6 +12,6 @@ class LeaderOfTheVanguard extends DrawCard {
     }
 }
 
-LeaderOfTheVanguard.code = '24027';
+VanguardLeader.code = '24027';
 
-module.exports = LeaderOfTheVanguard;
+module.exports = VanguardLeader;
