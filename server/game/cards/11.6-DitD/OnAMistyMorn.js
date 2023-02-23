@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions/index.js');
 
 class OnAMistyMorn extends DrawCard {
     setupCardAbilities() {
@@ -9,11 +10,9 @@ class OnAMistyMorn extends DrawCard {
                 numCards: 2,
                 cardCondition: card => card.controller === this.controller && card.location === 'dead pile' && card.getType() === 'character' && !card.isUnique()
             },
+            message: '{player} plays {source} to return {target} to their hand',
             handler: context => {
-                this.game.addMessage('{0} plays {1} to return {2} to hand', context.player, this, context.target);
-                for(let card of context.target) {
-                    context.player.returnCardToHand(card);
-                }
+                this.game.resolveGameAction(GameActions.simultaneously(context => context.target.map(card => GameActions.returnCardToHand({ card }))), context);
             }
         });
     }
