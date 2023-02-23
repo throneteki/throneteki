@@ -9,13 +9,14 @@ class HighgardenSept extends DrawCard {
         this.persistentEffect({
             condition: () => this.controller.hand.length >= 7,
             targetController: 'any',
-            effect: ability.effects.cannotPutIntoPlay((card, playingType) => !card.hasTrait('The Seven') && playingType !== 'marshal')
+            effect: ability.effects.cannotPutIntoPlay((card, playingType) => card.getType() !== 'event' && !card.hasTrait('The Seven') && playingType !== 'marshal')
         });
         this.reaction({
             when: {
                 onCardPowerGained: event => this.isControlledCharacter(event.card),
                 onCardPowerMoved: event => this.isControlledCharacter(event.target)
             },
+            limit: ability.limit.perPhase(1),
             message: '{player} uses {source} to draw 1 card',
             gameAction: GameActions.drawCards(context => ({ amount: 1, player: context.player, source: this }))
         });

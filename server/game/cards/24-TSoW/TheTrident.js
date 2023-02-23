@@ -32,9 +32,11 @@ class TheTrident extends DrawCard {
                                 onSelect: (player, card) => {
                                     this.game.addMessage('{0} chooses to sacrifice {1}', player, card);
                                     this.game.resolveGameAction(GameActions.sacrificeCard(() => ({ card })), context);
+                                    return true;
                                 },
                                 onCancel: (player) => {
                                     this.game.addAlert('danger', '{0} cancels resolution of {1}', player, context.source);
+                                    return true;
                                 },
                                 source: context.source
                             });

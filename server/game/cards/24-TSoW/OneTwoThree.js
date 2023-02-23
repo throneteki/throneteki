@@ -38,7 +38,7 @@ class OneTwoThree extends DrawCard {
                         GameActions.putIntoShadows(context => ({ card: context.targets.shadows })),
                         GameActions.genericHandler(context => {
                             this.untilEndOfPhase(ability => ({
-                                match: context.target,
+                                match: context.targets.insight,
                                 effect: ability.effects.addKeyword('insight')
                             }));
                         })

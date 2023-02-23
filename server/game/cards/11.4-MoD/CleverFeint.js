@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class CleverFeint extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,12 +11,9 @@ class CleverFeint extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.controller === this.controller &&
                                        card.isShadow()
             },
+            message: '{player} plays {source} to return {target} to shadows',
             handler: context => {
-                for(let card of context.target) {
-                    card.controller.moveCard(card, 'shadows');
-                }
-
-                this.game.addMessage('{0} plays {1} to return {2} to shadows', context.player, this, context.target);
+                this.game.resolveGameAction(GameActions.simultaneously(context => context.target.map(card => GameActions.putIntoShadows({ card }))), context);
             }
         });
     }
