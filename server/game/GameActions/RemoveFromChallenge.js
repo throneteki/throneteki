@@ -31,7 +31,7 @@ class RemoveFromChallenge extends GameAction {
             event.card.inChallenge = false;
     
             event.challenge.challengeContributions.removeParticipants([event.card]);
-
+    
             event.challenge.calculateStrength();
         });
     }

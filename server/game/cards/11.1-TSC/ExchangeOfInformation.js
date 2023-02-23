@@ -10,7 +10,7 @@ class ExchangeOfInformation extends PlotCard {
                 this.selectedCards = [];
                 this.game.resolveGameAction(
                     GameActions.revealTopCards({
-                        player: this.controller,
+                        player: context.player,
                         amount: 10,
                         whileRevealed: GameActions.simultaneously(
                             ['character', 'location', 'attachment', 'event'].map(cardType => GameActions.ifCondition({

@@ -11,7 +11,7 @@ class SerBorosBlount extends DrawCard {
             gameAction: GameActions.search({
                 title: 'Select a character',
                 topCards: 10,
-                match: { type: 'character', trait: ['Kingsguard', 'Knight'], not: { faction: 'lannister' } },
+                match: { type: 'character', or: [{ trait: ['Knight'], not: { faction: 'lannister' } }, {trait: ['Kingsguard']}] },
                 reveal: false,
                 message: '{player} {gameAction}',
                 gameAction: GameActions.putIntoPlay(context => ({
