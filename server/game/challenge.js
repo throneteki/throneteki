@@ -96,6 +96,7 @@ class Challenge {
         this.attackers = this.attackers.filter(c => c !== card);
         this.declaredAttackers = this.declaredAttackers.filter(c => c !== card);
         this.defenders = this.defenders.filter(c => c !== card);
+        this.declaredDefenders = this.declaredDefenders.filter(c => c !== card);
 
         card.inChallenge = false;
 
