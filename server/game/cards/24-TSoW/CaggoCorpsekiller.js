@@ -5,8 +5,8 @@ class CaggoCorpsekiller extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCardReturnedToHand: event => event.card.getType() === 'character' && event.cardStateWhenMoved.location === 'play area',
-                onCardPutIntoShadows: event => event.card.getType() === 'character' && event.cardStateWhenMoved.location === 'play area'
+                onCardReturnedToHand: event => event.card.getType() === 'character' && event.card.location === 'play area',
+                onCardPutIntoShadows: event => event.card.getType() === 'character' && event.card.location === 'play area'
             },
             cost: ability.costs.kneelSelf(),
             message: {
