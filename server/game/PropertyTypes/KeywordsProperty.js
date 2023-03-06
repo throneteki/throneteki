@@ -8,6 +8,7 @@ class KeywordsProperty {
         this.bestowMaxes = [];
         this.shadowCosts = [];
         this.prizedValues = [];
+        this.limitModifiers = new KeywordLimitModifiers();
     }
 
     add(value) {
@@ -98,6 +99,42 @@ class KeywordsProperty {
         }
 
         return values.reduce((a, b) => func(a, b));
+    }
+
+    raiseLimit(value, amount) {
+        this.limitModifiers.raise(value, amount);
+    }
+    
+    lowerLimit(value, amount) {
+        this.limitModifiers.lower(value, amount);
+    }
+
+    getLimitModifier(value) {
+        return this.limitModifiers.get(value);
+    }
+}
+
+class KeywordLimitModifiers {
+    constructor() {
+        this.limitModifiers = new Map();
+    }
+
+    raise(value, amount) {
+        let lowerCaseValue = value.toLowerCase();
+        let currentModifier = this.limitModifiers.get(lowerCaseValue) || 0;
+        this.limitModifiers.set(lowerCaseValue, currentModifier + amount);
+    }
+
+    lower(value, amount) {
+        let lowerCaseValue = value.toLowerCase();
+        let currentModifier = this.limitModifiers.get(lowerCaseValue) || 0;
+        this.limitModifiers.set(lowerCaseValue, currentModifier - amount);
+    }
+
+    get(value) {
+        let lowerCaseValue = value.toLowerCase();
+        let currentModifier = this.limitModifiers.get(lowerCaseValue) || 0;
+        return currentModifier;
     }
 }
 
