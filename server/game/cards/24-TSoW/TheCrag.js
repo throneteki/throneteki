@@ -4,27 +4,23 @@ const GameActions = require('../../GameActions/index.js');
 class TheCrag extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            match: card => card.controller === this.controller && card.name === 'Robb Stark',
-            effect: [
-                ability.effects.addKeyword('assault'),
-                ability.effects.cannotBeSaved()
-            ]
+            targetController: 'current',
+            effect: ability.effects.cannotInitiateChallengeType('intrigue')
         });
         this.reaction({
             when: {
-                onCardKneeled: event => event.card.getType() === 'location' && event.card.isUnique() && event.cause === 'assault'
+                afterChallenge: event => event.challenge.isMatch({ challengeType: 'military', winner: this.controller, by5: true })
             },
-            cost: ability.costs.kneelSelf(),
             message: {
-                format: '{player} kneels {source} to have {source} gain {amount} power',
-                args: { amount: () => this.getAmountOfPower() }
+                format: '{player} uses {source} to discard {amount} cards at random from {loser}\'s hand',
+                args: { amount: context => this.getAmountForDiscard(context), loser: context => context.event.challenge.loser }
             },
-            gameAction: GameActions.gainPower({ amount: this.getAmountOfPower(), card: this })
+            gameAction: GameActions.discardAtRandom(context => ({ player: context.event.challenge.loser, amount: this.getAmountForDiscard(context) }))
         });
     }
 
-    getAmountOfPower() {
-        this.controller.activePlot && this.controller.activePlot.hasTrait('War') ? 2 : 1;
+    getAmountForDiscard(context) {
+        return context.player.anyCardsInPlay(card => card.name === 'Robb Stark') ? 2 : 1;
     }
 }
 
