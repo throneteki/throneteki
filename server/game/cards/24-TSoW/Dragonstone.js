@@ -9,7 +9,7 @@ class Dragonstone extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPutIntoShadows: event => event.card.location === 'play area'
+                onCardPutIntoShadows: () => true
             },
             message: {
                 format: '{player} returns {source} to shadows to discard {card}',
