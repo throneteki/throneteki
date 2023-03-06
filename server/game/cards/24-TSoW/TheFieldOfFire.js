@@ -1,54 +1,38 @@
 const DrawCard = require('../../drawcard.js');
 const Message = require('../../Message');
-const TextHelper = require('../../TextHelper');
 
 class TheFieldOfFire extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.action({
-            cost: ability.costs.payXGold(() => 1, () => this.game.getNumberOfCardsInPlay(card => card.isParticipating())),
+            condition: () => this.game.isDuringChallenge() && this.game.currentChallenge.anyParticipants(card => !card.hasTrait('Dragon')),
             message: {
-                format: '{player} plays {source} to choose {xValue} participating characters',
-                args: { xValue: context => context.xValue }
+                format: '{player} plays {source} to give {reductions} until the end of the phase',
+                args: { reductions: context => Object.entries(this.getReductions(context)).reduce((reductions, [reduction, characters]) => reductions.push(Message.fragment('{characters} -{reduction} STR', { characters, reduction })), []) }
             },
+            phase: 'challenge',
             handler: context => {
-                let xValue = context.xValue;
-                this.game.promptForSelect(this.controller, {
-                    mode: 'exactly',
-                    numCards: xValue,
-                    activePromptTitle: `Select ${TextHelper.count(xValue, 'character')}`,
-                    source: this,
-                    cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isParticipating(),
-                    onSelect: (player, cards) => this.targetsSelected(player, cards)
+                Object.entries(this.getReductions(context)).forEach(([reduction, characters]) => {
+                    this.untilEndOfPhase(ability => ({
+                        match: characters,
+                        targetController: 'any',
+                        effect: ability.effects.modifyStrength(reduction)
+                    }));
                 });
             }
         });
     }
 
-    targetsSelected(player, cards) {
-        let dragons = this.controller.getNumberOfCardsInPlay(card => card.hasTrait('Dragon'));
-        let reduceOne = cards.filter(card => !(card.hasTrait('Army') && card.hasTrait('Commander')));
-        let reduceThree = cards.filter(card => card.hasTrait('Army') || card.hasTrait('Commander'));
-        let reductionMessages = [];
-        if(reduceOne.length > 0) {
-            this.untilEndOfPhase(ability => ({
-                match: reduceOne,
-                targetController: 'any',
-                effect: ability.effects.modifyStrength(-dragons)
-            }));
-            reductionMessages.push(Message.fragment('{cards} by 1', { cards: reduceOne }));
-        }
-        if(reduceThree.length > 0) {
-            this.untilEndOfPhase(ability => ({
-                match: reduceThree,
-                targetController: 'any',
-                effect: ability.effects.modifyStrength(-dragons * 3)
-            }));
-            reductionMessages.push(Message.fragment('{cards} by 3', { cards: reduceThree }));
-        }
+    getReductions(context) {
+        let numDragons = context.player.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Dragon'));
+        return context.game.currentChallenge.getParticipants().reduce((reductions, participant) => {
+            if(participant.hasTrait('Dragon')) {
+                return;
+            }
 
-        this.game.addMessage('{0} reduces the strength of {1} until the end of the phase', player, reductionMessages);
-
-        return true;
+            let amount = numDragons * (participant.hasTrait('Army') ? 3 : 1);
+            reductions[amount] = reductions[amount] || [];
+            reductions[amount].push(participant);
+        }, {});
     }
 }
 
