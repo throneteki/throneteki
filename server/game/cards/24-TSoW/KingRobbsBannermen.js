@@ -1,24 +1,11 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
 
 class KingRobbsBannermen extends DrawCard {
-    setupCardAbilities() {
-        this.reaction({
-            when: {
-                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, challengeType: 'military' }) 
-                                            && this.controller.anyCardsInPlay(card => card.isAttacking() &&
-                                                card.hasTrait('King') &&
-                                                card.getType() === 'character')
-            },
-            target: {
-                activePromptTitle: 'Select a character',
-                cardCondition: { type: 'character', participating: false, condition: (card, context) => card.controller === context.event.challenge.loser },
-                gameAction: 'kill'
-            },
-            message: '{player} uses {source} to kill {target}',
-            handler: context => {
-                this.game.resolveGameAction(GameActions.kill(context => ({ card: context.target, player: context.player })), context);
-            }
+    setupCardAbilities(ability) {
+        this.persistentEffect({
+            condition: () => this.controller.anyCardsInPlay(card => card.isFaction('stark') && card.hasTrait('King')),
+            match: this,
+            effect: ability.effects.addAssaultLimit(1)
         });
     }
 }
