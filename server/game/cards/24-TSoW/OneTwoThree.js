@@ -5,48 +5,44 @@ class OneTwoThree extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({
-                    winner: this.controller,
-                    challengeType: 'intrigue',
-                    by5: true
-                })
+                afterChallenge: event => event.challenge.isMatch({ winner: this.controller, attackingPlayer: this.controller, challengeType: 'intrigue' })
             },
-            // TODO: Technically the target should be choosing 3 characters, then deciding which does what (as of ver. 1.0). Implement properly later.
+            cost: ability.costs.returnToHand(card => card.getType() === 'character' && card.location === 'play area'),
+            // TODO: Technically the target should be choosing 2 characters, then deciding which does what; implement properly on release.
             targets: {
-                hand: {
-                    activePromptTitle: 'Select character to return to hand',
-                    cardCondition: { type: 'character' }
-                },
-                shadows: {
-                    activePromptTitle: 'Select character to place into shadows',
-                    cardCondition: { type: 'character' }
-                },
                 insight: {
                     activePromptTitle: 'Select character to gain insight',
-                    cardCondition: { type: 'character' }
+                    cardCondition: { type: 'character', location: 'play area' }
+                },
+                blank: {
+                    activePromptTitle: 'Select character to blank',
+                    cardCondition: { type: 'character', location: 'play area'}
                 }
             },
-            max: ability.limit.perPhase(1),
             message: {
-                format: '{player} plays {source} to choose {targets}',
+                format: '{player} plays {source} and returns {costs.returnToHand} to their hand to choose {targets}',
                 args: { targets: context => context.targets.getTargets() }
             },
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously([
-                        GameActions.returnCardToHand(context => ({ card: context.targets.hand })),
-                        GameActions.putIntoShadows(context => ({ card: context.targets.shadows })),
                         GameActions.genericHandler(context => {
                             this.untilEndOfPhase(ability => ({
                                 match: context.targets.insight,
                                 effect: ability.effects.addKeyword('insight')
                             }));
+                        }),
+                        GameActions.genericHandler(context => {
+                            this.untilEndOfPhase(ability => ({
+                                match: context.targets.blank,
+                                effect: ability.effects.blankExcludingTraits
+                            }));
                         })
                     ])
                     , context);
                     
-                this.game.addMessage('{0} returns {1} to it\'s owners hand, places {2} into shadows and has {3} gain insight until the end of the phase',
-                    this.controller, context.targets.hand, context.targets.shadows, context.targets.insight);
+                this.game.addMessage('{1} gains insight and {2}\'s text box is treated as if it were blank (except for Traits) until the end of the phase',
+                    context.targets.insight, context.targets.blank);
             }
         });
     }
