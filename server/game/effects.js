@@ -1129,6 +1129,17 @@ const Effects = {
             }
         };
     },
+    cannotGainDominancePower: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flag.add('cannotGainDominancePower');
+            },
+            unapply: function(player) {
+                player.flag.remove('cannotGainDominancePower');
+            }
+        };
+    },
     canSelectAsFirstPlayer: function(condition) {
         return {
             targetType: 'player',
