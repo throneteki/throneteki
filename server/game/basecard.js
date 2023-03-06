@@ -396,6 +396,10 @@ class BaseCard {
         return this.keywords.getPrizedValue();
     }
 
+    getKeywordLimitModifier(keyword) {
+        return this.keywords.getLimitModifier(keyword);
+    }
+
     hasTrait(trait) {
         if(this.losesAspects.contains('traits')) {
             return false;
@@ -650,6 +654,10 @@ class BaseCard {
         this.keywords.add(keyword);
     }
 
+    raiseKeywordLimit(keyword, amount) {
+        this.keywords.raiseLimit(keyword, amount);
+    }
+
     addTrait(trait) {
         this.traits.add(trait);
 
@@ -677,6 +685,10 @@ class BaseCard {
 
     removeKeyword(keyword) {
         this.keywords.remove(keyword);
+    }
+
+    lowerKeywordLimit(keyword, amount) {
+        this.keywords.lowerLimit(keyword, amount);
     }
 
     removeTrait(trait) {

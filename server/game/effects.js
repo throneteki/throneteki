@@ -327,20 +327,30 @@ const Effects = {
     addStealthLimit: function(value) {
         return {
             apply: function(card) {
-                card.stealthLimit += value;
+                card.raiseKeywordLimit('stealth', value);
             },
             unapply: function(card) {
-                card.stealthLimit -= value;
+                card.lowerKeywordLimit('stealth', value);
             }
         };
     },
     addPillageLimit: function(value) {
         return {
             apply: function(card) {
-                card.pillageLimit += value;
+                card.raiseKeywordLimit('pillage', value);
             },
             unapply: function(card) {
-                card.pillageLimit -= value;
+                card.lowerKeywordLimit('pillage', value);
+            }
+        };
+    },
+    addAssaultLimit: function(value) {
+        return {
+            apply: function(card) {
+                card.raiseKeywordLimit('assault', value);
+            },
+            unapply: function(card) {
+                card.lowerKeywordLimit('assault', value);
             }
         };
     },
