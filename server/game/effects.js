@@ -344,6 +344,7 @@ const Effects = {
             }
         };
     },
+    ignoresAssaultLocationCost: challengeOptionEffect('ignoresAssaultLocationCost'),
     addIcon: function(icon) {
         return {
             apply: function(card, context) {

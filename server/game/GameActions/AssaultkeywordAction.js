@@ -20,7 +20,7 @@ class AssaultKeywordAction extends GameAction {
             target.controller === challenge.defendingPlayer &&
             target.location === 'play area' &&
             target.getType() === 'location' &&
-            target.getPrintedCost() < source.getPrintedCost() &&
+            (source.challengeOptions.contains('ignoresAssaultLocationCost') || target.getPrintedCost() < source.getPrintedCost()) &&
             target.allowGameAction(this.name)
         );
     }

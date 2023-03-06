@@ -4,12 +4,8 @@ const GameActions = require('../../GameActions/index.js');
 class KingsLandingMob extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            location: 'any',
-            targetController: 'current',
-            effect: [
-                ability.effects.reduceSelfCost('marshal', () => this.controller.getTotalReserve()),
-                ability.effects.setMinCost(4)
-            ]
+            match: this,
+            effect: ability.effects.ignoresAssaultLocationCost()
         });
         this.reaction({
             when: {
