@@ -15,10 +15,11 @@ class ChooseStealthTargets extends BaseStep {
     continue() {
         if(this.stealthCharacters.length > 0) {
             let character = this.stealthCharacters.shift();
-
-            let title = character.stealthLimit === 1 ? 'Select stealth target for ' + character.name : 'Select up to ' + character.stealthLimit + ' stealth targets for ' + character.name;
+            // Keyword modifier adjusts the number of characters that can be bypassed using stealth
+            let numTargets = 1 + character.getKeywordLimitModifier('stealth');
+            let title = `Select ${numTargets === 1 ? 'stealth target' : `up to ${numTargets} stealth targets`} for ${character.name}`;
             this.game.promptForSelect(character.controller, {
-                numCards: character.stealthLimit,
+                numCards: numTargets,
                 activePromptTitle: title,
                 waitingPromptTitle: 'Waiting for opponent to choose stealth target for ' + character.name,
                 cardCondition: card => this.canStealth(card, this.challenge, character),
@@ -41,8 +42,8 @@ class ChooseStealthTargets extends BaseStep {
         for(let target of targets) {
             this.challenge.addStealthChoice(character, target);
         }
-
-        this.game.addMessage('{0} has chosen {1} as the stealth target for {2}', this.challenge.attackingPlayer, targets, character);
+        
+        this.game.addMessage(`{0} has chosen {1} as the stealth ${targets.length > 1 ? 'targets' : 'target' } for {2}`, this.challenge.attackingPlayer, targets, character);
 
         return true;
     }

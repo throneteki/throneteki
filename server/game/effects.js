@@ -327,23 +327,34 @@ const Effects = {
     addStealthLimit: function(value) {
         return {
             apply: function(card) {
-                card.stealthLimit += value;
+                card.raiseKeywordLimit('stealth', value);
             },
             unapply: function(card) {
-                card.stealthLimit -= value;
+                card.lowerKeywordLimit('stealth', value);
             }
         };
     },
     addPillageLimit: function(value) {
         return {
             apply: function(card) {
-                card.pillageLimit += value;
+                card.raiseKeywordLimit('pillage', value);
             },
             unapply: function(card) {
-                card.pillageLimit -= value;
+                card.lowerKeywordLimit('pillage', value);
             }
         };
     },
+    addAssaultLimit: function(value) {
+        return {
+            apply: function(card) {
+                card.raiseKeywordLimit('assault', value);
+            },
+            unapply: function(card) {
+                card.lowerKeywordLimit('assault', value);
+            }
+        };
+    },
+    ignoresAssaultLocationCost: challengeOptionEffect('ignoresAssaultLocationCost'),
     addIcon: function(icon) {
         return {
             apply: function(card, context) {
@@ -1126,6 +1137,17 @@ const Effects = {
             },
             unapply: function(player) {
                 player.flags.remove('cannotBeFirstPlayer');
+            }
+        };
+    },
+    cannotGainDominancePower: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flag.add('cannotGainDominancePower');
+            },
+            unapply: function(player) {
+                player.flag.remove('cannotGainDominancePower');
             }
         };
     },

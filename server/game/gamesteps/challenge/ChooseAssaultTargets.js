@@ -18,10 +18,11 @@ class ChooseAssaultTargets extends BaseStep {
         if(this.assaultCharacters.length > 0 && !this.assaultTargetChosen) {
             let highestPrintedCost = Math.max(...this.assaultCharacters.map(character => character.getPrintedCost()));
             let characterWithHighestPrintedCost = this.assaultCharacters.find(character => character.getPrintedCost() === highestPrintedCost);
-            
-            let title = 'Select assault target for ' + characterWithHighestPrintedCost.name;
+            // Keyword modifier adjusts the number of locations that can be targeted using assault
+            let numTargets = 1 + characterWithHighestPrintedCost.getKeywordLimitModifier('assault');
+            let title = `Select ${numTargets === 1 ? 'assault target' : `up to ${numTargets} assault targets`} for ${characterWithHighestPrintedCost.name}`;
             this.game.promptForSelect(characterWithHighestPrintedCost.controller, {
-                numCards: 1,
+                numCards: numTargets,
                 activePromptTitle: title,
                 waitingPromptTitle: 'Waiting for opponent to choose assault target for ' + characterWithHighestPrintedCost.name,
                 cardCondition: card => this.canAssault(card, this.challenge, characterWithHighestPrintedCost),
@@ -46,7 +47,7 @@ class ChooseAssaultTargets extends BaseStep {
             this.challenge.addAssaultChoice(character, target);
         }
 
-        this.game.addMessage('{0} has chosen {1} as the assault target for {2} and blanks it until the end of the challenge', this.challenge.attackingPlayer, targets, character);
+        this.game.addMessage(`{0} has chosen {1} as the assault ${targets.length > 1 ? 'targets' : 'target' } for {2} and blanks ${targets.length > 1 ? 'them' : 'it' } until the end of the challenge`, this.challenge.attackingPlayer, targets, character);
 
         this.assaultTargetChosen = true;
 

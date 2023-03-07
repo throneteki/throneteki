@@ -3,6 +3,10 @@ const GameActions = require('../../GameActions');
 
 class Dragonstone extends DrawCard {
     setupCardAbilities(ability) {
+        this.persistentEffect({
+            targetController: 'current',
+            effect: ability.effects.reduceFirstPlayedCardCostEachRound(1, card => card.getType() === 'event')
+        });
         this.reaction({
             when: {
                 onCardPutIntoShadows: () => true

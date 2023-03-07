@@ -12,7 +12,9 @@ class PillageKeyword extends BaseAbility {
 
     executeHandler(context) {
         let {game, challenge, source} = context;
-        game.raiseEvent('onPillage', { source: source, numCards: source.pillageLimit }, event => {
+        // Keyword modifier adjusts the number of cards discarded for pillage
+        let amount = 1 + source.getKeywordLimitModifier('pillage');
+        game.raiseEvent('onPillage', { source: source, numCards: amount }, event => {
             challenge.loser.discardFromDraw(event.numCards, cards => {
                 game.addMessage('{0} discards {1} from the top of their deck due to Pillage from {2}', challenge.loser, cards, source);
             }, { isPillage: true, source: source });

@@ -20,7 +20,7 @@ class AssaultKeywordAction extends GameAction {
             target.controller === challenge.defendingPlayer &&
             target.location === 'play area' &&
             target.getType() === 'location' &&
-            target.getPrintedCost() < source.getPrintedCost() &&
+            (source.challengeOptions.contains('ignoresAssaultLocationCost') || target.getPrintedCost() < source.getPrintedCost()) &&
             target.allowGameAction(this.name)
         );
     }
@@ -31,12 +31,16 @@ class AssaultKeywordAction extends GameAction {
                 match: target,
                 effect: ability.effects.blankExcludingTraits
             }));
-            challenge.game.once('afterChallenge', event => {
-                if(event.challenge.winner === source.controller && target.allowGameAction('kneel')) {
-                    challenge.game.addMessage('{0} kneels {1} due to assault', source.controller, target);
-                    challenge.game.resolveGameAction(GameActions.kneelCard({ card: target, source: source, cause: 'assault' }));
-                }
-            });
+        });
+    }
+
+    setupSimultaneousKneel({ challenge }) {
+        challenge.game.once('afterChallenge', event => {
+            let successful = event.challenge.assaultData.filter(assaultChoice => event.challenge.winner === assaultChoice.source.controller && assaultChoice.target.allowGameAction('kneel'));
+            if(successful.length > 1) {
+                event.challenge.game.addMessage('{0} kneels {1} due to assault', event.challenge.winner, successful.map(assaultChoice => assaultChoice.target));
+                event.challenge.game.resolveGameAction(GameActions.simultaneously(successful.map(assaultChoice => GameActions.kneelCard({ card: assaultChoice.target, source: assaultChoice.source, cause: 'assault' }))));
+            }
         });
     }
 }

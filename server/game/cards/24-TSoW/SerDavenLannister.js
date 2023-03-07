@@ -2,12 +2,13 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions/index.js');
 
 class SerDavenLannister extends DrawCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 onCardPowerGained: event => event.card === this
             },
             message: '{player} uses {source} to discard 1 card at random from each opponents hand',
+            limit: ability.limit.perRound(2),
             gameAction: GameActions.simultaneously(context => 
                 context.game.getOpponents(context.player).map(opponent => GameActions.discardAtRandom({ amount: 1, player: opponent }))
             ).then({
