@@ -7,15 +7,15 @@ class TheFieldOfFire extends DrawCard {
             condition: () => this.game.isDuringChallenge() && this.game.currentChallenge.anyParticipants(card => !card.hasTrait('Dragon')),
             message: {
                 format: '{player} plays {source} to give {reductions} until the end of the phase',
-                args: { reductions: context => Object.entries(this.getReductions(context)).reduce((reductions, [reduction, characters]) => reductions.push(Message.fragment('{characters} -{reduction} STR', { characters, reduction })), []) }
+                args: { reductions: context => Array.from(this.getReductions(context), ([reduction, characters]) => Message.fragment('{characters} -{reduction} STR', { characters, reduction })) }
             },
             phase: 'challenge',
             handler: context => {
-                Object.entries(this.getReductions(context)).forEach(([reduction, characters]) => {
+                Array.from(this.getReductions(context)).forEach(([reduction, characters]) => {
                     this.untilEndOfPhase(ability => ({
                         match: characters,
                         targetController: 'any',
-                        effect: ability.effects.modifyStrength(reduction)
+                        effect: ability.effects.modifyStrength(-reduction)
                     }));
                 });
             }
@@ -24,15 +24,15 @@ class TheFieldOfFire extends DrawCard {
 
     getReductions(context) {
         let numDragons = context.player.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Dragon'));
-        return context.game.currentChallenge.getParticipants().reduce((reductions, participant) => {
-            if(participant.hasTrait('Dragon')) {
-                return;
+        let reductions = new Map();
+        for(let participant of context.game.currentChallenge.getParticipants()) {
+            if(!participant.hasTrait('Dragon')) {
+                let amount = numDragons * (participant.hasTrait('Army') ? 3 : 1);
+                let reduction = reductions.get(amount) || [];
+                reductions.set(amount, reduction.concat([participant]));
             }
-
-            let amount = numDragons * (participant.hasTrait('Army') ? 3 : 1);
-            reductions[amount] = reductions[amount] || [];
-            reductions[amount].push(participant);
-        }, {});
+        }
+        return reductions;
     }
 }
 
