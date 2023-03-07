@@ -47,7 +47,7 @@ class ChooseAssaultTargets extends BaseStep {
             this.challenge.addAssaultChoice(character, target);
         }
 
-        this.game.addMessage('{0} has chosen {1} as the assault target for {2} and blanks it until the end of the challenge', this.challenge.attackingPlayer, targets, character);
+        this.game.addMessage(`{0} has chosen {1} as the assault ${targets.length > 1 ? 'targets' : 'target' } for {2} and blanks ${targets.length > 1 ? 'them' : 'it' } until the end of the challenge`, this.challenge.attackingPlayer, targets, character);
 
         this.assaultTargetChosen = true;
 
