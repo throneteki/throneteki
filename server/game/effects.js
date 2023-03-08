@@ -1144,10 +1144,10 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function(player) {
-                player.flag.add('cannotGainDominancePower');
+                player.flags.add('cannotGainDominancePower');
             },
             unapply: function(player) {
-                player.flag.remove('cannotGainDominancePower');
+                player.flags.remove('cannotGainDominancePower');
             }
         };
     },
