@@ -9,8 +9,8 @@ class KneelCard extends GameAction {
         return ['faction', 'play area'].includes(card.location) && !card.kneeled;
     }
 
-    createEvent({ card, source, cause }) {
-        return this.event('onCardKneeled', { card: card, source: source, cause: cause }, event => {
+    createEvent({ card, reason = 'ability', source }) {
+        return this.event('onCardKneeled', { card, source, reason }, event => {
             event.card.kneeled = true;
         });
     }

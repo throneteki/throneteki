@@ -1,4 +1,5 @@
 const BaseAbility = require('./baseability.js');
+const GameActions = require('./GameActions');
 
 class IntimidateKeyword extends BaseAbility {
     constructor() {
@@ -7,18 +8,17 @@ class IntimidateKeyword extends BaseAbility {
                 activePromptTitle: 'Select a character to intimidate',
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
+            },
+            message: '{player} uses intimidate from {source} to kneel {target}',
+            handler: context => {
+                context.game.resolveGameAction(GameActions.kneelCard(context => ({
+                    card: context.target,
+                    reason: 'intimidate',
+                    source: context.source
+                })), context);
             }
         });
         this.title = 'Intimidate';
-    }
-
-    meetsRequirements(context) {
-        return context.challenge.isAttackerTheWinner() && this.canResolveTargets(context);
-    }
-
-    executeHandler(context) {
-        context.target.controller.kneelCard(context.target);
-        context.game.addMessage('{0} uses intimidate from {1} to kneel {2}', context.source.controller, context.source, context.target);
     }
 
     canIntimidate(card, strength, challenge) {

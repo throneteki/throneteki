@@ -16,7 +16,7 @@ class ChooseStealthTargets extends BaseStep {
         if(this.stealthCharacters.length > 0) {
             let character = this.stealthCharacters.shift();
             // Keyword modifier adjusts the number of characters that can be bypassed using stealth
-            let numTargets = 1 + character.getKeywordLimitModifier('stealth');
+            let numTargets = 1 + character.getKeywordTriggerModifier('stealth');
             let title = `Select ${numTargets === 1 ? 'stealth target' : `up to ${numTargets} stealth targets`} for ${character.name}`;
             this.game.promptForSelect(character.controller, {
                 numCards: numTargets,
