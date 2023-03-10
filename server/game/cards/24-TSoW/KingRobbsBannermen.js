@@ -5,7 +5,7 @@ class KingRobbsBannermen extends DrawCard {
         this.persistentEffect({
             condition: () => this.controller.anyCardsInPlay(card => card.isFaction('stark') && card.hasTrait('King')),
             match: this,
-            effect: ability.effects.addAssaultLimit(1)
+            effect: ability.effects.modifyKeywordTriggerAmount('assault', 1)
         });
     }
 }

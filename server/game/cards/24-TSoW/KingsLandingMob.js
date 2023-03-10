@@ -9,7 +9,7 @@ class KingsLandingMob extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardKneeled: event => event.cause === 'assault'
+                onCardKneeled: event => event.reason === 'assault'
             },
             cost: ability.costs.killSelf(),
             message: {

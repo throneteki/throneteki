@@ -19,7 +19,7 @@ class ChooseAssaultTargets extends BaseStep {
             let highestPrintedCost = Math.max(...this.assaultCharacters.map(character => character.getPrintedCost()));
             let characterWithHighestPrintedCost = this.assaultCharacters.find(character => character.getPrintedCost() === highestPrintedCost);
             // Keyword modifier adjusts the number of locations that can be targeted using assault
-            let numTargets = 1 + characterWithHighestPrintedCost.getKeywordLimitModifier('assault');
+            let numTargets = 1 + characterWithHighestPrintedCost.getKeywordTriggerModifier('assault');
             let title = `Select ${numTargets === 1 ? 'assault target' : `up to ${numTargets} assault targets`} for ${characterWithHighestPrintedCost.name}`;
             this.game.promptForSelect(characterWithHighestPrintedCost.controller, {
                 numCards: numTargets,

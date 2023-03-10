@@ -39,7 +39,7 @@ class AssaultKeywordAction extends GameAction {
             let successful = event.challenge.assaultData.filter(assaultChoice => event.challenge.winner === assaultChoice.source.controller && assaultChoice.target.allowGameAction('kneel'));
             if(successful.length > 1) {
                 event.challenge.game.addMessage('{0} kneels {1} due to assault', event.challenge.winner, successful.map(assaultChoice => assaultChoice.target));
-                event.challenge.game.resolveGameAction(GameActions.simultaneously(successful.map(assaultChoice => GameActions.kneelCard({ card: assaultChoice.target, source: assaultChoice.source, cause: 'assault' }))));
+                event.challenge.game.resolveGameAction(GameActions.simultaneously(successful.map(assaultChoice => GameActions.kneelCard({ card: assaultChoice.target, source: assaultChoice.source, reason: 'assault' }))));
             }
         });
     }

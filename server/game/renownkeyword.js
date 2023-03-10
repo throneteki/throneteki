@@ -1,23 +1,25 @@
 const BaseAbility = require('./baseability.js');
+const GameActions = require('./GameActions');
 
 class RenownKeyword extends BaseAbility {
     constructor() {
-        super({});
+        super({
+            message: {
+                format: '{player} gains {amount} power on {source} from Renown',
+                args: { amount: context => this.getAmount(context.source) }
+            },
+            gameAction: GameActions.gainPower(context => ({
+                card: context.source,
+                amount: this.getAmount(context.source),
+                reason: 'renown',
+                source: context.source
+            }))
+        });
         this.title = 'Renown';
     }
 
-    meetsRequirements() {
-        return true;
-    }
-
-    executeHandler(context) {
-        let {game, challenge, source} = context;
-
-        game.applyGameAction('gainPower', source, card => {
-            card.modifyPower(1);
-            game.raiseEvent('onRenown', { challenge: challenge, card: card });
-            game.addMessage('{0} gains 1 power on {1} from Renown', challenge.winner, card);
-        });
+    getAmount(source) {
+        return 1 + source.getKeywordTriggerModifier(this.title);
     }
 }
 
