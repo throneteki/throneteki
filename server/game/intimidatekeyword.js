@@ -5,7 +5,8 @@ class IntimidateKeyword extends BaseAbility {
     constructor() {
         super({
             target: {
-                activePromptTitle: 'Select a character to intimidate',
+                activePromptTitle: context => this.getTitle(context.source),
+                numCards: context => this.getAmount(context.source),
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
             },
@@ -19,6 +20,15 @@ class IntimidateKeyword extends BaseAbility {
             }
         });
         this.title = 'Intimidate';
+    }
+
+    getTitle(source) {
+        var numTargets = this.getAmount(source);
+        return `Select ${numTargets === 1 ? 'a character' : `up to ${numTargets} characters`} to intimidate`;
+    }
+
+    getAmount(source) {
+        return 1 + source.getKeywordTriggerModifier(this.title);
     }
 
     canIntimidate(card, strength, challenge) {

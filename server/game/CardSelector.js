@@ -40,6 +40,8 @@ class CardSelector {
 
     static getDefaultedProperties(properties) {
         properties = Object.assign({}, defaultProperties, properties);
+        properties.numCards = typeof(properties.numCards) === 'function' ? properties.numCards(properties.context) : properties.numCards;
+
         if(properties.mode) {
             return properties;
         }
