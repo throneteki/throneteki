@@ -21,8 +21,6 @@ class InitiateChallenge extends GameAction {
             
             challenge.stealthData.forEach(stealthChoice => event.thenAttachEvent(BypassByStealth.createEvent({ challenge, source: stealthChoice.source, target: stealthChoice.target })));
             challenge.assaultData.forEach(assaultChoice => event.thenAttachEvent(AssaultKeywordAction.createEvent({ challenge, source: assaultChoice.source, target: assaultChoice.target })));
-            // Grouping the kneel events for assault to ensure interrupts/reactions to multiple kneels are treated as simultaneous
-            AssaultKeywordAction.setupSimultaneousKneel({ challenge });
 
             event.thenExecute(event => {
                 // Reapply effects which rely on being within a challenge (eg. The Lord of the Crossing)
