@@ -21,6 +21,7 @@ class Challenge {
         this.declaredAttackers = [];
         this.attackerStrength = 0;
         this.defenders = [];
+        this.declaredDefenders = [];
         this.defenderStrength = 0;
         this.challengeContributions = new ChallengeContributions();
         this.stealthData = [];
@@ -63,6 +64,11 @@ class Challenge {
     addAttacker(attacker) {
         this.addAttackers([attacker]);
     }
+    
+    declareDefenders(defenders) {
+        this.addDefenders(defenders);
+        this.declaredDefenders = this.declaredDefenders.concat(defenders);
+    }
 
     addDefenders(defenders) {
         this.defenders = this.defenders.concat(defenders);
@@ -90,6 +96,7 @@ class Challenge {
         this.attackers = this.attackers.filter(c => c !== card);
         this.declaredAttackers = this.declaredAttackers.filter(c => c !== card);
         this.defenders = this.defenders.filter(c => c !== card);
+        this.declaredDefenders = this.declaredDefenders.filter(c => c !== card);
 
         card.inChallenge = false;
 

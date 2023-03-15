@@ -143,7 +143,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     illegallyPromptForDefenders() {
-        this.game.addAlert('danger', '{0} does not control enough elibile characters to legally initiate this challenge, but has chosen to continue with declaring defenders anyway', this.challenge.attackingPlayer);
+        this.game.addAlert('danger', '{0} does not control enough eligible characters to legally initiate this challenge, but has chosen to continue with declaring defenders anyway', this.challenge.attackingPlayer);
         this.game.queueStep(this.defenderPrompt);
         return true;
     }
@@ -157,7 +157,7 @@ class ChallengeFlow extends BaseStep {
     }
 
     chooseDefenders(defenders) {
-        this.challenge.addDefenders(defenders);
+        this.challenge.declareDefenders(defenders);
 
         if(this.challenge.declareDefendersFirst) {
             if(defenders.length > 0) {
@@ -175,7 +175,7 @@ class ChallengeFlow extends BaseStep {
             return;
         }
 
-        this.game.resolveGameAction(DeclareDefenders, { cards: this.challenge.defenders, challenge: this.challenge });
+        this.game.resolveGameAction(DeclareDefenders, { cards: this.challenge.declaredDefenders, challenge: this.challenge });
     }
 
     announceDefenderStrength() {
