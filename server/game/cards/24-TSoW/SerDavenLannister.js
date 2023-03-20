@@ -14,7 +14,7 @@ class SerDavenLannister extends DrawCard {
             ).then({
                 condition: context => context.game.getOpponents(context.player).every(opponent => opponent.hand.length < context.player.hand.length),
                 message: 'Then, {player} draws 1 card',
-                gameAction: GameActions.drawCards(context => ({ amount: context.costs.discardPower, player: context.player }))
+                gameAction: GameActions.drawCards(context => ({ amount: 1, player: context.player }))
             })
             
         });
