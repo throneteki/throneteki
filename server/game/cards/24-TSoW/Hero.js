@@ -12,7 +12,7 @@ class Hero extends DrawCard {
             },
             target: {
                 type: 'select',
-                cardCondition: { type: 'character', participating: true, trait: 'Army', controller: 'current' }
+                cardCondition: { type: 'character', trait: 'Army' }
             },
             message: '{player} uses {source} to stand {target}',
             handler: context => {

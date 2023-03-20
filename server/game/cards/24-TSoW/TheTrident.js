@@ -11,7 +11,7 @@ class TheTrident extends DrawCard {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.attackingPlayer === this.controller
             },
             message: {
-                format: '{player} is forced to give control of {source} to {loser}, or sacrifice another location',
+                format: '{player} is forced to give control of {source} to {loser}, or sacrifice another location they own',
                 args: { loser: context => context.event.challenge.loser }
             },
             gameAction: GameActions.choose({
@@ -27,7 +27,7 @@ class TheTrident extends DrawCard {
                         gameAction: GameActions.genericHandler(context => {
                             this.game.promptForSelect(context.player, {
                                 activePromptTitle: 'Select a location',
-                                cardCondition: card => card.getType() === 'location' && card.location === 'play area' && card.controller === context.player && card !== context.source,
+                                cardCondition: card => card.getType() === 'location' && card.location === 'play area' && card.owner === context.player && card !== context.source,
                                 gameAction: 'sacrifice',
                                 onSelect: (player, card) => {
                                     this.game.addMessage('{0} chooses to sacrifice {1}', player, card);

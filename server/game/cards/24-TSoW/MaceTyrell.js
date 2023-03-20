@@ -6,39 +6,24 @@ class MaceTyrell extends DrawCard {
         this.action({
             title: 'Stand and remove Army',
             condition: () => this.game.isDuringChallenge(),
+            cost: [
+                ability.costs.stand(card => card.hasTrait('Army') && card.isParticipating()),
+                ability.costs.removeFromChallenge(card => card.hasTrait('Army') && card.isParticipating())
+            ],
             target: {
-                cardCondition: card => card.isParticipating() && this.isControlledArmy(card)
+                cardCondition: (card, context) => card.isParticipating() && (!context.costs.stand || context.costs.stand !== card)
             },
             limit: ability.limit.perPhase(1),
-            message: '{player} uses {source} to stand and remove {target} from the challenge',
+            message: '{player} uses {source}, stands and removes {cost.stand} from the challenge to stand and remove {target} from the challenge',
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.simultaneously([
                         GameActions.standCard({ card: context.target }),
                         GameActions.removeFromChallenge({ card: context.target })
-                    ]).then({
-                        target: {
-                            cardCondition: (card, context) => card !== context.parentContext.target && !card.isParticipating() && this.isControlledArmy(card)
-                        },
-                        message: 'Then, {player} kneels {target} to have it participate in the challenge on their side',
-                        handler: context => {
-                            this.game.resolveGameAction(
-                                GameActions.simultaneously([
-                                    GameActions.kneelCard({ card: context.target }),
-                                    GameActions.genericHandler(context => {
-                                        this.game.currentChallenge.addParticipantToSide(this.controller, context.target);
-                                    })
-                                ])
-                                , context);
-                        }
-                    })
+                    ])
                     , context);
             }
         });
-    }
-    
-    isControlledArmy(card) {
-        return card.controller === this.controller && card.isMatch({ type: 'character', trait: 'Army', location: 'play area' });
     }
 }
 

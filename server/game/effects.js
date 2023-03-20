@@ -773,6 +773,7 @@ const Effects = {
             }
         };
     },
+    cannotBeAssaulted: cannotEffect('assault'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),

@@ -4,7 +4,7 @@ class FormerChampion extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.dynamicStrength(() => this.power * -2)
+            effect: ability.effects.dynamicStrength(() => this.power * -1)
         });
         this.persistentEffect({
             condition: () => this.getStrength() <= 3,
