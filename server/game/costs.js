@@ -160,6 +160,10 @@ const Costs = {
      */
     removeParentFromChallenge: () => CostBuilders.removeFromChallenge.parent(),
     /**
+     * Cost that will remove a card that matches the passed condition predicate function from the challenge.
+     */
+    removeFromChallenge: condition => CostBuilders.removeFromChallenge.select(condition),
+    /**
      * Cost that will place the played event card in the player's discard pile.
      */
     expendEvent: function() {

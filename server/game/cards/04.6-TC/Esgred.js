@@ -10,7 +10,7 @@ class Esgred extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             match: this,
-            effect: ability.effects.addStealthLimit(1)
+            effect: ability.effects.modifyKeywordTriggerAmount('stealth', 1)
         });
     }
 

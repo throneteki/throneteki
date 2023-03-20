@@ -324,33 +324,13 @@ const Effects = {
             }
         };
     },
-    addStealthLimit: function(value) {
+    modifyKeywordTriggerAmount: function(keyword, value) {
         return {
             apply: function(card) {
-                card.raiseKeywordLimit('stealth', value);
+                card.modifyKeywordTriggerAmount(keyword, value);
             },
             unapply: function(card) {
-                card.lowerKeywordLimit('stealth', value);
-            }
-        };
-    },
-    addPillageLimit: function(value) {
-        return {
-            apply: function(card) {
-                card.raiseKeywordLimit('pillage', value);
-            },
-            unapply: function(card) {
-                card.lowerKeywordLimit('pillage', value);
-            }
-        };
-    },
-    addAssaultLimit: function(value) {
-        return {
-            apply: function(card) {
-                card.raiseKeywordLimit('assault', value);
-            },
-            unapply: function(card) {
-                card.lowerKeywordLimit('assault', value);
+                card.modifyKeywordTriggerAmount(keyword, -value);
             }
         };
     },
@@ -793,6 +773,7 @@ const Effects = {
             }
         };
     },
+    cannotBeAssaulted: cannotEffect('assault'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),

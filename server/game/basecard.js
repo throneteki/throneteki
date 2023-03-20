@@ -396,8 +396,8 @@ class BaseCard {
         return this.keywords.getPrizedValue();
     }
 
-    getKeywordLimitModifier(keyword) {
-        return this.keywords.getLimitModifier(keyword);
+    getKeywordTriggerModifier(keyword) {
+        return this.keywords.getTriggerModifier(keyword);
     }
 
     hasTrait(trait) {
@@ -650,12 +650,12 @@ class BaseCard {
         this.markAsDirty();
     }
 
-    addKeyword(keyword) {
-        this.keywords.add(keyword);
+    modifyKeywordTriggerAmount(keyword, amount) {
+        this.keywords.modifyTriggerAmount(keyword, amount);
     }
 
-    raiseKeywordLimit(keyword, amount) {
-        this.keywords.raiseLimit(keyword, amount);
+    addKeyword(keyword) {
+        this.keywords.add(keyword);
     }
 
     addTrait(trait) {
@@ -685,10 +685,6 @@ class BaseCard {
 
     removeKeyword(keyword) {
         this.keywords.remove(keyword);
-    }
-
-    lowerKeywordLimit(keyword, amount) {
-        this.keywords.lowerLimit(keyword, amount);
     }
 
     removeTrait(trait) {

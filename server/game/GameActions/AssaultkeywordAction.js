@@ -1,5 +1,5 @@
 const GameAction = require('./GameAction');
-const GameActions = require('./index');
+const KneelCard = require('./KneelCard');
 
 /*
 Assault is a keyword ability.
@@ -31,16 +31,16 @@ class AssaultKeywordAction extends GameAction {
                 match: target,
                 effect: ability.effects.blankExcludingTraits
             }));
-        });
-    }
 
-    setupSimultaneousKneel({ challenge }) {
-        challenge.game.once('afterChallenge', event => {
-            let successful = event.challenge.assaultData.filter(assaultChoice => event.challenge.winner === assaultChoice.source.controller && assaultChoice.target.allowGameAction('kneel'));
-            if(successful.length > 1) {
-                event.challenge.game.addMessage('{0} kneels {1} due to assault', event.challenge.winner, successful.map(assaultChoice => assaultChoice.target));
-                event.challenge.game.resolveGameAction(GameActions.simultaneously(successful.map(assaultChoice => GameActions.kneelCard({ card: assaultChoice.target, source: assaultChoice.source, cause: 'assault' }))));
-            }
+            challenge.game.once('afterChallenge', event => {
+                const props = { card: target, source: source, reason: 'assault' };
+                if(challenge.winner === source.controller 
+                    && challenge.winner.anyCardsInPlay(card => card.isAttacking() && card.hasKeyword('assault'))
+                    && KneelCard.allow(props)) {
+                    event.thenAttachEvent(KneelCard.createEvent(props)
+                        .thenExecute(() => challenge.game.addMessage('{0} kneels {1} due to assault', challenge.winner, target)));
+                }
+            });
         });
     }
 }
