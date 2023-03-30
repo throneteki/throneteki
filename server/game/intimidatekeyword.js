@@ -10,7 +10,10 @@ class IntimidateKeyword extends BaseAbility {
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
             },
-            message: '{player} uses intimidate from {source} to kneel {target}',
+            message: {
+                format: '{player} uses {source} to kneel {targets} using intimidate',
+                args: { targets: context => context.targets.getTargets() }
+            },
             handler: context => {
                 context.game.resolveGameAction(GameActions.kneelCard(context => ({
                     card: context.target,
@@ -37,6 +40,10 @@ class IntimidateKeyword extends BaseAbility {
             && card.location === 'play area'
             && card.getType() === 'character'
             && card.getStrength() <= strength;
+    }
+
+    meetsRequirements(context) {
+        return context.source.isAttacking();
     }
 }
 
