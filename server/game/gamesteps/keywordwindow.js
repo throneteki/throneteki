@@ -137,7 +137,6 @@ class KeywordWindow extends BaseStep {
 
     resolveAbility(ability, participants) {
         for(let participant of participants) {
-            ability.outputMessage(participant.context);
             this.game.resolveAbility(ability, participant.context);
         }
     }
