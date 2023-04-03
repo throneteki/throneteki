@@ -9,18 +9,18 @@ class TheCrag extends DrawCard {
         });
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.isMatch({ challengeType: 'military', winner: this.controller, by5: true })
+                afterChallenge: event => event.challenge.isMatch({ challengeType: 'military', winner: this.controller, attackingPlayer: this.controller })
             },
             message: {
-                format: '{player} uses {source} to discard {amount} cards at random from {loser}\'s hand',
-                args: { amount: context => this.getAmountForDiscard(context), loser: context => context.event.challenge.loser }
+                format: '{player} uses {source} to gain {amount} power for their faction',
+                args: { amount: context => this.getAmount(context) }
             },
-            gameAction: GameActions.discardAtRandom(context => ({ player: context.event.challenge.loser, amount: this.getAmountForDiscard(context) }))
+            gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: this.getAmount(context) }))
         });
     }
 
-    getAmountForDiscard(context) {
-        return context.player.anyCardsInPlay(card => card.name === 'Robb Stark') ? 2 : 1;
+    getAmount(context) {
+        return context.player.anyCardsInPlay(card => card.isFaction('stark') && card.hasTrait('King')) ? 2 : 1;
     }
 }
 
