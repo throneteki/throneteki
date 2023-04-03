@@ -11,7 +11,8 @@ class MaceTyrell extends DrawCard {
                 ability.costs.removeFromChallenge(card => card.hasTrait('Army') && card.isParticipating())
             ],
             target: {
-                cardCondition: (card, context) => card.isParticipating() && (!context.costs.stand || context.costs.stand !== card)
+                cardCondition: (card, context) => card.isParticipating()
+                    && (!context.costs.stand || (card !== context.costs.stand && card.getPrintedCost() <= context.costs.stand.getPrintedCost()))
             },
             limit: ability.limit.perPhase(1),
             message: '{player} uses {source}, stands and removes {cost.stand} from the challenge to stand and remove {target} from the challenge',
