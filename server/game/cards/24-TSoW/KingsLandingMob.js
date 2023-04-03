@@ -7,12 +7,9 @@ class KingsLandingMob extends DrawCard {
             when: {
                 onCardKneeled: event => event.reason === 'assault'
             },
-            cost: [
-                ability.costs.killSelf(),
-                ability.costs.sacrifice(card => card.getType() === 'location')
-            ],
+            cost: ability.costs.killSelf(),
             message: {
-                format: '{player} kills {costs.kill} and sacrifices {costs.sacrifice} to discard {assaulted} from play',
+                format: '{player} kills {costs.kill} to discard {assaulted} from play',
                 args: { assaulted: context => context.event.card }
             },
             gameAction: GameActions.discardCard(context => ({ card: context.event.card }))
