@@ -1,38 +1,41 @@
 const DrawCard = require('../../drawcard.js');
-const Message = require('../../Message');
+const GameActions = require('../../GameActions/index.js');
 
 class TheFieldOfFire extends DrawCard {
-    setupCardAbilities() {
-        this.action({
-            condition: () => this.game.isDuringChallenge() && this.game.currentChallenge.anyParticipants(card => !card.hasTrait('Dragon')),
-            message: {
-                format: '{player} plays {source} to give {reductions} until the end of the phase',
-                args: { reductions: context => Array.from(this.getReductions(context), ([reduction, characters]) => Message.fragment('{characters} -{reduction} STR', { characters, reduction })) }
+    setupCardAbilities(ability) {
+        this.reaction({
+            when: {
+                onPhaseStarted: event => event.phase === 'challenge'
             },
-            phase: 'challenge',
+            cost: ability.costs.kneelFactionCard(),
+            target: {
+                cardCondition: { trait: 'Dragon', type: 'character', controller: 'current' }
+            },
+            message: {
+                format: '{player} plays {source} to choose {target} and give each character with printed STR {lowerSTR} or lower -1 STR until the end of the phase.',
+                args: { lowerSTR: context => context.target.getPrintedStrength() - 1 }
+            },
             handler: context => {
-                Array.from(this.getReductions(context)).forEach(([reduction, characters]) => {
-                    this.untilEndOfPhase(ability => ({
-                        match: characters,
-                        targetController: 'any',
-                        effect: ability.effects.modifyStrength(-reduction)
-                    }));
-                });
+                this.game.resolveGameAction(
+                    GameActions.simultaneously([
+                        GameActions.genericHandler(context => {
+                            this.untilEndOfPhase(ability => ({
+                                match: card => card.getPrintedStrength() < context.target.getPrintedStrength(),
+                                targetController: 'any',
+                                effect: ability.effects.modifyStrength(-1)
+                            }));
+                        }),
+                        GameActions.genericHandler(() => {
+                            this.untilEndOfPhase(ability => ({
+                                match: card => card.hasTrait('Army'),
+                                targetController: 'any',
+                                effect: ability.effects.burn
+                            }));
+                        })
+                    ])
+                    , context);
             }
         });
-    }
-
-    getReductions(context) {
-        let numDragons = context.player.getNumberOfCardsInPlay(card => card.getType() === 'character' && card.hasTrait('Dragon'));
-        let reductions = new Map();
-        for(let participant of context.game.currentChallenge.getParticipants()) {
-            if(!participant.hasTrait('Dragon')) {
-                let amount = numDragons * (participant.hasTrait('Army') ? 3 : 1);
-                let reduction = reductions.get(amount) || [];
-                reductions.set(amount, reduction.concat([participant]));
-            }
-        }
-        return reductions;
     }
 }
 
