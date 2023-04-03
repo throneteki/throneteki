@@ -9,6 +9,7 @@ class TheShadowTower extends DrawCard {
         });
         this.action({
             title: 'Reveal card in shadows',
+            phase: 'challenge',
             cost: ability.costs.kneelSelf(),
             target: {
                 activePromptTitle: 'Select a card',
