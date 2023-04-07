@@ -88,20 +88,10 @@ function permutate(permutations, current, array) {
     return permutations;
 }
 
-function countAsMap(array) {
-    let map = new Map();
-    for(let item of array) {
-        let current = map.get(item) || 0;
-        map.set(item, current + 1);
-    }
-    return map;
-}
-
 module.exports = {
     flatten,
     flatMap,
     partition,
     sortBy,
-    availableToPair,
-    countAsMap
+    availableToPair
 };
