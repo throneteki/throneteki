@@ -20,7 +20,7 @@ class SalladhorSaansLyseni extends DrawCard {
     }
 
     getAmount(context) {
-        let numCards = context.challenge.loser.getNumberOfCardsInPlay({ type: 'location', location: 'play area', kneeled: true });
+        let numCards = context.event.challenge.loser.getNumberOfCardsInPlay({ type: 'location', location: 'play area', kneeled: true });
         return Math.floor(numCards / 2);
     }
 }
