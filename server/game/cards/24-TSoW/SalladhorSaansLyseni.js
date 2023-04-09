@@ -3,7 +3,7 @@ const GameActions = require('../../GameActions/index.js');
 
 class SalladhorSaansLyseni extends DrawCard {
     setupCardAbilities(ability) {
-        this.interrupt({
+        this.reaction({
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
             },
