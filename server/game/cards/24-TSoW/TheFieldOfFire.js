@@ -9,7 +9,7 @@ class TheFieldOfFire extends DrawCard {
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
-                cardCondition: { trait: 'Dragon', type: 'character', controller: 'current' }
+                cardCondition: { trait: 'Dragon', type: 'character', controller: 'current', location: 'play area' }
             },
             message: {
                 format: '{player} plays {source} to choose {target} and give each character with printed STR {lowerSTR} or lower -1 STR until the end of the phase.',
@@ -20,14 +20,14 @@ class TheFieldOfFire extends DrawCard {
                     GameActions.simultaneously([
                         GameActions.genericHandler(context => {
                             this.untilEndOfPhase(ability => ({
-                                match: card => card.getPrintedStrength() < context.target.getPrintedStrength(),
+                                match: card => card.getType() === 'character' && card.getPrintedStrength() < context.target.getPrintedStrength(),
                                 targetController: 'any',
                                 effect: ability.effects.modifyStrength(-1)
                             }));
                         }),
                         GameActions.genericHandler(() => {
                             this.untilEndOfPhase(ability => ({
-                                match: card => card.hasTrait('Army'),
+                                match: card => card.getType() === 'character' && card.hasTrait('Army'),
                                 targetController: 'any',
                                 effect: ability.effects.burn
                             }));
