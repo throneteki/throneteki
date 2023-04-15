@@ -4,6 +4,9 @@
 
     secret: 'somethingverysecret',
     hmacSecret: 'somethingevenmoresecret',
+    
+	//captchaKey: 'captchaKey',
+    //emailKey: 'emailKey',
 
     dbPath: 'mongodb://mongo:27017/throneteki',
     // This is the host/port of the Zero MQ server which does the node load balancing
