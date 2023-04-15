@@ -114,7 +114,7 @@ class Game extends EventEmitter {
     }
 
     isPlaytesting() {
-        return this.instance === 'playtesting'
+        return this.instance === 'playtesting';
     }
 
     reportError(e) {
