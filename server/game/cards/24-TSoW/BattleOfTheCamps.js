@@ -2,7 +2,7 @@ const GameActions = require('../../GameActions');
 const PlotCard = require('../../plotcard');
 
 class BattleOfTheCamps extends PlotCard {
-    setupCardAbilities() {
+    setupCardAbilities(ability) {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.challengeType === 'military' && event.challenge.attackingPlayer === this.controller
@@ -14,6 +14,7 @@ class BattleOfTheCamps extends PlotCard {
                 format: '{player} uses {source} to {actions} {target}',
                 args: { actions: context => !context.target.hasTrait('Army') ? 'kneel' : 'kneel or kill' }
             },
+            limit: ability.limit.perPhase(1),
             handler: context => {
                 this.game.resolveGameAction(
                     GameActions.ifCondition({
