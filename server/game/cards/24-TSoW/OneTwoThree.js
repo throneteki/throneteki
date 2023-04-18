@@ -2,7 +2,7 @@ const DrawCard = require('../../drawcard.js');
 const GameActions = require('../../GameActions');
 
 class OneTwoThree extends DrawCard {
-    setupCardAbilities(ability) {
+    setupCardAbilities() {
         this.reaction({
             when: {
                 afterChallenge: event => event.challenge.isMatch({
@@ -11,42 +11,27 @@ class OneTwoThree extends DrawCard {
                     by5: true
                 })
             },
-            // TODO: Technically the target should be choosing 3 characters, then deciding which does what. Implement properly later.
-            targets: {
-                hand: {
-                    activePromptTitle: 'Select character to return to hand',
-                    cardCondition: { type: 'character', controller: 'current' }
+            target: {
+                cardCondition: { location: 'play area', type: 'character', controller: 'current' }
+            },
+            choices: {
+                'Return to hand': {
+                    message: '{player} plays {source} to return {target} to it\'s owners hand',
+                    gameAction: GameActions.returnCardToHand(context => ({ card: context.target }))
                 },
-                shadows: {
-                    activePromptTitle: 'Select character to place into shadows',
-                    cardCondition: { type: 'character', controller: 'current' }
+                'Place in shadows': {
+                    message: '{player} plays {source} to place {target} in shadows',
+                    gameAction: GameActions.putIntoShadows(context => ({ card: context.target }))
                 },
-                insight: {
-                    activePromptTitle: 'Select character to gain insight',
-                    cardCondition: { type: 'character', controller: 'current' }
+                'Gain insight': {
+                    message: '{player} plays {source} to have {target} gain insight until the end of the phase',
+                    gameAction: GameActions.genericHandler(context => {
+                        this.untilEndOfPhase(ability => ({
+                            match: context.targets.insight,
+                            effect: ability.effects.addKeyword('insight')
+                        }));
+                    })
                 }
-            },
-            max: ability.limit.perPhase(1),
-            message: {
-                format: '{player} plays {source} to choose {targets}',
-                args: { targets: context => context.targets.getTargets() }
-            },
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.simultaneously([
-                        GameActions.returnCardToHand(context => ({ card: context.targets.hand })),
-                        GameActions.putIntoShadows(context => ({ card: context.targets.shadows })),
-                        GameActions.genericHandler(context => {
-                            this.untilEndOfPhase(ability => ({
-                                match: context.targets.insight,
-                                effect: ability.effects.addKeyword('insight')
-                            }));
-                        })
-                    ])
-                    , context);
-                    
-                this.game.addMessage('{0} returns {1} to it\'s owners hand, places {2} into shadows and has {3} gain insight until the end of the phase',
-                    this.controller, context.targets.hand, context.targets.shadows, context.targets.insight);
             }
         });
     }
