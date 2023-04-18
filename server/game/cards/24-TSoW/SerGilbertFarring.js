@@ -3,27 +3,21 @@ const GameActions = require('../../GameActions/index.js');
 
 class SerGilbertFarring extends DrawCard {
     setupCardAbilities(ability) {
-        this.action({
-            title: 'Move 1 power',
-            limit: ability.limit.perPhase(1),
-            phase: 'challenge',
-            target: {
-                activePromptTitle: 'Select location to move power',
-                cardCondition: { location: 'play area', type: 'location', controller: 'current' }
+        this.persistentEffect({
+            condition: () => this.controller.anyCardsInPlay({ loyal: true, type: 'location', kneeled: false }),
+            match: this,
+            effect: ability.effects.addKeyword('Renown')
+        });
+        this.reaction({
+            when: {
+                onCardKneeled: event => event.card.isFaction('baratheon')
+                                        && event.card.getType() === 'location' 
+                                        && event.card.controller === this.controller
+                                        && ['assault', 'ability'].includes(event.reason)
             },
-            message: '{player} moves 1 power from {source} to {target} to give it immunity to assault until the end of the phase',
-            handler: context => {
-                this.game.resolveGameAction(GameActions.movePower(context => ({ from: this, to: context.target }))
-                    .then({
-                        gameAction: GameActions.genericHandler(context => {
-                            this.untilEndOfPhase(ability => ({
-                                match: context.target,
-                                effect: ability.effects.cannotBeAssaulted()
-                            }));
-                        })
-                    })
-                , context);
-            }
+            cost: ability.costs.standSelf(),
+            limit: ability.limit.perPhase(1),
+            gameAction: GameActions.standCard(context => ({ card: context.event.card }))
         });
     }
 }
