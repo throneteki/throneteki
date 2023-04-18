@@ -11,6 +11,7 @@ class TheCrag extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.isMatch({ challengeType: 'military', winner: this.controller, attackingPlayer: this.controller })
             },
+            limit: ability.limit.perPhase(2),
             message: {
                 format: '{player} uses {source} to gain {amount} power for their faction',
                 args: { amount: context => this.getAmount(context) }
