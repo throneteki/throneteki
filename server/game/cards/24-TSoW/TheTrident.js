@@ -7,6 +7,7 @@ class TheTrident extends DrawCard {
             claim: 1
         });
         this.forcedReaction({
+            cannotBeCanceled: true,
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && event.challenge.attackingPlayer === this.controller
             },
