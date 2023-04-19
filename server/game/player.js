@@ -922,11 +922,11 @@ class Player extends Spectator {
         return !this.putIntoShadowsRestrictions.some(restriction => restriction(card, playingType));
     }
 
-    putIntoShadows(card, reason = 'ability', allowSave = true, callback = () => true) {
+    putIntoShadows(card, allowSave = true, callback = () => true) {
         let playingType = this.game.currentPhase === 'setup' ? 'setup' : 'put';
         if(this.canPutIntoShadows(card, playingType)) {
             this.game.applyGameAction('putIntoShadows', card, card => {
-                this.game.raiseEvent('onCardPutIntoShadows', { player: this, card: card, reason, allowSave: allowSave }, event => {
+                this.game.raiseEvent('onCardPutIntoShadows', { player: this, card: card, allowSave: allowSave }, event => {
                     event.cardStateWhenMoved = card.createSnapshot();
                     this.moveCard(card, 'shadows', { allowSave: allowSave }, callback);
                 });

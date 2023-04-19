@@ -38,7 +38,7 @@ class MarshalIntoShadowsAction extends BaseAbility {
             type: 'shadows'
         };
         context.game.raiseEvent('onCardMarshalled', params, () => {
-            context.player.putIntoShadows(context.source, 'marshal');
+            context.player.putIntoShadows(context.source);
             context.game.addMessage(this.getMessageFormat(params), context.player, params.originalLocation, params.originalParent, context.costs.gold);
         });
     }
