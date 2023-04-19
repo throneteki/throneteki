@@ -5,7 +5,7 @@ class BattleOfTheCamps extends PlotCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                afterChallenge: event => event.challenge.challengeType === 'military' && event.challenge.attackingPlayer === this.controller
+                afterChallenge: event => event.challenge.isMatch({ challengeType: 'military', attackingPlayer: this.controller, winner: this.controller })
             },
             target: {
                 cardCondition: { type: 'character', location: 'play area', conditon: (card, context) => card.controller === context.event.challenge.loser }
