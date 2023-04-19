@@ -29,7 +29,7 @@ describe('Shagwell', function() {
                 this.player1.clickCard(this.shagwell);
                 this.player1.clickPrompt('Done');
             });
-            
+
             it('should copy his own keywords', function() {
                 expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(1);
                 this.shagwell.modifyToken('gold', 1);
@@ -83,7 +83,7 @@ describe('Shagwell', function() {
             it('should only copy one instance of the same keyword whilst on different characters', function() {
                 expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(2);
                 expect(this.shagwell.keywords.getCount('pillage')).toBe(0);
-                
+
                 this.player1.dragCard(this.stealthAndPillage, 'play area');
                 this.stealthAndPillage.modifyToken('gold', 1);
                 //update state
@@ -129,7 +129,7 @@ describe('Shagwell', function() {
                 expect(this.jinglebell.keywords.contains('stealth')).toBe(false);
             });
 
-            if('should not copy the keywords of a character which were also copied from a separate character that left play', function() {
+            it('should not copy the keywords of a character which were also copied from a separate character that left play', function() {
                 expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
                 expect(this.shagwell.keywords.contains('pillage')).toBe(false);
                 expect(this.shagwell.keywords.contains('stealth')).toBe(false);
@@ -169,8 +169,8 @@ describe('Shagwell', function() {
                     expect(this.patchface.keywords.contains('Bestow (3)')).toBe(false);
                     expect(this.shagwell.keywords.contains('stealth')).toBe(false);
                     expect(this.patchface.keywords.contains('stealth')).toBe(false);
-                }) 
-            })
+                });
+            });
         });
     });
 });
