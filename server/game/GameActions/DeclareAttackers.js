@@ -39,7 +39,7 @@ class DeclareAttackers extends GameAction {
         return (
             card.canParticipateInChallenge() &&
             card.location === 'play area' &&
-            !card.stealth &&
+            !card.bypassedByStealth &&
             canKneelForChallenge &&
             (card.hasIcon(challenge.challengeType) || card.challengeOptions.contains('canBeDeclaredWithoutIcon'))
         );

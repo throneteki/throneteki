@@ -107,8 +107,8 @@ describe('Crown Regent', function() {
 
             it('only bypasses the new character with stealth', function() {
                 this.player2.clickCard(this.player3Char);
-                expect(this.player3Char.stealth).toBe(true);
-                expect(this.player1Char.stealth).toBe(false);
+                expect(this.player3Char.bypassedByStealth).toBe(true);
+                expect(this.player1Char.bypassedByStealth).toBe(false);
             });
         });
     });

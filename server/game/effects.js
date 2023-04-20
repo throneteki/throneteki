@@ -777,7 +777,7 @@ const Effects = {
             }
         };
     },
-    cannotBeAssaulted: cannotEffect('assault'),
+    cannotBeTargetedByAssault: cannotEffect('targetByAssault'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),

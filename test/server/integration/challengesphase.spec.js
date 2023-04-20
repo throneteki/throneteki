@@ -31,7 +31,7 @@ describe('challenges phase', function() {
                 this.player1.clickCard(stealthTarget);
 
                 expect(this.player1).toAllowAbilityTrigger('Tyrion Lannister');
-                expect(stealthTarget.stealth).toBe(true);
+                expect(stealthTarget.bypassedByStealth).toBe(true);
             });
         });
 

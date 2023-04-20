@@ -9,24 +9,15 @@ among attacking characters with assault.
 Treat the chosen location as if its printed text box were blank (except for Traits) until the end of the challenge.
 If you win this challenge, kneel it.
 */
-class AssaultKeywordAction extends GameAction {
+class TargetByAssault extends GameAction {
     constructor() {
-        super('assault');
-    }
-
-    canChangeGameState({ challenge, source, target }) {
-        return (
-            source.isAssault() &&
-            target.controller === challenge.defendingPlayer &&
-            target.location === 'play area' &&
-            target.getType() === 'location' &&
-            (source.challengeOptions.contains('ignoresAssaultLocationCost') || target.getPrintedCost() < source.getPrintedCost()) &&
-            target.allowGameAction(this.name)
-        );
+        super('assaulted');
     }
 
     createEvent({ challenge, source, target }) {
         return this.event('onAssaulted', { challenge, source, target }, () => {
+            target.targetedByAssault = true;
+
             source.untilEndOfChallenge(ability => ({
                 match: target,
                 effect: ability.effects.blankExcludingTraits
@@ -45,4 +36,4 @@ class AssaultKeywordAction extends GameAction {
     }
 }
 
-module.exports = new AssaultKeywordAction();
+module.exports = new TargetByAssault();
