@@ -64,12 +64,21 @@ class MoveCardEventGenerator {
     createReturnCardToHandEvent({ card, allowSave = true }) {
         let params = {
             card: card,
-            allowSave: allowSave
+            allowSave: allowSave,
+            snapshotName: 'cardStateWhenReturned'
         };
-        return this.event('onCardReturnedToHand', params, event => {
-            event.cardStateWhenReturned = card.createSnapshot();
-            event.card.controller.moveCard(card, 'hand', { allowSave: allowSave });
+        const returnEvent = this.event('onCardReturnedToHand', params, event => {
+            event.thenAttachEvent(this.createPlaceCardEvent({ card: event.card, player: event.card.controller, location: 'hand' }));
         });
+
+        if(['play area', 'duplicate'].includes(card.location)) {
+            return this.atomic(
+                returnEvent,
+                this.createLeavePlayEvent({ card, allowSave })
+            );
+        }
+
+        return returnEvent;
     }
 
     createPlaceCardEvent({ card, player, location, bottom = false }) {
