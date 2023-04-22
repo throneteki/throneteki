@@ -434,6 +434,16 @@ const Effects = {
             isStateDependent: true
         };
     },
+    dynamicKeywordSources: function(sourceFunc) {
+        return {
+            apply: function(card) {
+                card.keywordSources.push(sourceFunc);
+            },
+            unapply: function(card) {
+                card.keywordSources = card.keywordSources.filter(existingSourceFunc => existingSourceFunc !== sourceFunc);
+            }
+        };
+    },
     removeKeyword: function(keyword) {
         return {
             apply: function(card) {

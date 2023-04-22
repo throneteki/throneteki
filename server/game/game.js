@@ -4,6 +4,7 @@ const moment = require('moment');
 const AttachmentValidityCheck = require('./AttachmentValidityCheck.js');
 const ChatCommands = require('./chatcommands.js');
 const GameChat = require('./gamechat.js');
+const DynamicKeywordsEffect = require('./DynamicKeywordsEffect');
 const EffectEngine = require('./effectengine.js');
 const Effect = require('./effect.js');
 const Effects = require('./effects');
@@ -1265,6 +1266,7 @@ class Game extends EventEmitter {
     }
 
     activatePersistentEffects() {
+        this.effectEngine.add(new DynamicKeywordsEffect({ game: this }));
         this.effectEngine.activatePersistentEffects();
     }
 

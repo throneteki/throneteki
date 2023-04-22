@@ -60,6 +60,7 @@ class BaseCard {
         this.powerOptions = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
+        this.keywordSources = [];
 
         this.power = 0;
         this.tokens = {};
