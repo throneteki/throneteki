@@ -12,21 +12,17 @@ class DragonEgg extends DrawCard {
                 onPhaseStarted: event => event.phase === 'marshal' && this.parent.name === 'Daenerys Targaryen'
             },
             cost: ability.costs.sacrificeSelf(),
-            handler: context => {
-                this.game.resolveGameAction(
-                    GameActions.search({
-                        title: 'Select a character',
-                        match: { type: 'character', trait: 'Hatchling' },
-                        message: '{player} uses {source} to search their deck and put {searchTarget} into play',
-                        cancelMessage: '{player} uses {source} to search their deck but does not find a card',
-                        gameAction: GameActions.putIntoPlay(context => ({
-                            player: context.player,
-                            card: context.searchTarget
-                        }))
-                    }),
-                    context
-                );
-            }
+            message: '{player} uses {source} to search their deck for a Hatchling character',
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { type: 'character', trait: 'Hatchling' },
+                reveal: false,
+                message: '{player} {gameAction}',
+                gameAction: GameActions.putIntoPlay(context => ({
+                    player: context.player,
+                    card: context.searchTarget
+                }))
+            })
         });
     }
 }

@@ -1,5 +1,5 @@
 class AbilityMessage {
-    static create(formatOrProperties) {
+    static create(formatOrProperties, specialArgs = null) {
         class NullValue {
             output() {
                 // no-op.
@@ -25,9 +25,10 @@ class AbilityMessage {
         }
 
         if(typeof(formatOrProperties) === 'string') {
-            return new AbilityMessage({ format: formatOrProperties });
+            return new AbilityMessage({ format: formatOrProperties, args: specialArgs });
         }
 
+        formatOrProperties.args = { ...formatOrProperties.args, ...specialArgs };
         return new AbilityMessage(formatOrProperties);
     }
 
@@ -81,16 +82,18 @@ class AbilityMessage {
         ];
         const optionalArgs = this.getOptionalArgs(format);
         const targetSelectionArgs = this.getTargetSelectionArgs(format);
+        const costArgs = this.getCostArgs(format);
         const customArgs = Object.entries(customArgsHash).map(([name, getValue]) => ({ name, getValue }));
 
-        return standardArgs.concat(optionalArgs).concat(targetSelectionArgs).concat(customArgs);
+        return standardArgs.concat(optionalArgs).concat(targetSelectionArgs).concat(costArgs).concat(customArgs);
     }
 
     getOptionalArgs(format) {
         const optionalArgTypes = [
             { name: 'opponent', getValue: context => context.opponent },
             { name: 'chosenPlayer', getValue: context => context.chosenPlayer },
-            { name: 'searchTarget', getValue: context => context.searchTarget }
+            { name: 'searchTarget', getValue: context => context.searchTarget },
+            { name: 'gameAction', getValue: context => context.gameAction && context.gameAction.message(context) }
         ];
 
         return optionalArgTypes.filter(argType => format.includes(`{${argType.name}}`));
@@ -105,6 +108,21 @@ class AbilityMessage {
             args.push({
                 name: `targetSelection.${property}`,
                 getValue: context => context.currentTargetSelection && context.currentTargetSelection[property]
+            });
+        }
+
+        return args;
+    }
+
+    getCostArgs(format) {
+        let args = [];
+        let regex = /{costs\.(\w+)}/g;
+        let match;
+        while((match = regex.exec(format)) !== null) {
+            let property = match[1];
+            args.push({
+                name: `costs.${property}`,
+                getValue: context => context.costs && context.costs[property]
             });
         }
 

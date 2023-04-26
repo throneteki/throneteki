@@ -13,12 +13,11 @@ describe('the SelectCardPrompt', function() {
     }
 
     beforeEach(function() {
-        this.game = jasmine.createSpyObj('game', ['getPlayers', 'getNumberOfPlayers']);
-        this.game.getPlayers.and.returnValue([]);
-
+        this.game = jasmine.createSpyObj('game', ['getPlayers', 'getNumberOfPlayers', 'allCards']);
         this.player = jasmine.createSpyObj('player1', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards', 'startClock', 'stopClock']);
         this.player.cardsInPlay = [];
         this.otherPlayer = jasmine.createSpyObj('player2', ['setPrompt', 'cancelPrompt', 'clearSelectableCards', 'clearSelectedCards', 'setSelectableCards', 'setSelectedCards', 'startClock', 'stopClock']);
+        this.game.getPlayers.and.returnValue([this.player, this.otherPlayer]);
         this.card = createCardSpy({ name: 'card', controller: this.player });
 
         this.player.cardsInPlay.push(this.card);
@@ -592,6 +591,57 @@ describe('the SelectCardPrompt', function() {
                     this.prompt.onCardClicked(this.player, this.card);
                     expect(this.prompt.selectedCards).not.toContain(this.card);
                 });
+            });
+        });
+    });
+
+    describe('for prompts with eachPlayer selection', function() {
+        beforeEach(function() {
+            this.card2 = createCardSpy({ name: 'card2', controller: this.otherPlayer });
+            this.card.controller = this.player;
+            this.game.allCards = [this.card, this.card2];
+            this.properties.mode = 'eachPlayer';
+            this.properties.ifAble = true;
+            this.properties.onSelect.and.returnValue(true);
+            this.properties.cardCondition.and.returnValue(true);
+            this.context = {
+                costs: {},
+                game: this.game,
+                player: this.player,
+                source: this.card
+            };
+            this.properties.context = this.context;
+            this.prompt = new SelectCardPrompt(this.game, this.player, this.properties);
+        });
+
+        describe('when there is a card selectable controlled by each player', function() {
+            it('lets the prompted player select a card controlled by each player', function() {
+                this.prompt.onCardClicked(this.player, this.card);
+                expect(this.player.setSelectedCards).toHaveBeenCalledWith([this.card]);
+                expect(this.prompt.isComplete()).toBe(false);
+                this.prompt.onCardClicked(this.player, this.card2);
+                expect(this.player.setSelectedCards).toHaveBeenCalledWith([this.card, this.card2]);
+                this.prompt.onMenuCommand(this.player, 'done');
+                expect(this.prompt.isComplete()).toBe(true);
+            });
+
+            it('does not let the prompted player finish the prompt when they selected a card controlled by only one player', function() {
+                this.prompt.onCardClicked(this.player, this.card);
+                expect(this.player.setSelectedCards).toHaveBeenCalledWith([this.card]);
+                expect(this.prompt.isComplete()).toBe(false);
+                this.prompt.onMenuCommand(this.player, 'done');
+                expect(this.prompt.isComplete()).toBe(false);
+            });
+        });
+
+        describe('when there is a card selectable controlled by only one player', function() {
+            it('lets the prompted player select a card controlled by only one player', function() {
+                this.card2.controller = this.player;
+                this.prompt.onCardClicked(this.player, this.card2);
+                expect(this.player.setSelectedCards).toHaveBeenCalledWith([this.card2]);
+                expect(this.prompt.isComplete()).toBe(false);
+                this.prompt.onMenuCommand(this.player, 'done');
+                expect(this.prompt.isComplete()).toBe(true);
             });
         });
     });

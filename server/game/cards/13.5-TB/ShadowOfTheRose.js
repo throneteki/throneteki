@@ -1,39 +1,24 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions');
 
 class ShadowOfTheRose extends DrawCard {
     setupCardAbilities() {
         this.action({
-            handler: () => {
-                this.game.promptForDeckSearch(this.controller, {
-                    numCards: 10,
-                    activePromptTitle: 'Select a card with shadow',
-                    cardCondition: card => card.isShadow(),
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} plays {source} to search the top 10 cards of their deck for a card with shadow',
+            gameAction: GameActions.search({
+                title: 'Select a card',
+                topCards: 10,
+                match: { shadow: true },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.simultaneously([
+                    GameActions.putIntoShadows(context => ({ card: context.searchTarget })),
+                    GameActions.ifCondition({
+                        condition: context => context.game.anyPlotHasTrait('Summer'),
+                        thenAction: GameActions.returnCardToHand({ card: this })
+                    })
+                ])
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.putIntoShadows(card);
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into shadows',
-            player, this, card);
-        this.returnToHandInsteadOfDiscardPile(player);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into shadows',
-            player, this);
-        this.returnToHandInsteadOfDiscardPile(player);
-    }
-
-    returnToHandInsteadOfDiscardPile(player) {
-        if(this.game.anyPlotHasTrait('Summer')) {
-            this.game.addMessage('{0} uses {1} to return {1} to their hand instead of their discard pile', player, this);
-            player.moveCard(this, 'hand');
-        }
     }
 }
 

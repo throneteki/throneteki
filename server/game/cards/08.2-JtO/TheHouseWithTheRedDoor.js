@@ -1,4 +1,5 @@
 const AgendaCard = require('../../agendacard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class TheHouseWithTheRedDoor extends AgendaCard {
     constructor(owner, cardData) {
@@ -8,36 +9,35 @@ class TheHouseWithTheRedDoor extends AgendaCard {
     }
 
     onDecksPrepared() {
-        this.game.promptForDeckSearch(this.controller, {
-            activePromptTitle: 'Select a location',
-            cardCondition: card => card.getType() === 'location' && !card.isLimited() && card.isUnique() && card.getPrintedCost() <= 3,
-            onSelect: (player, card) => this.cardSelected(player, card),
-            onCancel: player => this.doneSelecting(player),
+        const context = {
+            player: this.controller,
+            game: this.game,
             source: this
-        });
-    }
+        };
+        this.game.resolveGameAction(GameActions.search({
+            title: 'Select a location',
+            player: () => this.controller,
+            match: { type: 'location', limited: false, unique: true, printedCostOrLower: 3 },
+            reveal: false,
+            message: '{player} uses {source} to search their deck and put {searchTarget} into play',
+            gameAction: GameActions.putIntoPlay(context => ({
+                player: this.controller,
+                card: context.searchTarget
+            })).thenExecute(event => {
+                this.startLocation = event.card;
+                //Manually set card faceup to override the setup phase default facedown setting
+                event.card.facedown = false;
 
-    cardSelected(player, card) {
-        this.startLocation = card;
-        player.putIntoPlay(card);
-
-        //Manually set card faceup to override the setup phase default facedown setting
-        card.facedown = false;
-
-        this.controller.cardsInPlayBeforeSetup.push(card);
-        this.game.addMessage('{0} uses {1} to search their deck and put {2} into play', player, this, card);
-
-        this.lastingEffect(ability => ({
-            until: {
-                onCardLeftPlay: event => event.card === this.startLocation
-            },
-            match: card => card === this.startLocation,
-            effect: ability.effects.cannotBeDiscarded(context => context.resolutionStage === 'effect')
-        }));
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck, but does not put any card into play', player, this);
+                this.controller.cardsInPlayBeforeSetup.push(event.card);
+                this.lastingEffect(ability => ({
+                    until: {
+                        onCardLeftPlay: event => event.card === this.startLocation
+                    },
+                    match: card => card === this.startLocation,
+                    effect: ability.effects.cannotBeDiscarded(context => context.resolutionStage === 'effect')
+                }));
+            })
+        }), context);
     }
 
     setupCardAbilities(ability) {

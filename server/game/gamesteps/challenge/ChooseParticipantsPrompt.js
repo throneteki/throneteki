@@ -9,7 +9,7 @@ class ChooseParticipantsPrompt extends BaseStep {
         this.limits = choosingPlayer[properties.limitsProperty];
         this.properties = properties;
         this.attacking = !!properties.attacking;
-        this.challengeType = properties.challengeType;
+        this.challenge = properties.challenge;
         this.onSelect = properties.onSelect || (() => true);
     }
 
@@ -39,7 +39,7 @@ class ChooseParticipantsPrompt extends BaseStep {
     canParticipate(card) {
         return card.controller === this.choosingPlayer &&
             card.getType() === 'character' &&
-            card.canDeclareAsParticipant({ attacking: this.attacking, challengeType: this.challengeType }) &&
+            card.canDeclareAsParticipant({ attacking: this.attacking, challengeType: this.challenge.challengeType }) &&
             card.allowGameAction(this.properties.gameAction) &&
             !card.isParticipating();
     }
@@ -52,6 +52,9 @@ class ChooseParticipantsPrompt extends BaseStep {
         let title = this.properties.activePromptTitle;
         let max = this.limits.getMax();
         let min = this.limits.getMin();
+        if(this.properties.cannotCancel) {
+            min = Math.max(min, 1);
+        }
         let restrictions = [];
 
         if(min !== 0) {
@@ -82,7 +85,10 @@ class ChooseParticipantsPrompt extends BaseStep {
 
     hasMetParticipantMinimum(participants) {
         let min = this.limits.getMin();
-
+        if(this.properties.cannotCancel) {
+            min = Math.max(min, 1);
+        }
+        
         if(min === 0) {
             return true;
         }

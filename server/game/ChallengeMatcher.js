@@ -3,6 +3,7 @@ const Matcher = require('./Matcher');
 class ChallengeMatcher {
     static isMatch(challenge, matchers) {
         return (
+            Matcher.containsValue(matchers.initiatingPlayer, challenge.initiatingPlayer) &&
             Matcher.containsValue(matchers.initiatedChallengeType, challenge.initiatedChallengeType) &&
             Matcher.containsValue(matchers.challengeType, challenge.challengeType) &&
             Matcher.containsValue(matchers.attackingPlayer, challenge.attackingPlayer) &&
@@ -16,7 +17,9 @@ class ChallengeMatcher {
             Matcher.containsValue(matchers.number, challenge.number) &&
             Matcher.containsValue(matchers.unopposed, challenge.isUnopposed()) &&
             Matcher.anyValue(matchers.by5, value => (challenge.strengthDifference >= 5) === value) &&
-            Matcher.anyValue(matchers.match, func => func(challenge))
+            Matcher.anyValue(matchers.match, func => func(challenge)) &&
+            Matcher.anyValue(matchers.not, notProperties => !ChallengeMatcher.isMatch(challenge, notProperties)) &&
+            Matcher.anyValue(matchers.or, orProperties => ChallengeMatcher.isMatch(challenge, orProperties))
         );
     }
 

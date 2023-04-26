@@ -31,13 +31,13 @@ describe('Haldon Halfmaester', function() {
                 this.player1.clickPrompt('Done');
                 this.skipActionWindow();
                 this.player2.clickPrompt('Done');
-                this.skipActionWindow();
             });
 
             describe('and the top card is a character', function() {
                 beforeEach(function() {
                     this.player1.dragCard(this.hedge2, 'draw deck');
                     expect(this.hedge2.location).toBe('draw deck');
+                    this.skipActionWindow();
                 });
 
                 it('it should place 1 gold on a character', function() {
@@ -54,6 +54,7 @@ describe('Haldon Halfmaester', function() {
                 beforeEach(function() {
                     this.player1.dragCard(this.event, 'draw deck');
                     expect(this.event.location).toBe('draw deck');
+                    this.skipActionWindow();
                 });
 
                 it('it should draw the event', function() {
@@ -67,6 +68,7 @@ describe('Haldon Halfmaester', function() {
                 beforeEach(function() {
                     this.player1.dragCard(this.aegon, 'draw deck');
                     expect(this.aegon.location).toBe('draw deck');
+                    this.skipActionWindow();
                 });
 
                 it('it should place 1 gold on a character', function() {

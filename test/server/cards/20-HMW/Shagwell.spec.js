@@ -3,7 +3,7 @@ describe('Shagwell', function() {
         beforeEach(function() {
             const deck1 = this.buildDeck('tyrell', [
                 'A Mummer\'s Farce',
-                'Late Summer Feast', 'Shagwell', 'Jinglebell', 'Maester Aemon (Core)', 'Veteran Builder', 'Asha Greyjoy (KotI)', 'Polliver'
+                'Late Summer Feast', 'Shagwell', 'Jinglebell', 'Maester Aemon (Core)', 'Veteran Builder', 'Asha Greyjoy (KotI)', 'Polliver', 'Patchface', 'Saltcliffe Sailor'
             ]);
             this.player1.selectDeck(deck1);
             this.player2.selectDeck(deck1);
@@ -12,10 +12,12 @@ describe('Shagwell', function() {
 
             this.shagwell = this.player1.findCardByName('Shagwell');
             this.jinglebell = this.player1.findCardByName('Jinglebell');
+            this.patchface = this.player1.findCardByName('Patchface');
             this.noAttach = this.player1.findCardByName('Maester Aemon');
             this.noAttachExcept = this.player1.findCardByName('Veteran Builder');
             this.stealthAndPillage = this.player1.findCardByName('Asha Greyjoy');
             this.pillage = this.player1.findCardByName('Polliver');
+            this.stealthGaining = this.player1.findCardByName('Saltcliffe Sailor');
 
             this.completeSetup();
 
@@ -27,7 +29,7 @@ describe('Shagwell', function() {
                 this.player1.clickCard(this.shagwell);
                 this.player1.clickPrompt('Done');
             });
-            
+
             it('should copy his own keywords', function() {
                 expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(1);
                 this.shagwell.modifyToken('gold', 1);
@@ -81,7 +83,7 @@ describe('Shagwell', function() {
             it('should only copy one instance of the same keyword whilst on different characters', function() {
                 expect(this.shagwell.keywords.getCount('Bestow (1)')).toBe(2);
                 expect(this.shagwell.keywords.getCount('pillage')).toBe(0);
-                
+
                 this.player1.dragCard(this.stealthAndPillage, 'play area');
                 this.stealthAndPillage.modifyToken('gold', 1);
                 //update state
@@ -125,6 +127,49 @@ describe('Shagwell', function() {
                 expect(this.jinglebell.keywords.contains('Bestow (1)')).toBe(true);
                 expect(this.jinglebell.keywords.contains('pillage')).toBe(false);
                 expect(this.jinglebell.keywords.contains('stealth')).toBe(false);
+            });
+
+            it('should not copy the keywords of a character which were also copied from a separate character that left play', function() {
+                expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
+                expect(this.shagwell.keywords.contains('pillage')).toBe(false);
+                expect(this.shagwell.keywords.contains('stealth')).toBe(false);
+            });
+
+            describe('and patchface is in play', function() {
+                beforeEach(function() {
+                    this.player1.clickCard(this.patchface);
+                    this.player1.clickPrompt('1');
+                });
+
+                it('should not copy patchface\'s keywords when the source of those keywords has left play', function() {
+                    expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
+                    expect(this.patchface.keywords.contains('Bestow (1)')).toBe(true);
+                    expect(this.shagwell.keywords.contains('Bestow (3)')).toBe(false);
+                    expect(this.patchface.keywords.contains('Bestow (3)')).toBe(false);
+                    expect(this.shagwell.keywords.contains('stealth')).toBe(false);
+                    expect(this.patchface.keywords.contains('stealth')).toBe(false);
+                    //source of stealth gaining ability enters play
+                    this.player1.dragCard(this.stealthGaining, 'play area');
+                    this.player1.clickPrompt('1');
+                    //update state
+                    this.player1.clickCard(this.shagwell);
+                    expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
+                    expect(this.patchface.keywords.contains('Bestow (1)')).toBe(true);
+                    expect(this.shagwell.keywords.contains('Bestow (3)')).toBe(true);
+                    expect(this.patchface.keywords.contains('Bestow (3)')).toBe(true);
+                    expect(this.shagwell.keywords.contains('stealth')).toBe(true);
+                    expect(this.patchface.keywords.contains('stealth')).toBe(true);
+                    //source of stealth gaining ability leaves play
+                    this.player1.dragCard(this.stealthGaining, 'discard pile');
+                    //update state
+                    this.player1.clickCard(this.shagwell);
+                    expect(this.shagwell.keywords.contains('Bestow (1)')).toBe(true);
+                    expect(this.patchface.keywords.contains('Bestow (1)')).toBe(true);
+                    expect(this.shagwell.keywords.contains('Bestow (3)')).toBe(false);
+                    expect(this.patchface.keywords.contains('Bestow (3)')).toBe(false);
+                    expect(this.shagwell.keywords.contains('stealth')).toBe(false);
+                    expect(this.patchface.keywords.contains('stealth')).toBe(false);
+                });
             });
         });
     });

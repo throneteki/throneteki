@@ -55,7 +55,7 @@ describe('Ser Lancel Lannister', function() {
                 this.completeMarshalPhase();
 
                 this.player1.clickCard('I Never Bet Against My Family', 'hand');
-                this.player1.clickPrompt('Ser Gregor Clegane');
+                this.player1.clickCard('Ser Gregor Clegane', 'draw deck');
             });
 
             it('should not crash', function() {

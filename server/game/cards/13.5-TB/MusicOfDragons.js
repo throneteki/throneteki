@@ -1,31 +1,21 @@
 const DrawCard = require('../../drawcard');
+const GameActions = require('../../GameActions');
 
 class MusicOfDragons extends DrawCard {
     setupCardAbilities() {
         this.action({
             title: 'Search deck',
             phase: 'challenge',
-            handler: context => {
-                this.game.promptForDeckSearch(context.player, {
-                    activePromptTitle: 'Select a character',
-                    cardCondition: card => card.getType() === 'character' && card.hasTrait('Dragon'),
-                    onSelect: (player, card) => this.cardSelected(player, card),
-                    onCancel: player => this.doneSelecting(player),
-                    source: this
-                });
-            }
+            message: '{player} plays {source} to search their deck for a Dragon character',
+            gameAction: GameActions.search({
+                title: 'Select a character',
+                match: { type: 'character', trait: 'Dragon' },
+                message: '{player} {gameAction}',
+                gameAction: GameActions.addToHand(context => ({
+                    card: context.searchTarget
+                }))
+            })
         });
-    }
-
-    cardSelected(player, card) {
-        player.moveCard(card, 'hand');
-        this.game.addMessage('{0} uses {1} to search their deck and add {2} to their hand',
-            player, this, card);
-    }
-
-    doneSelecting(player) {
-        this.game.addMessage('{0} uses {1} to search their deck but does not add any card to their hand',
-            player, this);
     }
 }
 

@@ -28,6 +28,7 @@ class BaseCardSelector {
         this.singleController = properties.singleController;
         this.isCardEffect = properties.isCardEffect;
         this.optional = !!properties.optional;
+        this.ifAble = !!properties.ifAble;
 
         if(!Array.isArray(properties.cardType)) {
             this.cardType = [properties.cardType];
@@ -73,6 +74,8 @@ class BaseCardSelector {
      * the currently selected cards
      * @param {integer} numPlayers
      * the number of players in the game
+     * @param {AbilityContext} context
+     * the context of the prompt, if able
      * @returns {boolean}
      */
     hasEnoughSelected(selectedCards) {
@@ -154,6 +157,16 @@ class BaseCardSelector {
         }
 
         return card.controller === selectedCards[0].controller;
+    }
+
+    /**
+     * Returns whether this selection can be rejected when the choosing player decides 
+     * to cancel the selection entirely.
+     * @param {AbilityContext} context
+     * @returns {boolean}
+     */
+    rejectAllowed() {
+        return this.ifAble;
     }
 }
 

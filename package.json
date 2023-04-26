@@ -8,7 +8,9 @@
     "jasmine": "cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine",
     "cover": "cross-env JASMINE_CONFIG_PATH=./jasmine.json istanbul cover --include-all-sources jasmine",
     "lint": "eslint server/ test/server/ --ext=js",
-    "pack-lobby": "node ./pack.js"
+    "pack-lobby": "node ./pack.js",
+    "start": "node ./index.js",
+    "gamenode": "node ./server/gamenode/index.js"
   },
   "repository": {
     "type": "git",
@@ -43,14 +45,14 @@
     "moment": "^2.21.0",
     "mongodb": "^2.2.31",
     "monk": "^7.0.0",
-    "passport": "^0.3.2",
+    "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "patreon": "^0.4.1",
     "pluralize": "^7.0.0",
     "pmx": "^1.6.7",
     "raven": "^1.2.1",
     "socket.io": "^2.4.1",
-    "throneteki-deck-helper": "^2.6.0",
+    "throneteki-deck-helper": "^2.7.0",
     "underscore": "^1.13.1",
     "uuid": "^3.1.0",
     "winston": "^2.2.0",

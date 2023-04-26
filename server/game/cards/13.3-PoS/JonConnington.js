@@ -10,17 +10,24 @@ class JonConnington extends DrawCard {
             target: {
                 cardCondition: (card, context) => card.controller === context.player && card.location === 'shadows'
             },
-            message: '{player} uses {source} to reveal {target}',
+            message: '{player} uses {source} to reveal a card from shadows',
             handler: context => {
                 this.game.resolveGameAction(
-                    GameActions.revealCard(context => ({ card: context.target })),
+                    GameActions.revealCards(context => ({
+                        player: context.player,
+                        cards: [context.target]
+                    })).then({
+                        condition: context => context.event.cards[0].isMatch({
+                            printedCostOrLower: 4,
+                            not: { type: 'event' }
+                        }) && context.event.revealed.length > 0,
+                        message: '{player} {gameAction}',
+                        gameAction: GameActions.putIntoPlay(context => ({
+                            card: context.event.revealed[0]
+                        }))
+                    }),
                     context
-                ).thenExecute(event => {
-                    if(event.card.getType() !== 'event' && event.card.getPrintedCost() <= 4 && context.player.canPutIntoPlay(event.card)) {
-                        this.game.addMessage('Then {0} puts {1} into play for {2}', context.player, event.card, this);
-                        context.player.putIntoPlay(event.card);
-                    }
-                });
+                );
             }
         });
     }

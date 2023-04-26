@@ -60,6 +60,7 @@ class BaseCard {
         this.powerOptions = new ReferenceCountedSetProperty();
         this.controllerStack = [];
         this.eventsForRegistration = [];
+        this.keywordSources = [];
 
         this.power = 0;
         this.tokens = {};
@@ -258,13 +259,22 @@ class BaseCard {
         var properties = propertyFactory(AbilityDsl);
         this.game.addEffect(this, Object.assign({ duration: 'atEndOfPhase', location: 'any' }, properties));
     }
-
+    
     /**
      * Applies an immediate effect which lasts until the end of the round.
      */
     untilEndOfRound(propertyFactory) {
         var properties = propertyFactory(AbilityDsl);
         this.game.addEffect(this, Object.assign({ duration: 'untilEndOfRound', location: 'any' }, properties));
+    }
+
+    /**
+     * Applies an immediate effect which expires at the end of the round. Per
+     * game rules this duration is outside of the round.
+     */
+    atEndOfRound(propertyFactory) {
+        var properties = propertyFactory(AbilityDsl);
+        this.game.addEffect(this, Object.assign({ duration: 'atEndOfRound', location: 'any' }, properties));
     }
 
     /**
@@ -564,15 +574,27 @@ class BaseCard {
     }
 
     isAttacking() {
-        return this.game.currentChallenge && this.game.currentChallenge.isAttacking(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isAttacking(this);
     }
 
     isDefending() {
-        return this.game.currentChallenge && this.game.currentChallenge.isDefending(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isDefending(this);
     }
 
     isParticipating() {
-        return this.game.currentChallenge && this.game.currentChallenge.isParticipating(this);
+        if(!this.game.currentChallenge) {
+            return false;
+        }
+
+        return this.game.currentChallenge.isParticipating(this);
     }
 
     setCardType(cardType) {
