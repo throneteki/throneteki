@@ -98,11 +98,10 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                     targets: event.targets.map(target => target.getShortSummary())
                 });
             } else if(event.name === 'onTargetsChosen') {
-                let viewableTargets = event.targets.getViewableFor(this.game, player);
                 controls.push({
                     type: 'targeting',
                     source: event.ability.card.getShortSummary(),
-                    targets: viewableTargets.viewable.map(target => target.getShortSummary()).concat(viewableTargets.hidden.map(() => ({ facedown: true })))
+                    targets: event.targets.getShortSummariesForPlayer(this.game, player)
                 });
             }
         }
