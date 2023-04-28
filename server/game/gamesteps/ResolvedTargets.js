@@ -39,6 +39,25 @@ class ResolvedTargets {
         return flatten(targetingSelections.map(selection => selection.value));
     }
 
+    getViewableFor(game, player) {
+        let targetingSelections = this.selections.filter(selection => selection.resolved && selection.hasValue() && selection.targetingType === 'choose');
+        return targetingSelections.reduce((result, selection) => {
+            let cards = Array.isArray(selection.value) ? flatten(selection.value) : [selection.value];
+            if(selection.requiresValidation) {
+                result.viewable = result.viewable.concat(cards);
+            } else {
+                for(let card of cards) {
+                    if(game.isCardVisible(card, player)) {
+                        result.viewable.push(card);
+                    } else {
+                        result.hidden.push(card);
+                    }
+                }
+            }
+            return result;
+        }, { viewable: [], hidden: [] });
+    }
+
     getTargetsForPlayer(player) {
         let selectionsForPlayer = this.selections.filter(selection => selection.choosingPlayer === player);
         let result = new ResolvedTargets();

@@ -23,6 +23,7 @@ class BaseCardSelector {
      */
     constructor(properties) {
         this.cardCondition = CardMatcher.createMatcher(properties.cardCondition);
+        this.cardValidation = CardMatcher.createValidator(properties.cardCondition);
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;
@@ -65,6 +66,15 @@ class BaseCardSelector {
      */
     getEligibleTargets(context) {
         return context.game.allCards.filter(card => this.canTarget(card, context));
+    }
+
+    /**
+     * Returns whether this selector requires proof that the chosen card is a valid target.
+     *  @param {AbilityContext} context
+     *  @returns {boolean}
+     */
+    requiresTargetValidation(context) {
+        return this.getEligibleTargets(context).some(card => this.cardValidation(card, context))
     }
 
     /**

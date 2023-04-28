@@ -5,6 +5,7 @@ class AbilityChoiceSelection {
     constructor(options) {
         this.choosingPlayer = options.choosingPlayer;
         this.eligibleChoices = options.eligibleChoices;
+        this.requiresValidation = options.requiresValidation;
         this.targetingType = options.targetingType;
         this.name = options.name;
         this.subResults = options.subResults;

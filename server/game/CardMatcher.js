@@ -71,6 +71,29 @@ class CardMatcher {
 
         return false;
     }
+
+    static createValidator(propertiesOrFunc) {
+        let dummyMatcher = CardMatcher.createMatcher(propertiesOrFunc);
+        let tracking = ['name', 'factions', 'icons', 'keywords', 'traits', 'cardData'];
+
+        return function(card, context) {
+            let requiresValidation = false;
+            let proxy = new Proxy(card, {
+                // When a tracked property is accessed, then card should require validation
+                get(object, property) {
+                    if(tracking.includes(property)) {
+                        requiresValidation = true;
+                    }
+                    return object[property];
+                }
+            });
+            
+            // Run the proxy test through the matcher
+            dummyMatcher(proxy, context);
+
+            return requiresValidation;
+        }
+    }
 }
 
 module.exports = CardMatcher;

@@ -52,7 +52,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
             cardCondition: card => cardsForPlayer.includes(card),
             cardType: ['agenda', 'attachment', 'character', 'event', 'location', 'plot', 'title'],
             additionalButtons: this.getButtons(player, unclickableCards),
-            additionalControls: this.getAdditionalPromptControls(),
+            additionalControls: this.getAdditionalPromptControls(player),
             doneButtonText: 'Pass',
             onSelect: (player, card) => this.chooseCardToTrigger(player, card),
             onCancel: () => this.pass(),
@@ -88,7 +88,7 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return buttons;
     }
 
-    getAdditionalPromptControls() {
+    getAdditionalPromptControls(player) {
         let controls = [];
         for(let event of this.event.getConcurrentEvents()) {
             if(event.name === 'onCardAbilityInitiated' && event.targets.length > 0) {
@@ -98,10 +98,11 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                     targets: event.targets.map(target => target.getShortSummary())
                 });
             } else if(event.name === 'onTargetsChosen') {
+                let viewableTargets = event.targets.getViewableFor(this.game, player);
                 controls.push({
                     type: 'targeting',
                     source: event.ability.card.getShortSummary(),
-                    targets: event.targets.getTargets().map(target => target.getShortSummary())
+                    targets: viewableTargets.viewable.map(target => target.getShortSummary()).concat(viewableTargets.hidden.map(() => ({ facedown: true })))
                 });
             }
         }
