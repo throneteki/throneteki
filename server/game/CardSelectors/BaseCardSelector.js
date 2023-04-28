@@ -74,7 +74,7 @@ class BaseCardSelector {
      *  @returns {boolean}
      */
     requiresTargetValidation(context) {
-        return this.getEligibleTargets(context).some(card => this.cardValidation(card, context))
+        return this.getEligibleTargets(context).some(card => this.cardValidation(card, context));
     }
 
     /**

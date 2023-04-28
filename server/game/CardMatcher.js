@@ -92,7 +92,7 @@ class CardMatcher {
             dummyMatcher(proxy, context);
 
             return requiresValidation;
-        }
+        };
     }
 }
 
