@@ -95,18 +95,22 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
                 controls.push({
                     type: 'targeting',
                     source: event.source.getShortSummary(),
-                    targets: event.targets.map(target => target.getShortSummary())
+                    targets: this.buildTargetSummaries(player, event.targets, event.targetsToValidate)
                 });
             } else if(event.name === 'onTargetsChosen') {
                 controls.push({
                     type: 'targeting',
                     source: event.ability.card.getShortSummary(),
-                    targets: event.targets.getShortSummariesForPlayer(this.game, player)
+                    targets: this.buildTargetSummaries(player, event.targets.getTargets(), event.targets.getTargetsToValidate())
                 });
             }
         }
 
         return controls;
+    }
+
+    buildTargetSummaries(player, targets, forced) {
+        return targets.map(target => forced.includes(target) || this.game.isCardVisible(target, player) ? target.getShortSummary() : { facedown: true });
     }
 
     chooseCardToTrigger(player, card) {

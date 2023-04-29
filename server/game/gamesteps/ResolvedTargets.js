@@ -39,12 +39,9 @@ class ResolvedTargets {
         return flatten(targetingSelections.map(selection => selection.value));
     }
 
-    getShortSummariesForPlayer(game, player) {
-        let targetingSelections = this.selections.filter(selection => selection.resolved && selection.hasValue() && selection.targetingType === 'choose');
-        return targetingSelections.reduce((summaries, selection) => {
-            let cards = Array.isArray(selection.value) ? flatten(selection.value) : [selection.value];
-            return summaries.concat(cards.map(card => selection.requiresValidation || game.isCardVisible(card, player) ? card.getShortSummary() : { facedown: true }));
-        }, []);
+    getTargetsToValidate() {
+        let targetingSelections = this.selections.filter(selection => selection.hasValue() && selection.requiresValidation);
+        return flatten(targetingSelections.map(selection => selection.value));
     }
 
     getTargetsForPlayer(player) {
