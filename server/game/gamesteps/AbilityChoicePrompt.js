@@ -9,10 +9,11 @@ class AbilityChoicePrompt extends BaseStep {
         this.title = title;
         this.choices = choices;
         this.cancelText = cancelText || 'Done';
-        this.cancelMessage = AbilityMessage.create(cancelMessage || '{choosingPlayer} cancels the resolution of {source} (costs were still paid)', { choosingPlayer: context => context.choosingPlayer });
+        this.cancelMessage = AbilityMessage.create(cancelMessage || { format: '{choosingPlayer} cancels the resolution of {source} (costs were still paid)', type: 'danger' }, { choosingPlayer: context => context.choosingPlayer });
     }
 
     continue() {
+        this.context.choosingPlayer = this.choosingPlayer;
         let buttons = this.choices.map(choice => {
             if(choice.card) {
                 return { card: choice.card, mapCard: true, method: 'chooseAbilityChoice' };
@@ -34,7 +35,6 @@ class AbilityChoicePrompt extends BaseStep {
     chooseAbilityChoice(player, choiceArg) {
         let choice = this.choices.find(choice => choiceArg === choice.card || choiceArg === choice.text);
         if(choice) {
-            this.context.choosingPlayer = this.choosingPlayer;
             this.context.selectedChoice = choice;
             choice.message.output(this.game, this.context);
             this.game.resolveGameAction(choice.gameAction, this.context);
