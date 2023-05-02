@@ -46,6 +46,7 @@ class Game extends EventEmitter {
     constructor(details, options = {}) {
         super();
 
+        this.instance = details.instance;
         this.event = details.event;
         this.eventName = details.event && details.event.name;
         this.restrictedList = details.restrictedList;
@@ -111,6 +112,10 @@ class Game extends EventEmitter {
         this.router = options.router;
 
         this.pushAbilityContext({ resolutionStage: 'framework' });
+    }
+
+    isPlaytesting() {
+        return this.instance === 'playtesting';
     }
 
     reportError(e) {
@@ -1293,7 +1298,8 @@ class Game extends EventEmitter {
                 name: player.name,
                 faction: player.faction.name || player.faction.value,
                 agenda: player.agenda ? player.agenda.name : undefined,
-                power: player.getTotalPower()
+                power: player.getTotalPower(),
+                playtested: this.isPlaytesting() ? player.preparedDeck.drawCards.concat(player.preparedDeck.plotCards).filter(card => card.cardData.wip).map(card => card.name) : undefined
             };
         });
 

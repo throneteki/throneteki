@@ -5,7 +5,7 @@ class TheDefianceOfDuskendale extends PlotCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onCardKneeled: event => event.card.getType() === 'location' && event.cause === 'assault'
+                onCardKneeled: event => event.card.getType() === 'location' && event.reason === 'assault'
             },
             message: {
                 format: '{player} uses {source} to discard {location}',

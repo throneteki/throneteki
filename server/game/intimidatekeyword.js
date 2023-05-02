@@ -1,24 +1,37 @@
 const BaseAbility = require('./baseability.js');
+const GameActions = require('./GameActions');
 
 class IntimidateKeyword extends BaseAbility {
     constructor() {
         super({
             target: {
-                activePromptTitle: 'Select a character to intimidate',
+                activePromptTitle: context => this.getTitle(context.source),
+                numCards: context => this.getAmount(context.source),
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
+            },
+            message: {
+                format: '{player} uses {source} to kneel {targets} using intimidate',
+                args: { targets: context => context.targets.getTargets() }
+            },
+            handler: context => {
+                context.game.resolveGameAction(GameActions.kneelCard(context => ({
+                    card: context.target,
+                    reason: 'intimidate',
+                    source: context.source
+                })), context);
             }
         });
         this.title = 'Intimidate';
     }
 
-    meetsRequirements(context) {
-        return context.challenge.isAttackerTheWinner() && this.canResolveTargets(context);
+    getTitle(source) {
+        var numTargets = this.getAmount(source);
+        return `Select ${numTargets === 1 ? 'a character' : `up to ${numTargets} characters`} to intimidate`;
     }
 
-    executeHandler(context) {
-        context.target.controller.kneelCard(context.target);
-        context.game.addMessage('{0} uses intimidate from {1} to kneel {2}', context.source.controller, context.source, context.target);
+    getAmount(source) {
+        return 1 + source.getKeywordTriggerModifier(this.title);
     }
 
     canIntimidate(card, strength, challenge) {
@@ -27,6 +40,10 @@ class IntimidateKeyword extends BaseAbility {
             && card.location === 'play area'
             && card.getType() === 'character'
             && card.getStrength() <= strength;
+    }
+
+    meetsRequirements(context) {
+        return context.source.isAttacking();
     }
 }
 

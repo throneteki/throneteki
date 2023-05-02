@@ -18,8 +18,8 @@ class GainPower extends GameAction {
         return ['active plot', 'faction', 'play area'].includes(card.location);
     }
 
-    createEvent({ card, amount = 1 }) {
-        return this.event('onCardPowerGained', { card, power: amount }, event => {
+    createEvent({ card, amount = 1, reason = 'ability' }) {
+        return this.event('onCardPowerGained', { card, power: amount, reason }, event => {
             event.card.power += event.power;
             event.card.game.checkWinCondition(event.card.controller);
         });

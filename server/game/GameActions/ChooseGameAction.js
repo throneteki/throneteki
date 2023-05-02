@@ -32,7 +32,7 @@ class ChooseGameAction extends GameAction {
         const choosingPlayer = this.playerFunc(context);
         let tempContext = { ...context, choosingPlayer };
         const choices = this.createChoices(this.choicesFunc(tempContext));
-        const validChoices = choices.filter(choice => choice.condition(tempContext) && choice.gameAction.allow(tempContext));
+        const validChoices = choices.filter(choice => choice.condition(tempContext));
         return validChoices.length > 0;
     }
 

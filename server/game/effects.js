@@ -324,26 +324,17 @@ const Effects = {
             }
         };
     },
-    addStealthLimit: function(value) {
+    modifyKeywordTriggerAmount: function(keyword, value) {
         return {
             apply: function(card) {
-                card.stealthLimit += value;
+                card.modifyKeywordTriggerAmount(keyword, value);
             },
             unapply: function(card) {
-                card.stealthLimit -= value;
+                card.modifyKeywordTriggerAmount(keyword, -value);
             }
         };
     },
-    addPillageLimit: function(value) {
-        return {
-            apply: function(card) {
-                card.pillageLimit += value;
-            },
-            unapply: function(card) {
-                card.pillageLimit -= value;
-            }
-        };
-    },
+    ignoresAssaultLocationCost: challengeOptionEffect('ignoresAssaultLocationCost'),
     addIcon: function(icon) {
         return {
             apply: function(card, context) {
@@ -761,6 +752,10 @@ const Effects = {
         let restriction = (card, playingType) => playingType === 'marshal' && condition(card);
         return this.cannotPutIntoPlay(restriction);
     },
+    cannotBringOutOfShadows: function(condition) {
+        let restriction = (card, playingType) => playingType === 'outOfShadows' && condition(card);
+        return this.cannotPutIntoPlay(restriction);
+    },
     cannotPlay: function(condition) {
         let restriction = (card, playingType) => card.getType() === 'event' && playingType === 'play' && condition(card);
         return this.cannotPutIntoPlay(restriction);
@@ -792,6 +787,7 @@ const Effects = {
             }
         };
     },
+    cannotBeAssaulted: cannotEffect('assault'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),
@@ -1139,6 +1135,17 @@ const Effects = {
             }
         };
     },
+    cannotGainDominancePower: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.flags.add('cannotGainDominancePower');
+            },
+            unapply: function(player) {
+                player.flags.remove('cannotGainDominancePower');
+            }
+        };
+    },
     canSelectAsFirstPlayer: function(condition) {
         return {
             targetType: 'player',
@@ -1319,14 +1326,14 @@ const Effects = {
             isStateDependent: true
         };
     },
-    mustChooseAsClaim: function(card) {
+    mustChooseAsClaim: function(cardFunc) {
         return {
             targetType: 'player',
             apply: function(player) {
-                player.mustChooseAsClaim.push(card);
+                player.mustChooseAsClaim.push(cardFunc);
             },
             unapply: function(player) {
-                player.mustChooseAsClaim = player.mustChooseAsClaim.filter(c => c !== card);
+                player.mustChooseAsClaim = player.mustChooseAsClaim.filter(c => c !== cardFunc);
             }
         };
     },

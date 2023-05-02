@@ -73,7 +73,8 @@ class BaseCard {
         this.canProvidePlotModifier = {
             gold: true,
             initiative: true,
-            reserve: true
+            reserve: true,
+            claim: true
         };
 
         this.abilityRestrictions = [];
@@ -150,6 +151,14 @@ class BaseCard {
                 match: card => card.controller.activePlot === card,
                 targetController: 'current',
                 effect: AbilityDsl.effects.modifyReserve(modifiers.reserve)
+            });
+        }
+        if(modifiers.claim) {
+            this.persistentEffect({
+                condition: () => this.canProvidePlotModifier['claim'],
+                match: card => card.controller.activePlot === card,
+                targetController: 'current',
+                effect: AbilityDsl.effects.modifyClaim(modifiers.claim)
             });
         }
     }
@@ -386,6 +395,10 @@ class BaseCard {
 
     getPrizedValue() {
         return this.keywords.getPrizedValue();
+    }
+
+    getKeywordTriggerModifier(keyword) {
+        return this.keywords.getTriggerModifier(keyword);
     }
 
     hasTrait(trait) {
@@ -636,6 +649,10 @@ class BaseCard {
     removeAbilityRestriction(restriction) {
         this.abilityRestrictions = this.abilityRestrictions.filter(r => r !== restriction);
         this.markAsDirty();
+    }
+
+    modifyKeywordTriggerAmount(keyword, amount) {
+        this.keywords.modifyTriggerAmount(keyword, amount);
     }
 
     addKeyword(keyword) {
