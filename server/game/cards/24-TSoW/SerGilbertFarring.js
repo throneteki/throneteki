@@ -1,23 +1,14 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require('../../GameActions/index.js');
 
 class SerGilbertFarring extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.anyCardsInPlay({ loyal: true, type: 'location', kneeled: false }),
+            condition: () => this.controller.anyCardsInPlay({ trait: 'Stronghold', type: 'location' }),
             match: this,
-            effect: ability.effects.addKeyword('Renown')
-        });
-        this.reaction({
-            when: {
-                onCardKneeled: event => event.card.isFaction('baratheon')
-                                        && event.card.getType() === 'location' 
-                                        && event.card.controller === this.controller
-                                        && ['assault', 'ability'].includes(event.reason)
-            },
-            cost: ability.costs.standSelf(),
-            limit: ability.limit.perPhase(1),
-            gameAction: GameActions.standCard(context => ({ card: context.event.card }))
+            effect: [
+                ability.effects.addKeyword('Renown'),
+                ability.effects.doesNotKneelAsDefender()
+            ]
         });
     }
 }
