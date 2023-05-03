@@ -16,7 +16,7 @@ class TheFieldOfFire extends DrawCard {
                     match: card => card.getType() === 'character' && !card.hasTrait('Dragon') && card.attachments.length === 0 && card.location === 'play area',
                     targetController: 'any',
                     effect: ability.effects.modifyStrength(this.getReductionAmount(context.player))
-                }))
+                }));
             })
         });
     }
