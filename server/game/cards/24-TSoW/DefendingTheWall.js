@@ -4,21 +4,29 @@ const GameActions = require('../../GameActions/index.js');
 class DefendingTheWall extends DrawCard {
     setupCardAbilities() {
         this.action({
-            title: 'Remove character\'s strength',
+            title: 'Remove character from challenge',
             phase: 'challenge',
+            condition: context => context.player.anyCardsInPlay({ name: ['The Wall', 'Castle Black'] }),
             target: {
-                cardCondition: card => card.location === 'play area' && card.getType() === 'character' && card.isAttacking() && !card.isLoyal()
+                cardCondition: card => card.isAttacking() && card.getType() === 'character' && card.getNumberOfIcons() > 1 
             },
-            message: '{player} plays {source} to remove {target}\'s STR from the challenge',
+            message: '{player} plays {source} to remove {target} from the challenge',
             handler: context => {
-                this.untilEndOfChallenge(ability => ({
-                    match: context.target,
-                    effect: ability.effects.doesNotContributeStrength()
-                }));
-                
-                if(context.target.hasTrait('Army') || context.target.hasTrait('Wildling')) {
-                    this.game.resolveGameAction(GameActions.drawCards(context => ({ player: context.player, amount: 1 })), context);
-                }
+                this.resolveGameAction(
+                    GameActions.removeFromChallenge(context => ({
+                        card: context.target
+                    })).then({
+                        condition: context => !(context.parentContext.target.hasTrait('Army') || context.parentContext.target.hasTrait('Wildling')),
+                        message: {
+                            format: 'Then {player} stands {originalTarget}',
+                            args: { originalTarget: context => context.parentContext.target }
+                        },
+                        gameAction: GameActions.standCard(context => ({
+                            card: context.parentContext.target
+                        }))
+                    }),
+                    context
+                );
             }
         });
     }
