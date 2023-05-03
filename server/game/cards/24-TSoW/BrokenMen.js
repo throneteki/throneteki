@@ -11,9 +11,9 @@ class BrokenMen extends DrawCard {
             target: {
                 cardCondition: { participating: true, or: [{ printedCostOrLower: 4 }, { trait: 'Army' }]}
             },
-            message: '{player} plays {source} and sacrifices {costs.sacrificeCard} to remove {target} from the game',
+            message: '{player} plays {source} and sacrifices {costs.sacrificeCard} to discard {target} from play',
             handler: context => {
-                this.game.resolveGameAction(GameActions.removeFromGame(context => ({ card: context.target })), context);
+                this.game.resolveGameAction(GameActions.discardCard(context => ({ card: context.target, source: this })), context);
             }
         });
     }
