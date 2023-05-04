@@ -18,6 +18,9 @@ class NavBar extends React.Component {
         this.setState({
             showPopup: menuItem
         });
+        if(menuItem.onMouseOver) {
+            menuItem.onMouseOver();
+        }
     }
 
     onMenuItemMouseOut() {
@@ -99,7 +102,7 @@ class NavBar extends React.Component {
                     onClick={ menuItem.onClick ? event => {
                         event.preventDefault();
                         menuItem.onClick();
-                    } : null }>{ menuItem.text }</a>{ (this.state.showPopup === menuItem) ? this.state.showPopup.popup : null }</li>
+                    } : null }> { menuItem.displayWarning ? <span className='warning-icon'/> : null } { menuItem.text }</a>{ (this.state.showPopup === menuItem) ? this.state.showPopup.popup : null }</li>
             );
         });
 

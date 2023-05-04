@@ -70,7 +70,9 @@ export class GameBoard extends React.Component {
             showCardMenu: {},
             showMessages: true,
             lastMessageCount: 0,
-            newMessages: 0
+            lastSpectatorCount: 0,
+            newMessages: 0,
+            displayWarningInNavBar: false
         };
     }
 
@@ -124,12 +126,23 @@ export class GameBoard extends React.Component {
                 </ul>
             );
 
-            menuOptions.unshift({ text: 'Spectators: ' + props.currentGame.spectators.length, popup: spectatorPopup });
+            //if the current user is a player and the number of spectators changed, then display a warning next to the Spectators popup in the navbar 
+            if(props.currentGame.players[props.user.username] && props.currentGame.spectators.length !== this.state.lastSpectatorCount) {
+                this.setState({ displayWarningInNavBar: true });
+            }
+
+            menuOptions.unshift({ text: 'Spectators: ' + props.currentGame.spectators.length, popup: spectatorPopup, displayWarning: this.state.displayWarningInNavBar, onMouseOver: this.resetSpectatorWarning.bind(this) });
+
+            this.setState({ lastSpectatorCount: props.currentGame.spectators.length });
 
             this.setContextMenu(menuOptions);
         } else {
             this.setContextMenu([]);
         }
+    }
+
+    resetSpectatorWarning() {
+        this.setState({ displayWarningInNavBar: false });
     }
 
     setContextMenu(menu) {
@@ -579,4 +592,3 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(GameBoard);
-
