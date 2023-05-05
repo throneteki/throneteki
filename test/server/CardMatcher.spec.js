@@ -117,4 +117,61 @@ describe('CardMatcher', function() {
             });
         });
     });
+
+    describe('createCardCharacteristicChecker', function() {
+        beforeEach(function() {
+            let controller = { controller: 1 };
+            this.context = { player: controller };
+        });
+
+        describe('defaults', function() {
+            beforeEach(function() {
+                this.checker = CardMatcher.createCardCharacteristicChecker({});
+            });
+
+            it('should return false when nothing is checked', function() {
+                expect(this.checker(this.cardSpy, this.context)).toBe(false);
+            });
+        });
+
+        describe('characteristics', function() {
+            beforeEach(function() {
+                this.cardSpy.cardData = { type: 'character' };
+                this.cardSpy.name = 'Card';
+                this.cardSpy.location = 'hand';
+                // Need to 'strictly' define function to ensure it's scope is within the proxy 
+                // created in the checker (eg. "this" will refer to the proxy, rather than this test's context)
+                this.cardSpy.getType.and.callFake(function() { return this.cardData.type });
+            });
+
+            it('should return true when primitive property characteristics are checked (eg. name)', function() {
+                this.checker = CardMatcher.createCardCharacteristicChecker({ name: 'Card' });
+                expect(this.checker(this.cardSpy, this.context)).toBe(true);
+            });
+
+            it('should return true when cardData characteristics are checked, even through methods (eg. getType)', function() {
+                this.checker = CardMatcher.createCardCharacteristicChecker({ type: 'character' });
+                expect(this.checker(this.cardSpy, this.context)).toBe(true);
+            });
+
+            it('should return false if only gamestate properties for the card are checked (eg. location)', function() {
+                this.checker = CardMatcher.createCardCharacteristicChecker({ location: 'hand' });
+                expect(this.checker(this.cardSpy, this.context)).toBe(false);
+            });
+
+            it('should return true if multiple properties are checked, and one or more are characteristics', function() {
+                this.checker = CardMatcher.createCardCharacteristicChecker({ name: 'Card', type: 'character', location: 'hand' });
+                expect(this.checker(this.cardSpy, this.context)).toBe(true);
+            });
+
+            it('should return true if characteristics are checked through a matching function', function() {
+                this.checker = CardMatcher.createCardCharacteristicChecker((card, context) => card.getType() === 'character' && card.controller === context.controller);
+                expect(this.checker(this.cardSpy, this.context)).toBe(true);
+            });
+        });
+    });
 });
+
+function isLoyal() {
+    return this.cardData.loyal;
+}

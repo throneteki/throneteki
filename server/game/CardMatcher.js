@@ -3,15 +3,15 @@ const Matcher = require('./Matcher.js');
 class CardMatcher {
     static isMatch(card, properties) {
         return (
-            Matcher.containsValue(properties.type, card.getType()) &&
+            Matcher.containsValue(properties.type, () => card.getType()) &&
             Matcher.anyValue(properties.faction, faction => card.isFaction(faction)) &&
-            Matcher.containsValue(properties.kneeled, card.kneeled) &&
-            Matcher.containsValue(properties.location, card.location) &&
-            Matcher.containsValue(properties.name, card.name) &&
+            Matcher.containsValue(properties.kneeled, () => card.kneeled) &&
+            Matcher.containsValue(properties.location, () => card.location) &&
+            Matcher.containsValue(properties.name, () => card.name) &&
             Matcher.anyValue(properties.trait, trait => card.hasTrait(trait)) &&
-            Matcher.containsValue(properties.unique, card.isUnique()) &&
-            Matcher.containsValue(properties.loyal, card.isLoyal()) &&
-            Matcher.containsValue(properties.limited, card.isLimited && card.isLimited()) &&
+            Matcher.containsValue(properties.unique, () => card.isUnique()) &&
+            Matcher.containsValue(properties.loyal, () => card.isLoyal()) &&
+            Matcher.containsValue(properties.limited, () => card.isLimited && card.isLimited()) &&
             Matcher.anyValue(properties.printedCostOrLower, amount => card.hasPrintedCost() && card.getPrintedCost() <= amount) &&
             Matcher.anyValue(properties.printedCostOrHigher, amount => card.hasPrintedCost() && card.getPrintedCost() >= amount) &&
             Matcher.anyValue(properties.printedStrengthOrLower, amount => card.hasPrintedStrength() && card.getPrintedStrength() <= amount) &&
@@ -21,8 +21,8 @@ class CardMatcher {
             Matcher.anyValue(properties.attacking, attacking => card.isAttacking() === attacking) &&
             Matcher.anyValue(properties.defending, defending => card.isDefending() === defending) &&
             Matcher.anyValue(properties.participating, participating => card.isParticipating() === participating) &&
-            Matcher.containsValue(properties.facedown, card.facedown) &&
-            Matcher.containsValue(properties.parent, card.parent) &&
+            Matcher.containsValue(properties.facedown, () => card.facedown) &&
+            Matcher.containsValue(properties.parent, () => card.parent) &&
             Matcher.anyValue(properties.not, notProperties => !CardMatcher.isMatch(card, notProperties)) &&
             Matcher.anyValue(properties.or, orProperties => CardMatcher.isMatch(card, orProperties))
         );
@@ -72,17 +72,23 @@ class CardMatcher {
         return false;
     }
 
-    static createValidator(propertiesOrFunc) {
+    /**
+     * Creates a checker function to determine whether card characteristics are 
+     * involved in a given matcher properties/func. Characteristics would be 
+     * information about the card itself (eg. name, type, strength, icons, etc.) rather 
+     * than information about the cards game-state (eg. location, kneeling, controller, etc.)
+     */
+    static createCardCharacteristicChecker(propertiesOrFunc) {
         let dummyMatcher = CardMatcher.createMatcher(propertiesOrFunc);
-        let tracking = ['name', 'factions', 'icons', 'keywords', 'traits', 'cardData'];
+        let characteristics = ['name', 'factions', 'icons', 'keywords', 'traits', 'cardData'];
 
         return function(card, context) {
-            let requiresValidation = false;
+            let involvesCharacteristic = false;
             let proxy = new Proxy(card, {
-                // When a tracked property is accessed, then card should require validation
+                // Wraps the getter of each property to check if a characteristic is accessed
                 get(object, property) {
-                    if(tracking.includes(property)) {
-                        requiresValidation = true;
+                    if(characteristics.includes(property)) {
+                        involvesCharacteristic = true;
                     }
                     return object[property];
                 }
@@ -91,7 +97,7 @@ class CardMatcher {
             // Run the proxy test through the matcher
             dummyMatcher(proxy, context);
 
-            return requiresValidation;
+            return involvesCharacteristic;
         };
     }
 }

@@ -3,20 +3,20 @@ const Matcher = require('../../server/game/Matcher.js');
 describe('Matcher', function() {
     describe('containsValue', function() {
         it('should return true when the expected value is undefined', function() {
-            expect(Matcher.containsValue(undefined, 1)).toBe(true);
+            expect(Matcher.containsValue(undefined, () => 1)).toBe(true);
         });
 
         it('should return true when the values match', function() {
-            expect(Matcher.containsValue(1, 1)).toBe(true);
+            expect(Matcher.containsValue(1, () => 1)).toBe(true);
         });
 
         it('should return false when the values do not match', function() {
-            expect(Matcher.containsValue(2, 1)).toBe(false);
+            expect(Matcher.containsValue(2, () => 1)).toBe(false);
         });
 
         describe('when the expected value is an array', function() {
             it('should return true if the actual value is contained in the array', function() {
-                expect(Matcher.containsValue([1, 2, 3], 2)).toBe(true);
+                expect(Matcher.containsValue([1, 2, 3], () => 2)).toBe(true);
             });
         });
     });
