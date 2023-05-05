@@ -141,7 +141,9 @@ describe('CardMatcher', function() {
                 this.cardSpy.location = 'hand';
                 // Need to 'strictly' define function to ensure it's scope is within the proxy 
                 // created in the checker (eg. "this" will refer to the proxy, rather than this test's context)
-                this.cardSpy.getType.and.callFake(function() { return this.cardData.type });
+                this.cardSpy.getType.and.callFake(function() {
+                    return this.cardData.type;
+                });
             });
 
             it('should return true when primitive property characteristics are checked (eg. name)', function() {
@@ -171,7 +173,3 @@ describe('CardMatcher', function() {
         });
     });
 });
-
-function isLoyal() {
-    return this.cardData.loyal;
-}
