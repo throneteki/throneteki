@@ -7,7 +7,7 @@ class AssaultKeyword extends KeywordAbility {
             target: {
                 activePromptTitle: context => this.defaultTargetPromptTitle(context),
                 numCards: context => this.getTriggerAmount(context),
-                cardCondition: (card, context) => TargetByAssault.allow({ target: card, source: context.source, challenge: context.challenge }),
+                cardCondition: (card, context) => TargetByAssault.allow({ target: card, source: context.source, challenge: context.challenge })
             },
             message: {
                 format: '{player} uses {source} to blank {targets} using assault until the end of the challenge',
