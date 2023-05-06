@@ -7,8 +7,7 @@ class StealthKeyword extends KeywordAbility {
             target: {
                 activePromptTitle: context => this.defaultTargetPromptTitle(context),
                 numCards: context => this.getTriggerAmount(context),
-                cardCondition: (card, context) => this.canStealth(card, context.challenge),
-                gameAction: 'bypassByStealth'
+                cardCondition: (card, context) => BypassByStealth.allow({ target: card, source: context.source, challenge: context.challenge }),
             },
             message: {
                 format: '{player} uses {source} to bypass {targets} using stealth',
@@ -22,16 +21,9 @@ class StealthKeyword extends KeywordAbility {
             }
         });
     }
-    
-    canStealth(card, challenge) {
-        return !card.isStealth() 
-            && card.controller === challenge.defendingPlayer
-            && card.location === 'play area'
-            && card.getType() === 'character';
-    }
 
     meetsRequirements(context) {
-        return context.source.isAttacking();
+        return context.source.isAttacking() && context.source.allowGameAction('targetUsingStealth', context);
     }
 }
 

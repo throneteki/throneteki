@@ -7,8 +7,7 @@ class AssaultKeyword extends KeywordAbility {
             target: {
                 activePromptTitle: context => this.defaultTargetPromptTitle(context),
                 numCards: context => this.getTriggerAmount(context),
-                cardCondition: (card, context) => this.canAssault(card, context.challenge, context.source),
-                gameAction: 'targetByAssault'
+                cardCondition: (card, context) => TargetByAssault.allow({ target: card, source: context.source, challenge: context.challenge }),
             },
             message: {
                 format: '{player} uses {source} to blank {targets} using assault until the end of the challenge',
@@ -22,16 +21,9 @@ class AssaultKeyword extends KeywordAbility {
             }
         });
     }
-    
-    canAssault(card, challenge, source) {
-        return card.controller === challenge.defendingPlayer &&
-            card.location === 'play area' &&
-            card.getType() === 'location' &&
-            (source.challengeOptions.contains('ignoresAssaultLocationCost') || card.getPrintedCost() < source.getPrintedCost());
-    }
 
     meetsRequirements(context) {
-        return context.source.isAttacking() && context.source.allowGameAction('assault', context);
+        return context.source.isAttacking() && context.source.allowGameAction('targetUsingAssault', context);
     }
 }
 

@@ -404,7 +404,6 @@ class DrawCard extends BaseCard {
         return (
             this.canParticipateInChallenge() &&
             this.location === 'play area' &&
-            !this.bypassedByStealth &&
             canKneelForChallenge &&
             (this.hasIcon(challengeType) || this.challengeOptions.contains('canBeDeclaredWithoutIcon'))
         );
