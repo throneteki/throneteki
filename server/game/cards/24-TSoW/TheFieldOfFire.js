@@ -13,7 +13,7 @@ class TheFieldOfFire extends DrawCard {
             max: ability.limit.perPhase(1),
             gameAction: GameActions.genericHandler(context => {
                 this.untilEndOfPhase(ability => ({
-                    match: card => card.getType() === 'character' && !card.hasTrait('Dragon') && card.attachments.length === 0 && card.location === 'play area',
+                    match: context.game.filterCardsInPlay(card => card.getType() === 'character' && !card.hasTrait('Dragon') && card.attachments.length === 0),
                     targetController: 'any',
                     effect: ability.effects.modifyStrength(this.getReductionAmount(context.player))
                 }));

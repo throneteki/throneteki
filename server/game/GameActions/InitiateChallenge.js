@@ -1,8 +1,11 @@
 const GameAction = require('./GameAction');
 const DeclareAttackers = require('./DeclareAttackers');
 const DeclareDefenders = require('./DeclareDefenders');
-const BypassByStealth = require('./BypassByStealth');
-const AssaultKeywordAction = require('./AssaultkeywordAction');
+
+const GameKeywords = require('../gamekeywords.js');
+const AbilityContext = require('../AbilityContext.js');
+
+const initiatingKeywords = ['stealth', 'assault'];
 
 class InitiateChallenge extends GameAction {
     constructor() {
@@ -18,9 +21,9 @@ class InitiateChallenge extends GameAction {
                 event.thenAttachEvent(DeclareDefenders.createEvent({ cards: event.challenge.defenders, challenge: event.challenge }));
             }
             event.thenAttachEvent(DeclareAttackers.createEvent({ cards: event.challenge.declaredAttackers, challenge: event.challenge }));
-            
-            challenge.stealthData.forEach(stealthChoice => event.thenAttachEvent(BypassByStealth.createEvent({ challenge, source: stealthChoice.source, target: stealthChoice.target })));
-            challenge.assaultData.forEach(assaultChoice => event.thenAttachEvent(AssaultKeywordAction.createEvent({ challenge, source: assaultChoice.source, target: assaultChoice.target })));
+
+            // Attaching custom initiation actions, such as stealth & assault
+            event.challenge.initiationActions.forEach(initiationAction => event.thenAttachEvent(initiationAction.action.createEvent(initiationAction.properties)));
 
             event.thenExecute(event => {
                 // Reapply effects which rely on being within a challenge (eg. The Lord of the Crossing)
@@ -36,6 +39,27 @@ class InitiateChallenge extends GameAction {
                     challenge.attackingPlayer, challenge.challengeType, challenge.defendingPlayer, challenge.attackerStrength, challenge.defenderStrength);
             });
         });
+    }
+
+    resolveKeywords({ challenge }) {
+        const declaredAttackersWithContext = challenge.declaredAttackers.map(card => {
+            return { card: card, context: new AbilityContext({ player: challenge.attackingPlayer, game: challenge.game, challenge, source: card }) };
+        });
+        for(let keyword of initiatingKeywords) {
+            let ability = GameKeywords[keyword];
+            let resolveables = declaredAttackersWithContext.filter(attacker => attacker.card.hasKeyword(keyword) && ability.canResolve(attacker.context));
+
+            if(keyword === 'assault') {
+                let highestPrintedCost = Math.max(...resolveables.map(r => r.card.getPrintedCost()));
+                let highestResolvable = resolveables.find(resolveable => resolveable.card.getPrintedCost() === highestPrintedCost);
+                // TODO: Potentially change to select who you want to assault with, for any characters with special interactions with assault
+                if(highestResolvable) {
+                    challenge.game.resolveAbility(ability, highestResolvable.context);
+                }
+            } else {
+                resolveables.forEach(attacker => challenge.game.resolveAbility(ability, attacker.context));
+            }
+        }
     }
 }
 

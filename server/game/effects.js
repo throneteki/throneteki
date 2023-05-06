@@ -787,7 +787,7 @@ const Effects = {
             }
         };
     },
-    cannotBeAssaulted: cannotEffect('assault'),
+    cannotBeTargetedByAssault: cannotEffect('targetByAssault'),
     cannotBeBypassedByStealth: cannotEffect('bypassByStealth'),
     cannotBeDiscarded: cannotEffect('discard'),
     cannotBeKneeled: cannotEffect('kneel'),
@@ -814,7 +814,8 @@ const Effects = {
         };
     },
     cannotTarget: cannotEffect('target'),
-    cannotAssault: cannotEffect('assault'),
+    cannotTargetUsingAssault: cannotEffect('targetUsingAssault'),
+    cannotTargetUsingStealth: cannotEffect('targetUsingStealth'),
     setMaxGoldGain: function(max) {
         return {
             targetType: 'player',
