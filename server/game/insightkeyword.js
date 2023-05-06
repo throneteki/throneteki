@@ -1,25 +1,20 @@
-const BaseAbility = require('./baseability');
+const KeywordAbility = require('./KeywordAbility.js');
 const GameActions = require('./GameActions');
 const TextHelper = require('./TextHelper');
 
-class InsightKeyword extends BaseAbility {
+class InsightKeyword extends KeywordAbility {
     constructor() {
-        super({
+        super('Insight', {
             message: {
                 format: '{player} draws {amount} from Insight on {source}',
-                args: { amount: context => TextHelper.count(this.getAmount(context.source), 'card') }
+                args: { amount: context => TextHelper.count(this.getTriggerAmount(context), 'card') }
             },
             gameAction: GameActions.drawCards(context => ({
                 player: context.challenge.winner,
-                amount: this.getAmount(context.source),
+                amount: this.getTriggerAmount(context),
                 reason: 'insight',
                 source: context.source
             }))});
-        this.title = 'Insight';
-    }
-
-    getAmount(source) {
-        return 1 + source.getKeywordTriggerModifier(this.title);
     }
 }
 

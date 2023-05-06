@@ -1,12 +1,12 @@
-const BaseAbility = require('./baseability.js');
+const KeywordAbility = require('./KeywordAbility.js');
 const GameActions = require('./GameActions');
 
-class IntimidateKeyword extends BaseAbility {
+class IntimidateKeyword extends KeywordAbility {
     constructor() {
-        super({
+        super('Intimidate', {
             target: {
-                activePromptTitle: context => this.getTitle(context.source),
-                numCards: context => this.getAmount(context.source),
+                activePromptTitle: context => this.getIntimidatePromptTitle(context),
+                numCards: context => this.getTriggerAmount(context),
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
             },
@@ -22,16 +22,11 @@ class IntimidateKeyword extends BaseAbility {
                 })), context);
             }
         });
-        this.title = 'Intimidate';
     }
 
-    getTitle(source) {
-        var numTargets = this.getAmount(source);
+    getIntimidatePromptTitle(context) {
+        var numTargets = this.getTriggerAmount(context);
         return `Select ${numTargets === 1 ? 'a character' : `up to ${numTargets} characters`} to intimidate`;
-    }
-
-    getAmount(source) {
-        return 1 + source.getKeywordTriggerModifier(this.title);
     }
 
     canIntimidate(card, strength, challenge) {

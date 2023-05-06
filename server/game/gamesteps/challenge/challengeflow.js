@@ -2,8 +2,6 @@ const BaseStep = require('../basestep.js');
 const GamePipeline = require('../../gamepipeline.js');
 const SimpleStep = require('../simplestep.js');
 const ChooseParticipantsPrompt = require('./ChooseParticipantsPrompt');
-const ChooseAssaultTargets = require('./ChooseAssaultTargets.js');
-const ChooseStealthTargets = require('./ChooseStealthTargets.js');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
 const KeywordWindow = require('../keywordwindow.js');
@@ -23,8 +21,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
             new SimpleStep(this.game, () => this.recalculateEffects()),
-            new SimpleStep(this.game, () => this.chooseStealthTargets()),
-            new SimpleStep(this.game, () => this.chooseAssaultTargets()),
+            new SimpleStep(this.game, () => this.promptForInitiationKeywords()),
             new SimpleStep(this.game, () => this.initiateChallenge()),
             new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
             new SimpleStep(this.game, () => this.promptForDefenders()),
@@ -107,14 +104,8 @@ class ChallengeFlow extends BaseStep {
         return true;
     }
 
-    chooseStealthTargets() {
-        const stealthAttackers = this.challenge.declaredAttackers.filter(card => card.isStealth());
-        this.game.queueStep(new ChooseStealthTargets(this.game, this.challenge, stealthAttackers));
-    }
-
-    chooseAssaultTargets() {
-        const assaultAttackers = this.challenge.declaredAttackers.filter(card => card.isAssault());
-        this.game.queueStep(new ChooseAssaultTargets(this.game, this.challenge, assaultAttackers));
+    promptForInitiationKeywords() {
+        InitiateChallenge.resolveKeywords({ challenge: this.challenge });
     }
 
     initiateChallenge() {
