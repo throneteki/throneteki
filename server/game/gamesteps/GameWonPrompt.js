@@ -18,8 +18,8 @@ class GameWonPrompt extends AllPlayerPrompt {
             { arg: 'rematch', text: 'Rematch' }
         ];
 
-        if(this.game.isPlaytesting()) {
-            buttons.unshift({ arg: 'review', text: 'Open card review page (external page)' });
+        if(this.game.isPlaytesting() && this.game.instance.reviewFormId) {
+            buttons.unshift({ arg: `googleForm:${this.game.instance.reviewFormId}`, text: 'Submit card review (external page)' });
         }
 
         return {
