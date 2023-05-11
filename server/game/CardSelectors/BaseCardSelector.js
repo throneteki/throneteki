@@ -23,7 +23,7 @@ class BaseCardSelector {
      */
     constructor(properties) {
         this.cardCondition = CardMatcher.createMatcher(properties.cardCondition);
-        this.checksCardCharacteristic = CardMatcher.createCardCharacteristicChecker(properties.cardCondition);
+        this.isCardAttributeAccessed = CardMatcher.createCardAttributeAnalyzer(properties.cardCondition);
         this.cardType = properties.cardType;
         this.gameAction = properties.gameAction;
         this.singleController = properties.singleController;
@@ -74,7 +74,7 @@ class BaseCardSelector {
      *  @returns {boolean}
      */
     requiresTargetValidation(context) {
-        return this.getEligibleTargets(context).some(card => this.checksCardCharacteristic(card, context));
+        return this.getEligibleTargets(context).some(card => this.isCardAttributeAccessed(card, context));
     }
 
     /**

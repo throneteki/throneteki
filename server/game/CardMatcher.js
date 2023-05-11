@@ -73,22 +73,24 @@ class CardMatcher {
     }
 
     /**
-     * Creates a checker function to determine whether card characteristics are 
-     * involved in a given matcher properties/func. Characteristics would be 
-     * information about the card itself (eg. name, type, strength, icons, etc.) rather 
-     * than information about the cards game-state (eg. location, kneeling, controller, etc.)
+     * Creates an analyzing function which determines whether card attributes are 
+     * involved in a given matcher (via properties/func). "Card attributes" would be 
+     * data about the faceup card itself (eg. name, type, strength, icons, etc.) rather 
+     * than data about the card's game-state (eg. location, kneeling, controller, etc.).
      */
-    static createCardCharacteristicChecker(propertiesOrFunc) {
+    static createCardAttributeAnalyzer(propertiesOrFunc) {
         let dummyMatcher = CardMatcher.createMatcher(propertiesOrFunc);
-        let characteristics = ['name', 'factions', 'icons', 'keywords', 'traits', 'cardData'];
+        // Anything which accesses cardData is checking printed card attributes, whilst other attributes which
+        // have separated from cardData (such as 'name' or any ReferenceCountedProperties) are individually checked
+        let attributeProperties = ['cardData', 'name', 'factions', 'icons', 'keywords', 'traits'];
 
         return function(card, context) {
-            let involvesCharacteristic = false;
+            let involvesAttribute = false;
             let proxy = new Proxy(card, {
-                // Wraps the getter of each property to check if a characteristic is accessed
+                // Wraps the getter of each property to check if an attribute-based property is accessed
                 get(object, property) {
-                    if(characteristics.includes(property)) {
-                        involvesCharacteristic = true;
+                    if(attributeProperties.includes(property)) {
+                        involvesAttribute = true;
                     }
                     return object[property];
                 }
@@ -97,7 +99,7 @@ class CardMatcher {
             // Run the proxy test through the matcher
             dummyMatcher(proxy, context);
 
-            return involvesCharacteristic;
+            return involvesAttribute;
         };
     }
 }
