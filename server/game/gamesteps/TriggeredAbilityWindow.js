@@ -109,8 +109,8 @@ class TriggeredAbilityWindow extends BaseAbilityWindow {
         return controls;
     }
 
-    buildTargetSummaries(player, targets, forced) {
-        return targets.map(target => forced.includes(target) || this.game.isCardVisible(target, player) ? target.getShortSummary() : { facedown: true });
+    buildTargetSummaries(player, targets, targetsToValidate) {
+        return targets.map(target => targetsToValidate.includes(target) || this.game.isCardVisible(target, player) ? target.getShortSummary() : { facedown: true });
     }
 
     chooseCardToTrigger(player, card) {
