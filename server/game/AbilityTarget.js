@@ -43,10 +43,12 @@ class AbilityTarget {
         // Creating the selector once the target is being selected for effects such as keywords with a changing target amount
         this.selector = CardSelector.for({ context, ...this.properties });
         let eligibleCards = this.selector.getEligibleTargets(context);
+        let requiresValidation = this.selector.requiresTargetValidation(context);
         let subResults = this.subTargets.map(subTarget => subTarget.buildPlayerSelection(context));
         return new AbilityChoiceSelection({
             choosingPlayer: context.choosingPlayer,
             eligibleChoices: eligibleCards,
+            requiresValidation: requiresValidation,
             targetingType: this.type,
             subResults: subResults,
 

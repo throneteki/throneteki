@@ -18,9 +18,10 @@ describe('AbilityResolver', function() {
         this.player = jasmine.createSpyObj('player', ['moveCard']);
         this.source = jasmine.createSpyObj('source', ['createSnapshot', 'getType']);
         this.source.owner = this.player;
-        let targets = jasmine.createSpyObj('targets', ['getTargets', 'hasTargets', 'setSelections', 'updateTargets']);
+        let targets = jasmine.createSpyObj('targets', ['getTargets', 'hasTargets', 'setSelections', 'updateTargets', 'getTargetsToValidate']);
         targets.hasTargets.and.returnValue(true);
         targets.getTargets.and.returnValue([]);
+        targets.getTargetsToValidate.and.returnValue([]);
         this.context = { foo: 'bar', player: this.player, source: this.source, targets: targets };
         this.resolver = new AbilityResolver(this.game, this.ability, this.context);
     });
@@ -65,7 +66,7 @@ describe('AbilityResolver', function() {
             });
 
             it('should raise the onCardAbilityInitiated event', function() {
-                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, ability: this.ability, targets: [], originalLocation: undefined }, jasmine.any(Function));
+                expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, ability: this.ability, targets: [], targetsToValidate: [], originalLocation: undefined }, jasmine.any(Function));
             });
         });
 
@@ -210,6 +211,7 @@ describe('AbilityResolver', function() {
                         beforeEach(function() {
                             this.targetResult.name = 'foo';
                             this.context.targets.getTargets.and.returnValue([this.target]);
+                            this.context.targets.getTargetsToValidate.and.returnValue([this.target]);
                             this.resolver.continue();
                         });
 
@@ -226,7 +228,7 @@ describe('AbilityResolver', function() {
                         });
 
                         it('should raise the onCardAbilityInitiated event with appropriate targets', function() {
-                            expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, ability: this.ability, targets: [this.target], originalLocation: this.context.originalLocation }, jasmine.any(Function));
+                            expect(this.game.raiseEvent).toHaveBeenCalledWith('onCardAbilityInitiated', { player: this.player, source: this.source, ability: this.ability, targets: [this.target], targetsToValidate: [this.target], originalLocation: this.context.originalLocation }, jasmine.any(Function));
                         });
                     });
 
