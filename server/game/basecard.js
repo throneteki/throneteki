@@ -767,7 +767,13 @@ class BaseCard {
         return 'card';
     }
 
-    getShortSummary() {
+    getShortSummary(isVisible = true) {
+        if(!isVisible) {
+            return {
+                facedown: true,
+                shadowPosition: this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : undefined
+            };
+        }
         return {
             code: this.cardData.code,
             label: this.cardData.label,
