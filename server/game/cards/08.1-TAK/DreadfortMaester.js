@@ -4,7 +4,7 @@ class DreadfortMaester extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller && ['military', 'intrigue'].includes(event.challenge.challengeType)
+                onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller && ['military', 'intrigue'].includes(event.challenge.initiatedChallengeType)
             },
             cost: ability.costs.sacrificeSelf(),
             handler: context => {

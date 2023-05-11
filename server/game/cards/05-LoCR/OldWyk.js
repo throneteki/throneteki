@@ -6,7 +6,7 @@ class OldWyk extends DrawCard {
         this.reaction({
             when: {
                 onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller &&
-                                               event.challenge.challengeType === 'power' &&
+                                               event.challenge.initiatedChallengeType === 'power' &&
                                                this.anyDrownedGodInDeadPile()
             },
             cost: ability.costs.kneelSelf(),
