@@ -7,7 +7,7 @@ class StealthKeyword extends KeywordAbility {
             target: {
                 activePromptTitle: context => this.defaultTargetPromptTitle(context),
                 numCards: context => this.getTriggerAmount(context),
-                cardCondition: (card, context) => BypassByStealth.allow({ target: card, source: context.source, challenge: context.challenge })
+                cardCondition: (card, context) => BypassByStealth.allow({ card, source: context.source, challenge: context.challenge })
             },
             message: {
                 format: '{player} uses {source} to bypass {targets} using stealth',
@@ -15,7 +15,7 @@ class StealthKeyword extends KeywordAbility {
             },
             handler: context => {
                 context.targets.getTargets().forEach(target => {
-                    let props = { challenge: context.challenge, source: context.source, target };
+                    let props = { challenge: context.challenge, source: context.source, card: target };
                     context.challenge.addInitiationAction(BypassByStealth, props);
                 });
             }

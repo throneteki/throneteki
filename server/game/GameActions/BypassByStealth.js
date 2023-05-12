@@ -5,19 +5,19 @@ class BypassByStealth extends GameAction {
         super('bypassByStealth');
     }
 
-    canChangeGameState({ challenge, target }) {
-        return !target.isStealth()
-            && target.controller === challenge.defendingPlayer
-            && target.location === 'play area'
-            && target.getType() === 'character';
+    canChangeGameState({ challenge, card }) {
+        return !card.isStealth()
+            && card.controller === challenge.defendingPlayer
+            && card.location === 'play area'
+            && card.getType() === 'character';
     }
 
-    createEvent({ challenge, source, target }) {
-        return this.event('onBypassedByStealth', { challenge, source, target }, event => {
+    createEvent({ challenge, source, card }) {
+        return this.event('onBypassedByStealth', { challenge, source, target: card }, event => {
             event.target.bypassedByStealth = true;
 
-            source.untilEndOfChallenge(ability => ({
-                match: target,
+            event.source.untilEndOfChallenge(ability => ({
+                match: event.target,
                 effect: ability.effects.cannotBeDeclaredAsDefender()
             }));
         });

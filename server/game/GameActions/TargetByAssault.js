@@ -6,29 +6,29 @@ class TargetByAssault extends GameAction {
         super('targetByAssault');
     }
 
-    canChangeGameState({ challenge, source, target }) {
-        return target.controller === challenge.defendingPlayer &&
-            target.location === 'play area' &&
-            target.getType() === 'location' &&
-            (source.challengeOptions.contains('ignoresAssaultLocationCost') || target.getPrintedCost() < source.getPrintedCost());
+    canChangeGameState({ challenge, source, card }) {
+        return card.controller === challenge.defendingPlayer &&
+            card.location === 'play area' &&
+            card.getType() === 'location' &&
+            (source.challengeOptions.contains('ignoresAssaultLocationCost') || card.getPrintedCost() < source.getPrintedCost());
     }
 
-    createEvent({ challenge, source, target }) {
-        return this.event('onTargetedByAssault', { challenge, source, target }, () => {
-            target.targetedByAssault = true;
+    createEvent({ challenge, source, card }) {
+        return this.event('onTargetedByAssault', { challenge, source, target: card }, event => {
+            event.target.targetedByAssault = true;
 
-            source.untilEndOfChallenge(ability => ({
-                match: target,
+            event.source.untilEndOfChallenge(ability => ({
+                match: event.target,
                 effect: ability.effects.blankExcludingTraits
             }));
 
-            challenge.game.once('afterChallenge', event => {
-                const props = { card: target, source: source, reason: 'assault' };
-                if(challenge.winner === source.controller 
-                    && challenge.winner.anyCardsInPlay(card => card.isAttacking() && card.hasKeyword('assault'))
+            event.challenge.game.once('afterChallenge', afterChallengeEvent => {
+                const props = { card: event.target, source: event.source, reason: 'assault' };
+                if(event.challenge.winner === event.source.controller 
+                    && event.challenge.winner.anyCardsInPlay(card => card.isAttacking() && card.hasKeyword('assault'))
                     && KneelCard.allow(props)) {
-                    event.thenAttachEvent(KneelCard.createEvent(props)
-                        .thenExecute(() => challenge.game.addMessage('{0} kneels {1} due to assault', challenge.winner, target)));
+                    afterChallengeEvent.thenAttachEvent(KneelCard.createEvent(props)
+                        .thenExecute(() => event.challenge.game.addMessage('{0} kneels {1} due to assault', event.challenge.winner, event.target)));
                 }
             });
         });

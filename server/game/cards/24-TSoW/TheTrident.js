@@ -28,7 +28,7 @@ class TheTrident extends DrawCard {
                         gameAction: GameActions.genericHandler(context => {
                             this.game.promptForSelect(context.player, {
                                 activePromptTitle: 'Select a location',
-                                cardCondition: card => card.getType() === 'location' && card.location === 'play area' && card.isFaction('neutral') && card !== context.source,
+                                cardCondition: card => card.getType() === 'location' && card.location === 'play area' && card.isFaction('neutral') && card !== context.source && card.controller === context.player,
                                 gameAction: 'sacrifice',
                                 onSelect: (player, card) => {
                                     this.game.addMessage('{0} chooses to sacrifice {1}', player, card);
