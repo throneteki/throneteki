@@ -5,13 +5,16 @@ class CaggoCorpsekiller extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCardReturnedToHand: event => event.card.getType() === 'character' && event.card.location === 'play area',
-                onCardPutIntoShadows: event => event.card.getType() === 'character' && event.card.location === 'play area'
+                onCardReturnedToHand: event => this.returnConditions(event),
+                onCardPutIntoShadows: event => this.returnConditions(event)
             },
-            cost: ability.costs.kneelSelf(),
+            cost: ability.costs.returnSelfToHand(),
             message: {
-                format: '{player} kneels {costs.kneel} to place {card} in it\'s owners dead pile',
-                args: { card: context => context.event.card }
+                format: '{player} returns {costs.returnToHand} to place {card} in it\'s owners dead pile instead of their {targetLocation}',
+                args: {
+                    card: context => context.event.card,
+                    targetLocation: context => context.event.location === 'shadows' ? 'shadow area' : context.event.location
+                }
             },
             handler: context => {
                 context.event.replaceHandler(() => {
@@ -19,6 +22,10 @@ class CaggoCorpsekiller extends DrawCard {
                 });
             }
         });
+    }
+
+    returnConditions(event) {
+        return event.card !== this && event.card.location === 'play area' && event.card.getType() === 'character';
     }
 }
 
