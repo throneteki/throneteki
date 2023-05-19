@@ -2,7 +2,7 @@ const MovePower = require('../../../server/game/GameActions/MovePower');
 
 describe('MovePower', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['checkWinCondition']);
+        this.gameSpy = jasmine.createSpyObj('game', ['']);
         this.fromCardSpy = jasmine.createSpyObj('from', ['allowGameAction']);
         this.fromCardSpy.controller = 'FROM_PLAYER_OBJ';
         this.fromCardSpy.game = this.gameSpy;
@@ -97,10 +97,6 @@ describe('MovePower', function() {
 
             it('adds the amount of power removed to the to card', function() {
                 expect(this.toCardSpy.power).toBe(1);
-            });
-
-            it('checks the game for win condition', function() {
-                expect(this.gameSpy.checkWinCondition).toHaveBeenCalledWith('TO_PLAYER_OBJ');
             });
         });
     });

@@ -505,13 +505,7 @@ class Game extends EventEmitter {
         player.modifyGold(-appliedAmount);
     }
 
-    checkWinCondition(player) {
-        if(player.getTotalPower() >= 15 && player.canWinGame()) {
-            this.recordWinner(player, 'power');
-        }
-    }
-
-    checkPlayerElimination() {
+    checkWinAndLossConditions() {
         if(this.currentPhase === 'setup' || this.winner) {
             return;
         }
@@ -531,6 +525,7 @@ class Game extends EventEmitter {
             } else if(potentialWinners.length === 1) {
                 this.recordWinner(potentialWinners[0], 'decked');
             } else if(!this.disableWonPrompt) {
+                this.addAlert('info', '{0} will be eliminated because their draw decks are empty. {1} chooses the winner because they are first player', deckedPlayers, players[0]);
                 this.queueStep(new ChoosePlayerPrompt(this, players[0], {
                     activePromptTitle: 'Select the winning player',
                     condition: player => potentialWinners.includes(player),
@@ -544,7 +539,7 @@ class Game extends EventEmitter {
         }
 
         for(let player of deckedPlayers) {
-            this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
+            this.addAlert('info', '{0} is eliminated from the game because their draw deck is empty', player);
             player.eliminated = true;
         }
 
@@ -563,6 +558,22 @@ class Game extends EventEmitter {
             } else {
                 this.recordDraw(lastPlayer);
             }
+        }
+
+        let potentialWinners = remainingPlayers.filter(player => player.getTotalPower() >= 15 && player.canWinGame());
+        if(potentialWinners.length === 1) {
+            this.recordWinner(potentialWinners[0], 'power');
+        } else if(potentialWinners.length > 1) {
+            const firstPlayer = this.getFirstPlayer();
+            this.addAlert('info', '{0} have reached 15 power. {1} chooses the winner because they are first player', potentialWinners, firstPlayer);
+            this.queueStep(new ChoosePlayerPrompt(this, firstPlayer, {
+                activePromptTitle: 'Select the winning player',
+                condition: player => potentialWinners.includes(player),
+                onSelect: chosenPlayer => {
+                    this.addAlert('info', '{0} chooses {1} to win the game', firstPlayer, chosenPlayer);
+                    this.recordWinner(chosenPlayer, 'power');
+                }
+            }));
         }
     }
 
@@ -1042,7 +1053,7 @@ class Game extends EventEmitter {
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
         this.attachmentValidityCheck.enforceValidity();
-        this.checkPlayerElimination();
+        this.checkWinAndLossConditions();
     }
 
     isPhaseSkipped(name) {
@@ -1148,7 +1159,6 @@ class Game extends EventEmitter {
         }
 
         this.raiseEvent('onCardTakenControl', { card: card });
-        this.checkWinCondition(card.controller);
     }
 
     applyGameAction(actionType, cards, func, options = {}) {

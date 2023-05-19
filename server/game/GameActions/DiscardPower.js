@@ -14,7 +14,6 @@ class DiscardPower extends GameAction {
 
         return this.event('onCardPowerDiscarded', { card, power: finalAmount }, event => {
             event.card.power -= event.power;
-            event.card.game.checkWinCondition(event.card.controller);
         });
     }
 }
