@@ -48,7 +48,7 @@ class Message {
             }
             return { code: arg.code, label: arg.name, type: arg.getType(), argType: 'card' };
         } else if(arg instanceof Spectator) {
-            return { name: arg.user.username, argType: 'nonAvatarPlayer' };
+            return { name: arg.name, argType: 'nonAvatarPlayer' };
         } else if(arg instanceof Message) {
             return arg.flatten();
         }
