@@ -7,12 +7,11 @@ class OneTwoThree extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.isMatch({
                     winner: this.controller,
-                    challengeType: 'intrigue',
-                    by5: true
+                    challengeType: 'intrigue'
                 })
             },
             target: {
-                cardCondition: { location: 'play area', type: 'character', controller: 'current' }
+                cardCondition: { location: 'play area', type: 'character', participating: true, controller: 'current' }
             },
             choices: {
                 'Return to hand': {
