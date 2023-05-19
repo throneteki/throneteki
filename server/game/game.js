@@ -138,8 +138,12 @@ class Game extends EventEmitter {
         return this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
     }
 
-    getPlayers() {
+    getAllPlayers() {
         return Object.values(this.playersAndSpectators).filter(player => !player.isSpectator());
+    }
+
+    getPlayers() {
+        return this.getAllPlayers().filter(player => !player.eliminated);
     }
 
     getNumberOfPlayers() {
@@ -188,7 +192,7 @@ class Game extends EventEmitter {
     }
 
     setFirstPlayer(firstPlayer) {
-        for(let player of this.getPlayers()) {
+        for(let player of this.getAllPlayers()) {
             player.firstPlayer = player === firstPlayer;
         }
         this.raiseEvent('onFirstPlayerDetermined', { player: firstPlayer });
@@ -508,21 +512,48 @@ class Game extends EventEmitter {
     }
 
     checkPlayerElimination() {
-        if(this.currentPhase === 'setup') {
+        if(this.currentPhase === 'setup' || this.winner) {
             return;
         }
 
-        let players = this.getPlayers();
-        let deckedPlayers = players.filter(player => player.drawDeck.length === 0 && !player.lost);
+        let players = this.getPlayersInFirstPlayerOrder();
 
-        // TODO: When all remaining players are decked simultaneously, first
-        // player chooses the winner.
-        for(let player of deckedPlayers) {
-            this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
-            player.lost = true;
+        if(players.length === 0) {
+            return;
         }
 
-        let remainingPlayers = players.filter(player => !player.lost);
+        let deckedPlayers = players.filter(player => player.drawDeck.length === 0);
+
+        if(deckedPlayers.length === players.length) {
+            const potentialWinners = deckedPlayers.filter(player => player.canWinGame());
+            if(potentialWinners.length === 0) {
+                this.recordDraw(deckedPlayers);
+            } else if(potentialWinners.length === 1) {
+                this.recordWinner(potentialWinners[0], 'decked');
+            } else if(!this.disableWonPrompt) {
+                this.queueStep(new ChoosePlayerPrompt(this, players[0], {
+                    activePromptTitle: 'Select the winning player',
+                    condition: player => potentialWinners.includes(player),
+                    onSelect: chosenPlayer => {
+                        this.addAlert('info', '{0} chooses {1} to win the game', players[0], chosenPlayer);
+                        this.recordWinner(chosenPlayer, 'decked');
+                    }
+                }));
+            }
+            return;
+        }
+
+        for(let player of deckedPlayers) {
+            this.addAlert('info', '{0} loses the game because their draw deck is empty', player);
+            player.eliminated = true;
+        }
+
+        let remainingPlayers = players.filter(player => !player.eliminated);
+
+        // If the first player is eliminated, the next non-eliminated player in order becomes first player
+        if(players[0].eliminated && remainingPlayers.length > 1) {
+            this.setFirstPlayer(remainingPlayers[0]);
+        }
 
         if(remainingPlayers.length === 1) {
             let lastPlayer = remainingPlayers[0];
@@ -546,6 +577,9 @@ class Game extends EventEmitter {
         this.winReason = 'draw';
 
         this.router.gameWon(this, this.winReason, this.winner);
+        for(const player of this.getAllPlayers()) {
+            player.eliminated = false;
+        }
         this.queueStep(new GameWonPrompt(this, null));
     }
 
@@ -561,6 +595,9 @@ class Game extends EventEmitter {
         this.winReason = reason;
 
         this.router.gameWon(this, reason, winner);
+        for(const player of this.getAllPlayers()) {
+            player.eliminated = false;
+        }
         this.queueStep(new GameWonPrompt(this, winner));
     }
 
@@ -662,9 +699,9 @@ class Game extends EventEmitter {
         }
 
         this.addAlert('info', '{0} concedes', player);
-        player.lost = true;
+        player.eliminated = true;
 
-        let remainingPlayers = this.getPlayers().filter(player => !player.lost);
+        let remainingPlayers = this.getPlayers().filter(player => !player.eliminated);
 
         if(remainingPlayers.length === 1) {
             this.recordWinner(remainingPlayers[0], 'concede');
@@ -1310,7 +1347,7 @@ class Game extends EventEmitter {
         let playerState = {};
 
         if(this.started) {
-            for(let player of this.getPlayers()) {
+            for(let player of this.getAllPlayers()) {
                 playerState[player.name] = player.getState(activePlayer);
             }
 
@@ -1349,7 +1386,7 @@ class Game extends EventEmitter {
     getSummary(activePlayerName, options = {}) {
         var playerSummaries = {};
 
-        for(let player of this.getPlayers()) {
+        for(let player of this.getAllPlayers()) {
             var deck = undefined;
             if(player.left) {
                 return;
