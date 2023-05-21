@@ -5,7 +5,7 @@ class LynCorbray extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, challengeType: 'power' }) && this.allowGameAction('stand')
+                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, initiatedChallengeType: 'power' }) && this.allowGameAction('stand')
             },
             message: '{player} uses {source} to stand {source}',
             handler: context => {

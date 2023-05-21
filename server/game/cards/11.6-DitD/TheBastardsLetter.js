@@ -4,7 +4,7 @@ class TheBastardsLetter extends DrawCard {
     setupCardAbilities() {
         this.reaction({
             when: {
-                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, challengeType: 'military' })
+                onChallengeInitiated: event => event.challenge.isMatch({ initiatedAgainstPlayer: this.controller, initiatedChallengeType: 'military' })
             },
             target: {
                 type: 'select',
