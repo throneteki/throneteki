@@ -15,6 +15,7 @@ class WinterfellCastle extends DrawCard {
         });
         let leftPlayCondition = event => event.allowSave && event.card.canBeSaved() && event.card.hasTrait('Old Gods');
         this.interrupt({
+            canCancel: true,
             when: {
                 onCharacterKilled: leftPlayCondition,
                 onCardDiscarded: leftPlayCondition

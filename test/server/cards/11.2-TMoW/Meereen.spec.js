@@ -54,12 +54,12 @@ describe('Meereen', function() {
                 ]);
                 const deck2 = this.buildDeck('greyjoy', [
                     'A Noble Cause',
-                    'Dagmer Cleftjaw', 'Dagmer Cleftjaw', 'Dagmer Cleftjaw',
-                    'Dagmer Cleftjaw', 'Dagmer Cleftjaw', 'Dagmer Cleftjaw',
-                    'Dagmer Cleftjaw', 'Dagmer Cleftjaw', 'Dagmer Cleftjaw',
-                    'Dagmer Cleftjaw', 'Dagmer Cleftjaw', 'Dagmer Cleftjaw',
-                    'Dagmer Cleftjaw', 'Dagmer Cleftjaw', 'Dagmer Cleftjaw',
-                    'Dagmer Cleftjaw', 'Dagmer Cleftjaw', 'Dagmer Cleftjaw'
+                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)',
+                    'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)', 'Dagmer Cleftjaw (TS)'
                 ]);
                 this.player1.selectDeck(deck1);
                 this.player2.selectDeck(deck2);

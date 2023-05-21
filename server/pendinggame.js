@@ -6,8 +6,9 @@ const logger = require('./log.js');
 const GameChat = require('./game/gamechat.js');
 
 class PendingGame {
-    constructor(owner, details) {
+    constructor(owner, instance, details) {
         this.owner = owner;
+        this.instance = instance;
         this.players = {};
         this.spectators = {};
         this.id = uuid.v1();
@@ -404,6 +405,7 @@ class PendingGame {
         }
 
         return {
+            instance: this.instance,
             allowSpectators: this.allowSpectators,
             createdAt: this.createdAt,
             event: this.event,

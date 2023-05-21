@@ -5,7 +5,7 @@ class Thenns extends DrawCard {
         this.persistentEffect({
             condition: () => this.anyNonArmyOrWildlingInPlay() && this.game.isDuringChallenge(),
             match: this,
-            effect: ability.effects.cannotAssault()
+            effect: ability.effects.cannotTargetUsingAssault()
         });
     }
   

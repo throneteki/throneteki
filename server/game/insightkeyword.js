@@ -1,27 +1,20 @@
-const BaseAbility = require('./baseability');
+const KeywordAbility = require('./KeywordAbility.js');
 const GameActions = require('./GameActions');
+const TextHelper = require('./TextHelper');
 
-class InsightKeyword extends BaseAbility {
+class InsightKeyword extends KeywordAbility {
     constructor() {
-        super({});
-        this.title = 'Insight';
-    }
-
-    meetsRequirements(context) {
-        return context.challenge.winner.canDraw();
-    }
-
-    executeHandler(context) {
-        let {game, challenge, source} = context;
-        game.addMessage('{0} draws a card from Insight on {1}', challenge.winner, source);
-        game.resolveGameAction(
-            GameActions.drawCards({
-                player: challenge.winner,
-                amount: 1,
+        super('Insight', {
+            message: {
+                format: '{player} draws {amount} from Insight on {source}',
+                args: { amount: context => TextHelper.count(this.getTriggerAmount(context), 'card') }
+            },
+            gameAction: GameActions.drawCards(context => ({
+                player: context.challenge.winner,
+                amount: this.getTriggerAmount(context),
                 reason: 'insight',
-                source
-            })
-        );
+                source: context.source
+            }))});
     }
 }
 

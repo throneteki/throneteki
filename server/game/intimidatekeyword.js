@@ -1,24 +1,32 @@
-const BaseAbility = require('./baseability.js');
+const KeywordAbility = require('./KeywordAbility.js');
+const GameActions = require('./GameActions');
 
-class IntimidateKeyword extends BaseAbility {
+class IntimidateKeyword extends KeywordAbility {
     constructor() {
-        super({
+        super('Intimidate', {
             target: {
-                activePromptTitle: 'Select a character to intimidate',
+                activePromptTitle: context => this.getIntimidatePromptTitle(context),
+                numCards: context => this.getTriggerAmount(context),
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
+            },
+            message: {
+                format: '{player} uses {source} to kneel {targets} using intimidate',
+                args: { targets: context => context.targets.getTargets() }
+            },
+            handler: context => {
+                context.game.resolveGameAction(GameActions.kneelCard(context => ({
+                    card: context.target,
+                    reason: 'intimidate',
+                    source: context.source
+                })), context);
             }
         });
-        this.title = 'Intimidate';
     }
 
-    meetsRequirements(context) {
-        return context.challenge.isAttackerTheWinner() && this.canResolveTargets(context);
-    }
-
-    executeHandler(context) {
-        context.target.controller.kneelCard(context.target);
-        context.game.addMessage('{0} uses intimidate from {1} to kneel {2}', context.source.controller, context.source, context.target);
+    getIntimidatePromptTitle(context) {
+        var numTargets = this.getTriggerAmount(context);
+        return `Select ${numTargets === 1 ? 'a character' : `up to ${numTargets} characters`} to intimidate`;
     }
 
     canIntimidate(card, strength, challenge) {
@@ -27,6 +35,10 @@ class IntimidateKeyword extends BaseAbility {
             && card.location === 'play area'
             && card.getType() === 'character'
             && card.getStrength() <= strength;
+    }
+
+    meetsRequirements(context) {
+        return context.source.isAttacking();
     }
 }
 

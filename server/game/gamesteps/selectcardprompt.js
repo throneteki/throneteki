@@ -69,6 +69,7 @@ class SelectCardPrompt extends UiPrompt {
                 this.cannotUnselectMustSelect = true;
             }
         }
+        this.activePromptTitleFunc = typeof(properties.activePromptTitle) === 'function' ? properties.activePromptTitle : () => properties.activePromptTitle;
         this.revealTargets = properties.revealTargets;
         this.revealFunc = null;
         this.savePreviouslySelectedCards();
@@ -123,7 +124,7 @@ class SelectCardPrompt extends UiPrompt {
         return {
             selectCard: true,
             selectOrder: this.properties.ordered,
-            menuTitle: this.properties.activePromptTitle || this.selector.defaultActivePromptTitle(),
+            menuTitle: this.activePromptTitleFunc(this.context) || this.selector.defaultActivePromptTitle(),
             buttons: this.properties.additionalButtons.concat([
                 { text: this.properties.doneButtonText || 'Done', arg: 'done' }
             ]),

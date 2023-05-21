@@ -103,7 +103,7 @@ class KeywordWindow extends BaseStep {
 
     getParticipantsForKeyword(keyword, ability) {
         let participants = this.winnerCardsWithContext.filter(participant => {
-            return participant.card.hasKeyword(keyword) && ability.meetsRequirements(participant.context);
+            return participant.card.hasKeyword(keyword) && ability.canResolve(participant.context);
         });
 
         if(keyword === 'intimidate' && participants.length > 0) {
