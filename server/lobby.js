@@ -762,6 +762,7 @@ class Lobby {
         this.broadcastGameMessage('removegame', game);
 
         let newGame = new PendingGame(game.owner, {
+            name: game.name,
             event: game.event,
             restrictedList: game.restrictedList,
             spectators: game.allowSpectators,
@@ -788,7 +789,7 @@ class Lobby {
         }
 
         this.games[newGame.id] = newGame;
-        newGame.newGame(socket.id, socket.user);
+        newGame.newGame(socket.id, socket.user, null, true);
 
         socket.joinChannel(newGame.id);
         this.sendGameState(newGame);
