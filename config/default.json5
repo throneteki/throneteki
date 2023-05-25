@@ -5,7 +5,7 @@
     secret: 'somethingverysecret',
     hmacSecret: 'somethingevenmoresecret',
     
-	//captchaKey: 'captchaKey',
+    //captchaKey: 'captchaKey',
     //emailKey: 'emailKey',
 
     dbPath: 'mongodb://mongo:27017/throneteki',
