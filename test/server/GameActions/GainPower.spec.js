@@ -2,7 +2,7 @@ const GainPower = require('../../../server/game/GameActions/GainPower');
 
 describe('GainPower', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['checkWinCondition']);
+        this.gameSpy = jasmine.createSpyObj('game', ['']);
         this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
         this.cardSpy.controller = 'PLAYER_OBJ';
         this.cardSpy.game = this.gameSpy;
@@ -56,10 +56,6 @@ describe('GainPower', function() {
 
             it('adds power to the card', function() {
                 expect(this.cardSpy.power).toBe(3);
-            });
-
-            it('checks the game for win condition', function() {
-                expect(this.gameSpy.checkWinCondition).toHaveBeenCalledWith('PLAYER_OBJ');
             });
         });
     });

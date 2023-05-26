@@ -2,7 +2,7 @@ const AbilityMessage = require('../AbilityMessage');
 const BaseStep = require('./basestep');
 
 class AbilityChoicePrompt extends BaseStep {
-    constructor({ game, context, choosingPlayer, title, choices, cancelText, cancelMessage }) {
+    constructor({ game, context, choosingPlayer, title, choices, cancelText, cancelMessage, gameActionResolver }) {
         super(game);
         this.context = context;
         this.choosingPlayer = choosingPlayer || this.context.choosingPlayer;
@@ -10,6 +10,7 @@ class AbilityChoicePrompt extends BaseStep {
         this.choices = choices;
         this.cancelText = cancelText || 'Done';
         this.cancelMessage = AbilityMessage.create(cancelMessage || { format: '{choosingPlayer} cancels the resolution of {source} (costs were still paid)', type: 'danger' }, { choosingPlayer: context => context.choosingPlayer });
+        this.gameActionResolver = gameActionResolver || ((gameAction, context) => game.resolveGameAction(gameAction, context));
     }
 
     continue() {
@@ -37,7 +38,7 @@ class AbilityChoicePrompt extends BaseStep {
         if(choice) {
             this.context.selectedChoice = choice;
             choice.message.output(this.game, this.context);
-            this.game.resolveGameAction(choice.gameAction, this.context);
+            this.gameActionResolver(choice.gameAction, this.context);
         }
 
         return true;

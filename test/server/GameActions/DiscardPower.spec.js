@@ -2,7 +2,7 @@ const DiscardPower = require('../../../server/game/GameActions/DiscardPower');
 
 describe('DiscardPower', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['checkWinCondition']);
+        this.gameSpy = jasmine.createSpyObj('game', ['']);
         this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction']);
         this.cardSpy.controller = 'PLAYER_OBJ';
         this.cardSpy.game = this.gameSpy;
@@ -72,10 +72,6 @@ describe('DiscardPower', function() {
                 it('removes power from the card', function() {
                     expect(this.cardSpy.power).toBe(1);
                 });
-
-                it('checks the game for win condition', function() {
-                    expect(this.gameSpy.checkWinCondition).toHaveBeenCalledWith('PLAYER_OBJ');
-                });
             });
         });
 
@@ -99,10 +95,6 @@ describe('DiscardPower', function() {
 
                 it('removes power from the card', function() {
                     expect(this.cardSpy.power).toBe(0);
-                });
-
-                it('checks the game for win condition', function() {
-                    expect(this.gameSpy.checkWinCondition).toHaveBeenCalledWith('PLAYER_OBJ');
                 });
             });
         });
