@@ -21,7 +21,6 @@ class GainPower extends GameAction {
     createEvent({ card, amount = 1, reason = 'ability' }) {
         return this.event('onCardPowerGained', { card, power: amount, reason }, event => {
             event.card.power += event.power;
-            event.card.game.checkWinCondition(event.card.controller);
         });
     }
 }

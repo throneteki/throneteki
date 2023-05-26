@@ -855,9 +855,8 @@ const Effects = {
             apply: function(player) {
                 player.cannotWinGame = true;
             },
-            unapply: function(player, context) {
+            unapply: function(player) {
                 player.cannotWinGame = false;
-                context.game.checkWinCondition(player);
             }
         };
     },

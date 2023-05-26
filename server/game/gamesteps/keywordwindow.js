@@ -85,7 +85,6 @@ class KeywordWindow extends BaseStep {
                     let finalParticipants = selectedCards.map(card => participantsWithKeyword.find(participant => participant.card === card));
 
                     this.resolveAbility(ability, finalParticipants);
-                    this.game.checkWinCondition(this.challenge.winner);
 
                     return true;
                 }
@@ -96,8 +95,6 @@ class KeywordWindow extends BaseStep {
             } else {
                 this.resolveAbility(ability, participantsWithKeyword);
             }
-
-            this.game.checkWinCondition(this.challenge.winner);
         }
     }
 

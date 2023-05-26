@@ -37,7 +37,7 @@ class ChooseGameAction extends GameAction {
     }
 
     createEvent(context) {
-        return this.event('onChoose', {}, () => {
+        return this.event('onChoose', {}, event => {
             const choosingPlayer = this.playerFunc(context);
             let tempContext = { ...context, choosingPlayer };
             const title = this.title instanceof Function ? this.title(tempContext) : this.title;
@@ -45,7 +45,18 @@ class ChooseGameAction extends GameAction {
             const cancelText = this.cancelText instanceof Function ? this.cancelText(tempContext) : this.cancelText;
             const cancelMessage = this.cancelMessage instanceof Function ? this.cancelMessage(tempContext) : this.cancelMessage;
 
-            context.game.queueStep(new AbilityChoicePrompt({ game: context.game, context, choosingPlayer, title, choices, cancelText, cancelMessage }));
+            context.game.queueStep(new AbilityChoicePrompt({
+                game: context.game,
+                context,
+                choosingPlayer,
+                title,
+                choices,
+                cancelText,
+                cancelMessage,
+                gameActionResolver: gameAction => {
+                    event.thenAttachEvent(gameAction.createEvent(context));
+                }
+            }));
         });
     }
 
