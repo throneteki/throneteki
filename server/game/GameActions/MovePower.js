@@ -23,8 +23,6 @@ class MovePower extends GameAction {
         return this.event('onCardPowerMoved', { source: from, target: to, power: appliedPower }, event => {
             event.source.power -= appliedPower;
             event.target.power += appliedPower;
-
-            event.target.game.checkWinCondition(event.target.controller);
         });
     }
 }

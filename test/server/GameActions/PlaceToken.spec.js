@@ -2,7 +2,7 @@ const PlaceToken = require('../../../server/game/GameActions/PlaceToken');
 
 describe('PlaceToken', function() {
     beforeEach(function() {
-        this.gameSpy = jasmine.createSpyObj('game', ['checkWinCondition']);
+        this.gameSpy = jasmine.createSpyObj('game', ['']);
         this.cardSpy = jasmine.createSpyObj('card', ['allowGameAction', 'modifyToken']);
         this.cardSpy.location = 'play area';
         this.props = { card: this.cardSpy, token: 'TOKEN_TYPE', amount: 2 };
