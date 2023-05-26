@@ -1,6 +1,9 @@
 {
     env: 'development',
-    instance: 'development',
+    // This is for specific instance-based data which will be passed into each game; not required.
+    //instance: {
+    //    type: 'development'
+    //},
 
     secret: 'somethingverysecret',
     hmacSecret: 'somethingevenmoresecret',
