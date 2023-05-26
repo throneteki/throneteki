@@ -16,7 +16,7 @@ class TheCrag extends DrawCard {
                 format: '{player} uses {source} to gain {amount} power for their faction',
                 args: { amount: context => this.getAmount(context) }
             },
-            gameAction: GameActions.gainPower(context => ({ card: context.player.faction, amount: this.getAmount(context) }))
+            gameAction: GameActions.gainPower(context => ({ card: this, amount: this.getAmount(context) }))
         });
     }
 
