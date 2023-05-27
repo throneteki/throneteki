@@ -455,12 +455,21 @@
   margin: 0 2px;
   max-height: @card-height;
   max-width: @card-width;
+  position: relative;
 }
 
 .target-card-image {
   max-height: @card-height;
   object-fit: contain;
   width: 100%;
+}
+
+.target-card-shadow-position {
+  position: absolute;
+  line-height: 1em;
+  user-select: none;
+  bottom: 0%;
+  right: 5%;
 }
 
 .phase-indicator {

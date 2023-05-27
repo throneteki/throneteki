@@ -347,6 +347,8 @@ class InnerCard extends React.Component {
             return 'contributing';
         } else if(this.props.card.stealth) {
             return 'stealth';
+        } else if(this.props.card.assault) {
+            return 'assault';
         } else if(this.props.card.controlled) {
             return 'controlled';
         } else if(this.props.card.new) {

@@ -13,6 +13,13 @@ class ActivePlayerPrompt extends React.Component {
 
         this.props.stopAbilityTimer();
 
+        // Checks & opens google form if button is formatted as such, rather than regular button-click actions
+        let googleFormMatcher = button.arg && button.arg.toString().match(/^googleForm:(?<formId>.+)$/);
+        if(googleFormMatcher) {
+            window.open(`https://forms.gle/${googleFormMatcher.groups.formId}`, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
         if(this.props.onButtonClick) {
             this.props.onButtonClick(button);
         }

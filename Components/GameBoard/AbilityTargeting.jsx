@@ -21,7 +21,8 @@ class AbilityTargeting extends React.Component {
                 onMouseOver={ event => this.onMouseOver(event, card) }>
                 <img className='target-card-image vertical'
                     alt={ card.name }
-                    src={ '/img/cards/' + (!card.facedown ? (card.code + '.png') : 'cardback.jpg') } />
+                    src={ '/img/cards/' + (card.facedown ? (card.shadowPosition ? 'cardback_shadow.png' : 'cardback.jpg') : card.code + '.png') } />
+                { card.shadowPosition ? <div className='target-card-shadow-position'>{ '#' + card.shadowPosition }</div> : null }
             </div>);
     }
 
