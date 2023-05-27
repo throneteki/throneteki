@@ -4,9 +4,9 @@ const GameActions = require('../../GameActions/index.js');
 class HighgardenSept extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
-            condition: () => this.controller.hand.length >= 7,
+            condition: () => this.controller.hand.length >= 7 && this.game.currentPhase === 'challenge',
             targetController: 'any',
-            effect: ability.effects.cannotPutIntoPlay((card, playingType) => card.getType() === 'character' && !card.hasTrait('The Seven') && playingType !== 'marshal')
+            effect: ability.effects.cannotPutIntoPlay(card => card.getType() === 'character' && !card.hasTrait('The Seven'))
         });
         this.reaction({
             when: {
