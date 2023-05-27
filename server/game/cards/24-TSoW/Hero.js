@@ -11,7 +11,6 @@ class Hero extends DrawCard {
                     && this.controller.hand.length < event.challenge.loser.hand.length
             },
             target: {
-                type: 'select',
                 cardCondition: { or: [{type: 'character', trait: 'Army'}, { name: 'Grey Worm' }] }
             },
             limit: ability.limit.perPhase(2),
