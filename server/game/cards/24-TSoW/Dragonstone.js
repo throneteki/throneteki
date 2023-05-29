@@ -8,10 +8,10 @@ class Dragonstone extends DrawCard {
         });
         this.reaction({
             when: {
-                onCardPutIntoShadows: () => true // TODO: Prevent reacting to marshalling into shadows
+                onCardPutIntoShadows: event => event.reason = 'ability'
             },
             message: {
-                format: '{player} kneels {source} and prevents {card} from coming out of shadows until {source} stands or leaves play',
+                format: '{player} kneels {source} to prevent {card} from coming out of shadows until {source} stands or leaves play',
                 args: { card: context => context.event.card }
             },
             cost: ability.costs.kneelSelf(),

@@ -25,6 +25,7 @@ class CaggoCorpsekiller extends DrawCard {
     }
 
     returnConditions(event) {
+        // Cards being "returned" to hand/shadows can only come from 'play area' (TO BE CONFIRMED)
         return event.card !== this && event.card.location === 'play area' && event.card.getType() === 'character';
     }
 }

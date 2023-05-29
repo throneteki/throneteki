@@ -17,12 +17,13 @@ class PutIntoShadows extends GameAction {
         return card.location !== 'shadows' && player.canPutIntoShadows(card, card.game.currentPhase === 'setup' ? 'setup' : 'put');
     }
 
-    createEvent({ player, card, allowSave = true }) {
+    createEvent({ player, card, allowSave = true, reason = 'ability' }) {
         const params = {
             card,
             player: player || card.controller,
             allowSave,
-            snapshotName: 'cardStateWhenMoved'
+            snapshotName: 'cardStateWhenMoved',
+            reason
         };
 
         const putIntoShadowsEvent = this.event('onCardPutIntoShadows', params, event => {
