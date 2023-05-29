@@ -9,7 +9,7 @@ class SalladhorSaansLyseni extends DrawCard {
             },
             limit: ability.limit.perPhase(1),
             message: {
-                format: '{player} uses {source} to have it gain {amount} power',
+                format: '{player} uses {source} to have {source} gain {amount} power',
                 args: { amount: context => this.getAmount(context) }
             },
             gameAction: GameActions.gainPower(context => ({
