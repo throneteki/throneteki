@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const Message = require('../../Message');
 const GameActions = require('../../GameActions/index.js');
 
 class DefendingTheWall extends DrawCard {
@@ -10,7 +11,10 @@ class DefendingTheWall extends DrawCard {
             target: {
                 cardCondition: card => card.isAttacking() && card.getType() === 'character' && card.getNumberOfIcons() > 1 
             },
-            message: '{player} plays {source} to remove {target} from the challenge',
+            message: {
+                format: '{player} plays {source} to {actions}', // TODO: Update this to {gameAction} once handler is replaced by gameAction
+                args: { actions: context => Message.fragment(`${(context.target.isMatch({ not: { trait: ['Army', 'Wildling'] } }) ? 'stand and ' : '')}remove {target} from the challenge`, { target: context.target }) }
+            },
             handler: context => {
                 this.resolveGameAction(
                     GameActions.simultaneously([
@@ -18,7 +22,7 @@ class DefendingTheWall extends DrawCard {
                             card: context.target
                         })),
                         GameActions.ifCondition({
-                            condition: context => !(context.target.hasTrait('Army') || context.target.hasTrait('Wildling')),
+                            condition: context => context.target.isMatch({ not: { trait: ['Army', 'Wildling'] } }),
                             thenAction: GameActions.standCard(context => ({
                                 card: context.target
                             }))

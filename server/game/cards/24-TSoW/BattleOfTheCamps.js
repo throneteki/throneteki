@@ -12,7 +12,7 @@ class BattleOfTheCamps extends PlotCard {
             },
             message: {
                 format: '{player} uses {source} to {actions} {target}',
-                args: { actions: context => !context.target.hasTrait('Army') ? 'kneel' : 'kneel or kill' }
+                args: { actions: context => !context.target.hasTrait('Army') ? 'kneel' : 'either kneel or kill' }
             },
             limit: ability.limit.perPhase(1),
             handler: context => {

@@ -187,6 +187,10 @@ class DrawCard extends BaseCard {
         return this.keywords.getShadowCost();
     }
 
+    getShadowPosition() {
+        return this.location === 'shadows' ? this.controller.shadows.indexOf(this) + 1 : null;
+    }
+
     modifyStrength(amount, applying = true) {
         this.strengthModifier += amount;
 

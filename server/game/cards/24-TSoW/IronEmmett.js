@@ -4,10 +4,7 @@ class IronEmmett extends DrawCard {
     setupCardAbilities(ability) {
         this.persistentEffect({
             condition: () => this.kneeled && this.game.currentPhase === 'challenge',
-            effect: [
-                ability.effects.cannotPutIntoPlay(card => card.hasIcon('military')),
-                ability.effects.cannotPlay(card => card.hasIcon('military'))
-            ]
+            effect: ability.effects.cannotPutIntoPlay(card => card.hasIcon('military'))
         });
     }
 }

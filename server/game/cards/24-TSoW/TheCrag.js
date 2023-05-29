@@ -13,7 +13,7 @@ class TheCrag extends DrawCard {
             },
             limit: ability.limit.perPhase(2),
             message: {
-                format: '{player} uses {source} to gain {amount} power for their faction',
+                format: '{player} uses {source} to have {source} gain {amount} power',
                 args: { amount: context => this.getAmount(context) }
             },
             gameAction: GameActions.gainPower(context => ({ card: this, amount: this.getAmount(context) }))
