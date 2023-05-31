@@ -1,5 +1,5 @@
 const TitleCard = require('../../TitleCard.js');
-const InitiateChallenge = require('../../GameActions/InitiateChallenge.js');
+const InitiatingKeywordsWindow = require('../../gamesteps/InitiatingKeywordsWindow.js');
 
 class CrownRegent extends TitleCard {
     setupCardAbilities(ability) {
@@ -21,7 +21,7 @@ class CrownRegent extends TitleCard {
                     onSelect: opponent => {
                         challenge.defendingPlayer = opponent;
                         challenge.clearInitiationActions();
-                        InitiateChallenge.resolveKeywords({ challenge });
+                        this.game.queueStep(new InitiatingKeywordsWindow(this.game, challenge));
                     },
                     onCancel: () => {
                         this.game.addAlert('danger', '{0} cancels the challenge redirect', context.event.challenge.attackingPlayer);

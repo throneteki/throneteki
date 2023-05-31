@@ -4,6 +4,7 @@ const SimpleStep = require('../simplestep.js');
 const ChooseParticipantsPrompt = require('./ChooseParticipantsPrompt');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
+const InitiatingKeywordsWindow = require('../InitiatingKeywordsWindow.js');
 const KeywordWindow = require('../keywordwindow.js');
 const InitiateChallenge = require('../../GameActions/InitiateChallenge');
 const DeclareDefenders = require('../../GameActions/DeclareDefenders.js');
@@ -21,7 +22,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
             new SimpleStep(this.game, () => this.recalculateEffects()),
-            new SimpleStep(this.game, () => this.promptForInitiationKeywords()),
+            () => new InitiatingKeywordsWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.initiateChallenge()),
             new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
             new SimpleStep(this.game, () => this.promptForDefenders()),
@@ -102,10 +103,6 @@ class ChallengeFlow extends BaseStep {
         this.challenge.declareAttackers(attackers);
 
         return true;
-    }
-
-    promptForInitiationKeywords() {
-        InitiateChallenge.resolveKeywords({ challenge: this.challenge });
     }
 
     initiateChallenge() {

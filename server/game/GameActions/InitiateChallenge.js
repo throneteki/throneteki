@@ -2,11 +2,6 @@ const GameAction = require('./GameAction');
 const DeclareAttackers = require('./DeclareAttackers');
 const DeclareDefenders = require('./DeclareDefenders');
 
-const GameKeywords = require('../gamekeywords.js');
-const AbilityContext = require('../AbilityContext.js');
-
-const initiatingKeywords = ['stealth', 'assault'];
-
 class InitiateChallenge extends GameAction {
     constructor() {
         super('initiateChallenge');
@@ -39,27 +34,6 @@ class InitiateChallenge extends GameAction {
                     challenge.attackingPlayer, challenge.challengeType, challenge.defendingPlayer, challenge.attackerStrength, challenge.defenderStrength);
             });
         });
-    }
-
-    resolveKeywords({ challenge }) {
-        const declaredAttackersWithContext = challenge.declaredAttackers.map(card => {
-            return { card: card, context: new AbilityContext({ player: challenge.attackingPlayer, game: challenge.game, challenge, source: card }) };
-        });
-        for(let keyword of initiatingKeywords) {
-            let ability = GameKeywords[keyword];
-            let resolveables = declaredAttackersWithContext.filter(attacker => attacker.card.hasKeyword(keyword) && ability.canResolve(attacker.context));
-
-            if(keyword === 'assault') {
-                let highestPrintedCost = Math.max(...resolveables.map(r => r.card.getPrintedCost()));
-                let highestResolvable = resolveables.find(resolveable => resolveable.card.getPrintedCost() === highestPrintedCost);
-                // TODO: Potentially change to select who you want to assault with, for any characters with special interactions with assault
-                if(highestResolvable) {
-                    challenge.game.resolveAbility(ability, highestResolvable.context);
-                }
-            } else {
-                resolveables.forEach(attacker => challenge.game.resolveAbility(ability, attacker.context));
-            }
-        }
     }
 }
 
