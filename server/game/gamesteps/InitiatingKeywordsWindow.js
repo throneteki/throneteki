@@ -42,7 +42,7 @@ class InitiatingKeywordsWindow extends BaseStep {
 
                 this.game.resolveAbility(ability, participant.context);
                 this.resolvedAbilities.push({ ability, context: participant.context });
-            })
+            });
         }
     }
 }
