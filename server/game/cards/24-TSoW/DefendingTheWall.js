@@ -9,7 +9,7 @@ class DefendingTheWall extends DrawCard {
             phase: 'challenge',
             condition: context => context.player.anyCardsInPlay({ name: ['Castle Black', 'The Wall'] }),
             target: {
-                cardCondition: card => card.isAttacking() && card.getType() === 'character' && card.getNumberOfIcons() > 1 
+                cardCondition: { type: 'character', attacking: true, condition: card => card.getNumberOfIcons() > 1 }
             },
             message: {
                 format: '{player} plays {source} to {actions}', // TODO: Update this to {gameAction} once handler is replaced by gameAction
