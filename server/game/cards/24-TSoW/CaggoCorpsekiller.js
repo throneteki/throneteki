@@ -25,8 +25,8 @@ class CaggoCorpsekiller extends DrawCard {
     }
 
     returnConditions(event) {
-        // Cards being "returned" to hand/shadows can only come from 'play area' (TO BE CONFIRMED)
-        return event.card !== this && event.card.location === 'play area' && event.card.getType() === 'character';
+        // Caggo can only interrupt if the card is returned/placed from a location which his controller can see (play area, discard pile, dead pile)
+        return event.card !== this && event.card.getType() === 'character' && ['play area', 'discard pile', 'dead pile'].includes(event.card.location);
     }
 }
 
