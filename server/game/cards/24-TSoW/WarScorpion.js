@@ -9,6 +9,7 @@ class WarScorpion extends DrawCard {
         });
         this.action({
             title: 'Remove attacker from challenge',
+            phase: 'challenge',
             cost: ability.costs.sacrificeSelf(),
             target: {
                 cardCondition: { type: 'character', attacking: true }
