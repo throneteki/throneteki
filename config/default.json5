@@ -12,8 +12,20 @@
     mqHost: 'lobby',
     mqPort: 6000,
 
+    redisUrl: 'redis://redis',
+
     minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
-    nodeIdentity: 'node1',
-    host: 'localhost',
-    socketioPort: 5000
+   
+    gameNode: {
+        name: 'node1',
+        host: 'localhost',
+        socketioPort: 5000
+
+        /*
+         * Other game node configurations used, but not specified, include:
+         *  - keyPath
+         *  - certPath
+         *  - maxGames
+         */
+    }
 }

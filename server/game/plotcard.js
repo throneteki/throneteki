@@ -24,26 +24,30 @@ class PlotCard extends BaseCard {
     }
 
     getWhenRevealedAbility() {
-        return this.abilities.reactions.find(ability => ability instanceof CardWhenRevealed);
+        return this.abilities.reactions.find((ability) => ability instanceof CardWhenRevealed);
     }
 
     getInitiative() {
-        const baseValue = this.canProvidePlotModifier['initiative'] ? this.getPrintedInitiative() : 0;
+        const baseValue = this.canProvidePlotModifier['initiative']
+            ? this.getPrintedInitiative()
+            : 0;
         return Math.max(baseValue + this.initiativeModifier, 0);
     }
 
     getPrintedInitiative() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.initiative);
+        return this.getPrintedNumberFor(this.cardData.initiative);
     }
 
     getIncome() {
-        let baseValue = this.canProvidePlotModifier['gold'] ? (this.baseIncome || this.getPrintedIncome()) : 0;
+        let baseValue = this.canProvidePlotModifier['gold']
+            ? this.baseIncome || this.getPrintedIncome()
+            : 0;
 
         return baseValue + this.goldModifier;
     }
 
     getPrintedIncome() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.income);
+        return this.getPrintedNumberFor(this.cardData.income);
     }
 
     getReserve() {
@@ -52,17 +56,17 @@ class PlotCard extends BaseCard {
     }
 
     getPrintedReserve() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.reserve);
+        return this.getPrintedNumberFor(this.cardData.reserve);
     }
 
     getPrintedClaim() {
-        return this.getPrintedNumberFor(this.cardData.plotStats.claim);
+        return this.getPrintedNumberFor(this.cardData.claim);
     }
 
     getClaim() {
         let baseClaim = this.getPrintedClaim();
 
-        if(typeof(this.claimSet) === 'number') {
+        if (typeof this.claimSet === 'number') {
             return this.claimSet;
         }
 

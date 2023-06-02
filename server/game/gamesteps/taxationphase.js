@@ -16,19 +16,19 @@ class TaxationPhase extends Phase {
     }
 
     returnGold() {
-        for(let player of this.game.getPlayersInFirstPlayerOrder()) {
-            if(!player.doesNotReturnUnspentGold) {
+        for (let player of this.game.getPlayersInFirstPlayerOrder()) {
+            if (!player.doesNotReturnUnspentGold) {
                 this.game.returnGoldToTreasury({ player: player, amount: player.gold });
             }
         }
     }
 
     returnTitleCards() {
-        if(!this.game.isMelee) {
+        if (!this.game.isMelee) {
             return;
         }
 
-        for(let player of this.game.getPlayers()) {
+        for (let player of this.game.getPlayers()) {
             this.game.titlePool.returnToPool(player, player.title);
         }
     }
@@ -37,13 +37,15 @@ class TaxationPhase extends Phase {
         this.game.raiseEvent('onRoundEnded');
 
         let players = this.game.getPlayers();
-        let playerPower = players.map(player => `${player.name}: ${player.getTotalPower()}`).join(', ');
+        let playerPower = players
+            .map((player) => `${player.name}: ${player.getTotalPower()}`)
+            .join(', ');
 
         this.game.round++;
 
         this.game.addAlert('endofround', 'End of round {0}', this.game.round);
         this.game.addMessage(playerPower);
-        this.game.addAlert('startofround', 'Round {0}', this.game.round + 1);
+        this.game.addAlert('startofround', `Turn ${this.game.round} - {0}`, this.game.activePlayer);
 
         this.game.checkForTimeExpired();
     }

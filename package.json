@@ -31,13 +31,14 @@
   "homepage": "https://github.com/cryogen/throneteki#readme",
   "dependencies": {
     "@sendgrid/mail": "^6.2.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.18.2",
     "command-line-args": "^4.0.7",
     "config": "^3.2.2",
     "cross-env": "^3.2.4",
     "express": "^4.15.5",
     "jimp": "^0.16.1",
+    "jsondiffpatch": "^0.4.1",
     "jsonwebtoken": "^8.2.2",
     "lodash.range": "^3.2.0",
     "lodash.sample": "^4.2.1",
@@ -51,13 +52,14 @@
     "pluralize": "^7.0.0",
     "pmx": "^1.6.7",
     "raven": "^1.2.1",
-    "socket.io": "^2.4.1",
+    "redis": "^4.3.1",
+    "socket.io": "^4.6.1",
     "throneteki-deck-helper": "^2.7.0",
+    "token-introspection": "^3.2.0",
     "underscore": "^1.13.1",
     "uuid": "^3.1.0",
     "winston": "^2.2.0",
-    "winston-daily-rotate-file": "^1.7.2",
-    "zeromq": "^5.1.0"
+    "winston-daily-rotate-file": "^1.7.2"
   },
   "devDependencies": {
     "chai": "^4.1.2",

@@ -10,8 +10,12 @@ class EndRound extends GameAction {
     }
 
     createEvent({ game }) {
-        return this.event('onRoundEnded', { game }, event => {
-            event.thenAttachEvent(this.event('onAtEndOfRound', { game }));
+        return this.event('onRoundEnded', { game }, (event) => {
+            event.thenAttachEvent(
+                this.event('onAtEndOfRound', { game }, () => {
+                    game.endRound();
+                })
+            );
         });
     }
 }

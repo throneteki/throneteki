@@ -11,11 +11,11 @@ class Deck {
 
     createFactionCard(player) {
         if(this.data.faction) {
-            let factionData = Factions.find(faction => faction.value === this.data.faction.value);
+            let factionData = Factions.find(faction => faction.value === this.data.faction.code);
             return new DrawCard(player, {
-                code: this.data.faction.value,
+                code: this.data.faction.code,
                 type: 'faction',
-                faction: this.data.faction.value,
+                faction: this.data.faction.code,
                 name: factionData && factionData.name,
                 label: factionData && factionData.name
             });
