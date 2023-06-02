@@ -1,7 +1,7 @@
-const KeywordAbility = require('./KeywordAbility.js');
+const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
 const BypassByStealth = require('./GameActions/BypassByStealth.js');
 
-class StealthKeyword extends KeywordAbility {
+class StealthKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Stealth', {
             target: {
@@ -22,8 +22,8 @@ class StealthKeyword extends KeywordAbility {
         });
     }
 
-    meetsRequirements(context) {
-        return context.source.isAttacking() && context.source.allowGameAction('targetUsingStealth', context);
+    meetsKeywordRequirements(context) {
+        return context.source.isAttacking();
     }
 }
 

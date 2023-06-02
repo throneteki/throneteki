@@ -5,7 +5,7 @@ const ChooseParticipantsPrompt = require('./ChooseParticipantsPrompt');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
 const InitiatingKeywordsWindow = require('../InitiatingKeywordsWindow.js');
-const KeywordWindow = require('../keywordwindow.js');
+const ResolutionKeywordsWindow = require('../ResolutionKeywordsWindow.js');
 const InitiateChallenge = require('../../GameActions/InitiateChallenge');
 const DeclareDefenders = require('../../GameActions/DeclareDefenders.js');
 
@@ -32,7 +32,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.determineWinner()),
             new SimpleStep(this.game, () => this.challengeBonusPower()),
             new SimpleStep(this.game, () => this.beforeClaim()),
-            () => new KeywordWindow(this.game, this.challenge),
+            () => new ResolutionKeywordsWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.atEndOfChallenge())
         ]);
 

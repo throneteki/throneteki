@@ -1,8 +1,8 @@
-const KeywordAbility = require('./KeywordAbility.js');
+const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
 const GameActions = require('./GameActions');
 const TextHelper = require('./TextHelper');
 
-class InsightKeyword extends KeywordAbility {
+class InsightKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Insight', {
             message: {

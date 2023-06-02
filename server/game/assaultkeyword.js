@@ -1,7 +1,7 @@
-const KeywordAbility = require('./KeywordAbility.js');
+const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
 const TargetByAssault = require('./GameActions/TargetByAssault.js');
 
-class AssaultKeyword extends KeywordAbility {
+class AssaultKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Assault', {
             target: {
@@ -21,6 +21,8 @@ class AssaultKeyword extends KeywordAbility {
                 });
             }
         });
+        // Order by highest printed cost (sorts by smallest values first)
+        this.orderBy = context => -context.source.getPrintedCost();
     }
 
     getTriggerAmount(context) {
@@ -33,8 +35,8 @@ class AssaultKeyword extends KeywordAbility {
         return Math.max(super.getTriggerAmount(context) + totalBaseTriggerOffset, 0);
     }
 
-    meetsRequirements(context) {
-        return context.source.isAttacking() && context.source.allowGameAction('targetUsingAssault', context) && this.getTriggerAmount(context) > 0;
+    meetsKeywordRequirements(context) {
+        return context.source.isAttacking();
     }
 
     executeHandler(context) {
