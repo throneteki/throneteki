@@ -146,7 +146,7 @@ class Game extends EventEmitter {
         return this.playersAndSpectators[playerName] && !this.playersAndSpectators[playerName].left;
     }
 
-    getPlayers() {
+    getAllPlayers() {
         return Object.values(this.playersAndSpectators).filter((player) => !player.isSpectator());
     }
 
