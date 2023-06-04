@@ -39,6 +39,11 @@ class ResolvedTargets {
         return flatten(targetingSelections.map(selection => selection.value));
     }
 
+    getTargetsToValidate() {
+        let targetingSelections = this.selections.filter(selection => selection.hasValue() && selection.requiresValidation);
+        return flatten(targetingSelections.map(selection => selection.value));
+    }
+
     getTargetsForPlayer(player) {
         let selectionsForPlayer = this.selections.filter(selection => selection.choosingPlayer === player);
         let result = new ResolvedTargets();

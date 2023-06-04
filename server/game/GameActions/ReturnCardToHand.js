@@ -1,5 +1,6 @@
 const Message = require('../Message');
 const GameAction = require('./GameAction');
+const LeavePlay = require('./LeavePlay');
 const MoveCardEventGenerator = require('./MoveCardEventGenerator');
 
 class ReturnCardToHand extends GameAction {
@@ -22,6 +23,10 @@ class ReturnCardToHand extends GameAction {
     }
 
     canChangeGameState({ card }) {
+        if(card.location === 'play area' && !LeavePlay.allow({ card })) {
+            return false;
+        }
+
         return ['dead pile', 'discard pile', 'play area', 'shadows', 'duplicate', 'being played'].includes(card.location);
     }
 

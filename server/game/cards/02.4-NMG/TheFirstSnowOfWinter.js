@@ -1,3 +1,4 @@
+const GameActions = require('../../GameActions/index.js');
 const PlotCard = require('../../plotcard.js');
 
 class TheFirstSnowOfWinter extends PlotCard {
@@ -6,21 +7,12 @@ class TheFirstSnowOfWinter extends PlotCard {
             when: {
                 onPhaseStarted: event => event.phase === 'challenge'
             },
-            handler: () => {
-                for(let player of this.game.getPlayers()) {
-                    this.returnCardsToHand(player);
-                }
-
-                this.game.addMessage('{0} uses {1} to force both players to return each card with printed cost 3 or lower to their hand', this.controller, this);
-            }
+            message: '{player} uses {source} to force each player to return each card with printed cost 3 or lower to their hand',
+            gameAction: GameActions.simultaneously(context => 
+                context.game.filterCardsInPlay(card => card.isMatch({ type: 'character', printedCostOrLower: 3 }))
+                    .map(card => GameActions.returnCardToHand({ card }))
+            )
         });
-    }
-
-    returnCardsToHand(player) {
-        let characters = player.filterCardsInPlay(card => card.getType() === 'character' && card.hasPrintedCost() && card.getPrintedCost() <= 3);
-        for(let card of characters) {
-            player.returnCardToHand(card);
-        }
     }
 }
 

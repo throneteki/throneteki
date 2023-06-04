@@ -21,7 +21,7 @@ class TorrhensSquare extends DrawCard {
                 for(let card of context.target) {
                     card.untilEndOfPhase(ability => ({
                         match: card,
-                        effect: ability.effects.addPillageLimit(1)
+                        effect: ability.effects.modifyKeywordTriggerAmount('pillage', 1)
                     }));
                 }
             }

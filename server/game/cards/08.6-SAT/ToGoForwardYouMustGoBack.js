@@ -14,7 +14,7 @@ class ToGoForwardYouMustGoBack extends DrawCard {
                         title: 'Shuffle your hand and draw 5 cards?',
                         message: {
                             format: '{selectingPlayer} chooses to shuffle their hand into their deck and draw 5 cards',
-                            args: { selectingPlayer: () => player },
+                            args: { selectingPlayer: () => player }
                         },
                         gameAction: GameActions.shuffleIntoDeck({ cards: player.hand })
                             .then({

@@ -15,7 +15,7 @@ class TheSilverSteed extends DrawCard {
         });
         this.reaction({
             when: {
-                onRenown: event => event.card === this.parent
+                onCardPowerGained: event => event.card === this.parent && event.reason === 'renown'
             },
             handler: () => {
                 // The sacrifice here is specifically an effect, not a cost
