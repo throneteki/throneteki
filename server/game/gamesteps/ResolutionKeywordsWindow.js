@@ -1,20 +1,19 @@
 const {sortBy} = require('../../Array');
 
+const ChallengeKeywordsWindow = require('./ChallengeKeywordsWindow');
 const AbilityContext = require('../AbilityContext.js');
-const BaseStep = require('./basestep.js');
 const GameKeywords = require('../gamekeywords.js');
 
-const challengeKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
+const resolutionKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
 
-class KeywordWindow extends BaseStep {
+class ResolutionKeywordsWindow extends ChallengeKeywordsWindow {
     constructor(game, challenge) {
-        super(game);
-        this.challenge = challenge;
+        super(game, challenge);
         this.winnerCardsWithContext = challenge.getWinnerCards().map(card => {
             return { card: card, context: new AbilityContext({ player: this.challenge.winner, game: this.game, challenge: this.challenge, source: card }) };
         });
         this.firstPlayer = game.getFirstPlayer();
-        this.remainingKeywords = challengeKeywords;
+        this.remainingKeywords = resolutionKeywords;
     }
 
     continue() {
@@ -68,7 +67,7 @@ class KeywordWindow extends BaseStep {
 
     applyKeyword(keyword) {
         let ability = GameKeywords[keyword];
-        let participantsWithKeyword = this.getParticipantsForKeyword(keyword, ability);
+        let participantsWithKeyword = this.winnerCardsWithContext.filter(participant => participant.card.hasKeyword(keyword));
 
         if(participantsWithKeyword.length === 0) {
             return;
@@ -90,53 +89,9 @@ class KeywordWindow extends BaseStep {
                 }
             });
         } else {
-            if(keyword === 'pillage' && participantsWithKeyword.length > 1) {
-                this.promptForPillageOrder(ability, participantsWithKeyword);
-            } else {
-                this.resolveAbility(ability, participantsWithKeyword);
-            }
-        }
-    }
-
-    getParticipantsForKeyword(keyword, ability) {
-        let participants = this.winnerCardsWithContext.filter(participant => {
-            return participant.card.hasKeyword(keyword) && ability.canResolve(participant.context);
-        });
-
-        if(keyword === 'intimidate' && participants.length > 0) {
-            return [participants[0]];
-        }
-
-        return participants;
-    }
-
-    promptForPillageOrder(ability, participants) {
-        let cards = participants.map(participant => participant.card);
-        this.game.promptForSelect(this.challenge.winner, {
-            ordered: true,
-            mode: 'exactly',
-            numCards: participants.length,
-            activePromptTitle: 'Select order for pillage',
-            cardCondition: card => cards.includes(card),
-            onSelect: (player, selectedCards) => {
-                let finalParticipants = selectedCards.map(card => participants.find(participant => participant.card === card));
-
-                this.resolveAbility(ability, finalParticipants);
-
-                return true;
-            },
-            onCancel: () => {
-                this.resolveAbility(ability, participants);
-                return true;
-            }
-        });
-    }
-
-    resolveAbility(ability, participants) {
-        for(let participant of participants) {
-            this.game.resolveAbility(ability, participant.context);
+            this.resolveAbility(ability, participantsWithKeyword);
         }
     }
 }
 
-module.exports = KeywordWindow;
+module.exports = ResolutionKeywordsWindow;

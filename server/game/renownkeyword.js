@@ -1,7 +1,7 @@
-const KeywordAbility = require('./KeywordAbility.js');
+const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
 const GameActions = require('./GameActions');
 
-class RenownKeyword extends KeywordAbility {
+class RenownKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Renown', {
             message: {

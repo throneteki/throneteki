@@ -4,7 +4,8 @@ const SimpleStep = require('../simplestep.js');
 const ChooseParticipantsPrompt = require('./ChooseParticipantsPrompt');
 const ClaimPrompt = require('./ClaimPrompt');
 const ActionWindow = require('../actionwindow.js');
-const KeywordWindow = require('../keywordwindow.js');
+const InitiatingKeywordsWindow = require('../InitiatingKeywordsWindow.js');
+const ResolutionKeywordsWindow = require('../ResolutionKeywordsWindow.js');
 const InitiateChallenge = require('../../GameActions/InitiateChallenge');
 const DeclareDefenders = require('../../GameActions/DeclareDefenders.js');
 
@@ -21,7 +22,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.preAttackersPromptForDefenders()),
             new SimpleStep(this.game, () => this.promptForAttackers()),
             new SimpleStep(this.game, () => this.recalculateEffects()),
-            new SimpleStep(this.game, () => this.promptForInitiationKeywords()),
+            () => new InitiatingKeywordsWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.initiateChallenge()),
             new ActionWindow(this.game, 'After attackers declared', 'attackersDeclared'),
             new SimpleStep(this.game, () => this.promptForDefenders()),
@@ -31,7 +32,7 @@ class ChallengeFlow extends BaseStep {
             new SimpleStep(this.game, () => this.determineWinner()),
             new SimpleStep(this.game, () => this.challengeBonusPower()),
             new SimpleStep(this.game, () => this.beforeClaim()),
-            () => new KeywordWindow(this.game, this.challenge),
+            () => new ResolutionKeywordsWindow(this.game, this.challenge),
             new SimpleStep(this.game, () => this.atEndOfChallenge())
         ]);
 
@@ -102,10 +103,6 @@ class ChallengeFlow extends BaseStep {
         this.challenge.declareAttackers(attackers);
 
         return true;
-    }
-
-    promptForInitiationKeywords() {
-        InitiateChallenge.resolveKeywords({ challenge: this.challenge });
     }
 
     initiateChallenge() {

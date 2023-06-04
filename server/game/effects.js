@@ -814,8 +814,8 @@ const Effects = {
         };
     },
     cannotTarget: cannotEffect('target'),
-    cannotTargetUsingAssault: cannotEffect('targetUsingAssault'),
-    cannotTargetUsingStealth: cannotEffect('targetUsingStealth'),
+    cannotTargetUsingAssault: cannotEffect('assault'),
+    cannotTargetUsingStealth: cannotEffect('stealth'),
     setMaxGoldGain: function(max) {
         return {
             targetType: 'player',

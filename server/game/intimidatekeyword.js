@@ -1,11 +1,11 @@
-const KeywordAbility = require('./KeywordAbility.js');
+const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
 const GameActions = require('./GameActions');
 
-class IntimidateKeyword extends KeywordAbility {
+class IntimidateKeyword extends ChallengeKeywordAbility {
     constructor() {
         super('Intimidate', {
             target: {
-                activePromptTitle: context => this.getIntimidatePromptTitle(context),
+                activePromptTitle: context => this.targetPromptTitle(context),
                 numCards: context => this.getTriggerAmount(context),
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
@@ -22,11 +22,17 @@ class IntimidateKeyword extends KeywordAbility {
                 })), context);
             }
         });
+        // Order by highest printed cost (sorts by smallest values first)
+        this.orderBy = context => -context.source.getPrintedCost();
     }
 
-    getIntimidatePromptTitle(context) {
-        var numTargets = this.getTriggerAmount(context);
-        return `Select ${numTargets === 1 ? 'a character' : `up to ${numTargets} characters`} to intimidate`;
+    targetPromptTitle(context) {
+        let numTargets = this.getTriggerAmount(context);
+        return `Select ${numTargets === 1 ? 'a character' : `up to ${numTargets} characters`} to intimidate for ${context.source.name}`;
+    }
+
+    getTriggerAmount(context) {
+        return super.getTriggerAmount(context) - context.resolved.reduce((total, resolvedIntimidate) => total += resolvedIntimidate.context.targets.getTargets(), 0);
     }
 
     canIntimidate(card, strength, challenge) {
@@ -37,7 +43,7 @@ class IntimidateKeyword extends KeywordAbility {
             && card.getStrength() <= strength;
     }
 
-    meetsRequirements(context) {
+    meetsKeywordRequirements(context) {
         return context.source.isAttacking();
     }
 }
