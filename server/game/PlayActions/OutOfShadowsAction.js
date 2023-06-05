@@ -23,7 +23,7 @@ class OutOfShadowsAction extends BaseAbility {
     }
 
     executeHandler(context) {
-        const position = context.player.shadows.indexOf(context.source) + 1;
+        const position = context.source.getShadowPosition();
         if(context.costs.isDupe) {
             context.game.addMessage('{0} brings a duplicate of {1} out of shadows (card #{2}) costing {3} gold', context.player, context.source, position, context.costs.gold);
         } else {

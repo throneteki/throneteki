@@ -22,7 +22,6 @@ class AbilityTarget {
         this.choosingPlayer = properties.choosingPlayer || 'current';
         this.name = name;
         this.properties = properties;
-        this.selector = CardSelector.for(properties);
         this.messages = properties.messages;
         this.ifAble = !!properties.ifAble;
         this.subTargets = properties.subTargets ? Object.entries(properties.subTargets).map(([name, properties]) => {
@@ -32,19 +31,24 @@ class AbilityTarget {
     }
 
     canResolve(context) {
+        const selector = CardSelector.for({ context, ...this.properties });
         const players = this.getChoosingPlayers(context);
         return this.ifAble || players.length > 0 && players.every(choosingPlayer => {
             context.choosingPlayer = choosingPlayer;
-            return this.selector.hasEnoughTargets(context);
+            return selector.hasEnoughTargets(context);
         }) && this.subTargets.every(subTarget => subTarget.canResolve(context));
     }
 
     buildPlayerSelection(context) {
+        // Creating the selector once the target is being selected for effects such as keywords with a changing target amount
+        this.selector = CardSelector.for({ context, ...this.properties });
         let eligibleCards = this.selector.getEligibleTargets(context);
+        let requiresValidation = this.selector.requiresTargetValidation(context);
         let subResults = this.subTargets.map(subTarget => subTarget.buildPlayerSelection(context));
         return new AbilityChoiceSelection({
             choosingPlayer: context.choosingPlayer,
             eligibleChoices: eligibleCards,
+            requiresValidation: requiresValidation,
             targetingType: this.type,
             subResults: subResults,
 

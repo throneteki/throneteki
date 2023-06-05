@@ -4,7 +4,7 @@ class ScoutingVessel extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onPillage: event => event.source.getType() === 'character' && event.source.controller === this.controller
+                onTopCardsDiscarded: event => event.source.getType() === 'character' && event.source.controller === this.controller && event.isPillage
             },
             cost: [
                 ability.costs.kneelSelf(),
@@ -12,7 +12,7 @@ class ScoutingVessel extends DrawCard {
             ],
             message: '{player} kneels and sacrifices {source} to discard 3 cards with pillage instead of 1',
             handler: context => {
-                context.event.numCards += 2;
+                context.event.amount += 2;
             }
         });
     }

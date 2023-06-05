@@ -1,3 +1,4 @@
+const PutIntoShadows = require('../GameActions/PutIntoShadows');
 const BaseAbility = require('../baseability');
 const Costs = require('../costs');
 
@@ -37,8 +38,8 @@ class MarshalIntoShadowsAction extends BaseAbility {
             player: context.player,
             type: 'shadows'
         };
-        context.game.raiseEvent('onCardMarshalled', params, () => {
-            context.player.putIntoShadows(context.source);
+        context.game.raiseEvent('onCardMarshalled', params, event => {
+            event.thenAttachEvent(PutIntoShadows.createEvent({ card: context.source, reason: 'marshal' }));
             context.game.addMessage(this.getMessageFormat(params), context.player, params.originalLocation, params.originalParent, context.costs.gold);
         });
     }

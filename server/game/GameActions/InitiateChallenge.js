@@ -1,8 +1,6 @@
 const GameAction = require('./GameAction');
 const DeclareAttackers = require('./DeclareAttackers');
 const DeclareDefenders = require('./DeclareDefenders');
-const BypassByStealth = require('./BypassByStealth');
-const AssaultKeywordAction = require('./AssaultkeywordAction');
 
 class InitiateChallenge extends GameAction {
     constructor() {
@@ -18,9 +16,9 @@ class InitiateChallenge extends GameAction {
                 event.thenAttachEvent(DeclareDefenders.createEvent({ cards: event.challenge.defenders, challenge: event.challenge }));
             }
             event.thenAttachEvent(DeclareAttackers.createEvent({ cards: event.challenge.declaredAttackers, challenge: event.challenge }));
-            
-            challenge.stealthData.forEach(stealthChoice => event.thenAttachEvent(BypassByStealth.createEvent({ challenge, source: stealthChoice.source, target: stealthChoice.target })));
-            challenge.assaultData.forEach(assaultChoice => event.thenAttachEvent(AssaultKeywordAction.createEvent({ challenge, source: assaultChoice.source, target: assaultChoice.target })));
+
+            // Attaching custom initiation actions, such as stealth & assault
+            event.challenge.initiationActions.forEach(initiationAction => event.thenAttachEvent(initiationAction.action.createEvent(initiationAction.properties)));
 
             event.thenExecute(event => {
                 // Reapply effects which rely on being within a challenge (eg. The Lord of the Crossing)

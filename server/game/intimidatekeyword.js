@@ -1,24 +1,38 @@
-const BaseAbility = require('./baseability.js');
+const ChallengeKeywordAbility = require('./ChallengeKeywordAbility.js');
+const GameActions = require('./GameActions');
 
-class IntimidateKeyword extends BaseAbility {
+class IntimidateKeyword extends ChallengeKeywordAbility {
     constructor() {
-        super({
+        super('Intimidate', {
             target: {
-                activePromptTitle: 'Select a character to intimidate',
+                activePromptTitle: context => this.targetPromptTitle(context),
+                numCards: context => this.getTriggerAmount(context),
                 cardCondition: (card, context) => this.canIntimidate(card, context.challenge.strengthDifference, context.challenge),
                 gameAction: 'kneel'
+            },
+            message: {
+                format: '{player} uses {source} to kneel {targets} using intimidate',
+                args: { targets: context => context.targets.getTargets() }
+            },
+            handler: context => {
+                context.game.resolveGameAction(GameActions.kneelCard(context => ({
+                    card: context.target,
+                    reason: 'intimidate',
+                    source: context.source
+                })), context);
             }
         });
-        this.title = 'Intimidate';
+        // Order by highest printed cost (sorts by smallest values first)
+        this.orderBy = context => -context.source.getPrintedCost();
     }
 
-    meetsRequirements(context) {
-        return context.challenge.isAttackerTheWinner() && this.canResolveTargets(context);
+    targetPromptTitle(context) {
+        let numTargets = this.getTriggerAmount(context);
+        return `Select ${numTargets === 1 ? 'a character' : `up to ${numTargets} characters`} to intimidate for ${context.source.name}`;
     }
 
-    executeHandler(context) {
-        context.target.controller.kneelCard(context.target);
-        context.game.addMessage('{0} uses intimidate from {1} to kneel {2}', context.source.controller, context.source, context.target);
+    getTriggerAmount(context) {
+        return super.getTriggerAmount(context) - context.resolved.reduce((total, resolvedIntimidate) => total += resolvedIntimidate.context.targets.getTargets(), 0);
     }
 
     canIntimidate(card, strength, challenge) {
@@ -27,6 +41,10 @@ class IntimidateKeyword extends BaseAbility {
             && card.location === 'play area'
             && card.getType() === 'character'
             && card.getStrength() <= strength;
+    }
+
+    meetsKeywordRequirements(context) {
+        return context.source.isAttacking();
     }
 }
 

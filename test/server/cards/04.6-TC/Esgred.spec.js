@@ -43,8 +43,8 @@ describe('Esgred', function() {
                 this.player1.clickCard(this.knight2);
                 this.player1.clickPrompt('Done');
 
-                expect(this.knight1.stealth).toBe(true);
-                expect(this.knight2.stealth).toBe(true);
+                expect(this.knight1.bypassedByStealth).toBe(true);
+                expect(this.knight2.bypassedByStealth).toBe(true);
             });
         });
 

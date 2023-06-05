@@ -1,4 +1,5 @@
 const DrawCard = require('../../drawcard.js');
+const GameActions = require('../../GameActions/index.js');
 
 class TywinsStratagem extends DrawCard {
     setupCardAbilities(ability) {
@@ -10,12 +11,9 @@ class TywinsStratagem extends DrawCard {
                 mode: 'eachPlayer',
                 gameAction: 'returnToHand'
             },
+            message: '{player} plays {source} to return {target} to its owner\'s hands',
             handler: context => {
-                for(let card of context.target) {
-                    card.owner.returnCardToHand(card);
-                }
-                this.game.addMessage('{0} plays {1} to return {2} to its owner\'s hands',
-                    this.controller, this, context.target);
+                this.game.resolveGameAction(GameActions.simultaneously(context => context.target.map(card => GameActions.returnCardToHand({ card }))), context);
             }
         });
 

@@ -18,6 +18,8 @@ const { sortBy } = require('./Array');
 
 class Lobby {
     constructor(server, options = {}) {
+        this.instance = options.instance;
+
         this.sockets = {};
         this.users = {};
         this.games = {};
@@ -476,7 +478,7 @@ class Lobby {
                 }
             }
 
-            let game = new PendingGame(socket.user, {event, restrictedList, ...gameDetails});
+            let game = new PendingGame(socket.user, this.instance, {event, restrictedList, ...gameDetails});
             game.newGame(socket.id, socket.user, gameDetails.password, true);
 
             socket.joinChannel(game.id);
@@ -761,7 +763,7 @@ class Lobby {
         delete this.games[gameId];
         this.broadcastGameMessage('removegame', game);
 
-        let newGame = new PendingGame(game.owner, {
+        let newGame = new PendingGame(game.owner, game.instance, {
             name: game.name,
             event: game.event,
             restrictedList: game.restrictedList,
@@ -906,7 +908,7 @@ class Lobby {
                 continue;
             }
 
-            let syncGame = new PendingGame(new User(owner.user), { spectators: game.allowSpectators, name: game.name, event: game.event });
+            let syncGame = new PendingGame(new User(owner.user), game.instance, { spectators: game.allowSpectators, name: game.name, event: game.event });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
             syncGame.createdAt = game.startedAt;
