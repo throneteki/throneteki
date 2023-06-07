@@ -1452,7 +1452,7 @@ const Effects = {
             targetType: 'player',
             apply: function(player, context) {
                 const shadows = player.shadows;
-                const revealFunc = reveal => shadows.includes(reveal);
+                const revealFunc = reveal => player.shadows.includes(reveal);
 
                 context.revealShadows = context.revealShadows || {};
                 context.revealShadows[player.name] = {
