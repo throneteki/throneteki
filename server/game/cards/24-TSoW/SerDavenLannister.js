@@ -5,7 +5,10 @@ class SerDavenLannister extends DrawCard {
     setupCardAbilities(ability) {
         this.reaction({
             when: {
-                onCardPowerGained: event => event.card === this
+                onCardPowerGained: (event, context) => event.card === this
+                    // TODO strictly speaking this check should not be done in the 'when' condition, but when checking targets
+                    // SEE ALSO GreatWyk (12017), which have the same triggering restriction (not implemented yet)
+                    && context.game.getOpponents(context.player).every(opponent => opponent.hand.length > 0)
             },
             message: '{player} uses {source} to have each opponent choose and discard 1 card from their hand',
             limit: ability.limit.perRound(2),
