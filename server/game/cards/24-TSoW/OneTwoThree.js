@@ -26,7 +26,7 @@ class OneTwoThree extends DrawCard {
                     message: '{player} plays {source} to have {target} gain insight until the end of the phase',
                     gameAction: GameActions.genericHandler(context => {
                         this.untilEndOfPhase(ability => ({
-                            match: context.targets.insight,
+                            match: context.target,
                             effect: ability.effects.addKeyword('insight')
                         }));
                     })
