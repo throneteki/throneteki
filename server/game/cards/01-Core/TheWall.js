@@ -22,6 +22,7 @@ class TheWall extends DrawCard {
             }
         });
         this.persistentEffect({
+            condition: () => this.location === 'play area',
             match: (card) => card.isFaction('thenightswatch') && card.getType() === 'character',
             effect: ability.effects.modifyStrength(1)
         });
