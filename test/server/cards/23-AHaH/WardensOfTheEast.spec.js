@@ -48,7 +48,6 @@ describe('Wardens of the East', function () {
                 });
 
                 it('card should be revealed again', function () {
-                    debugger;
                     expect(this.aVeryLargeShadow1.location === 'shadows' && this.game.cardVisibility.isVisible(this.aVeryLargeShadow1, this.player2)).toBe(true);
                 });
 
