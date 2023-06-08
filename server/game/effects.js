@@ -1451,18 +1451,17 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function(player, context) {
-                const shadows = player.shadows;
                 const revealFunc = reveal => player.shadows.includes(reveal);
 
                 context.revealShadows = context.revealShadows || {};
                 context.revealShadows[player.name] = {
                     revealFunc,
-                    revealed: shadows
+                    controller: player
                 };
                 context.game.cardVisibility.addRule(revealFunc);
 
                 context.game.resolveGameAction(GameActions.revealCards({
-                    cards: shadows,
+                    cards: player.shadows,
                     player,
                     revealWithMessage: false,
                     highlight: false,
@@ -1470,10 +1469,7 @@ const Effects = {
                 }), context);
             },
             reapply: function(player, context) {
-                const shadows = player.shadows;
-                const newReveals = shadows.filter(card => !context.revealShadows[player.name].revealed.includes(card));
-
-                context.revealShadows[player.name].revealed = shadows;
+                const newReveals = player.shadows.filter(card => !context.revealShadows[player.name].controller.shadows.includes(card));
 
                 // Only trigger reveal event for newly revealed cards
                 if(newReveals.length > 0) {
