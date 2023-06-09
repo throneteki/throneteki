@@ -1451,27 +1451,47 @@ const Effects = {
         return {
             targetType: 'player',
             apply: function(player, context) {
-                const revealFunc = reveal => player.shadows.includes(reveal);
+                // making a snapshot of the shadows area through a shallow copy. This way eventual changes to
+                // player.shadows array content (first level) are not reflected in the snapshot
+                const shadows = [...player.shadows];
 
+                // we define the reveal function just once, so it must be bound to the player to keep track of the
+                // content of the shadows area when the function is called by the engine
+                const revealFunc = reveal => player.shadows.includes(reveal);
+                context.game.cardVisibility.addRule(revealFunc);
+
+                // saving in the context a reference to the revealFunc (so we can remove it from the engine when the
+                // effect expires) and the actual snapshot of the cards in the shadows area for which we are resolving
+                // the reveal game action (to avoid a second resolution of the same game action in case of reapply)
                 context.revealShadows = context.revealShadows || {};
                 context.revealShadows[player.name] = {
                     revealFunc,
-                    controller: player
+                    revealed: shadows
                 };
-                context.game.cardVisibility.addRule(revealFunc);
 
-                context.game.resolveGameAction(GameActions.revealCards({
-                    cards: player.shadows,
-                    player,
-                    revealWithMessage: false,
-                    highlight: false,
-                    source: context.source
-                }), context);
+                // resolving the 'reveal' game action for cards in shadows (if there are any)
+                if(shadows.length > 0) {
+                    context.game.resolveGameAction(GameActions.revealCards({
+                        cards: shadows,
+                        player,
+                        revealWithMessage: false,
+                        highlight: false,
+                        source: context.source
+                    }), context);
+                }
             },
             reapply: function(player, context) {
-                const newReveals = player.shadows.filter(card => !context.revealShadows[player.name].controller.shadows.includes(card));
+                // making a snapshot of the shadows area through a shallow copy. This way eventual changes to
+                // player.shadows array content (first level) are not reflected in the snapshot
+                const shadows = [...player.shadows];
 
-                // Only trigger reveal event for newly revealed cards
+                // calculating the newly revealed cards
+                const newReveals = shadows.filter(card => !context.revealShadows[player.name].revealed.includes(card));
+
+                // updating the context reference with the actual snapshot of the cards in the shadows area
+                context.revealShadows[player.name].revealed = shadows;
+
+                // Only trigger reveal event for newly revealed cards (if there are any)
                 if(newReveals.length > 0) {
                     context.game.resolveGameAction(GameActions.revealCards({
                         cards: newReveals,
