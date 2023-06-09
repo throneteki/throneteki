@@ -4,7 +4,7 @@ const Event = require('../../../server/game/event.js');
 describe('CardForcedReaction', function () {
     beforeEach(function () {
         this.gameSpy = jasmine.createSpyObj('game', ['on', 'popAbilityContext', 'pushAbilityContext', 'removeListener', 'registerAbility', 'resolveGameAction']);
-        this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getType', 'isAnyBlank' , 'createSnapshot']);
+        this.cardSpy = jasmine.createSpyObj('card', ['getPrintedType', 'getType', 'isAnyBlank', 'createSnapshot']);
         this.cardSpy.location = 'play area';
         this.cardSpy.createSnapshot.and.returnValue(this.cardSpy);
         this.limitSpy = jasmine.createSpyObj('limit', ['increment', 'isAtMax', 'registerEvents', 'unregisterEvents']);
