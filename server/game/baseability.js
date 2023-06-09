@@ -87,7 +87,7 @@ class BaseAbility {
             this.canResolvePlayer(context) &&
             this.canPayCosts(context) &&
             this.canResolveTargets(context) &&
-            this.allowedGameAction(context)
+            this.isGameActionAllowed(context)
         );
     }
 
@@ -232,7 +232,7 @@ class BaseAbility {
      * 
      * @returns {Boolean}
      */
-    allowedGameAction(context) {
+    isGameActionAllowed(context) {
         return this.executeWithTemporaryContext(context, 'effect', () => this.gameAction.allow(context));
     }
 
