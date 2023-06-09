@@ -87,7 +87,7 @@ class BaseAbility {
             this.canResolvePlayer(context) &&
             this.canPayCosts(context) &&
             this.canResolveTargets(context) &&
-            this.gameAction.allow(context)
+            this.allowedGameAction(context)
         );
     }
 
@@ -119,13 +119,16 @@ class BaseAbility {
      */
     executeWithTemporaryContext(context, stage, callback) {
         let originalResolutionStage = context.resolutionStage;
+        let originalCardStateWhenInitiated = context.cardStateWhenInitiated;
 
         try {
             context.game.pushAbilityContext(context);
             context.resolutionStage = stage;
+            context.cardStateWhenInitiated = context.source ? context.source.createSnapshot() : undefined;
             return callback();
         } finally {
             context.resolutionStage = originalResolutionStage;
+            context.cardStateWhenInitiated = originalCardStateWhenInitiated;
             context.game.popAbilityContext();
         }
     }
@@ -222,6 +225,15 @@ class BaseAbility {
      */
     resolveTargets(context) {
         return flatMap(this.targets, target => target.resolve(context));
+    }
+
+    /**
+     * Returns whether the gameAction for this ability is allowed to resolve.
+     * 
+     * @returns {Boolean}
+     */
+    allowedGameAction(context) {
+        return this.executeWithTemporaryContext(context, 'effect', () => this.gameAction.allow(context));
     }
 
     /**
