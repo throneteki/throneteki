@@ -72,7 +72,7 @@ class Game extends EventEmitter {
         this.gameTimeLimit = details.gameTimeLimit;
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
-        this.delayToStartClock = 5;
+        this.delayToStartClock = details.delayToStartClock;
         this.clockPaused = false;
         this.timeLimit = new TimeLimit(this);
         this.savedGameId = details.savedGameId;
@@ -1392,7 +1392,8 @@ class Game extends EventEmitter {
                 gameTimeLimitTime: this.timeLimit.timeLimitInSeconds,
                 muteSpectators: this.muteSpectators,
                 useChessClocks: this.useChessClocks,
-                chessClockTimeLimit: this.chessClockTimeLimit
+                chessClockTimeLimit: this.chessClockTimeLimit,
+                delayToStartClock: this.delayToStartClock
             };
         }
 
