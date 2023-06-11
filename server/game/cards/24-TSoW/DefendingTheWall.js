@@ -16,7 +16,7 @@ class DefendingTheWall extends DrawCard {
                 args: { actions: context => Message.fragment(`${(context.target.isMatch({ not: { trait: ['Army', 'Wildling'] } }) ? 'stand and ' : '')}remove {target} from the challenge`, { target: context.target }) }
             },
             handler: context => {
-                this.resolveGameAction(
+                this.game.resolveGameAction(
                     GameActions.simultaneously([
                         GameActions.removeFromChallenge(context => ({
                             card: context.target
