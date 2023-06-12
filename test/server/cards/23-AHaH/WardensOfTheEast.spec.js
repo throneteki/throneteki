@@ -22,7 +22,6 @@ describe('Wardens of the East', function () {
             [this.sweetRobin] = this.player2.filterCardsByName('Sweetrobin', 'hand');
 
             this.player1.player.gold = 10;
-            this.player2.player.gold = 10;
 
             this.player1.clickCard(this.aVeryLargeShadow11);
             this.player1.clickCard(this.aVeryLargeShadow12);
@@ -74,7 +73,6 @@ describe('Wardens of the East', function () {
                         })
 
                         it('card should be removed from play', function () {
-                            debugger;
                             expect(this.aVeryLargeShadow13.location).toBe('out of game');
                         });
                     });
