@@ -5,7 +5,7 @@ class Sweetrobin extends DrawCard {
     setupCardAbilities(ability) {
         this.interrupt({
             when: {
-                onCardRevealed: event => (!event.card.hasPrintedCost() || (event.card.hasPrintedCost() && event.card.getPrintedCost() <= event.card.owner.getTotalInitiative())) && ['hand', 'draw deck', 'shadows'].includes(event.card.location)
+                onCardRevealed: event => event.card.hasPrintedCost() && event.card.getPrintedCost() <= event.card.owner.getTotalInitiative() && ['hand', 'draw deck', 'shadows'].includes(event.card.location)
             },
             limit: ability.limit.perPhase(1),
             message: {
