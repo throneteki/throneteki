@@ -63,10 +63,6 @@ class BaseAbility {
 
     buildGameAction(properties) {
         if(properties.gameAction) {
-            if(properties.target || properties.targets || properties.chooseOpponent || properties.choosePlayer) {
-                throw new Error('Cannot use gameAction with abilities with choices');
-            }
-
             return properties.gameAction;
         }
 
@@ -87,7 +83,7 @@ class BaseAbility {
             this.canResolvePlayer(context) &&
             this.canPayCosts(context) &&
             this.canResolveTargets(context) &&
-            this.gameAction.allow(context)
+            this.canAlterGameState(context)
         );
     }
 
@@ -222,6 +218,47 @@ class BaseAbility {
      */
     resolveTargets(context) {
         return flatMap(this.targets, target => target.resolve(context));
+    }
+
+    /**
+     * Returns whether this ability is able to alter the game state.
+     *
+     * @returns {Boolean}
+     */
+    canAlterGameState(context) {
+        // If the ability requires no targets it is sufficient to check if game action is allowed
+        return this.targets.length <= 0 ? this.executeWithTemporaryContext(context, 'effect', () => this.gameAction.allow(context)) :
+
+            // otherwise we should check if there exist at least one target that would produce a game state change
+            this.targets.some(target => this.canAlterGameStateForTarget(context, target));
+    }
+
+    /**
+     * Returns whether this ability is able to alter the game state for a given target
+     *
+     * @param context
+     * @param target
+     * @returns {*}
+     */
+    canAlterGameStateForTarget(context, target) {
+        return this.executeWithTemporaryContext(context, 'effect', () => {
+            return this.canAlterGameStateForSome(context, target.getEligibleCards(context));
+        });
+    }
+
+    /**
+     * Returns whether this ability is able to alter the game state for at least one of given cards
+     * Returns true if given cards are empty
+     *
+     * @param context
+     * @param target
+     * @returns {*}
+     */
+    canAlterGameStateForSome(context, eligibleCards) {
+        return eligibleCards.length <= 0 || eligibleCards.some((card) => {
+            context.target = card;
+            return this.gameAction.allow(context);
+        });
     }
 
     /**

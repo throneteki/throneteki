@@ -39,6 +39,17 @@ class AbilityTarget {
         }) && this.subTargets.every(subTarget => subTarget.canResolve(context));
     }
 
+    getEligibleCards(context){
+        const selector = CardSelector.for({ context, ...this.properties });
+
+        return this.getChoosingPlayers(context).reduce((targets, choosingPlayer) => {
+            context.choosingPlayer = choosingPlayer;
+            return targets.concat(selector.getEligibleTargets(context)).concat(this.subTargets.reduce((targets, subTarget) => {
+                return subTarget.getEligibleTargets(context);
+            }, []));
+        }, []);
+    }
+
     buildPlayerSelection(context) {
         // Creating the selector once the target is being selected for effects such as keywords with a changing target amount
         this.selector = CardSelector.for({ context, ...this.properties });
