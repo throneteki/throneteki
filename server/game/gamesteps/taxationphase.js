@@ -24,7 +24,7 @@ class TaxationPhase extends Phase {
     }
 
     returnTitleCards() {
-        if (!this.game.isMelee) {
+        if (!this.game.gameMode === 'melee') {
             return;
         }
 

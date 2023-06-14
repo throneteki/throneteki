@@ -77,6 +77,7 @@ class Game extends EventEmitter {
         this.savedGameId = details.savedGameId;
         this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;
+        this.gameMode = details.gameMode;
         this.abilityContextStack = [];
         this.abilityWindowStack = [];
         this.password = details.password;
@@ -85,7 +86,6 @@ class Game extends EventEmitter {
             isApplying: false,
             type: undefined
         };
-        this.isMelee = !!details.isMelee;
         this.noTitleSetAside = !!details.noTitleSetAside;
         this.titlePool = new TitlePool(this, options.titleCardData || []);
         this.cardData = options.cardData || [];
@@ -953,7 +953,7 @@ class Game extends EventEmitter {
             return cards.concat(player.preparedDeck.allCards);
         }, []);
 
-        if (this.isMelee) {
+        if (this.gameMode === 'melee') {
             this.allCards = this.titlePool.cards.concat(playerCards);
         } else {
             this.allCards = playerCards;
@@ -1526,7 +1526,7 @@ class Game extends EventEmitter {
 
             return {
                 id: this.id,
-                isMelee: this.isMelee,
+                gameMode: this.gameMode,
                 name: this.name,
                 owner: this.owner,
                 players: playerState,
@@ -1589,8 +1589,8 @@ class Game extends EventEmitter {
             createdAt: this.createdAt,
             gamePrivate: this.gamePrivate,
             gameType: this.gameType,
+            gameMode: this.gameMode,
             id: this.id,
-            isMelee: this.isMelee,
             messages: this.gameChat.messages,
             name: this.name,
             owner: this.owner,

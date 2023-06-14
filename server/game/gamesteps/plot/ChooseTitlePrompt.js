@@ -10,7 +10,7 @@ class ChooseTitlePrompt extends BaseStep {
     }
 
     continue() {
-        if(!this.game.isMelee) {
+        if(!this.game.gameMode === 'melee') {
             return true;
         }
 

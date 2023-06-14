@@ -768,7 +768,7 @@ class Lobby {
             spectators: game.allowSpectators,
             showHand: game.showHand,
             gameType: game.gameType,
-            isMelee: game.isMelee,
+            gameMode: game.gameMode,
             useRookery: game.useRookery,
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,

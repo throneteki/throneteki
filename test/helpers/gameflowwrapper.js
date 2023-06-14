@@ -29,9 +29,9 @@ class GameFlowWrapper {
             id: 12345,
             owner: { username: 'player1' },
             saveGameId: 12345,
-            isMelee: !!options.isMelee,
+            gameMode: options.gameMode || 'joust',
             noTitleSetAside: true,
-            players: this.generatePlayerDetails(options.numOfPlayers || (options.isMelee ? 3 : 2))
+            players: this.generatePlayerDetails(options.numOfPlayers || (options.gameMode === 'melee' ? 3 : 2))
         };
         this.game = new Game(details, { router: gameRouter, titleCardData: titleCardData });
         this.game.started = true;

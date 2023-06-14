@@ -1,5 +1,5 @@
 describe('melee titles', function() {
-    integration({ isMelee: true }, function() {
+    integration({ gameMode: 'melee' }, function() {
         describe('selecting titles', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('stark', [

@@ -18,7 +18,7 @@ class PendingGame {
         this.showHand = details.showHand;
         this.gamePrivate = details.gamePrivate;
         this.gameType = details.gameType;
-        this.isMelee = details.isMelee;
+        this.gameMode = details.gameMode;
         this.useRookery = details.useRookery;
         this.createdAt = new Date();
         this.gameChat = new GameChat();
@@ -409,8 +409,8 @@ class PendingGame {
             event: this.event,
             gamePrivate: this.gamePrivate,
             gameType: this.gameType,
+            gameMode: this.gameMode,
             id: this.id,
-            isMelee: this.isMelee,
             name: this.name,
             owner: this.owner.getDetails(),
             players,
