@@ -39,7 +39,7 @@ class AbilityTarget {
         }) && this.subTargets.every(subTarget => subTarget.canResolve(context));
     }
 
-    getEligibleCards(context){
+    getEligibleCards(context) {
         const selector = CardSelector.for({ context, ...this.properties });
 
         return this.getChoosingPlayers(context).reduce((targets, choosingPlayer) => {
