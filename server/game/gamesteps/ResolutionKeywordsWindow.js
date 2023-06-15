@@ -1,7 +1,6 @@
 const {sortBy} = require('../../Array');
 
 const ChallengeKeywordsWindow = require('./ChallengeKeywordsWindow');
-const AbilityContext = require('../AbilityContext.js');
 const GameKeywords = require('../gamekeywords.js');
 
 const resolutionKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
@@ -9,9 +8,7 @@ const resolutionKeywords = ['insight', 'intimidate', 'pillage', 'renown'];
 class ResolutionKeywordsWindow extends ChallengeKeywordsWindow {
     constructor(game, challenge) {
         super(game, challenge);
-        this.winnerCardsWithContext = challenge.getWinnerCards().map(card => {
-            return { card: card, context: new AbilityContext({ player: this.challenge.winner, game: this.game, challenge: this.challenge, source: card }) };
-        });
+        this.winnerCardsWithContext = this.buildContexts(challenge.getWinnerCards(), this.challenge.winner);
         this.firstPlayer = game.getFirstPlayer();
         this.remainingKeywords = resolutionKeywords;
     }
@@ -67,7 +64,7 @@ class ResolutionKeywordsWindow extends ChallengeKeywordsWindow {
 
     applyKeyword(keyword) {
         let ability = GameKeywords[keyword];
-        let participantsWithKeyword = this.winnerCardsWithContext.filter(participant => participant.card.hasKeyword(keyword));
+        let participantsWithKeyword = this.winnerCardsWithContext.filter(participant => ability.canResolve(participant.context));
 
         if(participantsWithKeyword.length === 0) {
             return;

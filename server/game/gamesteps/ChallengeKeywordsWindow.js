@@ -1,4 +1,5 @@
 const { sortBy } = require('underscore');
+const AbilityContext = require('../AbilityContext.js');
 const BaseStep = require('./basestep');
 
 class ChallengeKeywordsWindow extends BaseStep {
@@ -6,6 +7,14 @@ class ChallengeKeywordsWindow extends BaseStep {
         super(game);
         this.challenge = challenge;
         this.resolvedAbilities = [];
+    }
+
+    buildContexts(cards, player) {
+        return cards.map(card => {
+            let context = new AbilityContext({ player, game: this.game, challenge: this.challenge, source: card });
+            context.resolved = [];
+            return { card: card, context: context };
+        })
     }
 
     resolveAbility(ability, participants) {
@@ -26,6 +35,7 @@ class ChallengeKeywordsWindow extends BaseStep {
         for(let participant of participants) {
             this.game.queueSimpleStep(() => {
                 participant.context.resolved = this.resolvedAbilities.filter(resolved => resolved.ability.title === ability.title);
+                // Check this a second time; primarily in case a previous trigger has affected whether it can resolve (eg. additional triggers with Assault).
                 if(!ability.canResolve(participant.context)) {
                     return;
                 }
