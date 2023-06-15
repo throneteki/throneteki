@@ -11,7 +11,7 @@ class Hero extends DrawCard {
                     && this.controller.hand.length < event.challenge.loser.hand.length
             },
             target: {
-                cardCondition: { or: [{type: 'character', trait: 'Army'}, { name: 'Grey Worm' }] }
+                cardCondition: { or: [{ type: 'character', trait: 'Army', location: 'play area' }, { name: 'Grey Worm', location: 'play area' }] }
             },
             limit: ability.limit.perPhase(2),
             message: '{player} uses {source} to stand {target}',
