@@ -14,7 +14,7 @@ class ChallengeKeywordsWindow extends BaseStep {
             let context = new AbilityContext({ player, game: this.game, challenge: this.challenge, source: card });
             context.resolved = [];
             return { card: card, context: context };
-        })
+        });
     }
 
     resolveAbility(ability, participants) {
