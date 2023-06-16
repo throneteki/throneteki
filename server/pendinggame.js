@@ -28,6 +28,7 @@ class PendingGame {
         this.muteSpectators = details.muteSpectators;
         this.useChessClocks = details.useChessClocks;
         this.chessClockTimeLimit = details.chessClockTimeLimit;
+        this.delayToStartClock = details.delayToStartClock;
         this.started = false;
         this.maxPlayers = 2;
     }
@@ -378,7 +379,8 @@ class PendingGame {
             gameTimeLimit: this.gameTimeLimit,
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
-            chessClockTimeLimit: this.chessClockTimeLimit
+            chessClockTimeLimit: this.chessClockTimeLimit,
+            delayToStartClock: this.delayToStartClock
         };
     }
 
@@ -424,7 +426,8 @@ class PendingGame {
             gameTimeLimit: this.gameTimeLimit,
             muteSpectators: this.muteSpectators,
             useChessClocks: this.useChessClocks,
-            chessClockTimeLimit: this.chessClockTimeLimit
+            chessClockTimeLimit: this.chessClockTimeLimit,
+            delayToStartClock: this.delayToStartClock
         };
     }
 }

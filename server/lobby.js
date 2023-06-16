@@ -775,7 +775,8 @@ class Lobby {
             useGameTimeLimit: game.useGameTimeLimit,
             gameTimeLimit: game.gameTimeLimit,
             useChessClocks: game.useChessClocks,
-            chessClockTimeLimit: game.chessClockTimeLimit
+            chessClockTimeLimit: game.chessClockTimeLimit,
+            delayToStartClock: game.delayToStartClock
         });
         newGame.rematch = true;
 
