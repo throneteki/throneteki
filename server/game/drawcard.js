@@ -71,6 +71,7 @@ class DrawCard extends BaseCard {
             abilitySourceType: 'game',
             canCancel: true,
             cannotBeCanceled: true,
+            ignoreEventCosts: true,
             location: 'duplicate',
             when: {
                 onCharacterKilled: dupeCondition,
