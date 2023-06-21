@@ -265,6 +265,39 @@
   }
 }
 
+.chessclock-group {
+  align-self: flex-start;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  position: absolute;
+  top: 45%;
+  left: 1%;
+}
+
+.chessclock-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.chessclock-item {
+  padding-left: 1rem;
+}
+
+.chessclock-icon {
+  height: 0.9em;
+  width: 0.9em;
+  filter: invert(90%);
+  align-self: flex-end;
+}
+
+.chessclock-delay {
+  font-size: 0.7em;
+  font-style: italic;
+}
+
 /**
  * Generates the specified property based on the calculation of:
  * property: numCards * (cardSize + cardSpacing) + additionalOffset

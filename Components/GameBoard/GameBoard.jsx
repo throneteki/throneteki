@@ -256,7 +256,7 @@ export class GameBoard extends React.Component {
                         secondsLeft={ thisPlayer.chessClock.timeLeft }
                         stateId={ thisPlayer.chessClock.stateId } />);
             }
-            timeLimitClock = (<div>
+            timeLimitClock = (<div className='chessclock-group'>
                 { chessClockOtherPlayer }
                 { chessClockThisPlayer }
             </div>);
