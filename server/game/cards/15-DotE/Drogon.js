@@ -1,5 +1,5 @@
 const DrawCard = require('../../drawcard.js');
-const GameActions = require("../../GameActions");
+const GameActions = require('../../GameActions');
 
 class Drogon extends DrawCard {
     setupCardAbilities(ability) {
