@@ -12,6 +12,10 @@ class Drogon extends DrawCard {
             when: {
                 afterChallenge: event => event.challenge.winner === this.controller && this.isAttacking()
             },
+            message: {
+                format: '{player} uses {source} to kill all characters {defendingPlayer} controls with STR 1 or lower',
+                args: { defendingPlayer: context => context.event.challenge.defendingPlayer }
+            },
             gameAction: GameActions.simultaneously(context =>
                 context.event.challenge.defendingPlayer.filterCardsInPlay({
                     type: 'character', printedStrengthOrLower: 1
