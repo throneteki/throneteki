@@ -23,27 +23,39 @@ class DoranMartell extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
-                this.game.promptForIcon(context.player, this, icon => {
-                    if(context.target.controller !== context.player) {
-                        this.untilEndOfPhase(ability => ({
-                            match: context.target,
-                            effect: ability.effects.removeIcon(icon)
-                        }));
-
-                        this.game.addMessage('{0} uses {1} to remove {2} {3} icon from {4} until the end of the phase',
-                            context.player, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
-                    } else {
-                        this.untilEndOfPhase(ability => ({
-                            match: context.target,
-                            effect: ability.effects.addIcon(icon)
-                        }));
-
-                        this.game.addMessage('{0} uses {1} to give {2} {3} icon to {4} until the end of the phase',
-                            context.player, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
-                    }
+                this.game.promptWithMenu(context.player, this.createPromptContext(context), {
+                    activePrompt: {
+                        menuTitle: 'Give or remove icon from ' + context.target.name + '?',
+                        buttons: [
+                            { text: 'Give', method: 'giveIcon' },
+                            { text: 'Remove', method: 'removeIcon' }
+                        ]
+                    },
+                    source: this
                 });
             }
         });
+    }
+
+    createPromptContext(context) {
+        return {
+            giveIcon: () => this.handleIcon(context, true),
+            removeIcon: () => this.handleIcon(context, false)
+        };
+    }
+
+    handleIcon(context, isGive) {
+        this.game.promptForIcon(context.player, this, icon => {
+            this.untilEndOfPhase(ability => ({
+                match: context.target,
+                effect: isGive ? ability.effects.addIcon(icon) : ability.effects.removeIcon(icon)
+            }));
+
+            this.game.addMessage('{0} uses {1} to {2} {3} {4} icon {5} {6} until the end of the phase',
+                context.player, this, isGive ? 'give' : 'remove', icon === 'intrigue' ? 'an' : 'a', icon,
+                isGive ? 'to' : 'from', context.target);
+        });
+        return true;
     }
 }
 
