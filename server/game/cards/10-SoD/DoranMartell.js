@@ -25,10 +25,10 @@ class DoranMartell extends DrawCard {
             handler: context => {
                 this.game.promptWithMenu(context.player, this.createPromptContext(context), {
                     activePrompt: {
-                        menuTitle: 'Give or remove icon from ' + context.target.name + '?',
+                        menuTitle: 'Choose for ' + context.target.name + '?',
                         buttons: [
-                            { text: 'Give', method: 'giveIcon' },
-                            { text: 'Remove', method: 'removeIcon' }
+                            { text: 'Gain Icon', method: 'gainIcon' },
+                            { text: 'Lose Icon', method: 'loseIcon' }
                         ]
                     },
                     source: this
@@ -39,21 +39,20 @@ class DoranMartell extends DrawCard {
 
     createPromptContext(context) {
         return {
-            giveIcon: () => this.handleIcon(context, true),
-            removeIcon: () => this.handleIcon(context, false)
+            gainIcon: () => this.handleIcon(context, true),
+            loseIcon: () => this.handleIcon(context, false)
         };
     }
 
-    handleIcon(context, isGive) {
+    handleIcon(context, isGain) {
         this.game.promptForIcon(context.player, this, icon => {
             this.untilEndOfPhase(ability => ({
                 match: context.target,
-                effect: isGive ? ability.effects.addIcon(icon) : ability.effects.removeIcon(icon)
+                effect: isGain ? ability.effects.addIcon(icon) : ability.effects.removeIcon(icon)
             }));
 
-            this.game.addMessage('{0} uses {1} to {2} {3} {4} icon {5} {6} until the end of the phase',
-                context.player, this, isGive ? 'give' : 'remove', icon === 'intrigue' ? 'an' : 'a', icon,
-                isGive ? 'to' : 'from', context.target);
+            this.game.addMessage('{0} uses {1} to have {2} {3} {4} {5} icon until the end of the phase',
+                context.player, this, context.target, isGain ? 'gain' : 'lose', icon === 'intrigue' ? 'an' : 'a', icon);
         });
         return true;
     }
