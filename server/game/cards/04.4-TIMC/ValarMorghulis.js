@@ -1,14 +1,14 @@
 const PlotCard = require('../../plotcard.js');
-const {flatMap} = require('../../../Array');
+const GameActions = require('../../GameActions');
 
 class ValarMorghulis extends PlotCard {
     setupCardAbilities() {
         this.whenRevealed({
-            handler: () => {
-                let players = this.game.getPlayersInFirstPlayerOrder();
-                let characters = flatMap(players, player => player.filterCardsInPlay(card => card.getType() === 'character'));
-                this.game.killCharacters(characters);
-            }
+            message: '{player} uses {source} to kill each character in play',
+            gameAction: GameActions.simultaneously(context =>
+                context.game.getPlayersInFirstPlayerOrder().reduce((charactersToKill, player) => {
+                    return charactersToKill.concat(player.filterCardsInPlay(card => card.getType() === 'character'));
+                }, []).map(characterToKill => GameActions.kill({ card: characterToKill })))
         });
     }
 }
