@@ -41,6 +41,7 @@ const EndRound = require('./GameActions/EndRound');
 const TimeLimit = require('./timeLimit.js');
 const PrizedKeywordListener = require('./PrizedKeywordListener');
 const GameWonPrompt = require('./gamesteps/GameWonPrompt');
+const DeadPileObserver = require('./DeadPileObserver');
 
 class Game extends EventEmitter {
     constructor(details, options = {}) {
@@ -97,6 +98,7 @@ class Game extends EventEmitter {
         this.cardVisibility = new CardVisibility(this);
         this.winnerOfDominanceInLastRound = undefined;
         this.prizedKeywordListener = new PrizedKeywordListener(this);
+        this.deadPileObserver = new DeadPileObserver(this);
         this.muteSpectators = details.muteSpectators;
 
         for(let player of Object.values(details.players || {})) {
@@ -1057,6 +1059,7 @@ class Game extends EventEmitter {
     postEventCalculations() {
         this.effectEngine.recalculateDirtyTargets();
         this.effectEngine.reapplyStateDependentEffects();
+        this.deadPileObserver.promptForDeadPileOrder();
         this.attachmentValidityCheck.enforceValidity();
         this.checkWinAndLossConditions();
     }
