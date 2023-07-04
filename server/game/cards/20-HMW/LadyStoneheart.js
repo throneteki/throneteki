@@ -23,7 +23,9 @@ class LadyStoneheart extends DrawCard {
                     this.game.addMessage('{0} kills {1} for {2}', selection.choosingPlayer, selection.value, this);
                 }
                 this.game.resolveGameAction(
-                    GameActions.kill(() => { victims: selections.map(selection => ({ player: selection.choosingPlayer, card: selection.value })) })
+                    GameActions.kill(() => ({
+                        victims: selections.map(selection => ({ player: selection.choosingPlayer, card: selection.value }))
+                    }))
                 );
             }
         });

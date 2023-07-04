@@ -12,13 +12,17 @@ class Kill extends GameAction {
     }
 
     message({ victims }) {
-        if (!Array.isArray(victims)) victims = [victims];
+        if(!Array.isArray(victims)) {
+            victims = [victims];
+        }
 
         return Message.fragment('kills {victims}', { victims });
     }
 
     allow({ victims, context }) {
-        if (!Array.isArray(victims)) victims = [victims];
+        if(!Array.isArray(victims)) {
+            victims = [victims];
+        }
         return victims.some(victim => this.isAllowed(victim, context));
     }
 
@@ -41,7 +45,9 @@ class Kill extends GameAction {
      * @param context - execution context
      */
     createEvent({ victims, context }) {
-        if (!Array.isArray(victims)) victims = [victims];
+        if(!Array.isArray(victims)) {
+            victims = [victims];
+        }
 
         victims = victims.filter(victim => this.isAllowed(victim, context)).map(victim => ({
             card: victim.card,

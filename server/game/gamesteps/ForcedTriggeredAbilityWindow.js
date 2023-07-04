@@ -1,6 +1,6 @@
 const BaseAbilityWindow = require('./BaseAbilityWindow');
 const TriggeredAbilityWindowTitles = require('./TriggeredAbilityWindowTitles');
-const uuid = require("uuid");
+const uuid = require('uuid');
 
 class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
     continue() {
