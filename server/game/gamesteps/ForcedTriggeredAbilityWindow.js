@@ -1,5 +1,6 @@
 const BaseAbilityWindow = require('./BaseAbilityWindow');
 const TriggeredAbilityWindowTitles = require('./TriggeredAbilityWindowTitles');
+const uuid = require("uuid");
 
 class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
     continue() {
@@ -57,6 +58,22 @@ class ForcedTriggeredAbilityWindow extends BaseAbilityWindow {
         this.resolveAbility(choice.ability, choice.context);
 
         return true;
+    }
+
+    registerAbility(ability, event) {
+        if(this.hasResolvedAbility(ability, event)) {
+            return;
+        }
+
+        let context = ability.createContext(event);
+
+        this.abilityChoices.push({
+            id: uuid.v1(),
+            player: context.player,
+            ability: ability,
+            card: ability.card,
+            context: context
+        });
     }
 }
 
