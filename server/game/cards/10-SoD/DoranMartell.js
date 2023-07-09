@@ -23,27 +23,38 @@ class DoranMartell extends DrawCard {
                 cardCondition: card => card.location === 'play area' && card.getType() === 'character'
             },
             handler: context => {
-                this.game.promptForIcon(context.player, this, icon => {
-                    if(context.target.controller !== context.player) {
-                        this.untilEndOfPhase(ability => ({
-                            match: context.target,
-                            effect: ability.effects.removeIcon(icon)
-                        }));
-
-                        this.game.addMessage('{0} uses {1} to remove {2} {3} icon from {4} until the end of the phase',
-                            context.player, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
-                    } else {
-                        this.untilEndOfPhase(ability => ({
-                            match: context.target,
-                            effect: ability.effects.addIcon(icon)
-                        }));
-
-                        this.game.addMessage('{0} uses {1} to give {2} {3} icon to {4} until the end of the phase',
-                            context.player, this, icon === 'intrigue' ? 'an' : 'a', icon, context.target);
-                    }
+                this.game.promptWithMenu(context.player, this.createPromptContext(context), {
+                    activePrompt: {
+                        menuTitle: 'Choose for ' + context.target.name + '?',
+                        buttons: [
+                            { text: 'Gain Icon', method: 'gainIcon' },
+                            { text: 'Lose Icon', method: 'loseIcon' }
+                        ]
+                    },
+                    source: this
                 });
             }
         });
+    }
+
+    createPromptContext(context) {
+        return {
+            gainIcon: () => this.handleIcon(context, true),
+            loseIcon: () => this.handleIcon(context, false)
+        };
+    }
+
+    handleIcon(context, isGain) {
+        this.game.promptForIcon(context.player, this, icon => {
+            this.untilEndOfPhase(ability => ({
+                match: context.target,
+                effect: isGain ? ability.effects.addIcon(icon) : ability.effects.removeIcon(icon)
+            }));
+
+            this.game.addMessage('{0} uses {1} to have {2} {3} {4} {5} icon until the end of the phase',
+                context.player, this, context.target, isGain ? 'gain' : 'lose', icon === 'intrigue' ? 'an' : 'a', icon);
+        });
+        return true;
     }
 }
 

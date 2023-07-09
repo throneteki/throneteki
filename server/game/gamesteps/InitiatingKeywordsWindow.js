@@ -1,5 +1,4 @@
 const ChallengeKeywordsWindow = require('./ChallengeKeywordsWindow');
-const AbilityContext = require('../AbilityContext.js');
 const GameKeywords = require('../gamekeywords.js');
 
 const initiatingKeywords = ['stealth', 'assault'];
@@ -7,15 +6,13 @@ const initiatingKeywords = ['stealth', 'assault'];
 class InitiatingKeywordsWindow extends ChallengeKeywordsWindow {
     constructor(game, challenge) {
         super(game, challenge);
-        this.attackingCardsWithContext = challenge.declaredAttackers.map(card => {
-            return { card: card, context: new AbilityContext({ player: this.challenge.attackingPlayer, game: this.game, challenge: this.challenge, source: card }) };
-        });
+        this.attackingCardsWithContext = this.buildContexts(challenge.declaredAttackers, this.challenge.attackingPlayer);
     }
 
     continue() {
         for(let keyword of initiatingKeywords) {
             let ability = GameKeywords[keyword];
-            let attackersWithKeyword = this.attackingCardsWithContext.filter(attacker => attacker.card.hasKeyword(keyword));
+            let attackersWithKeyword = this.attackingCardsWithContext.filter(attacker => ability.canResolve(attacker.context));
 
             if(attackersWithKeyword.length > 0) {
                 this.resolveAbility(ability, attackersWithKeyword);

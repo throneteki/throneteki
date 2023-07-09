@@ -65,9 +65,6 @@ describe('assault', function() {
                 this.player1.clickPrompt('Done');
                 
                 this.player1.clickCard(this.wall);
-
-                // Pass Iron Fleet prompt
-                this.player1.clickPrompt('Pass');
             });
             
             it('should immediately blank that location', function() {
@@ -140,9 +137,6 @@ describe('assault', function() {
             describe('and the initial assaulting character loses assault', function() {
                 beforeEach(function() {
                     this.player1.clickCard(this.wall);
-                    
-                    // Pass Iron Fleet prompt
-                    this.player1.clickPrompt('Pass');
 
                     this.player1.clickPrompt('Pass');
 
@@ -177,9 +171,6 @@ describe('assault', function() {
                 this.player1.clickPrompt('Done');
                 
                 this.player1.clickCard(this.wall);
-
-                // Pass Iron Fleet prompt
-                this.player1.clickPrompt('Pass');
 
                 this.player1.clickPrompt('Pass');
                 
