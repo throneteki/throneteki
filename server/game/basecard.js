@@ -765,22 +765,23 @@ class BaseCard {
     }
 
     getAlertStatus() {
+        // Only build alert status if card is in development
         if(this.cardData.version) {
             if(!this.version) {
                 return {
                     type: 'error',
                     message: 'Card not implemented'
-                }
+                };
             }
             if(this.cardData.version !== this.version) {
                 return {
                     type: 'warning',
                     message: 'Card version is outdated'
-                }
+                };
             }
         }
 
-        return null;
+        return undefined;
     }
 
     getGameElementType() {
@@ -821,7 +822,7 @@ class BaseCard {
             tokens: this.tokens,
             type: this.getType(),
             uuid: this.uuid,
-            alertStatus: this.game.isPlaytesting() ? this.getAlertStatus() : undefined
+            alertStatus: this.getAlertStatus()
         };
 
         return Object.assign(state, selectionState);
