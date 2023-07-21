@@ -764,6 +764,25 @@ class BaseCard {
         return false;
     }
 
+    getAlertStatus() {
+        if(this.cardData.version) {
+            if(!this.version) {
+                return {
+                    type: 'error',
+                    message: 'Card not implemented'
+                }
+            }
+            if(this.cardData.version !== this.version) {
+                return {
+                    type: 'warning',
+                    message: 'Card version is outdated'
+                }
+            }
+        }
+
+        return null;
+    }
+
     getGameElementType() {
         return 'card';
     }
@@ -801,7 +820,8 @@ class BaseCard {
             power: this.power,
             tokens: this.tokens,
             type: this.getType(),
-            uuid: this.uuid
+            uuid: this.uuid,
+            alertStatus: this.game.isPlaytesting() ? this.getAlertStatus() : undefined
         };
 
         return Object.assign(state, selectionState);
