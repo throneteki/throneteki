@@ -6,7 +6,7 @@ describe('Valyrian Steel', function() {
                     'Valyrian Steel (LMHR)',
                     'Late Summer Feast',
                     'Hedge Knight',
-                    'Little Bird'
+                    'Little Bird (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -14,7 +14,7 @@ describe('Valyrian Steel', function() {
                 this.keepStartingHands();
 
                 this.character = this.player1.findCardByName('Hedge Knight', 'hand');
-                this.attachment = this.player1.findCardByName('Little Bird', 'hand');
+                this.attachment = this.player1.findCardByName('Little Bird (Core)', 'hand');
 
                 this.player1.clickCard(this.character);
 

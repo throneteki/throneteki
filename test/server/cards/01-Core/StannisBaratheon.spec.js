@@ -3,7 +3,7 @@ describe('Stannis Baratheon', function() {
         beforeEach(function() {
             const deck = this.buildDeck('baratheon', [
                 'Trading with the Pentoshi',
-                'Stannis Baratheon (Core)', 'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Maester Cressen', 'The Roseroad', 'Bodyguard', 'Recruiter for the Watch'
+                'Stannis Baratheon (Core)', 'Robert Baratheon (Core)', 'Dragonstone Faithful', 'Maester Cressen (Core)', 'The Roseroad', 'Bodyguard', 'Recruiter for the Watch'
             ]);
             this.player1.selectDeck(deck);
             this.player2.selectDeck(deck);
@@ -12,7 +12,7 @@ describe('Stannis Baratheon', function() {
 
             this.character1 = this.player1.findCardByName('Robert Baratheon', 'hand');
             this.character2 = this.player1.findCardByName('Dragonstone Faithful', 'hand');
-            this.character3 = this.player1.findCardByName('Maester Cressen', 'hand');
+            this.character3 = this.player1.findCardByName('Maester Cressen (Core)', 'hand');
             this.attachment = this.player1.findCardByName('Bodyguard', 'hand');
             this.location = this.player1.findCardByName('The Roseroad', 'hand');
 
