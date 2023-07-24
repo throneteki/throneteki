@@ -4,6 +4,10 @@ const DrawCard = require('../../drawcard.js');
 
 class BelligerentHeir extends DrawCard {
     setupCardAbilities(ability) {
+        this.persistentEffect({
+            match: this,
+            effect: ability.effects.dynamicStrength(() => this.tokens[Tokens.gold])
+        });
         this.reaction({
             when: {
                 onChallengeInitiated: event => event.challenge.attackingPlayer === this.controller
