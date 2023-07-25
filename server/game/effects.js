@@ -1326,6 +1326,17 @@ const Effects = {
             isStateDependent: true
         };
     },
+    choosesIntrigueClaim: function() {
+        return {
+            targetType: 'player',
+            apply: function(player) {
+                player.choosesIntrigueClaim = true;
+            },
+            unapply: function(player) {
+                player.choosesIntrigueClaim = false;
+            }
+        };
+    },
     mustChooseAsClaim: function(cardFunc) {
         return {
             targetType: 'player',
