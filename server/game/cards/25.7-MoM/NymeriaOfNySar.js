@@ -6,8 +6,9 @@ class NymeriaOfNySar extends DrawCard {
     setupCardAbilities(ability) {
         this.attachmentRestriction({ type: 'location', unique: true });
         this.reaction({
+            cannotBeCanceled: true,
             when: {
-                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.strengthDifference >= 10 && !this.owner.hasFlag('cannotRevealPlot')
+                afterChallenge: event => event.challenge.winner === this.controller && event.challenge.strengthDifference >= 10 && !this.controller.hasFlag('cannotRevealPlot')
             },
             cost: ability.costs.kneelFactionCard(),
             target: {
@@ -26,11 +27,10 @@ class NymeriaOfNySar extends DrawCard {
         this.action({
             title: 'Manually trigger',
             cost: ability.costs.kneelFactionCard(),
-            condition: () => !this.owner.hasFlag('cannotRevealPlot'),
+            condition: () => !this.controller.hasFlag('cannotRevealPlot'),
             target: {
                 type: 'select',
                 activePromptTitle: 'Select a plot',
-                //do not filter the plotTrait when triggering manually
                 cardCondition: (card, context) => 
                     card.controller === context.player && 
                     card.location === 'plot deck' && 
