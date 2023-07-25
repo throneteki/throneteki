@@ -159,7 +159,7 @@ describe('attachments', function() {
             beforeEach(function() {
                 const deck1 = this.buildDeck('stark', [
                     'A Noble Cause',
-                    'Winterfell Steward', 'Little Bird'
+                    'Winterfell Steward', 'Little Bird (Core)'
                 ]);
                 const deck2 = this.buildDeck('stark', [
                     'A Noble Cause',
@@ -171,7 +171,7 @@ describe('attachments', function() {
                 this.keepStartingHands();
 
                 this.character = this.player1.findCardByName('Winterfell Steward', 'hand');
-                this.nonTerminalAttachment = this.player1.findCardByName('Little Bird', 'hand');
+                this.nonTerminalAttachment = this.player1.findCardByName('Little Bird (Core)', 'hand');
                 this.terminalAttachment = this.player2.findCardByName('Milk of the Poppy', 'hand');
 
                 this.player1.clickCard(this.character);

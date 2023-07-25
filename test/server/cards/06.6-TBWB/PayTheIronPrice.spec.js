@@ -7,7 +7,7 @@ describe('Pay The Iron Price', function() {
             ]);
             const deck2 = this.buildDeck('greyjoy', [
                 'A Noble Cause',
-                'Iron Islands Fishmonger', 'Little Bird', 'Fishing Net', 'Milk of the Poppy', 'Ward (TS)'
+                'Iron Islands Fishmonger', 'Little Bird (Core)', 'Fishing Net', 'Milk of the Poppy', 'Ward (TS)'
             ]);
 
             this.player1.selectDeck(deck1);
@@ -17,7 +17,7 @@ describe('Pay The Iron Price', function() {
 
             this.character = this.player1.findCardByName('Black Wind\'s Crew', 'hand');
             this.opponentCharacter = this.player2.findCardByName('Iron Islands Fishmonger', 'hand');
-            this.positiveAttachment = this.player2.findCardByName('Little Bird', 'hand');
+            this.positiveAttachment = this.player2.findCardByName('Little Bird (Core)', 'hand');
             this.negativeAttachment = this.player2.findCardByName('Fishing Net', 'hand');
             this.milk = this.player2.findCardByName('Milk of the Poppy', 'hand');
             this.ward = this.player2.findCardByName('Ward', 'hand');

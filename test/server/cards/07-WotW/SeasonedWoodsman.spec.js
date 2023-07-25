@@ -4,7 +4,7 @@ describe('Seasoned Woodsman', function() {
             beforeEach(function() {
                 const deck = this.buildDeck('thenightswatch', [
                     'Sneak Attack',
-                    'Seasoned Woodsman', 'Little Bird'
+                    'Seasoned Woodsman', 'Little Bird (Core)'
                 ]);
                 this.player1.selectDeck(deck);
                 this.player2.selectDeck(deck);
@@ -18,7 +18,7 @@ describe('Seasoned Woodsman', function() {
 
                 this.selectFirstPlayer(this.player1);
 
-                this.player1.clickCard('Little Bird', 'hand');
+                this.player1.clickCard('Little Bird (Core)', 'hand');
                 this.player1.clickCard(this.character);
             });
 
